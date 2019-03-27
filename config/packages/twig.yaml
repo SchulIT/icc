@@ -1,0 +1,11 @@
+twig:
+    paths: ['%kernel.project_dir%/templates']
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+
+    form_themes:
+        - "admin/form.html.twig"
+    globals:
+        config: '@SchoolIT\CommonBundle\Twig\ConfigVariable'
+        user: '@App\Twig\UserVariable'
+        profile_url: "%env(IDP_PROFILE_URL)%"

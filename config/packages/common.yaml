@@ -1,0 +1,8 @@
+common:
+    app:
+        url: "%env(APP_URL)%"
+        name: "%env(APP_NAME)%"
+        version: "%version%"
+        logo: "%env(APP_LOGO)%"
+    locales: "%locales%"
+    menu: mainMenu

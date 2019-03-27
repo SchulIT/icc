@@ -1,0 +1,28 @@
+label:
+    acronym: Kürzel
+    firstname: Vorname
+    lastname: Nachname
+    name: Name
+    email: E-Mail
+
+greeting:
+    female: Frau
+    male: Herr
+
+teacher:
+    fullname: %greeting% %title% %name%
+
+exams:
+    export:
+        title: Klausurplan
+        description: Klausurplan für %user%
+        invigilator_description: "Klausuraufsicht %tuitions%"
+        exam_description: "Klausur %tuition%"
+        tuition: "%name% (%grades%)"
+
+teachers:
+    export:
+        headings:
+            grade: "Klasse %i%"
+            grade_substitute: "Klasse %i% (stv.)"
+            subject: "Fach %i%"

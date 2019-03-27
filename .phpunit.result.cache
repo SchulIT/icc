@@ -1,0 +1,1 @@
+C:37:"PHPUnit\Runner\DefaultTestResultCache":256:{a:2:{s:7:"defects";a:1:{s:65:"App\Tests\Grouping\AppointmentDateGroupStrategyTest::testGrouping";i:4;}s:5:"times";a:1:{s:65:"App\Tests\Grouping\AppointmentDateGroupStrategyTest::testGrouping";d:0.035999999999999997279953589668366475962102413177490234375;}}}

@@ -25,7 +25,6 @@ class TimetablePeriod {
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @Assert\NotNull()
      * @Assert\NotBlank()
      * @var string
      */
@@ -33,7 +32,6 @@ class TimetablePeriod {
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotNull()
      * @Assert\NotBlank()
      * @var string
      */

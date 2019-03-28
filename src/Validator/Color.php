@@ -8,5 +8,5 @@ use Symfony\Component\Validator\Constraint;
  * @Annotation
  */
 class Color extends Constraint {
-    public $message = 'The value must be a valid HTML encoded color.';
+    public $message = 'Color {{ value }} is not a valid HTML color.';
 }

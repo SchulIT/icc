@@ -38,7 +38,7 @@ class AcronymHelper {
     /**
      * @return Teacher[]
      */
-    protected function getListOfTeachers() {
+    private function getListOfTeachers() {
         if($this->cache === null) {
             $this->cache = $this->teacherRepository->findAll();
         }

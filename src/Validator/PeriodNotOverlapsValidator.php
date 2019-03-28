@@ -38,7 +38,7 @@ class PeriodNotOverlapsValidator extends ConstraintValidator {
 
             if($this->overlap($period, $value)) {
                 $this->context->buildViolation($constraint->message)
-                    ->setParameter('{{ period }}', $period->getName())
+                    ->setParameter('{{ key }}', $period->getExternalId())
                     ->addViolation();
             }
         }

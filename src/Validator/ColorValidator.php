@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class ColorValidator extends ConstraintValidator {
 
-    static $ColorRegexp = '/^([a-f0-9]){6}$/';
+    static $ColorRegexp = '/^([A-Fa-f0-9]){6}$/';
 
     /**
      * @inheritDoc
@@ -20,6 +20,7 @@ class ColorValidator extends ConstraintValidator {
 
         if(!empty($value) && !preg_match(static::$ColorRegexp, $value)) {
             $this->context->buildViolation($constraint->message)
+                ->setParameter('{{ value }}', $value)
                 ->addViolation();
         }
     }

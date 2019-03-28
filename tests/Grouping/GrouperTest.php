@@ -42,10 +42,10 @@ class GrouperTest extends TestCase {
 
         $containerMock
             ->method('get')
-            ->with('App\Tests\Grouping\NonExistingService')
             ->willReturn($service);
 
         $grouper = new Grouper();
+        $grouper->setContainer($containerMock);
         $grouper->group([], 'App\Tests\Grouping\NonExistingService');
     }
 }

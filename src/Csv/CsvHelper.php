@@ -2,6 +2,8 @@
 
 namespace App\Csv;
 
+use League\Csv\CharsetConverter;
+use League\Csv\Writer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
@@ -13,24 +15,20 @@ class CsvHelper {
      * @param string[][] $fields
      * @param string $separator The separator which is used to separate the values (default: ,)
      * @return string
-     * @see fputcsv()
+     * @throws \Exception
      */
     public function getCsvContent(array $fields, $separator = ','): string {
-        ob_start();
+        $encoder = (new CharsetConverter())
+            ->inputEncoding('UTF-8')
+            ->outputEncoding('UTF-16LE');
 
-        $handler = fopen('php://output', 'w');
+        $writer = Writer::createFromPath('php://temp', 'w');
+        $writer->addFormatter($encoder);
+        $writer->setOutputBOM(Writer::BOM_UTF16_LE);
+        $writer->setDelimiter($separator);
+        $writer->insertAll($fields);
 
-        if($handler === false) {
-            throw new \RuntimeException('Cannot open php://output');
-        }
-
-        echo 'sep=' . $separator . PHP_EOL;
-
-        foreach($fields as $row) {
-            fputcsv($handler, $row, $separator);
-        }
-
-        return (string)ob_get_clean();
+        return $writer->getContent();
     }
 
     /**
@@ -40,16 +38,13 @@ class CsvHelper {
      * @param string[][] $fields CSV data (see fputcsv())
      * @param string $separator The separator which is used to separate the values (default: ,)
      * @return Response
-     * @see CsvHelper::getCsvContent()
+     * @throws \Exception
      */
     public function getCsvResponse(string $filename, array $fields, $separator = ','): Response {
         $csv = $this->getCsvContent($fields, $separator);
 
-        $csv = mb_convert_encoding($csv, 'UTF-16LE', 'UTF-8');
-        $csv = chr(255) . chr(254) . $csv; // add UTF-16LE BOM
-
         $response = new Response($csv);
-        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-16');
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename));
 
         return $response;

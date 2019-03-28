@@ -31,6 +31,6 @@ class AppointmentDateStrategy implements GroupingStrategyInterface {
         $year = (int)($key / 100);
         $month = $key % 100;
 
-        return new AppointmentDateGroup($key, $year, $month);
+        return new AppointmentDateGroup($key, $month, $year);
     }
 }

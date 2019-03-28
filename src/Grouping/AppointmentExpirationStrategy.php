@@ -18,10 +18,13 @@ class AppointmentExpirationStrategy implements GroupingStrategyInterface {
      * @return bool
      */
     public function computeKey($appointment) {
+        $today = $this->dateHelper->getToday();
         $now = $this->dateHelper->getNow();
 
-        if($appointment->getEnd() !== null && $appointment->getEnd() < $now) {
-            return true;
+        if($appointment->getEnd() !== null) {
+            if(($appointment->isAllDay() && $appointment->getEnd() < $today) || (!$appointment->isAllDay() && $appointment->getEnd() < $now)) {
+                return true;
+            }
         }
 
         return false;

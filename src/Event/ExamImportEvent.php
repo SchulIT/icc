@@ -3,24 +3,12 @@
 namespace App\Event;
 
 use App\Entity\Exam;
-use Symfony\Component\EventDispatcher\Event;
 
-class ExamImportEvent extends Event {
+/**
+ * @method Exam[] getAdded()
+ * @method Exam[] getUpdated()
+ * @method Exam[] getRemoved()
+ */
+class ExamImportEvent extends ImportEvent {
 
-    /** @var Exam[] */
-    private $exams;
-
-    /**
-     * @param Exam[] $exams
-     */
-    public function __construct(array $exams = [ ]) {
-        $this->exams = $exams;
-    }
-
-    /**
-     * @return Exam[]
-     */
-    public function getExams(): array {
-        return $this->exams;
-    }
 }

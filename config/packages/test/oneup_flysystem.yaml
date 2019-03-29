@@ -1,0 +1,17 @@
+# Read the documentation: https://github.com/1up-lab/OneupFlysystemBundle/tree/master/Resources/doc/index.md
+oneup_flysystem:
+  adapters:
+    messages:
+      memory: ~
+    documents:
+      memory: ~
+    wiki:
+      memory: ~
+
+  filesystems:
+    messages:
+      adapter: messages
+    documents:
+      adapter: documents
+    wiki:
+      adapter: wiki

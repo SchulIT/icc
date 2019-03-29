@@ -6,6 +6,7 @@ use App\Repository\SubjectRepositoryInterface;
 use App\Validator\Color;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -41,7 +42,6 @@ class Subject {
 
     /**
      * @ORM\Column(type="boolean")
-     * @Serializer\Exclude()
      * @var bool
      */
     private $replaceSubjectAbbreviation = false;

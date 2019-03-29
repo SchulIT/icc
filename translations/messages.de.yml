@@ -10,12 +10,12 @@ greeting:
     male: Herr
 
 teacher:
-    fullname: %greeting% %title% %name%
+    fullname: "%greeting% %title% %name%"
 
 exams:
     export:
         title: Klausurplan
-        description: Klausurplan für %user%
+        description: "Klausurplan für %user%"
         invigilator_description: "Klausuraufsicht %tuitions%"
         exam_description: "Klausur %tuition%"
         tuition: "%name% (%grades%)"

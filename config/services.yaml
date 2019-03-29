@@ -35,3 +35,17 @@ services:
         arguments:
             $prefix: 'App\\Request\\Data'
 
+    JMS\Serializer\SerializationContext:
+        calls:
+            - [ setSerializeNull, [ true ]]
+
+    JMS\Serializer\ContextFactory\DeserializationContextFactoryInterface:
+        alias: 'jms_serializer.configured_deserialization_context_factory'
+
+    App\Filesystem\DocumentFilesystem:
+        arguments:
+            $filesystem: '@oneup_flysystem.document_filesystem'
+
+    App\Filesystem\MessageFilesystem:
+        arguments:
+            $filesystem: '@oneup_flysystem.message_filesystem'

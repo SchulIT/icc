@@ -1,10 +1,20 @@
 # Read the documentation: https://github.com/1up-lab/OneupFlysystemBundle/tree/master/Resources/doc/index.md
 oneup_flysystem:
     adapters:
-        default_adapter:
+        messages:
             local:
-                directory: '%kernel.cache_dir%/flysystem'
+                directory: '%kernel.root_dir%/files/messages'
+        documents:
+            local:
+                directory: '%kernel.root_dir%/files/documents'
+        wiki:
+            local:
+                directory: '%kernel.root_dir%/files/wiki'
+
     filesystems:
-        default_filesystem:
-            adapter: default_adapter
-            alias: League\Flysystem\Filesystem
+        messages:
+            adapter: messages
+        documents:
+            adapter: documents
+        wiki:
+            adapter: wiki

@@ -55,7 +55,7 @@ class Exam {
     private $description;
 
     /**
-     * @ORM\ManyToMany()
+     * @ORM\ManyToMany(targetEntity="Tuition")
      * @ORM\JoinTable(
      *     name="exam_tuitions",
      *     joinColumns={@ORM\JoinColumn(name="exam", onDelete="CASCADE")},
@@ -66,7 +66,7 @@ class Exam {
     private $tuitions;
 
     /**
-     * @ORM\ManyToMany()
+     * @ORM\ManyToMany(targetEntity="Student")
      * @ORM\JoinTable(
      *     name="exam_students",
      *     joinColumns={@ORM\JoinColumn(name="exam", onDelete="CASCADE")},

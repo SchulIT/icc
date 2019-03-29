@@ -1,4 +1,7 @@
 {
+    "acelaya/doctrine-enum-type": {
+        "version": "v2.2.3"
+    },
     "behat/transliterator": {
         "version": "v1.2.0"
     },

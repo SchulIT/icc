@@ -11,29 +11,89 @@ use PHPUnit\Framework\TestCase;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class AppintmentExpirationStrategyTest extends TestCase {
+class AppointmentExpirationStrategyTest extends TestCase {
 
     private function getTestData() {
         $dates = [
-            '2018-12-24',
-            '2018-12-25',
-            '2018-12-24',
-            '2018-12-31',
-            '2019-01-01',
-            '2019-02-01',
-            '2019-02-02',
-            '2019-03-02'
+            ['2018-12-24', true],
+            ['2018-12-25 09:00', false],
+            ['2018-12-24', true],
+            ['2018-12-31', true],
+            ['2019-01-01', true],
+            ['2019-02-01 10:00', false],
+            ['2019-02-02', true],
+            ['2019-03-02', true]
         ];
 
         $appointments = [ ];
 
-        foreach($dates as $startDate) {
+        foreach($dates as $date) {
+            $startDate = $date[0];
+            $isAllDay = $date[1];
             $appointments[] = (new Appointment())
-                ->setAllDay(true)
+                ->setAllDay($isAllDay)
                 ->setEnd(new \DateTime($startDate));
         }
 
         return $appointments;
+    }
+
+    public function testNonAllDayAppointmentEndingTodayIsNotExpired() {
+        $dateHelper = $this->createMock(DateHelper::class);
+        $dateHelper
+            ->method('getNow')
+            ->willReturn(new \DateTime('2019-02-01 10:00'));
+
+        $strategy = new AppointmentExpirationStrategy($dateHelper);
+
+        $containerMock = $this->createMock(ContainerInterface::class);
+        $containerMock
+            ->method('get')
+            ->with(AppointmentExpirationStrategy::class)
+            ->willReturn($strategy);
+
+        $grouper = new Grouper();
+        $grouper->setContainer($containerMock);
+
+        $appointment = (new Appointment())
+            ->setAllDay(false)
+            ->setEnd(new \DateTime('2019-02-01 09:59'));
+        /** @var AppointmentExpirationGroup[] $groups */
+        $groups = $grouper->group([$appointment], AppointmentExpirationStrategy::class);
+
+        $this->assertEquals(1, count($groups));
+        $group = $groups[0];
+
+        $this->assertTrue($group->isExpired());
+    }
+
+    public function testNonAllDayAppointmentEndingTodayIsExpired() {
+        $dateHelper = $this->createMock(DateHelper::class);
+        $dateHelper
+            ->method('getNow')
+            ->willReturn(new \DateTime('2019-02-01 10:00'));
+
+        $strategy = new AppointmentExpirationStrategy($dateHelper);
+
+        $containerMock = $this->createMock(ContainerInterface::class);
+        $containerMock
+            ->method('get')
+            ->with(AppointmentExpirationStrategy::class)
+            ->willReturn($strategy);
+
+        $grouper = new Grouper();
+        $grouper->setContainer($containerMock);
+
+        $appointment = (new Appointment())
+            ->setAllDay(false)
+            ->setEnd(new \DateTime('2019-02-01 10:01'));
+        /** @var AppointmentExpirationGroup[] $groups */
+        $groups = $grouper->group([$appointment], AppointmentExpirationStrategy::class);
+
+        $this->assertEquals(1, count($groups));
+        $group = $groups[0];
+
+        $this->assertFalse($group->isExpired());
     }
 
     public function testAppointmentEndingTodayIsNotExpired() {

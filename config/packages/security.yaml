@@ -14,11 +14,20 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api/import, roles: ROLE_IMPORT }
 
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        import_api:
+            pattern: ^/api/import
+            stateless: true
+            guard:
+                authenticators:
+                    - App\Security\ImportUserAuthenticator
+
         main:
             anonymous: true
 

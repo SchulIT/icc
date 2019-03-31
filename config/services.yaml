@@ -49,3 +49,7 @@ services:
     App\Filesystem\MessageFilesystem:
         arguments:
             $filesystem: '@oneup_flysystem.message_filesystem'
+
+    App\Security\ImportUserAuthenticator:
+        arguments:
+            $presharedKey: '%env(IMPORT_PSK)%'

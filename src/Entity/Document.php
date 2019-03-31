@@ -64,7 +64,7 @@ class Document {
 
     /**
      * @ORM\OneToMany(targetEntity="DocumentAttachment", mappedBy="document")
-     * @var ArrayCollection<MessageAttachment>
+     * @var ArrayCollection<DocumentAttachment>
      */
     private $attachments;
 

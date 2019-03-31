@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class StudentsData {
 
     /**
-     * @Serializer\Type("array<StudentData>")
+     * @Serializer\Type("array<App\Request\Data\StudentData>")
      * @Assert\Valid()
      * @var StudentData[]
      */

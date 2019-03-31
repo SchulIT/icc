@@ -2,11 +2,19 @@
 
 namespace App\Response;
 
+use JMS\Serializer\Annotation as Serializer;
+use Swagger\Annotations as SWG;
+
 class ErrorResponse {
-    /** @var string */
+    /**
+     * @Serializer\Type("string")
+     * @var string
+     */
     private $message;
 
     /**
+     * @Serializer\Type("object")
+     * @SWG\Property(description="This property may or may not contain information about the error.")
      * @var mixed[]
      */
     private $data = [ ];

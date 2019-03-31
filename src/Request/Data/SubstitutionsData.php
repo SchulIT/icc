@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SubstitutionsData {
 
     /**
-     * @Serializer\Type("array<SubstitutionData>")
+     * @Serializer\Type("array<App\Request\Data\SubstitutionData>")
      * @Assert\Valid()
      * @var SubstitutionData[]
      */

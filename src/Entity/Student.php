@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Validator\Color;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -54,6 +55,12 @@ class Student {
      * @var StudentStatus
      */
     private $status;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $isFullAged;
 
     /**
      * @ORM\ManyToOne(targetEntity="Grade", inversedBy="students")
@@ -146,6 +153,22 @@ class Student {
      */
     public function setStatus(StudentStatus $status): Student {
         $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFullAged(): bool {
+        return $this->isFullAged;
+    }
+
+    /**
+     * @param bool $isFullAged
+     * @return Student
+     */
+    public function setIsFullAged(bool $isFullAged): Student {
+        $this->isFullAged = $isFullAged;
         return $this;
     }
 

@@ -1,3 +1,13 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+app.swagger_ui.default:
+    path: /docs/api/app
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui, area: default }
+
+app.swagger_ui.import:
+    path: /docs/api/import
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui, area: import }

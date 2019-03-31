@@ -64,13 +64,13 @@ class AppointmentData {
     private $location;
 
     /**
-     * @Serializer\Type("bool")
+     * @Serializer\Type("boolean")
      * @var boolean
      */
     private $isAllDay;
 
     /**
-     * @Serializer\Type("bool")
+     * @Serializer\Type("boolean")
      * @var boolean
      */
     private $isHiddenFromStudents;

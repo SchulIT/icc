@@ -3,6 +3,7 @@
 namespace App\Request\Data;
 
 use App\Entity\Gender;
+use App\Entity\Student;
 use App\Entity\StudentStatus;
 use App\Validator\NullOrNotBlank;
 use JMS\Serializer\Annotation as Serializer;
@@ -47,6 +48,12 @@ class StudentData {
      * @var int
      */
     private $status;
+
+    /**
+     * @Serializer\Type("boolean")
+     * @var bool
+     */
+    private $isFullAged;
 
     /**
      * @Serializer\Type("string")
@@ -148,6 +155,22 @@ class StudentData {
      */
     public function setGrade(?string $grade): StudentData {
         $this->grade = $grade;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFullAged(): bool {
+        return $this->isFullAged;
+    }
+
+    /**
+     * @param bool $isFullAged
+     * @return StudentData
+     */
+    public function setIsFullAged(bool $isFullAged): StudentData {
+        $this->isFullAged = $isFullAged;
         return $this;
     }
 

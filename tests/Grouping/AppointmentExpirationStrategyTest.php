@@ -97,8 +97,14 @@ class AppointmentExpirationStrategyTest extends TestCase {
     }
 
     public function testAppointmentEndingTodayIsNotExpired() {
-        $dateHelper = new DateHelper();
-        $dateHelper->setToday(new \DateTime('2019-01-02'));
+        $dateHelper = $this->createMock(DateHelper::class);
+        $dateHelper
+            ->method('getNow')
+            ->willReturn(new \DateTime('2019-01-02 08:00'));
+
+        $dateHelper
+            ->method('getToday')
+            ->willReturn(new \DateTime('2019-01-02'));
 
         $strategy = new AppointmentExpirationStrategy($dateHelper);
 
@@ -124,8 +130,14 @@ class AppointmentExpirationStrategyTest extends TestCase {
     }
 
     public function testGrouping() {
-        $dateHelper = new DateHelper();
-        $dateHelper->setToday(new \DateTime('2019-02-01'));
+        $dateHelper = $this->createMock(DateHelper::class);
+        $dateHelper
+            ->method('getNow')
+            ->willReturn(new \DateTime('2019-02-01 08:00'));
+
+        $dateHelper
+            ->method('getToday')
+            ->willReturn(new \DateTime('2019-02-01'));
 
         $strategy = new AppointmentExpirationStrategy($dateHelper);
 

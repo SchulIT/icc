@@ -3,22 +3,22 @@
 namespace App\Settings;
 
 use App\Entity\Setting;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\SettingRepositoryInterface;
 
 /**
  * Manager for application settings which can be configured online
  */
 class SettingsManager {
 
-    private $em;
+    private $repository;
 
     private $initialised = false;
 
     /** @var Setting[] */
     private $settings = [ ];
 
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
+    public function __construct(SettingRepositoryInterface $settingRepository) {
+        $this->repository = $settingRepository;
     }
 
     /**
@@ -55,10 +55,8 @@ class SettingsManager {
         $setting = $this->settings[$key];
         $setting->setValue($value);
 
-        $em = $this->em;
-
-        $em->persist($setting);
-        $em->flush();
+        $this->repository
+            ->persist($setting);
     }
 
     /**
@@ -74,10 +72,8 @@ class SettingsManager {
      * Loads all settings from the database
      */
     protected function initialize() {
-        $em = $this->em;
-
-        /** @var Setting[] $settings */
-        $settings = $em->getRepository('Portal\Models\Setting')->findAll();
+        $settings = $this->repository
+            ->findAll();
 
         foreach($settings as $setting) {
             $this->settings[$setting->getKey()] = $setting;

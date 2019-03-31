@@ -5,7 +5,6 @@ namespace App\Filesystem;
 use App\Entity\Document;
 use App\Entity\DocumentAttachment;
 use App\Http\FlysystemFileResponse;
-use League\Flysystem\FileNotFoundException;
 use League\Flysystem\FilesystemInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -24,7 +23,7 @@ class DocumentFilesystem {
     /**
      * @param DocumentAttachment $attachment
      * @return Response
-     * @throws \App\Filesystem\FileNotFoundException
+     * @throws FileNotFoundException
      */
     public function getDownloadResponse(DocumentAttachment $attachment): Response {
         $path = $this->getAttachmentPath($attachment);
@@ -34,7 +33,7 @@ class DocumentFilesystem {
                 'file' => $path
             ]);
 
-            throw new \App\Filesystem\FileNotFoundException();
+            throw new FileNotFoundException();
         }
 
         return new FlysystemFileResponse($this->filesystem, $this->getAttachmentPath($attachment), $attachment->getFilename());
@@ -55,10 +54,10 @@ class DocumentFilesystem {
     }
 
     private function getAttachmentsDirectory(Document $document): string {
-        return sprintf('/documents/%d/', $document->getId());
+        return sprintf('/%d/', $document->getId());
     }
 
     private function getAttachmentPath(DocumentAttachment $attachment): string {
-        return sprintf('/documents/%d/%s', $attachment->getDocument()->getId(), $attachment->getFilename());
+        return sprintf('/%d/%s', $attachment->getDocument()->getId(), $attachment->getFilename());
     }
 }

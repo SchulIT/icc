@@ -100,19 +100,10 @@ class Document {
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int {
+    public function getId(): ?int {
         return $this->id;
-    }
-
-    /**
-     * @param int $id
-     * @return Document
-     */
-    public function setId(int $id): Document {
-        $this->id = $id;
-        return $this;
     }
 
     /**
@@ -120,15 +111,6 @@ class Document {
      */
     public function getAlias(): string {
         return $this->alias;
-    }
-
-    /**
-     * @param string $alias
-     * @return Document
-     */
-    public function setAlias(string $alias): Document {
-        $this->alias = $alias;
-        return $this;
     }
 
     /**
@@ -194,16 +176,16 @@ class Document {
         return $this->studyGroups;
     }
 
-    public function addAttachment(MessageAttachment $attachment) {
+    public function addAttachment(DocumentAttachment $attachment) {
         $this->attachments->add($attachment);
     }
 
-    public function removeAttachment(MessageAttachment $attachment) {
+    public function removeAttachment(DocumentAttachment $attachment) {
         $this->attachments->removeElement($attachment);
     }
 
     /**
-     * @return ArrayCollection<MessageAttachment>
+     * @return ArrayCollection<DocumentAttachment>
      */
     public function getAttachments() {
         return $this->attachments;

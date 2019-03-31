@@ -33,7 +33,7 @@ class MessageFilesystem {
                 'file' => $path
             ]);
 
-            throw new \App\Filesystem\FileNotFoundException();
+            throw new FileNotFoundException();
         }
 
         return new FlysystemFileResponse($this->filesystem, $this->getMessageAttachmentPath($attachment), $attachment->getFilename());
@@ -54,10 +54,10 @@ class MessageFilesystem {
     }
 
     private function getMessageAttachmentPath(MessageAttachment $attachment): string {
-        return sprintf('/messages/%d/%s', $attachment->getMessage()->getId(), $attachment->getFilename());
+        return sprintf('/%d/%s', $attachment->getMessage()->getId(), $attachment->getFilename());
     }
 
     private function getMessageDirectory(Message $message): string {
-        return sprintf('/messages/%d/', $message->getId());
+        return sprintf('/%d/', $message->getId());
     }
 }

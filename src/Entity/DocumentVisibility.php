@@ -27,7 +27,7 @@ class DocumentVisibility {
     /**
      * @return Document
      */
-    public function getDocument() {
+    public function getDocument(): Document {
         return $this->document;
     }
 

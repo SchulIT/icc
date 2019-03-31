@@ -38,19 +38,10 @@ class Grade {
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int {
+    public function getId(): ?int {
         return $this->id;
-    }
-
-    /**
-     * @param int $id
-     * @return Grade
-     */
-    public function setId(int $id): Grade {
-        $this->id = $id;
-        return $this;
     }
 
     /**

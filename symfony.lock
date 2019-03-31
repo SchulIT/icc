@@ -218,6 +218,9 @@
     "league/flysystem": {
         "version": "1.0.50"
     },
+    "league/flysystem-memory": {
+        "version": "1.0.1"
+    },
     "lightsaml/lightsaml": {
         "version": "1.4.1"
     },

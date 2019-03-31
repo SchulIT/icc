@@ -1,7 +1,7 @@
+dist: xenial
 language: php
 
 php:
-  - '7.1'
   - '7.2'
   - '7.3'
   - nightly
@@ -18,5 +18,9 @@ install:
   - composer install
 
 script:
-  - vendor/bin/phpstan analyze --level 5
-  - vendor/bin/phpunit
+  - vendor/bin/phpstan analyze ./src --level 5
+  - vendor/bin/phpunit --coverage-clover clover.xml
+
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover clover.xml

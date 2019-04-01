@@ -75,19 +75,10 @@ class StudyGroup {
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int {
+    public function getId(): ?int {
         return $this->id;
-    }
-
-    /**
-     * @param int $id
-     * @return StudyGroup
-     */
-    public function setId(int $id): StudyGroup {
-        $this->id = $id;
-        return $this;
     }
 
     /**

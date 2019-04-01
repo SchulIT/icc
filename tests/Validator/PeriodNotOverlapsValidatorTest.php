@@ -11,20 +11,37 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class PeriodNotOverlapsValidatorTest extends ConstraintValidatorTestCase {
 
+    private function getPeriod(int $id, string $start, string $end) {
+        $period = $this->createMock(TimetablePeriod::class);
+        $period
+            ->method('getId')
+            ->willReturn($id);
+
+        $period
+            ->method('getStart')
+            ->willReturn(new \DateTime($start));
+
+        $period
+            ->method('getEnd')
+            ->willReturn(new \DateTime($end));
+
+        return $period;
+    }
+
     public function getValidPeriods() {
         return [
-            [ (new TimetablePeriod())->setId(10)->setStart(new \DateTime('2019-12-01'))->setEnd(new \DateTime('2018-12-31'))],
-            [ (new TimetablePeriod())->setId(11)->setStart(new \DateTime('2019-03-01'))->setEnd(new \DateTime('2019-04-01'))]
+            [ $this->getPeriod(10, '2019-12-01', '2018-12-31') ],
+            [ $this->getPeriod(11,'2019-03-01','2019-04-01') ]
         ];
     }
 
     public function getInvalidPeriods() {
         return [
-            [ (new TimetablePeriod())->setId(12)->setStart(new \DateTime('2018-12-30'))->setEnd(new \DateTime('2019-01-10')), ['january']],
-            [ (new TimetablePeriod())->setId(13)->setStart(new \DateTime('2019-01-01'))->setEnd(new \DateTime('2019-01-10')), ['january']],
-            [ (new TimetablePeriod())->setId(14)->setStart(new \DateTime('2019-01-10'))->setEnd(new \DateTime('2019-01-20')), ['january']],
-            [ (new TimetablePeriod())->setId(15)->setStart(new \DateTime('2019-01-29'))->setEnd(new \DateTime('2019-02-10')), ['january', 'february']],
-            [ (new TimetablePeriod())->setId(16)->setStart(new \DateTime('2019-02-20'))->setEnd(new \DateTime('2019-02-28')), ['february']],
+            [ $this->getPeriod(12,'2018-12-30','2019-01-10'), ['january']],
+            [ $this->getPeriod(13,'2019-01-01','2019-01-10'), ['january']],
+            [ $this->getPeriod(14,'2019-01-10','2019-01-20'), ['january']],
+            [ $this->getPeriod(15,'2019-01-29','2019-02-10'), ['january', 'february']],
+            [ $this->getPeriod(16,'2019-02-20','2019-02-28'), ['february']],
         ];
     }
 
@@ -85,13 +102,11 @@ class PeriodNotOverlapsValidatorTest extends ConstraintValidatorTestCase {
         $periods = [ ];
 
         $periods[] = (new TimetablePeriod())
-            ->setId(1)
             ->setExternalId('january')
             ->setStart(new \DateTime('2019-01-01'))
             ->setEnd(new \DateTime('2019-01-31'));
 
         $periods[] = (new TimetablePeriod())
-            ->setId(2)
             ->setExternalId('february')
             ->setStart(new \DateTime('2019-02-01'))
             ->setEnd(new \DateTime('2019-02-28'));

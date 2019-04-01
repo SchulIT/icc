@@ -78,19 +78,10 @@ class TimetablePeriod {
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int {
+    public function getId(): ?int {
         return $this->id;
-    }
-
-    /**
-     * @param int $id
-     * @return TimetablePeriod
-     */
-    public function setId(int $id): TimetablePeriod {
-        $this->id = $id;
-        return $this;
     }
 
     /**

@@ -2,10 +2,13 @@
 
 namespace App\Tests\Entity;
 
+use App\Entity\Gender;
 use App\Entity\Grade;
-use PHPUnit\Framework\TestCase;
+use App\Entity\Student;
+use App\Entity\StudentStatus;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class GradeTest extends TestCase {
+class GradeTest extends WebTestCase {
     public function testGettersSetters() {
         $grade = new Grade();
 
@@ -14,4 +17,39 @@ class GradeTest extends TestCase {
         $grade->setName('name');
         $this->assertEquals('name', $grade->getName());
     }
+
+    public function testGetStudents() {
+        $kernel = static::createKernel();
+        $kernel->boot();
+
+        $em = $kernel->getContainer()->get('doctrine')
+            ->getManager();
+
+        $grade = (new Grade())
+            ->setName('grade');
+
+        $student = (new Student())
+            ->setGender(Gender::X())
+            ->setGrade($grade)
+            ->setStatus(StudentStatus::Active())
+            ->setLastname('lastname')
+            ->setFirstname('firstname')
+            ->setExternalId('external-id');
+
+        $em->persist($grade);
+        $em->persist($student);
+        $em->flush();
+
+        $em->clear();
+
+        /** @var Grade $grade */
+        $grade = $em->getRepository(Grade::class)
+            ->findOneBy([
+                'id' => $grade->getId()
+            ]);
+
+        $this->assertEquals(1, $grade->getStudents()->count());
+        $this->assertEquals($student->getId(), $grade->getStudents()->first()->getId());
+    }
+
 }

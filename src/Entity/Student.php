@@ -60,7 +60,7 @@ class Student {
      * @ORM\Column(type="boolean")
      * @var bool
      */
-    private $isFullAged;
+    private $isFullAged = false;
 
     /**
      * @ORM\ManyToOne(targetEntity="Grade", inversedBy="students")
@@ -70,9 +70,9 @@ class Student {
     private $grade;
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int {
+    public function getId(): ?int {
         return $this->id;
     }
 

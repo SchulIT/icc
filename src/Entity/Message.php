@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -398,9 +399,9 @@ class Message {
     }
 
     /**
-     * @return ArrayCollection<MessageConfirmation>
+     * @return Collection<MessageConfirmation>
      */
-    public function getConfirmations(): ArrayCollection {
+    public function getConfirmations(): Collection {
         return $this->confirmations;
     }
 }

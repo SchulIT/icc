@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
@@ -11,33 +12,23 @@ class MessageVisibility {
 
     /**
      * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="Message", inversedBy="visibilities", cascade={"persist"})
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Message
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer")
+     * @var int
      */
-    private $message;
+    private $id;
 
     /**
-     * @ORM\Id()
      * @ORM\Column(type="UserType::class")
      * @var UserType
      */
     private $userType;
 
     /**
-     * @return Message
+     * @return int|null
      */
-    public function getMessage(): Message {
-        return $this->message;
-    }
-
-    /**
-     * @param Message $message
-     * @return MessageVisibility
-     */
-    public function setMessage(Message $message): MessageVisibility {
-        $this->message = $message;
-        return $this;
+    public function getId(): ?int {
+        return $this->id;
     }
 
     /**

@@ -11,11 +11,11 @@ class TimetablePeriodVisibility {
 
     /**
      * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="TimetablePeriod", inversedBy="visibilities", cascade={"persist"})
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var TimetablePeriod
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="int")
+     * @var int
      */
-    private $period;
+    private $id;
 
     /**
      * @ORM\Id()
@@ -26,19 +26,10 @@ class TimetablePeriodVisibility {
     private $userType;
 
     /**
-     * @return TimetablePeriod
+     * @return int|null
      */
-    public function getPeriod(): TimetablePeriod {
-        return $this->period;
-    }
-
-    /**
-     * @param TimetablePeriod $period
-     * @return TimetablePeriodVisibility
-     */
-    public function setPeriod(TimetablePeriod $period): TimetablePeriodVisibility {
-        $this->period = $period;
-        return $this;
+    public function getId(): ?int {
+        return $this->id;
     }
 
     /**

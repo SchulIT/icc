@@ -3,9 +3,9 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -78,17 +78,17 @@ class User {
     private $userType;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="linkingUsers")
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="linkingUsers")
+     * @ORM\JoinTable(name="user_links",
+     *     joinColumns={@ORM\JoinColumn(name="source_user", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="linked_user", referencedColumnName="id", onDelete="CASCADE")}
+     * )
      * @var ArrayCollection<User>
      */
     private $linkedUsers = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="linkedUsers")
-     * @ORM\JoinTable(name="user_links",
-     *     joinColumns={@ORM\JoinColumn(name="source_user", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="linked_user", referencedColumnName="id", onDelete="CASCADE")}
-     * )
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="linkedUsers")
      * @var ArrayCollection<User>
      */
     private $linkingUsers = null;
@@ -110,9 +110,9 @@ class User {
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int {
+    public function getId(): ?int {
         return $this->id;
     }
 
@@ -223,24 +223,15 @@ class User {
     /**
      * @return ArrayCollection<User>
      */
-    public function getLinkedUsers(): ArrayCollection {
+    public function getLinkedUsers(): Collection {
         return $this->linkedUsers;
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getLinkingUsers(): ArrayCollection {
+    public function getLinkingUsers(): Collection {
         return $this->linkingUsers;
-    }
-
-    /**
-     * @param ArrayCollection $linkingUsers
-     * @return User
-     */
-    public function setLinkingUsers(ArrayCollection $linkingUsers): User {
-        $this->linkingUsers = $linkingUsers;
-        return $this;
     }
 
     /**
@@ -282,9 +273,9 @@ class User {
     }
 
     /**
-     * @return ArrayCollection<Message>
+     * @return Collection<Message>
      */
-    public function getDismissedMessages(): ArrayCollection {
+    public function getDismissedMessages(): Collection {
         return $this->dismissedMessages;
     }
 

@@ -11,33 +11,23 @@ class DocumentVisibility {
 
     /**
      * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="Document", inversedBy="visibilities", cascade={"persist"})
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Document
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer")
+     * @var int
      */
-    private $document;
+    private $id;
 
     /**
-     * @ORM\Id()
      * @ORM\Column(type="UserType::class")
      * @var UserType
      */
     private $userType;
 
     /**
-     * @return Document
+     * @return int|null
      */
-    public function getDocument(): Document {
-        return $this->document;
-    }
-
-    /**
-     * @param Document $document
-     * @return DocumentVisibility
-     */
-    public function setDocument(Document $document): DocumentVisibility {
-        $this->document = $document;
-        return $this;
+    public function getId(): ?int {
+        return $this->id;
     }
 
     /**

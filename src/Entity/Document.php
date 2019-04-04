@@ -69,7 +69,11 @@ class Document {
     private $attachments;
 
     /**
-     * @ORM\OneToMany(targetEntity="DocumentVisibility", mappedBy="document", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="DocumentVisibility")
+     * @ORM\JoinTable(name="document_visibilities"
+     *     joinColumns={@ORM\JoinColumn(name="document")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility")}
+     * )
      * @var ArrayCollection<MessageVisibility>
      */
     private $visibilities;

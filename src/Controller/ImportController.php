@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Request\Data\AppointmentCategoriesData;
 use App\Request\Data\AppointmentsData;
 use App\Request\Data\ExamsData;
 use App\Request\Data\GradesData;
@@ -47,6 +48,30 @@ class ImportController extends AbstractController {
      * )
      */
     public function appointments(AppointmentsData $appointmentsData) {
+
+    }
+
+    /**
+     * Imports appointment categories.
+     *
+     * @Route("/appointments/categories", methods={"POST"})
+     * @SWG\Parameter(
+     *     name="payload",
+     *     in="body",
+     *     @Model(type=AppointmentCategoriesData::class)
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Import was successful",
+     *     @Model(type=ImportResponse::class)
+     * )
+     * @SWG\Response(
+     *     response=400,
+     *     description="Import was not successful",
+     *     @Model(type=ErrorResponse::class)
+     * )
+     */
+    public function appointmentCategories(AppointmentCategoriesData $appointmentCategoriesData) {
 
     }
 

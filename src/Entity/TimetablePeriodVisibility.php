@@ -12,13 +12,12 @@ class TimetablePeriodVisibility {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
-     * @ORM\Column(type="int")
+     * @ORM\Column(type="integer")
      * @var int
      */
     private $id;
 
     /**
-     * @ORM\Id()
      * @ORM\Column(type="UserType::class")
      * @ORM\OrderBy("asc")
      * @var UserType

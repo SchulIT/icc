@@ -70,7 +70,7 @@ class Document {
 
     /**
      * @ORM\ManyToMany(targetEntity="DocumentVisibility")
-     * @ORM\JoinTable(name="document_visibilities"
+     * @ORM\JoinTable(name="document_visibilities",
      *     joinColumns={@ORM\JoinColumn(name="document")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="visibility")}
      * )

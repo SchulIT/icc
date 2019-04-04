@@ -6,6 +6,7 @@ use JMS\Serializer\Annotation as Serializer;
 use Swagger\Annotations as SWG;
 
 class ErrorResponse {
+
     /**
      * @Serializer\Type("string")
      * @var string
@@ -13,7 +14,7 @@ class ErrorResponse {
     private $message;
 
     /**
-     * @Serializer\Type("object")
+     * @Serializer\Type("array<string>")
      * @SWG\Property(description="This property may or may not contain information about the error.")
      * @var mixed[]
      */

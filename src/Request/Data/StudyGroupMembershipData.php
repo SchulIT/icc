@@ -8,6 +8,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class StudyGroupMembershipData {
 
     /**
+     * Student ID.
+     *
      * @Serializer\Type("string")
      * @Assert\NotBlank()
      * @var string

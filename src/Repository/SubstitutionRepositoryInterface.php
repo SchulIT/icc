@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Substitution;
 
-interface SubstitutionRepositoryInterface {
+interface SubstitutionRepositoryInterface extends TransactionalRepositoryInterface {
 
     /**
      * @param int $id
@@ -17,6 +17,11 @@ interface SubstitutionRepositoryInterface {
      * @return Substitution|null
      */
     public function findOneByExternalId(string $externalId): ?Substitution;
+
+    /**
+     * @return Substitution[]
+     */
+    public function findAll();
 
     /**
      * @param \DateTime $date

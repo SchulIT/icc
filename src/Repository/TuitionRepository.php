@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class TuitionRepository implements TuitionRepositoryInterface {
 
     private $em;
+    private $isTransactionActive = false;
 
     public function __construct(EntityManagerInterface $entityManager) {
         $this->em = $entityManager;
@@ -123,7 +124,7 @@ class TuitionRepository implements TuitionRepositoryInterface {
      */
     public function persist(Tuition $tuition): void {
         $this->em->persist($tuition);
-        $this->em->flush();
+        $this->isTransactionActive || $this->em->flush();
     }
 
     /**
@@ -131,6 +132,17 @@ class TuitionRepository implements TuitionRepositoryInterface {
      */
     public function remove(Tuition $tuition): void {
         $this->em->remove($tuition);
+        $this->isTransactionActive || $this->em->flush();
+    }
+
+    public function beginTransaction(): void {
+        $this->em->beginTransaction();
+        $this->isTransactionActive = true;
+    }
+
+    public function commit(): void {
         $this->em->flush();
+        $this->em->commit();
+        $this->isTransactionActive = false;
     }
 }

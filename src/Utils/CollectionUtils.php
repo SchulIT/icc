@@ -2,18 +2,18 @@
 
 namespace App\Utils;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
-class ArrayCollectionUtils {
+class CollectionUtils {
 
     /**
-     * Synchronises an ArrayCollection with $targetEntities based on the given $idSelector.
+     * Synchronises a Collection with $targetEntities based on the given $idSelector.
      *
-     * @param ArrayCollection $collection
+     * @param Collection $collection
      * @param array $targetEntities
      * @param \Closure $idSelector
      */
-    public function synchronize(ArrayCollection $collection, array $targetEntities, \Closure $idSelector) {
+    public static function synchronize(Collection $collection, array $targetEntities, \Closure $idSelector) {
         $currentCollection = clone $collection;
         $currentIds = array_map($idSelector, $collection->toArray());
 

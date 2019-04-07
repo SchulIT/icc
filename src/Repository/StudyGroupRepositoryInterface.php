@@ -7,7 +7,7 @@ use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupType;
 
-interface StudyGroupRepositoryInterface {
+interface StudyGroupRepositoryInterface extends TransactionalRepositoryInterface {
 
     /**
      * @param int $id

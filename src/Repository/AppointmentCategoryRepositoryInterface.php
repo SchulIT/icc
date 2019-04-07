@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\AppointmentCategory;
 
-interface AppointmentCategoryRepositoryInterface {
+interface AppointmentCategoryRepositoryInterface extends TransactionalRepositoryInterface {
 
     /**
      * @param int $id

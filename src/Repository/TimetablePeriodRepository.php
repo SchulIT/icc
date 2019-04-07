@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class TimetablePeriodRepository implements TimetablePeriodRepositoryInterface {
 
     private $em;
+    private $isTransactionActive = false;
 
     public function __construct(EntityManagerInterface $entityManager) {
         $this->em = $entityManager;
@@ -48,7 +49,7 @@ class TimetablePeriodRepository implements TimetablePeriodRepositoryInterface {
      */
     public function persist(TimetablePeriod $period): void {
         $this->em->persist($period);
-        $this->em->flush();
+        $this->isTransactionActive || $this->em->flush();
     }
 
     /**
@@ -56,6 +57,17 @@ class TimetablePeriodRepository implements TimetablePeriodRepositoryInterface {
      */
     public function remove(TimetablePeriod $period): void {
         $this->em->remove($period);
+        $this->isTransactionActive || $this->em->flush();
+    }
+
+    public function beginTransaction(): void {
+        $this->em->beginTransaction();
+        $this->isTransactionActive = true;
+    }
+
+    public function commit(): void {
         $this->em->flush();
+        $this->em->commit();
+        $this->isTransactionActive = false;
     }
 }

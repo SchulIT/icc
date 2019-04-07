@@ -10,34 +10,32 @@ use App\Repository\StudentRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Request\Data\ExamData;
-use App\Utils\ArrayCollectionUtils;
+use App\Utils\CollectionUtils;
+use App\Utils\ArrayUtils;
 
 class ExamsImportStrategy implements ImportStrategyInterface {
 
     private $examRepository;
     private $tuitionRepository;
     private $studentRepository;
-    private $collectionUtils;
 
     public function __construct(ExamRepositoryInterface $examRepository, TuitionRepositoryInterface $tuitionRepository,
-                                StudentRepositoryInterface $studentRepository, ArrayCollectionUtils $collectionUtils) {
+                                StudentRepositoryInterface $studentRepository) {
         $this->examRepository = $examRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->studentRepository = $studentRepository;
-        $this->collectionUtils = $collectionUtils;
     }
 
     /**
      * @return Exam[]
      */
     public function getExistingEntities(): array {
-        $exams = [ ];
-
-        foreach($this->examRepository->findAll() as $exam) {
-            $exams[$exam->getExternalId()] = $exam;
-        }
-
-        return $exams;
+        return ArrayUtils::createArrayWithKeys(
+            $this->examRepository->findAll(),
+            function(Exam $exam) {
+                return $exam->getExternalId();
+            }
+        );
     }
 
     /**
@@ -80,7 +78,7 @@ class ExamsImportStrategy implements ImportStrategyInterface {
         $entity->setLessonEnd($data->getLessonEnd());
         $entity->setRooms($data->getRooms());
 
-        $this->collectionUtils->synchronize(
+        CollectionUtils::synchronize(
             $entity->getStudents(),
             $this->studentRepository->findAllByExternalId($data->getStudents()),
             function(Student $student) {
@@ -88,7 +86,7 @@ class ExamsImportStrategy implements ImportStrategyInterface {
             }
         );
 
-        $this->collectionUtils->synchronize(
+        CollectionUtils::synchronize(
             $entity->getTuitions(),
             $this->tuitionRepository->findAllByExternalId($data->getTuitions()),
             function(Tuition $tuition) {

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -49,28 +50,25 @@ class StudyGroup {
      *     joinColumns={@ORM\JoinColumn(name="studygroup", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="grade", referencedColumnName="id")}
      * )
+     * @var Collection<Grade>
      */
     private $grades;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Student")
-     * @ORM\JoinTable(
-     *     name="studygroup_students",
-     *     joinColumns={@ORM\JoinColumn(name="studygroup", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="student", referencedColumnName="id")}
-     * )
+     * @ORM\OneToMany(targetEntity="StudyGroupMembership", mappedBy="studyGroup")
+     * @var Collection<StudyGroupMembership>
      */
-    private $students;
+    private $memberships;
 
     /**
      * @ORM\OneToMany(targetEntity="Tuition", mappedBy="studyGroup")
-     * @var ArrayCollection<Tuition>
+     * @var Collection<Tuition>
      */
     private $tuitions;
 
     public function __construct() {
         $this->grades = new ArrayCollection();
-        $this->students = new ArrayCollection();
+        $this->memberships = new ArrayCollection();
         $this->tuitions = new ArrayCollection();
     }
 
@@ -138,31 +136,23 @@ class StudyGroup {
     }
 
     /**
-     * @return ArrayCollection<Grade>
+     * @return Collection<Grade>
      */
-    public function getGrades(): ArrayCollection {
+    public function getGrades(): Collection {
         return $this->grades;
     }
 
-    public function addStudent(Student $student) {
-        $this->students->add($student);
-    }
-
-    public function removeStudent(Student $student) {
-        $this->students->removeElement($student);
+    /**
+     * @return Collection<StudyGroupMembership>
+     */
+    public function getMemberships(): Collection {
+        return $this->memberships;
     }
 
     /**
-     * @return ArrayCollection<Student>
+     * @return Collection<Tuition>
      */
-    public function getStudents(): ArrayCollection {
-        return $this->students;
-    }
-
-    /**
-     * @return ArrayCollection<Tuition>
-     */
-    public function getTuitions(): ArrayCollection {
+    public function getTuitions(): Collection {
         return $this->tuitions;
     }
 

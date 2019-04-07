@@ -66,7 +66,11 @@ class TimetablePeriod {
     private $lessons;
 
     /**
-     * @ORM\OneToMany(targetEntity="TimetableSupervision", mappedBy="period")
+     * @ORM\ManyToMany(targetEntity="TimetablePeriodVisibility")
+     * @ORM\JoinTable(name="timetableperiod_visibilities",
+     *     joinColumns={@ORM\JoinColumn(name="period", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility", onDelete="CASCADE")}
+     * )
      * @var ArrayCollection<TimetableSupervision>
      */
     private $supervisions;

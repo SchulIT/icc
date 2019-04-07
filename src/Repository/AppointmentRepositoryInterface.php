@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Appointment;
-use App\Entity\Grade;
+use App\Entity\Student;
 use App\Entity\StudyGroup;
+use App\Entity\Teacher;
 use App\Entity\UserType;
 
 interface AppointmentRepositoryInterface extends TransactionalRepositoryInterface {
@@ -22,12 +23,18 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function findOneByExternalId(string $externalId): ?Appointment;
 
     /**
-     * @param UserType $userType
-     * @param \DateTime|null $today = null
-     * @param Grade|null $grade
+     * @param Student[] $students
+     * @param \DateTime|null $today
      * @return Appointment[]
      */
-    public function findAllFor(UserType $userType, ?\DateTime $today = null, ?Grade $grade = null);
+    public function findAllForStudents(array $students, ?\DateTime $today = null): array;
+
+    /**
+     * @param Teacher $teacher
+     * @param \DateTime|null $today
+     * @return Appointment[]
+     */
+    public function findAllForTeacher(Teacher $teacher, ?\DateTime $today = null): array;
 
     /**
      * @param \DateTime|null $today = null

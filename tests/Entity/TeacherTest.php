@@ -31,18 +31,5 @@ class TeacherTest extends TestCase {
 
         $teacher->setTitle(null);
         $this->assertNull($teacher->getTitle());
-
-        $grade = new Grade();
-        $teacher->addGrade($grade);
-        $this->assertTrue($teacher->getGrades()->contains($grade));
-
-        $teacher->removeGrade($grade);
-        $this->assertFalse($teacher->getGrades()->contains($grade));
-
-        $teacher->addGradeSubstitute($grade);
-        $this->assertTrue($teacher->getGradeSubstitutes()->contains($grade));
-
-        $teacher->removeGradeSubstitute($grade);
-        $this->assertFalse($teacher->getGradeSubstitutes()->contains($grade));
     }
 }

@@ -9,6 +9,7 @@ use App\Repository\GradeRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\StudentData;
+use App\Utils\ArrayUtils;
 
 class StudentsImportStrategy implements ImportStrategyInterface {
 
@@ -21,22 +22,21 @@ class StudentsImportStrategy implements ImportStrategyInterface {
     }
 
     /**
-     * @inheritDoc
+     * @return array<string,Student>
      */
     public function getExistingEntities(): array {
-        /** @var array<string,Student> $currentStudents */
-        $currentStudents = [ ];
-
-        foreach($this->studentRepository->findAll() as $student) {
-            $currentStudents[$student->getExternalId()] = $student;
-        }
-
-        return $currentStudents;
+        return ArrayUtils::createArrayWithKeys(
+            $this->studentRepository->findAll(),
+            function(Student $student) {
+                return $student->getExternalId();
+            }
+        );
     }
 
     /**
      * @param StudentData $data
      * @return Student
+     * @throws ImportException
      */
     public function createNewEntity($data) {
         $student = (new Student())
@@ -48,7 +48,7 @@ class StudentsImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param StudentData $object
-     * @param Student[] $existingEntities
+     * @param array<string,Student> $existingEntities
      * @return Student|null
      */
     public function getExistingEntity($object, array $existingEntities) {
@@ -66,7 +66,7 @@ class StudentsImportStrategy implements ImportStrategyInterface {
     /**
      * @param Student $entity
      * @param StudentData $data
-     * @return void
+     * @throws ImportException
      */
     public function updateEntity($entity, $data): void {
         $entity->setFirstname($data->getFirstname());
@@ -75,7 +75,13 @@ class StudentsImportStrategy implements ImportStrategyInterface {
         $entity->setStatus(new StudentStatus($data->getStatus()));
 
         if($data->getGrade() !== null) {
-            $entity->setGrade($this->gradeRepository->findOneByName($data->getGrade()));
+            $grade = $this->gradeRepository->findOneByName($data->getGrade());
+
+            if($grade === null) {
+                throw new ImportException(sprintf('Grade "%s" does not exist (Student ID: "%s", Lastname: "%s")', $data->getGrade(), $data->getId(), $data->getLastname()));
+            }
+
+            $entity->setGrade($grade);
         } else {
             $entity->setGrade(null);
         }

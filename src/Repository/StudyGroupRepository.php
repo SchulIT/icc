@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class StudyGroupRepository implements StudyGroupRepositoryInterface {
 
     private $em;
+    private $isTransactionActive = false;
 
     public function __construct(EntityManagerInterface $entityManager) {
         $this->em = $entityManager;
@@ -124,7 +125,7 @@ class StudyGroupRepository implements StudyGroupRepositoryInterface {
      */
     public function persist(StudyGroup $studyGroup): void {
         $this->em->persist($studyGroup);
-        $this->em->flush();
+        $this->isTransactionActive || $this->em->flush();
     }
 
     /**
@@ -132,7 +133,18 @@ class StudyGroupRepository implements StudyGroupRepositoryInterface {
      */
     public function remove(StudyGroup $studyGroup): void {
         $this->em->remove($studyGroup);
+        $this->isTransactionActive || $this->em->flush();
+    }
+
+    public function beginTransaction(): void {
+        $this->em->beginTransaction();
+        $this->isTransactionActive = true;
+    }
+
+    public function commit(): void {
         $this->em->flush();
+        $this->em->commit();
+        $this->isTransactionActive = false;
     }
 
 }

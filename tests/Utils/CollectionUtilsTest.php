@@ -2,12 +2,11 @@
 
 namespace App\Tests\Utils;
 
-use App\Entity\MessageAttachment;
-use App\Utils\ArrayCollectionUtils;
+use App\Utils\CollectionUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
-class ArrayCollectionUtilsTest extends TestCase {
+class CollectionUtilsTest extends TestCase {
     public function getIdSelector() {
         return function(Entity $entity) {
             return $entity->getId();
@@ -24,8 +23,7 @@ class ArrayCollectionUtilsTest extends TestCase {
 
         $this->assertEquals(0, $collection->count());
 
-        $utils = new ArrayCollectionUtils();
-        $utils->synchronize($collection, $targetCollection, $this->getIdSelector());
+        CollectionUtils::synchronize($collection, $targetCollection, $this->getIdSelector());
         $this->assertEquals(3, $collection->count());
     }
 
@@ -38,8 +36,7 @@ class ArrayCollectionUtilsTest extends TestCase {
 
         $this->assertEquals(3, $collection->count());
 
-        $utils = new ArrayCollectionUtils();
-        $utils->synchronize($collection, $targetCollection, $this->getIdSelector());
+        CollectionUtils::synchronize($collection, $targetCollection, $this->getIdSelector());
 
         $this->assertEquals(0, $collection->count());
     }
@@ -59,8 +56,7 @@ class ArrayCollectionUtilsTest extends TestCase {
 
         $this->assertEquals(3, $collection->count());
 
-        $utils = new ArrayCollectionUtils();
-        $utils->synchronize($collection, $targetCollection, $this->getIdSelector());
+        CollectionUtils::synchronize($collection, $targetCollection, $this->getIdSelector());
 
         $this->assertEquals(4, $collection->count());
 

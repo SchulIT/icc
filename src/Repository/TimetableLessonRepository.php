@@ -6,9 +6,11 @@ use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
 use Doctrine\ORM\EntityManagerInterface;
 
-class TimetableLessionRepository implements TimetableLessonRepositoryInterface {
+class TimetableLessonRepository implements TimetableLessonRepositoryInterface {
 
     private $em;
+    private $isTransactionActive = false;
+
 
     public function __construct(EntityManagerInterface $entityManager) {
         $this->em = $entityManager;
@@ -60,7 +62,7 @@ class TimetableLessionRepository implements TimetableLessonRepositoryInterface {
      */
     public function persist(TimetableLesson $lesson): void {
         $this->em->persist($lesson);
-        $this->em->flush();
+        $this->isTransactionActive || $this->em->flush();
     }
 
     /**
@@ -68,6 +70,17 @@ class TimetableLessionRepository implements TimetableLessonRepositoryInterface {
      */
     public function remove(TimetableLesson $lesson): void {
         $this->em->remove($lesson);
+        $this->isTransactionActive || $this->em->flush();
+    }
+
+    public function beginTransaction(): void {
+        $this->em->beginTransaction();
+        $this->isTransactionActive = true;
+    }
+
+    public function commit(): void {
         $this->em->flush();
+        $this->em->commit();
+        $this->isTransactionActive = false;
     }
 }

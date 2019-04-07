@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Utils\CollectionUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,6 +22,12 @@ class Grade {
     private $id;
 
     /**
+     * @ORM\Column(type="string", unique=true, nullable=true)
+     * @var string|null
+     */
+    private $externalId;
+
+    /**
      * @ORM\Column(type="string", unique=true)
      * @Assert\NotNull()
      * @Assert\NotBlank()
@@ -34,8 +41,15 @@ class Grade {
      */
     private $students;
 
+    /**
+     * @ORM\OneToMany(targetEntity="GradeTeacher", mappedBy="grade")
+     * @var ArrayCollection<GradeTeacher>
+     */
+    private $teachers;
+
     public function __construct() {
         $this->students = new ArrayCollection();
+        $this->teachers = new ArrayCollection();
     }
 
     /**
@@ -43,6 +57,22 @@ class Grade {
      */
     public function getId(): ?int {
         return $this->id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExternalId(): ?string {
+        return $this->externalId;
+    }
+
+    /**
+     * @param string $externalId
+     * @return Grade
+     */
+    public function setExternalId(string $externalId): Grade {
+        $this->externalId = $externalId;
+        return $this;
     }
 
     /**
@@ -66,6 +96,18 @@ class Grade {
      */
     public function getStudents(): Collection {
         return $this->students;
+    }
+
+    public function addTeacher(GradeTeacher $teacher) {
+        $this->teachers->add($teacher);
+    }
+
+    public function removeTeacher(GradeTeacher $teacher) {
+        $this->teachers->removeElement($teacher);
+    }
+
+    public function getTeachers(): Collection {
+        return $this->teachers;
     }
 
 }

@@ -47,25 +47,6 @@ class TeacherData {
     private $gender;
 
     /**
-     * @Serializer\Type("array<string>")
-     * @var string[]
-     */
-    private $grades;
-
-    /**
-     * @Serializer\Type("array<string>")
-     * @var string[]
-     */
-    private $gradeSubstitudes;
-
-    /**
-     * Subject abbreviations
-     * @Serializer\Type("array<string>")
-     * @var string[]
-     */
-    private $subjects;
-
-    /**
      * @return string|null
      */
     public function getAcronym(): ?string {
@@ -142,54 +123,6 @@ class TeacherData {
      */
     public function setGender(?string $gender): TeacherData {
         $this->gender = $gender;
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getGrades(): array {
-        return $this->grades;
-    }
-
-    /**
-     * @param string[] $grades
-     * @return TeacherData
-     */
-    public function setGrades(array $grades): TeacherData {
-        $this->grades = $grades;
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getGradeSubstitudes(): array {
-        return $this->gradeSubstitudes;
-    }
-
-    /**
-     * @param string[] $gradeSubstitudes
-     * @return TeacherData
-     */
-    public function setGradeSubstitudes(array $gradeSubstitudes): TeacherData {
-        $this->gradeSubstitudes = $gradeSubstitudes;
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getSubjects(): array {
-        return $this->subjects;
-    }
-
-    /**
-     * @param string[] $subjects
-     * @return TeacherData
-     */
-    public function setSubjects(array $subjects): TeacherData {
-        $this->subjects = $subjects;
         return $this;
     }
 

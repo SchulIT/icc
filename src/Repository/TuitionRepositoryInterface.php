@@ -6,7 +6,7 @@ use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 
-interface TuitionRepositoryInterface {
+interface TuitionRepositoryInterface extends TransactionalRepositoryInterface {
 
     /**
      * @param int $id

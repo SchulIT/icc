@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Subject;
 
-interface SubjectRepositoryInterface {
+interface SubjectRepositoryInterface extends TransactionalRepositoryInterface {
 
     /**
      * @param int $id

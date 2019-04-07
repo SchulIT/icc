@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -56,35 +57,25 @@ class Teacher {
     private $gender;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Grade")
-     * @ORM\JoinTable(name="teacher_grades",
-     *     joinColumns={@ORM\JoinColumn(name="teacher", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="grade", referencedColumnName="id", onDelete="CASCADE")}
+     * @ORM\ManyToMany(targetEntity="Subject", inversedBy="teachers")
+     * @ORM\JoinTable(
+     *     name="subject_teachers",
+     *     joinColumns={@ORM\JoinColumn(name="teacher", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="subject", onDelete="CASCADE")}
      * )
-     * @var ArrayCollection<Grade>
-     */
-    private $grades;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Grade")
-     * @ORM\JoinTable(name="teacher_grade_substitutes",
-     *     joinColumns={@ORM\JoinColumn(name="teacher", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="grade", referencedColumnName="id", onDelete="CASCADE")}
-     * )
-     * @var ArrayCollection<Grade>
-     */
-    private $gradesSubstitutes;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Subject", mappedBy="teachers")
-     * @var ArrayCollection<Subject>
+     * @var Collection<Subject>
      */
     private $subjects;
 
+    /**
+     * @ORM\OneToMany(targetEntity="GradeTeacher", mappedBy="teacher")
+     * @var Collection<GradeTeacher>
+     */
+    private $grades;
+
     public function __construct() {
-        $this->grades = new ArrayCollection();
-        $this->gradesSubstitutes = new ArrayCollection();
         $this->subjects = new ArrayCollection();
+        $this->grades = new ArrayCollection();
     }
 
     /**
@@ -175,51 +166,24 @@ class Teacher {
     }
 
     /**
-     * @param Grade $grade
+     * @return Collection<GradeTeacher>
      */
-    public function addGrade(Grade $grade): void {
-        $this->grades->add($grade);
-    }
-
-    /**
-     * @param Grade $grade
-     */
-    public function removeGrade(Grade $grade): void {
-        $this->grades->removeElement($grade);
-    }
-
-    /**
-     * @return ArrayCollection<Grade>
-     */
-    public function getGrades(): ArrayCollection {
+    public function getGrades(): Collection {
         return $this->grades;
     }
 
-    /**
-     * @param Grade $grade
-     */
-    public function addGradeSubstitute(Grade $grade): void {
-        $this->gradesSubstitutes->add($grade);
+    public function addSubject(Subject $subject) {
+        $this->subjects->add($subject);
+    }
+
+    public function removeSubject(Subject $subject) {
+        $this->subjects->removeElement($subject);
     }
 
     /**
-     * @param Grade $grade
+     * @return Collection<Subject>
      */
-    public function removeGradeSubstitute(Grade $grade): void {
-        $this->gradesSubstitutes->removeElement($grade);
-    }
-
-    /**
-     * @return ArrayCollection<Grade>
-     */
-    public function getGradeSubstitutes(): ArrayCollection {
-        return $this->gradesSubstitutes;
-    }
-
-    /**
-     * @return ArrayCollection<Subject>
-     */
-    public function getSubjects(): ArrayCollection {
+    public function getSubjects(): Collection {
         return $this->subjects;
     }
 }

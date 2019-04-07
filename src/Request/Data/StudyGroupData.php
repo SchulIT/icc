@@ -31,15 +31,15 @@ class StudyGroupData {
     /**
      * @Serializer\Type("array<string>")
      * @Assert\Count(min="1")
-     * @var string|null
+     * @var string[]
      */
-    private $grades;
+    private $grades = [ ];
 
     /**
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $students;
+    private $students = [ ];
 
     /**
      * @return string|null
@@ -90,17 +90,17 @@ class StudyGroupData {
     }
 
     /**
-     * @return string|null
+     * @return string[]
      */
-    public function getGrades(): ?string {
+    public function getGrades(): array {
         return $this->grades;
     }
 
     /**
-     * @param string|null $grades
+     * @param string[] $grades
      * @return StudyGroupData
      */
-    public function setGrades(?string $grades): StudyGroupData {
+    public function setGrades(array $grades): StudyGroupData {
         $this->grades = $grades;
         return $this;
     }

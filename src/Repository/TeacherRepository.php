@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class TeacherRepository implements TeacherRepositoryInterface {
 
     private $em;
+    private $isTransactionActive = false;
 
     public function __construct(EntityManagerInterface $entityManager) {
         $this->em = $entityManager;
@@ -63,7 +64,7 @@ class TeacherRepository implements TeacherRepositoryInterface {
      */
     public function persist(Teacher $teacher): void {
         $this->em->persist($teacher);
-        $this->em->flush();
+        $this->isTransactionActive || $this->em->flush();
     }
 
     /**
@@ -71,6 +72,17 @@ class TeacherRepository implements TeacherRepositoryInterface {
      */
     public function remove(Teacher $teacher): void {
         $this->em->remove($teacher);
+        $this->isTransactionActive || $this->em->flush();
+    }
+
+    public function beginTransaction(): void {
+        $this->em->beginTransaction();
+        $this->isTransactionActive = true;
+    }
+
+    public function commit(): void {
         $this->em->flush();
+        $this->em->commit();
+        $this->isTransactionActive = false;
     }
 }

@@ -18,7 +18,7 @@ class TimetablePeriodVisibility {
     private $id;
 
     /**
-     * @ORM\Column(type="UserType::class")
+     * @ORM\Column(type="UserType::class", unique=true)
      * @ORM\OrderBy("asc")
      * @var UserType
      */

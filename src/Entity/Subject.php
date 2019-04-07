@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\SubjectRepositoryInterface;
 use App\Validator\Color;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -106,12 +105,7 @@ class Subject {
     private $color;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Teacher", inversedBy="subjects")
-     * @ORM\JoinTable(
-     *     name="subject_teachers",
-     *     joinColumns={@ORM\JoinColumn(name="subject", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="teacher", referencedColumnName="id")}
-     * )
+     * @ORM\ManyToMany(targetEntity="Teacher", mappedBy="subjects")
      * @var ArrayCollection<Teacher>
      */
     private $teachers;
@@ -301,14 +295,6 @@ class Subject {
     public function setColor(string $color): Subject {
         $this->color = $color;
         return $this;
-    }
-
-    public function addTeacher(Teacher $teacher) {
-        $this->teachers->add($teacher);
-    }
-
-    public function removeTeacher(Teacher $teacher) {
-        $this->teachers->removeElement($teacher);
     }
 
     /**

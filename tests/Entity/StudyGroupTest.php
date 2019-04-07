@@ -30,12 +30,5 @@ class StudyGroupTest extends TestCase {
 
         $studyGroup->removeGrade($grade);
         $this->assertFalse($studyGroup->getGrades()->contains($grade));
-
-        $student = new Student();
-        $studyGroup->addStudent($student);
-        $this->assertTrue($studyGroup->getStudents()->contains($student));
-
-        $studyGroup->removeStudent($student);
-        $this->assertFalse($studyGroup->getStudents()->contains($student));
     }
 }

@@ -10,9 +10,32 @@ class GradeData {
     /**
      * @Serializer\Type("string")
      * @Assert\NotBlank()
+     * @var string
+     */
+    private $id;
+
+    /**
+     * @Serializer\Type("string")
+     * @Assert\NotBlank()
      * @var string|null
      */
     private $name;
+
+    /**
+     * @param string|null $id
+     * @return GradeData
+     */
+    public function setId(?string $id): GradeData {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getId(): ?string {
+        return $this->id;
+    }
 
     /**
      * @return string|null

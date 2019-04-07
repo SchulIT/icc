@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
 
-interface TimetableLessonRepositoryInterface {
+interface TimetableLessonRepositoryInterface extends TransactionalRepositoryInterface {
 
     /**
      * @param int $id

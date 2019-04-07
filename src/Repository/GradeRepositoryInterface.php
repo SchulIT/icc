@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Grade;
 
-interface GradeRepositoryInterface {
+interface GradeRepositoryInterface extends TransactionalRepositoryInterface {
 
     /**
      * @param int $id
@@ -22,6 +22,12 @@ interface GradeRepositoryInterface {
      * @return Grade[]
      */
     public function findAll();
+
+    /**
+     * @param string[] $externalIds
+     * @return Grade[]
+     */
+    public function findAllByExternalId(array $externalIds): array;
 
     /**
      * @param Grade $grade

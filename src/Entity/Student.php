@@ -2,7 +2,8 @@
 
 namespace App\Entity;
 
-use App\Validator\Color;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -68,6 +69,16 @@ class Student {
      * @var Grade
      */
     private $grade;
+
+    /**
+     * @ORM\OneToMany(targetEntity="StudyGroupMembership", mappedBy="student")
+     * @var Collection<StudyGroupMembership>
+     */
+    private $studyGroupMemberships;
+
+    public function __construct() {
+        $this->studyGroupMemberships = new ArrayCollection();
+    }
 
     /**
      * @return int|null
@@ -186,5 +197,12 @@ class Student {
     public function setGrade(?Grade $grade): Student {
         $this->grade = $grade;
         return $this;
+    }
+
+    /**
+     * @return Collection<StudyGroupMembership>
+     */
+    public function getStudyGroupMemberships(): Collection {
+        return $this->studyGroupMemberships;
     }
 }

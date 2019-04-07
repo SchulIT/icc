@@ -6,7 +6,9 @@ use App\Entity\Substitution;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SubstitutionRepository implements SubstitutionRepositoryInterface {
+
     private $em;
+    private $isTransactionActive = false;
 
     public function __construct(EntityManagerInterface $entityManager) {
         $this->em = $entityManager;
@@ -35,6 +37,14 @@ class SubstitutionRepository implements SubstitutionRepositoryInterface {
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findAll() {
+        return $this->em->getRepository(Substitution::class)
+            ->findAll();
+    }
+
+    /**
      * @param \DateTime $date
      * @return Substitution[]
      */
@@ -50,7 +60,7 @@ class SubstitutionRepository implements SubstitutionRepositoryInterface {
      */
     public function persist(Substitution $substitution): void {
         $this->em->persist($substitution);
-        $this->em->flush();
+        $this->isTransactionActive || $this->em->flush();
     }
 
     /**
@@ -58,6 +68,17 @@ class SubstitutionRepository implements SubstitutionRepositoryInterface {
      */
     public function remove(Substitution $substitution): void {
         $this->em->remove($substitution);
+        $this->isTransactionActive || $this->em->flush();
+    }
+
+    public function beginTransaction(): void {
+        $this->em->beginTransaction();
+        $this->isTransactionActive = true;
+    }
+
+    public function commit(): void {
         $this->em->flush();
+        $this->em->commit();
+        $this->isTransactionActive = false;
     }
 }

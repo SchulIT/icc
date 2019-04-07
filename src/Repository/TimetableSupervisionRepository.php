@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class TimetableSupervisionRepository implements TimetableSupervisionRepositoryInterface {
 
     private $em;
+    private $isTransactionActive = false;
 
     public function __construct(EntityManagerInterface $entityManager) {
         $this->em = $entityManager;
@@ -47,7 +48,7 @@ class TimetableSupervisionRepository implements TimetableSupervisionRepositoryIn
      */
     public function persist(TimetableSupervision $supervision): void {
         $this->em->persist($supervision);
-        $this->em->flush();
+        $this->isTransactionActive || $this->em->flush();
     }
 
     /**
@@ -55,6 +56,17 @@ class TimetableSupervisionRepository implements TimetableSupervisionRepositoryIn
      */
     public function remove(TimetableSupervision $supervision): void {
         $this->em->remove($supervision);
+        $this->isTransactionActive || $this->em->flush();
+    }
+
+    public function beginTransaction(): void {
+        $this->em->beginTransaction();
+        $this->isTransactionActive = true;
+    }
+
+    public function commit(): void {
         $this->em->flush();
+        $this->em->commit();
+        $this->isTransactionActive = false;
     }
 }

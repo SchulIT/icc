@@ -61,13 +61,6 @@ class SubjectTest extends TestCase {
         $subject->setIsVisibleTeachers(false);
         $this->assertFalse($subject->isVisibleTeachers());
 
-        $teacher = new Teacher();
-        $subject->addTeacher($teacher);
-        $this->assertTrue($subject->getTeachers()->contains($teacher));
-
-        $subject->removeTeacher($teacher);
-        $this->assertFalse($subject->getTeachers()->contains($teacher));
-
         $subject->setReplaceSubjectAbbreviation(true);
         $this->assertTrue($subject->isReplaceSubjectAbbreviation());
 

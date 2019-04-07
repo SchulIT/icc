@@ -19,6 +19,12 @@ class TimetableSupervision {
     private $id;
 
     /**
+     * @ORM\Column(type="string", unique=true)
+     * @var string
+     */
+    private $externalId;
+
+    /**
      * @ORM\ManyToOne(targetEntity="TimetablePeriod", inversedBy="supervisions")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
@@ -75,6 +81,22 @@ class TimetableSupervision {
      */
     public function getId(): ?int {
         return $this->id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExternalId(): ?string {
+        return $this->externalId;
+    }
+
+    /**
+     * @param string $externalId
+     * @return TimetableSupervision
+     */
+    public function setExternalId(string $externalId): TimetableSupervision {
+        $this->externalId = $externalId;
+        return $this;
     }
 
     /**

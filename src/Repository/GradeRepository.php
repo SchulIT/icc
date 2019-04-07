@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class GradeRepository implements GradeRepositoryInterface {
 
     private $em;
+    private $isTransactionActive = false;
 
     public function __construct(EntityManagerInterface $entityManager) {
         $this->em = $entityManager;
@@ -45,11 +46,26 @@ class GradeRepository implements GradeRepositoryInterface {
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findAllByExternalId(array $externalIds): array {
+        $qb = $this->em->createQueryBuilder();
+
+        $qb
+            ->select('s')
+            ->from(Grade::class, 'g')
+            ->where($qb->expr()->in('g.externalId', ':externalIds'))
+            ->setParameter('externalIds', $externalIds);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param Grade $grade
      */
     public function persist(Grade $grade): void {
         $this->em->persist($grade);
-        $this->em->flush();
+        $this->isTransactionActive || $this->em->flush();
     }
 
     /**
@@ -57,7 +73,17 @@ class GradeRepository implements GradeRepositoryInterface {
      */
     public function remove(Grade $grade): void {
         $this->em->remove($grade);
-        $this->em->flush();
+        $this->isTransactionActive || $this->em->flush();
     }
 
+    public function beginTransaction(): void {
+        $this->em->beginTransaction();
+        $this->isTransactionActive = true;
+    }
+
+    public function commit(): void {
+        $this->em->flush();
+        $this->em->commit();
+        $this->isTransactionActive = false;
+    }
 }

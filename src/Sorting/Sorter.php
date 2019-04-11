@@ -17,7 +17,7 @@ class Sorter implements ContainerAwareInterface {
         $this->container = $container;
     }
 
-    public function sort(&$array, string $strategyService, SortDirection $direction = null) {
+    public function sort(array &$array, string $strategyService, SortDirection $direction = null) {
         if($this->container === null) {
             throw new \RuntimeException('Container was not injected properly');
         }

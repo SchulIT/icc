@@ -116,8 +116,17 @@ class StudyGroupRepository implements StudyGroupRepositoryInterface {
      * @return StudyGroup[]
      */
     public function findAll() {
-        return $this->em->getRepository(StudyGroup::class)
-            ->findAll();
+        $qb = $this->em->createQueryBuilder();
+
+        $qb
+            ->select(['sg', 'g', 'm', 't', 's'])
+            ->from(StudyGroup::class, 'sg')
+            ->leftJoin('sg.grades', 'g')
+            ->leftJoin('sg.memberships', 'm')
+            ->leftJoin('sg.tuitions', 't')
+            ->leftJoin('m.student', 's');
+
+        return $qb->getQuery()->getResult();
     }
 
     /**

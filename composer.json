@@ -36,11 +36,13 @@
         "symfony/twig-bundle": "^4.2",
         "symfony/validator": "^4.2",
         "symfony/web-link": "^4.2",
+        "symfony/webpack-encore-bundle": "^1.4",
         "symfony/yaml": "^4.2",
         "webuni/commonmark-table-extension": "^0.9.0"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^5.0",
+        "doctrine/doctrine-fixtures-bundle": "^3.1",
         "league/flysystem-memory": "^1.0",
         "phpstan/phpstan": "^0.11.4",
         "phpstan/phpstan-doctrine": "^0.11.2",

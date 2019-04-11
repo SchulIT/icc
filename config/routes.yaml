@@ -2,6 +2,17 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
+lightsaml_sp:
+    resource: "@LightSamlSpBundle/Resources/config/routing.yml"
+    prefix: saml
+
+common:
+    resource: "@CommonBundle/Controller"
+    type: annotation
+
+logout:
+    path: /logout
+
 app.swagger_ui.default:
     path: /docs/api/app
     methods: GET
@@ -11,3 +22,8 @@ app.swagger_ui.import:
     path: /docs/api/import
     methods: GET
     defaults: { _controller: nelmio_api_doc.controller.swagger_ui, area: import }
+
+composer:
+    resource: "@ComposerDependencyListBundle/Controller"
+    type: annotation
+    prefix: /dependencies

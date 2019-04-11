@@ -71,7 +71,11 @@ class Message {
     private $attachments;
 
     /**
-     * @ORM\OneToMany(targetEntity="MessageVisibility", mappedBy="message", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="MessageVisibility")
+     * @ORM\JoinTable(name="message_visibilities",
+     *     joinColumns={@ORM\JoinColumn(name="message")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility")}
+     * )
      * @var ArrayCollection<MessageVisibility>
      */
     private $visibilities;

@@ -1,0 +1,7 @@
+parameters:
+    types_map:
+        parent: Parent
+        teacher: Teacher
+        intern: Intern
+        student: Student
+        secretary: Staff

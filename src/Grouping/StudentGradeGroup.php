@@ -30,7 +30,7 @@ class StudentGradeGroup implements GroupInterface {
     /**
      * @return Student[]
      */
-    public function getStudents() {
+    public function &getStudents(): array {
         return $this->students;
     }
 

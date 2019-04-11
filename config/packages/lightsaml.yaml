@@ -1,10 +1,14 @@
+parameters:
+    sp_cert_file: "%kernel.project_dir%/saml/sp.crt"
+    sp_cert_key: "%kernel.project_dir%/saml/sp.key"
+
 light_saml_symfony_bridge:
     own:
         entity_id: "%env(SAML_ENTITY_ID)%"
         credentials:
             -
-                certificate: "%kernel.project_dir%/saml/sp.crt"
-                key:         "%kernel.project_dir%/saml/sp.key"
+                certificate: "%sp_cert_file%"
+                key:         "%sp_cert_key%"
                 password:    ~
     party:
         idp:

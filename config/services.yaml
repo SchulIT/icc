@@ -27,10 +27,16 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\ArgumentResolver\UserValueResolver:
-        tags:
-            - { name: controller.argument_value_resolver }
+    # SAML
+    LightSaml\SpBundle\Security\User\UsernameMapperInterface:
+        alias: lightsaml_sp.username_mapper.simple
 
+    SchoolIT\CommonBundle\Command\CreateCertificateCommand:
+        arguments:
+            $keyFile: '%sp_cert_key%'
+            $certFile: '%sp_cert_file%'
+
+    # JSON
     App\Request\JsonParamConverter:
         arguments:
             $prefix: 'App\\Request\\Data'
@@ -42,6 +48,7 @@ services:
     JMS\Serializer\ContextFactory\DeserializationContextFactoryInterface:
         alias: 'jms_serializer.configured_deserialization_context_factory'
 
+    # FLYSYSTEM
     App\Filesystem\DocumentFilesystem:
         arguments:
             $filesystem: '@oneup_flysystem.document_filesystem'
@@ -53,3 +60,30 @@ services:
     App\Security\ImportUserAuthenticator:
         arguments:
             $presharedKey: '%env(IMPORT_PSK)%'
+
+    # SECURITY
+    App\Security\User\UserMapper:
+        arguments:
+            $typesMap: '%types_map%'
+
+    # MENU
+    App\Menu\Builder:
+        tags:
+            - { name: knp_menu.menu_builder, method: mainMenu, alias: mainMenu }
+
+    # SERVICES
+    App\Sorting\:
+        resource: '../src/Sorting/*Strategy.php'
+        public: true
+
+    App\Grouping\:
+        resource: '../src/Grouping/*Strategy.php'
+        public: true
+
+    App\Grouping\Grouper:
+        calls:
+            - ['setContainer', [ '@service_container']]
+
+    App\Sorting\Sorter:
+        calls:
+            - ['setContainer', [ '@service_container']]

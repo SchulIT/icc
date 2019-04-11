@@ -54,7 +54,11 @@ class TimetablePeriod {
     private $end;
 
     /**
-     * @ORM\OneToMany(targetEntity="TimetablePeriodVisibility", mappedBy="period", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="TimetablePeriodVisibility")
+     * @ORM\JoinTable(name="timetableperiod_visibilities",
+     *     joinColumns={@ORM\JoinColumn(name="period")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility")}
+     * )
      * @var ArrayCollection<TimetablePeriodVisibility>
      */
     private $visibilities;
@@ -67,7 +71,7 @@ class TimetablePeriod {
 
     /**
      * @ORM\ManyToMany(targetEntity="TimetablePeriodVisibility")
-     * @ORM\JoinTable(name="timetableperiod_visibilities",
+     * @ORM\JoinTable(name="timetable_period_visibilities",
      *     joinColumns={@ORM\JoinColumn(name="period", onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="visibility", onDelete="CASCADE")}
      * )

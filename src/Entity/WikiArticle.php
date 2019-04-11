@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use League\CommonMark\Util\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -212,7 +212,7 @@ class WikiArticle {
     }
 
     public function removeVisibility(WikiArticleVisibility $visibility) {
-        $this->visibilities->remove($visibility);
+        $this->visibilities->removeElement($visibility);
     }
 
     /**

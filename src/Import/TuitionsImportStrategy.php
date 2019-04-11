@@ -96,7 +96,7 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
 
         $studyGroup = $this->studyGroupRepository->findOneByExternalId($data->getStudyGroup());
 
-        if($studyGroup !== null) {
+        if($studyGroup === null) {
             throw new ImportException(sprintf('Study group with ID "%s" was not found on tuition with ID "%s"', $data->getStudyGroup(), $data->getId()));
         }
 
@@ -148,7 +148,7 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
 
         foreach($teachers as $teacher) {
             if(!in_array($teachers, $foundTeacherAcronyms)) {
-                throw new ImportException('Additional teacher "%s" was not found on tuition with ID "%s"', $teacher, $tuitionExternalId);
+                throw new ImportException(sprintf('Additional teacher "%s" was not found on tuition with ID "%s"', $teacher, $tuitionExternalId));
             }
         }
     }

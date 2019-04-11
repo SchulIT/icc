@@ -12,6 +12,7 @@ use MyCLabs\Enum\Enum;
  * @method static UserType Parent()
  * @method static UserType Staff()
  * @method static UserType Intern()
+ * @method static UserType User();
  */
 class UserType extends Enum {
     private const Teacher = 'teacher';
@@ -19,4 +20,5 @@ class UserType extends Enum {
     private const Parent = 'parent';
     private const Staff = 'staff';
     private const Intern = 'intern';
+    private const User = 'user';
 }

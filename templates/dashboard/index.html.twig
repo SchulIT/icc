@@ -1,0 +1,9 @@
+{% extends "main.html.twig" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <div class="contentbox">
+        <h2>{{ 'dashboard.welcome'|trans({ '%firstname%': user.firstname, '%lastname%': user.lastname }) }}</h2>
+    </div>
+{% endblock %}

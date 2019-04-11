@@ -1,41 +1,43 @@
+# To get started with security, check out the documentation:
+# https://symfony.com/doc/current/security.html
 security:
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+
+    # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
         database:
             id: App\Security\SecurityUserProvider
 
-    role_hierarchy:
-        ROLE_MESSAGE_CREATOR: ROLE_USER
-        ROLE_ADMIN: [ ROLE_MESSAGE_CREATOR, ROLE_ALLOWED_TO_SWITCH ]
-
-        # Easy way to control access for large sections of your site
-        # Note: Only the *first* access control that matches will be used
-
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api/import, roles: ROLE_IMPORT }
 
+    role_hierarchy:
+        ROLE_ADMIN: [ ROLE_USER, ROLE_MESSAGE_CREATOR, ROLE_ALLOWED_TO_SWITCH ]
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
+        ROLE_MESSAGE_CREATOR: ROLE_USER
+
+
     firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        import_api:
-            pattern: ^/api/import
-            stateless: true
-            guard:
-                authenticators:
-                    - App\Security\ImportUserAuthenticator
+        login:
+            anonymous: ~
+            pattern: ^/saml/(login|discovery)$
+
+        secured:
+            pattern: ^/
+            light_saml_sp:
+                provider: database       # user provider name configured in step 9
+                user_creator: App\Security\User\UserCreator
+                login_path: /saml/login
+                check_path: /saml/login_check
+                attribute_mapper: App\Security\User\AttributeMapper
+                token_factory: SchoolIT\CommonBundle\Security\Factory\SamlSpTokenFactory
+            logout:
+                path: /logout
 
         main:
-            anonymous: true
-
-            # activate different ways to authenticate
-
-            # http_basic: true
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-
-            # form_login: true
-            # https://symfony.com/doc/current/security/form_login_setup.html
-
+            anonymous: ~

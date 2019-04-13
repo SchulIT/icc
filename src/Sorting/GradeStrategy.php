@@ -12,6 +12,6 @@ class GradeStrategy implements SortingStrategyInterface {
      * @return int
      */
     public function compare($objectA, $objectB): int {
-        return strcmp($objectA->getName(), $objectB->getName());
+        return strnatcmp($objectA->getName(), $objectB->getName());
     }
 }

@@ -5,7 +5,7 @@ namespace App\Grouping;
 use App\Entity\Grade;
 use App\Entity\Student;
 
-class StudentGradeGroup implements GroupInterface {
+class StudentGradeGroup implements GroupInterface, SortableGroupInterface {
     /**
      * @var Grade
      */
@@ -49,4 +49,7 @@ class StudentGradeGroup implements GroupInterface {
     }
 
 
+    public function &getItems(): array {
+        return $this->students;
+    }
 }

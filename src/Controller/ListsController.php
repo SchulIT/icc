@@ -41,9 +41,7 @@ class ListsController extends AbstractController {
             StudentGradeStrategy::class
         );
         $this->sorter->sort($studentGroups, StudentGradeGroupStrategy::class);
-        ArrayUtils::apply($studentGroups, function(StudentGradeGroup $group) {
-            $this->sorter->sort($group->getStudents(), StudentStrategy::class);
-        });
+        $this->sorter->sortGroupItems($studentGroups, StudentStrategy::class);
 
         return $this->render('lists/study_groups.html.twig', [
             'grades' => $grades,

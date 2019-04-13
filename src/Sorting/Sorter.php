@@ -2,6 +2,7 @@
 
 namespace App\Sorting;
 
+use App\Grouping\SortableGroupInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -17,12 +18,24 @@ class Sorter implements ContainerAwareInterface {
         $this->container = $container;
     }
 
+    public function sortGroupItems(array $groups, string $strategyService, SortDirection $direction = null) {
+        foreach($groups as $group) {
+            if($group instanceof SortableGroupInterface) {
+                $this->sort($group->getItems(), $strategyService, $direction);
+            }
+        }
+    }
+
     public function sort(array &$array, string $strategyService, SortDirection $direction = null) {
         if($this->container === null) {
             throw new \RuntimeException('Container was not injected properly');
         }
 
         $strategy = $this->container->get($strategyService);
+
+        if($strategy === null) {
+            throw new \RuntimeException(sprintf('Service "%s" is not available.', $strategyService));
+        }
 
         if(!$strategy instanceof SortingStrategyInterface) {
             throw new \RuntimeException(sprintf('Service "%s" must implement "%s" in order to be used as sorting strategy!', $strategyService, SortingStrategyInterface::class));

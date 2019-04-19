@@ -3,16 +3,17 @@
 namespace App\Grouping;
 
 use App\Entity\Grade;
+use App\Entity\StudyGroup;
 use App\Entity\Tuition;
 
 class StudyGroupGradeStrategy implements GroupingStrategyInterface {
 
     /**
-     * @param Tuition $object
+     * @param StudyGroup $object
      * @return Grade[]
      */
     public function computeKey($object) {
-        return $object->getStudyGroup()->getGrades()->toArray();
+        return $object->getGrades()->toArray();
     }
 
     /**

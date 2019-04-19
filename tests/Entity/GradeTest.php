@@ -31,7 +31,7 @@ class GradeTest extends WebTestCase {
         $student = (new Student())
             ->setGender(Gender::X())
             ->setGrade($grade)
-            ->setStatus(StudentStatus::Active())
+            ->setStatus('active')
             ->setLastname('lastname')
             ->setFirstname('firstname')
             ->setExternalId('external-id');

@@ -74,20 +74,20 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
      */
     public function updateEntity($entity, $data): void {
         if($data->getTeacher() !== null) {
-            $teacher = $this->teacherRepository->findOneByAcronym($data->getTeacher());
+            $teacher = $this->teacherRepository->findOneByExternalId($data->getTeacher());
 
             if($teacher === null) {
-                throw new ImportException(sprintf('Teacher "%s" on substitution with ID "%s" was not found.', $data->getTeacher(), $data->getId()));
+                throw new ImportException(sprintf('Teacher with ID "%s" on substitution with ID "%s" was not found.', $data->getTeacher(), $data->getId()));
             }
 
             $entity->setTeacher($teacher);
         }
 
         if($data->getReplacementTeacher() !== null) {
-            $teacher = $this->teacherRepository->findOneByAcronym($data->getReplacementTeacher());
+            $teacher = $this->teacherRepository->findOneByExternalId($data->getReplacementTeacher());
 
             if($teacher === null) {
-                throw new ImportException(sprintf('Replacement teacher "%s" on substitution with ID "%s" was not found.', $data->getTeacher(), $data->getId()));
+                throw new ImportException(sprintf('Replacement teacher with ID "%s" on substitution with ID "%s" was not found.', $data->getTeacher(), $data->getId()));
             }
 
             $entity->setReplacementTeacher($teacher);

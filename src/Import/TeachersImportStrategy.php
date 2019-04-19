@@ -4,7 +4,6 @@ namespace App\Import;
 
 use App\Entity\Gender;
 use App\Entity\Teacher;
-use App\Repository\TeacherRepository;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\TeacherData;
@@ -25,7 +24,7 @@ class TeachersImportStrategy implements ImportStrategyInterface {
         return ArrayUtils::createArrayWithKeys(
             $this->teacherRepository->findAll(),
             function(Teacher $teacher) {
-                return $teacher->getAcronym();
+                return $teacher->getExternalId();
             }
         );
     }
@@ -36,7 +35,7 @@ class TeachersImportStrategy implements ImportStrategyInterface {
      */
     public function createNewEntity($data) {
         $teacher = (new Teacher())
-            ->setAcronym($data->getAcronym());
+            ->setExternalId($data->getId());
 
         $this->updateEntity($teacher, $data);
 
@@ -65,6 +64,7 @@ class TeachersImportStrategy implements ImportStrategyInterface {
      * @param TeacherData $data
      */
     public function updateEntity($entity, $data): void {
+        $entity->setAcronym($data->getAcronym());
         $entity->setTitle($data->getTitle());
         $entity->setGender(new Gender($data->getGender()));
         $entity->setFirstname($data->getFirstname());

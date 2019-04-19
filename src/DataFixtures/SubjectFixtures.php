@@ -28,6 +28,7 @@ class SubjectFixtures extends Fixture {
         foreach($subjects as $abbreviation => $name) {
             $subject = (new Subject())
                 ->setName($name)
+                ->setExternalId($abbreviation)
                 ->setAbbreviation($abbreviation);
 
             $manager->persist($subject);

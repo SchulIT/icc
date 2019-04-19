@@ -1,0 +1,44 @@
+{% extends "main.html.twig" %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/attachments.js') }}"></script>
+
+    <script src="{{ asset('build/ace/ace.js') }}"></script>
+    <script src="{{ asset('build/editor.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ 'messages.add.label'|trans }}{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form) }}
+
+    {{ form_row(form.group_general) }}
+
+    <div class="contentbox">
+        <h4>{{ 'label.attachments'|trans }}</h4>
+
+        <div class="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}">
+            {{ form_widget(form.group_attachments.attachments) }}
+        </div>
+
+        {{ form_errors(form.group_attachments.attachments) }}
+
+        <button class="btn btn-outline-primary btn-sm btn-add">
+            <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+        </button>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+        </button>
+
+        <a href="{{ path('admin_messages') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}

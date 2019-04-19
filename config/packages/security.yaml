@@ -38,6 +38,7 @@ security:
                 token_factory: SchoolIT\CommonBundle\Security\Factory\SamlSpTokenFactory
             logout:
                 path: /logout
+            switch_user: true
 
         main:
             anonymous: ~

@@ -21,6 +21,7 @@ class TeachersImportStrategyTest extends WebTestCase {
 
         $em->persist(
             (new Teacher())
+                ->setExternalId('AB')
                 ->setAcronym('AB')
                 ->setFirstname('Firstname')
                 ->setLastname('Lastname')
@@ -28,6 +29,7 @@ class TeachersImportStrategyTest extends WebTestCase {
         );
         $em->persist(
             (new Teacher())
+                ->setExternalId('AC')
                 ->setAcronym('AC')
                 ->setFirstname('Firstname')
                 ->setLastname('Lastname')
@@ -37,11 +39,13 @@ class TeachersImportStrategyTest extends WebTestCase {
 
         $teachersData = [
             (new TeacherData())
+                ->setId('AB')
                 ->setAcronym('AB')
                 ->setFirstname('John')
                 ->setLastname('Doe')
                 ->setGender('male'),
             (new TeacherData())
+                ->setId('AD')
                 ->setAcronym('AD')
                 ->setFirstname('John')
                 ->setLastname('Doe')

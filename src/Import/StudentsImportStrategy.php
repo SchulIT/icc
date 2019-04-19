@@ -4,7 +4,6 @@ namespace App\Import;
 
 use App\Entity\Gender;
 use App\Entity\Student;
-use App\Entity\StudentStatus;
 use App\Repository\GradeRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
@@ -72,7 +71,7 @@ class StudentsImportStrategy implements ImportStrategyInterface {
         $entity->setFirstname($data->getFirstname());
         $entity->setLastname($data->getLastname());
         $entity->setGender(new Gender($data->getGender()));
-        $entity->setStatus(new StudentStatus($data->getStatus()));
+        $entity->setStatus($data->getStatus());
 
         if($data->getGrade() !== null) {
             $grade = $this->gradeRepository->findOneByName($data->getGrade());

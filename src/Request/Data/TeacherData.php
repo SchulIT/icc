@@ -11,6 +11,13 @@ class TeacherData {
 
     /**
      * @Serializer\Type("string")
+     * @Assert\NotNull()
+     * @var string|null
+     */
+    private $id;
+
+    /**
+     * @Serializer\Type("string")
      * @Assert\NotBlank()
      * @var string|null
      */
@@ -45,6 +52,22 @@ class TeacherData {
      * @var string|null
      */
     private $gender;
+
+    /**
+     * @return string|null
+     */
+    public function getId(): ?string {
+        return $this->id;
+    }
+
+    /**
+     * @param string|null $id
+     * @return TeacherData
+     */
+    public function setId(?string $id): TeacherData {
+        $this->id = $id;
+        return $this;
+    }
 
     /**
      * @return string|null

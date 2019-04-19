@@ -26,7 +26,8 @@ class TeacherStringConverter {
         $string = $this->translator->trans('teacher.fullname', [
             '%greeting%' => $greeting,
             '%title%' => $teacher->getTitle(),
-            '%name%' => $teacher->getLastname()
+            '%name%' => $teacher->getLastname(),
+            '%acronym%' => $teacher->getAcronym()
         ]);
 
         $string = preg_replace('~\s+~', ' ', $string);

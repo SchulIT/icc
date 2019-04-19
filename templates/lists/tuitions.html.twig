@@ -1,0 +1,184 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'lists.tuitions.label'|trans }}{% endblock %}
+
+{% block content %}
+    {% include "_messages.html.twig" %}
+
+    <div class="contentbox">
+        <div class="row">
+            <div class="col-md-4 col-sm-4 col-xs-12">
+                <form role="form" method="get" class="form hidden-print">
+                    <div class="form-group">
+                        <label for="grade" class="control-label">{{ 'label.grade'|trans }}:</label>
+                        <select name="gradeId" id="grade" class="form-control" data-trigger="form-submit" data-select="select2">
+                            <option value="">{{ 'label.select.grade'|trans }}</option>
+                            {% for g in grades %}
+                                <option value="{{ g.id() }}" {% if grade != null and grade.id == g.id %}selected="selected"{% endif %}>{{ g.getName() }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-4 col-sm-4 col-xs-12">
+                <form role="form" method="get" class="form hidden-print">
+                    <div class="form-group">
+                        <label for="teacer" class="control-label">{{ 'label.teacher'|trans }}:</label>
+                        <select name="teacherAcronym" id="teacer" class="form-control" data-trigger="form-submit" data-select="select2">
+                            <option value="">{{ 'label.select.teacher'|trans }}</option>
+                            {% for t in teachers %}
+                                <option value="{{ t.acronym() }}" {% if teacher != null and teacher.acronym == t.acronym %}selected="selected"{% endif %}>{{ t|teacher }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-4 col-sm-4 col-xs-12">
+                <form role="form" method="get" class="form hidden-print">
+                    <div class="form-group">
+                        <label for="student" class="control-label">{{ 'label.student'|trans }}:</label>
+                        <select name="studentId" id="student" class="form-control" data-trigger="form-submit" data-select="select2">
+                            <option value="">{{ 'label.select.student'|trans }}</option>
+                            {% for group in studentGroups %}
+                                <optgroup label="{{ group.grade.name }}">
+                                    {% for s in group.students %}
+                                        <option value="{{ s.id }}"{% if student != null and student.id == s.id %}selected="selected"{% endif %}>{{ s|student }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% if student != null %}
+        <div class="contentbox">
+            <h4>
+                {{ 'lists.tuitions.heading.student'|trans({'%student%': student|student }) }}
+            </h4>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <colgroup>
+
+                    </colgroup>
+
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.name'|trans }}</th>
+                        <th>{{ 'label.subject'|trans }}</th>
+                        <th>{{ 'label.teacher'|trans }}</th>
+                        <th>{{ 'lists.tuitions.type'|trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for tuition in tuitions %}
+                    <tr>
+                        <td>{{ tuition.name }}</td>
+                        <td>{{ tuition.subject.name }}</td>
+                        <td>{{ tuition.teacher|teacher }}</td>
+                        <td>
+                            {{ memberships[tuition.externalId] }}
+                        </td>
+                        <td>
+                            <a href="{{ path('lists_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% elseif grade != null %}
+        <div class="contentbox">
+            <h4>
+                {{ 'lists.tuitions.heading.grade'|trans({'%grade%': grade.name }) }}
+            </h4>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <colgroup>
+
+                    </colgroup>
+
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.name'|trans }}</th>
+                        <th>{{ 'label.subject'|trans }}</th>
+                        <th>{{ 'label.teacher'|trans }}</th>
+                        <th>{{ 'label.study_group'|trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for tuition in tuitions %}
+                        <tr>
+                            <td>{{ tuition.name }}</td>
+                            <td>{{ tuition.subject.name }}</td>
+                            <td>{{ tuition.teacher|teacher }}</td>
+                            <td>
+                                <a href="{{ path('lists_studygroups', { studyGroupId: tuition.studyGroup.id}) }}">{{ tuition.studyGroup.name }}</a>
+                                <span class="badge badge-primary">
+                                    {{ 'label.students'|trans({'%count%': tuition.studyGroup.memberships|length }) }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ path('lists_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% elseif teacher != null %}
+        <div class="contentbox">
+            <h4>
+                {{ 'lists.tuitions.heading.teacher'|trans({'%teacher%': teacher|teacher }) }}
+            </h4>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <colgroup>
+
+                    </colgroup>
+
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.name'|trans }}</th>
+                        <th>{{ 'label.subject'|trans }}</th>
+                        <th>{{ 'label.study_group'|trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for tuition in tuitions %}
+                        <tr>
+                            <td>{{ tuition.name }}</td>
+                            <td>{{ tuition.subject.name }}</td>
+                            <td>
+                                {{ tuition.studyGroup.name }}
+                                <span class="badge badge-primary">
+                                    {{ 'label.students'|trans({'%count%': tuition.studyGroup.memberships|length }) }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ path('lists_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+
+    {% endif %}
+{% endblock %}

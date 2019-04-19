@@ -5,6 +5,7 @@ twig:
 
     form_themes:
         - "form.html.twig"
+        - "@VichUploader/Form/fields.html.twig"
     globals:
         config: '@SchoolIT\CommonBundle\Twig\ConfigVariable'
         user: '@App\Twig\UserVariable'

@@ -12,6 +12,13 @@ $enable-gradients: true;
 @import '../../vendor/schoolit/common-bundle/Resources/assets/css/layout.scss';
 @import '../../vendor/schoolit/common-bundle/Resources/assets/css/additions.scss';
 
+// Import editor
+@import '../../node_modules/bootstrap-markdown-editor-4/dist/css/bootstrap-markdown-editor.min.css';
+
+// Select 2
+@import '../../node_modules/select2/dist/css/select2.css';
+@import '../../node_modules/select2-bootstrap4-theme/dist/select2-bootstrap4.css';
+
 small, .small {
   font-size: 90% !important;
 }
@@ -26,4 +33,27 @@ table {
       margin-bottom: 0 !important;
     }
   }
+}
+
+.widget {
+  text-align: left;
+}
+
+/* Editor fixes to make it work with FontAwesome (see https://stackoverflow.com/a/26638216) */
+.md-container {
+  .btn-group {
+    margin-right: 5px;
+  }
+
+  .btn-default {
+    @extend .btn-secondary;
+  }
+
+  .fas {
+    @extend .fa;
+  }
+}
+
+.dismissed-message {
+  display: none;
 }

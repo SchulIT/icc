@@ -19,6 +19,12 @@ interface GradeRepositoryInterface extends TransactionalRepositoryInterface {
     public function findOneByName(string $name): ?Grade;
 
     /**
+     * @param string $externalId
+     * @return Grade|null
+     */
+    public function findOneByExternalId(string $externalId): ?Grade;
+
+    /**
      * @return Grade[]
      */
     public function findAll();

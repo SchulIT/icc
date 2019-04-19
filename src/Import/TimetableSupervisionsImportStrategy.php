@@ -86,10 +86,10 @@ class TimetableSupervisionsImportStrategy implements ImportStrategyInterface {
             throw new ImportException(sprintf('Week "%s" on timetable supervision ID "%s" was not found.', $data->getWeek(), $data->getId()));
         }
 
-        $teacher = $this->teacherRepository->findOneByAcronym($data->getTeacher());
+        $teacher = $this->teacherRepository->findOneByExternalId($data->getTeacher());
 
         if($teacher === null) {
-            throw new ImportException(sprintf('Teacher "%s" on timetable supervision ID "%s" was not found.', $data->getTeacher(), $data->getId()));
+            throw new ImportException(sprintf('Teacher with ID "%s" on timetable supervision ID "%s" was not found.', $data->getTeacher(), $data->getId()));
         }
 
         $entity->setPeriod($period);

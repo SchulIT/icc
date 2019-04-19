@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -59,11 +60,14 @@ class User {
     private $teacher = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Student")
-     * @ORM\JoinColumn(onDelete="SET NULL")
-     * @var Student|null
+     * @ORM\ManyToMany(targetEntity="Student")
+     * @ORM\JoinTable(name="user_students",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @var Collection<Student>
      */
-    private $student = null;
+    private $students;
 
     /**
      * @ORM\Column(type="json_array")
@@ -78,22 +82,6 @@ class User {
     private $userType;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="linkingUsers")
-     * @ORM\JoinTable(name="user_links",
-     *     joinColumns={@ORM\JoinColumn(name="source_user", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="linked_user", referencedColumnName="id", onDelete="CASCADE")}
-     * )
-     * @var ArrayCollection<User>
-     */
-    private $linkedUsers = null;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="linkedUsers")
-     * @var ArrayCollection<User>
-     */
-    private $linkingUsers = null;
-
-    /**
      * @ORM\ManyToMany(targetEntity="Message")
      * @ORM\JoinTable(name="user_dismissed_messages",
      *     joinColumns={@ORM\JoinColumn(name="user", referencedColumnName="id", onDelete="CASCADE")},
@@ -104,8 +92,7 @@ class User {
     private $dismissedMessages;
 
     public function __construct() {
-        $this->linkedUsers = new ArrayCollection();
-        $this->linkingUsers = new ArrayCollection();
+        $this->students = new ArrayCollection();
         $this->dismissedMessages = new ArrayCollection();
     }
 
@@ -181,22 +168,6 @@ class User {
     }
 
     /**
-     * @return Student|null
-     */
-    public function getStudent(): ?Student {
-        return $this->student;
-    }
-
-    /**
-     * @param Student|null $student
-     * @return User
-     */
-    public function setStudent(?Student $student): User {
-        $this->student = $student;
-        return $this;
-    }
-
-    /**
      * @return UserType
      */
     public function getUserType(): UserType {
@@ -210,28 +181,6 @@ class User {
     public function setUserType(UserType $userType): User {
         $this->userType = $userType;
         return $this;
-    }
-
-    public function addLinkedUser(User $user) {
-        $this->linkedUsers->add($user);
-    }
-
-    public function removeLinkedUser(User $user) {
-        $this->linkedUsers->removeElement($user);
-    }
-
-    /**
-     * @return ArrayCollection<User>
-     */
-    public function getLinkedUsers(): Collection {
-        return $this->linkedUsers;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getLinkingUsers(): Collection {
-        return $this->linkingUsers;
     }
 
     /**
@@ -279,25 +228,18 @@ class User {
         return $this->dismissedMessages;
     }
 
-    /**
-     * @return Student[]
-     */
-    public function getStudents() {
-        $students = [ $this->getStudent() ];
+    public function addStudent(Student $student) {
+        $this->students->add($student);
+    }
 
-        foreach ($this->getLinkedUsers() as $user) {
-            $students[] = $user->getStudent();
-        }
-
-        return $students;
+    public function removeStudent(Student $student) {
+        $this->students->removeElement($student);
     }
 
     /**
-     * @return Grade[]
+     * @return Collection<Student>
      */
-    public function getGrades() {
-        return array_map(function(Student $student) {
-            return $student->getGrade();
-        }, $this->getStudents());
+    public function getStudents(): Collection {
+        return $this->students;
     }
 }

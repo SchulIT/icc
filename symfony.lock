@@ -129,6 +129,9 @@
     "egulias/email-validator": {
         "version": "2.1.7"
     },
+    "emojione/emojione": {
+        "version": "v2.0.0"
+    },
     "exsyst/swagger": {
         "version": "v0.4.1"
     },
@@ -703,6 +706,9 @@
             "./config/packages/test/swiftmailer.yaml"
         ]
     },
+    "symfony/templating": {
+        "version": "v4.2.7"
+    },
     "symfony/test-pack": {
         "version": "v1.0.5"
     },
@@ -805,6 +811,18 @@
     },
     "twig/twig": {
         "version": "v2.6.2"
+    },
+    "vich/uploader-bundle": {
+        "version": "1.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "1.5",
+            "ref": "c4f5755b37fb65b9c6a3cbdae91205c15a137ed4"
+        },
+        "files": [
+            "./config/packages/vich_uploader.yaml"
+        ]
     },
     "webmozart/assert": {
         "version": "1.4.0"

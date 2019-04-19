@@ -2,10 +2,12 @@
 
 namespace App\Security\User;
 
+use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
+use App\Utils\CollectionUtils;
 use LightSaml\ClaimTypes;
 use LightSaml\Model\Protocol\Response;
 use Psr\Log\LoggerInterface;
@@ -14,6 +16,7 @@ use SchoolIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
 
 class UserMapper {
     const ROLES_ASSERTION_NAME = 'urn:roles';
+    const STUDENT_IDS_ASSERTION_NAME = 'urn:studentIds';
 
     private $typesMap;
     private $teacherRepository;
@@ -63,7 +66,7 @@ class UserMapper {
 
     /**
      * @param User $user
-     * @param Response|array[] Either a SAMLResponse or an array (keys: SAML Attribute names, values: corresponding values)
+     * @param Response|array[] $data Either a SAMLResponse or an array (keys: SAML Attribute names, values: corresponding values)
      * @return User
      */
     public function mapUser(User $user, $data) {
@@ -82,7 +85,8 @@ class UserMapper {
                 ClaimTypes::SURNAME,
                 ClaimTypes::EMAIL_ADDRESS,
                 SamlClaimTypes::INTERNAL_ID,
-                SamlClaimTypes::TYPE
+                SamlClaimTypes::TYPE,
+                static::STUDENT_IDS_ASSERTION_NAME
             ],
             [
                 static::ROLES_ASSERTION_NAME
@@ -118,24 +122,45 @@ class UserMapper {
             ->setRoles($roles);
 
         if(UserType::Teacher()->equals($type)) {
-            $acronym = $data[SamlClaimTypes::INTERNAL_ID];
-            $teacher = $this->teacherRepository->findOneByAcronym($acronym);
+            $internalId = $data[SamlClaimTypes::INTERNAL_ID];
+            $teacher = $this->teacherRepository->findOneByExternalId($internalId);
 
             if($teacher !== null) {
                 $user->setTeacher($teacher);
             } else {
                 $this->logger
-                    ->notice(sprintf('Cannot map teacher with acronym "%s" as such teacher does not exist.', $acronym));
+                    ->notice(sprintf('Cannot map teacher with internal ID "%s" as such teacher does not exist.', $internalId));
             }
         } else if(UserType::Student()->equals($type) || UserType::Parent()->equals($type)) {
             $studentId = $data[SamlClaimTypes::INTERNAL_ID];
             $student = $this->studentRepository->findOneByExternalId($studentId);
 
             if($student !== null) {
-                $user->setStudent($student);
+                CollectionUtils::synchronize(
+                    $user->getStudents(),
+                    [ $student ],
+                    function(Student $student) {
+                        return $student->getId();
+                    }
+                );
             } else {
                 $this->logger
                     ->notice(sprintf('Cannot map student with student ID "%s" as such student does not exist.', $studentId));
+            }
+        } else if(UserType::Parent()->equals($type)) {
+            $rawStudentIds = $data[static::STUDENT_IDS_ASSERTION_NAME] ?? null;
+
+            if($rawStudentIds !== null) {
+                $studentIds = explode(',', $rawStudentIds);
+                $students = $this->studentRepository->findAllByExternalId($studentIds);
+
+                CollectionUtils::synchronize(
+                    $user->getStudents(),
+                    $students,
+                    function (Student $student) {
+                        return $student->getId();
+                    }
+                );
             }
         }
 
@@ -143,12 +168,24 @@ class UserMapper {
     }
 
     private function getValue(Response $response, $attributeName) {
-        return $response->getFirstAssertion()->getFirstAttributeStatement()
-            ->getFirstAttributeByName($attributeName)->getFirstAttributeValue();
+        $attribute = $response->getFirstAssertion()->getFirstAttributeStatement()
+            ->getFirstAttributeByName($attributeName);
+
+        if($attribute === null) {
+            return null;
+        }
+
+        return $attribute->getFirstAttributeValue();
     }
 
     private function getValues(Response $response, $attributeName) {
-        return $response->getFirstAssertion()->getFirstAttributeStatement()
-            ->getFirstAttributeByName($attributeName)->getAllAttributeValues();
+        $attribute = $response->getFirstAssertion()->getFirstAttributeStatement()
+            ->getFirstAttributeByName($attributeName);
+
+        if($attribute === null) {
+            return null;
+        }
+
+        return $attribute->getAllAttributeValues();
     }
 }

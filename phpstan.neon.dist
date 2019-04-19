@@ -3,6 +3,8 @@ includes:
 	- vendor/phpstan/phpstan-symfony/extension.neon
 
 parameters:
+	ignoreErrors:
+	    - "~Parameter \\#1 \\$array of method App\\\\Sorting\\\\Sorter::sort\\(\\) is passed by reference, so it expects variables only\\.~"
 	excludes_analyse:
 		- '%rootDir%/../../../src/Markdown/*'
 	symfony:

@@ -42,8 +42,10 @@ class MessageRepository implements MessageRepositoryInterface {
 
         if($today !== null) {
             $qbInner
-                ->andWhere('mInner.startDate >= :today')
-                ->andWhere('mInner.expireDate < :today');
+                ->andWhere('mInner.startDate <= :today')
+                ->andWhere('mInner.expireDate >= :today');
+
+            $qb->setParameter('today', $today);
         }
 
         if(count($studyGroups) > 0) {

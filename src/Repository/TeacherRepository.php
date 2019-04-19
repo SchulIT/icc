@@ -37,6 +37,16 @@ class TeacherRepository implements TeacherRepositoryInterface {
     /**
      * @inheritDoc
      */
+    public function findOneByExternalId(string $externalId): ?Teacher {
+        return $this->em->getRepository(Teacher::class)
+            ->findOneBy([
+                'externalId' => $externalId
+            ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAllByAcronym(array $acronyms): array {
         $qb = $this->em->createQueryBuilder();
 
@@ -85,4 +95,5 @@ class TeacherRepository implements TeacherRepositoryInterface {
         $this->em->commit();
         $this->isTransactionActive = false;
     }
+
 }

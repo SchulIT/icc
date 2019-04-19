@@ -1,4 +1,5 @@
 var Encore = require('@symfony/webpack-encore');
+var CopyPlugin = require('copy-webpack-plugin');
 
 Encore
     // directory where compiled assets will be stored
@@ -18,6 +19,8 @@ Encore
      * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
      */
     .addEntry('app', './assets/js/app.js')
+    .addEntry('attachments', './assets/js/attachments.js')
+    .addEntry('editor', './assets/js/editor.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     //.splitEntryChunks()
@@ -61,6 +64,23 @@ Encore
     // uncomment if you use API Platform Admin (composer req api-admin)
     //.enableReactPreset()
     //.addEntry('admin', './assets/js/admin.js')
+
+    .addPlugin(
+        new CopyPlugin([
+            {
+                from: 'vendor/emojione/emojione/assets/png',
+                to: 'emoji/png'
+            },
+            {
+                from: 'vendor/emojione/emojione/assets/svg',
+                to: 'emoji/svg'
+            },
+            {
+                from: 'node_modules/ace-builds/src-min',
+                to: 'ace'
+            }
+        ])
+    )
 ;
 
 module.exports = Encore.getWebpackConfig();

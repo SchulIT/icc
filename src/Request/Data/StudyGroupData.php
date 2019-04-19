@@ -30,7 +30,7 @@ class StudyGroupData {
 
     /**
      * @Serializer\Type("array<string>")
-     * @Assert\Count(min="1")
+     * @Assert\Count(min=1)
      * @var string[]
      */
     private $grades = [ ];

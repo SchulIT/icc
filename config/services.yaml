@@ -4,7 +4,17 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    locale: 'en'
+    commonmark.config:
+        renderer:
+            block_separator: "\n"
+            inner_separator: "\n"
+            soft_break: "\n"
+        enable_em: true,
+        enable_strong: true,
+        use_asterisk: true,
+        use_underscore: true,
+        html_input: 'escape'
+        allow_unsafe_links: false
 
 services:
     # default configuration for services in *this* file
@@ -87,3 +97,39 @@ services:
     App\Sorting\Sorter:
         calls:
             - ['setContainer', [ '@service_container']]
+
+    # ARGUMENT RESOLVER
+    App\ArgumentResolver\QueryStringArgumentValueResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 50 }
+
+    # CONTROLLER
+    App\Controller\MarkdownController:
+        bind:
+            $baseUrl: '%env(APP_URL)%'
+
+    # MARKDOWN
+    Emojione\Client:
+        factory: 'App\Markdown\EmojiClientFactory:createEmojiClient'
+        arguments:
+            $baseUrl: '%env(APP_URL)%'
+
+    League\CommonMark\Environment:
+        factory: [ 'League\CommonMark\Environment', createCommonMarkEnvironment ]
+        calls:
+            - [ addExtension, [ "@Webuni\\CommonMark\\TableExtension\\TableExtension" ]]
+
+    Webuni\CommonMark\TableExtension\TableExtension: ~
+
+    League\CommonMark\CommonMarkConverter:
+        class: League\CommonMark\CommonMarkConverter
+        arguments:
+            $config: "%commonmark.config%"
+
+    EasySlugger\SluggerInterface:
+        class: EasySlugger\Utf8Slugger
+
+    # HELPER
+    App\Listener\BlameListener:
+        bind:
+            $blameableListener: '@stof_doctrine_extensions.listener.blameable'

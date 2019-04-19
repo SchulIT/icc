@@ -23,6 +23,63 @@ class TuitionFixtures extends Fixture implements DependentFixtureInterface {
         ];
     }
 
+    private function loadEFTuitions(ObjectManager $manager) {
+        $subjects = [ 'M', 'D', 'E' ];
+
+        $teachers = $manager->getRepository(Teacher::class)
+            ->findAll();
+
+        foreach($subjects as $subjectName) {
+            $subject = $manager->getRepository(Subject::class)
+                ->findOneBy([
+                    'abbreviation' => $subjectName
+                ]);
+
+            for($courseNumber = 1; $courseNumber <= 3; $courseNumber++) {
+                $teacher = $teachers[random_int(0, count($teachers) - 1)];
+
+                $studyGroupId = sprintf('EF-%s-GK%d', $subjectName, $courseNumber);
+                $studyGroup = $manager->getRepository(StudyGroup::class)
+                    ->findOneBy([
+                        'externalId' => $studyGroupId
+                    ]);
+
+                $tuition = (new Tuition())
+                    ->setExternalId($studyGroup->getExternalId())
+                    ->setName($studyGroup->getName())
+                    ->setStudyGroup($studyGroup)
+                    ->setSubject($subject)
+                    ->setTeacher($teacher);
+
+                $manager->persist($tuition);
+            }
+        }
+    }
+
+    private function loadInformatikAG(ObjectManager $manager) {
+        $studyGroup = $manager->getRepository(StudyGroup::class)
+            ->findOneBy(['externalId' => 'AG-IF']);
+
+        $teacher = $manager->getRepository(Teacher::class)
+            ->findOneBy([
+                'acronym' => 'GREE'
+            ]);
+
+        $subject = $manager->getRepository(Subject::class)
+            ->findOneBy([
+                'externalId' => 'AG-IF'
+            ]);
+
+        $tuition = (new Tuition())
+            ->setExternalId('5-IF-AG')
+            ->setTeacher($teacher)
+            ->setName('Informatik AG')
+            ->setSubject($subject)
+            ->setStudyGroup($studyGroup);
+
+        $manager->persist($tuition);
+    }
+
     /**
      * @inheritDoc
      */
@@ -60,6 +117,9 @@ class TuitionFixtures extends Fixture implements DependentFixtureInterface {
                 $manager->persist($tuition);
             }
         }
+
+        $this->loadInformatikAG($manager);
+        $this->loadEFTuitions($manager);
 
         $manager->flush();
     }

@@ -5,7 +5,7 @@ namespace App\Grouping;
 use App\Entity\Grade;
 use App\Entity\StudyGroup;
 
-class StudyGroupGradeGroup implements GroupInterface {
+class StudyGroupGradeGroup implements GroupInterface, SortableGroupInterface {
 
     /** @var Grade */
     private $grade;
@@ -34,5 +34,12 @@ class StudyGroupGradeGroup implements GroupInterface {
 
     public function addItem($item) {
         $this->studyGroups[] = $item;
+    }
+
+    /**
+     * @return StudyGroup[]
+     */
+    public function &getItems(): array {
+        return $this->studyGroups;
     }
 }

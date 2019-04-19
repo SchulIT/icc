@@ -1,0 +1,67 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'messages.overview.label'|trans }}{% endblock %}
+
+{% block content %}
+    {% for group in groups %}
+        <div class="contentbox">
+            <h4>{{ group.userType|usertype }} <span class="badge badge-secondary badge-pill">{{ group.messages|length }}</span> </h4>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.subject'|trans }}</th>
+                        <th>{{ 'label.scope'|trans }}</th>
+                        <th>{{ 'label.study_groups'|trans }}</th>
+                        <th>{{ 'label.start'|trans }}</th>
+                        <th>{{ 'label.end'|trans }}</th>
+                        <th>{{ 'label.author'|trans }}</th>
+                        <th> </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for message in group.messages %}
+                        <tr>
+                            <td>{{ message.subject }}</td>
+                            <td>{{ message.scope }}</td>
+                            <td>
+                                {% for studyGroup in message.studyGroups %}
+                                    {{ studyGroup.name }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {{ message.startDate|format_date() }}
+                            </td>
+                            <td>
+                                {{ message.expireDate|format_date() }}
+                            </td>
+                            <td>
+                                {{ message.createdBy|user }}
+                            </td>
+                            <td>
+                                ...
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% if groups|length == 0 %}
+    <div class="bs-callout bs-callout-info">
+        <h4>{{ 'info.label'|trans }}</h4>
+
+        <p>{{ 'messages.overview.empty'|trans }}</p>
+    </div>
+    {% endif %}
+
+    <div class="buttons">
+        <a href="{{ path('add_message') }}" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'messages.add.label'|trans }}
+        </a>
+    </div>
+{% endblock %}

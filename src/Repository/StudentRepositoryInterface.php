@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Grade;
 use App\Entity\Student;
+use App\Sorting\StudentGroupMembershipStrategy;
 
 interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
 
@@ -23,6 +25,18 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Student[]
      */
     public function findAllByExternalId(array $externalIds): array;
+
+    /**
+     * @param Grade $grade
+     * @return Student[]
+     */
+    public function findAllByGrade(Grade $grade): array;
+
+    /**
+     * @param string $query
+     * @return Student[]
+     */
+    public function findAllByQuery(string $query): array;
 
     /**
      * @return Student[]

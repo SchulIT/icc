@@ -29,9 +29,10 @@ class StudentTest extends TestCase {
         $student->setIsFullAged(false);
         $this->assertFalse($student->isFullAged());
 
-        $status = StudentStatus::Active();
-        $student->setStatus($status);
-        $this->assertEquals($status, $student->getStatus());
+        $student->setStatus('active');
+        $this->assertEquals('active', $student->getStatus());
+        $student->setStatus(null);
+        $this->assertNull($student->getStatus());
 
         $grade = new Grade();
         $student->setGrade($grade);

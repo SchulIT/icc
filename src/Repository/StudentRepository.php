@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Grade;
 use App\Entity\Student;
+use App\Sorting\StudentGroupMembershipStrategy;
 use Doctrine\ORM\EntityManagerInterface;
 
 class StudentRepository implements StudentRepositoryInterface {
@@ -33,6 +35,36 @@ class StudentRepository implements StudentRepositoryInterface {
             ->findOneBy([
                 'externalId' => $externalId
             ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByGrade(Grade $grade): array {
+        return $this->em->getRepository(Student::class)
+            ->findBy([
+                'grade' => $grade
+            ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByQuery(string $query): array {
+        $qb = $this->em->createQueryBuilder();
+
+        $qb
+            ->select(['s'])
+            ->from(Student::class, 's')
+            ->where(
+                $qb->expr()->orX(
+                    $qb->expr()->like('s.firstname', ':query'),
+                    $qb->expr()->like('s.lastname', ':query')
+                )
+            )
+            ->setParameter('query', '%' . $query . '%');
+
+        return $qb->getQuery()->getResult();
     }
 
     /**

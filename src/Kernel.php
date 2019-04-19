@@ -6,10 +6,8 @@ use Acelaya\Doctrine\Type\PhpEnumType;
 use App\Entity\Gender;
 use App\Entity\GradeTeacherType;
 use App\Entity\MessageScope;
-use App\Entity\StudentStatus;
 use App\Entity\StudyGroupType;
 use App\Entity\UserType;
-use App\Entity\WikiArticleVisibility;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -61,7 +59,6 @@ class Kernel extends BaseKernel
             'Gender::class' => Gender::class,
             'GradeTeacherType::class' => GradeTeacherType::class,
             'MessageScope::class' => MessageScope::class,
-            'StudentStatus::class' => StudentStatus::class,
             'StudyGroupType::class' => StudyGroupType::class,
             'UserType::class' => UserType::class
         ];

@@ -28,15 +28,21 @@ JSON;
 
         foreach($teachers as $acronym => $teacher) {
             $entity = (new Teacher())
+                ->setExternalId($acronym)
                 ->setFirstname($teacher->name)
                 ->setLastname($teacher->surname)
                 ->setGender(new Gender($teacher->gender))
-                ->setAcronym($acronym);
+                ->setAcronym($acronym)
+                ->setEmail($this->generateEmail($teacher->name, $teacher->surname));
 
             $manager->persist($entity);
         }
 
         $manager->flush();
+    }
+
+    private function generateEmail(string $firstname, string $lastname): string {
+        return mb_strtolower(sprintf('%s.%s@school.it', $firstname, $lastname));
     }
 
     private function generateAcronym(string $lastname) {

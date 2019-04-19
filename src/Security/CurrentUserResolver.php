@@ -23,6 +23,10 @@ class CurrentUserResolver {
     }
 
     public function getUser(): ?User {
+        if($this->hasUser() === false) {
+            return null;
+        }
+
         if($this->security->getUser()->getUsername() !== $this->username || $this->user === null) {
             $securityUser = $this->security->getUser();
 

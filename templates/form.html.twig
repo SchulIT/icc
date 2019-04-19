@@ -1,0 +1,13 @@
+{% extends "@Common/form.html.twig" %}
+
+{% block file_widget -%}
+    <{{ element|default('div') }} class="custom-file">
+    {%- set type = type|default('file') -%}
+    {{- block('form_widget_simple') -}}
+    <label for="{{ form.vars.id }}" class="custom-file-label" data-browse="{{ 'label.choose_file'|trans }}">
+        {%- if attr.placeholder is defined -%}
+            {{- translation_domain is same as(false) ? attr.placeholder : attr.placeholder|trans({}, translation_domain) -}}
+        {%- endif -%}
+    </label>
+    </{{ element|default('div') }}>
+{% endblock %}

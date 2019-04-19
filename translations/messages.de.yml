@@ -1,16 +1,58 @@
 label:
+    general: Allgemeine Informationen
     acronym: Kürzel
     firstname: Vorname
     lastname: Nachname
     name: Name
     email: E-Mail
+    subject: Fach
+    teacher: Lehrkraft
+    student: Lernender
+    students: "{0} %count% Lernende|{1} %count% Lernender|]1,Inf[ %count% Lernende"
+    students_simple: Lernende
+    exam: Klausur
+    exams: Klausuren
+    grade: Klasse
+    grades: Klassen
+    study_group: Lerngruppe
+    study_groups: Lerngruppen
+    details: Details
+    date: Datum
+    lesson: Stunde
+    lessons: Stunden
+    start: Beginn
+    end: End
+    exam_lessons: "{0} %start%. Stunde|{1} %start%./%end%. Stunde|]1,Inf[ %start%.-%end%. Stunde"
+    select:
+        grade: Klasse auswählen
+        student: Lernenden auswählen
+        teacher: Lehrkraft auswählen
+        study_group: Lerngruppe auswählen
+    search:
+        student: Lernenden suchen
+    scope: Bereich
+    author: Autor
+    visibility: Sichtbar für
+    message:
+        subject: Betreff
+        start: Start-Datum
+        expiry: Ablauf-Datum
+    content: Inhalt
+    attachments: Anhänge
+    file: Datei
+    choose_file: Datei auswählen
+
+actions:
+    add: hinzufügen
+    remove: löschen
+    back: zurück
 
 greeting:
     female: Frau
     male: Herr
 
 teacher:
-    fullname: "%greeting% %title% %name%"
+    fullname: "%greeting% %title% %name% [%acronym%]"
 
 exams:
     export:
@@ -20,9 +62,70 @@ exams:
         exam_description: "Klausur %tuition%"
         tuition: "%name% (%grades%)"
 
+plans:
+    exams:
+        empty: Aktuell sind keine Klausuren im System.
+
+lists:
+    label: Listen
+    tuitions:
+        label: Unterricht
+        heading:
+            grade: "Unterricht der Klasse %grade%"
+            student: "Unterricht von %student%"
+            teacher: "Unterricht von %teacher%"
+        type: Art
+    study_groups:
+        label: Lerngruppen
+        start: Bitte eine Lerngruppe auswählen oder suchen.
+        empty: Dieser Lerngruppe sind keine Lernenden zugeordnet.
+        mail_to_all: E-Mail an alle Lernenden verfassen
+
 teachers:
     export:
         headings:
             grade: "Klasse %i%"
             grade_substitutional: "Klasse %i% (stv.)"
             subject: "Fach %i%"
+
+messages:
+    overview:
+        label: Mitteilungen
+        empty: Aktuell gibt es keine Mitteilungen im System.
+    add:
+        label: Neue Mitteilung
+
+message:
+    visibility: Sichtbarkeit der Mitteilung
+    date: Start- und Ablaufdatum
+    dismiss: Mitteilung ausblenden
+    reenable: Mitteilung wieder einblenden
+    dismissed_info: '{1} %count% Mitteilung wird ausgeblendet.|]1,Inf[ %count% Mitteilungen werden ausgeblendet.'
+    dismissed_action: '{1} Mitteilung einblenden|]1,Inf[ %count% Mitteilungen einblenden'
+    scopes:
+        dashboard: Dashboard
+        substitutions: Vertretungsplan
+        exams: Klausurplan
+        appointments: Terminplan
+        login: Anmeldeseite
+        timetable: Stundenplan
+        messages: Mitteilungen
+
+usertype:
+    teacher: Lehrkräfte
+    student: Lernende
+    parent: Eltern
+    intern: Praktikanten
+    staff: Mitarbeiter
+    user: Benutzer
+
+studygroup:
+    name: "%name% [%type%]"
+    type:
+        grade: Klasse/Jgst.
+        course: Kurs
+
+date:
+    range: "%from% bis %to%"
+    format: d.m.Y
+    time_format: "H:i"

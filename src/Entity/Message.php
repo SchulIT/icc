@@ -56,8 +56,8 @@ class Message {
      * @ORM\ManyToMany(targetEntity="StudyGroup")
      * @ORM\JoinTable(
      *     name="message_studygroups",
-     *     joinColumns={@ORM\JoinColumn(name="message", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="studygroup", onDelete="CASCADE")}
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
      * @var ArrayCollection<StudyGroup>
@@ -65,7 +65,7 @@ class Message {
     private $studyGroups;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\MessageAttachment", mappedBy="message")
+     * @ORM\OneToMany(targetEntity="App\Entity\MessageAttachment", mappedBy="message", cascade={"persist"})
      * @var ArrayCollection<MessageAttachment>
      */
     private $attachments;
@@ -73,8 +73,8 @@ class Message {
     /**
      * @ORM\ManyToMany(targetEntity="MessageVisibility")
      * @ORM\JoinTable(name="message_visibilities",
-     *     joinColumns={@ORM\JoinColumn(name="message")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility")}
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var ArrayCollection<MessageVisibility>
      */
@@ -149,7 +149,7 @@ class Message {
         $this->visibilities = new ArrayCollection();
         $this->confirmations = new ArrayCollection();
 
-        $this->scope = MessageScope::None();
+        $this->scope = MessageScope::Messages();
     }
 
     /**
@@ -162,7 +162,7 @@ class Message {
     /**
      * @return string
      */
-    public function getSubject(): string {
+    public function getSubject(): ?string {
         return $this->subject;
     }
 
@@ -170,7 +170,7 @@ class Message {
      * @param string $subject
      * @return Message
      */
-    public function setSubject(string $subject): Message {
+    public function setSubject(?string $subject): Message {
         $this->subject = $subject;
         return $this;
     }
@@ -178,7 +178,7 @@ class Message {
     /**
      * @return string
      */
-    public function getContent(): string {
+    public function getContent(): ?string {
         return $this->content;
     }
 
@@ -186,7 +186,7 @@ class Message {
      * @param string $content
      * @return Message
      */
-    public function setContent(string $content): Message {
+    public function setContent(?string $content): Message {
         $this->content = $content;
         return $this;
     }
@@ -194,7 +194,7 @@ class Message {
     /**
      * @return \DateTime
      */
-    public function getStartDate(): \DateTime {
+    public function getStartDate(): ?\DateTime {
         return $this->startDate;
     }
 
@@ -210,7 +210,7 @@ class Message {
     /**
      * @return \DateTime
      */
-    public function getExpireDate(): \DateTime {
+    public function getExpireDate(): ?\DateTime {
         return $this->expireDate;
     }
 
@@ -232,9 +232,9 @@ class Message {
     }
 
     /**
-     * @return ArrayCollection<StudyGroup>
+     * @return Collection<StudyGroup>
      */
-    public function getStudyGroups(): ArrayCollection {
+    public function getStudyGroups(): Collection {
         return $this->studyGroups;
     }
 
@@ -247,9 +247,9 @@ class Message {
     }
 
     /**
-     * @return ArrayCollection<MessageAttachment>
+     * @return Collection<MessageAttachment>
      */
-    public function getAttachments(): ArrayCollection {
+    public function getAttachments(): Collection {
         return $this->attachments;
     }
 
@@ -262,9 +262,9 @@ class Message {
     }
 
     /**
-     * @return ArrayCollection<MessageVisibility>
+     * @return Collection<MessageVisibility>
      */
-    public function getVisibilities(): ArrayCollection {
+    public function getVisibilities(): Collection {
         return $this->visibilities;
     }
 

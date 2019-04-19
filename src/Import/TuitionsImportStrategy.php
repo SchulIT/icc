@@ -82,10 +82,10 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
             throw new ImportException(sprintf('Subject "%s" was not found on tuition with ID "%s"', $data->getSubject(), $data->getId()));
         }
 
-        $teacher = $this->teacherRepository->findOneByAcronym($data->getTeacher());
+        $teacher = $this->teacherRepository->findOneByExternalId($data->getTeacher());
 
         if($teacher === null) {
-            throw new ImportException(sprintf('Teacher "%s" was not found on tuition with ID "%s"', $data->getTeacher(), $data->getId()));
+            throw new ImportException(sprintf('Teacher with ID "%s" was not found on tuition with ID "%s"', $data->getTeacher(), $data->getId()));
         }
 
         $additionalTeachers = $this->teacherRepository->findAllByAcronym($data->getAdditionalTeachers());

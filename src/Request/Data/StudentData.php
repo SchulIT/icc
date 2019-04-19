@@ -3,8 +3,6 @@
 namespace App\Request\Data;
 
 use App\Entity\Gender;
-use App\Entity\Student;
-use App\Entity\StudentStatus;
 use App\Validator\NullOrNotBlank;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -43,9 +41,8 @@ class StudentData {
 
     /**
      * @Serializer\Type("int")
-     * @Assert\Choice(callback="getStudentStatuses")
-     * @see StudentStatus
-     * @var int
+     * @NullOrNotBlank()
+     * @var string|null
      */
     private $status;
 
@@ -127,17 +124,17 @@ class StudentData {
     }
 
     /**
-     * @return int
+     * @return string|null
      */
-    public function getStatus(): int {
+    public function getStatus(): ?string {
         return $this->status;
     }
 
     /**
-     * @param int $status
+     * @param string|null $status
      * @return StudentData
      */
-    public function setStatus(int $status): StudentData {
+    public function setStatus(?string $status): StudentData {
         $this->status = $status;
         return $this;
     }
@@ -176,9 +173,5 @@ class StudentData {
 
     public static function getGenders() {
         return array_values(Gender::toArray());
-    }
-
-    public static function getStudentStatuses() {
-        return array_values(StudentStatus::toArray());
     }
 }

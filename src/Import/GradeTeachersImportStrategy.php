@@ -39,10 +39,10 @@ class GradeTeachersImportStrategy implements RelationsImportStrategyInterface {
      * @throws ImportException
      */
     public function persist($data): void {
-        $teacher = $this->teacherRepository->findOneByAcronym($data->getTeacher());
+        $teacher = $this->teacherRepository->findOneByExternalId($data->getTeacher());
 
         if($teacher === null) {
-            throw new ImportException(sprintf('Teacher "%s" was not found.', $data->getTeacher()));
+            throw new ImportException(sprintf('Teacher with ID "%s" was not found.', $data->getTeacher()));
         }
 
         $grade = $this->gradeRepository->findOneById($data->getGrade());

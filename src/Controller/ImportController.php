@@ -88,7 +88,8 @@ class ImportController extends AbstractController {
     /**
      * Imports appointments. Note: you first must create appointment categories from the web interface.
      *
-     * @Route("/appointments", methods={"POST"})
+     * @Route("/appointments", methods={"POST"}, name="import_appointments")
+     * @SWG\Post(operationId="import_appointments")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -118,6 +119,7 @@ class ImportController extends AbstractController {
      * Imports appointment categories.
      *
      * @Route("/appointments/categories", methods={"POST"})
+     * @SWG\Post(operationId="import_appointment_categories")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -147,6 +149,7 @@ class ImportController extends AbstractController {
      * Imports exams.
      *
      * @Route("/exams", methods={"POST"})
+     * @SWG\Post(operationId="import_exams")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -176,6 +179,7 @@ class ImportController extends AbstractController {
      * Imports grades.
      *
      * @Route("/grades", methods={"POST"})
+     * @SWG\Post(operationId="import_grades")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -205,6 +209,7 @@ class ImportController extends AbstractController {
      * Imports grade teachers.
      *
      * @Route("/grades/teachers", methods={"POST"})
+     * @SWG\Post(operationId="import_teachers")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -234,6 +239,7 @@ class ImportController extends AbstractController {
      * Imports students.
      *
      * @Route("/students", methods={"POST"})
+     * @SWG\Post(operationId="import_students")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -263,6 +269,7 @@ class ImportController extends AbstractController {
      * Imports study groups.
      *
      * @Route("/studygroups", methods={"POST"})
+     * @SWG\Post(operationId="import_studygroups")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -292,6 +299,7 @@ class ImportController extends AbstractController {
      * Imports study group memberships.
      *
      * @Route("/studygroups/memberships", methods={"POST"})
+     * @SWG\Post(operationId="import_studygroups_memberships")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -321,6 +329,7 @@ class ImportController extends AbstractController {
      * Imports subjects.
      *
      * @Route("/subjects", methods={"POST"})
+     * @SWG\Post(operationId="import_subjects")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -350,6 +359,7 @@ class ImportController extends AbstractController {
      * Imports study groups.
      *
      * @Route("/substitutions", methods={"POST"})
+     * @SWG\Post(operationId="import_substitutions")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -379,6 +389,7 @@ class ImportController extends AbstractController {
      * Imports teachers.
      *
      * @Route("/teachers", methods={"POST"})
+     * @SWG\Post(operationId="import_teachers")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -408,6 +419,7 @@ class ImportController extends AbstractController {
      * Imports timetable lessons. Note: you must import periods first.
      *
      * @Route("/timetable/lessons", methods={"POST"})
+     * @SWG\Post(operationId="import_timetable_lessons")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -437,6 +449,7 @@ class ImportController extends AbstractController {
      * Imports timetable periods.
      *
      * @Route("/timetable/periods", methods={"POST"})
+     * @SWG\Post(operationId="import_timetable_periods")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -466,6 +479,7 @@ class ImportController extends AbstractController {
      * Imports timetable supervisions. Note: you must import periods first.
      *
      * @Route("/timetable/supervisions", methods={"POST"})
+     * @SWG\Post(operationId="import_timetable_supervisions")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",
@@ -495,6 +509,7 @@ class ImportController extends AbstractController {
      * Imports tuitions.
      *
      * @Route("/tuitions", methods={"POST"})
+     * @SWG\Post(operationId="import_tuitions")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",

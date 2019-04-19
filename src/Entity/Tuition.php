@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -56,7 +57,7 @@ class Tuition {
      *     joinColumns={@ORM\JoinColumn(name="studygroup", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="teacher", referencedColumnName="id")}
      * )
-     * @var ArrayCollection<Teacher>
+     * @var Collection<Teacher>
      */
     private $additionalTeachers;
 
@@ -151,9 +152,9 @@ class Tuition {
     }
 
     /**
-     * @return ArrayCollection<Teacher>
+     * @return Collection<Teacher>
      */
-    public function getAdditionalTeachers(): ArrayCollection {
+    public function getAdditionalTeachers(): Collection {
         return $this->additionalTeachers;
     }
 

@@ -8,19 +8,22 @@ class ImportResponse {
 
     /**
      * Added entities.
-     * @Serializer\Type("array")
+     * @Serializer\Type("array<object>")
+     * @var object[]
      */
     private $added;
 
     /**
      * Updated entities.
-     * @Serializer\Type("array")
+     * @Serializer\Type("array<object>")
+     * @var object[]
      */
     private $updated;
 
     /**
      * Removed entities.
-     * @Serializer\Type("array")
+     * @Serializer\Type("array<object>")
+     * @var object[]
      */
     private $removed;
 
@@ -31,21 +34,21 @@ class ImportResponse {
     }
 
     /**
-     * @return mixed
+     * @return object[]
      */
     public function getAdded() {
         return $this->added;
     }
 
     /**
-     * @return mixed
+     * @return object[]
      */
     public function getUpdated() {
         return $this->updated;
     }
 
     /**
-     * @return mixed
+     * @return object[]
      */
     public function getRemoved() {
         return $this->removed;

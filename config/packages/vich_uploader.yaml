@@ -1,0 +1,13 @@
+vich_uploader:
+    db_driver: orm
+    storage: flysystem
+
+    mappings:
+        messages:
+            upload_destination: messages
+            directory_namer: App\Filesystem\MessageFilesystem
+        wiki:
+            upload_destination: wiki
+        documents:
+            upload_destination: documents
+            directory_namer: App\Filesystem\DocumentFilesystem

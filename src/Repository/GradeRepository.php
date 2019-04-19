@@ -36,6 +36,16 @@ class GradeRepository implements GradeRepositoryInterface {
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findOneByExternalId(string $externalId): ?Grade {
+        return $this->em->getRepository(Grade::class)
+            ->findOneBy([
+                'externalId' => $externalId
+            ]);
+    }
+
+    /**
      * @return Grade[]
      */
     public function findAll() {
@@ -86,4 +96,6 @@ class GradeRepository implements GradeRepositoryInterface {
         $this->em->commit();
         $this->isTransactionActive = false;
     }
+
+
 }

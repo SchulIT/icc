@@ -9,8 +9,10 @@ use League\Flysystem\FilesystemInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Response;
+use Vich\UploaderBundle\Mapping\PropertyMapping;
+use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
-class DocumentFilesystem {
+class DocumentFilesystem implements DirectoryNamerInterface {
 
     private $filesystem;
     private $logger;
@@ -59,5 +61,14 @@ class DocumentFilesystem {
 
     private function getAttachmentPath(DocumentAttachment $attachment): string {
         return sprintf('/%d/%s', $attachment->getDocument()->getId(), $attachment->getFilename());
+    }
+
+    /**
+     * @param DocumentAttachment $object
+     * @param PropertyMapping $mapping
+     * @return string
+     */
+    public function directoryName($object, PropertyMapping $mapping): string {
+        return $this->getAttachmentsDirectory($object->getDocument());
     }
 }

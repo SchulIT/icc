@@ -21,10 +21,6 @@ class SubjectTest extends TestCase {
         $subject->setColor('color');
         $this->assertEquals('color', $subject->getColor());
 
-        $teacher = new Teacher();
-        $subject->setDepartmentChairman($teacher);
-        $this->assertEquals($teacher, $subject->getDepartmentChairman());
-
         $subject->setIsVisibleCourses(true);
         $this->assertTrue($subject->isVisibleCourses());
 

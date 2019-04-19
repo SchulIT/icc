@@ -23,6 +23,11 @@ app.swagger_ui.import:
     methods: GET
     defaults: { _controller: nelmio_api_doc.controller.swagger_ui, area: import }
 
+app.swagger_ui.import.json:
+    path: /docs/api/import.json
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger, area: import }
+
 composer:
     resource: "@ComposerDependencyListBundle/Controller"
     type: annotation

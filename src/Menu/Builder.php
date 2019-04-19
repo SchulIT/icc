@@ -25,6 +25,21 @@ class Builder {
             'route' => 'dashboard'
         ]);
 
+        // Lists menu
+        $menu->addChild('lists.label', [
+            'attributes' => [
+                'class' => 'header'
+            ]
+        ]);
+
+        $menu->addChild('lists.tuitions.label', [
+            'route' => 'lists_tuitions'
+        ]);
+
+        $menu->addChild('lists.study_groups.label', [
+            'route' => 'lists_studygroups'
+        ]);
+
         return $menu;
     }
 }

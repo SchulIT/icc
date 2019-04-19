@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Validator\NullOrNotBlank;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -52,8 +53,16 @@ class Student {
     private $gender;
 
     /**
-     * @ORM\Column(type="StudentStatus::class")
-     * @var StudentStatus
+     * @ORM\Column(type="string", nullable=true)
+     * @NullOrNotBlank()
+     * @Assert\Email()
+     * @var string|null
+     */
+    private $email;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string|null
      */
     private $status;
 
@@ -152,17 +161,33 @@ class Student {
     }
 
     /**
-     * @return StudentStatus
+     * @return string|null
      */
-    public function getStatus(): StudentStatus {
+    public function getEmail(): ?string {
+        return $this->email;
+    }
+
+    /**
+     * @param string|null $email
+     * @return Student
+     */
+    public function setEmail(?string $email): Student {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getStatus(): ?string {
         return $this->status;
     }
 
     /**
-     * @param StudentStatus $status
+     * @param string|null $status
      * @return Student
      */
-    public function setStatus(StudentStatus $status): Student {
+    public function setStatus(?string $status): Student {
         $this->status = $status;
         return $this;
     }

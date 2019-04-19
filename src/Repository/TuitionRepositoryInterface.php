@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
@@ -37,6 +38,12 @@ interface TuitionRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Tuition[]
      */
     public function findAllByStudents(array $students);
+
+    /**
+     * @param Grade[] $grades
+     * @return Tuition[]
+     */
+    public function findAllByGrades(array $grades);
 
     /**
      * @return Tuition[]

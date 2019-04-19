@@ -25,6 +25,12 @@ class Subject {
 
     /**
      * @ORM\Column(type="string", unique=true)
+     * @var string
+     */
+    private $externalId;
+
+    /**
+     * @ORM\Column(type="string", unique=true)
      * @Assert\NotBlank()
      * @Assert\NotNull()
      * @var string
@@ -88,14 +94,6 @@ class Subject {
     private $isVisibleCourses = true;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Teacher", inversedBy="departments")
-     * @ORM\JoinColumn(onDelete="SET NULL")
-     * @Serializer\Exclude()
-     * @var Teacher
-     */
-    private $departmentChairman;
-
-    /**
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank()
      * @Assert\Length(min="6", max="6")
@@ -119,6 +117,22 @@ class Subject {
      */
     public function getId(): ?int {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExternalId(): string {
+        return $this->externalId;
+    }
+
+    /**
+     * @param string $externalId
+     * @return Subject
+     */
+    public function setExternalId(string $externalId): Subject {
+        $this->externalId = $externalId;
+        return $this;
     }
 
     /**
@@ -262,22 +276,6 @@ class Subject {
      */
     public function setIsVisibleCourses(bool $isVisibleCourses): Subject {
         $this->isVisibleCourses = $isVisibleCourses;
-        return $this;
-    }
-
-    /**
-     * @return Teacher
-     */
-    public function getDepartmentChairman(): Teacher {
-        return $this->departmentChairman;
-    }
-
-    /**
-     * @param Teacher $departmentChairman
-     * @return Subject
-     */
-    public function setDepartmentChairman(Teacher $departmentChairman): Subject {
-        $this->departmentChairman = $departmentChairman;
         return $this;
     }
 

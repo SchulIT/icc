@@ -5,7 +5,6 @@ namespace App\DataFixtures;
 use App\Entity\Gender;
 use App\Entity\Grade;
 use App\Entity\Student;
-use App\Entity\StudentStatus;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -83,10 +82,15 @@ JSON;
     private function getStudentFromObject($student) {
         return (new Student())
             ->setGender(new Gender($student->gender))
-            ->setStatus(StudentStatus::Active())
+            ->setStatus('aktiv')
             ->setIsFullAged(false)
             ->setLastname($student->surname)
-            ->setFirstname($student->name);
+            ->setFirstname($student->name)
+            ->setEmail($this->generateEmail($student->name, $student->surname));
+    }
+
+    private function generateEmail(string $firstname, string $lastname) {
+        return mb_strtolower(sprintf('%s.%s@students.school.it', $firstname, $lastname));
     }
 
     /**

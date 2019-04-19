@@ -9,8 +9,10 @@ use League\Flysystem\FilesystemInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Response;
+use Vich\UploaderBundle\Mapping\PropertyMapping;
+use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
-class MessageFilesystem {
+class MessageFilesystem implements DirectoryNamerInterface {
 
     private $filesystem;
     private $logger;
@@ -59,5 +61,14 @@ class MessageFilesystem {
 
     private function getMessageDirectory(Message $message): string {
         return sprintf('/%d/', $message->getId());
+    }
+
+    /**
+     * @param MessageAttachment $object
+     * @param PropertyMapping $mapping
+     * @return string
+     */
+    public function directoryName($object, PropertyMapping $mapping): string {
+        return $this->getMessageDirectory($object->getMessage());
     }
 }

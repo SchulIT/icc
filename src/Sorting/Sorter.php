@@ -26,16 +26,17 @@ class Sorter implements ContainerAwareInterface {
         }
     }
 
+    /**
+     * @param array $array
+     * @param string $strategyService
+     * @param SortDirection|null $direction
+     */
     public function sort(array &$array, string $strategyService, SortDirection $direction = null) {
         if($this->container === null) {
             throw new \RuntimeException('Container was not injected properly');
         }
 
         $strategy = $this->container->get($strategyService);
-
-        if($strategy === null) {
-            throw new \RuntimeException(sprintf('Service "%s" is not available.', $strategyService));
-        }
 
         if(!$strategy instanceof SortingStrategyInterface) {
             throw new \RuntimeException(sprintf('Service "%s" must implement "%s" in order to be used as sorting strategy!', $strategyService, SortingStrategyInterface::class));

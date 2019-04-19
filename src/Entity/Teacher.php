@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Sorting\TeacherStrategy;
+use App\Validator\NullOrNotBlank;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,6 +23,12 @@ class Teacher {
      * @var int
      */
     private $id;
+
+    /**
+     * @ORM\Column(type="string", unique=true)
+     * @var string
+     */
+    private $externalId;
 
     /**
      * @ORM\Column(type="string", unique=true)
@@ -57,6 +65,14 @@ class Teacher {
     private $gender;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\Email()
+     * @NullOrNotBlank()
+     * @var string|null
+     */
+    private $email;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Subject", inversedBy="teachers")
      * @ORM\JoinTable(
      *     name="subject_teachers",
@@ -83,6 +99,22 @@ class Teacher {
      */
     public function getId(): ?int {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExternalId(): string {
+        return $this->externalId;
+    }
+
+    /**
+     * @param string $externalId
+     * @return Teacher
+     */
+    public function setExternalId(string $externalId): Teacher {
+        $this->externalId = $externalId;
+        return $this;
     }
 
     /**
@@ -163,6 +195,22 @@ class Teacher {
     public function setGender(Gender $gender): Teacher {
         $this->gender = $gender;
         return $this;
+    }
+
+    /**
+     * @param string|null $email
+     * @return Teacher
+     */
+    public function setEmail(?string $email): Teacher {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmail(): ?string {
+        return $this->email;
     }
 
     /**

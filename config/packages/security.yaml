@@ -5,7 +5,9 @@ security:
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
         database:
-            id: App\Security\SecurityUserProvider
+            entity:
+                class: App:User
+                property: username
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
@@ -30,7 +32,7 @@ security:
         secured:
             pattern: ^/
             light_saml_sp:
-                provider: database       # user provider name configured in step 9
+                provider: database
                 user_creator: App\Security\User\UserCreator
                 login_path: /saml/login
                 check_path: /saml/login_check

@@ -45,7 +45,7 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/add", name="add_message")
      */
-    public function add(Request $request, CurrentUserResolver $currentUserResolver) {
+    public function add(Request $request) {
         $message = new Message();
         $form = $this->createForm(MessageType::class, $message);
         $form->handleRequest($request);

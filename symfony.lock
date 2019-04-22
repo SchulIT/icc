@@ -150,6 +150,9 @@
     "frostiede/composer-dependency-list-bundle": {
         "version": "1.0.2"
     },
+    "fzaninotto/faker": {
+        "version": "v1.8.0"
+    },
     "gedmo/doctrine-extensions": {
         "version": "v2.4.36"
     },

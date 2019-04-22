@@ -9,8 +9,15 @@ use App\Entity\Tuition;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Faker\Generator;
 
 class TuitionFixtures extends Fixture implements DependentFixtureInterface {
+
+    private $generator;
+
+    public function __construct(Generator $generator) {
+        $this->generator = $generator;
+    }
 
     /**
      * @inheritDoc
@@ -36,7 +43,7 @@ class TuitionFixtures extends Fixture implements DependentFixtureInterface {
                 ]);
 
             for($courseNumber = 1; $courseNumber <= 3; $courseNumber++) {
-                $teacher = $teachers[random_int(0, count($teachers) - 1)];
+                $teacher = $this->generator->randomElement($teachers);
 
                 $studyGroupId = sprintf('EF-%s-GK%d', $subjectName, $courseNumber);
                 $studyGroup = $manager->getRepository(StudyGroup::class)
@@ -56,14 +63,88 @@ class TuitionFixtures extends Fixture implements DependentFixtureInterface {
         }
     }
 
+    private function loadQ1Tuitions(ObjectManager $manager) {
+        $lkSubjects = [ 'M', 'D', 'E' ];
+        $gkSubjects = [ 'IF', 'MU', 'L', 'F' ];
+        $subjects = array_merge($lkSubjects, $gkSubjects);
+
+        $teachers = $manager->getRepository(Teacher::class)
+            ->findAll();
+
+        foreach($lkSubjects as $subjectName) {
+            for($i = 1; $i <= 2; $i++) {
+                $name = sprintf(
+                    '%s-LK%d',
+                    $subjectName,
+                    $i
+                );
+
+                $id = 'Q1-' . $name;
+
+                $studyGroup = $manager->getRepository(StudyGroup::class)
+                    ->findOneBy([
+                        'externalId' => $id
+                    ]);
+
+                $subject = $manager->getRepository(Subject::class)
+                    ->findOneBy([
+                        'externalId' => $subjectName
+                    ]);
+
+                $teacher = $this->generator->randomElement($teachers);
+
+                $tuition = (new Tuition())
+                    ->setName($name)
+                    ->setExternalId($id)
+                    ->setStudyGroup($studyGroup)
+                    ->setTeacher($teacher)
+                    ->setSubject($subject);
+
+                $manager->persist($tuition);
+            }
+        }
+
+        foreach($subjects as $subjectName) {
+            for($i = 1; $i <= 2; $i++) {
+                $name = sprintf(
+                    '%s-GK%d',
+                    $subjectName,
+                    $i
+                );
+
+                $id = 'Q1-' . $name;
+
+                $studyGroup = $manager->getRepository(StudyGroup::class)
+                    ->findOneBy([
+                        'externalId' => $id
+                    ]);
+
+                $subject = $manager->getRepository(Subject::class)
+                    ->findOneBy([
+                        'externalId' => $subjectName
+                    ]);
+
+                $teacher = $this->generator->randomElement($teachers);
+
+                $tuition = (new Tuition())
+                    ->setName($name)
+                    ->setExternalId($id)
+                    ->setStudyGroup($studyGroup)
+                    ->setTeacher($teacher)
+                    ->setSubject($subject);
+
+                $manager->persist($tuition);
+            }
+        }
+    }
+
     private function loadInformatikAG(ObjectManager $manager) {
         $studyGroup = $manager->getRepository(StudyGroup::class)
             ->findOneBy(['externalId' => 'AG-IF']);
 
-        $teacher = $manager->getRepository(Teacher::class)
-            ->findOneBy([
-                'acronym' => 'GREE'
-            ]);
+        $teachers = $manager->getRepository(Teacher::class)
+            ->findAll();
+        $teacher = $this->generator->randomElement($teachers);
 
         $subject = $manager->getRepository(Subject::class)
             ->findOneBy([
@@ -111,7 +192,7 @@ class TuitionFixtures extends Fixture implements DependentFixtureInterface {
                     ->setExternalId($tuitionId)
                     ->setName($subject->getName());
 
-                $teacher = $teachers[random_int(0, count($teachers) - 1)];
+                $teacher = $this->generator->randomElement($teachers);
                 $tuition->setTeacher($teacher);
 
                 $manager->persist($tuition);
@@ -120,6 +201,7 @@ class TuitionFixtures extends Fixture implements DependentFixtureInterface {
 
         $this->loadInformatikAG($manager);
         $this->loadEFTuitions($manager);
+        $this->loadQ1Tuitions($manager);
 
         $manager->flush();
     }

@@ -3,7 +3,6 @@
 namespace App\Security\User;
 
 use App\Entity\User;
-use App\Security\SecurityUser;
 use Doctrine\ORM\EntityManagerInterface;
 use LightSaml\Model\Protocol\Response;
 use LightSaml\SpBundle\Security\User\UserCreatorInterface;
@@ -32,6 +31,6 @@ class UserCreator implements UserCreatorInterface {
         $this->em->persist($user);
         $this->em->flush();
 
-        return new SecurityUser($user);
+        return $user;
     }
 }

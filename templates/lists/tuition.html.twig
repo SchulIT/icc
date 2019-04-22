@@ -18,7 +18,7 @@
     </div>
 
     <div class="contentbox">
-        <h4>{{ 'label.students_simple'|trans }}</h4>
+        <h4>{{ 'label.students_simple'|trans }} <span class="badge badge-primary badge-pill">{{ memberships|length }}</span> </h4>
 
         <div class="table-responsive">
             <table class="table table-striped table-bordered table-hover">
@@ -55,7 +55,7 @@
     </div>
 
     <div class="contentbox">
-        <h4>{{ 'label.exams'|trans }}</h4>
+        <h4>{{ 'label.exams'|trans }} {% if exams|length > 0 %}<span class="badge badge-primary badge-pill">{{ exams|length }}</span>{% endif %}</h4>
 
         {% if exams|length == 0 %}
             <div class="bs-callout bs-callout-info">
@@ -78,11 +78,11 @@
                 <tbody>
                 {% for exam in exams %}
                     <tr>
-                        <td>{{ exam.date|date }}</td>
+                        <td>{{ exam.date|format_date }}</td>
                         <td>{{ 'label.exam_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}</td>
                         <td>{{ exam.students|length }}</td>
                         <td>
-
+                            <a href="{{ path('show_exam', { id: exam.id }) }}">{{ 'label.details'|trans }}</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -90,5 +90,11 @@
             </table>
         </div>
         {% endif %}
+    </div>
+
+    <div class="buttons">
+        <a href="javascript: history.back();" class="btn btn-primary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
     </div>
 {% endblock %}

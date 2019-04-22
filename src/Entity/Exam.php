@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -61,7 +62,7 @@ class Exam {
      *     joinColumns={@ORM\JoinColumn(name="exam", onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="tuition", onDelete="CASCADE")}
      * )
-     * @var ArrayCollection<Tuition>
+     * @var Collection<Tuition>
      */
     private $tuitions;
 
@@ -72,14 +73,14 @@ class Exam {
      *     joinColumns={@ORM\JoinColumn(name="exam", onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="student", onDelete="CASCADE")}
      * )
-     * @var ArrayCollection<Student>
+     * @var Collection<Student>
      */
     private $students;
 
     /**
      * @ORM\OneToMany(targetEntity="ExamInvigilator", mappedBy="exam")
      * @ORM\OrderBy({"lesson" = "asc"})
-     * @var ArrayCollection<ExamInvigilator>
+     * @var Collection<ExamInvigilator>
      */
     private $invigilators;
 
@@ -190,10 +191,14 @@ class Exam {
         $this->tuitions->removeElement($tuition);
     }
 
+    public function getTuitions(): Collection {
+        return $this->tuitions;
+    }
+
     /**
      * @return ArrayCollection<Student>
      */
-    public function getStudents(): ArrayCollection {
+    public function getStudents(): Collection {
         return $this->students;
     }
 
@@ -203,13 +208,6 @@ class Exam {
 
     public function removeStudent(Student $student) {
         $this->students->removeElement($student);
-    }
-
-    /**
-     * @return ArrayCollection<Tuition>
-     */
-    public function getTuitions(): ArrayCollection {
-        return $this->tuitions;
     }
 
     public function addInvigilator(ExamInvigilator $examInvigilator) {
@@ -223,7 +221,7 @@ class Exam {
     /**
      * @return ArrayCollection<ExamInvigilator>
      */
-    public function getInvigilators(): ArrayCollection {
+    public function getInvigilators(): Collection {
         return $this->invigilators;
     }
 

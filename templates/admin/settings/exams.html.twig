@@ -1,0 +1,20 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.settings.exams.label'|trans }}{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+    <div class="contentbox">
+        <h4>{{ 'label.general'|trans }}</h4>
+
+        {{ form_widget(form)}}
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+        </button>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

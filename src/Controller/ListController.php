@@ -18,7 +18,6 @@ use App\Repository\StudentRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
-use App\Security\CurrentUserResolver;
 use App\Sorting\GradeStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentGradeGroupStrategy;
@@ -30,15 +29,15 @@ use App\Sorting\TeacherStrategy;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ListsController extends AbstractControllerWithMessages {
+class ListController extends AbstractControllerWithMessages {
 
     private $grouper;
     private $sorter;
 
     public function __construct(Grouper $grouper, Sorter $sorter,
                                 MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
-                                CurrentUserResolver $userResolver, DateHelper $dateHelper) {
-        parent::__construct($messageRepository, $dismissedMessagesHelper, $userResolver, $dateHelper);
+                                DateHelper $dateHelper) {
+        parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper);
 
         $this->grouper = $grouper;
         $this->sorter = $sorter;
@@ -49,7 +48,7 @@ class ListsController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/tuitions", name="lists_tuitions")
+     * @Route("/lists/tuitions", name="list_tuitions")
      */
     public function tuitions(GradeRepositoryInterface $gradeRepository, StudentRepositoryInterface $studentRepository,
                              TeacherRepositoryInterface $teacherRepository, TuitionRepositoryInterface $tuitionRepository,
@@ -105,7 +104,7 @@ class ListsController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/tuitions/{id}", name="lists_tuition")
+     * @Route("/lists/tuitions/{id}", name="list_tuition")
      */
     public function tuition(Tuition $tuition, TuitionRepositoryInterface $tuitionRepository, ExamRepositoryInterface $examRepository) {
         $tuition = $tuitionRepository->findOneById($tuition->getId());
@@ -122,7 +121,7 @@ class ListsController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/study_groups", name="lists_studygroups")
+     * @Route("/lists/study_groups", name="list_studygroups")
      */
     public function studyGroups(StudyGroupRepositoryInterface $studyGroupRepository, ?int $studyGroupId = null) {
         $studyGroups = $studyGroupRepository->findAll();

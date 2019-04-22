@@ -6,6 +6,7 @@ use App\Entity\Grade;
 use App\Entity\Student;
 use App\Sorting\StudentGroupMembershipStrategy;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 
 class StudentRepository implements StudentRepositoryInterface {
     private $em;
@@ -15,15 +16,23 @@ class StudentRepository implements StudentRepositoryInterface {
         $this->em = $entityManager;
     }
 
+    private function getDefaultQueryBuilder(): QueryBuilder {
+        return $this->em->createQueryBuilder()
+            ->select(['s', 'g'])
+            ->from(Student::class, 's')
+            ->leftJoin('s.grade', 'g');
+    }
+
     /**
      * @param int $id
      * @return Student|null
      */
     public function findOneById(int $id): ?Student {
-        return $this->em->getRepository(Student::class)
-            ->findOneBy([
-                'id' => $id
-            ]);
+        return $this->getDefaultQueryBuilder()
+            ->andWhere('s.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getSingleResult();
     }
 
     /**
@@ -31,38 +40,44 @@ class StudentRepository implements StudentRepositoryInterface {
      * @return Student|null
      */
     public function findOneByExternalId(string $externalId): ?Student {
-        return $this->em->getRepository(Student::class)
-            ->findOneBy([
-                'externalId' => $externalId
-            ]);
+        return $this->getDefaultQueryBuilder()
+            ->andWhere('s.externalId = :externalId')
+            ->setParameter('externalId', $externalId)
+            ->getQuery()
+            ->getSingleResult();
     }
 
     /**
      * @inheritDoc
      */
     public function findAllByGrade(Grade $grade): array {
-        return $this->em->getRepository(Student::class)
-            ->findBy([
-                'grade' => $grade
-            ]);
+        return $this->getDefaultQueryBuilder()
+            ->andWhere('g.id = :gradeId')
+            ->setParameter('gradeId', $grade->getId())
+            ->getQuery()
+            ->getResult();
     }
 
     /**
      * @inheritDoc
      */
     public function findAllByQuery(string $query): array {
-        $qb = $this->em->createQueryBuilder();
+        $qb = $this->getDefaultQueryBuilder();
 
-        $qb
-            ->select(['s'])
-            ->from(Student::class, 's')
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('sInner.id')
+            ->from(Student::class, 'sInner')
             ->where(
                 $qb->expr()->orX(
-                    $qb->expr()->like('s.firstname', ':query'),
-                    $qb->expr()->like('s.lastname', ':query')
+                    $qb->expr()->like('sInner.firstname', ':query'),
+                    $qb->expr()->like('sInner.lastname', ':query')
                 )
             )
             ->setParameter('query', '%' . $query . '%');
+
+        $qb
+            ->andWhere($qb->expr()->in('s.id', $qbInner->getDQL()))
+            ->setParameter('query', $query);
 
         return $qb->getQuery()->getResult();
     }
@@ -71,8 +86,9 @@ class StudentRepository implements StudentRepositoryInterface {
      * @return Student[]
      */
     public function findAll() {
-        return $this->em->getRepository(Student::class)
-            ->findAll();
+        return $this->getDefaultQueryBuilder()
+            ->getQuery()
+            ->getResult();
     }
 
     /**
@@ -106,12 +122,15 @@ class StudentRepository implements StudentRepositoryInterface {
      * @inheritDoc
      */
     public function findAllByExternalId(array $externalIds): array {
-        $qb = $this->em->createQueryBuilder();
+        $qb = $this->getDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('sInner.id')
+            ->from(Student::class, 'sInner')
+            ->where($qb->expr()->in('sInner.externalId', ':externalIds'));
 
         $qb
-            ->select('s')
-            ->from(Student::class, 's')
-            ->where($qb->expr()->in('s.externalId', ':externalIds'))
+            ->andWhere($qb->expr()->in('s.id', $qbInner->getDQL()))
             ->setParameter('externalIds', $externalIds);
 
         return $qb->getQuery()->getResult();

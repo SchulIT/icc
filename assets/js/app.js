@@ -16,7 +16,7 @@ window.$ = $;
 
         $('[data-toggle=tooltip]').tooltip();
 
-        $('select[data-trigger=form-submit]').change(function(e) {
+        $('[data-trigger=form-submit]').change(function(e) {
             $(this).closest('form').submit();
         });
 

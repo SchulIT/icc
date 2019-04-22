@@ -4,10 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Message;
 use App\Entity\MessageScope;
+use App\Entity\User;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
-use App\Security\CurrentUserResolver;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,9 +18,8 @@ class MessageController extends AbstractControllerWithMessages {
     private $userRepository;
 
     public function __construct(UserRepositoryInterface $userRepository, MessageRepositoryInterface $messageRepository,
-                                DismissedMessagesHelper $dismissedMessagesHelper, CurrentUserResolver $userResolver,
-                                DateHelper $dateHelper) {
-        parent::__construct($messageRepository, $dismissedMessagesHelper, $userResolver, $dateHelper);
+                                DismissedMessagesHelper $dismissedMessagesHelper, DateHelper $dateHelper) {
+        parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper);
 
         $this->userRepository = $userRepository;
     }
@@ -33,7 +32,8 @@ class MessageController extends AbstractControllerWithMessages {
      * @Route("/messages/{id}/dismiss", name="dismiss_message")
      */
     public function dismiss(Message $message, Request $request) {
-        $user = $this->userResolver->getUser();
+        /** @var User $user */
+        $user = $this->getUser();
 
         if($user->getDismissedMessages()->contains($message) !== true) {
             $user->addDismissedMessage($message);
@@ -47,7 +47,8 @@ class MessageController extends AbstractControllerWithMessages {
      * @Route("/messages/{id}/reenable", name="reenable_message")
      */
     public function reenable(Message $message, Request $request) {
-        $user = $this->userResolver->getUser();
+        /** @var User $user */
+        $user = $this->getUser();
 
         if($user->getDismissedMessages()->contains($message) === true) {
             $user->removeDismissedMessage($message);

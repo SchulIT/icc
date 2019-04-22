@@ -4,7 +4,7 @@ namespace App\Grouping;
 
 use App\Entity\Exam;
 
-class ExamDateGroup implements GroupInterface {
+class ExamDateGroup implements GroupInterface, SortableGroupInterface {
     /**
      * @var \DateTime
      */
@@ -45,5 +45,12 @@ class ExamDateGroup implements GroupInterface {
      */
     public function addItem($item) {
         $this->exams[] = $item;
+    }
+
+    /**
+     * @return Exam[]
+     */
+    public function &getItems(): array {
+        return $this->exams;
     }
 }

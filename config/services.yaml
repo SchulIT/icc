@@ -128,8 +128,3 @@ services:
 
     EasySlugger\SluggerInterface:
         class: EasySlugger\Utf8Slugger
-
-    # HELPER
-    App\Listener\BlameListener:
-        bind:
-            $blameableListener: '@stof_doctrine_extensions.listener.blameable'

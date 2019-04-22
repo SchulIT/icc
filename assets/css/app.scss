@@ -57,3 +57,33 @@ table {
 .dismissed-message {
   display: none;
 }
+
+.exam {
+  padding: 3px 5px;
+  margin-bottom: 10px;
+  background: #f5f5f5;
+
+  hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  >.container-fluid {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .row {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  .remark {
+    font-weight: bold;
+  }
+}

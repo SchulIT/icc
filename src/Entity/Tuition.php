@@ -173,4 +173,14 @@ class Tuition {
         $this->studyGroup = $studyGroup;
         return $this;
     }
+
+    /**
+     * @return Teacher[]
+     */
+    public function getTeachers() {
+        return array_merge(
+            [ $this->getTeacher() ],
+            $this->getAdditionalTeachers()->toArray()
+        );
+    }
 }

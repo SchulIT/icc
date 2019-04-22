@@ -41,18 +41,22 @@ label:
     attachments: Anhänge
     file: Datei
     choose_file: Datei auswählen
+    room: Raum
+    options: Optionen
 
 actions:
     add: hinzufügen
     remove: löschen
     back: zurück
+    save: speichern
 
 greeting:
     female: Frau
     male: Herr
 
 teacher:
-    fullname: "%greeting% %title% %name% [%acronym%]"
+    fullname: "%greeting% %title% %name%"
+    fullname_acronym: "%greeting% %title% %name% [%acronym%]"
 
 exams:
     export:
@@ -63,8 +67,22 @@ exams:
         tuition: "%name% (%grades%)"
 
 plans:
+    label: Pläne
+
     exams:
+        label: Klausurplan
+        title: "Klausurplan für %for%"
         empty: Aktuell sind keine Klausuren im System.
+        tuitions: "{1} Kurs|]1,Inf[ Kurse"
+        time: Zeitraum
+        invigilators: Aufsicht
+        show_all: Alte Klausuren anzeigen
+
+    exam:
+        label: Klausurdetails
+        students: Klausurschreiber
+
+
 
 lists:
     label: Listen
@@ -125,7 +143,20 @@ studygroup:
         grade: Klasse/Jgst.
         course: Kurs
 
+
 date:
     range: "%from% bis %to%"
     format: d.m.Y
     time_format: "H:i"
+
+admin:
+    settings:
+        success: Einstellungen erfolgreich aktualisiert
+        exams:
+            label: Klausurplan-Einstellungen
+            window:
+                label: Vorausblick für Lernende
+                help: Anzahl der Tage, die Lernende in die Zukunft blicken können (0 bedeutet unbegrenzte Anzahl an Tagen).
+                invigilators:
+                    label: Vorausblick der Aufsichten für Lernende
+                    help: Anzahl der Tage, die Lernende Aufsichten zukünftiger Klausuren sehen können (0 bedeutet unbegrenze Anzahl an Tagen).

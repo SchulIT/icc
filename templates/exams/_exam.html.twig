@@ -1,0 +1,54 @@
+<div class="exam">
+    <div class="container-fluid">
+        <div class="row no-gutters">
+            <p class="w-100">
+                <strong>{{ 'plans.exams.tuitions'|trans({'%count%': exam.tuitions|length} ) }}:</strong>
+                {% for tuition in exam.tuitions %}
+                    {{ tuition.name }}
+
+                    <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                {% endfor %}
+            </p>
+            <p class="col">
+                <strong>{{ 'plans.exams.time'|trans }}:</strong>
+                {{ 'label.exam_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
+            </p>
+            <p class="col">
+                <strong>{{ 'label.room'|trans }}:</strong>
+
+                {% if exam.rooms|length > 0 %}
+                    {{ exam.rooms|first }}
+                {% else %}
+                    <span class="badge badge-info">nicht verfügbar</span>
+                {% endif %}
+            </p>
+
+            <hr class="w-100">
+
+            <p class="w-100 remark">
+                {{ exam.description }}
+            </p>
+
+            {% if exam.invigilators|length > 0 and is_granted('invigilators', exam) %}
+                <hr class="w-100">
+
+                <div class="w-100">
+                    <strong>{{ 'plans.exams.invigilators'|trans }}:</strong>
+
+                    <ul>
+                        {% for invigilator in exam.invigilators %}
+                            <li>{{ invigilator.teacher|teacher }} ({{ 'label.exam_lessons'|trans({'%start%': invigilator.lesson, '%count%': 0}) }})</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            {% if details|default(true) == true and is_granted('invigilators', exam) %}
+            <a href="{{ path('show_exam', { id: exam.id }) }}" class="btn btn-outline-primary btn-sm">
+                <i class="fa fa-info-circle"></i> {{ 'label.details'|trans }}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -25,6 +25,18 @@ class Builder {
             'route' => 'dashboard'
         ]);
 
+        // Plans
+        $menu->addChild('plans.label', [
+            'attributes' => [
+                'class' => 'header'
+            ]
+        ]);
+
+        $menu->addChild('plans.exams.label', [
+            'route' => 'exams'
+        ]);
+
+
         // Lists menu
         $menu->addChild('lists.label', [
             'attributes' => [
@@ -33,11 +45,11 @@ class Builder {
         ]);
 
         $menu->addChild('lists.tuitions.label', [
-            'route' => 'lists_tuitions'
+            'route' => 'list_tuitions'
         ]);
 
         $menu->addChild('lists.study_groups.label', [
-            'route' => 'lists_studygroups'
+            'route' => 'list_studygroups'
         ]);
 
         return $menu;

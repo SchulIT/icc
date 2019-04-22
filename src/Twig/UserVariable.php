@@ -3,17 +3,14 @@
 namespace App\Twig;
 
 use App\Entity\User;
-use App\Security\CurrentUserResolver;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserVariable {
     private $tokenStorage;
-    private $currentUserResolver;
 
-    public function __construct(TokenStorageInterface $tokenStorage, CurrentUserResolver $currentUserResolver) {
+    public function __construct(TokenStorageInterface $tokenStorage) {
         $this->tokenStorage = $tokenStorage;
-        $this->currentUserResolver = $currentUserResolver;
     }
 
     /**
@@ -34,7 +31,7 @@ class UserVariable {
      * @return User
      */
     public function getUser() {
-        return $this->currentUserResolver->getUser();
+        return $this->getToken()->getUser();
     }
 
     public function getFirstname(): string {

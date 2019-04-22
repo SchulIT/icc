@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Exam;
+use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 
 class ExamRepository implements ExamRepositoryInterface {
     private $em;
@@ -15,15 +17,39 @@ class ExamRepository implements ExamRepositoryInterface {
         $this->em = $entityManager;
     }
 
+    private function getDefaultQueryBuilder(\DateTime $today = null): QueryBuilder {
+        $qb = $this->em->createQueryBuilder();
+
+        $qb
+            ->select(['e', 'i', 's', 't', 'sg', 'g', 'at', 'tt', 'it'])
+            ->from(Exam::class, 'e')
+            ->leftJoin('e.invigilators', 'i')
+            ->leftJoin('i.teacher', 'it')
+            ->leftJoin('e.students', 's')
+            ->leftJoin('e.tuitions', 't')
+            ->leftJoin('t.teacher', 'tt')
+            ->leftJoin('t.additionalTeachers', 'at')
+            ->leftJoin('t.studyGroup', 'sg')
+            ->leftJoin('sg.grades', 'g');
+
+        if($today !== null) {
+            $qb->where('e.date > :today')
+                ->setParameter('today', $today);
+        }
+
+        return $qb;
+    }
+
     /**
      * @param int $id
      * @return Exam|null
      */
     public function findOneById(int $id): ?Exam {
-        return $this->em->getRepository(Exam::class)
-            ->findOneBy([
-                'id' => $id
-            ]);
+        return $this->getDefaultQueryBuilder()
+            ->andWhere('e.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getSingleResult();
     }
 
     /**
@@ -31,17 +57,18 @@ class ExamRepository implements ExamRepositoryInterface {
      * @return Exam|null
      */
     public function findOneByExternalId(string $externalId): ?Exam {
-        return $this->em->getRepository(Exam::class)
-            ->findOneBy([
-                'externalId' => $externalId
-            ]);
+        return $this->getDefaultQueryBuilder()
+            ->andWhere('e.externalId = :externalId')
+            ->setParameter('externalId', $externalId)
+            ->getQuery()
+            ->getSingleResult();
     }
 
     /**
      * @inheritDoc
      */
     public function findAllByTuitions(array $tuitions, ?\DateTime $today = null) {
-        $qb = $this->em->createQueryBuilder();
+        $qb = $this->getDefaultQueryBuilder($today);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
@@ -49,20 +76,8 @@ class ExamRepository implements ExamRepositoryInterface {
             ->leftJoin('eInner.tuitions', 'tInner')
             ->where($qb->expr()->in('tInner.id', ':tuitions'));
 
-        if($today !== null) {
-            $qbInner->andWhere(
-                'eInner.date >= :today'
-            );
-
-            $qb->setParameter('today', $today);
-        }
-
         $qb
-            ->select(['e', 'i', 't'])
-            ->from(Exam::class, 'e')
-            ->leftJoin('e.invigilators', 'i')
-            ->leftJoin('e.tuitions', 't')
-            ->where($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
             ->setParameter('tuitions', $tuitions);
 
         return $qb->getQuery()->getResult();
@@ -72,7 +87,7 @@ class ExamRepository implements ExamRepositoryInterface {
      * @inheritDoc
      */
     public function findAllByTeacher(Teacher $teacher, ?\DateTime $today = null) {
-        $qb = $this->em->createQueryBuilder();
+        $qb = $this->getDefaultQueryBuilder($today);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
@@ -89,12 +104,33 @@ class ExamRepository implements ExamRepositoryInterface {
             );
 
         $qb
-            ->select(['e', 'i', 't'])
-            ->from(Exam::class, 'e')
-            ->leftJoin('e.invigilators', 'i')
-            ->leftJoin('e.tuitions', 't')
-            ->where($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
             ->setParameter('teacher', $teacher->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByStudents(array $students, ?\DateTime $today = null) {
+        $qb = $this->getDefaultQueryBuilder($today);
+
+        $studentIds = array_map(function(Student $student) {
+            return $student->getId();
+        }, $students);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.students', 'sInner')
+            ->where(
+                $qb->expr()->in('sInner.id', ':studentIds')
+            );
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->setParameter('studentIds', $studentIds);
 
         return $qb->getQuery()->getResult();
     }
@@ -104,18 +140,9 @@ class ExamRepository implements ExamRepositoryInterface {
      * @return Exam[]
      */
     public function findAll(?\DateTime $today = null) {
-        $qb = $this->em->createQueryBuilder()
-            ->select(['e', 'i', 't'])
-            ->from(Exam::class, 'e')
-            ->leftJoin('e.invigilators', 'i')
-            ->leftJoin('e.tuitions', 't');
-
-        if($today !== null) {
-            $qb->where('e.date > :today')
-                ->setParameter('today', $today);
-        }
-
-        return $qb->getQuery()->getResult();
+        return $this->getDefaultQueryBuilder($today)
+            ->getQuery()
+            ->getResult();
     }
 
     /**
@@ -144,4 +171,5 @@ class ExamRepository implements ExamRepositoryInterface {
         $this->em->commit();
         $this->isTransactionActive = false;
     }
+
 }

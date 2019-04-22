@@ -13,7 +13,7 @@ class TeacherStringConverter {
         $this->translator = $translator;
     }
 
-    public function convert(Teacher $teacher) {
+    public function convert(Teacher $teacher, bool $includeAcronym = false) {
         $greeting = $this->translator->trans('greeting.female');
 
         if($teacher->getGender()->equals(Gender::Male())) {
@@ -23,7 +23,7 @@ class TeacherStringConverter {
             $greeting = '';
         }
 
-        $string = $this->translator->trans('teacher.fullname', [
+        $string = $this->translator->trans($includeAcronym ? 'teacher.fullname_acronym' : 'teacher.fullname', [
             '%greeting%' => $greeting,
             '%title%' => $teacher->getTitle(),
             '%name%' => $teacher->getLastname(),

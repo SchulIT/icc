@@ -16,11 +16,6 @@ class StudentsGradeStrategyTest extends TestCase {
     public function testStrategy() {
         $gradeGroupsStrategy = new StudentGradeGroupStrategy(new GradeStrategy());
 
-        $container = $this->createMock(ContainerInterface::class);
-        $container
-            ->method('get')
-            ->willReturn($gradeGroupsStrategy);
-
         $groupEF = (new StudentGradeGroup((new Grade())->setName('EF')));
         $group9A = (new StudentGradeGroup((new Grade())->setName('9A')));
         $group9B = (new StudentGradeGroup((new Grade())->setName('9B')));
@@ -33,8 +28,7 @@ class StudentsGradeStrategyTest extends TestCase {
             $group9A
         ];
 
-        $sorter = new Sorter();
-        $sorter->setContainer($container);
+        $sorter = new Sorter([$gradeGroupsStrategy]);
 
         $sorter->sort($groups, StudentGradeGroupStrategy::class);
 
@@ -62,14 +56,7 @@ class StudentsGradeStrategyTest extends TestCase {
         $groupEF->addItem($studentThree);
 
         $studentsStrategy = new StudentStrategy();
-
-        $container = $this->createMock(ContainerInterface::class);
-        $container
-            ->method('get')
-            ->willReturn($studentsStrategy);
-
-        $sorter = new Sorter();
-        $sorter->setContainer($container);
+        $sorter = new Sorter([$studentsStrategy]);
 
         $sorter->sortGroupItems([$groupEF], StudentStrategy::class);
 

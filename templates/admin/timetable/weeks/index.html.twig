@@ -1,0 +1,61 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.timetable.weeks.label'|trans }}{% endblock %}
+
+{% block content %}
+    <div class="contentbox">
+        <h4>{{ 'admin.timetable.weeks.label'|trans }}</h4>
+
+        {% if weeks|length == 0 %}
+            <div class="bs-callout bs-callout-info">
+                <h5>{{ 'info.label'|trans }}</h5>
+
+                <p>{{ 'admin.timetable.weeks.overview.empty'|trans }}</p>
+
+                <a href="#" class="btn btn-primary btn-sm">
+                    <i class="fa fa-plus"></i> {{ 'admin.timetable.weeks.add_default.label'|trans }}
+                </a>
+            </div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.name'|trans }} </th>
+                        <th>{{ 'label.week_mod.label'|trans }}</th>
+                        <th> </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for week in weeks %}
+                        <tr>
+                            <td>
+                                {{ week.displayName }} <span class="badge badge-secondary">{{ week.key }}</span>
+                            </td>
+                            <td>
+                                {{ week.weekMod }}
+                            </td>
+                            <td>
+                                <a href="{{ path('admin_edit_timetable_week', { id: week.id }) }}" class="btn btn-primary btn-sm">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+
+                                <a href="{{ path('admin_remove_timetable_week', { id: week.id }) }}" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="buttons">
+        <a href="{{ path('admin_add_timetable_week') }}" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'admin.timetable.weeks.add.label'|trans }}
+        </a>
+    </div>
+{% endblock %}

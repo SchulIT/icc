@@ -21,7 +21,7 @@ class TimetableWeek {
     private $id;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string", unique=true, name="`key`")
      * @var string
      */
     private $key;

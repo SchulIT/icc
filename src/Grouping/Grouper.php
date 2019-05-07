@@ -2,19 +2,20 @@
 
 namespace App\Grouping;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
-class Grouper implements ContainerAwareInterface {
+class Grouper {
 
-    /** @var ContainerInterface|null */
-    private $container;
+    /** @var GroupingStrategyInterface[] */
+    private $strategies = [ ];
 
     /**
-     * @inheritDoc
+     * @param GroupingStrategyInterface[]
      */
-    public function setContainer(ContainerInterface $container = null) {
-        $this->container = $container;
+    public function __construct(iterable $strategies) {
+        foreach($strategies as $strategy) {
+            $this->strategies[get_class($strategy)] = $strategy;
+        }
     }
 
     /**
@@ -23,14 +24,10 @@ class Grouper implements ContainerAwareInterface {
      * @return GroupInterface[]
      */
     public function group(array $items, string $strategyService) {
-        if($this->container === null) {
-            throw new \RuntimeException('Container was not injected properly');
-        }
+        $strategy = $this->strategies[$strategyService] ?? null;
 
-        $strategy = $this->container->get($strategyService);
-
-        if(!$strategy instanceof GroupingStrategyInterface) {
-            throw new \RuntimeException(sprintf('Service "%s" must implement "%s" in order to be used as sorting strategy!', $strategyService, GroupingStrategyInterface::class));
+        if($strategy === null) {
+            throw new ServiceNotFoundException($strategyService);
         }
 
         /** @var GroupInterface[] $groups */

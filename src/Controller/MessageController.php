@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/messages")
+ */
 class MessageController extends AbstractControllerWithMessages {
 
     private $userRepository;
@@ -29,7 +32,14 @@ class MessageController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/messages/{id}/dismiss", name="dismiss_message")
+     * @Route("", name="messages")
+     */
+    public function index() {
+
+    }
+
+    /**
+     * @Route("/{id}/dismiss", name="dismiss_message")
      */
     public function dismiss(Message $message, Request $request) {
         /** @var User $user */
@@ -44,7 +54,7 @@ class MessageController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/messages/{id}/reenable", name="reenable_message")
+     * @Route("/{id}/reenable", name="reenable_message")
      */
     public function reenable(Message $message, Request $request) {
         /** @var User $user */

@@ -14,7 +14,7 @@ abstract class AbstractSettings {
             ->getValue($key, $default);
     }
 
-    protected function setValue($key, $value) {
+    protected function setValue($key, $value): void {
         $this->settingsManager
             ->setValue($key, $value);
     }

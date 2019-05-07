@@ -5,17 +5,20 @@ namespace App\Sorting;
 use App\Grouping\SortableGroupInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
-class Sorter implements ContainerAwareInterface {
+class Sorter {
 
-    /** @var ContainerInterface|null */
-    private $container;
+    /** @var SortingStrategyInterface[] */
+    private $strategies;
 
     /**
-     * @inheritDoc
+     * @param SortingStrategyInterface[] $strategies
      */
-    public function setContainer(ContainerInterface $container = null) {
-        $this->container = $container;
+    public function __construct(iterable $strategies) {
+        foreach($strategies as $strategy) {
+            $this->strategies[get_class($strategy)] = $strategy;
+        }
     }
 
     public function sortGroupItems(array $groups, string $strategyService, SortDirection $direction = null) {
@@ -32,14 +35,10 @@ class Sorter implements ContainerAwareInterface {
      * @param SortDirection|null $direction
      */
     public function sort(array &$array, string $strategyService, SortDirection $direction = null) {
-        if($this->container === null) {
-            throw new \RuntimeException('Container was not injected properly');
-        }
+        $strategy = $this->strategies[$strategyService] ?? null;
 
-        $strategy = $this->container->get($strategyService);
-
-        if(!$strategy instanceof SortingStrategyInterface) {
-            throw new \RuntimeException(sprintf('Service "%s" must implement "%s" in order to be used as sorting strategy!', $strategyService, SortingStrategyInterface::class));
+        if($strategy === null) {
+            throw new ServiceNotFoundException($strategyService);
         }
 
         usort($array, [ $strategy, 'compare' ]);

@@ -7,3 +7,11 @@
 {% block javascript %}
     <script src="{{ asset('build/app.js') }}"></script>
 {% endblock %}
+
+{% block menu %}
+    <nav class="navbar navbar-expand-md">
+        <div class="collapse navbar-collapse" id="menu">
+            {{ knp_menu_render(mainMenu, {'currentClass': 'active' }) }}
+        </div>
+    </nav>
+{% endblock %}

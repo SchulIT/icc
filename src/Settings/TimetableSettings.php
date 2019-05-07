@@ -3,84 +3,102 @@
 namespace App\Settings;
 
 class TimetableSettings extends AbstractSettings {
-    const StartDate = 'start';
-    const EndDate = 'end';
-    const Collapsible = 'collapsible';
-    const BeforeDescription = 'before.description';
-    const SupervisionSubject = 'supervision.subject';
+
+    private const MaxLessonsKey = 'max_lessons';
+    private const DescriptionBeforeKey = 'lesson.%d.before_label';
+    private const StartKey = 'lesson.%d.start';
+    private const EndKey = 'lesson.%d.end';
+    private const SupervisionLabelKey = 'supervision.label';
+    private const CategoriesKey = 'no_lessons_categories';
 
     public function __construct(SettingsManager $manager) {
         parent::__construct($manager);
     }
 
-    public function getKeyName($lesson, $settingsType) {
-        if($lesson !== null) {
-            return sprintf('timetable.%d.%s', $lesson, strtolower($settingsType));
-        }
-
-        if($settingsType === 'categories') {
-            return 'timetable.categories';
-        }
-
-        if(substr($settingsType, 0, strlen('supervision')) === 'supervision') {
-            return sprintf('timetable.%s', $settingsType);
-        }
-
-        throw new \InvalidArgumentException();
+    protected function getValue($key, $default = null) {
+        return parent::getValue(
+            sprintf('timetable.%s', $key),
+            $default
+        );
     }
 
-    public function getDescriptionBeforeLesson($lesson) {
-        $key = $this->getKeyName($lesson, static::BeforeDescription);
-        return $this->getValue($key);
+    protected function setValue($key, $value): void {
+        parent::setValue(
+            sprintf('timetable.%s', $key),
+            $value
+        );
     }
 
-    public function setDescriptionBeforeLesson($lesson, $description) {
-        $key = $this->getKeyName($lesson, static::BeforeDescription);
-        $this->setValue($key, $description);
+    private function getKeyName(string $key, int $lesson): string {
+        return sprintf($key, $lesson);
+    }
+
+    public function getDescriptionBeforeLesson(int $lesson): ?string {
+        return $this->getValue(
+            $this->getKeyName(static::DescriptionBeforeKey, $lesson)
+        );
+    }
+
+    public function setDescriptionBeforeLesson(int $lesson, ?string $description): void {
+        $this->setValue(
+            $this->getKeyName(static::DescriptionBeforeKey, $lesson),
+            $description
+        );
     }
 
     public function getStart($lesson) {
-        $key = $this->getKeyName($lesson, TimetableSettings::StartDate);
-        return $this->getValue($key);
+        return $this->getValue(
+            $this->getKeyName(static::StartKey, $lesson)
+        );
     }
 
     public function getEnd($lesson) {
-        $key = $this->getKeyName($lesson, TimetableSettings::EndDate);
-        return $this->getValue($key);
+        return $this->getValue(
+            $this->getKeyName(static::EndKey, $lesson)
+        );
     }
 
-    public function setStart($lesson, $time = null) {
-        $key = $this->getKeyName($lesson, TimetableSettings::StartDate);
-        $this->setValue($key, $time);
+    public function setStart($lesson, $time = null): void {
+        $this->setValue(
+            $this->getKeyName(static::StartKey, $lesson),
+            $time
+        );
     }
 
-    public function setEnd($lesson, $time = null) {
-        $key = $this->getKeyName($lesson, TimetableSettings::EndDate);
-        $this->setValue($key, $time);
+    public function setEnd($lesson, $time = null): void {
+        $this->setValue(
+            $this->getKeyName(static::EndKey, $lesson),
+            $time
+        );
     }
 
-    public function isCollapsible(int $lesson) {
-        $key = $this->getKeyName($lesson, TimetableSettings::Collapsible);
-        return $this->getValue($key, false);
+    /**
+     * @return int[]
+     */
+    public function getCategoryIds(): array {
+        return $this->getValue(static::CategoriesKey, [ ]);
     }
 
-    public function setIsCollapsible(int $lesson, bool $isCollapsible) {
-        $key = $this->getKeyName($lesson, TimetableSettings::Collapsible);
-        $this->setValue($key, $isCollapsible);
+    /**
+     * @param int[] $ids
+     */
+    public function setCategoryIds(array $ids): void {
+        $this->setValue(static::CategoriesKey, $ids);
     }
 
-    public function getCategoryIds() {
-        $key = $this->getKeyName(null, 'categories');
-        return $this->getValue($key, [ ]);
+    public function setSupervisionLabel(?string $label): void {
+        $this->setValue(static::SupervisionLabelKey, $label);
     }
 
-    public function setSupervisionSubject($subject) {
-        $key = $this->getKeyName(null, static::SupervisionSubject);
-        $this->setValue($key, $subject);
+    public function getSupervisionLabel(): ?string {
+        return $this->getValue(static::SupervisionLabelKey);
     }
 
-    public function getSupervisionSubject() {
-        $key = $this->getKeyName(null, static::SupervisionSubject);
-        return $this->getValue($key, null);
+    public function getMaxLessons(): int {
+        return (int)$this->getValue(static::MaxLessonsKey, 0);
+    }
+
+    public function setMaxLessons(int $maxLessons): void {
+        $this->setValue(static::MaxLessonsKey, $maxLessons);
     }
 }

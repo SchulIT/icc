@@ -38,7 +38,7 @@ class TuitionRepository implements TuitionRepositoryInterface {
             ->where('t.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
-            ->getSingleResult();
+            ->getOneOrNullResult();
     }
 
     /**
@@ -49,7 +49,7 @@ class TuitionRepository implements TuitionRepositoryInterface {
             ->where('t.externalId = :externalId')
             ->setParameter('externalId', $externalId)
             ->getQuery()
-            ->getSingleResult();
+            ->getOneOrNullResult();
     }
 
     /**

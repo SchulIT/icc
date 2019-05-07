@@ -43,6 +43,13 @@ label:
     choose_file: Datei auswählen
     room: Raum
     options: Optionen
+    external_id: Externe ID
+    key: Schlüssel
+    display_name: Anzeigename
+    week_mod:
+        label: Wochen-Modulo
+        help: "Wird zur Berechnung der Wochen benötigt (bspw. 0 = gerade Wochen, 1 = ungerade Wochen; sofern nur zwei Wochentypen angegeben wurden). Berechnung: aktuelle Woche modulo Anzahl der Stundenplan-Wochen."
+
 
 actions:
     add: hinzufügen
@@ -82,7 +89,14 @@ plans:
         label: Klausurdetails
         students: Klausurschreiber
 
-
+    timetable:
+        label: Stundenplan
+    substitutions:
+        label: Vertretungsplan
+    appointments:
+        label: Terminplan
+    rooms:
+        label: Räume
 
 lists:
     label: Listen
@@ -160,3 +174,77 @@ admin:
                 invigilators:
                     label: Vorausblick der Aufsichten für Lernende
                     help: Anzahl der Tage, die Lernende Aufsichten zukünftiger Klausuren sehen können (0 bedeutet unbegrenze Anzahl an Tagen).
+        timetable:
+            label: Stundenplan-Einstellungen
+            max_lessons:
+                label: Anzahl der Unterrichtsstunden
+                help: Gibt die maximale Anzahl an Unterrichtsstunden für einen Wochentag an (wird genutzt, um die Zeiten für die Schulstunden festzulegen)
+            no_school_category:
+                none: (keine)
+                label: Kategorien für Unterrichtsfrei
+                help: Ist an einem Tag ein Termin in einer der Kategorien vorhanden, so ist der Stundenplan für diesen Tag leer.
+            supervision:
+                legend: Aufsicht
+                label: Anzeigetext für Aufsichten
+                label_before:
+                    label: "Text vor %lesson%. Stunde"
+                    help: "Gibt den Text in der Stundenspalte an, der vor der %lesson%. Stunde angezeigt wird (bspw. 1. große Pause, Mittagspause, ...)."
+                start: Aufsichtsbeginn vor 1. Stunde
+            lesson:
+                legend: Unterrichtsstuden
+                start: "Beginn %lesson%. Stunde"
+                end: "Ende %lesson%. Stunde"
+
+
+    timetable:
+        weeks:
+            label: Stundenplan-Wochen
+            overview:
+                empty: Aktuell sind keine Stundenplan-Wochen hinterlegt.
+            add_default:
+                label: Standard-A/B-Wochen hinzufügen
+                success: Standard-A/B-Wochen erfolgreich hinzugefügt
+            add:
+                label: Neue Stundenplan-Woche
+                success: Stundenplan-Woche erfolgreich hinzugefügt
+            edit:
+                label: Stundenplan-Woche bearbeiten
+                success: Stundenplan-Woche erfolgreich aktualisiert
+            remove:
+                label: Stundenplan-Woche löschen
+                confirm: 'Soll die Stundenplan-Woche "%name%" wirklich gelöscht werden?'
+                success: Stundenplan-Woche erfolgreich gelöscht
+
+
+        periods:
+            label: Stundenplan-Perioden
+            overview:
+                empty: Aktuell sind keine Stundenplan-Perioden hinterlegt.
+            add:
+                label: Neue Stundenplan-Periode
+                success: Stundenplan-Periode erfolgreich angelegt
+            edit:
+                label: Stundenplan-Periode bearbeiten
+                success: Stundenplan-Periode erfolgreich aktualisiert
+            remove:
+                label: Stundenplan-Periode löschen
+                confirm: 'Soll die Stundenplan-Periode "%name%" wirklich gelöscht werden?'
+                success: Stundenplan-Periode erfolgreich gelöscht
+
+    documents:
+        categories:
+            label: Dokument-Kategorien verwalten
+            overview:
+                empty: Aktuell sind keine Kategorien vorhanden.
+                back: Zurück zu den Dokumenten
+                num_documents: Anzahl der Dokumente
+            add:
+                label: Neue Kategorie anlegen
+                success: Kategorie erfolgreich erstellt
+            edit:
+                label: Kategorie bearbeiten
+                success: Kategorie erfolgreich aktualisiert
+            remove:
+                label: Kategorie löschen
+                confirm: 'Soll die Dokument-Kategorie "%name%" wirklich gelöscht werden?'
+                success: Kategorie erfolgreich gelöscht

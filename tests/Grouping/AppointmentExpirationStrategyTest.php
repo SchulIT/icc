@@ -45,15 +45,7 @@ class AppointmentExpirationStrategyTest extends TestCase {
             ->willReturn(new \DateTime('2019-02-01 10:00'));
 
         $strategy = new AppointmentExpirationStrategy($dateHelper);
-
-        $containerMock = $this->createMock(ContainerInterface::class);
-        $containerMock
-            ->method('get')
-            ->with(AppointmentExpirationStrategy::class)
-            ->willReturn($strategy);
-
-        $grouper = new Grouper();
-        $grouper->setContainer($containerMock);
+        $grouper = new Grouper([$strategy]);
 
         $appointment = (new Appointment())
             ->setAllDay(false)
@@ -74,15 +66,7 @@ class AppointmentExpirationStrategyTest extends TestCase {
             ->willReturn(new \DateTime('2019-02-01 10:00'));
 
         $strategy = new AppointmentExpirationStrategy($dateHelper);
-
-        $containerMock = $this->createMock(ContainerInterface::class);
-        $containerMock
-            ->method('get')
-            ->with(AppointmentExpirationStrategy::class)
-            ->willReturn($strategy);
-
-        $grouper = new Grouper();
-        $grouper->setContainer($containerMock);
+        $grouper = new Grouper([$strategy]);
 
         $appointment = (new Appointment())
             ->setAllDay(false)
@@ -107,15 +91,7 @@ class AppointmentExpirationStrategyTest extends TestCase {
             ->willReturn(new \DateTime('2019-01-02'));
 
         $strategy = new AppointmentExpirationStrategy($dateHelper);
-
-        $containerMock = $this->createMock(ContainerInterface::class);
-        $containerMock
-            ->method('get')
-            ->with(AppointmentExpirationStrategy::class)
-            ->willReturn($strategy);
-
-        $grouper = new Grouper();
-        $grouper->setContainer($containerMock);
+        $grouper = new Grouper([$strategy]);
 
         $appointment = (new Appointment())
             ->setAllDay(true)
@@ -140,15 +116,7 @@ class AppointmentExpirationStrategyTest extends TestCase {
             ->willReturn(new \DateTime('2019-02-01'));
 
         $strategy = new AppointmentExpirationStrategy($dateHelper);
-
-        $containerMock = $this->createMock(ContainerInterface::class);
-        $containerMock
-            ->method('get')
-            ->with(AppointmentExpirationStrategy::class)
-            ->willReturn($strategy);
-
-        $grouper = new Grouper();
-        $grouper->setContainer($containerMock);
+        $grouper = new Grouper([$strategy]);
 
         $array = $this->getTestData();
         /** @var AppointmentExpirationGroup[] $groups */

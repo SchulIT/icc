@@ -19,10 +19,12 @@ class ExamFixtures extends Fixture implements DependentFixtureInterface {
 
     private $generator;
     private $tuitionRepository;
+    private $roomGenerator;
 
-    public function __construct(Generator $generator, TuitionRepositoryInterface $tuitionRepository) {
+    public function __construct(Generator $generator, TuitionRepositoryInterface $tuitionRepository, RoomGenerator $roomGenerator) {
         $this->generator = $generator;
         $this->tuitionRepository = $tuitionRepository;
+        $this->roomGenerator = $roomGenerator;
     }
 
     /**
@@ -35,20 +37,6 @@ class ExamFixtures extends Fixture implements DependentFixtureInterface {
     }
 
     private function loadQ1Exams(ObjectManager $manager) {
-        $rooms = [ ];
-
-        foreach(['A', 'B', 'C'] as $building) {
-            for($floor = 0; $floor <= 3; $floor++) {
-                for($room = 0; $room <= 10; $room++) {
-                    $rooms[] = sprintf(
-                        '%s%s',
-                        $building,
-                        str_pad((string)($floor * 100 + $room), 3, '0', STR_PAD_LEFT)
-                    );
-                }
-            }
-        }
-
         $grade = $manager->getRepository(Grade::class)
             ->findOneBy([
                 'externalId' => 'Q1'
@@ -69,7 +57,7 @@ class ExamFixtures extends Fixture implements DependentFixtureInterface {
 
                 $start = $this->generator->numberBetween(1, 3);
                 $duration = $this->generator->numberBetween(2, 4);
-                $room = $this->generator->randomElement($rooms);
+                $room = $this->roomGenerator->getRoom();
 
                 $exam = (new Exam())
                     ->setExternalId($id)

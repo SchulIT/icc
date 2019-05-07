@@ -10,10 +10,21 @@ class ExamSettings extends AbstractSettings {
         parent::__construct($manager);
     }
 
-    public function isEnabled(UserType $userType) {
-        $enabledFor = $this->getValue('exams.visibility', [ ]);
+    public function getVisibility() {
+        return $this->getValue('exams.visibility', [ ]);
+    }
 
-        if(in_array($userType->getValue(), $enabledFor)) {
+    public function setVisibility(array $visibility) {
+        $this->setValue('exams.visibility', $visibility);
+    }
+
+    /**
+     * @param UserType $userType
+     * @return bool
+     * @deprecated
+     */
+    public function isEnabled(UserType $userType) {
+        if(in_array($userType->getValue(), $this->getVisibility())) {
             return true;
         }
 
@@ -29,6 +40,10 @@ class ExamSettings extends AbstractSettings {
         return (int)$this->getValue('exams.window', 0);
     }
 
+    public function setTimeWindowForStudents(int $timeWindow) {
+        $this->setValue('exams.window', $timeWindow);
+    }
+
     /**
      * Returns the number of days students can view invigilators for future exams. Detaults to 0 (unlimited days)
      *
@@ -36,5 +51,9 @@ class ExamSettings extends AbstractSettings {
      */
     public function getTimeWindowForStudentsToSeeInvigilators(): int {
         return (int)$this->getValue('exams.window.invigilators', 0);
+    }
+
+    public function setTimeWindowForStudentsToSeeInvigilators(int $timeWindow) {
+        $this->setValue('exams.window.invigilators', $timeWindow);
     }
 }

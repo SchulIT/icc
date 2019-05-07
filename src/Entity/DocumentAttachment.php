@@ -19,7 +19,7 @@ class DocumentAttachment {
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Document", inversedBy="files")
+     * @ORM\ManyToOne(targetEntity="Document", inversedBy="attachments")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Document
      */

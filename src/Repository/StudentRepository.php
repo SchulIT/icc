@@ -32,7 +32,7 @@ class StudentRepository implements StudentRepositoryInterface {
             ->andWhere('s.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
-            ->getSingleResult();
+            ->getOneOrNullResult();
     }
 
     /**
@@ -44,7 +44,7 @@ class StudentRepository implements StudentRepositoryInterface {
             ->andWhere('s.externalId = :externalId')
             ->setParameter('externalId', $externalId)
             ->getQuery()
-            ->getSingleResult();
+            ->getOneOrNullResult();
     }
 
     /**

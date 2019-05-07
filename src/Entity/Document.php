@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -58,13 +59,13 @@ class Document {
      *     inverseJoinColumns={@ORM\JoinColumn(name="studygroup", onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
-     * @var ArrayCollection<StudyGroup>
+     * @var Collection<StudyGroup>
      */
     private $studyGroups;
 
     /**
      * @ORM\OneToMany(targetEntity="DocumentAttachment", mappedBy="document")
-     * @var ArrayCollection<DocumentAttachment>
+     * @var Collection<DocumentAttachment>
      */
     private $attachments;
 
@@ -74,7 +75,7 @@ class Document {
      *     joinColumns={@ORM\JoinColumn(name="document")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="visibility")}
      * )
-     * @var ArrayCollection<MessageVisibility>
+     * @var Collection<MessageVisibility>
      */
     private $visibilities;
 
@@ -92,7 +93,7 @@ class Document {
      *     joinColumns={@ORM\JoinColumn(name="page", onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="user", onDelete="CASCADE")}
      * )
-     * @var ArrayCollection<Teacher>
+     * @var Collection<Teacher>
      */
     private $authors;
 
@@ -174,9 +175,9 @@ class Document {
     }
 
     /**
-     * @return ArrayCollection<StudyGroup>
+     * @return Collection<StudyGroup>
      */
-    public function getStudyGroups(): ArrayCollection {
+    public function getStudyGroups(): Collection {
         return $this->studyGroups;
     }
 
@@ -189,9 +190,9 @@ class Document {
     }
 
     /**
-     * @return ArrayCollection<DocumentAttachment>
+     * @return Collection<DocumentAttachment>
      */
-    public function getAttachments() {
+    public function getAttachments(): Collection {
         return $this->attachments;
     }
 
@@ -204,9 +205,9 @@ class Document {
     }
 
     /**
-     * @return ArrayCollection<MessageVisibility>
+     * @return Collection<MessageVisibility>
      */
-    public function getVisibilities() {
+    public function getVisibilities(): Collection {
         return $this->visibilities;
     }
 
@@ -226,9 +227,9 @@ class Document {
     }
 
     /**
-     * @return ArrayCollection<Teacher>
+     * @return Collection<Teacher>
      */
-    public function getAuthors() {
+    public function getAuthors(): Collection {
         return $this->authors;
     }
 

@@ -1,0 +1,137 @@
+{% extends 'knp_menu.html.twig' %}
+
+{% import "knp_menu.html.twig" as macros %}
+
+{% block item %}
+    {% if item.displayed %}
+        {%- set attributes = item.attributes %}
+        {%- set is_dropdown = attributes.dropdown|default(false) %}
+        {%- set divider_prepend = attributes.divider_prepend|default(false) %}
+        {%- set divider_append = attributes.divider_append|default(false) %}
+
+        {# unset bootstrap specific attributes #}
+        {%- set attributes = attributes|merge({'dropdown': null, 'divider_prepend': null, 'divider_append': null }) %}
+
+        {%- if divider_prepend %}
+            {{ block('dividerElement') }}
+        {%- endif %}
+
+        {# building the class of the item #}
+        {%- set classes = item.attribute('class') is not empty ? [item.attribute('class')] : [] %}
+        {%- set classes = classes|merge(['nav-item']) -%}
+        {%- if matcher.isCurrent(item) %}
+            {%- set classes = classes|merge([options.currentClass]) %}
+        {%- elseif matcher.isAncestor(item, options.depth) %}
+            {%- set classes = classes|merge([options.ancestorClass]) %}
+        {%- endif %}
+        {%- if item.actsLikeFirst %}
+            {%- set classes = classes|merge([options.firstClass]) %}
+        {%- endif %}
+        {%- if item.actsLikeLast %}
+            {%- set classes = classes|merge([options.lastClass]) %}
+        {%- endif %}
+
+        {# building the class of the children #}
+        {%- set childrenClasses = item.childrenAttribute('class') is not empty ? [item.childrenAttribute('class')] : [] %}
+        {%- set childrenClasses = childrenClasses|merge(['menu_level_' ~ item.level]) %}
+
+        {# adding classes for dropdown #}
+        {%- if is_dropdown %}
+            {%- set childrenClasses = childrenClasses|merge(['nav nav-pills flex-column']) %}
+        {%- endif %}
+
+        {# putting classes together #}
+        {%- if classes is not empty %}
+            {%- set attributes = attributes|merge({'class': classes|join(' ')}) %}
+        {%- endif %}
+        {%- set listAttributes = item.childrenAttributes|merge({'class': childrenClasses|join(' ') }) %}
+
+        {# displaying the item #}
+        <li{{ macros.attributes(attributes) }}>
+            {%- if is_dropdown %}
+                {{ block('dropdownElement') }}
+            {%- elseif item.uri is not empty and (not item.current or options.currentAsLink) %}
+                {{ block('linkElement') }}
+            {%- else %}
+                {{ block('spanElement') }}
+            {%- endif %}
+            {# render the list of children #}
+            {% if is_dropdown %}
+                <div id="{{ listAttributes.id }}" class="collapse{% if matcher.isCurrent(item) or matcher.isAncestor(item, options.depth) %} show{% endif %}">
+                    {%- set listAttributes = listAttributes|merge({ 'id': null }) %}
+                    {{ block('list') }}
+                </div>
+            {% else %}
+                {{ block('list') }}
+            {% endif %}
+        </li>
+
+        {%- if divider_append %}
+            {{ block('dividerElement') }}
+        {%- endif %}
+    {% endif %}
+{% endblock %}
+
+{% block dividerElement %}
+    {% if item.level == 1 %}
+        <li class="divider-vertical"></li>
+    {% else %}
+        <li class="divider"></li>
+    {% endif %}
+{% endblock %}
+
+{% block linkElement %}
+    {%- set linkAttributes = item.linkAttributes %}
+    {%- set classes = linkAttributes.class is defined and linkAttributes.class is not empty ? [linkAttributes.attribute('class')] : [] %}
+    {%- set classes = classes|merge(['nav-link']) %}
+    {%- if matcher.isCurrent(item) %}
+        {%- set classes = classes|merge([options.currentClass]) %}
+    {%- endif  %}
+    {%- set linkAttributes = linkAttributes|merge({'class': classes|join(' ')}) %}
+
+    <a href="{{ item.uri }}"{{ macros.attributes(linkAttributes) }}>
+        {% if item.attribute('icon') is not empty  %}
+            <i class="{{ item.attribute('icon') }}"></i>
+        {% endif %}
+        {{ block('label') }}
+        {{ block('badge') }}
+    </a>
+{% endblock %}
+
+{% block spanElement %}
+    {%- set labelAttributes = item.labelAttributes %}
+    {%- set classes = labelAttributes.class is defined and linkAttributes.class is not empty ? [linkAttributes.attribute('class')] : [] %}
+    {%- set classes = classes|merge(['navbar-text']) %}
+    {%- set labelAttributes = labelAttributes|merge({'class': classes|join(' ')}) %}
+
+    <span{{ macros.attributes(labelAttributes) }}>
+        {% if item.attribute('icon') is not empty  %}
+            <i class="{{ item.attribute('icon') }}"></i>
+        {% endif %}
+        {{ block('label') }}
+        {{ block('badge') }}
+	</span>
+{% endblock %}
+
+{% block badge %}
+    {% if item.attribute('count') is not empty %}
+        <span class="badge badge-pill badge-primary{%- if matcher.isCurrent(item) %} badge-light{% endif %}">{{ item.attribute('count') }}</span>
+    {% endif %}
+{% endblock %}
+
+{% block dropdownElement %}
+    {%- set classes = item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [] %}
+    {%- set classes = classes|merge(['nav-link']) %}
+    {%- set attributes = item.linkAttributes %}
+    {%- set attributes = attributes|merge({'class': classes|join(' ')}) %}
+    {%- set attributes = attributes|merge({'data-toggle': 'collapse', 'data-target': '#' ~ listAttributes.id }) %}
+    <a href="#"{{ macros.attributes(attributes) }}>
+        {% if item.attribute('icon') is not empty  %}
+            <i class="{{ item.attribute('icon') }}"></i>
+        {% endif %}
+        {{ block('label') }}
+        <i class="fa fa-caret-down" aria-hidden="true"></i>
+    </a>
+{% endblock %}
+
+{% block label %}{{ item.label|trans }}{% endblock %}

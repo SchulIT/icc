@@ -9,7 +9,6 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Utils\AcronymHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\IdentityTranslator;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AcronymHelperTest extends TestCase {
 
@@ -39,7 +38,7 @@ class TeacherStringConverter extends OriginalTeacherStringConverter {
         parent::__construct(new IdentityTranslator());
     }
 
-    public function convert(Teacher $teacher) {
+    public function convert(Teacher $teacher, bool $includeAcronym = false) {
         if($teacher->getGender()->equals(Gender::Male())) {
             return sprintf('Mr. %s', $teacher->getLastname());
         }

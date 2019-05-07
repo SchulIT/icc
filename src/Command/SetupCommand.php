@@ -9,6 +9,7 @@ use App\Entity\UserType;
 use App\Repository\DocumentVisibilityRepositoryInterface;
 use App\Repository\MessageVisibilityRepositoryInterface;
 use App\Repository\TimetablePeriodVisibilityRepositoryInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,13 +21,17 @@ class SetupCommand extends Command {
     private $messageVisibilityRepository;
     private $timetablePeriodVisibilityRepository;
 
+    private $em;
+
     public function __construct(DocumentVisibilityRepositoryInterface $documentVisibilityRepository, MessageVisibilityRepositoryInterface $messageVisibilityRepository,
-                                TimetablePeriodVisibilityRepositoryInterface $timetablePeriodVisibilityRepository, string $name = null) {
+                                TimetablePeriodVisibilityRepositoryInterface $timetablePeriodVisibilityRepository, EntityManagerInterface $em, string $name = null) {
         parent::__construct($name);
 
         $this->documentVisibilityRepository = $documentVisibilityRepository;
         $this->messageVisibilityRepository = $messageVisibilityRepository;
         $this->timetablePeriodVisibilityRepository = $timetablePeriodVisibilityRepository;
+
+        $this->em = $em;
     }
 
     public function configure() {
@@ -40,6 +45,8 @@ class SetupCommand extends Command {
     public function execute(InputInterface $input, OutputInterface $output) {
         $style = new SymfonyStyle($input, $output);
 
+        $this->setupSessions($style);
+
         $this->addMissingDocumentVisibilities($style);
         $this->addMissingMessageVisibilities($style);
         $this->addMissingTimetablePeriodVisibilities($style);
@@ -47,8 +54,6 @@ class SetupCommand extends Command {
 
     private function addMissingVisibility(SymfonyStyle $style, string $type, array $visibilities, \Closure $newVisibilityAction) {
         $style->section(sprintf('Adding missing %s', $type));
-
-
 
         foreach(UserType::values() as $value) {
             if(in_array($value, $visibilities)) {
@@ -111,5 +116,19 @@ class SetupCommand extends Command {
         };
 
         $this->addMissingVisibility($style, TimetablePeriodVisibility::class, $visibilities, $action);
+    }
+
+    private function setupSessions(SymfonyStyle $style) {
+            $sql = <<<SQL
+CREATE TABLE IF NOT EXISTS `sessions` (
+    `sess_id` VARCHAR(128) NOT NULL PRIMARY KEY,
+    `sess_data` BLOB NOT NULL,
+    `sess_time` INTEGER UNSIGNED NOT NULL,
+    `sess_lifetime` MEDIUMINT NOT NULL
+) COLLATE utf8_bin, ENGINE = InnoDB;
+SQL;
+        $this->em->getConnection()->exec($sql);
+
+        $style->success('Sessions table ready.');
     }
 }

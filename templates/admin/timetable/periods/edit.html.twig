@@ -1,0 +1,24 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.timetable.periods.edit.label'|trans }}{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+    <div class="contentbox">
+        <h4>{{ 'label.general'|trans }}</h4>
+
+        {{ form_widget(form) }}
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+        </button>
+
+        <a href="{{ path('admin_timetable_periods') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

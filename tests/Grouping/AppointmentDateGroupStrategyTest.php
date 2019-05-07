@@ -34,15 +34,7 @@ class AppointmentDateGroupStrategyTest extends TestCase {
 
     public function testGrouping() {
         $strategy = new AppointmentDateStrategy();
-
-        $containerMock = $this->createMock(ContainerInterface::class);
-        $containerMock
-            ->method('get')
-            ->with(AppointmentDateStrategy::class)
-            ->willReturn($strategy);
-
-        $grouper = new Grouper();
-        $grouper->setContainer($containerMock);
+        $grouper = new Grouper([$strategy]);
 
         $array = $this->getTestData();
         /** @var AppointmentDateGroup[] $groups */

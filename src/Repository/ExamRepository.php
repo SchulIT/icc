@@ -49,7 +49,7 @@ class ExamRepository implements ExamRepositoryInterface {
             ->andWhere('e.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
-            ->getSingleResult();
+            ->getOneOrNullResult();
     }
 
     /**
@@ -61,7 +61,7 @@ class ExamRepository implements ExamRepositoryInterface {
             ->andWhere('e.externalId = :externalId')
             ->setParameter('externalId', $externalId)
             ->getQuery()
-            ->getSingleResult();
+            ->getOneOrNullResult();
     }
 
     /**

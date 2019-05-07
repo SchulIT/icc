@@ -48,15 +48,15 @@ class DocumentCategory {
     /**
      * @return string
      */
-    public function getName(): string {
+    public function getName(): ?string {
         return $this->name;
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      * @return DocumentCategory
      */
-    public function setName(string $name): DocumentCategory {
+    public function setName(?string $name): DocumentCategory {
         $this->name = $name;
         return $this;
     }

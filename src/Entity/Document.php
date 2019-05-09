@@ -64,7 +64,7 @@ class Document {
     private $studyGroups;
 
     /**
-     * @ORM\OneToMany(targetEntity="DocumentAttachment", mappedBy="document")
+     * @ORM\OneToMany(targetEntity="DocumentAttachment", mappedBy="document", cascade={"persist"})
      * @var Collection<DocumentAttachment>
      */
     private $attachments;
@@ -119,14 +119,14 @@ class Document {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getName(): string {
+    public function getName(): ?string {
         return $this->name;
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      * @return Document
      */
     public function setName(string $name): Document {
@@ -151,17 +151,17 @@ class Document {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getContent(): string {
+    public function getContent(): ?string {
         return $this->content;
     }
 
     /**
-     * @param string $content
+     * @param string|null $content
      * @return Document
      */
-    public function setContent(string $content) {
+    public function setContent(?string $content) {
         $this->content = $content;
         return $this;
     }
@@ -182,6 +182,12 @@ class Document {
     }
 
     public function addAttachment(DocumentAttachment $attachment) {
+        if($attachment->getDocument() === $this) {
+            // Do not readd already existing attachments (seems to fix a bug with VichUploaderBundle https://github.com/dustin10/VichUploaderBundle/issues/842)
+            return;
+        }
+
+        $attachment->setDocument($this);
         $this->attachments->add($attachment);
     }
 

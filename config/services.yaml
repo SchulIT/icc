@@ -71,12 +71,14 @@ services:
 
     # FLYSYSTEM
     App\Filesystem\DocumentFilesystem:
+        public: true
         arguments:
-            $filesystem: '@oneup_flysystem.document_filesystem'
+            $filesystem: '@oneup_flysystem.documents_filesystem'
 
     App\Filesystem\MessageFilesystem:
+        public: true
         arguments:
-            $filesystem: '@oneup_flysystem.message_filesystem'
+            $filesystem: '@oneup_flysystem.messages_filesystem'
 
     App\Security\ImportUserAuthenticator:
         arguments:
@@ -99,11 +101,9 @@ services:
     # SERVICES
     App\Sorting\:
         resource: '../src/Sorting/*Strategy.php'
-        public: true
 
     App\Grouping\:
         resource: '../src/Grouping/*Strategy.php'
-        public: true
 
     App\Grouping\Grouper:
         arguments:

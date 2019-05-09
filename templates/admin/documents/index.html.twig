@@ -1,0 +1,72 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.documents.categories.label'|trans }}{% endblock %}
+
+{% block content %}
+
+    {% if categories|length == 0 %}
+        <div class="contentbox">
+        <h4>{{ 'admin.documents.categories.label'|trans }}</h4>
+            <div class="bs-callout bs-callout-info">
+                <h5>{{ 'info.label'|trans }}</h5>
+
+                <p>{{ 'admin.documents.overview.empty'|trans }}</p>
+            </div>
+        </div>
+    {% else %}
+        {% for group in categories %}
+            <div class="contentbox">
+                <h4>{{ group.category.name }} <span class="badge badge-pill badge-primary">{{ group.documents|length }}</span> </h4>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>{{ 'label.name'|trans }} </th>
+                            <th>{{ 'label.visibility'|trans }}</th>
+                            <th>{{ 'label.authors'|trans }}</th>
+                            <th> </th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for document in group.documents %}
+                            <tr>
+                                <td>{{ document.name }}</td>
+                                <td>
+                                    {% for visibility in document.visibilities %}{{ visibility.userType|usertype }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                </td>
+                                <td>
+                                    {% for user in document.authors %}{{ user|user }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                </td>
+                                <td>
+                                    {% if is_granted('edit', document) %}
+                                        <a href="{{ path('admin_edit_document', { id: document.id }) }}" class="btn btn-primary btn-sm">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                    {% endif %}
+                                    {% if is_granted('remove', document) %}
+                                        <a href="{{ path('admin_remove_document', { id: document.id }) }}" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="buttons">
+        <a href="{{ path('admin_add_document_category') }}" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'admin.documents.categories.add.label'|trans }}
+        </a>
+
+        <a href="{{ path('admin_document_categories') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'admin.documents.categories.overview.back'|trans }}
+        </a>
+    </div>
+{% endblock %}

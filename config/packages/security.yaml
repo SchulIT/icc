@@ -14,10 +14,12 @@ security:
         - { path: ^/api/import, roles: ROLE_IMPORT }
 
     role_hierarchy:
-        ROLE_ADMIN: [ ROLE_USER, ROLE_MESSAGE_CREATOR, ROLE_ALLOWED_TO_SWITCH ]
+        ROLE_ADMIN: [ ROLE_USER, ROLE_WIKI_ADMIN, ROLE_DOCUMENTS_ADMIN, ROLE_MESSAGE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
         ROLE_SUPER_ADMIN: ROLE_ADMIN
         ROLE_MESSAGE_CREATOR: ROLE_USER
-
+        ROLE_MESSAGE_ADMIN: [ ROLE_MESSAGE_CREATOR, ROLE_USER ]
+        ROLE_WIKI_ADMIN: ROLE_USER
+        ROLE_DOCUMENTS_ADMIN: ROLE_USER
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs

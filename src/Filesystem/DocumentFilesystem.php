@@ -69,6 +69,8 @@ class DocumentFilesystem implements DirectoryNamerInterface {
      * @return string
      */
     public function directoryName($object, PropertyMapping $mapping): string {
+        dump($object);
+
         return $this->getAttachmentsDirectory($object->getDocument());
     }
 }

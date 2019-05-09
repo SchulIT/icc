@@ -9,6 +9,7 @@ use App\Entity\Grade;
 use App\Entity\MessageScope;
 use App\Entity\MessageVisibility;
 use App\Entity\StudyGroup;
+use App\Security\Voter\MessageScopeVoter;
 use App\Sorting\StringStrategy;
 use App\Sorting\StudyGroupStrategy;
 use App\Utils\ArrayUtils;
@@ -23,6 +24,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class MessageType extends AbstractType {
 
@@ -36,9 +39,12 @@ class MessageType extends AbstractType {
     private $stringStrategy;
     private $studyGroupStrategy;
 
+    private $authorizationChecker;
+
     public function __construct(StudyGroupStringConverter $studyGroupConverter, UserTypeStringConverter $userTypeConverter,
                                 MessageScopeStringConverter $messageScopeConverter, DateHelper $dateHelper,
-                                StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy) {
+                                StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy,
+                                AuthorizationCheckerInterface $authorizationChecker) {
         $this->studyGroupConverter = $studyGroupConverter;
         $this->userTypeConverter = $userTypeConverter;
         $this->messageScopeConverter = $messageScopeConverter;
@@ -46,6 +52,8 @@ class MessageType extends AbstractType {
 
         $this->stringStrategy = $stringStrategy;
         $this->studyGroupStrategy = $studyGroupStrategy;
+
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -61,14 +69,19 @@ class MessageType extends AbstractType {
                         $years[] = $year;
                     }
 
+                    $scopes = array_filter(ArrayUtils::createArray(MessageScope::keys(), MessageScope::values()),
+                        function(MessageScope $scope) {
+                            return $this->authorizationChecker->isGranted(MessageScopeVoter::USE, $scope);
+                        }
+                    );
+
                     $builder
                         ->add('subject', TextType::class, [
                             'label' => 'label.message.subject'
                         ])
                         ->add('scope', ChoiceType::class, [
-                            'choices' => ArrayUtils::createArray(MessageScope::keys(), MessageScope::values()),
+                            'choices' => $scopes,
                             'label' => 'label.scope',
-                            'expanded' => true,
                             'choice_label' => function(MessageScope $scope) {
                                 return $this->messageScopeConverter->convert($scope);
                             }

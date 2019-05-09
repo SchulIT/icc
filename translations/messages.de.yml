@@ -49,6 +49,7 @@ label:
     week_mod:
         label: Wochen-Modulo
         help: "Wird zur Berechnung der Wochen benötigt (bspw. 0 = gerade Wochen, 1 = ungerade Wochen; sofern nur zwei Wochentypen angegeben wurden). Berechnung: aktuelle Woche modulo Anzahl der Stundenplan-Wochen."
+    category: Kategorie
 
 
 actions:
@@ -142,6 +143,7 @@ message:
         login: Anmeldeseite
         timetable: Stundenplan
         messages: Mitteilungen
+        lists: Listen
 
 usertype:
     teacher: Lehrkräfte
@@ -232,6 +234,19 @@ admin:
                 success: Stundenplan-Periode erfolgreich gelöscht
 
     documents:
+        label: Dokumente verwalten
+
+        add:
+            label: Dokument erstellen
+            success: Dokument erfolgreich erstellt
+        edit:
+            label: Dokument bearbeiten
+            success: Dokument erfolgreich aktualisiert
+        remove:
+            label: Dokument löschen
+            confirm: 'Soll das Dokument "%name%" wirklich gelöscht werden?'
+            success: Dokument erfolgreich gelöscht
+
         categories:
             label: Dokument-Kategorien verwalten
             overview:

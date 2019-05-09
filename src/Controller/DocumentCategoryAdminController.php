@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/admin/documents/categories")
- * @Security("is_granted('ROLE_ADMIN')")
+ * @Security("is_granted('ROLE_DOCUMENTS_ADMIN')")
  */
 class DocumentCategoryAdminController extends AbstractController {
 

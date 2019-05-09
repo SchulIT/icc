@@ -30,7 +30,7 @@ class MessageAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/", name="admin_messages")
+     * @Route("", name="admin_messages")
      */
     public function index() {
         $messages = $this->repository->findAll();

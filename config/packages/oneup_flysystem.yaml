@@ -3,18 +3,21 @@ oneup_flysystem:
     adapters:
         messages:
             local:
-                directory: '%kernel.root_dir%/files/messages'
+                directory: '%kernel.project_dir%/files/messages'
         documents:
             local:
-                directory: '%kernel.root_dir%/files/documents'
+                directory: '%kernel.project_dir%/files/documents'
         wiki:
             local:
-                directory: '%kernel.root_dir%/files/wiki'
+                directory: '%kernel.project_dir%/files/wiki'
 
     filesystems:
         messages:
             adapter: messages
+            mount: messages
         documents:
             adapter: documents
+            mount: documents
         wiki:
             adapter: wiki
+            mount: wiki

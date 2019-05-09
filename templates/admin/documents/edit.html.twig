@@ -1,0 +1,63 @@
+{% extends "main.html.twig" %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/attachments.js') }}"></script>
+
+    <script src="{{ asset('build/ace/ace.js') }}"></script>
+    <script src="{{ asset('build/editor.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ 'admin.documents.edit.label'|trans }}{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form) }}
+
+    {{ form_row(form.group_general) }}
+
+    <div class="contentbox">
+        <h4>{{ 'label.attachments'|trans }}</h4>
+
+        <div class="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}">
+            {% for attachment in form.group_attachments.attachments %}
+                {% if attachment.vars.value is not null and attachment.vars.value.id is not null %}
+                    <div class="form-group row">
+                        <div class="col-sm-2">  </div>
+                        <div class="col-sm-10">
+                            <i class="fa fa-file"></i> {{ attachment.vars.value.filename }}
+
+                            {% if attachment.children.file.delete is defined %}
+                                {{ form_widget(attachment.children.file.delete) }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% do attachment.setRendered() %}
+                {% else %}
+                    {{ form_widget(attachment) }}
+                {% endif %}
+            {% endfor %}
+
+            {% do form.group_attachments.setRendered() %}
+        </div>
+
+        {{ form_errors(form.group_attachments.attachments) }}
+
+        <button class="btn btn-outline-primary btn-sm btn-add">
+            <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+        </button>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'actions.save'|trans }}
+        </button>
+
+        <a href="{{ path('admin_documents') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}

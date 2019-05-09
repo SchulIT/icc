@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Vich\UploaderBundle\Entity\File;
+use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -29,7 +29,7 @@ class MessageAttachment {
     private $message;
 
     /**
-     * @Vich\UploadableField(mapping="messages", fileNameProperty="filename")
+     * @Vich\UploadableField(mapping="messages", fileNameProperty="filename", size="size")
      */
     private $file;
 
@@ -97,17 +97,17 @@ class MessageAttachment {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFilename(): string {
+    public function getFilename(): ?string {
         return $this->filename;
     }
 
     /**
-     * @param string $filename
+     * @param string|null $filename
      * @return MessageAttachment
      */
-    public function setFilename(string $filename): MessageAttachment {
+    public function setFilename(?string $filename): MessageAttachment {
         $this->filename = $filename;
         return $this;
     }
@@ -124,6 +124,7 @@ class MessageAttachment {
      * @return MessageAttachment
      */
     public function setSize(?int $size): MessageAttachment {
+        dump($size);
         $this->size = $size;
         return $this;
     }

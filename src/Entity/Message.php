@@ -239,6 +239,12 @@ class Message {
     }
 
     public function addAttachment(MessageAttachment $attachment) {
+        if($attachment->getMessage() === $this) {
+            // Do not readd already existing attachments (seems to fix a bug with VichUploaderBundle https://github.com/dustin10/VichUploaderBundle/issues/842)
+            return;
+        }
+
+        $attachment->setMessage($this); // important as MessageFilesystem needs $attachment->getMessage()
         $this->attachments->add($attachment);
     }
 

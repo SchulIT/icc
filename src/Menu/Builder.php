@@ -35,7 +35,7 @@ class Builder {
         ]);
 
         $plans->addChild('plans.rooms.label', [
-
+            'route' => 'rooms'
         ]);
 
         return $plans;

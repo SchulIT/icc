@@ -3,15 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\DocumentVisibility;
-use Doctrine\ORM\EntityManagerInterface;
 
-class DocumentVisibilityRepository implements DocumentVisibilityRepositoryInterface {
-
-    private $em;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class DocumentVisibilityRepository extends AbstractRepository implements DocumentVisibilityRepositoryInterface {
 
     /**
      * @inheritDoc

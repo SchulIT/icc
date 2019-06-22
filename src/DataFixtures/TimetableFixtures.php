@@ -46,42 +46,34 @@ class TimetableFixtures extends Fixture implements DependentFixtureInterface {
         $manager->flush();
     }
 
-    private function loadQ1LKTimetable(ObjectManager $manager, TimetableWeek $weekA, TimetableWeek $weebB, TimetablePeriod $period) {
+    private function loadQ1LKTimetable(ObjectManager $manager, TimetableWeek $weekA, TimetableWeek $weekB, TimetablePeriod $period) {
         /** @var Tuition[] $lks */
         $lks = $manager->getRepository(Tuition::class)
             ->findAll();
 
         foreach($lks as $lk) {
             if(substr($lk->getName(), -3) === 'LK1') {
-                foreach([$weekA, $weebB] as $week) {
+                foreach([$weekA, $weekB] as $week) {
                     // LK1
                     $manager->persist(
                         (new TimetableLesson())
                             ->setDay(1)// Monday
                             ->setLesson(1)
+                            ->setIsDoubleLesson(true)
                             ->setTuition($lk)
-                            ->setRoom($this->roomProvider->getRoom())
+                            ->setRoom($this->roomProvider->getRandomRoom())
                             ->setWeek($week)
                             ->setPeriod($period)
                             ->setExternalId(sprintf('%s-%d-%d-%s', $lk->getExternalId(), 1, 1, $week->getKey()))
-                    );
-                    $manager->persist(
-                        (new TimetableLesson())
-                            ->setDay(1)// Monday
-                            ->setLesson(2)
-                            ->setTuition($lk)
-                            ->setRoom($this->roomProvider->getRoom())
-                            ->setWeek($week)
-                            ->setPeriod($period)
-                            ->setExternalId(sprintf('%s-%d-%d-%s', $lk->getExternalId(), 1, 2, $week->getKey()))
                     );
 
                     $manager->persist(
                         (new TimetableLesson())
                             ->setDay(3)// Wednesday
                             ->setLesson(3)
+                            ->setIsDoubleLesson(true)
                             ->setTuition($lk)
-                            ->setRoom($this->roomProvider->getRoom())
+                            ->setRoom($this->roomProvider->getRandomRoom())
                             ->setWeek($week)
                             ->setPeriod($period)
                             ->setExternalId(sprintf('%s-%d-%d-%s', $lk->getExternalId(), 3, 3, $week->getKey()))
@@ -89,69 +81,40 @@ class TimetableFixtures extends Fixture implements DependentFixtureInterface {
 
                     $manager->persist(
                         (new TimetableLesson())
-                            ->setDay(3)// Wednesday
-                            ->setLesson(4)
-                            ->setTuition($lk)
-                            ->setRoom($this->roomProvider->getRoom())
-                            ->setWeek($week)
-                            ->setPeriod($period)
-                            ->setExternalId(sprintf('%s-%d-%d-%s', $lk->getExternalId(), 3, 4, $week->getKey()))
-                    );
-
-                    $manager->persist(
-                        (new TimetableLesson())
                             ->setDay(5)// Friday
                             ->setLesson(6)
                             ->setTuition($lk)
-                            ->setRoom($this->roomProvider->getRoom())
+                            ->setRoom($this->roomProvider->getRandomRoom())
                             ->setWeek($week)
                             ->setPeriod($period)
                             ->setExternalId(sprintf('%s-%d-%d-%s', $lk->getExternalId(), 5, 6, $week->getKey()))
                     );
                 }
-            } else {
-                foreach([$weekA, $weebB] as $week) {
+            } else if(substr($lk->getName(), -3) === 'LK2')  {
+                foreach([$weekA, $weekB] as $week) {
                     // LK2
                     $manager->persist(
                         (new TimetableLesson())
                             ->setDay(1)// Monday
                             ->setLesson(3)
+                            ->setIsDoubleLesson(true)
                             ->setTuition($lk)
-                            ->setRoom($this->roomProvider->getRoom())
+                            ->setRoom($this->roomProvider->getRandomRoom())
                             ->setWeek($week)
                             ->setPeriod($period)
                             ->setExternalId(sprintf('%s-%d-%d-%s', $lk->getExternalId(), 1, 3, $week->getKey()))
-                    );
-                    $manager->persist(
-                        (new TimetableLesson())
-                            ->setDay(1)// Monday
-                            ->setLesson(4)
-                            ->setTuition($lk)
-                            ->setRoom($this->roomProvider->getRoom())
-                            ->setWeek($week)
-                            ->setPeriod($period)
-                            ->setExternalId(sprintf('%s-%d-%d-%s', $lk->getExternalId(), 1, 4, $week->getKey()))
                     );
 
                     $manager->persist(
                         (new TimetableLesson())
                             ->setDay(2)// Tuesday
                             ->setLesson(3)
+                            ->setIsDoubleLesson(true)
                             ->setTuition($lk)
-                            ->setRoom($this->roomProvider->getRoom())
+                            ->setRoom($this->roomProvider->getRandomRoom())
                             ->setWeek($week)
                             ->setPeriod($period)
                             ->setExternalId(sprintf('%s-%d-%d-%s', $lk->getExternalId(), 2, 3, $week->getKey()))
-                    );
-                    $manager->persist(
-                        (new TimetableLesson())
-                            ->setDay(2)// Tuesday
-                            ->setLesson(4)
-                            ->setTuition($lk)
-                            ->setRoom($this->roomProvider->getRoom())
-                            ->setWeek($week)
-                            ->setPeriod($period)
-                            ->setExternalId(sprintf('%s-%d-%d-%s', $lk->getExternalId(), 2, 4, $week->getKey()))
                     );
                 }
 
@@ -159,21 +122,12 @@ class TimetableFixtures extends Fixture implements DependentFixtureInterface {
                     (new TimetableLesson())
                         ->setDay(4)// Tuesday
                         ->setLesson(3)
+                        ->setIsDoubleLesson(true)
                         ->setTuition($lk)
-                        ->setRoom($this->roomProvider->getRoom())
+                        ->setRoom($this->roomProvider->getRandomRoom())
                         ->setWeek($weekA)
                         ->setPeriod($period)
                         ->setExternalId(sprintf('%s-%d-%d-%s', $lk->getExternalId(), 4, 3, $weekA->getKey()))
-                );
-                $manager->persist(
-                    (new TimetableLesson())
-                        ->setDay(4)// Tuesday
-                        ->setLesson(4)
-                        ->setTuition($lk)
-                        ->setRoom($this->roomProvider->getRoom())
-                        ->setWeek($weekA)
-                        ->setPeriod($period)
-                        ->setExternalId(sprintf('%s-%d-%d-%s', $lk->getExternalId(), 4, 4, $weekA->getKey()))
                 );
             }
         }

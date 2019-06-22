@@ -41,13 +41,6 @@ class TimetableDay {
     }
 
     /**
-     * @param TimetableLesson $lesson
-     */
-    public function addLesson(TimetableLesson $lesson): void {
-        $this->lessons[] = $lesson;
-    }
-
-    /**
      * @return TimetableLesson[]
      */
     public function getLessons() {
@@ -72,6 +65,11 @@ class TimetableDay {
     public function addTimetableLesson(TimetableLessonEntity $lessonEntity): void {
         $lesson = $this->getTimetableLesson($lessonEntity->getLesson());
         $lesson->addTimetableLesson($lessonEntity);
+
+        if($lessonEntity->isDoubleLesson()) {
+            $nextLesson = $this->getTimetableLesson($lessonEntity->getLesson() + 1);
+            $nextLesson->addTimetableLesson($lessonEntity);
+        }
     }
 
     /**

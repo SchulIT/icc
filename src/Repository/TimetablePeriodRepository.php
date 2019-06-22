@@ -3,16 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\TimetablePeriod;
-use Doctrine\ORM\EntityManagerInterface;
 
-class TimetablePeriodRepository implements TimetablePeriodRepositoryInterface {
-
-    private $em;
-    private $isTransactionActive = false;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class TimetablePeriodRepository extends AbstractTransactionalRepository implements TimetablePeriodRepositoryInterface {
 
     /**
      * @inheritDoc
@@ -49,7 +41,7 @@ class TimetablePeriodRepository implements TimetablePeriodRepositoryInterface {
      */
     public function persist(TimetablePeriod $period): void {
         $this->em->persist($period);
-        $this->isTransactionActive || $this->em->flush();
+        $this->flushIfNotInTransaction();
     }
 
     /**
@@ -57,17 +49,7 @@ class TimetablePeriodRepository implements TimetablePeriodRepositoryInterface {
      */
     public function remove(TimetablePeriod $period): void {
         $this->em->remove($period);
-        $this->isTransactionActive || $this->em->flush();
+        $this->flushIfNotInTransaction();
     }
 
-    public function beginTransaction(): void {
-        $this->em->beginTransaction();
-        $this->isTransactionActive = true;
-    }
-
-    public function commit(): void {
-        $this->em->flush();
-        $this->em->commit();
-        $this->isTransactionActive = false;
-    }
 }

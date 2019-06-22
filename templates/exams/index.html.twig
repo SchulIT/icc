@@ -7,48 +7,20 @@
 
     <div class="contentbox">
         <div class="row">
-            {% if teachers|length > 0 %}
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <form role="form" method="get" class="form hidden-print">
-                    <div class="form-group">
-                        <label for="teacher">{{ 'label.teacher'|trans }}:</label>
-                        <select name="teacherAcronym" id="teacher" class="form-control" data-trigger="form-submit" data-select="select2">
-                            <option value="">{{ 'label.select.teacher'|trans }}</option>
-                            {% for t in teachers %}
-                                <option value="{{ t.acronym() }}" {% if teacher != null and teacher.acronym == t.acronym %}selected="selected"{% endif %}>{{ t|teacher(true) }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </form>
-            </div>
+            {% if teacherFilter.teachers|length > 0 %}
+                {% include "_filter/teacher.html.twig" %}
             {% endif %}
 
-            {% if studentGroups|length > 0 %}
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <form role="form" method="get" class="form hidden-print">
-                    <div class="form-group">
-                        <label for="student">{{ 'label.student'|trans }}:</label>
-                        <select name="studentId" id="student" class="form-control" data-trigger="form-submit" data-select="select2">
-                            <option value="">{{ 'label.select.student'|trans }}</option>
-                            {% for group in studentGroups %}
-                                <optgroup label="{{ group.grade.name }}">
-                                    {% for s in group.students %}
-                                        <option value="{{ s.id }}"{% if student != null and student.id == s.id %}selected="selected"{% endif %}>{{ s|student }}</option>
-                                    {% endfor %}
-                                </optgroup>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </form>
-            </div>
+            {% if studentFilter.studentGradeGroups|length > 0 %}
+                {% include "_filter/student.html.twig" %}
             {% endif %}
 
             <div class="col-md-4 col-sm-4 col-xs-12">
                 <form role="form" method="get" class="form hidden-print">
                     <label class="control-label">{{ 'label.options'|trans }}:</label>
                     <div class="form-check">
-                        {% if teacher is not null %}<input type="hidden" name="teacherAcronym" value="{{ teacher.acronym }}">{% endif %}
-                        {% if student is not null %}<input type="hidden" name="studentId" value="{{ student.id }}">{% endif %}
+                        {% if teacherFilter.currentTeacher is not null %}<input type="hidden" name="teacherAcronym" value="{{ teacherFilter.currentTeacher.acronym }}">{% endif %}
+                        {% if studentFilter.currentStudent is not null %}<input type="hidden" name="studentId" value="{{ studentFilter.currentStudent.id }}">{% endif %}
                         <input class="form-check-input" data-trigger="form-submit" type="checkbox" value="true" id="all" name="all" {% if showAll %} checked="checked"{% endif %}>
                         <label for="all" class="form-check-label">
                             {{ 'plans.exams.show_all'|trans }}
@@ -59,13 +31,13 @@
         </div>
     </div>
 
-    {% if teacher is not null or student is not null %}
+    {% if teacherFilter.currentTeacher is not null or studentFilter.currentStudent is not null %}
     <div class="contentbox">
         <h4>
-            {% if teacher is not null %}
-                {{ 'plans.exams.title'|trans({'%for%' : teacher|teacher}) }}
-            {% elseif student is not null %}
-                {{ 'plans.exams.title'|trans({'%for%' : student|student}) }} ({{ student.grade.name }})
+            {% if teacherFilter.currentTeacher is not null %}
+                {{ 'plans.exams.title'|trans({'%for%' : teacherFilter.currentTeacher|teacher}) }}
+            {% elseif studentFilter.currentStudent is not null %}
+                {{ 'plans.exams.title'|trans({'%for%' : studentFilter.currentStudent|student}) }} ({{ studentFilter.currentStudent.grade.name }})
             {% endif %}
         </h4>
 

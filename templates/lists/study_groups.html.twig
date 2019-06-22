@@ -8,26 +8,12 @@
     <div class="contentbox d-print-none">
         <div class="row">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <form role="form" method="get" class="form">
-                    <div class="form-group">
-                        <label for="study_group" class="control-label">{{ 'label.study_group'|trans }}:</label>
-                        <select name="studyGroupId" id="study_group" class="form-control" data-trigger="form-submit" data-select="select2">
-                            <option value="">{{ 'label.select.study_group'|trans }}</option>
-                            {% for group in studyGroups %}
-                            <optgroup label="{{ group.grade.name }}">
-                                {% for g in group.studyGroups %}
-                                    <option value="{{ g.id }}" {% if studyGroup != null and studyGroup.id == g.id %}selected="selected"{% endif %}>{{ g|studygroup }}</option>
-                                {% endfor %}
-                            </optgroup>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </form>
+                {% include "_filter/study_group.html.twig" %}
             </div>
         </div>
     </div>
 
-    {% if studyGroup == null %}
+    {% if studyGroupFilter.currentStudyGroup == null %}
         <div class="bs-callout bs-callout-info">
             <h4>{{ 'info.label'|trans }}</h4>
 
@@ -41,9 +27,9 @@
         </div>
     {% elseif students|length > 0 %}
         <div class="contentbox">
-            <h4>{{ studyGroup.name }} <span class="badge badge-primary badge-pill">{{ studyGroup.memberships|length }}</span> </h4>
+            <h4>{{ studyGroupFilter.currentStudyGroup.name }} <span class="badge badge-primary badge-pill">{{ studyGroupFilter.currentStudyGroup.memberships|length }}</span> </h4>
 
-            {% if studyGroup.grades|length > 1 %}
+            {% if studyGroupFilter.currentStudyGroup.grades|length > 1 %}
                 <p>{% for grade in studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
             {% endif %}
 
@@ -104,7 +90,7 @@
                     </thead>
 
                     <tbody>
-                    {% for tuition in studyGroup.tuitions %}
+                    {% for tuition in studyGroupFilter.currentStudyGroup.tuitions %}
                         <tr>
                             <td>{{ tuition.name }}</td>
                             <td>{{ tuition.subject.name }}</td>

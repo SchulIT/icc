@@ -4,11 +4,11 @@ namespace App\Sorting;
 
 use App\Grouping\StudyGroupGradeGroup;
 
-class StudyGroupGradeGradeStrategy implements SortingStrategyInterface {
+class StudyGroupGradeGroupStrategy implements SortingStrategyInterface {
 
     private $gradeStrategy;
 
-    public function __construct(GradeStrategy $gradeStrategy) {
+    public function __construct(GradeNameStrategy $gradeStrategy) {
         $this->gradeStrategy = $gradeStrategy;
     }
 

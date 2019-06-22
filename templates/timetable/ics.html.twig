@@ -1,0 +1,60 @@
+{% extends 'main.html.twig' %}
+
+{% block title %}Termine exportieren{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('index') }}">Übersicht</a></li>
+        <li><a href="{{ path('show_timetable') }}">Stundenplan</a></li>
+        <li class="active">Export</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Stundenplan exportieren</h1>
+    </div>
+
+    {% if canExport %}
+        <div class="bs-callout bs-callout-info">
+            <h4>Information</h4>
+            <p>
+                Der aktuelle Stundenplan ist vom {{ start.format('d.m.Y') }} bis zum {{ end.format('d.m.Y') }} gültig.
+            </p>
+        </div>
+
+        <div class="export">
+            <h4>Einmaliger Download</h4>
+            <div class="bs-callout bs-callout-warning">
+                <p>Der Stundenplan wird bei dieser Methode nicht aktualisiert!</p>
+            </div>
+            <a href="{{ path('timetable_download') }}" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span> stundenplan.ics</a>
+
+            <hr />
+
+            <h4>Link zur Synchronisierung</h4>
+            <p>Dieser Link kann in Diesten wie beispielsweise Google Kalender verwendet werden, der den Stundenplan damit aktuell hält.</p>
+
+            {% if url == null %}
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+
+                <div class="buttons">
+                    <button class="btn btn-primary">
+                        <i class="fa fa-save"></i> Erzeugen
+                    </button>
+                </div>
+                {{ form_end(form) }}
+            {% else %}
+                <input type="text" readonly="readonly" autofocus="true" class="form-control" onfocus="this.select()" value="{{ url }}" />
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="bs-callout bs-callout-info">
+            <h4>Information</h4>
+            <p>
+                Der Stundenplan kann aktuell nicht exportiert werden.
+            </p>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -6,7 +6,6 @@ use App\Entity\Substitution;
 
 class SubstitutionStrategy implements SortingStrategyInterface {
 
-
     /**
      * @param Substitution $objectA
      * @param Substitution $objectB

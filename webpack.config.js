@@ -21,6 +21,7 @@ Encore
     .addEntry('app', './assets/js/app.js')
     .addEntry('attachments', './assets/js/attachments.js')
     .addEntry('editor', './assets/js/editor.js')
+    .addEntry('timetable', './assets/css/timetable.scss')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     //.splitEntryChunks()

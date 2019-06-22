@@ -4,20 +4,13 @@ namespace App\Sorting;
 
 use App\Entity\User;
 
-class UserUsernameStrategy implements SortingStrategyInterface {
-
-    private $stringStrategy;
-
-    public function __construct(StringStrategy $strategy) {
-        $this->stringStrategy = $strategy;
-    }
+class UserUsernameStrategy extends AbstractStringPropertyStrategy {
 
     /**
-     * @param User $objectA
-     * @param User $objectB
-     * @return int
+     * @param User $object
+     * @return string
      */
-    public function compare($objectA, $objectB): int {
-        return $this->stringStrategy->compare($objectA->getUsername(), $objectB->getUsername());
+    protected function getValue($object): string {
+        return $object->getUsername();
     }
 }

@@ -8,6 +8,7 @@ class TimetableSettings extends AbstractSettings {
     private const DescriptionBeforeKey = 'lesson.%d.before_label';
     private const StartKey = 'lesson.%d.start';
     private const EndKey = 'lesson.%d.end';
+    private const CollapsibleKey = 'lesson.%d.collapsable';
     private const SupervisionLabelKey = 'supervision.label';
     private const CategoriesKey = 'no_lessons_categories';
 
@@ -69,6 +70,20 @@ class TimetableSettings extends AbstractSettings {
         $this->setValue(
             $this->getKeyName(static::EndKey, $lesson),
             $time
+        );
+    }
+
+    public function setCollapsible($lesson, bool $isCollapsable): void {
+        $this->setValue(
+            $this->getKeyName(static::CollapsibleKey, $lesson),
+            $isCollapsable
+        );
+    }
+
+    public function isCollapsible($lesson): bool {
+        return $this->getValue(
+            $this->getKeyName(static::CollapsibleKey, $lesson),
+            false
         );
     }
 

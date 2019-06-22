@@ -6,26 +6,20 @@ use App\Entity\Exam;
 use App\Entity\MessageScope;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
-use App\Entity\Teacher;
 use App\Entity\Tuition;
-use App\Entity\User;
 use App\Entity\UserType;
 use App\Grouping\ExamDateStrategy;
 use App\Grouping\Grouper;
-use App\Grouping\StudentGradeStrategy;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
-use App\Repository\StudentRepositoryInterface;
-use App\Repository\TeacherRepositoryInterface;
 use App\Security\Voter\ExamVoter;
 use App\Sorting\ExamDateGroupStrategy;
 use App\Sorting\ExamLessonStrategy as ExamDateSortingStrategy;
 use App\Sorting\Sorter;
-use App\Sorting\StudentGradeGroupStrategy;
 use App\Sorting\StudentStrategy;
-use App\Sorting\TeacherStrategy;
-use App\Utils\ArrayUtils;
+use App\View\Filter\StudentFilter;
+use App\View\Filter\TeacherFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -45,44 +39,24 @@ class ExamController extends AbstractControllerWithMessages {
     /**
      * @Route("/exams", name="exams")
      */
-    public function index(ExamRepositoryInterface $examRepository, StudentRepositoryInterface $studentRepository,
-                          TeacherRepositoryInterface $teacherRepository, DateHelper $dateHelper,
+    public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter,
+                          ExamRepositoryInterface $examRepository,
                           ?int $studentId = null, ?string $teacherAcronym = null, ?bool $all = false) {
-        /** @var User $user */
         $user = $this->getUser();
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
-        if($isStudentOrParent) {
-            $students = $user->getStudents()->toArray();
-            $teachers = [ ];
-        } else {
-            $students = $studentRepository->findAll();
-            $teachers = $teacherRepository->findAll();
-        }
-
-        $students = ArrayUtils::createArrayWithKeys($students, function(Student $student) { return $student->getId();});
-        $teachers = ArrayUtils::createArrayWithKeys($teachers, function(Teacher $teacher) { return $teacher->getAcronym();});
-
-        $student = $studentId !== null ?
-            $students[$studentId] ?? null : null;
-        $teacher = $teacherAcronym !== null ?
-            $teachers[$teacherAcronym] ?? $user->getTeacher() : $user->getTeacher();
-
-        $studentGroups = $this->grouper->group($students, StudentGradeStrategy::class);
-        $this->sorter->sort($studentGroups, StudentGradeGroupStrategy::class);
-        $this->sorter->sortGroupItems($studentGroups, StudentStrategy::class);
-
-        $this->sorter->sort($teachers, TeacherStrategy::class);
+        $studentFilterView = $studentsFilter->handle($studentId, $this->getUser());
+        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $this->getUser());
 
         $exams = [ ];
         $today = $all ? null : $this->dateHelper->getToday();
 
-        if($student !== null) {
-            $exams = $examRepository->findAllByStudents([$student], $today);
+        if($studentFilterView->getCurrentStudent() !== null) {
+            $exams = $examRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $today);
         } else if($isStudentOrParent) {
-            $exams = $examRepository->findAllByStudents($user->getStudents()->toArray(), $today);
-        } else if($teacher !== null) {
-            $exams = $examRepository->findAllByTeacher($teacher, $today);
+            $exams = [ ];
+        } else if($teacherFilterView->getCurrentTeacher() !== null) {
+            $exams = $examRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $today);
         } else {
             $exams = $examRepository->findAll($today);
         }
@@ -97,10 +71,8 @@ class ExamController extends AbstractControllerWithMessages {
 
         return $this->render('exams/index.html.twig', [
             'examGroups' => $examGroups,
-            'studentGroups' => $studentGroups,
-            'teachers' => $teachers,
-            'teacher' => $teacher,
-            'student' => $student,
+            'studentFilter' => $studentFilterView,
+            'teacherFilter' => $teacherFilterView,
             'showAll' => $all
         ]);
     }

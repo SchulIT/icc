@@ -3,14 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Setting;
-use Doctrine\ORM\EntityManagerInterface;
 
-class SettingRepository implements SettingRepositoryInterface {
-    private $em;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class SettingRepository extends AbstractRepository implements SettingRepositoryInterface {
 
     /**
      * @param string $key

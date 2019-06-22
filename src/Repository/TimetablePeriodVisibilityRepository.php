@@ -3,15 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\TimetablePeriodVisibility;
-use Doctrine\ORM\EntityManagerInterface;
 
-class TimetablePeriodVisibilityRepository implements TimetablePeriodVisibilityRepositoryInterface {
-
-    private $em;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class TimetablePeriodVisibilityRepository extends AbstractRepository implements TimetablePeriodVisibilityRepositoryInterface {
 
     /**
      * @inheritDoc

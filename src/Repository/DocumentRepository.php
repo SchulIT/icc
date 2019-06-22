@@ -4,14 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Document;
 use App\Entity\DocumentCategory;
-use Doctrine\ORM\EntityManagerInterface;
 
-class DocumentRepository implements DocumentRepositoryInterface {
-    private $em;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class DocumentRepository extends AbstractRepository implements DocumentRepositoryInterface {
 
     /**
      * @param int $id

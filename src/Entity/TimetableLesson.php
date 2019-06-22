@@ -63,6 +63,12 @@ class TimetableLesson {
     private $lesson;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $isDoubleLesson = false;
+
+    /**
      * @ORM\Column(type="string", nullable=true)
      * @var string|null
      */
@@ -168,6 +174,22 @@ class TimetableLesson {
      */
     public function setLesson(int $lesson): TimetableLesson {
         $this->lesson = $lesson;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDoubleLesson(): bool {
+        return $this->isDoubleLesson;
+    }
+
+    /**
+     * @param bool $isDoubleLesson
+     * @return TimetableLesson
+     */
+    public function setIsDoubleLesson(bool $isDoubleLesson): TimetableLesson {
+        $this->isDoubleLesson = $isDoubleLesson;
         return $this;
     }
 

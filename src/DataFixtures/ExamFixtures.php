@@ -57,7 +57,7 @@ class ExamFixtures extends Fixture implements DependentFixtureInterface {
 
                 $start = $this->generator->numberBetween(1, 3);
                 $duration = $this->generator->numberBetween(2, 4);
-                $room = $this->roomGenerator->getRoom();
+                $room = $this->roomGenerator->getRandomRoom();
 
                 $exam = (new Exam())
                     ->setExternalId($id)

@@ -4,7 +4,7 @@ twig:
     strict_variables: '%kernel.debug%'
 
     form_themes:
-        - "form.html.twig"
+        - "@Common/form.html.twig"
     globals:
         config: '@SchoolIT\CommonBundle\Twig\ConfigVariable'
         user: '@App\Twig\UserVariable'

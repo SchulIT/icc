@@ -3,15 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\MessageVisibility;
-use Doctrine\ORM\EntityManagerInterface;
 
-class MessageVisibilityRepository implements MessageVisibilityRepositoryInterface {
-
-    private $em;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class MessageVisibilityRepository extends AbstractRepository implements MessageVisibilityRepositoryInterface {
 
     /**
      * @inheritDoc

@@ -5,17 +5,9 @@ namespace App\Repository;
 use App\Entity\Exam;
 use App\Entity\Student;
 use App\Entity\Teacher;
-use App\Entity\Tuition;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class ExamRepository implements ExamRepositoryInterface {
-    private $em;
-    private $isTransactionActive = false;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class ExamRepository extends AbstractTransactionalRepository implements ExamRepositoryInterface {
 
     private function getDefaultQueryBuilder(\DateTime $today = null): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
@@ -150,7 +142,7 @@ class ExamRepository implements ExamRepositoryInterface {
      */
     public function persist(Exam $exam): void {
         $this->em->persist($exam);
-        $this->isTransactionActive || $this->em->flush();
+        $this->flushIfNotInTransaction();
     }
 
     /**
@@ -158,18 +150,7 @@ class ExamRepository implements ExamRepositoryInterface {
      */
     public function remove(Exam $exam): void {
         $this->em->remove($exam);
-        $this->isTransactionActive || $this->em->flush();
-    }
-
-    public function beginTransaction(): void {
-        $this->em->beginTransaction();
-        $this->isTransactionActive = true;
-    }
-
-    public function commit(): void {
-        $this->em->flush();
-        $this->em->commit();
-        $this->isTransactionActive = false;
+        $this->flushIfNotInTransaction();
     }
 
 }

@@ -1,0 +1,15 @@
+<form role="form" method="get" class="form">
+    <div class="form-group">
+        <label for="study_group" class="control-label">{{ 'label.study_group'|trans }}:</label>
+        <select name="studyGroupId" id="study_group" class="form-control" data-trigger="form-submit" data-select="select2">
+            <option value="">{{ 'label.select.study_group'|trans }}</option>
+            {% for group in studyGroupFilter.studyGroupGroups %}
+                <optgroup label="{{ group.grade.name }}">
+                    {% for g in group.studyGroups %}
+                        <option value="{{ g.id }}" {% if studyGroupFilter.currentStudyGroup != null and studyGroupFilter.currentStudyGroup.id == g.id %}selected="selected"{% endif %}>{{ g|studygroup }}</option>
+                    {% endfor %}
+                </optgroup>
+            {% endfor %}
+        </select>
+    </div>
+</form>

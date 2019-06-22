@@ -96,6 +96,7 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
         $entity->setTuition($tuition);
         $entity->setWeek($week);
         $entity->setLesson($data->getLesson());
+        $entity->setIsDoubleLesson($data->isDoubleLesson());
         $entity->setDay($data->getDay());
         $entity->setRoom($data->getRoom());
     }

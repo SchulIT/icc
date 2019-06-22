@@ -1,0 +1,70 @@
+@import '../../node_modules/bootstrap/scss/bootstrap';
+
+@media screen {
+    body.timetable-print {
+        margin: 20px;
+    }
+}
+
+.timetable {
+    font-size: 80%;
+
+    td {
+        vertical-align: middle !important;
+
+        &.has-lessons {
+            background: #efefef !important;
+        }
+    }
+
+    hr {
+        border-color: transparent !important;
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+}
+
+.timetable-week,
+table.timetable,
+table.timetable tbody,
+table.timetable tr,
+table.timetable tr td {
+    page-break-inside: avoid;
+}
+
+.lesson.print {
+    .subject,
+    .teacher {
+        width: 50px;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .subject.huge {
+        width: 100px !important;
+    }
+
+    .course,
+    .room {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}
+
+hr {
+    margin-top: 2px;
+    margin-bottom: 10px;
+    border-color: #000;
+}
+
+.table-bordered {
+    &, td, th {
+        border-color: black !important;
+        padding: 5px !important;
+    }
+}
+
+#footer-wrapper {
+    display:none;
+}
+

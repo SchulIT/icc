@@ -28,6 +28,8 @@ label:
         student: Lernenden auswählen
         teacher: Lehrkraft auswählen
         study_group: Lerngruppe auswählen
+        room: Raum auswählen
+        subjects: Fächer
     search:
         student: Lernenden suchen
     scope: Bereich
@@ -50,6 +52,7 @@ label:
         label: Wochen-Modulo
         help: "Wird zur Berechnung der Wochen benötigt (bspw. 0 = gerade Wochen, 1 = ungerade Wochen; sofern nur zwei Wochentypen angegeben wurden). Berechnung: aktuelle Woche modulo Anzahl der Stundenplan-Wochen."
     category: Kategorie
+    authors: Autoren
 
 
 actions:
@@ -57,6 +60,7 @@ actions:
     remove: löschen
     back: zurück
     save: speichern
+    search: suchen
 
 greeting:
     female: Frau
@@ -98,6 +102,16 @@ plans:
         label: Terminplan
     rooms:
         label: Räume
+        filter:
+            label: Raum suchen
+            name:
+                label: "Name/Beschreibung"
+                help: "Hier kann ein Suchbegriff eingegeben werden"
+            seats:
+                help: "Hier kann die minimale Anzahl an Sitzplätzen eingegeben werden"
+        seats: Sitzplätze
+        timetable: Stundenplan anzeigen
+
 
 lists:
     label: Listen
@@ -164,6 +178,14 @@ date:
     range: "%from% bis %to%"
     format: d.m.Y
     time_format: "H:i"
+    days:
+        0: Sonntag
+        1: Montag
+        2: Dienstag
+        3: Mittwoch
+        4: Donnerstag
+        5: Freitag
+        6: Samstag
 
 admin:
     settings:
@@ -196,6 +218,7 @@ admin:
                 legend: Unterrichtsstuden
                 start: "Beginn %lesson%. Stunde"
                 end: "Ende %lesson%. Stunde"
+                collapsible: "%lesson%. Stunde kann mit voriger Stunde zu einer Doppelstunde zusammengefasst werden"
 
 
     timetable:
@@ -235,6 +258,8 @@ admin:
 
     documents:
         label: Dokumente verwalten
+        overview:
+            empty: Aktuell gibt es keine Dokumente.
 
         add:
             label: Dokument erstellen
@@ -263,3 +288,4 @@ admin:
                 label: Kategorie löschen
                 confirm: 'Soll die Dokument-Kategorie "%name%" wirklich gelöscht werden?'
                 success: Kategorie erfolgreich gelöscht
+

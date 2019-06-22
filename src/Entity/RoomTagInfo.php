@@ -1,6 +1,6 @@
 <?php
 
-namespace Portal\Models;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class RoomTagInfo {
     /**
      * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\ManyToOne(targetEntity="Room", inversedBy="tags")
      * @ORM\JoinColumn(name="room", onDelete="CASCADE")
      */
     private $room;

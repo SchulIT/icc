@@ -15,9 +15,13 @@
     <div class="contentbox">
         <h4>{{ 'admin.settings.timetable.lesson.legend'|trans }}</h4>
 
-        {% for i in 1..maxLessons %}
+        {% for i in 1..maxLessons if maxLessons > 0 %}
             {{ form_row(form['lesson_' ~ i ~ '_start']) }}
             {{ form_row(form['lesson_' ~ i ~ '_end']) }}
+
+            {% if i > 1 %}
+                {{ form_row(form['lesson_' ~ i ~ '_collapsible']) }}
+            {% endif %}
         {% endfor %}
     </div>
 
@@ -27,7 +31,7 @@
         {{ form_row(form.supervision_label) }}
         {{ form_row(form.supervision_begin) }}
 
-        {% for i in 1..maxLessons %}
+        {% for i in 1..maxLessons if maxLessons > 0 %}
             {{ form_row(form['supervision_label_before_' ~ i]) }}
         {% endfor %}
     </div>

@@ -3,15 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\TimetableWeek;
-use Doctrine\ORM\EntityManagerInterface;
 
-class TimetableWeekRepository implements TimetableWeekRepositoryInterface {
-
-    private $em;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class TimetableWeekRepository extends AbstractRepository implements TimetableWeekRepositoryInterface {
 
     /**
      * @inheritDoc

@@ -29,11 +29,15 @@ class RoomGenerator {
         }
     }
 
-    public function getRoom(): string {
+    public function getRooms(): array {
+        return $this->rooms;
+    }
+
+    public function getRandomRoom(): string {
         return $this->generator->randomElement($this->rooms);
     }
 
-    public function getRooms(int $count): array {
+    public function getRandomRooms(int $count): array {
         return $this->generator->randomElements($this->rooms, $count);
     }
 }

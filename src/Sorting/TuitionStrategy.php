@@ -4,14 +4,13 @@ namespace App\Sorting;
 
 use App\Entity\Tuition;
 
-class TuitionStrategy implements SortingStrategyInterface {
+class TuitionStrategy extends AbstractStringPropertyStrategy {
 
     /**
-     * @param Tuition $objectA
-     * @param Tuition $objectB
-     * @return int
+     * @param Tuition $object
+     * @return string
      */
-    public function compare($objectA, $objectB): int {
-        return strcmp($objectA->getName(), $objectB->getName());
+    protected function getValue($object): string {
+        return $object->getName();
     }
 }

@@ -4,26 +4,21 @@ namespace App\Controller;
 
 use App\Converter\UserTypeStringConverter;
 use App\Entity\AppointmentCategory;
-use App\Entity\MessageScope;
 use App\Entity\UserType;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Settings\ExamSettings;
-use App\Settings\SettingsManager;
 use App\Settings\TimetableSettings;
 use App\Utils\ArrayUtils;
-use SchoolIT\CommonBundle\Form\FieldsetType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Type;
-use Symfony\Component\Validator\Constraints\Valid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -139,15 +134,26 @@ class SettingsController extends AbstractController {
                     'data' => $timetableSettings->getStart($lesson),
                     'widget' => 'single_text',
                     'required' => false,
-                    'input' => 'string'
+                    'input' => 'string',
+                    'input_format' => 'H:i'
                 ])
                 ->add(sprintf('lesson_%d_end', $lesson), TimeType::class, [
                     'label' => $translator->trans('admin.settings.timetable.lesson.end', [ '%lesson%' => $lesson ]),
                     'data' => $timetableSettings->getEnd($lesson),
                     'widget' => 'single_text',
                     'required' => false,
-                    'input' => 'string'
+                    'input' => 'string',
+                    'input_format' => 'H:i'
                 ]);
+
+            if($lesson > 1) {
+                $builder
+                    ->add(sprintf('lesson_%d_collapsible', $lesson), CheckboxType::class, [
+                        'label' => $translator->trans('admin.settings.timetable.lesson.collapsible', ['%lesson%' => $lesson]),
+                        'data' => $timetableSettings->isCollapsible($lesson),
+                        'required' => false
+                    ]);
+            }
         }
 
         $builder
@@ -182,11 +188,10 @@ class SettingsController extends AbstractController {
             $timetableSettings->setSupervisionLabel($form->get('supervision_label')->getData());
             $timetableSettings->setStart(0, $form->get('supervision_begin')->getData());
 
-            dump($form->get('supervision_begin')->getData());
-
             for($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
                 $startKey = sprintf('lesson_%d_start', $lesson);
                 $endKey = sprintf('lesson_%d_end', $lesson);
+                $collapsibleKey = sprintf('lesson_%d_collapsible', $lesson);
                 $supervisionKey = sprintf('supervision_label_before_%d', $lesson);
 
                 if($form->has($startKey)) {
@@ -195,6 +200,10 @@ class SettingsController extends AbstractController {
 
                 if($form->has($endKey)) {
                     $timetableSettings->setEnd($lesson, $form->get($endKey)->getData());
+                }
+
+                if($form->has($collapsibleKey)) {
+                    $timetableSettings->setCollapsible($lesson, $form->get($collapsibleKey)->getData());
                 }
 
                 if($form->has($supervisionKey)) {

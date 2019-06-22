@@ -5,12 +5,7 @@ namespace App\Repository;
 use App\Entity\DocumentCategory;
 use Doctrine\ORM\EntityManagerInterface;
 
-class DocumentCategoryRepository implements DocumentCategoryRepositoryInterface {
-    private $em;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class DocumentCategoryRepository extends AbstractRepository implements DocumentCategoryRepositoryInterface {
 
     /**
      * @param int $id

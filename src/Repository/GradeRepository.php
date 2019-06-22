@@ -3,16 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
-use Doctrine\ORM\EntityManagerInterface;
 
-class GradeRepository implements GradeRepositoryInterface {
-
-    private $em;
-    private $isTransactionActive = false;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class GradeRepository extends AbstractTransactionalRepository implements GradeRepositoryInterface {
 
     /**
      * @param int $id
@@ -75,7 +67,7 @@ class GradeRepository implements GradeRepositoryInterface {
      */
     public function persist(Grade $grade): void {
         $this->em->persist($grade);
-        $this->isTransactionActive || $this->em->flush();
+        $this->flushIfNotInTransaction();
     }
 
     /**
@@ -83,19 +75,7 @@ class GradeRepository implements GradeRepositoryInterface {
      */
     public function remove(Grade $grade): void {
         $this->em->remove($grade);
-        $this->isTransactionActive || $this->em->flush();
+        $this->flushIfNotInTransaction();
     }
-
-    public function beginTransaction(): void {
-        $this->em->beginTransaction();
-        $this->isTransactionActive = true;
-    }
-
-    public function commit(): void {
-        $this->em->flush();
-        $this->em->commit();
-        $this->isTransactionActive = false;
-    }
-
 
 }

@@ -3,16 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Substitution;
-use Doctrine\ORM\EntityManagerInterface;
 
-class SubstitutionRepository implements SubstitutionRepositoryInterface {
-
-    private $em;
-    private $isTransactionActive = false;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class SubstitutionRepository extends AbstractTransactionalRepository implements SubstitutionRepositoryInterface {
 
     /**
      * @param int $id
@@ -60,7 +52,7 @@ class SubstitutionRepository implements SubstitutionRepositoryInterface {
      */
     public function persist(Substitution $substitution): void {
         $this->em->persist($substitution);
-        $this->isTransactionActive || $this->em->flush();
+        $this->flushIfNotInTransaction();
     }
 
     /**
@@ -68,17 +60,7 @@ class SubstitutionRepository implements SubstitutionRepositoryInterface {
      */
     public function remove(Substitution $substitution): void {
         $this->em->remove($substitution);
-        $this->isTransactionActive || $this->em->flush();
+        $this->flushIfNotInTransaction();
     }
 
-    public function beginTransaction(): void {
-        $this->em->beginTransaction();
-        $this->isTransactionActive = true;
-    }
-
-    public function commit(): void {
-        $this->em->flush();
-        $this->em->commit();
-        $this->isTransactionActive = false;
-    }
 }

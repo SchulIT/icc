@@ -4,14 +4,13 @@ namespace App\Sorting;
 
 use App\Entity\UserType;
 
-class UserTypeStrategy implements SortingStrategyInterface {
+class UserTypeStrategy extends AbstractStringPropertyStrategy {
 
     /**
-     * @param UserType $objectA
-     * @param UserType $objectB
-     * @return int
+     * @param UserType $object
+     * @return string
      */
-    public function compare($objectA, $objectB): int {
-        return strcmp($objectA->getValue(), $objectB->getValue());
+    protected function getValue($object): string {
+        return $object->getValue();
     }
 }

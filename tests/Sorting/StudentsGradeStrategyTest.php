@@ -5,7 +5,7 @@ namespace App\Tests\Sorting;
 use App\Entity\Grade;
 use App\Entity\Student;
 use App\Grouping\StudentGradeGroup;
-use App\Sorting\GradeStrategy;
+use App\Sorting\GradeNameStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentGradeGroupStrategy;
 use App\Sorting\StudentStrategy;
@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class StudentsGradeStrategyTest extends TestCase {
     public function testStrategy() {
-        $gradeGroupsStrategy = new StudentGradeGroupStrategy(new GradeStrategy());
+        $gradeGroupsStrategy = new StudentGradeGroupStrategy(new GradeNameStrategy());
 
         $groupEF = (new StudentGradeGroup((new Grade())->setName('EF')));
         $group9A = (new StudentGradeGroup((new Grade())->setName('9A')));

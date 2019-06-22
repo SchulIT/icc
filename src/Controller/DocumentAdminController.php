@@ -9,7 +9,7 @@ use App\Grouping\Grouper;
 use App\Repository\DocumentRepositoryInterface;
 use App\Security\Voter\DocumentVoter;
 use App\Sorting\DocumentCategoryStrategy as DocumentCategorySortingStrategy;
-use App\Sorting\DocumentStrategy;
+use App\Sorting\DocumentNameStrategy;
 use App\Sorting\Sorter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,7 +39,7 @@ class DocumentAdminController extends AbstractController {
 
         $categories = $grouper->group($documents, DocumentCategoryStrategy::class);
         $sorter->sort($categories, DocumentCategorySortingStrategy::class);
-        $sorter->sortGroupItems($categories, DocumentStrategy::class);
+        $sorter->sortGroupItems($categories, DocumentNameStrategy::class);
 
         return $this->render('admin/documents/index.html.twig', [
             'categories' => $categories

@@ -5,16 +5,9 @@ namespace App\Repository;
 use App\Entity\Message;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroup;
-use App\Entity\User;
 use App\Entity\UserType;
-use Doctrine\ORM\EntityManagerInterface;
 
-class MessageRepository implements MessageRepositoryInterface {
-    private $em;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class MessageRepository extends AbstractRepository implements MessageRepositoryInterface {
 
     /**
      * @param int $id

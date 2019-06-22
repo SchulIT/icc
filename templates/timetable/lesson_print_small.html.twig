@@ -1,0 +1,33 @@
+{% if lesson != null %}
+    {% set isWrittenCourse = false %}
+    {% if student != null and lesson.getCourse() != null and lesson.getCourse().getStudentCourseInfoForStudent(student)|courseTypeIsWritten %}
+        {% set isWrittenCourse = true %}
+    {% endif %}
+    <div class="lesson print{% if isWrittenCourse %} written{% endif %}">
+        {% if lesson.getCourse() != null and not isOnlySekIIGrades(lesson.getGrades()) %}
+            <strong>{{ lesson.getCourse().getSubject() }}</strong>
+        {% else %}
+            <strong>{{ lesson.getSubject() }}</strong>
+        {% endif %}
+
+        {% if lesson.getCourse() != null %}
+            {{ lesson.getCourse().getName() }}
+        {% endif %}
+
+        {% if subject != null %}
+            <strong>{% for g in lesson.getGrades() %}{{ g.getName() }}{% if not loop.last %}, {% endif %}{% endfor %}</strong>
+        {% endif %}
+
+        {% if teacher != null %}
+            {% for g in lesson.getGrades() %}{{ g.getName() }}{% if not loop.last %}, {% endif %}{% endfor %}
+        {% else %}
+            {{ lesson.getTeacher().getAcronym() }}
+        {% endif %}
+
+        {% if room != null %}
+            {% for g in lesson.getGrades() %}{{ g.getName() }}{% if not loop.last %}, {% endif %}{% endfor %}
+        {% elseif not lesson.getRoom() is empty %}
+            <i>{{ lesson.getRoom() }}</i>
+        {% endif %}
+    </div>
+{% endif %}

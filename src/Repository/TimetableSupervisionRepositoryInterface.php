@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Teacher;
 use App\Entity\TimetablePeriod;
 use App\Entity\TimetableSupervision;
 
@@ -15,9 +16,10 @@ interface TimetableSupervisionRepositoryInterface extends TransactionalRepositor
 
     /**
      * @param TimetablePeriod $period
+     * @param Teacher $teacher
      * @return TimetableSupervision[]
      */
-    public function findAllByPeriod(TimetablePeriod $period);
+    public function findAllByPeriodAndTeacher(TimetablePeriod $period, Teacher $teacher);
 
     /**
      * @return TimetableSupervision[]

@@ -52,6 +52,13 @@ class TimetableLessonData {
     private $lesson;
 
     /**
+     * @Serializer\Type("bool")
+     * @Assert\NotNull()
+     * @var bool
+     */
+    private $isDoubleLesson;
+
+    /**
      * @Serializer\Type("string")
      * @Assert\NotNull()
      * @var string
@@ -151,6 +158,22 @@ class TimetableLessonData {
      */
     public function setLesson(?int $lesson): TimetableLessonData {
         $this->lesson = $lesson;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDoubleLesson(): bool {
+        return $this->isDoubleLesson;
+    }
+
+    /**
+     * @param bool $isDoubleLesson
+     * @return TimetableLessonData
+     */
+    public function setIsDoubleLesson(bool $isDoubleLesson): TimetableLessonData {
+        $this->isDoubleLesson = $isDoubleLesson;
         return $this;
     }
 

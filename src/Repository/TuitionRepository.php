@@ -6,17 +6,9 @@ use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class TuitionRepository implements TuitionRepositoryInterface {
-
-    private $em;
-    private $isTransactionActive = false;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class TuitionRepository extends AbstractTransactionalRepository implements TuitionRepositoryInterface {
 
     private function getDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
@@ -150,7 +142,7 @@ class TuitionRepository implements TuitionRepositoryInterface {
      */
     public function persist(Tuition $tuition): void {
         $this->em->persist($tuition);
-        $this->isTransactionActive || $this->em->flush();
+        $this->flushIfNotInTransaction();
     }
 
     /**
@@ -158,18 +150,7 @@ class TuitionRepository implements TuitionRepositoryInterface {
      */
     public function remove(Tuition $tuition): void {
         $this->em->remove($tuition);
-        $this->isTransactionActive || $this->em->flush();
-    }
-
-    public function beginTransaction(): void {
-        $this->em->beginTransaction();
-        $this->isTransactionActive = true;
-    }
-
-    public function commit(): void {
-        $this->em->flush();
-        $this->em->commit();
-        $this->isTransactionActive = false;
+        $this->flushIfNotInTransaction();
     }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Portal\Models;
+namespace App\Entity;
 
 use App\Validator\NullOrNotBlank;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -72,14 +72,14 @@ class Room {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getDescription() {
         return $this->description;
     }
 
     /**
-     * @param string $description
+     * @param string|null $description
      * @return Room $this
      */
     public function setDescription($description) {

@@ -4,22 +4,13 @@ namespace App\Sorting;
 
 use App\Entity\DocumentCategory;
 
-class DocumentCategoryNameStrategy implements SortingStrategyInterface {
-    private $stringStrategy;
-
-    public function __construct(StringStrategy $strategy) {
-        $this->stringStrategy = $strategy;
-    }
+class DocumentCategoryNameStrategy extends AbstractStringPropertyStrategy {
 
     /**
-     * @param DocumentCategory $objectA
-     * @param DocumentCategory $objectB
-     * @return int
+     * @param DocumentCategory $object
+     * @return string
      */
-    public function compare($objectA, $objectB): int {
-        return $this->stringStrategy->compare(
-            $objectA->getName(),
-            $objectB->getName()
-        );
+    protected function getValue($object): string {
+        return $object->getName();
     }
 }

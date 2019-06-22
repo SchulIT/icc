@@ -4,16 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Student;
 use App\Entity\User;
-use App\Entity\UserType;
-use Doctrine\ORM\EntityManagerInterface;
 
-class UserRepository implements UserRepositoryInterface {
-
-    private $em;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class UserRepository extends AbstractRepository implements UserRepositoryInterface {
 
     /**
      * @inheritDoc

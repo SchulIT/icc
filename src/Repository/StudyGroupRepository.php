@@ -6,16 +6,8 @@ use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupType;
-use Doctrine\ORM\EntityManagerInterface;
 
-class StudyGroupRepository implements StudyGroupRepositoryInterface {
-
-    private $em;
-    private $isTransactionActive = false;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class StudyGroupRepository extends AbstractTransactionalRepository implements StudyGroupRepositoryInterface {
 
     /**
      * @param int $id
@@ -134,7 +126,7 @@ class StudyGroupRepository implements StudyGroupRepositoryInterface {
      */
     public function persist(StudyGroup $studyGroup): void {
         $this->em->persist($studyGroup);
-        $this->isTransactionActive || $this->em->flush();
+        $this->flushIfNotInTransaction();
     }
 
     /**
@@ -142,18 +134,7 @@ class StudyGroupRepository implements StudyGroupRepositoryInterface {
      */
     public function remove(StudyGroup $studyGroup): void {
         $this->em->remove($studyGroup);
-        $this->isTransactionActive || $this->em->flush();
-    }
-
-    public function beginTransaction(): void {
-        $this->em->beginTransaction();
-        $this->isTransactionActive = true;
-    }
-
-    public function commit(): void {
-        $this->em->flush();
-        $this->em->commit();
-        $this->isTransactionActive = false;
+        $this->flushIfNotInTransaction();
     }
 
 }

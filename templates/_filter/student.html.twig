@@ -1,0 +1,15 @@
+<form role="form" method="get" class="form hidden-print">
+    <div class="form-group">
+        <label for="student">{{ 'label.student'|trans }}:</label>
+        <select name="studentId" id="student" class="form-control" data-trigger="form-submit" data-select="select2">
+            <option value="">{{ 'label.select.student'|trans }}</option>
+            {% for group in studentFilter.studentGradeGroups %}
+                <optgroup label="{{ group.grade.name }}">
+                    {% for s in group.students %}
+                        <option value="{{ s.id }}"{% if studentFilter.currentStudent != null and studentFilter.currentStudent.id == s.id %}selected="selected"{% endif %}>{{ s|student }}</option>
+                    {% endfor %}
+                </optgroup>
+            {% endfor %}
+        </select>
+    </div>
+</form>

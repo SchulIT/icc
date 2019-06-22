@@ -5,13 +5,10 @@
 {% block content %}
 
     {% if categories|length == 0 %}
-        <div class="contentbox">
-        <h4>{{ 'admin.documents.categories.label'|trans }}</h4>
-            <div class="bs-callout bs-callout-info">
-                <h5>{{ 'info.label'|trans }}</h5>
+        <div class="bs-callout bs-callout-info">
+            <h4>{{ 'info.label'|trans }}</h4>
 
-                <p>{{ 'admin.documents.overview.empty'|trans }}</p>
-            </div>
+            <p>{{ 'admin.documents.overview.empty'|trans }}</p>
         </div>
     {% else %}
         {% for group in categories %}
@@ -61,12 +58,16 @@
     {% endif %}
 
     <div class="buttons">
-        <a href="{{ path('admin_add_document_category') }}" class="btn btn-primary btn-sm">
-            <i class="fa fa-plus"></i> {{ 'admin.documents.categories.add.label'|trans }}
+        {% if is_granted('new-document') %}
+        <a href="{{ path('admin_add_document') }}" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'admin.documents.add.label'|trans }}
         </a>
+        {% endif %}
 
+        {% if is_granted('ROLE_DOCUMENTS_ADMIN') %}
         <a href="{{ path('admin_document_categories') }}" class="btn btn-secondary btn-sm">
-            <i class="fa fa-arrow-left"></i> {{ 'admin.documents.categories.overview.back'|trans }}
+            <i class="fa fa-cogs"></i> {{ 'admin.documents.categories.label'|trans }}
         </a>
+        {% endif %}
     </div>
 {% endblock %}

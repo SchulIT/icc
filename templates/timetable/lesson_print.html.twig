@@ -1,0 +1,35 @@
+{% if lesson != null %}
+    <div class="lesson print">
+        <div class="clearfix">
+            <div class="subject pull-left">
+                {% if isCourse %}
+                    {{ lesson.tuition.studyGroup.name }}
+                {% else %}
+                    {% if lesson.tuition.subject.replaceSubjectAbbreviation %}
+                        {{ lesson.tuition.subject.name }}
+                    {% else %}
+                        {{ lesson.tuition.subject.abbreviation }}
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="clearfix">
+            <div class="teacher pull-left">
+                {% if teacher != null %}
+                    {% for g in lesson.getGrades() %}{{ g.getName() }}{% if not loop.last %}, {% endif %}{% endfor %}
+                {% else %}
+                    {{ lesson.getTeacher().getAcronym() }}
+                {% endif %}
+            </div>
+
+            <div class="room pull-left">
+                {% if room != null %}
+                    {% for g in lesson.getGrades() %}{{ g.getName() }}{% if not loop.last %}, {% endif %}{% endfor %}
+                {% elseif not lesson.getRoom() is empty %}
+                    {{ lesson.getRoom() }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}

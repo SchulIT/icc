@@ -3,16 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\GradeTeacher;
-use Doctrine\ORM\EntityManagerInterface;
 
-class GradeTeacherRepository implements GradeTeacherRepositoryInterface {
-
-    private $em;
-    private $isTransactionActive = false;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class GradeTeacherRepository extends AbstractTransactionalRepository implements GradeTeacherRepositoryInterface {
 
     /**
      * @inheritDoc
@@ -24,7 +16,7 @@ class GradeTeacherRepository implements GradeTeacherRepositoryInterface {
 
     public function persist(GradeTeacher $gradeTeacher): void {
         $this->em->persist($gradeTeacher);
-        $this->isTransactionActive || $this->em->flush();
+        $this->flushIfNotInTransaction();
     }
 
     public function removeAll(): void {
@@ -35,16 +27,6 @@ class GradeTeacherRepository implements GradeTeacherRepositoryInterface {
             ->execute();
     }
 
-    public function beginTransaction(): void {
-        $this->em->beginTransaction();
-        $this->isTransactionActive = true;
-    }
-
-    public function commit(): void {
-        $this->em->flush();
-        $this->em->commit();
-        $this->isTransactionActive = false;
-    }
 
 
 }

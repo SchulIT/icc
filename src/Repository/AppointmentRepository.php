@@ -11,14 +11,7 @@ use App\Entity\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class AppointmentRepository implements AppointmentRepositoryInterface {
-    private $em;
-    private $isTransactionActive = false;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
-
+class AppointmentRepository extends AbstractTransactionalRepository implements AppointmentRepositoryInterface {
     /**
      * @param int $id
      * @return Appointment|null
@@ -125,7 +118,7 @@ class AppointmentRepository implements AppointmentRepositoryInterface {
      */
     public function persist(Appointment $appointment): void {
         $this->em->persist($appointment);
-        $this->isTransactionActive || $this->em->flush();
+        $this->flushIfNotInTransaction();
     }
 
     /**
@@ -133,18 +126,7 @@ class AppointmentRepository implements AppointmentRepositoryInterface {
      */
     public function remove(Appointment $appointment): void {
         $this->em->remove($appointment);
-        $this->isTransactionActive || $this->em->flush();
-    }
-
-    public function beginTransaction(): void {
-        $this->em->beginTransaction();
-        $this->isTransactionActive = true;
-    }
-
-    public function commit(): void {
-        $this->em->flush();
-        $this->em->commit();
-        $this->isTransactionActive = false;
+        $this->flushIfNotInTransaction();
     }
 
 }

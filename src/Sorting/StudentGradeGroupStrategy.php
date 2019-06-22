@@ -8,7 +8,7 @@ class StudentGradeGroupStrategy implements SortingStrategyInterface {
 
     private $gradeStrategy;
 
-    public function __construct(GradeStrategy $gradeStrategy) {
+    public function __construct(GradeNameStrategy $gradeStrategy) {
         $this->gradeStrategy = $gradeStrategy;
     }
 

@@ -2,18 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Teacher;
 use App\Entity\TimetablePeriod;
 use App\Entity\TimetableSupervision;
-use Doctrine\ORM\EntityManagerInterface;
 
-class TimetableSupervisionRepository implements TimetableSupervisionRepositoryInterface {
-
-    private $em;
-    private $isTransactionActive = false;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        $this->em = $entityManager;
-    }
+class TimetableSupervisionRepository extends AbstractTransactionalRepository implements TimetableSupervisionRepositoryInterface {
 
     /**
      * @inheritDoc
@@ -28,10 +21,11 @@ class TimetableSupervisionRepository implements TimetableSupervisionRepositoryIn
     /**
      * @inheritDoc
      */
-    public function findAllByPeriod(TimetablePeriod $period) {
+    public function findAllByPeriodAndTeacher(TimetablePeriod $period, Teacher $teacher) {
         return $this->em->getRepository(TimetableSupervision::class)
-            ->findOneBy([
-                'period' => $period
+            ->findBy([
+                'period' => $period,
+                'teacher' => $teacher
             ]);
     }
 
@@ -48,7 +42,7 @@ class TimetableSupervisionRepository implements TimetableSupervisionRepositoryIn
      */
     public function persist(TimetableSupervision $supervision): void {
         $this->em->persist($supervision);
-        $this->isTransactionActive || $this->em->flush();
+        $this->flushIfNotInTransaction();
     }
 
     /**
@@ -56,17 +50,6 @@ class TimetableSupervisionRepository implements TimetableSupervisionRepositoryIn
      */
     public function remove(TimetableSupervision $supervision): void {
         $this->em->remove($supervision);
-        $this->isTransactionActive || $this->em->flush();
-    }
-
-    public function beginTransaction(): void {
-        $this->em->beginTransaction();
-        $this->isTransactionActive = true;
-    }
-
-    public function commit(): void {
-        $this->em->flush();
-        $this->em->commit();
-        $this->isTransactionActive = false;
+        $this->flushIfNotInTransaction();
     }
 }

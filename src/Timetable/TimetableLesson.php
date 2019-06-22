@@ -17,7 +17,7 @@ class TimetableLesson {
     private $isCollapsed = false;
 
     /**
-     * @var TimetableLessonItem[]
+     * @var TimetableLessonEntity[]
      */
     private $lessons = [ ];
 
@@ -33,6 +33,13 @@ class TimetableLesson {
 
     public function __construct(int $lesson) {
         $this->lesson = $lesson;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLesson(): int {
+        return $this->lesson;
     }
 
     /**
@@ -71,11 +78,11 @@ class TimetableLesson {
      * @param TimetableLessonEntity $timetableLesson
      */
     public function addTimetableLesson(TimetableLessonEntity $timetableLesson): void {
-        $this->lessons[] = new TimetableLessonItem($timetableLesson->getTuition(), $timetableLesson->getRoom());
+        $this->lessons[] = $timetableLesson;
     }
 
     /**
-     * @return TimetableLessonItem[]
+     * @return TimetableLessonEntity[]
      */
     public function getLessons() {
         return $this->lessons;
@@ -114,23 +121,5 @@ class TimetableLesson {
      */
     public function hasSupervisionBefore(): bool {
         return count($this->beforeSupervisions) > 0;
-    }
-
-    /**
-     * @param TimetableLesson $lesson
-     * @return bool
-     */
-    public function isSameAs(TimetableLesson $lesson): bool {
-        $selector = function(TimetableLessonItem $item) {
-            return $item->getTuition()->getId();
-        };
-
-        $tuitionsLeft = array_map($selector, $this->getLessons());
-        $tuitionsRight = array_map($selector, $lesson->getLessons());
-
-        $diffLeft = array_diff($tuitionsLeft, $tuitionsRight);
-        $diffRight = array_diff($tuitionsRight, $tuitionsLeft);
-
-        return count($diffLeft) === 0 && count($diffRight) === 0;
     }
 }

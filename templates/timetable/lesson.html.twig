@@ -1,0 +1,38 @@
+{% if lesson != null %}
+    <strong>
+        {% set isCourse = lesson.tuition.studyGroup.type.value == 2 %}
+        <span title="{{ lesson.tuition.subject.name }}">
+            <a href="{{ path('list_tuition', { id: lesson.tuition.id }) }}">
+                {% if isCourse %}
+                    {{ lesson.tuition.studyGroup.name }}
+                {% else %}
+                    {% if lesson.tuition.subject.replaceSubjectAbbreviation %}
+                        {{ lesson.tuition.subject.name }}
+                    {% else %}
+                        {{ lesson.tuition.subject.abbreviation }}
+                    {% endif %}
+                {% endif %}
+            </a>
+        </span>
+    </strong>
+
+    {% if roomFilter.currentRoom != null %}
+        ({% for g in lesson.tuition.studyGroup.grades %}{{ g.getName() }}{% if not loop.last %}, {% endif %}{% endfor %})
+    {% elseif not lesson.room is empty %}
+        ({{ lesson.getRoom() }})
+    {% endif %}
+
+    {#
+    {% if student != null and student.getGrade().isSekII() == true and lesson.getCourse() != null %}
+        [{{ lesson.getCourse().getStudentCourseInfoForStudent(student).getCourseType() }}]
+    {% endif %}
+    #}
+    {% if teacherFilter.currentTeacher == null %}
+        <br />
+        {{ lesson.tuition.teacher|teacher }}
+    {% endif %}
+    {% if teacherFilter.currentTeacher != null or subjectFilter.currentSubjects|length > 0 %}
+        <br />
+        {% for g in lesson.tuition.studyGroup.grades %}{{ g.getName() }}{% if not loop.last %}, {% endif %}{% endfor %}
+    {% endif %}
+{% endif %}

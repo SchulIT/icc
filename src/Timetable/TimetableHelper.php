@@ -49,7 +49,7 @@ class TimetableHelper {
         foreach($timetable->getWeeks() as $week) {
             foreach($week->days as $day) {
                 for($lessonNumber = 1; $lessonNumber <= count($day->getLessons()); $lessonNumber++) {
-                    if($this->settings->isCollapsible($lessonNumber) !== true) {
+                    if($this->settings->isCollapsible($lessonNumber + 1) !== true) {
                         continue;
                     }
 
@@ -60,7 +60,26 @@ class TimetableHelper {
                         continue;
                     }
 
-                    if($currentLesson->isSameAs($nextLesson)) {
+                    /*
+                     * Only collapse if all lessons in the current lesson are double lessons
+                     * AND if all lessons in the next lesson do not match the lesson number
+                     * as double lessons are added to both lessons
+                     */
+                    $collapse = true;
+
+                    foreach($currentLesson->getLessons() as $lesson) {
+                        if($lesson->isDoubleLesson() === false) {
+                            $collapse = false;
+                        }
+                    }
+
+                    foreach($nextLesson->getLessons() as $lesson) {
+                        if($lesson->getLesson() === $nextLesson->getLesson()) {
+                            $collapse = false;
+                        }
+                    }
+
+                    if($collapse === true) {
                         $currentLesson->setIncludeNextLesson();
                         $nextLesson->setCollapsed();
                     }

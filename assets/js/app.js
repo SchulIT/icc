@@ -1,57 +1,68 @@
 require('../css/app.scss');
 
-var $ = require('jquery');
-require('bootstrap');
-require('select2');
-var bsCustomFileInput = require('bs-custom-file-input');
+require('bootstrap.native');
+require('emojione');
+import Choices from "choices.js";
 
-// Make jQuery available
-window.$ = $;
+let bsCustomFileInput = require('bs-custom-file-input');
 
-(function($) {
-    'use strict';
+/*
+ * Polyfill for closest function (thanks, Mozilla! https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#Polyfill)
+ */
+if (!Element.prototype.matches) {
+    Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+}
 
-    $(document).ready(function() {
-        bsCustomFileInput.init();
+if (!Element.prototype.closest) {
+    Element.prototype.closest = function(s) {
+        let el = this;
 
-        $('[data-toggle=tooltip]').tooltip();
+        do {
+            if (el.matches(s)) return el;
+            el = el.parentElement || el.parentNode;
+        } while (el !== null && el.nodeType === 1);
+        return null;
+    };
+}
 
-        $('[data-trigger=form-submit]').change(function(e) {
-            $(this).closest('form').submit();
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    bsCustomFileInput.init();
 
-        $('[data-select=select2]').each(function() {
-            var $elem = $(this);
-            $elem.css('width', '100%'); // make it responsive
-            var options = {
-                theme: 'bootstrap4'
-            };
-
-            var selectLimit = $elem.attr('data-max');
-
-            if(typeof selectLimit !== "undefined") {
-                options.maximumSelectionLength = selectLimit;
-            }
-
-            $elem.select2(options);
-        });
-
-        $('a[data-show]').on('click', function(e) {
-            e.preventDefault();
-
-            var $this = $(this);
-            var $target = $($this.attr('data-show'));
-
-            $target.show();
-        });
-
-        $('a[data-remove]').on('click', function(e) {
-            e.preventDefault();
-
-            var $this = $(this);
-            var $target = $($this.attr('data-remove'));
-
-            $target.remove();
+    document.querySelectorAll('[data-trigger="submit"]').forEach(function (el) {
+        el.addEventListener('change', function (event) {
+            this.closest('form').submit();
         });
     });
-})(jQuery);
+
+    document.querySelectorAll('select[data-choice=true]').forEach(function(el) {
+        console.log(el);
+
+        new Choices(el, {
+            itemSelectText: '',
+            shouldSort: false,
+            shouldSortItems: false
+        });
+    });
+
+    document.querySelectorAll('a[data-show]').forEach(function(el) {
+        el.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            let targetSelector = this.getAttribute('data-show');
+            let target = document.querySelector(targetSelector);
+
+            target.style.display = '';
+        });
+    });
+
+    document.querySelectorAll('a[data-remove]').forEach(function(el) {
+        el.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            let targetSelector = this.getAttribute('data-remove');
+            let target = document.querySelector(targetSelector);
+
+            target.remove();
+        });
+    });
+});

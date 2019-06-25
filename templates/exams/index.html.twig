@@ -5,41 +5,52 @@
 {% block content %}
     {% include "_messages.html.twig" %}
 
-    <div class="contentbox">
-        <div class="row">
-            {% if teacherFilter.teachers|length > 0 %}
-                {% include "_filter/teacher.html.twig" %}
-            {% endif %}
-
-            {% if studentFilter.studentGradeGroups|length > 0 %}
-                {% include "_filter/student.html.twig" %}
-            {% endif %}
-
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <form role="form" method="get" class="form hidden-print">
-                    <label class="control-label">{{ 'label.options'|trans }}:</label>
-                    <div class="form-check">
-                        {% if teacherFilter.currentTeacher is not null %}<input type="hidden" name="teacherAcronym" value="{{ teacherFilter.currentTeacher.acronym }}">{% endif %}
-                        {% if studentFilter.currentStudent is not null %}<input type="hidden" name="studentId" value="{{ studentFilter.currentStudent.id }}">{% endif %}
-                        <input class="form-check-input" data-trigger="form-submit" type="checkbox" value="true" id="all" name="all" {% if showAll %} checked="checked"{% endif %}>
-                        <label for="all" class="form-check-label">
-                            {{ 'plans.exams.show_all'|trans }}
-                        </label>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                {% if teacherFilter.teachers|length > 0 %}
+                    <div class="col-md-3 col-sm-3 col-xs-12">
+                        {% include "_filter/teacher.html.twig" %}
                     </div>
-                </form>
+                {% endif %}
+
+                {% if studentFilter.studentGradeGroups|length > 0 %}
+                    <div class="col-md-3 col-sm-3 col-xs-12">
+                        {% include "_filter/student.html.twig" %}
+                    </div>
+                {% endif %}
+
+                {% if studentFilter.studentGradeGroups|length > 0 %}
+                    <div class="col-md-3 col-sm-3 col-xs-12">
+                        {% include "_filter/grade.html.twig" %}
+                    </div>
+                {% endif %}
+
+                <div class="col-md-3 col-sm-3 col-xs-12">
+                    <form role="form" method="get" class="form hidden-print">
+                        <label class="control-label">{{ 'label.options'|trans }}:</label>
+                        <div class="form-check">
+                            {% if teacherFilter.currentTeacher is not null %}<input type="hidden" name="teacherAcronym" value="{{ teacherFilter.currentTeacher.acronym }}">{% endif %}
+                            {% if studentFilter.currentStudent is not null %}<input type="hidden" name="studentId" value="{{ studentFilter.currentStudent.id }}">{% endif %}
+                            <input class="form-check-input" data-trigger="form-submit" type="checkbox" value="true" id="all" name="all" {% if showAll %} checked="checked"{% endif %}>
+                            <label for="all" class="form-check-label">
+                                {{ 'plans.exams.show_all'|trans }}
+                            </label>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
-    {% if teacherFilter.currentTeacher is not null or studentFilter.currentStudent is not null %}
-    <div class="contentbox">
-        <h4>
+    {% if teacherFilter.currentTeacher is not null or studentFilter.currentStudent is not null or gradeFilter.currentGrade is not null %}
+        <h2 class="mb-3">
             {% if teacherFilter.currentTeacher is not null %}
                 {{ 'plans.exams.title'|trans({'%for%' : teacherFilter.currentTeacher|teacher}) }}
             {% elseif studentFilter.currentStudent is not null %}
                 {{ 'plans.exams.title'|trans({'%for%' : studentFilter.currentStudent|student}) }} ({{ studentFilter.currentStudent.grade.name }})
             {% endif %}
-        </h4>
+        </h2>
 
         {% if examGroups|length == 0 %}
             <div class="bs-callout bs-callout-info">

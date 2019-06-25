@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Exam;
+use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
@@ -41,6 +42,13 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Exam[]
      */
     public function findAllByStudents(array $students, ?\DateTime $today = null);
+
+    /**
+     * @param Grade $grade
+     * @param \DateTime|null $today
+     * @return Exam[]
+     */
+    public function findAllByGrade(Grade $grade, ?\DateTime $today = null);
 
     /**
      * @param \DateTime|null $today If set, only exams on $today or later are returned

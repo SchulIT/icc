@@ -4,10 +4,13 @@
 
 {% block content %}
     {{ form_start(form) }}
-    <div class="contentbox">
-        <h4>{{ 'label.general'|trans }}</h4>
 
-        {{ form_widget(form)}}
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_widget(form) }}
+        </div>
     </div>
 
     <div class="buttons">

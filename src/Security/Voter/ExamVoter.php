@@ -83,12 +83,14 @@ class ExamVoter extends Voter {
             return false;
         }
 
-        if($this->examSettings->isEnabled($userType) !== true) {
+        if($this->examSettings->isVisibileFor($userType) === false) {
             return false;
         }
 
         $days = $this->examSettings->getTimeWindowForStudents();
         if($this->isStudentOrParent($token) && $days > 0) {
+            dump('student');
+
             $threshold = $this->dateHelper->getToday()
                 ->modify(sprintf('+%d days', $days));
 

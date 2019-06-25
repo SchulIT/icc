@@ -1,60 +1,61 @@
-import '../../node_modules/bootstrap-markdown-editor-4/src/bootstrap-markdown-editor';
+import SimpleMDE from 'simplemde';
+require('../../node_modules/inline-attachment/src/inline-attachment');
+require('../../node_modules/inline-attachment/src/codemirror-4.inline-attachment');
 
-+function($) {
-    'use strict';
+document.addEventListener('DOMContentLoaded', function(event) {
+    document.querySelectorAll('[data-editor=markdown]').forEach(function(el) {
+        if(el.classList.contains('md-textarea-hidden')) {
+            /*
+             * Somehow, when adding the markdown editor to an textarea,
+             * this event is triggered again (with the hidden textarea)...
+             */
+            return;
+        }
 
-    $(document).ready(function() {
-        $('[data-editor=markdown]').each(function() {
-            var $elem = $(this);
+        if(el.getAttribute('data-preview') === null) {
+            console.error('You must provide an URL which returns the markdown preview');
+            return;
+        }
 
-            if($elem.hasClass('md-textarea-hidden')) {
-                /*
-                 * Somehow, when adding the markdown editor to an textarea,
-                 * this event is triggered again (with the hidden textarea)...
-                 */
-                return;
+        let previewUrl = el.getAttribute('data-preview');
+
+        let options = {
+            autoDownloadFontAwesome: false,
+            autofocus: false,
+            autosave: {
+                enabled: false
+            },
+            element: el,
+            placeholder: '',
+            previewRender: function(text, preview) {
+                let request = new XMLHttpRequest();
+                request.open('POST', previewUrl, true);
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+
+                request.onload = function() {
+                    if(request.status >= 200 && request.status < 400) {
+                        preview.innerHTML = request.responseText;
+                    }
+                };
+
+                request.send(text);
+
+                return 'Laden...';
+            },
+            spellChecker: false,
+            status: false
+        };
+
+        let editor = new SimpleMDE(options);
+
+        if(el.getAttribute('data-upload') !== null) {
+            if (el.getAttribute('data-upload') === "true" || el.getAttribute('data-upload') === 'data-upload') {
+                var inlineAttachmentConfig = {
+                    uploadUrl: el.getAttribute('data-url')
+                };
+
+                inlineAttachment.editors.codemirror4.attach(editor.codemirror, inlineAttachmentConfig);
             }
-
-            var previewUrl = $elem.attr('data-preview');
-
-            if(typeof(previewUrl) === 'undefined') {
-                console.error('You must provide an URL which returns the markdown preview');
-                return;
-            }
-
-            var options = {
-                preview: true,
-                fullscreen: false,
-                label: {
-                    btnHeader1: 'Überschrift 1',
-                    btnHeader2: 'Überschrift 2',
-                    btnHeader3: 'Überschrift 3',
-                    btnBold: 'Fett',
-                    btnItalic: 'Kursiv',
-                    btnList: 'Ungeordnete Liste',
-                    btnOrderedList: 'Geordnete Liste',
-                    btnLink: 'Link',
-                    btnImage: 'Bild einfügen',
-                    btnUpload: 'Bild hochladen',
-                    btnEdit: 'Bearbeiten',
-                    btnPreview: 'Vorschau',
-                    btnFullscreen: 'Vollbild',
-                    loading: 'Laden'
-                },
-                onPreview: function(content, callback) {
-                    $.post(previewUrl, content, function onSuccess(content) {
-                        callback(content);
-                    }, 'html');
-                }
-            };
-
-            if($elem.attr('data-upload') === "true" || $elem.attr('data-upload') === 'data-upload') {
-                var url = $(this).attr('data-url');
-                options.imageUpload = true;
-                options.uploadPath = url;
-            }
-
-            $elem.markdownEditor(options);
-        });
+        }
     });
-}(jQuery);
+});

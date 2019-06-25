@@ -1,7 +1,7 @@
 <form role="form" method="get" class="form hidden-print">
     <div class="form-group">
         <label for="room" class="control-label">{{ 'label.room'|trans }}:</label>
-        <select name="roomId" id="room" class="form-control" data-trigger="form-submit" data-select="select2">
+        <select name="roomId" id="room" class="form-control" data-trigger="submit" data-choice="true">
             <option value="">{{ 'label.select.room'|trans }}</option>
             {% for r in roomFilter.rooms %}
                 <option value="{{ r.id() }}" {% if roomFilter.currentRoom != null and roomFilter.currentRoom.id == r.id %}selected="selected"{% endif %}>{{ r.getName() }}</option>

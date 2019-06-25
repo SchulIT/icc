@@ -5,16 +5,19 @@
 {% block content %}
     {{ form_start(form) }}
 
-    <div class="contentbox">
-        <h4>{{ 'label.general'|trans }}</h4>
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
 
-        {{ form_row(form.lessons) }}
-        {{ form_row(form.categories) }}
+        <div class="card-body">
+            {{ form_row(form.lessons) }}
+            {{ form_row(form.categories) }}
+        </div>
     </div>
 
-    <div class="contentbox">
-        <h4>{{ 'admin.settings.timetable.lesson.legend'|trans }}</h4>
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.timetable.lesson.legend'|trans }}</div>
 
+        <div class="card-body">
         {% for i in 1..maxLessons if maxLessons > 0 %}
             {{ form_row(form['lesson_' ~ i ~ '_start']) }}
             {{ form_row(form['lesson_' ~ i ~ '_end']) }}
@@ -23,17 +26,20 @@
                 {{ form_row(form['lesson_' ~ i ~ '_collapsible']) }}
             {% endif %}
         {% endfor %}
+        </div>
     </div>
 
-    <div class="contentbox">
-        <h4>{{ 'admin.settings.timetable.supervision.legend'|trans }}</h4>
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.timetable.supervision.legend'|trans }}</div>
 
-        {{ form_row(form.supervision_label) }}
-        {{ form_row(form.supervision_begin) }}
+        <div class="card-body">
+            {{ form_row(form.supervision_label) }}
+            {{ form_row(form.supervision_begin) }}
 
-        {% for i in 1..maxLessons if maxLessons > 0 %}
-            {{ form_row(form['supervision_label_before_' ~ i]) }}
-        {% endfor %}
+            {% for i in 1..maxLessons if maxLessons > 0 %}
+                {{ form_row(form['supervision_label_before_' ~ i]) }}
+            {% endfor %}
+        </div>
     </div>
 
     {{ form_widget(form)}}

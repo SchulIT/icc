@@ -38,16 +38,10 @@ Encore
      * https://symfony.com/doc/current/frontend.html#adding-more-features
      */
     .cleanupOutputBeforeBuild()
-    .enableBuildNotifications()
+    //.enableBuildNotifications()
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)
-    .enableVersioning(Encore.isProduction())
-
-    // enables @babel/preset-env polyfills
-    .configureBabel(() => {}, {
-        useBuiltIns: 'usage',
-        corejs: 3
-    })
+    // .enableVersioning(Encore.isProduction())
 
     // enables Sass/SCSS support
     .enableSassLoader()
@@ -60,11 +54,20 @@ Encore
     //.enableIntegrityHashes()
 
     // uncomment if you're having problems with a jQuery plugin
-    .autoProvidejQuery()
+    //.autoProvidejQuery()
 
     // uncomment if you use API Platform Admin (composer req api-admin)
     //.enableReactPreset()
     //.addEntry('admin', './assets/js/admin.js')
+
+    .addLoader(
+        {
+            test: /bootstrap\.native/,
+            use: {
+                loader: 'bootstrap.native-loader'
+            }
+        }
+    )
 
     .addPlugin(
         new CopyPlugin([
@@ -75,10 +78,6 @@ Encore
             {
                 from: 'vendor/emojione/emojione/assets/svg',
                 to: 'emoji/svg'
-            },
-            {
-                from: 'node_modules/ace-builds/src-min',
-                to: 'ace'
             }
         ])
     )

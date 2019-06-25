@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "710ba3200d0cea8c0c420eec65b66004",
+    "content-hash": "c0cc370dc482d36e17ba19c5a47cb76f",
     "packages": [
         {
             "name": "acelaya/doctrine-enum-type",
@@ -4137,16 +4137,16 @@
         },
         {
             "name": "schoolit/common-bundle",
-            "version": "1.2.6",
+            "version": "1.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SchulIT/common-bundle.git",
-                "reference": "ebd4007bce43796be4c8566467f41963262eabfe"
+                "reference": "21be9fe61c9628f8bbe1470aa8b26e40a333ce14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/ebd4007bce43796be4c8566467f41963262eabfe",
-                "reference": "ebd4007bce43796be4c8566467f41963262eabfe",
+                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/21be9fe61c9628f8bbe1470aa8b26e40a333ce14",
+                "reference": "21be9fe61c9628f8bbe1470aa8b26e40a333ce14",
                 "shasum": ""
             },
             "require": {
@@ -4181,7 +4181,7 @@
             "license": [
                 "MIT"
             ],
-            "time": "2019-04-22T16:34:10+00:00"
+            "time": "2019-06-22T12:18:55+00:00"
         },
         {
             "name": "sensio/framework-extra-bundle",

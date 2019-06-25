@@ -14,27 +14,29 @@ class Builder {
     }
 
     private function plansMenu(ItemInterface $menu): ItemInterface {
-        $plans = $menu->addChild('plans.label')
-            ->setAttribute('dropdown', true)
-            ->setChildrenAttribute('id', 'menu-plans');
+        $plans = $menu->addChild('plans.label', [
+            'attributes' => [
+                'class' => 'header'
+            ]
+        ]);
 
-        $plans->addChild('plans.timetable.label', [
+        $menu->addChild('plans.timetable.label', [
             'route' => 'timetable'
         ]);
 
-        $plans->addChild('plans.substitutions.label', [
-
+        $menu->addChild('plans.substitutions.label', [
+            'route' => 'substitutions'
         ]);
 
-        $plans->addChild('plans.exams.label', [
+        $menu->addChild('plans.exams.label', [
             'route' => 'exams'
         ]);
 
-        $plans->addChild('plans.appointments.label', [
-
+        $menu->addChild('plans.appointments.label', [
+            'route' => 'appointments'
         ]);
 
-        $plans->addChild('plans.rooms.label', [
+        $menu->addChild('plans.rooms.label', [
             'route' => 'rooms'
         ]);
 
@@ -42,19 +44,65 @@ class Builder {
     }
 
     private function listsMenu(ItemInterface $menu): ItemInterface {
-        $lists = $menu->addChild('lists.label')
-            ->setAttribute('dropdown', true)
-            ->setChildrenAttribute('id', 'menu-lists');
+        $lists = $menu->addChild('lists.label', [
+            'attributes' => [
+                'class' => 'header'
+            ]
+        ]);
 
-        $lists->addChild('lists.tuitions.label', [
+        $menu->addChild('lists.tuitions.label', [
             'route' => 'list_tuitions'
         ]);
 
-        $lists->addChild('lists.study_groups.label', [
+        $menu->addChild('lists.study_groups.label', [
             'route' => 'list_studygroups'
         ]);
 
         return $lists;
+    }
+
+    private function adminMenu(ItemInterface $menu): ItemInterface {
+        $admin = $menu->addChild('admin.label', [
+            'attributes' => [
+                'class' => 'header'
+            ]
+        ])
+            ->setAttribute('dropdown', true)
+            ->setChildrenAttribute('id', 'menu-admin');
+
+        $admin->addChild('admin.documents.label', [
+            'route' => 'admin_documents'
+        ]);
+
+        return $admin;
+    }
+
+    private function settingsMenu(ItemInterface $menu): ItemInterface {
+        $settings = $menu->addChild('admin.settings.label', [
+            'attributes' => [
+                'class' => 'header'
+            ]
+        ])
+            ->setAttribute('dropdown', true)
+            ->setChildrenAttribute('id', 'menu-settings');
+
+        $settings->addChild('admin.settings.timetable.label', [
+            'route' => 'admin_settings_timetable'
+        ]);
+
+        $settings->addChild('admin.timetable.weeks.label', [
+            'route' => 'admin_timetable_weeks'
+        ]);
+
+        $settings->addChild('admin.timetable.periods.label', [
+            'route' => 'admin_timetable_periods'
+        ]);
+
+        $settings->addChild('admin.settings.exams.label', [
+            'route' => 'admin_settings_exams'
+        ]);
+
+        return $settings;
     }
 
     public function mainMenu(array $options) {
@@ -67,6 +115,8 @@ class Builder {
 
         $this->plansMenu($menu);
         $this->listsMenu($menu);
+        $this->settingsMenu($menu);
+        $this->adminMenu($menu);
 
         return $menu;
     }

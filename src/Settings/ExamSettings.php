@@ -18,14 +18,11 @@ class ExamSettings extends AbstractSettings {
         $this->setValue('exams.visibility', $visibility);
     }
 
-    /**
-     * @param UserType $userType
-     * @return bool
-     * @deprecated
-     */
-    public function isEnabled(UserType $userType) {
-        if(in_array($userType->getValue(), $this->getVisibility())) {
-            return true;
+    public function isVisibileFor(UserType $type) {
+        foreach($this->getVisibility() as $visibleUserType) {
+            if($type->equals($visibleUserType)) {
+                return true;
+            }
         }
 
         return false;

@@ -18,6 +18,7 @@ use App\Sorting\ExamDateGroupStrategy;
 use App\Sorting\ExamLessonStrategy as ExamDateSortingStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
+use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
@@ -39,20 +40,23 @@ class ExamController extends AbstractControllerWithMessages {
     /**
      * @Route("/exams", name="exams")
      */
-    public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter,
-                          ExamRepositoryInterface $examRepository,
-                          ?int $studentId = null, ?string $teacherAcronym = null, ?bool $all = false) {
+    public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter,
+                          ExamRepositoryInterface $examRepository, ?int $studentId = null, ?string $teacherAcronym = null,
+                          ?int $gradeId = null, ?bool $all = false) {
         $user = $this->getUser();
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
         $studentFilterView = $studentsFilter->handle($studentId, $this->getUser());
         $teacherFilterView = $teacherFilter->handle($teacherAcronym, $this->getUser());
+        $gradeFilterView = $gradeFilter->handle($gradeId, $this->getUser());
 
         $exams = [ ];
         $today = $all ? null : $this->dateHelper->getToday();
 
         if($studentFilterView->getCurrentStudent() !== null) {
             $exams = $examRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $today);
+        } else if($gradeFilterView->getCurrentGrade() !== null) {
+            $exams = $examRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $today);
         } else if($isStudentOrParent) {
             $exams = [ ];
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
@@ -73,6 +77,7 @@ class ExamController extends AbstractControllerWithMessages {
             'examGroups' => $examGroups,
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
+            'gradeFilter' => $gradeFilterView,
             'showAll' => $all
         ]);
     }

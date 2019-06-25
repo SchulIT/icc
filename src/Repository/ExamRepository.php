@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Exam;
+use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\Teacher;
 use Doctrine\ORM\QueryBuilder;
@@ -128,6 +129,27 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findAllByGrade(Grade $grade, ?\DateTime $today = null) {
+        $qb = $this->getDefaultQueryBuilder($today);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.tuitions', 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.grades', 'gInner')
+            ->where('gInner.id = :grade');
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->setParameter('grade', $grade->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param \DateTime|null $today
      * @return Exam[]
      */
@@ -152,5 +174,6 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $this->em->remove($exam);
         $this->flushIfNotInTransaction();
     }
+
 
 }

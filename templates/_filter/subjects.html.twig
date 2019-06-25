@@ -1,7 +1,7 @@
 <form role="form" method="get" class="form hidden-print">
     <div class="form-group">
         <label for="subjects">{{ 'label.select.subjects'|trans }}:</label>
-        <select name="subjects[]" id="subjects" multiple="multiple" class="form-control" data-trigger="form-submit" data-select="select2">
+        <select name="subjects[]" id="subjects" multiple="multiple" class="form-control" data-trigger="submit" data-choice="true">
             {% for s in subjectFilter.subjects %}
                 <option value="{{ s.id }}" {% if s in subjectFilter.currentSubjects %}selected="selected"{% endif %}>{{ s.name }}</option>
             {% endfor %}

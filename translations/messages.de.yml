@@ -188,7 +188,10 @@ date:
         6: Samstag
 
 admin:
+    label: Verwaltung
+
     settings:
+        label: Einstellungen
         success: Einstellungen erfolgreich aktualisiert
         exams:
             label: Klausurplan-Einstellungen
@@ -257,7 +260,7 @@ admin:
                 success: Stundenplan-Periode erfolgreich gelöscht
 
     documents:
-        label: Dokumente verwalten
+        label: Dokumente
         overview:
             empty: Aktuell gibt es keine Dokumente.
 

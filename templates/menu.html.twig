@@ -121,11 +121,10 @@
 
 {% block dropdownElement %}
     {%- set classes = item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [] %}
-    {%- set classes = classes|merge(['nav-link']) %}
     {%- set attributes = item.linkAttributes %}
     {%- set attributes = attributes|merge({'class': classes|join(' ')}) %}
-    {%- set attributes = attributes|merge({'data-toggle': 'collapse', 'data-target': '#' ~ listAttributes.id }) %}
-    <a href="#"{{ macros.attributes(attributes) }}>
+    {%- set attributes = attributes|merge({'data-toggle': 'collapse', 'href': '#' ~ listAttributes.id }) %}
+    <a {{ macros.attributes(attributes) }}>
         {% if item.attribute('icon') is not empty  %}
             <i class="{{ item.attribute('icon') }}"></i>
         {% endif %}

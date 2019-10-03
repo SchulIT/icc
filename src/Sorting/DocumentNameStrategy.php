@@ -11,6 +11,6 @@ class DocumentNameStrategy extends AbstractStringPropertyStrategy {
      * @return string
      */
     protected function getValue($object): string {
-        return $object->getName();
+        return $object->getTitle();
     }
 }

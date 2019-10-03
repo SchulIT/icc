@@ -4,7 +4,7 @@ namespace App\View\Filter;
 
 use App\Entity\Subject;
 
-class SubjectFilterView {
+class SubjectsFilterView {
 
     /** @var Subject[] */
     private $subjects;

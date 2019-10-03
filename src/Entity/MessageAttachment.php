@@ -29,7 +29,7 @@ class MessageAttachment {
     private $message;
 
     /**
-     * @Vich\UploadableField(mapping="messages", fileNameProperty="filename", size="size")
+     * @Vich\UploadableField(mapping="messages", fileNameProperty="path", originalName="filename", size="size")
      */
     private $file;
 
@@ -39,6 +39,12 @@ class MessageAttachment {
      * @var string
      */
     private $filename;
+
+    /**
+     * @ORM\Column(type="string")
+     * @var string
+     */
+    private $path;
 
     /**
      * @ORM\Column(type="integer")
@@ -113,6 +119,22 @@ class MessageAttachment {
     }
 
     /**
+     * @return string
+     */
+    public function getPath(): ?string {
+        return $this->path;
+    }
+
+    /**
+     * @param string $path
+     * @return MessageAttachment
+     */
+    public function setPath(string $path): MessageAttachment {
+        $this->path = $path;
+        return $this;
+    }
+
+    /**
      * @return int|null
      */
     public function getSize(): ?int {
@@ -124,7 +146,6 @@ class MessageAttachment {
      * @return MessageAttachment
      */
     public function setSize(?int $size): MessageAttachment {
-        dump($size);
         $this->size = $size;
         return $this;
     }

@@ -2,7 +2,7 @@ let bsCustomFileInput = require('bs-custom-file-input');
 
 document.addEventListener('DOMContentLoaded', function() {
     function deleteOption() {
-        this.closest('.form-inline').remove();
+        this.closest('.form-group').remove();
     }
 
     function htmlToElement(html) {
@@ -25,14 +25,17 @@ document.addEventListener('DOMContentLoaded', function() {
         let newFormHtml = prototype.replace(/__name__/g, index);
 
         // increase the index with one for the next item
-        collectionHolder.setAttribute('index', index + 1);
+        collectionHolder.setAttribute('data-index', parseInt(index) + 1);
 
         // Display the form in the page in an li
         let newForm = htmlToElement(newFormHtml);
 
+        console.log(newForm);
+
         collectionHolder.appendChild(newForm);
 
         newForm.querySelectorAll('.btn-delete').forEach(function(el) {
+            el.removeEventListener('click', deleteOption, false);
             el.addEventListener('click', deleteOption);
         });
 
@@ -44,26 +47,28 @@ document.addEventListener('DOMContentLoaded', function() {
         // prevent the link from creating a "#" on the URL
         event.preventDefault();
 
+        let collectionHandlerId = this.getAttribute('data-collection');
+        let collectionHandler = document.querySelector('div[data-collection=' + collectionHandlerId + ']');
+
         // add a new tag form (see next code block)
-        addOption(collectionHolder);
+        addOption(collectionHandler);
     }
 
-    // Get the ul that holds the collection of tags
-    let collectionHolder = document.querySelector('.attachments');
-
-    collectionHolder.querySelectorAll('.btn-delete').forEach(function (el) {
+    document.querySelectorAll('div[data-collection]').forEach(function(el) {
         el.addEventListener('click', deleteOption);
+
+        // count the current form inputs we have (e.g. 2), use that as the new
+        // index when inserting a new item (e.g. 2)
+        el.setAttribute('data-index', el.childNodes.length);
+
+        el.querySelectorAll('.btn-delete').forEach(function(btn) {
+            btn.addEventListener('click', deleteOption);
+        });
     });
 
-    // count the current form inputs we have (e.g. 2), use that as the new
-    // index when inserting a new item (e.g. 2)
-    collectionHolder.setAttribute('data-index', collectionHolder.querySelectorAll('input').length);
-
-    let button = collectionHolder
-        .parentNode.parentNode.querySelector('button.btn-add');
-
-    button.removeEventListener('click', onButtonAddClick, false);
-    button.addEventListener('click', onButtonAddClick);
-
+    document.querySelectorAll('button[data-collection]').forEach(function(el) {
+        el.removeEventListener('click', onButtonAddClick, false);
+        el.addEventListener('click', onButtonAddClick);
+    });
 });
 

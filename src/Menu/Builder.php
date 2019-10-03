@@ -58,6 +58,10 @@ class Builder {
             'route' => 'list_studygroups'
         ]);
 
+        $menu->addChild('lists.teachers.label', [
+            'route' => 'list_teachers'
+        ]);
+
         return $lists;
     }
 
@@ -72,6 +76,14 @@ class Builder {
 
         $admin->addChild('admin.documents.label', [
             'route' => 'admin_documents'
+        ]);
+
+        $admin->addChild('admin.messages.label', [
+            'route' => 'admin_messages'
+        ]);
+
+        $admin->addChild('admin.appointments.label', [
+            'route' => 'admin_appointments'
         ]);
 
         return $admin;
@@ -109,8 +121,22 @@ class Builder {
         $menu = $this->factory->createItem('root')
             ->setChildrenAttribute('class', 'nav nav-pills flex-column');
 
+        $menu->addChild('menu.label', [
+            'attributes' => [
+                'class' => 'header'
+            ]
+        ]);
+
         $menu->addChild('dashboard.label', [
             'route' => 'dashboard'
+        ]);
+
+        $menu->addChild('documents.label', [
+            'route' => 'documents'
+        ]);
+
+        $menu->addChild('messages.overview.label', [
+            'route' => 'messages'
         ]);
 
         $this->plansMenu($menu);

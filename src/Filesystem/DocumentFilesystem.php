@@ -6,6 +6,7 @@ use App\Entity\Document;
 use App\Entity\DocumentAttachment;
 use App\Http\FlysystemFileResponse;
 use League\Flysystem\FilesystemInterface;
+use Mimey\MimeTypes;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,10 +16,12 @@ use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 class DocumentFilesystem implements DirectoryNamerInterface {
 
     private $filesystem;
+    private $mimeTypes;
     private $logger;
 
-    public function __construct(FilesystemInterface $filesystem, LoggerInterface $logger = null) {
+    public function __construct(FilesystemInterface $filesystem, MimeTypes $mimeTypes, LoggerInterface $logger = null) {
         $this->filesystem = $filesystem;
+        $this->mimeTypes = $mimeTypes;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -38,7 +41,10 @@ class DocumentFilesystem implements DirectoryNamerInterface {
             throw new FileNotFoundException();
         }
 
-        return new FlysystemFileResponse($this->filesystem, $this->getAttachmentPath($attachment), $attachment->getFilename());
+        $extension = pathinfo($attachment->getFilename(), PATHINFO_EXTENSION);
+        $mimeType = $this->mimeTypes->getMimeType($extension);
+
+        return new FlysystemFileResponse($this->filesystem, $this->getAttachmentPath($attachment), $attachment->getFilename(), $mimeType);
     }
 
     public function removeDocumentAttachment(DocumentAttachment $attachment): void {
@@ -60,7 +66,7 @@ class DocumentFilesystem implements DirectoryNamerInterface {
     }
 
     private function getAttachmentPath(DocumentAttachment $attachment): string {
-        return sprintf('/%d/%s', $attachment->getDocument()->getId(), $attachment->getFilename());
+        return sprintf('/%d/%s', $attachment->getDocument()->getId(), $attachment->getPath());
     }
 
     /**
@@ -69,8 +75,6 @@ class DocumentFilesystem implements DirectoryNamerInterface {
      * @return string
      */
     public function directoryName($object, PropertyMapping $mapping): string {
-        dump($object);
-
         return $this->getAttachmentsDirectory($object->getDocument());
     }
 }

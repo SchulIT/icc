@@ -14,6 +14,7 @@ use App\Ics\IcsItem;
 use App\Repository\ExamRepositoryInterface;
 use App\Settings\ExamSettings;
 use App\Settings\TimetableSettings;
+use Jsvrcek\ICS\Model\CalendarEvent;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -43,7 +44,7 @@ class ExamIcsExporter {
 
     /**
      * @param User $user
-     * @return IcsItem[]
+     * @return CalendarEvent[]
      */
     private function getIcsItems(User $user) {
         if($this->examSettings->isEnabled($user->getUserType())) {
@@ -70,7 +71,7 @@ class ExamIcsExporter {
     /**
      * @param Exam $exam
      * @param User $user
-     * @return IcsItem[]
+     * @return CalendarEvent[]
      */
     private function makeIcsItems(Exam $exam, User $user) {
         if($user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent())) {
@@ -97,36 +98,36 @@ class ExamIcsExporter {
         return $items;
     }
 
-    private function makeIcsItem(Exam $exam): IcsItem {
+    private function makeIcsItem(Exam $exam): CalendarEvent {
         $start = $this->getDateTime($exam->getDate(), $this->timetableSettings->getStart($exam->getLessonStart()));
         $end = $this->getDateTime($exam->getDate(), $this->timetableSettings->getEnd($exam->getLessonEnd()));
         $description = $this->translator->trans('exams.export.exam_description', [
             '%tuitions%' => $this->getTuitionsAsString($exam->getTuitions()->toArray())
         ]);
 
-        return (new IcsItem())
-            ->setId(sprintf('exam-%d', $exam->getId()))
+        return (new CalendarEvent())
+            ->setUid(sprintf('exam-%d', $exam->getId()))
             ->setSummary($description)
             ->setDescription($description)
             ->setStart($start)
             ->setEnd($end)
-            ->setLocation($this->getRoomsAsString($exam->getRooms()));
+            ->setLocations($exam->getRooms());
     }
 
-    private function makeIcsItemInvigilator(Exam $exam, int $lesson): IcsItem {
+    private function makeIcsItemInvigilator(Exam $exam, int $lesson): CalendarEvent {
         $start = $this->getDateTime($exam->getDate(), $this->timetableSettings->getStart($lesson));
         $end = $this->getDateTime($exam->getDate(), $this->timetableSettings->getEnd($lesson));
         $description = $this->translator->trans('exams.export.invigilator_description', [
             '%tuitions%' => $this->getTuitionsAsString($exam->getTuitions()->toArray())
         ]);
 
-        return (new IcsItem())
-            ->setId(sprintf('exam-%d-invigilator-%d', $exam->getId(), $lesson))
+        return (new CalendarEvent())
+            ->setUid(sprintf('exam-%d-invigilator-%d', $exam->getId(), $lesson))
             ->setSummary($description)
             ->setDescription($description)
             ->setStart($start)
             ->setEnd($end)
-            ->setLocation($this->getRoomsAsString($exam->getRooms()));
+            ->setLocations($exam->getRooms());
     }
 
     private function isExamTeacher(Exam $exam, ?Teacher $teacher): bool {

@@ -2,10 +2,13 @@
 
 namespace App\Twig;
 
+use App\Converter\FilesizeStringConverter;
 use App\Converter\MessageScopeStringConverter;
 use App\Converter\StudentStringConverter;
+use App\Converter\StudyGroupsGradeStringConverter;
 use App\Converter\StudyGroupStringConverter;
 use App\Converter\TeacherStringConverter;
+use App\Converter\TimestampDateTimeConverter;
 use App\Converter\UserStringConverter;
 use App\Converter\UserTypeStringConverter;
 use App\Entity\MessageScope;
@@ -25,16 +28,24 @@ class AppExtension extends AbstractExtension {
     private $userConverter;
     private $messageScopeConverter;
     private $studyGroupConverter;
+    private $studyGroupsConverter;
+    private $filesizeConverter;
+    private $timestampConverter;
 
     public function __construct(TeacherStringConverter $teacherConverter, StudentStringConverter $studentConverter,
                                 UserTypeStringConverter $userTypeConverter, UserStringConverter $userConverter,
-                                MessageScopeStringConverter $messageScopeConverter, StudyGroupStringConverter $studyGroupConverter) {
+                                MessageScopeStringConverter $messageScopeConverter, StudyGroupStringConverter $studyGroupConverter,
+                                StudyGroupsGradeStringConverter $studyGroupsConverter, FilesizeStringConverter $filesizeConverter,
+                                TimestampDateTimeConverter $timestampConverter) {
         $this->teacherConverter = $teacherConverter;
         $this->studentConverter = $studentConverter;
         $this->userTypeConverter = $userTypeConverter;
         $this->userConverter = $userConverter;
         $this->messageScopeConverter = $messageScopeConverter;
         $this->studyGroupConverter = $studyGroupConverter;
+        $this->studyGroupsConverter = $studyGroupsConverter;
+        $this->filesizeConverter = $filesizeConverter;
+        $this->timestampConverter = $timestampConverter;
     }
 
     public function getFilters() {
@@ -44,7 +55,10 @@ class AppExtension extends AbstractExtension {
             new TwigFilter('usertype', [ $this, 'userType' ]),
             new TwigFilter('user', [ $this, 'user' ]),
             new TwigFilter('messagescope', [ $this, 'messageScope' ]),
-            new TwigFilter('studygroup', [$this, 'studyGroup'])
+            new TwigFilter('studygroup', [$this, 'studyGroup']),
+            new TwigFilter('studygroups', [ $this, 'studyGroups' ]),
+            new TwigFilter('filesize', [ $this, 'filesize' ]),
+            new TwigFilter('todatetime', [ $this, 'toDateTime' ])
         ];
     }
 
@@ -70,5 +84,17 @@ class AppExtension extends AbstractExtension {
 
     public function studyGroup(StudyGroup $group) {
         return $this->studyGroupConverter->convert($group);
+    }
+
+    public function studyGroups(iterable $studyGroups, bool $sort = false) {
+        return $this->studyGroupsConverter->convert($studyGroups, $sort);
+    }
+
+    public function filesize(int $bytes) {
+        return $this->filesizeConverter->convert($bytes);
+    }
+
+    public function toDateTime(int $timestamp) {
+        return $this->timestampConverter->convert($timestamp);
     }
 }

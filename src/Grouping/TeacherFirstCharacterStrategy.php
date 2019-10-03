@@ -11,7 +11,7 @@ class TeacherFirstCharacterStrategy implements GroupingStrategyInterface {
      * @return string
      */
     public function computeKey($object) {
-        return ucfirst($object->getAcronym());
+        return ucfirst(substr($object->getAcronym(), 0, 1));
     }
 
     /**

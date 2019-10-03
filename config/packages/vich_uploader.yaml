@@ -6,8 +6,10 @@ vich_uploader:
         messages:
             upload_destination: messages
             directory_namer: App\Filesystem\MessageFilesystem
+            namer: Vich\UploaderBundle\Naming\UniqidNamer
         wiki:
             upload_destination: wiki
         documents:
             upload_destination: documents
             directory_namer: App\Filesystem\DocumentFilesystem
+            namer: Vich\UploaderBundle\Naming\UniqidNamer

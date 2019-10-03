@@ -7,8 +7,8 @@ use App\Converter\UserStringConverter;
 use App\Converter\UserTypeStringConverter;
 use App\Entity\DocumentCategory;
 use App\Entity\DocumentVisibility;
-use App\Entity\Grade;
 use App\Entity\StudyGroup;
+use App\Entity\StudyGroupType;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Sorting\DocumentCategoryNameStrategy;
@@ -22,8 +22,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DocumentType extends AbstractType {
@@ -61,8 +59,8 @@ class DocumentType extends AbstractType {
                 'legend' => 'label.general',
                 'fields' => function(FormBuilderInterface $builder) use($isRestrictedView) {
                     $builder
-                        ->add('name', TextType::class, [
-                            'label' => 'label.name',
+                        ->add('title', TextType::class, [
+                            'label' => 'label.title',
                             'disabled' => $isRestrictedView
                         ])
                         ->add('category', SortableEntityType::class, [
@@ -97,21 +95,15 @@ class DocumentType extends AbstractType {
                                     return $repository->createQueryBuilder('sg')
                                         ->select(['sg', 'g'])
                                         ->orderBy('sg.name', 'asc')
-                                        ->leftJoin('sg.grades', 'g');
-                                },
-                                'group_by' => function (StudyGroup $group) {
-                                    $grades = array_map(function (Grade $grade) {
-                                        return $grade->getName();
-                                    }, $group->getGrades()->toArray());
-
-                                    return join(', ', $grades);
+                                        ->leftJoin('sg.grades', 'g')
+                                        ->where('sg.type = :type')
+                                        ->setParameter('type', StudyGroupType::Grade());
                                 },
                                 'multiple' => true,
                                 'choice_label' => function (StudyGroup $group) {
-                                    return $this->studyGroupConverter->convert($group);
+                                    return $group->getName();
                                 },
-                                'sort_by' => $this->stringStrategy,
-                                'sort_items_by' => $this->studyGroupStrategy,
+                                'sort_by' => $this->studyGroupStrategy,
                                 'attr' => [
                                     'size' => 10
                                 ],

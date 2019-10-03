@@ -1,0 +1,17 @@
+<form role="form" method="get" class="form hidden-print">
+    {% include "_filter/_params.html.twig" %}
+
+    <div class="form-group">
+        <label for="usertype">{{ 'label.usertype'|trans }}:</label>
+        <select name="userType" id="usertype" class="form-control" data-trigger="submit" data-choice="true">
+            {% if userTypeFilter.handleNull %}
+                <option value="" {% if userTypeFilter.currentType is null %}selected="selected"{% endif %}>{{ 'label.select.all'|trans }}</option>
+            {% else %}
+            <option value="" placeholder>{{ 'label.select.usertype'|trans }}</option>
+            {% endif %}
+            {% for t in userTypeFilter.types %}
+                <option value="{{ t.value }}" {% if userTypeFilter.currentType != null and userTypeFilter.currentType.value == t.value %}selected="selected"{% endif %}>{{ t|usertype }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</form>

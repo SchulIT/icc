@@ -17,8 +17,8 @@ class MessageTest extends TestCase {
 
         $this->assertNull($message->getId());
 
-        $message->setSubject('subject');
-        $this->assertEquals('subject', $message->getSubject());
+        $message->setTitle('subject');
+        $this->assertEquals('subject', $message->getTitle());
 
         $message->setContent('content');
         $this->assertEquals('content', $message->getContent());

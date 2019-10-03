@@ -30,7 +30,7 @@ class MessageConfirmationTest extends WebTestCase {
             ->getManager();
 
         $message = (new Message())
-            ->setSubject('subject')
+            ->setTitle('subject')
             ->setContent('content')
             ->setStartDate(new \DateTime('2019-01-01'))
             ->setExpireDate(new \DateTime('2019-01-03'))

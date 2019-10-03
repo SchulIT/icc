@@ -18,13 +18,12 @@ use SchoolIT\CommonBundle\Form\FieldsetType;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class MessageType extends AbstractType {
@@ -76,8 +75,8 @@ class MessageType extends AbstractType {
                     );
 
                     $builder
-                        ->add('subject', TextType::class, [
-                            'label' => 'label.message.subject'
+                        ->add('title', TextType::class, [
+                            'label' => 'label.title'
                         ])
                         ->add('scope', ChoiceType::class, [
                             'choices' => $scopes,
@@ -99,7 +98,7 @@ class MessageType extends AbstractType {
                                 return $this->userTypeConverter->convert($visibility->getUserType());
                             }
                         ])
-                        ->add('studyGroups', SortableEntityType::class, [
+                        ->add('studyGroups', StudyGroupType::class, [
                             'label' => 'label.study_groups',
                             'class' => StudyGroup::class,
                             'query_builder' => function(EntityRepository $repository) {
@@ -147,6 +146,35 @@ class MessageType extends AbstractType {
                             'entry_type' => MessageAttachmentType::class,
                             'allow_add' => true,
                             'allow_delete' => true
+                        ]);
+                }
+            ])
+            ->add('group_uploaddownload', FieldsetType::class, [
+                'legend' => 'label.messages_files.label',
+                'fields' => function(FormBuilderInterface $builder) {
+                    $builder
+                        ->add('isDownloadsEnabled', CheckboxType::class, [
+                            'label' => 'label.messages_files.enable_downloads',
+                            'required' => false,
+                            'help' => 'label.messages_files.info_downloads'
+                        ])
+                        ->add('isUploadsEnabled', CheckboxType::class, [
+                            'label' => 'label.messages_files.enable_uploads',
+                            'required' => false,
+                            'help' => 'label.messages_files.info_uploads'
+                        ])
+                        ->add('uploadDescription', MarkdownType::class, [
+                            'label' => 'label.messages_files.upload_description',
+                            'required' => false
+                        ])
+                        ->add('files', CollectionType::class, [
+                            'entry_options' => [
+                                'label' => 'label.file'
+                            ],
+                            'entry_type' => MessageFileType::class,
+                            'allow_add' => true,
+                            'allow_delete' => true,
+                            'by_reference' => false
                         ]);
                 }
             ]);

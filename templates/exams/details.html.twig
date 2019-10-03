@@ -2,6 +2,14 @@
 
 {% block title %}{{ 'plans.exam.label'|trans }}{% endblock %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('exams') }}">{{ 'plans.exams.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
 {% block content %}
     <h2 class="mb-3">{{ 'plans.exam.label'|trans }}</h2>
 

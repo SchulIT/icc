@@ -2,6 +2,15 @@
 
 {% block title %}{{ tuition.name }} ({{ tuition.subject.name }}){% endblock %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('list_tuitions') }}">{{ 'lists.tuitions.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
 {% block content %}
     {% include "_messages.html.twig" %}
 

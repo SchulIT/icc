@@ -4,10 +4,12 @@ namespace App\Entity;
 
 use App\Validator\Color;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @UniqueEntity(fields={"externalId"})
  */
 class AppointmentCategory {
 
@@ -21,8 +23,6 @@ class AppointmentCategory {
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
-     * @Assert\NotNull()
-     * @Assert\NotBlank()
      * @var string|null
      */
     private $externalId;
@@ -38,6 +38,8 @@ class AppointmentCategory {
     /**
      * @ORM\Column(type="string", nullable=true)
      * @Color()
+     * @Assert\NotNull()
+     * @Assert\NotBlank()
      * @var string|null
      */
     private $color = null;
@@ -66,17 +68,17 @@ class AppointmentCategory {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getName(): string {
+    public function getName(): ?string {
         return $this->name;
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      * @return AppointmentCategory
      */
-    public function setName(string $name): AppointmentCategory {
+    public function setName(?string $name): AppointmentCategory {
         $this->name = $name;
         return $this;
     }

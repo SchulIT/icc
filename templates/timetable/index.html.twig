@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('build/timetable.scss') }}" media="print" />
 {% endblock %}
 
-{% block title %}Stundenplan{% endblock %}
+{% block title %}{{ 'plans.timetable.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -54,9 +54,9 @@
 
     {% if periods|length == 0 %}
     <div class="bs-callout bs-callout-info">
-        <h4>Information</h4>
+        <h4>{{ 'info.label'|trans }}</h4>
         <p>
-            Aktuell ist kein Stundenplan verfügbar.
+            {{ 'plans.timetable.not_available'|trans }}
         </p>
     </div>
     {% endif %}
@@ -79,12 +79,7 @@
             <div class="card-body">
                 {% if timetable != null %}
                         <h5 class="card-title">
-                            Stundenplan für
-                            {% if studentFilter.currentStudent != null %}{{ studentFilter.currentStudent|student }}
-                            {% elseif teacherFilter.currentTeacher != null %}{{ teacherFilter.currentTeacher|teacher }}
-                            {% elseif roomFilter.currentRoom != null %}{{ roomFilter.currentRoom.name }}
-                            {% elseif gradeFilter.currentGrade != null %}{{ gradeFilter.currentGrade.name }}
-                            {% elseif subjectFilter.currentSubjects|length > 0%}TODO{% endif %}
+                            {% include "timetable/_title.html.twig" %}
                         </h5>
 
                         {% for week in timetable.weeks %}
@@ -99,9 +94,9 @@
                                 </colgroup>
 
                                 <thead>
-                                <th>Stunde</th>
+                                <th>{{ 'label.lesson'|trans }}</th>
                                 {% for day in week.days %}
-                                    <th{% if day.isCurrentDay %} class="current" {% endif %}>{{ day.day|weekday }} {% if day.isCurrentDay %}<span class="label label-default">heute</span>{% endif %}</th>
+                                    <th{% if day.isCurrentDay %} class="current" {% endif %}>{{ day.day|weekday }} {% if day.isCurrentDay %}<span class="badge badge-secondary">heute</span>{% endif %}</th>
                                 {% endfor %}
                                 </thead>
 
@@ -148,7 +143,9 @@
                                                     {% set end = endTimes[i] %}
                                                 {% endif %}
                                                 {% if start != null and end != null %}
-                                                    ({{ start }} - {{ end }})
+                                                <span class="text-muted">
+                                                    {{ start }} - {{ end }}
+                                                </span>
                                                 {% endif %}
                                             </td>
                                             {% for day in week.days %}
@@ -189,23 +186,11 @@
                     <div class="bs-callout bs-callout-info">
                         <h4>Information</h4>
                         <p>
-                            Für diese Periode ist kein Stundenplan verfügbar.
+                             {{ 'plans.timetable.not_available_for_period'|trans }}
                         </p>
                     </div>
                 {% endif %}
         </div>
-
-        <div class="row">
-            {% for period in periods %}
-            <div class="col-sm widget link-widget">
-                <a class="content" href="{{ path('timetable', { period: period.getId(), grade: gradeFilter.currentGrade, student: studentFilter.currentStudent ? studentFilter.currentStudent.id, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.id, subject: subjectFilter.currentSubjects, room: roomFilter.currentRoom ? roomFilter.currentRoom.id }) }}">
-
-                </a>
-            </div>
-            {% endfor %}
-        </div>
-
-
     {% endif %}
     </div>
 

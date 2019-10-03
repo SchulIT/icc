@@ -1,0 +1,100 @@
+{% extends "main.html.twig" %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/collection.js') }}"></script>
+    <script src="{{ asset('build/editor.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ 'messages.edit.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'admin.label'|trans }}</li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_messages') }}">{{ 'admin.messages.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form) }}
+
+    {{ form_row(form.group_general) }}
+
+    <div class="card mb-3">
+        <div class="card-header">{{ 'label.attachments'|trans }}</div>
+
+        <div class="card-body">
+            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}">
+                {% for attachment in form.group_attachments.attachments %}
+                    {% if attachment.vars.value is not null and attachment.vars.value.id is not null %}
+                        <div class="form-group row">
+                            <div class="col-sm-2">  </div>
+                            <div class="col-sm-10">
+                                <i class="fa fa-file"></i> {{ attachment.vars.value.filename }}
+
+                                {% if attachment.children.file.delete is defined %}
+                                    {{ form_widget(attachment.children.file.delete) }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% do attachment.setRendered() %}
+                    {% else %}
+                        {{ form_widget(attachment) }}
+                    {% endif %}
+                {% endfor %}
+
+                {% do form.group_attachments.setRendered() %}
+            </div>
+
+            {{ form_errors(form.group_attachments.attachments) }}
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="attachments">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
+        </div>
+
+        <!-- {{ form_end(form.group_attachments) }} -->
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">{{ 'label.messages_files.label'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_row(form.group_uploaddownload.isDownloadsEnabled) }}
+            {{ form_row(form.group_uploaddownload.isUploadsEnabled) }}
+            {{ form_row(form.group_uploaddownload.uploadDescription) }}
+
+            <div class="files" data-collection="files" data-prototype="{{ form_row(form.group_uploaddownload.files.vars.prototype)|e('html_attr') }}">
+                {% for file in form.group_uploaddownload.files %}
+                    {{ form_row(file) }}
+                {% endfor %}
+            </div>
+
+            {{ form_errors(form.group_uploaddownload.files) }}
+
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="files">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
+
+            <!-- {{ form_end(form.group_uploaddownload) }} -->
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+        </button>
+
+        <a href="{{ path('admin_messages') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}

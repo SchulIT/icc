@@ -2,6 +2,13 @@
 
 {% block title %}{{ 'plans.exams.label'|trans }}{% endblock %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
 {% block content %}
     {% include "_messages.html.twig" %}
 
@@ -28,14 +35,18 @@
 
                 <div class="col-md-3 col-sm-3 col-xs-12">
                     <form role="form" method="get" class="form hidden-print">
+                        {% if teacherFilter.currentTeacher is not null %}<input type="hidden" name="teacherAcronym" value="{{ teacherFilter.currentTeacher.acronym }}">{% endif %}
+                        {% if studentFilter.currentStudent is not null %}<input type="hidden" name="studentId" value="{{ studentFilter.currentStudent.id }}">{% endif %}
+
                         <label class="control-label">{{ 'label.options'|trans }}:</label>
-                        <div class="form-check">
-                            {% if teacherFilter.currentTeacher is not null %}<input type="hidden" name="teacherAcronym" value="{{ teacherFilter.currentTeacher.acronym }}">{% endif %}
-                            {% if studentFilter.currentStudent is not null %}<input type="hidden" name="studentId" value="{{ studentFilter.currentStudent.id }}">{% endif %}
-                            <input class="form-check-input" data-trigger="form-submit" type="checkbox" value="true" id="all" name="all" {% if showAll %} checked="checked"{% endif %}>
-                            <label for="all" class="form-check-label">
-                                {{ 'plans.exams.show_all'|trans }}
-                            </label>
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+
+                                <input class="custom-control-input" data-trigger="submit" type="checkbox" value="true" id="all" name="all" {% if showAll %} checked="checked"{% endif %}>
+                                <label for="all" class="custom-control-label">
+                                    {{ 'plans.exams.show_all'|trans }}
+                                </label>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -69,4 +80,10 @@
         {% endif %}
     </div>
     {% endif %}
+
+    <div class="buttons">
+        <a href="{{ path('exams_export') }}" class="btn btn-primary btn-sm">
+            {{ 'plans.exams.export.label'|trans }}
+        </a>
+    </div>
 {% endblock %}

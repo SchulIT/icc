@@ -7,6 +7,7 @@ label:
     email: E-Mail
     subject: Fach
     teacher: Lehrkraft
+    teachers: Lehrkräfte
     student: Lernender
     students: "{0} %count% Lernende|{1} %count% Lernender|]1,Inf[ %count% Lernende"
     students_simple: Lernende
@@ -16,6 +17,7 @@ label:
     grades: Klassen
     study_group: Lerngruppe
     study_groups: Lerngruppen
+    usertype: Benutzertyp
     details: Details
     date: Datum
     lesson: Stunde
@@ -24,12 +26,16 @@ label:
     end: End
     exam_lessons: "{0} %start%. Stunde|{1} %start%./%end%. Stunde|]1,Inf[ %start%.-%end%. Stunde"
     select:
+        all: Alle
         grade: Klasse auswählen
         student: Lernenden auswählen
         teacher: Lehrkraft auswählen
         study_group: Lerngruppe auswählen
         room: Raum auswählen
         subjects: Fächer
+        subject: Fach auswählen
+        category: Kategorie auswählen
+        usertype: Benutzertyp auswählen
     search:
         student: Lernenden suchen
     scope: Bereich
@@ -53,14 +59,41 @@ label:
         help: "Wird zur Berechnung der Wochen benötigt (bspw. 0 = gerade Wochen, 1 = ungerade Wochen; sofern nur zwei Wochentypen angegeben wurden). Berechnung: aktuelle Woche modulo Anzahl der Stundenplan-Wochen."
     category: Kategorie
     authors: Autoren
-
+    query: Suchbegriff
+    lastchange: Letzte Änderung
+    title: Titel
+    messages_files:
+        label: Personalisierte Dateien
+        info_downloads: Es ist möglich, dass für jeden Benutzer personalisierte Dateien zum Download angeboten werden.
+        enable_downloads: Benutzer können Dateien herunterladen
+        info_uploads: Darüber hinaus ist es möglich, dass Benutzer personalisierte Dateien einsenden können.
+        enable_uploads: Benutzer können Dateien hochladen
+        file_label: Beschreibung für die Datei, bspw. ZIP-Archiv
+        file_extension: Erlaubte Dateiendungen, separiert mit Komma
+        upload_description: Zusätzliche Hinweise
+        files: Dateien
+    organizers: Organisatoren
+    external_organizers: Externe Organisatoren
+    location: Ort
+    all_day: ganztägig
+    hidden_from_students: vor Schülern verstecken
+    people: Menschen
+    color: Farbe
 
 actions:
     add: hinzufügen
+    edit: bearbeiten
     remove: löschen
     back: zurück
     save: speichern
     search: suchen
+    create: erzeugen
+    upload: hochladen
+    pick: auswählen
+
+clipboard:
+    copy: In die Zwischenablage kopieren
+    success: In die Zwischenablage kopiert
 
 greeting:
     female: Frau
@@ -89,6 +122,17 @@ plans:
         time: Zeitraum
         invigilators: Aufsicht
         show_all: Alte Klausuren anzeigen
+        export:
+            label: Klausuren exportieren
+            download:
+                label: Einmaliger Download
+                info: Der Klausurplan wird bei dieser Methode nicht aktualisiert!
+                filename: klausuren.ics
+            sync:
+                label: Link zur Synchronisation
+                info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Klausurplan damit aktuell hält.
+                name_help: Unter diesem Namen kann in den Profil-Einstellungen der Zugriff wieder entzogen werden.
+                success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
 
     exam:
         label: Klausurdetails
@@ -96,10 +140,38 @@ plans:
 
     timetable:
         label: Stundenplan
+        not_available: Aktuell ist kein Stundenplan verfügbar.
+        not_available_for_period: Für diese Periode ist kein Stundenplan verfügbar.
+        lesson: Stunde
+        title: "Stundenplan für %name%"
+        print:
+            date: "gedruckt am %date%"
     substitutions:
         label: Vertretungsplan
     appointments:
         label: Terminplan
+        not_available: Aktuell ist der Terminplan nicht verfügbar.
+        empty: Aktuell sind keine Termine eingetragen.
+        filter:
+            show_past: Zurückliegende Termine anzeigen
+        export:
+            label: Kalender exportieren
+            download:
+                label: Einmaliger Download
+                info: Der Stundenplan wird bei dieser Methode nicht aktualisiert!
+                filename: termine.ics
+            sync:
+                label: Link zur Synchronisation
+                info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Stundenplan damit aktuell hält.
+                name_help: Unter diesem Namen kann in den Profil-Einstellungen der Zugriff wieder entzogen werden.
+                success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
+            name: Schulkalender
+            description: Export der Schulkalenders
+            teachers: Lehrkräfte
+            category: "Kategorie: %name%"
+            study_groups: "{1}Lerngruppe: %name%|]1,Inf[Lerngruppen: %name%"
+            all: alle
+            organizers: "{1}Organisator: %name%|]1,Inf[Organisatoren: %name%"
     rooms:
         label: Räume
         filter:
@@ -122,11 +194,21 @@ lists:
             student: "Unterricht von %student%"
             teacher: "Unterricht von %teacher%"
         type: Art
+
     study_groups:
         label: Lerngruppen
         start: Bitte eine Lerngruppe auswählen oder suchen.
         empty: Dieser Lerngruppe sind keine Lernenden zugeordnet.
         mail_to_all: E-Mail an alle Lernenden verfassen
+        grade_teacher: Klassenleitung
+        grade_teacher_substitutional: Stellvertretende Klassenleitung
+        num_students: Anzahl Lernende
+    teachers:
+        label: Lehrkräfte
+        emtpy: Es wurden keine Lehrkräfte gefunden.
+        substitutional:
+            short: (stv.)
+            long: stellvertretend
 
 teachers:
     export:
@@ -139,8 +221,34 @@ messages:
     overview:
         label: Mitteilungen
         empty: Aktuell gibt es keine Mitteilungen im System.
+        archive: alte Mitteilungen anzeigen
+        show_all: "Alle %num% Lerngruppen anzeigen"
     add:
         label: Neue Mitteilung
+        success: Mitteilung erfolgreich erstellt
+
+    edit:
+        label: Mitteilung bearbeiten
+
+    confirm:
+        info: Diese Mitteilung muss von der Zielgruppe bestätigt werden.
+        success: Mitteilung erfolgreich bestätigt.
+        confirmed: Die Mitteilung wurde bereits bestätigt.
+
+    downloads:
+        info: Diese Mitteilung enthält persönliche Downloads
+        empty: Aktuell sind keine Downloads verfügbar.
+        label: Persönliche Downloads
+
+    uploads:
+        info: Diese Mitteilung enthält persönliche Uploads
+        label: Persönliche Uploads
+        empty: Es wurden noch keine Dateien hochgeladen.
+
+documents:
+    label: Dokumente
+    empty: Aktuell wurden keine Dokumente hinterlegt.
+    empty_search: Die Suche ergab keinen Treffer.
 
 message:
     visibility: Sichtbarkeit der Mitteilung
@@ -172,6 +280,7 @@ studygroup:
     type:
         grade: Klasse/Jgst.
         course: Kurs
+    string: "%name% (%grade%)"
 
 
 date:
@@ -186,6 +295,19 @@ date:
         4: Donnerstag
         5: Freitag
         6: Samstag
+    months:
+        1: Januar
+        2: Februar
+        3: März
+        4: April
+        5: Mai
+        6: Juni
+        7: Juli
+        8: August
+        9: September
+        10: Oktober
+        11: November
+        12: Dezember
 
 admin:
     label: Verwaltung
@@ -259,6 +381,57 @@ admin:
                 confirm: 'Soll die Stundenplan-Periode "%name%" wirklich gelöscht werden?'
                 success: Stundenplan-Periode erfolgreich gelöscht
 
+    messages:
+        label: Mitteilungen
+        overview:
+            expired: Abgelaufene Mitteilungen
+            active: Aktive Mitteilungen
+        add:
+            label: Mitteilung erstellen
+            success: Mitteilung erfolgreich erstellt
+        edit:
+            label: Mitteilung bearbeiten
+            success: Mitteilung erfolgreich aktualisiert
+        remove:
+            label: Mitteilung löschen
+            confirm: 'Soll die Mitteilung "%name%" wirklich gelöscht werden?'
+            success: Mitteilung erfolgreich gelöscht
+        confirmations:
+            label: Bestätigungen anzeigen
+            num: 'Die Mitteilung wurde %num% mal bestätigt.'
+
+    appointments:
+        label: Termine
+        overview:
+            empty: Aktuell gibt es keine Termine.
+
+        add:
+            label: Termin erstellen
+            success: Termin erfolgreich erstellt
+        edit:
+            label: Termin bearbeiten
+            success: Termin erfolgreich aktualisiert
+        remove:
+            label: Termin löschen
+            success: Termin erfolgreich gelöscht
+            confirm: 'Soll der Termin "%name%" wirklich gelöscht werden?'
+
+        categories:
+            label: Termin-Kategorien
+            overview:
+                empty: Aktuell sind keine Kategorien vorhanden.
+                back: Zurück zu den Terminen
+            add:
+                label: Kategorie erstellen
+                success: Kategorie erfolgreich erstellt
+            edit:
+                label: Kategorie bearbeiten
+                success: Kategorie erfolgreich aktualisiert
+            remove:
+                label: Kategorie löschen
+                confirm: 'Soll die Termin-Kategorie "%name%" wirklich gelöscht werden?'
+                success: Kategorie erfolgreich gelöscht
+
     documents:
         label: Dokumente
         overview:
@@ -292,3 +465,6 @@ admin:
                 confirm: 'Soll die Dokument-Kategorie "%name%" wirklich gelöscht werden?'
                 success: Kategorie erfolgreich gelöscht
 
+forms:
+    select:
+        all_grades: Alle Klassen/Jgst. auswählen

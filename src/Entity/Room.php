@@ -118,7 +118,7 @@ class Room {
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection<RoomTagInfo>
      */
     public function getTags(): Collection {
         return $this->tags;

@@ -4,18 +4,36 @@ namespace App\Repository;
 
 use App\Entity\Document;
 use App\Entity\DocumentCategory;
+use App\Entity\StudyGroup;
+use App\Entity\UserType;
+use Doctrine\ORM\QueryBuilder;
 
 class DocumentRepository extends AbstractRepository implements DocumentRepositoryInterface {
+
+    private function createDefaultQueryBuilder(): QueryBuilder {
+        $qb = $this->em->createQueryBuilder()
+            ->select(['d', 'att', 'a', 'c', 'sg', 'v'])
+            ->from(Document::class, 'd')
+            ->leftJoin('d.attachments', 'att')
+            ->leftJoin('d.authors', 'a')
+            ->leftJoin('d.category', 'c')
+            ->leftJoin('d.studyGroups', 'sg')
+            ->leftJoin('d.visibilities', 'v');
+
+        return $qb;
+    }
 
     /**
      * @param int $id
      * @return Document|null
      */
     public function findOneById(int $id): ?Document {
-        return $this->em->getRepository(Document::class)
-            ->findOneBy([
-                'id' => $id
-            ]);
+        $qb = $this->createDefaultQueryBuilder();
+        $qb->where('d.id = :id')
+            ->setParameter('id', $id)
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getSingleResult();
     }
 
     /**
@@ -23,20 +41,56 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
      * @return Document[]
      */
     public function findAllByCategory(DocumentCategory $category) {
-        return $this->em->getRepository(Document::class)
-            ->findBy([
-                'category' => $category
-            ]);
+        $qb = $this->createDefaultQueryBuilder();
+        $qb->where('c.id = :id')
+            ->setParameter('id', $category->getId())
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getSingleResult();
     }
 
     /**
      * @return Document[]
      */
     public function findAll() {
-        return $this->em->getRepository(Document::class)
-            ->findBy([], [
-                'name' => 'asc'
-            ]);
+        $qb = $this->createDefaultQueryBuilder();
+        $qb->orderBy('d.title', 'asc');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllFor(UserType $type, ?StudyGroup $studyGroup = null, ?string $q = null) {
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('dInner.id')
+            ->from(Document::class, 'dInner')
+            ->leftJoin('dInner.studyGroups', 'sgInner')
+            ->leftJoin('dInner.visibilities', 'vInner')
+            ->where('vInner.userType = :type');
+
+        $qb->setParameter('type', $type->getValue());
+
+        if($studyGroup !== null) {
+            $qbInner->andWhere('sgInner.id = :group');
+            $qb->setParameter('group', $studyGroup->getId());
+        }
+
+        if($q !== null) {
+            dump($q);
+
+            $qbInner->andWhere('MATCH (d.content) AGAINST(:q) > 0');
+            $qb->setParameter('q', $q);
+        }
+
+        $qb->where(
+            $qb->expr()->in('d.id', $qbInner->getDQL())
+        );
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -54,4 +108,5 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
         $this->em->persist($document);
         $this->em->flush();
     }
+
 }

@@ -1,0 +1,62 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.appointments.categories.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'admin.label'|trans }}</li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_appointments') }}">{{ 'admin.appointments.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+        {% if categories|length == 0 %}
+            <div class="bs-callout bs-callout-info">
+                <h5>{{ 'info.label'|trans }}</h5>
+
+                <p>{{ 'admin.appointments.categories.overview.empty'|trans }}</p>
+            </div>
+        {% else %}
+            <div class="card">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.name'|trans }} </th>
+                        <th> </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td>
+                                {{ category.name }}
+                            </td>
+                            <td>
+                                <a href="{{ path('edit_appointment_category', { id: category.id }) }}" class="btn btn-primary btn-sm">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+
+                                <a href="{{ path('remove_appointment_category', { id: category.id }) }}" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+    <div class="buttons">
+        <a href="{{ path('add_appointment_category') }}" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'admin.appointments.categories.add.label'|trans }}
+        </a>
+
+        <a href="{{ path('admin_appointments') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'admin.appointments.categories.overview.back'|trans }}
+        </a>
+    </div>
+{% endblock %}

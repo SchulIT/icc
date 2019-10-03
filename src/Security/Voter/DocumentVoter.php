@@ -16,6 +16,7 @@ class DocumentVoter extends Voter {
     const Edit = 'edit';
     const Remove = 'remove';
     const View = 'view';
+    const ViewOthers = 'other-documents';
 
     private $security;
 
@@ -30,10 +31,10 @@ class DocumentVoter extends Voter {
         $attributes = [
             static::Edit,
             static::Remove,
-            static::View
+            static::View,
         ];
 
-        return $attribute === static::New ||
+        return $attribute === static::New || $attribute === static::ViewOthers ||
             ($subject instanceof Document && in_array($attribute, $attributes));
     }
 
@@ -53,6 +54,9 @@ class DocumentVoter extends Voter {
 
             case static::View:
                 return $this->canViewDocument($subject, $token);
+
+            case static::ViewOthers:
+                return $this->canViewOtherDocuments($token);
         }
 
         throw new \LogicException('This code should not be reached.');
@@ -67,8 +71,11 @@ class DocumentVoter extends Voter {
             return true;
         }
 
+        /** @var User $user */
+        $user = $token->getUser();
+
         foreach($document->getAuthors() as $author) {
-            if($author->getId() === $token->getUser()->getId()) {
+            if($author->getId() === $user->getId()) {
                 return true;
             }
         }
@@ -110,5 +117,13 @@ class DocumentVoter extends Voter {
         }
 
         return false;
+    }
+
+    private function canViewOtherDocuments(TokenInterface $token) {
+        /** @var User $user */
+        $user = $token->getUser();
+
+        $isTeacher = $user->getUserType()->equals(UserType::Teacher());
+        return $isTeacher || $this->security->isGranted('ROLE_DOCUMENTS_ADMIN');
     }
 }

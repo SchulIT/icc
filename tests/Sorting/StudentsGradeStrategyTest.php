@@ -7,6 +7,7 @@ use App\Entity\Student;
 use App\Grouping\StudentGradeGroup;
 use App\Sorting\GradeNameStrategy;
 use App\Sorting\Sorter;
+use App\Sorting\StringStrategy;
 use App\Sorting\StudentGradeGroupStrategy;
 use App\Sorting\StudentStrategy;
 use PHPUnit\Framework\TestCase;
@@ -14,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class StudentsGradeStrategyTest extends TestCase {
     public function testStrategy() {
-        $gradeGroupsStrategy = new StudentGradeGroupStrategy(new GradeNameStrategy());
+        $gradeGroupsStrategy = new StudentGradeGroupStrategy(new GradeNameStrategy(new StringStrategy()));
 
         $groupEF = (new StudentGradeGroup((new Grade())->setName('EF')));
         $group9A = (new StudentGradeGroup((new Grade())->setName('9A')));
@@ -55,7 +56,7 @@ class StudentsGradeStrategyTest extends TestCase {
         $groupEF->addItem($studentTwo);
         $groupEF->addItem($studentThree);
 
-        $studentsStrategy = new StudentStrategy();
+        $studentsStrategy = new StudentStrategy(new StringStrategy());
         $sorter = new Sorter([$studentsStrategy]);
 
         $sorter->sortGroupItems([$groupEF], StudentStrategy::class);

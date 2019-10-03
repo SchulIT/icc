@@ -10,7 +10,7 @@ class Grouper {
     private $strategies = [ ];
 
     /**
-     * @param GroupingStrategyInterface[]
+     * @param GroupingStrategyInterface[] $strategies
      */
     public function __construct(iterable $strategies) {
         foreach($strategies as $strategy) {

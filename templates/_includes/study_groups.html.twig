@@ -1,0 +1,2 @@
+{% set studyGroupsView = studyGroups|studygroups(true) %}
+{% if studyGroups|length > 7 %}<a href="#" id="grades-{{ id }}" data-show=".grades-{{ id }}" data-remove="#grades-{{ id }}">{{ 'messages.overview.show_all'|trans({'%num%': studyGroups|length}) }}</a> <span class="grades-{{ id }}" style="display: none">{{ studyGroupsView }}</span>{% else %}{{ studyGroupsView }}{% endif %}

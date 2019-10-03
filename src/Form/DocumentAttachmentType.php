@@ -13,7 +13,10 @@ class DocumentAttachmentType extends AbstractType {
         $builder
             ->add('file', VichFileType::class, [
                 'label' => 'label.file',
-                'download_uri' => false
+                'download_uri' => false,
+                'attr' => [
+                    'in_collection' => true
+                ]
             ]);
     }
 

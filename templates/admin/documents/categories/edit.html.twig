@@ -2,12 +2,25 @@
 
 {% block title %}{{ 'admin.documents.categories.edit.label'|trans }}{% endblock %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'admin.label'|trans }}</li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_documents') }}">{{ 'admin.documents.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_document_categories') }}">{{ 'admin.documents.categories.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
 {% block content %}
     {{ form_start(form) }}
-    <div class="contentbox">
-        <h4>{{ 'label.general'|trans }}</h4>
 
-        {{ form_widget(form) }}
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_widget(form) }}
+        </div>
     </div>
 
     <div class="buttons">

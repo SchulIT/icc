@@ -2,6 +2,9 @@
     "acelaya/doctrine-enum-type": {
         "version": "v2.2.3"
     },
+    "beberlei/doctrineextensions": {
+        "version": "v1.2.3"
+    },
     "behat/transliterator": {
         "version": "v1.2.0"
     },
@@ -135,9 +138,6 @@
     "exsyst/swagger": {
         "version": "v0.4.1"
     },
-    "facebook/webdriver": {
-        "version": "1.6.0"
-    },
     "fig/link-util": {
         "version": "1.0.0"
     },
@@ -223,6 +223,9 @@
             "./config/packages/jms_serializer.yaml",
             "./config/packages/prod/jms_serializer.yaml"
         ]
+    },
+    "jsvrcek/ics": {
+        "version": "0.6"
     },
     "knplabs/knp-menu": {
         "version": "2.3.0"
@@ -387,6 +390,9 @@
     "psr/log": {
         "version": "1.1.0"
     },
+    "ralouphie/mimey": {
+        "version": "2.1.0"
+    },
     "robrichards/xmlseclibs": {
         "version": "3.0.3"
     },
@@ -484,9 +490,6 @@
             "./config/bootstrap.php"
         ]
     },
-    "symfony/contracts": {
-        "version": "v1.0.2"
-    },
     "symfony/css-selector": {
         "version": "v4.2.4"
     },
@@ -569,12 +572,6 @@
             "./src/Kernel.php"
         ]
     },
-    "symfony/http-client": {
-        "version": "v4.3.1"
-    },
-    "symfony/http-client-contracts": {
-        "version": "v1.1.3"
-    },
     "symfony/http-foundation": {
         "version": "v4.2.4"
     },
@@ -621,9 +618,6 @@
     },
     "symfony/orm-pack": {
         "version": "v1.0.6"
-    },
-    "symfony/panther": {
-        "version": "v0.3.0"
     },
     "symfony/phpunit-bridge": {
         "version": "4.1",

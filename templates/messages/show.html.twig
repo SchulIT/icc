@@ -1,0 +1,128 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ message.title }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('messages') }}">{{ 'messages.overview.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-9 pl-0">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ message.title }}</h5>
+
+                    {{ message.content|markdown }}
+                </div>
+            </div>
+
+            {% if message.attachments|length > 0 %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'label.attachments'|trans }}</h5>
+
+                        <ul class="list-unstyled">
+                            {% for attachment in message.attachments %}
+                                <li><i class="fa fa-file"></i> <a href="{{ path('download_message_attachment', { message: message.id, id: attachment.id }) }}">{{ attachment.filename }}</a> <span class="text-muted">{{ attachment.size|filesize }}</span></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if message.downloadsEnabled %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'messages.downloads.label'|trans }}</h5>
+
+                        {% if downloads is empty %}
+                        <div class="bs-callout bs-callout-info">
+                            <p>{{ 'messages.downloads.empty'|trans }}</p>
+                        </div>
+                        {% else %}
+                            <ul class="list-unstyled">
+                                {% for file in downloads %}
+                                <li><i class="fa fa-file"></i> <a href="{{ path('download_user_file', { id: message.id, filename: file.basename }) }}">{{ file.basename }}</a> <span class="text-muted">{{ file.size|filesize }}</span></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if message.uploadsEnabled %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'messages.uploads.label'|trans }}</h5>
+
+                        {% if uploads is empty %}
+                            <div class="bs-callout bs-callout-info">
+                                <p>{{ 'messages.uploads.empty'|trans }}</p>
+                            </div>
+                        {% else %}
+                            <ul class="list-unstyled">
+                                {% for file in uploads %}
+                                    <li><i class="fa fa-file"></i> <a href="{{ path('download_uploaded_user_file', { id: message.id, filename: file.basename }) }}">{{ file.basename }}</a> <span class="text-muted">{{ file.size|filesize }} <i class="fa fa-calendar"></i> {{ file.timestamp|todatetime|format_datetime }}</span></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        {{ form_start(form) }}
+                        {{ form_widget(form) }}
+
+                        <div class="buttons">
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-upload"></i> {{ 'actions.upload'|trans }}</button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-3 pr-0">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ 'label.details'|trans }}</h5>
+
+                    <p>
+                        <span class="text-muted">{{ 'label.lastchange'|trans }}</span> {{ message.updatedAt|format_datetime }}
+                    </p>
+
+                    <p>
+                        <span class="text-muted">{{ 'label.visibility'|trans }}</span>
+                        {% for visibility in message.visibilities %}{{ visibility.userType|usertype }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    </p>
+
+                    {% if message.studyGroups|length > 0 %}
+                        <p>
+                            <span class="text-muted">{{ 'label.study_groups'|trans }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, id: message.id } only  %}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <a href="javascript:history.back();" class="btn btn-primary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+
+        {% if is_granted('edit', message) %}
+            <a href="{{ path('edit_message', { id: message.id }) }}" class="btn btn-primary btn-sm">
+                <i class="fa fa-edit"></i> {{ 'admin.documents.edit.label'|trans }}
+            </a>
+        {% endif %}
+        {% if is_granted('remove', message) %}
+            <a href="#" class="btn btn-danger btn-sm">
+                <i class="fa fa-trash"></i> {{ 'admin.documents.remove.label'|trans }}
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}

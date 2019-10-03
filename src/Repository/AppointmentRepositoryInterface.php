@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Appointment;
+use App\Entity\AppointmentCategory;
+use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
@@ -23,11 +25,20 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function findOneByExternalId(string $externalId): ?Appointment;
 
     /**
-     * @param Student[] $students
+     * @param Grade $grade
      * @param \DateTime|null $today
+     * @param bool $includeHiddenFromStudents
      * @return Appointment[]
      */
-    public function findAllForStudents(array $students, ?\DateTime $today = null): array;
+    public function findAllForGrade(Grade $grade, ?\DateTime $today = null, bool $includeHiddenFromStudents = false): array;
+
+    /**
+     * @param Student[] $students
+     * @param \DateTime|null $today
+     * @param bool $includeHiddenFromStudents
+     * @return Appointment[]
+     */
+    public function findAllForStudents(array $students, ?\DateTime $today = null, bool $includeHiddenFromStudents = false): array;
 
     /**
      * @param Teacher $teacher
@@ -37,10 +48,12 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function findAllForTeacher(Teacher $teacher, ?\DateTime $today = null): array;
 
     /**
+     * @param AppointmentCategory|null $category
+     * @param string|null $q
      * @param \DateTime|null $today = null
      * @return Appointment[]
      */
-    public function findAll(?\DateTime $today = null);
+    public function findAll(?AppointmentCategory $category = null, ?string $q = null, ?\DateTime $today = null);
 
     /**
      * @param Appointment $appointment

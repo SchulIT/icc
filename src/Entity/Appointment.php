@@ -31,7 +31,7 @@ class Appointment {
      * @Assert\NotBlank()
      * @var string
      */
-    private $subject;
+    private $title;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -73,7 +73,7 @@ class Appointment {
     private $isHiddenFromStudents;
 
     /**
-     * @ORM\ManyToMany(targetEntity="StudyGroup")
+     * @ORM\ManyToMany(targetEntity="StudyGroup", cascade={"persist"})
      * @ORM\JoinTable(
      *     name="appointment_studygroups",
      *     joinColumns={@ORM\JoinColumn(name="grade", onDelete="CASCADE")},
@@ -84,7 +84,7 @@ class Appointment {
     private $studyGroups;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Teacher")
+     * @ORM\ManyToMany(targetEntity="Teacher", cascade={"persist"})
      * @ORM\JoinTable(
      *     name="appointment_organizers",
      *     joinColumns={@ORM\JoinColumn(name="appointment", onDelete="CASCADE")},
@@ -138,16 +138,16 @@ class Appointment {
     /**
      * @return string
      */
-    public function getSubject(): string {
-        return $this->subject;
+    public function getTitle(): string {
+        return $this->title;
     }
 
     /**
-     * @param string $subject
+     * @param string $title
      * @return Appointment
      */
-    public function setSubject(string $subject): Appointment {
-        $this->subject = $subject;
+    public function setTitle(string $title): Appointment {
+        $this->title = $title;
         return $this;
     }
 

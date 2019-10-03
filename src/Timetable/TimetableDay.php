@@ -60,6 +60,15 @@ class TimetableDay {
     }
 
     /**
+     * @param int $lesson
+     */
+    public function addEmptyTimetableLesson(int $lesson): void {
+        if(!array_key_exists($lesson, $this->lessons)) {
+            $this->lessons[$lesson] = new TimetableLesson($lesson);
+        }
+    }
+
+    /**
      * @param TimetableLessonEntity $lessonEntity
      */
     public function addTimetableLesson(TimetableLessonEntity $lessonEntity): void {

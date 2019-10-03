@@ -5,6 +5,7 @@ namespace App\View\Filter;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
+use App\Entity\StudyGroupType;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Grouping\Grouper;
@@ -26,7 +27,7 @@ class StudyGroupFilter {
         $this->studyGroupRepository = $studyGroupRepository;
     }
 
-    public function handle(?int $studyGroupId, User $user) {
+    public function handle(?int $studyGroupId, User $user, bool $onlyGrades = false) {
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
         $studyGroups = [ ];
@@ -46,6 +47,12 @@ class StudyGroupFilter {
             }
         } else {
             $studyGroups = $this->studyGroupRepository->findAll();
+        }
+
+        if($onlyGrades === true) {
+            $studyGroups = array_filter($studyGroups, function(StudyGroup $studyGroup) {
+                return $studyGroup->getType()->equals(StudyGroupType::Grade());
+            });
         }
 
         $studyGroups = ArrayUtils::createArrayWithKeys(

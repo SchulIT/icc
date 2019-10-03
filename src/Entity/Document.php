@@ -10,6 +10,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @ORM\Table(
+ *     indexes={
+ *          @ORM\Index(columns={"title"}, flags={"fulltext"}),
+ *          @ORM\Index(columns={"content"}, flags={"fulltext"})
+ *     }
+ * )
  */
 class Document {
 
@@ -23,7 +29,7 @@ class Document {
 
     /**
      * @ORM\Column(type="string")
-     * @Gedmo\Slug(fields={"name"})
+     * @Gedmo\Slug(fields={"title"})
      * @var string
      */
     private $alias;
@@ -33,7 +39,7 @@ class Document {
      * @Assert\NotBlank()
      * @var string
      */
-    private $name;
+    private $title;
 
     /**
      * @ORM\ManyToOne(targetEntity="DocumentCategory", inversedBy="documents")
@@ -121,16 +127,16 @@ class Document {
     /**
      * @return string|null
      */
-    public function getName(): ?string {
-        return $this->name;
+    public function getTitle(): ?string {
+        return $this->title;
     }
 
     /**
-     * @param string|null $name
+     * @param string|null $title
      * @return Document
      */
-    public function setName(string $name): Document {
-        $this->name = $name;
+    public function setTitle(?string $title): Document {
+        $this->title = $title;
         return $this;
     }
 
@@ -183,7 +189,7 @@ class Document {
 
     public function addAttachment(DocumentAttachment $attachment) {
         if($attachment->getDocument() === $this) {
-            // Do not readd already existing attachments (seems to fix a bug with VichUploaderBundle https://github.com/dustin10/VichUploaderBundle/issues/842)
+            // Do not read already existing attachments (seems to fix a bug with VichUploaderBundle https://github.com/dustin10/VichUploaderBundle/issues/842)
             return;
         }
 

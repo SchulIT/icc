@@ -1,0 +1,15 @@
+{% set name = "" %}
+
+{% if studentFilter.currentStudent != null %}{% set name = studentFilter.currentStudent|student %}
+{% elseif teacherFilter.currentTeacher != null %}{% set name = teacherFilter.currentTeacher|teacher %}
+{% elseif roomFilter.currentRoom != null %}{% set name = roomFilter.currentRoom.name %}
+{% elseif gradeFilter.currentGrade != null %}{% set name = gradeFilter.currentGrade.name %}
+{% elseif subjectFilter.currentSubjects|length > 0%}
+    {% set names = [] %}
+    {% for s in subjectFilter.currentSubjects %}
+        {% set names = names|merge([s.name]) %}
+    {% endfor %}
+    {% set name = names|join(', ') %}
+{% endif %}
+
+{{ 'plans.timetable.title'|trans({'%name%': name }) }}

@@ -17,8 +17,8 @@ class AppointmentTest extends TestCase {
         $appointment->setExternalId('external-id');
         $this->assertEquals('external-id', $appointment->getExternalId());
 
-        $appointment->setSubject('subject');
-        $this->assertEquals('subject', $appointment->getSubject());
+        $appointment->setTitle('subject');
+        $this->assertEquals('subject', $appointment->getTitle());
 
         $appointment->setContent('content');
         $this->assertEquals('content', $appointment->getContent());

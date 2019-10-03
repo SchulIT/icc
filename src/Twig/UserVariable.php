@@ -31,7 +31,10 @@ class UserVariable {
      * @return User
      */
     public function getUser() {
-        return $this->getToken()->getUser();
+        /** @var User $user */
+        $user = $this->getToken()->getUser();
+
+        return $user;
     }
 
     public function getFirstname(): string {

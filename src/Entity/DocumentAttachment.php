@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Validator\Color;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\File;
@@ -29,7 +30,7 @@ class DocumentAttachment {
     private $document;
 
     /**
-     * @Vich\UploadableField(mapping="documents", fileNameProperty="filename")
+     * @Vich\UploadableField(mapping="documents", fileNameProperty="path", originalName="filename", size="size")
      */
     private $file;
 
@@ -39,6 +40,12 @@ class DocumentAttachment {
      * @var string
      */
     private $filename;
+
+    /**
+     * @ORM\Column(type="string")
+     * @var string
+     */
+    private $path;
 
     /**
      * @ORM\Column(type="integer")
@@ -84,7 +91,7 @@ class DocumentAttachment {
 
     /**
      * @param File|null $file
-     * @return MessageAttachment
+     * @return DocumentAttachment
      */
     public function setFile(?File $file = null): DocumentAttachment {
         $this->file = $file;
@@ -105,10 +112,26 @@ class DocumentAttachment {
 
     /**
      * @param string|null $filename
-     * @return MessageAttachment
+     * @return DocumentAttachment
      */
     public function setFilename(?string $filename): DocumentAttachment {
         $this->filename = $filename;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath(): ?string {
+        return $this->path;
+    }
+
+    /**
+     * @param string $path
+     * @return DocumentAttachment
+     */
+    public function setPath(string $path): DocumentAttachment {
+        $this->path = $path;
         return $this;
     }
 
@@ -121,7 +144,7 @@ class DocumentAttachment {
 
     /**
      * @param int|null $size
-     * @return MessageAttachment
+     * @return DocumentAttachment
      */
     public function setSize(?int $size): DocumentAttachment {
         $this->size = $size;

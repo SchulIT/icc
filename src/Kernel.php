@@ -3,12 +3,16 @@
 namespace App;
 
 use Acelaya\Doctrine\Type\PhpEnumType;
+use App\DependencyInjection\Security\Factory\DeviceTokenFactory;
+use App\Entity\DeviceToken;
+use App\Entity\DeviceTokenType;
 use App\Entity\Gender;
 use App\Entity\GradeTeacherType;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroupType;
 use App\Entity\UserType;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -60,7 +64,8 @@ class Kernel extends BaseKernel
             'GradeTeacherType::class' => GradeTeacherType::class,
             'MessageScope::class' => MessageScope::class,
             'StudyGroupType::class' => StudyGroupType::class,
-            'UserType::class' => UserType::class
+            'UserType::class' => UserType::class,
+            'DeviceTokenType::class' => DeviceTokenType::class
         ];
 
         foreach($enums as $alias => $enum) {
@@ -70,5 +75,11 @@ class Kernel extends BaseKernel
         }
 
         return parent::boot();
+    }
+
+    public function build(ContainerBuilder $container) {
+        /** @var SecurityExtension $extension */
+        $extension = $container->getExtension('security');
+        $extension->addSecurityListenerFactory(new DeviceTokenFactory());
     }
 }

@@ -2,6 +2,14 @@
 
 {% block title %}{{ 'admin.documents.label'|trans }}{% endblock %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'admin.label'|trans }}</li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
 {% block content %}
 
     {% if categories|length == 0 %}
@@ -18,7 +26,7 @@
                 <table class="table table-striped table-bordered table-hover">
                     <thead>
                     <tr>
-                        <th>{{ 'label.name'|trans }} </th>
+                        <th>{{ 'label.title'|trans }} </th>
                         <th>{{ 'label.visibility'|trans }}</th>
                         <th>{{ 'label.authors'|trans }}</th>
                         <th> </th>
@@ -28,7 +36,7 @@
                     <tbody>
                     {% for document in group.documents %}
                         <tr>
-                            <td>{{ document.name }}</td>
+                            <td>{{ document.title }}</td>
                             <td>
                                 {% for visibility in document.visibilities %}{{ visibility.userType|usertype }}{% if not loop.last %}, {% endif %}{% endfor %}
                             </td>

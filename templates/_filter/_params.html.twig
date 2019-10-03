@@ -1,0 +1,5 @@
+{% for k,v in params|default({}) %}
+    {% if v is not null %}
+        <input type="hidden" name="{{ k }}" value="{{ v }}">
+    {% endif %}
+{% endfor %}

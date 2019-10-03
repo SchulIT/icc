@@ -1,8 +1,10 @@
 <form role="form" method="get" class="form hidden-print">
+    {% include "_filter/_params.html.twig" %}
+
     <div class="form-group">
         <label for="teacher">{{ 'label.teacher'|trans }}:</label>
         <select name="teacherAcronym" id="teacher" class="form-control" data-trigger="submit" data-choice="true">
-            <option value="">{{ 'label.select.teacher'|trans }}</option>
+            <option value="" placeholder>{{ 'label.select.teacher'|trans }}</option>
             {% for t in teacherFilter.teachers %}
                 <option value="{{ t.acronym() }}" {% if teacherFilter.currentTeacher != null and teacherFilter.currentTeacher.acronym == t.acronym %}selected="selected"{% endif %}>{{ t|teacher(true) }}</option>
             {% endfor %}

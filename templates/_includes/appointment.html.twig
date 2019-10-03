@@ -1,0 +1,38 @@
+{% if appointment.isAllDay %}
+    {% set start = appointment.start|format_date %}
+{% else %}
+    {% set start = appointment.start|format_datetime %}
+{% endif %}
+{% if appointment.end is not null %}
+    {% if appointment.isAllDay %}
+        {% set end = appointment.end|format_date %}
+    {% else %}
+        {% set end = appointment.end|format_datetime %}
+    {% endif %}
+
+    {% set date = 'date.range'|trans({'%from%': start, '%to%': end }) %}
+{% else %}
+    {% set date = start %}
+{% endif %}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{{ appointment.title }}</h5>
+        <p><i class="fa fa-calendar"></i> {{ date }}</p>
+        <p>{{ appointment.content }}</p>
+        <hr />
+        <span class="d-md-inline d-block">
+            <span class="color-rect" style="background: {{ appointment.category.color }}"></span> {{ appointment.category.name }}
+        </span>
+        {% if appointment.studyGroups is not empty %}
+        <span class="d-md-inline d-block">
+            <i class="fas fa-graduation-cap"></i> {{ appointment.studyGroups|studygroups }}
+        </span>
+        {% endif %}
+        {% if appointment.organizers is not empty or appointment.externalOrganizers is not null %}
+        <span class="d-md-inline d-block">
+            <i class="fa fa-users"></i> {% for organizer in appointment.organizers %}{{ organizer|teacher }}{% if not loop.last or appointment.externalOrganizers is not null %}, {% endif %}{% endfor %}{{ appointment.externalOrganizers }}
+        </span>
+        {% endif %}
+    </div>
+</div>

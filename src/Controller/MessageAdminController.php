@@ -5,11 +5,15 @@ namespace App\Controller;
 use App\Entity\Message;
 use App\Form\MessageType;
 use App\Grouping\Grouper;
+use App\Grouping\MessageExpirationGroup;
+use App\Grouping\MessageExpirationStrategy;
 use App\Grouping\MessageVisibilityGroup;
 use App\Grouping\MessageVisibilityStrategy;
 use App\Repository\MessageRepositoryInterface;
-use App\Security\CurrentUserResolver;
+use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
+use App\View\Filter\UserTypeFilter;
+use League\CommonMark\Util\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,13 +36,22 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("", name="admin_messages")
      */
-    public function index() {
-        $messages = $this->repository->findAll();
-        /** @var MessageVisibilityGroup[] $groups */
-        $groups = $this->grouper->group($messages, MessageVisibilityStrategy::class);
+    public function index(UserTypeFilter $userTypeFilter, ?string $userType = null) {
+        $userTypeFilterView = $userTypeFilter->handle($userType);
+        $userTypeFilterView->setHandleNull(true);
+
+        if($userTypeFilterView->getCurrentType() === null) {
+            $messages = $this->repository->findAll();
+        } else {
+            $messages = $this->repository->findAllByUserType($userTypeFilterView->getCurrentType());
+        }
+
+        /** @var MessageExpirationGroup[] $groups */
+        $groups = $this->grouper->group($messages, MessageExpirationStrategy::class);
 
         return $this->render('admin/messages/index.html.twig', [
-            'groups' => $groups
+            'groups' => $groups,
+            'userTypeFilter' => $userTypeFilterView
         ]);
     }
 
@@ -59,6 +72,37 @@ class MessageAdminController extends AbstractController {
 
         return $this->render('admin/messages/add.html.twig', [
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/edit", name="edit_message")
+     */
+    public function edit(Request $request, Message $message) {
+        $originalFiles = new ArrayCollection();
+        foreach($message->getFiles() as $file) {
+            $originalFiles->add($file);
+        }
+
+        $form = $this->createForm(MessageType::class, $message);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            foreach($originalFiles as $file) {
+                if($message->getFiles()->contains($file) === false) {
+                    $this->repository->removeMessageFile($file);
+                }
+            }
+
+            $this->repository->persist($message);
+
+            $this->addFlash('success', 'message.edit.succes');
+            return $this->redirectToRoute('admin_messages');
+        }
+
+        return $this->render('admin/messages/edit.html.twig', [
+            'form' => $form->createView(),
+            'message' => $message
         ]);
     }
 }

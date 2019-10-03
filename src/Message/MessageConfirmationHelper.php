@@ -6,30 +6,50 @@ use App\Entity\Message;
 use App\Entity\MessageConfirmation;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class MessageConfirmationHelper {
 
+    private $tokenStorage;
     private $entityManager;
-    private $authorizationChecker;
+    private $cache = [ ];
 
-    public function __construct(EntityManagerInterface $entityManager, AuthorizationCheckerInterface $authorizationChecker) {
+    public function __construct(TokenStorageInterface $tokenStorage, EntityManagerInterface $entityManager) {
+        $this->tokenStorage = $tokenStorage;
         $this->entityManager = $entityManager;
-        $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function confirm(Message $message, User $user) {
-        $confirmedUserIds = array_map(function (MessageConfirmation $confirmation) {
-            return $confirmation->getUser()->getId();
-        }, $message->getConfirmations()->toArray());
+    public function isMessageConfirmed(Message $message, User $user = null) {
+        if($user === null) {
+            $user = $this->tokenStorage->getToken()->getUser();
+        }
 
-        if(!in_array($user->getId(), $confirmedUserIds)) {
-            $confirmation = (new MessageConfirmation())
-                ->setUser($user)
-                ->setMessage($message);
+        $this->buildCache($user);
+        $confirmedMessageIds = $this->cache[$user->getId()];
 
-            $this->entityManager->persist($confirmation);
-            $this->entityManager->flush();
+        return in_array($message->getId(), $confirmedMessageIds);
+    }
+
+    private function buildCache(User $user) {
+        $key = $user->getId();
+
+        if(isset($this->cache[$key])) {
+            return;
+        }
+
+        /** @var MessageConfirmation[] $confirmations */
+        $confirmations = $this->entityManager->createQueryBuilder()
+            ->select(['c', 'm'])
+            ->from(MessageConfirmation::class, 'c')
+            ->leftJoin('c.message', 'm')
+            ->getQuery()
+            ->getResult();
+
+
+        $this->cache[$key] = [ ];
+
+        foreach($confirmations as $confirmation) {
+            $this->cache[$key][] = $confirmation->getMessage()->getId();
         }
     }
 }

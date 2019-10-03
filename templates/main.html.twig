@@ -9,9 +9,5 @@
 {% endblock %}
 
 {% block menu %}
-    <nav class="navbar navbar-expand-md">
-        <div class="collapse navbar-collapse" id="menu">
-            {{ knp_menu_render(mainMenu, {'currentClass': 'active' }) }}
-        </div>
-    </nav>
+    {{ knp_menu_render(mainMenu, {'currentClass': 'active' }) }}
 {% endblock %}

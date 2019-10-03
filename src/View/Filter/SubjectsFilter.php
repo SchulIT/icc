@@ -6,7 +6,7 @@ use App\Repository\SubjectRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\SubjectNameStrategy;
 
-class SubjectFilter {
+class SubjectsFilter {
     private $sorter;
     private $subjectRepository;
 
@@ -31,6 +31,6 @@ class SubjectFilter {
             }
         }
 
-        return new SubjectFilterView($subjects, $currentSubjects);
+        return new SubjectsFilterView($subjects, $currentSubjects);
     }
 }

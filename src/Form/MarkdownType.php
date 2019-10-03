@@ -20,7 +20,8 @@ class MarkdownType extends TextareaType {
         $resolver
             ->setDefault('upload_enabled', true)
             ->setDefault('upload_url', $this->urlGenerator->generate('markdown_upload', [], UrlGeneratorInterface::ABSOLUTE_PATH))
-            ->setDefault('preview_url', $this->urlGenerator->generate('markdown_preview', [], UrlGeneratorInterface::ABSOLUTE_PATH));
+            ->setDefault('preview_url', $this->urlGenerator->generate('markdown_preview', [], UrlGeneratorInterface::ABSOLUTE_PATH))
+            ->setDefault('required', false);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options) {

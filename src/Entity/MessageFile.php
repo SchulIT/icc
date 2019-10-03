@@ -34,11 +34,12 @@ class MessageFile {
     private $label;
 
     /**
-     * @ORM\Column(type="json_array")
-     * @Assert\Length(min="1")
-     * @var string[]
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank()
+     * @Assert\NotNull()
+     * @var string
      */
-    private $extensions;
+    private $extension;
 
     /**
      * @return int|null
@@ -64,34 +65,34 @@ class MessageFile {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLabel(): string {
+    public function getLabel(): ?string {
         return $this->label;
     }
 
     /**
-     * @param string $label
+     * @param string|null $label
      * @return MessageFile
      */
-    public function setLabel(string $label): MessageFile {
+    public function setLabel(?string $label): MessageFile {
         $this->label = $label;
         return $this;
     }
 
     /**
-     * @return string[]
+     * @return string|null
      */
-    public function getExtensions(): array {
-        return $this->extensions;
+    public function getExtension(): ?string {
+        return $this->extension;
     }
 
     /**
-     * @param string[] $extensions
+     * @param string|null $extension
      * @return MessageFile
      */
-    public function setExtensions(array $extensions): MessageFile {
-        $this->extensions = $extensions;
+    public function setExtension(?string $extension): MessageFile {
+        $this->extension = $extension;
         return $this;
     }
 }

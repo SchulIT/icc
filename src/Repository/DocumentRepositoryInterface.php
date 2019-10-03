@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Document;
 use App\Entity\DocumentCategory;
+use App\Entity\StudyGroup;
+use App\Entity\UserType;
 
 interface DocumentRepositoryInterface {
 
@@ -18,6 +20,14 @@ interface DocumentRepositoryInterface {
      * @return Document[]
      */
     public function findAllByCategory(DocumentCategory $category);
+
+    /**
+     * @param UserType $type
+     * @param StudyGroup|null $studyGroup
+     * @param string|null $q
+     * @return Document[]
+     */
+    public function findAllFor(UserType $type, ?StudyGroup $studyGroup = null, ?string $q = null);
 
     /**
      * @return Document[]

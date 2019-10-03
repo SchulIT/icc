@@ -29,7 +29,7 @@ class DocumentCategoryTest extends WebTestCase {
 
         $document = (new Document())
             ->setContent('content')
-            ->setName('name')
+            ->setTitle('name')
             ->setCategory($category);
 
         $em->persist($category);

@@ -8,6 +8,7 @@ use App\Filesystem\DocumentFilesystem;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemInterface;
 use League\Flysystem\Memory\MemoryAdapter;
+use Mimey\MimeTypes;
 use PHPUnit\Framework\TestCase;
 
 class DocumentFilesystemTest extends TestCase {
@@ -35,11 +36,15 @@ class DocumentFilesystemTest extends TestCase {
             ->method('getFilename')
             ->willReturn($filename);
 
+        $attachment
+            ->method('getPath')
+            ->willReturn($filename);
+
         return $attachment;
     }
 
     private function getFilesystem(FilesystemInterface $flysystem): DocumentFilesystem {
-        $filesystem = new DocumentFilesystem($flysystem);
+        $filesystem = new DocumentFilesystem($flysystem, new MimeTypes());
         $flysystem->put('/1/foo.txt', 'bla');
         $flysystem->put('/1/bla.txt', 'foo');
         $flysystem->put('/2/foo.txt', 'bla');

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Appointment;
+use App\Entity\AppointmentCategory;
 use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
@@ -35,12 +36,12 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
     }
 
     /**
-     * @param string $idsDQL
+     * @param string|null $idsDQL
      * @param array $parameters
      * @param \DateTime|null $today
      * @return Appointment[]
      */
-    private function getAppointments(string $idsDQL, array $parameters, ?\DateTime $today): array {
+    private function getAppointments(?string $idsDQL, array $parameters, ?\DateTime $today): array {
         $qb = $this->em->createQueryBuilder();
 
         $qb
@@ -48,10 +49,13 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->from(Appointment::class, 'a')
             ->leftJoin('a.category', 'c')
             ->leftJoin('a.organizers', 'o')
-            ->leftJoin('a.studyGroups', 'sg')
-            ->where(
+            ->leftJoin('a.studyGroups', 'sg');
+
+        if($idsDQL != null) {
+            $qb->where(
                 $qb->expr()->in('a.id', $idsDQL)
             );
+        }
 
         foreach($parameters as $key => $value) {
             $qb->setParameter($key, $value);
@@ -63,15 +67,48 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
                 ->setParameter('today', $today);
         }
 
+        $qb->orderBy('a.start', 'asc');
+
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param Grade $grade
+     * @param \DateTime|null $today
+     * @param bool $includeHiddenFromStudents
+     * @return Appointment[]
+     */
+    public function findAllForGrade(Grade $grade, ?\DateTime $today = null, bool $includeHiddenFromStudents = false): array {
+        $qbStudyGroups = $this->em->createQueryBuilder();
+
+        $qbStudyGroups
+            ->select('gInner.id')
+            ->from(StudyGroup::class, 'sgInner')
+            ->leftJoin('sgInner.grades', 'sgGradesInner')
+            ->where('sgGradesInner.id = :gradeId');
+
+        $qbAppointments = $this->em->createQueryBuilder()
+            ->select('aInner.id')
+            ->from(Appointment::class, 'aInner')
+            ->leftJoin('aInner.studyGroups', 'aSgInner')
+            ->where(
+                $qbStudyGroups->expr()->in('aSgInner.id', $qbStudyGroups->getDQL())
+            );
+
+        if($includeHiddenFromStudents === false) {
+            $qbAppointments->andWhere('aInner.isHiddenFromStudents == false');
+        }
+
+        return $this->getAppointments($qbAppointments, ['gradeId' => $grade->getId() ], $today);
     }
 
     /**
      * @param Student[] $students
      * @param \DateTime|null $today
+     * @param bool $includeHiddenFromStudents
      * @return Appointment[]
      */
-    public function findAllForStudents(array $students, ?\DateTime $today = null): array {
+    public function findAllForStudents(array $students, ?\DateTime $today = null, bool $includeHiddenFromStudents = false): array {
         $qbStudyGroups = $this->em->createQueryBuilder();
 
         $qbStudyGroups
@@ -86,8 +123,11 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->leftJoin('aInner.studyGroups', 'aSgInner')
             ->where(
                 $qbStudyGroups->expr()->in('aSgInner.id', $qbStudyGroups->getDQL())
-            )
-            ->andWhere('aInner.isHiddenFromStudents = false');
+            );
+
+        if($includeHiddenFromStudents === false) {
+            $qbAppointments->andWhere('aInner.isHiddenFromStudents == false');
+        }
 
         $studentIds = array_map(function(Student $student) {
             return $student->getId();
@@ -102,6 +142,13 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
      * @return Appointment[]
      */
     public function findAllForTeacher(Teacher $teacher, ?\DateTime $today = null): array {
+        /**
+         * Appointment for teacher means either:
+         * - he/she is organizator
+         * - he/she teaches a study group
+         * - appointment has no study groups associated
+         */
+
 
     }
 
@@ -109,8 +156,35 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
      * @param \DateTime|null $today
      * @return Appointment[]
      */
-    public function findAll(?\DateTime $today = null) {
-        // TODO: Implement findAll() method.
+    public function findAll(?AppointmentCategory $category = null, ?string $q = null, ?\DateTime $today = null) {
+        $qbIds = $this->em->createQueryBuilder();
+        $params = [ ];
+
+        $qbIds
+            ->select('aInner.id')
+            ->from(Appointment::class, 'aInner');
+
+        if($category !== null) {
+            $qbIds
+                ->leftJoin('aInner.category', 'cInner')
+                ->andWhere('cInner.id = :category');
+
+            $params['category'] = $category->getId();
+        }
+
+        if($q !== null) {
+            $qbIds
+                ->andWhere(
+                    $qbIds->expr()->orX(
+                        'aInner.title LIKE :query',
+                        'aInner.content LIKE :query'
+                    )
+                );
+
+            $params['query'] = '%' . $q . '%';
+        }
+
+        return  $this->getAppointments($qbIds->getDQL(), $params, $today);
     }
 
     /**

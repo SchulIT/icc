@@ -1,0 +1,18 @@
+<form role="form" method="get" class="form hidden-print">
+    {% include "_filter/_params.html.twig" %}
+
+    <div class="form-group">
+        <label for="q">{{ 'label.query'|trans }}:</label>
+        <div class="input-group mb-3">
+            <input name="q" type="text" value="{{ q }}" class="form-control">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i></button>
+                {% if q is not null %}
+                    <a href="{{ path(route, params|merge({q: null})) }}" class="btn btn-outline-primary">
+                        <i class="fa fa-times"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</form>

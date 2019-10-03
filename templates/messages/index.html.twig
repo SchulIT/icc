@@ -1,0 +1,66 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'messages.overview.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.id %}
+                {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
+
+                {% if studentFilter.studentGradeGroups|length > 0 %}
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        {% include "_filter/student.html.twig" with { params: { archive: archive, userType: userTypeParam } } %}
+                    </div>
+                {% endif %}
+
+                {% if userTypeFilter.types|length > 0 %}
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        {% include "_filter/user_type.html.twig" with { params: { archive: archive, studentId: studentParam } } %}
+                    </div>
+                {% endif %}
+
+                <div class="col-md-3 col-sm-3 col-xs-12">
+                    <form role="form" method="get" class="form hidden-print">
+                        {% include "_filter/_params.html.twig" with { params: { userType: userTypeParam, studentId: studentParam } } %}
+
+                        <label class="control-label">{{ 'label.options'|trans }}:</label>
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+
+                                <input class="custom-control-input" data-trigger="submit" type="checkbox" value="true" id="archive" name="archive" {% if archive %} checked="checked"{% endif %}>
+                                <label for="archive" class="custom-control-label">
+                                    {{ 'messages.overview.archive'|trans }}
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if messages|length == 0 %}
+
+    {% else %}
+        {% for message in messages %}
+            {% include "_includes/message.html.twig" %}
+        {% endfor %}
+    {% endif %}
+
+    {% if is_granted('new-message') %}
+    <div class="buttons">
+        <a href="{{ path('add_message') }}" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'messages.add.label'|trans }}
+        </a>
+    </div>
+    {% endif %}
+{% endblock %}

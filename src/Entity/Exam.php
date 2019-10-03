@@ -191,12 +191,15 @@ class Exam {
         $this->tuitions->removeElement($tuition);
     }
 
+    /**
+     * @return Collection<Tuition>
+     */
     public function getTuitions(): Collection {
         return $this->tuitions;
     }
 
     /**
-     * @return ArrayCollection<Student>
+     * @return Collection<Student>
      */
     public function getStudents(): Collection {
         return $this->students;
@@ -219,7 +222,7 @@ class Exam {
     }
 
     /**
-     * @return ArrayCollection<ExamInvigilator>
+     * @return Collection<ExamInvigilator>
      */
     public function getInvigilators(): Collection {
         return $this->invigilators;

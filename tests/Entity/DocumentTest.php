@@ -16,8 +16,8 @@ class DocumentTest extends WebTestCase {
 
         $this->assertNull($document->getId());
 
-        $document->setName('name');
-        $this->assertEquals('name', $document->getName());
+        $document->setTitle('name');
+        $this->assertEquals('name', $document->getTitle());
 
         $category = new DocumentCategory();
         $document->setCategory($category);
@@ -67,7 +67,7 @@ class DocumentTest extends WebTestCase {
             ->setName('category');
 
         $document = (new Document())
-            ->setName('My fancy document')
+            ->setTitle('My fancy document')
             ->setContent('content')
             ->setCategory($category);
 

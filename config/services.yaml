@@ -143,3 +143,12 @@ services:
 
     EasySlugger\SluggerInterface:
         class: EasySlugger\Utf8Slugger
+
+    # HELPER
+    App\Ics\IcsHelper:
+        arguments:
+            $appName: '%env(APP_NAME)%'
+            $languageCode: '%env(LANGUAGE)%'
+            $appUrl: '%env(APP_URL)%'
+
+    Mimey\MimeTypes: ~

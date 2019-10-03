@@ -2,6 +2,13 @@
 
 {% block title %}{{ 'lists.study_groups.label'|trans }}{% endblock %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
 {% block content %}
     {% include "_messages.html.twig" %}
 
@@ -21,90 +28,108 @@
 
             <p>{{ 'lists.study_groups.start'|trans }}</p>
         </div>
-    {% elseif students|length == 0 %}
-        <div class="bs-callout bs-callout-info">
-            <h4>{{ 'info.label'|trans }}</h4>
+    {% else %}
+        {% if studyGroupFilter.currentStudyGroup.type.value == 1 %}
+            {% set grade = studyGroupFilter.currentStudyGroup.grades[0] %}
 
-            <p>{{ 'lists.study_groups.empty'|trans }}</p>
-        </div>
-    {% elseif students|length > 0 %}
-        <div class="card">
-            <div class="card-header">
-                {{ studyGroupFilter.currentStudyGroup.name }}
-                <span class="badge badge-primary badge-pill">{{ studyGroupFilter.currentStudyGroup.memberships|length }}</span>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ grade.name }}</h5>
 
-                {% for grade in studyGroupFilter.currentStudyGroup.grades %}
-                    <span class="badge badge-secondary">{{ grade.name }}</span>
-                {% endfor %}
+                    <ul class="list-unstyled m-0">
+                        <li>{{ 'lists.study_groups.grade_teacher'|trans }}: {% for teacher in gradeTeachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
+                        <li>{{ 'lists.study_groups.grade_teacher_substitutional'|trans }}: {% for teacher in substitutionalGradeTeachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
+                        <li>{{ 'lists.study_groups.num_students'|trans }}: {{ students|length }}</li>
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
 
+        {% if students|length == 0 %}
+            <div class="bs-callout bs-callout-info">
+                <h4>{{ 'info.label'|trans }}</h4>
+
+                <p>{{ 'lists.study_groups.empty'|trans }}</p>
+            </div>
+        {% elseif students|length > 0 %}
+            <div class="card">
+                <div class="card-header">
+                    {{ studyGroupFilter.currentStudyGroup.name }}
+                    <span class="badge badge-primary badge-pill">{{ studyGroupFilter.currentStudyGroup.memberships|length }}</span>
+
+                    {% for grade in studyGroupFilter.currentStudyGroup.grades %}
+                        <span class="badge badge-secondary">{{ grade.name }}</span>
+                    {% endfor %}
+
+                </div>
+
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.lastname'|trans }}</th>
+                        <th>{{ 'label.firstname'|trans }}</th>
+                        <th>{{ 'label.grade'|trans }}</th>
+                        <th>{{ 'label.email'|trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <td>{{ student.lastname }}</td>
+                            <td>{{ student.firstname }}</td>
+                            <td>{{ student.grade.name }}</td>
+                            <td>
+                                {% if student.email is not empty %}
+                                    <i class="fa fa-envelope"></i>
+                                    <a href="mailto: {{ student.email}}" target="_blank">
+                                        {{ student.email}}
+                                    </a>
+                                {% endif %}
+                            </td>
+                            <td>
+
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
 
-            <table class="table table-striped table-hover table-bordered">
-                <thead>
-                <tr>
-                    <th>{{ 'label.lastname'|trans }}</th>
-                    <th>{{ 'label.firstname'|trans }}</th>
-                    <th>{{ 'label.grade'|trans }}</th>
-                    <th>{{ 'label.email'|trans }}</th>
-                    <th></th>
-                </tr>
-                </thead>
+            <div class="buttons mb-3">
+                <a href="mailto:{% for student in students %}{% if student.email is not empty %}{{ student.email }};{% endif %}{% endfor %}" class="btn btn-primary btn-sm">
+                    <i class="fa fa-send"></i> {{ 'lists.study_groups.mail_to_all'|trans }}
+                </a>
+            </div>
 
-                <tbody>
-                {% for student in students %}
+            <div class="card">
+                <div class="card-header">{{ 'lists.tuitions.label'|trans }}</div>
+
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
                     <tr>
-                        <td>{{ student.lastname }}</td>
-                        <td>{{ student.firstname }}</td>
-                        <td>{{ student.grade.name }}</td>
-                        <td>
-                            {% if student.email is not empty %}
-                                <i class="fa fa-envelope"></i>
-                                <a href="mailto: {{ student.email}}" target="_blank">
-                                    {{ student.email}}
-                                </a>
-                            {% endif %}
-                        </td>
-                        <td>
-
-                        </td>
+                        <th>{{ 'label.name'|trans }}</th>
+                        <th>{{ 'label.subject'|trans }}</th>
+                        <th>{{ 'label.teacher'|trans }}</th>
+                        <th></th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    </thead>
 
-        <div class="buttons mb-3">
-            <a href="mailto:{% for student in students %}{% if student.email is not empty %}{{ student.email }};{% endif %}{% endfor %}" class="btn btn-primary btn-sm">
-                <i class="fa fa-send"></i> {{ 'lists.study_groups.mail_to_all'|trans }}
-            </a>
-        </div>
-
-        <div class="card">
-            <div class="card-header">{{ 'lists.tuitions.label'|trans }}</div>
-
-            <table class="table table-striped table-hover table-bordered">
-                <thead>
-                <tr>
-                    <th>{{ 'label.name'|trans }}</th>
-                    <th>{{ 'label.subject'|trans }}</th>
-                    <th>{{ 'label.teacher'|trans }}</th>
-                    <th></th>
-                </tr>
-                </thead>
-
-                <tbody>
-                {% for tuition in studyGroupFilter.currentStudyGroup.tuitions %}
-                    <tr>
-                        <td>{{ tuition.name }}</td>
-                        <td>{{ tuition.subject.name }}</td>
-                        <td>{{ tuition.teacher|teacher }}</td>
-                        <td>
-                            <a href="{{ path('list_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    <tbody>
+                    {% for tuition in studyGroupFilter.currentStudyGroup.tuitions %}
+                        <tr>
+                            <td>{{ tuition.name }}</td>
+                            <td>{{ tuition.subject.name }}</td>
+                            <td>{{ tuition.teacher|teacher }}</td>
+                            <td>
+                                <a href="{{ path('list_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
     {% endif %}
 {% endblock %}

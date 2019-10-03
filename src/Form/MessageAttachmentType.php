@@ -12,7 +12,10 @@ class MessageAttachmentType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add('file', VichFileType::class, [
-                'label' => 'label.file'
+                'label' => 'label.file',
+                'attr' => [
+                    'in_collection' => true
+                ]
             ]);
     }
 

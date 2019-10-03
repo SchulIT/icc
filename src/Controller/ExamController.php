@@ -2,17 +2,23 @@
 
 namespace App\Controller;
 
+use App\Entity\DeviceToken;
+use App\Entity\DeviceTokenType;
 use App\Entity\Exam;
 use App\Entity\MessageScope;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Tuition;
+use App\Entity\User;
 use App\Entity\UserType;
+use App\Export\ExamIcsExporter;
+use App\Form\DeviceTokenType as DeviceTokenTypeForm;
 use App\Grouping\ExamDateStrategy;
 use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
+use App\Security\Devices\DeviceManager;
 use App\Security\Voter\ExamVoter;
 use App\Sorting\ExamDateGroupStrategy;
 use App\Sorting\ExamLessonStrategy as ExamDateSortingStrategy;
@@ -22,8 +28,13 @@ use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+
+/**
+ * @Route("/exams")
+ */
 class ExamController extends AbstractControllerWithMessages {
 
     private $grouper;
@@ -38,17 +49,18 @@ class ExamController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/exams", name="exams")
+     * @Route("", name="exams")
      */
     public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter,
                           ExamRepositoryInterface $examRepository, ?int $studentId = null, ?string $teacherAcronym = null,
                           ?int $gradeId = null, ?bool $all = false) {
+        /** @var User $user */
         $user = $this->getUser();
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
-        $studentFilterView = $studentsFilter->handle($studentId, $this->getUser());
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $this->getUser());
-        $gradeFilterView = $gradeFilter->handle($gradeId, $this->getUser());
+        $studentFilterView = $studentsFilter->handle($studentId, $user);
+        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user);
+        $gradeFilterView = $gradeFilter->handle($gradeId, $user);
 
         $exams = [ ];
         $today = $all ? null : $this->dateHelper->getToday();
@@ -83,7 +95,7 @@ class ExamController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/exams/{id}", name="show_exam")
+     * @Route("/{id}", name="show_exam", requirements={"id": "\d+"})
      */
     public function show(Exam $exam) {
         $studyGroups = [ ];
@@ -110,6 +122,41 @@ class ExamController extends AbstractControllerWithMessages {
             'students' => $students,
             'studyGroups' => $studyGroups
         ]);
+    }
+
+    /**
+     * @Route("/export", name="exams_export")
+     */
+    public function export(Request $request, DeviceManager $manager) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $deviceToken = (new DeviceToken())
+            ->setType(DeviceTokenType::Exams())
+            ->setUser($user);
+
+        $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $deviceToken = $manager->persistDeviceToken($deviceToken);
+        }
+
+        return $this->render('exams/export.html.twig', [
+            'form' => $form->createView(),
+            'token' => $deviceToken
+        ]);
+    }
+
+    /**
+     * @Route("/ics/download", name="exams_ics")
+     * @Route("/ics/download/{token}", name="exams_ics_token")
+     */
+    public function ics(ExamIcsExporter $exporter) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $exporter->getIcsResponse($user);
     }
 
     protected function getMessageScope(): MessageScope {

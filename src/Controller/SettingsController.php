@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Converter\UserTypeStringConverter;
 use App\Entity\AppointmentCategory;
 use App\Entity\UserType;
+use App\Menu\Builder;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Settings\ExamSettings;
 use App\Settings\TimetableSettings;
@@ -25,6 +26,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * @Route("/admin/settings")
  */
 class SettingsController extends AbstractController {
+
+    /**
+     * @Route("", name="admin_settings")
+     */
+    public function index(Builder $menuBuilder) {
+        $menu = $menuBuilder->mainMenu([]);
+        $settingsMenu = $menu->getChild('admin.settings.label');
+
+        return $this->render('admin/settings/index.html.twig', [
+            'menu' => $settingsMenu->getChildren()
+        ]);
+    }
 
     /**
      * @Route("/exams", name="admin_settings_exams")

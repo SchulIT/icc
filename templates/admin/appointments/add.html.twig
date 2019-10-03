@@ -1,0 +1,35 @@
+{% extends "main.html.twig" %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/editor.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ 'admin.appointments.add.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'admin.label'|trans }}</li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_appointments') }}">{{ 'admin.appointments.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+        </button>
+
+        <a href="{{ path('admin_appointments') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}

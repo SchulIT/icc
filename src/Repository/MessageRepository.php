@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Message;
+use App\Entity\MessageFile;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroup;
 use App\Entity\UserType;
+use Doctrine\ORM\QueryBuilder;
 
 class MessageRepository extends AbstractRepository implements MessageRepositoryInterface {
 
@@ -23,8 +25,8 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
     /**
      * @inheritDoc
      */
-    public function findBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = []) {
-        $qb = $this->em->createQueryBuilder();
+    public function findBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [], bool $archive = false) {
+        $qb = $this->createDefaultQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('mInner.id')
@@ -34,11 +36,17 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
             ->andWhere('mInner.scope = :scope');
 
         if($today !== null) {
-            $qbInner
-                ->andWhere('mInner.startDate <= :today')
-                ->andWhere('mInner.expireDate >= :today');
+            if($archive === true) {
+                $qbInner
+                    ->andWhere('mInner.expireDate < :today');
+                $qb->setParameter('today', $today);
+            } else {
+                $qbInner
+                    ->andWhere('mInner.startDate <= :today')
+                    ->andWhere('mInner.expireDate >= :today');
 
-            $qb->setParameter('today', $today);
+                $qb->setParameter('today', $today);
+            }
         }
 
         if(count($studyGroups) > 0) {
@@ -52,16 +60,9 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
         }
 
         $qb
-            ->select(['m', 'sg'])
-            ->from(Message::class, 'm')
-            ->leftJoin('m.attachments', 'a')
-            ->leftJoin('m.createdBy', 'c')
-            ->leftJoin('m.files', 'f')
-            ->leftJoin('m.studyGroups', 'sg')
-            ->leftJoin('m.visibilities', 'v')
             ->where($qb->expr()->in('m.id', $qbInner->getDQL()))
-            ->setParameter('scope', $scope)
-            ->setParameter('userType', $userType);
+            ->setParameter('scope', $scope->getValue())
+            ->setParameter('userType', $userType->getValue());
 
         return $qb->getQuery()->getResult();
     }
@@ -72,6 +73,26 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
     public function findAll() {
         return $this->em->getRepository(Message::class)
             ->findAll();
+    }
+
+    /**
+     * @param UserType $userType
+     * @return Message[]
+     */
+    public function findAllByUserType(UserType $userType) {
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('mInner.id')
+            ->from(Message::class, 'mInner')
+            ->leftJoin('mInner.visibilities', 'vInner')
+            ->where('vInner.userType = :userType');
+
+        $qb
+            ->where($qb->expr()->in('m.id', $qbInner->getDQL()))
+            ->setParameter('userType', $userType->getValue());
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -87,6 +108,25 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
      */
     public function remove(Message $message): void {
         $this->em->remove($message);
+        $this->em->flush();
+    }
+
+    private function createDefaultQueryBuilder(): QueryBuilder {
+        return $this->em->createQueryBuilder()
+            ->select(['m', 'sg'])
+            ->from(Message::class, 'm')
+            ->leftJoin('m.attachments', 'a')
+            ->leftJoin('m.createdBy', 'c')
+            ->leftJoin('m.files', 'f')
+            ->leftJoin('m.studyGroups', 'sg')
+            ->leftJoin('m.visibilities', 'v');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function removeMessageFile(MessageFile $file): void {
+        $this->em->remove($file);
         $this->em->flush();
     }
 }

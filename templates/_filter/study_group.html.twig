@@ -1,14 +1,24 @@
+{% if grouped is not defined %}
+    {% set grouped = true %}
+{% endif %}
+
 <form role="form" method="get" class="form">
+    {% include "_filter/_params.html.twig" %}
+
     <div class="form-group">
         <label for="study_group" class="control-label">{{ 'label.study_group'|trans }}:</label>
         <select name="studyGroupId" id="study_group" class="form-control" data-trigger="submit" data-choice="true">
-            <option value="">{{ 'label.select.study_group'|trans }}</option>
+            <option value="" placeholder>{{ 'label.select.study_group'|trans }}</option>
             {% for group in studyGroupFilter.studyGroupGroups %}
+                {% if grouped %}
                 <optgroup label="{{ group.grade.name }}">
+                {% endif %}
                     {% for g in group.studyGroups %}
                         <option value="{{ g.id }}" {% if studyGroupFilter.currentStudyGroup != null and studyGroupFilter.currentStudyGroup.id == g.id %}selected="selected"{% endif %}>{{ g|studygroup }}</option>
                     {% endfor %}
+                {% if grouped %}
                 </optgroup>
+                {% endif %}
             {% endfor %}
         </select>
     </div>

@@ -12,11 +12,11 @@ class MessageFileTest extends TestCase {
 
         $this->assertNull($file->getId());
 
-        $file->setExtensions([]);
-        $this->assertEquals([], $file->getExtensions());
+        $file->setExtension(null);
+        $this->assertEquals(null, $file->getExtension());
 
-        $file->setExtensions(['png']);
-        $this->assertEquals(['png'], $file->getExtensions());
+        $file->setExtension('png');
+        $this->assertEquals('png', $file->getExtension());
 
         $file->setLabel('label');
         $this->assertEquals('label', $file->getLabel());

@@ -8,9 +8,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FlysystemFileResponse extends StreamedResponse {
 
-    public function __construct(FilesystemInterface $filesystem, string $path, string $filename,
+    public function __construct(FilesystemInterface $filesystem, string $path, string $filename, $mime = 'application/octet-stream',
                                 string $disposition = ResponseHeaderBag::DISPOSITION_ATTACHMENT) {
         parent::__construct(null, 200, [ ]);
+
+        $this->headers->set('Content-Type', $mime);
 
         $this->setCallback(function() use($filesystem, $path) {
             $stream = $filesystem->readStream($path);
@@ -23,6 +25,6 @@ class FlysystemFileResponse extends StreamedResponse {
             flush();
         });
 
-        $this->headers->makeDisposition($disposition, $filename);
+        $this->headers->set('Content-Disposition', $this->headers->makeDisposition($disposition, $filename));
     }
 }

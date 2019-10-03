@@ -11,18 +11,19 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 class ColorValidatorTest extends ConstraintValidatorTestCase {
     public function getValidColors() {
         return [
-            ['000000'],
-            ['ABCDEF'],
-            ['123ABC'],
-            ['abcDEF'],
-            ['123aBC']
+            ['#000000'],
+            ['#ABCDEF'],
+            ['#123ABC'],
+            ['#abcDEF'],
+            ['#123aBC']
         ];
     }
 
     public function getInvalidColors() {
         return [
             ['000'],
-            ['defghi']
+            ['defghi'],
+            ['abcDEF']
         ];
     }
 

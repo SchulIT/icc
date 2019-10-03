@@ -1,0 +1,84 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'lists.teachers.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {% include "_messages.html.twig" %}
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    {% include "_filter/subject.html.twig" %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if groups|length > 1 %}
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-pills nav-justified card-header-pills">
+                    {% for group in groups %}
+                        <li class="nav-item">
+                            <a href="#{{ group.firstCharacter }}" class="nav-link">{{ group.firstCharacter }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <table class="table table-striped table-hover">
+                <tbody>
+                {% for group in groups %}
+                    {% for teacher in group.teachers %}
+                        <tr{% if loop.first %} id="{{ group.key }}"{% endif %}>
+                            <td><strong>{{ teacher.acronym }}</strong></td>
+                            <td>
+                                {{ teacher|teacher }}
+                            </td>
+                            <td>
+                                <i class="fa fa-envelope"></i> <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>
+                            </td>
+                            <td>
+                                {% for gradeTeacher in teacher.grades %}
+                                    {{ gradeTeacher.grade.name }}{% if gradeTeacher.type == 'p' %} <span title="{{ 'lists.teachers.substitutional.long'|trans }}">{{ 'lists.teachers.substitutional.short'|trans }}</span>{% endif %}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% if teacher.getSubjects().count() > 0 %}
+                                    {{ teacher.subjects[0].name }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if teacher.subjects.count() > 1 %}
+                                    {{ teacher.subjects[1].name }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if teacher.subjects|length > 2 %}
+                                    {% for subject in teacher.subjects %}
+                                        {% if loop.index0 > 1 %}{{ subject.getName() }}{% if not loop.last %}, {% endif %}{% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="bs-callout bs-callout-info">
+            <h4>{{ 'info.label'|trans }}</h4>
+
+            <p>{{ 'lists.teachers.empty'|trans }}</p>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -2,49 +2,69 @@
 
 namespace App\Repository;
 
+use App\Entity\Subject;
 use App\Entity\Teacher;
+use Doctrine\ORM\QueryBuilder;
 
 class TeacherRepository extends AbstractTransactionalRepository implements TeacherRepositoryInterface {
+
+    private function createDefaultQueryBuilder(): QueryBuilder {
+        $qb = $this->em->createQueryBuilder()
+            ->select(['t', 's', 'g'])
+            ->from(Teacher::class, 't')
+            ->leftJoin('t.subjects', 's')
+            ->leftJoin('t.grades', 'g')
+            ->orderBy('t.acronym', 'asc');
+
+        return $qb;
+    }
 
     /**
      * @inheritDoc
      */
     public function findOneById(int $id): ?Teacher {
-        return $this->em->getRepository(Teacher::class)
-            ->findOneBy([
-                'id' => $id
-            ]);
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qb->where('t.id = :id')
+            ->setParameter('id', $id)
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @inheritDoc
      */
     public function findOneByAcronym(string $acronym): ?Teacher {
-        return $this->em->getRepository(Teacher::class)
-            ->findOneBy([
-                'acronym' => $acronym
-            ]);
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qb->where('t.acronym = :acronym')
+            ->setParameter('acronym', $acronym)
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @inheritDoc
      */
     public function findOneByExternalId(string $externalId): ?Teacher {
-        return $this->em->getRepository(Teacher::class)
-            ->findOneBy([
-                'externalId' => $externalId
-            ]);
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qb->where('t.externalId = :externalId')
+            ->setParameter('externalId', $externalId)
+            ->setMaxResults(1) ;
+
+        return $qb->getQuery()->getSingleResult();
     }
 
     /**
      * @inheritDoc
      */
     public function findAllByAcronym(array $acronyms): array {
-        $qb = $this->em->createQueryBuilder();
+        $qb = $this->createDefaultQueryBuilder();
 
         $qb
-            ->select('t')
-            ->from(Teacher::class, 't')
             ->where($qb->expr()->in('t.acronym', ':acronyms'))
             ->setParameter('acronyms', $acronyms);
 
@@ -55,10 +75,9 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
      * @inheritDoc
      */
     public function findAll() {
-        return $this->em->getRepository(Teacher::class)
-            ->findBy([], [
-                'acronym' => 'asc'
-            ]);
+        return $this->createDefaultQueryBuilder()
+            ->getQuery()
+            ->getResult();
     }
 
     /**
@@ -77,4 +96,22 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
         $this->flushIfNotInTransaction();
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function findAllBySubject(Subject $subject): array {
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(Teacher::class, 'tInner')
+            ->leftJoin('tInner.subjects', 'sInner')
+            ->where('sInner.abbreviation = :subject');
+        $qb
+            ->setParameter('subject', $subject->getAbbreviation());
+
+        $qb->where($qb->expr()->in('t.id', $qbInner->getDQL()));
+
+        return $qb->getQuery()->getResult();
+    }
 }

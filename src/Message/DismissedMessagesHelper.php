@@ -5,12 +5,15 @@ namespace App\Message;
 use App\Entity\Message;
 use App\Entity\User;
 use App\Repository\UserRepositoryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class DismissedMessagesHelper {
 
+    private $tokenStorage;
     private $userRepository;
 
-    public function __construct(UserRepositoryInterface $userRepository) {
+    public function __construct(TokenStorageInterface $tokenStorage, UserRepositoryInterface $userRepository) {
+        $this->tokenStorage = $tokenStorage;
         $this->userRepository = $userRepository;
     }
 
@@ -72,5 +75,22 @@ class DismissedMessagesHelper {
         }
 
         return $dismissedMessages;
+    }
+
+    public function isMessageDismissed(Message $message, User $user = null) {
+        if($user === null) {
+            $user = $this->tokenStorage->getToken()->getUser();
+        }
+
+        /** @var Message[] $dismissedMessages */
+        $dismissedMessages = $user->getDismissedMessages();
+
+        foreach($dismissedMessages as $dismissedMessage) {
+            if($dismissedMessage->getId() === $message->getId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

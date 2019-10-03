@@ -40,11 +40,39 @@ class TimetableHelper {
             );
         }
 
+        $this->addEmptyLessons($timetable);
         $this->collapseTimetable($timetable);
 
         return $timetable;
     }
 
+    /**
+     * Adds empty TimetableLessons in order to improve collapsing capabilitites
+     *
+     * @param Timetable $timetable
+     */
+    private function addEmptyLessons(Timetable $timetable) {
+        foreach($timetable->getWeeks() as $week) {
+            $maxLessons = $week->getMaxLessons();
+
+            foreach($week->days as $day) {
+                $lessons = $day->getLessons();
+
+                for($lesson = 1; $lesson <= $maxLessons; $lesson++) {
+                    if(array_key_exists($lesson, $lessons) !== true) {
+                        $day->addEmptyTimetableLesson($lesson);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Computes the model for double lessons such that the model knows which lessons are collapsed. (Does NOT compute
+     * which lessons are considered double lessons -> this information must be set at import)
+     *
+     * @param Timetable $timetable
+     */
     private function collapseTimetable(Timetable $timetable) {
         foreach($timetable->getWeeks() as $week) {
             foreach($week->days as $day) {

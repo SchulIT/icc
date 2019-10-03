@@ -26,7 +26,7 @@ class Message {
      * @Assert\NotBlank()
      * @var string
      */
-    private $subject;
+    private $title;
 
     /**
      * @ORM\Column(type="text")
@@ -95,6 +95,21 @@ class Message {
     private $createdBy = null;
 
     /**
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     * @var \DateTime
+     */
+    private $createdAt;
+
+    /**
+     * @Gedmo\Timestampable(on="create")
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     * @var \DateTime
+     */
+    private $updatedAt;
+
+    /**
      * @ORM\Column(type="boolean")
      * @var bool
      */
@@ -113,7 +128,8 @@ class Message {
     private $uploadDescription;
 
     /**
-     * @ORM\OneToMany(targetEntity="MessageFile", mappedBy="message")
+     * @ORM\OneToMany(targetEntity="MessageFile", mappedBy="message", cascade={"persist"})
+     * @Assert\Valid()
      * @var ArrayCollection<MessageFile>
      */
     private $files;
@@ -162,16 +178,16 @@ class Message {
     /**
      * @return string
      */
-    public function getSubject(): ?string {
-        return $this->subject;
+    public function getTitle(): ?string {
+        return $this->title;
     }
 
     /**
-     * @param string $subject
+     * @param string $title
      * @return Message
      */
-    public function setSubject(?string $subject): Message {
-        $this->subject = $subject;
+    public function setTitle(?string $title): Message {
+        $this->title = $title;
         return $this;
     }
 
@@ -346,6 +362,7 @@ class Message {
     }
 
     public function addFile(MessageFile $file) {
+        $file->setMessage($this);
         $this->files->add($file);
     }
 
@@ -354,9 +371,9 @@ class Message {
     }
 
     /**
-     * @return ArrayCollection<MessageFile>
+     * @return Collection<MessageFile>
      */
-    public function getFiles(): ArrayCollection {
+    public function getFiles(): Collection {
         return $this->files;
     }
 
@@ -413,5 +430,19 @@ class Message {
      */
     public function getConfirmations(): Collection {
         return $this->confirmations;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt(): \DateTime {
+        return $this->createdAt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt(): \DateTime {
+        return $this->updatedAt;
     }
 }

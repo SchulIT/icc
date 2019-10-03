@@ -42,7 +42,7 @@ class Grade {
     private $students;
 
     /**
-     * @ORM\OneToMany(targetEntity="GradeTeacher", mappedBy="grade")
+     * @ORM\OneToMany(targetEntity="GradeTeacher", mappedBy="grade", cascade={"persist"})
      * @var ArrayCollection<GradeTeacher>
      */
     private $teachers;

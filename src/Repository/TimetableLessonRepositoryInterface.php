@@ -9,7 +9,7 @@ use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
-use App\View\Filter\SubjectFilter;
+use App\View\Filter\SubjectsFilter;
 
 interface TimetableLessonRepositoryInterface extends TransactionalRepositoryInterface {
 

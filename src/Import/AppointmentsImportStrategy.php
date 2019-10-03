@@ -83,7 +83,7 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
         $entity->setAllDay($data->isAllDay());
         $entity->setIsHiddenFromStudents($data->isHiddenFromStudents());
         $entity->setLocation($data->getLocation());
-        $entity->setSubject($data->getSubject());
+        $entity->setTitle($data->getSubject());
 
         $category = $this->appointmentCategoryRepository->findOneByExternalId($data->getCategory());
 

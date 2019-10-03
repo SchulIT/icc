@@ -1,11 +1,20 @@
 {% extends "main.html.twig" %}
 
 {% block post_javascript %}
-    <script src="{{ asset('build/attachments.js') }}"></script>
+    <script src="{{ asset('build/collection.js') }}"></script>
     <script src="{{ asset('build/editor.js') }}"></script>
 {% endblock %}
 
 {% block title %}{{ 'admin.documents.edit.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'admin.label'|trans }}</li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_documents') }}">{{ 'admin.documents.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
 
 {% block content %}
 
@@ -17,7 +26,7 @@
         <div class="card-header">{{ 'label.attachments'|trans }}</div>
 
         <div class="card-body">
-            <div class="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}">
+            <div class="attachments" data-collectin="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}">
                 {% for attachment in form.group_attachments.attachments %}
                     {% if attachment.vars.value is not null and attachment.vars.value.id is not null %}
                         <div class="form-group row">
@@ -44,7 +53,7 @@
         </div>
 
         <div class="card-footer">
-            <button class="btn btn-outline-primary btn-sm btn-add" type="button">
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="attachments">
                 <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
             </button>
         </div>

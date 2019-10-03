@@ -1,0 +1,1 @@
+{% for visibility in visibilities %}{{ visibility.userType|usertype }}{% if not loop.last %}, {% endif %}{% endfor %}

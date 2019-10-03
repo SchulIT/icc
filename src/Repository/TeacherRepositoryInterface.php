@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Subject;
 use App\Entity\Teacher;
 
 interface TeacherRepositoryInterface extends TransactionalRepositoryInterface {
@@ -29,6 +30,12 @@ interface TeacherRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Teacher[]
      */
     public function findAllByAcronym(array $acronyms): array;
+
+    /**
+     * @param Subject $subject
+     * @return Teacher[]
+     */
+    public function findAllBySubject(Subject $subject): array;
 
     /**
      * @return Teacher[]

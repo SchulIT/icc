@@ -3,13 +3,15 @@
 namespace App\DataFixtures;
 
 use App\Entity\Gender;
+use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Utils\ArrayUtils;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Faker\Generator;
 
-class TeacherFixtures extends Fixture {
+class TeacherFixtures extends Fixture implements DependentFixtureInterface {
 
     private $generator;
 
@@ -23,6 +25,7 @@ class TeacherFixtures extends Fixture {
     public function load(ObjectManager $manager) {
         $acronyms = [ ];
         $size = 100;
+        $allSubjects = $manager->getRepository(Subject::class)->findAll();
 
         for($i = 0; $i < $size; $i++) {
             $firstname = $this->generator->firstName;
@@ -44,6 +47,11 @@ class TeacherFixtures extends Fixture {
                 ->setAcronym($acronym)
                 ->setEmail($this->generateEmail($firstname, $lastname));
 
+            $subjects = $this->generator->randomElements($allSubjects, $this->generator->numberBetween(2, 3), false);
+            foreach($subjects as $subject) {
+                $entity->addSubject($subject);
+            }
+
             $acronyms[] = $acronym;
 
             $manager->persist($entity);
@@ -58,5 +66,14 @@ class TeacherFixtures extends Fixture {
 
     private function generateAcronym(string $firstname, string $lastname) {
         return substr(strtoupper($lastname), 0, 3) . substr(strtoupper($firstname), 0, 1);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDependencies() {
+        return [
+            SubjectFixtures::class
+        ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\MessageScope;
 use App\Entity\TimetablePeriod;
+use App\Entity\User;
 use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\MessageRepositoryInterface;
@@ -18,7 +19,7 @@ use App\Timetable\TimetableHelper;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\RoomFilter;
 use App\View\Filter\StudentFilter;
-use App\View\Filter\SubjectFilter;
+use App\View\Filter\SubjectsFilter;
 use App\View\Filter\TeacherFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,13 +46,16 @@ class TimetableController extends AbstractControllerWithMessages {
     /**
      * @Route("/timetable", name="timetable")
      */
-    public function index(StudentFilter $studentFilter, TeacherFilter $teacherFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectFilter $subjectFilter,
+    public function index(StudentFilter $studentFilter, TeacherFilter $teacherFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableWeekRepositoryInterface $weekRepository, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
                           TimetableSupervisionRepositoryInterface $supervisionRepository, Request $request,
                           ?int $studentId = null, ?string $teacherAcronym = null, ?int $roomId = null, ?int $gradeId = null, ?bool $print = false) {
-        $studentFilterView = $studentFilter->handle($studentId, $this->getUser());
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $this->getUser());
-        $gradeFilterView = $gradeFilter->handle($gradeId, $this->getUser());
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $studentFilterView = $studentFilter->handle($studentId, $user);
+        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user);
+        $gradeFilterView = $gradeFilter->handle($gradeId, $user);
         $roomFilterView = $roomFilter->handle($roomId);
         $subjectFilterView = $subjectFilter->handle($request->query->get('subjects', [ ]));
 

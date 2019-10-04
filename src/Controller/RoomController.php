@@ -10,6 +10,7 @@ use App\Repository\RoomTagRepositoryInterface;
 use App\Rooms\RoomQueryBuilder;
 use App\Sorting\RoomNameStrategy;
 use App\Sorting\Sorter;
+use App\Utils\RefererHelper;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,8 +20,8 @@ class RoomController extends AbstractControllerWithMessages {
     private $sorter;
 
     public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
-                                DateHelper $dateHelper, Sorter $sorter) {
-        parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper);
+                                DateHelper $dateHelper, Sorter $sorter, RefererHelper $refererHelper) {
+        parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper, $refererHelper);
 
         $this->sorter = $sorter;
     }

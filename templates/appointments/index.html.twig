@@ -32,18 +32,18 @@
         <div class="card-body">
             <div class="row">
                 {% if studentFilter.studentGradeGroups|length > 0 %}
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         {% include "_filter/student.html.twig" %}
                     </div>
                 {% endif %}
 
                 {% if gradeFilter.grades|length > 0 %}
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         {% include "_filter/grade.html.twig" %}
                     </div>
                 {% endif %}
 
-                <div class="col-md-4 col-sm-4 col-xs-12">
+                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                     <form role="form" method="get" class="form hidden-print">
                         {{ _self.applyAllFilters('categoryId', studentFilter, gradeFilter, categoryFilter, query) }}
 
@@ -59,7 +59,7 @@
                     </form>
                 </div>
 
-                <div class="col-md-4 col-sm-4 col-xs-12">
+                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                     <form role="form" method="get" class="form hidden-print">
                         {{ _self.applyAllFilters('show-all', studentFilter, gradeFilter, categoryFilter, query) }}
 

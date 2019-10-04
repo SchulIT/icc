@@ -9,7 +9,6 @@ use App\Sorting\Sorter;
 use App\Sorting\StringStrategy;
 use App\Sorting\UserUsernameStrategy;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**

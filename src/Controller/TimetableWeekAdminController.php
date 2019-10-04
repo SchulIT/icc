@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Entity\TimetableWeek;
 use App\Form\TimetableWeekType;
 use App\Repository\TimetableWeekRepositoryInterface;
+use App\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -18,7 +18,9 @@ class TimetableWeekAdminController extends AbstractController {
 
     private $repository;
 
-    public function __construct(TimetableWeekRepositoryInterface $repository) {
+    public function __construct(TimetableWeekRepositoryInterface $repository, RefererHelper $refererHelper) {
+        parent::__construct($refererHelper);
+
         $this->repository = $repository;
     }
 

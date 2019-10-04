@@ -79,6 +79,13 @@ label:
     hidden_from_students: vor Schülern verstecken
     people: Menschen
     color: Farbe
+    parent: Übergeordnet
+    status: Status
+    online: online
+    offline: offline
+    none: Keiner
+    tags: Tags
+    gender: Geschlecht
 
 actions:
     add: hinzufügen
@@ -267,6 +274,14 @@ message:
         messages: Mitteilungen
         lists: Listen
 
+wiki:
+    label: Wiki
+    more_articles: Weitere Artikel
+    inherited: vererbt
+    navigation: Navigation
+    toc: Inhaltsverzeichnis
+    search: Wiki durchsuchen
+
 usertype:
     teacher: Lehrkräfte
     student: Lernende
@@ -384,6 +399,7 @@ admin:
     messages:
         label: Mitteilungen
         overview:
+            label: Mitteilungsübersicht
             expired: Abgelaufene Mitteilungen
             active: Aktive Mitteilungen
         add:
@@ -403,6 +419,7 @@ admin:
     appointments:
         label: Termine
         overview:
+            label: Terminübersicht
             empty: Aktuell gibt es keine Termine.
 
         add:
@@ -435,6 +452,7 @@ admin:
     documents:
         label: Dokumente
         overview:
+            label: Dokumentenübersicht
             empty: Aktuell gibt es keine Dokumente.
 
         add:
@@ -464,6 +482,53 @@ admin:
                 label: Kategorie löschen
                 confirm: 'Soll die Dokument-Kategorie "%name%" wirklich gelöscht werden?'
                 success: Kategorie erfolgreich gelöscht
+
+    wiki:
+        label: Wiki
+
+        overview:
+            empty: Keine Wiki-Artikel vorhanden.
+        add:
+            label: Neuer Wiki-Artikel
+            success: Wiki-Artikel erfolgreich erstellt
+        edit:
+            label: Wiki-Artikel bearbeiten
+            success: Wiki-Artikel erfolgreich aktualisiert
+        remove:
+            label: Wiki-Artikel löschen
+            confirm: 'Soll der Wiki-Artikel "%name%" wirklich gelöscht werden?'
+            success: Wiki-Artikel erfolgreich gelöscht
+
+    teachers:
+        label: Lehrkräfte
+
+        overview:
+            empty: Keine Lehrkräfte vorhanden.
+        add:
+            label: Neue Lehrkraft
+            success: Lehrkraft erfolgreich angelegt
+        edit:
+            label: Lehrkraft bearbeiten
+            success: Lehrkraft erfolgreich aktualisiert
+        remove:
+            label: Lehrkraft löschen
+            confirm: 'Soll die Lehrkraft "%name% (%acronym%) wirklich gelöscht werden?'
+            success: Lehrkraft erfolgreich gelöscht
+
+        tags:
+            label: Lehrkraft-Tags
+            overview:
+                empty: Keine Tags vorhanden.
+            add:
+                label: Neuer Tag
+                success: Tag erfolgreich angelegt
+            edit:
+                label: Tag bearbeiten
+                success: Tag erfolgreich aktualisiert
+            remove:
+                label: Tag löschen
+                confirm: 'Soll der Tag "%name%" wirklich gelöscht werden?'
+                success: Tag erfolgreich gelöscht
 
 forms:
     select:

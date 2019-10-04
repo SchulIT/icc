@@ -4,17 +4,23 @@ namespace App\Import;
 
 use App\Entity\Gender;
 use App\Entity\Teacher;
+use App\Entity\TeacherTag;
 use App\Repository\TeacherRepositoryInterface;
+use App\Repository\TeacherTagRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\TeacherData;
 use App\Utils\ArrayUtils;
+use App\Utils\CollectionUtils;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class TeachersImportStrategy implements ImportStrategyInterface {
 
     private $teacherRepository;
+    private $teacherTagRepository;
 
-    public function __construct(TeacherRepositoryInterface $teacherRepository) {
+    public function __construct(TeacherRepositoryInterface $teacherRepository, TeacherTagRepositoryInterface $teacherTagRepository) {
         $this->teacherRepository = $teacherRepository;
+        $this->teacherTagRepository = $teacherTagRepository;
     }
 
     /**
@@ -69,6 +75,10 @@ class TeachersImportStrategy implements ImportStrategyInterface {
         $entity->setGender(new Gender($data->getGender()));
         $entity->setFirstname($data->getFirstname());
         $entity->setLastname($data->getLastname());
+
+        CollectionUtils::synchronize($entity->getTags(), $this->createTagCollection($data->getTags()), function(TeacherTag $tag) {
+            return $tag->getExternalId();
+        });
     }
 
     /**
@@ -92,5 +102,17 @@ class TeachersImportStrategy implements ImportStrategyInterface {
      */
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->teacherRepository;
+    }
+
+    /**
+     * @param string[] $tagExternalIds
+     * @return TeacherTag[]
+     */
+    private function createTagCollection(array $tagExternalIds): array {
+        $tags = new ArrayCollection($this->teacherTagRepository->findAll());
+
+        return $tags->filter(function(TeacherTag $tag) use($tagExternalIds) {
+            return in_array($tag->getExternalId(), $tagExternalIds);
+        })->toArray();
     }
 }

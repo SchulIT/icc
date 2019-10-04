@@ -22,10 +22,7 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
             ]);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function findBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [], bool $archive = false) {
+    private function getFindByQueryBuilder(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [], bool $archive = false): QueryBuilder {
         $qb = $this->createDefaultQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
@@ -64,7 +61,25 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
             ->setParameter('scope', $scope->getValue())
             ->setParameter('userType', $userType->getValue());
 
-        return $qb->getQuery()->getResult();
+        return $qb;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [], bool $archive = false) {
+        return $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups, $archive)->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function countBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [], bool $archive = false): int {
+        $qb = $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups, $archive);
+
+        $qb->select('COUNT(DISTINCT m.id)');
+
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -129,4 +144,6 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
         $this->em->remove($file);
         $this->em->flush();
     }
+
+
 }

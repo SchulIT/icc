@@ -25,7 +25,17 @@ interface MessageRepositoryInterface {
      * @param bool $archive
      * @return Message[]
      */
-    public function findBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [ ], bool $archive);
+    public function findBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [ ], bool $archive = false);
+
+    /**
+     * @param MessageScope $scope
+     * @param UserType $userType
+     * @param \DateTime|null $today Only return messages which are active on this given date
+     * @param StudyGroup[] $studyGroups Only return messages which belong to the given study groups
+     * @param bool $archive
+     * @return int
+     */
+    public function countBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [ ], bool $archive = false): int;
 
     /**
      * @param UserType $userType

@@ -2,13 +2,12 @@
 
 namespace App\Markdown\Processor;
 
-use EasySlugger\SluggerInterface;
-use League\CommonMark\Block\Element\Document;
-use League\CommonMark\Block\Element\Heading;
-use League\CommonMark\DocumentProcessorInterface;
 use App\Markdown\Element\AnchorLink;
+use EasySlugger\SluggerInterface;
+use League\CommonMark\Block\Element\Heading;
+use League\CommonMark\Event\DocumentParsedEvent;
 
-class HeadingAnchorProcessor implements DocumentProcessorInterface {
+class HeadingAnchorProcessor {
 
     /**
      * @var SluggerInterface
@@ -22,7 +21,8 @@ class HeadingAnchorProcessor implements DocumentProcessorInterface {
     /**
      * @inheritDoc
      */
-    public function processDocument(Document $document) {
+    public function onDocumentParsed(DocumentParsedEvent $event) {
+        $document = $event->getDocument();
         $walker = $document->walker();
 
         while($event = $walker->next()) {

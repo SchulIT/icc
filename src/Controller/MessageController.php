@@ -18,15 +18,13 @@ use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\MessageVoter;
 use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
+use App\Utils\RefererHelper;
 use App\View\Filter\StudentFilter;
-use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\ORM\EntityManagerInterface;
 use SchoolIT\CommonBundle\Helper\DateHelper;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -38,7 +36,9 @@ class MessageController extends AbstractController {
     private $sorter;
     private $dateHelper;
 
-    public function __construct(Sorter $sorter, DateHelper $dateHelper) {
+    public function __construct(Sorter $sorter, DateHelper $dateHelper, RefererHelper $refererHelper) {
+        parent::__construct($refererHelper);
+        
         $this->sorter = $sorter;
         $this->dateHelper = $dateHelper;
     }
@@ -173,7 +173,7 @@ class MessageController extends AbstractController {
     /**
      * @Route("/{id}/confirm", name="confirm_message")
      */
-    public function confirm(Message $message, Request $request, EntityManagerInterface $entityManager) {
+    public function confirm(Message $message, EntityManagerInterface $entityManager) {
         $this->denyAccessUnlessGranted(MessageVoter::Confirm, $message);
 
         /** @var User $user */
@@ -193,13 +193,13 @@ class MessageController extends AbstractController {
             $entityManager->flush();
         }
 
-        return $this->redirectToReferer($request);
+        return $this->redirectToRequestReferer('show_message', [ 'id' => $message->getId() ]);
     }
 
     /**
      * @Route("/{id}/dismiss", name="dismiss_message")
      */
-    public function dismiss(Message $message, Request $request, UserRepositoryInterface $userRepository) {
+    public function dismiss(Message $message, UserRepositoryInterface $userRepository) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -208,13 +208,13 @@ class MessageController extends AbstractController {
             $userRepository->persist($user);
         }
 
-        return $this->redirectToReferer($request);
+        return $this->redirectToRequestReferer('messages');
     }
 
     /**
      * @Route("/{id}/reenable", name="reenable_message")
      */
-    public function reenable(Message $message, Request $request, UserRepositoryInterface $userRepository) {
+    public function reenable(Message $message, UserRepositoryInterface $userRepository) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -223,26 +223,7 @@ class MessageController extends AbstractController {
             $userRepository->persist($user);
         }
 
-        return $this->redirectToReferer($request);
-    }
-
-    private function redirectToReferer(Request $request): Response {
-        $referer = $request->headers->get('referer');
-
-        if($referer === null) {
-            return $this->redirectToRoute('dashboard');
-        }
-
-        $baseUrl = $request->getSchemeAndHttpHost();
-        $lastPath = substr($referer, strpos($referer, $baseUrl) + strlen($baseUrl));
-
-        $params = $this->get('router')->getMatcher()->match($lastPath);
-
-        $parameters = array_filter($params, function($key) {
-            return substr($key, 0, 1) !== '_';
-        }, ARRAY_FILTER_USE_KEY);
-
-        return $this->redirectToRoute($params['_route'], $parameters);
+        return $this->redirectToRequestReferer('messages');
     }
 
 }

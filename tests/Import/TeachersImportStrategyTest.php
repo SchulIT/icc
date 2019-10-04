@@ -4,22 +4,42 @@ namespace App\Tests\Import;
 
 use App\Entity\Gender;
 use App\Entity\Teacher;
+use App\Entity\TeacherTag;
 use App\Import\Importer;
 use App\Import\TeachersImportStrategy;
 use App\Repository\TeacherRepository;
+use App\Repository\TeacherTagRepository;
 use App\Request\Data\TeacherData;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TeachersImportStrategyTest extends WebTestCase {
 
-    public function testImport() {
+    private $em;
+
+    public function setUp(): void {
         $kernel = static::createKernel();
         $kernel->boot();
 
-        $em = $kernel->getContainer()->get('doctrine')
+        $this->em = $kernel
+            ->getContainer()
+            ->get('doctrine')
             ->getManager();
 
-        $em->persist(
+        $this->em->persist(
+            (new TeacherTag())
+                ->setExternalId('tag1')
+                ->setName('Tag 1')
+                ->setColor('#000000')
+        );
+
+        $this->em->persist(
+            (new TeacherTag())
+                ->setExternalId('tag2')
+                ->setName('Tag 2')
+                ->setColor('#111111')
+        );
+
+        $this->em->persist(
             (new Teacher())
                 ->setExternalId('AB')
                 ->setAcronym('AB')
@@ -27,7 +47,7 @@ class TeachersImportStrategyTest extends WebTestCase {
                 ->setLastname('Lastname')
                 ->setGender(Gender::Female())
         );
-        $em->persist(
+        $this->em->persist(
             (new Teacher())
                 ->setExternalId('AC')
                 ->setAcronym('AC')
@@ -35,32 +55,48 @@ class TeachersImportStrategyTest extends WebTestCase {
                 ->setLastname('Lastname')
                 ->setGender(Gender::Male())
         );
-        $em->flush();
+        $this->em->flush();
+    }
 
+    public function testImport() {
         $teachersData = [
             (new TeacherData())
                 ->setId('AB')
                 ->setAcronym('AB')
                 ->setFirstname('John')
                 ->setLastname('Doe')
-                ->setGender('male'),
+                ->setGender('male')
+                ->setTags(['tag1']),
             (new TeacherData())
                 ->setId('AD')
                 ->setAcronym('AD')
                 ->setFirstname('John')
                 ->setLastname('Doe')
-                ->setGender('male'),
+                ->setGender('male')
+                ->setTags(['tag1', 'tag2']),
         ];
 
-        $repository = new TeacherRepository($em);
+        $repository = new TeacherRepository($this->em);
+        $tagRepository = new TeacherTagRepository($this->em);
         $importer = new Importer();
-        $strategy = new TeachersImportStrategy($repository);
-        $importer->import($teachersData, $strategy);
+        $strategy = new TeachersImportStrategy($repository, $tagRepository);
+        $result = $importer->import($teachersData, $strategy);
 
-        $teachers = $strategy->getExistingEntities();
+        /** @var Teacher[] $addedTeachers */
+        $addedTeachers = $result->getAdded();
+        $this->assertEquals(1, count($addedTeachers));
+        $this->assertEquals('AD', $addedTeachers[0]->getAcronym());
+        $this->assertEquals(2, $addedTeachers[0]->getTags()->count());
 
-        $this->assertEquals(2, count($teachers));
-        $this->assertArrayHasKey('AB', $teachers);
-        $this->assertArrayHasKey('AD', $teachers);
+        /** @var Teacher[] $updatedTeachers */
+        $updatedTeachers = $result->getUpdated();
+        $this->assertEquals(1, count($updatedTeachers));
+        $this->assertEquals('AB', $updatedTeachers[0]->getAcronym());
+        $this->assertEquals(1, $updatedTeachers[0]->getTags()->count());
+
+        /** @var Teacher[] $removedTeachers */
+        $removedTeachers = $result->getRemoved();
+        $this->assertEquals(1, count($removedTeachers));
+        $this->assertEquals('AC', $removedTeachers[0]->getAcronym());
     }
 }

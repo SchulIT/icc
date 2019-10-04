@@ -81,7 +81,7 @@ class Message {
     private $visibilities;
 
     /**
-     * @ORM\Column(type="MessageScope::class")
+     * @ORM\Column(type="message_scope")
      * @var MessageScope
      */
     private $scope;

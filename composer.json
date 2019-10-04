@@ -9,12 +9,14 @@
         "acelaya/doctrine-enum-type": "^2.2",
         "beberlei/doctrineextensions": "^1.2",
         "emojione/emojione": "2.0",
+        "fervo/enum-bundle": "^2.2",
         "fzaninotto/faker": "^1.8",
         "javiereguiluz/easyslugger": "^1.0",
         "jms/serializer-bundle": "^3.2",
         "jsvrcek/ics": "^0.6.0",
         "knplabs/knp-menu-bundle": "^2.2",
-        "league/commonmark": "^0.18.4",
+        "league/commonmark": "^1.0",
+        "league/commonmark-ext-table": "^2.1",
         "league/csv": "^9.2",
         "lightsaml/sp-bundle": "^1.2",
         "myclabs/php-enum": "^1.6",
@@ -43,8 +45,7 @@
         "symfony/web-link": "^4.2",
         "symfony/webpack-encore-bundle": "^1.4",
         "symfony/yaml": "^4.2",
-        "vich/uploader-bundle": "^1.9",
-        "webuni/commonmark-table-extension": "^0.9.0"
+        "vich/uploader-bundle": "^1.9"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^5.0",

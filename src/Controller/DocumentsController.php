@@ -4,26 +4,19 @@ namespace App\Controller;
 
 use App\Entity\Document;
 use App\Entity\DocumentAttachment;
-use App\Entity\MessageScope;
 use App\Entity\User;
-use App\Entity\UserType;
 use App\Filesystem\DocumentFilesystem;
 use App\Filesystem\FileNotFoundException;
 use App\Grouping\DocumentCategoryStrategy as DocumentCategoryGroupingStrategy;
 use App\Grouping\Grouper;
-use App\Http\FlysystemFileResponse;
-use App\Message\DismissedMessagesHelper;
 use App\Repository\DocumentRepositoryInterface;
-use App\Repository\MessageRepositoryInterface;
 use App\Security\Voter\DocumentVoter;
 use App\Sorting\DocumentCategoryStrategy;
 use App\Sorting\DocumentNameStrategy;
 use App\Sorting\Sorter;
-use App\View\Filter\GradeFilter;
+use App\Utils\RefererHelper;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\UserTypeFilter;
-use SchoolIT\CommonBundle\Helper\DateHelper;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -35,7 +28,9 @@ class DocumentsController extends AbstractController {
     private $grouper;
     private $sorter;
 
-    public function __construct(Grouper $grouper, Sorter $sorter) {
+    public function __construct(Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
+        parent::__construct($refererHelper);
+
         $this->grouper = $grouper;
         $this->sorter = $sorter;
     }
@@ -66,7 +61,7 @@ class DocumentsController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/{alias}", name="document", requirements={"id": "\d+"})
+     * @Route("/{id}/{alias}", name="show_document", requirements={"id": "\d+"})
      */
     public function show(Document $document) {
         $this->denyAccessUnlessGranted(DocumentVoter::View, $document);

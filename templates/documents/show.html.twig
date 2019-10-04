@@ -67,12 +67,12 @@
         </a>
 
         {% if is_granted('edit', document) %}
-            <a href="{{ path('admin_edit_document', { id: document.id }) }}" class="btn btn-primary btn-sm">
+            <a href="{{ path('admin_edit_document', { id: document.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
                 <i class="fa fa-edit"></i> {{ 'admin.documents.edit.label'|trans }}
             </a>
         {% endif %}
         {% if is_granted('remove', document) %}
-            <a href="{{ path('admin_remove_document', { id: document.id }) }}" class="btn btn-danger btn-sm">
+            <a href="{{ path('admin_remove_document', { id: document.id, ref: 'view' }) }}" class="btn btn-danger btn-sm">
                 <i class="fa fa-trash"></i> {{ 'admin.documents.remove.label'|trans }}
             </a>
         {% endif %}

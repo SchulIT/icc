@@ -163,3 +163,13 @@ table {
     background: #efefef;
   }
 }
+
+// Wiki
+.card-columns {
+  @include media-breakpoint-only(lg) {
+    column-count: 2;
+  }
+  @include media-breakpoint-only(xl) {
+    column-count: 2;
+  }
+}

@@ -10,6 +10,7 @@ use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Settings\ExamSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\ArrayUtils;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -24,6 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/admin/settings")
+ * @Security("is_granted('RROLE_ADMIN')")
  */
 class SettingsController extends AbstractController {
 
@@ -31,8 +33,7 @@ class SettingsController extends AbstractController {
      * @Route("", name="admin_settings")
      */
     public function index(Builder $menuBuilder) {
-        $menu = $menuBuilder->mainMenu([]);
-        $settingsMenu = $menu->getChild('admin.settings.label');
+        $settingsMenu = $menuBuilder->settingsMenu([]);
 
         return $this->render('admin/settings/index.html.twig', [
             'menu' => $settingsMenu->getChildren()

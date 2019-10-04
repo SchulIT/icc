@@ -17,18 +17,18 @@
                 {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
 
                 {% if studyGroupFilter.studyGroupGroups|length > 0 %}
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         {% include "_filter/study_group.html.twig" with { grouped: false, params: { q: q, userType: userTypeParam } } %}
                     </div>
                 {% endif %}
 
                 {% if userTypeFilter.types|length > 0 %}
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         {% include "_filter/user_type.html.twig" with { params: { q: q, studyGroupId: studyGroupParam } } %}
                     </div>
                 {% endif %}
 
-                <div class="col-md-4 col-sm-4 col-xs-12">
+                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                     {% include "_filter/query.html.twig" with { params: { q: q, studyGroupId: studyGroupParam }, route: 'documents' } %}
                 </div>
             </div>
@@ -55,7 +55,7 @@
 
                 <div class="list-group list-group-flush">
                     {% for document in group.documents %}
-                        <a href="{{ path('document', { id: document.id, alias: document.alias }) }}" class="list-group-item list-group-item-action"><i class="far fa-file"></i> {{ document.title }}</a>
+                        <a href="{{ path('show_document', { id: document.id, alias: document.alias }) }}" class="list-group-item list-group-item-action"><i class="far fa-file"></i> {{ document.title }}</a>
                     {% endfor %}
                 </div>
             </div>

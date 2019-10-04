@@ -9,9 +9,9 @@ use App\Grouping\Grouper;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Sorting\AppointmentDateGroupStrategy;
 use App\Sorting\Sorter;
+use App\Utils\RefererHelper;
 use App\View\Filter\AppointmentCategoryFilter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Sorting\AppointmentDateStrategy as AppointmentSortingStrategy;
@@ -26,7 +26,9 @@ class AppointmentAdminController extends AbstractController {
     private $grouper;
     private $sorter;
 
-    public function __construct(AppointmentRepositoryInterface $appointmentRepository, Grouper $grouper, Sorter $sorter) {
+    public function __construct(AppointmentRepositoryInterface $appointmentRepository, Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
+        parent::__construct($refererHelper);
+
         $this->repository = $appointmentRepository;
         $this->grouper = $grouper;
         $this->sorter = $sorter;

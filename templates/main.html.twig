@@ -1,5 +1,82 @@
 {% extends '@Common/main.html.twig' %}
 
+{% block userbar %}
+    <div class="float-right d-print-none" id="userbar">
+        <div class="btn-group d-md-none d-lg-none">
+            <button type="button" class="btn btn-secondary btn-sm" data-toggle="collapse" data-target="#menu">
+                <i class="fas fa-bars"></i> {{ 'menu.label'|trans }}
+            </button>
+        </div>
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-cogs"></i> {{ 'admin.settings.label'|trans }}
+                </button>
+
+                {{ knp_menu_render('settingsMenu', {'currentClass': 'active', 'template': 'dropdown_menu.html.twig' }) }}
+            </div>
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-cogs"></i> {{ 'admin.label'|trans }}
+            </button>
+
+            {{ knp_menu_render('adminMenu', {'currentClass': 'active', 'template': 'dropdown_menu.html.twig' }) }}
+        </div>
+        {% endif %}
+
+        {% if user.services|length > 0 %}
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <i class="fas fa-bars"></i> {{ 'services.label'|trans }}
+                </button>
+
+                <ul class="dropdown-menu" role="menu">
+
+                    {% for service in user.services %}
+                        <li>
+                            <a class="dropdown-item" href="{{ service.url }}" target="_blank" title="{{ service.description }}">
+                                {{ service.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                <i class="fas fa-user"></i>
+
+                {% if user.firstname is not null and user.lastname is not null %}
+                    {{ user.lastname }}, {{ user.firstname }} ({{ app.user.username }})
+                {% else %}
+                    {{ app.user.username }}
+                {% endif %}
+            </button>
+
+            <ul class="dropdown-menu pull-right" role="menu">
+                {% block usermenu %}{% endblock %}
+                {% if profile_url is not null %}
+                    <li>
+                        {% if profile_url starts with 'http://' or profile_url starts with 'https://' %}
+                            <a href="{{ profile_url }}" class="dropdown-item"><i class="fas fa-cogs"></i> {{ 'profile.label'|trans }}</a>
+                        {% else %}
+                            <a href="{{ path(profile_url) }}" class="dropdown-item"><i class="fas fa-cogs"></i> {{ 'profile.label'|trans }}</a>
+                        {% endif %}
+                    </li>
+                    <li class="dropdown-divider"></li>
+                {% endif %}
+                <li>
+                    <a href="{{ path('logout') }}" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> {{ 'auth.logout'|trans }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
 {% block css %}
     <link rel="stylesheet" href="{{ asset('build/app.css') }}" type="text/css" />
 {% endblock %}

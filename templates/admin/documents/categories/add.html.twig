@@ -5,7 +5,7 @@
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
-        <li class="breadcrumb-item">{{ 'admin.label'|trans }}</li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin_documents') }}">{{ 'admin.documents.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin_document_categories') }}">{{ 'admin.documents.categories.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>

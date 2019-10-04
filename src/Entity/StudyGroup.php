@@ -37,7 +37,7 @@ class StudyGroup {
     private $name;
 
     /**
-     * @ORM\Column(type="StudyGroupType::class")
+     * @ORM\Column(type="study_group_type")
      * @Assert\NotNull()
      * @var StudyGroupType
      */

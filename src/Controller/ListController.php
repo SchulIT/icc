@@ -8,34 +8,21 @@ use App\Entity\GradeTeacherType;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroupMembership;
 use App\Entity\StudyGroupType;
-use App\Entity\Teacher;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Grouping\Grouper;
-use App\Grouping\StudentGradeGroup;
-use App\Grouping\StudentGradeStrategy;
-use App\Grouping\StudyGroupGradeGroup;
-use App\Grouping\StudyGroupGradeStrategy;
 use App\Grouping\TeacherFirstCharacterStrategy;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
-use App\Repository\GradeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
-use App\Repository\StudentRepositoryInterface;
-use App\Repository\StudyGroupRepositoryInterface;
-use App\Repository\SubjectRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
-use App\Sorting\GradeNameStrategy;
 use App\Sorting\Sorter;
-use App\Sorting\StudentGradeGroupStrategy;
 use App\Sorting\StudentGroupMembershipStrategy;
 use App\Sorting\StudentStrategy;
-use App\Sorting\StudyGroupGradeGroupStrategy;
-use App\Sorting\StudyGroupStrategy;
-use App\Sorting\SubjectNameStrategy;
 use App\Sorting\TeacherFirstCharacterGroupStrategy;
 use App\Sorting\TeacherStrategy;
+use App\Utils\RefererHelper;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
@@ -51,8 +38,8 @@ class ListController extends AbstractControllerWithMessages {
 
     public function __construct(Grouper $grouper, Sorter $sorter,
                                 MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
-                                DateHelper $dateHelper) {
-        parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper);
+                                DateHelper $dateHelper, RefererHelper $refererHelper) {
+        parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper, $refererHelper);
 
         $this->grouper = $grouper;
         $this->sorter = $sorter;
@@ -173,8 +160,8 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/lists/teachers", name="list_teachers")
      */
-    public function teachers(SubjectFilter $subjectFilter, TeacherRepositoryInterface $teacherRepository, ?string $subject) {
-        $subjectFilterView = $subjectFilter->handle($subject);
+    public function teachers(SubjectFilter $subjectFilter, TeacherRepositoryInterface $teacherRepository, ?int $subjectId = null) {
+        $subjectFilterView = $subjectFilter->handle($subjectId);
         $teachers = [ ];
 
         if($subjectFilterView->getCurrentSubject() !== null) {

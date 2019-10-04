@@ -58,25 +58,6 @@ class Kernel extends BaseKernel
         $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS, '/', 'glob');
     }
 
-    public function boot() {
-        $enums = [
-            'Gender::class' => Gender::class,
-            'GradeTeacherType::class' => GradeTeacherType::class,
-            'MessageScope::class' => MessageScope::class,
-            'StudyGroupType::class' => StudyGroupType::class,
-            'UserType::class' => UserType::class,
-            'DeviceTokenType::class' => DeviceTokenType::class
-        ];
-
-        foreach($enums as $alias => $enum) {
-            if(!PhpEnumType::hasType($alias)) {
-                PhpEnumType::registerEnumType($alias, $enum);
-            }
-        }
-
-        return parent::boot();
-    }
-
     public function build(ContainerBuilder $container) {
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');

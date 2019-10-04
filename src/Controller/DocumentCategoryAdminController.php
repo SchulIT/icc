@@ -7,8 +7,8 @@ use App\Form\DocumentCategoryType;
 use App\Repository\DocumentCategoryRepositoryInterface;
 use App\Sorting\DocumentCategoryNameStrategy;
 use App\Sorting\Sorter;
+use App\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -20,7 +20,9 @@ class DocumentCategoryAdminController extends AbstractController {
 
     private $repository;
 
-    public function __construct(DocumentCategoryRepositoryInterface $repository) {
+    public function __construct(DocumentCategoryRepositoryInterface $repository, RefererHelper $refererHelper) {
+        parent::__construct($refererHelper);
+
         $this->repository = $repository;
     }
 

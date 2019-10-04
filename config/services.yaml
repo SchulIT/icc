@@ -93,6 +93,8 @@ services:
     App\Menu\Builder:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: mainMenu }
+            - { name: knp_menu.menu_builder, method: adminMenu, alias: adminMenu }
+            - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
 
     SchoolIT\CommonBundle\Menu\Voter:
         tags:
@@ -123,23 +125,27 @@ services:
         bind:
             $baseUrl: '%env(APP_URL)%'
 
+    App\Controller\WikiAdminController:
+        bind:
+            $wikiFilesystem: '@oneup_flysystem.wiki_filesystem'
+
     # MARKDOWN
     Emojione\Client:
         factory: 'App\Markdown\EmojiClientFactory:createEmojiClient'
         arguments:
             $baseUrl: '%env(APP_URL)%'
 
-    League\CommonMark\Environment:
+    League\CommonMark\EnvironmentInterface:
+        class: League\CommonMark\Environment
         factory: [ 'League\CommonMark\Environment', createCommonMarkEnvironment ]
         calls:
-            - [ addExtension, [ "@Webuni\\CommonMark\\TableExtension\\TableExtension" ]]
-
-    Webuni\CommonMark\TableExtension\TableExtension: ~
+            - [ addExtension, [ "@App\\Markdown\\MarkdownExtension" ]]
 
     League\CommonMark\CommonMarkConverter:
         class: League\CommonMark\CommonMarkConverter
         arguments:
             $config: "%commonmark.config%"
+            $environment: "@League\\CommonMark\\EnvironmentInterface"
 
     EasySlugger\SluggerInterface:
         class: EasySlugger\Utf8Slugger

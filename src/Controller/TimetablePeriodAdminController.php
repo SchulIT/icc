@@ -7,8 +7,8 @@ use App\Form\TimetablePeriodType;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
+use App\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -20,7 +20,9 @@ class TimetablePeriodAdminController extends AbstractController {
 
     private $repository;
 
-    public function __construct(TimetablePeriodRepositoryInterface $repository) {
+    public function __construct(TimetablePeriodRepositoryInterface $repository, RefererHelper $refererHelper) {
+        parent::__construct($refererHelper);
+
         $this->repository = $repository;
     }
 

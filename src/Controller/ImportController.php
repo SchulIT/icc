@@ -36,12 +36,12 @@ use App\Request\Data\TimetableSupervisionsData;
 use App\Request\Data\TuitionsData;
 use App\Response\ErrorResponse;
 use App\Response\ImportResponse;
+use App\Utils\RefererHelper;
 use Exception;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Swagger\Annotations as SWG;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -54,7 +54,9 @@ class ImportController extends AbstractController {
     private $importer;
     private $serializer;
 
-    public function __construct(Importer $importer, SerializerInterface $serializer) {
+    public function __construct(Importer $importer, SerializerInterface $serializer, RefererHelper $refererHelper) {
+        parent::__construct($refererHelper);
+
         $this->importer = $importer;
         $this->serializer = $serializer;
     }
@@ -209,7 +211,7 @@ class ImportController extends AbstractController {
      * Imports grade teachers.
      *
      * @Route("/grades/teachers", methods={"POST"})
-     * @SWG\Post(operationId="import_teachers")
+     * @SWG\Post(operationId="import_grade_teachers")
      * @SWG\Parameter(
      *     name="payload",
      *     in="body",

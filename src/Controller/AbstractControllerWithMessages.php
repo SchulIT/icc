@@ -6,8 +6,8 @@ use App\Entity\MessageScope;
 use App\Entity\User;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\MessageRepositoryInterface;
+use App\Utils\RefererHelper;
 use SchoolIT\CommonBundle\Helper\DateHelper;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractControllerWithMessages extends AbstractController {
@@ -17,7 +17,9 @@ abstract class AbstractControllerWithMessages extends AbstractController {
     protected $dateHelper;
 
     public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
-                                 DateHelper $dateHelper) {
+                                 DateHelper $dateHelper, RefererHelper $refererHelper) {
+        parent::__construct($refererHelper);
+
         $this->messageRepository = $messageRepository;
         $this->dismissedMessagesHelper = $dismissedMessagesHelper;
         $this->dateHelper = $dateHelper;

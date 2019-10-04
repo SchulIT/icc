@@ -22,7 +22,7 @@ class AlertBlock extends AbstractBlock {
     /**
      * @inheritDoc
      */
-    public function canContain(AbstractBlock $block) {
+    public function canContain(AbstractBlock $block): bool {
         return true;
     }
 
@@ -36,14 +36,14 @@ class AlertBlock extends AbstractBlock {
     /**
      * @inheritDoc
      */
-    public function isCode() {
+    public function isCode(): bool {
         return false;
     }
 
     /**
      * @inheritDoc
      */
-    public function matchesNextLine(Cursor $cursor) {
+    public function matchesNextLine(Cursor $cursor): bool {
         $line = $cursor->getLine();
 
         if($line === '!!!') {

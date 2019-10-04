@@ -1,0 +1,70 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.wiki.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% macro wiki_article(article, paddingLeft) %}
+    <tr>
+        <td><span style="padding-left: {{ paddingLeft }}px;"></span> {% if paddingLeft > 0 %}┗{% endif %} {{ article.title }}</td>
+        <td>
+            {% if article.isOnline %}
+                <span class="badge badge-success">{{ 'label.online'|trans }}</span>
+            {% else %}
+                <span class="badge badge-danger">{{ 'label.offline'|trans }}</span>
+            {% endif %}
+        </td>
+        <td>
+            {% for visibility in article.visibilities %}{{ visibility.userType|usertype }}{% if not loop.last %}, {% endif %}{% endfor %}
+        </td>
+        <td>
+            <a href="{{ path('edit_wiki_article', { id: article.id }) }}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
+            <a href="{{ path('remove_wiki_article', { id: article.id }) }}" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+        </td>
+    </tr>
+
+    {% for child in article.children %}
+        {{ _self.wiki_article(child, paddingLeft + 10) }}
+    {% endfor %}
+{% endmacro %}
+
+{% block content %}
+
+    {% if tree|length == 0 %}
+        <div class="bs-callout bs-callout-info">
+            <h4>{{ 'info.label'|trans }}</h4>
+
+            <p>{{ 'admin.wiki.overview.empty'|trans }}</p>
+        </div>
+    {% else %}
+        <div class="card">
+            <table class="table table-hover table-striped">
+                <thead>
+                <tr>
+                    <th>{{ 'label.title'|trans }}</th>
+                    <th>{{ 'label.status'|trans }}</th>
+                    <th>{{ 'label.visibility'|trans }}</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for article in tree %}
+                    {{ _self.wiki_article(article, 0) }}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+    <div class="buttons">
+        <a href="{{ path('add_wiki_article') }}" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'admin.wiki.add.label'|trans }}
+        </a>
+    </div>
+{% endblock %}

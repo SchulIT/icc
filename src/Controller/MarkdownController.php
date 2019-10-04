@@ -3,9 +3,8 @@
 namespace App\Controller;
 
 use App\Markdown\Markdown;
+use App\Utils\RefererHelper;
 use EasySlugger\SluggerInterface;
-use League\Flysystem\FilesystemInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -16,7 +15,9 @@ class MarkdownController extends AbstractController {
     private $slugger;
     private $baseUrl;
 
-    public function __construct(string $baseUrl, Markdown $markdown, SluggerInterface $slugger) {
+    public function __construct(string $baseUrl, Markdown $markdown, SluggerInterface $slugger, RefererHelper $refererHelper) {
+        parent::__construct($refererHelper);
+
         $this->markdown = $markdown;
         $this->slugger = $slugger;
         $this->baseUrl = $baseUrl;

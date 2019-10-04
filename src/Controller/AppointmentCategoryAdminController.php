@@ -4,12 +4,11 @@ namespace App\Controller;
 
 use App\Entity\AppointmentCategory;
 use App\Form\AppointmentCategoryType;
-use App\Form\DocumentCategoryType;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Sorting\AppointmentCategoryStrategy;
 use App\Sorting\Sorter;
+use App\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -22,7 +21,9 @@ class AppointmentCategoryAdminController extends AbstractController {
     private $repository;
     private $sorter;
 
-    public function __construct(AppointmentCategoryRepositoryInterface $categoryRepository, Sorter $sorter) {
+    public function __construct(AppointmentCategoryRepositoryInterface $categoryRepository, Sorter $sorter, RefererHelper $refererHelper) {
+        parent::__construct($refererHelper);
+
         $this->repository = $categoryRepository;
         $this->sorter = $sorter;
     }

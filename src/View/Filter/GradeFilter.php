@@ -22,11 +22,13 @@ class GradeFilter {
 
     public function handle(?int $gradeId, User $user) {
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
+        $defaultGrade = null;
 
         if($isStudentOrParent) {
             $grades = $user->getStudents()->map(function(Student $student) {
                 return $student->getGrade();
             })->toArray();
+            $defaultGrade = $grades[0] ?? null;
         } else {
             $grades = $this->gradeRepository->findAll();
         }
@@ -39,7 +41,7 @@ class GradeFilter {
         );
 
         $grade = $gradeId !== null ?
-            $grades[$gradeId] ?? null : null;
+            $grades[$gradeId] ?? $defaultGrade : $defaultGrade;
 
         $this->sorter->sort($grades, GradeNameStrategy::class);
 

@@ -7,17 +7,31 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ListsVoter extends Voter {
 
+    public const Teachers = 'teachers';
+    public const Students = 'students';
+    public const Tuitions = 'tuitions';
+    public const StudyGroups = 'studygroups';
+
     /**
      * @inheritDoc
      */
     protected function supports($attribute, $subject) {
-        // TODO: Implement supports() method.
+        $attributes = [
+            static::Teachers,
+            static::Students,
+            static::Tuitions,
+            static::StudyGroups
+        ];
+
+        return in_array($attribute, $attributes)
+            && $subject === null;
     }
 
     /**
      * @inheritDoc
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
-        // TODO: Implement voteOnAttribute() method.
+        // TODO
+        return true;
     }
 }

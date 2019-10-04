@@ -7,14 +7,11 @@ use App\Form\MessageType;
 use App\Grouping\Grouper;
 use App\Grouping\MessageExpirationGroup;
 use App\Grouping\MessageExpirationStrategy;
-use App\Grouping\MessageVisibilityGroup;
-use App\Grouping\MessageVisibilityStrategy;
 use App\Repository\MessageRepositoryInterface;
-use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
+use App\Utils\RefererHelper;
 use App\View\Filter\UserTypeFilter;
-use League\CommonMark\Util\ArrayCollection;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -27,7 +24,9 @@ class MessageAdminController extends AbstractController {
     private $grouper;
     private $sorter;
 
-    public function __construct(MessageRepositoryInterface $repository, Grouper $grouper, Sorter $sorter) {
+    public function __construct(MessageRepositoryInterface $repository, Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
+        parent::__construct($refererHelper);
+
         $this->repository = $repository;
         $this->grouper = $grouper;
         $this->sorter = $sorter;
@@ -97,7 +96,7 @@ class MessageAdminController extends AbstractController {
             $this->repository->persist($message);
 
             $this->addFlash('success', 'message.edit.succes');
-            return $this->redirectToRoute('admin_messages');
+            return $this->redirectToReferer(['view' => 'show_message'], 'admin_messages', [ 'id' => $message->getId() ]);
         }
 
         return $this->render('admin/messages/edit.html.twig', [

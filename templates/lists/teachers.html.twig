@@ -15,7 +15,7 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-4 col-sm-4 col-xs-12">
+                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                     {% include "_filter/subject.html.twig" %}
                 </div>
             </div>
@@ -42,6 +42,10 @@
                             <td><strong>{{ teacher.acronym }}</strong></td>
                             <td>
                                 {{ teacher|teacher }}
+
+                                {% for tag in teacher.tags %}
+                                    <span class="badge" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
+                                {% endfor %}
                             </td>
                             <td>
                                 <i class="fa fa-envelope"></i> <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>

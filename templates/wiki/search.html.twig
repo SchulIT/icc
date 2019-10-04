@@ -1,0 +1,65 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'wiki.search'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('wiki') }}">{{ 'wiki.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% macro wiki_breadcrumb(article) %}
+    {% if article is not null %}
+        {% if article.parent is not null %}
+            {{ _self.wiki_breadcrumb(article.parent) }}
+        {% endif %}
+        <li class="breadcrumb-item"><a href="{{ path('show_wiki_article', { id: article.id, slug: article.slug}) }}">{{ article.title }}</a></li>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">{{ 'wiki.search'|trans }}</div>
+
+        <div class="card-body">
+            <form action="{{ path('wiki_search') }}">
+                <div class="input-group">
+                    <input type="text" name="q" value="{{ q }}" class="form-control">
+
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if articles|length == 0 %}
+
+    {% endif %}
+
+    {% for article in articles %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{{ path('show_wiki_article', { id: article.id, slug: article.slug}) }}">{{ article.title }}</a>
+                </h5>
+
+                <ol class="breadcrumb">
+                    {{ _self.wiki_breadcrumb(article.parent) }}
+                    <li class="breadcrumb-item">{{ article.title }}</li>
+                </ol>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% include '@Common/includes/pagination.html.twig' with {
+        currentFilters: { q: q },
+        currentPage: page,
+        paginationPath: 'wiki_search',
+        lastPage: pages,
+        showAlwaysFirstAndLast: true
+    } only %}
+{% endblock %}

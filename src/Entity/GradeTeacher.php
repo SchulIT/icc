@@ -26,7 +26,7 @@ class GradeTeacher {
     private $grade;
 
     /**
-     * @ORM\Column(type="GradeTeacherType::class")
+     * @ORM\Column(type="grade_teacher_type")
      * @var GradeTeacherType
      */
     private $type;

@@ -2,14 +2,13 @@
 
 namespace App\Markdown\Processor;
 
-use League\CommonMark\Block\Element\Document;
-use League\CommonMark\DocumentProcessorInterface;
+use App\Repository\DocumentRepositoryInterface;
+use League\CommonMark\Event\DocumentParsedEvent;
 use League\CommonMark\Inline\Element\HtmlInline;
 use League\CommonMark\Inline\Element\Link;
-use App\Repository\DocumentRepositoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class LinkProcessor implements DocumentProcessorInterface {
+class LinkProcessor {
 
     private $documentRepository;
     private $urlGenerator;
@@ -22,7 +21,8 @@ class LinkProcessor implements DocumentProcessorInterface {
     /**
      * @inheritDoc
      */
-    public function processDocument(Document $document) {
+    public function onDocumentParsed(DocumentParsedEvent $event) {
+        $document = $event->getDocument();
         $walker = $document->walker();
 
         while($event = $walker->next()) {
@@ -42,7 +42,7 @@ class LinkProcessor implements DocumentProcessorInterface {
                 $document = $this->documentRepository->findOneById($id);
 
                 if($document !== null) {
-                    $url = $this->urlGenerator->generate('show_document', [
+                    $url = $this->urlGenerator->generate('document', [
                         'id' => $document->getId(),
                         'alias' => $document->getAlias()
                     ]);

@@ -16,6 +16,7 @@ use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
 use App\Timetable\TimetableHelper;
+use App\Utils\RefererHelper;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\RoomFilter;
 use App\View\Filter\StudentFilter;
@@ -34,8 +35,8 @@ class TimetableController extends AbstractControllerWithMessages {
 
     public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
                                 DateHelper $dateHelper, TimetableHelper $timetableHelper, TimetableSettings $timetableSettings,
-                                Grouper $grouper, Sorter $sorter) {
-        parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper);
+                                Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
+        parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper, $refererHelper);
 
         $this->timetableHelper = $timetableHelper;
         $this->timetableSettings = $timetableSettings;

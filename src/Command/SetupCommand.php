@@ -6,9 +6,11 @@ use App\Entity\DocumentVisibility;
 use App\Entity\MessageVisibility;
 use App\Entity\TimetablePeriodVisibility;
 use App\Entity\UserType;
+use App\Entity\WikiArticleVisibility;
 use App\Repository\DocumentVisibilityRepositoryInterface;
 use App\Repository\MessageVisibilityRepositoryInterface;
 use App\Repository\TimetablePeriodVisibilityRepositoryInterface;
+use App\Repository\WikiArticleVisibilityRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,16 +22,19 @@ class SetupCommand extends Command {
     private $documentVisibilityRepository;
     private $messageVisibilityRepository;
     private $timetablePeriodVisibilityRepository;
+    private $wikiArticleVisibilityRepository;
 
     private $em;
 
     public function __construct(DocumentVisibilityRepositoryInterface $documentVisibilityRepository, MessageVisibilityRepositoryInterface $messageVisibilityRepository,
-                                TimetablePeriodVisibilityRepositoryInterface $timetablePeriodVisibilityRepository, EntityManagerInterface $em, string $name = null) {
+                                TimetablePeriodVisibilityRepositoryInterface $timetablePeriodVisibilityRepository, WikiArticleVisibilityRepositoryInterface $wikiArticleVisibilityRepository,
+                                EntityManagerInterface $em, string $name = null) {
         parent::__construct($name);
 
         $this->documentVisibilityRepository = $documentVisibilityRepository;
         $this->messageVisibilityRepository = $messageVisibilityRepository;
         $this->timetablePeriodVisibilityRepository = $timetablePeriodVisibilityRepository;
+        $this->wikiArticleVisibilityRepository = $wikiArticleVisibilityRepository;
 
         $this->em = $em;
     }
@@ -49,6 +54,7 @@ class SetupCommand extends Command {
 
         $this->addMissingDocumentVisibilities($style);
         $this->addMissingMessageVisibilities($style);
+        $this->addMissingWikiVisibilities($style);
         $this->addMissingTimetablePeriodVisibilities($style);
     }
 
@@ -116,6 +122,23 @@ class SetupCommand extends Command {
         };
 
         $this->addMissingVisibility($style, TimetablePeriodVisibility::class, $visibilities, $action);
+    }
+
+    private function addMissingWikiVisibilities(SymfonyStyle $style) {
+        $visibilities = array_map(function(WikiArticleVisibility $wikiArticleVisibility) {
+            return $wikiArticleVisibility->getUserType()->getValue();
+        },
+            $this->wikiArticleVisibilityRepository->findAll()
+        );
+
+        $action = function(UserType $userType) {
+            $visibility = (new WikiArticleVisibility())
+                ->setUserType($userType);
+
+            $this->wikiArticleVisibilityRepository->persist($visibility);
+        };
+
+        $this->addMissingVisibility($style, WikiArticleVisibility::class, $visibilities, $action);
     }
 
     private function setupSessions(SymfonyStyle $style) {

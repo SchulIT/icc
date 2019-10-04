@@ -20,13 +20,13 @@ class HeadingRenderer implements BlockRendererInterface {
         }
 
         $level = $block->getLevel();
-        $level = min($level + 1, 6);
+        $level = min($level + 4, 6);
 
         $tag = 'h' . $level;
 
         $attrs = [];
         foreach ($block->getData('attributes', []) as $key => $value) {
-            $attrs[$key] = Xml::escape($value, true);
+            $attrs[$key] = Xml::escape($value);
         }
 
         return new HtmlElement($tag, $attrs, $htmlRenderer->renderInlines($block->children()));

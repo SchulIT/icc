@@ -5,18 +5,40 @@ namespace App\Markdown;
 use EasySlugger\SluggerInterface;
 use League\CommonMark\Block\Element\Document;
 use League\CommonMark\Block\Element\Heading;
+use League\CommonMark\DocParser;
+use League\CommonMark\EnvironmentInterface;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class TableOfContentsHelper {
-    private $toc = [ ];
-
     private $slugger;
+    private $cache;
+    private $environment;
 
-    public function __construct(SluggerInterface $slugger) {
+    public function __construct(SluggerInterface $slugger, AdapterInterface $adapter, EnvironmentInterface $environment) {
         $this->slugger = $slugger;
+        $this->cache = $adapter;
+        $this->environment = $environment;
     }
 
-    public function getTableOfContents(Document $document) {
-        $this->processDocument($document);
+    public function getTableOfContents(string $markdown) {
+        $hash = hash('sha512', $markdown);
+        $key = sprintf('markdown.toc.%s', $hash);
+
+        $item = $this->cache->getItem($key);
+
+        if(!$item->isHit()) {
+            $toc = $this->computeToc($markdown);
+
+            $item->set(serialize($toc));
+        }
+
+        return unserialize($item->get());
+    }
+
+    private function computeToc(string $markdown): array {
+        $parser = new DocParser($this->environment);
+        $document = $parser->parse($markdown);
+        $toc = $this->processDocument($document);
 
         $counter = [
             2 => 0,
@@ -29,7 +51,7 @@ class TableOfContentsHelper {
         $items = [ ];
         $lastLevel = 2;
 
-        foreach($this->toc as $value) {
+        foreach($toc as $value) {
             $level = $value['level'];
 
             if($level < $lastLevel) {
@@ -59,7 +81,8 @@ class TableOfContentsHelper {
         return $items;
     }
 
-    private function processDocument(Document $document) {
+    private function processDocument(Document $document): array {
+        $toc = [ ];
         $walker = $document->walker();
 
         while($event = $walker->next()) {
@@ -74,11 +97,13 @@ class TableOfContentsHelper {
 
             $level = min($node->getLevel() + 1, 6);
 
-            $this->toc[] = [
+            $toc[] = [
                 'id' => $slug,
                 'level' => $level,
                 'text' => $heading
             ];
         }
+
+        return $toc;
     }
 }

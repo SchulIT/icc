@@ -47,7 +47,7 @@ class Student {
     private $lastname;
 
     /**
-     * @ORM\Column(type="Gender::class")
+     * @ORM\Column(type="gender")
      * @var Gender
      */
     private $gender;

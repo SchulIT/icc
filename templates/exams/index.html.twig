@@ -16,24 +16,24 @@
         <div class="card-body">
             <div class="row">
                 {% if teacherFilter.teachers|length > 0 %}
-                    <div class="col-md-3 col-sm-3 col-xs-12">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         {% include "_filter/teacher.html.twig" %}
                     </div>
                 {% endif %}
 
                 {% if studentFilter.studentGradeGroups|length > 0 %}
-                    <div class="col-md-3 col-sm-3 col-xs-12">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         {% include "_filter/student.html.twig" %}
                     </div>
                 {% endif %}
 
                 {% if studentFilter.studentGradeGroups|length > 0 %}
-                    <div class="col-md-3 col-sm-3 col-xs-12">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         {% include "_filter/grade.html.twig" %}
                     </div>
                 {% endif %}
 
-                <div class="col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                     <form role="form" method="get" class="form hidden-print">
                         {% if teacherFilter.currentTeacher is not null %}<input type="hidden" name="teacherAcronym" value="{{ teacherFilter.currentTeacher.acronym }}">{% endif %}
                         {% if studentFilter.currentStudent is not null %}<input type="hidden" name="studentId" value="{{ studentFilter.currentStudent.id }}">{% endif %}

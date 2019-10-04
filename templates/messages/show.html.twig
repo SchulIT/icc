@@ -115,7 +115,7 @@
         </a>
 
         {% if is_granted('edit', message) %}
-            <a href="{{ path('edit_message', { id: message.id }) }}" class="btn btn-primary btn-sm">
+            <a href="{{ path('edit_message', { id: message.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
                 <i class="fa fa-edit"></i> {{ 'admin.documents.edit.label'|trans }}
             </a>
         {% endif %}

@@ -1,0 +1,25 @@
+fervo_enum:
+    enums:
+        App\Entity\Gender:
+            doctrine_type: gender
+            form_type: gender
+
+        App\Entity\GradeTeacherType:
+            doctrine_type: grade_teacher_type
+            form_type: grade_teacher_type
+
+        App\Entity\MessageScope:
+            doctrine_type: message_scope
+            form_type: message_scope
+
+        App\Entity\StudyGroupType:
+            doctrine_type: study_group_type
+            form_type: study_group_type
+
+        App\Entity\UserType:
+            doctrine_type: user_type
+            form_type: user_type
+
+        App\Entity\DeviceTokenType:
+            doctrine_type: device_token_type
+            form_type: device_token_type

@@ -5,6 +5,7 @@ includes:
 parameters:
 	ignoreErrors:
 	    - "~Parameter \\#1 \\$array of method App\\\\Sorting\\\\Sorter::sort\\(\\) is passed by reference, so it expects variables only\\.~"
+	    - "~Class FervoEnumBundle\\\\Generated\\\\Form\\\\[A-Za-z]+ not found\\.~"
 	excludes_analyse:
 		- '%rootDir%/../../../src/Markdown/*'
 	symfony:

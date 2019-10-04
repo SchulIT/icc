@@ -26,7 +26,7 @@ class DeviceToken {
     private $token;
 
     /**
-     * @ORM\Column(type="DeviceTokenType::class")
+     * @ORM\Column(type="device_token_type")
      * @var DeviceTokenType
      */
     private $type;

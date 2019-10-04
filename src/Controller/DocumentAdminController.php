@@ -11,7 +11,7 @@ use App\Security\Voter\DocumentVoter;
 use App\Sorting\DocumentCategoryStrategy as DocumentCategorySortingStrategy;
 use App\Sorting\DocumentNameStrategy;
 use App\Sorting\Sorter;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -21,7 +21,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class DocumentAdminController extends AbstractController {
     private $repository;
 
-    public function __construct(DocumentRepositoryInterface $repository) {
+    public function __construct(DocumentRepositoryInterface $repository, RefererHelper $refererHelper) {
+        parent::__construct($refererHelper);
+
         $this->repository = $repository;
     }
 
@@ -81,7 +83,7 @@ class DocumentAdminController extends AbstractController {
             $this->repository->persist($document);
 
             $this->addFlash('success', 'admin.documents.edit.success');
-            return $this->redirectToRoute('admin_documents');
+            return $this->redirectToReferer(['view' => 'show_document'], 'admin_documents', [ 'id' => $document->getId(), 'alias' => $document->getAlias() ]);
         }
 
         return $this->render('admin/documents/edit.html.twig', [

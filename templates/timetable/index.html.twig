@@ -20,31 +20,31 @@
         <div class="card-body">
             <div class="row">
                 {% if teacherFilter.teachers|length > 0 %}
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         {% include "_filter/teacher.html.twig" %}
                     </div>
                 {% endif %}
 
                 {% if studentFilter.studentGradeGroups|length > 0 %}
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         {% include "_filter/student.html.twig" %}
                     </div>
                 {% endif %}
 
                 {% if gradeFilter.grades|length > 0 %}
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         {% include "_filter/grade.html.twig" %}
                     </div>
                 {% endif %}
 
                 {% if subjectFilter.subjects|length > 0 %}
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         {% include "_filter/room.html.twig" %}
                     </div>
                 {% endif %}
 
                 {% if roomFilter.rooms|length > 0 %}
-                    <div class="col-md-8 col-sm-8 col-xs-12">
+                    <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
                         {% include "_filter/subjects.html.twig" %}
                     </div>
                 {% endif %}

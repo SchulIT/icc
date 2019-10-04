@@ -57,7 +57,7 @@
     {% if is_granted('edit', message) or is_granted('remove', message) %}
         <div class="card-footer">
             {% if is_granted('edit', message) %}
-                <a href="{{ path('edit_message', { id: message.id }) }}" class="btn btn-primary btn-sm">
+                <a href="{{ path('edit_message', { id: message.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
                     <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
                 </a>
 

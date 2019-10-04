@@ -24,6 +24,7 @@ use App\Sorting\ExamDateGroupStrategy;
 use App\Sorting\ExamLessonStrategy as ExamDateSortingStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
+use App\Utils\RefererHelper;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
@@ -41,8 +42,8 @@ class ExamController extends AbstractControllerWithMessages {
     private $sorter;
 
     public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
-                                DateHelper $dateHelper, Grouper $grouper, Sorter $sorter) {
-        parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper);
+                                DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
+        parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper, $refererHelper);
 
         $this->grouper = $grouper;
         $this->sorter = $sorter;

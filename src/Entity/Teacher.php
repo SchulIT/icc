@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Sorting\TeacherStrategy;
 use App\Validator\NullOrNotBlank;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -59,7 +58,7 @@ class Teacher {
     private $lastname;
 
     /**
-     * @ORM\Column(type="Gender::class")
+     * @ORM\Column(type="gender")
      * @var Gender
      */
     private $gender;
@@ -89,9 +88,20 @@ class Teacher {
      */
     private $grades;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="TeacherTag", cascade={"persist"})
+     * @ORM\JoinTable(
+     *     name="teacher_tags",
+     *     joinColumns={@ORM\JoinColumn(name="teacher", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="tag", onDelete="CASCADE")}
+     * )
+     */
+    private $tags;
+
     public function __construct() {
         $this->subjects = new ArrayCollection();
         $this->grades = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     /**
@@ -102,33 +112,33 @@ class Teacher {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getExternalId(): string {
+    public function getExternalId(): ?string {
         return $this->externalId;
     }
 
     /**
-     * @param string $externalId
+     * @param string|null $externalId
      * @return Teacher
      */
-    public function setExternalId(string $externalId): Teacher {
+    public function setExternalId(?string $externalId): Teacher {
         $this->externalId = $externalId;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getAcronym(): string {
+    public function getAcronym(): ?string {
         return $this->acronym;
     }
 
     /**
-     * @param string $acronym
+     * @param string|null $acronym
      * @return Teacher
      */
-    public function setAcronym(string $acronym): Teacher {
+    public function setAcronym(?string $acronym): Teacher {
         $this->acronym = $acronym;
         return $this;
     }
@@ -150,33 +160,33 @@ class Teacher {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFirstname(): string {
+    public function getFirstname(): ?string {
         return $this->firstname;
     }
 
     /**
-     * @param string $firstname
+     * @param string|null $firstname
      * @return Teacher
      */
-    public function setFirstname(string $firstname): Teacher {
+    public function setFirstname(?string $firstname): Teacher {
         $this->firstname = $firstname;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLastname(): string {
+    public function getLastname(): ?string {
         return $this->lastname;
     }
 
     /**
-     * @param string $lastname
+     * @param string|null $lastname
      * @return Teacher
      */
-    public function setLastname(string $lastname): Teacher {
+    public function setLastname(?string $lastname): Teacher {
         $this->lastname = $lastname;
         return $this;
     }
@@ -233,5 +243,20 @@ class Teacher {
      */
     public function getSubjects(): Collection {
         return $this->subjects;
+    }
+
+    public function addTag(TeacherTag $tag) {
+        $this->tags->add($tag);
+    }
+
+    public function removeTag(TeacherTag $tag) {
+        $this->tags->removeElement($tag);
+    }
+
+    /**
+     * @return Collection<TeacherTag>
+     */
+    public function getTags(): Collection {
+        return $this->tags;
     }
 }

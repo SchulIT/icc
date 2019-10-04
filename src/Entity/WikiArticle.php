@@ -122,6 +122,7 @@ class WikiArticle {
 
     /**
      * @ORM\OneToMany(targetEntity="WikiArticle", mappedBy="parent")
+     * @ORM\OrderBy({"title" = "ASC"})
      * @var Collection<WikiArticle>
      */
     private $children;

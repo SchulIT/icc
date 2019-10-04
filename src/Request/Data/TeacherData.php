@@ -54,6 +54,14 @@ class TeacherData {
     private $gender;
 
     /**
+     * List of external IDs of tags which are added to the user.
+     *
+     * @Serializer\Type("array<string>")
+     * @var string[]
+     */
+    private $tags;
+
+    /**
      * @return string|null
      */
     public function getId(): ?string {
@@ -146,6 +154,22 @@ class TeacherData {
      */
     public function setGender(?string $gender): TeacherData {
         $this->gender = $gender;
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTags(): array {
+        return $this->tags;
+    }
+
+    /**
+     * @param string[] $tags
+     * @return TeacherData
+     */
+    public function setTags(array $tags): TeacherData {
+        $this->tags = $tags;
         return $this;
     }
 

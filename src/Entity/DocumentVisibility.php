@@ -18,7 +18,7 @@ class DocumentVisibility {
     private $id;
 
     /**
-     * @ORM\Column(type="UserType::class", unique=true)
+     * @ORM\Column(type="user_type", unique=true)
      * @var UserType
      */
     private $userType;

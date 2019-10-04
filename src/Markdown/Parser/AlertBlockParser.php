@@ -2,17 +2,17 @@
 
 namespace App\Markdown\Parser;
 
-use League\CommonMark\Block\Parser\AbstractBlockParser;
+use League\CommonMark\Block\Parser\BlockParserInterface;
 use League\CommonMark\ContextInterface;
 use League\CommonMark\Cursor;
 use App\Markdown\Element\AlertBlock;
 
-class AlertBlockParser extends AbstractBlockParser {
+class AlertBlockParser implements BlockParserInterface {
 
     /**
      * @inheritDoc
      */
-    public function parse(ContextInterface $context, Cursor $cursor) {
+    public function parse(ContextInterface $context, Cursor $cursor): bool {
         $previousState = $cursor->saveState();
 
         $alert = $cursor->match('/^!{3}([a-z]+)/');
@@ -24,5 +24,7 @@ class AlertBlockParser extends AbstractBlockParser {
         $type = substr($alert, 3);
 
         $context->addBlock(new AlertBlock($type));
+
+        return true;
     }
 }

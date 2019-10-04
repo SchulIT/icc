@@ -77,7 +77,7 @@ class User implements UserInterface {
     private $roles = ['ROLE_USER'];
 
     /**
-     * @ORM\Column(type="UserType::class")
+     * @ORM\Column(type="user_type")
      * @var UserType
      */
     private $userType;

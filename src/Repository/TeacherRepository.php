@@ -10,10 +10,11 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
 
     private function createDefaultQueryBuilder(): QueryBuilder {
         $qb = $this->em->createQueryBuilder()
-            ->select(['t', 's', 'g'])
+            ->select(['t', 's', 'g', 'tt'])
             ->from(Teacher::class, 't')
             ->leftJoin('t.subjects', 's')
             ->leftJoin('t.grades', 'g')
+            ->leftJoin('t.tags', 'tt')
             ->orderBy('t.acronym', 'asc');
 
         return $qb;

@@ -158,3 +158,8 @@ services:
             $appUrl: '%env(APP_URL)%'
 
     Mimey\MimeTypes: ~
+
+    # CONVERTER
+    App\Converter\EnumStringConverter:
+        bind:
+            $enumFormKeyMapping: '%fervo_enum.enum_map%'

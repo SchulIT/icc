@@ -17,9 +17,9 @@
             <i class="fa fa-users"></i>
             {% for visibility in message.visibilities %}
                 {% if visibility.userType.value in ['students', 'parents'] %}
-                    {{ visibility.userType|usertype }}{% if not loop.last %}, {% endif %}
+                    {{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}
                 {% else %}
-                    {{ visibility.userType|usertype }}{% if not loop.last %}, {% endif %}
+                    {{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}
                 {% endif %}
             {% endfor %}
         </small>

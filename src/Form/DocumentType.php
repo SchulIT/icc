@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Converter\EnumStringConverter;
 use App\Converter\StudyGroupStringConverter;
 use App\Converter\UserStringConverter;
 use App\Converter\UserTypeStringConverter;
@@ -31,20 +32,20 @@ class DocumentType extends AbstractType {
     private $stringStrategy;
     private $studyGroupStrategy;
     private $documentCategoryNameStrategy;
-    private $userTypeConverter;
+    private $enumStringConverter;
     private $userConverter;
     private $userStrategy;
 
     private $authorizationChecker;
 
     public function __construct(StudyGroupStringConverter $studyGroupConverter, StringStrategy $stringStrategy,
-                                StudyGroupStrategy $studyGroupStrategy, UserTypeStringConverter $userTypeConverter,
+                                StudyGroupStrategy $studyGroupStrategy, EnumStringConverter $enumStringConverter,
                                 DocumentCategoryNameStrategy $documentCategorySorter, UserStringConverter $userConverter,
                                 UserUsernameStrategy $userStrategy, AuthorizationCheckerInterface $authorizationChecker) {
         $this->studyGroupConverter = $studyGroupConverter;
         $this->stringStrategy = $stringStrategy;
         $this->studyGroupStrategy = $studyGroupStrategy;
-        $this->userTypeConverter = $userTypeConverter;
+        $this->enumStringConverter = $enumStringConverter;
         $this->documentCategoryNameStrategy = $documentCategorySorter;
         $this->userConverter = $userConverter;
         $this->userStrategy = $userStrategy;
@@ -85,7 +86,7 @@ class DocumentType extends AbstractType {
                                 'multiple' => true,
                                 'expanded' => true,
                                 'choice_label' => function (DocumentVisibility $visibility) {
-                                    return $this->userTypeConverter->convert($visibility->getUserType());
+                                    return $this->enumStringConverter->convert($visibility->getUserType());
                                 }
                             ])
                             ->add('studyGroups', SortableEntityType::class, [

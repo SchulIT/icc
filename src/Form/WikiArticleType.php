@@ -2,8 +2,7 @@
 
 namespace App\Form;
 
-use App\Converter\UserTypeStringConverter;
-use App\Entity\MessageVisibility;
+use App\Converter\EnumStringConverter;
 use App\Entity\WikiArticle;
 use App\Entity\WikiArticleVisibility;
 use App\Repository\WikiArticleRepositoryInterface;
@@ -20,13 +19,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class WikiArticleType extends AbstractType {
 
-    private $userTypeConverter;
+    private $enumStringConverter;
     private $treeHelper;
     private $wikiRepository;
     private $urlGenerator;
 
-    public function __construct(UserTypeStringConverter $userTypeConverter, TreeHelper $treeHelper, WikiArticleRepositoryInterface $wikiRepository, UrlGeneratorInterface $urlGenerator) {
-        $this->userTypeConverter = $userTypeConverter;
+    public function __construct(EnumStringConverter $enumStringConverter, TreeHelper $treeHelper, WikiArticleRepositoryInterface $wikiRepository, UrlGeneratorInterface $urlGenerator) {
+        $this->enumStringConverter = $enumStringConverter;
         $this->treeHelper = $treeHelper;
         $this->wikiRepository = $wikiRepository;
         $this->urlGenerator = $urlGenerator;
@@ -63,7 +62,7 @@ class WikiArticleType extends AbstractType {
                 'multiple' => true,
                 'expanded' => true,
                 'choice_label' => function(WikiArticleVisibility $visibility) {
-                    return $this->userTypeConverter->convert($visibility->getUserType());
+                    return $this->enumStringConverter->convert($visibility->getUserType());
                 }
             ])
             ->add('content', MarkdownType::class, [

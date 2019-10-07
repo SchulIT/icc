@@ -38,7 +38,7 @@
                         <tr>
                             <td>{{ document.title }}</td>
                             <td>
-                                {% for visibility in document.visibilities %}{{ visibility.userType|usertype }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                {% for visibility in document.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
                             </td>
                             <td>
                                 {% for user in document.authors %}{{ user|user }}{% if not loop.last %}, {% endif %}{% endfor %}

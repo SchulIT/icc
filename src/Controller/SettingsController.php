@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Converter\UserTypeStringConverter;
+use App\Converter\EnumStringConverter;
 use App\Entity\AppointmentCategory;
 use App\Entity\UserType;
 use App\Menu\Builder;
@@ -43,13 +43,13 @@ class SettingsController extends AbstractController {
     /**
      * @Route("/exams", name="admin_settings_exams")
      */
-    public function exams(Request $request, ExamSettings $examSettings, UserTypeStringConverter $typeStringConverter) {
+    public function exams(Request $request, ExamSettings $examSettings, EnumStringConverter $enumStringConverter) {
         $builder = $this->createFormBuilder();
         $builder
             ->add('visibility', ChoiceType::class, [
                 'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
-                'choice_label' => function(UserType $userType) use($typeStringConverter) {
-                    return $typeStringConverter->convert($userType);
+                'choice_label' => function(UserType $userType) use($enumStringConverter) {
+                    return $enumStringConverter->convert($userType);
                 },
                 'choice_value' => function(UserType $userType) {
                     return $userType->getValue();

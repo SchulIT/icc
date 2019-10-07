@@ -1,4 +1,31 @@
+label:
+  gender: Geschlecht
+  scope: Bereich
+
 gender:
   male: männlich
   female: weiblich
   x: divers
+
+device_token_type:
+  calendar: Kalender-Synchronisation
+  exams: Klausurplan-Synchronisation
+  timetable: Stundenplan-Synchronisation
+
+message_scope:
+  dashboard: Dashboard
+  substitutions: Vertretungsplan
+  exams: Klausurplan
+  appointments: Terminplan
+  login: Anmeldeseite
+  timetable: Stundenplan
+  messages: Mitteilungen
+  lists: Listen
+
+user_type:
+  teacher: Lehrkräfte
+  student: Lernende
+  parent: Eltern
+  intern: Praktikanten
+  staff: Mitarbeiter
+  user: Benutzer

@@ -58,7 +58,11 @@
             </button>
 
             <ul class="dropdown-menu pull-right" role="menu">
-                {% block usermenu %}{% endblock %}
+                {#{% block usermenu %}{% endblock %}#}
+                <li>
+                    <a href="{{ path('profile') }}" class="dropdown-item"><i class="fa fa-user"></i> {{ 'profile.overview.label'|trans }}</a>
+                </li>
+                <li class="dropdown-divider"></li>
                 {% if profile_url is not null %}
                     <li>
                         {% if profile_url starts with 'http://' or profile_url starts with 'https://' %}

@@ -2,9 +2,8 @@
 
 namespace App\Form;
 
-use App\Converter\MessageScopeStringConverter;
+use App\Converter\EnumStringConverter;
 use App\Converter\StudyGroupStringConverter;
-use App\Converter\UserTypeStringConverter;
 use App\Entity\Grade;
 use App\Entity\MessageScope;
 use App\Entity\MessageVisibility;
@@ -14,6 +13,7 @@ use App\Sorting\StringStrategy;
 use App\Sorting\StudyGroupStrategy;
 use App\Utils\ArrayUtils;
 use Doctrine\ORM\EntityRepository;
+use FervoEnumBundle\Generated\Form\MessageScopeType;
 use SchoolIT\CommonBundle\Form\FieldsetType;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -30,9 +30,8 @@ class MessageType extends AbstractType {
 
     private const YearsDelta = 1;
 
+    private $enumStringConverter;
     private $studyGroupConverter;
-    private $userTypeConverter;
-    private $messageScopeConverter;
     private $dateHelper;
 
     private $stringStrategy;
@@ -40,13 +39,11 @@ class MessageType extends AbstractType {
 
     private $authorizationChecker;
 
-    public function __construct(StudyGroupStringConverter $studyGroupConverter, UserTypeStringConverter $userTypeConverter,
-                                MessageScopeStringConverter $messageScopeConverter, DateHelper $dateHelper,
-                                StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy,
+    public function __construct(StudyGroupStringConverter $studyGroupConverter, EnumStringConverter $enumStringConverter,
+                                DateHelper $dateHelper, StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy,
                                 AuthorizationCheckerInterface $authorizationChecker) {
         $this->studyGroupConverter = $studyGroupConverter;
-        $this->userTypeConverter = $userTypeConverter;
-        $this->messageScopeConverter = $messageScopeConverter;
+        $this->enumStringConverter = $enumStringConverter;
         $this->dateHelper = $dateHelper;
 
         $this->stringStrategy = $stringStrategy;
@@ -78,12 +75,9 @@ class MessageType extends AbstractType {
                         ->add('title', TextType::class, [
                             'label' => 'label.title'
                         ])
-                        ->add('scope', ChoiceType::class, [
+                        ->add('scope', MessageScopeType::class, [
                             'choices' => $scopes,
-                            'label' => 'label.scope',
-                            'choice_label' => function(MessageScope $scope) {
-                                return $this->messageScopeConverter->convert($scope);
-                            }
+                            'label' => 'label.scope'
                         ])
                         ->add('visibilities', EntityType::class, [
                             'label' => 'label.visibility',
@@ -95,7 +89,7 @@ class MessageType extends AbstractType {
                             'multiple' => true,
                             'expanded' => true,
                             'choice_label' => function(MessageVisibility $visibility) {
-                                return $this->userTypeConverter->convert($visibility->getUserType());
+                                return $this->enumStringConverter->convert($visibility->getUserType());
                             }
                         ])
                         ->add('studyGroups', StudyGroupType::class, [
@@ -123,6 +117,10 @@ class MessageType extends AbstractType {
                             'attr' => [
                                 'size' => 10
                             ]
+                        ])
+                        ->add('mustConfirm', CheckboxType::class, [
+                            'label' => 'label.must_confirm',
+                            'required' => false
                         ])
                         ->add('startDate', DateType::class, [
                             'label' => 'label.message.start',

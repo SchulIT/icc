@@ -86,6 +86,7 @@ label:
     none: Keiner
     tags: Tags
     gender: Geschlecht
+    must_confirm: muss vom Benutzer bestätigt werden
 
 actions:
     add: hinzufügen
@@ -264,15 +265,6 @@ message:
     reenable: Mitteilung wieder einblenden
     dismissed_info: '{1} %count% Mitteilung wird ausgeblendet.|]1,Inf[ %count% Mitteilungen werden ausgeblendet.'
     dismissed_action: '{1} Mitteilung einblenden|]1,Inf[ %count% Mitteilungen einblenden'
-    scopes:
-        dashboard: Dashboard
-        substitutions: Vertretungsplan
-        exams: Klausurplan
-        appointments: Terminplan
-        login: Anmeldeseite
-        timetable: Stundenplan
-        messages: Mitteilungen
-        lists: Listen
 
 wiki:
     label: Wiki
@@ -281,14 +273,6 @@ wiki:
     navigation: Navigation
     toc: Inhaltsverzeichnis
     search: Wiki durchsuchen
-
-usertype:
-    teacher: Lehrkräfte
-    student: Lernende
-    parent: Eltern
-    intern: Praktikanten
-    staff: Mitarbeiter
-    user: Benutzer
 
 studygroup:
     name: "%name% [%type%]"
@@ -533,3 +517,22 @@ admin:
 forms:
     select:
         all_grades: Alle Klassen/Jgst. auswählen
+
+profile:
+    overview:
+        label: Profil
+
+    notifications:
+        label: Benachrichtigungen
+
+    apps:
+        label: Verbundene Apps
+        empty: Keine verbundenen Apps.
+        platform: 'Plattform: %name%'
+        registration_date: 'Registrierung: %date%'
+        last_activity: 'Letzte Aktivität: %date%'
+
+        remove:
+            label: Verbundene App trennen
+            confirm: 'Soll die verbundene App "%name%" wirklich gelöscht werden? Anschließend ist der Zugriff der App auf das ICC nicht mehr möglich.'
+            success: Verbundene App erfolgreich gelöscht

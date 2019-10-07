@@ -2,6 +2,7 @@
 
 namespace App\Grouping;
 
+use App\Converter\EnumStringConverter;
 use App\Converter\UserTypeStringConverter;
 use App\Entity\Student;
 use App\Entity\User;
@@ -9,10 +10,10 @@ use App\Entity\UserType;
 
 class UserTypeAndGradeStrategy implements GroupingStrategyInterface {
 
-    private $userTypeConverter;
+    private $enumStringConverter;
 
-    public function __construct(UserTypeStringConverter $userTypeConverter) {
-        $this->userTypeConverter = $userTypeConverter;
+    public function __construct(EnumStringConverter $enumStringConverter) {
+        $this->enumStringConverter = $enumStringConverter;
     }
 
     /**
@@ -30,7 +31,7 @@ class UserTypeAndGradeStrategy implements GroupingStrategyInterface {
             })->toArray();
         }
 
-        return $this->userTypeConverter->convert($object->getUserType());
+        return $this->enumStringConverter->convert($object->getUserType());
     }
 
     /**

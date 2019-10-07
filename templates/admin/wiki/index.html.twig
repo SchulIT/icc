@@ -21,7 +21,7 @@
             {% endif %}
         </td>
         <td>
-            {% for visibility in article.visibilities %}{{ visibility.userType|usertype }}{% if not loop.last %}, {% endif %}{% endfor %}
+            {% for visibility in article.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
         </td>
         <td>
             <a href="{{ path('edit_wiki_article', { id: article.id }) }}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>

@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Converter\EnumStringConverter;
 use App\Converter\UserTypeStringConverter;
 use App\Entity\TimetablePeriodVisibility;
 use App\Sorting\TimetablePeriodVisibilityStrategy;
@@ -13,11 +14,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 class TimetablePeriodType extends AbstractType {
 
     private $periodVisibilityStrategy;
-    private $userTypeConverter;
+    private $enumStringConverter;
 
-    public function __construct(TimetablePeriodVisibilityStrategy $periodVisibilityStrategy, UserTypeStringConverter $userTypeConverter) {
+    public function __construct(TimetablePeriodVisibilityStrategy $periodVisibilityStrategy, EnumStringConverter $enumStringConverter) {
         $this->periodVisibilityStrategy = $periodVisibilityStrategy;
-        $this->userTypeConverter = $userTypeConverter;
+        $this->enumStringConverter = $enumStringConverter;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -40,7 +41,7 @@ class TimetablePeriodType extends AbstractType {
                 'multiple' => true,
                 'expanded' => true,
                 'choice_label' => function(TimetablePeriodVisibility $visibility) {
-                    return $this->userTypeConverter->convert($visibility->getUserType());
+                    return $this->enumStringConverter->convert($visibility->getUserType());
                 },
                 'sort_by' => $this->periodVisibilityStrategy
             ]);

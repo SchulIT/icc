@@ -108,7 +108,7 @@
 
                         <p>
                             <span class="text-muted">{{ 'label.visibility'|trans }}</span>
-                            {% for visibility in visibilities %}{{ visibility.userType|usertype }}{% if not loop.last %}, {% endif %}{% endfor %}
+                            {% for visibility in visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
 
                             {% if article.visibilities|length == 0 %}<span class="badge badge-info">{{ 'wiki.inherited'|trans }}</span>{% endif %}
                         </p>

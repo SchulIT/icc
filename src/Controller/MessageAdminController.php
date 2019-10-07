@@ -65,7 +65,7 @@ class MessageAdminController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $this->repository->persist($message);
 
-            $this->addFlash('success', 'message.add.success');
+            $this->addFlash('success', 'admin.messages.add.success');
             return $this->redirectToRoute('admin_messages');
         }
 
@@ -95,7 +95,7 @@ class MessageAdminController extends AbstractController {
 
             $this->repository->persist($message);
 
-            $this->addFlash('success', 'message.edit.succes');
+            $this->addFlash('success', 'admin.messages.edit.succes');
             return $this->redirectToReferer(['view' => 'show_message'], 'admin_messages', [ 'id' => $message->getId() ]);
         }
 

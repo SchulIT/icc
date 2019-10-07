@@ -10,7 +10,7 @@
             <option value="" placeholder>{{ 'label.select.usertype'|trans }}</option>
             {% endif %}
             {% for t in userTypeFilter.types %}
-                <option value="{{ t.value }}" {% if userTypeFilter.currentType != null and userTypeFilter.currentType.value == t.value %}selected="selected"{% endif %}>{{ t|usertype }}</option>
+                <option value="{{ t.value }}" {% if userTypeFilter.currentType != null and userTypeFilter.currentType.value == t.value %}selected="selected"{% endif %}>{{ t|enum }}</option>
             {% endfor %}
         </select>
     </div>

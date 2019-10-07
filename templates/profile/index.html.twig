@@ -1,0 +1,22 @@
+{% extends "profile/_profile.twig" %}
+
+{% block title %}{{ 'profile.overview.label'|trans }}{% endblock %}
+
+{% block overview_active %}active{% endblock %}
+
+{% block profile_content %}
+    <div class="card-text mb-3">
+        <p>
+            <span class="text-muted">{{ 'label.firstname'|trans }}</span> {{ app.user.firstname }}
+        </p>
+        <p>
+            <span class="text-muted">{{ 'label.lastname'|trans }}</span> {{ app.user.lastname }}
+        </p>
+        <p>
+            <span class="text-muted">{{ 'label.email'|trans }}</span> {{ app.user.email }}
+        </p>
+        <p>
+            <span class="text-muted">{{ 'label.usertype'|trans }}</span> {{ app.user.userType|enum }}
+        </p>
+    </div>
+{% endblock %}

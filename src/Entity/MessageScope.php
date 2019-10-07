@@ -15,12 +15,12 @@ use MyCLabs\Enum\Enum;
  * @method static MessageScope Lists()
  */
 class MessageScope extends Enum {
-    private const Dashboard = 'Dashboard';
-    private const Substitutions = 'Substitutions';
-    private const Exams = 'Exams';
-    private const Appointments = 'Appointments';
-    private const Login = 'Login';
-    private const Timetable = 'Timetable';
-    private const Messages = 'Messages';
-    private const Lists = 'Lists';
+    private const Dashboard = 'dashboard';
+    private const Substitutions = 'substitutions';
+    private const Exams = 'exams';
+    private const Appointments = 'appointments';
+    private const Login = 'login';
+    private const Timetable = 'timetable';
+    private const Messages = 'messages';
+    private const Lists = 'lists';
 }

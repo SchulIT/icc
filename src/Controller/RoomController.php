@@ -40,7 +40,7 @@ class RoomController extends AbstractControllerWithMessages {
 
         $this->sorter->sort($rooms, RoomNameStrategy::class);
 
-        return $this->render('rooms/index.html.twig', [
+        return $this->renderWithMessages('rooms/index.html.twig', [
             'rooms' => $rooms,
             'query' => $query,
             'tags' => $roomTagRepository->findAll()

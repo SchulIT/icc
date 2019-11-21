@@ -86,7 +86,7 @@ class ExamController extends AbstractControllerWithMessages {
         $this->sorter->sort($examGroups, ExamDateGroupStrategy::class);
         $this->sorter->sortGroupItems($examGroups, ExamDateSortingStrategy::class);
 
-        return $this->render('exams/index.html.twig', [
+        return $this->renderWithMessages('exams/index.html.twig', [
             'examGroups' => $examGroups,
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
@@ -118,7 +118,7 @@ class ExamController extends AbstractControllerWithMessages {
         $students = $exam->getStudents()->toArray();
         $this->sorter->sort($students, StudentStrategy::class);
 
-        return $this->render('exams/details.html.twig', [
+        return $this->renderWithMessages('exams/details.html.twig', [
             'exam' => $exam,
             'students' => $students,
             'studyGroups' => $studyGroups
@@ -143,7 +143,7 @@ class ExamController extends AbstractControllerWithMessages {
             $deviceToken = $manager->persistDeviceToken($deviceToken);
         }
 
-        return $this->render('exams/export.html.twig', [
+        return $this->renderWithMessages('exams/export.html.twig', [
             'form' => $form->createView(),
             'token' => $deviceToken
         ]);

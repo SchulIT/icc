@@ -1,7 +1,7 @@
 services:
     Faker\Factory: ~
     Faker\Generator:
-        factory: 'Faker\Factory:create'
+        factory: ['@Faker\Factory', create]
         arguments: ['de_DE']
         calls:
             - [ 'seed', [1]]

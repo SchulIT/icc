@@ -3,7 +3,7 @@
 namespace App\Event;
 
 use App\Entity\Message;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class MessageCreatedEvent extends Event {
     /** @var Message */

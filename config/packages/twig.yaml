@@ -9,3 +9,5 @@ twig:
         config: '@SchoolIT\CommonBundle\Twig\ConfigVariable'
         user: '@App\Twig\UserVariable'
         profile_url: "%env(IDP_PROFILE_URL)%"
+
+    exception_controller: null

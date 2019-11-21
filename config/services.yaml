@@ -131,7 +131,7 @@ services:
 
     # MARKDOWN
     Emojione\Client:
-        factory: 'App\Markdown\EmojiClientFactory:createEmojiClient'
+        factory: ['@App\Markdown\EmojiClientFactory', createEmojiClient]
         arguments:
             $baseUrl: '%env(APP_URL)%'
 

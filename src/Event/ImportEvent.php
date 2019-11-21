@@ -2,7 +2,9 @@
 
 namespace App\Event;
 
-class ImportEvent {
+use Symfony\Contracts\EventDispatcher\Event;
+
+class ImportEvent extends Event {
     private $added;
     private $updated;
     private $removed;

@@ -27,7 +27,7 @@ abstract class AbstractControllerWithMessages extends AbstractController {
 
     protected abstract function getMessageScope(): MessageScope;
 
-    public function render(string $view, array $parameters = [], Response $response = null): Response {
+    public function renderWithMessages(string $view, array $parameters = [], Response $response = null): Response {
         /** @var User $user */
         $user = $this->getUser();
 

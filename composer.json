@@ -8,8 +8,9 @@
         "ext-openssl": "*",
         "acelaya/doctrine-enum-type": "^2.2",
         "beberlei/doctrineextensions": "^1.2",
+        "doctrine/doctrine-bundle": "2.0",
         "emojione/emojione": "2.0",
-        "fervo/enum-bundle": "^2.2",
+        "fervo/enum-bundle": "dev-master",
         "fzaninotto/faker": "^1.8",
         "javiereguiluz/easyslugger": "^1.0",
         "jms/serializer-bundle": "^3.2",
@@ -49,7 +50,7 @@
         "vich/uploader-bundle": "^1.9"
     },
     "require-dev": {
-        "dama/doctrine-test-bundle": "^5.0",
+        "dama/doctrine-test-bundle": "^6.0",
         "doctrine/doctrine-fixtures-bundle": "^3.1",
         "league/flysystem-memory": "^1.0",
         "phpstan/phpstan": "^0.11.4",
@@ -106,5 +107,11 @@
             "allow-contrib": false,
             "require": "^4.2"
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/frostieDE/EnumBundle"
+        }
+    ]
 }

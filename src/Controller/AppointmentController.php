@@ -71,7 +71,7 @@ class AppointmentController extends AbstractControllerWithMessages {
         $sorter->sort($groups, AppointmentDateGroupStrategy::class);
         $sorter->sortGroupItems($groups, AppointmentDateSortingStrategy::class);
 
-        return $this->render('appointments/index.html.twig', [
+        return $this->renderWithMessages('appointments/index.html.twig', [
             'categoryFilter' => $categoryFilterView,
             'studentFilter' => $studentFilterView,
             'gradeFilter' => $gradeFilterView,
@@ -99,7 +99,7 @@ class AppointmentController extends AbstractControllerWithMessages {
             $deviceToken = $manager->persistDeviceToken($deviceToken);
         }
 
-        return $this->render('appointments/export.html.twig', [
+        return $this->renderWithMessages('appointments/export.html.twig', [
             'form' => $form->createView(),
             'token' => $deviceToken
         ]);

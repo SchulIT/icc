@@ -81,7 +81,7 @@ class ListController extends AbstractControllerWithMessages {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher());
         }
 
-        return $this->render('lists/tuitions.html.twig', [
+        return $this->renderWithMessages('lists/tuitions.html.twig', [
             'gradeFilter' => $gradeFilterView,
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
@@ -100,7 +100,7 @@ class ListController extends AbstractControllerWithMessages {
 
         $exams = $examRepository->findAllByTuitions([$tuition]);
 
-        return $this->render('lists/tuition.html.twig', [
+        return $this->renderWithMessages('lists/tuition.html.twig', [
             'tuition' => $tuition,
             'memberships' => $memberships,
             'exams' => $exams
@@ -148,7 +148,7 @@ class ListController extends AbstractControllerWithMessages {
             );
         }
 
-        return $this->render('lists/study_groups.html.twig', [
+        return $this->renderWithMessages('lists/study_groups.html.twig', [
             'studyGroupFilter' => $studyGroupFilterView,
             'students' => $students,
             'grade' => $grade,
@@ -174,7 +174,7 @@ class ListController extends AbstractControllerWithMessages {
         $this->sorter->sort($groups, TeacherFirstCharacterGroupStrategy::class);
         $this->sorter->sortGroupItems($groups, TeacherStrategy::class);
 
-        return $this->render('lists/teachers.html.twig', [
+        return $this->renderWithMessages('lists/teachers.html.twig', [
             'groups' => $groups,
             'subjectFilter' => $subjectFilterView
         ]);

@@ -25,7 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/admin/settings")
- * @Security("is_granted('RROLE_ADMIN')")
+ * @Security("is_granted('ROLE_ADMIN')")
  */
 class SettingsController extends AbstractController {
 

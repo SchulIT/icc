@@ -65,7 +65,7 @@ class TeacherFixtures extends Fixture implements DependentFixtureInterface {
     }
 
     private function generateAcronym(string $firstname, string $lastname) {
-        return substr(strtoupper($lastname), 0, 3) . substr(strtoupper($firstname), 0, 1);
+        return mb_substr(mb_strtoupper($lastname), 0, 3) . mb_substr(mb_strtoupper($firstname), 0, 2);
     }
 
     /**

@@ -265,6 +265,7 @@ message:
     reenable: Mitteilung wieder einblenden
     dismissed_info: '{1} %count% Mitteilung wird ausgeblendet.|]1,Inf[ %count% Mitteilungen werden ausgeblendet.'
     dismissed_action: '{1} Mitteilung einblenden|]1,Inf[ %count% Mitteilungen einblenden'
+    must_confirm: Diese Mitteilung muss bestätigt werden.
 
 wiki:
     label: Wiki

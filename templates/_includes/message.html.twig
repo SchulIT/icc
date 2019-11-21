@@ -34,7 +34,7 @@
     <div class="card-footer">
         {% if is_granted('confirm', message) %}
             {% if not is_confirmed(message) %}
-                <a href="{{ path('confirm_message', { id: message.id }) }}" class="btn btn-danger btn-sm"><i class="fa fa-check"></i> {{ 'actions.confirm'|trans }}</a>
+                <span><i class="fa fa-info-circle"></i> {{ 'message.must_confirm'|trans }}</span> <a href="{{ path('confirm_message', { id: message.id }) }}" class="btn btn-danger btn-sm"><i class="fa fa-check"></i> {{ 'actions.confirm'|trans }}</a>
             {% else %}
                 <i class="fa fa-check"></i> {{ 'messages.confirm.confirmed'|trans }}
             {% endif %}

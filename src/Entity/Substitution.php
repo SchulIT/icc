@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -121,6 +122,11 @@ class Substitution {
      * @var ArrayCollection<StudyGroup>
      */
     private $replacementStudyGroups;
+
+    public function __construct() {
+        $this->studyGroups = new ArrayCollection();
+        $this->replacementStudyGroups = new ArrayCollection();
+    }
 
     /**
      * @return int|null
@@ -330,9 +336,9 @@ class Substitution {
     }
 
     /**
-     * @return ArrayCollection<StudyGroup>
+     * @return Collection<StudyGroup>
      */
-    public function getStudyGroups(): ArrayCollection {
+    public function getStudyGroups(): Collection {
         return $this->studyGroups;
     }
 
@@ -345,9 +351,9 @@ class Substitution {
     }
 
     /**
-     * @return ArrayCollection<StudyGroup>
+     * @return Collection<StudyGroup>
      */
-    public function getReplacementStudyGroups(): ArrayCollection {
+    public function getReplacementStudyGroups(): Collection {
         return $this->replacementStudyGroups;
     }
 

@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Grade;
 use App\Entity\Substitution;
+use App\Entity\Teacher;
 
 interface SubstitutionRepositoryInterface extends TransactionalRepositoryInterface {
 
@@ -28,6 +30,27 @@ interface SubstitutionRepositoryInterface extends TransactionalRepositoryInterfa
      * @return Substitution[]
      */
     public function findAllByDate(\DateTime $date);
+
+    /**
+     * @param array $studyGroups
+     * @param \DateTime|null $date
+     * @return Substitution[]
+     */
+    public function findAllForStudyGroups(array $studyGroups, ?\DateTime $date = null);
+
+    /**
+     * @param Teacher $teacher
+     * @param \DateTime|null $date
+     * @return Substitution[]
+     */
+    public function findAllForTeacher(Teacher $teacher, ?\DateTime $date = null);
+
+    /**
+     * @param Grade $grade
+     * @param \DateTime|null $date
+     * @return Substitution[]
+     */
+    public function findAllForGrade(Grade $grade, ?\DateTime $date = null);
 
     /**
      * @param Substitution $substitution

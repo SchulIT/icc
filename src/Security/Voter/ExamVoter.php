@@ -89,8 +89,6 @@ class ExamVoter extends Voter {
 
         $days = $this->examSettings->getTimeWindowForStudents();
         if($this->isStudentOrParent($token) && $days > 0) {
-            dump('student');
-
             $threshold = $this->dateHelper->getToday()
                 ->modify(sprintf('+%d days', $days));
 

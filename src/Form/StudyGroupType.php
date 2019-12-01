@@ -31,7 +31,6 @@ class StudyGroupType extends SortableEntityType {
             }
         }
 
-        dump($gradeIds);
         $view->vars['grades'] = $gradeIds;
     }
 

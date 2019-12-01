@@ -56,7 +56,7 @@ class AppExtension extends AbstractExtension {
         ];
     }
 
-    public function teacher(Teacher $teacher, bool $includeAcronym = false) {
+    public function teacher(?Teacher $teacher, bool $includeAcronym = false) {
         return $this->teacherConverter->convert($teacher, $includeAcronym);
     }
 

@@ -1,0 +1,37 @@
+{% macro replacement(original, replacement) %}
+    {% if original is not empty %}<s>{{ original }}</s> {% endif %}{% if replacement is not empty %}⟶ {{ replacement }}{% endif %}
+{% endmacro %}
+
+{% set duration = substitution.lessonEnd - substitution.lessonStart %}
+<div class="card">
+    <div class="card-body">
+        <div class="row no-gutters">
+            <p class="col">
+                <strong>{{ 'label.lessons'|trans({'%count%': duratin}) }}:</strong>
+                {{ 'label.substitution_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': duration }) }}
+            </p>
+
+            <p class="col">
+                <strong>{{ 'label.room'|trans }}:</strong> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
+            </p>
+
+            <p class="col">
+                <strong>{{ 'label.subject'|trans }}:</strong> {{ _self.replacement(substitution.subject, substitution.replacementSubject) }}
+            </p>
+
+            <p class="col">
+                <strong>{{ 'label.teacher'|trans }}:</strong> {{ _self.replacement(substitution.teacher|teacher, substitution.replacementTeacher|teacher) }}
+            </p>
+
+            <p class="col">
+                <strong>{{ 'label.study_groups'|trans({'%count%': substitution.}) }}</strong>
+            </p>
+
+            <hr />
+
+            <p class="w-100">
+                {{ substitution.remark }}
+            </p>
+        </div>
+    </div>
+</div>

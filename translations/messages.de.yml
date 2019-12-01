@@ -16,15 +16,16 @@ label:
     grade: Klasse
     grades: Klassen
     study_group: Lerngruppe
-    study_groups: Lerngruppen
+    study_groups: "{0} Lerngruppen|{1} Lerngruppe|]1,Inf[ Lerngruppen"
     usertype: Benutzertyp
     details: Details
     date: Datum
     lesson: Stunde
-    lessons: Stunden
+    lessons: "{0} Stunden|{1} Stunde|]1,Inf[ Stunden"
     start: Beginn
     end: End
     exam_lessons: "{0} %start%. Stunde|{1} %start%./%end%. Stunde|]1,Inf[ %start%.-%end%. Stunde"
+    substitution_lessons: "{0} %start%.|{1} %start%./%end%.|]1,Inf[ %start%.-%end%."
     select:
         all: Alle
         grade: Klasse auswählen

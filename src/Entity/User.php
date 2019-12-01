@@ -91,6 +91,12 @@ class User implements UserInterface {
      */
     private $dismissedMessages;
 
+    /**
+     * @ORM\Column(type="json_array")
+     * @var string[]
+     */
+    private $data = [ ];
+
     public function __construct() {
         $this->students = new ArrayCollection();
         $this->dismissedMessages = new ArrayCollection();
@@ -241,6 +247,14 @@ class User implements UserInterface {
      */
     public function getStudents(): Collection {
         return $this->students;
+    }
+
+    public function getData(string $key, $default = null) {
+        return $this->data[$key] ?? $default;
+    }
+
+    public function setData(string $key, $data): void {
+        $this->data[$key] = $data;
     }
 
     /**

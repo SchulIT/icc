@@ -76,6 +76,8 @@ class SubstitutionFixtures extends Fixture implements DependentFixtureInterface 
 
             $id++;
         }
+
+        $manager->flush();
     }
 
     public function getDependencies() {

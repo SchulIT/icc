@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\MessageScope;
+use App\Entity\StudyGroupMembership;
 use App\Entity\Substitution;
 use App\Entity\User;
 use App\Grouping\Grouper;
@@ -31,7 +32,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
                           ?string $date, ?int $studentId = null, ?int $gradeId = null, ?string $teacherAcronym = null, ?string $groupBy = null, ?string $view = null) {
         /** @var User $user */
         $user = $this->getUser();
-        $days = $dateHelper->getListOfNextDays($substitutionSettings->getNumberOfAheadDaysForSubstitutions());
+        $days = $this->getListOfNextDays($dateHelper, $substitutionSettings->getNumberOfAheadDaysForSubstitutions(), $substitutionSettings->skipWeekends());
         $selectedDate = $this->getCurrentDate($days, $date);
 
         $studentFilterView = $studentFilter->handle($studentId, $user);
@@ -46,7 +47,11 @@ class SubstitutionController extends AbstractControllerWithMessages {
         } else if($gradeFilterView->getCurrentGrade() !== null) {
             $substitutions = $substitutionRepository->findAllForGrade($gradeFilterView->getCurrentGrade(), $selectedDate);
         } else if($studentFilterView->getCurrentStudent() !== null) {
-            $substitutions = $substitutionRepository->findAllForStudyGroups($studentFilterView->getStudentGradeGroups(), $selectedDate);
+            $studyGroups = array_map(function(StudyGroupMembership $membership) {
+                return $membership->getStudyGroup();
+            }, $studentFilterView->getCurrentStudent()->getStudyGroupMemberships()->toArray());
+
+            $substitutions = $substitutionRepository->findAllForStudyGroups($studyGroups, $selectedDate);
         } else {
             $substitutions = $substitutionRepository->findAllByDate($selectedDate);
         }
@@ -62,14 +67,42 @@ class SubstitutionController extends AbstractControllerWithMessages {
         $viewType = $viewParameter->getViewType($view, $user, static::SectionKey);
 
         return $this->renderWithMessages('substitutions/index.html.twig', [
-            'substitutions' => $substitutions,
+            'groups' => $groups,
             'days' => $days,
             'selectedDate' => $selectedDate,
             'studentFilter' => $studentFilterView,
             'gradeFilter' => $gradeFilterView,
             'teacherFilter' => $teacherFilterView,
-            'view' => $viewType
+            'view' => $viewType,
+            'groupBy' => $groupByParameter->getGroupingStrategyKey($groupingClass)
         ]);
+    }
+
+    private function getListOfNextDays(DateHelper $dateHelper, int $numberOfDays, bool $skipWeekends) {
+        $today = $dateHelper->getToday();
+
+        if($skipWeekends) {
+            // Ensure to start at a weekday in case weekends are skipped
+            while ($today->format('N') >= 6) {
+                $today->modify('+1 day');
+            }
+        }
+
+        $days = [ $today ];
+        $last = $today;
+
+        while(count($days) < $numberOfDays) {
+            $day = clone $last;
+            $day->modify('+1 day');
+
+            if($skipWeekends === false || $day->format('N') < 6) {
+                $days[] = $day;
+            }
+
+            $last = $day;
+        }
+
+        return $days;
     }
 
     /**
@@ -89,7 +122,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
         $selectedDateTime = new \DateTime($date);
 
         foreach($dateTimes as $dateTime) {
-            if($dateTime === $selectedDateTime) {
+            if($dateTime == $selectedDateTime) {
                 return $dateTime;
             }
         }

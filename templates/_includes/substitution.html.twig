@@ -1,5 +1,5 @@
 {% macro replacement(original, replacement) %}
-    {% if original is not empty %}<s>{{ original }}</s> {% endif %}{% if replacement is not empty %}⟶ {{ replacement }}{% endif %}
+    {% if original is not empty and replacement is not empty %}<s>{{ original }}</s> ⟶ {% elseif original is not empty %}{{ original }}{% endif %}{% if replacement is not empty %}{{ replacement }}{% endif %}
 {% endmacro %}
 
 {% set duration = substitution.lessonEnd - substitution.lessonStart %}
@@ -7,8 +7,8 @@
     <div class="card-body">
         <div class="row no-gutters">
             <p class="col">
-                <strong>{{ 'label.lessons'|trans({'%count%': duratin}) }}:</strong>
-                {{ 'label.substitution_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': duration }) }}
+                <strong>{{ 'label.substitution_lessons_label'|trans({'%count%': duration}) }}:</strong>
+                {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
             </p>
 
             <p class="col">
@@ -23,15 +23,27 @@
                 <strong>{{ 'label.teacher'|trans }}:</strong> {{ _self.replacement(substitution.teacher|teacher, substitution.replacementTeacher|teacher) }}
             </p>
 
-            <p class="col">
-                <strong>{{ 'label.study_groups'|trans({'%count%': substitution.}) }}</strong>
-            </p>
-
-            <hr />
+            {% if substitution.remark is not empty %}
+                <p class="col">
+                    <strong>{{ 'label.type'|trans }}:</strong> {{ substitution.type }}
+                </p>
+            {% endif %}
 
             <p class="w-100">
-                {{ substitution.remark }}
+                <strong>{{ 'label.study_group'|trans }}:</strong> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
             </p>
+
+            {% if substitution.type is not empty or substitution.remark is not empty %}
+                <hr class="w-100"/>
+
+                <p class="w-100 remark">
+                    {% if substitution.remark is not empty %}
+                        {{ substitution.remark }}
+                    {% else %}
+                        {{ substitution.type }}
+                    {% endif %}
+                </p>
+            {% endif %}
         </div>
     </div>
 </div>

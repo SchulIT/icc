@@ -50,6 +50,10 @@ class GroupByParameter {
         return $this->groupMap[$grouping];
     }
 
+    public function getGroupingStrategyKey(string $groupingClass): string {
+        return array_search($groupingClass, $this->groupMap);
+    }
+
     public function getSortingStrategyClassName(string $groupingStrategy): string {
         if(!isset($this->sortMap[$groupingStrategy])) {
             throw new \InvalidArgumentException(sprintf('Groupstrategy "%s" is not a recognized grouping strategy', $groupingStrategy));

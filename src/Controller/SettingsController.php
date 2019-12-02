@@ -8,6 +8,7 @@ use App\Entity\UserType;
 use App\Menu\Builder;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Settings\ExamSettings;
+use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\ArrayUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -232,6 +233,57 @@ class SettingsController extends AbstractController {
         return $this->render('admin/settings/timetable.html.twig', [
             'form' => $form->createView(),
             'maxLessons' => $timetableSettings->getMaxLessons()
+        ]);
+    }
+
+    /**
+     * @Route("/substitutions", name="admin_settings_substitutions")
+     */
+    public function substitutions(Request $request, SubstitutionSettings $substitutionSettings) {
+        $builder = $this->createFormBuilder();
+        $builder
+
+            ->add('ahead_days', IntegerType::class, [
+                'label' => 'admin.settings.substitutions.number_of_ahead_substitutions.label',
+                'help' => 'admin.settings.substitutions.number_of_ahead_substitutions.help',
+                'constraints' => [
+                    new Type(['type' => 'integer']),
+                    new GreaterThanOrEqual(['value' => 0])
+                ],
+                'data' => $substitutionSettings->getNumberOfAheadDaysForSubstitutions()
+            ])
+            ->add('skip_weekends', CheckboxType::class, [
+                'label' => 'admin.settings.substitutions.skip_weekends.label',
+                'help' => 'admin.settings.substitutions.skip_weekends.help',
+                'required' => false,
+                'data' => $substitutionSettings->skipWeekends()
+            ]);
+
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $map = [
+                'ahead_days' => function(int $days) use ($substitutionSettings) {
+                    $substitutionSettings->setNumberOfAheadDaysForSubstitutions($days);
+                },
+                'skip_weekends' => function(bool $skipWeekends) use ($substitutionSettings) {
+                    $substitutionSettings->setSkipWeekends($skipWeekends);
+                }
+            ];
+
+            foreach($map as $formKey => $callable) {
+                $value = $form->get($formKey)->getData();
+                $callable($value);
+            }
+
+            $this->addFlash('success', 'admin.settings.success');
+
+            return $this->redirectToRoute('admin_settings_substitutions');
+        }
+
+        return $this->render('admin/settings/substitutions.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 }

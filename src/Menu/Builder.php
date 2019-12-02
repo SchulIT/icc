@@ -176,6 +176,10 @@ class Builder {
             'route' => 'admin_settings_exams'
         ]);
 
+        $menu->addChild('admin.settings.substitutions.label', [
+            'route' => 'admin_settings_substitutions'
+        ]);
+
         return $menu;
     }
 

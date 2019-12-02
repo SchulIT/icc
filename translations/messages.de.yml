@@ -21,11 +21,12 @@ label:
     details: Details
     date: Datum
     lesson: Stunde
-    lessons: "{0} Stunden|{1} Stunde|]1,Inf[ Stunden"
+    lessons: Stunden
     start: Beginn
     end: End
     exam_lessons: "{0} %start%. Stunde|{1} %start%./%end%. Stunde|]1,Inf[ %start%.-%end%. Stunde"
     substitution_lessons: "{0} %start%.|{1} %start%./%end%.|]1,Inf[ %start%.-%end%."
+    substitution_lessons_label: "{0} Stunde|]0,Inf[ Stunden"
     select:
         all: Alle
         grade: Klasse auswählen
@@ -88,6 +89,8 @@ label:
     tags: Tags
     gender: Geschlecht
     must_confirm: muss vom Benutzer bestätigt werden
+    type: Art
+    remark: Anmerkung
 
 actions:
     add: hinzufügen
@@ -157,6 +160,15 @@ plans:
             date: "gedruckt am %date%"
     substitutions:
         label: Vertretungsplan
+        view:
+            label: Ansicht
+            table: Tabelle
+            card: Liste
+
+        group_by:
+            label: Gruppieren
+            grades: Klassen
+            teachers: Lehrkräfte
     appointments:
         label: Terminplan
         not_available: Aktuell ist der Terminplan nicht verfügbar.
@@ -316,6 +328,16 @@ admin:
     settings:
         label: Einstellungen
         success: Einstellungen erfolgreich aktualisiert
+
+        substitutions:
+            label: Vertretungsplan-Einstellungen
+            number_of_ahead_substitutions:
+                label: Anzahl der Tage
+                help: Anzahl der Tage, für die der Vertretungsplan angezeigt werden soll (einschließlich des aktuellen Tages).
+            skip_weekends:
+                label: Wochenenden überspringen
+                help: Gibt an, ob Wochenendtage im Vertretungsplan übersprungen werden sollen.
+
         exams:
             label: Klausurplan-Einstellungen
             window:

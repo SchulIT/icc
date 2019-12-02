@@ -312,17 +312,17 @@ class Substitution {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getRemark(): string {
+    public function getRemark(): ?string {
         return $this->remark;
     }
 
     /**
-     * @param string $remark
+     * @param string|null $remark
      * @return Substitution
      */
-    public function setRemark(string $remark): Substitution {
+    public function setRemark(?string $remark): Substitution {
         $this->remark = $remark;
         return $this;
     }

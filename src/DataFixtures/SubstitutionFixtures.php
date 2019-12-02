@@ -69,9 +69,15 @@ class SubstitutionFixtures extends Fixture implements DependentFixtureInterface 
                 $substitution->addStudyGroup($studyGroup);
 
                 if($this->generator->boolean) {
-                    $substitution->addStudyGroup($this->generator->randomElement($studyGroups));
+                    $additionalStudyGroup = $this->generator->randomElement($studyGroups);
+
+                    if($additionalStudyGroup->getId() !== $studyGroup->getId()) {
+                        $substitution->addStudyGroup($additionalStudyGroup);
+                    }
                     $substitution->addReplacementStudyGroup($this->generator->randomElement($studyGroups));
                 }
+
+                $manager->persist($substitution);
             }
 
             $id++;

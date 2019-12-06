@@ -10,12 +10,15 @@ use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Ics\IcsHelper;
-use App\Ics\IcsItem;
 use App\Repository\ExamRepositoryInterface;
+use App\Security\Voter\ExamVoter;
 use App\Settings\ExamSettings;
 use App\Settings\TimetableSettings;
 use Jsvrcek\ICS\Model\CalendarEvent;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExamIcsExporter {
@@ -24,14 +27,16 @@ class ExamIcsExporter {
     private $timetableSettings;
     private $icsHelper;
     private $translator;
+    private $authorizationChecker;
 
     public function __construct(ExamSettings $examSettings, ExamRepositoryInterface $examRepository, TimetableSettings $timetableSettings,
-                                IcsHelper $icsHelper, TranslatorInterface $translator) {
+                                IcsHelper $icsHelper, TranslatorInterface $translator, AuthorizationCheckerInterface $authorizationChecker) {
         $this->examSettings = $examSettings;
         $this->examRepository = $examRepository;
         $this->timetableSettings = $timetableSettings;
         $this->icsHelper = $icsHelper;
         $this->translator = $translator;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function getIcsResponse(User $user): Response {
@@ -47,17 +52,21 @@ class ExamIcsExporter {
      * @return CalendarEvent[]
      */
     private function getIcsItems(User $user) {
-        if($this->examSettings->isEnabled($user->getUserType())) {
+        if($this->examSettings->isVisibileFor($user->getUserType())) {
             return [ ];
         }
 
         $exams = [ ];
 
         if($user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent())) {
-            $exams = $this->examRepository->findAllByStudents($user->getStudents());
+            $exams = $this->examRepository->findAllByStudents($user->getStudents()->toArray());
         } else if($user->getUserType()->equals(UserType::Teacher())) {
             $exams = $this->examRepository->findAllByTeacher($user->getTeacher());
         }
+
+        $exams = array_filter($exams, function(Exam $exam) {
+            return $this->authorizationChecker->isGranted(ExamVoter::SHOW, $exam);
+        });
 
         $items = [ ];
 
@@ -65,7 +74,7 @@ class ExamIcsExporter {
             $items += $this->makeIcsItems($exam, $user);
         }
 
-        return [ ];
+        return $items;
     }
 
     /**

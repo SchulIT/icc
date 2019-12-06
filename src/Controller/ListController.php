@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Exam;
 use App\Entity\Grade;
 use App\Entity\GradeTeacher;
 use App\Entity\GradeTeacherType;
@@ -17,6 +18,7 @@ use App\Repository\ExamRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
+use App\Security\Voter\ExamVoter;
 use App\Sorting\Sorter;
 use App\Sorting\StudentGroupMembershipStrategy;
 use App\Sorting\StudentStrategy;
@@ -99,6 +101,10 @@ class ListController extends AbstractControllerWithMessages {
         $this->sorter->sort($memberships, StudentGroupMembershipStrategy::class);
 
         $exams = $examRepository->findAllByTuitions([$tuition]);
+
+        $exams = array_filter($exams, function(Exam $exam) {
+            return $this->isGranted(ExamVoter::SHOW, $exam);
+        });
 
         return $this->renderWithMessages('lists/tuition.html.twig', [
             'tuition' => $tuition,

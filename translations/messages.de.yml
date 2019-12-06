@@ -134,6 +134,7 @@ plans:
         time: Zeitraum
         invigilators: Aufsicht
         show_all: Alte Klausuren anzeigen
+        not_visible: Aktuell ist der Klausurplan nicht freigeschaltet.
         export:
             label: Klausuren exportieren
             download:

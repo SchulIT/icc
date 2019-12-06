@@ -17,26 +17,36 @@
             <div class="row">
                 {% if teacherFilter.teachers|length > 0 %}
                     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/teacher.html.twig" %}
+                        {% include "_filter/teacher.html.twig" with { params: { all: showAll } } %}
                     </div>
                 {% endif %}
 
                 {% if studentFilter.studentGradeGroups|length > 0 %}
                     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/student.html.twig" %}
+                        {% include "_filter/student.html.twig" with { params: { all: showAll } } %}
                     </div>
                 {% endif %}
 
                 {% if studentFilter.studentGradeGroups|length > 0 %}
                     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/grade.html.twig" %}
+                        {% include "_filter/grade.html.twig" with { params: { all: showAll } } %}
                     </div>
                 {% endif %}
 
                 <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                     <form role="form" method="get" class="form hidden-print">
-                        {% if teacherFilter.currentTeacher is not null %}<input type="hidden" name="teacherAcronym" value="{{ teacherFilter.currentTeacher.acronym }}">{% endif %}
-                        {% if studentFilter.currentStudent is not null %}<input type="hidden" name="studentId" value="{{ studentFilter.currentStudent.id }}">{% endif %}
+                        {% set params = { } %}
+                        {% if teacherFilter.currentTeacher is not null %}
+                            {% set params = params|merge({ teacherAcronym: teacherFilter.currentTeacher.acronym }) %}
+                        {% endif %}
+                        {% if studentFilter.currentStudent is not null %}
+                            {% set params = params|merge({ studentId: studentFilter.currentStudent.id }) %}
+                        {% endif %}
+                        {% if gradeFilter.currentGrade is not null %}
+                            {% set params = params|merge({ gradeId: gradeFilter.currentGrade.id }) %}
+                        {% endif %}
+
+                        {% include "_filter/_params.html.twig" %}
 
                         <label class="control-label">{{ 'label.options'|trans }}:</label>
                         <div class="form-group">
@@ -54,7 +64,13 @@
         </div>
     </div>
 
-    {% if teacherFilter.currentTeacher is not null or studentFilter.currentStudent is not null or gradeFilter.currentGrade is not null %}
+    {% if not isVisible %}
+        <div class="bs-callout bs-callout-info">
+            <h4>{{ 'info.label'|trans }}</h4>
+
+            <p>{{ 'plans.exams.not_visible'|trans }}</p>
+        </div>
+    {% elseif teacherFilter.currentTeacher is not null or studentFilter.currentStudent is not null or gradeFilter.currentGrade is not null %}
         <h2 class="mb-3">
             {% if teacherFilter.currentTeacher is not null %}
                 {{ 'plans.exams.title'|trans({'%for%' : teacherFilter.currentTeacher|teacher}) }}
@@ -78,7 +94,6 @@
                 {% endfor %}
             {% endfor %}
         {% endif %}
-    </div>
     {% endif %}
 
     <div class="buttons">

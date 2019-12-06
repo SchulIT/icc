@@ -20,6 +20,7 @@ use App\Repository\ExamRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Security\Devices\DeviceManager;
 use App\Security\Voter\ExamVoter;
+use App\Settings\ExamSettings;
 use App\Sorting\ExamDateGroupStrategy;
 use App\Sorting\ExamLessonStrategy as ExamDateSortingStrategy;
 use App\Sorting\Sorter;
@@ -53,8 +54,8 @@ class ExamController extends AbstractControllerWithMessages {
      * @Route("", name="exams")
      */
     public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter,
-                          ExamRepositoryInterface $examRepository, ?int $studentId = null, ?string $teacherAcronym = null,
-                          ?int $gradeId = null, ?bool $all = false) {
+                          ExamRepositoryInterface $examRepository, ExamSettings $examSettings,
+                          ?int $studentId = null, ?string $teacherAcronym = null, ?int $gradeId = null, ?bool $all = false) {
         /** @var User $user */
         $user = $this->getUser();
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
@@ -91,7 +92,8 @@ class ExamController extends AbstractControllerWithMessages {
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
             'gradeFilter' => $gradeFilterView,
-            'showAll' => $all
+            'showAll' => $all,
+            'isVisible' => $examSettings->isVisibileFor($user->getUserType())
         ]);
     }
 
@@ -99,6 +101,8 @@ class ExamController extends AbstractControllerWithMessages {
      * @Route("/{id}", name="show_exam", requirements={"id": "\d+"})
      */
     public function show(Exam $exam) {
+        $this->denyAccessUnlessGranted(ExamVoter::SHOW, $exam);
+
         $studyGroups = [ ];
         /** @var Student[] $students */
         $students = $exam->getStudents();

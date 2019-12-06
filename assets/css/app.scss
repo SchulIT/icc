@@ -173,3 +173,10 @@ table {
     column-count: 2;
   }
 }
+
+// Fixes dropdowns in combination with active buttons
+.btn-group {
+  > .btn.active {
+    z-index: auto !important;
+  }
+}

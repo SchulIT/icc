@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity()
  * @UniqueEntity(fields={"username"})
  */
-class User implements UserInterface {
+class User implements UserInterface, \Serializable {
 
     /**
      * @ORM\Id()
@@ -275,4 +275,21 @@ class User implements UserInterface {
      * @inheritDoc
      */
     public function eraseCredentials() { }
+
+    /**
+     * @inheritDoc
+     */
+    public function serialize() {
+        return serialize([
+            $this->getId(),
+            $this->getUsername()
+        ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function unserialize($serialized) {
+        list($this->id, $this->username) = unserialize($serialized);
+    }
 }

@@ -38,7 +38,7 @@ class TeacherStringConverter extends OriginalTeacherStringConverter {
         parent::__construct(new IdentityTranslator());
     }
 
-    public function convert(Teacher $teacher, bool $includeAcronym = false) {
+    public function convert(?Teacher $teacher, bool $includeAcronym = false): string {
         if($teacher->getGender()->equals(Gender::Male())) {
             return sprintf('Mr. %s', $teacher->getLastname());
         }

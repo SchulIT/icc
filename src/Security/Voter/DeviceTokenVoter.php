@@ -25,7 +25,7 @@ class DeviceTokenVoter extends Voter {
      * @return bool|void
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $token->getUser();
 
         if($user === null) {

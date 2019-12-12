@@ -101,7 +101,7 @@
 
                     {% if message.studyGroups|length > 0 %}
                         <p>
-                            <span class="text-muted">{{ 'label.study_groups'|trans }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, id: message.id } only  %}
+                            <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': message.studyGroups|length }) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, id: message.id } only  %}
                         </p>
                     {% endif %}
                 </div>
@@ -116,12 +116,12 @@
 
         {% if is_granted('edit', message) %}
             <a href="{{ path('edit_message', { id: message.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
-                <i class="fa fa-edit"></i> {{ 'admin.documents.edit.label'|trans }}
+                <i class="fa fa-edit"></i> {{ 'admin.messages.edit.label'|trans }}
             </a>
         {% endif %}
         {% if is_granted('remove', message) %}
             <a href="#" class="btn btn-danger btn-sm">
-                <i class="fa fa-trash"></i> {{ 'admin.documents.remove.label'|trans }}
+                <i class="fa fa-trash"></i> {{ 'admin.messages.remove.label'|trans }}
             </a>
         {% endif %}
     </div>

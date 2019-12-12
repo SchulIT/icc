@@ -53,7 +53,7 @@
 
                     {% if document.studyGroups|length > 0 %}
                         <p>
-                            <span class="text-muted">{{ 'label.study_groups'|trans }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: document.studyGroups, id: document.id } only  %}
+                            <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': document.studyGroups|length}) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: document.studyGroups, id: document.id } only  %}
                         </p>
                     {% endif %}
                 </div>

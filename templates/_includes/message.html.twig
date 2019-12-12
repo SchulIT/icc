@@ -62,7 +62,7 @@
                 </a>
 
                 {% if message.mustConfirm %}
-                <a href="#" class="btn btn-secondary btn-sm">
+                <a href="{{ path('message_confirmations', { id: message.id })}}" class="btn btn-secondary btn-sm">
                     <i class="fa fa-clipboard-list"></i> {{ 'admin.messages.confirmations.label'|trans }}
                 </a>
                 {% endif %}

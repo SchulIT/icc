@@ -91,6 +91,7 @@ label:
     must_confirm: muss vom Benutzer bestätigt werden
     type: Art
     remark: Anmerkung
+    confirmed: bestätigt
 
 actions:
     add: hinzufügen
@@ -114,6 +115,9 @@ greeting:
 teacher:
     fullname: "%greeting% %title% %name%"
     fullname_acronym: "%greeting% %title% %name% [%acronym%]"
+
+user:
+    display_name: "%lastname%, %firstname%"
 
 exams:
     export:
@@ -280,6 +284,9 @@ message:
     dismissed_info: '{1} %count% Mitteilung wird ausgeblendet.|]1,Inf[ %count% Mitteilungen werden ausgeblendet.'
     dismissed_action: '{1} Mitteilung einblenden|]1,Inf[ %count% Mitteilungen einblenden'
     must_confirm: Diese Mitteilung muss bestätigt werden.
+
+    confirmations:
+        label: Bestätigungen
 
 wiki:
     label: Wiki

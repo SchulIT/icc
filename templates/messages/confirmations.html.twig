@@ -1,0 +1,161 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ message.title }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('messages') }}">{{ 'messages.overview.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_message', { id: message.id }) }}">{{ message.title }}</a></li>
+        <li class="breadcrumb-item">{{ 'message.confirmations.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    {# Students #}
+    {% for studyGroup in studyGroups %}
+        <div class="card">
+            <div class="card-header">
+                {{ studyGroup.studyGroup|studygroup }} {% for grade in studyGroup.studyGroup.grades %}<span class="badge badge-primary">{{ grade.name }}</span>{% endfor %}
+            </div>
+
+            <table class="table table-striped table-bordered">
+                <colgroup>
+                    <col>
+                    <col class="column-lg">
+                    <col class="column-lg">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>{{ 'label.name'|trans }}</th>
+                    <th>{{ 'label.confirmed'|trans }} <span class="badge badge-primary">{{ 'label.student'|trans }}</span></th>
+                    <th>{{ 'label.confirmed'|trans }} <span class="badge badge-primary">{{ 'user_type.parent'|trans({}, 'enums') }}</span></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for student in studyGroup.students %}
+                    {% set studentConfirmation = view.studentConfirmation(student) %}
+                    {% set parentConfirmation = view.parentConfirmation(student) %}
+                    {% set class = "table-danger" %}
+                    {% if studentConfirmation is not null and parentConfirmation is not null %}
+                        {% set class = "table-success" %}
+                    {% elseif studentConfirmation is not null or parentConfirmation is not null %}
+                        {% set class = "table-warning" %}
+                    {% endif %}
+
+                    <tr class="{{ class }}">
+                        <td>{{ 'user.display_name'|trans({'%firstname%': student.firstname, '%lastname%': student.lastname}) }}</td>
+                        <td>
+                            {% if studentConfirmation is not null %}
+                                <i class="fa fa-check-circle"></i> {{ studentConfirmation.createdAt|format_datetime }}
+                            {% else %}
+                                <i class="fa fa-times-circle"></i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if parentConfirmation is not null %}
+                                <i class="fa fa-check-circle"></i> {{ parentConfirmation.createdAt|format_datetime }}
+                            {% else %}
+                                <i class="fa fa-times-circle"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+
+
+    {# Teachers #}
+    <div class="card">
+        <div class="card-header">{{ 'label.teachers'|trans }} <span class="badge badge-primary">{{ teachers|length }}</span> </div>
+
+        <table class="table table-striped table-bordered">
+            <colgroup>
+                <col>
+                <col class="column-lg">
+            </colgroup>
+            <thead>
+            <tr>
+                <th>{{ 'label.name'|trans }}</th>
+                <th>{{ 'label.confirmed'|trans }}</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for teacher in teachers %}
+                {% set confirmation = view.teacherConfirmation(teacher) %}
+                {% set class = confirmation is not null ? "table-success" : "table-danger" %}
+                <tr class="{{ class }}">
+                    <td>{{ 'user.display_name'|trans({'%firstname%': teacher.firstname, '%lastname%': teacher.lastname}) }}</td>
+                    <td>
+                        {% if confirmation is not null %}
+                            <i class="fa fa-check-circle"></i> {{ confirmation.createdAt|format_datetime }}
+                        {% else %}
+                            <i class="fa fa-times-circle"></i>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# Others #}
+    {% for group in userGroups %}
+        <div class="card">
+            <div class="card-header">{{ group.userType|enum }} <span class="badge badge-primary">{{ group.users|length }}</span> </div>
+
+            <table class="table table-striped table-bordered">
+                <colgroup>
+                    <col>
+                    <col class="column-lg">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>{{ 'label.name'|trans }}</th>
+                    <th>{{ 'label.confirmed'|trans }}</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for user in group.users %}
+                    {% set confirmation = view.userConfirmation(user) %}
+                    {% set class = confirmation is not null ? "table-success" : "table-danger" %}
+
+                    <tr class="{{ class }}">
+                        <td>{{ 'user.display_name'|trans({'%firstname%': user.firstname, '%lastname%': user.lastname}) }}</td>
+                        <td>
+                            {% if confirmation is not null %}
+                                <i class="fa fa-check-circle"></i> {{ confirmation.createdAt|format_datetime }}
+                            {% else %}
+                                <i class="fa fa-times-circle"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+
+    <div class="buttons">
+        <a href="javascript:history.back();" class="btn btn-primary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+
+        {% if is_granted('edit', message) %}
+            <a href="{{ path('edit_message', { id: message.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
+                <i class="fa fa-edit"></i> {{ 'admin.documents.edit.label'|trans }}
+            </a>
+        {% endif %}
+        {% if is_granted('remove', message) %}
+            <a href="#" class="btn btn-danger btn-sm">
+                <i class="fa fa-trash"></i> {{ 'admin.documents.remove.label'|trans }}
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}

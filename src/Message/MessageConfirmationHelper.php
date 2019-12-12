@@ -4,7 +4,10 @@ namespace App\Message;
 
 use App\Entity\Message;
 use App\Entity\MessageConfirmation;
+use App\Entity\MessageVisibility;
 use App\Entity\User;
+use App\Entity\UserType;
+use App\Utils\EnumArrayUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 

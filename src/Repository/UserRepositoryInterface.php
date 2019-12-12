@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Student;
 use App\Entity\User;
+use App\Entity\UserType;
 
 interface UserRepositoryInterface {
     /**
@@ -49,6 +50,12 @@ interface UserRepositoryInterface {
      * @return User[]
      */
     public function findAllByNotifyTimetable();
+
+    /**
+     * @param UserType[] $types
+     * @return User[]
+     */
+    public function findAllByUserTypes(array $types): array;
 
     /**
      * @return User[]

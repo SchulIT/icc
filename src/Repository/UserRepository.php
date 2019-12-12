@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Student;
 use App\Entity\User;
+use App\Entity\UserType;
 
 class UserRepository extends AbstractRepository implements UserRepositoryInterface {
 
@@ -111,5 +112,25 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
      */
     public function findAllByNotifyTimetable() {
         // TODO: Implement findAllByNotifyTimetable() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByUserTypes(array $types): array {
+        $typeNames = array_map(function(UserType $type) {
+            return $type->getValue();
+        }, $types);
+
+        $qb = $this->em->createQueryBuilder();
+
+        return $qb
+            ->select(['u', 's'])
+            ->from(User::class, 'u')
+            ->leftJoin('u.students', 's')
+            ->where($qb->expr()->in('u.userType', ':types'))
+            ->setParameter('types', $typeNames)
+            ->getQuery()
+            ->getResult();
     }
 }

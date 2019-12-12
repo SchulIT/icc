@@ -4,15 +4,19 @@ namespace App\Repository;
 
 use App\Entity\Grade;
 use App\Entity\Student;
+use App\Entity\StudyGroup;
 use Doctrine\ORM\QueryBuilder;
 
 class StudentRepository extends AbstractTransactionalRepository implements StudentRepositoryInterface {
 
     private function getDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
-            ->select(['s', 'g'])
+            ->select(['s', 'g', 'sgm', 'sg', 'sgg'])
             ->from(Student::class, 's')
-            ->leftJoin('s.grade', 'g');
+            ->leftJoin('s.grade', 'g')
+            ->leftJoin('s.studyGroupMemberships', 'sgm')
+            ->leftJoin('sgm.studyGroup', 'sg')
+            ->leftJoin('sg.grades', 'sgg');
     }
 
     /**
@@ -113,6 +117,29 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
         $qb
             ->andWhere($qb->expr()->in('s.id', $qbInner->getDQL()))
             ->setParameter('externalIds', $externalIds);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByStudyGroups(array $studyGroups): array {
+        $studyGroupIds = array_map(function(StudyGroup $studyGroup) {
+            return $studyGroup->getId();
+        }, $studyGroups);
+
+        $qb = $this->getDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('sInner.id')
+            ->from(Student::class, 'sInner')
+            ->leftJoin('sInner.studyGroupMemberships', 'sgmInner')
+            ->where($qb->expr()->in('sgmInner.studyGroup', ':studyGroupIds'));
+
+        $qb
+            ->andWhere($qb->expr()->in('s.id', $qbInner->getDQL()))
+            ->setParameter('studyGroupIds', $studyGroupIds);
 
         return $qb->getQuery()->getResult();
     }

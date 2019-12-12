@@ -13,11 +13,20 @@ use App\Entity\UserType;
 use App\Filesystem\FileNotFoundException;
 use App\Filesystem\MessageFilesystem;
 use App\Form\MessageUploadType;
+use App\Grouping\Grouper;
+use App\Grouping\StudentStudyGroupStrategy;
+use App\Grouping\UserUserTypeStrategy;
+use App\Message\MessageConfirmationViewHelper;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\MessageVoter;
 use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
+use App\Sorting\StudentStrategy;
+use App\Sorting\StudentStudyGroupGroupStrategy;
+use App\Sorting\TeacherStrategy;
+use App\Sorting\UserLastnameFirstnameStrategy;
+use App\Sorting\UserUserTypeGroupStrategy;
 use App\Utils\RefererHelper;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\UserTypeFilter;
@@ -226,4 +235,30 @@ class MessageController extends AbstractController {
         return $this->redirectToRequestReferer('messages');
     }
 
+    /**
+     * @Route("/{id}/confirmations", name="message_confirmations")
+     */
+    public function confirmations(Message $message, MessageConfirmationViewHelper $confirmationViewHelper, Grouper $grouper) {
+        $view = $confirmationViewHelper->createView($message);
+
+        $teachers = $view->getTeachers();
+        $this->sorter->sort($teachers, TeacherStrategy::class);
+
+        $students = $view->getStudents();
+        $studyGroups = $grouper->group($students, StudentStudyGroupStrategy::class);
+        $this->sorter->sort($studyGroups, StudentStudyGroupGroupStrategy::class);
+        $this->sorter->sortGroupItems($studyGroups, StudentStrategy::class);
+
+        $userGroups = $grouper->group($view->getUsers(), UserUserTypeStrategy::class);
+        $this->sorter->sort($userGroups, UserUserTypeGroupStrategy::class);
+        $this->sorter->sortGroupItems($userGroups, UserLastnameFirstnameStrategy::class);
+
+        return $this->render('messages/confirmations.html.twig', [
+            'message' => $message,
+            'teachers' => $teachers,
+            'userGroups' => $userGroups,
+            'studyGroups' => $studyGroups,
+            'view' => $view
+        ]);
+    }
 }

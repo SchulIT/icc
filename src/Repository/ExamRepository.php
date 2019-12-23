@@ -150,6 +150,19 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findAllByDateAndLesson(\DateTime $today, int $lesson): array {
+        $qb = $this->getDefaultQueryBuilder($today);
+
+        $qb
+            ->andWhere('e.lessonStart <= :lesson AND e.lessonEnd >= :lesson')
+            ->setParameter('lesson', $lesson);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param \DateTime|null $today
      * @return Exam[]
      */

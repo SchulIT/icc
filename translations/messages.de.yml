@@ -127,6 +127,9 @@ exams:
         exam_description: "Klausur %tuition%"
         tuition: "%name% (%grades%)"
 
+dashboard:
+    lesson: "%lesson. Stunde"
+
 plans:
     label: Pläne
 

@@ -8,6 +8,7 @@ use App\Security\Voter\DocumentVoter;
 use App\Sorting\Sorter;
 use App\Sorting\UserTypeStrategy;
 use App\Utils\ArrayUtils;
+use App\Utils\EnumArrayUtils;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class UserTypeFilter {
@@ -21,21 +22,34 @@ class UserTypeFilter {
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function handle(?string $userType, User $user = null, bool $isRestrictedToOwnType = false) {
+    /**
+     * @param string|null $userType
+     * @param User|null $user
+     * @param bool $isRestrictedToOwnType
+     * @param UserType|null $defaultType
+     * @param UserType[] $onlyTypes Restrict to the given user types
+     * @return UserTypeFilterView
+     */
+    public function handle(?string $userType, User $user = null, bool $isRestrictedToOwnType = false, ?UserType $defaultType = null, array $onlyTypes = [ ]) {
         if($isRestrictedToOwnType === true) {
-            return new UserTypeFilterView([ ], $user !== null ? $user->getUserType() : null);
+            return new UserTypeFilterView([ ], $user !== null ? $user->getUserType() : $defaultType);
         }
 
-        $types = ArrayUtils::createArrayWithKeys(UserType::values(), function(UserType $type) {
+        if(empty($onlyTypes)) {
+            $enums = $this->types;
+        } else {
+            $enums = $onlyTypes;
+        }
+
+        $types = ArrayUtils::createArrayWithKeys($enums, function(UserType $type) {
             return $type->getValue();
         });
-
 
         if($user !== null) {
             $type = $userType == null ?
                 $types[$userType] ?? $user->getUserType() : $user->getUserType();
         } else {
-            $type = $types[$userType] ?? null;
+            $type = $types[$userType] ?? $defaultType;
         }
 
         $this->sorter->sort($types, UserTypeStrategy::class);

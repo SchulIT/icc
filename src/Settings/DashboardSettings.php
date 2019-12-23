@@ -2,10 +2,10 @@
 
 namespace App\Settings;
 
-class SubstitutionSettings extends AbstractSettings {
+class DashboardSettings extends AbstractSettings {
 
-    public const AheadDaysKeys = 'substitutions.days_ahead';
-    public const SkipWeekends = 'substitutions.skip_weekends';
+    public const AheadDaysKeys = 'dashboard.days_ahead';
+    public const SkipWeekends = 'dashboard.skip_weekends';
 
     public function getNumberOfAheadDaysForSubstitutions(): int {
         return (int)$this->getValue(static::AheadDaysKeys, 7);

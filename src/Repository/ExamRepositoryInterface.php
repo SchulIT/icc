@@ -51,6 +51,13 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllByGrade(Grade $grade, ?\DateTime $today = null);
 
     /**
+     * @param \DateTime $today
+     * @param int $lesson
+     * @return Exam[]
+     */
+    public function findAllByDateAndLesson(\DateTime $today, int $lesson): array;
+
+    /**
      * @param \DateTime|null $today If set, only exams on $today or later are returned
      * @return Exam[]
      */

@@ -8,7 +8,7 @@ use App\Entity\Substitution;
 use App\Entity\User;
 use App\Grouping\Grouper;
 use App\Repository\SubstitutionRepositoryInterface;
-use App\Settings\SubstitutionSettings;
+use App\Settings\DashboardSettings;
 use App\Sorting\Sorter;
 use App\Sorting\SubstitutionStrategy;
 use App\View\Filter\GradeFilter;
@@ -21,6 +21,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class SubstitutionController extends AbstractControllerWithMessages {
 
+    use DateTimeHelperTrait;
+
     private const SectionKey = 'substitutions';
 
     /**
@@ -28,11 +30,11 @@ class SubstitutionController extends AbstractControllerWithMessages {
      */
     public function index(SubstitutionRepositoryInterface $substitutionRepository, StudentFilter $studentFilter,
                           GradeFilter $gradeFilter, TeacherFilter $teacherFilter, GroupByParameter $groupByParameter, ViewParameter $viewParameter,
-                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, SubstitutionSettings $substitutionSettings,
+                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, DashboardSettings $dashboardSettings,
                           ?string $date, ?int $studentId = null, ?int $gradeId = null, ?string $teacherAcronym = null, ?string $groupBy = null, ?string $view = null) {
         /** @var User $user */
         $user = $this->getUser();
-        $days = $this->getListOfNextDays($dateHelper, $substitutionSettings->getNumberOfAheadDaysForSubstitutions(), $substitutionSettings->skipWeekends());
+        $days = $this->getListOfNextDays($dateHelper, $dashboardSettings->getNumberOfAheadDaysForSubstitutions(), $dashboardSettings->skipWeekends());
         $selectedDate = $this->getCurrentDate($days, $date);
 
         $studentFilterView = $studentFilter->handle($studentId, $user);
@@ -76,58 +78,6 @@ class SubstitutionController extends AbstractControllerWithMessages {
             'view' => $viewType,
             'groupBy' => $groupByParameter->getGroupingStrategyKey($groupingClass)
         ]);
-    }
-
-    private function getListOfNextDays(DateHelper $dateHelper, int $numberOfDays, bool $skipWeekends) {
-        $today = $dateHelper->getToday();
-
-        if($skipWeekends) {
-            // Ensure to start at a weekday in case weekends are skipped
-            while ($today->format('N') >= 6) {
-                $today->modify('+1 day');
-            }
-        }
-
-        $days = [ $today ];
-        $last = $today;
-
-        while(count($days) < $numberOfDays) {
-            $day = clone $last;
-            $day->modify('+1 day');
-
-            if($skipWeekends === false || $day->format('N') < 6) {
-                $days[] = $day;
-            }
-
-            $last = $day;
-        }
-
-        return $days;
-    }
-
-    /**
-     * @param \DateTime[] $dateTimes
-     * @param string|null $date
-     * @return \DateTime|null
-     */
-    private function getCurrentDate(array $dateTimes, ?string $date): ?\DateTime {
-        if(count($dateTimes) === 0) {
-            return null;
-        }
-
-        if($date === null) {
-            return $dateTimes[0];
-        }
-
-        $selectedDateTime = new \DateTime($date);
-
-        foreach($dateTimes as $dateTime) {
-            if($dateTime == $selectedDateTime) {
-                return $dateTime;
-            }
-        }
-
-        return $dateTimes[0];
     }
 
     protected function getMessageScope(): MessageScope {

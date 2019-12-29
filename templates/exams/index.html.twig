@@ -90,7 +90,7 @@
                 <h5>{{ group.date|format_date }}</h5>
 
                 {% for exam in group.exams %}
-                    {% include "exams/_exam.html.twig" with { exam: exam } %}
+                    {% include "_includes/exam.html.twig" with { exam: exam } %}
                 {% endfor %}
             {% endfor %}
         {% endif %}

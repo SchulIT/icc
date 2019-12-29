@@ -11,6 +11,8 @@ class DashboardView {
 
     private $items = [ ];
 
+    private $beforeItems = [ ];
+
     /**
      * @return Message[]
      */
@@ -19,7 +21,7 @@ class DashboardView {
     }
 
     public function getLessons(): array {
-        $lessons = array_keys($this->items);
+        $lessons = array_merge(array_keys($this->items), array_keys($this->beforeItems));
         sort($lessons, SORT_NUMERIC);
 
         return $lessons;
@@ -32,12 +34,27 @@ class DashboardView {
         return $this->items[$lesson] ?? [ ];
     }
 
+    /**
+     * @return AbstractViewItem[]
+     */
+    public function getItemsBefore(int $lesson): array {
+        return $this->beforeItems[$lesson] ?? [ ];
+    }
+
     public function addItem(int $lesson, AbstractViewItem $item): void {
         if(!isset($this->items[$lesson])) {
             $this->items[$lesson] = [ ];
         }
 
         $this->items[$lesson][] = $item;
+    }
+
+    public function addItemBefore(int $lesson, AbstractViewItem $item): void {
+        if(!isset($this->beforeItems[$lesson])) {
+            $this->beforeItems[$lesson] = [ ];
+        }
+
+        $this->beforeItems[$lesson][] = $item;
     }
 
     public function addMessage(Message $message): void {

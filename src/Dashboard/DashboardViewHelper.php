@@ -6,6 +6,7 @@ use App\Entity\Exam;
 use App\Entity\Message;
 use App\Entity\MessageScope;
 use App\Entity\Student;
+use App\Entity\StudyGroupMembership;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
@@ -48,16 +49,16 @@ class DashboardViewHelper {
     public function createViewForTeacher(Teacher $teacher, \DateTime $dateTime): DashboardView {
         $view = new DashboardView();
 
-        $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), UserType::Teacher(), $dateTime), $view);
-        $this->addSubstitutions($this->substitutionRepository->findAllForTeacher($teacher, $dateTime), $view);
-        $this->addExams($this->examRepository->findAllByTeacher($teacher, $dateTime), $view);
-
         $currentPeriod = $this->getCurrentTimetablePeriod(UserType::Teacher(), $dateTime);
 
         if($currentPeriod !== null) {
-            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher), $dateTime, $view);
+            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher), $dateTime, $view, true);
             $this->addSupervisions($this->supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher), $view);
         }
+
+        $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), UserType::Teacher(), $dateTime), $view);
+        $this->addSubstitutions($this->substitutionRepository->findAllForTeacher($teacher, $dateTime), $view);
+        $this->addExams($this->examRepository->findAllByTeacher($teacher, $dateTime, true), $view);
 
         return $view;
     }
@@ -71,15 +72,15 @@ class DashboardViewHelper {
 
         $studyGroups = $this->studyGroupHelper->getStudyGroups([$student])->toArray();
 
-        $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $userType, $dateTime, $studyGroups), $view);
-        $this->addSubstitutions($this->substitutionRepository->findAllForStudyGroups($studyGroups, $dateTime), $view);
-        $this->addExams($this->examRepository->findAllByStudents([$student], $dateTime), $view);
-
         $currentPeriod = $this->getCurrentTimetablePeriod($userType, $dateTime);
 
         if($currentPeriod !== null) {
-            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndStudent($currentPeriod, $student), $dateTime, $view);
+            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndStudent($currentPeriod, $student), $dateTime, $view, false);
         }
+
+        $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $userType, $dateTime, $studyGroups), $view);
+        $this->addSubstitutions($this->substitutionRepository->findAllForStudyGroups($studyGroups, $dateTime), $view);
+        $this->addExams($this->examRepository->findAllByStudents([$student], $dateTime, true), $view);
 
         return $view;
     }
@@ -93,14 +94,21 @@ class DashboardViewHelper {
     }
 
     /**
-     * @param TimetableLesson[] $lessons
+     * @param iterable $lessons
      * @param \DateTime $dateTime
      * @param DashboardView $dashboardView
+     * @param bool $computeAbsences
      */
-    private function addTimetableLessons(iterable $lessons, \DateTime $dateTime, DashboardView $dashboardView): void {
+    private function addTimetableLessons(iterable $lessons, \DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences): void {
         foreach($lessons as $lesson) {
-            $exams = $this->examRepository->findAllByDateAndLesson($dateTime, $lesson->getLesson());
-            $dashboardView->addItem($lesson->getLesson(), new LessonViewItem($lesson, $exams));
+            $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lesson, $lesson->getLesson(), $dateTime) : [ ];
+
+            $dashboardView->addItem($lesson->getLesson(), new LessonViewItem($lesson, $absentStudents, false));
+
+            if($lesson->isDoubleLesson()) {
+                $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lesson, $lesson->getLesson() + 1, $dateTime) : [ ];
+                $dashboardView->addItem($lesson->getLesson() + 1, new LessonViewItem($lesson, [ ], false));
+            }
         }
     }
 
@@ -110,7 +118,11 @@ class DashboardViewHelper {
      */
     private function addSupervisions(iterable $supervisions, DashboardView $dashboardView): void {
         foreach($supervisions as $supervision) {
-            $dashboardView->addItem($supervision->getLesson(), new SupervisionViewItem($supervision));
+            if($supervision->isBefore()) {
+                $dashboardView->addItemBefore($supervision->getLesson(), new SupervisionViewItem($supervision));
+            } else {
+                $dashboardView->addItem($supervision->getLesson(), new SupervisionViewItem($supervision));
+            }
         }
     }
 
@@ -120,7 +132,9 @@ class DashboardViewHelper {
      */
     private function addSubstitutions(iterable $substitutions, DashboardView $dashboardView): void {
         foreach($substitutions as $substitution) {
-            $dashboardView->addItem($substitution->getLessonStart(), new SubstitutionViewItem($substitution));
+            for($lesson = $substitution->getLessonStart(); $lesson <= $substitution->getLessonEnd(); $lesson++) {
+                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution));
+            }
         }
     }
 
@@ -140,12 +154,44 @@ class DashboardViewHelper {
      */
     private function addExams(iterable $exams, DashboardView $dashboardView): void {
         foreach($exams as $exam) {
-            $dashboardView->addItem($exam->getLessonStart(), new ExamViewItem($exam));
+            for($lesson = $exam->getLessonStart(); $lesson <= $exam->getLessonEnd(); $lesson++) {
+                $dashboardView->addItem($lesson, new ExamViewItem($exam));
+            }
         }
     }
 
     private function getCurrentTimetablePeriod(UserType $userType, \DateTime $dateTime): ?TimetablePeriod {
         return $this->timetablePeriodHelper->getPeriod($userType, $dateTime);
+    }
+
+    private function computeAbsentStudents(TimetableLesson $lessonEntity, int $lesson, \DateTime $dateTime) {
+        // TODO: Also add absent students because a study group is absent (this information is not provided yet)
+        return $this->computeExamStudents($lessonEntity, $lesson, $dateTime);
+    }
+
+    private function computeExamStudents(TimetableLesson $lessonEntity, int $lesson, \DateTime $dateTime) {
+        $lessonStudents = $lessonEntity
+            ->getTuition()
+            ->getStudyGroup()
+            ->getMemberships()
+            ->map(function (StudyGroupMembership $membership) {
+                return $membership->getStudent();
+            });
+
+        $exams = $this->examRepository->findAllByDateAndLesson($dateTime, $lesson);
+        $absentStudents = [ ];
+
+        foreach($exams as $exam) {
+            foreach ($exam->getStudents() as $examStudent) {
+                foreach ($lessonStudents as $lessonStudent) {
+                    if ($examStudent->getId() === $lessonStudent->getId()) {
+                        $absentStudents[] = new AbsentExamStudent($lessonStudent, $exam);
+                    }
+                }
+            }
+        }
+
+        return $absentStudents;
     }
 
 }

@@ -2,23 +2,30 @@
 
 namespace App\Dashboard;
 
-use App\Entity\Exam;
-use App\Entity\Student;
-use App\Entity\StudyGroupMembership;
 use App\Entity\TimetableLesson;
 
 class LessonViewItem extends AbstractViewItem {
 
+    private $isOutdated;
     private $lesson;
-    private $exams;
+    private $absentStudents = [ ];
 
     /**
      * @param TimetableLesson $lesson
-     * @param Exam[] $exams
+     * @param AbsentStudent[] $absentStudents
+     * @param bool $isOutdated
      */
-    public function __construct(TimetableLesson $lesson, array $exams) {
+    public function __construct(TimetableLesson $lesson, array $absentStudents, bool $isOutdated) {
         $this->lesson = $lesson;
-        $this->exams = $exams;
+        $this->absentStudents = $absentStudents;
+        $this->isOutdated = $isOutdated;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOutdated(): bool {
+        return $this->isOutdated;
     }
 
     /**
@@ -29,42 +36,10 @@ class LessonViewItem extends AbstractViewItem {
     }
 
     /**
-     * Returns the affected students of an exam which takes place during this lesson
-     *
-     * @param Exam $exam
-     * @return Student[]
+     * @return AbsentStudent[]
      */
-    public function getAffectedExamStudents(Exam $exam): array {
-        if(!in_array($exam, $this->exams)) {
-            throw new \InvalidArgumentException('Given exam must be in the exams array.');
-        }
-
-        $lessonStudents = $this->lesson
-            ->getTuition()
-            ->getStudyGroup()
-            ->getMemberships()
-            ->map(function (StudyGroupMembership $membership) {
-                return $membership->getStudent();
-            });
-
-        $affectedStudents = [ ];
-
-        foreach($exam->getStudents() as $examStudent) {
-            foreach($lessonStudents as $lessonStudent) {
-                if($examStudent->getId() === $lessonStudent->getId()) {
-                    $affectedStudents[] = $examStudent;
-                }
-            }
-        }
-
-        return  $affectedStudents;
-    }
-
-    /**
-     * @return Exam[]
-     */
-    public function getExams(): array {
-        return $this->exams;
+    public function getAbsentStudents(): array {
+        return $this->absentStudents;
     }
 
     public function getBlockName(): string {

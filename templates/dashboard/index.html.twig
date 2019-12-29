@@ -1,4 +1,5 @@
 {% extends "main.html.twig" %}
+{% import "dashboard/widgets.html.twig" as dashboard %}
 
 {% block title %}{{ 'dashboard.label'|trans }}{% endblock %}
 
@@ -62,7 +63,37 @@
 
             {# Loop lessons #}
             {% for lesson in view.lessons %}
-                <h3>{{ 'dashboard.lesson'|trans({'%lesson%': lesson }) }}</h3>
+                {% if view.itemsBefore(lesson)|length > 0 %}
+                    <h3>{{ 'dashboard.before_lesson'|trans({'%lesson%': lesson }) }}</h3>
+
+                    {% for item in view.items(lesson) %}
+                        {% set type = item.blockName %}
+
+                        {% if type == 'supervision' %}
+                            {{ dashboard.supervision(item) }}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                {% if view.items(lesson)|length > 0 %}
+                    <h3>{{ 'dashboard.lesson'|trans({'%lesson%': lesson }) }}</h3>
+
+                    {% for item in view.items(lesson) %}
+                        {% set type = item.blockName %}
+
+                        {% if type == 'exam' %}
+                            {{ dashboard.exam(item) }}
+                        {% elseif type == 'lesson' %}
+                            {{ dashboard.lesson(item) }}
+                        {% elseif type == 'supervision' %}
+                            {{ dashboard.supervision(item) }}
+                        {% elseif type == 'substitution' %}
+                            {{ dashboard.substitution(item) }}
+                        {% elseif type == 'appointment' %}
+                            {{ dashboard.appointment(item) }}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             {% endfor %}
         </div>
     </div>

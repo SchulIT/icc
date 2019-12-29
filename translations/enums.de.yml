@@ -29,3 +29,7 @@ user_type:
   intern: Praktikanten
   staff: Mitarbeiter
   user: Benutzer
+
+absence_reason:
+  exam: Klausur
+  other: Anderer Grund

@@ -163,3 +163,7 @@ services:
     App\Converter\EnumStringConverter:
         bind:
             $enumFormKeyMapping: '%fervo_enum.enum_map%'
+
+    # DOCTRINE:
+    Doctrine\Persistence\ManagerRegistry:
+        alias: 'doctrine'

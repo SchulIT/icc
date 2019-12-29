@@ -10,7 +10,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class ExamRepository extends AbstractTransactionalRepository implements ExamRepositoryInterface {
 
-    private function getDefaultQueryBuilder(\DateTime $today = null): QueryBuilder {
+    private function getDefaultQueryBuilder(\DateTime $today = null, bool $onlyToday = false): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
 
         $qb
@@ -26,8 +26,13 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->leftJoin('sg.grades', 'g');
 
         if($today !== null) {
-            $qb->where('e.date > :today')
-                ->setParameter('today', $today);
+            $qb->setParameter('today', $today);
+
+            if($onlyToday === true) {
+                $qb->where('e.date = :today');
+            } else {
+                $qb->where('e.date > :today');
+            }
         }
 
         return $qb;
@@ -79,8 +84,8 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByTeacher(Teacher $teacher, ?\DateTime $today = null) {
-        $qb = $this->getDefaultQueryBuilder($today);
+    public function findAllByTeacher(Teacher $teacher, ?\DateTime $today = null, bool $onlyToday = false) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
@@ -88,7 +93,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->leftJoin('eInner.invigilators', 'iInner')
             ->leftJoin('eInner.tuitions', 'tInner')
             ->leftJoin('tInner.additionalTeachers', 'teacherInner')
-            ->where(
+            ->andWhere(
                 $qb->expr()->orX(
                     'teacherInner.id = :teacher',
                     'iInner.teacher = :teacher',
@@ -106,8 +111,8 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByStudents(array $students, ?\DateTime $today = null) {
-        $qb = $this->getDefaultQueryBuilder($today);
+    public function findAllByStudents(array $students, ?\DateTime $today = null, bool $onlyToday = false) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday);
 
         $studentIds = array_map(function(Student $student) {
             return $student->getId();
@@ -131,8 +136,8 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByGrade(Grade $grade, ?\DateTime $today = null) {
-        $qb = $this->getDefaultQueryBuilder($today);
+    public function findAllByGrade(Grade $grade, ?\DateTime $today = null, bool $onlyToday = false) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
@@ -153,7 +158,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
      * @inheritDoc
      */
     public function findAllByDateAndLesson(\DateTime $today, int $lesson): array {
-        $qb = $this->getDefaultQueryBuilder($today);
+        $qb = $this->getDefaultQueryBuilder($today, true);
 
         $qb
             ->andWhere('e.lessonStart <= :lesson AND e.lessonEnd >= :lesson')

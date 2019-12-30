@@ -41,7 +41,7 @@ class Sorter {
             throw new ServiceNotFoundException($strategyService);
         }
 
-        usort($array, [ $strategy, 'compare' ]);
+        uasort($array, [ $strategy, 'compare' ]);
 
         if(SortDirection::Descending()->equals($direction)) {
             $array = array_reverse($array);

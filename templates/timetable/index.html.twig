@@ -96,7 +96,7 @@
                                 <thead>
                                 <th>{{ 'label.lesson'|trans }}</th>
                                 {% for day in week.days %}
-                                    <th{% if day.isCurrentDay %} class="current" {% endif %}>{{ day.day|weekday }} {% if day.isCurrentDay %}<span class="badge badge-secondary">heute</span>{% endif %}</th>
+                                    <th{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %}>{{ day.day|weekday }} {% if day.isCurrentDay %}<span class="badge badge-secondary">{{ 'plans.timetable.today'|trans }}</span>{% endif %}{% if day.isUpcomingDay %}<span class="badge badge-secondary">{{ 'plans.timetable.upcoming'|trans }}</span>{% endif %}</th>
                                 {% endfor %}
                                 </thead>
 

@@ -170,6 +170,9 @@ plans:
         title: "Stundenplan für %name%"
         print:
             date: "gedruckt am %date%"
+        today: heute
+        upcoming: demnächst
+
     substitutions:
         label: Vertretungsplan
         view:

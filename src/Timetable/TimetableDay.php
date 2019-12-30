@@ -16,14 +16,18 @@ class TimetableDay {
      */
     private $isCurrentDay;
 
+    /** @var bool Flag whether this is the upcoming day when viewing timetable on weekends */
+    private $isUpcomingDay;
+
     /**
      * @var TimetableLesson[]
      */
     private $lessons = [ ];
 
-    public function __construct(int $day, bool $isCurrentDay) {
+    public function __construct(int $day, bool $isCurrentDay, bool $isUpcomingDay) {
         $this->day = $day;
         $this->isCurrentDay = $isCurrentDay;
+        $this->isUpcomingDay = $isUpcomingDay;
     }
 
     /**
@@ -38,6 +42,13 @@ class TimetableDay {
      */
     public function isCurrentDay(): bool {
         return $this->isCurrentDay;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUpcomingDay(): bool {
+        return $this->isUpcomingDay;
     }
 
     /**

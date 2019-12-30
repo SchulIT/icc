@@ -135,7 +135,7 @@ class TimetableHelper {
         });
 
         for($i = 1; $i <= 5; $i++) {
-            $day = $this->makeTimetableDay($i, $this->isCurrentDay($week, $numberWeeks, $i), $lessons, $supervision);
+            $day = $this->makeTimetableDay($i, $this->isCurrentDay($week, $numberWeeks, $i), $this->isUpcomingDay($week, $numberWeeks, $i), $lessons, $supervision);
             $timetableWeek->days[$i] = $day;
         }
 
@@ -157,12 +157,13 @@ class TimetableHelper {
     /**
      * @param int $day
      * @param bool $isCurrentDay
+     * @param bool $isUpcomingDay
      * @param TimetableLessonEntity[] $lessons
      * @param TimetableSupervision[] $supervision
      * @return TimetableDay
      */
-    private function makeTimetableDay(int $day, bool $isCurrentDay, array $lessons, array $supervision) {
-        $timetableDay = new TimetableDay($day, $isCurrentDay);
+    private function makeTimetableDay(int $day, bool $isCurrentDay, bool $isUpcomingDay, array $lessons, array $supervision) {
+        $timetableDay = new TimetableDay($day, $isCurrentDay, $isUpcomingDay);
 
         /** @var TimetableLessonEntity[] $lessons */
         $lessons = array_filter($lessons, function(TimetableLessonEntity $lesson) use ($day) {
@@ -198,5 +199,33 @@ class TimetableHelper {
 
         return $weekNumber % $numberWeeks === $week->getWeekMod()
             && $dayNumber === $day;
+    }
+
+    /**
+     * @param TimetableWeekEntity $week
+     * @param int $numberWeeks
+     * @param int $day
+     * @return bool
+     */
+    private function isUpcomingDay(TimetableWeekEntity $week, int $numberWeeks, int $day) {
+        $today = $this->dateHelper->getToday();
+
+        if($this->isWeekend($today) === false) {
+            return false;
+        }
+
+        while($this->isWeekend($today)) {
+            $today = $today->modify('+1 day');
+        }
+
+        $weekNumber = (int)$today->format('W');
+        $dayNumber = (int)$today->format('w');
+
+        return $weekNumber % $numberWeeks === $week->getWeekMod()
+            && $dayNumber === $day;
+    }
+
+    private function isWeekend(\DateTime $dateTime): bool {
+        return $dateTime->format('w') === 0 || $dateTime->format('w') === 6;
     }
 }

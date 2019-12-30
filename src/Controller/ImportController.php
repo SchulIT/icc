@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Import\AbsenceImportStrategy;
 use App\Import\AppointmentCategoriesImportStrategy;
 use App\Import\AppointmentsImportStrategy;
 use App\Import\ExamsImportStrategy;
@@ -21,6 +22,7 @@ use App\Import\TimetablePeriodsImportStrategy;
 use App\Import\TimetableSupervisionsImportStrategy;
 use App\Import\TuitionsImportStrategy;
 use App\Repository\InfotextRepositoryInterface;
+use App\Request\Data\AbsencesData;
 use App\Request\Data\AppointmentCategoriesData;
 use App\Request\Data\AppointmentsData;
 use App\Request\Data\ExamsData;
@@ -233,7 +235,7 @@ class ImportController extends AbstractController {
      */
     public function gradeTeachers(GradeTeachersData $gradeTeachersData, GradeTeachersImportStrategy $strategy): Response {
         try {
-            $result = $this->importer->importRelations($gradeTeachersData->getGradeTeachers(), $strategy);
+            $result = $this->importer->replaceImport($gradeTeachersData->getGradeTeachers(), $strategy);
             return $this->fromResult($result);
         } catch (Exception $e) {
             return $this->fromException($e);
@@ -323,7 +325,7 @@ class ImportController extends AbstractController {
      */
     public function studyGroupsMemberships(StudyGroupMembershipsData $membershipsData, StudyGroupMembershipImportStrategy $strategy): Response {
         try {
-            $result = $this->importer->importRelations($membershipsData->getMemberships(), $strategy);
+            $result = $this->importer->replaceImport($membershipsData->getMemberships(), $strategy);
             return $this->fromResult($result);
         } catch (Exception $e) {
             return $this->fromException($e);
@@ -563,10 +565,11 @@ class ImportController extends AbstractController {
      */
     public function infotexts(InfotextsData $infotextsData, InfotextsImportStrategy $strategy): Response {
         try {
-            $result = $this->importer->importRelations($infotextsData->getInfotexts(), $strategy);
+            $result = $this->importer->replaceImport($infotextsData->getInfotexts(), $strategy);
             return $this->fromResult($result);
         } catch(Exception $e) {
             return $this->fromException($e);
         }
     }
+    
 }

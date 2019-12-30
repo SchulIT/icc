@@ -5,9 +5,9 @@ namespace App\Import;
 use App\Entity\Infotext;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\InfotextsData;
+use App\Request\Data\InfotextData;
 
-class InfotextsImportStrategy implements RelationsImportStrategyInterface {
+class InfotextsImportStrategy implements ReplaceImportStrategyInterface {
 
     private $repository;
 
@@ -24,15 +24,13 @@ class InfotextsImportStrategy implements RelationsImportStrategyInterface {
     }
 
     /**
-     * @param InfotextsData $data
+     * @param InfotextData $data
      */
     public function persist($data): void {
-        foreach($data->getInfotexts() as $data) {
-            $infotext = (new Infotext())
-                ->setContent($data->getContent())
-                ->setDate($data->getDate());
+        $infotext = (new Infotext())
+            ->setContent($data->getContent())
+            ->setDate($data->getDate());
 
-            $this->repository->persist($infotext);
-        }
+        $this->repository->persist($infotext);
     }
 }

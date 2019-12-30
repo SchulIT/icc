@@ -10,7 +10,7 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\GradeTeacherData;
 
-class GradeTeachersImportStrategy implements RelationsImportStrategyInterface {
+class GradeTeachersImportStrategy implements ReplaceImportStrategyInterface {
 
     private $gradeTeacherRepository;
     private $gradeRepository;

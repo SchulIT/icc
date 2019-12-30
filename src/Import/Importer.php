@@ -52,10 +52,10 @@ class Importer {
 
     /**
      * @param array $data
-     * @param RelationsImportStrategyInterface $strategy
+     * @param ReplaceImportStrategyInterface $strategy
      * @return ImportResult
      */
-    public function importRelations($data, RelationsImportStrategyInterface $strategy): ImportResult {
+    public function replaceImport($data, ReplaceImportStrategyInterface $strategy): ImportResult {
         $repository = $strategy->getRepository();
         $repository->beginTransaction();
 

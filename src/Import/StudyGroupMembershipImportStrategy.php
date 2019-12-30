@@ -9,7 +9,7 @@ use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\StudyGroupMembershipData;
 
-class StudyGroupMembershipImportStrategy implements RelationsImportStrategyInterface {
+class StudyGroupMembershipImportStrategy implements ReplaceImportStrategyInterface {
 
     private $studyGroupMembershipRepository;
     private $studyGroupRepository;

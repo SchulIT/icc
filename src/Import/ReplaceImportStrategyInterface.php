@@ -4,7 +4,7 @@ namespace App\Import;
 
 use App\Repository\TransactionalRepositoryInterface;
 
-interface RelationsImportStrategyInterface {
+interface ReplaceImportStrategyInterface {
 
     public function getRepository(): TransactionalRepositoryInterface;
 

@@ -1,3 +1,4 @@
+{% set showDate = showDate|default(false) %}
 <div class="card">
     <div class="card-body">
         <div class="row no-gutters">
@@ -13,6 +14,7 @@
             <p class="col">
                 <strong>{{ 'plans.exams.time'|trans }}:</strong>
                 {{ 'label.exam_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
+                {% if showDate %}<i class="fa fa-calendar"></i> {{ exam.date|format_date }}{% endif %}
             </p>
             <p class="col">
                 <strong>{{ 'label.room'|trans }}:</strong>

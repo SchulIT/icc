@@ -1,9 +1,100 @@
 {% extends "main.html.twig" %}
+{% import "dashboard/widgets.html.twig" as dashboard %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}{{ 'dashboard.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">{{ 'dashboard.label'|trans }}</li>
+    </ol>
+{% endblock %}
 
 {% block content %}
-    <div class="contentbox">
-        <h2>{{ 'dashboard.welcome'|trans({ '%firstname%': user.firstname, '%lastname%': user.lastname }) }}</h2>
+    {% set currentFilter = { studentId: studentFilter.currentStudent ? studentFilter.currentStudent.id : null, teacherAcronym: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.acronym : null } %}
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.id %}
+                {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
+
+                {% if teacherFilter.teachers|length > 0 %}
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        {% include "_filter/teacher.html.twig" with { params: {} } %}
+                    </div>
+                {% endif %}
+
+                {% if studentFilter.studentGradeGroups|length > 0 %}
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        {% include "_filter/student.html.twig" with { params: { userType: userTypeParam } } %}
+                    </div>
+                {% endif %}
+
+                {% if userTypeFilter.types|length > 0 %}
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        {% include "_filter/user_type.html.twig" with { params: { studentId: studentParam } } %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                {% for day in days %}
+                    <li class="nav-item">
+                        <a class="nav-link{% if selectedDate == day %} active{% endif %}" href="{{ path('dashboard', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
+                            <i class="fa fa-calendar"></i> {{ day.format('w')|weekday }}
+                            <div class="text-muted">{{ day.format('d.m.Y') }}</div>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="card-body">
+            {# Messages #}
+            {% for message in view.messages %}
+                {% include "_includes/message.html.twig" with { message: message } only %}
+            {% endfor %}
+
+            {# Daily infos (TODO) #}
+
+            {# Loop lessons #}
+            {% for lesson in view.lessons %}
+                {% if view.itemsBefore(lesson)|length > 0 %}
+                    <h3>{{ 'dashboard.before_lesson'|trans({'%lesson%': lesson }) }}</h3>
+
+                    {% for item in view.items(lesson) %}
+                        {% set type = item.blockName %}
+
+                        {% if type == 'supervision' %}
+                            {{ dashboard.supervision(item) }}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                {% if view.items(lesson)|length > 0 %}
+                    <h3>{{ 'dashboard.lesson'|trans({'%lesson%': lesson }) }}</h3>
+
+                    {% for item in view.items(lesson) %}
+                        {% set type = item.blockName %}
+
+                        {% if type == 'exam' %}
+                            {{ dashboard.exam(item) }}
+                        {% elseif type == 'lesson' %}
+                            {{ dashboard.lesson(item) }}
+                        {% elseif type == 'supervision' %}
+                            {{ dashboard.supervision(item) }}
+                        {% elseif type == 'substitution' %}
+                            {{ dashboard.substitution(item) }}
+                        {% elseif type == 'appointment' %}
+                            {{ dashboard.appointment(item) }}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

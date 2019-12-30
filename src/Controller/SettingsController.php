@@ -8,7 +8,7 @@ use App\Entity\UserType;
 use App\Menu\Builder;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Settings\ExamSettings;
-use App\Settings\SubstitutionSettings;
+use App\Settings\DashboardSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\ArrayUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -239,7 +239,7 @@ class SettingsController extends AbstractController {
     /**
      * @Route("/substitutions", name="admin_settings_substitutions")
      */
-    public function substitutions(Request $request, SubstitutionSettings $substitutionSettings) {
+    public function substitutions(Request $request, DashboardSettings $substitutionSettings) {
         $builder = $this->createFormBuilder();
         $builder
 

@@ -127,6 +127,13 @@ exams:
         exam_description: "Klausur %tuition%"
         tuition: "%name% (%grades%)"
 
+dashboard:
+    lesson: "%lesson%. Stunde"
+    before_lesson: "vor %lesson%. Stunde"
+    absent_students: Abwesend
+    absent_student: "%student% (%reason%)"
+    supervision: Aufsicht
+
 plans:
     label: Pläne
 

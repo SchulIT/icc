@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Import\AbsenceImportStrategy;
+use App\Import\AbsencesImportStrategy;
 use App\Import\AppointmentCategoriesImportStrategy;
 use App\Import\AppointmentsImportStrategy;
 use App\Import\ExamsImportStrategy;
@@ -571,5 +571,34 @@ class ImportController extends AbstractController {
             return $this->fromException($e);
         }
     }
-    
+
+    /**
+     * Imports absences.
+     *
+     * @Route("/absences", methods={"POST"})
+     * @SWG\Post(operationId="import_absences")
+     * @SWG\Parameter(
+     *     name="payload",
+     *     in="body",
+     *     @Model(type=AbsencesData::class)
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Import was successful",
+     *     @Model(type=ImportResponse::class)
+     * )
+     * @SWG\Response(
+     *     response=400,
+     *     description="Import was not successful",
+     *     @Model(type=ErrorResponse::class)
+     * )
+     */
+    public function absences(AbsencesData $absencesData, AbsencesImportStrategy $strategy): Response {
+        try {
+            $result = $this->importer->replaceImport($absencesData->getAbsences(), $strategy);
+            return $this->fromResult($result);
+        } catch(Exception $e) {
+            return $this->fromException($e);
+        }
+    }
 }

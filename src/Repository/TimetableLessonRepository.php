@@ -91,7 +91,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
         $qb = $this->getDefaultQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
-            ->select('lInner')
+            ->select('lInner.id')
             ->from(TimetableLesson::class, 'lInner')
             ->leftJoin('lInner.period', 'pInner')
             ->leftJoin('lInner.tuition', 'tInner')
@@ -122,7 +122,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
         $qb = $this->getDefaultQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
-            ->select('lInner')
+            ->select('lInner.id')
             ->from(TimetableLesson::class, 'lInner')
             ->leftJoin('lInner.period', 'pInner')
             ->where('pInner.id = :period')

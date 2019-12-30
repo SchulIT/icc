@@ -7,6 +7,7 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\Substitution;
 use App\Entity\User;
 use App\Grouping\Grouper;
+use App\Repository\InfotextRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Settings\DashboardSettings;
 use App\Sorting\Sorter;
@@ -28,7 +29,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
     /**
      * @Route("/substitutions", name="substitutions")
      */
-    public function index(SubstitutionRepositoryInterface $substitutionRepository, StudentFilter $studentFilter,
+    public function index(SubstitutionRepositoryInterface $substitutionRepository, InfotextRepositoryInterface $infotextRepository, StudentFilter $studentFilter,
                           GradeFilter $gradeFilter, TeacherFilter $teacherFilter, GroupByParameter $groupByParameter, ViewParameter $viewParameter,
                           Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, DashboardSettings $dashboardSettings,
                           ?string $date, ?int $studentId = null, ?int $gradeId = null, ?string $teacherAcronym = null, ?string $groupBy = null, ?string $view = null) {
@@ -69,6 +70,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
         $viewType = $viewParameter->getViewType($view, $user, static::SectionKey);
 
         return $this->renderWithMessages('substitutions/index.html.twig', [
+            'infotexts' => $infotextRepository->findAllByDate($selectedDate),
             'groups' => $groups,
             'days' => $days,
             'selectedDate' => $selectedDate,

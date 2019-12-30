@@ -9,6 +9,7 @@ use App\Import\GradesImportStrategy;
 use App\Import\GradeTeachersImportStrategy;
 use App\Import\Importer;
 use App\Import\ImportResult;
+use App\Import\InfotextsImportStrategy;
 use App\Import\StudentsImportStrategy;
 use App\Import\StudyGroupImportStrategy;
 use App\Import\StudyGroupMembershipImportStrategy;
@@ -19,11 +20,13 @@ use App\Import\TimetableLessonsImportStrategy;
 use App\Import\TimetablePeriodsImportStrategy;
 use App\Import\TimetableSupervisionsImportStrategy;
 use App\Import\TuitionsImportStrategy;
+use App\Repository\InfotextRepositoryInterface;
 use App\Request\Data\AppointmentCategoriesData;
 use App\Request\Data\AppointmentsData;
 use App\Request\Data\ExamsData;
 use App\Request\Data\GradesData;
 use App\Request\Data\GradeTeachersData;
+use App\Request\Data\InfotextsData;
 use App\Request\Data\StudentsData;
 use App\Request\Data\StudyGroupMembershipsData;
 use App\Request\Data\StudyGroupsData;
@@ -533,6 +536,36 @@ class ImportController extends AbstractController {
             $result = $this->importer->import($tuitionsData->getTuitions(), $strategy);
             return $this->fromResult($result);
         } catch (Exception $e) {
+            return $this->fromException($e);
+        }
+    }
+
+    /**
+     * Imports infotexts.
+     *
+     * @Route("/infotexts", methods={"POST"})
+     * @SWG\Post(operationId="import_infotexts")
+     * @SWG\Parameter(
+     *     name="payload",
+     *     in="body",
+     *     @Model(type=InfotextsData::class)
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Import was successful",
+     *     @Model(type=ImportResponse::class)
+     * )
+     * @SWG\Response(
+     *     response=400,
+     *     description="Import was not successful",
+     *     @Model(type=ErrorResponse::class)
+     * )
+     */
+    public function infotexts(InfotextsData $infotextsData, InfotextsImportStrategy $strategy): Response {
+        try {
+            $result = $this->importer->importRelations($infotextsData->getInfotexts(), $strategy);
+            return $this->fromResult($result);
+        } catch(Exception $e) {
             return $this->fromException($e);
         }
     }

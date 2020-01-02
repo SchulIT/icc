@@ -8,4 +8,5 @@ stof_doctrine_extensions:
             sluggable: true
             sortable: true
             timestampable: true
-            blameable: true # we use a custom BlameListener (@see App\Listener\BlameListener)
+            blameable: true
+            loggable: true

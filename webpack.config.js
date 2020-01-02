@@ -23,6 +23,7 @@ Encore
     .addEntry('editor', './assets/js/editor.js')
     .addEntry('timetable', './assets/css/timetable.scss')
     .addEntry('picker', './assets/js/picker.js')
+    .addEntry('modal', './assets/js/modal.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     //.splitEntryChunks()

@@ -21,6 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     }
  * )
  * @Gedmo\Tree(type="nested")
+ * @Gedmo\Loggable()
  */
 class WikiArticle {
 
@@ -35,6 +36,7 @@ class WikiArticle {
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
+     * @Gedmo\Versioned()
      * @var string
      */
     private $title;
@@ -68,6 +70,7 @@ class WikiArticle {
 
     /**
      * @ORM\Column(type="string")
+     * @Gedmo\Versioned()
      * @Assert\NotBlank()
      * @var string
      */

@@ -92,6 +92,8 @@ label:
     type: Art
     remark: Anmerkung
     confirmed: bestätigt
+    version: Version
+    user: Benutzer
 
 actions:
     add: hinzufügen
@@ -524,6 +526,23 @@ admin:
             label: Wiki-Artikel löschen
             confirm: 'Soll der Wiki-Artikel "%name%" wirklich gelöscht werden?'
             success: Wiki-Artikel erfolgreich gelöscht
+        versions:
+            label: Versionen
+            restore:
+                label: Version wiederherstellen
+                button: wiederherstellen
+                confirm: 'Soll die Version vom %date% wirklich wiederhergestellt werden?'
+                success: Version erfolgreich wiederherstellt
+            show:
+                label: "Version %version%"
+                button: anzeigen
+                info: "Es wird Version %version% vom %date% des Wiki-Artikels angezeigt."
+
+            type:
+                label: Art
+                create: erstellen
+                update: bearbeitet
+                remove: gelöscht
 
     teachers:
         label: Lehrkräfte

@@ -150,6 +150,10 @@
                 <a href="{{ path('edit_wiki_article', { id: article.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
                     <i class="fa fa-edit"></i> {{ 'admin.wiki.edit.label'|trans }}
                 </a>
+
+                <a href="{{ path('wiki_article_versions', { id: article.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
+                    <i class="fa fa-history"></i> {{ 'admin.wiki.versions.label'|trans }}
+                </a>
             {% endif %}
             {% if is_granted('remove', article) %}
                 <a href="{{ path('remove_wiki_article', { id: article.id, ref: 'view' }) }}" class="btn btn-danger btn-sm">

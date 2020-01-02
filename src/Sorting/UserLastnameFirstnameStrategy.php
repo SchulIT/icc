@@ -19,7 +19,7 @@ class UserLastnameFirstnameStrategy implements SortingStrategyInterface {
      */
     public function compare($objectA, $objectB): int {
         // Sort by lastname first
-        if($cmpLastname = $this->stringStrategy->compare($objectA->getLastname(), $objectB->getLastname()) !== 0) {
+        if(0 !== $cmpLastname = $this->stringStrategy->compare($objectA->getLastname(), $objectB->getLastname())) {
             return $cmpLastname;
         }
 

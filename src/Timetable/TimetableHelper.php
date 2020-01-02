@@ -226,6 +226,6 @@ class TimetableHelper {
     }
 
     private function isWeekend(\DateTime $dateTime): bool {
-        return $dateTime->format('w') === 0 || $dateTime->format('w') === 6;
+        return $dateTime->format('w') == 0 || $dateTime->format('w') == 6;
     }
 }

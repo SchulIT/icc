@@ -13,6 +13,7 @@ use App\Sorting\Sorter;
 use App\Utils\RefererHelper;
 use EasySlugger\SluggerInterface;
 use Gedmo\Loggable\Entity\LogEntry;
+use Gedmo\Loggable\Entity\Repository\LogEntryRepository;
 use League\Flysystem\FilesystemInterface;
 use SchoolIT\CommonBundle\Form\ConfirmType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -95,6 +96,7 @@ class WikiAdminController extends AbstractController {
     public function versions(WikiArticle $article, Request $request, Sorter $sorter) {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
 
+        /** @var LogEntryRepository $repo */
         $repo = $this->getDoctrine()->getRepository(LogEntry::class);
         $logs = $repo->getLogEntries($article);
 
@@ -115,6 +117,7 @@ class WikiAdminController extends AbstractController {
     public function version(WikiArticle $article, Request $request, int $version) {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
 
+        /** @var LogEntryRepository $repo */
         $repo = $this->getDoctrine()->getRepository(LogEntry::class);
         $logs = $repo->getLogEntries($article);
 
@@ -156,6 +159,8 @@ class WikiAdminController extends AbstractController {
         }
 
         $em = $this->getDoctrine()->getManager();
+
+        /** @var LogEntryRepository $repo */
         $repo = $em->getRepository(LogEntry::class);
 
         $repo->revert($article, $request->request->get(static::VersionParam));

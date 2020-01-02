@@ -8,5 +8,6 @@ parameters:
 	    - "~Class FervoEnumBundle\\\\Generated\\\\Form\\\\[A-Za-z]+ not found\\.~"
 	excludes_analyse:
 		- '%rootDir%/../../../src/Markdown/*'
+		- '%rootDir%/../../../src/DataFixtures/*'
 	symfony:
 		container_xml_path: '%rootDir%/../../../var/cache/dev/srcApp_KernelDevDebugContainer.xml'

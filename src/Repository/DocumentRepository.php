@@ -103,7 +103,7 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
      * @param Document $document
      */
     public function remove(Document $document): void {
-        $this->em->persist($document);
+        $this->em->remove($document);
         $this->em->flush();
     }
 

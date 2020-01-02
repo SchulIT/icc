@@ -11,10 +11,12 @@ use App\Sorting\AppointmentDateGroupStrategy;
 use App\Sorting\Sorter;
 use App\Utils\RefererHelper;
 use App\View\Filter\AppointmentCategoryFilter;
+use SchoolIT\CommonBundle\Form\ConfirmType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Sorting\AppointmentDateStrategy as AppointmentSortingStrategy;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/admin/appointments")
@@ -95,7 +97,25 @@ class AppointmentAdminController extends AbstractController {
     /**
      * @Route("/{id}/remove", name="remove_appointment")
      */
-    public function remove() {
+    public function remove(Appointment $appointment, Request $request, TranslatorInterface $translator) {
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => $translator->trans('admin.appointments.remove.confirm', [
+                '%name%' => $appointment->getTitle()
+            ])
+        ]);
+        $form->handleRequest($request);
 
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($appointment);
+
+            $this->addFlash('success', 'admin.appointments.remove.success');
+
+            return $this->redirectToRoute('admin_appointments');
+        }
+
+        return $this->render('admin/appointments/remove.html.twig', [
+            'form' => $form->createView(),
+            'appointment' => $appointment
+        ]);
     }
 }

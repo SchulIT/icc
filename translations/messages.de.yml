@@ -524,7 +524,7 @@ admin:
             success: Wiki-Artikel erfolgreich aktualisiert
         remove:
             label: Wiki-Artikel löschen
-            confirm: 'Soll der Wiki-Artikel "%name%" wirklich gelöscht werden?'
+            confirm: 'Soll der Wiki-Artikel "%name%" (inkl. aller Unter-Artikel) wirklich gelöscht werden?'
             success: Wiki-Artikel erfolgreich gelöscht
         versions:
             label: Versionen
@@ -597,3 +597,7 @@ profile:
             label: Verbundene App trennen
             confirm: 'Soll die verbundene App "%name%" wirklich gelöscht werden? Anschließend ist der Zugriff der App auf das ICC nicht mehr möglich.'
             success: Verbundene App erfolgreich gelöscht
+
+remove:
+    header: Löschen bestätigen
+    confirm: Ja, löschen

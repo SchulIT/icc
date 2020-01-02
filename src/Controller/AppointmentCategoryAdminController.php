@@ -2,15 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
 use App\Form\AppointmentCategoryType;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Sorting\AppointmentCategoryStrategy;
 use App\Sorting\Sorter;
 use App\Utils\RefererHelper;
+use SchoolIT\CommonBundle\Form\ConfirmType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/admin/appointments/categories")
@@ -83,7 +86,25 @@ class AppointmentCategoryAdminController extends AbstractController {
     /**
      * @Route("/{id}/remove", name="remove_appointment_category")
      */
-    public function remove() {
+    public function remove(AppointmentCategory $category, Request $request, TranslatorInterface $translator) {
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => $translator->trans('admin.appointments.categories.remove.confirm', [
+                '%name%' => $category->getName()
+            ])
+        ]);
+        $form->handleRequest($request);
 
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($category);
+
+            $this->addFlash('success', 'admin.appointments.categories.remove.success');
+
+            return $this->redirectToRoute('admin_appointment_categories');
+        }
+
+        return $this->render('admin/appointments/categories/remove.html.twig', [
+            'form' => $form->createView(),
+            'category' => $category
+        ]);
     }
 }

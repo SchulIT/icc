@@ -8,12 +8,15 @@ use App\Grouping\Grouper;
 use App\Grouping\MessageExpirationGroup;
 use App\Grouping\MessageExpirationStrategy;
 use App\Repository\MessageRepositoryInterface;
+use App\Security\Voter\MessageVoter;
 use App\Sorting\Sorter;
 use App\Utils\RefererHelper;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\Common\Collections\ArrayCollection;
+use SchoolIT\CommonBundle\Form\ConfirmType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/admin/messages")
@@ -100,6 +103,33 @@ class MessageAdminController extends AbstractController {
         }
 
         return $this->render('admin/messages/edit.html.twig', [
+            'form' => $form->createView(),
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/remove", name="remove_message")
+     */
+    public function remove(Message $message, Request $request, TranslatorInterface $translator) {
+        $this->denyAccessUnlessGranted(MessageVoter::Remove, $message);
+
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => $translator->trans('admin.messages.remove.confirm', [
+                '%name%' => $message->getTitle()
+            ])
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($message);
+
+            $this->addFlash('success', 'admin.messages.remove.success');
+
+            return $this->redirectToRoute('admin_messages');
+        }
+
+        return $this->render('admin/messages/remove.html.twig', [
             'form' => $form->createView(),
             'message' => $message
         ]);

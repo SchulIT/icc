@@ -6,9 +6,11 @@ use App\Entity\TeacherTag;
 use App\Form\TeacherTagType;
 use App\Repository\TeacherTagRepositoryInterface;
 use App\Utils\RefererHelper;
+use SchoolIT\CommonBundle\Form\ConfirmType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/admin/teachers/tags")
@@ -75,7 +77,25 @@ class TeacherTagAdminController extends AbstractController {
     /**
      * @Route("/{id}/remove", name="remove_teacher_tag")
      */
-    public function remove() {
+    public function remove(TeacherTag $tag, Request $request, TranslatorInterface $translator) {
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => $translator->trans('admin.teachers.tags.remove.confirm', [
+                '%name%' => $tag->getName()
+            ])
+        ]);
+        $form->handleRequest($request);
 
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($tag);
+
+            $this->addFlash('success', 'admin.teachers.tags.remove.success');
+
+            return $this->redirectToRoute('admin_teacher_tags');
+        }
+
+        return $this->render('admin/teachers/tags/remove.html.twig', [
+            'form' => $form->createView(),
+            'tag' => $tag
+        ]);
     }
 }

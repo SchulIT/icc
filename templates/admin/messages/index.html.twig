@@ -52,7 +52,7 @@
                                 {% endif %}
                             {% endif %}
                             {% if is_granted('remove', message) %}
-                                <a href="#" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                <a href="{{ path('remove_message', { id: message.id }) }}" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
                             {% endif %}
                         </td>
                     </tr>

@@ -120,7 +120,7 @@
             </a>
         {% endif %}
         {% if is_granted('remove', message) %}
-            <a href="#" class="btn btn-danger btn-sm">
+            <a href="{{ path('remove_message', { id: message.id, ref: 'view' })}}" class="btn btn-danger btn-sm">
                 <i class="fa fa-trash"></i> {{ 'admin.messages.remove.label'|trans }}
             </a>
         {% endif %}

@@ -8,9 +8,11 @@ use App\Repository\DocumentCategoryRepositoryInterface;
 use App\Sorting\DocumentCategoryNameStrategy;
 use App\Sorting\Sorter;
 use App\Utils\RefererHelper;
+use SchoolIT\CommonBundle\Form\ConfirmType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/admin/documents/categories")
@@ -82,7 +84,25 @@ class DocumentCategoryAdminController extends AbstractController {
     /**
      * @Route("/{id}/remove", name="admin_remove_document_category")
      */
-    public function remove(DocumentCategory $category, Request $request) {
+    public function remove(DocumentCategory $category, Request $request, TranslatorInterface $translator) {
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => $translator->trans('admin.documents.categories.remove.confirm', [
+                '%name%' => $category->getName()
+            ])
+        ]);
+        $form->handleRequest($request);
 
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($category);
+
+            $this->addFlash('success', 'admin.documents.categories.remove.success');
+
+            return $this->redirectToRoute('admin_document_categories');
+        }
+
+        return $this->render('admin/documents/categories/remove.html.twig', [
+            'form' => $form->createView(),
+            'category' => $category
+        ]);
     }
 }

@@ -2,15 +2,18 @@
 
 namespace App\Controller;
 
+use App\Converter\TeacherStringConverter;
 use App\Entity\Teacher;
 use App\Form\TeacherType;
 use App\Repository\TeacherRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\TeacherStrategy;
 use App\Utils\RefererHelper;
+use SchoolIT\CommonBundle\Form\ConfirmType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/admin/teachers")
@@ -82,7 +85,25 @@ class TeacherAdminController extends AbstractController {
     /**
      * @Route("/{id}/remove", name="remove_teacher")
      */
-    public function remove(Teacher $teacher, Request $request) {
+    public function remove(Teacher $teacher, Request $request, TranslatorInterface $translator, TeacherStringConverter $teacherStringConverter) {
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => $translator->trans('admin.teachers.remove.confirm', [
+                '%name%' => $teacherStringConverter->convert($teacher)
+            ])
+        ]);
+        $form->handleRequest($request);
 
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($teacher);
+
+            $this->addFlash('success', 'admin.teachers.remove.success');
+
+            return $this->redirectToRoute('admin_teachers');
+        }
+
+        return $this->render('admin/teachers/remove.html.twig', [
+            'form' => $form->createView(),
+            'teacher' => $teacher
+        ]);
     }
 }

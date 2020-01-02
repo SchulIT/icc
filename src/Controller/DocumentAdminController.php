@@ -12,8 +12,10 @@ use App\Sorting\DocumentCategoryStrategy as DocumentCategorySortingStrategy;
 use App\Sorting\DocumentNameStrategy;
 use App\Sorting\Sorter;
 use App\Utils\RefererHelper;
+use SchoolIT\CommonBundle\Form\ConfirmType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/admin/documents")
@@ -95,7 +97,27 @@ class DocumentAdminController extends AbstractController {
     /**
      * @Route("/{id}/remove", name="admin_remove_document")
      */
-    public function remove(Document $document, Request $request) {
+    public function remove(Document $document, Request $request, TranslatorInterface $translator) {
         $this->denyAccessUnlessGranted(DocumentVoter::Remove, $document);
+
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => $translator->trans('admin.documents.remove.confirm', [
+                '%name%' => $document->getTitle()
+            ])
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($document);
+
+            $this->addFlash('success', 'admin.documents.remove.success');
+
+            return $this->redirectToRoute('admin_documents');
+        }
+
+        return $this->render('admin/documents/remove.html.twig', [
+            'form' => $form->createView(),
+            'document' => $document
+        ]);
     }
 }

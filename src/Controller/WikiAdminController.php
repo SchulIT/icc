@@ -14,6 +14,7 @@ use App\Utils\RefererHelper;
 use EasySlugger\SluggerInterface;
 use Gedmo\Loggable\Entity\LogEntry;
 use League\Flysystem\FilesystemInterface;
+use SchoolIT\CommonBundle\Form\ConfirmType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -172,8 +173,30 @@ class WikiAdminController extends AbstractController {
     /**
      * @Route("/{id}/remove", name="remove_wiki_article")
      */
-    public function remove() {
+    public function remove(WikiArticle $article, Request $request, TranslatorInterface $translator) {
+        $this->denyAccessUnlessGranted(WikiVoter::Remove, $article);
 
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => $translator->trans('admin.wiki.remove.confirm', [
+                '%name%' => $article->getTitle()
+            ])
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($article);
+
+            $this->addFlash('success', 'admin.wiki.remove.success');
+
+            return $this->redirectToRoute('admin_wiki', [
+                'id' => $article->getParent() !== null ? $article->getParent()->getId() : null
+            ]);
+        }
+
+        return $this->render('admin/wiki/remove.html.twig', [
+            'form' => $form->createView(),
+            'article' => $article
+        ]);
     }
 
     /**

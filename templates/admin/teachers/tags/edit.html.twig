@@ -12,6 +12,7 @@
         <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin_teachers') }}">{{ 'admin.teachers.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin_teacher_tags') }}">{{ 'admin.teachers.tags.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ tag.name }}</li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}

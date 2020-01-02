@@ -5,6 +5,7 @@ namespace App\View\Filter;
 use App\Entity\Room;
 use App\Repository\RoomRepositoryInterface;
 use App\Sorting\RoomNameStrategy;
+use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
 use App\Utils\ArrayUtils;
 
@@ -24,7 +25,7 @@ class RoomFilter {
                 return $room->getId();
             }
         );
-        $this->sorter->sort($rooms, RoomNameStrategy::class);
+        $this->sorter->sort($rooms, RoomNameStrategy::class, SortDirection::Ascending(), true);
 
         $room = $roomId !== null ?
             $rooms[$roomId] ?? null : null;

@@ -33,15 +33,20 @@ class Sorter {
      * @param array $array
      * @param string $strategyService
      * @param SortDirection|null $direction
+     * @param bool $keepIndices
      */
-    public function sort(array &$array, string $strategyService, SortDirection $direction = null) {
+    public function sort(array &$array, string $strategyService, SortDirection $direction = null, bool $keepIndices = false) {
         $strategy = $this->strategies[$strategyService] ?? null;
 
         if($strategy === null) {
             throw new ServiceNotFoundException($strategyService);
         }
 
-        uasort($array, [ $strategy, 'compare' ]);
+        if($keepIndices === true) {
+            uasort($array, [$strategy, 'compare']);
+        } else {
+            usort($array, [$strategy, 'compare']);
+        }
 
         if(SortDirection::Descending()->equals($direction)) {
             $array = array_reverse($array);

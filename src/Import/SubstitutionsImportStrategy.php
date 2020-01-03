@@ -4,6 +4,7 @@ namespace App\Import;
 
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
+use App\Entity\Teacher;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
@@ -73,25 +74,25 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
      * @throws ImportException
      */
     public function updateEntity($entity, $data): void {
-        if($data->getTeacher() !== null) {
-            $teacher = $this->teacherRepository->findOneByExternalId($data->getTeacher());
+        $teacherIdSelector = function(Teacher $teacher) {
+            return $teacher->getId();
+        };
 
-            if($teacher === null) {
-                throw new ImportException(sprintf('Teacher with ID "%s" on substitution with ID "%s" was not found.', $data->getTeacher(), $data->getId()));
-            }
+        $teachers = $this->teacherRepository->findAllByExternalId($data->getTeachers());
 
-            $entity->setTeacher($teacher);
+        if(count($teachers) !== count($data->getTeachers())) {
+            $this->throwMissingTeacher($data->getTeachers(), $teachers, $data->getId());
         }
 
-        if($data->getReplacementTeacher() !== null) {
-            $teacher = $this->teacherRepository->findOneByExternalId($data->getReplacementTeacher());
+        CollectionUtils::synchronize($entity->getTeachers(), $teachers, $teacherIdSelector);
 
-            if($teacher === null) {
-                throw new ImportException(sprintf('Replacement teacher with ID "%s" on substitution with ID "%s" was not found.', $data->getTeacher(), $data->getId()));
-            }
+        $replacementTeachers = $this->teacherRepository->findAllByExternalId($data->getReplacementTeachers());
 
-            $entity->setReplacementTeacher($teacher);
+        if(count($replacementTeachers) !== count($data->getReplacementTeachers())) {
+            $this->throwMissingTeacher($data->getReplacementTeachers(), $replacementTeachers, $data->getId());
         }
+
+        CollectionUtils::synchronize($entity->getTeachers(), $teachers, $teacherIdSelector);
 
         $entity->setDate($data->getDate());
         $entity->setLessonStart($data->getLessonStart());
@@ -167,6 +168,24 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
         foreach($studyGroups as $studyGroup) {
             if(!in_array($studyGroup, $foundStudyGroupIds)) {
                 throw new ImportException(sprintf('Study group "%s" on substitution ID "%s" was not found.', $studyGroup, $substitutionId));
+            }
+        }
+    }
+
+    /**
+     * @param string[] $teachers
+     * @param Teacher[] $foundTeachers
+     * @param string $substitutionId
+     * @throws ImportException
+     */
+    private function throwMissingTeacher(array $teachers, array $foundTeachers, string $substitutionId) {
+        $foundTeacherExternalIds = array_map(function(Teacher $teacher) {
+            return $teacher->getExternalId();
+        }, $foundTeachers);
+
+        foreach($teachers as $teacher) {
+            if(!in_array($teacher, $foundTeacherExternalIds)) {
+                throw new ImportException(sprintf('Teacher "%s" on substitution ID "%s" was not found.', $teacher, $substitutionId));
             }
         }
     }

@@ -14,6 +14,7 @@ use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\User;
+use Doctrine\Common\Collections\Collection;
 use MyCLabs\Enum\Enum;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -46,6 +47,7 @@ class AppExtension extends AbstractExtension {
     public function getFilters() {
         return [
             new TwigFilter('teacher', [ $this, 'teacher' ]),
+            new TwigFilter('teachers', [ $this, 'teachers' ]),
             new TwigFilter('student', [ $this, 'student' ]),
             new TwigFilter('user', [ $this, 'user' ]),
             new TwigFilter('studygroup', [$this, 'studyGroup']),
@@ -58,6 +60,21 @@ class AppExtension extends AbstractExtension {
 
     public function teacher(?Teacher $teacher, bool $includeAcronym = false) {
         return $this->teacherConverter->convert($teacher, $includeAcronym);
+    }
+
+    /**
+     * @param Teacher[]|Collection<Teacher> $teachers
+     * @param bool $includeAcronyms
+     * @return string
+     */
+    public function teachers(iterable $teachers, bool $includeAcronyms = false) {
+        if($teachers instanceof Collection) {
+            $teachers = $teachers->toArray();
+        }
+
+        return implode(', ', array_map(function(Teacher $teacher) use ($includeAcronyms) {
+            return $this->teacherConverter->convert($teacher, $includeAcronyms);
+        }, $teachers));
     }
 
     public function student(Student $student) {

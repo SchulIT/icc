@@ -43,8 +43,17 @@ class SubstitutionFixtures extends Fixture implements DependentFixtureInterface 
                     ->setDate($this->generator->randomElement($dates))
                     ->setSubject($this->generator->randomElement($subjects))
                     ->setType($this->generator->randomElement($types))
-                    ->setTeacher($this->generator->randomElement($teachers))
                     ->setExternalId(sprintf('substitution-%d', $id));
+
+                $substitution->addTeacher($this->generator->randomElement($teachers));
+
+                if($this->generator->boolean) {
+                    $teacher = $this->generator->randomElement($teachers);
+
+                    if(!$substitution->getTeachers()->contains($teacher)) {
+                        $substitution->addTeacher($teacher);
+                    }
+                }
 
                 if($this->generator->boolean) {
                     $substitution->setRoom($this->generator->randomElement($rooms));
@@ -58,8 +67,8 @@ class SubstitutionFixtures extends Fixture implements DependentFixtureInterface 
                     $substitution->setReplacementSubject($this->generator->randomElement($subjects));
                 }
 
-                if($this->generator->boolean) {
-                    $substitution->setReplacementTeacher($this->generator->randomElement($teachers));
+                if($this->generator->boolean(70)) {
+                    $substitution->addReplacementTeacher($this->generator->randomElement($teachers));
                 }
 
                 if($this->generator->boolean) {

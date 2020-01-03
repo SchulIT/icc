@@ -7,7 +7,7 @@ label:
     email: E-Mail
     subject: Fach
     teacher: Lehrkraft
-    teachers: Lehrkräfte
+    teachers: "{0} Lehrkraft|{1} Lehrkraft|]1,Inf[ Lehrkräfte"
     student: Lernender
     students: "{0} %count% Lernende|{1} %count% Lernender|]1,Inf[ %count% Lernende"
     students_simple: Lernende

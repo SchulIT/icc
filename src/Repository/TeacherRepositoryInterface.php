@@ -32,6 +32,12 @@ interface TeacherRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllByAcronym(array $acronyms): array;
 
     /**
+     * @param string[] $externalIds
+     * @return Teacher[]
+     */
+    public function findAllByExternalId(array $externalIds): array;
+
+    /**
      * @param Subject $subject
      * @return Teacher[]
      */

@@ -70,18 +70,26 @@ class Substitution {
     private $replacementSubject = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Teacher|null
+     * @ORM\ManyToMany(targetEntity="Teacher")
+     * @ORM\JoinTable(
+     *     name="substitution_teachers",
+     *     joinColumns={@ORM\JoinColumn(name="substitution", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="teacher", onDelete="CASCADE")}
+     * )
+     * @var Collection<Teacher>
      */
-    private $teacher = null;
+    private $teachers;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Teacher|null
+     * @ORM\ManyToMany(targetEntity="Teacher")
+     * @ORM\JoinTable(
+     *     name="substitution_replacmentteachers",
+     *     joinColumns={@ORM\JoinColumn(name="substitution", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="teacher", onDelete="CASCADE")}
+     * )
+     * @var Collection<Teacher>
      */
-    private $replacementTeacher;
+    private $replacementTeachers;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -124,6 +132,8 @@ class Substitution {
     private $replacementStudyGroups;
 
     public function __construct() {
+        $this->teachers = new ArrayCollection();
+        $this->replacementTeachers = new ArrayCollection();
         $this->studyGroups = new ArrayCollection();
         $this->replacementStudyGroups = new ArrayCollection();
     }
@@ -248,35 +258,33 @@ class Substitution {
     }
 
     /**
-     * @return Teacher|null
+     * @return Collection<Teacher>s
      */
-    public function getTeacher(): ?Teacher {
-        return $this->teacher;
+    public function getTeachers(): Collection {
+        return $this->teachers;
+    }
+
+    public function addTeacher(Teacher $teacher): void {
+        $this->teachers->add($teacher);
+    }
+
+    public function removeTeacher(Teacher $teacher): void {
+        $this->teachers->removeElement($teacher);
     }
 
     /**
-     * @param Teacher|null $teacher
-     * @return Substitution
+     * @return Collection<Teacher>
      */
-    public function setTeacher(?Teacher $teacher): Substitution {
-        $this->teacher = $teacher;
-        return $this;
+    public function getReplacementTeachers(): Collection {
+        return $this->replacementTeachers;
     }
 
-    /**
-     * @return Teacher|null
-     */
-    public function getReplacementTeacher(): ?Teacher {
-        return $this->replacementTeacher;
+    public function addReplacementTeacher(Teacher $teacher): void {
+        $this->replacementTeachers->add($teacher);
     }
 
-    /**
-     * @param Teacher|null $replacementTeacher
-     * @return Substitution
-     */
-    public function setReplacementTeacher(?Teacher $replacementTeacher): Substitution {
-        $this->replacementTeacher = $replacementTeacher;
-        return $this;
+    public function removeReplacementTeacher(Teacher $teacher): void {
+        $this->replacementTeachers->removeElement($teacher);
     }
 
     /**

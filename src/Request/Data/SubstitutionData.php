@@ -59,18 +59,16 @@ class SubstitutionData {
     private $replacementSubject;
 
     /**
-     * @Serializer\Type("string")
-     * @NullOrNotBlank()
-     * @var string|null
+     * @Serializer\Type("array<string>")
+     * @var string[]
      */
-    private $teacher;
+    private $teachers;
 
     /**
-     * @Serializer\Type("string")
-     * @NullOrNotBlank()
-     * @var string|null
+     * @Serializer\Type("array<string>")
+     * @var string[]
      */
-    private $replacementTeacher;
+    private $replacementTeachers;
 
     /**
      * @Serializer\Type("string")
@@ -218,34 +216,34 @@ class SubstitutionData {
     }
 
     /**
-     * @return string|null
+     * @return string[]
      */
-    public function getTeacher(): ?string {
-        return $this->teacher;
+    public function getTeachers(): array {
+        return $this->teachers;
     }
 
     /**
-     * @param string|null $teacher
+     * @param string[] $teachers
      * @return SubstitutionData
      */
-    public function setTeacher(?string $teacher): SubstitutionData {
-        $this->teacher = $teacher;
+    public function setTeachers(array $teachers): SubstitutionData {
+        $this->teachers = $teachers;
         return $this;
     }
 
     /**
-     * @return string|null
+     * @return string[]
      */
-    public function getReplacementTeacher(): ?string {
-        return $this->replacementTeacher;
+    public function getReplacementTeachers(): array {
+        return $this->replacementTeachers;
     }
 
     /**
-     * @param string|null $replacementTeacher
+     * @param string[] $replacementTeachers
      * @return SubstitutionData
      */
-    public function setReplacementTeacher(?string $replacementTeacher): SubstitutionData {
-        $this->replacementTeacher = $replacementTeacher;
+    public function setReplacementTeachers(array $replacementTeachers): SubstitutionData {
+        $this->replacementTeachers = $replacementTeachers;
         return $this;
     }
 

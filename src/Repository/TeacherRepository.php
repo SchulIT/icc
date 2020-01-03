@@ -75,6 +75,19 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
     /**
      * @inheritDoc
      */
+    public function findAllByExternalId(array $externalIds): array {
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qb
+            ->where($qb->expr()->in('t.externalId', ':externalIds'))
+            ->setParameter('externalIds', $externalIds);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAll() {
         return $this->createDefaultQueryBuilder()
             ->getQuery()
@@ -115,4 +128,5 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
 
         return $qb->getQuery()->getResult();
     }
+
 }

@@ -40,12 +40,12 @@ class SubstitutionTeacherStrategy implements GroupingStrategyInterface {
         /** @var Teacher[] $teachers */
         $teachers = [ ];
 
-        if($object->getTeacher() !== null) {
-            $teachers[] = $object->getTeacher();
+        if($object->getTeachers()->count() > 0) {
+            $teachers = array_merge($teachers, $object->getTeachers()->toArray());
         }
 
-        if($object->getReplacementTeacher() !== null) {
-            $teachers[] = $object->getReplacementTeacher();
+        if($object->getReplacementTeachers()->count() > 0) {
+            $teachers = array_merge($teachers, $object->getReplacementTeachers()->toArray());
         }
 
         $regExp = '~(^|\s|\.|,|;|:|\()(' . implode('|', array_keys($this->teachers)) . ')($|\s|\.|,|;|:|\))~';

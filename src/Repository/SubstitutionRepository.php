@@ -104,8 +104,8 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
         $qbInner = $this->em->createQueryBuilder();
         $qbInner->select('sInner.id')
             ->from(Substitution::class, 'sInner')
-            ->leftJoin('sInner.teacher', 'tInner')
-            ->leftJoin('sInner.replacementTeacher', 'rtInner');
+            ->leftJoin('sInner.teachers', 'tInner')
+            ->leftJoin('sInner.replacementTeachers', 'rtInner');
 
         $qbInner->where(
             $qbInner->expr()->orX(
@@ -160,8 +160,8 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
 
         $qb->select(['s', 't', 'rt', 'sg', 'rsg'])
             ->from(Substitution::class, 's')
-            ->leftJoin('s.teacher', 't')
-            ->leftJoin('s.replacementTeacher', 'rt')
+            ->leftJoin('s.teachers', 't')
+            ->leftJoin('s.replacementTeachers', 'rt')
             ->leftJoin('s.studyGroups', 'sg')
             ->leftJoin('s.replacementStudyGroups', 'rsg')
             ->orderBy('s.date', 'asc')

@@ -71,7 +71,7 @@
 
     {# Teachers #}
     <div class="card">
-        <div class="card-header">{{ 'label.teachers'|trans }} <span class="badge badge-primary">{{ teachers|length }}</span> </div>
+        <div class="card-header">{{ 'label.teachers'|trans({'%count%': teachers|length }) }} <span class="badge badge-primary">{{ teachers|length }}</span> </div>
 
         <table class="table table-striped table-bordered">
             <colgroup>

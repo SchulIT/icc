@@ -20,7 +20,7 @@
             </p>
 
             <p class="col">
-                <strong>{{ 'label.teacher'|trans }}:</strong> {{ _self.replacement(substitution.teacher|teacher, substitution.replacementTeacher|teacher) }}
+                <strong>{{ 'label.teachers'|trans({'%count%': max(substitution.teachers|length, substitution.replacementTeachers|length)}) }}:</strong> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
             </p>
 
             {% if substitution.remark is not empty %}

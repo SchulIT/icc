@@ -39,6 +39,8 @@ class MessageAdminController extends AbstractController {
      * @Route("", name="admin_messages")
      */
     public function index(UserTypeFilter $userTypeFilter, ?string $userType = null) {
+        $this->denyAccessUnlessGranted('ROLE_MESSAGE_CREATOR');
+
         $userTypeFilterView = $userTypeFilter->handle($userType);
         $userTypeFilterView->setHandleNull(true);
 
@@ -61,6 +63,8 @@ class MessageAdminController extends AbstractController {
      * @Route("/add", name="add_message")
      */
     public function add(Request $request) {
+        $this->denyAccessUnlessGranted(MessageVoter::New);
+
         $message = new Message();
         $form = $this->createForm(MessageType::class, $message);
         $form->handleRequest($request);
@@ -81,6 +85,8 @@ class MessageAdminController extends AbstractController {
      * @Route("/{id}/edit", name="edit_message")
      */
     public function edit(Request $request, Message $message) {
+        $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
+
         $originalFiles = new ArrayCollection();
         foreach($message->getFiles() as $file) {
             $originalFiles->add($file);

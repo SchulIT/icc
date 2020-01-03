@@ -6,9 +6,10 @@ use App\Entity\Document;
 use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Repository\DocumentRepositoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Security;
 
 class DocumentVoter extends Voter {
 
@@ -17,11 +18,14 @@ class DocumentVoter extends Voter {
     const Remove = 'remove';
     const View = 'view';
     const ViewOthers = 'other-documents';
+    const Admin = 'admin-documents';
 
-    private $security;
+    private $documentRepository;
+    private $accessDecisionManager;
 
-    public function __construct(Security $security) {
-        $this->security = $security;
+    public function __construct(AccessDecisionManagerInterface $accessDecisionManager, DocumentRepositoryInterface $documentRepository) {
+        $this->accessDecisionManager = $accessDecisionManager;
+        $this->documentRepository = $documentRepository;
     }
 
     /**
@@ -34,7 +38,7 @@ class DocumentVoter extends Voter {
             static::View,
         ];
 
-        return $attribute === static::New || $attribute === static::ViewOthers ||
+        return $attribute === static::New || $attribute === static::ViewOthers || $attribute === static::Admin ||
             ($subject instanceof Document && in_array($attribute, $attributes));
     }
 
@@ -44,30 +48,33 @@ class DocumentVoter extends Voter {
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
         switch($attribute) {
             case static::New:
-                return $this->canCreateDocument();
+                return $this->canCreateDocument($token);
 
             case static::Edit:
                 return $this->canEditDocument($subject, $token);
 
             case static::Remove:
-                return $this->canRemoveDocument();
+                return $this->canRemoveDocument($token);
 
             case static::View:
                 return $this->canViewDocument($subject, $token);
 
             case static::ViewOthers:
                 return $this->canViewOtherDocuments($token);
+
+            case static::Admin:
+                return $this->canViewAdminOverview($token);
         }
 
         throw new \LogicException('This code should not be reached.');
     }
 
-    private function canCreateDocument() {
-        return $this->security->isGranted('ROLE_DOCUMENTS_ADMIN');
+    private function canCreateDocument(TokenInterface $token) {
+        return $this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']);
     }
 
     private function canEditDocument(Document $document, TokenInterface $token) {
-        if($this->security->isGranted('ROLE_DOCUMENTS_ADMIN')) {
+        if($this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN'])) {
             return true;
         }
 
@@ -83,11 +90,15 @@ class DocumentVoter extends Voter {
         return false;
     }
 
-    private function canRemoveDocument() {
-        return $this->security->isGranted('ROLE_DOCUMENTS_ADMIN');
+    private function canRemoveDocument(TokenInterface $token) {
+        return $this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']);
     }
 
     private function canViewDocument(Document $document, TokenInterface $token) {
+        if($this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']) || $this->accessDecisionManager->decide($token, ['ROLE_KIOSK'])) {
+            return true;
+        }
+
         /** @var User $user */
         $user = $token->getUser();
 
@@ -124,6 +135,17 @@ class DocumentVoter extends Voter {
         $user = $token->getUser();
 
         $isTeacher = $user->getUserType()->equals(UserType::Teacher());
-        return $isTeacher || $this->security->isGranted('ROLE_DOCUMENTS_ADMIN');
+        return $isTeacher || $this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']);
+    }
+
+    private function canViewAdminOverview(TokenInterface $token) {
+        if($this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN'])) {
+            return true;
+        }
+
+        /** @var User $user */
+        $user = $token->getUser();
+
+        return count($this->documentRepository->findAllByAuthor($user)) > 0;
     }
 }

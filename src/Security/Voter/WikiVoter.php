@@ -2,7 +2,10 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\User;
 use App\Entity\WikiArticle;
+use App\Entity\WikiArticleVisibility;
+use App\Utils\EnumArrayUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -43,10 +46,10 @@ class WikiVoter extends Voter {
                 return $this->canView($subject, $token);
 
             case static::Edit:
-                return $this->canEdit($subject, $token);
+                return $this->canEdit($token);
 
             case static::Remove:
-                return $this->canRemove($subject, $token);
+                return $this->canRemove($token);
 
             case static::New:
                 return $this->canCreate($token);
@@ -56,15 +59,37 @@ class WikiVoter extends Voter {
     }
 
     private function canView(WikiArticle $article, TokenInterface $token) {
-        // TODO
+        if($this->accessDecisionManager->decide($token, ['ROLE_WIKI_ADMIN'])) {
+            // Admins can view all documents
+            return true;
+        }
+
+        /** @var User $user */
+        $user = $token->getUser();
+
+        $currentArticle = $article;
+        do {
+            $visibilities = $currentArticle->getVisibilities()
+                ->map(function(WikiArticleVisibility $visibility) {
+                    return $visibility->getUserType();
+                })
+                ->toArray();
+
+            if(count($visibilities) > 0 && EnumArrayUtils::inArray($user->getUserType(), $visibilities) !== true) {
+                return false;
+            }
+
+            $currentArticle = $currentArticle->getParent();
+        } while($currentArticle !== null);
+
         return true;
     }
 
-    private function canEdit(WikiArticle $article, TokenInterface $token) {
+    private function canEdit(TokenInterface $token) {
         return $this->accessDecisionManager->decide($token, ['ROLE_WIKI_ADMIN']);
     }
 
-    private function canRemove(WikiArticle $article, TokenInterface $token) {
+    private function canRemove(TokenInterface $token) {
         return $this->accessDecisionManager->decide($token, ['ROLE_WIKI_ADMIN']);
     }
 

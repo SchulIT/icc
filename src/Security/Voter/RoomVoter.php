@@ -9,12 +9,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class ListsVoter extends Voter {
+class RoomVoter extends Voter {
 
-    public const Teachers = 'teachers';
-    public const Students = 'students';
-    public const Tuitions = 'tuitions';
-    public const StudyGroups = 'studygroups';
+    public const View = 'view-rooms';
 
     private $accessDecisionManager;
 
@@ -26,15 +23,7 @@ class ListsVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject) {
-        $attributes = [
-            static::Teachers,
-            static::Students,
-            static::Tuitions,
-            static::StudyGroups
-        ];
-
-        return in_array($attribute, $attributes)
-            && $subject === null;
+        return $attribute === static::View;
     }
 
     /**
@@ -42,19 +31,14 @@ class ListsVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
         switch($attribute) {
-            case static::Teachers:
-                return true; // everyone can see teachers
-
-            case static::Students:
-            case static::StudyGroups:
-            case static::Tuitions:
-                return $this->canViewLists($token);
+            case static::View:
+                return $this->canViewOverview($token);
         }
 
         throw new \LogicException('This code should not be reached.');
     }
 
-    private function canViewLists(TokenInterface $token) {
+    private function canViewOverview(TokenInterface $token) {
         if($this->accessDecisionManager->decide($token, [ 'ROLE_ADMIN' ]) || $this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
             return true;
         }
@@ -63,8 +47,8 @@ class ListsVoter extends Voter {
         $user = $token->getUser();
 
         return EnumArrayUtils::inArray($user->getUserType(), [
-            UserType::Student(),
-            UserType::Parent()
-        ]) !== true; // Everyone but students/parents are allowed to view lists
+                UserType::Student(),
+                UserType::Parent()
+            ]) !== true; // Everyone but students/parents are allowed to view lists
     }
 }

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Document;
 use App\Entity\DocumentCategory;
 use App\Entity\StudyGroup;
+use App\Entity\User;
 use App\Entity\UserType;
 use Doctrine\ORM\QueryBuilder;
 
@@ -47,6 +48,26 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
             ->setMaxResults(1);
 
         return $qb->getQuery()->getSingleResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByAuthor(User $user): array {
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('dInner.id')
+            ->from(Document::class, 'dInner')
+            ->leftJoin('dInner.authors', 'aInner')
+            ->where('aInner.id = :user');
+
+        $qb->where(
+            $qb->expr()->in('d.id', $qbInner->getDQL())
+        );
+
+        $qb->setParameter('user', $user->getId());
+        return $qb->getQuery()->getResult();
     }
 
     /**

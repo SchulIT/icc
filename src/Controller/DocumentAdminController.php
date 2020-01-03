@@ -42,6 +42,8 @@ class DocumentAdminController extends AbstractController {
      * @Route("", name="admin_documents")
      */
     public function index(Sorter $sorter, Grouper $grouper) {
+        $this->denyAccessUnlessGranted(DocumentVoter::Admin);
+
         $documents = [ ];
 
         foreach($this->repository->findAll() as $document) {

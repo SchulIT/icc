@@ -96,12 +96,17 @@ class MessageVoter extends Voter {
         }
 
         // Admins see all messages
-        if($this->accessDecisionManager->decide($token, ['ROLE_MESSAGE_ADMIN'])) {
+        if($this->accessDecisionManager->decide($token, ['ROLE_MESSAGE_ADMIN']) || $this->accessDecisionManager->decide($token, ['ROLE_KIOSK'])) {
             return true;
         }
 
         // Teachers can see all messages
         if($user->getUserType()->equals(UserType::Teacher())) {
+            return true;
+        }
+
+        // You can see your own messages
+        if($message->getCreatedBy()->getId() === $user->getId()) {
             return true;
         }
 
@@ -158,10 +163,18 @@ class MessageVoter extends Voter {
     }
 
     private function canConfirm(Message $message, TokenInterface $token) {
+        if($this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
+            return false;
+        }
+
         return $message->mustConfirm() && $this->isMessageForUser($message, $token);
     }
 
     private function canDismiss(Message $message, TokenInterface $token) {
+        if($this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
+            return false;
+        }
+
         if($message->mustConfirm() === false || $this->canConfirm($message, $token) === false) {
             return true;
         }

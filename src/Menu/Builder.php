@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Security\Voter\ListsVoter;
+use App\Security\Voter\RoomVoter;
 use App\Security\Voter\WikiVoter;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
@@ -59,9 +60,11 @@ class Builder {
             'route' => 'appointments'
         ]);
 
-        $menu->addChild('plans.rooms.label', [
-            'route' => 'rooms'
-        ]);
+        if($this->authorizationChecker->isGranted(RoomVoter::View)) {
+            $menu->addChild('plans.rooms.label', [
+                'route' => 'rooms'
+            ]);
+        }
 
         return $plans;
     }

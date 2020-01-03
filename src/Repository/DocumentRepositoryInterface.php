@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Document;
 use App\Entity\DocumentCategory;
 use App\Entity\StudyGroup;
+use App\Entity\User;
 use App\Entity\UserType;
 
 interface DocumentRepositoryInterface {
@@ -20,6 +21,12 @@ interface DocumentRepositoryInterface {
      * @return Document[]
      */
     public function findAllByCategory(DocumentCategory $category);
+
+    /**
+     * @param User $user
+     * @return Document[]
+     */
+    public function findAllByAuthor(User $user): array;
 
     /**
      * @param UserType $type

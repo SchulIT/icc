@@ -3,6 +3,12 @@
 namespace App\Security\Voter;
 
 use App\Entity\Appointment;
+use App\Entity\Student;
+use App\Entity\StudyGroup;
+use App\Entity\StudyGroupMembership;
+use App\Entity\User;
+use App\Entity\UserType;
+use App\Utils\EnumArrayUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -68,6 +74,42 @@ class AppointmentVoter extends Voter {
     }
 
     private function canView(Appointment $appointment, TokenInterface $token) {
-        return true; // TODO
+        if($this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']) || $this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
+            return true;
+        }
+
+        /** @var User $user */
+        $user = $token->getUser();
+
+        $isStudentOrParent = EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]);
+
+        if($isStudentOrParent !== true) {
+            return true;
+        }
+
+        $appointmentStudyGroupsIds = $appointment->getStudyGroups()
+            ->map(function(StudyGroup $studyGroup) {
+                return $studyGroup->getId();
+            })
+            ->toArray();
+
+        /** @var Student[] $students */
+        $students = $user->getStudents();
+
+        foreach($students as $student) {
+            $studentStudyGroupsIds = $student->getStudyGroupMemberships()
+                ->map(function(StudyGroupMembership $membership) {
+                    return $membership->getStudyGroup()->getId();
+                })
+                ->toArray();
+
+            $intersection = array_intersect($appointmentStudyGroupsIds, $studentStudyGroupsIds);
+
+            if(count($intersection) > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

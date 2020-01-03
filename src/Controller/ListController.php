@@ -19,6 +19,7 @@ use App\Repository\MessageRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Security\Voter\ExamVoter;
+use App\Security\Voter\ListsVoter;
 use App\Sorting\Sorter;
 use App\Sorting\StudentGroupMembershipStrategy;
 use App\Sorting\StudentStrategy;
@@ -56,6 +57,8 @@ class ListController extends AbstractControllerWithMessages {
      */
     public function tuitions(GradeFilter $gradeFilter, StudentFilter $studentFilter, TeacherFilter $teacherFilter, TuitionRepositoryInterface $tuitionRepository,
                              ?int $studentId = null, ?int $gradeId = null, ?string $teacherAcronym = null) {
+        $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
+
         /** @var User $user */
         $user = $this->getUser();
 
@@ -96,6 +99,8 @@ class ListController extends AbstractControllerWithMessages {
      * @Route("/lists/tuitions/{id}", name="list_tuition")
      */
     public function tuition(Tuition $tuition, TuitionRepositoryInterface $tuitionRepository, ExamRepositoryInterface $examRepository) {
+        $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
+
         $tuition = $tuitionRepository->findOneById($tuition->getId());
         $memberships = $tuition->getStudyGroup()->getMemberships()->toArray();
         $this->sorter->sort($memberships, StudentGroupMembershipStrategy::class);
@@ -117,6 +122,8 @@ class ListController extends AbstractControllerWithMessages {
      * @Route("/lists/study_groups", name="list_studygroups")
      */
     public function studyGroups(StudyGroupFilter $studyGroupFilter, ?int $studyGroupId = null) {
+        $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);
+
         /** @var User $user */
         $user = $this->getUser();
 
@@ -167,6 +174,8 @@ class ListController extends AbstractControllerWithMessages {
      * @Route("/lists/teachers", name="list_teachers")
      */
     public function teachers(SubjectFilter $subjectFilter, TeacherRepositoryInterface $teacherRepository, ?int $subjectId = null) {
+        $this->denyAccessUnlessGranted(ListsVoter::Teachers);
+
         $subjectFilterView = $subjectFilter->handle($subjectId);
         $teachers = [ ];
 

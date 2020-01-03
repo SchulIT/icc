@@ -21,6 +21,7 @@ security:
         ROLE_WIKI_ADMIN: ROLE_USER
         ROLE_DOCUMENTS_ADMIN: ROLE_USER
         ROLE_APPOINTMENTS_ADMIN: ROLE_USER
+        ROLE_KIOSK: ROLE_USER
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs

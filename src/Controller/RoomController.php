@@ -8,6 +8,7 @@ use App\Repository\MessageRepositoryInterface;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\RoomTagRepositoryInterface;
 use App\Rooms\RoomQueryBuilder;
+use App\Security\Voter\RoomVoter;
 use App\Sorting\RoomNameStrategy;
 use App\Sorting\Sorter;
 use App\Utils\RefererHelper;
@@ -30,6 +31,8 @@ class RoomController extends AbstractControllerWithMessages {
      * @Route("/rooms", name="rooms")
      */
     public function index(Request $request, RoomQueryBuilder $queryBuilder, RoomRepositoryInterface $roomRepository, RoomTagRepositoryInterface $roomTagRepository) {
+        $this->denyAccessUnlessGranted(RoomVoter::View);
+
         $query = $queryBuilder->buildFromRequest($request);
 
         if($query->hasConditions() || $query->hasName()) {

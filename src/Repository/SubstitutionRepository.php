@@ -45,10 +45,11 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
      * @return Substitution[]
      */
     public function findAllByDate(\DateTime $date) {
-        return $this->em->getRepository(Substitution::class)
-            ->findBy([
-                'date' => $date
-            ]);
+        $qb = $this->getDefaultQueryBuilder()
+            ->where('s.date = :date')
+            ->setParameter('date', $date);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**

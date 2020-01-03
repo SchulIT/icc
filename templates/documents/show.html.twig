@@ -29,7 +29,7 @@
 
                     <ul class="list-unstyled">
                         {% for attachment in document.attachments %}
-                            <li><i class="fa fa-file"></i> <a href="{{ path('download_document_attachment', { document: document.id, alias: document.alias, id: attachment.id }) }}">{{ attachment.filename }}</a> <span class="text-muted">{{ attachment.size|filesize }}</span></li>
+                            <li><i class="fa fa-file"></i> <a href="{{ path('download_document_attachment', { document: document.id, alias: document.slug, id: attachment.id }) }}">{{ attachment.filename }}</a> <span class="text-muted">{{ attachment.size|filesize }}</span></li>
                         {% endfor %}
                     </ul>
                 </div>

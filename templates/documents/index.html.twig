@@ -55,7 +55,7 @@
 
                 <div class="list-group list-group-flush">
                     {% for document in group.documents %}
-                        <a href="{{ path('show_document', { id: document.id, alias: document.alias }) }}" class="list-group-item list-group-item-action"><i class="far fa-file"></i> {{ document.title }}</a>
+                        <a href="{{ path('show_document', { id: document.id, slug: document.slug }) }}" class="list-group-item list-group-item-action"><i class="far fa-file"></i> {{ document.title }}</a>
                     {% endfor %}
                 </div>
             </div>

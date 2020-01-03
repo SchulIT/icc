@@ -32,7 +32,7 @@ class Document {
      * @Gedmo\Slug(fields={"title"})
      * @var string
      */
-    private $alias;
+    private $slug;
 
     /**
      * @ORM\Column(type="string")
@@ -120,8 +120,8 @@ class Document {
     /**
      * @return string
      */
-    public function getAlias(): string {
-        return $this->alias;
+    public function getSlug(): string {
+        return $this->slug;
     }
 
     /**

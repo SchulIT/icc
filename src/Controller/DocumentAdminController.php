@@ -85,7 +85,7 @@ class DocumentAdminController extends AbstractController {
             $this->repository->persist($document);
 
             $this->addFlash('success', 'admin.documents.edit.success');
-            return $this->redirectToReferer(['view' => 'show_document'], 'admin_documents', [ 'id' => $document->getId(), 'alias' => $document->getAlias() ]);
+            return $this->redirectToReferer(['view' => 'show_document'], 'admin_documents', [ 'id' => $document->getId(), 'slug' => $document->getSlug() ]);
         }
 
         return $this->render('admin/documents/edit.html.twig', [

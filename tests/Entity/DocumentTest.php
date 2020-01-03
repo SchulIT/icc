@@ -75,8 +75,8 @@ class DocumentTest extends WebTestCase {
         $em->persist($document);
         $em->flush();
 
-        $this->assertNotNull($document->getAlias());
-        $this->assertEquals('my-fancy-document', $document->getAlias());
+        $this->assertNotNull($document->getSlug());
+        $this->assertEquals('my-fancy-document', $document->getSlug());
 
         $this->assertNotNull($document->getUpdatedAt());
     }

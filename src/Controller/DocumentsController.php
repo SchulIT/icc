@@ -61,7 +61,7 @@ class DocumentsController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/{alias}", name="show_document", requirements={"id": "\d+"})
+     * @Route("/{id}/{slug}", name="show_document", requirements={"id": "\d+"})
      */
     public function show(Document $document) {
         $this->denyAccessUnlessGranted(DocumentVoter::View, $document);

@@ -44,7 +44,7 @@ class LinkProcessor {
                 if($document !== null) {
                     $url = $this->urlGenerator->generate('document', [
                         'id' => $document->getId(),
-                        'alias' => $document->getAlias()
+                        'alias' => $document->getSlug()
                     ]);
                     $node->setUrl($url);
                 } else {

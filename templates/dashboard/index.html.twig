@@ -66,11 +66,13 @@
                 {% if view.itemsBefore(lesson)|length > 0 %}
                     <h3>{{ 'dashboard.before_lesson'|trans({'%lesson%': lesson }) }}</h3>
 
-                    {% for item in view.items(lesson) %}
+                    {% for item in view.itemsBefore(lesson) %}
                         {% set type = item.blockName %}
 
                         {% if type == 'supervision' %}
                             {{ dashboard.supervision(item) }}
+                        {% elseif type == 'substitution' %}
+                            {{ dashboard.substitution(item) }}
                         {% endif %}
                     {% endfor %}
                 {% endif %}

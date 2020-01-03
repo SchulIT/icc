@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Absence;
+use App\Entity\Student;
 
 interface AbsenceRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAll(): array;
@@ -22,6 +23,14 @@ interface AbsenceRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Absence[]
      */
     public function findAllStudyGroups(\DateTime $date): array;
+
+    /**
+     * @param \DateTime $dateTime
+     * @param Student[] $students
+     * @param int $lesson
+     * @return Student[]
+     */
+    public function findAllStudentsByDateAndLesson(\DateTime $dateTime, array $students, int $lesson);
 
     public function persist(Absence $person): void;
 

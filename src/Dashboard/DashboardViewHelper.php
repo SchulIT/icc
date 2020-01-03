@@ -14,12 +14,15 @@ use App\Entity\TimetablePeriod;
 use App\Entity\TimetableSupervision;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
+use App\Sorting\Sorter;
+use App\Sorting\StudentStrategy;
 use App\Timetable\TimetablePeriodHelper;
 use App\Utils\EnumArrayUtils;
 use App\Utils\StudyGroupHelper;
@@ -32,22 +35,26 @@ class DashboardViewHelper {
     private $supervisionRepository;
     private $messageRepository;
     private $infotextRepository;
+    private $absenceRepository;
 
     private $studyGroupHelper;
     private $timetablePeriodHelper;
+    private $sorter;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository,
-                                MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, StudyGroupHelper $studyGroupHelper,
-                                TimetablePeriodHelper $timetablePeriodHelper) {
+                                MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
+                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, Sorter $sorter) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->timetableRepository = $timetableRepository;
         $this->supervisionRepository = $supervisionRepository;
         $this->messageRepository = $messageRepository;
         $this->infotextRepository = $infotextRepository;
+        $this->absenceRepository = $absenceRepository;
         $this->studyGroupHelper = $studyGroupHelper;
         $this->timetablePeriodHelper = $timetablePeriodHelper;
+        $this->sorter = $sorter;
     }
 
     public function createViewForTeacher(Teacher $teacher, \DateTime $dateTime): DashboardView {
@@ -108,12 +115,11 @@ class DashboardViewHelper {
     private function addTimetableLessons(iterable $lessons, \DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences): void {
         foreach($lessons as $lesson) {
             $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lesson, $lesson->getLesson(), $dateTime) : [ ];
-
             $dashboardView->addItem($lesson->getLesson(), new LessonViewItem($lesson, $absentStudents, false));
 
             if($lesson->isDoubleLesson()) {
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lesson, $lesson->getLesson() + 1, $dateTime) : [ ];
-                $dashboardView->addItem($lesson->getLesson() + 1, new LessonViewItem($lesson, [ ], false));
+                $dashboardView->addItem($lesson->getLesson() + 1, new LessonViewItem($lesson, $absentStudents, false));
             }
         }
     }
@@ -192,8 +198,24 @@ class DashboardViewHelper {
     }
 
     private function computeAbsentStudents(TimetableLesson $lessonEntity, int $lesson, \DateTime $dateTime) {
-        // TODO: Also add absent students because a study group is absent (this information is not provided yet)
-        return $this->computeExamStudents($lessonEntity, $lesson, $dateTime);
+        $lessonStudents = $lessonEntity
+            ->getTuition()
+            ->getStudyGroup()
+            ->getMemberships()
+            ->map(function(StudyGroupMembership $membership) {
+                return $membership->getStudent();
+            })
+            ->toArray();
+
+        $absentStudents = array_unique(array_merge(
+            $this->absenceRepository->findAllStudentsByDateAndLesson($dateTime, $lessonStudents, $lesson),
+            $this->computeExamStudents($lessonEntity, $lesson, $dateTime)
+        ));
+
+        // Sort the students
+        $this->sorter->sort($absentStudents, StudentStrategy::class);
+
+        return $absentStudents;
     }
 
     private function computeExamStudents(TimetableLesson $lessonEntity, int $lesson, \DateTime $dateTime) {

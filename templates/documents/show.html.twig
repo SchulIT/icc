@@ -70,6 +70,10 @@
             <a href="{{ path('admin_edit_document', { id: document.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
                 <i class="fa fa-edit"></i> {{ 'admin.documents.edit.label'|trans }}
             </a>
+
+            <a href="{{ path('document_versions', { id: document.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
+                <i class="fa fa-history"></i> {{ 'versions.label'|trans }}
+            </a>
         {% endif %}
         {% if is_granted('remove', document) %}
             <a href="{{ path('admin_remove_document', { id: document.id, ref: 'view' }) }}" class="btn btn-danger btn-sm">

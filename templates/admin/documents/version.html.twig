@@ -6,8 +6,8 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('admin_wiki') }}">{{ 'admin.wiki.label'|trans }}</a></li>
-        <li class="breadcrumb-item">{{ article.title }}</li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_wiki') }}">{{ 'admin.documents.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ document.title }}</li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -21,38 +21,19 @@
 
     <div class="row">
         <div class="col-md-9 pl-0">
-            {% if article is not null %}
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">{{ article.title }}</h5>
+                    <h5 class="card-title">{{ document.title }}</h5>
 
-                    {{ article.content|markdown }}
+                    {{ document.content|markdown }}
                 </div>
             </div>
-            {% endif %}
-        </div>
-
-        <div class="col-md-3 pr-0">
-            {% if article is not null %}
-                {% set toc = toc(article.content) %}
-                {% if toc|length > 0 %}
-                    <div class="card">
-                        <div class="card-header">{{ 'wiki.toc'|trans }}</div>
-
-                        <div class="list-group list-group-flush">
-                            {% for heading in toc %}
-                            <a href="#{{ heading.id }}" class="list-group-item list-group-item-action">{{ heading.level }} {{ heading.text }}</a>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            {% endif %}
         </div>
     </div>
 
     <div class="buttons">
-        <form action="{{ path('restore_wiki_article_version', { id: article.id }) }}">
-            <a href="{{ path('wiki_article_versions', { id: article.id }) }}" class="btn btn-primary btn-sm">
+        <form action="{{ path('restore_document_version', { id: document.id }) }}">
+            <a href="{{ path('document_versions', { id: document.id }) }}" class="btn btn-primary btn-sm">
                 <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
             </a>
 
@@ -68,7 +49,7 @@
     <script src="{{ asset('build/modal.js') }}"></script>
 
     <div class="modal fade" id="restore-modal" tabindex="-1" role="dialog" aria-labelledby="restore-modal" aria-hidden="true">
-        <form method="post" action="{{ path('restore_wiki_article_version', { id: article.id }) }}">
+        <form method="post" action="{{ path('restore_document_version', { id: document.id }) }}">
             <input type="hidden" name="{{ token_param }}" value="{{ csrf_token(token_id) }}">
             <input type="hidden" name="{{ version_param }}" value="{{ entry.version }}">
 

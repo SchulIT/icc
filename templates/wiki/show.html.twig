@@ -152,7 +152,7 @@
                 </a>
 
                 <a href="{{ path('wiki_article_versions', { id: article.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
-                    <i class="fa fa-history"></i> {{ 'admin.wiki.versions.label'|trans }}
+                    <i class="fa fa-history"></i> {{ 'versions.label'|trans }}
                 </a>
             {% endif %}
             {% if is_granted('remove', article) %}

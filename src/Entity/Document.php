@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          @ORM\Index(columns={"content"}, flags={"fulltext"})
  *     }
  * )
+ * @Gedmo\Loggable()
  */
 class Document {
 
@@ -37,6 +38,7 @@ class Document {
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
+     * @Gedmo\Versioned()
      * @var string
      */
     private $title;
@@ -51,6 +53,7 @@ class Document {
 
     /**
      * @ORM\Column(type="text")
+     * @Gedmo\Versioned()
      * @Assert\NotNull()
      * @Assert\NotBlank()
      * @var string

@@ -7,13 +7,17 @@ use App\Form\DocumentType;
 use App\Grouping\DocumentCategoryStrategy;
 use App\Grouping\Grouper;
 use App\Repository\DocumentRepositoryInterface;
+use App\Repository\LogRepositoryInterface;
 use App\Security\Voter\DocumentVoter;
 use App\Sorting\DocumentCategoryStrategy as DocumentCategorySortingStrategy;
 use App\Sorting\DocumentNameStrategy;
+use App\Sorting\LogEntryStrategy;
+use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
 use App\Utils\RefererHelper;
 use SchoolIT\CommonBundle\Form\ConfirmType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -21,6 +25,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * @Route("/admin/documents")
  */
 class DocumentAdminController extends AbstractController {
+
+    private const VersionParam = '_version';
+    private const RevertCsrfTokenParam = '_csrf_token';
+    private const RevertCsrfToken = 'revert-document';
+
     private $repository;
 
     public function __construct(DocumentRepositoryInterface $repository, RefererHelper $refererHelper) {
@@ -91,6 +100,79 @@ class DocumentAdminController extends AbstractController {
         return $this->render('admin/documents/edit.html.twig', [
             'document' => $document,
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/versions", name="document_versions")
+     */
+    public function versions(Document $document, Request $request, LogRepositoryInterface $logRepository, Sorter $sorter) {
+        $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
+
+        $logs = $logRepository->getLogEntries($document);
+        $sorter->sort($logs, LogEntryStrategy::class, SortDirection::Descending());
+
+        return $this->render('admin/documents/versions.html.twig', [
+            'document' => $document,
+            'logs' => $logs,
+            'token_id' => static::RevertCsrfToken,
+            'token_param' => static::RevertCsrfTokenParam,
+            'version_param' => static::VersionParam
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/versions/{version}", name="show_document_version")
+     */
+    public function version(Document $document, LogRepositoryInterface $logRepository, int $version) {
+        $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
+
+        $logs = $logRepository->getLogEntries($document);
+        $entry = null;
+
+        foreach($logs as $logEntry) {
+            if($logEntry->getVersion() === $version) {
+                $entry = $logEntry;
+            }
+        }
+
+        if($entry === null) {
+            throw new NotFoundHttpException();
+        }
+
+        $logRepository->revert($document, $version);
+
+        return $this->render('admin/documents/version.html.twig', [
+            'document' => $document,
+            'entry' => $entry,
+            'token_id' => static::RevertCsrfToken,
+            'token_param' => static::RevertCsrfTokenParam,
+            'version_param' => static::VersionParam
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/restore", name="restore_document_version")
+     */
+    public function restore(Document $document, Request $request, LogRepositoryInterface $logRepository, TranslatorInterface $translator) {
+        $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
+
+        if($this->isCsrfTokenValid(static::RevertCsrfToken, $request->request->get(static::RevertCsrfTokenParam)) !== true) {
+            $this->addFlash('error', $translator->trans('The CSRF token is invalid. Please try to resubmit the form.', [], 'validators'));
+
+            return $this->redirectToRoute('document_versions', [
+                'id' => $document->getId()
+            ]);
+        }
+
+        $logRepository->revert($document, $request->request->get(static::VersionParam));
+        $this->repository->persist($document);
+
+        $this->addFlash('success', 'versions.restore.success');
+
+        return $this->redirectToRoute('show_document', [
+            'id' => $document->getId(),
+            'slug' => $document->getSlug()
         ]);
     }
 

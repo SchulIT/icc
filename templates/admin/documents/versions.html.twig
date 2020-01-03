@@ -6,8 +6,8 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('admin_wiki') }}">{{ 'admin.wiki.label'|trans }}</a></li>
-        <li class="breadcrumb-item">{{ article.title }}</li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_documents') }}">{{ 'admin.documents.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ document.title }}</li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -39,7 +39,7 @@
                     <td>{{ entry.username }}</td>
                     <td>{{ entry.loggedAt|format_datetime }}</td>
                     <td>
-                        <a href="{{ path('wiki_article_version', { id: article.id, version: entry.version}) }}" class="btn btn-sm btn-primary">
+                        <a href="{{ path('show_document_version', { id: document.id, version: entry.version}) }}" class="btn btn-sm btn-primary">
                             <i class="fa fa-eye"></i> {{ 'versions.show.button'|trans }}
                         </a>
 
@@ -59,7 +59,7 @@
     <script src="{{ asset('build/modal.js') }}"></script>
 
     <div class="modal fade" id="restore-modal" tabindex="-1" role="dialog" aria-labelledby="restore-modal" aria-hidden="true">
-        <form method="post" action="{{ path('restore_wiki_article_version', { id: article.id }) }}">
+        <form method="post" action="{{ path('restore_document_version', { id: document.id }) }}">
             <input type="hidden" name="{{ token_param }}" value="{{ csrf_token(token_id) }}">
             <input type="hidden" name="{{ version_param }}" value="">
 

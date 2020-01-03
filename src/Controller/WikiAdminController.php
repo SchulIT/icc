@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\WikiArticle;
 use App\Form\WikiArticleType;
+use App\Repository\LogRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Request\BadRequestException;
 use App\Security\Voter\WikiVoter;
@@ -93,13 +94,10 @@ class WikiAdminController extends AbstractController {
     /**
      * @Route("/{id}/versions", name="wiki_article_versions")
      */
-    public function versions(WikiArticle $article, Request $request, Sorter $sorter) {
+    public function versions(WikiArticle $article, Request $request, LogRepositoryInterface $logRepository, Sorter $sorter) {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
 
-        /** @var LogEntryRepository $repo */
-        $repo = $this->getDoctrine()->getRepository(LogEntry::class);
-        $logs = $repo->getLogEntries($article);
-
+        $logs = $logRepository->getLogEntries($article);
         $sorter->sort($logs, LogEntryStrategy::class, SortDirection::Descending());
 
         return $this->render('admin/wiki/versions.html.twig', [
@@ -114,13 +112,10 @@ class WikiAdminController extends AbstractController {
     /**
      * @Route("/{id}/versions/{version}", name="wiki_article_version")
      */
-    public function version(WikiArticle $article, Request $request, int $version) {
+    public function version(WikiArticle $article, Request $request, LogRepositoryInterface $logRepository, int $version) {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
 
-        /** @var LogEntryRepository $repo */
-        $repo = $this->getDoctrine()->getRepository(LogEntry::class);
-        $logs = $repo->getLogEntries($article);
-
+        $logs = $logRepository->getLogEntries($article);
         $entry = null;
 
         foreach($logs as $logEntry) {
@@ -133,7 +128,7 @@ class WikiAdminController extends AbstractController {
             throw new NotFoundHttpException();
         }
 
-        $repo->revert($article, $version);
+        $logRepository->revert($article, $version);
 
         return $this->render('admin/wiki/version.html.twig', [
             'article' => $article,
@@ -147,7 +142,7 @@ class WikiAdminController extends AbstractController {
     /**
      * @Route("/{id}/restore", name="restore_wiki_article_version")
      */
-    public function restore(WikiArticle $article, Request $request, TranslatorInterface $translator) {
+    public function restore(WikiArticle $article, Request $request, LogRepositoryInterface $logRepository, TranslatorInterface $translator) {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
 
         if($this->isCsrfTokenValid(static::RevertCsrfToken, $request->request->get(static::RevertCsrfTokenParam)) !== true) {
@@ -158,16 +153,10 @@ class WikiAdminController extends AbstractController {
             ]);
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $logRepository->revert($article, $request->request->get(static::VersionParam));
+        $this->repository->persist($article);
 
-        /** @var LogEntryRepository $repo */
-        $repo = $em->getRepository(LogEntry::class);
-
-        $repo->revert($article, $request->request->get(static::VersionParam));
-        $em->persist($article);
-        $em->flush();
-
-        $this->addFlash('success', 'admin.wiki.versions.success');
+        $this->addFlash('success', 'versions.restore.success');
 
         return $this->redirectToRoute('show_wiki_article', [
             'id' => $article->getId(),

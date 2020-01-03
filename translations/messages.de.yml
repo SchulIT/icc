@@ -526,23 +526,6 @@ admin:
             label: Wiki-Artikel löschen
             confirm: 'Soll der Wiki-Artikel "%name%" (inkl. aller Unter-Artikel) wirklich gelöscht werden?'
             success: Wiki-Artikel erfolgreich gelöscht
-        versions:
-            label: Versionen
-            restore:
-                label: Version wiederherstellen
-                button: wiederherstellen
-                confirm: 'Soll die Version vom %date% wirklich wiederhergestellt werden?'
-                success: Version erfolgreich wiederherstellt
-            show:
-                label: "Version %version%"
-                button: anzeigen
-                info: "Es wird Version %version% vom %date% des Wiki-Artikels angezeigt."
-
-            type:
-                label: Art
-                create: erstellen
-                update: bearbeitet
-                remove: gelöscht
 
     teachers:
         label: Lehrkräfte
@@ -574,6 +557,24 @@ admin:
                 label: Tag löschen
                 confirm: 'Soll der Tag "%name%" wirklich gelöscht werden?'
                 success: Tag erfolgreich gelöscht
+
+versions:
+    label: Versionen
+    restore:
+        label: Version wiederherstellen
+        button: wiederherstellen
+        confirm: 'Soll die Version vom %date% wirklich wiederhergestellt werden?'
+        success: Version erfolgreich wiederherstellt
+    show:
+        label: "Version %version%"
+        button: anzeigen
+        info: "Es wird Version %version% vom %date% des Wiki-Artikels angezeigt."
+
+    type:
+        label: Art
+        create: erstellen
+        update: bearbeitet
+        remove: gelöscht
 
 forms:
     select:

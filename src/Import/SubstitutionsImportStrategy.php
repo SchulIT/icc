@@ -103,6 +103,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
         $entity->setReplacementRoom($data->getReplacementRoom());
         $entity->setRemark($data->getRemark());
         $entity->setType($data->getType());
+        $entity->setStartsBefore($data->startsBefore());
 
         $studyGroups = $this->studyGroupRepository->findAllByExternalId($data->getStudyGroups());
 

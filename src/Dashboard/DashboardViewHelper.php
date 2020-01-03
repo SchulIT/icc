@@ -132,7 +132,16 @@ class DashboardViewHelper {
      */
     private function addSubstitutions(iterable $substitutions, DashboardView $dashboardView): void {
         foreach($substitutions as $substitution) {
-            for($lesson = $substitution->getLessonStart(); $lesson <= $substitution->getLessonEnd(); $lesson++) {
+            if($substitution->startsBefore()) {
+                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution));
+
+                if($substitution->getLessonEnd() - $substitution->getLessonStart() === 0) {
+                    // Do not expand more lessons when the end is the same lesson as the beginning
+                    continue;
+                }
+            }
+
+            for ($lesson = $substitution->getLessonStart(); $lesson <= $substitution->getLessonEnd(); $lesson++) {
                 $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution));
             }
         }

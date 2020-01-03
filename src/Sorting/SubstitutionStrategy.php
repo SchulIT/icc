@@ -12,6 +12,12 @@ class SubstitutionStrategy implements SortingStrategyInterface {
      * @return int
      */
     public function compare($objectA, $objectB): int {
-        return $objectA->getLessonStart() - $objectB->getLessonStart();
+        $lessonStartCmp = $objectA->getLessonStart() - $objectB->getLessonStart();
+
+        if($lessonStartCmp === 0) {
+            return (int)$objectB->startsBefore() - (int)$objectA->startsBefore();
+        }
+
+        return $lessonStartCmp;
     }
 }

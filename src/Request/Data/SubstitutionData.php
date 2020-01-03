@@ -38,6 +38,12 @@ class SubstitutionData {
     private $lessonEnd;
 
     /**
+     * @Serializer\Type("boolean")
+     * @var bool
+     */
+    private $startsBefore;
+
+    /**
      * @Serializer\Type("string")
      * @NullOrNotBlank()
      * @var string|null
@@ -164,6 +170,22 @@ class SubstitutionData {
      */
     public function setLessonEnd(int $lessonEnd): SubstitutionData {
         $this->lessonEnd = $lessonEnd;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function startsBefore(): bool {
+        return $this->startsBefore;
+    }
+
+    /**
+     * @param bool $startsBefore
+     * @return SubstitutionData
+     */
+    public function setStartsBefore(bool $startsBefore): SubstitutionData {
+        $this->startsBefore = $startsBefore;
         return $this;
     }
 

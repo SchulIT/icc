@@ -8,7 +8,11 @@
         <div class="row no-gutters">
             <p class="col">
                 <strong>{{ 'label.substitution_lessons_label'|trans({'%count%': duration}) }}:</strong>
-                {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
+                {% if substitution.startsBefore %}
+                    {{ substitution.lessonStart|before_lesson }}
+                {% else %}
+                    {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
+                {% endif %}
             </p>
 
             <p class="col">
@@ -29,9 +33,11 @@
                 </p>
             {% endif %}
 
-            <p class="w-100">
-                <strong>{{ 'label.study_group'|trans }}:</strong> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
-            </p>
+            {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
+                <p class="w-100">
+                    <strong>{{ 'label.study_group'|trans }}:</strong> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
+                </p>
+            {% endif %}
 
             {% if substitution.type is not empty or substitution.remark is not empty %}
                 <hr class="w-100"/>

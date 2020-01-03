@@ -5,7 +5,7 @@ namespace App\Grouping;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
 
-class SubstitutionTeacherGroup implements GroupInterface {
+class SubstitutionTeacherGroup implements GroupInterface, SortableGroupInterface {
 
     /** @var Teacher|null */
     private $teacher;
@@ -43,5 +43,9 @@ class SubstitutionTeacherGroup implements GroupInterface {
      */
     public function addItem($item) {
         $this->substitutions[] = $item;
+    }
+
+    public function &getItems(): array {
+        return $this->substitutions;
     }
 }

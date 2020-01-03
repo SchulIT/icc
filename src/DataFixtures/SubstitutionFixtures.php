@@ -92,6 +92,23 @@ class SubstitutionFixtures extends Fixture implements DependentFixtureInterface 
             $id++;
         }
 
+        for($i = 0; $i < 100; $i++) {
+            $start = $this->generator->numberBetween(1, 8);
+
+            $substitution = (new Substitution())
+                ->setStartsBefore(true)
+                ->setLessonStart($start)
+                ->setLessonEnd($start)
+                ->setDate($this->generator->randomElement($dates))
+                ->setType("Aufsicht")
+                ->setExternalId(sprintf('substitution-%d', $id));
+
+            $substitution->addTeacher($this->generator->randomElement($teachers));
+
+            $manager->persist($substitution);
+            $id++;
+        }
+
         $manager->flush();
     }
 

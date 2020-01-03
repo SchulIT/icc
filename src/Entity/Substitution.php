@@ -52,6 +52,12 @@ class Substitution {
     private $lessonEnd;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $startsBefore = false;
+
+    /**
      * @ORM\Column(type="string", nullable=true)
      * @var string|null
      */
@@ -206,6 +212,22 @@ class Substitution {
      */
     public function setLessonEnd(int $lessonEnd): Substitution {
         $this->lessonEnd = $lessonEnd;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function startsBefore(): bool {
+        return $this->startsBefore;
+    }
+
+    /**
+     * @param bool $startsBefore
+     * @return Substitution
+     */
+    public function setStartsBefore(bool $startsBefore): Substitution {
+        $this->startsBefore = $startsBefore;
         return $this;
     }
 

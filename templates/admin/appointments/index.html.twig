@@ -48,10 +48,18 @@
                 <div class="card-header">{{ ('date.months.' ~ group.month)|trans }} {{ group.year }} <span class="badge badge-pill badge-primary">{{ group.appointments|length }}</span> </div>
 
                 <table class="table table-striped table-bordered table-hover">
+                    <colgroup>
+                        <col>
+                        <col class="column-lg">
+                        <col class="column-lg">
+                        <col class="column-lg">
+                        <col class="column-lg">
+                        <col class="column-md">
+                    </colgroup>
+
                     <thead>
                     <tr>
                         <th>{{ 'label.title'|trans }} </th>
-                        <th>{{ 'label.category'|trans }}</th>
                         <th>{{ 'label.start'|trans }}</th>
                         <th>{{ 'label.end'|trans }}</th>
                         <th>{{ 'label.study_groups'|trans({'%count%': 0}) }}</th>
@@ -80,8 +88,11 @@
                         {% endif %}
 
                         <tr>
-                            <td>{{ appointment.title }}</td>
-                            <td><span class="color-rect" style="background: {{ appointment.category.color }}"></span> {{ appointment.category.name }}</td>
+                            <td>
+                                {{ appointment.title }}
+
+                                <span class="badge" style="background: {{ appointment.category.color }}; color: {{ appointment.category.color|foreground }}">{{ appointment.category.name }}</span>
+                            </td>
                             <td>{{ start }}</td>
                             <td>{{ end }}</td>
                             <td>

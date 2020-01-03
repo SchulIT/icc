@@ -180,3 +180,9 @@ table {
     z-index: auto !important;
   }
 }
+
+.card {
+  > .table {
+    border-top: 0;
+  }
+}

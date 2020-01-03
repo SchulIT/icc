@@ -27,7 +27,14 @@
                 {% if group.expired %}{{ 'admin.messages.overview.expired'|trans }}{% else %}{{ 'admin.messages.overview.active'|trans }}{% endif %} <span class="badge badge-pill badge-primary">{{ group.messages|length }}</span>
             </div>
 
-            <table class="table table-striped table-hover">
+            <table class="table table-striped table-bordered table-hover">
+                <colgroup>
+                    <col>
+                    <col class="column-320">
+                    <col class="column-320">
+                    <col class="column-lg">
+                </colgroup>
+
                 <thead>
                 <tr>
                     <th>{{ 'label.title'|trans }}</th>

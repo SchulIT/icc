@@ -59,7 +59,10 @@
                 {% include "_includes/message.html.twig" with { message: message } only %}
             {% endfor %}
 
-            {# Daily infos (TODO) #}
+            {# Daily infos #}
+            {% for infotext in view.infotexts %}
+                {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
+            {% endfor %}
 
             {# Loop lessons #}
             {% for lesson in view.lessons %}

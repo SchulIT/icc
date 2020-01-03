@@ -2,12 +2,16 @@
 
 namespace App\Dashboard;
 
+use App\Entity\Infotext;
 use App\Entity\Message;
 
 class DashboardView {
 
     /** @var Message[] */
     private $messages = [ ];
+
+    /** @var Infotext[] */
+    private $infotexts = [ ];
 
     private $items = [ ];
 
@@ -41,6 +45,13 @@ class DashboardView {
         return $this->beforeItems[$lesson] ?? [ ];
     }
 
+    /**
+     * @return Infotext[]
+     */
+    public function getInfotexts(): array {
+        return $this->infotexts;
+    }
+
     public function addItem(int $lesson, AbstractViewItem $item): void {
         if(!isset($this->items[$lesson])) {
             $this->items[$lesson] = [ ];
@@ -59,5 +70,9 @@ class DashboardView {
 
     public function addMessage(Message $message): void {
         $this->messages[] = $message;
+    }
+
+    public function addInfotext(Infotext $infotext): void {
+        $this->infotexts[] = $infotext;
     }
 }

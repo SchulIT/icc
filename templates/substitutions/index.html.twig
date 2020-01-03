@@ -82,11 +82,7 @@
 
         <div class="card-body">
             {% for infotext in infotexts %}
-                <div class="card">
-                    <div class="card-body">
-                        <i class="fa fa-info-circle"></i> {{ infotext.content }}
-                    </div>
-                </div>
+                {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
             {% endfor %}
 
             {% for group in groups %}

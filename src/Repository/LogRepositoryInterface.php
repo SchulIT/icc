@@ -7,13 +7,13 @@ use Gedmo\Loggable\Entity\LogEntry;
 interface LogRepositoryInterface {
 
     /**
-     * @param $entity
+     * @param object $entity
      * @return LogEntry[]
      */
     public function getLogEntries($entity): array;
 
     /**
-     * @param $entity
+     * @param object $entity
      * @param int $version
      */
     public function revert($entity, int $version): void;

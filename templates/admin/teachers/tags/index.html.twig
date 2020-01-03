@@ -41,11 +41,11 @@
                         <td>{{ tag.name }} <span class="badge badge-primary">{{ tag.externalId }}</span></td>
                         <td><span class="color-rect" style="background: {{ tag.color }}"></span> </td>
                         <td>
-                            <a href="{{ path('edit_teacher_tag', { id: tag.id}) }}" class="btn btn-primary btn-sm">
+                            <a href="{{ path('edit_teacher_tag', { id: tag.id}) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
                                 <i class="fa fa-edit"></i>
                             </a>
 
-                            <a href="{{ path('remove_teacher_tag', { id: tag.id }) }}" class="btn btn-danger btn-sm">
+                            <a href="{{ path('remove_teacher_tag', { id: tag.id }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
                                 <i class="fa fa-trash"></i>
                             </a>
                         </td>

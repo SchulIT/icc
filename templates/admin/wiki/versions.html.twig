@@ -52,6 +52,12 @@
             </tbody>
         </table>
     </div>
+
+    <div class="buttons">
+        <a href="{{ referer_path({'view': 'show_wiki_article'}, 'admin_wiki_articles', { id: article.id, slug: article.slug }) }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
 {% endblock %}
 
 {% block post_javascript %}
@@ -75,8 +81,8 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
-                        <button type="submit" class="btn btn-primary"><i class="fa fa-trash-restore"></i> {{ 'versions.restore.button'|trans }}</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-trash-restore"></i> {{ 'versions.restore.button'|trans }}</button>
                     </div>
                 </div>
             </div>

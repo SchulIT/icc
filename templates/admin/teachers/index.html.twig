@@ -52,11 +52,11 @@
                             {% for tag in teacher.tags %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
                         </td>
                         <td>
-                            <a href="{{ path('edit_teacher', { id: teacher.id }) }}" class="btn btn-primary btn-sm">
+                            <a href="{{ path('edit_teacher', { id: teacher.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
                                 <i class="fa fa-edit"></i>
                             </a>
 
-                            <a href="{{ path('remove_teacher', { id: teacher.id }) }}" class="btn btn-danger btn-sm">
+                            <a href="{{ path('remove_teacher', { id: teacher.id }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
                                 <i class="fa fa-trash"></i>
                             </a>
                         </td>

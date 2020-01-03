@@ -52,15 +52,15 @@
                             </td>
                             <td>
                                 {% if is_granted('edit', document) %}
-                                    <a href="{{ path('admin_edit_document', { id: document.id }) }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ path('admin_edit_document', { id: document.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    <a href="{{ path('document_versions', { id: document.id }) }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ path('document_versions', { id: document.id }) }}" class="btn btn-primary btn-sm" title="{{ 'versions.label'|trans }}">
                                         <i class="fa fa-history"></i>
                                     </a>
                                 {% endif %}
                                 {% if is_granted('remove', document) %}
-                                    <a href="{{ path('admin_remove_document', { id: document.id }) }}" class="btn btn-danger btn-sm">
+                                    <a href="{{ path('admin_remove_document', { id: document.id }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 {% endif %}

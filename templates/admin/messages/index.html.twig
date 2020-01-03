@@ -52,14 +52,14 @@
                         <td>{% include "_includes/study_groups.html.twig" with { studyGroups: message.studyGroups, id: message.id } only %}</td>
                         <td>
                             {% if is_granted('edit', message) %}
-                                <a href="{{ path('edit_message', { id: message.id }) }}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
+                                <a href="{{ path('edit_message', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}"><i class="fa fa-edit"></i></a>
 
                                 {% if message.mustConfirm %}
 
                                 {% endif %}
                             {% endif %}
                             {% if is_granted('remove', message) %}
-                                <a href="{{ path('remove_message', { id: message.id }) }}" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                <a href="{{ path('remove_message', { id: message.id }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}"><i class="fa fa-trash"></i></a>
                             {% endif %}
                         </td>
                     </tr>

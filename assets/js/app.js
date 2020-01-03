@@ -6,6 +6,7 @@ import Choices from "choices.js";
 
 let bsCustomFileInput = require('bs-custom-file-input');
 let ClipboardJS = require('clipboard');
+var bsn = require('bootstrap.native');
 
 /*
  * Polyfill for closest function (thanks, Mozilla! https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#Polyfill)
@@ -102,6 +103,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     optionEl.selected = true;
                 }
             });
+        });
+    });
+
+    document.querySelectorAll('[title]').forEach(function(el) {
+        new bsn.Tooltip(el, {
+            placement: 'bottom'
         });
     });
 });

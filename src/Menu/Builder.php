@@ -153,6 +153,10 @@ class Builder {
             $menu->addChild('admin.teachers.label', [
                 'route' => 'admin_teachers'
             ]);
+
+            $menu->addChild('api.doc', [
+                'uri' => '/docs/api/import'
+            ]);
         }
 
         return $menu;

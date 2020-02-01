@@ -602,3 +602,6 @@ profile:
 remove:
     header: Löschen bestätigen
     confirm: Ja, löschen
+
+api:
+    doc: API-Dokumentation

@@ -16,7 +16,7 @@ class AbsenceData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\Choice("study_group", "teacher")
+     * @Assert\Choice({"study_group", "teacher"})
      * @var string
      */
     private $type;

@@ -16,6 +16,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 
 class SetupCommand extends Command {
 
@@ -23,12 +24,13 @@ class SetupCommand extends Command {
     private $messageVisibilityRepository;
     private $timetablePeriodVisibilityRepository;
     private $wikiArticleVisibilityRepository;
+    private $pdoSessionHandler;
 
     private $em;
 
     public function __construct(DocumentVisibilityRepositoryInterface $documentVisibilityRepository, MessageVisibilityRepositoryInterface $messageVisibilityRepository,
                                 TimetablePeriodVisibilityRepositoryInterface $timetablePeriodVisibilityRepository, WikiArticleVisibilityRepositoryInterface $wikiArticleVisibilityRepository,
-                                EntityManagerInterface $em, string $name = null) {
+                                EntityManagerInterface $em, PdoSessionHandler $pdoSessionHandler, string $name = null) {
         parent::__construct($name);
 
         $this->documentVisibilityRepository = $documentVisibilityRepository;
@@ -37,6 +39,7 @@ class SetupCommand extends Command {
         $this->wikiArticleVisibilityRepository = $wikiArticleVisibilityRepository;
 
         $this->em = $em;
+        $this->pdoSessionHandler = $pdoSessionHandler;
     }
 
     public function configure() {
@@ -142,15 +145,12 @@ class SetupCommand extends Command {
     }
 
     private function setupSessions(SymfonyStyle $style) {
-            $sql = <<<SQL
-CREATE TABLE IF NOT EXISTS `sessions` (
-    `sess_id` VARCHAR(128) NOT NULL PRIMARY KEY,
-    `sess_data` BLOB NOT NULL,
-    `sess_time` INTEGER UNSIGNED NOT NULL,
-    `sess_lifetime` MEDIUMINT NOT NULL
-) COLLATE utf8_bin, ENGINE = InnoDB;
-SQL;
-        $this->em->getConnection()->exec($sql);
+        $sql = "SHOW TABLES LIKE 'sessions';";
+        $row = $this->em->getConnection()->executeQuery($sql);
+
+        if($row->fetch() === false) {
+            $this->pdoSessionHandler->createTable();
+        }
 
         $style->success('Sessions table ready.');
     }

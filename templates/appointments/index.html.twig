@@ -52,7 +52,7 @@
                             <select name="categoryId" id="category" class="form-control" data-trigger="submit" data-choice="true">
                                 <option value="" placeholder>{{ 'label.select.category'|trans }}</option>
                                 {% for c in categoryFilter.categories %}
-                                <option value="{{ c.id }}" {% if categoryFilter.currentCategory != null and categoryFilter.currentCategory.id == c.id %}selected="selected"{% endif %}>{{ c.name }}</option>
+                                <option data-custom-properties="{{ c.color }}" value="{{ c.id }}" {% if categoryFilter.currentCategory != null and categoryFilter.currentCategory.id == c.id %}selected="selected"{% endif %}>{{ c.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>

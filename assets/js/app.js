@@ -63,7 +63,41 @@ document.addEventListener('DOMContentLoaded', function() {
             itemSelectText: '',
             shouldSort: false,
             shouldSortItems: false,
-            removeItemButton: removeItemButton
+            removeItemButton: removeItemButton,
+            callbackOnCreateTemplates: function(template) {
+                return {
+                    item: (classNames, data) => {
+                        return template(`
+          <div class="${classNames.item} ${
+                            data.highlighted
+                                ? classNames.highlightedState
+                                : classNames.itemSelectable
+                        } ${
+                            data.placeholder ? classNames.placeholder : ''
+                        }" data-item data-id="${data.id}" data-value="${data.value}" ${
+                            data.active ? 'aria-selected="true"' : ''
+                        } ${data.disabled ? 'aria-disabled="true"' : ''}>
+            ${data.customProperties != null && data.customProperties.startsWith('#') ? '<span class="color-rect" style="background: ' + data.customProperties + ';"></span>' : '' } ${data.label}
+          </div>
+        `);
+                    },
+                    choice: (classNames, data) => {
+                        return template(`
+          <div class="${classNames.item} ${classNames.itemChoice} ${
+                            data.disabled ? classNames.itemDisabled : classNames.itemSelectable
+                        }" data-select-text="${this.config.itemSelectText}" data-choice ${
+                            data.disabled
+                                ? 'data-choice-disabled aria-disabled="true"'
+                                : 'data-choice-selectable'
+                        } data-id="${data.id}" data-value="${data.value}" ${
+                            data.groupId > 0 ? 'role="treeitem"' : 'role="option"'
+                        }>
+             ${data.customProperties != null && data.customProperties.startsWith('#') ? '<span class="color-rect" style="background: ' + data.customProperties + ';"></span>' : '' } ${data.label}
+          </div>
+        `);
+                    },
+                };
+            },
         });
     });
 

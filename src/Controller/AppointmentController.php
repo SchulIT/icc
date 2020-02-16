@@ -61,7 +61,7 @@ class AppointmentController extends AbstractControllerWithMessages {
         $isStudent = $user->getUserType()->equals(UserType::Student());
         $isParent = $user->getUserType()->equals(UserType::Parent());
 
-        $categoryFilterView = $categoryFilter->handle($request->query->get('categoryIds', [ ]));
+        $categoryFilterView = $categoryFilter->handle(explode(',', $request->query->get('categoryIds', '')));
         $studentFilterView = $studentFilter->handle($studentId, $user);
         $gradeFilterView = $gradeFilter->handle($gradeId, $user);
 

@@ -38,61 +38,44 @@
 
     {% include "_messages.html.twig" %}
 
-    <div id="appointments"></div>
-
-    <script type="text/x-template" id="appointments-template">
-        <div data-url="{{ path('appointments_xhr') }}">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        {% if studentFilter.studentGradeGroups|length > 0 %}
-                            <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                                {% include "_filter/student.html.twig" %}
-                            </div>
-                        {% endif %}
-
-                        {% if gradeFilter.grades|length > 0 %}
-                            <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                                {% include "_filter/grade.html.twig" %}
-                            </div>
-                        {% endif %}
-
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <form role="form" method="get" class="form hidden-print">
-                                <div class="form-group">
-                                    <label for="category" class="control-label">{{ 'label.categories'|trans }}:</label>
-                                    <select v-model="query.categoryIds" name="categoryId[]" multiple="multiple" id="category" class="form-control" data-trigger="submit" data-choice="true" placeholder="{{ 'label.select.category'|trans }}">
-                                        {% for c in categoryFilter.categories %}
-                                        <option data-custom-properties="{{ c.color }}" value="{{ c.id }}" {% if c in categoryFilter.currentCategories %}selected="selected"{% endif %}>{{ c.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </form>
+    <div id="appointments" data-url="{{ path('appointments_xhr') }}">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    {% if studentFilter.studentGradeGroups|length > 0 %}
+                        <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            {% include "_filter/student.html.twig" with { trigger: 'none' } %}
                         </div>
+                    {% endif %}
+
+                    {% if gradeFilter.grades|length > 0 %}
+                        <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            {% include "_filter/grade.html.twig" with { trigger: 'none' } %}
+                        </div>
+                    {% endif %}
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <form role="form" method="get" class="form hidden-print">
+                            <div class="form-group">
+                                <label for="categories" class="control-label">{{ 'label.categories'|trans }}:</label>
+                                <select name="categoryIds" multiple="multiple" id="categories" class="form-control" data-choice="true" placeholder="{{ 'label.select.category'|trans }}">
+                                    {% for c in categoryFilter.categories %}
+                                    <option data-custom-properties="{{ c.color }}" value="{{ c.id }}" {% if c in categoryFilter.currentCategories %}selected="selected"{% endif %}>{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="card">
-                <div class="card-body">
-                    <FullCalendar class='demo-app-calendar'
-                          ref="fullCalendar"
-                          defaultView="dayGridMonth"
-                          :header="{left: 'prev,next today', center: 'title',right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'}"
-                          :plugins="calendarPlugins"
-                          :weekends="calendarWeekends"
-                          themeSystem="bootstrap"
-                          locale="de"
-                          :locales="calendarLocales"
-                          :firstDay="1"
-                          :events="calendarEvents"
-                          weekNumbers="true"
-                          weekNumbersWithinDays="true"
-                          @dateClick="handleEventClick"></FullCalendar>
-                </div>
+        <div class="card">
+            <div class="card-body">
+                <div id="calendar"></div>
             </div>
         </div>
-    </script>
+    </div>
 
     {#
 

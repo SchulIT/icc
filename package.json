@@ -16,9 +16,7 @@
         "@fullcalendar/list": "^4.4.0",
         "@fullcalendar/timegrid": "^4.4.0",
         "@fullcalendar/timeline": "^4.4.0",
-        "@fullcalendar/vue": "^4.4.0",
         "@symfony/webpack-encore": "^0.27.0",
-        "axios": "^0.19.2",
         "bootstrap": "^4.0.0",
         "bootstrap.native": "^2.0.26",
         "bootstrap.native-loader": "^2.0.0",
@@ -35,11 +33,6 @@
         "sass-loader": "^7.0.1",
         "simplemde": "^1.11.2",
         "uglify-js": "^3.6.0",
-        "vanilla-picker": "^2.10.0",
-        "vue": "^2.6.11",
-        "vue-axios": "^2.1.5",
-        "vue-loader": "^15.9.0",
-        "vue-style-loader": "^4.1.2",
-        "vue-template-compiler": "^2.6.11"
+        "vanilla-picker": "^2.10.0"
     }
 }

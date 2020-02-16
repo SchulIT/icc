@@ -1,130 +1,76 @@
-import Choices from "choices.js";
-
 require('../css/appointments.scss');
 
-import Vue from 'vue';
-
-import axios from 'axios'
-import VueAxios from 'vue-axios'
-
+import { Calendar } from "@fullcalendar/core";
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
-import FullCalendar from '@fullcalendar/vue'
 import bootstrapPlugin from '@fullcalendar/bootstrap';
-import deLocale from '@fullcalendar/core/locales/de'
+import deLocale from '@fullcalendar/core/locales/de';
 
 require('@fullcalendar/core/locales-all');
 
-Vue.use(VueAxios, axios);
-
 document.addEventListener('DOMContentLoaded', function () {
+    var appEl = document.getElementById('appointments');
+    var lastQuery = { };
 
-    new Vue({
-        el: '#appointments',
-        components: {
-            FullCalendar: FullCalendar
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new Calendar(calendarEl, {
+        plugins: [
+            dayGridPlugin,
+            timeGridPlugin,
+            listPlugin,
+            interactionPlugin,
+            bootstrapPlugin
+        ],
+        header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
         },
-        data: function () {
-            return {
-                calendarLocales: [
-                    deLocale
-                ],
-                calendarPlugins: [
-                    dayGridPlugin,
-                    timeGridPlugin,
-                    interactionPlugin,
-                    bootstrapPlugin,
-                    listPlugin
-                ],
-                calendarWeekends: true,
-                calendarEvents: [],
-                query: {
-                    studentId: '',
-                    gradeId: '',
-                    categoryIds: []
+        themeSystem: 'bootstrap',
+        locales: [ deLocale ],
+        locale: 'de',
+        eventSources: [
+            {
+                id: 'json',
+                url: appEl.getAttribute('data-url'),
+                method: 'GET',
+                extraParams: function() {
+                    return lastQuery;
                 }
             }
-        },
-        watch: {
-            query: {
-                handler() {
-                    this.loadEvents();
-                },
-                deep: true
-            }
-        },
-        methods: {
-            handleEventClick(event) {
-                console.log(event)
-            },
-            loadEvents() {
-                let $this = this;
-
-                axios.get($this.$data.url, { params: this.$data.query })
-                    .then(function(response) {
-                        $this.$data.calendarEvents = response.data;
-                    })
-                    .catch(function(error) {
-                        console.error(error);
-                    });
-            }
-        },
-        template: '#appointments-template',
-        mounted: function() {
-            this.$data.url = this.$el.getAttribute('data-url');
-
-            this.$el.querySelectorAll('select[data-choice=true]').forEach(function(el) {
-                let removeItemButton = false;
-
-                if(el.getAttribute('multiple') !== null) {
-                    removeItemButton = true;
-                }
-
-                new Choices(el, {
-                    itemSelectText: '',
-                    shouldSort: false,
-                    shouldSortItems: false,
-                    removeItemButton: removeItemButton,
-                    callbackOnCreateTemplates: function(template) {
-                        return {
-                            item: (classNames, data) => {
-                                return template(`
-          <div class="${classNames.item} ${
-                                    data.highlighted
-                                        ? classNames.highlightedState
-                                        : classNames.itemSelectable
-                                } ${
-                                    data.placeholder ? classNames.placeholder : ''
-                                }" data-item data-id="${data.id}" data-value="${data.value}" ${
-                                    data.active ? 'aria-selected="true"' : ''
-                                } ${data.disabled ? 'aria-disabled="true"' : ''}>
-            ${data.customProperties != null && data.customProperties.startsWith('#') ? '<span class="color-rect" style="background: ' + data.customProperties + ';"></span>' : '' } ${data.label}
-          </div>
-        `);
-                            },
-                            choice: (classNames, data) => {
-                                return template(`
-          <div class="${classNames.item} ${classNames.itemChoice} ${
-                                    data.disabled ? classNames.itemDisabled : classNames.itemSelectable
-                                }" data-select-text="${this.config.itemSelectText}" data-choice ${
-                                    data.disabled
-                                        ? 'data-choice-disabled aria-disabled="true"'
-                                        : 'data-choice-selectable'
-                                } data-id="${data.id}" data-value="${data.value}" ${
-                                    data.groupId > 0 ? 'role="treeitem"' : 'role="option"'
-                                }>
-             ${data.customProperties != null && data.customProperties.startsWith('#') ? '<span class="color-rect" style="background: ' + data.customProperties + ';"></span>' : '' } ${data.label}
-          </div>
-        `);
-                            },
-                        };
-                    },
-                });
-            });
-
-            this.loadEvents();
-        }
+        ]
     });
+
+    calendar.render();
+
+    var studentIdEl = document.getElementById('student');
+    var gradeIdEl = document.getElementById('grade');
+    var categoriyIdsEl = document.getElementById('categories');
+
+    [studentIdEl, gradeIdEl, categoriyIdsEl ].forEach(function(el) {
+        el.addEventListener('change', function(el) {
+            loadEvents();
+        });
+    });
+
+    function loadEvents() {
+        var query = { };
+
+        [studentIdEl, gradeIdEl, categoriyIdsEl ].forEach(function(el) {
+            if(el.multiple !== null && el.multiple !== false) {
+                query[el.name] = Array.from(el.selectedOptions).map(x => x.value);
+            } else {
+
+                query[el.name] = el.value === "" ? null : el.value;
+            }
+        });
+
+        var eventSource = calendar.getEventSourceById('json');
+        lastQuery = query;
+        eventSource.refetch();
+    }
+
+    loadEvents();
 });

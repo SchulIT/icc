@@ -1,6 +1,5 @@
 var Encore = require('@symfony/webpack-encore');
 var CopyPlugin = require('copy-webpack-plugin');
-const { VueLoaderPlugin } = require('vue-loader')
 
 Encore
     // directory where compiled assets will be stored
@@ -63,8 +62,6 @@ Encore
     // uncomment if you use API Platform Admin (composer req api-admin)
     //.enableReactPreset()
     //.addEntry('admin', './assets/js/admin.js')
-
-    .enableVueLoader()
 
     .addLoader(
         {

@@ -3,3 +3,9 @@
 @import '../../node_modules/@fullcalendar/timegrid/main.css';
 @import '../../node_modules/@fullcalendar/list/main.css';
 @import '../../node_modules/@fullcalendar/bootstrap/main.css';
+
+.fc.fc-bootstrap {
+  a.fc-event {
+    padding: 5px;
+  }
+}

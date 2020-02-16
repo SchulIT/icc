@@ -24,9 +24,7 @@ class AppointmentCategoriesFilter {
                 return $category->getId();
             }
         );
-
-        dump($categoryIds);
-
+        
         $selectedCategories = array_filter($categories, function (AppointmentCategory $category) use ($categoryIds) {
             return in_array($category->getId(), $categoryIds);
         });

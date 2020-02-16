@@ -16,64 +16,85 @@
     {% if exclude != 'gradeId' and gradeFilter.currentGrade != null %}
         <input type="hidden" name="gradeId" value="{{ gradeFilter.currentGrade.id }}">
     {% endif %}
-    {% if exclude != 'categoryId' and categoryFilter.currentCategory != null %}
-        <input type="hidden" name="categoryId" value="{{ categoryFilter.currentCategory.id }}">
+    {% if exclude != 'categoryId' and categoryFilter != null and categoryFilter.currentCategories|length > 0 %}
+        {% for c in categoryFilter.currentCategories %}<input type="hidden" name="categoryId[]" value="{{ c.id }}">{% endfor %}
     {% endif %}
     {% if exclude != 'query' and query != null %}
         <input type="hidden" name="query" value="{{ query }}">
     {% endif %}
 {% endmacro %}
 
+{% block post_javascript %}
+    <script src="{{ asset('build/appointments.js') }}"></script>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+
+    <link rel="stylesheet" href="{{ asset('build/appointments.css') }}" type="text/css">
+{% endblock %}
+
 {% block content %}
 
     {% include "_messages.html.twig" %}
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                {% if studentFilter.studentGradeGroups|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/student.html.twig" %}
-                    </div>
-                {% endif %}
+    <div id="appointments"></div>
 
-                {% if gradeFilter.grades|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/grade.html.twig" %}
-                    </div>
-                {% endif %}
-
-                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                    <form role="form" method="get" class="form hidden-print">
-                        {{ _self.applyAllFilters('categoryId', studentFilter, gradeFilter, categoryFilter, query) }}
-
-                        <div class="form-group">
-                            <label for="category" class="control-label">{{ 'label.category'|trans }}:</label>
-                            <select name="categoryId" id="category" class="form-control" data-trigger="submit" data-choice="true">
-                                <option value="" placeholder>{{ 'label.select.category'|trans }}</option>
-                                {% for c in categoryFilter.categories %}
-                                <option data-custom-properties="{{ c.color }}" value="{{ c.id }}" {% if categoryFilter.currentCategory != null and categoryFilter.currentCategory.id == c.id %}selected="selected"{% endif %}>{{ c.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                    <form role="form" method="get" class="form hidden-print">
-                        {{ _self.applyAllFilters('show-all', studentFilter, gradeFilter, categoryFilter, query) }}
-
-                        <div class="form-group">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" name="showAll" value="true" class="custom-control-input" id="show-all" data-trigger="submit" {% if showAll %}checked="checked"{% endif %}>
-                                <label class="custom-control-label" for="show-all">{{ 'plans.appointments.filter.show_past'|trans }}</label>
+    <script type="text/x-template" id="appointments-template">
+        <div data-url="{{ path('appointments_xhr') }}">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        {% if studentFilter.studentGradeGroups|length > 0 %}
+                            <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                {% include "_filter/student.html.twig" %}
                             </div>
+                        {% endif %}
+
+                        {% if gradeFilter.grades|length > 0 %}
+                            <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                {% include "_filter/grade.html.twig" %}
+                            </div>
+                        {% endif %}
+
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <form role="form" method="get" class="form hidden-print">
+                                <div class="form-group">
+                                    <label for="category" class="control-label">{{ 'label.categories'|trans }}:</label>
+                                    <select v-model="query.categoryIds" name="categoryId[]" multiple="multiple" id="category" class="form-control" data-trigger="submit" data-choice="true" placeholder="{{ 'label.select.category'|trans }}">
+                                        {% for c in categoryFilter.categories %}
+                                        <option data-custom-properties="{{ c.color }}" value="{{ c.id }}" {% if c in categoryFilter.currentCategories %}selected="selected"{% endif %}>{{ c.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <FullCalendar class='demo-app-calendar'
+                          ref="fullCalendar"
+                          defaultView="dayGridMonth"
+                          :header="{left: 'prev,next today', center: 'title',right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'}"
+                          :plugins="calendarPlugins"
+                          :weekends="calendarWeekends"
+                          themeSystem="bootstrap"
+                          locale="de"
+                          :locales="calendarLocales"
+                          :firstDay="1"
+                          :events="calendarEvents"
+                          weekNumbers="true"
+                          weekNumbersWithinDays="true"
+                          @dateClick="handleEventClick"></FullCalendar>
                 </div>
             </div>
         </div>
-    </div>
+    </script>
+
+    {#
 
     {% if groups|length == 0 %}
         <div class="bs-callout bs-callout-info">
@@ -106,6 +127,8 @@
             </div>
         </div>
     {% endif %}
+
+    #}
 
     <div class="buttons">
         <a href="{{ path('appointments_export') }}" class="btn btn-primary btn-sm">{{ 'plans.appointments.export.label'|trans }}</a>

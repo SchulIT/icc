@@ -10,7 +10,7 @@ use App\Repository\AppointmentRepositoryInterface;
 use App\Sorting\AppointmentDateGroupStrategy;
 use App\Sorting\Sorter;
 use App\Utils\RefererHelper;
-use App\View\Filter\AppointmentCategoryFilter;
+use App\View\Filter\AppointmentCategoriesFilter;
 use SchoolIT\CommonBundle\Form\ConfirmType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,9 +39,9 @@ class AppointmentAdminController extends AbstractController {
     /**
      * @Route("", name="admin_appointments")
      */
-    public function index(AppointmentCategoryFilter $categoryFilter, ?int $categoryId = null, ?string $q = null) {
+    public function index(AppointmentCategoriesFilter $categoryFilter, array $categoryId = [ ], ?string $q = null) {
         $categoryFilterView = $categoryFilter->handle($categoryId);
-        $appointments = $this->repository->findAll($categoryFilterView->getCurrentCategory(), $q);
+        $appointments = $this->repository->findAll($categoryFilterView->getCurrentCategories(), $q);
 
         $groups = $this->grouper->group($appointments, AppointmentGroupingStrategy::class);
         $this->sorter->sortGroupItems($groups, AppointmentSortingStrategy::class);

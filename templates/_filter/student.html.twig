@@ -3,7 +3,7 @@
 
     <div class="form-group">
         <label for="student">{{ 'label.student'|trans }}:</label>
-        <select name="studentId" id="student" class="form-control" data-trigger="submit" data-choice="true">
+        <select v-model="query.studentId" name="studentId" id="student" class="form-control" data-trigger="submit" data-choice="true">
             <option value="" placeholder>{{ 'label.select.student'|trans }}</option>
             {% for group in studentFilter.studentGradeGroups %}
                 <optgroup label="{{ group.grade.name }}">

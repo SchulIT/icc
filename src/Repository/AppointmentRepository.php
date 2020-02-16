@@ -153,10 +153,11 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
     }
 
     /**
+     * @param AppointmentCategory[] $categories
      * @param \DateTime|null $today
      * @return Appointment[]
      */
-    public function findAll(?AppointmentCategory $category = null, ?string $q = null, ?\DateTime $today = null) {
+    public function findAll(array $categories = [ ], ?string $q = null, ?\DateTime $today = null) {
         $qbIds = $this->em->createQueryBuilder();
         $params = [ ];
 
@@ -164,12 +165,14 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->select('aInner.id')
             ->from(Appointment::class, 'aInner');
 
-        if($category !== null) {
+        if(count($categories) > 0) {
             $qbIds
                 ->leftJoin('aInner.category', 'cInner')
-                ->andWhere('cInner.id = :category');
+                ->andWhere('cInner.id IN :categories');
 
-            $params['category'] = $category->getId();
+            $params['categories'] = array_map(function(AppointmentCategory $category) {
+                return $category->getId();
+            }, $categories);
         }
 
         if($q !== null) {

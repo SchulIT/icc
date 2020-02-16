@@ -3,7 +3,7 @@
 
     <div class="form-group">
         <label for="grade" class="control-label">{{ 'label.grade'|trans }}:</label>
-        <select name="gradeId" id="grade" class="form-control" data-trigger="submit" data-choice="true">
+        <select v-model="query.gradeId" name="gradeId" id="grade" class="form-control" data-trigger="submit" data-choice="true">
             <option value="" placeholder>{{ 'label.select.grade'|trans }}</option>
             {% for g in gradeFilter.grades %}
                 <option value="{{ g.id() }}" {% if gradeFilter.currentGrade != null and gradeFilter.currentGrade.id == g.id %}selected="selected"{% endif %}>{{ g.getName() }}</option>

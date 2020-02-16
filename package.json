@@ -9,7 +9,16 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.9.0",
+        "@fullcalendar/bootstrap": "^4.4.0",
+        "@fullcalendar/core": "^4.4.0",
+        "@fullcalendar/daygrid": "^4.4.0",
+        "@fullcalendar/interaction": "^4.4.0",
+        "@fullcalendar/list": "^4.4.0",
+        "@fullcalendar/timegrid": "^4.4.0",
+        "@fullcalendar/timeline": "^4.4.0",
+        "@fullcalendar/vue": "^4.4.0",
         "@symfony/webpack-encore": "^0.27.0",
+        "axios": "^0.19.2",
         "bootstrap": "^4.0.0",
         "bootstrap.native": "^2.0.26",
         "bootstrap.native-loader": "^2.0.0",
@@ -19,12 +28,18 @@
         "clipboard": "^2.0.4",
         "copy-webpack-plugin": "^5.0.2",
         "core-js": "^3.1.4",
+        "css-loader": "^2.0.0",
         "emojione": "2.x",
         "inline-attachment": "^2.0.3",
         "node-sass": "^4.8.3",
         "sass-loader": "^7.0.1",
         "simplemde": "^1.11.2",
         "uglify-js": "^3.6.0",
-        "vanilla-picker": "^2.10.0"
+        "vanilla-picker": "^2.10.0",
+        "vue": "^2.6.11",
+        "vue-axios": "^2.1.5",
+        "vue-loader": "^15.9.0",
+        "vue-style-loader": "^4.1.2",
+        "vue-template-compiler": "^2.6.11"
     }
 }

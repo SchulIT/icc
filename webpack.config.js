@@ -1,5 +1,6 @@
 var Encore = require('@symfony/webpack-encore');
 var CopyPlugin = require('copy-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader')
 
 Encore
     // directory where compiled assets will be stored
@@ -24,6 +25,7 @@ Encore
     .addEntry('timetable', './assets/css/timetable.scss')
     .addEntry('picker', './assets/js/picker.js')
     .addEntry('modal', './assets/js/modal.js')
+    .addEntry('appointments', './assets/js/appointments.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     //.splitEntryChunks()
@@ -62,6 +64,8 @@ Encore
     //.enableReactPreset()
     //.addEntry('admin', './assets/js/admin.js')
 
+    .enableVueLoader()
+
     .addLoader(
         {
             test: /bootstrap\.native/,
@@ -70,7 +74,6 @@ Encore
             }
         }
     )
-
     .addPlugin(
         new CopyPlugin([
             {

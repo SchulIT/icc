@@ -60,6 +60,7 @@ label:
         label: Wochen-Modulo
         help: "Wird zur Berechnung der Wochen benötigt (bspw. 0 = gerade Wochen, 1 = ungerade Wochen; sofern nur zwei Wochentypen angegeben wurden). Berechnung: aktuelle Woche modulo Anzahl der Stundenplan-Wochen."
     category: Kategorie
+    categories: Kategorien
     authors: Autoren
     query: Suchbegriff
     lastchange: Letzte Änderung

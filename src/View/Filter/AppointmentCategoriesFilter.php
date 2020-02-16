@@ -8,7 +8,7 @@ use App\Sorting\AppointmentCategoryStrategy;
 use App\Sorting\Sorter;
 use App\Utils\ArrayUtils;
 
-class AppointmentCategoryFilter {
+class AppointmentCategoriesFilter {
     private $sorter;
     private $appointmentCategoryRepository;
 
@@ -17,19 +17,22 @@ class AppointmentCategoryFilter {
         $this->appointmentCategoryRepository = $appointmentCategoryRepository;
     }
 
-    public function handle(?int $categoryId) {
+    public function handle(array $categoryIds) {
         $categories = ArrayUtils::createArrayWithKeys(
             $this->appointmentCategoryRepository->findAll(),
-            function(AppointmentCategory $category) {
+            function (AppointmentCategory $category) {
                 return $category->getId();
             }
         );
 
-        $category = $categoryId !== null ?
-            $categories[$categoryId] ?? null : null;
+        dump($categoryIds);
+
+        $selectedCategories = array_filter($categories, function (AppointmentCategory $category) use ($categoryIds) {
+            return in_array($category->getId(), $categoryIds);
+        });
 
         $this->sorter->sort($categories, AppointmentCategoryStrategy::class);
 
-        return new AppointmentCategoryFilterView($categories, $category);
+        return new AppointmentCategoriesFilterView($categories, $selectedCategories);
     }
 }

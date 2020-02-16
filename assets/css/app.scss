@@ -107,6 +107,10 @@ table {
   }
 }
 
+.#{$choices-selector}__list {
+  z-index: 100;
+}
+
 .#{$choices-selector}__list--multiple {
   .#{$choices-selector}__item {
     background-color: $primary;

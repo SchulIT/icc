@@ -48,12 +48,12 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function findAllForTeacher(Teacher $teacher, ?\DateTime $today = null): array;
 
     /**
-     * @param AppointmentCategory|null $category
+     * @param AppointmentCategory[] $categories
      * @param string|null $q
      * @param \DateTime|null $today = null
      * @return Appointment[]
      */
-    public function findAll(?AppointmentCategory $category = null, ?string $q = null, ?\DateTime $today = null);
+    public function findAll(array $categories = [ ], ?string $q = null, ?\DateTime $today = null);
 
     /**
      * @param Appointment $appointment

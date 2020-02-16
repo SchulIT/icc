@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Appointment;
+use App\Entity\AppointmentCategory;
 use App\Entity\DeviceToken;
 use App\Entity\DeviceTokenType;
 use App\Entity\MessageScope;
+use App\Entity\StudyGroup;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Export\AppointmentIcsExporter;
@@ -17,7 +19,8 @@ use App\Security\Devices\DeviceManager;
 use App\Sorting\AppointmentDateGroupStrategy;
 use App\Sorting\AppointmentDateStrategy as AppointmentDateSortingStrategy;
 use App\Sorting\Sorter;
-use App\View\Filter\AppointmentCategoryFilter;
+use App\Utils\ColorUtils;
+use App\View\Filter\AppointmentCategoriesFilter;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
@@ -32,22 +35,40 @@ class AppointmentController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="appointments")
      */
-    public function index(AppointmentRepositoryInterface $appointmentRepository, DateHelper $dateHelper, Sorter $sorter, Grouper $grouper,
-                          AppointmentCategoryFilter $categoryFilter, StudentFilter $studentFilter, GradeFilter $gradeFilter,
-                          ?int $studentId = null, ?int $gradeId = null, ?int $categoryId = null, ?string $query = null, ?bool $showAll = false) {
+    public function index(AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, GradeFilter $gradeFilter) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $categoryFilterView = $categoryFilter->handle([ ]);
+        $studentFilterView = $studentFilter->handle(null, $user);
+        $gradeFilterView = $gradeFilter->handle(null, $user);
+
+        return $this->renderWithMessages('appointments/index.html.twig', [
+            'categoryFilter' => $categoryFilterView,
+            'studentFilter' => $studentFilterView,
+            'gradeFilter' => $gradeFilterView
+        ]);
+    }
+
+    /**
+     * @Route("/xhr", name="appointments_xhr", methods={"GET"})
+     */
+    public function indexXhr(AppointmentRepositoryInterface $appointmentRepository, ColorUtils $colorUtils,
+                             AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, GradeFilter $gradeFilter, Request $request,
+                             ?int $studentId = null, ?int $gradeId = null, ?string $query = null, ?bool $showAll = false) {
         /** @var User $user */
         $user = $this->getUser();
         $isStudent = $user->getUserType()->equals(UserType::Student());
         $isParent = $user->getUserType()->equals(UserType::Parent());
 
-        $categoryFilterView = $categoryFilter->handle($categoryId);
+        $categoryFilterView = $categoryFilter->handle($request->query->get('categoryIds', [ ]));
         $studentFilterView = $studentFilter->handle($studentId, $user);
         $gradeFilterView = $gradeFilter->handle($gradeId, $user);
 
         $appointments = [ ];
 
         $includeHiddenFromStudents = $isStudent === false;
-        $today = $showAll ? null : $dateHelper->getToday();
+        $today = null;
 
         if($studentFilterView->getCurrentStudent() !== null) {
             $appointments = $appointmentRepository->findAllForStudents([$studentFilterView->getCurrentStudent()], $today, $includeHiddenFromStudents);
@@ -57,28 +78,41 @@ class AppointmentController extends AbstractControllerWithMessages {
             if($isStudent || $isParent) {
                 $appointments = $appointmentRepository->findAllForStudents($user->getStudents()->toArray(), $today, $includeHiddenFromStudents);
             } else {
-                $appointments = $appointmentRepository->findAll(null, null, $today);
+                $appointments = $appointmentRepository->findAll([ ], null, $today);
             }
         }
 
-        if($categoryFilterView->getCurrentCategory() !== null) {
-            $appointments = array_filter($appointments, function(Appointment $appointment) use($categoryFilterView) {
-                return $appointment->getCategory()->getId() === $categoryFilterView->getCurrentCategory()->getId();
+        if(!empty($categoryFilterView->getCurrentCategories())) {
+            $selectedCategoryIds = array_map(function(AppointmentCategory $category) {
+                return $category->getId();
+            }, $categoryFilterView->getCurrentCategories());
+
+            $appointments = array_filter($appointments, function(Appointment $appointment) use($selectedCategoryIds) {
+                return in_array($appointment->getCategory()->getId(), $selectedCategoryIds);
             });
         }
 
-        $groups = $grouper->group($appointments, AppointmentDateStrategy::class);
-        $sorter->sort($groups, AppointmentDateGroupStrategy::class);
-        $sorter->sortGroupItems($groups, AppointmentDateSortingStrategy::class);
+        $json = [ ];
 
-        return $this->renderWithMessages('appointments/index.html.twig', [
-            'categoryFilter' => $categoryFilterView,
-            'studentFilter' => $studentFilterView,
-            'gradeFilter' => $gradeFilterView,
-            'groups' => $groups,
-            'query' => $query,
-            'showAll' => $showAll
-        ]);
+        foreach($appointments as $appointment) {
+            $json[] = [
+                'id' => $appointment->getId(),
+                'allDay' => $appointment->isAllDay(),
+                'title' => $appointment->getTitle(),
+                'textColor' => $colorUtils->getForeground($appointment->getCategory()->getColor()),
+                'backgroundColor' => $appointment->getCategory()->getColor(),
+                'start' => $appointment->getStart()->format($appointment->isAllDay() ? 'Y-m-d' : 'Y-m-d H:i'),
+                'end' => $appointment->getEnd()->format($appointment->isAllDay() ? 'Y-m-d' : 'Y-m-d H:i'),
+                'extendedProps' => [
+                    'content' => $appointment->getContent(),
+                    'study_groups' => implode(', ', $appointment->getStudyGroups()->map(function(StudyGroup $studyGroup) {
+                        return $studyGroup->getName();
+                    })->toArray())
+                ]
+            ];
+        }
+
+        return $this->json($json);
     }
 
     /**

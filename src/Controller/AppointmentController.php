@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
+use App\Converter\StudyGroupsGradeStringConverter;
+use App\Converter\TeacherStringConverter;
 use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
 use App\Entity\DeviceToken;
 use App\Entity\DeviceTokenType;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroup;
+use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Export\AppointmentIcsExporter;
@@ -26,6 +29,7 @@ use App\View\Filter\StudentFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/appointments")
@@ -53,7 +57,8 @@ class AppointmentController extends AbstractControllerWithMessages {
     /**
      * @Route("/xhr", name="appointments_xhr", methods={"GET"})
      */
-    public function indexXhr(AppointmentRepositoryInterface $appointmentRepository, ColorUtils $colorUtils,
+    public function indexXhr(AppointmentRepositoryInterface $appointmentRepository, ColorUtils $colorUtils, TranslatorInterface $translator,
+                             StudyGroupsGradeStringConverter $studyGroupsGradeStringConverter, TeacherStringConverter $teacherStringConverter,
                              AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, GradeFilter $gradeFilter, Request $request,
                              ?int $studentId = null, ?int $gradeId = null, ?string $query = null, ?bool $showAll = false) {
         /** @var User $user */
@@ -95,6 +100,47 @@ class AppointmentController extends AbstractControllerWithMessages {
         $json = [ ];
 
         foreach($appointments as $appointment) {
+            $view = [
+                [
+                    'label' => $translator->trans('label.start'),
+                    'content' => $appointment->getStart()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
+                ],
+                [
+                    'label' => $translator->trans('label.end'),
+                    'content' => $appointment->getEnd()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
+                ]
+            ];
+
+            if(!empty($appointment->getLocation())) {
+                $view[] = [
+                    'label' => $translator->trans('label.location'),
+                    'content' => $appointment->getLocation()
+                ];
+            }
+
+            if($appointment->getStudyGroups()->count() > 0) {
+                $view[] = [
+                    'label' => $translator->trans('label.study_groups', ['%count%' => $appointment->getStudyGroups()->count()]),
+                    'content' => $studyGroupsGradeStringConverter->convert($appointment->getStudyGroups())
+                ];
+            }
+
+            if($appointment->getOrganizers()->count() > 0) {
+                $view[] = [
+                    'label' => $translator->trans('label.organizers'),
+                    'content' => implode(', ', array_map(function (Teacher $teacher) use ($teacherStringConverter) {
+                        return $teacherStringConverter->convert($teacher);
+                    }, $appointment->getOrganizers()->toArray()))
+                ];
+            }
+
+            if(!empty($appointment->getExternalOrganizers())) {
+                $view[] = [
+                    'label' => $translator->trans('label.external_organizers'),
+                    'content' => $appointment->getExternalOrganizers()
+                ];
+            }
+
             $json[] = [
                 'id' => $appointment->getId(),
                 'allDay' => $appointment->isAllDay(),
@@ -104,10 +150,9 @@ class AppointmentController extends AbstractControllerWithMessages {
                 'start' => $appointment->getStart()->format($appointment->isAllDay() ? 'Y-m-d' : 'Y-m-d H:i'),
                 'end' => $appointment->getEnd()->format($appointment->isAllDay() ? 'Y-m-d' : 'Y-m-d H:i'),
                 'extendedProps' => [
+                    'category'=> $appointment->getCategory()->getName(),
                     'content' => $appointment->getContent(),
-                    'study_groups' => implode(', ', $appointment->getStudyGroups()->map(function(StudyGroup $studyGroup) {
-                        return $studyGroup->getName();
-                    })->toArray())
+                    'view' => $view
                 ]
             ];
         }

@@ -7,12 +7,14 @@ import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 import deLocale from '@fullcalendar/core/locales/de';
+var bsn = require('bootstrap.native');
 
 require('@fullcalendar/core/locales-all');
 
 document.addEventListener('DOMContentLoaded', function () {
     var appEl = document.getElementById('appointments');
     var lastQuery = { };
+    var popovers = { };
 
     var calendarEl = document.getElementById('calendar');
     var calendar = new Calendar(calendarEl, {
@@ -40,7 +42,44 @@ document.addEventListener('DOMContentLoaded', function () {
                     return lastQuery;
                 }
             }
-        ]
+        ],
+        eventMouseEnter: function(info) {
+            var event = info.event;
+            var title = event.title;
+            var content = event.extendedProps.content;
+            var view = event.extendedProps.view;
+
+            var template = '<div class="popover" role="tooltip">' +
+                '<div class="arrow"></div>' +
+                '<h3 class="popover-header">' + title + ' <span class="badge" style="background: ' + event.backgroundColor + '; color: ' + event.textColor + '">' + event.extendedProps.category + '</span></h3>' +
+                '<div class="popover-body">' +
+                '<p>' + content + '</p>';
+
+            view.forEach(function(viewItem) {
+                template += '<p><span class="text-muted">' + viewItem.label + '</span> ' + viewItem.content + '</p>';
+            });
+
+            template += '</div></div>';
+
+            var popover = new bsn.Popover(info.el, {
+                placement: 'right',
+                template: template,
+                trigger: 'focus',
+                dismissible: true,
+                animation: 'none',
+                delay: 1 // 0 is not sufficient enough, probably bsn thinks, that delay is not set if set to 0?!
+            });
+            popover.show();
+
+            var eventId = event.id;
+            popovers[eventId] = popover;
+        },
+        eventMouseLeave: function(info) {
+            var eventId = info.event.id;
+            if(popovers[eventId] !== null) {
+                popovers[eventId].hide();
+            }
+        }
     });
 
     calendar.render();

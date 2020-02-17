@@ -23,7 +23,7 @@ label:
     lesson: Stunde
     lessons: Stunden
     start: Beginn
-    end: End
+    end: Ende
     exam_lessons: "{0} %start%. Stunde|{1} %start%./%end%. Stunde|]1,Inf[ %start%.-%end%. Stunde"
     substitution_lessons: "{0} %start%.|{1} %start%./%end%.|]1,Inf[ %start%.-%end%."
     substitution_lessons_label: "{0} Stunde|]0,Inf[ Stunden"

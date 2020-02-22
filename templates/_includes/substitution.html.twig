@@ -15,20 +15,22 @@
                 {% endif %}
             </p>
 
+            {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
             <p class="col">
                 <strong>{{ 'label.room'|trans }}:</strong> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
             </p>
+            {% endif %}
 
             <p class="col">
                 <strong>{{ 'label.subject'|trans }}:</strong> {{ _self.replacement(substitution.subject, substitution.replacementSubject) }}
             </p>
 
-            <p class="col">
+            <p class="w-100">
                 <strong>{{ 'label.teachers'|trans({'%count%': max(substitution.teachers|length, substitution.replacementTeachers|length)}) }}:</strong> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
             </p>
 
-            {% if substitution.remark is not empty %}
-                <p class="col">
+            {% if substitution.remark is not empty and substitution.type is not empty %}
+                <p class="w-100">
                     <strong>{{ 'label.type'|trans }}:</strong> {{ substitution.type }}
                 </p>
             {% endif %}

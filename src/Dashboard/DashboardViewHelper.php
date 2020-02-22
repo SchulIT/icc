@@ -21,6 +21,7 @@ use App\Repository\MessageRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
+use App\Repository\TimetableWeekRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\Timetable\TimetablePeriodHelper;
@@ -32,6 +33,7 @@ class DashboardViewHelper {
     private $substitutionRepository;
     private $examRepository;
     private $timetableRepository;
+    private $timetableWeekRepository;
     private $supervisionRepository;
     private $messageRepository;
     private $infotextRepository;
@@ -42,12 +44,13 @@ class DashboardViewHelper {
     private $sorter;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
-                                TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository,
+                                TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
                                 MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                                 StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, Sorter $sorter) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->timetableRepository = $timetableRepository;
+        $this->timetableWeekRepository = $timetableWeekRepository;
         $this->supervisionRepository = $supervisionRepository;
         $this->messageRepository = $messageRepository;
         $this->infotextRepository = $infotextRepository;
@@ -61,9 +64,10 @@ class DashboardViewHelper {
         $view = new DashboardView();
 
         $currentPeriod = $this->getCurrentTimetablePeriod(UserType::Teacher(), $dateTime);
+        $numberOfWeeks = count($this->timetableWeekRepository->findAll());
 
         if($currentPeriod !== null) {
-            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher), $dateTime, $view, true);
+            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher), $dateTime, $view, true, $numberOfWeeks);
             $this->addSupervisions($this->supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher), $view);
         }
 
@@ -85,9 +89,12 @@ class DashboardViewHelper {
         $studyGroups = $this->studyGroupHelper->getStudyGroups([$student])->toArray();
 
         $currentPeriod = $this->getCurrentTimetablePeriod($userType, $dateTime);
+        $numberOfWeeks = count($this->timetableWeekRepository->findAll());
+
+        dump($currentPeriod);
 
         if($currentPeriod !== null) {
-            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndStudent($currentPeriod, $student), $dateTime, $view, false);
+            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndStudent($currentPeriod, $student), $dateTime, $view, false, $numberOfWeeks);
         }
 
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $userType, $dateTime, $studyGroups), $view);
@@ -107,13 +114,20 @@ class DashboardViewHelper {
     }
 
     /**
-     * @param iterable $lessons
+     * @param TimetableLesson[] $lessons
      * @param \DateTime $dateTime
      * @param DashboardView $dashboardView
      * @param bool $computeAbsences
      */
-    private function addTimetableLessons(iterable $lessons, \DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences): void {
+    private function addTimetableLessons(iterable $lessons, \DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences, int $numberOfWeeks): void {
         foreach($lessons as $lesson) {
+            $isWeek = (int)$dateTime->format('W') % $numberOfWeeks === $lesson->getWeek()->getWeekMod();
+            $isDay = (int)$dateTime->format('w') === $lesson->getDay();
+
+            if($isWeek === false || $isDay === false) {
+                continue;
+            }
+
             $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lesson, $lesson->getLesson(), $dateTime) : [ ];
             $dashboardView->addItem($lesson->getLesson(), new LessonViewItem($lesson, $absentStudents, false));
 

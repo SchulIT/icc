@@ -40,6 +40,8 @@ class DashboardController extends AbstractController {
             $view = $dashboardViewHelper->createViewForUser($user, $selectedDate);
         }
 
+        dump($view);
+
         return $this->render('dashboard/index.html.twig', [
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,

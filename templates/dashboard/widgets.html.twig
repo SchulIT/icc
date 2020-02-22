@@ -8,7 +8,7 @@
         <div class="card-body">
             <div class="row no-gutters">
                 <p class="w-100">
-                    <strong>{{ 'plans.exams.tuitions'|trans({'%count%': exam.tuitions|length} ) }}:</strong>
+                    <strong>{{ 'plans.exams.tuitions'|trans({'%count%': 1} ) }}:</strong>
                     {{ lesson.tuition.name }}
 
                     <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}

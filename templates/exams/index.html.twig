@@ -64,37 +64,43 @@
         </div>
     </div>
 
-    {% if not isVisible %}
-        <div class="bs-callout bs-callout-info">
-            <h4>{{ 'info.label'|trans }}</h4>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">
+                {% if teacherFilter.currentTeacher is not null %}
+                    {{ 'plans.exams.title'|trans({'%for%' : teacherFilter.currentTeacher|teacher}) }}
+                {% elseif studentFilter.currentStudent is not null %}
+                    {{ 'plans.exams.title'|trans({'%for%' : studentFilter.currentStudent|student}) }} ({{ studentFilter.currentStudent.grade.name }})
+                {% elseif gradeFilter.currentGrade is not null %}
+                    {{ 'plans.exams.title_grades'|trans({'%for%' : gradeFilter.currentGrade.name}) }}
+                {% else %}
+                    {{ 'plans.exams.label'|trans }}
+                {% endif %}
+            </h5>
 
-            <p>{{ 'plans.exams.not_visible'|trans }}</p>
-        </div>
-    {% elseif teacherFilter.currentTeacher is not null or studentFilter.currentStudent is not null or gradeFilter.currentGrade is not null %}
-        <h2 class="mb-3">
-            {% if teacherFilter.currentTeacher is not null %}
-                {{ 'plans.exams.title'|trans({'%for%' : teacherFilter.currentTeacher|teacher}) }}
-            {% elseif studentFilter.currentStudent is not null %}
-                {{ 'plans.exams.title'|trans({'%for%' : studentFilter.currentStudent|student}) }} ({{ studentFilter.currentStudent.grade.name }})
+            {% if not isVisible %}
+                <div class="bs-callout bs-callout-info">
+                    <h4>{{ 'info.label'|trans }}</h4>
+
+                    <p>{{ 'plans.exams.not_visible'|trans }}</p>
+                </div>
+            {% elseif examGroups|length == 0 %}
+                <div class="bs-callout bs-callout-info">
+                    <h4>{{ 'info.label'|trans }}</h4>
+
+                    <p>{{ 'plans.exams.empty'|trans }}</p>
+                </div>
             {% endif %}
-        </h2>
 
-        {% if examGroups|length == 0 %}
-            <div class="bs-callout bs-callout-info">
-                <h4>{{ 'info.label'|trans }}</h4>
-
-                <p>{{ 'plans.exams.empty'|trans }}</p>
-            </div>
-        {% else %}
             {% for group in examGroups %}
-                <h5>{{ group.date|format_date }}</h5>
+                <h6>{{ ('date.days.'~group.date|date('w'))|trans }}, {{ group.date|format_date }}</h6>
 
                 {% for exam in group.exams %}
                     {% include "_includes/exam.html.twig" with { exam: exam } %}
                 {% endfor %}
             {% endfor %}
-        {% endif %}
-    {% endif %}
+        </div>
+    </div>
 
     <div class="buttons">
         <a href="{{ path('exams_export') }}" class="btn btn-primary btn-sm">

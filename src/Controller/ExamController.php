@@ -79,10 +79,6 @@ class ExamController extends AbstractControllerWithMessages {
             $exams = $examRepository->findAll($today);
         }
 
-        $exams = array_filter($exams, function(Exam $exam) {
-            return $this->isGranted(ExamVoter::SHOW, $exam);
-        });
-
         $examGroups = $this->grouper->group($exams, ExamDateStrategy::class);
         $this->sorter->sort($examGroups, ExamDateGroupStrategy::class);
         $this->sorter->sortGroupItems($examGroups, ExamDateSortingStrategy::class);

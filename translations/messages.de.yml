@@ -143,6 +143,7 @@ plans:
     exams:
         label: Klausurplan
         title: "Klausurplan für %for%"
+        title_grades: "Klausurplan der %for%"
         empty: Aktuell sind keine Klausuren im System.
         tuitions: "{1} Kurs|]1,Inf[ Kurse"
         time: Zeitraum

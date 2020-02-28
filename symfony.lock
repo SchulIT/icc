@@ -150,9 +150,6 @@
     "fervo/enum-bundle": {
         "version": "2.0.x-dev"
     },
-    "fightbulc/moment": {
-        "version": "1.29.0"
-    },
     "frostiede/composer-dependency-list": {
         "version": "1.0.1"
     },

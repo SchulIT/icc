@@ -82,7 +82,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
         $qbStudyGroups = $this->em->createQueryBuilder();
 
         $qbStudyGroups
-            ->select('gInner.id')
+            ->select('sgInner.id')
             ->from(StudyGroup::class, 'sgInner')
             ->leftJoin('sgInner.grades', 'sgGradesInner')
             ->where('sgGradesInner.id = :gradeId');

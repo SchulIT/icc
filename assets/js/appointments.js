@@ -86,9 +86,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var studentIdEl = document.getElementById('student');
     var gradeIdEl = document.getElementById('grade');
+    var teacherIdEl = document.getElementById('teacher');
     var categoriyIdsEl = document.getElementById('categories');
 
-    [studentIdEl, gradeIdEl, categoriyIdsEl ].forEach(function(el) {
+    [studentIdEl, gradeIdEl, teacherIdEl, categoriyIdsEl ].forEach(function(el) {
         el.addEventListener('change', function(el) {
             loadEvents();
         });
@@ -97,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadEvents() {
         var query = { };
 
-        [studentIdEl, gradeIdEl, categoriyIdsEl ].forEach(function(el) {
+        [studentIdEl, gradeIdEl, teacherIdEl, categoriyIdsEl ].forEach(function(el) {
             if(el.multiple !== null && el.multiple !== false) {
                 query[el.name] = Array.from(el.selectedOptions).map(x => x.value);
             } else {

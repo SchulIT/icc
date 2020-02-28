@@ -144,12 +144,38 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
     public function findAllForTeacher(Teacher $teacher, ?\DateTime $today = null): array {
         /**
          * Appointment for teacher means either:
-         * - he/she is organizator
-         * - he/she teaches a study group
-         * - appointment has no study groups associated
+         * - he/she is organizer (1)
+         * - appointment has no study groups associated (2)
          */
 
+        // Query (1)
+        $qbTeacherOrganizer = $this->em->createQueryBuilder()
+            ->select('aTOInner.id')
+            ->from(Appointment::class, 'aTOInner')
+            ->leftJoin('aTOInner.organizers', 'oTOInner')
+            ->where('oTOInner.id = :teacherId');
 
+        // Query (2)
+        $qbTeacherAppointments = $this->em->createQueryBuilder();
+        $qbTeacherAppointments
+            ->select('aTAInner.id')
+            ->from(Appointment::class, 'aTAInner')
+            ->leftJoin('aTAInner.studyGroups', 'sgTAInner')
+            ->where($qbTeacherAppointments->expr()->isNull('sgTAInner.id'));
+
+        // Combine (1) and (2)
+        $qbAppointments = $this->em->createQueryBuilder();
+        $qbAppointments
+            ->select('aInner.id')
+            ->from(Appointment::class, 'aInner')
+            ->where(
+                $qbAppointments->expr()->orX(
+                    $qbAppointments->expr()->in('aInner.id', $qbTeacherOrganizer->getDQL()),
+                    $qbAppointments->expr()->in('aInner.id', $qbTeacherAppointments->getDQL())
+                )
+            );
+
+        return $this->getAppointments($qbAppointments, ['teacherId' => $teacher->getId() ], $today);
     }
 
     /**

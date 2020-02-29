@@ -67,7 +67,7 @@ class GradeFixtures extends Fixture implements DependentFixtureInterface {
 
             $teachers = $this->generator->randomElements($allTeachers, 2, false);
             static::addTeacherToGrade($grade, $teachers[0], GradeTeacherType::Primary());
-            static::addTeacherToGrade($grade, $teachers[1], GradeTeacherType::Substitutional());
+            static::addTeacherToGrade($grade, $teachers[1], GradeTeacherType::Substitute());
 
             $manager->persist($grade);
         }
@@ -79,7 +79,7 @@ class GradeFixtures extends Fixture implements DependentFixtureInterface {
 
             $teachers = $this->generator->randomElements($allTeachers, 2, false);
             static::addTeacherToGrade($grade, $teachers[0], GradeTeacherType::Primary());
-            static::addTeacherToGrade($grade, $teachers[1], GradeTeacherType::Substitutional());
+            static::addTeacherToGrade($grade, $teachers[1], GradeTeacherType::Substitute());
 
             $manager->persist($grade);
         }

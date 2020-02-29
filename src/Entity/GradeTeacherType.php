@@ -6,9 +6,9 @@ use MyCLabs\Enum\Enum;
 
 /**
  * @method static GradeTeacherType Primary()
- * @method static GradeTeacherType Substitutional()
+ * @method static GradeTeacherType Substitute()
  */
 class GradeTeacherType extends Enum {
-    private const Primary = 'p';
-    private const Substitutional = 's';
+    private const Primary = 'primary';
+    private const Substitute = 'substitute';
 }

@@ -156,7 +156,7 @@ class ListController extends AbstractControllerWithMessages {
             $substitutionalGradeTeachers = array_map(function(GradeTeacher $gradeTeacher) {
                 return $gradeTeacher->getTeacher();
             }, array_filter($grade->getTeachers()->toArray(), function(GradeTeacher $gradeTeacher){
-                    return $gradeTeacher->getType()->equals(GradeTeacherType::Substitutional());
+                    return $gradeTeacher->getType()->equals(GradeTeacherType::Substitute());
                 })
             );
         }

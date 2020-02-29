@@ -38,7 +38,7 @@ class TeacherCsvExporter {
 
         $maxSubstitutionalGrades = max(array_map(function(Teacher $teacher) {
             return $teacher->getGrades()->filter(function(GradeTeacher $gradeTeacher) {
-                return $gradeTeacher->getType()->equals(GradeTeacherType::Substitutional());
+                return $gradeTeacher->getType()->equals(GradeTeacherType::Substitute());
             });
         }, $teachers));
 
@@ -100,7 +100,7 @@ class TeacherCsvExporter {
 
             /** @var GradeTeacher[] $substitutionalGrades */
             $substitutionalGrades = $teacher->getGrades()->filter(function(GradeTeacher $gradeTeacher) {
-                return $gradeTeacher->getType()->equals(GradeTeacherType::Substitutional());
+                return $gradeTeacher->getType()->equals(GradeTeacherType::Substitute());
             });
 
             foreach($substitutionalGrades as $gradeTeacher) {

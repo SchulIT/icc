@@ -16,6 +16,7 @@ class AbsenceData {
 
     /**
      * @Serializer\Type("string")
+     * @Assert\NotBlank()
      * @Assert\Choice({"study_group", "teacher"})
      * @var string
      */
@@ -23,6 +24,7 @@ class AbsenceData {
 
     /**
      * @Serializer\Type("datetime")
+     * @Assert\NotBlank()
      * @Assert\Date()
      * @var \DateTime
      */
@@ -36,6 +38,7 @@ class AbsenceData {
 
     /**
      * @Serializer\Type("int")
+     * @Assert\GreaterThanOrEqual(propertyPath="lessonStart")
      * @var int|null
      */
     private $lessonEnd = null;

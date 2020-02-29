@@ -80,8 +80,8 @@ class AppointmentData {
     /**
      * List of external study group IDs, which this appointment belongs to.
      *
-     * @Serializer\Type("array<int>")
-     * @var int[]
+     * @Serializer\Type("array<string>")
+     * @var string[]
      */
     private $studyGroups;
 

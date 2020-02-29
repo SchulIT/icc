@@ -18,7 +18,7 @@ class StudyGroupMembershipData {
     private $student;
 
     /**
-     * External study group IDs which the student belongs to.
+     * External study group ID which the student belongs to.
      *
      * @Serializer\Type("string")
      * @Assert\NotBlank()
@@ -28,6 +28,7 @@ class StudyGroupMembershipData {
 
     /**
      * Type of the membership.
+     * @Serializer\Type("string")
      * @NullOrNotBlank()
      * @var string|null
      */

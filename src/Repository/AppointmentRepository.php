@@ -50,7 +50,8 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->from(Appointment::class, 'a')
             ->leftJoin('a.category', 'c')
             ->leftJoin('a.organizers', 'o')
-            ->leftJoin('a.studyGroups', 'sg');
+            ->leftJoin('a.studyGroups', 'sg')
+            ->leftJoin('a.visibilities', 'v');
 
         if($idsDQL != null) {
             $qb->where(
@@ -74,32 +75,22 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
     }
 
     /**
-     * @param StudyGroup $studyGroup
-     * @param DateTime|null $today
-     * @param bool $includeHiddenFromStudents
-     * @return Appointment[]
+     * @inheritDoc
      */
-    public function findAllForStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null, bool $includeHiddenFromStudents = false): array {
+    public function findAllForStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null): array {
         $qbAppointments = $this->em->createQueryBuilder()
             ->select('aInner.id')
             ->from(Appointment::class, 'aInner')
             ->leftJoin('aInner.studyGroups', 'aSgInner')
             ->where('aSgInner.id = :studyGroupId');
 
-        if($includeHiddenFromStudents === false) {
-            $qbAppointments->andWhere('aInner.isHiddenFromStudents == false');
-        }
-
         return $this->getAppointments($qbAppointments, ['studyGroupId' => $studyGroup->getId() ], $today);
     }
 
     /**
-     * @param Student[] $students
-     * @param DateTime|null $today
-     * @param bool $includeHiddenFromStudents
-     * @return Appointment[]
+     * @inheritDoc
      */
-    public function findAllForStudents(array $students, ?DateTime $today = null, bool $includeHiddenFromStudents = false): array {
+    public function findAllForStudents(array $students, ?DateTime $today = null): array {
         $qbStudyGroups = $this->em->createQueryBuilder();
 
         $qbStudyGroups
@@ -115,10 +106,6 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->where(
                 $qbStudyGroups->expr()->in('aSgInner.id', $qbStudyGroups->getDQL())
             );
-
-        if($includeHiddenFromStudents === false) {
-            $qbAppointments->andWhere('aInner.isHiddenFromStudents == false');
-        }
 
         $studentIds = array_map(function(Student $student) {
             return $student->getId();
@@ -221,6 +208,19 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
     public function remove(Appointment $appointment): void {
         $this->em->remove($appointment);
         $this->flushIfNotInTransaction();
+    }
+
+    private function filterUserType(QueryBuilder $builder, UserType $userType, string $prefix): QueryBuilder {
+        $allowedUserTypes = [
+
+        ];
+
+        $builder
+            ->andWhere(
+
+            );
+
+        return $builder;
     }
 
 }

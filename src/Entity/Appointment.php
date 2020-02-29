@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -67,12 +68,6 @@ class Appointment {
     private $allDay = true;
 
     /**
-     * @ORM\Column(type="boolean")
-     * @var bool
-     */
-    private $isHiddenFromStudents;
-
-    /**
      * @ORM\ManyToMany(targetEntity="StudyGroup", cascade={"persist"})
      * @ORM\JoinTable(
      *     name="appointment_studygroups",
@@ -107,9 +102,20 @@ class Appointment {
      */
     private $category;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="AppointmentVisibility")
+     * @ORM\JoinTable(name="appointment_visibilities",
+     *     joinColumns={@ORM\JoinColumn(name="appointment")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility")}
+     * )
+     * @var Collection<MessageVisibility>
+     */
+    private $visibilities;
+
     public function __construct() {
         $this->studyGroups = new ArrayCollection();
         $this->organizers = new ArrayCollection();
+        $this->visibilities = new ArrayCollection();
     }
 
     /**
@@ -232,22 +238,6 @@ class Appointment {
     }
 
     /**
-     * @return bool
-     */
-    public function isHiddenFromStudents(): bool {
-        return $this->isHiddenFromStudents;
-    }
-
-    /**
-     * @param bool $isHiddenFromStudents
-     * @return Appointment
-     */
-    public function setIsHiddenFromStudents(bool $isHiddenFromStudents): Appointment {
-        $this->isHiddenFromStudents = $isHiddenFromStudents;
-        return $this;
-    }
-
-    /**
      * @return AppointmentCategory|null
      */
     public function getCategory(): ?AppointmentCategory {
@@ -307,5 +297,20 @@ class Appointment {
      */
     public function getStudyGroups() {
         return $this->studyGroups;
+    }
+
+    public function addVisibility(AppointmentVisibility $visibility) {
+        $this->visibilities->add($visibility);
+    }
+
+    public function removeVisibility(AppointmentVisibility $visibility) {
+        $this->visibilities->removeElement($visibility);
+    }
+
+    /**
+     * @return Collection<AppointmentVisibility>
+     */
+    public function getVisibilities(): Collection {
+        return $this->visibilities;
     }
 }

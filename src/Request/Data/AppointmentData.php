@@ -70,10 +70,12 @@ class AppointmentData {
     private $isAllDay;
 
     /**
-     * @Serializer\Type("boolean")
-     * @var boolean
+     * @Serializer\Type("array<string>")
+     * @Assert\Type("array")
+     * @Assert\Choice({"student", "parent", "teacher"}, multiple=true)
+     * @var string[]
      */
-    private $isHiddenFromStudents;
+    private $visibilities;
 
     /**
      * List of external study group IDs, which this appointment belongs to.
@@ -227,18 +229,18 @@ class AppointmentData {
     }
 
     /**
-     * @return bool
+     * @return string[]
      */
-    public function isHiddenFromStudents() {
-        return $this->isHiddenFromStudents;
+    public function getVisibilities(): array {
+        return $this->visibilities;
     }
 
     /**
-     * @param bool $isHiddenFromStudents
+     * @param string[] $visibilities
      * @return AppointmentData
      */
-    public function setIsHiddenFromStudents($isHiddenFromStudents): AppointmentData {
-        $this->isHiddenFromStudents = $isHiddenFromStudents;
+    public function setVisibilities(array $visibilities): AppointmentData {
+        $this->visibilities = $visibilities;
         return $this;
     }
 

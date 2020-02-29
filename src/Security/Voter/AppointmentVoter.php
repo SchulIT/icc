@@ -84,7 +84,13 @@ class AppointmentVoter extends Voter {
         $isStudentOrParent = EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]);
 
         if($isStudentOrParent !== true) {
+            // Everyone but students and parents may pass
             return true;
+        }
+
+        // Check visibility (students and parents only)
+        if($this->checkVisibility($appointment, $user->getUserType()) !== true) {
+            return false;
         }
 
         $appointmentStudyGroupsIds = $appointment->getStudyGroups()
@@ -106,6 +112,16 @@ class AppointmentVoter extends Voter {
             $intersection = array_intersect($appointmentStudyGroupsIds, $studentStudyGroupsIds);
 
             if(count($intersection) > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function checkVisibility(Appointment $appointment, UserType $userType) {
+        foreach($appointment->getVisibilities() as $visibility) {
+            if($visibility->getUserType()->equals($userType)) {
                 return true;
             }
         }

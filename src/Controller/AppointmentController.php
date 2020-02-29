@@ -19,6 +19,7 @@ use App\Grouping\AppointmentDateStrategy;
 use App\Grouping\Grouper;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Security\Devices\DeviceManager;
+use App\Security\Voter\AppointmentVoter;
 use App\Sorting\AppointmentDateGroupStrategy;
 use App\Sorting\AppointmentDateStrategy as AppointmentDateSortingStrategy;
 use App\Sorting\Sorter;
@@ -76,19 +77,17 @@ class AppointmentController extends AbstractControllerWithMessages {
         $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user);
 
         $appointments = [ ];
-
-        $includeHiddenFromStudents = $isStudent === false;
         $today = null;
 
         if($studentFilterView->getCurrentStudent() !== null) {
-            $appointments = $appointmentRepository->findAllForStudents([$studentFilterView->getCurrentStudent()], $today, $includeHiddenFromStudents);
+            $appointments = $appointmentRepository->findAllForStudents([$studentFilterView->getCurrentStudent()], $today);
         } else if($studyGroupView->getCurrentStudyGroup() !== null) {
-            $appointments = $appointmentRepository->findAllForStudyGroup($studyGroupView->getCurrentStudyGroup(), $today, $includeHiddenFromStudents);
+            $appointments = $appointmentRepository->findAllForStudyGroup($studyGroupView->getCurrentStudyGroup(), $today);
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             $appointments = $appointmentRepository->findAllForTeacher($teacherFilterView->getCurrentTeacher(), $today);
         } else {
             if($isStudent || $isParent) {
-                $appointments = $appointmentRepository->findAllForStudents($user->getStudents()->toArray(), $today, $includeHiddenFromStudents);
+                $appointments = $appointmentRepository->findAllForStudents($user->getStudents()->toArray(), $today);
             } else {
                 $appointments = $appointmentRepository->findAll([ ], null, $today);
             }
@@ -107,6 +106,10 @@ class AppointmentController extends AbstractControllerWithMessages {
         $json = [ ];
 
         foreach($appointments as $appointment) {
+            if($this->isGranted(AppointmentVoter::View, $appointment) !== true) {
+                continue;
+            }
+
             $view = [
                 [
                     'label' => $translator->trans('label.start'),

@@ -8,6 +8,7 @@ use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
+use App\Entity\User;
 use App\Entity\UserType;
 use DateTime;
 
@@ -28,18 +29,16 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     /**
      * @param StudyGroup $studyGroup
      * @param DateTime|null $today
-     * @param bool $includeHiddenFromStudents
      * @return Appointment[]
      */
-    public function findAllForStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null, bool $includeHiddenFromStudents = false): array;
+    public function findAllForStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null): array;
 
     /**
      * @param Student[] $students
      * @param DateTime|null $today
-     * @param bool $includeHiddenFromStudents
      * @return Appointment[]
      */
-    public function findAllForStudents(array $students, ?DateTime $today = null, bool $includeHiddenFromStudents = false): array;
+    public function findAllForStudents(array $students, ?DateTime $today = null): array;
 
     /**
      * @param Teacher $teacher

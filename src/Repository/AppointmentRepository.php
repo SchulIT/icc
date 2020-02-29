@@ -9,6 +9,7 @@ use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\UserType;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
@@ -38,10 +39,10 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
     /**
      * @param string|null $idsDQL
      * @param array $parameters
-     * @param \DateTime|null $today
+     * @param DateTime|null $today
      * @return Appointment[]
      */
-    private function getAppointments(?string $idsDQL, array $parameters, ?\DateTime $today): array {
+    private function getAppointments(?string $idsDQL, array $parameters, ?DateTime $today): array {
         $qb = $this->em->createQueryBuilder();
 
         $qb
@@ -73,42 +74,32 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
     }
 
     /**
-     * @param Grade $grade
-     * @param \DateTime|null $today
+     * @param StudyGroup $studyGroup
+     * @param DateTime|null $today
      * @param bool $includeHiddenFromStudents
      * @return Appointment[]
      */
-    public function findAllForGrade(Grade $grade, ?\DateTime $today = null, bool $includeHiddenFromStudents = false): array {
-        $qbStudyGroups = $this->em->createQueryBuilder();
-
-        $qbStudyGroups
-            ->select('sgInner.id')
-            ->from(StudyGroup::class, 'sgInner')
-            ->leftJoin('sgInner.grades', 'sgGradesInner')
-            ->where('sgGradesInner.id = :gradeId');
-
+    public function findAllForStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null, bool $includeHiddenFromStudents = false): array {
         $qbAppointments = $this->em->createQueryBuilder()
             ->select('aInner.id')
             ->from(Appointment::class, 'aInner')
             ->leftJoin('aInner.studyGroups', 'aSgInner')
-            ->where(
-                $qbStudyGroups->expr()->in('aSgInner.id', $qbStudyGroups->getDQL())
-            );
+            ->where('aSgInner.id = :studyGroupId');
 
         if($includeHiddenFromStudents === false) {
             $qbAppointments->andWhere('aInner.isHiddenFromStudents == false');
         }
 
-        return $this->getAppointments($qbAppointments, ['gradeId' => $grade->getId() ], $today);
+        return $this->getAppointments($qbAppointments, ['studyGroupId' => $studyGroup->getId() ], $today);
     }
 
     /**
      * @param Student[] $students
-     * @param \DateTime|null $today
+     * @param DateTime|null $today
      * @param bool $includeHiddenFromStudents
      * @return Appointment[]
      */
-    public function findAllForStudents(array $students, ?\DateTime $today = null, bool $includeHiddenFromStudents = false): array {
+    public function findAllForStudents(array $students, ?DateTime $today = null, bool $includeHiddenFromStudents = false): array {
         $qbStudyGroups = $this->em->createQueryBuilder();
 
         $qbStudyGroups
@@ -138,10 +129,10 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
 
     /**
      * @param Teacher $teacher
-     * @param \DateTime|null $today
+     * @param DateTime|null $today
      * @return Appointment[]
      */
-    public function findAllForTeacher(Teacher $teacher, ?\DateTime $today = null): array {
+    public function findAllForTeacher(Teacher $teacher, ?DateTime $today = null): array {
         /**
          * Appointment for teacher means either:
          * - he/she is organizer (1)
@@ -180,10 +171,10 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
 
     /**
      * @param AppointmentCategory[] $categories
-     * @param \DateTime|null $today
+     * @param DateTime|null $today
      * @return Appointment[]
      */
-    public function findAll(array $categories = [ ], ?string $q = null, ?\DateTime $today = null) {
+    public function findAll(array $categories = [ ], ?string $q = null, ?DateTime $today = null) {
         $qbIds = $this->em->createQueryBuilder();
         $params = [ ];
 

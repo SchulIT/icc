@@ -48,9 +48,9 @@
                         </div>
                     {% endif %}
 
-                    {% if gradeFilter.grades|length > 0 %}
+                    {% if studyGroupFilter.studyGroupGroups|length > 0 %}
                         <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                            {% include "_filter/grade.html.twig" with { trigger: 'none' } %}
+                            {% include "_filter/study_group.html.twig" with { trigger: 'none' } %}
                         </div>
                     {% endif %}
 

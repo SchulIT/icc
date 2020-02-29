@@ -9,6 +9,7 @@ use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\UserType;
+use DateTime;
 
 interface AppointmentRepositoryInterface extends TransactionalRepositoryInterface {
 
@@ -25,35 +26,35 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function findOneByExternalId(string $externalId): ?Appointment;
 
     /**
-     * @param Grade $grade
-     * @param \DateTime|null $today
+     * @param StudyGroup $studyGroup
+     * @param DateTime|null $today
      * @param bool $includeHiddenFromStudents
      * @return Appointment[]
      */
-    public function findAllForGrade(Grade $grade, ?\DateTime $today = null, bool $includeHiddenFromStudents = false): array;
+    public function findAllForStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null, bool $includeHiddenFromStudents = false): array;
 
     /**
      * @param Student[] $students
-     * @param \DateTime|null $today
+     * @param DateTime|null $today
      * @param bool $includeHiddenFromStudents
      * @return Appointment[]
      */
-    public function findAllForStudents(array $students, ?\DateTime $today = null, bool $includeHiddenFromStudents = false): array;
+    public function findAllForStudents(array $students, ?DateTime $today = null, bool $includeHiddenFromStudents = false): array;
 
     /**
      * @param Teacher $teacher
-     * @param \DateTime|null $today
+     * @param DateTime|null $today
      * @return Appointment[]
      */
-    public function findAllForTeacher(Teacher $teacher, ?\DateTime $today = null): array;
+    public function findAllForTeacher(Teacher $teacher, ?DateTime $today = null): array;
 
     /**
      * @param AppointmentCategory[] $categories
      * @param string|null $q
-     * @param \DateTime|null $today = null
+     * @param DateTime|null $today = null
      * @return Appointment[]
      */
-    public function findAll(array $categories = [ ], ?string $q = null, ?\DateTime $today = null);
+    public function findAll(array $categories = [ ], ?string $q = null, ?DateTime $today = null);
 
     /**
      * @param Appointment $appointment

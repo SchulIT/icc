@@ -26,6 +26,7 @@ use App\Utils\ColorUtils;
 use App\View\Filter\AppointmentCategoriesFilter;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
+use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\TeacherFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,19 +41,19 @@ class AppointmentController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="appointments")
      */
-    public function index(AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter) {
+    public function index(AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter) {
         /** @var User $user */
         $user = $this->getUser();
 
         $categoryFilterView = $categoryFilter->handle([ ]);
         $studentFilterView = $studentFilter->handle(null, $user);
-        $gradeFilterView = $gradeFilter->handle(null, $user);
+        $studyGroupView = $studyGroupFilter->handle(null, $user);
         $teacherFilterView = $teacherFilter->handle(null, $user);
 
         return $this->renderWithMessages('appointments/index.html.twig', [
             'categoryFilter' => $categoryFilterView,
             'studentFilter' => $studentFilterView,
-            'gradeFilter' => $gradeFilterView,
+            'studyGroupFilter' => $studyGroupView,
             'teacherFilter' => $teacherFilterView
         ]);
     }
@@ -62,8 +63,8 @@ class AppointmentController extends AbstractControllerWithMessages {
      */
     public function indexXhr(AppointmentRepositoryInterface $appointmentRepository, ColorUtils $colorUtils, TranslatorInterface $translator,
                              StudyGroupsGradeStringConverter $studyGroupsGradeStringConverter, TeacherStringConverter $teacherStringConverter,
-                             AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Request $request,
-                             ?int $studentId = null, ?int $gradeId = null, ?string $teacherAcronym = null, ?string $query = null, ?bool $showAll = false) {
+                             AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter, Request $request,
+                             ?int $studentId = null, ?int $studyGroupId = null, ?string $teacherAcronym = null, ?string $query = null, ?bool $showAll = false) {
         /** @var User $user */
         $user = $this->getUser();
         $isStudent = $user->getUserType()->equals(UserType::Student());
@@ -71,7 +72,7 @@ class AppointmentController extends AbstractControllerWithMessages {
 
         $categoryFilterView = $categoryFilter->handle(explode(',', $request->query->get('categoryIds', '')));
         $studentFilterView = $studentFilter->handle($studentId, $user);
-        $gradeFilterView = $gradeFilter->handle($gradeId, $user);
+        $studyGroupView = $studyGroupFilter->handle($studyGroupId, $user);
         $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user);
 
         $appointments = [ ];
@@ -79,13 +80,10 @@ class AppointmentController extends AbstractControllerWithMessages {
         $includeHiddenFromStudents = $isStudent === false;
         $today = null;
 
-        dump($teacherAcronym);
-        dump($teacherFilterView->getCurrentTeacher());
-
         if($studentFilterView->getCurrentStudent() !== null) {
             $appointments = $appointmentRepository->findAllForStudents([$studentFilterView->getCurrentStudent()], $today, $includeHiddenFromStudents);
-        } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $appointments = $appointmentRepository->findAllForGrade($gradeFilterView->getCurrentGrade(), $today, $includeHiddenFromStudents);
+        } else if($studyGroupView->getCurrentStudyGroup() !== null) {
+            $appointments = $appointmentRepository->findAllForStudyGroup($studyGroupView->getCurrentStudyGroup(), $today, $includeHiddenFromStudents);
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             $appointments = $appointmentRepository->findAllForTeacher($teacherFilterView->getCurrentTeacher(), $today);
         } else {

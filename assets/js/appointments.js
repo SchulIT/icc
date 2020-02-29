@@ -85,11 +85,11 @@ document.addEventListener('DOMContentLoaded', function () {
     calendar.render();
 
     var studentIdEl = document.getElementById('student');
-    var gradeIdEl = document.getElementById('grade');
+    var studyGroupIdEl = document.getElementById('study_group');
     var teacherIdEl = document.getElementById('teacher');
     var categoriyIdsEl = document.getElementById('categories');
 
-    [studentIdEl, gradeIdEl, teacherIdEl, categoriyIdsEl ].forEach(function(el) {
+    [studentIdEl, studyGroupIdEl, teacherIdEl, categoriyIdsEl ].forEach(function(el) {
         el.addEventListener('change', function(el) {
             loadEvents();
         });
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadEvents() {
         var query = { };
 
-        [studentIdEl, gradeIdEl, teacherIdEl, categoriyIdsEl ].forEach(function(el) {
+        [studentIdEl, studyGroupIdEl, teacherIdEl, categoriyIdsEl ].forEach(function(el) {
             if(el.multiple !== null && el.multiple !== false) {
                 query[el.name] = Array.from(el.selectedOptions).map(x => x.value);
             } else {

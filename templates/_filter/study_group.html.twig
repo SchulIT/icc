@@ -7,7 +7,7 @@
 
     <div class="form-group">
         <label for="study_group" class="control-label">{{ 'label.study_group'|trans }}:</label>
-        <select name="studyGroupId" id="study_group" class="form-control" data-trigger="submit" data-choice="true">
+        <select name="studyGroupId" id="study_group" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="true">
             <option value="" placeholder>{{ 'label.select.study_group'|trans }}</option>
             {% for group in studyGroupFilter.studyGroupGroups %}
                 {% if grouped %}

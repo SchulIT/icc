@@ -245,14 +245,14 @@ class AppointmentData {
     }
 
     /**
-     * @return int[]
+     * @return string[]
      */
     public function getStudyGroups() {
         return $this->studyGroups;
     }
 
     /**
-     * @param int[] $studyGroups
+     * @param string[] $studyGroups
      * @return AppointmentData
      */
     public function setStudyGroups($studyGroups): AppointmentData {

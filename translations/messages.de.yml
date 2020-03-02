@@ -179,6 +179,7 @@ plans:
 
     substitutions:
         label: Vertretungsplan
+        empty: Für diesen Tag gibt es keine Vertretungen zum Anzeigen.
         view:
             label: Ansicht
             table: Tabelle

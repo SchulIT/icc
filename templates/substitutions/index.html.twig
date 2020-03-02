@@ -85,6 +85,13 @@
                 {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
             {% endfor %}
 
+            {% if groups|length == 0 %}
+                <div class="bs-callout bs-callout-info">
+                    <h4>{{ 'info.label'|trans }}</h4>
+                    <p>{{ 'plans.substitutions.empty'|trans }}</p>
+                </div>
+            {% endif %}
+
             {% for group in groups %}
                 <h5 class="card-title">
                     {% if group.grade is defined %}{{ group.grade.name }}{% endif %}

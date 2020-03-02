@@ -108,7 +108,7 @@ class Appointment {
      *     joinColumns={@ORM\JoinColumn(name="appointment")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="visibility")}
      * )
-     * @var Collection<MessageVisibility>
+     * @var Collection<AppointmentVisibility>
      */
     private $visibilities;
 

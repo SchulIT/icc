@@ -93,8 +93,6 @@ class AppointmentIcsExporter {
     private function makeSubject(Appointment $appointment): string {
         if($appointment->getStudyGroups()->count() > 0) {
             return sprintf("%s [%s]", $appointment->getTitle(), $this->studyGroupsConverter->convert($appointment->getStudyGroups()));
-        } else if($appointment->isHiddenFromStudents()) {
-            return sprintf('%s [%s]', $appointment->getTitle(), $this->translator->trans('label.teachers', ['%count%' => 2 ]));
         }
 
         return $appointment->getTitle();

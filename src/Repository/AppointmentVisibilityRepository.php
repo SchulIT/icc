@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Repository;
 
-use App\Repository\AbstractRepository;
-use App\Repository\AppointmentVisibilityRepositoryInterface;
+use App\Entity\AppointmentVisibility;
 
 class AppointmentVisibilityRepository extends AbstractRepository implements AppointmentVisibilityRepositoryInterface {
 

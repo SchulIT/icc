@@ -46,12 +46,6 @@ class AppointmentTest extends TestCase {
         $appointment->setAllDay(false);
         $this->assertFalse($appointment->isAllDay());
 
-        $appointment->setIsHiddenFromStudents(true);
-        $this->assertTrue($appointment->isHiddenFromStudents());
-
-        $appointment->setIsHiddenFromStudents(false);
-        $this->assertFalse($appointment->isHiddenFromStudents());
-
         $category = new AppointmentCategory();
         $appointment->setCategory($category);
         $this->assertEquals($category, $appointment->getCategory());

@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
+use App\Entity\AppointmentVisibility;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -25,6 +26,7 @@ class AppointmentFixture extends Fixture implements DependentFixtureInterface {
     public function getDependencies() {
         return [
             AppointmentCategoryFixtures::class,
+            AppointmentVisibilityFixture::class,
             StudyGroupFixtures::class
         ];
     }
@@ -36,6 +38,7 @@ class AppointmentFixture extends Fixture implements DependentFixtureInterface {
         $studyGroups = $manager->getRepository(StudyGroup::class)->findAll();
         $teachers = $manager->getRepository(Teacher::class)->findAll();
         $categories = $manager->getRepository(AppointmentCategory::class)->findAll();
+        $visibilities = $manager->getRepository(AppointmentVisibility::class)->findAll();
 
         for($i = 0; $i < 200; $i++) {
             $start = $this->generator->dateTimeBetween('-180 days', '+180 days');
@@ -49,8 +52,13 @@ class AppointmentFixture extends Fixture implements DependentFixtureInterface {
                 ->setLocation($this->generator->city)
                 ->setTitle($this->generator->words(3, true))
                 ->setContent($this->generator->sentence)
-                ->setIsHiddenFromStudents($this->generator->boolean)
                 ->setAllDay($this->generator->boolean);
+
+            $v = $this->generator->randomElements($visibilities, 2, false);
+
+            foreach($v as $visibility) {
+                $appointment->addVisibility($visibility);
+            }
 
             $numStudyGroups = $this->generator->numberBetween(1, count($studyGroups));
             $studyGroups = $this->generator->randomElements($studyGroups, $numStudyGroups);

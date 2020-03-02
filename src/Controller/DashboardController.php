@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Dashboard\DashboardViewHelper;
 use App\Entity\User;
 use App\Entity\UserType;
-use App\Settings\DashboardSettings;
+use App\Settings\SubstitutionSettings;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Filter\UserTypeFilter;
@@ -21,7 +21,7 @@ class DashboardController extends AbstractController {
      * @Route("/dashboard", name="dashboard")
      */
     public function index(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
-                          DashboardViewHelper $dashboardViewHelper, DateHelper $dateHelper, DashboardSettings $dashboardSettings,
+                          DashboardViewHelper $dashboardViewHelper, DateHelper $dateHelper, SubstitutionSettings $dashboardSettings,
                           ?int $studentId = null, ?string $teacherAcronym = null, ?string $userType = null, ?string $date = null) {
         /** @var User $user */
         $user = $this->getUser();
@@ -39,8 +39,6 @@ class DashboardController extends AbstractController {
         } else {
             $view = $dashboardViewHelper->createViewForUser($user, $selectedDate);
         }
-
-        dump($view);
 
         return $this->render('dashboard/index.html.twig', [
             'studentFilter' => $studentFilterView,

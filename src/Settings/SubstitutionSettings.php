@@ -2,7 +2,7 @@
 
 namespace App\Settings;
 
-class DashboardSettings extends AbstractSettings {
+class SubstitutionSettings extends AbstractSettings {
 
     public const AheadDaysKeys = 'dashboard.days_ahead';
     public const SkipWeekends = 'dashboard.skip_weekends';

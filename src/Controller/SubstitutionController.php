@@ -9,7 +9,7 @@ use App\Entity\User;
 use App\Grouping\Grouper;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
-use App\Settings\DashboardSettings;
+use App\Settings\SubstitutionSettings;
 use App\Sorting\Sorter;
 use App\Sorting\SubstitutionStrategy;
 use App\View\Filter\GradeFilter;
@@ -31,7 +31,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
      */
     public function index(SubstitutionRepositoryInterface $substitutionRepository, InfotextRepositoryInterface $infotextRepository, StudentFilter $studentFilter,
                           GradeFilter $gradeFilter, TeacherFilter $teacherFilter, GroupByParameter $groupByParameter, ViewParameter $viewParameter,
-                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, DashboardSettings $dashboardSettings,
+                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, SubstitutionSettings $dashboardSettings,
                           ?string $date, ?int $studentId = null, ?int $gradeId = null, ?string $teacherAcronym = null, ?string $groupBy = null, ?string $view = null) {
         /** @var User $user */
         $user = $this->getUser();

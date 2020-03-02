@@ -136,6 +136,7 @@ dashboard:
     absent_students: Abwesend
     absent_student: "%student% (%reason%)"
     supervision: Aufsicht
+    empty: Für diesen Tag sind keine Daten hinterlegt.
 
 plans:
     label: Pläne

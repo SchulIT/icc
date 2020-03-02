@@ -75,4 +75,11 @@ class DashboardView {
     public function addInfotext(Infotext $infotext): void {
         $this->infotexts[] = $infotext;
     }
+
+    public function isEmpty(): bool {
+        return count($this->messages) === 0
+            && count($this->infotexts) === 0
+            && count($this->items) === 0
+            && count($this->beforeItems) === 0;
+    }
 }

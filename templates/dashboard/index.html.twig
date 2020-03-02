@@ -74,6 +74,14 @@
         </div>
 
         <div class="card-body">
+            {% if view.empty %}
+                <div class="bs-callout bs-callout-info">
+                    <h4>{{ 'info.label'|trans }}</h4>
+
+                    <p>{{ 'dashboard.empty'|trans }}</p>
+                </div>
+            {% endif %}
+
             {# Messages #}
             {% for message in view.messages %}
                 {% include "_includes/message.html.twig" with { message: message } only %}

@@ -22,11 +22,15 @@ use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
+use App\Security\Voter\ExamVoter;
+use App\Security\Voter\MessageVoter;
+use App\Security\Voter\SubstitutionVoter;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\Timetable\TimetablePeriodHelper;
 use App\Utils\EnumArrayUtils;
 use App\Utils\StudyGroupHelper;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DashboardViewHelper {
 
@@ -43,10 +47,12 @@ class DashboardViewHelper {
     private $timetablePeriodHelper;
     private $sorter;
 
+    private $authorizationChecker;
+
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
                                 MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
-                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, Sorter $sorter) {
+                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, Sorter $sorter, AuthorizationCheckerInterface $authorizationChecker) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->timetableRepository = $timetableRepository;
@@ -58,6 +64,7 @@ class DashboardViewHelper {
         $this->studyGroupHelper = $studyGroupHelper;
         $this->timetablePeriodHelper = $timetablePeriodHelper;
         $this->sorter = $sorter;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function createViewForTeacher(Teacher $teacher, \DateTime $dateTime): DashboardView {
@@ -90,8 +97,6 @@ class DashboardViewHelper {
 
         $currentPeriod = $this->getCurrentTimetablePeriod($userType, $dateTime);
         $numberOfWeeks = count($this->timetableWeekRepository->findAll());
-
-        dump($currentPeriod);
 
         if($currentPeriod !== null) {
             $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndStudent($currentPeriod, $student), $dateTime, $view, false, $numberOfWeeks);
@@ -158,6 +163,10 @@ class DashboardViewHelper {
      */
     private function addSubstitutions(iterable $substitutions, DashboardView $dashboardView): void {
         foreach($substitutions as $substitution) {
+            if($this->authorizationChecker->isGranted(SubstitutionVoter::View, $substitution) !== true) {
+                continue;
+            }
+
             if($substitution->startsBefore()) {
                 $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution));
 
@@ -179,6 +188,10 @@ class DashboardViewHelper {
      */
     private function addMessages(iterable $messages, DashboardView $dashboardView): void {
         foreach($messages as $message) {
+            if($this->authorizationChecker->isGranted(MessageVoter::View, $message) !== true) {
+                continue;
+            }
+
             $dashboardView->addMessage($message);
         }
     }
@@ -189,6 +202,10 @@ class DashboardViewHelper {
      */
     private function addExams(iterable $exams, DashboardView $dashboardView): void {
         foreach($exams as $exam) {
+            if($this->authorizationChecker->isGranted(ExamVoter::SHOW, $exam) !== true) {
+                continue;
+            }
+
             for($lesson = $exam->getLessonStart(); $lesson <= $exam->getLessonEnd(); $lesson++) {
                 $dashboardView->addItem($lesson, new ExamViewItem($exam));
             }

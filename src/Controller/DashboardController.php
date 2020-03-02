@@ -14,7 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractController {
 
-    use DateTimeHelperTrait;
+    private const DaysInFuture = 5;
+    private const DaysInPast = 1;
 
     /**
      * @Route("/")
@@ -25,8 +26,16 @@ class DashboardController extends AbstractController {
                           ?int $studentId = null, ?string $teacherAcronym = null, ?string $userType = null, ?string $date = null) {
         /** @var User $user */
         $user = $this->getUser();
-        $days = $this->getListOfNextDays($dateHelper, $dashboardSettings->getNumberOfAheadDaysForSubstitutions(), $dashboardSettings->skipWeekends());
-        $selectedDate = $this->getCurrentDate($days, $date);
+
+        $selectedDate = null;
+        try {
+            $selectedDate = new \DateTime($date);
+        } catch (\Exception $e) {
+            $selectedDate = $dateHelper->getToday();
+        }
+
+        $days = $this->getListOfSurroundingDays($selectedDate, static::DaysInFuture, static::DaysInPast);
+
 
         $studentFilterView = $studentFilter->handle($studentId, $user);
         $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user);
@@ -48,5 +57,27 @@ class DashboardController extends AbstractController {
             'days' => $days,
             'selectedDate' => $selectedDate
         ]);
+    }
+
+    /**
+     * @param \DateTime $dateTime
+     * @param int $daysInFuture
+     * @param int $daysInPast
+     * @return \DateTime[]
+     */
+    private function getListOfSurroundingDays(\DateTime $dateTime, int $daysInFuture, int $daysInPast): array {
+        $days = [ ];
+
+        for($i = $daysInPast; $i > 0; $i--) {
+            $days[] = (clone $dateTime)->modify(sprintf('-%d days', $i));
+        }
+
+        $days[] = $dateTime;
+
+        for($i = 1; $i <= $daysInFuture; $i++) {
+            $days[] = (clone $dateTime)->modify(sprintf('+%d days', $i));
+        }
+
+        return $days;
     }
 }

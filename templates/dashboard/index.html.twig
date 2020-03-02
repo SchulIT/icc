@@ -17,6 +17,7 @@
             <div class="row">
                 {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.id %}
                 {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
+                {% set dateParam = selectedDate|date('Y-m-d') %}
 
                 {% if teacherFilter.teachers|length > 0 %}
                     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
@@ -26,15 +27,34 @@
 
                 {% if studentFilter.studentGradeGroups|length > 0 %}
                     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/student.html.twig" with { params: { userType: userTypeParam } } %}
+                        {% include "_filter/student.html.twig" with { params: { userType: userTypeParam, date: dateParam } } %}
                     </div>
                 {% endif %}
 
                 {% if userTypeFilter.types|length > 0 %}
                     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/user_type.html.twig" with { params: { studentId: studentParam } } %}
+                        {% include "_filter/user_type.html.twig" with { params: { studentId: studentParam, date: dateParam } } %}
                     </div>
                 {% endif %}
+
+                <div class="col-lg-4">
+                    <form role="form" method="get" class="form hidden-print">
+                        {% include "_filter/_params.html.twig" with { params: currentFilter } %}
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
+                        </div>
+
+                        <!--
+                        <div class="form-group">
+                            <label for="usertype">{{ 'label.date'|trans }}:</label>
+                            <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
+                        </div>-->
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -81,6 +81,60 @@
     </div>
 {% endblock %}
 
+{% block container %}
+    <div class="row">
+        <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 navigation d-print-none">
+            <nav class="navbar navbar-expand-md">
+                <div class="collapse navbar-collapse" id="menu">
+                    {{ knp_menu_render(mainMenu, {'currentClass': 'active' }) }}
+                </div>
+            </nav>
+        </div>
+
+        <div class="col-lg-10 col-md-9 col-sm-12 col-xs-12">
+            {% block breadcrumb %}{% endblock %}
+
+            {% for msg in app.session.flashbag.get('error') %}
+                <div class="bs-callout bs-callout-danger">
+                    <h4>{{ 'error.label'|trans }}</h4>
+                    <p>{{ msg|trans }}</p>
+                </div>
+            {% endfor %}
+
+            {% for msg in app.session.flashbag.get('info') %}
+                <div class="bs-callout bs-callout-info">
+                    <h4>{{ 'info.label'|trans }}</h4>
+                    <p>{{ msg|trans }}</p>
+                </div>
+            {% endfor %}
+
+            {% for msg in app.session.flashbag.get('success') %}
+                <div class="bs-callout bs-callout-success">
+                    <h4>{{ 'success.label'|trans }}</h4>
+                    <p>{{ msg|trans }}</p>
+                </div>
+            {% endfor %}
+
+            {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                <div class="bs-callout bs-callout-warning">
+                    <h4>{{ 'profile.switch.active.title'|trans }}</h4>
+
+                    <p>
+                        {{ 'profile.switch.active.message'|trans({'%user%': app.user|user}) }}
+                    </p>
+
+                    <a href="?_switch_user=_exit" class="btn btn-primary btn-sm">
+                        <i class="fa fa-sign-out-alt"></i> {{ 'profile.switch.exit'|trans }}
+                    </a>
+                </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+
+    </div>
+{% endblock %}
+
 {% block footer_links %} – <a href="{{ absolute_url('/docs/api/app') }}">{{ 'api.doc'|trans }}</a> {% endblock %}
 
 {% block css %}
@@ -89,8 +143,4 @@
 
 {% block javascript %}
     <script src="{{ asset('build/app.js') }}"></script>
-{% endblock %}
-
-{% block menu %}
-    {{ knp_menu_render(mainMenu, {'currentClass': 'active' }) }}
 {% endblock %}

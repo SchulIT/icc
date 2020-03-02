@@ -602,6 +602,14 @@ profile:
             confirm: 'Soll die verbundene App "%name%" wirklich gelöscht werden? Anschließend ist der Zugriff der App auf das ICC nicht mehr möglich.'
             success: Verbundene App erfolgreich gelöscht
 
+    switch:
+        label: Benutzer wechseln
+        button: wechseln
+        active:
+            title: Achtung, Benutzer wurde gewechselt!
+            message: "Für das System sieht es so aus, als wäre <strong>%user%</strong> angemeldet!"
+        exit: abmelden
+
 remove:
     header: Löschen bestätigen
     confirm: Ja, löschen

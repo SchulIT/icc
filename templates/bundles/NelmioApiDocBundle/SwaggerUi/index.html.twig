@@ -1,0 +1,35 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'api.doc'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'api.doc'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui.css') }}">
+
+    {% block swagger_data %}
+        {# json_encode(65) is for JSON_UNESCAPED_SLASHES|JSON_HEX_TAG to avoid JS XSS #}
+        <script id="swagger-data" type="application/json">{{ swagger_data|json_encode(65)|raw }}</script>
+    {% endblock swagger_data %}
+{% endblock %}
+
+{% block content %}
+    {% block swagger_ui %}
+        <div id="swagger-ui" class="api-platform"></div>
+    {% endblock %}
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui-bundle.js') }}"></script>
+    <script src="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui-standalone-preset.js') }}"></script>
+
+    {% block swagger_initialization %}
+        <script src="{{ asset('bundles/nelmioapidoc/init-swagger-ui.js') }}"></script>
+    {% endblock swagger_initialization %}
+{% endblock post_javascript %}
+

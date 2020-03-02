@@ -195,3 +195,21 @@ table {
     border-top: 0;
   }
 }
+
+// Swagger
+.swagger-ui {
+  .col {
+    position: initial;
+    width: auto;
+  }
+
+  .topbar,
+  .information-container {
+    display: none;
+  }
+
+  .wrapper,
+  .wrapper > section {
+    padding: 0 !important;
+  }
+}

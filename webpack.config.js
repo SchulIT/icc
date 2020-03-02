@@ -1,5 +1,6 @@
 var Encore = require('@symfony/webpack-encore');
 var CopyPlugin = require('copy-webpack-plugin');
+const GlobImporter = require('node-sass-glob-importer');
 
 Encore
     // directory where compiled assets will be stored
@@ -47,7 +48,9 @@ Encore
     // .enableVersioning(Encore.isProduction())
 
     // enables Sass/SCSS support
-    .enableSassLoader()
+    .enableSassLoader(function(options) {
+        options.importer = GlobImporter();
+    })
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()

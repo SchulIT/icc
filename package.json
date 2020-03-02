@@ -30,6 +30,7 @@
         "emojione": "2.x",
         "inline-attachment": "^2.0.3",
         "node-sass": "^4.8.3",
+        "node-sass-glob-importer": "^5.3.2",
         "sass-loader": "^7.0.1",
         "simplemde": "^1.11.2",
         "uglify-js": "^3.6.0",

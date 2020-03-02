@@ -36,8 +36,9 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
      * @inheritDoc
      */
     public function findAll() {
-        return $this->em->getRepository(Substitution::class)
-            ->findAll();
+        return $this->getDefaultQueryBuilder(null)
+            ->getQuery()
+            ->getResult();
     }
 
     /**
@@ -45,11 +46,9 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
      * @return Substitution[]
      */
     public function findAllByDate(\DateTime $date) {
-        $qb = $this->getDefaultQueryBuilder()
-            ->where('s.date = :date')
-            ->setParameter('date', $date);
-
-        return $qb->getQuery()->getResult();
+        return $this->getDefaultQueryBuilder($date)
+            ->getQuery()
+            ->getResult();
     }
 
     /**
@@ -89,8 +88,8 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
             )
         );
 
-        $qb = $this->getDefaultQueryBuilder();
-        $qb->where(
+        $qb = $this->getDefaultQueryBuilder($date);
+        $qb->andWhere(
             $qb->expr()->in('s.id', $qbInner->getDQL())
         );
         $qb->setParameter('ids', $ids);
@@ -117,8 +116,8 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
             )
         );
 
-        $qb = $this->getDefaultQueryBuilder();
-        $qb->where(
+        $qb = $this->getDefaultQueryBuilder($date);
+        $qb->andWhere(
             $qb->expr()->in('s.id', $qbInner->getDQL())
         );
         $qb->setParameter('id', $teacher->getId());
@@ -147,8 +146,8 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
             )
         );
 
-        $qb = $this->getDefaultQueryBuilder();
-        $qb->where(
+        $qb = $this->getDefaultQueryBuilder($date);
+        $qb->andWhere(
             $qb->expr()->in('s.id', $qbInner->getDQL())
         );
         $qb->setParameter('id', $grade->getId());
@@ -156,7 +155,7 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
         return $qb->getQuery()->getResult();
     }
 
-    private function getDefaultQueryBuilder(): QueryBuilder {
+    private function getDefaultQueryBuilder(\DateTime $date = null): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
 
         $qb->select(['s', 't', 'rt', 'sg', 'rsg'])
@@ -167,6 +166,12 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
             ->leftJoin('s.replacementStudyGroups', 'rsg')
             ->orderBy('s.date', 'asc')
             ->orderBy('s.lessonStart', 'asc');
+
+        if($date !== null) {
+            $qb
+                ->where('s.date = :date')
+                ->setParameter('date', $date);
+        }
 
         return $qb;
     }

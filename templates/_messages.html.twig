@@ -1,59 +1,11 @@
-{% import _self as macros %}
-
-{% macro message(message, isDismissed) %}
-    <div class="bs-callout bs-callout-info{% if isDismissed %} dismissed-message{% endif %}">
-        {% if isDismissed %}
-            <a class="close" title="{{ 'message.reenable'|trans }}" href="{{ path('reenable_message', { id: message.id }) }}">
-                <i class="fa fa-reply"></i>
-            </a>
-        {% else %}
-            <a class="close" title="{{ 'message.dismiss'|trans }}" href="{{ path('dismiss_message', { id: message.id }) }}">
-                <i class="fa fa-close"></i>
-            </a>
-        {% endif %}
-        <h4>{{ message.subject }}</h4>
-        <small title="{{ 'label.author'|trans }}"><i class="fa fa-user"></i> {{ message.createdBy|user }}</small>
-        <small title="{{ 'message.visibility'|trans }}">
-            <i class="fa fa-users"></i>
-            {% for visibility in message.visibilities %}
-                {% if visibility.userType.value in ['students', 'parents'] %}
-                    {{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}
-                {% else %}
-                    {{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}
-                {% endif %}
-            {% endfor %}
-        </small>
-        <small title="{{ 'message.date'|trans }}">
-            <i class="fa fa-calendar"></i>
-            {{ 'date.range'|trans({
-                    '%from%': message.startDate.format('date.format'|trans),
-                    '%to%': message.expireDate.format('date.format'|trans)
-            }) }}
-        </small>
-
-        {{ message.content|markdown }}
-    </div>
-{% endmacro %}
-
 {% if _messages is defined %}
     {% for message in _messages %}
-        {{ macros.message(message, false) }}
+        {% include "_includes/message.html.twig" with { message: message } %}
     {% endfor %}
 {% endif %}
 
-{% if _dismissedMessages is defined %}
-    {% if _dismissedMessages|length > 0 %}
-        <div class="bs-callout bs-callout-warning" id="dismissed-messages-info">
-            <p>
-                {{ 'message.dismissed_info'|trans({'%count%': _dismissedMessages|length }) }}
-                <a href="#" data-remove="#dismissed-messages-info" data-show=".dismissed-message">
-                    {{ 'message.dismissed_action'|trans({'%count%': _dismissedMessages|length }) }}
-                </a>
-            </p>
-        </div>
-
-        {% for message in _dismissedMessages %}
-            {{ macros.message(message, true) }}
-        {% endfor %}
-    {% endif %}
+{% if _dismissed_messages is defined %}
+    {% for message in _dismissed_messages %}
+        {% include "_includes/message.html.twig" with { message: message } %}
+    {% endfor %}
 {% endif %}

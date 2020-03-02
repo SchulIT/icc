@@ -39,7 +39,7 @@ abstract class AbstractControllerWithMessages extends AbstractController {
             );
 
             $parameters['_messages'] = $this->dismissedMessagesHelper->getNonDismissedMessages($messages, $user);
-            $parameters['_dismissedMessages'] = $this->dismissedMessagesHelper->getDismissedMessages($messages, $user);
+            $parameters['_dismissed_messages'] = $this->dismissedMessagesHelper->getDismissedMessages($messages, $user);
         }
 
         return parent::render($view, $parameters, $response);

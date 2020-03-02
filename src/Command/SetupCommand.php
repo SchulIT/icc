@@ -2,11 +2,13 @@
 
 namespace App\Command;
 
+use App\Entity\AppointmentVisibility;
 use App\Entity\DocumentVisibility;
 use App\Entity\MessageVisibility;
 use App\Entity\TimetablePeriodVisibility;
 use App\Entity\UserType;
 use App\Entity\WikiArticleVisibility;
+use App\Repository\AppointmentVisibilityRepositoryInterface;
 use App\Repository\DocumentVisibilityRepositoryInterface;
 use App\Repository\MessageVisibilityRepositoryInterface;
 use App\Repository\TimetablePeriodVisibilityRepositoryInterface;
@@ -24,19 +26,21 @@ class SetupCommand extends Command {
     private $messageVisibilityRepository;
     private $timetablePeriodVisibilityRepository;
     private $wikiArticleVisibilityRepository;
+    private $visibilityRepository;
     private $pdoSessionHandler;
 
     private $em;
 
     public function __construct(DocumentVisibilityRepositoryInterface $documentVisibilityRepository, MessageVisibilityRepositoryInterface $messageVisibilityRepository,
                                 TimetablePeriodVisibilityRepositoryInterface $timetablePeriodVisibilityRepository, WikiArticleVisibilityRepositoryInterface $wikiArticleVisibilityRepository,
-                                EntityManagerInterface $em, PdoSessionHandler $pdoSessionHandler, string $name = null) {
+                                AppointmentVisibilityRepositoryInterface $visibilityRepository, EntityManagerInterface $em, PdoSessionHandler $pdoSessionHandler, string $name = null) {
         parent::__construct($name);
 
         $this->documentVisibilityRepository = $documentVisibilityRepository;
         $this->messageVisibilityRepository = $messageVisibilityRepository;
         $this->timetablePeriodVisibilityRepository = $timetablePeriodVisibilityRepository;
         $this->wikiArticleVisibilityRepository = $wikiArticleVisibilityRepository;
+        $this->visibilityRepository = $visibilityRepository;
 
         $this->em = $em;
         $this->pdoSessionHandler = $pdoSessionHandler;
@@ -59,12 +63,13 @@ class SetupCommand extends Command {
         $this->addMissingMessageVisibilities($style);
         $this->addMissingWikiVisibilities($style);
         $this->addMissingTimetablePeriodVisibilities($style);
+        $this->addMissingAppointmentVisibilities($style);
     }
 
-    private function addMissingVisibility(SymfonyStyle $style, string $type, array $visibilities, \Closure $newVisibilityAction) {
+    private function addMissingVisibility(SymfonyStyle $style, string $type, array $visibilities, \Closure $newVisibilityAction, array $userTypes) {
         $style->section(sprintf('Adding missing %s', $type));
 
-        foreach(UserType::values() as $value) {
+        foreach($userTypes as $value) {
             if(in_array($value, $visibilities)) {
                 $style->text(sprintf('%s for user type "%s" already exists', $type, $value));
             } else {
@@ -90,7 +95,7 @@ class SetupCommand extends Command {
             $this->documentVisibilityRepository->persist($visibility);
         };
 
-        $this->addMissingVisibility($style, DocumentVisibility::class, $visibilities, $action);
+        $this->addMissingVisibility($style, DocumentVisibility::class, $visibilities, $action, UserType::toArray());
     }
 
     private function addMissingMessageVisibilities(SymfonyStyle $style) {
@@ -107,7 +112,7 @@ class SetupCommand extends Command {
             $this->messageVisibilityRepository->persist($visibility);
         };
 
-        $this->addMissingVisibility($style, MessageVisibility::class, $visibilities, $action);
+        $this->addMissingVisibility($style, MessageVisibility::class, $visibilities, $action, UserType::toArray());
     }
 
     private function addMissingTimetablePeriodVisibilities(SymfonyStyle $style) {
@@ -124,7 +129,7 @@ class SetupCommand extends Command {
             $this->timetablePeriodVisibilityRepository->persist($visibility);
         };
 
-        $this->addMissingVisibility($style, TimetablePeriodVisibility::class, $visibilities, $action);
+        $this->addMissingVisibility($style, TimetablePeriodVisibility::class, $visibilities, $action, UserType::toArray());
     }
 
     private function addMissingWikiVisibilities(SymfonyStyle $style) {
@@ -141,7 +146,30 @@ class SetupCommand extends Command {
             $this->wikiArticleVisibilityRepository->persist($visibility);
         };
 
-        $this->addMissingVisibility($style, WikiArticleVisibility::class, $visibilities, $action);
+        $this->addMissingVisibility($style, WikiArticleVisibility::class, $visibilities, $action, UserType::toArray());
+    }
+
+    private function addMissingAppointmentVisibilities(SymfonyStyle $style) {
+        $visibilities = array_map(function(AppointmentVisibility $visibility) {
+            return $visibility->getUserType()->getValue();
+        },
+            $this->visibilityRepository->findAll()
+        );
+
+        $action = function(UserType $userType) {
+            $visibility = (new AppointmentVisibility())
+                ->setUserType($userType);
+
+            $this->visibilityRepository->persist($visibility);
+        };
+
+        $types = [
+            UserType::Teacher(),
+            UserType::Student(),
+            UserType::Parent()
+        ];
+
+        $this->addMissingVisibility($style, AppointmentVisibility::class, $visibilities, $action, $types);
     }
 
     private function setupSessions(SymfonyStyle $style) {

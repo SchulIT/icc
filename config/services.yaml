@@ -91,8 +91,11 @@ services:
 
     # MENU
     App\Menu\Builder:
+        arguments:
+            $idpProfileUrl: '%env(IDP_PROFILE_URL)%'
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: mainMenu }
+            - { name: knp_menu.menu_builder, method: userMenu, alias: userMenu }
             - { name: knp_menu.menu_builder, method: adminMenu, alias: adminMenu }
             - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
 

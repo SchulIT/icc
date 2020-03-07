@@ -2,12 +2,7 @@
 
 {% block userbar %}
     <div class="float-right d-print-none" id="userbar">
-        <div class="btn-group d-md-none d-lg-none">
-            <button type="button" class="btn btn-secondary btn-sm" data-toggle="collapse" data-target="#menu">
-                <i class="fas fa-bars"></i> {{ 'menu.label'|trans }}
-            </button>
-        </div>
-
+        {#
         {% if is_granted('ROLE_ADMIN') %}
             <div class="btn-group">
                 <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
@@ -25,6 +20,7 @@
             {{ knp_menu_render('adminMenu', {'currentClass': 'active', 'template': 'dropdown_menu.html.twig' }) }}
         </div>
         {% endif %}
+        #}
 
         {% if user.services|length > 0 %}
             <div class="btn-group">
@@ -41,98 +37,74 @@
                             </a>
                         </li>
                     {% endfor %}
-
                 </ul>
             </div>
         {% endif %}
-
-        <div class="btn-group">
-            <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
-                <i class="fas fa-user"></i>
-
-                {% if user.firstname is not null and user.lastname is not null %}
-                    {{ user.lastname }}, {{ user.firstname }} ({{ app.user.username }})
-                {% else %}
-                    {{ app.user.username }}
-                {% endif %}
-            </button>
-
-            <ul class="dropdown-menu pull-right" role="menu">
-                {#{% block usermenu %}{% endblock %}#}
-                <li>
-                    <a href="{{ path('profile') }}" class="dropdown-item"><i class="fa fa-user"></i> {{ 'profile.overview.label'|trans }}</a>
-                </li>
-                <li class="dropdown-divider"></li>
-                {% if profile_url is not null %}
-                    <li>
-                        {% if profile_url starts with 'http://' or profile_url starts with 'https://' %}
-                            <a href="{{ profile_url }}" class="dropdown-item"><i class="fas fa-cogs"></i> {{ 'profile.label'|trans }}</a>
-                        {% else %}
-                            <a href="{{ path(profile_url) }}" class="dropdown-item"><i class="fas fa-cogs"></i> {{ 'profile.label'|trans }}</a>
-                        {% endif %}
-                    </li>
-                    <li class="dropdown-divider"></li>
-                {% endif %}
-                <li>
-                    <a href="{{ path('logout') }}" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> {{ 'auth.logout'|trans }}</a>
-                </li>
-            </ul>
-        </div>
     </div>
 {% endblock %}
 
 {% block container %}
-    <div class="row">
-        <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 navigation d-print-none">
-            <nav class="navbar navbar-expand-md">
-                <div class="collapse navbar-collapse" id="menu">
-                    {{ knp_menu_render(mainMenu, {'currentClass': 'active' }) }}
-                </div>
-            </nav>
+    <div class="navbar navbar-dark navbar-expand-lg bg-primary">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse text-white" id="menu">
+            {{ knp_menu_render(mainMenu, {'currentClass': 'active' }) }}
+
+            {{ knp_menu_render('settingsMenu', {'currentClass': 'active' }) }}
+            {{ knp_menu_render('adminMenu', {'currentClass': 'active' }) }}
+            {{ knp_menu_render('userMenu', {'currentClass': 'active' }) }}
         </div>
-
-        <div class="col-lg-10 col-md-9 col-sm-12 col-xs-12">
-            {% block breadcrumb %}{% endblock %}
-
-            {% for msg in app.session.flashbag.get('error') %}
-                <div class="bs-callout bs-callout-danger">
-                    <h4>{{ 'error.label'|trans }}</h4>
-                    <p>{{ msg|trans }}</p>
-                </div>
-            {% endfor %}
-
-            {% for msg in app.session.flashbag.get('info') %}
-                <div class="bs-callout bs-callout-info">
-                    <h4>{{ 'info.label'|trans }}</h4>
-                    <p>{{ msg|trans }}</p>
-                </div>
-            {% endfor %}
-
-            {% for msg in app.session.flashbag.get('success') %}
-                <div class="bs-callout bs-callout-success">
-                    <h4>{{ 'success.label'|trans }}</h4>
-                    <p>{{ msg|trans }}</p>
-                </div>
-            {% endfor %}
-
-            {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
-                <div class="bs-callout bs-callout-warning">
-                    <h4>{{ 'profile.switch.active.title'|trans }}</h4>
-
-                    <p>
-                        {{ 'profile.switch.active.message'|trans({'%user%': app.user|user}) }}
-                    </p>
-
-                    <a href="?_switch_user=_exit" class="btn btn-primary btn-sm">
-                        <i class="fa fa-sign-out-alt"></i> {{ 'profile.switch.exit'|trans }}
-                    </a>
-                </div>
-            {% endif %}
-
-            {% block content %}{% endblock %}
-        </div>
-
     </div>
+    <div class="navbar navbar-sub bg-danger mb-2">
+        <div class="navbar text-white w-100" id="submenu">
+            {{ knp_menu_render(mainMenu, {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
+
+            {{ knp_menu_render('settingsMenu', {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
+            {{ knp_menu_render('adminMenu', {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
+            {{ knp_menu_render('userMenu', {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
+        </div>
+    </div>
+
+    {% block breadcrumb %}{% endblock %}
+
+    {% for msg in app.session.flashbag.get('error') %}
+        <div class="bs-callout bs-callout-danger">
+            <h4>{{ 'error.label'|trans }}</h4>
+            <p>{{ msg|trans }}</p>
+        </div>
+    {% endfor %}
+
+    {% for msg in app.session.flashbag.get('info') %}
+        <div class="bs-callout bs-callout-info">
+            <h4>{{ 'info.label'|trans }}</h4>
+            <p>{{ msg|trans }}</p>
+        </div>
+    {% endfor %}
+
+    {% for msg in app.session.flashbag.get('success') %}
+        <div class="bs-callout bs-callout-success">
+            <h4>{{ 'success.label'|trans }}</h4>
+            <p>{{ msg|trans }}</p>
+        </div>
+    {% endfor %}
+
+    {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+        <div class="bs-callout bs-callout-warning">
+            <h4>{{ 'profile.switch.active.title'|trans }}</h4>
+
+            <p>
+                {{ 'profile.switch.active.message'|trans({'%user%': app.user|user}) }}
+            </p>
+
+            <a href="?_switch_user=_exit" class="btn btn-primary btn-sm">
+                <i class="fa fa-sign-out-alt"></i> {{ 'profile.switch.exit'|trans }}
+            </a>
+        </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
 {% endblock %}
 
 {% block footer_links %} – <a href="{{ absolute_url('/docs/api/app') }}">{{ 'api.doc'|trans }}</a> {% endblock %}

@@ -2,6 +2,7 @@
 
 namespace App\Menu;
 
+use App\Converter\UserStringConverter;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroupMembership;
 use App\Entity\User;
@@ -15,6 +16,7 @@ use Knp\Menu\ItemInterface;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Builder {
     private $factory;
@@ -25,43 +27,50 @@ class Builder {
 
     private $tokenStorage;
     private $dateHelper;
+    private $userConverter;
+    private $translator;
+
+    private $idpProfileUrl;
 
     public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authorizationChecker,
                                 WikiArticleRepositoryInterface $wikiRepository, MessageRepositoryInterface $messageRepository,
-                                TokenStorageInterface $tokenStorage, DateHelper $dateHelper) {
+                                TokenStorageInterface $tokenStorage, DateHelper $dateHelper, UserStringConverter $userConverter,
+                                TranslatorInterface $translator, string $idpProfileUrl) {
         $this->factory = $factory;
         $this->authorizationChecker = $authorizationChecker;
         $this->wikiRepository = $wikiRepository;
         $this->messageRepository = $messageRepository;
         $this->tokenStorage = $tokenStorage;
         $this->dateHelper = $dateHelper;
+        $this->userConverter = $userConverter;
+        $this->translator = $translator;
+        $this->idpProfileUrl = $idpProfileUrl;
     }
 
     private function plansMenu(ItemInterface $menu): ItemInterface {
-        $plans = $menu->addChild('plans.label', [
-            'attributes' => [
-                'class' => 'header'
-            ]
-        ]);
+        $plans = $menu->addChild('plans.label')
+            ->setExtra('menu', 'plans')
+            ->setExtra('menu-container', '#submenu')
+            ->setAttribute('icon', 'fa fa-school');
 
-        $menu->addChild('plans.timetable.label', [
+        $plans->addChild('plans.timetable.label', [
             'route' => 'timetable'
         ]);
 
-        $menu->addChild('plans.substitutions.label', [
+        $plans->addChild('plans.substitutions.label', [
             'route' => 'substitutions'
         ]);
 
-        $menu->addChild('plans.exams.label', [
+        $plans->addChild('plans.exams.label', [
             'route' => 'exams'
         ]);
 
-        $menu->addChild('plans.appointments.label', [
+        $plans->addChild('plans.appointments.label', [
             'route' => 'appointments'
         ]);
 
         if($this->authorizationChecker->isGranted(RoomVoter::View)) {
-            $menu->addChild('plans.rooms.label', [
+            $plans->addChild('plans.rooms.label', [
                 'route' => 'rooms'
             ]);
         }
@@ -70,26 +79,25 @@ class Builder {
     }
 
     private function listsMenu(ItemInterface $menu): ItemInterface {
-        $lists = $menu->addChild('lists.label', [
-            'attributes' => [
-                'class' => 'header'
-            ]
-        ]);
+        $lists = $menu->addChild('lists.label')
+            ->setExtra('menu', 'lists')
+            ->setExtra('menu-container', '#submenu')
+            ->setAttribute('icon', 'fas fa-list');
 
         if($this->authorizationChecker->isGranted(ListsVoter::Tuitions)) {
-            $menu->addChild('lists.tuitions.label', [
+            $lists->addChild('lists.tuitions.label', [
                 'route' => 'list_tuitions'
             ]);
         }
 
         if($this->authorizationChecker->isGranted(ListsVoter::StudyGroups)) {
-            $menu->addChild('lists.study_groups.label', [
+            $lists->addChild('lists.study_groups.label', [
                 'route' => 'list_studygroups'
             ]);
         }
 
         if($this->authorizationChecker->isGranted(ListsVoter::Teachers)) {
-            $menu->addChild('lists.teachers.label', [
+            $lists->addChild('lists.teachers.label', [
                 'route' => 'list_teachers'
             ]);
         }
@@ -99,14 +107,13 @@ class Builder {
 
     private function wikiMenu(ItemInterface $menu): ItemInterface {
         $wiki = $menu->addChild('wiki.label', [
-            'attributes' => [
-                'class' => 'header'
-            ]
-        ]);
+            'route' => 'wiki'
+        ])->setExtra('menu', 'wiki')
+            ->setExtra('menu-container', '#submenu');
 
         foreach($this->wikiRepository->findAll() as $article) {
             if($this->authorizationChecker->isGranted(WikiVoter::View, $article)) {
-                $menu->addChild(sprintf('wiki.%d', $article->getId()), [
+                $wiki->addChild(sprintf('wiki.%d', $article->getId()), [
                     'label' => $article->getTitle(),
                     'route' => 'show_wiki_article',
                     'routeParameters' => [
@@ -120,10 +127,63 @@ class Builder {
         return $wiki;
     }
 
-    public function adminMenu(array $options): ItemInterface {
+    public function userMenu(array $options): ItemInterface {
         $menu = $this->factory->createItem('root')
-            ->setChildrenAttribute('class', 'dropdown-menu')
-            ->setChildrenAttribute('role', 'menu');
+            ->setChildrenAttributes([
+                'class' => 'navbar-nav float-lg-right'
+            ]);
+
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        if($user === null || !$user instanceof User) {
+            return $menu;
+        }
+
+        $displayName = !empty($user->getFirstname()) && !empty($user->getLastname())
+            ? $this->userConverter->convert($user)
+            : $user->getUsername();
+
+        $userMenu = $menu->addChild('user', [
+                'label' => $displayName
+            ])
+            ->setAttribute('icon', 'fa fa-user')
+            ->setExtra('menu', 'user')
+            ->setExtra('menu-container', '#submenu')
+            ->setExtra('pull-right', true);
+
+        $userMenu->addChild('profile.overview.label', [
+            'route' => 'profile'
+        ]);
+
+        $userMenu->addChild('profile.label', [
+            'uri' => $this->idpProfileUrl
+        ])
+            ->setAttribute('target', '_blank');
+
+        $menu->addChild('label.logout', [
+            'route' => 'logout',
+            'label' => ''
+        ])
+            ->setAttribute('icon', 'fas fa-sign-out-alt')
+            ->setAttribute('title', $this->translator->trans('auth.logout'));
+
+        return $menu;
+    }
+
+    public function adminMenu(array $options): ItemInterface {
+        $root = $this->factory->createItem('root')
+            ->setChildrenAttributes([
+                'class' => 'navbar-nav float-lg-right'
+            ]);
+
+        $menu = $root->addChild('admin', [
+            'label' => ''
+        ])
+            ->setAttribute('icon', 'fa fa-cogs')
+            ->setAttribute('title', $this->translator->trans('admin.label'))
+            ->setExtra('menu', 'admin')
+            ->setExtra('menu-container', '#submenu')
+            ->setExtra('pull-right', true);
 
         if($this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN')) {
             $menu->addChild('admin.documents.label', [
@@ -159,13 +219,23 @@ class Builder {
             ]);
         }
 
-        return $menu;
+        return $root;
     }
 
     public function settingsMenu(array $options): ItemInterface {
-        $menu = $this->factory->createItem('root')
-            ->setChildrenAttribute('class', 'dropdown-menu')
-            ->setChildrenAttribute('role', 'menu');
+        $root = $this->factory->createItem('root')
+            ->setChildrenAttributes([
+                'class' => 'navbar-nav float-lg-right'
+            ]);
+
+        $menu = $root->addChild('settings', [
+            'label' => ''
+        ])
+            ->setAttribute('icon', 'fa fa-wrench')
+            ->setExtra('menu', 'settings')
+            ->setExtra('menu-container', '#submenu')
+            ->setExtra('pull-right', true)
+            ->setAttribute('title', $this->translator->trans('admin.settings.label'));
 
         $menu->addChild('admin.settings.timetable.label', [
             'route' => 'admin_settings_timetable'
@@ -187,25 +257,15 @@ class Builder {
             'route' => 'admin_settings_substitutions'
         ]);
 
-        return $menu;
+        return $root;
     }
 
     public function mainMenu(array $options) {
         $menu = $this->factory->createItem('root')
-            ->setChildrenAttribute('class', 'nav nav-pills flex-column');
-
-        $menu->addChild('menu.label', [
-            'attributes' => [
-                'class' => 'header'
-            ]
-        ]);
+            ->setChildrenAttribute('class', 'navbar-nav mr-auto');
 
         $menu->addChild('dashboard.label', [
             'route' => 'dashboard'
-        ]);
-
-        $menu->addChild('documents.label', [
-            'route' => 'documents'
         ]);
 
         $messageCount = 0;
@@ -229,10 +289,17 @@ class Builder {
         $menu->addChild('messages.overview.label', [
             'route' => 'messages'
         ])
-            ->setAttribute('count', $messageCount);
+            ->setAttribute('count', $messageCount)
+            ->setAttribute('icon', 'fas fa-envelope-open-text');
 
         $this->plansMenu($menu);
         $this->listsMenu($menu);
+
+        $menu->addChild('documents.label', [
+            'route' => 'documents'
+        ])
+            ->setAttribute('icon', 'far fa-file-alt');
+
         $this->wikiMenu($menu);
 
         return $menu;

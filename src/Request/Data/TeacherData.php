@@ -45,10 +45,10 @@ class TeacherData {
     private $title;
 
     /**
-     * @Assert\Type("string")
+     * @Serializer\Type("string")
      * @Assert\Email()
      * @NullOrNotBlank()
-     * @var
+     * @var string|null
      */
     private $email;
 

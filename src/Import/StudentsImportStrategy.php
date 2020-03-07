@@ -72,6 +72,7 @@ class StudentsImportStrategy implements ImportStrategyInterface {
         $entity->setLastname($data->getLastname());
         $entity->setGender(new Gender($data->getGender()));
         $entity->setStatus($data->getStatus());
+        $entity->setEmail($data->getEmail());
 
         if($data->getGrade() !== null) {
             $grade = $this->gradeRepository->findOneByExternalId($data->getGrade());

@@ -78,7 +78,8 @@ class TeacherAdminController extends AbstractController {
         }
 
         return $this->render('admin/teachers/edit.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'teacher' => $teacher
         ]);
     }
 
@@ -88,7 +89,8 @@ class TeacherAdminController extends AbstractController {
     public function remove(Teacher $teacher, Request $request, TranslatorInterface $translator, TeacherStringConverter $teacherStringConverter) {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => $translator->trans('admin.teachers.remove.confirm', [
-                '%name%' => $teacherStringConverter->convert($teacher)
+                '%name%' => $teacherStringConverter->convert($teacher),
+                '%acronym%' => $teacher->getAcronym()
             ])
         ]);
         $form->handleRequest($request);

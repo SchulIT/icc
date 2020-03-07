@@ -32,6 +32,13 @@ class StudentData {
 
     /**
      * @Serializer\Type("string")
+     * @NullOrNotBlank()
+     * @var string|null
+     */
+    private $email;
+
+    /**
+     * @Serializer\Type("string")
      * @Assert\NotBlank()
      * @Assert\Choice(callback="getGenders")
      * @see Gender
@@ -40,7 +47,7 @@ class StudentData {
     private $gender;
 
     /**
-     * @Serializer\Type("int")
+     * @Serializer\Type("string")
      * @NullOrNotBlank()
      * @var string|null
      */
@@ -96,6 +103,22 @@ class StudentData {
      */
     public function getLastname(): ?string {
         return $this->lastname;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmail(): ?string {
+        return $this->email;
+    }
+
+    /**
+     * @param string|null $email
+     * @return StudentData
+     */
+    public function setEmail(?string $email): StudentData {
+        $this->email = $email;
+        return $this;
     }
 
     /**

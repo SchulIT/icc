@@ -44,6 +44,7 @@ class TuitionData {
     /**
      * @Serializer\Type("string")
      * @Assert\NotBlank()
+     * @Assert\NotNull()
      * @var string|null
      */
     private $studyGroup;

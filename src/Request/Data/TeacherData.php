@@ -45,6 +45,14 @@ class TeacherData {
     private $title;
 
     /**
+     * @Assert\Type("string")
+     * @Assert\Email()
+     * @NullOrNotBlank()
+     * @var
+     */
+    private $email;
+
+    /**
      * @Serializer\Type("string")
      * @Assert\NotBlank()
      * @Assert\Choice(callback="getGenders")
@@ -52,6 +60,13 @@ class TeacherData {
      * @var string|null
      */
     private $gender;
+
+    /**
+     * @Serializer\Type("array<string>")
+     * List of external IDs of the subjects the teacher teachers.
+     * @var string[]
+     */
+    private $subjects;
 
     /**
      * List of external IDs of tags which are added to the user.
@@ -144,6 +159,22 @@ class TeacherData {
     /**
      * @return string|null
      */
+    public function getEmail() {
+        return $this->email;
+    }
+
+    /**
+     * @param string|null $email
+     * @return TeacherData
+     */
+    public function setEmail($email) {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
     public function getGender(): ?string {
         return $this->gender;
     }
@@ -154,6 +185,22 @@ class TeacherData {
      */
     public function setGender(?string $gender): TeacherData {
         $this->gender = $gender;
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSubjects(): array {
+        return $this->subjects;
+    }
+
+    /**
+     * @param string[] $subjects
+     * @return TeacherData
+     */
+    public function setSubjects(array $subjects): TeacherData {
+        $this->subjects = $subjects;
         return $this;
     }
 

@@ -38,4 +38,16 @@ class ArrayUtils {
 
         return $array;
     }
+
+    public static function findAllWithKeys(array $items, array $keys): array {
+        $result = [ ];
+
+        foreach($items as $key => $item) {
+            if(in_array($key, $keys)) {
+                $result[] = $item;
+            }
+        }
+
+        return $result;
+    }
 }

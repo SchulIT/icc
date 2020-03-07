@@ -74,7 +74,7 @@ class StudentsImportStrategy implements ImportStrategyInterface {
         $entity->setStatus($data->getStatus());
 
         if($data->getGrade() !== null) {
-            $grade = $this->gradeRepository->findOneByName($data->getGrade());
+            $grade = $this->gradeRepository->findOneByExternalId($data->getGrade());
 
             if($grade === null) {
                 throw new ImportException(sprintf('Grade "%s" does not exist (Student ID: "%s", Lastname: "%s")', $data->getGrade(), $data->getId(), $data->getLastname()));

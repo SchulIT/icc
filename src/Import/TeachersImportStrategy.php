@@ -3,8 +3,10 @@
 namespace App\Import;
 
 use App\Entity\Gender;
+use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TeacherTag;
+use App\Repository\SubjectRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TeacherTagRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
@@ -16,10 +18,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 class TeachersImportStrategy implements ImportStrategyInterface {
 
     private $teacherRepository;
+    private $subjectRepository;
     private $teacherTagRepository;
 
-    public function __construct(TeacherRepositoryInterface $teacherRepository, TeacherTagRepositoryInterface $teacherTagRepository) {
+    public function __construct(TeacherRepositoryInterface $teacherRepository, SubjectRepositoryInterface $subjectRepository, TeacherTagRepositoryInterface $teacherTagRepository) {
         $this->teacherRepository = $teacherRepository;
+        $this->subjectRepository = $subjectRepository;
         $this->teacherTagRepository = $teacherTagRepository;
     }
 
@@ -54,7 +58,7 @@ class TeachersImportStrategy implements ImportStrategyInterface {
      * @return Teacher|null
      */
     public function getExistingEntity($object, array $existingEntities) {
-        return $existingEntities[$object->getAcronym()] ?? null;
+        return $existingEntities[$object->getId()] ?? null;
     }
 
     /**
@@ -75,6 +79,15 @@ class TeachersImportStrategy implements ImportStrategyInterface {
         $entity->setGender(new Gender($data->getGender()));
         $entity->setFirstname($data->getFirstname());
         $entity->setLastname($data->getLastname());
+        $entity->setEmail($data->getEmail());
+
+        CollectionUtils::synchronize(
+            $entity->getSubjects(),
+            $this->subjectRepository->findAllByExternalId($data->getSubjects()),
+            function(Subject $subject) {
+                return $subject->getId();
+            }
+        );
 
         CollectionUtils::synchronize($entity->getTags(), $this->createTagCollection($data->getTags()), function(TeacherTag $tag) {
             return $tag->getExternalId();

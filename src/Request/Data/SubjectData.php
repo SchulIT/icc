@@ -10,6 +10,13 @@ class SubjectData {
     /**
      * @Serializer\Type("string")
      * @Assert\NotBlank()
+     * @var string
+     */
+    private $id;
+
+    /**
+     * @Serializer\Type("string")
+     * @Assert\NotBlank()
      * @var string|null
      */
     private $abbreviation;
@@ -20,6 +27,22 @@ class SubjectData {
      * @var string|null
      */
     private $name;
+
+    /**
+     * @return string
+     */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     * @return SubjectData
+     */
+    public function setId($id): SubjectData {
+        $this->id = $id;
+        return $this;
+    }
 
     /**
      * @return string|null

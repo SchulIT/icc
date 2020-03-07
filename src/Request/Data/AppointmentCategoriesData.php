@@ -12,21 +12,21 @@ class AppointmentCategoriesData {
      * @Assert\Valid()
      * @var AppointmentCategoryData[]
      */
-    private $appointments;
+    private $categories;
 
     /**
      * @return mixed
      */
-    public function getAppointments() {
-        return $this->appointments;
+    public function getCategories() {
+        return $this->categories;
     }
 
     /**
-     * @param mixed $appointments
+     * @param mixed $categories
      * @return AppointmentCategoriesData
      */
-    public function setAppointments($appointments) {
-        $this->appointments = $appointments;
+    public function setCategories($categories) {
+        $this->categories = $categories;
         return $this;
     }
 }

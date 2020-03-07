@@ -48,7 +48,9 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("/api/import")
@@ -72,7 +74,7 @@ class ImportController extends AbstractController {
 
         return new Response(
             $json,
-            $exception->getCode(),
+            $exception instanceof HttpException ? $exception->getCode() : 500,
             [
                 'Content-Type' => 'application/json'
             ]
@@ -145,7 +147,7 @@ class ImportController extends AbstractController {
      */
     public function appointmentCategories(AppointmentCategoriesData $appointmentCategoriesData, AppointmentCategoriesImportStrategy $strategy): Response {
         try {
-            $result = $this->importer->import($appointmentCategoriesData->getAppointments(), $strategy);
+            $result = $this->importer->import($appointmentCategoriesData->getCategories(), $strategy);
             return $this->fromResult($result);
         } catch (Exception $e) {
             return $this->fromException($e);

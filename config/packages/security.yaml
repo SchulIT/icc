@@ -29,6 +29,13 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        import:
+            pattern: ^/api/import
+            guard:
+                authenticators:
+                    - App\Security\ImportUserAuthenticator
+            stateless: true
+
         ics:
             pattern: ^/(appointments|timetable|exams)/ics/
             stateless: true

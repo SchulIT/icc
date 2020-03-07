@@ -128,17 +128,17 @@ class Tuition {
     }
 
     /**
-     * @return Teacher
+     * @return Teacher|null
      */
-    public function getTeacher(): Teacher {
+    public function getTeacher(): ?Teacher {
         return $this->teacher;
     }
 
     /**
-     * @param Teacher $teacher
+     * @param Teacher|null $teacher
      * @return Tuition
      */
-    public function setTeacher(Teacher $teacher): Tuition {
+    public function setTeacher(?Teacher $teacher): Tuition {
         $this->teacher = $teacher;
         return $this;
     }

@@ -2,6 +2,8 @@
 
 namespace App\Import;
 
+use App\Entity\StudyGroup;
+use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use App\Repository\StudyGroupRepositoryInterface;
@@ -12,6 +14,7 @@ use App\Repository\TuitionRepositoryInterface;
 use App\Request\Data\TuitionData;
 use App\Utils\CollectionUtils;
 use App\Utils\ArrayUtils;
+use function foo\func;
 
 class TuitionsImportStrategy implements ImportStrategyInterface {
 
@@ -20,12 +23,47 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
     private $teacherRepository;
     private $studyGroupRepository;
 
+    private $isInitialized = false;
+
+    private $subjectCache = [ ];
+    private $teacherCache = [ ];
+    private $studyGroupCache = [ ];
+
     public function __construct(TuitionRepositoryInterface $tuitionRepository, SubjectRepositoryInterface $subjectRepository,
                                 TeacherRepositoryInterface $teacherRepository, StudyGroupRepositoryInterface $studyGroupRepository) {
         $this->tuitionRepository = $tuitionRepository;
         $this->subjectRepository = $subjectRepository;
         $this->teacherRepository = $teacherRepository;
         $this->studyGroupRepository = $studyGroupRepository;
+    }
+
+    private function initialize() {
+        if($this->isInitialized === true) {
+            return;
+        }
+
+        $this->subjectCache = ArrayUtils::createArrayWithKeys(
+            $this->subjectRepository->findAll(),
+            function(Subject $subject) {
+                return $subject->getExternalId();
+            }
+        );
+
+        $this->teacherCache = ArrayUtils::createArrayWithKeys(
+            $this->teacherRepository->findAll(),
+            function(Teacher $teacher) {
+                return $teacher->getExternalId();
+            }
+        );
+
+        $this->studyGroupCache = ArrayUtils::createArrayWithKeys(
+            $this->studyGroupRepository->findAll(),
+            function(StudyGroup $studyGroup) {
+                return $studyGroup->getExternalId();
+            }
+        );
+
+        $this->isInitialized = true;
     }
 
     /**
@@ -76,32 +114,39 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
      * @throws ImportException
      */
     public function updateEntity($entity, $data): void {
-        $subject = $this->subjectRepository->findOneByAbbreviation($data->getSubject());
+        $this->initialize();
+
+        $subject = $this->subjectCache[$data->getSubject()] ?? null;
 
         if($subject === null) {
             throw new ImportException(sprintf('Subject "%s" was not found on tuition with ID "%s"', $data->getSubject(), $data->getId()));
         }
 
-        $teacher = $this->teacherRepository->findOneByExternalId($data->getTeacher());
+        if($data->getTeacher() === null) {
+            $entity->setTeacher(null);
+        } else {
+            $teacher = $this->teacherCache[$data->getTeacher()] ?? null;
 
-        if($teacher === null) {
-            throw new ImportException(sprintf('Teacher with ID "%s" was not found on tuition with ID "%s"', $data->getTeacher(), $data->getId()));
+            if ($teacher === null) {
+                throw new ImportException(sprintf('Teacher with ID "%s" was not found on tuition with ID "%s"', $data->getTeacher(), $data->getId()));
+            }
+
+            $entity->setTeacher($teacher);
         }
 
-        $additionalTeachers = $this->teacherRepository->findAllByAcronym($data->getAdditionalTeachers());
+        $additionalTeachers = ArrayUtils::findAllWithKeys($this->teacherCache, $data->getAdditionalTeachers());
 
         if(count($additionalTeachers) !== count($data->getAdditionalTeachers())) {
             $this->throwTeacherIsMissing($data->getAdditionalTeachers(), $additionalTeachers, $data->getId());
         }
 
-        $studyGroup = $this->studyGroupRepository->findOneByExternalId($data->getStudyGroup());
+        $studyGroup = $this->studyGroupCache[$data->getStudyGroup()] ?? null;
 
         if($studyGroup === null) {
             throw new ImportException(sprintf('Study group with ID "%s" was not found on tuition with ID "%s"', $data->getStudyGroup(), $data->getId()));
         }
 
         $entity->setSubject($subject);
-        $entity->setTeacher($teacher);
         $entity->setStudyGroup($studyGroup);
         $entity->setName($data->getName());
 
@@ -143,7 +188,7 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
      */
     private function throwTeacherIsMissing(array $teachers, array $foundTeachers, string $tuitionExternalId) {
         $foundTeacherAcronyms = array_map(function(Teacher $teacher) {
-            return $teacher->getAcronym();
+            return $teacher->getExternalId();
         }, $foundTeachers);
 
         foreach($teachers as $teacher) {

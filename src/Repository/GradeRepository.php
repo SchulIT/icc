@@ -54,7 +54,7 @@ class GradeRepository extends AbstractTransactionalRepository implements GradeRe
         $qb = $this->em->createQueryBuilder();
 
         $qb
-            ->select('s')
+            ->select('g')
             ->from(Grade::class, 'g')
             ->where($qb->expr()->in('g.externalId', ':externalIds'))
             ->setParameter('externalIds', $externalIds);

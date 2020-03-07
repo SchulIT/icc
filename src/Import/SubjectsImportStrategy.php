@@ -23,7 +23,7 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
         return ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(),
             function(Subject $subject) {
-                return $subject->getAbbreviation();
+                return $subject->getExternalId();
             }
         );
     }
@@ -34,7 +34,7 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
      */
     public function createNewEntity($data) {
         $subject = (new Subject())
-            ->setAbbreviation($data->getAbbreviation());
+            ->setExternalId($data->getId());
         $this->updateEntity($subject, $data);
 
         return $subject;
@@ -46,7 +46,7 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
      * @return Subject|null
      */
     public function getExistingEntity($object, array $existingEntities) {
-        return $existingEntities[$object->getAbbreviation()] ?? null;
+        return $existingEntities[$object->getId()] ?? null;
     }
 
     /**
@@ -63,6 +63,7 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
      */
     public function updateEntity($entity, $data): void {
         $entity->setName($data->getName());
+        $entity->setAbbreviation($data->getAbbreviation());
     }
 
     /**

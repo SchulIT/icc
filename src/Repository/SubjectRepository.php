@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Subject;
+use function Doctrine\ORM\QueryBuilder;
 
 class SubjectRepository extends AbstractTransactionalRepository implements SubjectRepositoryInterface {
 
@@ -34,6 +35,21 @@ class SubjectRepository extends AbstractTransactionalRepository implements Subje
     public function findAll() {
         return $this->em->getRepository(Subject::class)
             ->findAll();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByExternalId(array $externalIds): array {
+        $qb = $this->em->createQueryBuilder();
+
+        return $qb
+            ->select(['s'])
+            ->from(Subject::class, 's')
+            ->where($qb->expr()->in('s.externalId', ':ids'))
+            ->setParameter('ids', $externalIds)
+            ->getQuery()
+            ->getResult();
     }
 
     /**

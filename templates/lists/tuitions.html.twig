@@ -57,7 +57,9 @@
                     <td>{{ tuition.name }}</td>
                     <td>{{ tuition.subject.name }}</td>
                     <td>
-                        <a href="{{ path('list_tuitions', { teacherAcronym: tuition.teacher.acronym }) }}">{{ tuition.teacher|teacher }}</a>
+                        {% if tuition.teacher is not null %}
+                            <a href="{{ path('list_tuitions', { teacherAcronym: tuition.teacher.acronym }) }}">{{ tuition.teacher|teacher }}</a>
+                        {% endif %}
                     </td>
                     <td>
                         {{ memberships[tuition.externalId] }}

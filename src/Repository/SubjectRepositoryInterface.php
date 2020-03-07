@@ -24,6 +24,12 @@ interface SubjectRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAll();
 
     /**
+     * @param string[] $externalIds
+     * @return Subject[]
+     */
+    public function findAllByExternalId(array $externalIds): array;
+
+    /**
      * @param Subject $subject
      */
     public function persist(Subject $subject): void;

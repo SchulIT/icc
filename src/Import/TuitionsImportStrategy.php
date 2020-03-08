@@ -12,6 +12,7 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Request\Data\TuitionData;
+use App\Request\Data\TuitionsData;
 use App\Utils\CollectionUtils;
 use App\Utils\ArrayUtils;
 use function foo\func;
@@ -196,5 +197,13 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
                 throw new ImportException(sprintf('Additional teacher "%s" was not found on tuition with ID "%s"', $teacher, $tuitionExternalId));
             }
         }
+    }
+
+    /**
+     * @param TuitionsData $data
+     * @return TuitionData[]
+     */
+    public function getData($data): array {
+        return $data->getTuitions();
     }
 }

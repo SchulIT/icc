@@ -13,6 +13,7 @@ use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\AppointmentData;
+use App\Request\Data\AppointmentsData;
 use App\Utils\ArrayUtils;
 use App\Utils\CollectionUtils;
 
@@ -161,5 +162,13 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
      */
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->appointmentRepository;
+    }
+
+    /**
+     * @param AppointmentsData $data
+     * @return AppointmentData[]
+     */
+    public function getData($data): array {
+        return $data->getAppointments();
     }
 }

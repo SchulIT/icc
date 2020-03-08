@@ -9,6 +9,7 @@ use App\Repository\TimetableWeekRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Request\Data\TimetableLessonData;
+use App\Request\Data\TimetableLessonsData;
 use App\Utils\ArrayUtils;
 
 class TimetableLessonsImportStrategy implements ImportStrategyInterface {
@@ -120,5 +121,13 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
      */
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->timetableRepository;
+    }
+
+    /**
+     * @param TimetableLessonsData $data
+     * @return TimetableLessonData[]
+     */
+    public function getData($data): array {
+        return $data->getLessons();
     }
 }

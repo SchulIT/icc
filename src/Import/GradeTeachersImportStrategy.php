@@ -9,6 +9,7 @@ use App\Repository\GradeTeacherRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\GradeTeacherData;
+use App\Request\Data\GradeTeachersData;
 
 class GradeTeachersImportStrategy implements ReplaceImportStrategyInterface {
 
@@ -57,5 +58,13 @@ class GradeTeachersImportStrategy implements ReplaceImportStrategyInterface {
             ->setType(new GradeTeacherType($data->getType()));
 
         $this->gradeTeacherRepository->persist($gradeTeacher);
+    }
+
+    /**
+     * @param GradeTeachersData $data
+     * @return GradeTeacherData[]
+     */
+    public function getData($data): array {
+        return $data->getGradeTeachers();
     }
 }

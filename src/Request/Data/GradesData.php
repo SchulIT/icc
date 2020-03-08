@@ -12,12 +12,12 @@ class GradesData {
      * @Assert\Valid()
      * @var GradeData[]
      */
-    private $grades;
+    private $grades = [ ];
 
     /**
      * @return GradeData[]
      */
-    public function getGrades(): array {
+    public function getGrades() {
         return $this->grades;
     }
 
@@ -25,7 +25,7 @@ class GradesData {
      * @param GradeData[] $grades
      * @return GradesData
      */
-    public function setGrades(array $grades): GradesData {
+    public function setGrades($grades): GradesData {
         $this->grades = $grades;
         return $this;
     }

@@ -8,6 +8,7 @@ use App\Repository\GradeRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\StudentData;
+use App\Request\Data\StudentsData;
 use App\Utils\ArrayUtils;
 
 class StudentsImportStrategy implements ImportStrategyInterface {
@@ -106,5 +107,13 @@ class StudentsImportStrategy implements ImportStrategyInterface {
      */
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->studentRepository;
+    }
+
+    /**
+     * @param StudentsData $data
+     * @return StudentData[]
+     */
+    public function getData($data): array {
+        return $data->getStudents();
     }
 }

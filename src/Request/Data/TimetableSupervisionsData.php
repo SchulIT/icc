@@ -12,12 +12,12 @@ class TimetableSupervisionsData {
      * @Assert\Valid()
      * @var TimetableSupervisionData[]
      */
-    private $supervisions;
+    private $supervisions = [ ];
 
     /**
      * @return TimetableSupervisionData[]
      */
-    public function getSupervisions(): array {
+    public function getSupervisions() {
         return $this->supervisions;
     }
 
@@ -25,7 +25,7 @@ class TimetableSupervisionsData {
      * @param TimetableSupervisionData[] $supervisions
      * @return TimetableSupervisionsData
      */
-    public function setSupervisions(array $supervisions): TimetableSupervisionsData {
+    public function setSupervisions($supervisions): TimetableSupervisionsData {
         $this->supervisions = $supervisions;
         return $this;
     }

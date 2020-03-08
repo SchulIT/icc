@@ -6,6 +6,7 @@ use App\Entity\Grade;
 use App\Repository\GradeRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\GradeData;
+use App\Request\Data\GradesData;
 use App\Utils\ArrayUtils;
 
 class GradesImportStrategy implements ImportStrategyInterface {
@@ -84,5 +85,13 @@ class GradesImportStrategy implements ImportStrategyInterface {
      */
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->repository;
+    }
+
+    /**
+     * @param GradesData $data
+     * @return GradeData[]
+     */
+    public function getData($data): array {
+        return $data->getGrades();
     }
 }

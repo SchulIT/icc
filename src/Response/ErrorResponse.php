@@ -5,6 +5,9 @@ namespace App\Response;
 use JMS\Serializer\Annotation as Serializer;
 use Swagger\Annotations as SWG;
 
+/**
+ * Indicates a non-successful import.
+ */
 class ErrorResponse {
 
     /**

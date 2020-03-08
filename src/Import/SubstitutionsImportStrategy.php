@@ -10,6 +10,7 @@ use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\SubstitutionData;
+use App\Request\Data\SubstitutionsData;
 use App\Utils\CollectionUtils;
 use App\Utils\ArrayUtils;
 
@@ -189,5 +190,13 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
                 throw new ImportException(sprintf('Teacher "%s" on substitution ID "%s" was not found.', $teacher, $substitutionId));
             }
         }
+    }
+
+    /**
+     * @param SubstitutionsData $data
+     * @return SubstitutionData[]
+     */
+    public function getData($data): array {
+        return $data->getSubstitutions();
     }
 }

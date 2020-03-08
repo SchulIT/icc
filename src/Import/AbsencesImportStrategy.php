@@ -8,6 +8,7 @@ use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\AbsenceData;
+use App\Request\Data\AbsencesData;
 
 class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
 
@@ -53,5 +54,13 @@ class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
         }
 
         $this->repository->persist($absence);
+    }
+
+    /**
+     * @param AbsencesData $data
+     * @return AbsenceData[]
+     */
+    public function getData($data): array {
+        return $data->getAbsences();
     }
 }

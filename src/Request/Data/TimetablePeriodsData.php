@@ -12,12 +12,12 @@ class TimetablePeriodsData {
      * @Assert\Valid()
      * @var TimetablePeriodData[]
      */
-    private $periods;
+    private $periods = [ ];
 
     /**
      * @return TimetablePeriodData[]
      */
-    public function getPeriods(): array {
+    public function getPeriods() {
         return $this->periods;
     }
 
@@ -25,7 +25,7 @@ class TimetablePeriodsData {
      * @param TimetablePeriodData[] $periods
      * @return TimetablePeriodsData
      */
-    public function setPeriods(array $periods): TimetablePeriodsData {
+    public function setPeriods($periods): TimetablePeriodsData {
         $this->periods = $periods;
         return $this;
     }

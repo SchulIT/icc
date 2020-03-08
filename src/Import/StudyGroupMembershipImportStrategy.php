@@ -8,6 +8,7 @@ use App\Repository\StudyGroupMembershipRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\StudyGroupMembershipData;
+use App\Request\Data\StudyGroupMembershipsData;
 
 class StudyGroupMembershipImportStrategy implements ReplaceImportStrategyInterface {
 
@@ -54,5 +55,13 @@ class StudyGroupMembershipImportStrategy implements ReplaceImportStrategyInterfa
             ->setType($data->getType());
 
         $this->studyGroupMembershipRepository->persist($membership);
+    }
+
+    /**
+     * @param StudyGroupMembershipsData $data
+     * @return StudyGroupMembershipData[]
+     */
+    public function getData($data): array {
+        return $data->getMemberships();
     }
 }

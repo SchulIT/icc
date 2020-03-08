@@ -6,6 +6,7 @@ use App\Entity\Subject;
 use App\Repository\SubjectRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\SubjectData;
+use App\Request\Data\SubjectsData;
 use App\Utils\ArrayUtils;
 
 class SubjectsImportStrategy implements ImportStrategyInterface {
@@ -85,5 +86,13 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
      */
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->repository;
+    }
+
+    /**
+     * @param SubjectsData $data
+     * @return SubjectData[]
+     */
+    public function getData($data): array {
+        return $data->getSubjects();
     }
 }

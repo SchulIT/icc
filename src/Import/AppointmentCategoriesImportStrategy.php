@@ -5,6 +5,7 @@ namespace App\Import;
 use App\Entity\AppointmentCategory;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
+use App\Request\Data\AppointmentCategoriesData;
 use App\Request\Data\AppointmentCategoryData;
 use App\Utils\ArrayUtils;
 
@@ -85,5 +86,13 @@ class AppointmentCategoriesImportStrategy implements ImportStrategyInterface {
      */
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->repository;
+    }
+
+    /**
+     * @param AppointmentCategoriesData $data
+     * @return AppointmentCategoryData[]
+     */
+    public function getData($data): array {
+        return $data->getCategories();
     }
 }

@@ -12,12 +12,12 @@ class GradeTeachersData {
      * @Assert\Valid()
      * @var GradeTeacherData[]
      */
-    private $gradeTeachers;
+    private $gradeTeachers = [ ];
 
     /**
      * @return GradeTeacherData[]
      */
-    public function getGradeTeachers(): array {
+    public function getGradeTeachers() {
         return $this->gradeTeachers;
     }
 
@@ -25,7 +25,7 @@ class GradeTeachersData {
      * @param GradeTeacherData[] $gradeTeachers
      * @return GradeTeachersData
      */
-    public function setGradeTeachers(array $gradeTeachers): GradeTeachersData {
+    public function setGradeTeachers($gradeTeachers): GradeTeachersData {
         $this->gradeTeachers = $gradeTeachers;
         return $this;
     }

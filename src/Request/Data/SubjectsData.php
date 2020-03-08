@@ -12,12 +12,12 @@ class SubjectsData {
      * @Assert\Valid()
      * @var SubjectData[]
      */
-    private $subjects;
+    private $subjects = [ ];
 
     /**
      * @return SubjectData[]
      */
-    public function getSubjects(): array {
+    public function getSubjects() {
         return $this->subjects;
     }
 
@@ -25,7 +25,7 @@ class SubjectsData {
      * @param SubjectData[] $subjects
      * @return SubjectsData
      */
-    public function setSubjects(array $subjects): SubjectsData {
+    public function setSubjects($subjects): SubjectsData {
         $this->subjects = $subjects;
         return $this;
     }

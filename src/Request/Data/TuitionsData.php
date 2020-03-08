@@ -12,12 +12,12 @@ class TuitionsData {
      * @Assert\Valid()
      * @var TuitionData[]
      */
-    private $tuitions;
+    private $tuitions = [ ];
 
     /**
      * @return TuitionData[]
      */
-    public function getTuitions(): array {
+    public function getTuitions() {
         return $this->tuitions;
     }
 
@@ -25,7 +25,7 @@ class TuitionsData {
      * @param TuitionData[] $tuitions
      * @return TuitionsData
      */
-    public function setTuitions(array $tuitions): TuitionsData {
+    public function setTuitions($tuitions): TuitionsData {
         $this->tuitions = $tuitions;
         return $this;
     }

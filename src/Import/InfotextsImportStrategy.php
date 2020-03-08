@@ -6,6 +6,7 @@ use App\Entity\Infotext;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\InfotextData;
+use App\Request\Data\InfotextsData;
 
 class InfotextsImportStrategy implements ReplaceImportStrategyInterface {
 
@@ -32,5 +33,13 @@ class InfotextsImportStrategy implements ReplaceImportStrategyInterface {
             ->setDate($data->getDate());
 
         $this->repository->persist($infotext);
+    }
+
+    /**
+     * @param InfotextsData $data
+     * @return InfotextData[]
+     */
+    public function getData($data): array {
+        return $data->getInfotexts();
     }
 }

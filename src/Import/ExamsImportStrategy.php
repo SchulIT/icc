@@ -10,6 +10,7 @@ use App\Repository\StudentRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Request\Data\ExamData;
+use App\Request\Data\ExamsData;
 use App\Utils\CollectionUtils;
 use App\Utils\ArrayUtils;
 
@@ -114,5 +115,13 @@ class ExamsImportStrategy implements ImportStrategyInterface {
      */
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->examRepository;
+    }
+
+    /**
+     * @param ExamsData $data
+     * @return ExamData[]
+     */
+    public function getData($data): array {
+        return $data->getExams();
     }
 }

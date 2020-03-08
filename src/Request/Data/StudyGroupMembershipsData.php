@@ -12,12 +12,12 @@ class StudyGroupMembershipsData {
      * @Assert\Valid()
      * @var StudyGroupMembershipData[]
      */
-    private $memberships;
+    private $memberships = [ ];
 
     /**
      * @return StudyGroupMembershipData[]
      */
-    public function getMemberships(): array {
+    public function getMemberships() {
         return $this->memberships;
     }
 
@@ -25,7 +25,7 @@ class StudyGroupMembershipsData {
      * @param StudyGroupMembershipData[] $memberships
      * @return StudyGroupMembershipsData
      */
-    public function setMemberships(array $memberships): StudyGroupMembershipsData {
+    public function setMemberships($memberships): StudyGroupMembershipsData {
         $this->memberships = $memberships;
         return $this;
     }

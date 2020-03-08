@@ -12,12 +12,12 @@ class SubstitutionsData {
      * @Assert\Valid()
      * @var SubstitutionData[]
      */
-    private $substitutions;
+    private $substitutions = [ ];
 
     /**
      * @return SubstitutionData[]
      */
-    public function getSubstitutions(): array {
+    public function getSubstitutions() {
         return $this->substitutions;
     }
 
@@ -25,7 +25,7 @@ class SubstitutionsData {
      * @param SubstitutionData[] $substitutions
      * @return SubstitutionsData
      */
-    public function setSubstitutions(array $substitutions): SubstitutionsData {
+    public function setSubstitutions($substitutions): SubstitutionsData {
         $this->substitutions = $substitutions;
         return $this;
     }

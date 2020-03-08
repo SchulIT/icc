@@ -12,12 +12,12 @@ class AppointmentsData {
      * @Assert\Valid()
      * @var AppointmentData[]
      */
-    private $appointments;
+    private $appointments = [ ];
 
     /**
      * @return AppointmentData[]
      */
-    public function getAppointments(): array {
+    public function getAppointments() {
         return $this->appointments;
     }
 
@@ -25,7 +25,7 @@ class AppointmentsData {
      * @param AppointmentData[] $appointments
      * @return AppointmentsData
      */
-    public function setAppointments(array $appointments): AppointmentsData {
+    public function setAppointments($appointments): AppointmentsData {
         $this->appointments = $appointments;
         return $this;
     }

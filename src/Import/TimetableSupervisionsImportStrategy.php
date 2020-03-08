@@ -9,6 +9,7 @@ use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\TimetableSupervisionData;
+use App\Request\Data\TimetableSupervisionsData;
 use App\Utils\ArrayUtils;
 
 class TimetableSupervisionsImportStrategy implements ImportStrategyInterface {
@@ -120,5 +121,13 @@ class TimetableSupervisionsImportStrategy implements ImportStrategyInterface {
      */
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->supervisionRepository;
+    }
+
+    /**
+     * @param TimetableSupervisionsData $data
+     * @return TimetableSupervisionData[]
+     */
+    public function getData($data): array {
+        return $data->getSupervisions();
     }
 }

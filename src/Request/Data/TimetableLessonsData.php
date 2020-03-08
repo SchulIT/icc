@@ -12,12 +12,12 @@ class TimetableLessonsData {
      * @Assert\Valid()
      * @var TimetableLessonData[]
      */
-    private $lessons;
+    private $lessons = [ ];
 
     /**
      * @return TimetableLessonData[]
      */
-    public function getLessons(): array {
+    public function getLessons() {
         return $this->lessons;
     }
 
@@ -25,7 +25,7 @@ class TimetableLessonsData {
      * @param TimetableLessonData[] $lessons
      * @return TimetableLessonsData
      */
-    public function setLessons(array $lessons): TimetableLessonsData {
+    public function setLessons($lessons): TimetableLessonsData {
         $this->lessons = $lessons;
         return $this;
     }

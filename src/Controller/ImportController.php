@@ -9,6 +9,7 @@ use App\Import\ExamsImportStrategy;
 use App\Import\GradesImportStrategy;
 use App\Import\GradeTeachersImportStrategy;
 use App\Import\Importer;
+use App\Import\ImportException;
 use App\Import\ImportResult;
 use App\Import\InfotextsImportStrategy;
 use App\Import\StudentsImportStrategy;
@@ -21,7 +22,6 @@ use App\Import\TimetableLessonsImportStrategy;
 use App\Import\TimetablePeriodsImportStrategy;
 use App\Import\TimetableSupervisionsImportStrategy;
 use App\Import\TuitionsImportStrategy;
-use App\Repository\InfotextRepositoryInterface;
 use App\Request\Data\AbsencesData;
 use App\Request\Data\AppointmentCategoriesData;
 use App\Request\Data\AppointmentsData;
@@ -42,15 +42,12 @@ use App\Request\Data\TuitionsData;
 use App\Response\ErrorResponse;
 use App\Response\ImportResponse;
 use App\Utils\RefererHelper;
-use Exception;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("/api/import")
@@ -66,19 +63,6 @@ class ImportController extends AbstractController {
 
         $this->importer = $importer;
         $this->serializer = $serializer;
-    }
-
-    private function fromException(Exception $exception): Response {
-        $response = new ErrorResponse($exception->getMessage());
-        $json = $this->serializer->serialize($response, 'json');
-
-        return new Response(
-            $json,
-            $exception instanceof HttpException ? $exception->getCode() : 500,
-            [
-                'Content-Type' => 'application/json'
-            ]
-        );
     }
 
     private function fromResult(ImportResult $importResult): Response {
@@ -114,14 +98,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function appointments(AppointmentsData $appointmentsData, AppointmentsImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($appointmentsData->getAppointments(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->import($appointmentsData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -144,14 +125,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function appointmentCategories(AppointmentCategoriesData $appointmentCategoriesData, AppointmentCategoriesImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($appointmentCategoriesData->getCategories(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->import($appointmentCategoriesData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -174,14 +152,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function exams(ExamsData $examsData, ExamsImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($examsData->getExams(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->import($examsData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -204,14 +179,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function grades(GradesData $gradesData, GradesImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($gradesData->getGrades(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->import($gradesData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -234,14 +206,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function gradeTeachers(GradeTeachersData $gradeTeachersData, GradeTeachersImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->replaceImport($gradeTeachersData->getGradeTeachers(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->replaceImport($gradeTeachersData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -264,14 +233,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function students(StudentsData $studentsData, StudentsImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($studentsData->getStudents(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->import($studentsData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -294,14 +260,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function studyGroups(StudyGroupsData $studyGroupsData, StudyGroupImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($studyGroupsData->getStudyGroups(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->import($studyGroupsData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -324,14 +287,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function studyGroupsMemberships(StudyGroupMembershipsData $membershipsData, StudyGroupMembershipImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->replaceImport($membershipsData->getMemberships(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->replaceImport($membershipsData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -354,14 +314,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function subjects(SubjectsData $subjectsData, SubjectsImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($subjectsData->getSubjects(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->import($subjectsData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -384,14 +341,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function substitutions(SubstitutionsData $substitutionsData, SubstitutionsImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($substitutionsData->getSubstitutions(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->import($substitutionsData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -414,14 +368,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function teachers(TeachersData $teachersData, TeachersImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($teachersData->getTeachers(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->import($teachersData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -444,14 +395,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function timetableLessons(TimetableLessonsData $lessonsData, TimetableLessonsImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($lessonsData->getLessons(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->import($lessonsData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -474,14 +422,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function timetablePeriods(TimetablePeriodsData $periodsData, TimetablePeriodsImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($periodsData->getPeriods(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->import($periodsData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -504,14 +449,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function timetableSupervisions(TimetableSupervisionsData $supervisionsData, TimetableSupervisionsImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($supervisionsData->getSupervisions(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-
-        }
+        $result = $this->importer->import($supervisionsData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -534,14 +476,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function tuitions(TuitionsData $tuitionsData, TuitionsImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->import($tuitionsData->getTuitions(), $strategy);
-            return $this->fromResult($result);
-        } catch (Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->import($tuitionsData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -564,14 +503,11 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function infotexts(InfotextsData $infotextsData, InfotextsImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->replaceImport($infotextsData->getInfotexts(), $strategy);
-            return $this->fromResult($result);
-        } catch(Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->replaceImport($infotextsData, $strategy);
+        return $this->fromResult($result);
     }
 
     /**
@@ -594,13 +530,10 @@ class ImportController extends AbstractController {
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
      * )
+     * @throws ImportException
      */
     public function absences(AbsencesData $absencesData, AbsencesImportStrategy $strategy): Response {
-        try {
-            $result = $this->importer->replaceImport($absencesData->getAbsences(), $strategy);
-            return $this->fromResult($result);
-        } catch(Exception $e) {
-            return $this->fromException($e);
-        }
+        $result = $this->importer->replaceImport($absencesData, $strategy);
+        return $this->fromResult($result);
     }
 }

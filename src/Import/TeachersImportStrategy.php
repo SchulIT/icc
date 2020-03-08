@@ -11,6 +11,7 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TeacherTagRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\TeacherData;
+use App\Request\Data\TeachersData;
 use App\Utils\ArrayUtils;
 use App\Utils\CollectionUtils;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -127,5 +128,13 @@ class TeachersImportStrategy implements ImportStrategyInterface {
         return $tags->filter(function(TeacherTag $tag) use($tagExternalIds) {
             return in_array($tag->getExternalId(), $tagExternalIds);
         })->toArray();
+    }
+
+    /**
+     * @param TeachersData $data
+     * @return TeacherData[]
+     */
+    public function getData($data): array {
+        return $data->getTeachers();
     }
 }

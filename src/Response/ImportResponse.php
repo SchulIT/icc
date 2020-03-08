@@ -4,6 +4,9 @@ namespace App\Response;
 
 use JMS\Serializer\Annotation as Serializer;
 
+/**
+ * Indicates a successful import. For now, only the number of added, updated and removed entities is serialized to JSON.
+ */
 class ImportResponse {
 
     /**
@@ -28,18 +31,24 @@ class ImportResponse {
     private $removed;
 
     /**
+     * Number of added entities.
+     *
      * @Serializer\Type("int")
      * @var int
      */
     private $addedCount;
 
     /**
+     * Number of updated entities.
+     *
      * @Serializer\Type("int")
      * @var int
      */
     private $updatedCount;
 
     /**
+     * Number of removed entities.
+     *
      * @Serializer\Type("int")
      * @var int
      */

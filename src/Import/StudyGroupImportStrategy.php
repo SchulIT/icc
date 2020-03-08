@@ -9,6 +9,7 @@ use App\Repository\GradeRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\StudyGroupData;
+use App\Request\Data\StudyGroupsData;
 use App\Utils\CollectionUtils;
 use App\Utils\ArrayUtils;
 
@@ -124,5 +125,13 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
                 throw new ImportException(sprintf('Grade "%s" was not found on study group ID "%s"', $grade, $studyGroupExternalId));
             }
         }
+    }
+
+    /**
+     * @param StudyGroupsData $data
+     * @return StudyGroupData[]
+     */
+    public function getData($data): array {
+        return $data->getStudyGroups();
     }
 }

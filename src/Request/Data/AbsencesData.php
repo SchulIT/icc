@@ -11,7 +11,7 @@ class AbsencesData {
      * @Assert\Valid()
      * @var AbsenceData[]
      */
-    private $absences;
+    private $absences = [ ];
 
     /**
      * @return AbsenceData[]

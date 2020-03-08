@@ -12,12 +12,12 @@ class InfotextsData {
      * @Assert\Valid()
      * @var InfotextData[]
      */
-    private $infotexts;
+    private $infotexts = [ ];
 
     /**
      * @return InfotextData[]
      */
-    public function getInfotexts(): array {
+    public function getInfotexts() {
         return $this->infotexts;
     }
 
@@ -25,7 +25,7 @@ class InfotextsData {
      * @param InfotextData[] $infotexts
      * @return InfotextsData
      */
-    public function setInfotexts(array $infotexts): InfotextsData {
+    public function setInfotexts($infotexts): InfotextsData {
         $this->infotexts = $infotexts;
         return $this;
     }

@@ -2,11 +2,11 @@
 
 namespace App\ArgumentResolver;
 
+use App\Request\BadRequestException;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PostBodyRequestDataValueResolver implements ArgumentValueResolverInterface {
 
@@ -22,10 +22,6 @@ class PostBodyRequestDataValueResolver implements ArgumentValueResolverInterface
      * @inheritDoc
      */
     public function supports(Request $request, ArgumentMetadata $argument) {
-        if(empty($request->getContent())) {
-            return false;
-        }
-
         $type = $argument->getType();
 
         return substr($type, 0, strlen(static::Namespace)) == static::Namespace;
@@ -33,6 +29,7 @@ class PostBodyRequestDataValueResolver implements ArgumentValueResolverInterface
 
     /**
      * @inheritDoc
+     * @throws BadRequestException
      */
     public function resolve(Request $request, ArgumentMetadata $argument) {
         $json = $request->getContent();
@@ -40,12 +37,9 @@ class PostBodyRequestDataValueResolver implements ArgumentValueResolverInterface
 
         try {
             $object = $this->serializer->deserialize($json, $type, 'json');
-
-            dump($object);
-
             yield $object;
         } catch (\Exception $e) {
-            throw new BadRequestHttpException('The request data was not correct.');
+            throw new BadRequestException('The request data was not correct.');
         }
     }
 }

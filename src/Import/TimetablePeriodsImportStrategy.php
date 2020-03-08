@@ -6,6 +6,7 @@ use App\Entity\TimetablePeriod;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\TimetablePeriodData;
+use App\Request\Data\TimetablePeriodsData;
 use App\Utils\ArrayUtils;
 
 class TimetablePeriodsImportStrategy implements ImportStrategyInterface {
@@ -88,5 +89,13 @@ class TimetablePeriodsImportStrategy implements ImportStrategyInterface {
      */
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->repository;
+    }
+
+    /**
+     * @param TimetablePeriodsData $data
+     * @return TimetablePeriodData[]
+     */
+    public function getData($data): array {
+        return $data->getPeriods();
     }
 }

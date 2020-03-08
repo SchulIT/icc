@@ -43,7 +43,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
             $message = new ErrorResponse($throwable->getMessage());
             $message->setData($throwable->getViolations());
         } else { // Case 3: General error
-            $message = $throwable->getMessage();
+            $message = new ErrorResponse($throwable->getMessage());
         }
 
         $validStatusCodes = array_keys(Response::$statusTexts);

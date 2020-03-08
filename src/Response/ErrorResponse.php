@@ -17,7 +17,7 @@ class ErrorResponse {
     private $message;
 
     /**
-     * @Serializer\Type("array<string>")
+     * @Serializer\Type("array")
      * @SWG\Property(description="This property may or may not contain information about the error.")
      * @var mixed[]
      */

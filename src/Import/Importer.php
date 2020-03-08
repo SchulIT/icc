@@ -66,8 +66,10 @@ class Importer {
             $updatedEntities = [];
             $removedEntities = [];
 
+            $entities = $strategy->getData($data);
+
             // ADD/UPDATE ENTITIES
-            foreach ($data as $object) {
+            foreach ($entities as $object) {
                 $entity = $strategy->getExistingEntity($object, $currentEntities);
 
                 if ($entity !== null) {
@@ -121,7 +123,9 @@ class Importer {
 
             $addedEntities = [];
 
-            foreach ($data as $object) {
+            $entities = $strategy->getData($data);
+
+            foreach ($entities as $object) {
                 $strategy->persist($object);
                 $addedEntities[] = $object;
             }

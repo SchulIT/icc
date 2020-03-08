@@ -2,6 +2,7 @@
 
 namespace App\Request\Data;
 
+use App\Validator\NullOrNotBlank;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -30,7 +31,7 @@ class TuitionData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
+     * @NullOrNotBlank()
      * @var string|null
      */
     private $teacher;

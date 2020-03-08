@@ -67,6 +67,12 @@ class StudentData {
     private $grade;
 
     /**
+     * @Serializer\Type("array<string>")
+     * @var string[]
+     */
+    private $approvedPrivacyCategories = [ ];
+
+    /**
      * @return string|null
      */
     public function getId(): ?string {
@@ -192,6 +198,13 @@ class StudentData {
     public function setIsFullAged(bool $isFullAged): StudentData {
         $this->isFullAged = $isFullAged;
         return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getApprovedPrivacyCategories() {
+        return $this->approvedPrivacyCategories;
     }
 
     public static function getGenders() {

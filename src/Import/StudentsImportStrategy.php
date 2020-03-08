@@ -3,22 +3,47 @@
 namespace App\Import;
 
 use App\Entity\Gender;
+use App\Entity\Grade;
+use App\Entity\PrivacyCategory;
 use App\Entity\Student;
 use App\Repository\GradeRepositoryInterface;
+use App\Repository\PrivacyCategoryRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\StudentData;
 use App\Request\Data\StudentsData;
 use App\Utils\ArrayUtils;
+use App\Utils\CollectionUtils;
 
-class StudentsImportStrategy implements ImportStrategyInterface {
+class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrategyInterface {
 
     private $studentRepository;
     private $gradeRepository;
+    private $privacyCategoryRepository;
 
-    public function __construct(StudentRepositoryInterface $studentRepository, GradeRepositoryInterface $gradeRepository) {
+    private $gradesCache = [ ];
+    private $privacyCategoriesCache = [ ];
+
+    public function __construct(StudentRepositoryInterface $studentRepository, GradeRepositoryInterface $gradeRepository, PrivacyCategoryRepositoryInterface $privacyCategoryRepository) {
         $this->studentRepository = $studentRepository;
         $this->gradeRepository = $gradeRepository;
+        $this->privacyCategoryRepository = $privacyCategoryRepository;
+    }
+
+    public function initialize(): void {
+        $this->gradesCache = ArrayUtils::createArrayWithKeys(
+            $this->gradeRepository->findAll(),
+            function(Grade $grade) {
+                return $grade->getExternalId();
+            }
+        );
+
+        $this->privacyCategoriesCache = ArrayUtils::createArrayWithKeys(
+            $this->privacyCategoryRepository->findAll(),
+            function(PrivacyCategory $category) {
+                return $category->getExternalId();
+            }
+        );
     }
 
     /**
@@ -76,7 +101,7 @@ class StudentsImportStrategy implements ImportStrategyInterface {
         $entity->setEmail($data->getEmail());
 
         if($data->getGrade() !== null) {
-            $grade = $this->gradeRepository->findOneByExternalId($data->getGrade());
+            $grade = $this->gradesCache[$data->getGrade()] ?? null;
 
             if($grade === null) {
                 throw new ImportException(sprintf('Grade "%s" does not exist (Student ID: "%s", Lastname: "%s")', $data->getGrade(), $data->getId(), $data->getLastname()));
@@ -86,6 +111,19 @@ class StudentsImportStrategy implements ImportStrategyInterface {
         } else {
             $entity->setGrade(null);
         }
+
+        $approvedPrivacyCategories = ArrayUtils::findAllWithKeys(
+            $this->privacyCategoriesCache,
+            $data->getApprovedPrivacyCategories()
+        );
+
+        CollectionUtils::synchronize(
+            $entity->getApprovedPrivacyCategories(),
+            $approvedPrivacyCategories,
+            function(PrivacyCategory $category) {
+                return $category->getId();
+            }
+        );
     }
 
     /**

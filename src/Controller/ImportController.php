@@ -12,6 +12,7 @@ use App\Import\Importer;
 use App\Import\ImportException;
 use App\Import\ImportResult;
 use App\Import\InfotextsImportStrategy;
+use App\Import\PrivacyCategoryImportStrategy;
 use App\Import\StudentsImportStrategy;
 use App\Import\StudyGroupImportStrategy;
 use App\Import\StudyGroupMembershipImportStrategy;
@@ -29,6 +30,7 @@ use App\Request\Data\ExamsData;
 use App\Request\Data\GradesData;
 use App\Request\Data\GradeTeachersData;
 use App\Request\Data\InfotextsData;
+use App\Request\Data\PrivacyCategoriesData;
 use App\Request\Data\StudentsData;
 use App\Request\Data\StudyGroupMembershipsData;
 use App\Request\Data\StudyGroupsData;
@@ -534,6 +536,33 @@ class ImportController extends AbstractController {
      */
     public function absences(AbsencesData $absencesData, AbsencesImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($absencesData, $strategy);
+        return $this->fromResult($result);
+    }
+
+    /**
+     * Imports privacy categories.
+     *
+     * @Route("/privacy/categories", methods={"POST"})
+     * @SWG\Post(operationId="import_privacy_categories")
+     * @SWG\Parameter(
+     *     name="payload",
+     *     in="body",
+     *     @Model(type=PrivacyCategoriesData::class)
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Import was successful",
+     *     @Model(type=ImportResponse::class)
+     * )
+     * @SWG\Response(
+     *     response=400,
+     *     description="Import was not successful",
+     *     @Model(type=ErrorResponse::class)
+     * )
+     * @throws ImportException
+     */
+    public function privacyCategories(PrivacyCategoriesData $categoriesData, PrivacyCategoryImportStrategy $strategy): Response {
+        $result = $this->importer->import($categoriesData, $strategy);
         return $this->fromResult($result);
     }
 }

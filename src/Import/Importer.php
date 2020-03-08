@@ -33,8 +33,7 @@ class Importer {
         foreach($violations as $violation) {
             $data[] = [
                 'property' => $violation->getPropertyPath(),
-                'message' => $violation->getMessage(),
-                'code' => $violation->getCode()
+                'message' => $violation->getMessage()
             ];
         }
 
@@ -53,6 +52,10 @@ class Importer {
         $this->validateOrThrow($data);
 
         try {
+            if($strategy instanceof InitializeStrategyInterface) {
+                $strategy->initialize();
+            }
+
             $repository = $strategy->getRepository();
             $repository->beginTransaction();
 
@@ -104,7 +107,13 @@ class Importer {
      * @throws ImportException
      */
     public function replaceImport($data, ReplaceImportStrategyInterface $strategy): ImportResult {
+        $this->validateOrThrow($data);
+
         try {
+            if($strategy instanceof InitializeStrategyInterface) {
+                $strategy->initialize();
+            }
+
             $repository = $strategy->getRepository();
             $repository->beginTransaction();
 

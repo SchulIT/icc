@@ -105,8 +105,8 @@ class Appointment {
     /**
      * @ORM\ManyToMany(targetEntity="AppointmentVisibility")
      * @ORM\JoinTable(name="appointment_visibilities",
-     *     joinColumns={@ORM\JoinColumn(name="appointment")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility")}
+     *     joinColumns={@ORM\JoinColumn(name="appointment", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility", onDelete="CASCADE")}
      * )
      * @var Collection<AppointmentVisibility>
      */

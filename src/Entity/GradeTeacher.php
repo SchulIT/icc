@@ -12,7 +12,7 @@ class GradeTeacher {
     /**
      * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="Teacher", inversedBy="grades")
-     * @ORM\JoinColumn()
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Teacher
      */
     private $teacher;
@@ -20,7 +20,7 @@ class GradeTeacher {
     /**
      * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="Grade", inversedBy="teachers")
-     * @ORM\JoinColumn()
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Grade
      */
     private $grade;

@@ -57,8 +57,8 @@ class TimetablePeriod {
     /**
      * @ORM\ManyToMany(targetEntity="TimetablePeriodVisibility")
      * @ORM\JoinTable(name="timetableperiod_visibilities",
-     *     joinColumns={@ORM\JoinColumn(name="period")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility")}
+     *     joinColumns={@ORM\JoinColumn(name="period", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility", onDelete="CASCADE")}
      * )
      * @var Collection<TimetablePeriodVisibility>
      */

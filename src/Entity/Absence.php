@@ -37,14 +37,14 @@ class Absence {
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Teacher")
-     * @ORM\JoinColumn()
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Teacher
      */
     private $teacher;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\StudyGroup")
-     * @ORM\JoinColumn()
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var StudyGroup
      */
     private $studyGroup;

@@ -54,8 +54,8 @@ class Tuition {
      * @ORM\ManyToMany(targetEntity="Teacher")
      * @ORM\JoinTable(
      *     name="tuition_teachers",
-     *     joinColumns={@ORM\JoinColumn(name="studygroup", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="teacher", referencedColumnName="id")}
+     *     joinColumns={@ORM\JoinColumn(name="studygroup", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="teacher", referencedColumnName="id", onDelete="CASCADE")}
      * )
      * @var Collection<Teacher>
      */

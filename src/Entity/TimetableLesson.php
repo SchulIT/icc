@@ -42,7 +42,7 @@ class TimetableLesson {
 
     /**
      * @ORM\ManyToOne(targetEntity="TimetableWeek")
-     * @ORM\JoinColumn()
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
      * @var TimetableWeek
      */

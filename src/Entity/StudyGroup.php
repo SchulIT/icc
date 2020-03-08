@@ -47,8 +47,8 @@ class StudyGroup {
      * @ORM\ManyToMany(targetEntity="Grade")
      * @ORM\JoinTable(
      *     name="studygroup_grades",
-     *     joinColumns={@ORM\JoinColumn(name="studygroup", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="grade", referencedColumnName="id")}
+     *     joinColumns={@ORM\JoinColumn(name="studygroup", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="grade", referencedColumnName="id", onDelete="CASCADE")}
      * )
      * @var Collection<Grade>
      */

@@ -85,8 +85,19 @@ class Student {
      */
     private $studyGroupMemberships;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="PrivacyCategory")
+     * @ORM\JoinTable(name="student_privacy",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @var Collection<PrivacyCategory>
+     */
+    private $approvedPrivacyCategories;
+
     public function __construct() {
         $this->studyGroupMemberships = new ArrayCollection();
+        $this->approvedPrivacyCategories = new ArrayCollection();
     }
 
     /**
@@ -229,5 +240,12 @@ class Student {
      */
     public function getStudyGroupMemberships(): Collection {
         return $this->studyGroupMemberships;
+    }
+
+    /**
+     * @return Collection<PrivacyCategory>
+     */
+    public function getApprovedPrivacyCategories(): Collection {
+        return $this->approvedPrivacyCategories;
     }
 }

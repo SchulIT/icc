@@ -62,8 +62,8 @@ class User implements UserInterface, \Serializable {
     /**
      * @ORM\ManyToMany(targetEntity="Student")
      * @ORM\JoinTable(name="user_students",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE", onDelete="CASCADE")}
      * )
      * @var Collection<Student>
      */

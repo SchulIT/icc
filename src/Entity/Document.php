@@ -81,8 +81,8 @@ class Document {
     /**
      * @ORM\ManyToMany(targetEntity="DocumentVisibility")
      * @ORM\JoinTable(name="document_visibilities",
-     *     joinColumns={@ORM\JoinColumn(name="document")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility")}
+     *     joinColumns={@ORM\JoinColumn(name="document", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility", onDelete="CASCADE")}
      * )
      * @var Collection<MessageVisibility>
      */

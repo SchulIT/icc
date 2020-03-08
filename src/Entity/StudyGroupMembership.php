@@ -12,7 +12,7 @@ class StudyGroupMembership {
     /**
      * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="StudyGroup", inversedBy="memberships")
-     * @ORM\JoinColumn()
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var StudyGroup
      */
     private $studyGroup;
@@ -20,7 +20,7 @@ class StudyGroupMembership {
     /**
      * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="Student", inversedBy="studyGroupMemberships")
-     * @ORM\JoinColumn()
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Student
      */
     private $student;

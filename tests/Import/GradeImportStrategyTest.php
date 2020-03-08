@@ -7,6 +7,7 @@ use App\Import\GradesImportStrategy;
 use App\Import\Importer;
 use App\Repository\GradeRepository;
 use App\Request\Data\GradeData;
+use App\Request\Data\GradesData;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class GradeImportStrategyTest extends WebTestCase {
@@ -40,8 +41,8 @@ class GradeImportStrategyTest extends WebTestCase {
         ];
 
         $strategy = new GradesImportStrategy($repository);
-        $importer = new Importer();
-        $result = $importer->import($gradeData, $strategy);
+        $importer = new Importer($kernel->getContainer()->get('validator'));
+        $result = $importer->import((new GradesData())->setGrades($gradeData), $strategy);
 
         $this->assertNotNull($result);
         $this->assertEquals(1, count($result->getAdded()));

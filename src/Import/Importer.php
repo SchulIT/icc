@@ -15,7 +15,7 @@ class Importer {
     }
 
     /**
-     * @param $data
+     * @param object $data
      * @throws ValidationFailedException
      */
     private function validateOrThrow($data) {
@@ -42,7 +42,7 @@ class Importer {
 
 
     /**
-     * @param $data
+     * @param object $data
      * @param ImportStrategyInterface $strategy
      * @return ImportResult
      * @throws ImportException
@@ -103,7 +103,7 @@ class Importer {
     }
 
     /**
-     * @param $data
+     * @param object $data
      * @param ReplaceImportStrategyInterface $strategy
      * @return ImportResult
      * @throws ImportException

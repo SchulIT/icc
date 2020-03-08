@@ -7,18 +7,25 @@ use App\Entity\Teacher;
 use App\Entity\TeacherTag;
 use App\Import\Importer;
 use App\Import\TeachersImportStrategy;
+use App\Repository\SubjectRepository;
 use App\Repository\TeacherRepository;
 use App\Repository\TeacherTagRepository;
 use App\Request\Data\TeacherData;
+use App\Request\Data\TeachersData;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TeachersImportStrategyTest extends WebTestCase {
 
     private $em;
+    private $validator;
 
     public function setUp(): void {
         $kernel = static::createKernel();
         $kernel->boot();
+
+        $this->validator = $kernel
+            ->getContainer()
+            ->get('validator');
 
         $this->em = $kernel
             ->getContainer()
@@ -77,10 +84,11 @@ class TeachersImportStrategyTest extends WebTestCase {
         ];
 
         $repository = new TeacherRepository($this->em);
+        $subjectRepository = new SubjectRepository($this->em);
         $tagRepository = new TeacherTagRepository($this->em);
-        $importer = new Importer();
-        $strategy = new TeachersImportStrategy($repository, $tagRepository);
-        $result = $importer->import($teachersData, $strategy);
+        $importer = new Importer($this->validator);
+        $strategy = new TeachersImportStrategy($repository, $subjectRepository, $tagRepository);
+        $result = $importer->import((new TeachersData())->setTeachers($teachersData), $strategy);
 
         /** @var Teacher[] $addedTeachers */
         $addedTeachers = $result->getAdded();

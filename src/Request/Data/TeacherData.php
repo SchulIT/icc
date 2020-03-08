@@ -66,7 +66,7 @@ class TeacherData {
      * List of external IDs of the subjects the teacher teachers.
      * @var string[]
      */
-    private $subjects;
+    private $subjects = [ ];
 
     /**
      * List of external IDs of tags which are added to the user.
@@ -74,7 +74,7 @@ class TeacherData {
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $tags;
+    private $tags = [ ];
 
     /**
      * @return string|null

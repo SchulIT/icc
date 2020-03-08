@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Subject;
-use function Doctrine\ORM\QueryBuilder;
 
 class SubjectRepository extends AbstractTransactionalRepository implements SubjectRepositoryInterface {
 

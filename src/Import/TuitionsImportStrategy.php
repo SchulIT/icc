@@ -15,7 +15,6 @@ use App\Request\Data\TuitionData;
 use App\Request\Data\TuitionsData;
 use App\Utils\CollectionUtils;
 use App\Utils\ArrayUtils;
-use function foo\func;
 
 class TuitionsImportStrategy implements ImportStrategyInterface {
 

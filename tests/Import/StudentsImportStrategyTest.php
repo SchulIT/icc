@@ -6,8 +6,10 @@ use App\Entity\Grade;
 use App\Import\Importer;
 use App\Import\StudentsImportStrategy;
 use App\Repository\GradeRepository;
+use App\Repository\PrivacyCategoryRepository;
 use App\Repository\StudentRepository;
 use App\Request\Data\StudentData;
+use App\Request\Data\StudentsData;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class StudentsImportStrategyTest extends WebTestCase {
@@ -24,6 +26,7 @@ class StudentsImportStrategyTest extends WebTestCase {
             ->getManager();
         $repository = new StudentRepository($em);
         $gradeRepository = new GradeRepository($em);
+        $privacyRepository = new PrivacyCategoryRepository($em);
 
         $em->persist(
             (new Grade())
@@ -51,8 +54,8 @@ class StudentsImportStrategyTest extends WebTestCase {
                 ->setGender('female'),
         ];
 
-        $strategy = new StudentsImportStrategy($repository, $gradeRepository);
-        $importer = new Importer();
-        $importer->import($data, $strategy);
+        $strategy = new StudentsImportStrategy($repository, $gradeRepository, $privacyRepository);
+        $importer = new Importer($kernel->getContainer()->get('validator'));
+        $importer->import((new StudentsData())->setStudents($data), $strategy);
     }
 }

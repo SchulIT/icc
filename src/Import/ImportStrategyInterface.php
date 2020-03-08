@@ -9,7 +9,7 @@ interface ImportStrategyInterface {
     /**
      * Returns the entities which are to be imported.
      *
-     * @param object The data object of the request body.
+     * @param object $data The data object of the request body.
      * @return array
      */
     public function getData($data): array;

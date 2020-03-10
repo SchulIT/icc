@@ -1,47 +1,6 @@
 {% extends '@Common/main.html.twig' %}
 
-{% block userbar %}
-    <div class="float-right d-print-none" id="userbar">
-        {#
-        {% if is_granted('ROLE_ADMIN') %}
-            <div class="btn-group">
-                <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-cogs"></i> {{ 'admin.settings.label'|trans }}
-                </button>
-
-                {{ knp_menu_render('settingsMenu', {'currentClass': 'active', 'template': 'dropdown_menu.html.twig' }) }}
-            </div>
-
-        <div class="btn-group">
-            <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-cogs"></i> {{ 'admin.label'|trans }}
-            </button>
-
-            {{ knp_menu_render('adminMenu', {'currentClass': 'active', 'template': 'dropdown_menu.html.twig' }) }}
-        </div>
-        {% endif %}
-        #}
-
-        {% if user.services|length > 0 %}
-            <div class="btn-group">
-                <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
-                    <i class="fas fa-bars"></i> {{ 'services.label'|trans }}
-                </button>
-
-                <ul class="dropdown-menu" role="menu">
-
-                    {% for service in user.services %}
-                        <li>
-                            <a class="dropdown-item" href="{{ service.url }}" target="_blank" title="{{ service.description }}">
-                                {{ service.name }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
-    </div>
-{% endblock %}
+{% block userbar %}{% endblock %}
 
 {% block container %}
     <div class="navbar navbar-dark navbar-expand-lg bg-primary">
@@ -54,6 +13,7 @@
 
             {{ knp_menu_render('settingsMenu', {'currentClass': 'active' }) }}
             {{ knp_menu_render('adminMenu', {'currentClass': 'active' }) }}
+            {{ knp_menu_render('servicesMenu', {'currentClass': 'active' }) }}
             {{ knp_menu_render('userMenu', {'currentClass': 'active' }) }}
         </div>
     </div>
@@ -63,6 +23,7 @@
 
             {{ knp_menu_render('settingsMenu', {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
             {{ knp_menu_render('adminMenu', {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
+            {{ knp_menu_render('servicesMenu', {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
             {{ knp_menu_render('userMenu', {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
         </div>
     </div>

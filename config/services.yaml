@@ -98,6 +98,7 @@ services:
             - { name: knp_menu.menu_builder, method: userMenu, alias: userMenu }
             - { name: knp_menu.menu_builder, method: adminMenu, alias: adminMenu }
             - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
+            - { name: knp_menu.menu_builder, method: servicesMenu, alias: servicesMenu }
 
     SchoolIT\CommonBundle\Menu\Voter:
         tags:

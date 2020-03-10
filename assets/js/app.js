@@ -145,27 +145,107 @@ document.addEventListener('DOMContentLoaded', function() {
             placement: 'bottom'
         });
     });
+});
 
-    document.querySelectorAll('[data-menu]').forEach(function(el) {
+document.addEventListener('DOMContentLoaded', function() {
+    let container = document.getElementById('menu');
+
+    let openElement = function(element) {
+        if(element === null) {
+            return;
+        }
+
+        let targetSelector = element.getAttribute('data-menu');
+
+        if(targetSelector === null) { // Element has no menu
+            return;
+        }
+
+        let target = document.querySelector(targetSelector);
+
+        if(target === null) { // Target element is not available -> open nothing!
+            return;
+        }
+
+        // Close currently open (or active) element
+        let activeOrOpen = container.querySelector('li.nav-item.open') || container.querySelector('li.nav-item.active') || container.querySelector('li.nav-item.current_ancestor');
+
+        if(activeOrOpen !== null) {
+            closeElement(activeOrOpen.querySelector('a[data-menu]'), false);
+        }
+
+        element.closest('.nav-item').classList.add('open');
+
+        target.classList.remove('hide');
+        target.classList.add('show');
+    };
+
+    let closeElement = function(element, openActiveElement) {
+        if(openActiveElement === true) {
+            let active = container.querySelector('li.nav-item.active') || container.querySelector('li.nav-item.current_ancestor');
+
+            if(active !== null) {
+                openElement(active.querySelector('a[data-menu]'));
+            }
+        }
+
+        if(element === null) {
+            return;
+        }
+
+        let targetSelector = element.getAttribute('data-menu');
+
+        if(targetSelector === null) { // Element has no menu
+            return;
+        }
+
+        let target = document.querySelector(targetSelector);
+
+        if(target === null) { // Target element is not available -> open nothing!
+            return;
+        }
+
+        element.closest('.nav-item').classList.remove('open');
+
+        target.classList.remove('show');
+        target.classList.add('hide');
+    };
+
+    document.addEventListener('click', function(event) {
+        let clickedElement = event.target;
+
+        // Case 1: clicked into submenu
+        let submenuContainer = clickedElement.closest('#submenu');
+
+        if(submenuContainer !== null) {
+            // Clicked into the submenu container -> do nothing!
+            return;
+        }
+
+        // Case 2: clicked into again -> close
+        let menuContainer = clickedElement.closest('.nav-item');
+
+        if(menuContainer !== null && menuContainer.classList.contains('open')) {
+            closeElement(menuContainer.querySelector('a[data-menu]'), true)
+        }
+
+        // Other cases: clicked somewhere else -> close menu
+        let currentlyOpenElement = container.querySelector('li.open');
+
+        if(currentlyOpenElement !== null && currentlyOpenElement.classList.contains('active') === false && currentlyOpenElement.classList.contains('current_ancestor') === false) {
+            closeElement(currentlyOpenElement.querySelector('a[data-menu]'), true);
+        } else {
+            // no element is open -> prevent the active menu from being closed
+            closeElement(null, true);
+        }
+    });
+
+    document.querySelectorAll('a[data-menu]').forEach(function(el) {
         el.addEventListener('click', function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
-            let targetSelector = this.getAttribute('data-menu');
-            let target = document.querySelector(targetSelector);
-
-            let targetContainerSelector = this.getAttribute('data-menu-container');
-            let targetContainer = document.querySelector(targetContainerSelector);
-
-            console.log(target);
-            console.log(targetContainer);
-
-            targetContainer.querySelectorAll('[data-role=menu]').forEach(function(el) {
-                el.classList.add('hide');
-                el.classList.remove('show');
-            });
-
-            target.classList.remove('hide');
-            target.classList.add('show');
+            openElement(el);
         });
     });
 });

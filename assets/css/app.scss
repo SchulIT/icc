@@ -243,18 +243,25 @@ table {
     .nav-item {
 
       &.active,
+      &.open,
       &.current_ancestor {
         background: $danger;
       }
 
+      &.open {
+        .fa-caret-down {
+          @extend .fa-caret-up;
+        }
+      }
+
       .nav-link {
-        padding: $navbar-padding-y+$nav-link-padding-y  $navbar-padding-x+$nav-link-padding-x;
+        padding: $navbar-padding-y+$nav-link-padding-y  $nav-link-padding-x;
+        color: white;
+        transition: all .1s ease-out;
 
         &:hover {
           background: transparentize($white, 0.75);
         }
-
-        color: white;
       }
     }
   }
@@ -264,6 +271,8 @@ table {
   padding: $navbar-padding-y $navbar-padding-x;
 
   .nav-item {
+    transition: all .1s ease-out;
+
     &.active,
     &:hover {
       border-radius: 0.25rem;

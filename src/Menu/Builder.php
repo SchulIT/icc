@@ -13,6 +13,8 @@ use App\Security\Voter\RoomVoter;
 use App\Security\Voter\WikiVoter;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
+use Knp\Menu\MenuItem;
+use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -303,5 +305,34 @@ class Builder {
         $this->wikiMenu($menu);
 
         return $menu;
+    }
+
+    public function servicesMenu(): ItemInterface {
+        $root = $this->factory->createItem('root')
+            ->setChildrenAttributes([
+                'class' => 'navbar-nav float-lg-right'
+            ]);
+
+        $token = $this->tokenStorage->getToken();
+
+        if($token instanceof SamlSpToken) {
+            $menu = $root->addChild('services', [
+                'label' => ''
+            ])
+                ->setAttribute('icon', 'fa fa-th')
+                ->setExtra('menu', 'services')
+                ->setExtra('pull-right', true)
+                ->setAttribute('title', $this->translator->trans('services.label'));
+
+            foreach($token->getAttribute('services') as $service) {
+                $menu->addChild($service->name, [
+                    'uri' => $service->url
+                ])
+                    ->setAttribute('title', $service->description)
+                    ->setAttribute('target', '_blank');
+            }
+        }
+
+        return $root;
     }
 }

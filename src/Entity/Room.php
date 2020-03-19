@@ -20,6 +20,12 @@ class Room {
     private $id;
 
     /**
+     * @ORM\Column(type="string", unique=true, nullable=true)
+     * @var string|null
+     */
+    private $externalId;
+
+    /**
      * @ORM\Column(type="string", length=16, unique=true)
      * @Assert\NotNull()
      * @Assert\Length(max="16")
@@ -53,6 +59,22 @@ class Room {
      */
     public function getId() {
         return $this->id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExternalId(): ?string {
+        return $this->externalId;
+    }
+
+    /**
+     * @param string|null $externalId
+     * @return Room
+     */
+    public function setExternalId(?string $externalId): Room {
+        $this->externalId = $externalId;
+        return $this;
     }
 
     /**

@@ -13,6 +13,7 @@ use App\Import\ImportException;
 use App\Import\ImportResult;
 use App\Import\InfotextsImportStrategy;
 use App\Import\PrivacyCategoryImportStrategy;
+use App\Import\RoomImportStrategy;
 use App\Import\StudentsImportStrategy;
 use App\Import\StudyGroupImportStrategy;
 use App\Import\StudyGroupMembershipImportStrategy;
@@ -31,6 +32,7 @@ use App\Request\Data\GradesData;
 use App\Request\Data\GradeTeachersData;
 use App\Request\Data\InfotextsData;
 use App\Request\Data\PrivacyCategoriesData;
+use App\Request\Data\RoomsData;
 use App\Request\Data\StudentsData;
 use App\Request\Data\StudyGroupMembershipsData;
 use App\Request\Data\StudyGroupsData;
@@ -563,6 +565,33 @@ class ImportController extends AbstractController {
      */
     public function privacyCategories(PrivacyCategoriesData $categoriesData, PrivacyCategoryImportStrategy $strategy): Response {
         $result = $this->importer->import($categoriesData, $strategy);
+        return $this->fromResult($result);
+    }
+
+    /**
+     * Imports rooms.
+     *
+     * @Route("/rooms", methods={"POST"})
+     * @SWG\Post(operationId="import_rooms")
+     * @SWG\Parameter(
+     *     name="payload",
+     *     in="body",
+     *     @Model(type=RoomsData::class)
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Import was successful",
+     *     @Model(type=ImportResponse::class)
+     * )
+     * @SWG\Response(
+     *     response=400,
+     *     description="Import was not successful",
+     *     @Model(type=ErrorResponse::class)
+     * )
+     * @throws ImportException
+     */
+    public function rooms(RoomsData $roomsData, RoomImportStrategy $strategy): Response {
+        $result = $this->importer->import($roomsData, $strategy);
         return $this->fromResult($result);
     }
 }

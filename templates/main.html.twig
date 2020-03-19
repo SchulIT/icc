@@ -1,33 +1,25 @@
 {% extends '@Common/main.html.twig' %}
 
-{% block userbar %}{% endblock %}
+{% block menu %}
+    {{ knp_menu_render(mainMenu, {'currentClass': 'active' }) }}
+
+    {{ knp_menu_render('settingsMenu', {'currentClass': 'active' }) }}
+    {{ knp_menu_render('adminMenu', {'currentClass': 'active' }) }}
+    {{ knp_menu_render('servicesMenu', {'currentClass': 'active' }) }}
+    {{ knp_menu_render('userMenu', {'currentClass': 'active' }) }}
+{% endblock %}
+
+{% block submenu %}
+    {{ knp_menu_render(mainMenu, {'currentClass': 'active', 'template': '@Common/submenu.html.twig' }) }}
+
+    {{ knp_menu_render('settingsMenu', {'currentClass': 'active', 'template': '@Common/submenu.html.twig' }) }}
+    {{ knp_menu_render('adminMenu', {'currentClass': 'active', 'template': '@Common/submenu.html.twig' }) }}
+    {{ knp_menu_render('servicesMenu', {'currentClass': 'active', 'template': '@Common/submenu.html.twig' }) }}
+    {{ knp_menu_render('userMenu', {'currentClass': 'active', 'template': '@Common/submenu.html.twig' }) }}
+{% endblock %}
+
 
 {% block container %}
-    <div class="navbar navbar-dark navbar-expand-lg bg-primary">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse text-white" id="menu">
-            {{ knp_menu_render(mainMenu, {'currentClass': 'active' }) }}
-
-            {{ knp_menu_render('settingsMenu', {'currentClass': 'active' }) }}
-            {{ knp_menu_render('adminMenu', {'currentClass': 'active' }) }}
-            {{ knp_menu_render('servicesMenu', {'currentClass': 'active' }) }}
-            {{ knp_menu_render('userMenu', {'currentClass': 'active' }) }}
-        </div>
-    </div>
-    <div class="navbar navbar-sub bg-danger mb-2">
-        <div class="navbar text-white w-100" id="submenu">
-            {{ knp_menu_render(mainMenu, {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
-
-            {{ knp_menu_render('settingsMenu', {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
-            {{ knp_menu_render('adminMenu', {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
-            {{ knp_menu_render('servicesMenu', {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
-            {{ knp_menu_render('userMenu', {'currentClass': 'active', 'template': 'submenu.html.twig' }) }}
-        </div>
-    </div>
-
     {% block breadcrumb %}{% endblock %}
 
     {% for msg in app.session.flashbag.get('error') %}

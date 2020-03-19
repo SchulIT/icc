@@ -14,6 +14,7 @@ $enable-gradients: true;
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/brands';
 
 // Import SchoolIT design
+@import '../../vendor/schoolit/common-bundle/Resources/assets/css/variables.scss';
 @import '../../vendor/schoolit/common-bundle/Resources/assets/css/layout.scss';
 @import '../../vendor/schoolit/common-bundle/Resources/assets/css/additions.scss';
 
@@ -33,22 +34,6 @@ $enable-gradients: true;
 // Import SCSS from overrides
 @import "overrides/*.scss";
 
-small, .small {
-  font-size: 90% !important;
-}
-
-table {
-  .column-320 {
-    width: 320px;
-  }
-
-  td {
-    p, ul {
-      margin-bottom: 0 !important;
-    }
-  }
-}
-
 /* Editor fixes to make it work with FontAwesome (see https://stackoverflow.com/a/26638216) */
 .md-container {
   .btn-group {
@@ -65,11 +50,6 @@ table {
 }
 
 .card {
-  hr {
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
-
   .remark {
     font-weight: bold;
   }
@@ -133,22 +113,6 @@ table {
   margin-bottom: 0;
 }
 
-.navigation {
-  .nav {
-    .header {
-      font-size: 100%;
-
-      > a,
-      > span {
-        font-size: 120%;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        display: block;
-      }
-    }
-  }
-}
-
 .color-rect {
   vertical-align: baseline;
   border-radius: .25em;
@@ -190,12 +154,6 @@ table {
   }
 }
 
-.card {
-  > .table {
-    border-top: 0;
-  }
-}
-
 // Swagger
 .swagger-ui {
   .col {
@@ -214,91 +172,6 @@ table {
   }
 }
 
-@include media-breakpoint-up(lg) {
-  .navbar {
-    .navbar-nav {
-      .nav-item {
-        .dropdown-menu {
-          background: $red !important;
-          color: white;
-
-          &.show {
-            display: none !important;
-          }
-        }
-      }
-    }
-  }
-}
-
-// Menu
-.navbar {
-  padding: 0;
-
-  .navbar-toggler {
-    margin: $navbar-padding-y $navbar-padding-x;
-  }
-
-  .navbar-nav {
-    .nav-item {
-
-      &.active,
-      &.open,
-      &.current_ancestor {
-        background: $danger;
-      }
-
-      &.open {
-        .fa-caret-down {
-          @extend .fa-caret-up;
-        }
-      }
-
-      .nav-link {
-        padding: $navbar-padding-y+$nav-link-padding-y  $nav-link-padding-x;
-        color: white;
-        transition: all .1s ease-out;
-
-        &:hover {
-          background: transparentize($white, 0.75);
-        }
-      }
-    }
-  }
-}
-
-.navbar.navbar-sub {
-  padding: $navbar-padding-y $navbar-padding-x;
-
-  .nav-item {
-    transition: all .1s ease-out;
-
-    &.active,
-    &:hover {
-      border-radius: 0.25rem;
-      background: transparentize($white, 0.75);
-    }
-  }
-
-  .nav-link {
-    color: white;
-  }
-}
-
-.navbar-nav {
-  > li.dropdown.show {
-    position: static;
-
-    .dropdown-menu {
-      display:flex;
-      width: 100%;
-      text-align: center;
-      left:0; right:0;
-      flex-direction:row;
-      flex-wrap:wrap;
-    }
-  }
-}
 
 .show {
   display: block;

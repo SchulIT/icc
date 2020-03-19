@@ -8,5 +8,6 @@ common:
         version: "%version%"
         project_url: "%project_url%"
         logo: "%env(APP_LOGO)%"
+        small_logo: "%env(APP_SMALLLOGO)%"
     locales: "%locales%"
     menu: mainMenu

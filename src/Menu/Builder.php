@@ -111,6 +111,7 @@ class Builder {
         $wiki = $menu->addChild('wiki.label', [
             'route' => 'wiki'
         ])->setExtra('menu', 'wiki')
+            ->setAttribute('icon', 'fab fa-wikipedia-w')
             ->setExtra('menu-container', '#submenu');
 
         foreach($this->wikiRepository->findAll() as $article) {
@@ -141,9 +142,7 @@ class Builder {
             return $menu;
         }
 
-        $displayName = !empty($user->getFirstname()) && !empty($user->getLastname())
-            ? $this->userConverter->convert($user)
-            : $user->getUsername();
+        $displayName = $user->getUsername();
 
         $userMenu = $menu->addChild('user', [
                 'label' => $displayName
@@ -268,7 +267,8 @@ class Builder {
 
         $menu->addChild('dashboard.label', [
             'route' => 'dashboard'
-        ]);
+        ])
+            ->setAttribute('icon', 'fa fa-home');
 
         $messageCount = 0;
 

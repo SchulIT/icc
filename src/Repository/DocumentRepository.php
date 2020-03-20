@@ -116,6 +116,14 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
      * @param Document $document
      */
     public function persist(Document $document): void {
+        /*
+         * Ensure that all 1:N relations are set correctly
+         * (VichUploader does not seem to use add*() methods)
+         */
+        foreach($document->getAttachments() as $attachment) {
+            $attachment->setDocument($document);
+        }
+
         $this->em->persist($document);
         $this->em->flush();
     }

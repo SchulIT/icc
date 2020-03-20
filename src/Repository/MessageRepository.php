@@ -114,6 +114,14 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
      * @param Message $message
      */
     public function persist(Message $message): void {
+        /*
+         * Ensure that all 1:N relations are set correctly
+         * (VichUploader does not seem to use add*() methods)
+         */
+        foreach($message->getAttachments() as $attachment) {
+            $attachment->setMessage($message);
+        }
+
         $this->em->persist($message);
         $this->em->flush();
     }

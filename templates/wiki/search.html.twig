@@ -20,46 +20,54 @@
 {% endmacro %}
 
 {% block content %}
-    <div class="card">
-        <div class="card-header">{{ 'wiki.search'|trans }}</div>
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if articles|length == 0 %}
 
-        <div class="card-body">
-            <form action="{{ path('wiki_search') }}">
-                <div class="input-group">
-                    <input type="text" name="q" value="{{ q }}" class="form-control">
+                {% endif %}
 
-                    <div class="input-group-append">
-                        <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i></button>
+                {% for article in articles %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{{ path('show_wiki_article', { id: article.id, slug: article.slug}) }}">{{ article.title }}</a>
+                            </h5>
+
+                            <ol class="breadcrumb">
+                                {{ _self.wiki_breadcrumb(article.parent) }}
+                                <li class="breadcrumb-item">{{ article.title }}</li>
+                            </ol>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% include '@Common/includes/pagination.html.twig' with {
+                    currentFilters: { q: q },
+                    currentPage: page,
+                    paginationPath: 'wiki_search',
+                    lastPage: pages,
+                    showAlwaysFirstAndLast: true
+                } only %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">{{ 'wiki.search'|trans }}</div>
+
+                    <div class="card-body">
+                        <form action="{{ path('wiki_search') }}">
+                            <div class="input-group">
+                                <input type="text" name="q" value="{{ q }}" class="form-control">
+
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </form>
-        </div>
-    </div>
-
-    {% if articles|length == 0 %}
-
-    {% endif %}
-
-    {% for article in articles %}
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <a href="{{ path('show_wiki_article', { id: article.id, slug: article.slug}) }}">{{ article.title }}</a>
-                </h5>
-
-                <ol class="breadcrumb">
-                    {{ _self.wiki_breadcrumb(article.parent) }}
-                    <li class="breadcrumb-item">{{ article.title }}</li>
-                </ol>
             </div>
         </div>
-    {% endfor %}
-
-    {% include '@Common/includes/pagination.html.twig' with {
-        currentFilters: { q: q },
-        currentPage: page,
-        paginationPath: 'wiki_search',
-        lastPage: pages,
-        showAlwaysFirstAndLast: true
-    } only %}
+    </div>
 {% endblock %}

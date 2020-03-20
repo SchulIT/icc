@@ -12,57 +12,66 @@
 {% endblock %}
 
 {% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if tags|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <h4>{{ 'info.label'|trans }}</h4>
 
-    {% if tags|length == 0 %}
-        <div class="bs-callout bs-callout-info">
-            <h4>{{ 'info.label'|trans }}</h4>
+                        <p>{{ 'admin.teachers.tags.overview.empty'|trans }}</p>
+                    </div>
+                {% else %}
+                    <div class="card">
+                        <table class="table table-striped table-bordered table-hover">
+                            <colgroup>
+                                <col>
+                                <col class="column-md">
+                                <col class="column-md">
+                            </colgroup>
 
-            <p>{{ 'admin.teachers.tags.overview.empty'|trans }}</p>
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.name'|trans }}</th>
+                                <th>{{ 'label.color'|trans }}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for tag in tags %}
+                                <tr>
+                                    <td>{{ tag.name }} <span class="badge badge-primary">{{ tag.externalId }}</span></td>
+                                    <td><span class="color-rect" style="background: {{ tag.color }}"></span> </td>
+                                    <td>
+                                        <a href="{{ path('edit_teacher_tag', { id: tag.id}) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+
+                                        <a href="{{ path('remove_teacher_tag', { id: tag.id }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('add_teacher_tag') }}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-plus"></i> {{ 'admin.teachers.tags.add.label'|trans }}
+                        </a>
+
+                        <a href="{{ path('admin_teachers') }}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-    {% else %}
-        <div class="card">
-            <table class="table table-striped table-bordered table-hover">
-                <colgroup>
-                    <col>
-                    <col class="column-md">
-                    <col class="column-md">
-                </colgroup>
-
-                <thead>
-                <tr>
-                    <th>{{ 'label.name'|trans }}</th>
-                    <th>{{ 'label.color'|trans }}</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for tag in tags %}
-                    <tr>
-                        <td>{{ tag.name }} <span class="badge badge-primary">{{ tag.externalId }}</span></td>
-                        <td><span class="color-rect" style="background: {{ tag.color }}"></span> </td>
-                        <td>
-                            <a href="{{ path('edit_teacher_tag', { id: tag.id}) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
-                                <i class="fa fa-edit"></i>
-                            </a>
-
-                            <a href="{{ path('remove_teacher_tag', { id: tag.id }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% endif %}
-
-    <div class="buttons">
-        <a href="{{ path('add_teacher_tag') }}" class="btn btn-primary btn-sm">
-            <i class="fa fa-plus"></i> {{ 'admin.teachers.tags.add.label'|trans }}
-        </a>
-
-        <a href="{{ path('admin_teachers') }}" class="btn btn-secondary btn-sm">
-            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
-        </a>
     </div>
 {% endblock %}

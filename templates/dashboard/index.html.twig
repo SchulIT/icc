@@ -10,124 +10,123 @@
 {% endblock %}
 
 {% block content %}
+
     {% set currentFilter = { studentId: studentFilter.currentStudent ? studentFilter.currentStudent.id : null, teacherAcronym: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.acronym : null } %}
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.id %}
-                {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
-                {% set dateParam = selectedDate|date('Y-m-d') %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
 
-                {% if teacherFilter.teachers|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/teacher.html.twig" with { params: {} } %}
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            {% for day in days %}
+                                <li class="nav-item">
+                                    <a class="nav-link{% if selectedDate == day %} active{% endif %}" href="{{ path('dashboard', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
+                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday }}
+                                        <div class="text-muted">{{ day.format('d.m.Y') }}</div>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
                     </div>
-                {% endif %}
 
-                {% if studentFilter.studentGradeGroups|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/student.html.twig" with { params: { userType: userTypeParam, date: dateParam } } %}
-                    </div>
-                {% endif %}
+                    <div class="card-body">
+                        {% if view.empty %}
+                            <div class="bs-callout bs-callout-info">
+                                <h4>{{ 'info.label'|trans }}</h4>
 
-                {% if userTypeFilter.types|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/user_type.html.twig" with { params: { studentId: studentParam, date: dateParam } } %}
-                    </div>
-                {% endif %}
-
-                <div class="col-lg-4">
-                    <form role="form" method="get" class="form hidden-print">
-                        {% include "_filter/_params.html.twig" with { params: currentFilter } %}
-
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                <p>{{ 'dashboard.empty'|trans }}</p>
                             </div>
-                            <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
-                        </div>
+                        {% endif %}
 
-                        <!--
-                        <div class="form-group">
-                            <label for="usertype">{{ 'label.date'|trans }}:</label>
-                            <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
-                        </div>-->
-                    </form>
+                        {# Messages #}
+                        {% for message in view.messages %}
+                            {% include "_includes/message.html.twig" with { message: message } only %}
+                        {% endfor %}
+
+                        {# Daily infos #}
+                        {% for infotext in view.infotexts %}
+                            {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
+                        {% endfor %}
+
+                        {# Loop lessons #}
+                        {% for lesson in view.lessons %}
+                            {% if view.itemsBefore(lesson)|length > 0 %}
+                                <h3>{{ 'dashboard.before_lesson'|trans({'%lesson%': lesson }) }}</h3>
+
+                                {% for item in view.itemsBefore(lesson) %}
+                                    {% set type = item.blockName %}
+
+                                    {% if type == 'supervision' %}
+                                        {{ dashboard.supervision(item) }}
+                                    {% elseif type == 'substitution' %}
+                                        {{ dashboard.substitution(item) }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+
+                            {% if view.items(lesson)|length > 0 %}
+                                <h3>{{ 'dashboard.lesson'|trans({'%lesson%': lesson }) }}</h3>
+
+                                {% for item in view.items(lesson) %}
+                                    {% set type = item.blockName %}
+
+                                    {% if type == 'exam' %}
+                                        {{ dashboard.exam(item) }}
+                                    {% elseif type == 'lesson' %}
+                                        {{ dashboard.lesson(item) }}
+                                    {% elseif type == 'supervision' %}
+                                        {{ dashboard.supervision(item) }}
+                                    {% elseif type == 'substitution' %}
+                                        {{ dashboard.substitution(item) }}
+                                    {% elseif type == 'appointment' %}
+                                        {{ dashboard.appointment(item) }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.id %}
+                        {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
+                        {% set dateParam = selectedDate|date('Y-m-d') %}
 
-    <div class="card">
-        <div class="card-header">
-            <ul class="nav nav-tabs card-header-tabs">
-                {% for day in days %}
-                    <li class="nav-item">
-                        <a class="nav-link{% if selectedDate == day %} active{% endif %}" href="{{ path('dashboard', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
-                            <i class="fa fa-calendar"></i> {{ day.format('w')|weekday }}
-                            <div class="text-muted">{{ day.format('d.m.Y') }}</div>
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+                        {% if teacherFilter.teachers|length > 0 %}
+                            {% include "_filter/teacher.html.twig" with { params: {} } %}
+                        {% endif %}
 
-        <div class="card-body">
-            {% if view.empty %}
-                <div class="bs-callout bs-callout-info">
-                    <h4>{{ 'info.label'|trans }}</h4>
+                        {% if studentFilter.studentGradeGroups|length > 0 %}
+                            {% include "_filter/student.html.twig" with { params: { userType: userTypeParam, date: dateParam } } %}
+                        {% endif %}
 
-                    <p>{{ 'dashboard.empty'|trans }}</p>
+                        {% if userTypeFilter.types|length > 0 %}
+                            {% include "_filter/user_type.html.twig" with { params: { studentId: studentParam, date: dateParam } } %}
+                        {% endif %}
+
+                        <form role="form" method="get" class="form hidden-print">
+                            {% include "_filter/_params.html.twig" with { params: currentFilter } %}
+
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
+                            </div>
+
+                            <!--
+                            <div class="form-group">
+                                <label for="usertype">{{ 'label.date'|trans }}:</label>
+                                <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
+                            </div>-->
+                        </form>
+                    </div>
                 </div>
-            {% endif %}
-
-            {# Messages #}
-            {% for message in view.messages %}
-                {% include "_includes/message.html.twig" with { message: message } only %}
-            {% endfor %}
-
-            {# Daily infos #}
-            {% for infotext in view.infotexts %}
-                {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
-            {% endfor %}
-
-            {# Loop lessons #}
-            {% for lesson in view.lessons %}
-                {% if view.itemsBefore(lesson)|length > 0 %}
-                    <h3>{{ 'dashboard.before_lesson'|trans({'%lesson%': lesson }) }}</h3>
-
-                    {% for item in view.itemsBefore(lesson) %}
-                        {% set type = item.blockName %}
-
-                        {% if type == 'supervision' %}
-                            {{ dashboard.supervision(item) }}
-                        {% elseif type == 'substitution' %}
-                            {{ dashboard.substitution(item) }}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-
-                {% if view.items(lesson)|length > 0 %}
-                    <h3>{{ 'dashboard.lesson'|trans({'%lesson%': lesson }) }}</h3>
-
-                    {% for item in view.items(lesson) %}
-                        {% set type = item.blockName %}
-
-                        {% if type == 'exam' %}
-                            {{ dashboard.exam(item) }}
-                        {% elseif type == 'lesson' %}
-                            {{ dashboard.lesson(item) }}
-                        {% elseif type == 'supervision' %}
-                            {{ dashboard.supervision(item) }}
-                        {% elseif type == 'substitution' %}
-                            {{ dashboard.substitution(item) }}
-                        {% elseif type == 'appointment' %}
-                            {{ dashboard.appointment(item) }}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock %}

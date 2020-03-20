@@ -14,139 +14,138 @@
 {% endmacro %}
 
 {% block content %}
-    {% include "_messages.html.twig" %}
-
     {% set currentFilter = { studentId: studentFilter.currentStudent ? studentFilter.currentStudent.id : null, gradeId: gradeFilter.currentGrade ? gradeFilter.currentGrade.id : null, teacherAcronym: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.acronym : null } %}
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                {% if teacherFilter.teachers|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/teacher.html.twig" %}
-                    </div>
-                {% endif %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% include "_messages.html.twig" %}
 
-                {% if studentFilter.studentGradeGroups|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/student.html.twig" %}
-                    </div>
-                {% endif %}
-
-                {% if gradeFilter.grades|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/grade.html.twig" %}
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="btn-group" role="group" aria-label="{{ 'plans.substitutions.view.label'|trans }}" title="{{ 'plans.substitutions.view.label'|trans }}">
-                        <a href="{{ path('substitutions', currentFilter|merge({'view': 'table'})) }}" class="btn btn-outline-secondary {% if view == 'table' %}active{% endif %}">
-                            <i class="fa fa-table"></i> {{ 'plans.substitutions.view.table'|trans }}
-                        </a>
-
-                        <a href="{{ path('substitutions', currentFilter|merge({'view': 'card'})) }}" class="btn btn-outline-secondary {% if view == 'card' %}active{% endif %}">
-                            <i class="fa fa-list"></i> {{ 'plans.substitutions.view.card'|trans }}
-                        </a>
-                    </div>
-
-                    <div class="btn-group" role="group" aria-label="{{ 'plans.substitutions.group_by.label'|trans }}" title="{{ 'plans.substitutions.group_by.label'|trans }}">
-                        <a href="{{ path('substitutions', currentFilter|merge({'groupBy': 'teachers'})) }}" class="btn btn-outline-secondary {% if groupBy == 'teachers' %}active{% endif %}">
-                            <i class="fa fa-table"></i> {{ 'plans.substitutions.group_by.teachers'|trans }}
-                        </a>
-
-                        <a href="{{ path('substitutions', currentFilter|merge({'groupBy': 'grades'})) }}" class="btn btn-outline-secondary {% if groupBy == 'grades' %}active{% endif %}">
-                            <i class="fa fa-list"></i> {{ 'plans.substitutions.group_by.grades'|trans }}
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <ul class="nav nav-tabs card-header-tabs">
-                {% for day in days %}
-                    <li class="nav-item">
-                        <a class="nav-link{% if selectedDate == day %} active{% endif %}" href="{{ path('substitutions', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
-                            <i class="fa fa-calendar"></i> {{ day.format('w')|weekday }}
-                            <div class="text-muted">{{ day.format('d.m.Y') }}</div>
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div class="card-body">
-            {% for infotext in infotexts %}
-                {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
-            {% endfor %}
-
-            {% if groups|length == 0 %}
-                <div class="bs-callout bs-callout-info">
-                    <h4>{{ 'info.label'|trans }}</h4>
-                    <p>{{ 'plans.substitutions.empty'|trans }}</p>
-                </div>
-            {% endif %}
-
-            {% for group in groups %}
-                <h5 class="card-title">
-                    {% if group.grade is defined %}{{ group.grade.name }}{% endif %}
-                    {% if group.teacher is defined %}{{ group.teacher.acronym }} ({{ group.teacher|teacher(false) }}){% endif %}
-                </h5>
-
-                {% if view == 'table' %}
-                    <table class="table table-striped table-bordered table-hover">
-                        <colgroup>
-                            <col class="column-md">
-                            <col class="column-lg">
-                            <col class="column-md">
-                            <col class="column-md">
-                            <col class="column-lg">
-                            <col class="column-md">
-                            <col>
-                        </colgroup>
-                        <thead>
-                        <tr>
-                            <th>{{ 'label.lesson'|trans }}</th>
-                            <th>{{ 'label.study_group'|trans }}</th>
-                            <th>{{ 'label.room'|trans }}</th>
-                            <th>{{ 'label.subject'|trans }}</th>
-                            <th>{{ 'label.teacher'|trans }}</th>
-                            <th>{{ 'label.type'|trans }}</th>
-                            <th>{{ 'label.remark'|trans }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% for substitution in group.substitutions %}
-                                {% set duration = substitution.lessonEnd - substitution.lessonStart %}
-                                <tr>
-                                    <td>
-                                        {% if substitution.startsBefore %}
-                                            {{ substitution.lessonStart|before_lesson }}
-                                        {% else %}
-                                            {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}</td>
-                                    <td>{{ _self.replacement(substitution.room, substitution.replacementRoom) }}</td>
-                                    <td>{{ _self.replacement(substitution.subject, substitution.replacementSubject) }}</td>
-                                    <td>{{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}</td>
-                                    <td>{{ substitution.type }}</td>
-                                    <td>{{ substitution.remark }}</td>
-                                </tr>
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            {% for day in days %}
+                                <li class="nav-item">
+                                    <a class="nav-link{% if selectedDate == day %} active{% endif %}" href="{{ path('substitutions', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
+                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday }}
+                                        <div class="text-muted">{{ day.format('d.m.Y') }}</div>
+                                    </a>
+                                </li>
                             {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    {% for substitution in group.substitutions %}
-                        {% include "_includes/substitution.html.twig" with { substitution: substitution } only %}
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="card-body">
+                        {% for infotext in infotexts %}
+                            {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
+                        {% endfor %}
+
+                        {% if groups|length == 0 %}
+                            <div class="bs-callout bs-callout-info">
+                                <h4>{{ 'info.label'|trans }}</h4>
+                                <p>{{ 'plans.substitutions.empty'|trans }}</p>
+                            </div>
+                        {% endif %}
+
+                        {% for group in groups %}
+                            <h5 class="card-title">
+                                {% if group.grade is defined %}{{ group.grade.name }}{% endif %}
+                                {% if group.teacher is defined %}{{ group.teacher.acronym }} ({{ group.teacher|teacher(false) }}){% endif %}
+                            </h5>
+
+                            {% if view == 'table' %}
+                                <table class="table table-striped table-bordered table-hover">
+                                    <colgroup>
+                                        <col class="column-md">
+                                        <col class="column-lg">
+                                        <col class="column-md">
+                                        <col class="column-md">
+                                        <col class="column-lg">
+                                        <col class="column-md">
+                                        <col>
+                                    </colgroup>
+                                    <thead>
+                                    <tr>
+                                        <th>{{ 'label.lesson'|trans }}</th>
+                                        <th>{{ 'label.study_group'|trans }}</th>
+                                        <th>{{ 'label.room'|trans }}</th>
+                                        <th>{{ 'label.subject'|trans }}</th>
+                                        <th>{{ 'label.teacher'|trans }}</th>
+                                        <th>{{ 'label.type'|trans }}</th>
+                                        <th>{{ 'label.remark'|trans }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for substitution in group.substitutions %}
+                                            {% set duration = substitution.lessonEnd - substitution.lessonStart %}
+                                            <tr>
+                                                <td>
+                                                    {% if substitution.startsBefore %}
+                                                        {{ substitution.lessonStart|before_lesson }}
+                                                    {% else %}
+                                                        {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}</td>
+                                                <td>{{ _self.replacement(substitution.room, substitution.replacementRoom) }}</td>
+                                                <td>{{ _self.replacement(substitution.subject, substitution.replacementSubject) }}</td>
+                                                <td>{{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}</td>
+                                                <td>{{ substitution.type }}</td>
+                                                <td>{{ substitution.remark }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                {% for substitution in group.substitutions %}
+                                    {% include "_includes/substitution.html.twig" with { substitution: substitution } only %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        {% if teacherFilter.teachers|length > 0 %}
+                            {% include "_filter/teacher.html.twig" %}
+                        {% endif %}
+
+                        {% if studentFilter.studentGradeGroups|length > 0 %}
+                            {% include "_filter/student.html.twig" %}
+                        {% endif %}
+
+                        {% if gradeFilter.grades|length > 0 %}
+                            {% include "_filter/grade.html.twig" %}
+                        {% endif %}
+
+                        <div class="form-group">
+                            <div class="btn-group" role="group" aria-label="{{ 'plans.substitutions.view.label'|trans }}" title="{{ 'plans.substitutions.view.label'|trans }}">
+                                <a href="{{ path('substitutions', currentFilter|merge({'view': 'table'})) }}" class="btn btn-outline-secondary {% if view == 'table' %}active{% endif %}">
+                                    <i class="fa fa-table"></i> {{ 'plans.substitutions.view.table'|trans }}
+                                </a>
+
+                                <a href="{{ path('substitutions', currentFilter|merge({'view': 'card'})) }}" class="btn btn-outline-secondary {% if view == 'card' %}active{% endif %}">
+                                    <i class="fa fa-list"></i> {{ 'plans.substitutions.view.card'|trans }}
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="btn-group" role="group" aria-label="{{ 'plans.substitutions.group_by.label'|trans }}" title="{{ 'plans.substitutions.group_by.label'|trans }}">
+                                <a href="{{ path('substitutions', currentFilter|merge({'groupBy': 'teachers'})) }}" class="btn btn-outline-secondary {% if groupBy == 'teachers' %}active{% endif %}">
+                                    <i class="fa fa-table"></i> {{ 'plans.substitutions.group_by.teachers'|trans }}
+                                </a>
+
+                                <a href="{{ path('substitutions', currentFilter|merge({'groupBy': 'grades'})) }}" class="btn btn-outline-secondary {% if groupBy == 'grades' %}active{% endif %}">
+                                    <i class="fa fa-list"></i> {{ 'plans.substitutions.group_by.grades'|trans }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

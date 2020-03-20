@@ -11,75 +11,81 @@
 {% endblock %}
 
 {% block content %}
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-4 col-sm-4 col-xs-12">
-                    {% include "_filter/user_type.html.twig" %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if groups|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <h4>{{ 'info.label'|trans }}</h4>
+
+                        <p>{{ 'messages.overview.empty'|trans }}</p>
+                    </div>
+                {% endif %}
+
+                {% for group in groups %}
+                    <div class="card">
+                        <div class="card-header">
+                            {% if group.expired %}{{ 'admin.messages.overview.expired'|trans }}{% else %}{{ 'admin.messages.overview.active'|trans }}{% endif %} <span class="badge badge-pill badge-primary">{{ group.messages|length }}</span>
+                        </div>
+
+                        <table class="table table-striped table-bordered table-hover">
+                            <colgroup>
+                                <col>
+                                <col class="column-320">
+                                <col class="column-320">
+                                <col class="column-lg">
+                            </colgroup>
+
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.title'|trans }}</th>
+                                <th>{{ 'label.visibility'|trans }}</th>
+                                <th>{{ 'label.study_groups'|trans({'%count%': 0}) }}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for message in group.messages %}
+                                <tr>
+                                    <td>{{ message.title }}</td>
+                                    <td>{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only %}</td>
+                                    <td>{% include "_includes/study_groups.html.twig" with { studyGroups: message.studyGroups, id: message.id } only %}</td>
+                                    <td>
+                                        {% if is_granted('edit', message) %}
+                                            <a href="{{ path('edit_message', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}"><i class="fa fa-edit"></i></a>
+
+                                            {% if message.mustConfirm %}
+
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if is_granted('remove', message) %}
+                                            <a href="{{ path('remove_message', { id: message.id }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}"><i class="fa fa-trash"></i></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('add_message') }}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-plus"></i> {{ 'messages.add.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/user_type.html.twig" %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    {% for group in groups %}
-        <div class="card">
-            <div class="card-header">
-                {% if group.expired %}{{ 'admin.messages.overview.expired'|trans }}{% else %}{{ 'admin.messages.overview.active'|trans }}{% endif %} <span class="badge badge-pill badge-primary">{{ group.messages|length }}</span>
-            </div>
-
-            <table class="table table-striped table-bordered table-hover">
-                <colgroup>
-                    <col>
-                    <col class="column-320">
-                    <col class="column-320">
-                    <col class="column-lg">
-                </colgroup>
-
-                <thead>
-                <tr>
-                    <th>{{ 'label.title'|trans }}</th>
-                    <th>{{ 'label.visibility'|trans }}</th>
-                    <th>{{ 'label.study_groups'|trans({'%count%': 0}) }}</th>
-                    <th></th>
-                </tr>
-                </thead>
-
-                <tbody>
-                {% for message in group.messages %}
-                    <tr>
-                        <td>{{ message.title }}</td>
-                        <td>{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only %}</td>
-                        <td>{% include "_includes/study_groups.html.twig" with { studyGroups: message.studyGroups, id: message.id } only %}</td>
-                        <td>
-                            {% if is_granted('edit', message) %}
-                                <a href="{{ path('edit_message', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}"><i class="fa fa-edit"></i></a>
-
-                                {% if message.mustConfirm %}
-
-                                {% endif %}
-                            {% endif %}
-                            {% if is_granted('remove', message) %}
-                                <a href="{{ path('remove_message', { id: message.id }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}"><i class="fa fa-trash"></i></a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% endfor %}
-
-    {% if groups|length == 0 %}
-    <div class="bs-callout bs-callout-info">
-        <h4>{{ 'info.label'|trans }}</h4>
-
-        <p>{{ 'messages.overview.empty'|trans }}</p>
-    </div>
-    {% endif %}
-
-    <div class="buttons">
-        <a href="{{ path('add_message') }}" class="btn btn-primary btn-sm">
-            <i class="fa fa-plus"></i> {{ 'messages.add.label'|trans }}
-        </a>
     </div>
 {% endblock %}

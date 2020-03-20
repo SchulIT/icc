@@ -10,63 +10,64 @@
 {% endblock %}
 
 {% block content %}
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                {% set studyGroupParam = (studyGroupFilter.currentStudyGroup == null) ? null : studyGroupFilter.currentStudyGroup.id %}
-                {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if categories|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <h4>{{ 'info.label'|trans }}</h4>
 
-                {% if studyGroupFilter.studyGroupGroups|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/study_group.html.twig" with { grouped: false, params: { q: q, userType: userTypeParam } } %}
+                        {% if q is not null %}
+                            <p>{{ 'documents.empty_search'|trans }}</p>
+                        {% else %}
+                            <p>{{ 'documents.empty'|trans }}</p>
+                        {% endif %}
                     </div>
-                {% endif %}
+                {% else %}
+                    {% for group in categories %}
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="far fa-folder"></i> {{ group.category.name }} <span class="badge badge-primary badge-pill">{{ group.documents|length }}</span>
+                            </div>
 
-                {% if userTypeFilter.types|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/user_type.html.twig" with { params: { q: q, studyGroupId: studyGroupParam } } %}
+                            <div class="list-group list-group-flush">
+                                {% for document in group.documents %}
+                                    <a href="{{ path('show_document', { id: document.id, slug: document.slug }) }}" class="list-group-item list-group-item-action"><i class="far fa-file"></i> {{ document.title }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% if is_granted('new-document') %}
+                            <a href="{{ path('admin_add_document') }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-plus"></i> {{ 'admin.documents.add.label'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
-                {% endif %}
+                </div>
 
-                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                    {% include "_filter/query.html.twig" with { params: { q: q, studyGroupId: studyGroupParam }, route: 'documents' } %}
+                <div class="card">
+                    <div class="card-body">
+                            {% set studyGroupParam = (studyGroupFilter.currentStudyGroup == null) ? null : studyGroupFilter.currentStudyGroup.id %}
+                            {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
+
+                            {% if studyGroupFilter.studyGroupGroups|length > 0 %}
+                                {% include "_filter/study_group.html.twig" with { grouped: false, params: { q: q, userType: userTypeParam } } %}
+                            {% endif %}
+
+                            {% if userTypeFilter.types|length > 0 %}
+                                {% include "_filter/user_type.html.twig" with { params: { q: q, studyGroupId: studyGroupParam } } %}
+                            {% endif %}
+
+                            {% include "_filter/query.html.twig" with { params: { q: q, studyGroupId: studyGroupParam }, route: 'documents' } %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    {% if categories|length == 0 %}
-
-            <div class="bs-callout bs-callout-info">
-                <h4>{{ 'info.label'|trans }}</h4>
-
-                {% if q is not null %}
-                    <p>{{ 'documents.empty_search'|trans }}</p>
-                {% else %}
-                    <p>{{ 'documents.empty'|trans }}</p>
-                {% endif %}
-            </div>
-    {% else %}
-        {% for group in categories %}
-            <div class="card">
-                <div class="card-header">
-                    <i class="far fa-folder"></i> {{ group.category.name }} <span class="badge badge-primary badge-pill">{{ group.documents|length }}</span>
-                </div>
-
-                <div class="list-group list-group-flush">
-                    {% for document in group.documents %}
-                        <a href="{{ path('show_document', { id: document.id, slug: document.slug }) }}" class="list-group-item list-group-item-action"><i class="far fa-file"></i> {{ document.title }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endfor %}
-    {% endif %}
-
-    <div class="buttons">
-        {% if is_granted('new-document') %}
-            <a href="{{ path('admin_add_document') }}" class="btn btn-primary btn-sm">
-                <i class="fa fa-plus"></i> {{ 'admin.documents.add.label'|trans }}
-            </a>
-        {% endif %}
     </div>
 {% endblock %}

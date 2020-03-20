@@ -1,77 +1,95 @@
 {% set mustConfirm = message.mustConfirm and is_granted('confirm', message) and not is_confirmed(message) %}
 
-<div class="card {% if mustConfirm %}border-danger{% endif %}">
+<div class="card {% if mustConfirm %}border-warning{% endif %}">
     <div class="card-body">
-        {% if is_granted('dismiss', message) %}
-            {% if is_dismissed(message) %}
-                <a href="{{ path('reenable_message', { id: message.id }) }}" class="close">
-                    <span aria-hidden="true"><i class="fa fa-reply"></i></span>
-                </a>
-            {% else %}
-                <a href="{{ path('dismiss_message', { id: message.id }) }}" class="close">
-                    <span aria-hidden="true"><i class="fa fa-times"></i></span>
-                </a>
+        <div class="float-right ml-2">
+
+            <div class="btn-group d-none d-md-inline-flex" role="group">
+                <button type="button" class="btn btn-sm btn-outline-secondary" title="{{ message.createdBy|user }}">
+                    <i class="fa fa-user"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" title="{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only  %}">
+                    <i class="fa fa-users"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" title="{{ message.createdBy|user }}">
+                    <i class="fa fa-graduation-cap"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" title="{{ message.updatedAt|format_datetime }}">
+                    <i class="fa fa-calendar"></i>
+                </button>
+                <!--{% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, id: message.id } only  %}-->
+            </div>
+
+            {% if message.mustConfirm %}
+                {% if not is_confirmed(message) and is_granted('confirm', message) %}
+                    <a href="{{ path('confirm_message', { id: message.id }) }}" class="btn btn-warning btn-sm" title="{{ 'actions.confirm'|trans }}">
+                        <i class="fa fa-check"></i>
+                    </a>
+                {% else %}
+                    <button type="button" class="btn btn-success btn-sm" title="{{ 'messages.confirm.confirmed'|trans }}">
+                        <i class="fa fa-check"></i>
+                    </button>
+                {% endif %}
             {% endif %}
-        {% endif %}
+
+            <div class="btn-group" role="group">
+                {% if message.downloadsEnabled %}
+                    <a href="{{ path('show_message', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.downloads.info'|trans }}">
+                        <i class="fa fa-download"></i>
+                    </a>
+                {% endif %}
+                {% if message.downloadsEnabled %}
+                    <a href="{{ path('show_message', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.uploads.info'|trans }}">
+                        <i class="fa fa-upload"></i>
+                    </a>
+                {% endif %}
+            </div>
+
+            {% if is_granted('edit', message) or is_granted('remove', message) %}
+                <div class="btn-group" role="group">
+                    {% if is_granted('edit', message) %}
+                        <a href="{{ path('edit_message', { id: message.id, ref: 'view' }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
+                            <i class="fa fa-edit"></i>
+                        </a>
+
+                        {% if message.mustConfirm %}
+                            <a href="{{ path('message_confirmations', { id: message.id })}}" class="btn btn-primary btn-sm" title="{{ 'admin.messages.confirmations.label'|trans }}">
+                                <i class="fas fa-tasks"></i>
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                    {% if is_granted('remove', message) %}
+                        <a href="{{ path('remove_message', { id: message.id })}}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if is_granted('dismiss', message) %}
+                {% if is_dismissed(message) %}
+                    <a href="{{ path('reenable_message', { id: message.id }) }}" class="btn btn-secondary btn-sm">
+                        <span aria-hidden="true"><i class="fas fa-eye"></i></span>
+                    </a>
+                {% else %}
+                    <a href="{{ path('dismiss_message', { id: message.id }) }}" class="btn btn-secondary btn-sm">
+                        <span aria-hidden="true"><i class="fas fa-eye-slash"></i></span>
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
 
         <h5 class="card-title"><a href="{{ path('show_message', { id: message.id }) }}">{{ message.title }}</a></h5>
 
         {% if not is_dismissed(message) %}
-
-        {{ message.content|markdown }}
-
-        <hr>
-
-        <i class="fa fa-user"></i> {{ message.createdBy|user }}
-        <i class="fa fa-users"></i> {% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only  %}
-        <i class="fa fa-graduation-cap"></i> {% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, id: message.id } only  %}
-        <i class="fa fa-calendar"></i> {{ message.updatedAt|format_datetime }}
-
+            {{ message.content|markdown }}
         {% endif %}
     </div>
 
-    {% if message.mustConfirm and not is_dismissed(message) %}
-    <div class="card-footer">
-        {% if is_granted('confirm', message) %}
-            {% if not is_confirmed(message) %}
-                <span><i class="fa fa-info-circle"></i> {{ 'message.must_confirm'|trans }}</span> <a href="{{ path('confirm_message', { id: message.id }) }}" class="btn btn-danger btn-sm"><i class="fa fa-check"></i> {{ 'actions.confirm'|trans }}</a>
-            {% else %}
-                <i class="fa fa-check"></i> {{ 'messages.confirm.confirmed'|trans }}
-            {% endif %}
-        {% else %}
-            {{ 'messages.confirm.info'|trans }}
-        {% endif %}
-    </div>
-    {% endif %}
-    {% if message.downloadsEnabled %}
-        <div class="card-footer">
-            <i class="fa fa-download"></i> <a href="{{ path('show_message', { id: message.id }) }}">{{ 'messages.downloads.info'|trans }}</a>
-        </div>
-    {% endif %}
-    {% if message.downloadsEnabled %}
-        <div class="card-footer">
-            <i class="fa fa-upload"></i> <a href="{{ path('show_message', { id: message.id }) }}">{{ 'messages.uploads.info'|trans }}</a>
+    {% if message.mustConfirm and not is_dismissed(message) and not is_confirmed(message) %}
+        <div class="card-footer bg-warning">
+            <i class="fa fa-info-circle"></i> {% if is_granted('confirm', message) %}{{ 'messages.confirm.prompt'|trans }}{% else %}{{ 'messages.confirm.info'|trans }}{% endif %}
         </div>
     {% endif %}
 
-    {% if is_granted('edit', message) or is_granted('remove', message) %}
-        <div class="card-footer">
-            {% if is_granted('edit', message) %}
-                <a href="{{ path('edit_message', { id: message.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
-                    <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
-                </a>
-
-                {% if message.mustConfirm %}
-                <a href="{{ path('message_confirmations', { id: message.id })}}" class="btn btn-secondary btn-sm">
-                    <i class="fa fa-clipboard-list"></i> {{ 'admin.messages.confirmations.label'|trans }}
-                </a>
-                {% endif %}
-            {% endif %}
-            {% if is_granted('remove', message) %}
-                <a href="{{ path('remove_message', { id: message.id })}}" class="btn btn-danger btn-sm">
-                    <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
-                </a>
-            {% endif %}
-        </div>
-    {% endif %}
 </div>

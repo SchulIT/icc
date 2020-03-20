@@ -10,149 +10,148 @@
 {% endblock %}
 
 {% block content %}
-    {% include "_messages.html.twig" %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% include "_messages.html.twig" %}
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                    {% include "_filter/grade.html.twig" %}
-                </div>
+                {% if studentFilter.currentStudent != null %}
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'lists.tuitions.heading.student'|trans({'%student%': studentFilter.currentStudent|student }) }} <span class="badge badge-secondary">{{ studentFilter.currentStudent.grade.name }}</span>
+                        </div>
 
-                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                    {% include "_filter/teacher.html.twig" %}
-                </div>
+                        <table class="table table-striped table-bordered">
+                            <colgroup>
 
-                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                    {% include "_filter/student.html.twig" %}
+                            </colgroup>
+
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.name'|trans }}</th>
+                                <th>{{ 'label.subject'|trans }}</th>
+                                <th>{{ 'label.teacher'|trans }}</th>
+                                <th>{{ 'lists.tuitions.type'|trans }}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for tuition in tuitions %}
+                            <tr>
+                                <td>{{ tuition.name }}</td>
+                                <td>{{ tuition.subject.name }}</td>
+                                <td>
+                                    {% if tuition.teacher is not null %}
+                                        <a href="{{ path('list_tuitions', { teacherAcronym: tuition.teacher.acronym }) }}">{{ tuition.teacher|teacher }}</a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ memberships[tuition.externalId] }}
+                                </td>
+                                <td>
+                                    <a href="{{ path('list_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% elseif gradeFilter.currentGrade != null %}
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'lists.tuitions.heading.grade'|trans({'%grade%': gradeFilter.currentGrade.name }) }}
+                        </div>
+
+                        <table class="table table-striped table-bordered">
+                            <colgroup>
+
+                            </colgroup>
+
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.name'|trans }}</th>
+                                <th>{{ 'label.subject'|trans }}</th>
+                                <th>{{ 'label.teacher'|trans }}</th>
+                                <th>{{ 'label.study_group'|trans }}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for tuition in tuitions %}
+                                <tr>
+                                    <td>{{ tuition.name }}</td>
+                                    <td>{{ tuition.subject.name }}</td>
+                                    <td>{{ tuition.teacher|teacher }}</td>
+                                    <td>
+                                        <a href="{{ path('list_studygroups', { studyGroupId: tuition.studyGroup.id}) }}">{{ tuition.studyGroup.name }}</a>
+                                        <span class="badge badge-primary">
+                                            {{ 'label.students'|trans({'%count%': tuition.studyGroup.memberships|length }) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('list_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% elseif teacherFilter.currentTeacher != null %}
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'lists.tuitions.heading.teacher'|trans({'%teacher%': teacherFilter.currentTeacher|teacher }) }}
+                        </div>
+
+                        <table class="table table-striped table-bordered">
+                            <colgroup>
+
+                            </colgroup>
+
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.name'|trans }}</th>
+                                <th>{{ 'label.subject'|trans }}</th>
+                                <th>{{ 'label.study_group'|trans }}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for tuition in tuitions %}
+                                <tr>
+                                    <td>{{ tuition.name }}</td>
+                                    <td>{{ tuition.subject.name }}</td>
+                                    <td>
+                                        <a href="{{ path('list_studygroups', { studyGroupId: tuition.studyGroup.id }) }}">{{ tuition.studyGroup.name }}</a>
+                                        <span class="badge badge-primary">
+                                            {{ 'label.students'|trans({'%count%': tuition.studyGroup.memberships|length }) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('list_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+
+                {% endif %}
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/grade.html.twig" %}
+
+                        {% include "_filter/teacher.html.twig" %}
+
+                        {% include "_filter/student.html.twig" %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    {% if studentFilter.currentStudent != null %}
-        <div class="card">
-            <div class="card-header">
-                {{ 'lists.tuitions.heading.student'|trans({'%student%': studentFilter.currentStudent|student }) }} <span class="badge badge-secondary">{{ studentFilter.currentStudent.grade.name }}</span>
-            </div>
-
-            <table class="table table-striped table-bordered">
-                <colgroup>
-
-                </colgroup>
-
-                <thead>
-                <tr>
-                    <th>{{ 'label.name'|trans }}</th>
-                    <th>{{ 'label.subject'|trans }}</th>
-                    <th>{{ 'label.teacher'|trans }}</th>
-                    <th>{{ 'lists.tuitions.type'|trans }}</th>
-                    <th></th>
-                </tr>
-                </thead>
-
-                <tbody>
-                {% for tuition in tuitions %}
-                <tr>
-                    <td>{{ tuition.name }}</td>
-                    <td>{{ tuition.subject.name }}</td>
-                    <td>
-                        {% if tuition.teacher is not null %}
-                            <a href="{{ path('list_tuitions', { teacherAcronym: tuition.teacher.acronym }) }}">{{ tuition.teacher|teacher }}</a>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {{ memberships[tuition.externalId] }}
-                    </td>
-                    <td>
-                        <a href="{{ path('list_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% elseif gradeFilter.currentGrade != null %}
-        <div class="card">
-            <div class="card-header">
-                {{ 'lists.tuitions.heading.grade'|trans({'%grade%': gradeFilter.currentGrade.name }) }}
-            </div>
-
-            <table class="table table-striped table-bordered">
-                <colgroup>
-
-                </colgroup>
-
-                <thead>
-                <tr>
-                    <th>{{ 'label.name'|trans }}</th>
-                    <th>{{ 'label.subject'|trans }}</th>
-                    <th>{{ 'label.teacher'|trans }}</th>
-                    <th>{{ 'label.study_group'|trans }}</th>
-                    <th></th>
-                </tr>
-                </thead>
-
-                <tbody>
-                {% for tuition in tuitions %}
-                    <tr>
-                        <td>{{ tuition.name }}</td>
-                        <td>{{ tuition.subject.name }}</td>
-                        <td>{{ tuition.teacher|teacher }}</td>
-                        <td>
-                            <a href="{{ path('list_studygroups', { studyGroupId: tuition.studyGroup.id}) }}">{{ tuition.studyGroup.name }}</a>
-                            <span class="badge badge-primary">
-                                {{ 'label.students'|trans({'%count%': tuition.studyGroup.memberships|length }) }}
-                            </span>
-                        </td>
-                        <td>
-                            <a href="{{ path('list_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% elseif teacherFilter.currentTeacher != null %}
-        <div class="card">
-            <div class="card-header">
-                {{ 'lists.tuitions.heading.teacher'|trans({'%teacher%': teacherFilter.currentTeacher|teacher }) }}
-            </div>
-
-            <table class="table table-striped table-bordered">
-                <colgroup>
-
-                </colgroup>
-
-                <thead>
-                <tr>
-                    <th>{{ 'label.name'|trans }}</th>
-                    <th>{{ 'label.subject'|trans }}</th>
-                    <th>{{ 'label.study_group'|trans }}</th>
-                    <th></th>
-                </tr>
-                </thead>
-
-                <tbody>
-                {% for tuition in tuitions %}
-                    <tr>
-                        <td>{{ tuition.name }}</td>
-                        <td>{{ tuition.subject.name }}</td>
-                        <td>
-                            <a href="{{ path('list_studygroups', { studyGroupId: tuition.studyGroup.id }) }}">{{ tuition.studyGroup.name }}</a>
-                            <span class="badge badge-primary">
-                                {{ 'label.students'|trans({'%count%': tuition.studyGroup.memberships|length }) }}
-                            </span>
-                        </td>
-                        <td>
-                            <a href="{{ path('list_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-
-    {% endif %}
 {% endblock %}

@@ -219,7 +219,7 @@ plans:
         filter:
             label: Raum suchen
             name:
-                label: "Name/Beschreibung"
+                label: Name
                 help: "Hier kann ein Suchbegriff eingegeben werden"
             seats:
                 help: "Hier kann die minimale Anzahl an Sitzplätzen eingegeben werden"
@@ -274,6 +274,7 @@ messages:
 
     confirm:
         info: Diese Mitteilung muss von der Zielgruppe bestätigt werden.
+        prompt: Diese Mitteilung bitte nach dem Lesen durch Abhaken in der Kopfzeile bestätigen.
         success: Mitteilung erfolgreich bestätigt.
         confirmed: Die Mitteilung wurde bereits bestätigt.
 

@@ -10,115 +10,122 @@
 {% endblock %}
 
 {% block content %}
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">{{ 'plans.rooms.filter.label'|trans }}</h5>
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% for room in rooms %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ room.name }}</h5>
 
-            <form method="post" role="form">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                            <div class="custom-control custom-checkbox">
-                                <input class="mr-1 custom-control-input" type="checkbox" id="check-name" name="name" {% if query.hasName() %} checked{% endif %}>
-                                <label class="custom-control-label" for="check-name">{{ 'plans.rooms.filter.name.label'|trans }}</label>
-                            </div>
+                            <p>
+                                <strong>{{ 'plans.rooms.seats'|trans }}: </strong>
+                                {{ room.seats }}
+                            </p>
+
+                            <p>
+                                {% for tagInfo in room.tags %}
+                                    <span class="badge badge-secondary">
+                                        <i class="fa fa-check"></i> {{ tagInfo.tag.name }}{% if tagInfo.tag.hasValue %}: {{ tagInfo.value() }}{% endif %}
+                                    </span>
+                                {% endfor %}
+                            </p>
+
+                            {% if room.description is not empty %}
+                                <hr />
+
+                                <p>
+                                    {{ room.description }}
+                                </p>
+                            {% endif %}
+
+                            <a href="{{ path('timetable', { roomId: room.id }) }}" class="btn btn-outline-primary btn-sm">
+                                {{ 'plans.rooms.timetable'|trans }}
+                            </a>
                         </div>
-                    </div>
-
-                    <input type="text" name="name-value" class="form-control input-sm" value="{{ query.getName() }}" data-enable="#check-name">
-
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <i class="fa fa-info-circle" title="{{ 'plans.rooms.filter.name.help'|trans }}" data-toggle="tooltip"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                            <div class="custom-control custom-checkbox">
-                                <input class="mr-1 custom-control-input" type="checkbox" id="check-seats" name="seats" {% if query.hasSeats() %} checked{% endif %}>
-                                <label for="check-seats" class="custom-control-label">
-                                    {{ 'plans.rooms.seats'|trans }}
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <input type="number" min="0" name="seats-value" class="form-control input-sm" value="{{ query.getSeatsValueOrDefault() }}" data-enable="#check-seats">
-
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <i class="fa fa-info-circle" title="{{ 'plans.rooms.filter.seats.help'|trans }}" data-toggle="tooltip"></i>
-                        </div>
-                    </div>
-                </div>
-
-                {% for tag in tags %}
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">
-                                <div class="custom-control custom-checkbox">
-                                    <input class="mr-1 custom-control-input" type="checkbox" id="check-tag-{{ tag.getId() }}" name="tag-{{ tag.getId() }}" value="true" {% if query.hasTag(tag) %} checked{% endif %}>
-                                    <label for="check-tag-{{ tag.getId() }}" class="custom-control-label">
-                                        {{ tag.getName() }}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        {% if tag.hasValue() %}
-                            <input type="number" min="0" name="tag-{{ tag.getId() }}-value" class="form-control input-sm" value="{{ query.getValueOrDefault(tag) }}" data-enable="#check-tag-{{ tag.getId() }}">
-                        {% endif %}
-
-                        {% if not tag.getDescription() is empty %}
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <i class="fa fa-info-circle" title="{{ tag.getDescription() }}" data-toggle="tooltip"></i>
-                            </div>
-                        </div>
-                        {% endif %}
                     </div>
                 {% endfor %}
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'plans.rooms.filter.label'|trans }}</h5>
 
-                <button type="submit" name="submit" value="" class="btn btn-primary btn-sm">
-                    <i class="fa fa-search"></i> {{ 'actions.search'|trans }}
-                </button>
-            </form>
-        </div>
-    </div>
+                        <form method="post" role="form">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="mr-1 custom-control-input" type="checkbox" id="check-name" name="name" {% if query.hasName() %} checked{% endif %}>
+                                            <label class="custom-control-label" for="check-name">{{ 'plans.rooms.filter.name.label'|trans }}</label>
+                                        </div>
+                                    </div>
+                                </div>
 
-    {% for room in rooms %}
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">{{ room.name }}</h5>
+                                <input type="text" name="name-value" class="form-control input-sm" value="{{ query.getName() }}" data-enable="#check-name">
 
-                <p>
-                    <strong>{{ 'plans.rooms.seats'|trans }}: </strong>
-                    {{ room.seats }}
-                </p>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <i class="fa fa-info-circle" title="{{ 'plans.rooms.filter.name.help'|trans }}" data-toggle="tooltip"></i>
+                                    </div>
+                                </div>
+                            </div>
 
-                <p>
-                    {% for tagInfo in room.tags %}
-                        <span class="badge badge-secondary">
-                            <i class="fa fa-check"></i> {{ tagInfo.tag.name }}{% if tagInfo.tag.hasValue %}: {{ tagInfo.value() }}{% endif %}
-                        </span>
-                    {% endfor %}
-                </p>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="mr-1 custom-control-input" type="checkbox" id="check-seats" name="seats" {% if query.hasSeats() %} checked{% endif %}>
+                                            <label for="check-seats" class="custom-control-label">
+                                                {{ 'plans.rooms.seats'|trans }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
 
-                {% if room.description is not empty %}
-                    <hr />
+                                <input type="number" min="0" name="seats-value" class="form-control input-sm" value="{{ query.getSeatsValueOrDefault() }}" data-enable="#check-seats">
 
-                    <p>
-                        {{ room.description }}
-                    </p>
-                {% endif %}
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <i class="fa fa-info-circle" title="{{ 'plans.rooms.filter.seats.help'|trans }}" data-toggle="tooltip"></i>
+                                    </div>
+                                </div>
+                            </div>
 
-                <a href="{{ path('timetable', { roomId: room.id }) }}" class="btn btn-outline-primary btn-sm">
-                    {{ 'plans.rooms.timetable'|trans }}
-                </a>
+                            {% for tag in tags %}
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <div class="custom-control custom-checkbox">
+                                                <input class="mr-1 custom-control-input" type="checkbox" id="check-tag-{{ tag.getId() }}" name="tag-{{ tag.getId() }}" value="true" {% if query.hasTag(tag) %} checked{% endif %}>
+                                                <label for="check-tag-{{ tag.getId() }}" class="custom-control-label">
+                                                    {{ tag.getName() }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% if tag.hasValue() %}
+                                        <input type="number" min="0" name="tag-{{ tag.getId() }}-value" class="form-control input-sm" value="{{ query.getValueOrDefault(tag) }}" data-enable="#check-tag-{{ tag.getId() }}">
+                                    {% endif %}
+
+                                    {% if not tag.getDescription() is empty %}
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-info-circle" title="{{ tag.getDescription() }}" data-toggle="tooltip"></i>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+
+                            <button type="submit" name="submit" value="" class="btn btn-primary btn-sm">
+                                <i class="fa fa-search"></i> {{ 'actions.search'|trans }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-    {% endfor %}
+    </div>
 {% endblock %}

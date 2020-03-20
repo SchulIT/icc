@@ -10,25 +10,47 @@
 {% endblock %}
 
 {% block content %}
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.id %}
-                {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
+<div class="container-fluid px-0">
+    <div class="row">
+        <div class="col-md-9">
+        {% if messages|length == 0 %}
 
-                {% if studentFilter.studentGradeGroups|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+        {% else %}
+            {% for message in messages %}
+                {% include "_includes/message.html.twig" %}
+            {% endfor %}
+        {% endif %}
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="list-group list-group-flush">
+                    {% if is_granted('new-message') %}
+                        <a href="{{ path('add_message') }}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-plus"></i> {{ 'messages.add.label'|trans }}
+                        </a>
+                    {% endif %}
+
+                    {% if is_granted('ROLE_MESSAGE_ADMIN') or is_granted('ROLE_MESSAGE_CREATOR') %}
+                        <a href="{{ path('admin_messages') }}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-cogs"></i> {{ 'admin.messages.overview.label'|trans }}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.id %}
+                    {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
+
+                    {% if studentFilter.studentGradeGroups|length > 0 %}
                         {% include "_filter/student.html.twig" with { params: { archive: archive, userType: userTypeParam } } %}
-                    </div>
-                {% endif %}
+                    {% endif %}
 
-                {% if userTypeFilter.types|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    {% if userTypeFilter.types|length > 0 %}
                         {% include "_filter/user_type.html.twig" with { params: { archive: archive, studentId: studentParam } } %}
-                    </div>
-                {% endif %}
+                    {% endif %}
 
-                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                     <form role="form" method="get" class="form hidden-print">
                         {% include "_filter/_params.html.twig" with { params: { userType: userTypeParam, studentId: studentParam } } %}
 
@@ -47,28 +69,5 @@
             </div>
         </div>
     </div>
-
-    {% if messages|length == 0 %}
-
-    {% else %}
-        {% for message in messages %}
-            {% include "_includes/message.html.twig" %}
-        {% endfor %}
-    {% endif %}
-
-
-    <div class="buttons">
-        {% if is_granted('new-message') %}
-            <a href="{{ path('add_message') }}" class="btn btn-primary btn-sm">
-                <i class="fa fa-plus"></i> {{ 'messages.add.label'|trans }}
-            </a>
-        {% endif %}
-
-        {% if is_granted('ROLE_MESSAGE_ADMIN') or is_granted('ROLE_MESSAGE_CREATOR') %}
-            <a href="{{ path('admin_messages') }}" class="btn btn-secondary btn-sm">
-                <i class="fa fa-cogs"></i> {{ 'admin.messages.overview.label'|trans }}
-            </a>
-        {% endif %}
-    </div>
-
+</div>
 {% endblock %}

@@ -10,101 +10,100 @@
 {% endblock %}
 
 {% block content %}
-    {% include "_messages.html.twig" %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                {% if teacherFilter.teachers|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/teacher.html.twig" with { params: { all: showAll } } %}
-                    </div>
-                {% endif %}
+                {% include "_messages.html.twig" %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {% if teacherFilter.currentTeacher is not null %}
+                                {{ 'plans.exams.title'|trans({'%for%' : teacherFilter.currentTeacher|teacher}) }}
+                            {% elseif studentFilter.currentStudent is not null %}
+                                {{ 'plans.exams.title'|trans({'%for%' : studentFilter.currentStudent|student}) }} ({{ studentFilter.currentStudent.grade.name }})
+                            {% elseif gradeFilter.currentGrade is not null %}
+                                {{ 'plans.exams.title_grades'|trans({'%for%' : gradeFilter.currentGrade.name}) }}
+                            {% else %}
+                                {{ 'plans.exams.label'|trans }}
+                            {% endif %}
+                        </h5>
 
-                {% if studentFilter.studentGradeGroups|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/student.html.twig" with { params: { all: showAll } } %}
-                    </div>
-                {% endif %}
+                        {% if not isVisible %}
+                            <div class="bs-callout bs-callout-info">
+                                <h4>{{ 'info.label'|trans }}</h4>
 
-                {% if studentFilter.studentGradeGroups|length > 0 %}
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        {% include "_filter/grade.html.twig" with { params: { all: showAll } } %}
-                    </div>
-                {% endif %}
-
-                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                    <form role="form" method="get" class="form hidden-print">
-                        {% set params = { } %}
-                        {% if teacherFilter.currentTeacher is not null %}
-                            {% set params = params|merge({ teacherAcronym: teacherFilter.currentTeacher.acronym }) %}
-                        {% endif %}
-                        {% if studentFilter.currentStudent is not null %}
-                            {% set params = params|merge({ studentId: studentFilter.currentStudent.id }) %}
-                        {% endif %}
-                        {% if gradeFilter.currentGrade is not null %}
-                            {% set params = params|merge({ gradeId: gradeFilter.currentGrade.id }) %}
-                        {% endif %}
-
-                        {% include "_filter/_params.html.twig" %}
-
-                        <label class="control-label">{{ 'label.options'|trans }}:</label>
-                        <div class="form-group">
-                            <div class="custom-control custom-checkbox">
-
-                                <input class="custom-control-input" data-trigger="submit" type="checkbox" value="true" id="all" name="all" {% if showAll %} checked="checked"{% endif %}>
-                                <label for="all" class="custom-control-label">
-                                    {{ 'plans.exams.show_all'|trans }}
-                                </label>
+                                <p>{{ 'plans.exams.not_visible'|trans }}</p>
                             </div>
-                        </div>
-                    </form>
+                        {% elseif examGroups|length == 0 %}
+                            <div class="bs-callout bs-callout-info">
+                                <h4>{{ 'info.label'|trans }}</h4>
+
+                                <p>{{ 'plans.exams.empty'|trans }}</p>
+                            </div>
+                        {% endif %}
+
+                        {% for group in examGroups %}
+                            <h6>{{ ('date.days.'~group.date|date('w'))|trans }}, {{ group.date|format_date }}</h6>
+
+                            {% for exam in group.exams %}
+                                {% include "_includes/exam.html.twig" with { exam: exam } %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('exams_export') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-download"></i> {{ 'plans.exams.export.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        {% if teacherFilter.teachers|length > 0 %}
+                            {% include "_filter/teacher.html.twig" with { params: { all: showAll } } %}
+                        {% endif %}
+
+                        {% if studentFilter.studentGradeGroups|length > 0 %}
+                            {% include "_filter/student.html.twig" with { params: { all: showAll } } %}
+                        {% endif %}
+
+                        {% if studentFilter.studentGradeGroups|length > 0 %}
+                            {% include "_filter/grade.html.twig" with { params: { all: showAll } } %}
+                        {% endif %}
+
+                        <form role="form" method="get" class="form hidden-print">
+                            {% set params = { } %}
+                            {% if teacherFilter.currentTeacher is not null %}
+                                {% set params = params|merge({ teacherAcronym: teacherFilter.currentTeacher.acronym }) %}
+                            {% endif %}
+                            {% if studentFilter.currentStudent is not null %}
+                                {% set params = params|merge({ studentId: studentFilter.currentStudent.id }) %}
+                            {% endif %}
+                            {% if gradeFilter.currentGrade is not null %}
+                                {% set params = params|merge({ gradeId: gradeFilter.currentGrade.id }) %}
+                            {% endif %}
+
+                            {% include "_filter/_params.html.twig" %}
+
+                            <label class="control-label">{{ 'label.options'|trans }}:</label>
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+
+                                    <input class="custom-control-input" data-trigger="submit" type="checkbox" value="true" id="all" name="all" {% if showAll %} checked="checked"{% endif %}>
+                                    <label for="all" class="custom-control-label">
+                                        {{ 'plans.exams.show_all'|trans }}
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">
-                {% if teacherFilter.currentTeacher is not null %}
-                    {{ 'plans.exams.title'|trans({'%for%' : teacherFilter.currentTeacher|teacher}) }}
-                {% elseif studentFilter.currentStudent is not null %}
-                    {{ 'plans.exams.title'|trans({'%for%' : studentFilter.currentStudent|student}) }} ({{ studentFilter.currentStudent.grade.name }})
-                {% elseif gradeFilter.currentGrade is not null %}
-                    {{ 'plans.exams.title_grades'|trans({'%for%' : gradeFilter.currentGrade.name}) }}
-                {% else %}
-                    {{ 'plans.exams.label'|trans }}
-                {% endif %}
-            </h5>
-
-            {% if not isVisible %}
-                <div class="bs-callout bs-callout-info">
-                    <h4>{{ 'info.label'|trans }}</h4>
-
-                    <p>{{ 'plans.exams.not_visible'|trans }}</p>
-                </div>
-            {% elseif examGroups|length == 0 %}
-                <div class="bs-callout bs-callout-info">
-                    <h4>{{ 'info.label'|trans }}</h4>
-
-                    <p>{{ 'plans.exams.empty'|trans }}</p>
-                </div>
-            {% endif %}
-
-            {% for group in examGroups %}
-                <h6>{{ ('date.days.'~group.date|date('w'))|trans }}, {{ group.date|format_date }}</h6>
-
-                {% for exam in group.exams %}
-                    {% include "_includes/exam.html.twig" with { exam: exam } %}
-                {% endfor %}
-            {% endfor %}
-        </div>
-    </div>
-
-    <div class="buttons">
-        <a href="{{ path('exams_export') }}" class="btn btn-primary btn-sm">
-            {{ 'plans.exams.export.label'|trans }}
-        </a>
     </div>
 {% endblock %}

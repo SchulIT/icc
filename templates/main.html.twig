@@ -20,7 +20,9 @@
 
 
 {% block container %}
-    {% block breadcrumb %}{% endblock %}
+    <div class="d-none d-md-block">
+        {% block breadcrumb %}{% endblock %}
+    </div>
 
     {% for msg in app.session.flashbag.get('error') %}
         <div class="bs-callout bs-callout-danger">
@@ -58,6 +60,10 @@
     {% endif %}
 
     {% block content %}{% endblock %}
+
+    <div class="d-show d-md-none">
+        {{ block('breadcrumb') }}
+    </div>
 {% endblock %}
 
 {% block footer_links %} – <a href="{{ absolute_url('/docs/api/app') }}">{{ 'api.doc'|trans }}</a> {% endblock %}

@@ -11,60 +11,70 @@
 {% endblock %}
 
 {% block content %}
-    {% if weeks|length == 0 %}
-        <div class="bs-callout bs-callout-info">
-            <h5>{{ 'info.label'|trans }}</h5>
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if weeks|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <h5>{{ 'info.label'|trans }}</h5>
 
-            <p>{{ 'admin.timetable.weeks.overview.empty'|trans }}</p>
+                        <p>{{ 'admin.timetable.weeks.overview.empty'|trans }}</p>
 
-            <a href="#" class="btn btn-primary btn-sm">
-                <i class="fa fa-plus"></i> {{ 'admin.timetable.weeks.add_default.label'|trans }}
-            </a>
+                        <a href="#" class="btn btn-primary btn-sm">
+                            <i class="fa fa-plus"></i> {{ 'admin.timetable.weeks.add_default.label'|trans }}
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="card">
+                        <table class="table table-striped table-bordered table-hover">
+                            <colgroup>
+                                <col>
+                                <col class="column-lg">
+                                <col class="column-md">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.name'|trans }} </th>
+                                <th>{{ 'label.week_mod.label'|trans }}</th>
+                                <th> </th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for week in weeks %}
+                                <tr>
+                                    <td>
+                                        {{ week.displayName }} <span class="badge badge-secondary">{{ week.key }}</span>
+                                    </td>
+                                    <td>
+                                        {{ week.weekMod }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('admin_edit_timetable_week', { id: week.id }) }}" class="btn btn-primary btn-sm">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+
+                                        <a href="{{ path('admin_remove_timetable_week', { id: week.id }) }}" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('admin_add_timetable_week') }}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-plus"></i> {{ 'admin.timetable.weeks.add.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-    {% else %}
-        <div class="card">
-            <table class="table table-striped table-bordered table-hover">
-                <colgroup>
-                    <col>
-                    <col class="column-lg">
-                    <col class="column-md">
-                </colgroup>
-                <thead>
-                <tr>
-                    <th>{{ 'label.name'|trans }} </th>
-                    <th>{{ 'label.week_mod.label'|trans }}</th>
-                    <th> </th>
-                </tr>
-                </thead>
-
-                <tbody>
-                {% for week in weeks %}
-                    <tr>
-                        <td>
-                            {{ week.displayName }} <span class="badge badge-secondary">{{ week.key }}</span>
-                        </td>
-                        <td>
-                            {{ week.weekMod }}
-                        </td>
-                        <td>
-                            <a href="{{ path('admin_edit_timetable_week', { id: week.id }) }}" class="btn btn-primary btn-sm">
-                                <i class="fa fa-edit"></i>
-                            </a>
-
-                            <a href="{{ path('admin_remove_timetable_week', { id: week.id }) }}" class="btn btn-danger btn-sm">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% endif %}
-
-    <div class="buttons">
-        <a href="{{ path('admin_add_timetable_week') }}" class="btn btn-primary btn-sm">
-            <i class="fa fa-plus"></i> {{ 'admin.timetable.weeks.add.label'|trans }}
-        </a>
     </div>
 {% endblock %}

@@ -23,143 +23,148 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-9 pl-0">
-            {% if article is not null %}
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ article.title }}</h5>
-
-                    {{ article.content|markdown }}
-                </div>
-            </div>
-            {% endif %}
-
-            <div class="card-columns">
-                {% for child in childrenWithChildren %}
-                <div class="card">
-                    <div class="card-header">
-                        <a href="{{ path('show_wiki_article', { id: child.id, slug: child.slug }) }}">
-                            <i class="far fa-copy"></i> {{ child.title }}
-                        </a>
-                    </div>
-                    <div class="list-group list-group-flush">
-                        {% for c in child.children %}
-                            {% if is_granted('view', c) %}
-                                <a href="{{ path('show_wiki_article', { id: c.id, slug: c.slug }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endfor %}
-
-                {% if childrenWithoutChildren|length > 0 %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if article is not null %}
                     <div class="card">
-                        <div class="card-header"><i class="far fa-copy"></i> {{ 'wiki.more_articles'|trans }}</div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ article.title }}</h5>
 
-                        <div class="list-group list-group-flush">
-                            {% for c in childrenWithoutChildren %}
-                                {% if is_granted('view', c) %}
-                                    <a href="{{ path('show_wiki_article', { id: c.id, slug: c.slug }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <div class="col-md-3 pr-0">
-            {% if article is not null %}
-                {% set toc = toc(article.content) %}
-                {% if toc|length > 0 %}
-                    <div class="card">
-                        <div class="card-header">{{ 'wiki.toc'|trans }}</div>
-
-                        <div class="list-group list-group-flush">
-                            {% for heading in toc %}
-                            <a href="#{{ heading.id }}" class="list-group-item list-group-item-action">{{ heading.level }} {{ heading.text }}</a>
-                            {% endfor %}
+                            {{ article.content|markdown }}
                         </div>
                     </div>
                 {% endif %}
 
-                {% if article.children|length > 0 %}
-                    <div class="card">
-                        <div class="card-header">{{ 'wiki.navigation'|trans }}</div>
-
-                        <div class="list-group list-group-flush">
-                            {% for c in article.children %}
-                                {% if is_granted('view', c) %}
-                                    <a href="{{ path('show_wiki_article', { id: c.id, slug: c.slug }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ 'label.details'|trans }}</h5>
-
-                        <p>
-                            <span class="text-muted">{{ 'label.lastchange'|trans }}</span> {{ article.updatedAt|format_datetime }}
-                        </p>
-
-                        <p>
-                            <span class="text-muted">{{ 'label.visibility'|trans }}</span>
-                            {% for visibility in visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
-
-                            {% if article.visibilities|length == 0 %}<span class="badge badge-info">{{ 'wiki.inherited'|trans }}</span>{% endif %}
-                        </p>
-                    </div>
-                </div>
-            {% endif %}
-
-            <div class="card">
-                <div class="card-header">{{ 'wiki.search'|trans }}</div>
-
-                <div class="card-body">
-                    <form action="{{ path('wiki_search') }}">
-                        <div class="input-group">
-                            <input type="text" name="q" class="form-control">
-
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i></button>
+                <div class="card-columns">
+                    {% for child in childrenWithChildren %}
+                        <div class="card">
+                            <div class="card-header">
+                                <a href="{{ path('show_wiki_article', { id: child.id, slug: child.slug }) }}">
+                                    <i class="far fa-copy"></i> {{ child.title }}
+                                </a>
+                            </div>
+                            <div class="list-group list-group-flush">
+                                {% for c in child.children %}
+                                    {% if is_granted('view', c) %}
+                                        <a href="{{ path('show_wiki_article', { id: c.id, slug: c.slug }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
                         </div>
-                    </form>
+                    {% endfor %}
+
+                    {% if childrenWithoutChildren|length > 0 %}
+                        <div class="card">
+                            <div class="card-header"><i class="far fa-copy"></i> {{ 'wiki.more_articles'|trans }}</div>
+
+                            <div class="list-group list-group-flush">
+                                {% for c in childrenWithoutChildren %}
+                                    {% if is_granted('view', c) %}
+                                        <a href="{{ path('show_wiki_article', { id: c.id, slug: c.slug }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% if article is not null %}
+                            {#
+                            {% if article.parent is null %}
+                                <a href="{{ path('wiki') }}" class="list-group-item list-group-item-action">
+                                    <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+                                </a>
+                            {% else %}
+                                <a href="{{ path('show_wiki_article', { id: article.parent.id, slug: article.parent.slug }) }}" class="list-group-item list-group-item-action">
+                                    <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+                                </a>
+                            {% endif %}#}
+
+                            {% if is_granted('edit', article) %}
+                                <a href="{{ path('edit_wiki_article', { id: article.id, ref: 'view' }) }}" class="list-group-item list-group-item-action">
+                                    <i class="fa fa-edit"></i> {{ 'admin.wiki.edit.label'|trans }}
+                                </a>
+
+                                <a href="{{ path('wiki_article_versions', { id: article.id, ref: 'view' }) }}" class="list-group-item list-group-item-action">
+                                    <i class="fa fa-history"></i> {{ 'versions.label'|trans }}
+                                </a>
+                            {% endif %}
+                            {% if is_granted('remove', article) %}
+                                <a href="{{ path('remove_wiki_article', { id: article.id, ref: 'view' }) }}" class="list-group-item list-group-item-action list-group-item-danger">
+                                    <i class="fa fa-trash"></i> {{ 'admin.wiki.remove.label'|trans }}
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if article is not null %}
+                    {% set toc = toc(article.content) %}
+                    {% if toc|length > 0 %}
+                        <div class="card">
+                            <div class="card-header">{{ 'wiki.toc'|trans }}</div>
+
+                            <div class="list-group list-group-flush">
+                                {% for heading in toc %}
+                                    <a href="#{{ heading.id }}" class="list-group-item list-group-item-action">{{ heading.level }} {{ heading.text }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if article.children|length > 0 %}
+                        <div class="card">
+                            <div class="card-header">{{ 'wiki.navigation'|trans }}</div>
+
+                            <div class="list-group list-group-flush">
+                                {% for c in article.children %}
+                                    {% if is_granted('view', c) %}
+                                        <a href="{{ path('show_wiki_article', { id: c.id, slug: c.slug }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ 'label.details'|trans }}</h5>
+
+                            <p>
+                                <span class="text-muted">{{ 'label.lastchange'|trans }}</span> {{ article.updatedAt|format_datetime }}
+                            </p>
+
+                            <p>
+                                <span class="text-muted">{{ 'label.visibility'|trans }}</span>
+                                {% for visibility in visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
+
+                                {% if article.visibilities|length == 0 %}<span class="badge badge-info">{{ 'wiki.inherited'|trans }}</span>{% endif %}
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-header">{{ 'wiki.search'|trans }}</div>
+
+                    <div class="card-body">
+                        <form action="{{ path('wiki_search') }}">
+                            <div class="input-group">
+                                <input type="text" name="q" class="form-control">
+
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="buttons">
-        {% if article is not null %}
-            {% if article.parent is null %}
-                <a href="{{ path('wiki') }}" class="btn btn-primary btn-sm">
-                    <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
-                </a>
-            {% else %}
-                <a href="{{ path('show_wiki_article', { id: article.parent.id, slug: article.parent.slug }) }}" class="btn btn-primary btn-sm">
-                    <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
-                </a>
-            {% endif %}
-
-            {% if is_granted('edit', article) %}
-                <a href="{{ path('edit_wiki_article', { id: article.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
-                    <i class="fa fa-edit"></i> {{ 'admin.wiki.edit.label'|trans }}
-                </a>
-
-                <a href="{{ path('wiki_article_versions', { id: article.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
-                    <i class="fa fa-history"></i> {{ 'versions.label'|trans }}
-                </a>
-            {% endif %}
-            {% if is_granted('remove', article) %}
-                <a href="{{ path('remove_wiki_article', { id: article.id, ref: 'view' }) }}" class="btn btn-danger btn-sm">
-                    <i class="fa fa-trash"></i> {{ 'admin.wiki.remove.label'|trans }}
-                </a>
-            {% endif %}
-        {% endif %}
     </div>
 {% endblock %}

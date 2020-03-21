@@ -117,7 +117,7 @@ class MessageController extends AbstractController {
                     /** @var UploadedFile $upload */
                     $upload = $form->get($id)->getData();
 
-                    if($upload->isValid()) {
+                    if($upload !== null && $upload->isValid()) {
                         $messageFilesystem->uploadFile($message, $user, $upload);
                     }
                 }

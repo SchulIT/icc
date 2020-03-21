@@ -1,0 +1,48 @@
+{% extends "main.html.twig" %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/zipper.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ 'messages.uploads.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_messages') }}">{{ 'admin.messages.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ message.title }}</li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card" id="explorer">
+                    {% include "admin/messages/files_explorer.html.twig" %}
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action" data-action="zip" data-files="#explorer" data-progress="#zip-progress">
+                            <i class="far fa-file-archive"></i> {{ 'messages.uploads.download.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card" id="zip-progress" style="display: none;">
+                    <div class="card-body">
+                        <span class="w-100" data-zip-progress-file></span>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 0" data-zip-progress-bar></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

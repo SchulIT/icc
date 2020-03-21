@@ -1,0 +1,16 @@
+<form role="form" method="get" class="form hidden-print">
+    {% include "_filter/_params.html.twig" %}
+
+    <div class="form-group">
+        <label for="user">{{ 'label.user'|trans }}:</label>
+        <select name="userId" id="user" class="form-control" data-trigger="submit" data-choice="true">
+            {% for group in userFilter.groups %}
+                <optgroup label="{{ group.key }}">
+                    {% for user in group.items %}
+                        <option value="{{ user.username }}"{% if userFilter.currentUser != null and userFilter.currentUser.id == t.id %}selected="selected"{% endif %}>{{ user.username }} ({{ user|user }})</option>
+                    {% endfor %}
+                </optgroup>
+            {% endfor %}
+        </select>
+    </div>
+</form>

@@ -31,6 +31,9 @@ $enable-gradients: true;
 // Import color picker
 @import '../../node_modules/vanilla-picker/src/index';
 
+// Import dropzone
+@import '../../node_modules/dropzone/src/dropzone';
+
 // Import SCSS from overrides
 @import "overrides/*.scss";
 

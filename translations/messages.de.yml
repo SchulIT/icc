@@ -282,11 +282,16 @@ messages:
         info: Diese Mitteilung enthält persönliche Downloads
         empty: Aktuell sind keine Downloads verfügbar.
         label: Persönliche Downloads
+        dropzone:
+            label: Hochladen
+            help: Hier Ordner mit den Dateien der jeweiligen Nutzer per Drag & Drop ablegen. Der Ordnername muss mit dem Benutzernamen übereinstimmen.
 
     uploads:
         info: Diese Mitteilung enthält persönliche Uploads
         label: Persönliche Uploads
         empty: Es wurden noch keine Dateien hochgeladen.
+        download:
+            label: Alle Dateien herunterladen
 
 documents:
     label: Dokumente

@@ -3,18 +3,22 @@
 namespace App\Controller;
 
 use App\Entity\Message;
+use App\Filesystem\MessageFilesystem;
 use App\Form\MessageType;
 use App\Grouping\Grouper;
 use App\Grouping\MessageExpirationGroup;
 use App\Grouping\MessageExpirationStrategy;
 use App\Repository\MessageRepositoryInterface;
+use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\MessageVoter;
 use App\Sorting\Sorter;
 use App\Utils\RefererHelper;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use SchoolIT\CommonBundle\Form\ConfirmType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -22,6 +26,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * @Route("/admin/messages")
  */
 class MessageAdminController extends AbstractController {
+
+    private const CsrfTokenName = '_csrf_token';
+    private const CsrfTokenId = 'message_files';
 
     private $repository;
     private $grouper;
@@ -139,5 +146,90 @@ class MessageAdminController extends AbstractController {
             'form' => $form->createView(),
             'message' => $message
         ]);
+    }
+
+    /**
+     * @Route("/{id}/downloads", name="message_downloads_admin")
+     */
+    public function downloads(Message $message, MessageFilesystem $filesystem) {
+        return $this->render('admin/messages/downloads.html.twig', [
+            'message' => $message,
+            'csrf_token_name' => static::CsrfTokenName,
+            'csrf_token_id' => static::CsrfTokenId,
+            'files' => $filesystem->getAllUserDownloads($message)
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/downloads/upload", name="upload_message_downloads")
+     */
+    public function uploadDownloads(Message $message, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository) {
+        if($this->isCsrfTokenValid(static::CsrfTokenId, $request->request->get(static::CsrfTokenName)) !== true) {
+            return new JsonResponse(
+                [
+                    'error' => 'CSRF token invalid.'
+                ],
+                Response::HTTP_BAD_REQUEST);
+        }
+
+        $fullPath = $request->request->get('path');
+
+        if($fullPath === null) {
+            return new JsonResponse(
+                [
+                    'error' => 'Drag and drop folders which names corresponds to users.'
+                ],
+                Response::HTTP_BAD_REQUEST);
+        }
+
+        $parts = explode('/', $fullPath);
+
+        if(count($parts) < 2 ) {
+            return new JsonResponse(
+                [
+                    'error' => 'Drag and drop folders which names corresponds to users.'
+                ],
+                Response::HTTP_BAD_REQUEST);
+        }
+
+        $username = $parts[0];
+        $user = $userRepository->findOneByUsername($username);
+
+        if($user === null) {
+            return new JsonResponse(
+                [
+                    'error' => sprintf('User %s does not exist.', $username)
+                ],
+                Response::HTTP_BAD_REQUEST);
+        }
+
+        $filesystem->uploadUserDownload($message, $user, $request->files->get('file'));
+
+        return new JsonResponse(
+            [
+                'files' => $this->renderView('admin/messages/files_explorer.html.twig', [
+                    'files' => $filesystem->getAllUserDownloads($message),
+                    'message' => $message
+                ])
+            ]
+        );
+    }
+
+    /**
+     * @Route("/{id}/uploads", name="message_uploads_admin")
+     */
+    public function uploads(Message $message, MessageFilesystem $filesystem) {
+        return $this->render('admin/messages/uploads.html.twig', [
+            'message' => $message,
+            'files' => $filesystem->getAllUserUploads($message),
+            'directory' => $filesystem->getMessageUploadsDirectory($message, null)
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/uploads/download", name="download_message_upload")
+     */
+    public function downloadUploads(Message $message, string $path, MessageFilesystem $filesystem) {
+        return $filesystem->getMessageUploadedFileDownloadResponse($message, $path);
     }
 }

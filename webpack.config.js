@@ -26,6 +26,8 @@ Encore
     .addEntry('picker', './assets/js/picker.js')
     .addEntry('modal', './assets/js/modal.js')
     .addEntry('appointments', './assets/js/appointments.js')
+    .addEntry('message-downloads', './assets/js/message-downloads.js')
+    .addEntry('zipper', './assets/js/zipper.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     //.splitEntryChunks()

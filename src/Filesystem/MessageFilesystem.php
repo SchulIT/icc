@@ -81,11 +81,19 @@ class MessageFilesystem implements DirectoryNamerInterface {
         return sprintf('/%d/', $message->getId());
     }
 
-    private function getMessageDownloadsDirectory(Message $message, User $user): string {
+    public function getMessageDownloadsDirectory(Message $message, ?User $user): string {
+        if($user === null) {
+            return sprintf('/%d/downloads', $message->getId());
+        }
+
         return sprintf('/%d/downloads/%s', $message->getId(), $user->getUsername());
     }
 
-    private function getMessageUploadsDirectory(Message $message, User $user): string {
+    public function getMessageUploadsDirectory(Message $message, ?User $user): string {
+        if($user === null) {
+            return sprintf('/%d/uploads', $message->getId());
+        }
+
         return sprintf('/%d/uploads/%s', $message->getId(), $user->getUsername());
     }
 
@@ -113,6 +121,54 @@ class MessageFilesystem implements DirectoryNamerInterface {
         return $this->filesystem->listContents($path);
     }
 
+    public function getAllUserDownloads(Message $message) {
+        $path = $this->getMessageDownloadsDirectory($message, null);
+        $contents = $this->filesystem->listContents($path, true);
+
+        return $this->makeStructure($contents);
+    }
+
+    public function getAllUserUploads(Message $message) {
+        $path = $this->getMessageUploadsDirectory($message, null);
+        $contents = $this->filesystem->listContents($path, true);
+
+        return $this->makeStructure($contents);
+    }
+
+    private function makeStructure(array $contents) {
+        $structure = [ ];
+
+        $folders = array_filter($contents, function(array $item) {
+            return $item['type'] === 'dir';
+        });
+        $files = array_filter($contents, function(array $item) {
+            return $item['type'] === 'file';
+        });
+
+        foreach($folders as $folder) {
+            $structure[$folder['path']] = $folder;
+            $structure[$folder['path']]['files'] = [ ];
+        }
+
+        foreach($files as $file) {
+            $structure[$file['dirname']]['files'][] = $file;
+        }
+
+        return $structure;
+    }
+
+    public function uploadUserDownload(Message $message, User $user, UploadedFile $uploadedFile) {
+        $path = sprintf('%s/%s', $this->getMessageDownloadsDirectory($message, $user), $uploadedFile->getClientOriginalName());
+
+        if($this->filesystem->has($path)) {
+            $this->filesystem->delete($path);
+        }
+
+        $stream = fopen($uploadedFile->getRealPath(), 'r+');
+        $this->filesystem->writeStream($path, $stream);
+        fclose($stream);
+    }
+
     public function uploadFile(Message $message, User $user, UploadedFile $uploadedFile) {
         $path = sprintf('%s/%s', $this->getMessageUploadsDirectory($message, $user), $uploadedFile->getClientOriginalName());
 
@@ -137,6 +193,13 @@ class MessageFilesystem implements DirectoryNamerInterface {
         $path = sprintf('%s/%s', $this->getMessageUploadsDirectory($message, $user), $filename);
 
         // TODO: fix $filename = "../max.mustermann/foo.pdf"
+
+        return $this->getDownloadResponse($path, $filename);
+    }
+
+    public function getMessageUploadedFileDownloadResponse(Message $message, string $path): Response {
+        $path = sprintf('%s/%s', $this->getMessageUploadsDirectory($message, null), $path);
+        $filename = pathinfo($path, PATHINFO_BASENAME);
 
         return $this->getDownloadResponse($path, $filename);
     }

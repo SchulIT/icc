@@ -1,0 +1,54 @@
+{% extends "main.html.twig" %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/message-downloads.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ 'messages.downloads.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_messages') }}">{{ 'admin.messages.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ message.title }}</li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card" id="explorer">
+                    {% include "admin/messages/files_explorer.html.twig" %}
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ 'messages.downloads.dropzone.label'|trans }}</h4>
+                        <p>{{ 'messages.downloads.dropzone.help'|trans }}</p>
+
+                        <div id="dropzone" class="dropzone" data-csrf-token-name="{{ csrf_token_name }}" data-csrf-token="{{ csrf_token(csrf_token_id) }}" data-url="{{ path('upload_message_downloads', { id: message.id }) }}" style="min-height: 150px;">
+                            <div id="dropzone-files"></div>
+                        </div>
+
+                        <template id="dropzone-preview">
+                            <div class="file">
+                                <div class="filename"><span data-dz-name></span></div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" data-dz-uploadprogress></div>
+                                </div>
+                                <div class="error-message">
+                                    <span data-dz-errormessage></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

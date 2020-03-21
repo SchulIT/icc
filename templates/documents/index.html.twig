@@ -40,6 +40,7 @@
                 {% endif %}
             </div>
             <div class="col-md-3">
+                {% if is_granted('new-document') or is_granted('admin-documents') %}
                 <div class="card">
                     <div class="list-group list-group-flush">
                         {% if is_granted('new-document') %}
@@ -47,8 +48,14 @@
                                 <i class="fa fa-plus"></i> {{ 'admin.documents.add.label'|trans }}
                             </a>
                         {% endif %}
+                        {% if is_granted('admin-documents') %}
+                            <a href="{{ path('admin_documents') }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-cogs"></i> {{ 'admin.documents.overview.label'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
+                {% endif %}
 
                 <div class="card">
                     <div class="card-body">

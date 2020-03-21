@@ -71,20 +71,10 @@
             </div>
 
             <div class="col-md-3">
+                {% if article is not null and (is_granted('edit', article) or is_granted('remove', article)) %}
                 <div class="card">
                     <div class="list-group list-group-flush">
                         {% if article is not null %}
-                            {#
-                            {% if article.parent is null %}
-                                <a href="{{ path('wiki') }}" class="list-group-item list-group-item-action">
-                                    <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
-                                </a>
-                            {% else %}
-                                <a href="{{ path('show_wiki_article', { id: article.parent.id, slug: article.parent.slug }) }}" class="list-group-item list-group-item-action">
-                                    <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
-                                </a>
-                            {% endif %}#}
-
                             {% if is_granted('edit', article) %}
                                 <a href="{{ path('edit_wiki_article', { id: article.id, ref: 'view' }) }}" class="list-group-item list-group-item-action">
                                     <i class="fa fa-edit"></i> {{ 'admin.wiki.edit.label'|trans }}
@@ -102,6 +92,7 @@
                         {% endif %}
                     </div>
                 </div>
+                {% endif %}
 
                 {% if article is not null %}
                     {% set toc = toc(article.content) %}

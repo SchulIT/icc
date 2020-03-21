@@ -87,6 +87,7 @@
         </div>
 
         <div class="col-md-3">
+            {% if is_granted('edit', message) or is_granted('remove', message) %}
             <div class="card">
                 <div class="list-group list-group-flush">
                     {% if is_granted('edit', message) %}
@@ -101,6 +102,7 @@
                     {% endif %}
                 </div>
             </div>
+            {% endif %}
 
             <div class="card">
                 <div class="card-body">

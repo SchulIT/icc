@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Message;
 use App\Entity\MessageFile;
+use App\Validator\FileExtension;
 use Mimey\MimeTypes;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -37,8 +38,10 @@ class MessageUploadType extends AbstractType {
                     'label' => $file->getLabel(),
                     'constraints' => [
                         new File([
-                            'maxSize' => '10M',
-                            'mimeTypes' => $this->mimeTypes->getAllMimeTypes($file->getExtension())
+                            'maxSize' => '10M'
+                        ]),
+                        new FileExtension([
+                            'extensions' => explode(',', $file->getExtension())
                         ])
                     ],
                     'required' => false

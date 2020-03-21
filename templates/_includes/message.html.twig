@@ -86,6 +86,16 @@
         {% endif %}
     </div>
 
+    {% if message.attachments|length > 0 %}
+        <div class="card-footer">
+            {% for attachment in message.attachments %}
+                <span class="mr-2">
+                    <a href="{{ path('download_message_attachment', { id: attachment.id, message: message.id }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
+                </span>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     {% if message.mustConfirm and not is_dismissed(message) and not is_confirmed(message) %}
         <div class="card-footer bg-warning">
             <i class="fa fa-info-circle"></i> {% if is_granted('confirm', message) %}{{ 'messages.confirm.prompt'|trans }}{% else %}{{ 'messages.confirm.info'|trans }}{% endif %}

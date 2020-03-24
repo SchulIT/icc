@@ -86,13 +86,21 @@
         {% endif %}
     </div>
 
-    {% if message.attachments|length > 0 %}
+    {% set userDownloads = message_downloads(message) %}
+    {% if message.attachments|length > 0 or userDownloads > 0 %}
         <div class="card-footer">
             {% for attachment in message.attachments %}
                 <span class="mr-2">
                     <a href="{{ path('download_message_attachment', { id: attachment.id, message: message.id }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
                 </span>
             {% endfor %}
+            {% if message.downloadsEnabled %}
+                {% for file in userDownloads %}
+                    <span class="mr-2">
+                        <a href="{{ path('download_user_file', { id: message.id, filename: file.basename }) }}"><i class="fa fa-download"></i> {{ file.basename }}</a>
+                    </span>
+                {% endfor %}
+            {% endif %}
         </div>
     {% endif %}
 

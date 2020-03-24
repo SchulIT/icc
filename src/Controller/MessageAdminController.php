@@ -99,7 +99,16 @@ class MessageAdminController extends AbstractController {
             $originalFiles->add($file);
         }
 
-        $form = $this->createForm(MessageType::class, $message);
+        $update = (bool)$request->request->get('update', false);
+        $groups = ['Default'];
+
+        if($update === true) {
+            $groups[] = 'update';
+        }
+
+        $form = $this->createForm(MessageType::class, $message, [
+            'validation_groups' => $groups
+        ]);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
@@ -110,6 +119,10 @@ class MessageAdminController extends AbstractController {
             }
 
             $this->repository->persist($message);
+
+            if($update === true) {
+                
+            }
 
             $this->addFlash('success', 'admin.messages.edit.succes');
             return $this->redirectToReferer(['view' => 'show_message'], 'admin_messages', [ 'id' => $message->getId() ]);

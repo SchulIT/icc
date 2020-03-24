@@ -231,24 +231,33 @@ lists:
     label: Listen
     tuitions:
         label: Unterricht
+        start: Bitte eine Klasse, Lehrkraft oder einen Lernenden auswählen.
+        empty: Es wurden keine Unterrichte gefunden.
         heading:
             grade: "Unterricht der Klasse %grade%"
             student: "Unterricht von %student%"
             teacher: "Unterricht von %teacher%"
         type: Art
+        export:
+            csv: Liste exportieren
+            copy: E-Mail Adressen kopieren
+            mail: E-Mail an alle Lernenden verfassen
 
     study_groups:
         label: Lerngruppen
         start: Bitte eine Lerngruppe auswählen oder suchen.
         empty: Dieser Lerngruppe sind keine Lernenden zugeordnet.
-        mail_to_all: E-Mail an alle Lernenden verfassen
+        export:
+            csv: Liste exportieren
+            copy: E-Mail Adressen kopieren
+            mail: E-Mail an alle Lernenden verfassen
         grade_teacher: Klassenleitung
         grade_teacher_substitutional: Stellvertretende Klassenleitung
         num_students: Anzahl Lernende
     teachers:
         label: Lehrkräfte
-        emtpy: Es wurden keine Lehrkräfte gefunden.
-        substitutional:
+        empty: Es wurden keine Lehrkräfte gefunden.
+        substitute:
             short: (stv.)
             long: stellvertretend
 
@@ -446,6 +455,9 @@ admin:
         edit:
             label: Mitteilung bearbeiten
             success: Mitteilung erfolgreich aktualisiert
+            update:
+                button: speichern & Aktualisierung mitteilen
+                help: Speichert die Mitteilung ab und sendet Benachrichtigungen an alle Empfänger
         remove:
             label: Mitteilung löschen
             confirm: 'Soll die Mitteilung "%name%" wirklich gelöscht werden?'

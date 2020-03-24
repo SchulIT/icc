@@ -22,7 +22,7 @@
                         <p>{{ 'lists.study_groups.start'|trans }}</p>
                     </div>
                 {% else %}
-                    {% if studyGroupFilter.currentStudyGroup.type.value == 1 %}
+                    {% if studyGroupFilter.currentStudyGroup.type.value == "grade" %}
                         {% set grade = studyGroupFilter.currentStudyGroup.grades[0] %}
 
                         <div class="card">
@@ -57,13 +57,19 @@
                             </div>
 
                             <table class="table table-striped table-hover table-bordered">
+                                <colgroup>
+                                    <col class="column-lg">
+                                    <col class="column-lg">
+                                    <col class="column-md">
+                                    <col>
+                                </colgroup>
+
                                 <thead>
                                 <tr>
                                     <th>{{ 'label.lastname'|trans }}</th>
                                     <th>{{ 'label.firstname'|trans }}</th>
                                     <th>{{ 'label.grade'|trans }}</th>
                                     <th>{{ 'label.email'|trans }}</th>
-                                    <th></th>
                                 </tr>
                                 </thead>
 
@@ -81,25 +87,22 @@
                                                 </a>
                                             {% endif %}
                                         </td>
-                                        <td>
-
-                                        </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
                         </div>
 
-                        <div class="buttons mb-3">
-                            <a href="mailto:{% for student in students %}{% if student.email is not empty %}{{ student.email }};{% endif %}{% endfor %}" class="btn btn-primary btn-sm">
-                                <i class="fa fa-send"></i> {{ 'lists.study_groups.mail_to_all'|trans }}
-                            </a>
-                        </div>
-
                         <div class="card">
                             <div class="card-header">{{ 'lists.tuitions.label'|trans }}</div>
 
                             <table class="table table-striped table-hover table-bordered">
+                                <colgroup>
+                                    <col class="column-lg">
+                                    <col class="column-lg">
+                                    <col>
+                                    <col class="column-md">
+                                </colgroup>
                                 <thead>
                                 <tr>
                                     <th>{{ 'label.name'|trans }}</th>
@@ -127,6 +130,24 @@
                 {% endif %}
             </div>
             <div class="col-md-3">
+                {% if students|length > 0 %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            <a href="{{ path('export_studygroup', { id: studyGroupFilter.currentStudyGroup.id }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-download"></i> {{ 'lists.study_groups.export.csv'|trans }}
+                            </a>
+
+                            <a href="#" class="list-group-item list-group-item-action" data-clipboard-text="{% for student in students %}{% if student.email is not empty %}{{ student.email }};{% endif %}{% endfor %}">
+                                <i class="fa fa-copy"></i> {{ 'lists.tuitions.export.copy'|trans }}
+                            </a>
+
+                            <a href="mailto:{% for student in students %}{% if student.email is not empty %}{{ student.email }};{% endif %}{% endfor %}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-envelope"></i> {{ 'lists.study_groups.export.mail'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
                 <div class="card d-print-none">
                     <div class="card-body">
                         {% include "_filter/study_group.html.twig" %}

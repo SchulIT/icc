@@ -11,7 +11,7 @@
                 <button type="button" class="btn btn-sm btn-outline-secondary" title="{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only  %}">
                     <i class="fa fa-users"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" title="{{ message.createdBy|user }}">
+                <button type="button" class="btn btn-sm btn-outline-secondary" title="{{ message.studyGroups|studygroups(true) }}">
                     <i class="fa fa-graduation-cap"></i>
                 </button>
                 <button type="button" class="btn btn-sm btn-outline-secondary" title="{{ message.updatedAt|format_datetime }}">

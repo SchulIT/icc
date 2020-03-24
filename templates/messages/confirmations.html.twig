@@ -141,21 +141,4 @@
             </table>
         </div>
     {% endfor %}
-
-    <div class="buttons">
-        <a href="javascript:history.back();" class="btn btn-primary btn-sm">
-            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
-        </a>
-
-        {% if is_granted('edit', message) %}
-            <a href="{{ path('edit_message', { id: message.id, ref: 'view' }) }}" class="btn btn-primary btn-sm">
-                <i class="fa fa-edit"></i> {{ 'admin.documents.edit.label'|trans }}
-            </a>
-        {% endif %}
-        {% if is_granted('remove', message) %}
-            <a href="#" class="btn btn-danger btn-sm">
-                <i class="fa fa-trash"></i> {{ 'admin.documents.remove.label'|trans }}
-            </a>
-        {% endif %}
-    </div>
 {% endblock %}

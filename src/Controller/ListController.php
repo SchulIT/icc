@@ -7,10 +7,13 @@ use App\Entity\Grade;
 use App\Entity\GradeTeacher;
 use App\Entity\GradeTeacherType;
 use App\Entity\MessageScope;
+use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use App\Entity\StudyGroupType;
 use App\Entity\Tuition;
 use App\Entity\User;
+use App\Export\StudyGroupCsvExporter;
+use App\Export\TuitionCsvExporter;
 use App\Grouping\Grouper;
 use App\Grouping\TeacherFirstCharacterStrategy;
 use App\Message\DismissedMessagesHelper;
@@ -119,6 +122,15 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     /**
+     * @Route("/lists/tuitions/{id}/export", name="export_tuition")
+     */
+    public function exportTuition(Tuition $tuition, TuitionCsvExporter $tuitionCsvExporter) {
+        $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
+
+        return $tuitionCsvExporter->getCsvResponse($tuition);
+    }
+
+    /**
      * @Route("/lists/study_groups", name="list_studygroups")
      */
     public function studyGroups(StudyGroupFilter $studyGroupFilter, ?int $studyGroupId = null) {
@@ -168,6 +180,15 @@ class ListController extends AbstractControllerWithMessages {
             'gradeTeachers' => $gradeTeachers,
             'substitutionalGradeTeachers' => $substitutionalGradeTeachers
         ]);
+    }
+
+    /**
+     * @Route("/lists/study_groups/{id}/export", name="export_studygroup")
+     */
+    public function exportStudyGroup(StudyGroup $studyGroup, StudyGroupCsvExporter $csvExporter) {
+        $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);
+
+        return $csvExporter->getCsvResponse($studyGroup);
     }
 
     /**

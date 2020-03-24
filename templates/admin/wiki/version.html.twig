@@ -13,53 +13,54 @@
 {% endblock %}
 
 {% block content %}
-    <div class="bs-callout bs-callout-danger">
-        <h4><i class="fa fa-exclamation-triangle"></i> {{ 'info.label'|trans }}</h4>
 
-        <p>{{ 'versions.show.info'|trans({'%date%': entry.loggedAt|format_datetime, '%version%': entry.version }) }}</p>
-    </div>
 
-    <div class="row">
-        <div class="col-md-9 pl-0">
-            {% if article is not null %}
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ article.title }}</h5>
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="bs-callout bs-callout-danger">
+                    <h4><i class="fa fa-exclamation-triangle"></i> {{ 'info.label'|trans }}</h4>
 
-                    {{ article.content|markdown }}
+                    <p>{{ 'versions.show.info'|trans({'%date%': entry.loggedAt|format_datetime, '%version%': entry.version }) }}</p>
                 </div>
-            </div>
-            {% endif %}
-        </div>
 
-        <div class="col-md-3 pr-0">
-            {% if article is not null %}
-                {% set toc = toc(article.content) %}
-                {% if toc|length > 0 %}
+                {% if article is not null %}
                     <div class="card">
-                        <div class="card-header">{{ 'wiki.toc'|trans }}</div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ article.title }}</h5>
 
-                        <div class="list-group list-group-flush">
-                            {% for heading in toc %}
-                            <a href="#{{ heading.id }}" class="list-group-item list-group-item-action">{{ heading.level }} {{ heading.text }}</a>
-                            {% endfor %}
+                            {{ article.content|markdown }}
                         </div>
                     </div>
                 {% endif %}
-            {% endif %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="#" data-toggle="modal" data-target="#restore-modal" class="list-group-item list-group-item-action">
+                            <i class="fa fa-trash-restore"></i> {{ 'versions.restore.button'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                {% if article is not null %}
+                    {% set toc = toc(article.content) %}
+                    {% if toc|length > 0 %}
+                        <div class="card">
+                            <div class="card-header">{{ 'wiki.toc'|trans }}</div>
+
+                            <div class="list-group list-group-flush">
+                                {% for heading in toc %}
+                                    <a href="#{{ heading.id }}" class="list-group-item list-group-item-action">{{ heading.level }} {{ heading.text }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+            </div>
         </div>
-    </div>
-
-    <div class="buttons">
-        <form action="{{ path('restore_wiki_article_version', { id: article.id }) }}">
-            <a href="javascript:history.back();" class="btn btn-primary btn-sm">
-                <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
-            </a>
-
-            <a href="#" data-toggle="modal" data-target="#restore-modal" class="btn btn-primary btn-sm">
-                <i class="fa fa-trash-restore"></i> {{ 'versions.restore.button'|trans }}
-            </a>
-        </form>
     </div>
 {% endblock %}
 

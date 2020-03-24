@@ -45,7 +45,7 @@
                                         </td>
                                         <td>
                                             {% for gradeTeacher in teacher.grades %}
-                                                {{ gradeTeacher.grade.name }}{% if gradeTeacher.type == 'p' %} <span title="{{ 'lists.teachers.substitutional.long'|trans }}">{{ 'lists.teachers.substitutional.short'|trans }}</span>{% endif %}{% if not loop.last %}, {% endif %}
+                                                {{ gradeTeacher.grade.name }}{% if gradeTeacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}{% if not loop.last %}, {% endif %}
                                             {% endfor %}
                                         </td>
                                         <td>

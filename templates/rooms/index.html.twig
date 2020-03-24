@@ -12,41 +12,7 @@
 {% block content %}
     <div class="container-fluid px-0">
         <div class="row">
-            <div class="col-md-9">
-                {% for room in rooms %}
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ room.name }}</h5>
-
-                            <p>
-                                <strong>{{ 'plans.rooms.seats'|trans }}: </strong>
-                                {{ room.seats }}
-                            </p>
-
-                            <p>
-                                {% for tagInfo in room.tags %}
-                                    <span class="badge badge-secondary">
-                                        <i class="fa fa-check"></i> {{ tagInfo.tag.name }}{% if tagInfo.tag.hasValue %}: {{ tagInfo.value() }}{% endif %}
-                                    </span>
-                                {% endfor %}
-                            </p>
-
-                            {% if room.description is not empty %}
-                                <hr />
-
-                                <p>
-                                    {{ room.description }}
-                                </p>
-                            {% endif %}
-
-                            <a href="{{ path('timetable', { roomId: room.id }) }}" class="btn btn-outline-primary btn-sm">
-                                {{ 'plans.rooms.timetable'|trans }}
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-3 order-md-2">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">{{ 'plans.rooms.filter.label'|trans }}</h5>
@@ -125,6 +91,41 @@
                         </form>
                     </div>
                 </div>
+            </div>
+
+            <div class="col-md-9 order-md-1">
+                {% for room in rooms %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ room.name }}</h5>
+
+                            <p>
+                                <strong>{{ 'plans.rooms.seats'|trans }}: </strong>
+                                {{ room.seats }}
+                            </p>
+
+                            <p>
+                                {% for tagInfo in room.tags %}
+                                    <span class="badge badge-secondary">
+                                        <i class="fa fa-check"></i> {{ tagInfo.tag.name }}{% if tagInfo.tag.hasValue %}: {{ tagInfo.value() }}{% endif %}
+                                    </span>
+                                {% endfor %}
+                            </p>
+
+                            {% if room.description is not empty %}
+                                <hr />
+
+                                <p>
+                                    {{ room.description }}
+                                </p>
+                            {% endif %}
+
+                            <a href="{{ path('timetable', { roomId: room.id }) }}" class="btn btn-outline-primary btn-sm">
+                                {{ 'plans.rooms.timetable'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>

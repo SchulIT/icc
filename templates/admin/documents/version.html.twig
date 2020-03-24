@@ -13,34 +13,34 @@
 {% endblock %}
 
 {% block content %}
-    <div class="bs-callout bs-callout-danger">
-        <h4><i class="fa fa-exclamation-triangle"></i> {{ 'info.label'|trans }}</h4>
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="bs-callout bs-callout-danger">
+                    <h4><i class="fa fa-exclamation-triangle"></i> {{ 'info.label'|trans }}</h4>
 
-        <p>{{ 'versions.show.info'|trans({'%date%': entry.loggedAt|format_datetime, '%version%': entry.version }) }}</p>
-    </div>
+                    <p>{{ 'versions.show.info'|trans({'%date%': entry.loggedAt|format_datetime, '%version%': entry.version }) }}</p>
+                </div>
 
-    <div class="row">
-        <div class="col-md-9 pl-0">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ document.title }}</h5>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ document.title }}</h5>
 
-                    {{ document.content|markdown }}
+                        {{ document.content|markdown }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="#" data-toggle="modal" data-target="#restore-modal" class="list-group-item list-group-item-action">
+                            <i class="fa fa-trash-restore"></i> {{ 'versions.restore.button'|trans }}
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="buttons">
-        <form action="{{ path('restore_document_version', { id: document.id }) }}">
-            <a href="javascript:history.back();" class="btn btn-primary btn-sm">
-                <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
-            </a>
-
-            <a href="#" data-toggle="modal" data-target="#restore-modal" class="btn btn-primary btn-sm">
-                <i class="fa fa-trash-restore"></i> {{ 'versions.restore.button'|trans }}
-            </a>
-        </form>
     </div>
 {% endblock %}
 

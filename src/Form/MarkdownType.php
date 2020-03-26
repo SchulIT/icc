@@ -21,7 +21,8 @@ class MarkdownType extends TextareaType {
             ->setDefault('upload_enabled', true)
             ->setDefault('upload_url', null)
             ->setDefault('preview_url', $this->urlGenerator->generate('markdown_preview', [], UrlGeneratorInterface::ABSOLUTE_PATH))
-            ->setDefault('required', false);
+            ->setDefault('required', false)
+            ->setDefault('enable_links', true);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options) {
@@ -34,5 +35,14 @@ class MarkdownType extends TextareaType {
             'data-url' => $options['upload_url'],
             'data-preview' => $options['preview_url']
         ];
+
+        if($options['enable_links']) {
+            $view->vars['attr']['data-modal'] = '#modal-' . $view->vars['id'];
+            $view->vars['attr']['data-modal-url'] = $this->urlGenerator->generate('editor_links');
+        }
+    }
+
+    public function getBlockPrefix() {
+        return 'markdown';
     }
 }

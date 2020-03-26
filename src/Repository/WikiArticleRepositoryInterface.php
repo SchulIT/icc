@@ -7,6 +7,12 @@ use App\Entity\WikiArticle;
 interface WikiArticleRepositoryInterface {
 
     /**
+     * @param int $id
+     * @return WikiArticle|null
+     */
+    public function findOneById(int $id): ?WikiArticle;
+
+    /**
      * @return WikiArticle[]
      */
     public function findAll(): array;

@@ -1,0 +1,78 @@
+{% macro wiki_article(article, prefix) %}
+    {% set prefix = prefix ~ " / " %}
+    <a href="#" data-insert-link="wiki:{{ article.id }}" class="list-group-item list-group-item-action">
+        <span class="d-block">
+            {{ prefix }}<strong>{{ article.title }}</strong>
+            {% if article.isOnline %}
+                <span class="badge badge-success">{{ 'label.online'|trans }}</span>
+            {% else %}
+                <span class="badge badge-danger">{{ 'label.offline'|trans }}</span>
+            {% endif %}
+        </span>
+        <span class="d-block small text-muted">
+            {% for visibility in article.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
+        </span>
+    </a>
+    {% for child in article.children %}
+        {{ _self.wiki_article(child, prefix ~ article.title) }}
+    {% endfor %}
+{% endmacro %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{{ 'editor.links.header'|trans }}</title>
+
+        <link rel="stylesheet" href="{{ asset('build/app.css') }}" type="text/css" />
+    </head>
+
+    <body>
+        <div class="container-fluid p-4">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a href="#documents" class="nav-link active" data-toggle="tab">{{ 'documents.label'|trans }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#wiki" class="nav-link" data-toggle="tab">{{ 'wiki.label'|trans }}</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane show active" id="documents">
+                            {% for category in categories %}
+                            <div class="card">
+                                <div class="card-header">{{ category.category.name }}</div>
+                                <div class="list-group list-group-flush">
+                                    {% for document in category.documents %}
+                                    <a href="#" data-insert-link="document:{{ document.id }}" class="list-group-item list-group-item-action">
+                                        <span class="d-block">{{ document.title }}</span>
+                                        <span class="d-block text-muted small">
+                                            {% for visibility in document.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                        </span>
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="tab-pane" id="wiki">
+                            <div class="list-group">
+                                {% for article in tree %}
+                                    {{ _self.wiki_article(article, null) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script src="{{ asset('build/app.js') }}"></script>
+</html>

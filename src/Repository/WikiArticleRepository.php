@@ -15,6 +15,14 @@ class WikiArticleRepository extends AbstractRepository implements WikiArticleRep
         $em->getConfiguration()->addCustomHydrationMode('tree', TreeObjectHydrator::class);
     }
 
+    public function findOneById(int $id): ?WikiArticle {
+        return $this->em
+            ->getRepository(WikiArticle::class)
+            ->findOneBy([
+                'id' => $id
+            ]);
+    }
+
     /**
      * @inheritDoc
      */

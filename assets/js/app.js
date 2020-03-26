@@ -129,5 +129,26 @@ document.addEventListener('DOMContentLoaded', function() {
             placement: 'bottom'
         });
     });
+
+    document.querySelectorAll('[data-toggle=popover]').forEach(function(el) {
+        let title = el.getAttribute('data-popover-title');
+
+        let contentSelector = el.getAttribute('data-popover-container');
+        let content = document.querySelector(contentSelector).innerHTML;
+
+        var template = '<div class="popover" role="tooltip">' +
+            '<div class="arrow"></div>' +
+            '<h3 class="popover-header">' + title + '</h3>' +
+            '<div class="popover-body">' +
+             content +
+            '</div></div>';
+
+        new bsn.Popover(el, {
+            placement: 'bottom',
+            template: template,
+            trigger: 'hover',
+            animation: 'none'
+        });
+    });
 });
 

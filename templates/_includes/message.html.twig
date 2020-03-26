@@ -4,21 +4,27 @@
     <div class="card-body">
         <div class="float-right ml-2">
 
-            <div class="btn-group d-none d-md-inline-flex" role="group">
-                <button type="button" class="btn btn-sm btn-outline-secondary" title="{{ message.createdBy|user }}">
-                    <i class="fa fa-user"></i>
-                </button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" title="{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only  %}">
-                    <i class="fa fa-users"></i>
-                </button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" title="{{ message.studyGroups|studygroups(true) }}">
-                    <i class="fa fa-graduation-cap"></i>
-                </button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" title="{{ message.updatedAt|format_datetime }}">
-                    <i class="fa fa-calendar"></i>
-                </button>
-                <!--{% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, id: message.id } only  %}-->
+            <button data-toggle="popover" data-popover-title="{{ 'label.details'|trans }}" data-popover-container="#message-{{ message.id }}-info" class="btn btn-outline-secondary btn-sm">
+                <i class="fa fa-info-circle"></i>
+            </button>
+
+            <div class="d-none" id="message-{{ message.id }}-info">
+                <p class="m-0 mb-1">
+                    <span class="text-muted">{{ 'label.lastchange'|trans }}</span> {{ message.updatedAt|format_datetime }}
+                </p>
+
+                <p class="m-0 mb-1">
+                    <span class="text-muted">{{ 'label.visibility'|trans }}</span>
+                    {% for visibility in message.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
+                </p>
+
+                {% if message.studyGroups|length > 0 %}
+                    <p class="m-0 mb-1">
+                        <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': message.studyGroups|length }) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, id: message.id } only  %}
+                    </p>
+                {% endif %}
             </div>
+
 
             {% if message.mustConfirm %}
                 {% if not is_confirmed(message) and is_granted('confirm', message) %}

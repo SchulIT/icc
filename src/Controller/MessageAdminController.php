@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Message;
+use App\Event\MessageUpdatedEvent;
 use App\Filesystem\MessageFilesystem;
 use App\Form\MessageType;
 use App\Grouping\Grouper;
@@ -16,10 +17,12 @@ use App\Utils\RefererHelper;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use SchoolIT\CommonBundle\Form\ConfirmType;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -91,7 +94,7 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/{id}/edit", name="edit_message")
      */
-    public function edit(Request $request, Message $message) {
+    public function edit(Request $request, Message $message, EventDispatcherInterface $eventDispatcher) {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         $originalFiles = new ArrayCollection();
@@ -121,7 +124,7 @@ class MessageAdminController extends AbstractController {
             $this->repository->persist($message);
 
             if($update === true) {
-                
+                $eventDispatcher->dispatch(new MessageUpdatedEvent($message));
             }
 
             $this->addFlash('success', 'admin.messages.edit.succes');

@@ -57,6 +57,11 @@ services:
             $keyFile: '%sp_cert_key%'
             $certFile: '%sp_cert_file%'
 
+    SchoolIT\CommonBundle\EventListener\SamlExceptionListener:
+        arguments:
+            $retryRoute: 'lightsaml_sp.login'
+            $loggedInRoute: 'dashboard'
+
     # JSON
     App\Request\JsonParamConverter:
         arguments:

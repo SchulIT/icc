@@ -16,7 +16,6 @@ use SchoolIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
 
 class UserMapper {
     const ROLES_ASSERTION_NAME = 'urn:roles';
-    const STUDENT_IDS_ASSERTION_NAME = 'urn:studentIds';
 
     private $typesMap;
     private $teacherRepository;
@@ -86,7 +85,6 @@ class UserMapper {
                 ClaimTypes::EMAIL_ADDRESS,
                 SamlClaimTypes::INTERNAL_ID,
                 SamlClaimTypes::TYPE,
-                static::STUDENT_IDS_ASSERTION_NAME
             ],
             [
                 static::ROLES_ASSERTION_NAME
@@ -103,7 +101,7 @@ class UserMapper {
         $firstname = $data[ClaimTypes::GIVEN_NAME];
         $lastname = $data[ClaimTypes::SURNAME];
         $email = $data[ClaimTypes::EMAIL_ADDRESS];
-        $roles = $data[static::ROLES_ASSERTION_NAME];
+        $roles = $data[static::ROLES_ASSERTION_NAME] ?? [ ];
         $type = $this->getUserType($data[SamlClaimTypes::TYPE]);
 
         if(!is_array($roles)) {
@@ -123,32 +121,44 @@ class UserMapper {
 
         if(UserType::Teacher()->equals($type)) {
             $internalId = $data[SamlClaimTypes::INTERNAL_ID];
-            $teacher = $this->teacherRepository->findOneByExternalId($internalId);
 
-            if($teacher !== null) {
-                $user->setTeacher($teacher);
+            if($internalId !== null) {
+                $teacher = $this->teacherRepository->findOneByExternalId($internalId);
+
+                if ($teacher !== null) {
+                    $user->setTeacher($teacher);
+                } else {
+                    $this->logger
+                        ->notice(sprintf('Cannot map teacher with internal ID "%s" as such teacher does not exist.', $internalId));
+                }
             } else {
                 $this->logger
-                    ->notice(sprintf('Cannot map teacher with internal ID "%s" as such teacher does not exist.', $internalId));
+                    ->notice(sprintf('Cannot map teacher with username "%s" as his/her internal ID is not set.', $user->getUsername()));
             }
-        } else if(UserType::Student()->equals($type) || UserType::Parent()->equals($type)) {
+        } else if(UserType::Student()->equals($type)) {
             $studentId = $data[SamlClaimTypes::INTERNAL_ID];
-            $student = $this->studentRepository->findOneByExternalId($studentId);
 
-            if($student !== null) {
-                CollectionUtils::synchronize(
-                    $user->getStudents(),
-                    [ $student ],
-                    function(Student $student) {
-                        return $student->getId();
-                    }
-                );
+            if($studentId !== null) {
+                $student = $this->studentRepository->findOneByExternalId($studentId);
+
+                if ($student !== null) {
+                    CollectionUtils::synchronize(
+                        $user->getStudents(),
+                        [$student],
+                        function (Student $student) {
+                            return $student->getId();
+                        }
+                    );
+                } else {
+                    $this->logger
+                        ->notice(sprintf('Cannot map student with student ID "%s" as such student does not exist.', $studentId));
+                }
             } else {
                 $this->logger
-                    ->notice(sprintf('Cannot map student with student ID "%s" as such student does not exist.', $studentId));
+                    ->notice(sprintf('Cannot map student with username "%s" as his/her internal ID is not set.', $user->getUsername()));
             }
         } else if(UserType::Parent()->equals($type)) {
-            $rawStudentIds = $data[static::STUDENT_IDS_ASSERTION_NAME] ?? null;
+            $rawStudentIds = $data[SamlClaimTypes::INTERNAL_ID];
 
             if($rawStudentIds !== null) {
                 $studentIds = explode(',', $rawStudentIds);
@@ -161,6 +171,9 @@ class UserMapper {
                         return $student->getId();
                     }
                 );
+            } else {
+                $this->logger
+                    ->notice(sprintf('Cannot map parent with username "%s" as his/her internal ID is not set.', $user->getUsername()));
             }
         }
 

@@ -3,8 +3,15 @@
 {% block menu %}
     {{ knp_menu_render(mainMenu, {'currentClass': 'active' }) }}
 
-    {{ knp_menu_render('settingsMenu', {'currentClass': 'active' }) }}
-    {{ knp_menu_render('adminMenu', {'currentClass': 'active' }) }}
+    {% set settingsMenu = knp_menu_get('settingsMenu') %}
+    {% if settingsMenu.getChild('settings').getChildren()|length > 0 %}
+        {{ knp_menu_render('settingsMenu', {'currentClass': 'active' }) }}
+    {% endif %}
+
+    {% set adminMenu = knp_menu_get('adminMenu') %}
+    {% if adminMenu.getChild('admin').getChildren()|length > 0 %}
+        {{ knp_menu_render('adminMenu', {'currentClass': 'active' }) }}
+    {% endif %}
     {{ knp_menu_render('servicesMenu', {'currentClass': 'active' }) }}
     {{ knp_menu_render('userMenu', {'currentClass': 'active' }) }}
 {% endblock %}

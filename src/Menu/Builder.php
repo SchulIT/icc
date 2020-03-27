@@ -238,25 +238,27 @@ class Builder {
             ->setExtra('pull-right', true)
             ->setAttribute('title', $this->translator->trans('admin.settings.label'));
 
-        $menu->addChild('admin.settings.timetable.label', [
-            'route' => 'admin_settings_timetable'
-        ]);
+        if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $menu->addChild('admin.settings.timetable.label', [
+                'route' => 'admin_settings_timetable'
+            ]);
 
-        $menu->addChild('admin.timetable.weeks.label', [
-            'route' => 'admin_timetable_weeks'
-        ]);
+            $menu->addChild('admin.timetable.weeks.label', [
+                'route' => 'admin_timetable_weeks'
+            ]);
 
-        $menu->addChild('admin.timetable.periods.label', [
-            'route' => 'admin_timetable_periods'
-        ]);
+            $menu->addChild('admin.timetable.periods.label', [
+                'route' => 'admin_timetable_periods'
+            ]);
 
-        $menu->addChild('admin.settings.exams.label', [
-            'route' => 'admin_settings_exams'
-        ]);
+            $menu->addChild('admin.settings.exams.label', [
+                'route' => 'admin_settings_exams'
+            ]);
 
-        $menu->addChild('admin.settings.substitutions.label', [
-            'route' => 'admin_settings_substitutions'
-        ]);
+            $menu->addChild('admin.settings.substitutions.label', [
+                'route' => 'admin_settings_substitutions'
+            ]);
+        }
 
         return $root;
     }

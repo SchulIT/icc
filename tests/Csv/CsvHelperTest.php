@@ -22,7 +22,7 @@ class CsvHelperTest extends TestCase {
         $helper = new CsvHelper();
         $response = $helper->getCsvResponse('filename.csv', $this->getData());
 
-        $this->assertEquals('text/csv; charset=UTF-16', $response->headers->get('Content-Type'));
+        $this->assertEquals('text/csv; charset=UTF-8', $response->headers->get('Content-Type'));
         $this->assertEquals('attachment; filename=filename.csv', $response->headers->get('Content-Disposition'));
     }
 }

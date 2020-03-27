@@ -89,6 +89,9 @@ services:
         arguments:
             $typesMap: '%types_map%'
 
+    security.user_checker:
+        alias: App\Security\UserChecker
+
     # MENU
     App\Menu\Builder:
         arguments:

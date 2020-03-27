@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ 'lightsaml_error.title'|trans({}, 'security') }}</title>
+
+    <link rel="stylesheet" href="{{ asset('build/app.css') }}" type="text/css">
+</head>
+
+<body>
+    <div class="container-fluid p-4">
+        <h1>{{ 'lightsaml_error.title'|trans({}, 'security') }}</h1>
+
+        <p>{{ 'lightsaml_error.text'|trans({}, 'security') }}</p>
+
+        <p>
+            <a href="{{ path('lightsaml_sp.login') }}" class="btn btn-primary btn-sm">
+                <i class="fa fa-sign-in-alt"></i> {{ 'lightsaml_error.button'|trans({}, 'security') }}
+            </a>
+        </p>
+
+        <p class="text-muted">
+            Exception: {{ type }}<br>
+            Message: {{ message }}
+        </p>
+    </div>
+</body>
+</html>

@@ -45,6 +45,10 @@ security:
             anonymous: ~
             pattern: ^/saml/(login|discovery)$
 
+        auth:
+            anonymous: ~
+            pattern: ^/auth
+
         secured:
             pattern: ^/
             light_saml_sp:
@@ -54,6 +58,7 @@ security:
                 check_path: /saml/login_check
                 attribute_mapper: App\Security\User\AttributeMapper
                 token_factory: SchoolIT\CommonBundle\Security\Factory\SamlSpTokenFactory
+                failure_path: /auth/error
             logout:
                 path: /logout
             switch_user: true

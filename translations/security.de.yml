@@ -1,0 +1,10 @@
+invalid_account:
+  title: Fehler bei der Anmeldung
+  teacher: Der Account ist nicht mit einem Lehrer verknüpft.
+  student: Der Account ist nicht mit einer Schülerin oder einem Schüler verknüpft.
+  parent: Der Account ist mit keiner Schülerin und keinem Schüler verknüpft.
+
+lightsaml_error:
+  title: Fehler bei der Anmeldung
+  text: Beim Anmeldevorgang ist ein Fehler aufgetreten. Falls der Fehler erneut auftritt, dem Administrator melden und dabei die untenstehenden Informationen mitteilen.
+  button: Anmeldung erneut probieren

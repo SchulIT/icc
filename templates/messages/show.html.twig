@@ -110,6 +110,23 @@
                         <a href="{{ path('edit_message', { id: message.id, ref: 'view' }) }}" class="list-group-item list-group-item-action">
                             <i class="fa fa-edit"></i> {{ 'admin.messages.edit.label'|trans }}
                         </a>
+
+                        {% if message.mustConfirm %}
+                            <a href="{{ path('message_confirmations', { id: message.id }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-tasks"></i> {{ 'message.confirmations.label'|trans }}
+                            </a>
+                        {% endif %}
+
+                        {% if message.downloadsEnabled %}
+                            <a href="{{ path('message_downloads_admin', { id: message.id }) }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-download"></i> {{ 'messages.downloads.label'|trans }}
+                            </a>
+                        {% endif %}
+                        {% if message.uploadsEnabled %}
+                            <a href="{{ path('message_uploads_admin', { id: message.id }) }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-upload"></i> {{ 'messages.uploads.label'|trans }}
+                            </a>
+                        {% endif %}
                     {% endif %}
                     {% if is_granted('remove', message) %}
                         <a href="{{ path('remove_message', { id: message.id, ref: 'view' })}}" class="list-group-item list-group-item-action list-group-item-danger">

@@ -44,7 +44,7 @@
                         <i class="fa fa-download"></i>
                     </a>
                 {% endif %}
-                {% if message.downloadsEnabled %}
+                {% if message.uploadsEnabled %}
                     <a href="{{ path('show_message', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.uploads.info'|trans }}">
                         <i class="fa fa-upload"></i>
                     </a>

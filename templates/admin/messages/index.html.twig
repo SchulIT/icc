@@ -56,7 +56,20 @@
                                             <a href="{{ path('edit_message', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}"><i class="fa fa-edit"></i></a>
 
                                             {% if message.mustConfirm %}
+                                                <a href="{{ path('message_confirmations', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'message.confirmations.label'|trans }}">
+                                                    <i class="fas fa-tasks"></i>
+                                                </a>
+                                            {% endif %}
 
+                                            {% if message.downloadsEnabled %}
+                                                <a href="{{ path('message_downloads_admin', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.downloads.label'|trans }}">
+                                                    <i class="fa fa-download"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if message.uploadsEnabled %}
+                                                <a href="{{ path('message_uploads_admin', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.uploads.label'|trans }}">
+                                                    <i class="fa fa-upload"></i>
+                                                </a>
                                             {% endif %}
                                         {% endif %}
                                         {% if is_granted('remove', message) %}

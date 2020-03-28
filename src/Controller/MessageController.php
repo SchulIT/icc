@@ -6,6 +6,7 @@ use App\Entity\Message;
 use App\Entity\MessageAttachment;
 use App\Entity\MessageConfirmation;
 use App\Entity\MessageFile;
+use App\Entity\MessageFileUpload;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroupMembership;
 use App\Entity\User;
@@ -17,6 +18,7 @@ use App\Grouping\Grouper;
 use App\Grouping\StudentStudyGroupStrategy;
 use App\Grouping\UserUserTypeStrategy;
 use App\Message\MessageConfirmationViewHelper;
+use App\Repository\MessageFileUploadRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\MessageVoter;
@@ -97,29 +99,35 @@ class MessageController extends AbstractController {
     /**
      * @Route("/{id}", name="show_message")
      */
-    public function show(Message $message, MessageFilesystem $messageFilesystem, Request $request) {
+    public function show(Message $message, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $form = $this->createForm(MessageUploadType::class, null, [
-            'message' => $message
+        /** @var MessageFileUpload[] $uploads */
+        $uploads = [ ];
+
+        /** @var MessageFile $file */
+        foreach($message->getFiles() as $file) {
+            $fileUpload = $fileUploadRepository->findOneByFileAndUser($file, $user);
+
+            if($fileUpload === null) {
+                $fileUpload = (new MessageFileUpload())
+                    ->setUser($user)
+                    ->setMessageFile($file);
+            }
+
+            $uploads[] = $fileUpload;
+        }
+
+        $form = $this->createForm(MessageUploadType::class, [
+            'uploads' => $uploads
         ]);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            /** @var MessageFile[] $files */
-            $files = $message->getFiles();
-
-            foreach($files as $file) {
-                $id = sprintf('file_%d', $file->getId());
-
-                if($form->has($id)) {
-                    /** @var UploadedFile $upload */
-                    $upload = $form->get($id)->getData();
-
-                    if($upload !== null && $upload->isValid()) {
-                        $messageFilesystem->uploadFile($message, $user, $upload);
-                    }
+            foreach($uploads as $upload) {
+                if($upload->getFile() !== null) {
+                    $fileUploadRepository->persist($upload);
                 }
             }
 
@@ -128,10 +136,15 @@ class MessageController extends AbstractController {
             ]);
         }
 
+        $missing = array_filter($uploads, function(MessageFileUpload $upload) {
+            return $upload->isUploaded() === false;
+        });
+
         return $this->render('messages/show.html.twig', [
             'message' => $message,
             'downloads' => $messageFilesystem->getUserDownloads($message, $user),
-            'uploads' => $messageFilesystem->getUserUploads($message, $user),
+            'uploads' => $uploads,
+            'missing' => $missing,
             'form' => $form->createView()
         ]);
     }
@@ -165,15 +178,21 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/uploads/{filename}", name="download_uploaded_user_file")
+     * @Route("/{message}/uploads/{id}", name="download_uploaded_user_file")
      */
-    public function downloadUploadedUserFile(Message $message, string $filename, MessageFilesystem $messageFilesystem) {
+    public function downloadUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem) {
         /** @var User $user */
         $user = $this->getUser();
-        $this->denyAccessUnlessGranted(MessageVoter::View, $message);
+        $this->denyAccessUnlessGranted(MessageVoter::View, $file->getMessage());
+
+        $fileUpload = $fileUploadRepository->findOneByFileAndUser($file, $user);
+
+        if($fileUpload === null) {
+            throw new NotFoundHttpException();
+        }
 
         try {
-            return $messageFilesystem->getMessageUploadedUserFileDownloadResponse($message, $user, $filename);
+            return $messageFilesystem->getMessageUploadedUserFileDownloadResponse($fileUpload, $user);
         } catch (FileNotFoundException $e) {
             throw new NotFoundHttpException();
         }

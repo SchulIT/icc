@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -40,6 +42,16 @@ class MessageFile {
      * @var string
      */
     private $extension;
+
+    /**
+     * @ORM\OneToMany(targetEntity="MessageFileUpload", mappedBy="messageFile")
+     * @var Collection<MessageFileUpload>
+     */
+    private $uploads;
+
+    public function __construct() {
+        $this->uploads = new ArrayCollection();
+    }
 
     /**
      * @return int|null
@@ -94,5 +106,12 @@ class MessageFile {
     public function setExtension(?string $extension): MessageFile {
         $this->extension = $extension;
         return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getUploads(): Collection {
+        return $this->uploads;
     }
 }

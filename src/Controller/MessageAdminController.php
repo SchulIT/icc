@@ -9,15 +9,24 @@ use App\Form\MessageType;
 use App\Grouping\Grouper;
 use App\Grouping\MessageExpirationGroup;
 use App\Grouping\MessageExpirationStrategy;
+use App\Grouping\StudentGradeStrategy;
+use App\Grouping\StudentStudyGroupStrategy;
+use App\Grouping\UserUserTypeStrategy;
+use App\Message\MessageFileUploadViewHelper;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\MessageVoter;
 use App\Sorting\Sorter;
+use App\Sorting\StudentGradeGroupStrategy;
+use App\Sorting\StudentStrategy;
+use App\Sorting\StudentStudyGroupGroupStrategy;
+use App\Sorting\TeacherStrategy;
+use App\Sorting\UserLastnameFirstnameStrategy;
+use App\Sorting\UserUserTypeGroupStrategy;
 use App\Utils\RefererHelper;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use SchoolIT\CommonBundle\Form\ConfirmType;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -234,11 +243,27 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/{id}/uploads", name="message_uploads_admin")
      */
-    public function uploads(Message $message, MessageFilesystem $filesystem) {
+    public function uploads(Message $message, MessageFileUploadViewHelper $messageFileUploadViewHelper) {
+        $view = $messageFileUploadViewHelper->createView($message);
+
+        $teachers = $view->getTeachers();
+        $this->sorter->sort($teachers, TeacherStrategy::class);
+
+        $students = $view->getStudents();
+        $gradeGroups = $this->grouper->group($students, StudentGradeStrategy::class);
+        $this->sorter->sort($gradeGroups, StudentGradeGroupStrategy::class);
+        $this->sorter->sortGroupItems($gradeGroups, StudentStrategy::class);
+
+        $userGroups = $this->grouper->group($view->getUsers(), UserUserTypeStrategy::class);
+        $this->sorter->sort($userGroups, UserUserTypeGroupStrategy::class);
+        $this->sorter->sortGroupItems($userGroups, UserLastnameFirstnameStrategy::class);
+
         return $this->render('admin/messages/uploads.html.twig', [
             'message' => $message,
-            'files' => $filesystem->getAllUserUploads($message),
-            'directory' => $filesystem->getMessageUploadsDirectory($message, null)
+            'teachers' => $teachers,
+            'userGroups' => $userGroups,
+            'grades' => $gradeGroups,
+            'view' => $view
         ]);
     }
 

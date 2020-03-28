@@ -95,6 +95,7 @@ label:
     confirmed: bestätigt
     version: Version
     user: Benutzer
+    filesize: Größe
 
 actions:
     add: hinzufügen
@@ -298,9 +299,18 @@ messages:
     uploads:
         info: Diese Mitteilung enthält persönliche Uploads
         label: Persönliche Uploads
-        empty: Es wurden noch keine Dateien hochgeladen.
+        missing: Es wurde noch keine Datei hochgeladen.
+        help: "Erlaubte Dateitypen: %extensions%"
+        status:
+            missing: "{1} %count% Datei fehlt|]1,Inf[ %count% Dateien fehlen"
+            good: Alle Dateien hochgeladen
         download:
             label: Alle Dateien herunterladen
+        caution: Beim Hochladen werden vorhandene Dateien überschrieben. Bereits hochgeladene Dateien werden nicht überschrieben, wenn keine neue Datei angegeben wurde.
+        confirm:
+            title: Hochladen bestätigen
+            message: Beim Hochladen wird die bisherige Datei überschrieben.
+            button: Hochladen und überschreiben
 
 documents:
     label: Dokumente

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Student;
+use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
 
@@ -30,6 +31,25 @@ interface UserRepositoryInterface {
      * @return User[]
      */
     public function findAllByStudent(Student $student);
+
+    /**
+     * @param Student[] $students
+     * @return User[]
+     */
+    public function findAllParentsByStudents(array $students): array;
+
+    /**
+     * @param Student[] $students
+     * @return User[]
+     */
+    public function findAllStudentsByStudents(array $students): array;
+
+    /**
+     * @param Teacher[] $teachers
+     * @return User[]
+     */
+    public function findAllTeachers(array $teachers): array;
+
 
     /**
      * @return User[]

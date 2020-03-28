@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Student;
+use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
+use function Doctrine\ORM\QueryBuilder;
 
 class UserRepository extends AbstractRepository implements UserRepositoryInterface {
 
@@ -56,6 +58,90 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
             ->leftJoin('u.student', 's')
             ->where($qb->expr()->in('u.id', $qbInner->getDQL()))
             ->setParameter('student', $student->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllParentsByStudents(array $students): array {
+        $studentIds = array_map(function(Student $student) {
+            return $student->getId();
+        }, $students);
+
+        $qb = $this->em->createQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('uInner.id')
+            ->from(User::class, 'uInner')
+            ->leftJoin('uInner.students', 'sInner')
+            ->where($qb->expr()->in('sInner.id', ':students'))
+            ->andWhere('uInner.userType = :type');
+
+        $qb
+            ->select(['u', 's'])
+            ->from(User::class, 'u')
+            ->leftJoin('u.students', 's')
+            ->where($qb->expr()->in('u.id', $qbInner->getDQL()))
+            ->setParameter('students', $studentIds)
+            ->setParameter('type', UserType::Parent());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllStudentsByStudents(array $students): array {
+        $studentIds = array_map(function(Student $student) {
+            return $student->getId();
+        }, $students);
+
+        $qb = $this->em->createQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('uInner.id')
+            ->from(User::class, 'uInner')
+            ->leftJoin('uInner.students', 'sInner')
+            ->where($qb->expr()->in('sInner.id', ':students'))
+            ->andWhere('uInner.userType = :type');
+
+        $qb
+            ->select(['u', 's'])
+            ->from(User::class, 'u')
+            ->leftJoin('u.students', 's')
+            ->where($qb->expr()->in('u.id', $qbInner->getDQL()))
+            ->setParameter('students', $studentIds)
+            ->setParameter('type', UserType::Student());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllTeachers(array $teachers): array {
+        $teacherIds = array_map(function(Teacher $teacher) {
+            return $teacher->getId();
+        }, $teachers);
+
+        $qb = $this->em->createQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('uInner.id')
+            ->from(User::class, 'uInner')
+            ->leftJoin('uInner.teacher', 'tInner')
+            ->where($qb->expr()->in('tInner.id', ':teachers'))
+            ->andWhere('uInner.userType = :type');
+
+        $qb
+            ->select(['u', 's'])
+            ->from(User::class, 'u')
+            ->leftJoin('u.teacher', 't')
+            ->where($qb->expr()->in('u.id', $qbInner->getDQL()))
+            ->setParameter('teachers', $teacherIds)
+            ->setParameter('type', UserType::Teacher());
 
         return $qb->getQuery()->getResult();
     }

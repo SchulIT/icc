@@ -28,12 +28,27 @@ class ArrayUtils {
         return $array;
     }
 
-    public static function createArrayWithKeys(array $items, \Closure $keyFunc): array {
+    public static function createArrayWithKeys(array $items, \Closure $keyFunc, bool $multiValue = false): array {
         $array = [ ];
 
         foreach($items as $item) {
-            $key = $keyFunc($item);
-            $array[$key] = $item;
+            $keys = $keyFunc($item);
+
+            if(!is_array($keys)) {
+                $keys = [ $keys ];
+            }
+
+            foreach($keys as $key) {
+                if ($multiValue === true) {
+                    if (!isset($array[$key])) {
+                        $array[$key] = [];
+                    }
+
+                    $array[$key][] = $item;
+                } else {
+                    $array[$key] = $item;
+                }
+            }
         }
 
         return $array;

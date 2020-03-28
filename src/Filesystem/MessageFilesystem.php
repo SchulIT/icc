@@ -4,7 +4,9 @@ namespace App\Filesystem;
 
 use App\Entity\Message;
 use App\Entity\MessageAttachment;
+use App\Entity\MessageFileUpload;
 use App\Entity\User;
+use App\Exception\UnexpectedTypeException;
 use App\Http\FlysystemFileResponse;
 use League\Flysystem\FilesystemInterface;
 use Mimey\MimeTypes;
@@ -12,16 +14,19 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 class MessageFilesystem implements DirectoryNamerInterface {
 
+    private $tokenStorage;
     private $filesystem;
     private $mimeTypes;
     private $logger;
 
-    public function __construct(FilesystemInterface $filesystem, MimeTypes $mimeTypes, LoggerInterface $logger = null) {
+    public function __construct(TokenStorageInterface $tokenStorage, FilesystemInterface $filesystem, MimeTypes $mimeTypes, LoggerInterface $logger = null) {
+        $this->tokenStorage = $tokenStorage;
         $this->filesystem = $filesystem;
         $this->mimeTypes = $mimeTypes;
         $this->logger = $logger ?? new NullLogger();
@@ -73,14 +78,33 @@ class MessageFilesystem implements DirectoryNamerInterface {
         }
     }
 
+    /**
+     * Returns the full path of a MessageAttachment
+     *
+     * @param MessageAttachment $attachment
+     * @return string
+     */
     private function getMessageAttachmentPath(MessageAttachment $attachment): string {
         return sprintf('/%d/%s', $attachment->getMessage()->getId(), $attachment->getPath());
     }
 
+    /**
+     * Returns the messages basedir which is used for any sorts of file (attachments and user specific downloads/uploads)
+     *
+     * @param Message $message
+     * @return string
+     */
     private function getMessageDirectory(Message $message): string {
         return sprintf('/%d/', $message->getId());
     }
 
+    /**
+     * Returns the base dir for user specific downloads
+     *
+     * @param Message $message
+     * @param User|null $user The directory of a specific user (if specified)
+     * @return string
+     */
     public function getMessageDownloadsDirectory(Message $message, ?User $user): string {
         if($user === null) {
             return sprintf('/%d/downloads', $message->getId());
@@ -89,24 +113,48 @@ class MessageFilesystem implements DirectoryNamerInterface {
         return sprintf('/%d/downloads/%s', $message->getId(), $user->getUsername());
     }
 
-    public function getMessageUploadsDirectory(Message $message, ?User $user): string {
+    /**
+     * Returns the directory for user specific uploads
+     *
+     * @param Message|MessageFileUpload $messageOrUpload
+     * @param User|null $user The directory of a specific user (if specified)
+     * @return string
+     */
+    public function getMessageUploadsDirectory($messageOrUpload, ?User $user): string {
         if($user === null) {
-            return sprintf('/%d/uploads', $message->getId());
+            return sprintf('/%d/uploads', $messageOrUpload->getId());
         }
 
-        return sprintf('/%d/uploads/%s', $message->getId(), $user->getUsername());
+        return sprintf('/%d/uploads/%s', $messageOrUpload->getMessageFile()->getMessage()->getId(), $user->getUsername());
     }
 
     /**
      * @param MessageAttachment $object
      * @param PropertyMapping $mapping
      * @return string
+     * @throws UnexpectedTypeException
      */
     public function directoryName($object, PropertyMapping $mapping): string {
-        return $this->getMessageDirectory($object->getMessage());
+        if($object instanceof MessageFileUpload) {
+            $user = $this->tokenStorage->getToken()->getUser();
+
+            if($user instanceof User && $user !== null) {
+                return $this->getMessageUploadsDirectory($object, $user);
+            }
+
+            throw new \RuntimeException('User must not be null.');
+        } else if($object instanceof Message) {
+            return $this->getMessageDirectory($object->getMessage());
+        } else if($object instanceof MessageAttachment) {
+            return $this->getMessageAttachmentPath($object);
+        }
+
+        throw new UnexpectedTypeException($object, [ MessageFileUpload::class, Message::class, MessageAttachment::class ]);
     }
 
     /**
+     * Returns a list of user specific downloads
+     *
      * @param Message $message
      * @param User $user
      * @return string[]
@@ -116,11 +164,24 @@ class MessageFilesystem implements DirectoryNamerInterface {
         return $this->filesystem->listContents($path);
     }
 
+    /**
+     * Returns the list of uploaded files of a user
+     *
+     * @param Message $message
+     * @param User $user
+     * @return array
+     */
     public function getUserUploads(Message $message, User $user) {
         $path = $this->getMessageUploadsDirectory($message, $user);
         return $this->filesystem->listContents($path);
     }
 
+    /**
+     * Returns all user downloads as nested array
+     *
+     * @param Message $message
+     * @return array
+     */
     public function getAllUserDownloads(Message $message) {
         $path = $this->getMessageDownloadsDirectory($message, null);
         $contents = $this->filesystem->listContents($path, true);
@@ -128,6 +189,12 @@ class MessageFilesystem implements DirectoryNamerInterface {
         return $this->makeStructure($contents);
     }
 
+    /**
+     * Returns all user uploads as nested array
+     *
+     * @param Message $message
+     * @return array
+     */
     public function getAllUserUploads(Message $message) {
         $path = $this->getMessageUploadsDirectory($message, null);
         $contents = $this->filesystem->listContents($path, true);
@@ -135,6 +202,12 @@ class MessageFilesystem implements DirectoryNamerInterface {
         return $this->makeStructure($contents);
     }
 
+    /**
+     * Helper which creates a nested array structure
+     *
+     * @param array $contents
+     * @return array
+     */
     private function makeStructure(array $contents) {
         $structure = [ ];
 
@@ -157,6 +230,15 @@ class MessageFilesystem implements DirectoryNamerInterface {
         return $structure;
     }
 
+    /**
+     * Uploads a user-specific download
+     *
+     * @param Message $message
+     * @param User $user
+     * @param UploadedFile $uploadedFile
+     * @throws \League\Flysystem\FileExistsException
+     * @throws \League\Flysystem\FileNotFoundException
+     */
     public function uploadUserDownload(Message $message, User $user, UploadedFile $uploadedFile) {
         $path = sprintf('%s/%s', $this->getMessageDownloadsDirectory($message, $user), $uploadedFile->getClientOriginalName());
 
@@ -169,6 +251,15 @@ class MessageFilesystem implements DirectoryNamerInterface {
         fclose($stream);
     }
 
+    /**
+     * Uploads a user-specific file
+     *
+     * @param Message $message
+     * @param User $user
+     * @param UploadedFile $uploadedFile
+     * @throws \League\Flysystem\FileExistsException
+     * @throws \League\Flysystem\FileNotFoundException
+     */
     public function uploadFile(Message $message, User $user, UploadedFile $uploadedFile) {
         $path = sprintf('%s/%s', $this->getMessageUploadsDirectory($message, $user), $uploadedFile->getClientOriginalName());
 
@@ -189,12 +280,9 @@ class MessageFilesystem implements DirectoryNamerInterface {
         return $this->getDownloadResponse($path, $filename);
     }
 
-    public function getMessageUploadedUserFileDownloadResponse(Message $message, User $user, string $filename): Response {
-        $path = sprintf('%s/%s', $this->getMessageUploadsDirectory($message, $user), $filename);
-
-        // TODO: fix $filename = "../max.mustermann/foo.pdf"
-
-        return $this->getDownloadResponse($path, $filename);
+    public function getMessageUploadedUserFileDownloadResponse(MessageFileUpload $fileUpload, User $user): Response {
+        $path = sprintf('%s/%s', $this->getMessageUploadsDirectory($fileUpload, $user), $fileUpload->getPath());
+        return $this->getDownloadResponse($path, $fileUpload->getFilename());
     }
 
     public function getMessageUploadedFileDownloadResponse(Message $message, string $path): Response {

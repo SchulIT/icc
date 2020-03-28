@@ -74,11 +74,11 @@
 
             {% if is_granted('dismiss', message) %}
                 {% if is_dismissed(message) %}
-                    <a href="{{ path('reenable_message', { id: message.id }) }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ path('reenable_message', { id: message.id }) }}" class="btn btn-secondary btn-sm" title="{{ 'message.reenable'|trans }}">
                         <span aria-hidden="true"><i class="fas fa-eye"></i></span>
                     </a>
                 {% else %}
-                    <a href="{{ path('dismiss_message', { id: message.id }) }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ path('dismiss_message', { id: message.id }) }}" class="btn btn-secondary btn-sm" title="{{ 'message.dismiss'|trans }}">
                         <span aria-hidden="true"><i class="fas fa-eye-slash"></i></span>
                     </a>
                 {% endif %}

@@ -22,6 +22,7 @@ class TimetableWeek {
 
     /**
      * @ORM\Column(type="string", unique=true, name="`key`")
+     * @Assert\NotBlank()
      * @var string
      */
     private $key;
@@ -42,16 +43,16 @@ class TimetableWeek {
     private $weekMod;
 
     /**
-     * @return int|null
+     * @return int
      */
-    public function getId(): ?int {
+    public function getId() {
         return $this->id;
     }
 
     /**
      * @return string
      */
-    public function getKey(): string {
+    public function getKey() {
         return $this->key;
     }
 
@@ -59,7 +60,7 @@ class TimetableWeek {
      * @param string $key
      * @return TimetableWeek
      */
-    public function setKey(string $key): TimetableWeek {
+    public function setKey($key): TimetableWeek {
         $this->key = $key;
         return $this;
     }
@@ -67,7 +68,7 @@ class TimetableWeek {
     /**
      * @return string
      */
-    public function getDisplayName(): string {
+    public function getDisplayName() {
         return $this->displayName;
     }
 
@@ -75,7 +76,7 @@ class TimetableWeek {
      * @param string $displayName
      * @return TimetableWeek
      */
-    public function setDisplayName(string $displayName): TimetableWeek {
+    public function setDisplayName($displayName): TimetableWeek {
         $this->displayName = $displayName;
         return $this;
     }
@@ -83,7 +84,7 @@ class TimetableWeek {
     /**
      * @return int
      */
-    public function getWeekMod(): int {
+    public function getWeekMod() {
         return $this->weekMod;
     }
 
@@ -91,7 +92,7 @@ class TimetableWeek {
      * @param int $weekMod
      * @return TimetableWeek
      */
-    public function setWeekMod(int $weekMod): TimetableWeek {
+    public function setWeekMod($weekMod): TimetableWeek {
         $this->weekMod = $weekMod;
         return $this;
     }

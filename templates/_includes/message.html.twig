@@ -1,6 +1,9 @@
-{% set mustConfirm = message.mustConfirm and is_granted('confirm', message) and not is_confirmed(message) %}
+{% set missingUploads = missing_uploads(message) %}
 
-<div class="card {% if mustConfirm %}border-warning{% endif %}">
+{% set mustConfirm = message.mustConfirm and is_granted('confirm', message) and not is_confirmed(message) %}
+{% set mustUpload = message.uploadsEnabled and is_granted('upload', message) and missingUploads|length > 0 %}
+
+<div class="card {% if mustConfirm or mustUpload %}border-warning{% endif %}">
     <div class="card-body">
         <div class="float-right ml-2">
 
@@ -39,13 +42,8 @@
             {% endif %}
 
             <div class="btn-group" role="group">
-                {% if message.downloadsEnabled %}
-                    <a href="{{ path('show_message', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.downloads.info'|trans }}">
-                        <i class="fa fa-download"></i>
-                    </a>
-                {% endif %}
                 {% if message.uploadsEnabled %}
-                    <a href="{{ path('show_message', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.uploads.info'|trans }}">
+                    <a href="{{ path('show_message', { id: message.id }) }}" class="btn {% if missingUploads|length > 0 %}btn-warning{% else %}btn-success{% endif %} btn-sm" title="{{ 'messages.uploads.info'|trans }}">
                         <i class="fa fa-upload"></i>
                     </a>
                 {% endif %}
@@ -113,6 +111,12 @@
     {% if message.mustConfirm and not is_dismissed(message) and not is_confirmed(message) %}
         <div class="card-footer bg-warning">
             <i class="fa fa-info-circle"></i> {% if is_granted('confirm', message) %}{{ 'messages.confirm.prompt'|trans }}{% else %}{{ 'messages.confirm.info'|trans }}{% endif %}
+        </div>
+    {% endif %}
+
+    {% if message.uploadsEnabled and missingUploads|length > 0 %}
+        <div class="card-footer bg-warning">
+            <i class="fa fa-exclamation-triangle"></i> {{ 'messages.uploads.status.missing_long'|trans({'%count%': missingUploads|length }) }}
         </div>
     {% endif %}
 

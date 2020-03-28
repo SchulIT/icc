@@ -302,6 +302,7 @@ messages:
         missing: Es wurde noch keine Datei hochgeladen.
         help: "Erlaubte Dateitypen: %extensions%"
         status:
+            missing_long: "{1} Es muss noch eine Datei hochgeladen werden.|]1,Inf[ Es müssen noch %count% Dateien hochgeladen werden."
             missing: "{1} %count% Datei fehlt|]1,Inf[ %count% Dateien fehlen"
             good: Alle Dateien hochgeladen
         download:

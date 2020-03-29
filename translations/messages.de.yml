@@ -19,6 +19,7 @@ label:
     study_groups: "{0} Lerngruppen|{1} Lerngruppe|]1,Inf[ Lerngruppen"
     study_groups_simple: Lerngruppen
     usertype: Benutzertyp
+    usertypes: Benutzertypen
     details: Details
     date: Datum
     lesson: Stunde
@@ -69,7 +70,7 @@ label:
     messages_files:
         label: Personalisierte Dateien
         info_downloads: Es ist möglich, dass für jeden Benutzer personalisierte Dateien zum Download angeboten werden.
-        enable_downloads: Benutzer können Dateien herunterladen
+        enable_downloads: Benutzer können personalisierte Dateien herunterladen
         info_uploads: Darüber hinaus ist es möglich, dass Benutzer personalisierte Dateien einsenden können.
         enable_uploads: Benutzer können Dateien hochladen
         file_label: Beschreibung für die Datei, bspw. ZIP-Archiv
@@ -288,6 +289,7 @@ messages:
         label: Mitteilung bearbeiten
 
     confirm:
+        label: Bestätigungen
         info: Diese Mitteilung muss von der Zielgruppe bestätigt werden.
         prompt: Diese Mitteilung bitte nach dem Lesen durch Abhaken in der Kopfzeile bestätigen.
         success: Mitteilung erfolgreich bestätigt.
@@ -300,6 +302,10 @@ messages:
         dropzone:
             label: Hochladen
             help: Hier Ordner mit den Dateien der jeweiligen Nutzer per Drag & Drop ablegen. Der Ordnername muss mit dem Benutzernamen übereinstimmen.
+        remove:
+            label: Persönlichen Download löschen
+            confirm: 'Soll die Datei "%filename%" (%label%) von "%user%" wirklich gelöscht werden?'
+            success: Datei erfolgreich gelöscht
 
     uploads:
         info: Diese Mitteilung enthält persönliche Uploads
@@ -317,6 +323,9 @@ messages:
             title: Hochladen bestätigen
             message: Beim Hochladen wird die bisherige Datei überschrieben.
             button: Hochladen und überschreiben
+        remove:
+            confirm: 'Soll die Datei "%filename%" wirklich gelöscht werden?'
+            success: Datei erfolgreich gelöscht
 
 documents:
     label: Dokumente

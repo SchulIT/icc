@@ -25,6 +25,6 @@ class FlysystemFileResponse extends StreamedResponse {
             flush();
         });
 
-        $this->headers->set('Content-Disposition', $this->headers->makeDisposition($disposition, $filename));
+        $this->headers->set('Content-Disposition', $this->headers->makeDisposition($disposition, $filename, transliterator_transliterate('ASCII', $filename)));
     }
 }

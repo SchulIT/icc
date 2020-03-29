@@ -10,4 +10,6 @@ interface MessageFileUploadRepositoryInterface {
     public function findOneByFileAndUser(MessageFile $file, User $user): ?MessageFileUpload;
 
     public function persist(MessageFileUpload $fileUpload): void;
+
+    public function remove(MessageFileUpload $fileUpload): void;
 }

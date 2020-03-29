@@ -29,4 +29,9 @@ class MessageFileUploadRepository extends AbstractRepository implements MessageF
         $this->em->persist($fileUpload);
         $this->em->flush();
     }
+
+    public function remove(MessageFileUpload $fileUpload): void {
+        $this->em->remove($fileUpload);
+        $this->em->flush();
+    }
 }

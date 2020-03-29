@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Validator\SubsetOf;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -60,7 +61,7 @@ class Message {
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
-     * @var ArrayCollection<StudyGroup>
+     * @var Collection<StudyGroup>
      */
     private $studyGroups;
 
@@ -76,7 +77,7 @@ class Message {
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
-     * @var ArrayCollection<UserTypeEntity>
+     * @var Collection<UserTypeEntity>
      */
     private $visibilities;
 
@@ -116,10 +117,58 @@ class Message {
     private $isDownloadsEnabled = false;
 
     /**
+     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
+     * @ORM\JoinTable(name="message_download_enabled_usertypes",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @SubsetOf(propertyPath="visibilities")
+     * @var Collection<UserTypeEntity>
+     */
+    private $downloadEnabledUserTypes;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="StudyGroup")
+     * @ORM\JoinTable(
+     *     name="message_download_enabled_studygroups",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @ORM\OrderBy({"name" = "ASC"})
+     * @SubsetOf(propertyPath="studyGroups")
+     * @var Collection<StudyGroup>
+     */
+    private $downloadEnabledStudyGroups;
+
+    /**
      * @ORM\Column(type="boolean")
      * @var bool
      */
     private $isUploadsEnabled = false;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
+     * @ORM\JoinTable(name="message_upload_enabled_usertypes",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @SubsetOf(propertyPath="visibilities")
+     * @var Collection<UserTypeEntity>
+     */
+    private $uploadEnabledUserTypes;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="StudyGroup")
+     * @ORM\JoinTable(
+     *     name="message_upload_enabled_studygroups",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @ORM\OrderBy({"name" = "ASC"})
+     * @SubsetOf(propertyPath="studyGroups")
+     * @var Collection<StudyGroup>
+     */
+    private $uploadEnabledStudyGroups;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -130,7 +179,7 @@ class Message {
     /**
      * @ORM\OneToMany(targetEntity="MessageFile", mappedBy="message", cascade={"persist"})
      * @Assert\Valid()
-     * @var ArrayCollection<MessageFile>
+     * @var Collection<MessageFile>
      */
     private $files;
 
@@ -153,8 +202,32 @@ class Message {
     private $mustConfirm = false;
 
     /**
+     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
+     * @ORM\JoinTable(name="message_confirmation_required_usertypes",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @SubsetOf(propertyPath="visibilities")
+     * @var Collection<UserTypeEntity>
+     */
+    private $confirmationRequiredUserTypes;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="StudyGroup")
+     * @ORM\JoinTable(
+     *     name="message_confirmation_required_studygroups",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @ORM\OrderBy({"name" = "ASC"})
+     * @SubsetOf(propertyPath="studyGroups")
+     * @var Collection<StudyGroup>
+     */
+    private $confirmationRequiredStudyGroups;
+
+    /**
      * @ORM\OneToMany(targetEntity="MessageConfirmation", mappedBy="message")
-     * @var ArrayCollection<MessageConfirmation>
+     * @var Collection<MessageConfirmation>
      */
     private $confirmations;
 
@@ -164,6 +237,12 @@ class Message {
         $this->files = new ArrayCollection();
         $this->visibilities = new ArrayCollection();
         $this->confirmations = new ArrayCollection();
+        $this->confirmationRequiredStudyGroups = new ArrayCollection();
+        $this->confirmationRequiredUserTypes = new ArrayCollection();
+        $this->uploadEnabledStudyGroups = new ArrayCollection();
+        $this->uploadEnabledUserTypes = new ArrayCollection();
+        $this->downloadEnabledStudyGroups = new ArrayCollection();
+        $this->downloadEnabledUserTypes = new ArrayCollection();
 
         $this->scope = MessageScope::Messages();
     }
@@ -430,6 +509,48 @@ class Message {
      */
     public function getConfirmations(): Collection {
         return $this->confirmations;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getUploadEnabledUserTypes(): Collection {
+        return $this->uploadEnabledUserTypes;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getDownloadEnabledUserTypes(): Collection {
+        return $this->downloadEnabledUserTypes;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getDownloadEnabledStudyGroups(): Collection {
+        return $this->downloadEnabledStudyGroups;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getUploadEnabledStudyGroups(): Collection {
+        return $this->uploadEnabledStudyGroups;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getConfirmationRequiredUserTypes(): Collection {
+        return $this->confirmationRequiredUserTypes;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getConfirmationRequiredStudyGroups(): Collection {
+        return $this->confirmationRequiredStudyGroups;
     }
 
     /**

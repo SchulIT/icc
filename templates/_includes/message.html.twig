@@ -28,8 +28,7 @@
                 {% endif %}
             </div>
 
-
-            {% if message.mustConfirm %}
+            {% if message.mustConfirm and is_granted('confirm', message) %}
                 {% if not is_confirmed(message) and is_granted('confirm', message) %}
                     <a href="{{ path('confirm_message', { id: message.id }) }}" class="btn btn-warning btn-sm" title="{{ 'actions.confirm'|trans }}">
                         <i class="fa fa-check"></i>
@@ -41,13 +40,13 @@
                 {% endif %}
             {% endif %}
 
+            {% if message.uploadsEnabled and is_granted('upload', message) %}
             <div class="btn-group" role="group">
-                {% if message.uploadsEnabled %}
-                    <a href="{{ path('show_message', { id: message.id }) }}" class="btn {% if missingUploads|length > 0 %}btn-warning{% else %}btn-success{% endif %} btn-sm" title="{{ 'messages.uploads.info'|trans }}">
-                        <i class="fa fa-upload"></i>
-                    </a>
-                {% endif %}
+                <a href="{{ path('show_message', { id: message.id }) }}" class="btn {% if missingUploads|length > 0 %}btn-warning{% else %}btn-success{% endif %} btn-sm" title="{{ 'messages.uploads.info'|trans }}">
+                    <i class="fa fa-upload"></i>
+                </a>
             </div>
+            {% endif %}
 
             {% if is_granted('edit', message) or is_granted('remove', message) %}
                 <div class="btn-group" role="group">
@@ -91,7 +90,7 @@
     </div>
 
     {% set userDownloads = message_downloads(message) %}
-    {% if message.attachments|length > 0 or userDownloads > 0 %}
+    {% if message.attachments|length > 0 or userDownloads|length > 0 %}
         <div class="card-footer">
             {% for attachment in message.attachments %}
                 <span class="mr-2">
@@ -108,13 +107,13 @@
         </div>
     {% endif %}
 
-    {% if message.mustConfirm and not is_dismissed(message) and not is_confirmed(message) %}
+    {% if message.mustConfirm and is_granted('confirm', message) and not is_dismissed(message) and not is_confirmed(message) %}
         <div class="card-footer bg-warning">
             <i class="fa fa-info-circle"></i> {% if is_granted('confirm', message) %}{{ 'messages.confirm.prompt'|trans }}{% else %}{{ 'messages.confirm.info'|trans }}{% endif %}
         </div>
     {% endif %}
 
-    {% if message.uploadsEnabled and missingUploads|length > 0 %}
+    {% if message.uploadsEnabled and is_granted('upload', message) and missingUploads|length > 0 %}
         <div class="card-footer bg-warning">
             <i class="fa fa-exclamation-triangle"></i> {{ 'messages.uploads.status.missing_long'|trans({'%count%': missingUploads|length }) }}
         </div>

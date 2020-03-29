@@ -44,27 +44,32 @@
         </div>
     </div>
 
+    {{ form_row(form.group_confirmations) }}
+
+    {{ form_row(form.group_download) }}
+
     <div class="card mb-3">
         <div class="card-header">{{ 'label.messages_files.label'|trans }}</div>
 
         <div class="card-body">
-            {{ form_row(form.group_uploaddownload.isDownloadsEnabled) }}
-            {{ form_row(form.group_uploaddownload.isUploadsEnabled) }}
-            {{ form_row(form.group_uploaddownload.uploadDescription) }}
+            {{ form_row(form.group_upload.isUploadsEnabled) }}
+            {{ form_row(form.group_upload.uploadEnabledUserTypes) }}
+            {{ form_row(form.group_upload.uploadEnabledStudyGroups) }}
+            {{ form_row(form.group_upload.uploadDescription) }}
 
-            <div class="files" data-collection="files" data-prototype="{{ form_row(form.group_uploaddownload.files.vars.prototype)|e('html_attr') }}">
-                {% for file in form.group_uploaddownload.files %}
+            <div class="files" data-collection="files" data-prototype="{{ form_row(form.group_upload.files.vars.prototype)|e('html_attr') }}">
+                {% for file in form.group_upload.files %}
                     {{ form_row(file) }}
                 {% endfor %}
             </div>
 
-            {{ form_errors(form.group_uploaddownload.files) }}
+            {{ form_errors(form.group_upload.files) }}
 
             <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="files">
                 <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
             </button>
 
-            <!-- {{ form_end(form.group_uploaddownload) }} -->
+            <!-- {{ form_end(form.group_upload) }} -->
         </div>
     </div>
 

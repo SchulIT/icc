@@ -26,7 +26,7 @@ class MessageConfirmationViewHelper {
 
     public function createView(Message $message): MessageConfirmationView {
         /** @var UserType[] $visibilities */
-        $visibilities = $message->getVisibilities()->map(function(UserTypeEntity $visibility) {
+        $visibilities = $message->getConfirmationRequiredUserTypes()->map(function(UserTypeEntity $visibility) {
             return $visibility->getUserType();
         });
 
@@ -38,7 +38,7 @@ class MessageConfirmationViewHelper {
         }
 
         if(EnumArrayUtils::inArray(UserType::Student(), $visibilities) || EnumArrayUtils::inArray(UserType::Parent(), $visibilities)) {
-            $students = $this->studentRepository->findAllByStudyGroups($message->getStudyGroups()->toArray());
+            $students = $this->studentRepository->findAllByStudyGroups($message->getConfirmationRequiredStudyGroups()->toArray());
         }
 
         $users = $this->userRepository->findAllByUserTypes(

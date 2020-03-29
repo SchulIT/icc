@@ -78,6 +78,14 @@ class MessageFilesystem implements DirectoryNamerInterface {
         }
     }
 
+    public function removeUserFileDownload(Message $message, User $user, string $filename): void {
+        $path = sprintf('%s/%s', $this->getMessageDownloadsDirectory($message, $user), $filename);
+
+        if($this->filesystem->has($path)) {
+            $this->filesystem->delete($path);
+        }
+    }
+
     /**
      * Returns the full path of a MessageAttachment
      *
@@ -184,19 +192,6 @@ class MessageFilesystem implements DirectoryNamerInterface {
      */
     public function getAllUserDownloads(Message $message) {
         $path = $this->getMessageDownloadsDirectory($message, null);
-        $contents = $this->filesystem->listContents($path, true);
-
-        return $this->makeStructure($contents);
-    }
-
-    /**
-     * Returns all user uploads as nested array
-     *
-     * @param Message $message
-     * @return array
-     */
-    public function getAllUserUploads(Message $message) {
-        $path = $this->getMessageUploadsDirectory($message, null);
         $contents = $this->filesystem->listContents($path, true);
 
         return $this->makeStructure($contents);

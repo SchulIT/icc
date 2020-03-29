@@ -16,56 +16,172 @@
     </ol>
 {% endblock %}
 
+{% macro printUsers(view, message, users, backup) %}
+    {% if users|length == 0 %}
+        <tr class="table-warning">
+            <td colspan="4">
+                <i class="fa fa-user"></i> {{ backup }}
+            </td>
+        </tr>
+    {% endif %}
+
+    {% for user in users %}
+        <tr class="pointer" data-toggle="table-collapse" data-target=".file-{{ user.id }}">
+            <td colspan="4">
+                <div class="d-flex">
+                    <span class="mr-auto align-self-center"><i class="fa fa-user"></i> {{ user|user }}</span>
+
+                    <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
+                </div>
+            </td>
+        </tr>
+
+        {% for file in view.userDownloads(user) %}
+            <tr class="collapse file-{{ user.id }}">
+                <td class="align-middle">
+                    <a href="{{ path('download_message_download', { message: message.id, user: user.id, filename: file.basename }) }}" class="btn btn-primary btn-sm"><i class="fa fa-download"></i></a>
+                    <a href="{{ path('remove_message_download', { message: message.id, user: user.id, filename: file.basename }) }}" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                    {{ file.basename }}
+                </td>
+                <td class="align-middle">{{ file.size|filesize }}</td>
+                <td class="align-middle">{{ file.timestamp|todatetime|format_datetime }}</td>
+            </tr>
+        {% endfor %}
+    {% endfor %}
+{% endmacro %}
+
 {% block content %}
     <div class="container-fluid px-0">
         <div class="row">
-            <div class="col-md-9">
-                <div class="card" id="explorer">
-                    <table class="table table-striped table-bordered">
-                        <colgroup>
-                            <col>
-                            <col class="column-md">
-                            <col class="column-md">
-                        </colgroup>
+            <div class="col-md-9" id="explorer">
+                {# Students #}
+                {% for grade in grades %}
+                    <div class="card">
+                        <div class="card-header d-flex pointer" data-toggle="table-collapse" data-target="#downloads-{{ grade.grade.id }}">
+                            <span class="mr-auto align-self-center">{{ grade.grade.name }}</span>
 
-                        <thead>
-                        <tr>
-                            <th>{{ 'label.file'|trans }}</th>
-                            <th>{{ 'label.filesize'|trans }}</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for folder in files %}
-                            <tr>
-                                <td colspan="3">
-                                    <div class="d-flex pointer" data-toggle="table-collapse" data-target=".files-{{ loop.index }}">
-                                        <span class="align-self-center mr-auto">
-                                            <i class="fa fa-user"></i> {{ folder.basename }}
-                                        </span>
+                            <i class="fa fa-chevron-up float-right indicator align-self-center"></i>
+                        </div>
 
-                                        <span class="align-self-center mr-2">
-                                            {{ 'label.files'|trans({'%count%': folder.files|length }) }}
-                                        </span>
+                        <div id="downloads-{{ grade.grade.id }}">
+                            <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-students-{{ grade.grade.id }}">
+                                <span class="mr-auto align-self-center">{{ 'user_type.student'|trans({}, 'enums') }}</span>
+                                <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
+                            </div>
 
-                                        <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
-                                    </div>
-
-                                </td>
-                            </tr>
-                            {% set folderIdx = loop.index %}
-                            {% for file in folder.files %}
-                                {% set filePath = folder.basename ~ "/" ~ file.basename %}
-                                <tr class="collapse files-{{ folderIdx }}" data-zip="file" data-zip-filename="{{ filePath }}" data-zip-url="{{ path('download_message_upload', { id: message.id, path: filePath }) }}">
-                                    <td>{{ file.basename }}</td>
-                                    <td>{{ file.size|filesize }}</td>
-                                    <td></td>
+                            <table class="table table-striped table-bordered collapse card-table" id="downloads-students-{{ grade.grade.id }}">
+                                <colgroup>
+                                    <col>
+                                    <col class="column-lg">
+                                    <col class="column-lg">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>{{ 'label.file'|trans }}</th>
+                                    <th>{{ 'label.filesize'|trans }}</th>
+                                    <th>{{ 'label.date'|trans }}</th>
                                 </tr>
+                                </thead>
+
+                                <tbody>
+                                {% for student in grade.students %}
+                                    {% set users = view.studentUsers(student) %}
+                                    {{ _self.printUsers(view, message, users, student|student ) }}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+
+                            <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-parents-{{ grade.grade.id }}">
+                                <span class="mr-auto align-self-center">{{ 'user_type.parent'|trans({}, 'enums') }}</span>
+                                <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
+                            </div>
+
+                            <table class="table table-striped table-bordered collapse card-table" id="downloads-parents-{{ grade.grade.id }}">
+                                <colgroup>
+                                    <col>
+                                    <col class="column-lg">
+                                    <col class="column-lg">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>{{ 'label.file'|trans }}</th>
+                                    <th>{{ 'label.filesize'|trans }}</th>
+                                    <th>{{ 'label.date'|trans }}</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {% for student in grade.students %}
+                                    {% set users = view.parentUsers(student) %}
+                                    {{ _self.printUsers(view, message, users, student|student ) }}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+                {# Teachers #}
+                {% if teachers|length > 0 %}
+                    <div class="card">
+                        <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-teachers">
+                            <span class="mr-auto align-self-center">{{ 'user_type.teacher'|trans({}, 'enums') }}</span>
+                            <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
+                        </div>
+
+                        <table class="table table-striped table-bordered collapse" id="downloads-teachers">
+                            <colgroup>
+                                <col>
+                                <col class="column-lg">
+                                <col class="column-lg">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.file'|trans }}</th>
+                                <th>{{ 'label.filesize'|trans }}</th>
+                                <th>{{ 'label.date'|trans }}</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for teacher in teachers %}
+                                {% set users = view.teacherUsers(teacher) %}
+                                {{ _self.printUsers(view, message, users, teacher|teacher ) }}
                             {% endfor %}
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+
+                {# Users #}
+                {% for group in userGroups %}
+                    <div class="card">
+                        <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-users">
+                            <span class="mr-auto align-self-center">{{ group.userType|enum }}</span>
+                            <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
+                        </div>
+
+                        <table class="table table-striped table-bordered collapse" id="downloads-users">
+                            <colgroup>
+                                <col>
+                                <col class="column-lg">
+                                <col class="column-lg">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.file'|trans }}</th>
+                                <th>{{ 'label.filesize'|trans }}</th>
+                                <th>{{ 'label.date'|trans }}</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for user in group.users %}
+                                {{ _self.printUsers(view, message, [ user ], user|user ) }}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endfor %}
             </div>
 
             <div class="col-md-3">

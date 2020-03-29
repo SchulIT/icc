@@ -21,8 +21,9 @@
                     {{ message.content|markdown }}
                 </div>
                 {% set userDownloads = message_downloads(message) %}
-                {% if message.attachments|length > 0 or userDownloads > 0 %}
-                <div class="card-footer">
+
+                {% if message.attachments|length > 0 or userDownloads|length > 0 %}
+                    <div class="card-footer">
                         {% for attachment in message.attachments %}
                             <span class="mr-2">
                                 <a href="{{ path('download_message_attachment', { id: attachment.id, message: message.id }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
@@ -39,7 +40,7 @@
                 {% endif %}
             </div>
 
-            {% if message.uploadsEnabled %}
+            {% if message.uploadsEnabled and is_granted('upload', message) %}
                 <div class="card{% if missing|length > 0 %} border-warning{% endif %}">
                     <div class="card-body">
                         <h5 class="card-title">
@@ -68,9 +69,16 @@
                             <div class="form-group row">
                                 <div class="col-sm-2"></div>
                                 <div class="col-sm-10">
-                                    <div class="bs-callout {% if not upload.uploaded %}bs-callout-warning{% else %}bs-callout-success{% endif %}" role="alert">
+                                    <div class="bs-callout {% if not upload.uploaded %}bs-callout-warning{% else %}bs-callout-success{% endif %} mr-0 pr-0" role="alert">
                                     {% if upload.uploaded %}
-                                        <i class="fa fa-check-circle"></i> <a href="{{ path('download_uploaded_user_file', { message: message.id, id: upload.messageFile.id }) }}">{{ upload.filename }}</a> <span class="text-muted">{{ upload.size|filesize }} <i class="fa fa-calendar"></i> {{ upload.updatedAt|format_datetime }}</span>
+                                        <div class="d-flex">
+                                            <span class="mr-auto align-self-center">
+                                                <i class="fa fa-check-circle"></i> {{ upload.filename }}<span class="text-muted">{{ upload.size|filesize }} <i class="fa fa-calendar"></i> {{ upload.updatedAt|format_datetime }}</span>
+                                            </span>
+
+                                            <a href="{{ path('download_uploaded_user_file', { message: message.id, id: upload.messageFile.id }) }}" class="btn btn-primary btn-sm align-self-center mr-2"><i class="fa fa-download"></i></a>
+                                            <a href="{{ path('remove_uploaded_user_file', { message: message.id, id: upload.messageFile.id }) }}" class="btn btn-danger btn-sm align-self-center"><i class="fa fa-trash"></i></a>
+                                        </div>
                                     {% else %}
                                         <li class="fa fa-times-circle"></li> {{ 'messages.uploads.missing'|trans }}
                                     {% endif %}

@@ -68,10 +68,6 @@ class MessageType extends AbstractType {
                                 'size' => 10
                             ]
                         ])
-                        ->add('mustConfirm', CheckboxType::class, [
-                            'label' => 'label.must_confirm',
-                            'required' => false
-                        ])
                         ->add('startDate', DateType::class, [
                             'label' => 'label.message.start',
                             'years' => $years
@@ -97,7 +93,32 @@ class MessageType extends AbstractType {
                         ]);
                 }
             ])
-            ->add('group_uploaddownload', FieldsetType::class, [
+            ->add('group_confirmations', FieldsetType::class, [
+                'legend' => 'messages.confirm.label',
+                'fields' => function(FormBuilderInterface $builder) {
+                    $builder
+                        ->add('mustConfirm', CheckboxType::class, [
+                            'label' => 'label.must_confirm',
+                            'required' => false,
+                            'help' => 'messages.confirm.info'
+                        ])
+                        ->add('confirmationRequiredUserTypes', UserTypeEntityType::class, [
+                            'label' => 'label.usertypes',
+                            'multiple' => true,
+                            'expanded' => true,
+                            'required' => false
+                        ])
+                        ->add('confirmationRequiredStudyGroups', StudyGroupType::class, [
+                            'label' => 'label.study_groups_simple',
+                            'multiple' => true,
+                            'attr' => [
+                                'size' => 10
+                            ],
+                            'required' => false
+                        ]);
+                }
+            ])
+            ->add('group_download', FieldsetType::class, [
                 'legend' => 'label.messages_files.label',
                 'fields' => function(FormBuilderInterface $builder) {
                     $builder
@@ -106,6 +127,26 @@ class MessageType extends AbstractType {
                             'required' => false,
                             'help' => 'label.messages_files.info_downloads'
                         ])
+                        ->add('downloadEnabledUserTypes', UserTypeEntityType::class, [
+                            'label' => 'label.usertypes',
+                            'multiple' => true,
+                            'expanded' => true,
+                            'required' => false
+                        ])
+                        ->add('downloadEnabledStudyGroups', StudyGroupType::class, [
+                            'label' => 'label.study_groups_simple',
+                            'multiple' => true,
+                            'attr' => [
+                                'size' => 10
+                            ],
+                            'required' => false
+                        ]);
+                }
+            ])
+            ->add('group_upload', FieldsetType::class, [
+                'legend' => 'label.messages_files.label',
+                'fields' => function(FormBuilderInterface $builder) {
+                    $builder
                         ->add('isUploadsEnabled', CheckboxType::class, [
                             'label' => 'label.messages_files.enable_uploads',
                             'required' => false,
@@ -113,6 +154,20 @@ class MessageType extends AbstractType {
                         ])
                         ->add('uploadDescription', MarkdownType::class, [
                             'label' => 'label.messages_files.upload_description',
+                            'required' => false
+                        ])
+                        ->add('uploadEnabledUserTypes', UserTypeEntityType::class, [
+                            'label' => 'label.usertypes',
+                            'multiple' => true,
+                            'expanded' => true,
+                            'required' => false
+                        ])
+                        ->add('uploadEnabledStudyGroups', StudyGroupType::class, [
+                            'label' => 'label.study_groups_simple',
+                            'multiple' => true,
+                            'attr' => [
+                                'size' => 10
+                            ],
                             'required' => false
                         ])
                         ->add('files', CollectionType::class, [

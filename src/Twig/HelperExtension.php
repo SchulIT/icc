@@ -8,9 +8,11 @@ use App\Filesystem\MessageFilesystem;
 use App\Message\DismissedMessagesHelper;
 use App\Message\MessageConfirmationHelper;
 use App\Message\MessageFileUploadHelper;
+use App\Security\Voter\MessageVoter;
 use App\Utils\ColorUtils;
 use App\Utils\RefererHelper;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -23,10 +25,12 @@ class HelperExtension extends AbstractExtension {
     private $messageFilesystem;
     private $messageFileUploadHelper;
     private $tokenStorage;
+    private $authorizationChecker;
 
     public function __construct(MessageConfirmationHelper $confirmationHelper, DismissedMessagesHelper $dismissedHelper,
                                 RefererHelper $redirectHelper, ColorUtils $colorUtils, MessageFilesystem $messageFilesystem,
-                                MessageFileUploadHelper $messageFileUploadHelper, TokenStorageInterface $tokenStorage) {
+                                MessageFileUploadHelper $messageFileUploadHelper, TokenStorageInterface $tokenStorage,
+                                AuthorizationCheckerInterface $authorizationChecker) {
         $this->confirmationHelper = $confirmationHelper;
         $this->dismissedHelper = $dismissedHelper;
         $this->redirectHelper = $redirectHelper;
@@ -34,6 +38,7 @@ class HelperExtension extends AbstractExtension {
         $this->messageFilesystem = $messageFilesystem;
         $this->messageFileUploadHelper = $messageFileUploadHelper;
         $this->tokenStorage = $tokenStorage;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function getFunctions() {
@@ -56,6 +61,10 @@ class HelperExtension extends AbstractExtension {
     }
 
     public function getMissingUploads(Message $message) {
+        if($this->authorizationChecker->isGranted(MessageVoter::Upload, $message) !== true) {
+            return [ ];
+        }
+
         $token = $this->tokenStorage->getToken();
 
         if($token === null) {
@@ -72,6 +81,10 @@ class HelperExtension extends AbstractExtension {
     }
 
     public function messageDownloads(Message $message) {
+        if($this->authorizationChecker->isGranted(MessageVoter::Download, $message) !== true) {
+            return [ ];
+        }
+
         $token = $this->tokenStorage->getToken();
 
         if($token === null) {

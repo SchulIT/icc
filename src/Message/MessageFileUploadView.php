@@ -4,66 +4,18 @@ namespace App\Message;
 
 use App\Entity\MessageFile;
 use App\Entity\MessageFileUpload;
-use App\Entity\Student;
-use App\Entity\Teacher;
 use App\Entity\User;
 use App\Utils\ArrayUtils;
 
-class MessageFileUploadView {
-
-    /** @var Student[] */
-    private $students;
-
-    /** @var Teacher[] */
-    private $teachers;
-
-    /** @var array<int, User[]>  */
-    private $studentUsersLookup;
-    /** @var array<int, User[]> */
-    private $parentUsersLookup;
-    /** @var array<int, User[]>  */
-    private $teacherUsersLookup;
-    /** @var array<int, User>  */
-    private $users;
+class MessageFileUploadView extends AbstractMessageFileView {
 
     /** @var array<int, MessageFileUpload[]>  */
     private $userUploads;
 
     public function __construct(array $students, array $studentUsersLookup, array $parentUsersLookup, array $teachers, array $teacherUsersLookup, array $users, array $userUploads) {
-        $this->students = $students;
-        $this->studentUsersLookup = $studentUsersLookup;
-        $this->parentUsersLookup = $parentUsersLookup;
-        $this->teachers = $teachers;
-        $this->teacherUsersLookup = $teacherUsersLookup;
-        $this->users = $users;
+        parent::__construct($students, $studentUsersLookup, $parentUsersLookup, $teachers, $teacherUsersLookup, $users);
 
         $this->userUploads = $userUploads;
-    }
-
-    public function getStudents() {
-        return $this->students;
-    }
-
-    public function getTeachers() {
-        return $this->teachers;
-    }
-
-    public function getUsers() {
-        return array_values($this->users);
-    }
-
-    public function getStudentUsers(Student $student) {
-
-
-        return $this->studentUsersLookup[$student->getId()] ?? [ ];
-    }
-
-    public function getParentUsers(Student $student) {
-        return $this->parentUsersLookup[$student->getId()] ??  [ ];
-    }
-
-    public function getTeacherUsers(Teacher $teacher) {
-        return $this->teacherUsersLookup[$teacher->getId()] ?? [ ];
     }
 
     /**

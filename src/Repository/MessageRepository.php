@@ -136,7 +136,7 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
 
     private function createDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
-            ->select(['m', 'sg'])
+            ->select(['m', 'sg', 'v', 'f', 'c', 'a'])
             ->from(Message::class, 'm')
             ->leftJoin('m.attachments', 'a')
             ->leftJoin('m.createdBy', 'c')

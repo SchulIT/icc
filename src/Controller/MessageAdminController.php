@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Message;
+use App\Entity\User;
 use App\Event\MessageUpdatedEvent;
 use App\Filesystem\MessageFilesystem;
 use App\Form\MessageType;
@@ -12,6 +13,7 @@ use App\Grouping\MessageExpirationStrategy;
 use App\Grouping\StudentGradeStrategy;
 use App\Grouping\StudentStudyGroupStrategy;
 use App\Grouping\UserUserTypeStrategy;
+use App\Message\MessageDownloadViewHelper;
 use App\Message\MessageFileUploadViewHelper;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
@@ -27,6 +29,7 @@ use App\Utils\RefererHelper;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use SchoolIT\CommonBundle\Form\ConfirmType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -176,12 +179,70 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/{id}/downloads", name="message_downloads_admin")
      */
-    public function downloads(Message $message, MessageFilesystem $filesystem) {
+    public function downloads(Message $message, MessageDownloadViewHelper $messageDownloadViewHelper) {
+        $view = $messageDownloadViewHelper->createView($message);
+
+        $teachers = $view->getTeachers();
+        $this->sorter->sort($teachers, TeacherStrategy::class);
+
+        $students = $view->getStudents();
+        $gradeGroups = $this->grouper->group($students, StudentGradeStrategy::class);
+        $this->sorter->sort($gradeGroups, StudentGradeGroupStrategy::class);
+        $this->sorter->sortGroupItems($gradeGroups, StudentStrategy::class);
+
+        $userGroups = $this->grouper->group($view->getUsers(), UserUserTypeStrategy::class);
+        $this->sorter->sort($userGroups, UserUserTypeGroupStrategy::class);
+        $this->sorter->sortGroupItems($userGroups, UserLastnameFirstnameStrategy::class);
+
         return $this->render('admin/messages/downloads.html.twig', [
             'message' => $message,
+            'teachers' => $teachers,
+            'userGroups' => $userGroups,
+            'grades' => $gradeGroups,
+            'view' => $view,
             'csrf_token_name' => static::CsrfTokenName,
-            'csrf_token_id' => static::CsrfTokenId,
-            'files' => $filesystem->getAllUserDownloads($message)
+            'csrf_token_id' => static::CsrfTokenId
+        ]);
+    }
+
+    /**
+     * @Route("/{message}/downloads/{user}/{filename}/download", name="download_message_download")
+     * @ParamConverter("message", class="App\Entity\Message", options={"id" = "message"})
+     * @ParamConverter("user", class="App\Entity\User", options={"id" = "user"})
+     */
+    public function downloadDownload(Message $message, User $user, string $filename, MessageFilesystem $messageFilesystem) {
+        return $messageFilesystem->getMessageUserFileDownloadResponse($message, $user, $filename);
+    }
+
+    /**
+     * @Route("/{message}/downloads/{user}/{filename}/remove", name="remove_message_download")
+     * @ParamConverter("message", class="App\Entity\Message", options={"id" = "message"})
+     * @ParamConverter("user", class="App\Entity\User", options={"id" = "user"})
+     */
+    public function removeDownload(Message $message, User $user, string $filename, MessageFilesystem $messageFilesystem, Request $request) {
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'messages.downloads.remove.confirm',
+            'message_parameters' => [
+                '%user%' => $user->getUsername(),
+                '%filename%' => $filename
+            ]
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $messageFilesystem->removeUserFileDownload($message, $user, $filename);
+
+            $this->addFlash('success', 'messages.downloads.remove.success');
+            return $this->redirectToRoute('message_downloads_admin', [
+                'id' => $message->getId()
+            ]);
+        }
+
+        return $this->render('admin/messages/remove_download.html.twig', [
+            'form' => $form->createView(),
+            'message' => $message,
+            'user' => $user,
+            'filename' => $filename
         ]);
     }
 

@@ -35,6 +35,7 @@ use App\Utils\RefererHelper;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\ORM\EntityManagerInterface;
+use SchoolIT\CommonBundle\Form\ConfirmType;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -171,6 +172,7 @@ class MessageController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
         $this->denyAccessUnlessGranted(MessageVoter::View, $message);
+        $this->denyAccessUnlessGranted(MessageVoter::Download, $message);
 
         try {
             return $messageFilesystem->getMessageUserFileDownloadResponse($message, $user, $filename);
@@ -180,12 +182,13 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{message}/uploads/{id}", name="download_uploaded_user_file")
+     * @Route("/{message}/uploads/{id}/download", name="download_uploaded_user_file")
      */
     public function downloadUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem) {
         /** @var User $user */
         $user = $this->getUser();
         $this->denyAccessUnlessGranted(MessageVoter::View, $file->getMessage());
+        $this->denyAccessUnlessGranted(MessageVoter::Upload, $file->getMessage());
 
         $fileUpload = $fileUploadRepository->findOneByFileAndUser($file, $user);
 
@@ -198,6 +201,51 @@ class MessageController extends AbstractController {
         } catch (FileNotFoundException $e) {
             throw new NotFoundHttpException();
         }
+    }
+
+    /**
+     * @Route("/{message}/uploads/{id}/remove", name="remove_uploaded_user_file")
+     */
+    public function removeUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $filesystem, Request $request) {
+        /** @var User $user */
+        $user = $this->getUser();
+        $this->denyAccessUnlessGranted(MessageVoter::View, $file->getMessage());
+        $this->denyAccessUnlessGranted(MessageVoter::Upload, $file->getMessage());
+
+        $fileUpload = $fileUploadRepository->findOneByFileAndUser($file, $user);
+
+        if($fileUpload === null) {
+            throw new NotFoundHttpException();
+        }
+
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'messages.uploads.remove.confirm',
+            'message_parameters' => [
+                '%filename%' => $fileUpload->getFilename(),
+                '%label%' => $file->getLabel()
+            ]
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            try {
+                $fileUploadRepository->remove($fileUpload);
+            } catch (FileNotFoundException $e) {
+                throw new NotFoundHttpException();
+            }
+
+            $this->addFlash('success', 'messages.uploads.remove.success');
+            return $this->redirectToRoute('show_message', [
+                'id' => $file->getMessage()->getId()
+            ]);
+        }
+
+        return $this->render('messages/remove_uploaded_file.html.twig', [
+            'message' => $file->getMessage(),
+            'file' => $file,
+            'upload' => $fileUpload,
+            'form' => $form->createView()
+        ]);
     }
 
     /**

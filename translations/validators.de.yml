@@ -1,1 +1,2 @@
 "File has the wrong format. Expected Format: {{ extensions }}": "Datei hat das falsche Format. Erwartet: {{ extensions }}"
+"This should be a subset of {{ compared_value_path }}.": "Diese Auswahl muss eine Teilmenge von {{ compared_value_path }} sein."

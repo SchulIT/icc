@@ -10,6 +10,8 @@ use App\Entity\User;
 use App\Entity\UserType;
 use App\Entity\UserTypeEntity;
 use App\Message\MessageConfirmationHelper;
+use App\Utils\EnumArrayUtils;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -109,7 +111,7 @@ class MessageVoter extends Voter {
             return true;
         }
 
-        if($this->checkMessageIsForVisibility($message, $user->getUserType(), false) !== true) {
+        if($this->isMemberOfTypeAndStudyGroup($token, $this->getUserTypes($message->getVisibilities()), $message->getStudyGroups()->toArray(), false) !== true) {
             return false;
         }
 
@@ -166,7 +168,13 @@ class MessageVoter extends Voter {
             return false;
         }
 
-        return $message->mustConfirm() && $this->isMessageForUser($message, $token);
+        return $message->mustConfirm()
+            && $this->isMemberOfTypeAndStudyGroup(
+                $token,
+                $this->getUserTypes($message->getConfirmationRequiredUserTypes()),
+                $message->getConfirmationRequiredStudyGroups()->toArray(),
+                true
+            );
     }
 
     private function canDismiss(Message $message, TokenInterface $token) {
@@ -182,53 +190,92 @@ class MessageVoter extends Voter {
         return $this->confirmationHelper->isMessageConfirmed($message, $token->getUser());
     }
 
-    private function checkMessageIsForVisibility(Message $message, UserType $type, bool $strict = true): bool {
-        // Only targeted users are allowed to confirm
-        $visibilities = $message->getVisibilities()
-            ->map(function(UserTypeEntity $messageVisibility) {
-                return $messageVisibility->getUserType()->getKey();
-            })
-            ->toArray();
-
-        /** @var UserType[] $present */
-        $present = [ $type ];
-
-        if($strict === false && $type->equals(UserType::Parent())) {
-            $present[] = UserType::Student();
-        }
-
-        foreach($present as $userType) {
-            if(in_array($userType->getKey(), $visibilities) === true) {
-                return true;
-            }
-        }
-
-        return false;
+    /**
+     * @param Collection<UserTypeEntity> $collection
+     * @return UserType[]
+     */
+    private function getUserTypes(Collection $collection) {
+        return array_map(function(UserTypeEntity $userTypeEntity) {
+            return $userTypeEntity->getUserType();
+        }, $collection->toArray());
     }
 
-    private function isMessageForUser(Message $message, TokenInterface $token) {
-        if($this->canView($message, $token) !== true) {
-            return false;
+    /**
+     * @param UserType[] $allowedUserTypes
+     * @param UserType $userType
+     * @param bool $strict
+     * @return bool
+     */
+    private function checkUserType(array $allowedUserTypes, UserType $userType, bool $strict = true): bool {
+        if(EnumArrayUtils::inArray($userType, $allowedUserTypes)) {
+            return true;
         }
 
-        $user = $token->getUser();
-
-        if(!$user instanceof User) {
-            return false;
-        }
-
-        if($this->checkMessageIsForVisibility($message, $user->getUserType()) === true) {
+        if($strict === false && $userType->equals(UserType::Parent()) && EnumArrayUtils::inArray(UserType::Student(), $allowedUserTypes))  {
             return true;
         }
 
         return false;
     }
 
+    /**
+     * @param StudyGroup[] $studyGroups
+     * @param Student[] $students
+     * @return bool
+     */
+    private function isMemberOfStudyGroups(array $studyGroups, array $students): bool {
+        foreach($students as $student) {
+            foreach($studyGroups as $studyGroup) {
+                /** @var StudyGroupMembership $membership */
+                foreach($studyGroup->getMemberships() as $membership) {
+                    if($membership->getStudent()->getId() === $student->getId()) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param TokenInterface $token
+     * @param UserType[] $userTypes
+     * @param StudyGroup[] $studyGroups
+     * @param bool $strict
+     * @return bool
+     */
+    private function isMemberOfTypeAndStudyGroup(TokenInterface $token, array $userTypes, array $studyGroups, bool $strict = true): bool {
+        $user = $token->getUser();
+
+        if(!$user instanceof User) {
+            return false;
+        }
+
+        if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]) && $this->isMemberOfStudyGroups($studyGroups, $user->getStudents()->toArray()) !== true) {
+            return false;
+        }
+
+        return $this->checkUserType($userTypes, $user->getUserType(), $strict);
+    }
+
     private function canDownload(Message $message, TokenInterface $token) {
-        return $message->isDownloadsEnabled() && $this->isMessageForUser($message, $token);
+        return $message->isDownloadsEnabled()
+            && $this->isMemberOfTypeAndStudyGroup(
+                $token,
+                $this->getUserTypes($message->getDownloadEnabledUserTypes()),
+                $message->getDownloadEnabledStudyGroups()->toArray(),
+                true
+            );
     }
 
     private function canUpload(Message $message, TokenInterface $token) {
-        return $message->isUploadsEnabled() && $this->isMessageForUser($message, $token);
+        return $message->isUploadsEnabled()
+            && $this->isMemberOfTypeAndStudyGroup(
+                $token,
+                $this->getUserTypes($message->getUploadEnabledUserTypes()),
+                $message->getUploadEnabledStudyGroups()->toArray(),
+                true
+            );
     }
 }

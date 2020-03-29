@@ -77,12 +77,12 @@ class WikiArticle {
     private $content;
 
     /**
-     * @ORM\ManyToMany(targetEntity="WikiArticleVisibility")
-     * @ORM\JoinTable(name="wikiarticle_visibilities",
-     *     joinColumns={@ORM\JoinColumn(name="article", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility", onDelete="CASCADE")}
+     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
+     * @ORM\JoinTable(name="wiki_article_visibilities",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
-     * @var Collection<WikiArticleVisibility>
+     * @var ArrayCollection<UserTypeEntity>
      */
     private $visibilities;
 
@@ -211,11 +211,11 @@ class WikiArticle {
         return $this;
     }
 
-    public function addVisibility(WikiArticleVisibility $visibility) {
+    public function addVisibility(UserTypeEntity $visibility) {
         $this->visibilities->add($visibility);
     }
 
-    public function removeVisibility(WikiArticleVisibility $visibility) {
+    public function removeVisibility(UserTypeEntity $visibility) {
         $this->visibilities->removeElement($visibility);
     }
 

@@ -5,10 +5,10 @@ namespace App\Message;
 use App\Entity\Message;
 use App\Entity\MessageFile;
 use App\Entity\MessageFileUpload;
-use App\Entity\MessageVisibility;
 use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
@@ -28,7 +28,7 @@ class MessageFileUploadViewHelper {
 
     public function createView(Message $message): MessageFileUploadView {
         /** @var UserType[] $visibilities */
-        $visibilities = $message->getVisibilities()->map(function(MessageVisibility $visibility) {
+        $visibilities = $message->getVisibilities()->map(function(UserTypeEntity $visibility) {
             return $visibility->getUserType();
         });
 

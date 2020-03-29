@@ -8,6 +8,7 @@ use App\Entity\Grade;
 use App\Entity\MessageScope;
 use App\Entity\MessageVisibility;
 use App\Entity\StudyGroup;
+use App\Entity\UserTypeEntity;
 use App\Security\Voter\MessageScopeVoter;
 use App\Sorting\StringStrategy;
 use App\Sorting\StudyGroupStrategy;
@@ -81,14 +82,14 @@ class MessageType extends AbstractType {
                         ])
                         ->add('visibilities', EntityType::class, [
                             'label' => 'label.visibility',
-                            'class' => MessageVisibility::class,
+                            'class' => UserTypeEntity::class,
                             'query_builder' => function(EntityRepository $repository) {
                                 return $repository->createQueryBuilder('v')
                                     ->orderBy('v.userType', 'asc');
                             },
                             'multiple' => true,
                             'expanded' => true,
-                            'choice_label' => function(MessageVisibility $visibility) {
+                            'choice_label' => function(UserTypeEntity $visibility) {
                                 return $this->enumStringConverter->convert($visibility->getUserType());
                             }
                         ])

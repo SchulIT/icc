@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Converter\EnumStringConverter;
 use App\Converter\UserTypeStringConverter;
 use App\Entity\TimetablePeriodVisibility;
+use App\Entity\UserTypeEntity;
 use App\Sorting\TimetablePeriodVisibilityStrategy;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -37,10 +38,10 @@ class TimetablePeriodType extends AbstractType {
             ])
             ->add('visibilities', SortableEntityType::class, [
                 'label' => 'label.visibility',
-                'class' => TimetablePeriodVisibility::class,
+                'class' => UserTypeEntity::class,
                 'multiple' => true,
                 'expanded' => true,
-                'choice_label' => function(TimetablePeriodVisibility $visibility) {
+                'choice_label' => function(UserTypeEntity $visibility) {
                     return $this->enumStringConverter->convert($visibility->getUserType());
                 },
                 'sort_by' => $this->periodVisibilityStrategy

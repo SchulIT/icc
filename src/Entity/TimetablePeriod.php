@@ -55,12 +55,12 @@ class TimetablePeriod {
     private $end;
 
     /**
-     * @ORM\ManyToMany(targetEntity="TimetablePeriodVisibility")
-     * @ORM\JoinTable(name="timetableperiod_visibilities",
-     *     joinColumns={@ORM\JoinColumn(name="period", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility", onDelete="CASCADE")}
+     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
+     * @ORM\JoinTable(name="timetable_period_visibilities",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
-     * @var Collection<TimetablePeriodVisibility>
+     * @var ArrayCollection<UserTypeEntity>
      */
     private $visibilities;
 
@@ -70,14 +70,7 @@ class TimetablePeriod {
      */
     private $lessons;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="TimetablePeriodVisibility")
-     * @ORM\JoinTable(name="timetable_period_visibilities",
-     *     joinColumns={@ORM\JoinColumn(name="period", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility", onDelete="CASCADE")}
-     * )
-     * @var Collection<TimetableSupervision>
-     */
+
     private $supervisions;
 
     public function __construct() {
@@ -157,16 +150,16 @@ class TimetablePeriod {
         return $this;
     }
 
-    public function addVisibility(TimetablePeriodVisibility $visibility) {
+    public function addVisibility(UserTypeEntity $visibility) {
         $this->visibilities->add($visibility);
     }
 
-    public function removeVisibility(TimetablePeriodVisibility $visibility) {
+    public function removeVisibility(UserTypeEntity $visibility) {
         $this->visibilities->removeElement($visibility);
     }
 
     /**
-     * @return Collection<TimetablePeriodVisibility>
+     * @return Collection<UserTypeEntity>
      */
     public function getVisibilities(): Collection {
         return $this->visibilities;

@@ -4,8 +4,8 @@ namespace App\Message;
 
 use App\Entity\Message;
 use App\Entity\MessageConfirmation;
-use App\Entity\MessageVisibility;
 use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
@@ -26,7 +26,7 @@ class MessageConfirmationViewHelper {
 
     public function createView(Message $message): MessageConfirmationView {
         /** @var UserType[] $visibilities */
-        $visibilities = $message->getVisibilities()->map(function(MessageVisibility $visibility) {
+        $visibilities = $message->getVisibilities()->map(function(UserTypeEntity $visibility) {
             return $visibility->getUserType();
         });
 

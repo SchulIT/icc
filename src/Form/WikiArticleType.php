@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Converter\EnumStringConverter;
+use App\Entity\UserTypeEntity;
 use App\Entity\WikiArticle;
 use App\Entity\WikiArticleVisibility;
 use App\Repository\WikiArticleRepositoryInterface;
@@ -54,14 +55,14 @@ class WikiArticleType extends AbstractType {
             ])
             ->add('visibilities', EntityType::class, [
                 'label' => 'label.visibility',
-                'class' => WikiArticleVisibility::class,
+                'class' => UserTypeEntity::class,
                 'query_builder' => function(EntityRepository $repository) {
                     return $repository->createQueryBuilder('v')
                         ->orderBy('v.userType', 'asc');
                 },
                 'multiple' => true,
                 'expanded' => true,
-                'choice_label' => function(WikiArticleVisibility $visibility) {
+                'choice_label' => function(UserTypeEntity $visibility) {
                     return $this->enumStringConverter->convert($visibility->getUserType());
                 }
             ])

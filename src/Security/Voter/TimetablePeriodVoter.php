@@ -3,9 +3,9 @@
 namespace App\Security\Voter;
 
 use App\Entity\TimetablePeriod;
-use App\Entity\TimetablePeriodVisibility;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
 use App\Utils\EnumArrayUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -65,7 +65,7 @@ class TimetablePeriodVoter extends Voter {
         $userType = $user->getUserType();
 
         $allowedUserTypes = $period->getVisibilities()
-            ->map(function(TimetablePeriodVisibility $visibility) {
+            ->map(function(UserTypeEntity $visibility) {
                 return $visibility->getUserType();
             })
             ->toArray();

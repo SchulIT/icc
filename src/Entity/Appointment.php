@@ -103,12 +103,12 @@ class Appointment {
     private $category;
 
     /**
-     * @ORM\ManyToMany(targetEntity="AppointmentVisibility")
+     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
      * @ORM\JoinTable(name="appointment_visibilities",
-     *     joinColumns={@ORM\JoinColumn(name="appointment", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="visibility", onDelete="CASCADE")}
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
-     * @var Collection<AppointmentVisibility>
+     * @var ArrayCollection<UserTypeEntity>
      */
     private $visibilities;
 
@@ -299,16 +299,16 @@ class Appointment {
         return $this->studyGroups;
     }
 
-    public function addVisibility(AppointmentVisibility $visibility) {
+    public function addVisibility(UserTypeEntity $visibility) {
         $this->visibilities->add($visibility);
     }
 
-    public function removeVisibility(AppointmentVisibility $visibility) {
+    public function removeVisibility(UserTypeEntity $visibility) {
         $this->visibilities->removeElement($visibility);
     }
 
     /**
-     * @return Collection<AppointmentVisibility>
+     * @return Collection<UserTypeEntity>
      */
     public function getVisibilities(): Collection {
         return $this->visibilities;

@@ -12,6 +12,7 @@ use App\Entity\StudyGroup;
 use App\Entity\StudyGroupType;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
 use App\Sorting\DocumentCategoryNameStrategy;
 use App\Sorting\StringStrategy;
 use App\Sorting\StudyGroupStrategy;
@@ -78,14 +79,14 @@ class DocumentType extends AbstractType {
                         $builder
                             ->add('visibilities', EntityType::class, [
                                 'label' => 'label.visibility',
-                                'class' => DocumentVisibility::class,
+                                'class' => UserTypeEntity::class,
                                 'query_builder' => function (EntityRepository $repository) {
                                     return $repository->createQueryBuilder('v')
                                         ->orderBy('v.userType', 'asc');
                                 },
                                 'multiple' => true,
                                 'expanded' => true,
-                                'choice_label' => function (DocumentVisibility $visibility) {
+                                'choice_label' => function (UserTypeEntity $visibility) {
                                     return $this->enumStringConverter->convert($visibility->getUserType());
                                 }
                             ])

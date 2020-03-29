@@ -7,13 +7,12 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class AppointmentVisibility {
+class UserTypeEntity {
 
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @var int
      */
     private $id;
 
@@ -39,9 +38,9 @@ class AppointmentVisibility {
 
     /**
      * @param UserType $userType
-     * @return AppointmentVisibility
+     * @return UserTypeEntity
      */
-    public function setUserType(UserType $userType): AppointmentVisibility {
+    public function setUserType(UserType $userType): UserTypeEntity {
         $this->userType = $userType;
         return $this;
     }

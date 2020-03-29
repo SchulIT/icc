@@ -71,12 +71,12 @@ class Message {
     private $attachments;
 
     /**
-     * @ORM\ManyToMany(targetEntity="MessageVisibility")
+     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
      * @ORM\JoinTable(name="message_visibilities",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
-     * @var ArrayCollection<MessageVisibility>
+     * @var ArrayCollection<UserTypeEntity>
      */
     private $visibilities;
 
@@ -275,16 +275,16 @@ class Message {
         return $this->attachments;
     }
 
-    public function addVisibility(MessageVisibility $visibility) {
+    public function addVisibility(UserTypeEntity $visibility) {
         $this->visibilities->add($visibility);
     }
 
-    public function removeVisibility(MessageVisibility $visibility) {
+    public function removeVisibility(UserTypeEntity $visibility) {
         $this->visibilities->removeElement($visibility);
     }
 
     /**
-     * @return Collection<MessageVisibility>
+     * @return Collection<UserTypeEntity>
      */
     public function getVisibilities(): Collection {
         return $this->visibilities;

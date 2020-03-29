@@ -3,13 +3,12 @@
 namespace App\Security\Voter;
 
 use App\Entity\Message;
-use App\Entity\MessageVisibility;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use App\Entity\User;
 use App\Entity\UserType;
-use App\Message\DismissedMessagesHelper;
+use App\Entity\UserTypeEntity;
 use App\Message\MessageConfirmationHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -186,7 +185,7 @@ class MessageVoter extends Voter {
     private function checkMessageIsForVisibility(Message $message, UserType $type, bool $strict = true): bool {
         // Only targeted users are allowed to confirm
         $visibilities = $message->getVisibilities()
-            ->map(function(MessageVisibility $messageVisibility) {
+            ->map(function(UserTypeEntity $messageVisibility) {
                 return $messageVisibility->getUserType()->getKey();
             })
             ->toArray();

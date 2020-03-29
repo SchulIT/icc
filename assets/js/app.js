@@ -170,5 +170,43 @@ document.addEventListener('DOMContentLoaded', function() {
             animation: 'none'
         });
     });
+
+    let arrowDown = 'fa-chevron-down';
+    let arrowUp = 'fa-chevron-up';
+
+    document.querySelectorAll('[data-toggle=table-collapse]').forEach(function(el) {
+        el.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            let targetSelector = el.getAttribute('data-target');
+            let targets = document.querySelectorAll(targetSelector);
+
+            let indicator = el.querySelector('.indicator');
+
+            if(indicator === null) {
+                targets.forEach(function (target) {
+                    if (target.classList.contains('collapse')) {
+                        target.classList.remove('collapse');
+                    } else {
+                        target.classList.add('collapse');
+                    }
+                });
+            } else {
+                if(indicator.classList.contains(arrowDown)) { // show
+                    indicator.classList.remove(arrowDown);
+                    indicator.classList.add(arrowUp);
+                    targets.forEach(function(target) {
+                        target.classList.remove('collapse');
+                    });
+                } else { // hide
+                    indicator.classList.remove(arrowUp);
+                    indicator.classList.add(arrowDown);
+                    targets.forEach(function(target) {
+                        target.classList.add('collapse');
+                    });
+                }
+            }
+        });
+    });
 });
 

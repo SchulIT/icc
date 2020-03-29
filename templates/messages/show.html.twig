@@ -20,41 +20,24 @@
 
                     {{ message.content|markdown }}
                 </div>
-            </div>
-
-            {% if message.attachments|length > 0 %}
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ 'label.attachments'|trans }}</h5>
-
-                        <ul class="list-unstyled">
-                            {% for attachment in message.attachments %}
-                                <li><i class="fa fa-file"></i> <a href="{{ path('download_message_attachment', { message: message.id, id: attachment.id }) }}">{{ attachment.filename }}</a> <span class="text-muted">{{ attachment.size|filesize }}</span></li>
+                {% set userDownloads = message_downloads(message) %}
+                {% if message.attachments|length > 0 or userDownloads > 0 %}
+                <div class="card-footer">
+                        {% for attachment in message.attachments %}
+                            <span class="mr-2">
+                                <a href="{{ path('download_message_attachment', { id: attachment.id, message: message.id }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
+                            </span>
+                        {% endfor %}
+                        {% if message.downloadsEnabled %}
+                            {% for file in userDownloads %}
+                                <span class="mr-2">
+                                    <a href="{{ path('download_user_file', { id: message.id, filename: file.basename }) }}"><i class="fa fa-download"></i> {{ file.basename }}</a>
+                                </span>
                             {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            {% endif %}
-
-            {% if message.downloadsEnabled %}
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ 'messages.downloads.label'|trans }}</h5>
-
-                        {% if downloads is empty %}
-                        <div class="bs-callout bs-callout-info">
-                            <p>{{ 'messages.downloads.empty'|trans }}</p>
-                        </div>
-                        {% else %}
-                            <ul class="list-unstyled">
-                                {% for file in downloads %}
-                                <li><i class="fa fa-file"></i> <a href="{{ path('download_user_file', { id: message.id, filename: file.basename }) }}">{{ file.basename }}</a> <span class="text-muted">{{ file.size|filesize }}</span></li>
-                                {% endfor %}
-                            </ul>
                         {% endif %}
                     </div>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
 
             {% if message.uploadsEnabled %}
                 <div class="card{% if missing|length > 0 %} border-warning{% endif %}">
@@ -140,6 +123,10 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">{{ 'label.details'|trans }}</h5>
+
+                    <p>
+                        <span class="text-muted">{{ 'label.author'|trans }}</span> {{ message.createdBy|user }}
+                    </p>
 
                     <p>
                         <span class="text-muted">{{ 'label.lastchange'|trans }}</span> {{ message.updatedAt|format_datetime }}

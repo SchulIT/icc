@@ -82,4 +82,5 @@ class MessageConfirmationView {
     public function getUserConfirmation(User $user): ?MessageConfirmation {
         return $this->userConfirmations[$user->getId()] ?? null;
     }
+
 }

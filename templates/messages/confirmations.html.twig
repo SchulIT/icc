@@ -14,10 +14,10 @@
 {% block content %}
 
     {# Students #}
-    {% for studyGroup in studyGroups %}
+    {% for grade in grades %}
         <div class="card">
             <div class="card-header">
-                {{ studyGroup.studyGroup|studygroup }} {% for grade in studyGroup.studyGroup.grades %}<span class="badge badge-primary">{{ grade.name }}</span>{% endfor %}
+                {{ grade.grade.name }}
             </div>
 
             <table class="table table-striped table-bordered">
@@ -29,13 +29,13 @@
                 <thead>
                 <tr>
                     <th>{{ 'label.name'|trans }}</th>
-                    <th>{{ 'label.confirmed'|trans }} <span class="badge badge-primary">{{ 'label.student'|trans }}</span></th>
-                    <th>{{ 'label.confirmed'|trans }} <span class="badge badge-primary">{{ 'user_type.parent'|trans({}, 'enums') }}</span></th>
+                    <th>{{ 'label.student'|trans }}</th>
+                    <th>{{ 'user_type.parent'|trans({}, 'enums') }}</th>
                 </tr>
                 </thead>
 
                 <tbody>
-                {% for student in studyGroup.students %}
+                {% for student in grade.students %}
                     {% set studentConfirmation = view.studentConfirmation(student) %}
                     {% set parentConfirmation = view.parentConfirmation(student) %}
                     {% set class = "table-danger" %}

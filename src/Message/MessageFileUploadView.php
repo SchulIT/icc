@@ -83,7 +83,11 @@ class MessageFileUploadView {
         );
 
         foreach($files as $file) {
-            $uploads[] = $userUploads[$file->getId()] ?? (new MessageFileUpload())->setMessageFile($file);
+            $upload = $userUploads[$file->getId()] ?? (new MessageFileUpload())->setMessageFile($file);
+
+            if($upload->isUploaded() || $onlyUploaded === false) {
+                $uploads[] = $upload;
+            }
         }
 
         return $uploads;
@@ -92,9 +96,9 @@ class MessageFileUploadView {
     /**
      * @param array $users
      * @param array|MessageFile[]|Collection<MessageFile> $files
-     * @return float
+     * @return ProgressView
      */
-    public function getProgress(array $users, iterable $files): float {
+    public function getProgress(array $users, iterable $files): ProgressView {
         $progress = 0;
         $total = count($users) * count($files);
 
@@ -102,14 +106,10 @@ class MessageFileUploadView {
             $progress += count($this->getUserUploads($user, $files, true));
         }
 
-        if($total === 0) {
-            return 0;
-        }
-
-        return round((float)$progress / $total * 100);
+        return new ProgressView($progress, $total);
     }
 
-    public function getStudentProgress(array $students, iterable $files): float {
+    public function getStudentProgress(array $students, iterable $files): ProgressView {
         $users = [ ];
 
         foreach($students as $student) {
@@ -119,7 +119,7 @@ class MessageFileUploadView {
         return $this->getProgress($users, $files);
     }
 
-    public function getParentProgress(array $students, iterable $files): float {
+    public function getParentProgress(array $students, iterable $files): ProgressView {
         $users = [ ];
 
         foreach($students as $student) {
@@ -129,11 +129,11 @@ class MessageFileUploadView {
         return $this->getProgress($users, $files);
     }
 
-    public function getTeacherProgress(array $teachers, iterable $files): float {
+    public function getTeacherProgress(array $teachers, iterable $files): ProgressView {
         $users = [ ];
 
         foreach($teachers as $teacher) {
-            $users = array_merge($users, $this->getTeachers($teacher));
+            $users = array_merge($users, $this->getTeacherUsers($teacher));
         }
 
         return $this->getProgress($users, $files);

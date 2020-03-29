@@ -96,6 +96,10 @@ label:
     version: Version
     user: Benutzer
     filesize: Größe
+    files: "{0} %count% Dateien|{1} %count% Datei|]1,Inf[ %count% Dateien"
+
+progress:
+    status: "%current% von %total%"
 
 actions:
     add: hinzufügen

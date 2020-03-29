@@ -21,7 +21,50 @@
         <div class="row">
             <div class="col-md-9">
                 <div class="card" id="explorer">
-                    {% include "admin/messages/files_explorer.html.twig" %}
+                    <table class="table table-striped table-bordered">
+                        <colgroup>
+                            <col>
+                            <col class="column-md">
+                            <col class="column-md">
+                        </colgroup>
+
+                        <thead>
+                        <tr>
+                            <th>{{ 'label.file'|trans }}</th>
+                            <th>{{ 'label.filesize'|trans }}</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for folder in files %}
+                            <tr>
+                                <td colspan="3">
+                                    <div class="d-flex pointer" data-toggle="table-collapse" data-target=".files-{{ loop.index }}">
+                                        <span class="align-self-center mr-auto">
+                                            <i class="fa fa-user"></i> {{ folder.basename }}
+                                        </span>
+
+                                        <span class="align-self-center mr-2">
+                                            {{ 'label.files'|trans({'%count%': folder.files|length }) }}
+                                        </span>
+
+                                        <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
+                                    </div>
+
+                                </td>
+                            </tr>
+                            {% set folderIdx = loop.index %}
+                            {% for file in folder.files %}
+                                {% set filePath = folder.basename ~ "/" ~ file.basename %}
+                                <tr class="collapse files-{{ folderIdx }}" data-zip="file" data-zip-filename="{{ filePath }}" data-zip-url="{{ path('download_message_upload', { id: message.id, path: filePath }) }}">
+                                    <td>{{ file.basename }}</td>
+                                    <td>{{ file.size|filesize }}</td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 

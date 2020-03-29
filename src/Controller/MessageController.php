@@ -15,6 +15,7 @@ use App\Filesystem\FileNotFoundException;
 use App\Filesystem\MessageFilesystem;
 use App\Form\MessageUploadType;
 use App\Grouping\Grouper;
+use App\Grouping\StudentGradeStrategy;
 use App\Grouping\StudentStudyGroupStrategy;
 use App\Grouping\UserUserTypeStrategy;
 use App\Message\MessageConfirmationViewHelper;
@@ -24,6 +25,7 @@ use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\MessageVoter;
 use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
+use App\Sorting\StudentGradeGroupStrategy;
 use App\Sorting\StudentStrategy;
 use App\Sorting\StudentStudyGroupGroupStrategy;
 use App\Sorting\TeacherStrategy;
@@ -264,9 +266,9 @@ class MessageController extends AbstractController {
         $this->sorter->sort($teachers, TeacherStrategy::class);
 
         $students = $view->getStudents();
-        $studyGroups = $grouper->group($students, StudentStudyGroupStrategy::class);
-        $this->sorter->sort($studyGroups, StudentStudyGroupGroupStrategy::class);
-        $this->sorter->sortGroupItems($studyGroups, StudentStrategy::class);
+        $gradeGroups = $grouper->group($students, StudentGradeStrategy::class);
+        $this->sorter->sort($gradeGroups, StudentGradeGroupStrategy::class);
+        $this->sorter->sortGroupItems($gradeGroups, StudentStrategy::class);
 
         $userGroups = $grouper->group($view->getUsers(), UserUserTypeStrategy::class);
         $this->sorter->sort($userGroups, UserUserTypeGroupStrategy::class);
@@ -276,7 +278,7 @@ class MessageController extends AbstractController {
             'message' => $message,
             'teachers' => $teachers,
             'userGroups' => $userGroups,
-            'studyGroups' => $studyGroups,
+            'grades' => $gradeGroups,
             'view' => $view
         ]);
     }

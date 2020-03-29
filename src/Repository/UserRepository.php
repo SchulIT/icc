@@ -136,7 +136,7 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
             ->andWhere('uInner.userType = :type');
 
         $qb
-            ->select(['u', 's'])
+            ->select(['u', 't'])
             ->from(User::class, 'u')
             ->leftJoin('u.teacher', 't')
             ->where($qb->expr()->in('u.id', $qbInner->getDQL()))

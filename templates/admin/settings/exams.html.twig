@@ -17,7 +17,18 @@
         <div class="card-header">{{ 'label.general'|trans }}</div>
 
         <div class="card-body">
-            {{ form_widget(form) }}
+            {{ form_row(form.visibility) }}
+            {{ form_row(form.window) }}
+            {{ form_row(form.window_invigilators) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'profile.notifications.label'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_row(form.notifications_enabled) }}
+            {{ form_row(form.notifications_replyaddress) }}
         </div>
     </div>
 

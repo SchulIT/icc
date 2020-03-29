@@ -7,6 +7,8 @@ use App\Entity\AppointmentCategory;
 use App\Entity\UserType;
 use App\Menu\Builder;
 use App\Repository\AppointmentCategoryRepositoryInterface;
+use App\Settings\AbstractSettings;
+use App\Settings\AppointmentsSettings;
 use App\Settings\ExamSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
@@ -15,6 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
@@ -69,7 +72,7 @@ class SettingsController extends AbstractController {
                 ],
                 'data' => $examSettings->getTimeWindowForStudents()
             ])
-            ->add('window-invigilators', IntegerType::class, [
+            ->add('window_invigilators', IntegerType::class, [
                 'label' => 'admin.settings.exams.window.invigilators.label',
                 'help' => 'admin.settings.exams.window.invigilators.help',
                 'constraints' => [
@@ -77,6 +80,18 @@ class SettingsController extends AbstractController {
                     new GreaterThanOrEqual(['value' => 0])
                 ],
                 'data' => $examSettings->getTimeWindowForStudentsToSeeInvigilators()
+            ])
+            ->add('notifications_enabled', CheckboxType::class, [
+                'label' => 'admin.settings.exams.notifications.enabled.label',
+                'help' => 'admin.settings.exams.notifications.enabled.help',
+                'required' => false,
+                'data' => $examSettings->isNotificationsEnabled()
+            ])
+            ->add('notifications_replyaddress', EmailType::class, [
+                'label' => 'admin.settings.exams.notifications.reply_address.label',
+                'help' => 'admin.settings.exams.notifications.reply_address.help',
+                'required' => false,
+                'data' => $examSettings->getNotificationReplyToAddress()
             ]);
 
         $form = $builder->getForm();
@@ -90,8 +105,14 @@ class SettingsController extends AbstractController {
                 'window' => function(int $window) use ($examSettings) {
                     $examSettings->setTimeWindowForStudents($window);
                 },
-                'window-invigilators' => function(int $window) use ($examSettings) {
+                'window_invigilators' => function(int $window) use ($examSettings) {
                     $examSettings->setTimeWindowForStudentsToSeeInvigilators($window);
+                },
+                'notifications_enabled' => function(bool $enabled) use ($examSettings) {
+                    $examSettings->setNotificationsEnabled($enabled);
+                },
+                'notifications_replyaddress' => function(?string $address) use($examSettings) {
+                    $examSettings->setNotificationReplyToAddress($address);
                 }
             ];
 
@@ -242,7 +263,6 @@ class SettingsController extends AbstractController {
     public function substitutions(Request $request, SubstitutionSettings $substitutionSettings) {
         $builder = $this->createFormBuilder();
         $builder
-
             ->add('ahead_days', IntegerType::class, [
                 'label' => 'admin.settings.substitutions.number_of_ahead_substitutions.label',
                 'help' => 'admin.settings.substitutions.number_of_ahead_substitutions.help',
@@ -257,6 +277,18 @@ class SettingsController extends AbstractController {
                 'help' => 'admin.settings.substitutions.skip_weekends.help',
                 'required' => false,
                 'data' => $substitutionSettings->skipWeekends()
+            ])
+            ->add('notifications_enabled', CheckboxType::class, [
+                'label' => 'admin.settings.exams.notifications.enabled.label',
+                'help' => 'admin.settings.exams.notifications.enabled.help',
+                'required' => false,
+                'data' => $substitutionSettings->isNotificationsEnabled()
+            ])
+            ->add('notifications_replyaddress', EmailType::class, [
+                'label' => 'admin.settings.exams.notifications.reply_address.label',
+                'help' => 'admin.settings.exams.notifications.reply_address.help',
+                'required' => false,
+                'data' => $substitutionSettings->getNotificationReplyToAddress()
             ]);
 
         $form = $builder->getForm();
@@ -269,6 +301,12 @@ class SettingsController extends AbstractController {
                 },
                 'skip_weekends' => function(bool $skipWeekends) use ($substitutionSettings) {
                     $substitutionSettings->setSkipWeekends($skipWeekends);
+                },
+                'notifications_enabled' => function(bool $enabled) use ($substitutionSettings) {
+                    $substitutionSettings->setNotificationsEnabled($enabled);
+                },
+                'notifications_replyaddress' => function(?string $address) use($substitutionSettings) {
+                    $substitutionSettings->setNotificationReplyToAddress($address);
                 }
             ];
 
@@ -285,5 +323,11 @@ class SettingsController extends AbstractController {
         return $this->render('admin/settings/substitutions.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    public function appointments(Request $request, AppointmentsSettings $appointmentsSettings) {
+        $builder = $this->createFormBuilder();
+
+
     }
 }

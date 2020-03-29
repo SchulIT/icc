@@ -4,8 +4,8 @@ namespace App\Settings;
 
 class SubstitutionSettings extends AbstractSettings {
 
-    public const AheadDaysKeys = 'dashboard.days_ahead';
-    public const SkipWeekends = 'dashboard.skip_weekends';
+    public const AheadDaysKeys = 'substitutions.days_ahead';
+    public const SkipWeekends = 'substitutions.skip_weekends';
 
     public function getNumberOfAheadDaysForSubstitutions(): int {
         return (int)$this->getValue(static::AheadDaysKeys, 7);
@@ -21,5 +21,21 @@ class SubstitutionSettings extends AbstractSettings {
 
     public function setSkipWeekends(bool $skipWeekends): void {
         $this->setValue(static::SkipWeekends, $skipWeekends);
+    }
+
+    public function isNotificationsEnabled(): bool {
+        return (bool)$this->getValue('substitutions.notifications.enabled', false);
+    }
+
+    public function setNotificationsEnabled(bool $enabled): void {
+        $this->setValue('substitutions.notifications.enabled', $enabled);
+    }
+
+    public function getNotificationReplyToAddress(): ?string {
+        return (string)$this->getValue('substitutions.notifications.reply_to', null);
+    }
+
+    public function setNotificationReplyToAddress(?string $address): void {
+        $this->setValue('substitutions.notifications.reply_to', $address);
     }
 }

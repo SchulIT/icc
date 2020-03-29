@@ -53,4 +53,20 @@ class ExamSettings extends AbstractSettings {
     public function setTimeWindowForStudentsToSeeInvigilators(int $timeWindow) {
         $this->setValue('exams.window.invigilators', $timeWindow);
     }
+
+    public function isNotificationsEnabled(): bool {
+        return (bool)$this->getValue('exams.notifications.enabled', false);
+    }
+
+    public function setNotificationsEnabled(bool $enabled): void {
+        $this->setValue('exams.notifications.enabled', $enabled);
+    }
+
+    public function getNotificationReplyToAddress(): ?string {
+        return (string)$this->getValue('exams.notifications.reply_to', null);
+    }
+
+    public function setNotificationReplyToAddress(?string $address): void {
+        $this->setValue('exams.notifications.reply_to', $address);
+    }
 }

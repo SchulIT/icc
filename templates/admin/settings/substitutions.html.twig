@@ -17,7 +17,17 @@
         <div class="card-header">{{ 'label.general'|trans }}</div>
 
         <div class="card-body">
-            {{ form_widget(form) }}
+            {{ form_row(form.ahead_days) }}
+            {{ form_row(form.skip_weekends) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'profile.notifications.label'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_row(form.notifications_enabled) }}
+            {{ form_row(form.notifications_replyaddress) }}
         </div>
     </div>
 

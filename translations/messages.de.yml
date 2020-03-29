@@ -380,7 +380,7 @@ admin:
         success: Einstellungen erfolgreich aktualisiert
 
         substitutions:
-            label: Vertretungsplan-Einstellungen
+            label: Vertretungsplan
             number_of_ahead_substitutions:
                 label: Anzahl der Tage
                 help: Anzahl der Tage, für die der Vertretungsplan angezeigt werden soll (einschließlich des aktuellen Tages).
@@ -389,15 +389,23 @@ admin:
                 help: Gibt an, ob Wochenendtage im Vertretungsplan übersprungen werden sollen.
 
         exams:
-            label: Klausurplan-Einstellungen
+            label: Klausurplan
             window:
                 label: Vorausblick für Lernende
                 help: Anzahl der Tage, die Lernende in die Zukunft blicken können (0 bedeutet unbegrenzte Anzahl an Tagen).
                 invigilators:
                     label: Vorausblick der Aufsichten für Lernende
                     help: Anzahl der Tage, die Lernende Aufsichten zukünftiger Klausuren sehen können (0 bedeutet unbegrenze Anzahl an Tagen).
+            notifications:
+                enabled:
+                    label: Benachrichtigungen aktiviert
+                    help: Wenn diese Option aktiviert ist, werden Lehrkräfte informiert, sobald ein neuer Klausurplan verfügbar ist.
+                reply_address:
+                    label: Antwort-E-Mail Adresse
+                    help: Diese E-Mail Adresse wird bei E-Mail Benachrichtungen in das 'Reply-To'-Feld eingefügt, sodass Antworten auf die Benachrichtungsmail an diese E-Mail Adresse geschickt werden.
+
         timetable:
-            label: Stundenplan-Einstellungen
+            label: Stundenplan
             max_lessons:
                 label: Anzahl der Unterrichtsstunden
                 help: Gibt die maximale Anzahl an Unterrichtsstunden für einen Wochentag an (wird genutzt, um die Zeiten für die Schulstunden festzulegen)

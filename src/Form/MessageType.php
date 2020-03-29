@@ -2,25 +2,14 @@
 
 namespace App\Form;
 
-use App\Converter\EnumStringConverter;
-use App\Converter\StudyGroupStringConverter;
-use App\Entity\Grade;
 use App\Entity\MessageScope;
-use App\Entity\MessageVisibility;
-use App\Entity\StudyGroup;
-use App\Entity\UserTypeEntity;
 use App\Security\Voter\MessageScopeVoter;
-use App\Sorting\StringStrategy;
-use App\Sorting\StudyGroupStrategy;
 use App\Utils\ArrayUtils;
-use Doctrine\ORM\EntityRepository;
 use FervoEnumBundle\Generated\Form\MessageScopeType;
 use SchoolIT\CommonBundle\Form\FieldsetType;
 use SchoolIT\CommonBundle\Helper\DateHelper;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -31,25 +20,12 @@ class MessageType extends AbstractType {
 
     private const YearsDelta = 1;
 
-    private $enumStringConverter;
-    private $studyGroupConverter;
     private $dateHelper;
-
-    private $stringStrategy;
-    private $studyGroupStrategy;
 
     private $authorizationChecker;
 
-    public function __construct(StudyGroupStringConverter $studyGroupConverter, EnumStringConverter $enumStringConverter,
-                                DateHelper $dateHelper, StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy,
-                                AuthorizationCheckerInterface $authorizationChecker) {
-        $this->studyGroupConverter = $studyGroupConverter;
-        $this->enumStringConverter = $enumStringConverter;
+    public function __construct(DateHelper $dateHelper, AuthorizationCheckerInterface $authorizationChecker) {
         $this->dateHelper = $dateHelper;
-
-        $this->stringStrategy = $stringStrategy;
-        $this->studyGroupStrategy = $studyGroupStrategy;
-
         $this->authorizationChecker = $authorizationChecker;
     }
 
@@ -80,41 +56,14 @@ class MessageType extends AbstractType {
                             'choices' => $scopes,
                             'label' => 'label.scope'
                         ])
-                        ->add('visibilities', EntityType::class, [
+                        ->add('visibilities', UserTypeEntityType::class, [
                             'label' => 'label.visibility',
-                            'class' => UserTypeEntity::class,
-                            'query_builder' => function(EntityRepository $repository) {
-                                return $repository->createQueryBuilder('v')
-                                    ->orderBy('v.userType', 'asc');
-                            },
                             'multiple' => true,
                             'expanded' => true,
-                            'choice_label' => function(UserTypeEntity $visibility) {
-                                return $this->enumStringConverter->convert($visibility->getUserType());
-                            }
                         ])
                         ->add('studyGroups', StudyGroupType::class, [
-                            'label' => 'label.study_groups',
-                            'class' => StudyGroup::class,
-                            'query_builder' => function(EntityRepository $repository) {
-                                return $repository->createQueryBuilder('sg')
-                                    ->select(['sg', 'g'])
-                                    ->orderBy('sg.name', 'asc')
-                                    ->leftJoin('sg.grades', 'g');
-                            },
-                            'group_by' => function(StudyGroup $group) {
-                                $grades = array_map(function(Grade $grade) {
-                                    return $grade->getName();
-                                }, $group->getGrades()->toArray());
-
-                                return join(', ', $grades);
-                            },
+                            'label' => 'label.study_groups_simple',
                             'multiple' => true,
-                            'choice_label' => function(StudyGroup $group) {
-                                return $this->studyGroupConverter->convert($group);
-                            },
-                            'sort_by' => $this->stringStrategy,
-                            'sort_items_by' => $this->studyGroupStrategy,
                             'attr' => [
                                 'size' => 10
                             ]

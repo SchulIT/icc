@@ -2,17 +2,11 @@
 
 namespace App\Form;
 
-use App\Converter\StudyGroupStringConverter;
 use App\Converter\TeacherStringConverter;
 use App\Entity\AppointmentCategory;
-use App\Entity\Grade;
-use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Sorting\AppointmentCategoryStrategy;
-use App\Sorting\StringStrategy;
-use App\Sorting\StudyGroupStrategy;
 use App\Sorting\TeacherStrategy;
-use Doctrine\ORM\EntityRepository;
 use SchoolIT\CommonBundle\Form\FieldsetType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -21,18 +15,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class AppointmentType extends AbstractType {
-    private $studyGroupConverter;
     private $teacherConverter;
-    private $stringStrategy;
-    private $studyGroupStrategy;
     private $teacherStrategy;
     private $appointmentCategoryStrategy;
 
-    public function __construct(StudyGroupStringConverter $studyGroupConverter, StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy,
-                                TeacherStringConverter $teacherConverter, TeacherStrategy $teacherStrategy, AppointmentCategoryStrategy $appointmentCategoryStrategy) {
-        $this->studyGroupConverter = $studyGroupConverter;
-        $this->stringStrategy = $stringStrategy;
-        $this->studyGroupStrategy = $studyGroupStrategy;
+    public function __construct(TeacherStringConverter $teacherConverter, TeacherStrategy $teacherStrategy, AppointmentCategoryStrategy $appointmentCategoryStrategy) {
         $this->teacherConverter = $teacherConverter;
         $this->teacherStrategy = $teacherStrategy;
         $this->appointmentCategoryStrategy = $appointmentCategoryStrategy;
@@ -89,27 +76,8 @@ class AppointmentType extends AbstractType {
                 'fields' => function(FormBuilderInterface $builder) {
                     $builder
                         ->add('studyGroups', StudyGroupType::class, [
-                            'label' => 'label.study_groups',
-                            'class' => StudyGroup::class,
-                            'query_builder' => function(EntityRepository $repository) {
-                                return $repository->createQueryBuilder('sg')
-                                    ->select(['sg', 'g'])
-                                    ->orderBy('sg.name', 'asc')
-                                    ->leftJoin('sg.grades', 'g');
-                            },
-                            'group_by' => function(StudyGroup $group) {
-                                $grades = array_map(function(Grade $grade) {
-                                    return $grade->getName();
-                                }, $group->getGrades()->toArray());
-
-                                return join(', ', $grades);
-                            },
+                            'label' => 'label.study_groups_simple',
                             'multiple' => true,
-                            'choice_label' => function(StudyGroup $group) {
-                                return $this->studyGroupConverter->convert($group);
-                            },
-                            'sort_by' => $this->stringStrategy,
-                            'sort_items_by' => $this->studyGroupStrategy,
                             'attr' => [
                                 'size' => 10
                             ],

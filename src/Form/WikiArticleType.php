@@ -3,13 +3,9 @@
 namespace App\Form;
 
 use App\Converter\EnumStringConverter;
-use App\Entity\UserTypeEntity;
 use App\Entity\WikiArticle;
-use App\Entity\WikiArticleVisibility;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Wiki\TreeHelper;
-use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,13 +16,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class WikiArticleType extends AbstractType {
 
-    private $enumStringConverter;
     private $treeHelper;
     private $wikiRepository;
     private $urlGenerator;
 
-    public function __construct(EnumStringConverter $enumStringConverter, TreeHelper $treeHelper, WikiArticleRepositoryInterface $wikiRepository, UrlGeneratorInterface $urlGenerator) {
-        $this->enumStringConverter = $enumStringConverter;
+    public function __construct(TreeHelper $treeHelper, WikiArticleRepositoryInterface $wikiRepository, UrlGeneratorInterface $urlGenerator) {
         $this->treeHelper = $treeHelper;
         $this->wikiRepository = $wikiRepository;
         $this->urlGenerator = $urlGenerator;
@@ -53,18 +47,11 @@ class WikiArticleType extends AbstractType {
                 ],
                 'expanded' => true
             ])
-            ->add('visibilities', EntityType::class, [
+            ->add('visibilities', UserTypeEntityType::class, [
                 'label' => 'label.visibility',
-                'class' => UserTypeEntity::class,
-                'query_builder' => function(EntityRepository $repository) {
-                    return $repository->createQueryBuilder('v')
-                        ->orderBy('v.userType', 'asc');
-                },
                 'multiple' => true,
                 'expanded' => true,
-                'choice_label' => function(UserTypeEntity $visibility) {
-                    return $this->enumStringConverter->convert($visibility->getUserType());
-                }
+                'required' => false
             ])
             ->add('content', MarkdownType::class, [
                 'label' => 'label.content',

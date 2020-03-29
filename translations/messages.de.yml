@@ -17,6 +17,7 @@ label:
     grades: Klassen
     study_group: Lerngruppe
     study_groups: "{0} Lerngruppen|{1} Lerngruppe|]1,Inf[ Lerngruppen"
+    study_groups_simple: Lerngruppen
     usertype: Benutzertyp
     details: Details
     date: Datum

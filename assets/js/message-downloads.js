@@ -2,47 +2,54 @@ window.Dropzone = require('dropzone');
 window.Dropzone.autoDiscover = false;
 
 document.addEventListener('DOMContentLoaded', function() {
-    let explorerElement = document.getElementById('explorer');
+    document.querySelectorAll('[data-area=dropzone]').forEach(function(dropzoneEl) {
+        let previewTemplate = document.querySelector(dropzoneEl.getAttribute('data-preview')).innerHTML;
 
-    if(explorerElement === null) {
-        console.error('Explorer element is not defined.');
-        return;
-    }
+        let containerElementSelector = dropzoneEl.getAttribute('data-preview-container');
+        let containerElement = document.querySelector(containerElementSelector);
 
-    let dropzoneElement = document.getElementById('dropzone');
+        let dropzone = new Dropzone(dropzoneEl, {
+            url: dropzoneEl.getAttribute('data-url'),
+            clickable: false,
+            autoProcessQueue: true,
+            createImageThumbnails: false,
+            previewTemplate: previewTemplate,
+            previewsContainer: containerElement
+        });
 
-    if(dropzoneElement === null) {
-        console.error('Dropzone element not present.');
-        return;
-    }
+        dropzone.on('sending', function(file, xhr, data) {
+            let successElementSelector = dropzoneEl.getAttribute('data-success');
+            if(successElementSelector !== null) {
+                document.querySelector(successElementSelector).classList.add('d-none');
+            }
 
-    let dropzone = new Dropzone(dropzoneElement, {
-        url: dropzoneElement.getAttribute('data-url'),
-        clickable: false,
-        autoProcessQueue: true,
-        createImageThumbnails: false,
-        previewsContainer: "#dropzone-files",
-        previewTemplate: document.getElementById('dropzone-preview').innerHTML
-    });
+            let csrfTokenName = dropzoneEl.getAttribute('data-csrf-token-name');
+            let csrfToken = dropzoneEl.getAttribute('data-csrf-token');
 
-    dropzone.on('sending', function(file, xhr, data) {
-        let csrfTokenName = dropzoneElement.getAttribute('data-csrf-token-name');
-        let csrfToken = dropzoneElement.getAttribute('data-csrf-token');
+            if(csrfTokenName !== null && csrfToken !== null) {
+                data.append(csrfTokenName, csrfToken);
+            }
 
-        if(csrfTokenName !== null && csrfToken !== null) {
-            data.append(csrfTokenName, csrfToken);
-        }
+            if(dropzoneEl.getAttribute('data-upload-folders') !== null && file.fullPath) {
+                data.append('path', file.fullPath);
+            }
+        });
 
-        if(file.fullPath) {
-            data.append('path', file.fullPath);
-        }
-    });
+        dropzone.on('success', function(file, response) {
+            dropzone.removeFile(file);
 
-    dropzone.on('success', function(file, response) {
-        dropzone.removeFile(file);
+            let successElementSelector = dropzoneEl.getAttribute('data-success');
+            if(successElementSelector !== null) {
+                document.querySelector(successElementSelector).classList.remove('d-none');
+            } else {
+                let insertSelector = dropzoneEl.getAttribute('data-insert');
 
-        if(response.files) {
-            explorerElement.innerHTML = response.files;
-        }
+                if(insertSelector !== null && response.file) {
+                    let elem = document.createElement('div');
+                    elem.innerHTML = response.file;
+                    document.querySelector(insertSelector).appendChild(elem);
+                }
+            }
+        });
     });
 });

@@ -13,6 +13,7 @@ use App\Grouping\MessageExpirationStrategy;
 use App\Grouping\StudentGradeStrategy;
 use App\Grouping\StudentStudyGroupStrategy;
 use App\Grouping\UserUserTypeStrategy;
+use App\Message\MessageDownloadView;
 use App\Message\MessageDownloadViewHelper;
 use App\Message\MessageFileUploadViewHelper;
 use App\Repository\MessageRepositoryInterface;
@@ -30,6 +31,7 @@ use App\View\Filter\UserTypeFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use SchoolIT\CommonBundle\Form\ConfirmType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -180,6 +182,7 @@ class MessageAdminController extends AbstractController {
      * @Route("/{id}/downloads", name="message_downloads_admin")
      */
     public function downloads(Message $message, MessageDownloadViewHelper $messageDownloadViewHelper) {
+        /** @var MessageDownloadView $view */
         $view = $messageDownloadViewHelper->createView($message);
 
         $teachers = $view->getTeachers();
@@ -194,12 +197,27 @@ class MessageAdminController extends AbstractController {
         $this->sorter->sort($userGroups, UserUserTypeGroupStrategy::class);
         $this->sorter->sortGroupItems($userGroups, UserLastnameFirstnameStrategy::class);
 
+        $statistics = [ ];
+        $users = $view->getUsers();
+
+        foreach($users as $user) {
+            $files = $view->getUserDownloads($user);
+            $count = count($files);
+
+            if(!isset($statistics[$count])) {
+                $statistics[$count] = 0;
+            }
+
+            $statistics[$count]++;
+        }
+
         return $this->render('admin/messages/downloads.html.twig', [
             'message' => $message,
             'teachers' => $teachers,
             'userGroups' => $userGroups,
             'grades' => $gradeGroups,
             'view' => $view,
+            'statistics' => $statistics,
             'csrf_token_name' => static::CsrfTokenName,
             'csrf_token_id' => static::CsrfTokenId
         ]);
@@ -243,6 +261,38 @@ class MessageAdminController extends AbstractController {
             'message' => $message,
             'user' => $user,
             'filename' => $filename
+        ]);
+    }
+
+    /**
+     * @Route("/{message}/downloads/upload/{user}", name="upload_message_download")
+     * @ParamConverter("message", class="App\Entity\Message", options={"id" = "message"})
+     * @ParamConverter("user", class="App\Entity\User", options={"id" = "user"})
+     */
+    public function uploadDownload(Message $message, User $user, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository) {
+        if($this->isCsrfTokenValid(static::CsrfTokenId, $request->request->get(static::CsrfTokenName)) !== true) {
+            return new JsonResponse(
+                [
+                    'error' => 'CSRF token invalid.'
+                ],
+                Response::HTTP_BAD_REQUEST);
+        }
+
+        /** @var UploadedFile $file */
+        $file = $request->files->get('file');
+        $filesystem->uploadUserDownload($message, $user, $file);
+        $fileInfo = $filesystem->getUserDownload($message, $user, $file->getClientOriginalName());
+        $fileInfo['basename'] = basename($fileInfo['path']);
+
+        $response = $this->renderView('admin/messages/file_explorer_file.html.twig', [
+            'user' => $user,
+            'file' => $fileInfo,
+            'message' => $message
+        ]);
+
+        return new JsonResponse([
+            'success' => true,
+            'file' => $response
         ]);
     }
 
@@ -293,10 +343,7 @@ class MessageAdminController extends AbstractController {
 
         return new JsonResponse(
             [
-                'files' => $this->renderView('admin/messages/files_explorer.html.twig', [
-                    'files' => $filesystem->getAllUserDownloads($message),
-                    'message' => $message
-                ])
+                'success' => true
             ]
         );
     }

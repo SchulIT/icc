@@ -299,13 +299,20 @@ messages:
         info: Diese Mitteilung enthält persönliche Downloads
         empty: Aktuell sind keine Downloads verfügbar.
         label: Persönliche Downloads
+        user_missing: Der Benutzer ist noch nicht im System vorhanden.
         dropzone:
             label: Hochladen
             help: Hier Ordner mit den Dateien der jeweiligen Nutzer per Drag & Drop ablegen. Der Ordnername muss mit dem Benutzernamen übereinstimmen.
+            success: Alle Dateien wurden hochgeladen. Bitte Seite neuladen.
         remove:
             label: Persönlichen Download löschen
             confirm: 'Soll die Datei "%filename%" (%label%) von "%user%" wirklich gelöscht werden?'
             success: Datei erfolgreich gelöscht
+        statistics:
+            label: Statistik
+            info: '{0} %count% Dateien|{1} %count% Datei|]1,Inf[ %count% Dateien'
+            user: '%count% Benutzer'
+            caution: Die Statistik wird erst beim Neuladen dieser Seite aktualisiert.
 
     uploads:
         info: Diese Mitteilung enthält persönliche Uploads

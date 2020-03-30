@@ -54,4 +54,22 @@ abstract class AbstractMessageFileView {
     public function getTeacherUsers(Teacher $teacher) {
         return $this->teacherUsersLookup[$teacher->getId()] ?? [ ];
     }
+
+    public function getAllUsers(): array {
+        $users = $this->users;
+
+        foreach($this->studentUsersLookup as $id => $studentUsers) {
+            $users = array_merge($users, $studentUsers);
+        }
+
+        foreach($this->parentUsersLookup as $id => $parentUsers) {
+            $users = array_merge($users, $parentUsers);
+        }
+
+        foreach($this->teacherUsersLookup as $id => $teacherUsers) {
+            $users = array_merge($users, $teacherUsers);
+        }
+
+        return $users;
+    }
 }

@@ -173,6 +173,27 @@ class MessageFilesystem implements DirectoryNamerInterface {
     }
 
     /**
+     * Returns information about a given user specific download
+     *
+     * @param Message $message
+     * @param User $user
+     * @param string $filename
+     * @return string[]|null
+     */
+    public function getUserDownload(Message $message, User $user, string $filename) {
+        $path = sprintf('%s/%s',
+            $this->getMessageDownloadsDirectory($message, $user),
+            $filename
+        );
+
+        try {
+            return $this->filesystem->getMetadata($path);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
      * Returns the list of uploaded files of a user
      *
      * @param Message $message

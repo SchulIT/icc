@@ -1,0 +1,10 @@
+<div class="table-row file-{{ user.id }}">
+    <div class="table-col fill">
+        <a href="{{ path('download_message_download', { message: message.id, user: user.id, filename: file.basename }) }}" class="btn btn-primary btn-sm mr-2"><i class="fa fa-download"></i></a>
+        <a href="{{ path('remove_message_download', { message: message.id, user: user.id, filename: file.basename }) }}" class="btn btn-danger btn-sm mr-2"><i class="fa fa-trash"></i></a>
+        {{ file.basename }}
+    </div>
+
+    <div class="table-col column-md flex-shrink-0">{{ file.size|filesize }}</div>
+    <div class="table-col column-200 flex-shrink-0">{{ file.timestamp|todatetime|format_datetime }}</div>
+</div>

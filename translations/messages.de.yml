@@ -99,6 +99,7 @@ label:
     user: Benutzer
     filesize: Größe
     files: "{0} %count% Dateien|{1} %count% Datei|]1,Inf[ %count% Dateien"
+    priority: Priorität
 
 progress:
     status: "%current% von %total%"

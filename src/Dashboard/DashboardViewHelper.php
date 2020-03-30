@@ -25,6 +25,7 @@ use App\Repository\TimetableWeekRepositoryInterface;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\SubstitutionVoter;
+use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\Timetable\TimetablePeriodHelper;
@@ -187,6 +188,8 @@ class DashboardViewHelper {
      * @param DashboardView $dashboardView
      */
     private function addMessages(iterable $messages, DashboardView $dashboardView): void {
+        $this->sorter->sort($messages, MessageStrategy::class);
+
         foreach($messages as $message) {
             if($this->authorizationChecker->isGranted(MessageVoter::View, $message) !== true) {
                 continue;

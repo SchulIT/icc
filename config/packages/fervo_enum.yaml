@@ -12,6 +12,10 @@ fervo_enum:
             doctrine_type: message_scope
             form_type: message_scope
 
+        App\Entity\MessagePriority:
+            doctrine_type: message_priority
+            form_type: message_priority
+
         App\Entity\StudyGroupType:
             doctrine_type: study_group_type
             form_type: study_group_type

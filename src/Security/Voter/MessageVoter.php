@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Message;
+use App\Entity\MessagePriority;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
@@ -26,6 +27,7 @@ class MessageVoter extends Voter {
     const Dismiss = 'dismiss';
     const Download = 'download';
     const Upload = 'upload';
+    const Priority = 'message-priority';
 
     private $accessDecisionManager;
     private $confirmationHelper;
@@ -49,7 +51,7 @@ class MessageVoter extends Voter {
             static::Upload
         ];
 
-        return $attribute === static::New || (in_array($attribute, $attributes) && $subject instanceof Message);
+        return in_array($attribute, [ static::New, static::Priority]) || (in_array($attribute, $attributes) && $subject instanceof Message);
     }
 
     /**
@@ -80,6 +82,9 @@ class MessageVoter extends Voter {
 
             case static::Upload:
                 return $this->canUpload($subject, $token);
+
+            case static::Priority:
+                return $this->canSetPriority($token);
         }
 
         throw new \LogicException('This code should not be reached.');
@@ -182,6 +187,10 @@ class MessageVoter extends Voter {
             return false;
         }
 
+        if($message->getPriority()->equals(MessagePriority::Emergency())) {
+            return false;
+        }
+
         if($message->mustConfirm() === false || $this->canConfirm($message, $token) === false) {
             return true;
         }
@@ -277,5 +286,9 @@ class MessageVoter extends Voter {
                 $message->getUploadEnabledStudyGroups()->toArray(),
                 true
             );
+    }
+
+    private function canSetPriority(TokenInterface $token) {
+        return $this->accessDecisionManager->decide($token, ['ROLE_MESSAGE_PRIORITY']);
     }
 }

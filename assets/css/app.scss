@@ -339,3 +339,13 @@ div.table {
     }
   }
 }
+
+.message-danger {
+  border-color: $danger;
+  background: mix(#fff, $danger, 90);
+}
+
+.message-warning {
+  border-color: $warning;
+  background: mix(#fff, $warning, 90);
+}

@@ -1,6 +1,7 @@
 label:
   gender: Geschlecht
   scope: Bereich
+  priority: Priorität
 
 gender:
   male: männlich
@@ -21,6 +22,11 @@ message_scope:
   timetable: Stundenplan
   messages: Mitteilungen
   lists: Listen
+
+message_priority:
+  emergency: Notfall
+  important: Wichtig
+  normal: Normal
 
 user_type:
   teacher: Lehrkräfte

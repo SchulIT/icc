@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\MessageScope;
 use App\Security\Voter\MessageScopeVoter;
 use App\Utils\ArrayUtils;
+use FervoEnumBundle\Generated\Form\MessagePriorityType;
 use FervoEnumBundle\Generated\Form\MessageScopeType;
 use SchoolIT\CommonBundle\Form\FieldsetType;
 use SchoolIT\CommonBundle\Helper\DateHelper;
@@ -15,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use function foo\func;
 
 class MessageType extends AbstractType {
 
@@ -81,7 +83,21 @@ class MessageType extends AbstractType {
                             'upload_enabled' => false
                         ]);
                 }
-            ])
+            ]);
+
+        if($this->authorizationChecker->isGranted('ROLE_MESSAGE_PRIORITY')) {
+            $builder
+                ->add('group_priority', FieldsetType::class, [
+                    'legend' => 'label.priority',
+                    'fields' => function (FormBuilderInterface $builder) {
+                        $builder->add('priority', MessagePriorityType::class, [
+                            'label' => 'label.priority'
+                        ]);
+                    }
+                ]);
+        }
+
+        $builder
             ->add('group_attachments', FieldsetType::class, [
                 'legend' => 'label.attachments',
                 'fields' => function(FormBuilderInterface $builder) {

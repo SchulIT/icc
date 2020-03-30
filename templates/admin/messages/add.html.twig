@@ -22,6 +22,10 @@
 
     {{ form_row(form.group_general) }}
 
+    {% if form.group_priority is defined %}
+        {{ form_row(form.group_priority) }}
+    {% endif %}
+
     <div class="card mb-3">
         <div class="card-header">{{ 'label.attachments'|trans }}</div>
 

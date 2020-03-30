@@ -3,7 +3,7 @@
 {% set mustConfirm = message.mustConfirm and is_granted('confirm', message) and not is_confirmed(message) %}
 {% set mustUpload = message.uploadsEnabled and is_granted('upload', message) and missingUploads|length > 0 %}
 
-<div class="card {% if mustConfirm or mustUpload %}border-warning{% endif %}">
+<div class="card {% if mustConfirm or mustUpload %}border-warning{% endif %} {% if message.priority == 'emergency' %}message-danger{% elseif message.priority == 'important' %}message-warning{% endif %}">
     <div class="card-body">
         <div class="float-right ml-2">
 

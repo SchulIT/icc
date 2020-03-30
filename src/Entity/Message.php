@@ -231,6 +231,12 @@ class Message {
      */
     private $confirmations;
 
+    /**
+     * @ORM\Column(type="message_priority")
+     * @var MessagePriority
+     */
+    private $priority;
+
     public function __construct() {
         $this->studyGroups = new ArrayCollection();
         $this->attachments = new ArrayCollection();
@@ -245,6 +251,7 @@ class Message {
         $this->downloadEnabledUserTypes = new ArrayCollection();
 
         $this->scope = MessageScope::Messages();
+        $this->priority = MessagePriority::Normal();
     }
 
     /**
@@ -551,6 +558,22 @@ class Message {
      */
     public function getConfirmationRequiredStudyGroups(): Collection {
         return $this->confirmationRequiredStudyGroups;
+    }
+
+    /**
+     * @return MessagePriority
+     */
+    public function getPriority(): MessagePriority {
+        return $this->priority;
+    }
+
+    /**
+     * @param MessagePriority $priority
+     * @return Message
+     */
+    public function setPriority(MessagePriority $priority): Message {
+        $this->priority = $priority;
+        return $this;
     }
 
     /**

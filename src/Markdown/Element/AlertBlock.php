@@ -10,8 +10,6 @@ class AlertBlock extends AbstractBlock {
     private $type;
 
     public function __construct($type) {
-        parent::__construct();
-
         $this->type = $type;
     }
 

@@ -242,9 +242,6 @@
     "league/commonmark": {
         "version": "1.0.0"
     },
-    "league/commonmark-ext-table": {
-        "version": "v2.1.0"
-    },
     "league/csv": {
         "version": "9.2.0"
     },

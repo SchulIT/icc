@@ -18,7 +18,6 @@
         "jsvrcek/ics": "^0.6.0",
         "knplabs/knp-menu-bundle": "^3.0",
         "league/commonmark": "^1.0",
-        "league/commonmark-ext-table": "^2.1",
         "league/csv": "^9.2",
         "lightsaml/sp-bundle": "^1.2",
         "myclabs/php-enum": "^1.6",

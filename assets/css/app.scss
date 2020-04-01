@@ -112,9 +112,16 @@ $enable-gradients: true;
   padding: 1px 16px 0 4px;
 }
 
+.#{$choices-selector}__list--dropdown {
+  .#{$choices-selector}__item--selectable {
+    padding-right: 0;
+  }
+}
+
 .#{$choices-selector}__input {
   margin-bottom: 0;
 }
+
 
 .color-rect {
   vertical-align: baseline;

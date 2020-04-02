@@ -8,6 +8,7 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\User;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
+use App\Security\Voter\ExamVoter;
 use App\Security\Voter\ListsVoter;
 use App\Security\Voter\RoomVoter;
 use App\Security\Voter\WikiVoter;
@@ -198,7 +199,7 @@ class Builder {
             ]);
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR')) {
+        if($this->authorizationChecker->isGranted(ExamVoter::Manage)) {
             $menu->addChild('admin.exams.label', [
                 'route' => 'admin_exams'
             ]);

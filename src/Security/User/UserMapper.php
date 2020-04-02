@@ -13,8 +13,9 @@ use LightSaml\Model\Protocol\Response;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use SchoolIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
+use SchoolIT\CommonBundle\Security\User\AbstractUserMapper;
 
-class UserMapper {
+class UserMapper extends AbstractUserMapper {
     const ROLES_ASSERTION_NAME = 'urn:roles';
 
     private $typesMap;
@@ -41,26 +42,6 @@ class UserMapper {
         }
 
         return new UserType($type);
-    }
-
-    /**
-     * @param Response $response
-     * @param string[] $valueAttributes
-     * @param string[] $valuesAttributes
-     * @return array
-     */
-    private function transformResponseToArray(Response $response, array $valueAttributes, array $valuesAttributes) {
-        $result = [ ];
-
-        foreach($valueAttributes as $valueAttribute) {
-            $result[$valueAttribute] = $this->getValue($response, $valueAttribute);
-        }
-
-        foreach($valuesAttributes as $valuesAttribute) {
-            $result[$valuesAttribute] = $this->getValues($response, $valuesAttribute);
-        }
-
-        return $result;
     }
 
     /**
@@ -178,27 +159,5 @@ class UserMapper {
         }
 
         return $user;
-    }
-
-    private function getValue(Response $response, $attributeName) {
-        $attribute = $response->getFirstAssertion()->getFirstAttributeStatement()
-            ->getFirstAttributeByName($attributeName);
-
-        if($attribute === null) {
-            return null;
-        }
-
-        return $attribute->getFirstAttributeValue();
-    }
-
-    private function getValues(Response $response, $attributeName) {
-        $attribute = $response->getFirstAssertion()->getFirstAttributeStatement()
-            ->getFirstAttributeByName($attributeName);
-
-        if($attribute === null) {
-            return null;
-        }
-
-        return $attribute->getAllAttributeValues();
     }
 }

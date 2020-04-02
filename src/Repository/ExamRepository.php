@@ -178,6 +178,17 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findAllExternal(\DateTime $today = null) {
+        $qb = $this->getDefaultQueryBuilder($today);
+
+        return $qb->andWhere($qb->expr()->isNotNull('e.externalId'))
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @param Exam $exam
      */
     public function persist(Exam $exam): void {
@@ -192,6 +203,4 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $this->em->remove($exam);
         $this->flushIfNotInTransaction();
     }
-
-
 }

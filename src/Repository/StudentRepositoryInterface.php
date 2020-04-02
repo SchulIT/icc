@@ -6,6 +6,7 @@ use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Sorting\StudentGroupMembershipStrategy;
+use Doctrine\ORM\QueryBuilder;
 
 interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
 
@@ -44,6 +45,12 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Student[]
      */
     public function findAllByStudyGroups(array $studyGroups): array;
+
+    /**
+     * @param StudyGroup[] $studyGroups
+     * @return QueryBuilder
+     */
+    public function getQueryBuilderFindAllByStudyGroups(array $studyGroups): QueryBuilder;
 
     /**
      * @return Student[]

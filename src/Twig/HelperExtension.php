@@ -13,6 +13,8 @@ use App\Utils\ColorUtils;
 use App\Utils\RefererHelper;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -26,11 +28,12 @@ class HelperExtension extends AbstractExtension {
     private $messageFileUploadHelper;
     private $tokenStorage;
     private $authorizationChecker;
+    private $validator;
 
     public function __construct(MessageConfirmationHelper $confirmationHelper, DismissedMessagesHelper $dismissedHelper,
                                 RefererHelper $redirectHelper, ColorUtils $colorUtils, MessageFilesystem $messageFilesystem,
                                 MessageFileUploadHelper $messageFileUploadHelper, TokenStorageInterface $tokenStorage,
-                                AuthorizationCheckerInterface $authorizationChecker) {
+                                AuthorizationCheckerInterface $authorizationChecker, ValidatorInterface $validator) {
         $this->confirmationHelper = $confirmationHelper;
         $this->dismissedHelper = $dismissedHelper;
         $this->redirectHelper = $redirectHelper;
@@ -39,6 +42,7 @@ class HelperExtension extends AbstractExtension {
         $this->messageFileUploadHelper = $messageFileUploadHelper;
         $this->tokenStorage = $tokenStorage;
         $this->authorizationChecker = $authorizationChecker;
+        $this->validator = $validator;
     }
 
     public function getFunctions() {
@@ -48,7 +52,8 @@ class HelperExtension extends AbstractExtension {
             new TwigFunction('missing_uploads', [ $this, 'getMissingUploads' ]),
             new TwigFunction('message_downloads', [ $this, 'messageDownloads' ]),
             new TwigFunction('referer_path', [ $this, 'refererPath' ]),
-            new TwigFunction('foreground', [ $this, 'foregroundColor' ])
+            new TwigFunction('foreground', [ $this, 'foregroundColor' ]),
+            new TwigFunction('validation_errors', [ $this, 'validate' ])
         ];
     }
 
@@ -106,5 +111,9 @@ class HelperExtension extends AbstractExtension {
 
     public function foregroundColor(string $color): string {
         return $this->colorUtils->getForeground($color);
+    }
+
+    public function validate($object): ConstraintViolationListInterface {
+        return $this->validator->validate($object);
     }
 }

@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use App\Validator\NotTooManyExamsPerDay;
+use App\Validator\NotTooManyExamsPerWeek;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -9,6 +12,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @NotTooManyExamsPerWeek()
+ * @NotTooManyExamsPerDay()
  */
 class Exam {
 
@@ -27,10 +32,10 @@ class Exam {
     private $externalId;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      * @Assert\NotNull()
      * @Assert\Date()
-     * @var \DateTime
+     * @var DateTime|null
      */
     private $date;
 
@@ -39,7 +44,7 @@ class Exam {
      * @Assert\GreaterThan(0)
      * @var int
      */
-    private $lessonStart;
+    private $lessonStart = 0;
 
     /**
      * @ORM\Column(type="integer")
@@ -47,7 +52,7 @@ class Exam {
      * @Assert\GreaterThan(propertyPath="lessonStart")
      * @var int
      */
-    private $lessonEnd;
+    private $lessonEnd = 0;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -120,17 +125,17 @@ class Exam {
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime|null
      */
-    public function getDate(): \DateTime {
+    public function getDate(): ?DateTime {
         return $this->date;
     }
 
     /**
-     * @param \DateTime $date
+     * @param DateTime|null $date
      * @return Exam
      */
-    public function setDate(\DateTime $date): Exam {
+    public function setDate(?DateTime $date): Exam {
         $this->date = $date;
         return $this;
     }

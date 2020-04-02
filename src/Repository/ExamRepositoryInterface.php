@@ -67,6 +67,12 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAll(?\DateTime $today = null);
 
     /**
+     * @param \DateTime|null $today If set, only exams on $today or later are returned
+     * @return Exam[]
+     */
+    public function findAllExternal(\DateTime $today = null);
+
+    /**
      * @param Exam $exam
      */
     public function persist(Exam $exam): void;

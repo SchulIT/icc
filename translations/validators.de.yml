@@ -1,2 +1,4 @@
 "File has the wrong format. Expected Format: {{ extensions }}": "Datei hat das falsche Format. Erwartet: {{ extensions }}"
 "This should be a subset of {{ compared_value_path }}.": "Diese Auswahl muss eine Teilmenge von {{ compared_value_path }} sein."
+"Only {{ maxNumber }} exam(s) per week are allowed. Got {{ number }}.": "Die Anzahl der Klausuren pro Woche beträgt {{ maxNumber }}. Mit dieser Klausur sind es bereits {{ number }}."
+"Only {{ maxNumber }} exam(s) per day are allowed. Got {{ number }}.": "Die Anzahl der Klausuren pro Tag beträgt {{ maxNumber }}. Mit dieser Klausur sind es bereits {{ number }}."

@@ -32,7 +32,7 @@ class ExamsImportStrategy implements ImportStrategyInterface {
      */
     public function getExistingEntities(): array {
         return ArrayUtils::createArrayWithKeys(
-            $this->examRepository->findAll(),
+            $this->examRepository->findAllExternal(),
             function(Exam $exam) {
                 return $exam->getExternalId();
             }

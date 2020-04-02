@@ -92,6 +92,18 @@ class SettingsController extends AbstractController {
                 'help' => 'admin.settings.exams.notifications.reply_address.help',
                 'required' => false,
                 'data' => $examSettings->getNotificationReplyToAddress()
+            ])
+            ->add('number_of_exams_week', IntegerType::class, [
+                'label' => 'admin.settings.exams.planning.number_of_exams_week.label',
+                'help' => 'admin.settings.exams.planning.number_of_exams_week.help',
+                'required' => true,
+                'data' => $examSettings->getMaximumNumberOfExamsPerWeek()
+            ])
+            ->add('number_of_exams_day', IntegerType::class, [
+                'label' => 'admin.settings.exams.planning.number_of_exams_day.label',
+                'help' => 'admin.settings.exams.planning.number_of_exams_day.help',
+                'required' => true,
+                'data' => $examSettings->getMaximumNumberOfExamsPerDay()
             ]);
 
         $form = $builder->getForm();
@@ -113,6 +125,12 @@ class SettingsController extends AbstractController {
                 },
                 'notifications_replyaddress' => function(?string $address) use($examSettings) {
                     $examSettings->setNotificationReplyToAddress($address);
+                },
+                'number_of_exams_week' => function(int $number) use ($examSettings) {
+                    $examSettings->setMaximumNumberOfExamsPerWeek($number);
+                },
+                'number_of_exams_day' => function(int $number) use ($examSettings) {
+                    $examSettings->setMaximumNumberOfExamsPerDay($number);
                 }
             ];
 

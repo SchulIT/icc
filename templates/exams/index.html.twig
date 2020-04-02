@@ -59,6 +59,12 @@
                         <a href="{{ path('exams_export') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-download"></i> {{ 'plans.exams.export.label'|trans }}
                         </a>
+
+                        {% if is_granted('manage-exams') %}
+                            <a href="{{ path('admin_exams') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-cogs"></i> {{ 'admin.exams.label'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
 

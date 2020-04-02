@@ -10,19 +10,43 @@ security:
                 property: username
 
     access_control:
+        - { path: ^/admin/(messages|exams), roles: ROLE_USER }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api/import, roles: ROLE_IMPORT }
 
     role_hierarchy:
-        ROLE_ADMIN: [ ROLE_USER, ROLE_WIKI_ADMIN, ROLE_DOCUMENTS_ADMIN, ROLE_MESSAGE_ADMIN, ROLE_APPOINTMENTS_ADMIN ]
+        # Administrator
+        ROLE_ADMIN: [ ROLE_USER, ROLE_WIKI_ADMIN, ROLE_DOCUMENTS_ADMIN, ROLE_MESSAGE_ADMIN, ROLE_APPOINTMENTS_ADMIN, ROLE_EXAMS_ADMIN ]
+
+        # Administrator which is allowed to switch user
         ROLE_SUPER_ADMIN: [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
+
+        # Role which enables users to create messages
         ROLE_MESSAGE_CREATOR: ROLE_USER
+
+        # Role which enables all administrative operations for messages
         ROLE_MESSAGE_ADMIN: [ ROLE_MESSAGE_PRIORITY, ROLE_MESSAGE_CREATOR, ROLE_USER ]
+
+        # Role which enables all administrative operations for the wiki
         ROLE_WIKI_ADMIN: ROLE_USER
+
+        # Role which enables all administrative operations for documents
         ROLE_DOCUMENTS_ADMIN: ROLE_USER
+
+        # Role which enables all administrative operations for appointments
         ROLE_APPOINTMENTS_ADMIN: ROLE_USER
+
+        # Role for any read-only user
         ROLE_KIOSK: ROLE_USER
+
+        # Role which enables users to set message priorities
         ROLE_MESSAGE_PRIORITY: ROLE_MESSAGE_CREATOR
+
+        # Role which enables all administrative operations for exams
+        ROLE_EXAMS_ADMIN: ROLE_EXAMS_CREATOR
+
+        # Role which enables users to create exams (and manage their created exams)
+        ROLE_EXAMS_CREATOR: ROLE_USER
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs

@@ -1,0 +1,47 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.exams.remove.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_exams') }}">{{ 'admin.exams.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">{{ 'remove.header'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_widget(form.group_general.confirm) }}
+
+            <p class="w-100 mt-3">
+            {{ 'plans.exams.tuitions'|trans({'%count%': exam.tuitions|length} ) }}:
+
+            {% for tuition in exam.tuitions %}
+                {{ tuition.name }} ({{ tuition.subject.name }})
+
+                <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+            {% endfor %}
+            </p>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fa fa-trash"></i> {{ 'remove.confirm'|trans }}
+        </button>
+
+        <a href="{{ path('admin_exams') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

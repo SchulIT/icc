@@ -198,6 +198,12 @@ class Builder {
             ]);
         }
 
+        if($this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR')) {
+            $menu->addChild('admin.exams.label', [
+                'route' => 'admin_exams'
+            ]);
+        }
+
         if($this->authorizationChecker->isGranted('ROLE_APPOINTMENTS_ADMIN')) {
             $menu->addChild('admin.appointments.label', [
                 'route' => 'admin_appointments'

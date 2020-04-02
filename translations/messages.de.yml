@@ -100,6 +100,8 @@ label:
     filesize: Größe
     files: "{0} %count% Dateien|{1} %count% Datei|]1,Inf[ %count% Dateien"
     priority: Priorität
+    description: Beschreibung
+    tuitions: Unterricht
 
 progress:
     status: "%current% von %total%"
@@ -159,6 +161,7 @@ plans:
         invigilators: Aufsicht
         show_all: Alte Klausuren anzeigen
         not_visible: Aktuell ist der Klausurplan nicht freigeschaltet.
+        not_planned: Nicht geplant
         export:
             label: Klausuren exportieren
             download:
@@ -425,6 +428,14 @@ admin:
                 reply_address:
                     label: Antwort-E-Mail Adresse
                     help: Diese E-Mail Adresse wird bei E-Mail Benachrichtungen in das 'Reply-To'-Feld eingefügt, sodass Antworten auf die Benachrichtungsmail an diese E-Mail Adresse geschickt werden.
+            planning:
+                label: Planung
+                number_of_exams_week:
+                    label: Klausuren pro Woche
+                    help: Maximale Anzahl an Klausuren pro Wochen. Diese Beschränkung gilt nicht für Benutzer der Rolle ROLE_EXAMS_CREATOR und ROLE_EXAMS_ADMIN.
+                number_of_exams_day:
+                    label: Klausuren pro Tag
+                    help: Maximale Anzahl an Klausuren pro Tg. Diese Beschränkung gilt auch für Benutzer mit Rolle ROLE_EXAMS_CREATOR oder ROLE_EXAMS_ADMIN.
 
         timetable:
             label: Stundenplan
@@ -620,6 +631,30 @@ admin:
                 label: Tag löschen
                 confirm: 'Soll der Tag "%name%" wirklich gelöscht werden?'
                 success: Tag erfolgreich gelöscht
+
+    exams:
+        label: Klausuren
+        week: 'KW %week%'
+        add:
+            label: Neue Klasur
+            success: Klausur erfolgreich angelegt
+        edit:
+            label: Klausur bearbeiten
+            success: Klausur erfolgreich aktualisiert
+        students:
+            label: Klausurschreiber bearbeiten
+            success: Klausurschreiber aktualisiert
+            info: Lernende werden individuell einer Klausur zugeordnet. Diese können nach dem Erstellen der Klausur ausgewählt werden.
+            add_all: Alle Lernenden der ausgewählten Unterrichte als Klausurschreiber zuordnen
+        remove:
+            label: Klausur löschen
+            confirm: 'Soll die Klausur am %date% (%lessons%) wirklich gelöscht werden?'
+            success: Klausur erfolgreich gelöscht
+        bulk:
+            label: Mehrere Klausuren anlegen
+            help: Hiermit werden für jeden Unterricht entsprechend der angegebenen Anzahl Klausuren erstellt. Die Lehrkraft des Unterrichts kann anschließend das Datum sowie die Unterrichtsstunden für die Klausur festlegen.
+            success: Klausuren erfolgreich angelegt
+            number_of_exams: Anzahl der Klausuren
 
 versions:
     label: Versionen

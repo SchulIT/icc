@@ -5,7 +5,7 @@
             <p class="w-100">
                 <strong>{{ 'plans.exams.tuitions'|trans({'%count%': exam.tuitions|length} ) }}:</strong>
                 {% for tuition in exam.tuitions %}
-                    {{ tuition.name }}
+                    {{ tuition.name }} ({{ tuition.subject.name }})
 
                     <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
                     <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}

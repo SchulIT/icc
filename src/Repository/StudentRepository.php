@@ -125,6 +125,13 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
      * @inheritDoc
      */
     public function findAllByStudyGroups(array $studyGroups): array {
+        return $this->getQueryBuilderFindAllByStudyGroups($studyGroups)->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getQueryBuilderFindAllByStudyGroups(array $studyGroups): QueryBuilder {
         $studyGroupIds = array_map(function(StudyGroup $studyGroup) {
             return $studyGroup->getId();
         }, $studyGroups);
@@ -141,6 +148,6 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
             ->andWhere($qb->expr()->in('s.id', $qbInner->getDQL()))
             ->setParameter('studyGroupIds', $studyGroupIds);
 
-        return $qb->getQuery()->getResult();
+        return $qb;
     }
 }

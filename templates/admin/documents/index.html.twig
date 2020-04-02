@@ -46,14 +46,14 @@
                                 <tbody>
                                 {% for document in group.documents %}
                                     <tr>
-                                        <td>{{ document.title }}</td>
-                                        <td>
+                                        <td class="align-middle">{{ document.title }}</td>
+                                        <td class="align-middle">
                                             {% for visibility in document.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
                                         </td>
-                                        <td>
+                                        <td class="align-middle">
                                             {% for user in document.authors %}{{ user|user }}{% if not loop.last %}, {% endif %}{% endfor %}
                                         </td>
-                                        <td>
+                                        <td class="align-middle">
                                             {% if is_granted('edit', document) %}
                                                 <a href="{{ path('admin_edit_document', { id: document.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
                                                     <i class="fa fa-edit"></i>

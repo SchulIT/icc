@@ -43,13 +43,13 @@
                             <tbody>
                             {% for week in weeks %}
                                 <tr>
-                                    <td>
+                                    <td class="align-middle">
                                         {{ week.displayName }} <span class="badge badge-secondary">{{ week.key }}</span>
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {{ week.weekMod }}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         <a href="{{ path('admin_edit_timetable_week', { id: week.id }) }}" class="btn btn-primary btn-sm">
                                             <i class="fa fa-edit"></i>
                                         </a>

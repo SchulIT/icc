@@ -46,14 +46,14 @@
                             <tbody>
                             {% for teacher in teachers %}
                                 <tr>
-                                    <td>{{ teacher.acronym }}</td>
-                                    <td>{{ teacher.firstname}}</td>
-                                    <td>{{ teacher.lastname }}</td>
-                                    <td>{{ teacher.title }}</td>
-                                    <td>
+                                    <td class="align-middle">{{ teacher.acronym }}</td>
+                                    <td class="align-middle">{{ teacher.firstname}}</td>
+                                    <td class="align-middle">{{ teacher.lastname }}</td>
+                                    <td class="align-middle">{{ teacher.title }}</td>
+                                    <td class="align-middle">
                                         {% for tag in teacher.tags %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         <a href="{{ path('edit_teacher', { id: teacher.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
                                             <i class="fa fa-edit"></i>
                                         </a>

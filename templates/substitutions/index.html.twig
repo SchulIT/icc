@@ -79,19 +79,19 @@
                                         {% for substitution in group.substitutions %}
                                             {% set duration = substitution.lessonEnd - substitution.lessonStart %}
                                             <tr>
-                                                <td>
+                                                <td class="align-middle">
                                                     {% if substitution.startsBefore %}
                                                         {{ substitution.lessonStart|before_lesson }}
                                                     {% else %}
                                                         {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
                                                     {% endif %}
                                                 </td>
-                                                <td>{{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}</td>
-                                                <td>{{ _self.replacement(substitution.room, substitution.replacementRoom) }}</td>
-                                                <td>{{ _self.replacement(substitution.subject, substitution.replacementSubject) }}</td>
-                                                <td>{{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}</td>
-                                                <td>{{ substitution.type }}</td>
-                                                <td>{{ substitution.remark }}</td>
+                                                <td class="align-middle">{{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}</td>
+                                                <td class="align-middle">{{ _self.replacement(substitution.room, substitution.replacementRoom) }}</td>
+                                                <td class="align-middle">{{ _self.replacement(substitution.subject, substitution.replacementSubject) }}</td>
+                                                <td class="align-middle">{{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}</td>
+                                                <td class="align-middle">{{ substitution.type }}</td>
+                                                <td class="align-middle">{{ substitution.remark }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>

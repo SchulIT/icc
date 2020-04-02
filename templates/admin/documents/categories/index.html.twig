@@ -41,13 +41,13 @@
                             <tbody>
                             {% for category in categories %}
                                 <tr>
-                                    <td>
+                                    <td class="align-middle">
                                         {{ category.name }}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {{ category.documents.count }}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         <a href="{{ path('admin_edit_document_category', { id: category.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
                                             <i class="fa fa-edit"></i>
                                         </a>

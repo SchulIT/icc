@@ -42,16 +42,16 @@
                             <tbody>
                             {% for period in periods %}
                                 <tr>
-                                    <td>
+                                    <td class="align-middle">
                                         {{ period.name }} <span class="badge badge-secondary">{{ period.externalId }}</span>
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {{ period.start|format_date }}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {{ period.end|format_date }}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         <a href="{{ path('admin_edit_timetable_period', { id: period.id }) }}" class="btn btn-primary btn-sm">
                                             <i class="fa fa-edit"></i>
                                         </a>

@@ -48,10 +48,10 @@
                             <tbody>
                             {% for message in group.messages %}
                                 <tr>
-                                    <td>{{ message.title }}</td>
-                                    <td>{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only %}</td>
-                                    <td>{% include "_includes/study_groups.html.twig" with { studyGroups: message.studyGroups, id: message.id } only %}</td>
-                                    <td>
+                                    <td class="align-middle">{{ message.title }}</td>
+                                    <td class="align-middle">{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only %}</td>
+                                    <td class="align-middle">{% include "_includes/study_groups.html.twig" with { studyGroups: message.studyGroups, id: message.id } only %}</td>
+                                    <td class="align-middle">
                                         {% if is_granted('edit', message) %}
                                             <a href="{{ path('edit_message', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}"><i class="fa fa-edit"></i></a>
 

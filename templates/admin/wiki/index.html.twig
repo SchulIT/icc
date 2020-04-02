@@ -12,18 +12,18 @@
 
 {% macro wiki_article(article, paddingLeft) %}
     <tr>
-        <td><span style="padding-left: {{ paddingLeft }}px;"></span> {% if paddingLeft > 0 %}┗{% endif %} {{ article.title }}</td>
-        <td>
+        <td class="align-middle"><span style="padding-left: {{ paddingLeft }}px;"></span> {% if paddingLeft > 0 %}┗{% endif %} {{ article.title }}</td>
+        <td class="align-middle">
             {% if article.isOnline %}
                 <span class="badge badge-success">{{ 'label.online'|trans }}</span>
             {% else %}
                 <span class="badge badge-danger">{{ 'label.offline'|trans }}</span>
             {% endif %}
         </td>
-        <td>
+        <td class="align-middle">
             {% for visibility in article.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
         </td>
-        <td>
+        <td class="align-middle">
             <a href="{{ path('edit_wiki_article', { id: article.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}"><i class="fa fa-edit"></i></a>
             <a href="{{ path('wiki_article_versions', { id: article.id }) }}" class="btn btn-primary btn-sm" title="{{ 'versions.label'|trans }}">
                 <i class="fa fa-history"></i>

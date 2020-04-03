@@ -102,6 +102,8 @@ class Teacher {
         $this->subjects = new ArrayCollection();
         $this->grades = new ArrayCollection();
         $this->tags = new ArrayCollection();
+
+        $this->setGender(Gender::X());
     }
 
     /**

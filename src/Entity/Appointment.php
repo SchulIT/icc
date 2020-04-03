@@ -30,7 +30,7 @@ class Appointment {
      * @ORM\Column(type="string")
      * @Assert\NotNull()
      * @Assert\NotBlank()
-     * @var string
+     * @var string|null
      */
     private $title;
 
@@ -44,14 +44,14 @@ class Appointment {
      * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      * @Assert\NotNull()
-     * @var \DateTime
+     * @var \DateTime|null
      */
     private $start;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Assert\GreaterThan(propertyPath="start")
-     * @var \DateTime
+     * @var \DateTime|null
      */
     private $end;
 
@@ -144,7 +144,7 @@ class Appointment {
     /**
      * @return string
      */
-    public function getTitle(): string {
+    public function getTitle(): ?string {
         return $this->title;
     }
 
@@ -152,7 +152,7 @@ class Appointment {
      * @param string $title
      * @return Appointment
      */
-    public function setTitle(string $title): Appointment {
+    public function setTitle(?string $title): Appointment {
         $this->title = $title;
         return $this;
     }
@@ -176,7 +176,7 @@ class Appointment {
     /**
      * @return \DateTime
      */
-    public function getStart(): \DateTime {
+    public function getStart(): ?\DateTime {
         return $this->start;
     }
 
@@ -184,7 +184,7 @@ class Appointment {
      * @param \DateTime $start
      * @return Appointment
      */
-    public function setStart(\DateTime $start): Appointment {
+    public function setStart(?\DateTime $start): Appointment {
         $this->start = $start;
         return $this;
     }
@@ -192,7 +192,7 @@ class Appointment {
     /**
      * @return \DateTime
      */
-    public function getEnd(): \DateTime {
+    public function getEnd(): ?\DateTime {
         return $this->end;
     }
 
@@ -200,7 +200,7 @@ class Appointment {
      * @param \DateTime $end
      * @return Appointment
      */
-    public function setEnd(\DateTime $end): Appointment {
+    public function setEnd(?\DateTime $end): Appointment {
         $this->end = $end;
         return $this;
     }

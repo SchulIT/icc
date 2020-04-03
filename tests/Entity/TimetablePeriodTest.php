@@ -3,7 +3,7 @@
 namespace App\Tests\Entity;
 
 use App\Entity\TimetablePeriod;
-use App\Entity\TimetablePeriodVisibility;
+use App\Entity\UserTypeEntity;
 use PHPUnit\Framework\TestCase;
 
 class TimetablePeriodTest extends TestCase {
@@ -24,7 +24,7 @@ class TimetablePeriodTest extends TestCase {
         $period->setEnd($end);
         $this->assertEquals($end, $period->getEnd());
 
-        $visibility = new TimetablePeriodVisibility();
+        $visibility = new UserTypeEntity();
         $period->addVisibility($visibility);
         $this->assertTrue($period->getVisibilities()->contains($visibility));
 

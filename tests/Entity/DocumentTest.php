@@ -5,9 +5,9 @@ namespace App\Tests\Entity;
 use App\Entity\Document;
 use App\Entity\DocumentAttachment;
 use App\Entity\DocumentCategory;
-use App\Entity\MessageVisibility;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
+use App\Entity\UserTypeEntity;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DocumentTest extends WebTestCase {
@@ -40,7 +40,7 @@ class DocumentTest extends WebTestCase {
         $document->removeAttachment($attachment);
         $this->assertFalse($document->getAttachments()->contains($attachment));
 
-        $visibility = new MessageVisibility();
+        $visibility = new UserTypeEntity();
         $document->addVisibility($visibility);
         $this->assertTrue($document->getVisibilities()->contains($visibility));
 

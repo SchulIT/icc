@@ -10,6 +10,7 @@ use League\Flysystem\FilesystemInterface;
 use League\Flysystem\Memory\MemoryAdapter;
 use Mimey\MimeTypes;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 class MessageFilesystemTest extends TestCase {
 
@@ -46,7 +47,7 @@ class MessageFilesystemTest extends TestCase {
     }
 
     private function getFilesystem(FilesystemInterface $flysystem): MessageFilesystem {
-        $filesystem = new MessageFilesystem($flysystem, new MimeTypes());
+        $filesystem = new MessageFilesystem(new TokenStorage(), $flysystem, new MimeTypes());
         $flysystem->put('/1/foo.txt', 'bla');
         $flysystem->put('/1/bla.txt', 'foo');
         $flysystem->put('/2/foo.txt', 'bla');

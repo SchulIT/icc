@@ -4,11 +4,10 @@ namespace App\Tests\Entity;
 
 use App\Entity\Message;
 use App\Entity\MessageAttachment;
-use App\Entity\MessageConfirmation;
 use App\Entity\MessageFile;
 use App\Entity\MessageScope;
-use App\Entity\MessageVisibility;
 use App\Entity\StudyGroup;
+use App\Entity\UserTypeEntity;
 use PHPUnit\Framework\TestCase;
 
 class MessageTest extends TestCase {
@@ -49,7 +48,7 @@ class MessageTest extends TestCase {
         $message->removeAttachment($attachment);
         $this->assertFalse($message->getAttachments()->contains($attachment));
 
-        $visibility = new MessageVisibility();
+        $visibility = new UserTypeEntity();
         $message->addVisibility($visibility);
         $this->assertTrue($message->getVisibilities()->contains($visibility));
 

@@ -2,14 +2,13 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\TimetablePeriod;
-use App\Entity\TimetablePeriodVisibility;
 use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
 use PHPUnit\Framework\TestCase;
 
 class TimetablePeriodVisibilityTest extends TestCase {
     public function testGettersSetters() {
-        $visibility = new TimetablePeriodVisibility();
+        $visibility = new UserTypeEntity();
 
         $type = UserType::Student();
         $visibility->setUserType($type);

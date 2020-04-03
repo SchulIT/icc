@@ -2,13 +2,13 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\MessageVisibility;
 use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
 use PHPUnit\Framework\TestCase;
 
 class MessageVisibilityTest extends TestCase {
     public function testGettersSetters() {
-        $visibility = new MessageVisibility();
+        $visibility = new UserTypeEntity();
 
         $type = UserType::Intern();
         $visibility->setUserType($type);

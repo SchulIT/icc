@@ -37,7 +37,10 @@ class WikiArticleType extends AbstractType {
                 'label' => 'label.parent',
                 'choices' => $this->treeHelper->flattenTree($articles),
                 'placeholder'=> 'label.none',
-                'required' => false
+                'required' => false,
+                'attr' => [
+                    'data-choice' => 'true'
+                ]
             ])
             ->add('isOnline', ChoiceType::class, [
                 'label' => 'label.status',
@@ -45,13 +48,19 @@ class WikiArticleType extends AbstractType {
                     'label.online' => true,
                     'label.offline' => false
                 ],
-                'expanded' => true
+                'expanded' => true,
+                'label_attr' => [
+                    'class' => 'radio-custom'
+                ]
             ])
             ->add('visibilities', UserTypeEntityType::class, [
                 'label' => 'label.visibility',
                 'multiple' => true,
                 'expanded' => true,
-                'required' => false
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ])
             ->add('content', MarkdownType::class, [
                 'label' => 'label.content',
@@ -70,7 +79,10 @@ class WikiArticleType extends AbstractType {
                     'label' => 'label.parent',
                     'choices' => $this->treeHelper->flattenTree($articles, true, $article),
                     'placeholder'=> 'label.none',
-                    'required' => false
+                    'required' => false,
+                    'attr' => [
+                        'data-choice' => 'true'
+                    ]
                 ]);
             }
         });

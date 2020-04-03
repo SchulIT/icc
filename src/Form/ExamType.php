@@ -85,7 +85,10 @@ class ExamType extends AbstractType {
                             'required' => false,
                             'mapped' => false,
                             'label' => 'admin.exams.students.add_all',
-                            'help' => 'admin.exams.students.info'
+                            'help' => 'admin.exams.students.info',
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
                         ]);
                 }
             ]);

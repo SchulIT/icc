@@ -32,7 +32,10 @@ class TeacherType extends AbstractType {
             ])
             ->add('gender', GenderType::class, [
                 'label' => 'label.gender',
-                'expanded' => true
+                'expanded' => true,
+                'label_attr' => [
+                    'class' => 'radio-custom'
+                ]
             ])
             ->add('email', EmailType::class, [
                 'label' => 'label.email'

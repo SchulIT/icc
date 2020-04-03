@@ -51,7 +51,10 @@ class DocumentType extends AbstractType {
                             'choice_label' => function (DocumentCategory $category) {
                                 return $category->getName();
                             },
-                            'disabled' => $isRestrictedView
+                            'disabled' => $isRestrictedView,
+                            'attr' => [
+                                'data-choice' => 'true'
+                            ]
                         ]);
 
                     if($isRestrictedView !== true) {
@@ -59,7 +62,10 @@ class DocumentType extends AbstractType {
                             ->add('visibilities', UserTypeEntityType::class, [
                                 'label' => 'label.visibility',
                                 'multiple' => true,
-                                'expanded' => true
+                                'expanded' => true,
+                                'label_attr' => [
+                                    'class' => 'checkbox-custom'
+                                ]
                             ])
                             ->add('studyGroups', StudyGroupType::class, [
                                 'label' => 'label.study_groups_simple',

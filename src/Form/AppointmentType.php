@@ -49,13 +49,20 @@ class AppointmentType extends AbstractType {
                             'sort_by' => $this->appointmentCategoryStrategy,
                             'choice_label' => function(AppointmentCategory $appointmentCategory) {
                                 return $appointmentCategory->getName();
-                            }
+                            },
+                            'attr' => [
+                                'data-choice' => 'true'
+                            ]
                         ])
                         ->add('start', DateTimeType::class, [
-                            'label' => 'label.start'
+                            'label' => 'label.start',
+                            'date_widget' => 'single_text',
+                            'time_widget' => 'single_text'
                         ])
                         ->add('end', DateTimeType::class, [
-                            'label' => 'label.end'
+                            'label' => 'label.end',
+                            'date_widget' => 'single_text',
+                            'time_widget' => 'single_text'
                         ])
                         ->add('location', TextType::class, [
                             'label' => 'label.location',
@@ -63,11 +70,10 @@ class AppointmentType extends AbstractType {
                         ])
                         ->add('allDay', CheckboxType::class, [
                             'label' => 'label.all_day',
-                            'required' => false
-                        ])
-                        ->add('isHiddenFromStudents', CheckboxType::class, [
-                            'label' => 'label.hidden_from_students',
-                            'required' => false
+                            'required' => false,
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
                         ]);
                 }
             ])

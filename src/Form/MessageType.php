@@ -62,6 +62,9 @@ class MessageType extends AbstractType {
                             'label' => 'label.visibility',
                             'multiple' => true,
                             'expanded' => true,
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
                         ])
                         ->add('studyGroups', StudyGroupType::class, [
                             'label' => 'label.study_groups_simple',
@@ -72,11 +75,13 @@ class MessageType extends AbstractType {
                         ])
                         ->add('startDate', DateType::class, [
                             'label' => 'label.message.start',
-                            'years' => $years
+                            'years' => $years,
+                            'widget' => 'single_text'
                         ])
                         ->add('expireDate', DateType::class, [
                             'label' => 'label.message.expiry',
-                            'years' => $years
+                            'years' => $years,
+                            'widget' => 'single_text'
                         ])
                         ->add('content', MarkdownType::class, [
                             'label' => 'label.content',
@@ -91,7 +96,10 @@ class MessageType extends AbstractType {
                     'legend' => 'label.priority',
                     'fields' => function (FormBuilderInterface $builder) {
                         $builder->add('priority', MessagePriorityType::class, [
-                            'label' => 'label.priority'
+                            'label' => 'label.priority',
+                            'attr' => [
+                                'data-choice' => 'true'
+                            ]
                         ]);
                     }
                 ]);
@@ -116,13 +124,19 @@ class MessageType extends AbstractType {
                         ->add('mustConfirm', CheckboxType::class, [
                             'label' => 'label.must_confirm',
                             'required' => false,
-                            'help' => 'messages.confirm.info'
+                            'help' => 'messages.confirm.info',
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
                         ])
                         ->add('confirmationRequiredUserTypes', UserTypeEntityType::class, [
                             'label' => 'label.usertypes',
                             'multiple' => true,
                             'expanded' => true,
-                            'required' => false
+                            'required' => false,
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
                         ])
                         ->add('confirmationRequiredStudyGroups', StudyGroupType::class, [
                             'label' => 'label.study_groups_simple',
@@ -141,13 +155,18 @@ class MessageType extends AbstractType {
                         ->add('isDownloadsEnabled', CheckboxType::class, [
                             'label' => 'label.messages_files.enable_downloads',
                             'required' => false,
-                            'help' => 'label.messages_files.info_downloads'
+                            'help' => 'label.messages_files.info_downloads','label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
                         ])
                         ->add('downloadEnabledUserTypes', UserTypeEntityType::class, [
                             'label' => 'label.usertypes',
                             'multiple' => true,
                             'expanded' => true,
-                            'required' => false
+                            'required' => false,
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
                         ])
                         ->add('downloadEnabledStudyGroups', StudyGroupType::class, [
                             'label' => 'label.study_groups_simple',
@@ -166,7 +185,10 @@ class MessageType extends AbstractType {
                         ->add('isUploadsEnabled', CheckboxType::class, [
                             'label' => 'label.messages_files.enable_uploads',
                             'required' => false,
-                            'help' => 'label.messages_files.info_uploads'
+                            'help' => 'label.messages_files.info_uploads',
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
                         ])
                         ->add('uploadDescription', MarkdownType::class, [
                             'label' => 'label.messages_files.upload_description',
@@ -176,7 +198,10 @@ class MessageType extends AbstractType {
                             'label' => 'label.usertypes',
                             'multiple' => true,
                             'expanded' => true,
-                            'required' => false
+                            'required' => false,
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
                         ])
                         ->add('uploadEnabledStudyGroups', StudyGroupType::class, [
                             'label' => 'label.study_groups_simple',

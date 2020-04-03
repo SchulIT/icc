@@ -17,6 +17,8 @@ $enable-gradients: true;
 @import '../../vendor/schoolit/common-bundle/Resources/assets/css/variables.scss';
 @import '../../vendor/schoolit/common-bundle/Resources/assets/css/layout.scss';
 @import '../../vendor/schoolit/common-bundle/Resources/assets/css/additions.scss';
+@import '../../vendor/schoolit/common-bundle/Resources/assets/css/div-tables.scss';
+@import '../../vendor/schoolit/common-bundle/Resources/assets/css/swagger.scss';
 
 // Import editor
 @import '../../node_modules/easymde/src/css/easymde.css';
@@ -24,9 +26,11 @@ $enable-gradients: true;
 
 // Import Bootstrap 4 Card Tables
 @import '../../node_modules/bootstrap4-card-tables/src/bootstrap4-card-tables';
+@import '../../vendor/schoolit/common-bundle/Resources/assets/css/nested-card-tables.scss';
 
 // Import choices.js
 @import '../../node_modules/choices.js/src/styles/choices';
+@import '../../vendor/schoolit/common-bundle/Resources/assets/css/choices-fixes.scss';
 
 // Import color picker
 @import '../../node_modules/vanilla-picker/src/index';
@@ -78,51 +82,6 @@ $enable-gradients: true;
   }
 }
 
-// Choices overrides
-.#{$choices-selector}[data-type*="select-one"],
-.#{$choices-selector}[data-type*="select-multiple"],
-.#{$choices-selector}[data-type*="text"] {
-  .#{$choices-selector}__inner {
-    padding: 0.375rem 0.75rem !important;
-    min-height: calc(1.5em + 0.75rem + 2px);
-    //min-height: auto;
-  }
-}
-
-.#{$choices-selector}[data-type*="select-multiple"] {
-  .#{$choices-selector}__inner {
-    padding: 0.175rem 0.75rem !important;
-  }
-}
-
-.#{$choices-selector}__list {
-  z-index: 100;
-}
-
-.#{$choices-selector}__list--multiple {
-  .#{$choices-selector}__item {
-    background-color: $primary;
-    border-color: $primary;
-    border-radius: $border-radius;
-    margin-bottom: 0;
-  }
-}
-
-.#{$choices-selector}__list--single {
-  padding: 1px 16px 0 4px;
-}
-
-.#{$choices-selector}__list--dropdown {
-  .#{$choices-selector}__item--selectable {
-    padding-right: 0;
-  }
-}
-
-.#{$choices-selector}__input {
-  margin-bottom: 0;
-}
-
-
 .color-rect {
   vertical-align: baseline;
   border-radius: .25em;
@@ -157,75 +116,10 @@ $enable-gradients: true;
   }
 }
 
-// Fixes dropdowns in combination with active buttons
-.btn-group {
-  > .btn.active {
-    z-index: auto !important;
-  }
-}
-
-// Swagger
-.swagger-ui {
-  .col {
-    position: initial;
-    width: auto;
-  }
-
-  .topbar,
-  .information-container {
-    display: none;
-  }
-
-  .wrapper,
-  .wrapper > section {
-    padding: 0 !important;
-  }
-}
-
 .pointer {
   cursor: pointer;
 }
 
-// Allow nested card tables
-.card {
-  table.card-table {
-    border-right: 0;
-    border-left: 0;
-    margin-bottom: 0;
-
-    &:last-child {
-      border-bottom: 0;
-    }
-
-    &:not(.table-sm) th,
-    &:not(.table-sm) td {
-      padding: 0.75rem 1.25rem;
-    }
-
-    td:first-child,
-    th:first-child {
-      border-left: 0;
-    }
-
-    td:last-child,
-    th:last-child {
-      border-right: 0;
-    }
-
-    tr:first-child td,
-    tr:first-child th {
-      border-top: 0;
-    }
-
-    tr:last-child td {
-      border-bottom: 0;
-    }
-  }
-
-  .card-header + .table {
-    border-top: 0;
-  }
-}
 
 // Dropzone
 .dropzone {
@@ -248,101 +142,6 @@ $enable-gradients: true;
   &.hide-dz-default {
     .dz-default.dz-message {
       display: none;
-    }
-  }
-}
-
-// div-tables
-div.table {
-  @extend .d-flex;
-  @extend .flex-column;
-
-  &.collapse {
-    @extend .d-none;
-  }
-
-  .column-sm {
-    width: 20px;
-  }
-  .column-60 {
-    width: 60px;
-  }
-  .column-100 {
-    width: 100px;
-  }
-  .column-md,
-  .column-120 {
-    width: 120px;
-  }
-  .column-180 {
-    width: 180px;
-  }
-  .column-200 {
-    width: 200px;
-  }
-  .column-lg,
-  .column-240 {
-    width: 240px;
-  }
-  .column-280 {
-    width: 280px;
-  }
-  .column-320 {
-    width: 320px;
-  }
-
-  &.table-bordered {
-    border-top: $table-border-width solid $table-border-color;
-    border-left: $table-border-width solid $table-border-color;
-
-    .table-row {
-      border-bottom: $table-border-width solid $table-border-color;
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      .table-col {
-        border-right: $table-border-width solid $table-border-color;
-
-        &:last-child {
-          border-right: none;
-        }
-      }
-    }
-  }
-
-  .table-row {
-    @extend .d-flex;
-    &.collapse {
-      @extend .d-none;
-    }
-
-    &.table-head {
-      font-weight: bold;
-    }
-
-    .table-col {
-      @extend .d-flex;
-      @extend .align-items-center;
-
-      padding: 0.75rem 1.25rem;
-
-      &.collapse {
-        @extend .d-none;
-      }
-
-      &.fill {
-        @extend .flex-fill;
-      }
-    }
-  }
-}
-
-.card {
-  div.table {
-    &.table-bordered.table-card {
-      border-left: 0;
     }
   }
 }

@@ -18,16 +18,21 @@ class TimetablePeriodType extends AbstractType {
                 'label' => 'label.name'
             ])
             ->add('start', DateType::class, [
-                'label' => 'label.start'
+                'label' => 'label.start',
+                'widget' => 'single_text'
             ])
             ->add('end', DateType::class, [
-                'label' => 'label.end'
+                'label' => 'label.end',
+                'widget' => 'single_text'
             ])
             ->add('visibilities', UserTypeEntityType::class, [
                 'label' => 'label.visibility',
                 'multiple' => true,
                 'expanded' => true,
-                'required' => false
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ]);
     }
 }

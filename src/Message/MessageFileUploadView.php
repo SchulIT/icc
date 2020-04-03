@@ -6,6 +6,7 @@ use App\Entity\MessageFile;
 use App\Entity\MessageFileUpload;
 use App\Entity\User;
 use App\Utils\ArrayUtils;
+use Doctrine\Common\Collections\Collection;
 
 class MessageFileUploadView extends AbstractMessageFileView {
 

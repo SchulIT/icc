@@ -6,12 +6,14 @@ use App\Entity\Appointment;
 use App\Entity\AppointmentVisibility;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
+use App\Entity\UserTypeEntity;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\AppointmentVisibilityRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
+use App\Repository\UserTypeEntityRepositoryInterface;
 use App\Request\Data\AppointmentData;
 use App\Request\Data\AppointmentsData;
 use App\Utils\ArrayUtils;
@@ -21,23 +23,23 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
 
     private $appointmentRepository;
     private $appointmentCategoryRepository;
-    private $appointmentVisibilityRepository;
+    private $userTypeEntityRepository;
     private $studentGroupRepository;
     private $teacherRepository;
 
     private $isInitialized = false;
 
     /**
-     * @var AppointmentVisibility[]
+     * @var UserTypeEntity[]
      */
     private $visibilities = [];
 
     public function __construct(AppointmentRepositoryInterface $appointmentRepository, AppointmentCategoryRepositoryInterface $appointmentCategoryRepository,
-                                AppointmentVisibilityRepositoryInterface $appointmentVisibilityRepository, StudyGroupRepositoryInterface $studentRepository,
+                                UserTypeEntityRepositoryInterface $userTypeEntityRepository, StudyGroupRepositoryInterface $studentRepository,
                                 TeacherRepositoryInterface $teacherRepository) {
         $this->appointmentRepository = $appointmentRepository;
         $this->appointmentCategoryRepository = $appointmentCategoryRepository;
-        $this->appointmentVisibilityRepository = $appointmentVisibilityRepository;
+        $this->userTypeEntityRepository = $userTypeEntityRepository;
         $this->studentGroupRepository = $studentRepository;
         $this->teacherRepository = $teacherRepository;
     }
@@ -47,7 +49,7 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
             return;
         }
 
-        $this->visibilities = $this->appointmentVisibilityRepository->findAll();
+        $this->visibilities = $this->userTypeEntityRepository->findAll();
         $this->isInitialized = true;
     }
 
@@ -134,10 +136,10 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
 
         CollectionUtils::synchronize(
             $entity->getVisibilities(),
-            array_filter($this->visibilities, function(AppointmentVisibility $visibility) use ($data) {
+            array_filter($this->visibilities, function(UserTypeEntity $visibility) use ($data) {
                 return in_array($visibility->getUserType()->getValue(), $data->getVisibilities());
             }),
-            function(AppointmentVisibility $visibility) {
+            function(UserTypeEntity $visibility) {
                 return $visibility->getId();
             }
         );

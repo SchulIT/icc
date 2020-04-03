@@ -4,8 +4,8 @@ namespace App\Grouping;
 
 use App\Entity\Grade;
 use App\Entity\Message;
-use App\Entity\MessageVisibility;
 use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
 
 class MessageGradeStrategy implements GroupingStrategyInterface {
 
@@ -14,7 +14,7 @@ class MessageGradeStrategy implements GroupingStrategyInterface {
      * @return Grade[]
      */
     public function computeKey($object) {
-        return array_map(function(MessageVisibility $visibility) {
+        return array_map(function(UserTypeEntity $visibility) {
             return $visibility->getUserType();
         }, $object->getVisibilities()->toArray());
     }

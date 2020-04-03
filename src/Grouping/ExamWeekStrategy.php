@@ -8,7 +8,7 @@ class ExamWeekStrategy implements GroupingStrategyInterface {
 
     /**
      * @param Exam $object
-     * @return int
+     * @return int|null
      */
     public function computeKey($object) {
         if($object->getDate() === null) {

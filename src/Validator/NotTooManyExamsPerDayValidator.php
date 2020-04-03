@@ -52,8 +52,8 @@ class NotTooManyExamsPerDayValidator extends ConstraintValidator {
         if($numberOfExams > $this->examSettings->getMaximumNumberOfExamsPerDay()) {
             $this->context
                 ->buildViolation($constraint->message)
-                ->setParameter('{{ maxNumber }}', $this->examSettings->getMaximumNumberOfExamsPerDay())
-                ->setParameter('{{ number }}', $numberOfExams)
+                ->setParameter('{{ maxNumber }}', (string)$this->examSettings->getMaximumNumberOfExamsPerDay())
+                ->setParameter('{{ number }}', (string)$numberOfExams)
                 ->addViolation();
         }
     }

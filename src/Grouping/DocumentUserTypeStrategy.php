@@ -3,8 +3,8 @@
 namespace App\Grouping;
 
 use App\Entity\Document;
-use App\Entity\DocumentVisibility;
 use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
 
 class DocumentUserTypeStrategy implements GroupingStrategyInterface {
 
@@ -13,7 +13,7 @@ class DocumentUserTypeStrategy implements GroupingStrategyInterface {
      * @return UserType[]
      */
     public function computeKey($document) {
-        return array_map(function(DocumentVisibility $visibility) {
+        return array_map(function(UserTypeEntity $visibility) {
             return $visibility->getUserType();
         }, $document->getVisibilities()->toArray());
     }

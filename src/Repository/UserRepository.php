@@ -6,7 +6,6 @@ use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
-use function Doctrine\ORM\QueryBuilder;
 
 class UserRepository extends AbstractRepository implements UserRepositoryInterface {
 

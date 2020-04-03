@@ -3,8 +3,8 @@
 namespace App\Grouping;
 
 use App\Entity\Message;
-use App\Entity\MessageVisibility;
 use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
 
 class MessageVisibilityStrategy implements GroupingStrategyInterface {
 
@@ -13,7 +13,7 @@ class MessageVisibilityStrategy implements GroupingStrategyInterface {
      * @return UserType[]
      */
     public function computeKey($object) {
-        return $object->getVisibilities()->map(function (MessageVisibility $visibility) {
+        return $object->getVisibilities()->map(function (UserTypeEntity $visibility) {
             return $visibility->getUserType();
         })->toArray();
     }

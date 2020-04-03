@@ -137,7 +137,7 @@ class MessageFilesystem implements DirectoryNamerInterface {
     }
 
     /**
-     * @param MessageAttachment $object
+     * @param MessageAttachment|MessageFileUpload|Message $object
      * @param PropertyMapping $mapping
      * @return string
      * @throws UnexpectedTypeException
@@ -152,7 +152,7 @@ class MessageFilesystem implements DirectoryNamerInterface {
 
             throw new \RuntimeException('User must not be null.');
         } else if($object instanceof Message) {
-            return $this->getMessageDirectory($object->getMessage());
+            return $this->getMessageDirectory($object);
         } else if($object instanceof MessageAttachment) {
             return $this->getMessageAttachmentPath($object);
         }

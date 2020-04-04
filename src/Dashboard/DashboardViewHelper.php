@@ -205,7 +205,7 @@ class DashboardViewHelper {
      */
     private function addExams(iterable $exams, DashboardView $dashboardView): void {
         foreach($exams as $exam) {
-            if($this->authorizationChecker->isGranted(ExamVoter::SHOW, $exam) !== true) {
+            if($this->authorizationChecker->isGranted(ExamVoter::Show, $exam) !== true) {
                 continue;
             }
 

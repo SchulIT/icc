@@ -67,16 +67,34 @@ class ExamController extends AbstractControllerWithMessages {
         $exams = [ ];
         $today = $all ? null : $this->dateHelper->getToday();
 
-        if($studentFilterView->getCurrentStudent() !== null) {
-            $exams = $examRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $today);
-        } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $exams = $examRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $today);
-        } else if($isStudentOrParent) {
-            $exams = [ ];
-        } else if($teacherFilterView->getCurrentTeacher() !== null) {
-            $exams = $examRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $today);
-        } else {
-            $exams = $examRepository->findAll($today);
+        $isVisible = $examSettings->isVisibileFor($user->getUserType());
+        $isVisibleAdmin = false;
+
+        if($isVisible === true || $this->isGranted('ROLE_EXAMS_CREATOR') || $this->isGranted('ROLE_EXAMS_ADMIN')) {
+            $isVisible = true;
+            $isVisibleAdmin = true;
+
+            if ($studentFilterView->getCurrentStudent() !== null) {
+                $exams = $examRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $today);
+            } else {
+                if ($gradeFilterView->getCurrentGrade() !== null) {
+                    $exams = $examRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $today);
+                } else {
+                    if ($isStudentOrParent) {
+                        $exams = [];
+                    } else {
+                        if ($teacherFilterView->getCurrentTeacher() !== null) {
+                            $exams = $examRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $today);
+                        } else {
+                            $exams = $examRepository->findAll($today);
+                        }
+                    }
+                }
+            }
+
+            $exams = array_filter($exams, function (Exam $exam) {
+                return $this->isGranted(ExamVoter::Show, $exam);
+            });
         }
 
         $examGroups = $this->grouper->group($exams, ExamDateStrategy::class);
@@ -89,7 +107,8 @@ class ExamController extends AbstractControllerWithMessages {
             'teacherFilter' => $teacherFilterView,
             'gradeFilter' => $gradeFilterView,
             'showAll' => $all,
-            'isVisible' => $examSettings->isVisibileFor($user->getUserType())
+            'isVisible' => $isVisible,
+            'isVisibleAdmin' => $isVisibleAdmin
         ]);
     }
 
@@ -97,7 +116,7 @@ class ExamController extends AbstractControllerWithMessages {
      * @Route("/{id}", name="show_exam", requirements={"id": "\d+"})
      */
     public function show(Exam $exam) {
-        $this->denyAccessUnlessGranted(ExamVoter::SHOW, $exam);
+        $this->denyAccessUnlessGranted(ExamVoter::Show, $exam);
 
         $studyGroups = [ ];
         /** @var Student[] $students */

@@ -14,9 +14,9 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ExamVoter extends Voter {
 
-    public const SHOW = 'show';
-    public const INVIGILATORS = 'invigilators';
-    public const DETAILS = 'details';
+    public const Show = 'show';
+    public const Invigilators = 'invigilators';
+    public const Details = 'details';
 
     public const Manage = 'manage-exams';
     public const Add = 'new-exam';
@@ -38,9 +38,9 @@ class ExamVoter extends Voter {
      */
     protected function supports($attribute, $subject) {
         $attributes = [
-            static::DETAILS,
-            static::INVIGILATORS,
-            static::SHOW,
+            static::Details,
+            static::Invigilators,
+            static::Show,
             static::Edit,
             static::Remove
         ];
@@ -53,13 +53,13 @@ class ExamVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
         switch($attribute) {
-            case static::SHOW:
+            case static::Show:
                 return $this->canViewExam($subject, $token);
 
-            case static::DETAILS:
+            case static::Details:
                 return $this->canViewDetails($subject, $token);
 
-            case static::INVIGILATORS:
+            case static::Invigilators:
                 return $this->canViewInvigilators($subject, $token);
 
             case static::Add:
@@ -168,6 +168,10 @@ class ExamVoter extends Voter {
     }
 
     public function canViewExam(Exam $exam, TokenInterface $token): bool {
+        if($this->accessDecisionManager->decide($token, ['ROLE_EXAMS_ADMIN']) === true || $this->accessDecisionManager->decide($token, ['ROLE_EXAMS_CREATOR']) === true) {
+            return true;
+        }
+
         $userType = $this->getUserType($token);
 
         if($userType === null) {
@@ -175,6 +179,11 @@ class ExamVoter extends Voter {
         }
 
         if($this->examSettings->isVisibileFor($userType) === false) {
+            return false;
+        }
+
+        if($this->isStudentOrParent($token) && $exam->getDate() === null) {
+            // Exam is not planned yet -> do not display
             return false;
         }
 

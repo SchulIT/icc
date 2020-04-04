@@ -161,7 +161,9 @@ plans:
         invigilators: Aufsicht
         show_all: Alte Klausuren anzeigen
         not_visible: Aktuell ist der Klausurplan nicht freigeschaltet.
+        visible_admin: "Aktuell ist der Klausurplan aufgrund einer Rolle sichtbar, obwohl er für den Benutzertyp %type% nicht freigeschaltet ist."
         not_planned: Nicht geplant
+        not_available: Nicht verfügbar
         export:
             label: Klausuren exportieren
             download:

@@ -111,7 +111,7 @@ class ListController extends AbstractControllerWithMessages {
         $exams = $examRepository->findAllByTuitions([$tuition]);
 
         $exams = array_filter($exams, function(Exam $exam) {
-            return $this->isGranted(ExamVoter::SHOW, $exam);
+            return $this->isGranted(ExamVoter::Show, $exam);
         });
 
         return $this->renderWithMessages('lists/tuition.html.twig', [

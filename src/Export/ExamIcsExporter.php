@@ -65,7 +65,7 @@ class ExamIcsExporter {
         }
 
         $exams = array_filter($exams, function(Exam $exam) {
-            return $this->authorizationChecker->isGranted(ExamVoter::SHOW, $exam);
+            return $this->authorizationChecker->isGranted(ExamVoter::Show, $exam);
         });
 
         $items = [ ];

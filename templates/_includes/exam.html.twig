@@ -13,8 +13,12 @@
             </p>
             <p class="col">
                 <strong>{{ 'plans.exams.time'|trans }}:</strong>
-                {{ 'label.exam_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
-                {% if showDate %}<i class="fa fa-calendar"></i> {{ exam.date|format_date }}{% endif %}
+                {% if exam.date is not null %}
+                    {{ 'label.exam_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
+                    {% if showDate %}<i class="fa fa-calendar"></i> {{ exam.date|format_date }}{% endif %}
+                {% else %}
+                    <span class="badge badge-info">{{ 'plans.exams.not_planned'|trans }}</span>
+                {% endif %}
             </p>
             <p class="col">
                 <strong>{{ 'label.room'|trans }}:</strong>
@@ -22,15 +26,17 @@
                 {% if exam.rooms|length > 0 %}
                     {{ exam.rooms|first }}
                 {% else %}
-                    <span class="badge badge-info">nicht verfügbar</span>
+                    <span class="badge badge-info">{{ 'plans.exams.not_available'|trans }}</span>
                 {% endif %}
             </p>
 
-            <hr class="w-100">
+            {% if exam.description is not null %}
+                <hr class="w-100">
 
-            <p class="w-100 remark">
-                {{ exam.description }}
-            </p>
+                <p class="w-100 remark">
+                    {{ exam.description }}
+                </p>
+            {% endif %}
 
             {% if exam.invigilators|length > 0 and is_granted('invigilators', exam) %}
                 <hr class="w-100">
@@ -47,9 +53,11 @@
             {% endif %}
 
             {% if details|default(true) == true and is_granted('invigilators', exam) %}
-            <a href="{{ path('show_exam', { id: exam.id }) }}" class="btn btn-outline-primary btn-sm">
-                <i class="fa fa-info-circle"></i> {{ 'label.details'|trans }}
-            </a>
+                <p class="w-100 mb-0">
+                    <a href="{{ path('show_exam', { id: exam.id }) }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fa fa-info-circle"></i> {{ 'label.details'|trans }}
+                    </a>
+                </p>
             {% endif %}
         </div>
     </div>

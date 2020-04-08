@@ -55,10 +55,10 @@ class TimetableController extends AbstractControllerWithMessages {
         $user = $this->getUser();
 
         $studentFilterView = $studentFilter->handle($studentId, $user);
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user);
         $gradeFilterView = $gradeFilter->handle($gradeId, $user);
         $roomFilterView = $roomFilter->handle($roomId);
         $subjectFilterView = $subjectFilter->handle($request->query->get('subjects', [ ]));
+        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
 
         $periods = $periodRepository->findAll();
         $this->sorter->sort($periods, TimetablePeriodStrategy::class);

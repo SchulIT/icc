@@ -67,7 +67,7 @@ class ListController extends AbstractControllerWithMessages {
 
         $gradeFilterView = $gradeFilter->handle($gradeId, $user);
         $studentFilterView = $studentFilter->handle($studentId, $user);
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user);
+        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user, $gradeFilterView->getCurrentGrade() === null && $studentFilterView->getCurrentStudent() === null);
 
         $tuitions = [ ];
         $memberships = [ ];

@@ -61,8 +61,8 @@ class ExamController extends AbstractControllerWithMessages {
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
         $studentFilterView = $studentsFilter->handle($studentId, $user);
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user);
         $gradeFilterView = $gradeFilter->handle($gradeId, $user);
+        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null);
 
         $exams = [ ];
         $today = $all ? null : $this->dateHelper->getToday();

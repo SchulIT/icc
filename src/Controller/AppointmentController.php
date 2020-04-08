@@ -49,7 +49,7 @@ class AppointmentController extends AbstractControllerWithMessages {
         $categoryFilterView = $categoryFilter->handle([ ]);
         $studentFilterView = $studentFilter->handle(null, $user);
         $studyGroupView = $studyGroupFilter->handle(null, $user);
-        $teacherFilterView = $teacherFilter->handle(null, $user);
+        $teacherFilterView = $teacherFilter->handle(null, $user, $studentFilterView->getCurrentStudent() === null && $studyGroupView->getCurrentStudyGroup() === null);
 
         return $this->renderWithMessages('appointments/index.html.twig', [
             'categoryFilter' => $categoryFilterView,
@@ -74,7 +74,7 @@ class AppointmentController extends AbstractControllerWithMessages {
         $categoryFilterView = $categoryFilter->handle(explode(',', $request->query->get('categoryIds', '')));
         $studentFilterView = $studentFilter->handle($studentId, $user);
         $studyGroupView = $studyGroupFilter->handle($studyGroupId, $user);
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user);
+        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user, $studentFilterView->getCurrentStudent() === null && $studyGroupView->getCurrentStudyGroup() === null);
 
         $appointments = [ ];
         $today = null;

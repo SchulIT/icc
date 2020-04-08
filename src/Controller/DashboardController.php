@@ -6,6 +6,7 @@ use App\Dashboard\DashboardViewHelper;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Settings\SubstitutionSettings;
+use App\Utils\EnumArrayUtils;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Filter\UserTypeFilter;
@@ -38,8 +39,8 @@ class DashboardController extends AbstractController {
 
 
         $studentFilterView = $studentFilter->handle($studentId, $user);
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user);
-        $userTypeFilterView = $userTypeFilter->handle($userType, $user, false, UserType::Student(), [ UserType::Student(), UserType::Parent() ]);
+        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user, $studentFilterView->getCurrentStudent() === null);
+        $userTypeFilterView = $userTypeFilter->handle($userType, $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]), UserType::Student(), [ UserType::Student(), UserType::Parent() ]);
 
         if($studentFilterView->getCurrentStudent() !== null) {
             $view = $dashboardViewHelper->createViewForStudentOrParent($studentFilterView->getCurrentStudent(), $selectedDate, $userTypeFilterView->getCurrentType());

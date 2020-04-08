@@ -10,6 +10,7 @@
         "antishov/doctrine-extensions-bundle": "^1.4",
         "beberlei/doctrineextensions": "^1.2",
         "doctrine/doctrine-bundle": "2.0",
+        "easycorp/easyadmin-bundle": "^2.3",
         "emojione/emojione": "2.0",
         "fervo/enum-bundle": "dev-master",
         "fzaninotto/faker": "^1.8",

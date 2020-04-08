@@ -402,6 +402,9 @@ date:
 admin:
     label: Verwaltung
 
+    ea:
+        label: EasyAdmin
+
     settings:
         label: Einstellungen
         success: Einstellungen erfolgreich aktualisiert

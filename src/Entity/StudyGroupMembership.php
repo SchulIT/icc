@@ -78,4 +78,8 @@ class StudyGroupMembership {
         $this->type = $type;
         return $this;
     }
+
+    public function __toString() {
+        return sprintf('%s [%s]', $this->getStudent(), $this->getType());
+    }
 }

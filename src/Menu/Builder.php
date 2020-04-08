@@ -235,6 +235,13 @@ class Builder {
             ]);
         }
 
+        if($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
+            $menu->addChild('admin.ea.label', [
+                'uri' => '/admin/ea'
+            ])
+                ->setAttribute('target', '_blank');
+        }
+
         return $root;
     }
 

@@ -1,0 +1,94 @@
+easy_admin:
+    site_name: "%env(APP_NAME)%"
+    user:
+        display_name: true
+        name_property_path: 'username'
+    entities:
+        Absence:
+            class: App\Entity\Absence
+            form:
+                fields:
+                    - { property: date, type: date, type_options: { widget: 'single_text' }}
+                    - lessonStart
+                    - lessonEnd
+                    - teacher
+                    - studyGroup
+
+        Exam:
+            class: App\Entity\Exam
+            form:
+                fields:
+                    - { property: externalId, required: false }
+                    - date
+                    - lessonStart
+                    - lessonEnd
+                    - description
+                    - tuitions
+                    - students
+
+        Infotext:
+            class: App\Entity\Infotext
+
+        Grade:
+            class: App\Entity\Grade
+            form:
+                fields:
+                    - { property: externalId, required: false }
+                    - name
+                    - students
+
+        Room:
+            class: App\Entity\Room
+
+        Student:
+            class: App\Entity\Student
+            form:
+                fields:
+                    - { property: externalId, required: false }
+                    - firstname
+                    - lastname
+                    - { property: gender, type_options: { translation_domain: enums } }
+                    - email
+                    - status
+                    - isFullAged
+                    - grade
+                    - approvedPrivacyCategories
+
+        StudyGroup:
+            class: App\Entity\StudyGroup
+            form:
+                fields:
+                    - { property: externalId, required: false }
+                    - name
+                    - { property: type, type_options: { translation_domain: enums } }
+                    - grades
+                    - tuitions
+
+        Substitution:
+            class: App\Entity\Substitution
+
+        Tuition:
+            class: App\Entity\Tuition
+
+        User:
+            class: App\Entity\User
+            disabled_actions:
+                - new
+            list:
+                fields:
+                    - username
+                    - firstname
+                    - lastname
+                    - email
+                    - { property: userType, trans: true, domain: enums }
+                    - teacher
+                    - students
+            form:
+                fields:
+                    - username
+                    - firstname
+                    - lastname
+                    - email
+                    - { property: userType, type_options: { translation_domain: enums } }
+                    - teacher
+                    - students

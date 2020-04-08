@@ -39,3 +39,7 @@ user_type:
 absence_reason:
   exam: Klausur
   other: Anderer Grund
+
+study_group_type:
+  grade: Klasse
+  course: Kurs

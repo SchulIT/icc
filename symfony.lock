@@ -138,6 +138,19 @@
             "./config/packages/dev/easy_log_handler.yaml"
         ]
     },
+    "easycorp/easyadmin-bundle": {
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "2.0",
+            "ref": "0a51040a43c6f2172a3a0135cd15daf2043905d7"
+        },
+        "files": [
+            "./config/packages/easy_admin.yaml",
+            "./config/routes/easy_admin.yaml"
+        ]
+    },
     "egulias/email-validator": {
         "version": "2.1.7"
     },
@@ -323,6 +336,9 @@
         "files": [
             "./config/packages/oneup_flysystem.yaml"
         ]
+    },
+    "pagerfanta/pagerfanta": {
+        "version": "v2.1.3"
     },
     "phar-io/manifest": {
         "version": "1.0.1"

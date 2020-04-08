@@ -21,6 +21,7 @@ class Room {
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
+     * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */
     private $externalId;

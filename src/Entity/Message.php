@@ -38,7 +38,6 @@ class Message {
 
     /**
      * @ORM\Column(type="datetime", name="start_date")
-     * @Assert\Date()
      * @Assert\NotNull()
      * @var \DateTime
      */
@@ -47,7 +46,6 @@ class Message {
     /**
      * @ORM\Column(type="datetime", name="expire_date")
      * @Assert\GreaterThan(propertyPath="startDate")
-     * @Assert\Date()
      * @Assert\NotNull()
      * @var \DateTime
      */
@@ -588,5 +586,9 @@ class Message {
      */
     public function getUpdatedAt(): \DateTime {
         return $this->updatedAt;
+    }
+
+    public function __toString() {
+        return $this->getTitle();
     }
 }

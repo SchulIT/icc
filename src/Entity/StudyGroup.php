@@ -22,8 +22,7 @@ class StudyGroup {
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @Assert\NotNull()
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(allowNull=true)
      * @var string
      */
     private $externalId;
@@ -156,4 +155,7 @@ class StudyGroup {
         return $this->tuitions;
     }
 
+    public function __toString() {
+        return sprintf('%s: %s', implode(', ', $this->getGrades()->toArray()), $this->getName());
+    }
 }

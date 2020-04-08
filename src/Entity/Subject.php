@@ -302,4 +302,8 @@ class Subject {
         return $this->teachers;
     }
 
+    public function __toString() {
+        return sprintf('%s [%s]', $this->getName(), $this->getAbbreviation());
+    }
+
 }

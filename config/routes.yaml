@@ -32,3 +32,8 @@ composer:
     resource: "@ComposerDependencyListBundle/Controller"
     type: annotation
     prefix: /dependencies
+
+easy_admin_bundle:
+    resource: '@EasyAdminBundle/Controller/EasyAdminController.php'
+    prefix: /admin/ea
+    type: annotation

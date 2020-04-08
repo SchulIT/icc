@@ -41,7 +41,7 @@ class Substitution {
      * @Assert\GreaterThan(0)
      * @var int
      */
-    private $lessonStart;
+    private $lessonStart = 0;
 
     /**
      * @ORM\Column(type="integer")
@@ -49,7 +49,7 @@ class Substitution {
      * @Assert\GreaterThanOrEqual(propertyPath="lessonStart")
      * @var int
      */
-    private $lessonEnd;
+    private $lessonEnd = 0;
 
     /**
      * @ORM\Column(type="boolean")
@@ -168,17 +168,17 @@ class Substitution {
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getDate(): \DateTime {
+    public function getDate(): ?\DateTime {
         return $this->date;
     }
 
     /**
-     * @param \DateTime $date
+     * @param \DateTime|null $date
      * @return Substitution
      */
-    public function setDate(\DateTime $date): Substitution {
+    public function setDate(?\DateTime $date): Substitution {
         $this->date = $date;
         return $this;
     }

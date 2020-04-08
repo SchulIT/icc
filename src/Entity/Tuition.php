@@ -183,4 +183,8 @@ class Tuition {
             $this->getAdditionalTeachers()->toArray()
         );
     }
+
+    public function __toString() {
+        return sprintf('%s [%s]', $this->getStudyGroup(), $this->getSubject());
+    }
 }

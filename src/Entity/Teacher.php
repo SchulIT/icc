@@ -261,4 +261,8 @@ class Teacher {
     public function getTags(): Collection {
         return $this->tags;
     }
+
+    public function __toString() {
+        return $this->getAcronym();
+    }
 }

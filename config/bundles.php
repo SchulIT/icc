@@ -27,4 +27,5 @@ return [
     Vich\UploaderBundle\VichUploaderBundle::class => ['all' => true],
     Fervo\EnumBundle\FervoEnumBundle::class => ['all' => true],
     Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle::class => ['all' => true],
+    EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle::class => ['all' => true],
 ];

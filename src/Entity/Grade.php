@@ -23,6 +23,7 @@ class Grade {
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
+     * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */
     private $externalId;
@@ -76,17 +77,17 @@ class Grade {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getName(): string {
+    public function getName(): ?string {
         return $this->name;
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      * @return Grade
      */
-    public function setName(string $name): Grade {
+    public function setName(?string $name): Grade {
         $this->name = $name;
         return $this;
     }
@@ -108,6 +109,10 @@ class Grade {
 
     public function getTeachers(): Collection {
         return $this->teachers;
+    }
+
+    public function __toString() {
+        return $this->getName();
     }
 
 }

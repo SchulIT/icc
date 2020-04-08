@@ -44,4 +44,8 @@ class UserTypeEntity {
         $this->userType = $userType;
         return $this;
     }
+
+    public function __toString() {
+        return $this->getUserType();
+    }
 }

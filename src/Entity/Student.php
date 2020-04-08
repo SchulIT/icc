@@ -248,4 +248,8 @@ class Student {
     public function getApprovedPrivacyCategories(): Collection {
         return $this->approvedPrivacyCategories;
     }
+
+    public function __toString() {
+        return sprintf('%s: %s, %s', $this->getGrade(), $this->getLastname(), $this->getFirstname());
+    }
 }

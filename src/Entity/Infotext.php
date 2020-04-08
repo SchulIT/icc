@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
@@ -18,6 +19,8 @@ class Infotext {
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotNull()
+     * @Assert\Date()
      */
     private $date;
 
@@ -34,17 +37,17 @@ class Infotext {
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getDate(): \DateTime {
+    public function getDate(): ?\DateTime {
         return $this->date;
     }
 
     /**
-     * @param \DateTime $date
+     * @param \DateTime|null $date
      * @return Infotext
      */
-    public function setDate(\DateTime $date) {
+    public function setDate(?\DateTime $date) {
         $this->date = $date;
         return $this;
     }

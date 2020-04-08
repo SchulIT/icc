@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
@@ -19,6 +20,7 @@ class Absence {
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotNull()
      * @var \DateTime
      */
     private $date;
@@ -50,24 +52,24 @@ class Absence {
     private $studyGroup;
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int {
+    public function getId(): ?int {
         return $this->id;
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getDate(): \DateTime {
+    public function getDate(): ?\DateTime {
         return $this->date;
     }
 
     /**
-     * @param \DateTime $date
+     * @param \DateTime|null $date
      * @return Absence
      */
-    public function setDate(\DateTime $date): Absence {
+    public function setDate(?\DateTime $date): Absence {
         $this->date = $date;
         return $this;
     }

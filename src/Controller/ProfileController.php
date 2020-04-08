@@ -10,6 +10,7 @@ use App\Repository\DeviceTokenRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\DeviceTokenVoter;
 use App\Sorting\Sorter;
+use App\Sorting\StringGroupStrategy;
 use App\Sorting\StringStrategy;
 use App\Sorting\UserUsernameStrategy;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -77,7 +78,7 @@ class ProfileController extends AbstractController {
     public function switchUser(Grouper $grouper, Sorter $sorter, UserRepositoryInterface $userRepository) {
         $users = $userRepository->findAll();
         $groups = $grouper->group($users, UserTypeAndGradeStrategy::class);
-        $sorter->sort($groups, StringStrategy::class);
+        $sorter->sort($groups, StringGroupStrategy::class);
         $sorter->sortGroupItems($groups, UserUsernameStrategy::class);
 
         return $this->render('profile/switch.html.twig', [

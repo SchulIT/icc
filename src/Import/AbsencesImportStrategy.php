@@ -4,6 +4,7 @@ namespace App\Import;
 
 use App\Entity\Absence;
 use App\Repository\AbsenceRepositoryInterface;
+use App\Repository\RoomRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
@@ -15,11 +16,13 @@ class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
     private $repository;
     private $teacherRepository;
     private $studyGroupRepository;
+    private $roomRepository;
 
-    public function __construct(AbsenceRepositoryInterface $repository, TeacherRepositoryInterface $teacherRepository, StudyGroupRepositoryInterface $studyGroupRepository) {
+    public function __construct(AbsenceRepositoryInterface $repository, TeacherRepositoryInterface $teacherRepository, StudyGroupRepositoryInterface $studyGroupRepository, RoomRepositoryInterface $roomRepository) {
         $this->repository = $repository;
         $this->teacherRepository = $teacherRepository;
         $this->studyGroupRepository = $studyGroupRepository;
+        $this->roomRepository = $roomRepository;
     }
 
     public function getRepository(): TransactionalRepositoryInterface {
@@ -50,6 +53,12 @@ class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
 
             if($studyGroup !== null) {
                 $absence->setStudyGroup($studyGroup);
+            }
+        } else if($data->getType() === 'room') {
+            $room = $this->roomRepository->findOneByExternalId($data->getObjective());
+
+            if($room !== null) {
+                $absence->setRoom($room);
             }
         }
 

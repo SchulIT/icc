@@ -40,16 +40,23 @@ class Absence {
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Teacher")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Teacher
+     * @var Teacher|null
      */
     private $teacher;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\StudyGroup")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var StudyGroup
+     * @var StudyGroup|null
      */
     private $studyGroup;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Room")
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @var Room|null
+     */
+    private $room;
 
     /**
      * @return int|null
@@ -138,4 +145,18 @@ class Absence {
         return $this;
     }
 
+    /**
+     * @return Room|null
+     */
+    public function getRoom(): ?Room {
+        return $this->room;
+    }
+
+    /**
+     * @param Room $room
+     * @return Absence
+     */
+    public function setRoom(Room $room): Absence {
+        $this->room = $room;
+    }
 }

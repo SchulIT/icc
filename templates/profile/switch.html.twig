@@ -6,7 +6,7 @@
 
 {% block profile_card_body %}
     <div class="card-body">
-        <form method="get">
+        <form method="get" action="{{ path('dashboard') }}">
             <div class="form-group row">
                 <label class="col-form-label col-sm-2 required" for="user">{{ 'label.user'|trans}}</label>
                 <div class="col-sm-10">

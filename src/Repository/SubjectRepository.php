@@ -28,6 +28,26 @@ class SubjectRepository extends AbstractTransactionalRepository implements Subje
             ]);
     }
 
+    public function findAllWithTeachers(): array {
+        $qb = $this->em->createQueryBuilder();
+
+        return $qb
+            ->select(['s'])
+            ->from(Subject::class, 's')
+            ->where(
+                $qb->expr()->in(
+                    's.id',
+                        $this->em->createQueryBuilder()
+                            ->select('sInner')
+                            ->from(Subject::class, 'sInner')
+                            ->innerJoin('sInner.teachers', 'tInner')
+                            ->getQuery()->getDQL()
+                    )
+            )
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * @return Subject[]
      */

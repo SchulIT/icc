@@ -21,6 +21,11 @@ interface SubjectRepositoryInterface extends TransactionalRepositoryInterface {
     /**
      * @return Subject[]
      */
+    public function findAllWithTeachers(): array;
+
+    /**
+     * @return Subject[]
+     */
     public function findAll();
 
     /**

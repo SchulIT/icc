@@ -26,8 +26,8 @@
 
         {% if room != null %}
             {% for g in lesson.getGrades() %}{{ g.getName() }}{% if not loop.last %}, {% endif %}{% endfor %}
-        {% elseif not lesson.getRoom() is empty %}
-            <i>{{ lesson.getRoom() }}</i>
+        {% elseif not lesson.getRoom() is null %}
+            <i>{{ lesson.room.name }}</i>
         {% endif %}
     </div>
 {% endif %}

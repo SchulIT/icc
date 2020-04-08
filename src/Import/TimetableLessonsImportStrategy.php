@@ -3,6 +3,7 @@
 namespace App\Import;
 
 use App\Entity\TimetableLesson;
+use App\Repository\RoomRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
@@ -18,13 +19,15 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
     private $periodRepository;
     private $weekRepository;
     private $tuitionRepository;
+    private $roomRepository;
 
     public function __construct(TimetableLessonRepositoryInterface $timetableRepository, TimetablePeriodRepositoryInterface $periodRepository,
-                                TimetableWeekRepositoryInterface $weekRepository, TuitionRepositoryInterface $tuitionRepository) {
+                                TimetableWeekRepositoryInterface $weekRepository, TuitionRepositoryInterface $tuitionRepository, RoomRepositoryInterface $roomRepository) {
         $this->timetableRepository = $timetableRepository;
         $this->periodRepository = $periodRepository;
         $this->weekRepository = $weekRepository;
         $this->tuitionRepository = $tuitionRepository;
+        $this->roomRepository = $roomRepository;
     }
 
     /**
@@ -99,7 +102,7 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
         $entity->setLesson($data->getLesson());
         $entity->setIsDoubleLesson($data->isDoubleLesson());
         $entity->setDay($data->getDay());
-        $entity->setRoom($data->getRoom());
+        $entity->setRoom($this->roomRepository->findOneByExternalId($data->getRoom()));
     }
 
     /**

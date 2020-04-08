@@ -69,8 +69,9 @@ class TimetableLesson {
     private $isDoubleLesson = false;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
-     * @var string|null
+     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @var Room|null
      */
     private $room;
 
@@ -194,17 +195,17 @@ class TimetableLesson {
     }
 
     /**
-     * @return string|null
+     * @return Room|null
      */
-    public function getRoom(): ?string {
+    public function getRoom(): ?Room {
         return $this->room;
     }
 
     /**
-     * @param string|null $room
+     * @param Room|null $room
      * @return TimetableLesson
      */
-    public function setRoom(?string $room): TimetableLesson {
+    public function setRoom(?Room $room): TimetableLesson {
         $this->room = $room;
         return $this;
     }

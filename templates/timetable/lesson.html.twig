@@ -18,8 +18,8 @@
 
     {% if roomFilter.currentRoom != null %}
         ({% for g in lesson.tuition.studyGroup.grades %}{{ g.getName() }}{% if not loop.last %}, {% endif %}{% endfor %})
-    {% elseif not lesson.room is empty %}
-        ({{ lesson.getRoom() }})
+    {% elseif not lesson.room is null %}
+        ({{ lesson.room.name }})
     {% endif %}
 
     {#

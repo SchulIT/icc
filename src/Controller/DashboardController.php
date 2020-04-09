@@ -37,12 +37,14 @@ class DashboardController extends AbstractController {
 
         $days = $this->getListOfSurroundingDays($selectedDate, static::DaysInFuture, static::DaysInPast);
 
-
         $studentFilterView = $studentFilter->handle($studentId, $user);
         $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user, $studentFilterView->getCurrentStudent() === null);
         $userTypeFilterView = $userTypeFilter->handle($userType, $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]), UserType::Student(), [ UserType::Student(), UserType::Parent() ]);
 
         if($studentFilterView->getCurrentStudent() !== null) {
+            if($userTypeFilterView->getCurrentType() === null) {
+                $userTypeFilterView->setCurrentType(UserType::Student());
+            }
             $view = $dashboardViewHelper->createViewForStudentOrParent($studentFilterView->getCurrentStudent(), $selectedDate, $userTypeFilterView->getCurrentType());
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             $view = $dashboardViewHelper->createViewForTeacher($teacherFilterView->getCurrentTeacher(), $selectedDate);

@@ -11,7 +11,7 @@
 
 {% block content %}
 
-    {% set currentFilter = { studentId: studentFilter.currentStudent ? studentFilter.currentStudent.id : null, teacherAcronym: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.acronym : null } %}
+    {% set currentFilter = { studentId: studentFilter.currentStudent ? studentFilter.currentStudent.id : null, teacherAcronym: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.acronym : null, userType: userTypeFilter.currentType ?  userTypeFilter.currentType.value : null } %}
 
     <div class="container-fluid px-0">
         <div class="row">

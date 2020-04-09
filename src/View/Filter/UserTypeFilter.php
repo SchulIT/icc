@@ -30,7 +30,7 @@ class UserTypeFilter {
      * @param UserType[] $onlyTypes Restrict to the given user types
      * @return UserTypeFilterView
      */
-    public function handle(?string $userType, User $user = null, bool $isRestrictedToOwnType = false, ?UserType $defaultType = null, array $onlyTypes = [ ], bool $setDefaultType = true) {
+    public function handle(?string $userType, User $user = null, bool $isRestrictedToOwnType = false, ?UserType $defaultType = null, array $onlyTypes = [ ]) {
         if($isRestrictedToOwnType === true) {
             return new UserTypeFilterView([ ], $user !== null ? $user->getUserType() : $defaultType);
         }
@@ -45,9 +45,11 @@ class UserTypeFilter {
             return $type->getValue();
         });
 
+        $fallbackUserType = $types[$user->getUserType()->getValue()] ?? null;
+
         if($user !== null) {
             $type = $userType != null ?
-                $types[$userType] ?? $user->getUserType() : $user->getUserType();
+                $types[$userType] ?? $fallbackUserType : $fallbackUserType;
         } else {
             $type = $types[$userType] ?? $defaultType;
         }

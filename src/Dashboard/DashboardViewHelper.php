@@ -89,7 +89,7 @@ class DashboardViewHelper {
 
     public function createViewForStudentOrParent(Student $student, \DateTime $dateTime, UserType $userType): DashboardView {
         if(!EnumArrayUtils::inArray($userType, [ UserType::Student(), UserType::Parent() ])) {
-            throw new \InvalidArgumentException('$userType must be either Student or Parent, "%s" given.', $userType->getValue());
+            throw new \InvalidArgumentException(sprintf('$userType must be either Student or Parent, "%s" given.', $userType->getValue()));
         }
 
         $view = new DashboardView();

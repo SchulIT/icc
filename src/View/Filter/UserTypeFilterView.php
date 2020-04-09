@@ -34,6 +34,13 @@ class UserTypeFilterView {
         return $this->currentType;
     }
 
+    /**
+     * @param UserType|null $userType
+     */
+    public function setCurrentType(?UserType $userType): void {
+        $this->currentType = $userType;
+    }
+
     public function getHandleNull(): bool {
         return $this->handleNull;
     }

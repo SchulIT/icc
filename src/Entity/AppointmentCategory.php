@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Validator\Color;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -13,13 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class AppointmentCategory {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
@@ -44,11 +40,8 @@ class AppointmentCategory {
      */
     private $color = null;
 
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int {
-        return $this->id;
+    public function __construct() {
+        $this->uuid = Uuid::uuid4();
     }
 
     /**

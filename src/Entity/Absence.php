@@ -10,13 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Absence {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
+    use IdTrait;
 
     /**
      * @ORM\Column(type="date")
@@ -57,13 +51,6 @@ class Absence {
      * @var Room|null
      */
     private $room;
-
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int {
-        return $this->id;
-    }
 
     /**
      * @return \DateTime|null

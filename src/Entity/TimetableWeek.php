@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -12,13 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class TimetableWeek {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true, name="`key`")
@@ -42,11 +38,8 @@ class TimetableWeek {
      */
     private $weekMod;
 
-    /**
-     * @return int
-     */
-    public function getId() {
-        return $this->id;
+    public function __construct() {
+        $this->uuid = Uuid::uuid4();
     }
 
     /**

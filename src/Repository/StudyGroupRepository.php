@@ -21,6 +21,16 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findOneByUuid(string $uuid): ?StudyGroup {
+        return $this->em->getRepository(StudyGroup::class)
+            ->findOneBy([
+                'uuid' => $uuid
+            ]);
+    }
+
+    /**
      * @param string $externalId
      * @return StudyGroup|null
      */

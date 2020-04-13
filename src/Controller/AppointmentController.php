@@ -64,17 +64,17 @@ class AppointmentController extends AbstractControllerWithMessages {
      */
     public function indexXhr(AppointmentRepositoryInterface $appointmentRepository, ColorUtils $colorUtils, TranslatorInterface $translator,
                              StudyGroupsGradeStringConverter $studyGroupsGradeStringConverter, TeacherStringConverter $teacherStringConverter,
-                             AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter, Request $request,
-                             ?int $studentId = null, ?int $studyGroupId = null, ?string $teacherAcronym = null, ?string $query = null, ?bool $showAll = false) {
+                             AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
         $isStudent = $user->getUserType()->equals(UserType::Student());
         $isParent = $user->getUserType()->equals(UserType::Parent());
 
-        $categoryFilterView = $categoryFilter->handle(explode(',', $request->query->get('categoryIds', '')));
-        $studentFilterView = $studentFilter->handle($studentId, $user);
-        $studyGroupView = $studyGroupFilter->handle($studyGroupId, $user);
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user, $studentFilterView->getCurrentStudent() === null && $studyGroupView->getCurrentStudyGroup() === null);
+        $showAll = $request->query->getBoolean('all', false);
+        $categoryFilterView = $categoryFilter->handle(explode(',', $request->query->get('categories', '')));
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
+        $studyGroupView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $studyGroupView->getCurrentStudyGroup() === null);
 
         $appointments = [ ];
         $today = null;
@@ -152,7 +152,7 @@ class AppointmentController extends AbstractControllerWithMessages {
             }
 
             $json[] = [
-                'id' => $appointment->getId(),
+                'uuid' => $appointment->getUuid(),
                 'allDay' => $appointment->isAllDay(),
                 'title' => $appointment->getTitle(),
                 'textColor' => $colorUtils->getForeground($appointment->getCategory()->getColor()),

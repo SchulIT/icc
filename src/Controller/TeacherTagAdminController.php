@@ -56,7 +56,7 @@ class TeacherTagAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/edit", name="edit_teacher_tag")
+     * @Route("/{uuid}/edit", name="edit_teacher_tag")
      */
     public function edit(TeacherTag $tag, Request $request) {
         $form = $this->createForm(TeacherTagType::class, $tag);
@@ -75,7 +75,7 @@ class TeacherTagAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/remove", name="remove_teacher_tag")
+     * @Route("/{uuid}/remove", name="remove_teacher_tag")
      */
     public function remove(TeacherTag $tag, Request $request, TranslatorInterface $translator) {
         $form = $this->createForm(ConfirmType::class, null, [

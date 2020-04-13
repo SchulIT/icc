@@ -18,17 +18,17 @@ class RoomFilter {
         $this->roomRepository = $roomRepository;
     }
 
-    public function handle(?int $roomId) {
+    public function handle(?string $roomUuid) {
         $rooms = ArrayUtils::createArrayWithKeys(
             $this->roomRepository->findAll(),
             function(Room $room) {
-                return $room->getId();
+                return (string)$room->getUuid();
             }
         );
         $this->sorter->sort($rooms, RoomNameStrategy::class, SortDirection::Ascending(), true);
 
-        $room = $roomId !== null ?
-            $rooms[$roomId] ?? null : null;
+        $room = $roomUuid !== null ?
+            $rooms[$roomUuid] ?? null : null;
 
         return new RoomFilterView($rooms, $room);
     }

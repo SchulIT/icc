@@ -62,10 +62,10 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("", name="admin_messages")
      */
-    public function index(UserTypeFilter $userTypeFilter, ?string $userType = null) {
+    public function index(UserTypeFilter $userTypeFilter, Request $request) {
         $this->denyAccessUnlessGranted('ROLE_MESSAGE_CREATOR');
 
-        $userTypeFilterView = $userTypeFilter->handle($userType);
+        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null));
         $userTypeFilterView->setHandleNull(true);
 
         if($userTypeFilterView->getCurrentType() === null) {
@@ -106,7 +106,7 @@ class MessageAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/edit", name="edit_message")
+     * @Route("/{uuid}/edit", name="edit_message")
      */
     public function edit(Request $request, Message $message, EventDispatcherInterface $eventDispatcher) {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
@@ -142,7 +142,7 @@ class MessageAdminController extends AbstractController {
             }
 
             $this->addFlash('success', 'admin.messages.edit.succes');
-            return $this->redirectToReferer(['view' => 'show_message'], 'admin_messages', [ 'id' => $message->getId() ]);
+            return $this->redirectToReferer(['view' => 'show_message'], 'admin_messages', [ 'uuid' => $message->getUuid() ]);
         }
 
         return $this->render('admin/messages/edit.html.twig', [
@@ -152,7 +152,7 @@ class MessageAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/remove", name="remove_message")
+     * @Route("/{uuid}/remove", name="remove_message")
      */
     public function remove(Message $message, Request $request, TranslatorInterface $translator) {
         $this->denyAccessUnlessGranted(MessageVoter::Remove, $message);
@@ -179,7 +179,7 @@ class MessageAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/downloads", name="message_downloads_admin")
+     * @Route("/{uuid}/downloads", name="message_downloads_admin")
      */
     public function downloads(Message $message, MessageDownloadViewHelper $messageDownloadViewHelper) {
         /** @var MessageDownloadView $view */
@@ -225,8 +225,8 @@ class MessageAdminController extends AbstractController {
 
     /**
      * @Route("/{message}/downloads/{user}/{filename}/download", name="download_message_download")
-     * @ParamConverter("message", class="App\Entity\Message", options={"id" = "message"})
-     * @ParamConverter("user", class="App\Entity\User", options={"id" = "user"})
+     * @ParamConverter("message", class="App\Entity\Message", options={"uuid" = "message"})
+     * @ParamConverter("user", class="App\Entity\User", options={"uuid" = "user"})
      */
     public function downloadDownload(Message $message, User $user, string $filename, MessageFilesystem $messageFilesystem) {
         return $messageFilesystem->getMessageUserFileDownloadResponse($message, $user, $filename);
@@ -234,8 +234,8 @@ class MessageAdminController extends AbstractController {
 
     /**
      * @Route("/{message}/downloads/{user}/{filename}/remove", name="remove_message_download")
-     * @ParamConverter("message", class="App\Entity\Message", options={"id" = "message"})
-     * @ParamConverter("user", class="App\Entity\User", options={"id" = "user"})
+     * @ParamConverter("message", class="App\Entity\Message", options={"uuid" = "message"})
+     * @ParamConverter("user", class="App\Entity\User", options={"uuid" = "user"})
      */
     public function removeDownload(Message $message, User $user, string $filename, MessageFilesystem $messageFilesystem, Request $request) {
         $form = $this->createForm(ConfirmType::class, null, [
@@ -252,7 +252,7 @@ class MessageAdminController extends AbstractController {
 
             $this->addFlash('success', 'messages.downloads.remove.success');
             return $this->redirectToRoute('message_downloads_admin', [
-                'id' => $message->getId()
+                'uuid' => $message->getUuid()
             ]);
         }
 
@@ -266,8 +266,8 @@ class MessageAdminController extends AbstractController {
 
     /**
      * @Route("/{message}/downloads/upload/{user}", name="upload_message_download")
-     * @ParamConverter("message", class="App\Entity\Message", options={"id" = "message"})
-     * @ParamConverter("user", class="App\Entity\User", options={"id" = "user"})
+     * @ParamConverter("message", class="App\Entity\Message", options={"uuid" = "message"})
+     * @ParamConverter("user", class="App\Entity\User", options={"uuid" = "user"})
      */
     public function uploadDownload(Message $message, User $user, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository) {
         if($this->isCsrfTokenValid(static::CsrfTokenId, $request->request->get(static::CsrfTokenName)) !== true) {
@@ -297,7 +297,7 @@ class MessageAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/downloads/upload", name="upload_message_downloads")
+     * @Route("/{uuid}/downloads/upload", name="upload_message_downloads")
      */
     public function uploadDownloads(Message $message, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository) {
         if($this->isCsrfTokenValid(static::CsrfTokenId, $request->request->get(static::CsrfTokenName)) !== true) {
@@ -349,7 +349,7 @@ class MessageAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/uploads", name="message_uploads_admin")
+     * @Route("/{uuid}/uploads", name="message_uploads_admin")
      */
     public function uploads(Message $message, MessageFileUploadViewHelper $messageFileUploadViewHelper) {
         $view = $messageFileUploadViewHelper->createView($message);
@@ -376,7 +376,7 @@ class MessageAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/uploads/download", name="download_message_upload")
+     * @Route("/{uuid}/uploads/download", name="download_message_upload")
      */
     public function downloadUploads(Message $message, string $path, MessageFilesystem $filesystem) {
         return $filesystem->getMessageUploadedFileDownloadResponse($message, $path);

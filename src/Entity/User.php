@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -15,13 +16,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface, \Serializable {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true)
@@ -98,6 +94,8 @@ class User implements UserInterface, \Serializable {
     private $data = [ ];
 
     public function __construct() {
+        $this->uuid = Uuid::uuid4();
+
         $this->students = new ArrayCollection();
         $this->dismissedMessages = new ArrayCollection();
     }

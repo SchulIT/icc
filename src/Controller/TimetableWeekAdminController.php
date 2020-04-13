@@ -54,7 +54,7 @@ class TimetableWeekAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/edit", name="admin_edit_timetable_week")
+     * @Route("/{uuid}/edit", name="admin_edit_timetable_week")
      */
     public function edit(TimetableWeek $week, Request $request) {
         $form = $this->createForm(TimetableWeekType::class, $week);
@@ -73,7 +73,7 @@ class TimetableWeekAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/remove", name="admin_remove_timetable_week")
+     * @Route("/{uuid}/remove", name="admin_remove_timetable_week")
      */
     public function remove(TimetableWeek $week, Request $request) {
 

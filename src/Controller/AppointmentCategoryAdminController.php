@@ -64,7 +64,7 @@ class AppointmentCategoryAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/edit", name="edit_appointment_category")
+     * @Route("/{uuid}/edit", name="edit_appointment_category")
      */
     public function edit(AppointmentCategory $category, Request $request) {
         $form = $this->createForm(AppointmentCategoryType::class, $category);
@@ -84,7 +84,7 @@ class AppointmentCategoryAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/remove", name="remove_appointment_category")
+     * @Route("/{uuid}/remove", name="remove_appointment_category")
      */
     public function remove(AppointmentCategory $category, Request $request, TranslatorInterface $translator) {
         $form = $this->createForm(ConfirmType::class, null, [

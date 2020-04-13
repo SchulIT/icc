@@ -91,17 +91,17 @@
                                 </td>
                                 <td class="align-middle">
                                     {% if is_granted('edit', exam) %}
-                                        <a href="{{ path('edit_exam', { id: exam.id }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.exams.edit.label'|trans }}">
+                                        <a href="{{ path('edit_exam', { uuid: exam.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.exams.edit.label'|trans }}">
                                             <i class="fa fa-edit"></i>
                                         </a>
 
-                                        <a href="{{ path('edit_exam_students', { id: exam.id }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.exams.students.label'|trans }}">
+                                        <a href="{{ path('edit_exam_students', { uuid: exam.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.exams.students.label'|trans }}">
                                             <i class="fa fa-users"></i>
                                         </a>
                                     {% endif %}
 
                                     {% if is_granted('remove', exam) %}
-                                        <a href="{{ path('remove_exam', { id: exam.id }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.exams.remove.label'|trans }}">
+                                        <a href="{{ path('remove_exam', { uuid: exam.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.exams.remove.label'|trans }}">
                                             <i class="fa fa-trash"></i>
                                         </a>
                                     {% endif %}

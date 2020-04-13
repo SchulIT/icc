@@ -44,13 +44,12 @@ class ExamAdminController extends AbstractController {
     /**
      * @Route("", name="admin_exams")
      */
-    public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter, Grouper $grouper,
-                          ExamRepositoryInterface $examRepository, Sorter $sorter, ?int $gradeId = null) {
+    public function index(GradeFilter $gradeFilter, Grouper $grouper, ExamRepositoryInterface $examRepository, Sorter $sorter, Request $request) {
         $this->denyAccessUnlessGranted(ExamVoter::Manage);
 
         /** @var User $user */
         $user = $this->getUser();
-        $gradeFilterView = $gradeFilter->handle($gradeId, $user);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
 
         $exams = [ ];
 
@@ -130,7 +129,7 @@ class ExamAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/edit", name="edit_exam")
+     * @Route("/{uuid}/edit", name="edit_exam")
      */
     public function edit(Exam $exam, Request $request) {
         $this->denyAccessUnlessGranted(ExamVoter::Edit, $exam);
@@ -156,7 +155,7 @@ class ExamAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/remove", name="remove_exam")
+     * @Route("/{uuid}/remove", name="remove_exam")
      */
     public function remove(Exam $exam, Request $request, TranslatorInterface $translator) {
         $this->denyAccessUnlessGranted(ExamVoter::Remove, $exam);
@@ -189,7 +188,7 @@ class ExamAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/students", name="edit_exam_students")
+     * @Route("/{uuid}/students", name="edit_exam_students")
      */
     public function students(Exam $exam, Request $request) {
         $form = $this->createForm(ExamStudentsType::class, $exam);

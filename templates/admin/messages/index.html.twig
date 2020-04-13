@@ -50,30 +50,30 @@
                                 <tr>
                                     <td class="align-middle">{{ message.title }}</td>
                                     <td class="align-middle">{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only %}</td>
-                                    <td class="align-middle">{% include "_includes/study_groups.html.twig" with { studyGroups: message.studyGroups, id: message.id } only %}</td>
+                                    <td class="align-middle">{% include "_includes/study_groups.html.twig" with { studyGroups: message.studyGroups, id: message.uuid } only %}</td>
                                     <td class="align-middle">
                                         {% if is_granted('edit', message) %}
-                                            <a href="{{ path('edit_message', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}"><i class="fa fa-edit"></i></a>
+                                            <a href="{{ path('edit_message', { uuid: message.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}"><i class="fa fa-edit"></i></a>
 
                                             {% if message.mustConfirm %}
-                                                <a href="{{ path('message_confirmations', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'message.confirmations.label'|trans }}">
+                                                <a href="{{ path('message_confirmations', { uuid: message.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'message.confirmations.label'|trans }}">
                                                     <i class="fas fa-tasks"></i>
                                                 </a>
                                             {% endif %}
 
                                             {% if message.downloadsEnabled %}
-                                                <a href="{{ path('message_downloads_admin', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.downloads.label'|trans }}">
+                                                <a href="{{ path('message_downloads_admin', { uuid: message.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.downloads.label'|trans }}">
                                                     <i class="fa fa-download"></i>
                                                 </a>
                                             {% endif %}
                                             {% if message.uploadsEnabled %}
-                                                <a href="{{ path('message_uploads_admin', { id: message.id }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.uploads.label'|trans }}">
+                                                <a href="{{ path('message_uploads_admin', { uuid: message.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.uploads.label'|trans }}">
                                                     <i class="fa fa-upload"></i>
                                                 </a>
                                             {% endif %}
                                         {% endif %}
                                         {% if is_granted('remove', message) %}
-                                            <a href="{{ path('remove_message', { id: message.id }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}"><i class="fa fa-trash"></i></a>
+                                            <a href="{{ path('remove_message', { uuid: message.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}"><i class="fa fa-trash"></i></a>
                                         {% endif %}
                                     </td>
                                 </tr>

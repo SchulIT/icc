@@ -3,12 +3,12 @@
 
     <div class="form-group">
         <label for="student">{{ 'label.student'|trans }}:</label>
-        <select name="studentId" id="student" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="true">
+        <select name="student" id="student" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="true">
             <option value="" placeholder>{{ 'label.select.student'|trans }}</option>
             {% for group in studentFilter.studentGradeGroups %}
                 <optgroup label="{{ group.grade.name }}">
                     {% for s in group.students %}
-                        <option value="{{ s.id }}"{% if studentFilter.currentStudent != null and studentFilter.currentStudent.id == s.id %}selected="selected"{% endif %}>{{ s|student }}</option>
+                        <option value="{{ s.uuid }}"{% if studentFilter.currentStudent != null and studentFilter.currentStudent.id == s.id %}selected="selected"{% endif %}>{{ s|student }}</option>
                     {% endfor %}
                 </optgroup>
             {% endfor %}

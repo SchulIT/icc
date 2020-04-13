@@ -28,7 +28,7 @@
             <i class="fa fa-trash"></i> {{ 'remove.confirm'|trans }}
         </button>
 
-        <a href="{{ {{ referer_path({ view: 'show_wiki_article' }, 'admin_wiki', { id: article.id, slug: article.slug }) }} }}" class="btn btn-secondary btn-sm">
+        <a href="{{ {{ referer_path({ view: 'show_wiki_article' }, 'admin_wiki', { uuid: article.uuid }) }} }}" class="btn btn-secondary btn-sm">
             {{ 'actions.cancel'|trans }}
         </a>
     </div>

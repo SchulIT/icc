@@ -7,7 +7,7 @@
         {% if article.parent is not null %}
             {{ _self.wiki_breadcrumb(article.parent) }}
         {% endif %}
-        <li class="breadcrumb-item"><a href="{{ path('show_wiki_article', { id: article.id, slug: article.slug}) }}">{{ article.title }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_wiki_article', { uuid: article.uuid }) }}">{{ article.title }}</a></li>
     {% endif %}
 {% endmacro %}
 
@@ -40,14 +40,14 @@
                     {% for child in childrenWithChildren %}
                         <div class="card">
                             <div class="card-header">
-                                <a href="{{ path('show_wiki_article', { id: child.id, slug: child.slug }) }}">
+                                <a href="{{ path('show_wiki_article', { uuid: child.uuid }) }}">
                                     <i class="far fa-copy"></i> {{ child.title }}
                                 </a>
                             </div>
                             <div class="list-group list-group-flush">
                                 {% for c in child.children %}
                                     {% if is_granted('view', c) %}
-                                        <a href="{{ path('show_wiki_article', { id: c.id, slug: c.slug }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
+                                        <a href="{{ path('show_wiki_article', { uuid: c.uuid }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
                                     {% endif %}
                                 {% endfor %}
                             </div>
@@ -61,7 +61,7 @@
                             <div class="list-group list-group-flush">
                                 {% for c in childrenWithoutChildren %}
                                     {% if is_granted('view', c) %}
-                                        <a href="{{ path('show_wiki_article', { id: c.id, slug: c.slug }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
+                                        <a href="{{ path('show_wiki_article', { uuid: c.uuid }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
                                     {% endif %}
                                 {% endfor %}
                             </div>
@@ -76,16 +76,16 @@
                     <div class="list-group list-group-flush">
                         {% if article is not null %}
                             {% if is_granted('edit', article) %}
-                                <a href="{{ path('edit_wiki_article', { id: article.id, ref: 'view' }) }}" class="list-group-item list-group-item-action">
+                                <a href="{{ path('edit_wiki_article', { uuid: article.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action">
                                     <i class="fa fa-edit"></i> {{ 'admin.wiki.edit.label'|trans }}
                                 </a>
 
-                                <a href="{{ path('wiki_article_versions', { id: article.id, ref: 'view' }) }}" class="list-group-item list-group-item-action">
+                                <a href="{{ path('wiki_article_versions', { uuid: article.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action">
                                     <i class="fa fa-history"></i> {{ 'versions.label'|trans }}
                                 </a>
                             {% endif %}
                             {% if is_granted('remove', article) %}
-                                <a href="{{ path('remove_wiki_article', { id: article.id, ref: 'view' }) }}" class="list-group-item list-group-item-action list-group-item-danger">
+                                <a href="{{ path('remove_wiki_article', { uuid: article.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action list-group-item-danger">
                                     <i class="fa fa-trash"></i> {{ 'admin.wiki.remove.label'|trans }}
                                 </a>
                             {% endif %}
@@ -115,7 +115,7 @@
                             <div class="list-group list-group-flush">
                                 {% for c in article.children %}
                                     {% if is_granted('view', c) %}
-                                        <a href="{{ path('show_wiki_article', { id: c.id, slug: c.slug }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
+                                        <a href="{{ path('show_wiki_article', { uuid: c.uuid }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
                                     {% endif %}
                                 {% endfor %}
                             </div>

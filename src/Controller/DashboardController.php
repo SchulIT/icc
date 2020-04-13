@@ -11,6 +11,7 @@ use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Filter\UserTypeFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractController {
@@ -23,23 +24,22 @@ class DashboardController extends AbstractController {
      * @Route("/dashboard", name="dashboard")
      */
     public function index(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
-                          DashboardViewHelper $dashboardViewHelper, DateHelper $dateHelper, SubstitutionSettings $dashboardSettings,
-                          ?int $studentId = null, ?string $teacherAcronym = null, ?string $userType = null, ?string $date = null) {
+                          DashboardViewHelper $dashboardViewHelper, DateHelper $dateHelper, SubstitutionSettings $dashboardSettings, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
         $selectedDate = null;
         try {
-            $selectedDate = new \DateTime($date);
+            $selectedDate = new \DateTime($request->query->get('date', null));
         } catch (\Exception $e) {
             $selectedDate = $dateHelper->getToday();
         }
 
         $days = $this->getListOfSurroundingDays($selectedDate, static::DaysInFuture, static::DaysInPast);
 
-        $studentFilterView = $studentFilter->handle($studentId, $user);
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user, $studentFilterView->getCurrentStudent() === null);
-        $userTypeFilterView = $userTypeFilter->handle($userType, $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]), UserType::Student(), [ UserType::Student(), UserType::Parent() ]);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null);
+        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]), UserType::Student(), [ UserType::Student(), UserType::Parent() ]);
 
         if($studentFilterView->getCurrentStudent() !== null) {
             if($userTypeFilterView->getCurrentType() === null) {

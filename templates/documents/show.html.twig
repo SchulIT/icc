@@ -30,7 +30,7 @@
 
                         <ul class="list-unstyled">
                             {% for attachment in document.attachments %}
-                                <li><i class="fa fa-file"></i> <a href="{{ path('download_document_attachment', { document: document.id, alias: document.slug, id: attachment.id }) }}">{{ attachment.filename }}</a> <span class="text-muted">{{ attachment.size|filesize }}</span></li>
+                                <li><i class="fa fa-file"></i> <a href="{{ path('download_document_attachment', { document: document.uuid, uuid: attachment.uuid }) }}">{{ attachment.filename }}</a> <span class="text-muted">{{ attachment.size|filesize }}</span></li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -42,16 +42,16 @@
                 <div class="card">
                     <div class="list-group list-group-flush">
                         {% if is_granted('edit', document) %}
-                            <a href="{{ path('admin_edit_document', { id: document.id, ref: 'view' }) }}" class="list-group-item list-group-item-action">
+                            <a href="{{ path('admin_edit_document', { uuid: document.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action">
                                 <i class="fa fa-edit"></i> {{ 'admin.documents.edit.label'|trans }}
                             </a>
 
-                            <a href="{{ path('document_versions', { id: document.id, ref: 'view' }) }}" class="list-group-item list-group-item-action">
+                            <a href="{{ path('document_versions', { uuid: document.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action">
                                 <i class="fa fa-history"></i> {{ 'versions.label'|trans }}
                             </a>
                         {% endif %}
                         {% if is_granted('remove', document) %}
-                            <a href="{{ path('admin_remove_document', { id: document.id, ref: 'view' }) }}" class="list-group-item list-group-item-action list-group-item-danger">
+                            <a href="{{ path('admin_remove_document', { uuid: document.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action list-group-item-danger">
                                 <i class="fa fa-trash"></i> {{ 'admin.documents.remove.label'|trans }}
                             </a>
                         {% endif %}
@@ -73,7 +73,7 @@
 
                         {% if document.studyGroups|length > 0 %}
                             <p>
-                                <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': document.studyGroups|length}) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: document.studyGroups, id: document.id } only  %}
+                                <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': document.studyGroups|length}) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: document.studyGroups, id: document.uuid } only  %}
                             </p>
                         {% endif %}
                     </div>

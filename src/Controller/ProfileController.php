@@ -54,7 +54,7 @@ class ProfileController extends AbstractController {
     }
 
     /**
-     * @Route("/apps/{id}/remove", name="profile_remove_app", methods={"POST"})
+     * @Route("/apps/{uuid}/remove", name="profile_remove_app", methods={"POST"})
      */
     public function removeApp(DeviceToken $token, Request $request, DeviceTokenRepositoryInterface $deviceTokenRepository) {
         $this->denyAccessUnlessGranted(DeviceTokenVoter::Remove, $token);

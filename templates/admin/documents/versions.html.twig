@@ -39,7 +39,7 @@
                     <td>{{ entry.username }}</td>
                     <td>{{ entry.loggedAt|format_datetime }}</td>
                     <td>
-                        <a href="{{ path('show_document_version', { id: document.id, version: entry.version}) }}" class="btn btn-sm btn-primary">
+                        <a href="{{ path('show_document_version', { uuid: document.uuid, version: entry.version}) }}" class="btn btn-sm btn-primary">
                             <i class="fa fa-eye"></i> {{ 'versions.show.button'|trans }}
                         </a>
 
@@ -54,7 +54,7 @@
     </div>
 
     <div class="buttons">
-        <a href="{{ referer_path({'view': 'show_document'}, 'admin_documents', { id: document.id, slug: document.slug }) }}" class="btn btn-secondary btn-sm">
+        <a href="{{ referer_path({'view': 'show_document'}, 'admin_documents', { uuid: document.uuid }) }}" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
         </a>
     </div>
@@ -65,7 +65,7 @@
     <script src="{{ asset('build/modal.js') }}"></script>
 
     <div class="modal fade" id="restore-modal" tabindex="-1" role="dialog" aria-labelledby="restore-modal" aria-hidden="true">
-        <form method="post" action="{{ path('restore_document_version', { id: document.id }) }}">
+        <form method="post" action="{{ path('restore_document_version', { uuid: document.uuid }) }}">
             <input type="hidden" name="{{ token_param }}" value="{{ csrf_token(token_id) }}">
             <input type="hidden" name="{{ version_param }}" value="">
 

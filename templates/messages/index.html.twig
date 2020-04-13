@@ -46,19 +46,19 @@
 
             <div class="card">
                 <div class="card-body">
-                    {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.id %}
+                    {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.uuid %}
                     {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
 
                     {% if studentFilter.studentGradeGroups|length > 0 %}
-                        {% include "_filter/student.html.twig" with { params: { archive: archive, userType: userTypeParam } } %}
+                        {% include "_filter/student.html.twig" with { params: { archive: archive, user_type: userTypeParam } } %}
                     {% endif %}
 
                     {% if userTypeFilter.types|length > 0 %}
-                        {% include "_filter/user_type.html.twig" with { params: { archive: archive, studentId: studentParam } } %}
+                        {% include "_filter/user_type.html.twig" with { params: { archive: archive, student: studentParam } } %}
                     {% endif %}
 
                     <form role="form" method="get" class="form hidden-print">
-                        {% include "_filter/_params.html.twig" with { params: { userType: userTypeParam, studentId: studentParam } } %}
+                        {% include "_filter/_params.html.twig" with { params: { user_type: userTypeParam, student: studentParam } } %}
 
                         <label class="control-label">{{ 'label.options'|trans }}:</label>
                         <div class="form-group">

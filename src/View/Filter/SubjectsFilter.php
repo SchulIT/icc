@@ -15,9 +15,9 @@ class SubjectsFilter {
         $this->subjectRepository = $subjectRepository;
     }
 
-    public function handle(?array $subjectIds) {
-        if($subjectIds === null) {
-            $subjectIds = [ ];
+    public function handle(?array $subjectUuids) {
+        if($subjectUuids === null) {
+            $subjectUuids = [ ];
         }
 
         $subjects = $this->subjectRepository->findAll();
@@ -26,7 +26,7 @@ class SubjectsFilter {
         $currentSubjects = [ ];
 
         foreach($subjects as $subject) {
-            if(in_array($subject->getId(), $subjectIds)) {
+            if(in_array((string)$subject->getUuid(), $subjectUuids)) {
                 $currentSubjects[] = $subject;
             }
         }

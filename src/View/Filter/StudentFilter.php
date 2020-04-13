@@ -25,7 +25,7 @@ class StudentFilter {
         $this->studentRepository = $studentRepository;
     }
 
-    public function handle(?int $studentId, User $user): StudentFilterView {
+    public function handle(?string $studentUuid, User $user): StudentFilterView {
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
         if($isStudentOrParent) {
@@ -37,12 +37,12 @@ class StudentFilter {
         $students = ArrayUtils::createArrayWithKeys(
             $students,
             function(Student $student) {
-                return $student->getId();
+                return (string)$student->getUuid();
             }
         );
 
-        $student = $studentId !== null ?
-            $students[$studentId] ?? null : null;
+        $student = $studentUuid !== null ?
+            $students[$studentUuid] ?? null : null;
 
         if($student === null && $user->getStudents()->count() > 0) {
             $student = $user->getStudents()->first();

@@ -35,7 +35,7 @@
                     <ul class="nav nav-tabs card-header-tabs">
                         {% for period in periods %}
                             <li class="nav-item">
-                                <a class="nav-link{% if currentPeriod != null and period.id == currentPeriod.id %} active{% endif %}" href="{{ path('timetable', { period: period.getId(), grade: gradeFilter.currentGrade, student: studentFilter.currentStudent ? studentFilter.currentStudent.id, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.id, subject: subjectFilter.currentSubjects, room: roomFilter.currentRoom ? roomFilter.currentRoom.id }) }}">
+                                <a class="nav-link{% if currentPeriod != null and period.id == currentPeriod.id %} active{% endif %}" href="{{ path('timetable', { period: period.uuid, grade: gradeFilter.currentGrade, student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid, subject: subjectFilter.currentSubjects, room: roomFilter.currentRoom ? roomFilter.currentRoom.uuid }) }}">
                                     <i class="fa fa-calendar"></i> {{ period.getName() }}
                                     <div class="text-muted">{{ period.getStart().format('d.m.Y') }} - {{ period.getEnd().format('d.m.Y') }}</div>
                                 </a>

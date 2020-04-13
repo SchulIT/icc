@@ -13,6 +13,12 @@ interface GradeRepositoryInterface extends TransactionalRepositoryInterface {
     public function findOneById(int $id): ?Grade;
 
     /**
+     * @param string $uuid
+     * @return Grade|null
+     */
+    public function findOneByUuid(string $uuid): ?Grade;
+
+    /**
      * @param string $name
      * @return Grade|null
      */

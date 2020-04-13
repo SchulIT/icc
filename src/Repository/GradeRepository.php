@@ -20,6 +20,16 @@ class GradeRepository extends AbstractTransactionalRepository implements GradeRe
     /**
      * @inheritDoc
      */
+    public function findOneByUuid(string $uuid): ?Grade {
+        return $this->em->getRepository(Grade::class)
+            ->findOneBy([
+                'uuid' => $uuid
+            ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findOneByName(string $name): ?Grade {
         return $this->em->getRepository(Grade::class)
             ->findOneBy([

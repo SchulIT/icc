@@ -34,7 +34,7 @@ class WikiController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}-{slug}", name="show_wiki_article")
+     * @Route("/{uuid}", name="show_wiki_article")
      */
     public function show(?WikiArticle $article) {
         if($article !== null) {

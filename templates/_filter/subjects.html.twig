@@ -5,7 +5,7 @@
         <label for="subjects">{{ 'label.select.subjects'|trans }}:</label>
         <select name="subjects[]" id="subjects" multiple="multiple" class="form-control" data-trigger="submit" data-choice="true" placeholder="{{ 'label.select.subjects'|trans }}">
             {% for s in subjectFilter.subjects %}
-                <option value="{{ s.id }}" {% if s in subjectFilter.currentSubjects %}selected="selected"{% endif %}>{{ s.name }}</option>
+                <option value="{{ s.uuid }}" {% if s in subjectFilter.currentSubjects %}selected="selected"{% endif %}>{{ s.name }}</option>
             {% endfor %}
         </select>
     </div>

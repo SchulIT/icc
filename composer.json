@@ -25,6 +25,7 @@
         "nelmio/api-doc-bundle": "^3.4",
         "oneup/flysystem-bundle": "^3.0",
         "ralouphie/mimey": "^2.1",
+        "ramsey/uuid-doctrine": "^1.6",
         "schoolit/common-bundle": "dev-master",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/apache-pack": "^1.0",

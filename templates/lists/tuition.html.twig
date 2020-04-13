@@ -95,7 +95,7 @@
                                     <td>{{ 'label.exam_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}</td>
                                     <td>{{ exam.students|length }}</td>
                                     <td>
-                                        <a href="{{ path('show_exam', { id: exam.id }) }}">{{ 'label.details'|trans }}</a>
+                                        <a href="{{ path('show_exam', { uuid exam.uuid }) }}">{{ 'label.details'|trans }}</a>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -108,7 +108,7 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="list-group list-group-flush">
-                        <a href="{{ path('export_tuition', { id: tuition.id }) }}" class="list-group-item list-group-item-action">
+                        <a href="{{ path('export_tuition', { uuid: tuition.uuid }) }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-download"></i> {{ 'lists.tuitions.export.csv'|trans }}
                         </a>
 

@@ -64,13 +64,13 @@ class MessageController extends AbstractController {
     /**
      * @Route("", name="messages")
      */
-    public function index(MessageRepositoryInterface $messageRepository, StudentFilter $studentFilter, UserTypeFilter $userTypeFilter,
-                          ?int $studentId = null, ?string $userType = null, ?bool $archive = false) {
+    public function index(MessageRepositoryInterface $messageRepository, StudentFilter $studentFilter, UserTypeFilter $userTypeFilter, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $studentFilterView = $studentFilter->handle($studentId, $user);
-        $userTypeFilterView = $userTypeFilter->handle($userType, $user);
+        $archive = $request->query->getBoolean('archive', false);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
+        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user);
 
         $studyGroups = [ ];
         if($userTypeFilterView->getCurrentType()->equals(UserType::Student()) || $userTypeFilterView->getCurrentType()->equals(UserType::Parent())) {
@@ -100,7 +100,7 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}", name="show_message")
+     * @Route("/{uuid}", name="show_message")
      */
     public function show(Message $message, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem, Request $request) {
         /** @var User $user */
@@ -135,7 +135,7 @@ class MessageController extends AbstractController {
             }
 
             return $this->redirectToRoute('show_message', [
-                'id' => $message->getId()
+                'uuid' => $message->getUuid()
             ]);
         }
 
@@ -153,7 +153,7 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{message}/attachments/{id}", name="download_message_attachment")
+     * @Route("/{message}/attachments/{uuid}", name="download_message_attachment")
      */
     public function downloadAttachment(MessageAttachment $attachment, MessageFilesystem $messageFilesystem) {
         $this->denyAccessUnlessGranted(MessageVoter::View, $attachment->getMessage());
@@ -166,7 +166,7 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/downloads/{filename}", name="download_user_file")
+     * @Route("/{uuid}/downloads/{filename}", name="download_user_file")
      */
     public function downloadUserFile(Message $message, string $filename, MessageFilesystem $messageFilesystem) {
         /** @var User $user */
@@ -182,7 +182,7 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{message}/uploads/{id}/download", name="download_uploaded_user_file")
+     * @Route("/{message}/uploads/{uuid}/download", name="download_uploaded_user_file")
      */
     public function downloadUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem) {
         /** @var User $user */
@@ -204,7 +204,7 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{message}/uploads/{id}/remove", name="remove_uploaded_user_file")
+     * @Route("/{message}/uploads/{uuid}/remove", name="remove_uploaded_user_file")
      */
     public function removeUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $filesystem, Request $request) {
         /** @var User $user */
@@ -236,7 +236,7 @@ class MessageController extends AbstractController {
 
             $this->addFlash('success', 'messages.uploads.remove.success');
             return $this->redirectToRoute('show_message', [
-                'id' => $file->getMessage()->getId()
+                'uuid' => $file->getMessage()->getUuid()
             ]);
         }
 
@@ -249,7 +249,7 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/confirm", name="confirm_message")
+     * @Route("/{uuid}/confirm", name="confirm_message")
      */
     public function confirm(Message $message, EntityManagerInterface $entityManager) {
         $this->denyAccessUnlessGranted(MessageVoter::Confirm, $message);
@@ -271,11 +271,11 @@ class MessageController extends AbstractController {
             $entityManager->flush();
         }
 
-        return $this->redirectToRequestReferer('show_message', [ 'id' => $message->getId() ]);
+        return $this->redirectToRequestReferer('show_message', [ 'uuid' => $message->getUuid() ]);
     }
 
     /**
-     * @Route("/{id}/dismiss", name="dismiss_message")
+     * @Route("/{uuid}/dismiss", name="dismiss_message")
      */
     public function dismiss(Message $message, UserRepositoryInterface $userRepository) {
         /** @var User $user */
@@ -290,7 +290,7 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/reenable", name="reenable_message")
+     * @Route("/{uuid}/reenable", name="reenable_message")
      */
     public function reenable(Message $message, UserRepositoryInterface $userRepository) {
         /** @var User $user */

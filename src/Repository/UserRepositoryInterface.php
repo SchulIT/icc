@@ -15,6 +15,12 @@ interface UserRepositoryInterface {
     public function findOneById(int $id): ?User;
 
     /**
+     * @param string $uuid
+     * @return User|null
+     */
+    public function findOneByUuid(string $uuid): ?User;
+
+    /**
      * @param string $username
      * @return User|null
      */

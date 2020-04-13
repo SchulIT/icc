@@ -6,7 +6,7 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('messages') }}">{{ 'messages.overview.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('show_message', { id: message.id }) }}">{{ message.title }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_message', { uuid: message.uuid }) }}">{{ message.title }}</a></li>
         <li class="breadcrumb-item">{{ 'message.confirmations.label'|trans }}</li>
     </ol>
 {% endblock %}

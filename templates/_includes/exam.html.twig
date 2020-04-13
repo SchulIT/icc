@@ -54,7 +54,7 @@
 
             {% if details|default(true) == true and is_granted('invigilators', exam) %}
                 <p class="w-100 mb-0">
-                    <a href="{{ path('show_exam', { id: exam.id }) }}" class="btn btn-outline-primary btn-sm">
+                    <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm">
                         <i class="fa fa-info-circle"></i> {{ 'label.details'|trans }}
                     </a>
                 </p>

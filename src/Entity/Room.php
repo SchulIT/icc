@@ -6,18 +6,16 @@ use App\Validator\NullOrNotBlank;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
  */
 class Room {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
@@ -52,6 +50,7 @@ class Room {
     private $tags;
 
     public function __construct() {
+        $this->uuid = Uuid::uuid4();
         $this->tags = new ArrayCollection();
     }
 

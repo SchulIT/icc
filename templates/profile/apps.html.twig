@@ -15,7 +15,7 @@
         <ul class="list-group list-group-flush">
             {% for app in apps %}
             <li class="list-group-item">
-                <button type="button" class="btn btn-danger btn-sm float-right" data-toggle="modal" data-target="#remove-app-modal-{{ app.id }}">
+                <button type="button" class="btn btn-danger btn-sm float-right" data-toggle="modal" data-target="#remove-app-modal-{{ app.uuid }}">
                     <i class="fa fa-trash"></i>
                 </button>
 
@@ -34,13 +34,13 @@
 
 {% block profile_footer %}
     {% for app in apps %}
-        <div class="modal fade" id="remove-app-modal-{{ app.id }}" tabindex="-1" role="dialog" aria-labelledby="remove-app-modal-label-{{ app.id }}" aria-hidden="true">
+        <div class="modal fade" id="remove-app-modal-{{ app.uuid }}" tabindex="-1" role="dialog" aria-labelledby="remove-app-modal-label-{{ app.uuid }}" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <form action="{{ path('profile_remove_app', { id: app.id }) }}" method="post">
+                    <form action="{{ path('profile_remove_app', { uuid: app.uuid }) }}" method="post">
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_key) }}">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="remove-app-modal-label-{{ app.id }}">{{ 'profile.apps.remove.label'|trans }}</h5>
+                            <h5 class="modal-title" id="remove-app-modal-label-{{ app.uuid }}">{{ 'profile.apps.remove.label'|trans }}</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>

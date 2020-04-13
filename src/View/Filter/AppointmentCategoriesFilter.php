@@ -17,16 +17,16 @@ class AppointmentCategoriesFilter {
         $this->appointmentCategoryRepository = $appointmentCategoryRepository;
     }
 
-    public function handle(array $categoryIds) {
+    public function handle(array $categoryUuids) {
         $categories = ArrayUtils::createArrayWithKeys(
             $this->appointmentCategoryRepository->findAll(),
             function (AppointmentCategory $category) {
-                return $category->getId();
+                return (string)$category->getUuid();
             }
         );
         
-        $selectedCategories = array_filter($categories, function (AppointmentCategory $category) use ($categoryIds) {
-            return in_array($category->getId(), $categoryIds);
+        $selectedCategories = array_filter($categories, function (AppointmentCategory $category) use ($categoryUuids) {
+            return in_array($category->getUuid(), $categoryUuids);
         });
 
         $this->sorter->sort($categories, AppointmentCategoryStrategy::class);

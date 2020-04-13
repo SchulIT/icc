@@ -22,6 +22,16 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
     /**
      * @inheritDoc
      */
+    public function findOneByUuid(string $uuid): ?User {
+        return $this->em->getRepository(User::class)
+            ->findOneBy([
+                'uuid' => $uuid
+            ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findOneByUsername(string $username): ?User {
         return $this->em->getRepository(User::class)
             ->findOneBy([

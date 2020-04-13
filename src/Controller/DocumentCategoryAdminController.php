@@ -62,7 +62,7 @@ class DocumentCategoryAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/edit", name="admin_edit_document_category")
+     * @Route("/{uuid}/edit", name="admin_edit_document_category")
      */
     public function edit(DocumentCategory $documentCategory, Request $request) {
         $form = $this->createForm(DocumentCategoryType::class, $documentCategory);
@@ -82,7 +82,7 @@ class DocumentCategoryAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/remove", name="admin_remove_document_category")
+     * @Route("/{uuid}/remove", name="admin_remove_document_category")
      */
     public function remove(DocumentCategory $category, Request $request, TranslatorInterface $translator) {
         $form = $this->createForm(ConfirmType::class, null, [

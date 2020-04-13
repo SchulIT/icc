@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -12,13 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class MessageFile {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\ManyToOne(targetEntity="Message", inversedBy="files", cascade={"persist"})
@@ -50,6 +46,7 @@ class MessageFile {
     private $uploads;
 
     public function __construct() {
+        $this->uuid = Uuid::uuid4();
         $this->uploads = new ArrayCollection();
     }
 

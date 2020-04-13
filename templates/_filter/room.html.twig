@@ -3,10 +3,10 @@
 
     <div class="form-group">
         <label for="room" class="control-label">{{ 'label.room'|trans }}:</label>
-        <select name="roomId" id="room" class="form-control" data-trigger="submit" data-choice="true">
+        <select name="room" id="room" class="form-control" data-trigger="submit" data-choice="true">
             <option value="" placeholder>{{ 'label.select.room'|trans }}</option>
             {% for r in roomFilter.rooms %}
-                <option value="{{ r.id() }}" {% if roomFilter.currentRoom != null and roomFilter.currentRoom.id == r.id %}selected="selected"{% endif %}>{{ r.getName() }}</option>
+                <option value="{{ r.uuid }}" {% if roomFilter.currentRoom != null and roomFilter.currentRoom.id == r.id %}selected="selected"{% endif %}>{{ r.getName() }}</option>
             {% endfor %}
         </select>
     </div>

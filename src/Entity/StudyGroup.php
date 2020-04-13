@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -12,13 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class StudyGroup {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true)
@@ -66,6 +62,7 @@ class StudyGroup {
     private $tuitions;
 
     public function __construct() {
+        $this->uuid = Uuid::uuid4();
         $this->grades = new ArrayCollection();
         $this->memberships = new ArrayCollection();
         $this->tuitions = new ArrayCollection();

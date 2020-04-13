@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -10,13 +11,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class TimetableSupervision {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true)
@@ -76,11 +72,8 @@ class TimetableSupervision {
      */
     private $location;
 
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int {
-        return $this->id;
+    public function __construct() {
+        $this->uuid = Uuid::uuid4();
     }
 
     /**

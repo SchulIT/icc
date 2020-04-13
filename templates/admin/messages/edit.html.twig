@@ -104,7 +104,7 @@
             <i class="fa fa-save"></i> {{ 'admin.messages.edit.update.button'|trans }}
         </button>
 
-        <a href="{{ referer_path({ view: 'show_message' }, 'admin_messages', { id: message.id }) }}" class="btn btn-secondary btn-sm">
+        <a href="{{ referer_path({ view: 'show_message' }, 'admin_messages', { uuid: message.uuid }) }}" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
         </a>
     </div>

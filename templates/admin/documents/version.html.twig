@@ -49,7 +49,7 @@
     <script src="{{ asset('build/modal.js') }}"></script>
 
     <div class="modal fade" id="restore-modal" tabindex="-1" role="dialog" aria-labelledby="restore-modal" aria-hidden="true">
-        <form method="post" action="{{ path('restore_document_version', { id: document.id }) }}">
+        <form method="post" action="{{ path('restore_document_version', { uuid: document.uuid }) }}">
             <input type="hidden" name="{{ token_param }}" value="{{ csrf_token(token_id) }}">
             <input type="hidden" name="{{ version_param }}" value="{{ entry.version }}">
 

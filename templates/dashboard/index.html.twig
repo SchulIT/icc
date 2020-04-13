@@ -11,7 +11,7 @@
 
 {% block content %}
 
-    {% set currentFilter = { studentId: studentFilter.currentStudent ? studentFilter.currentStudent.id : null, teacherAcronym: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.acronym : null, userType: userTypeFilter.currentType ?  userTypeFilter.currentType.value : null } %}
+    {% set currentFilter = { student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.acronym : null, user_type: userTypeFilter.currentType ?  userTypeFilter.currentType.value : null } %}
 
     <div class="container-fluid px-0">
         <div class="row">
@@ -92,7 +92,7 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="card-body">
-                        {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.id %}
+                        {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.uuid %}
                         {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
                         {% set dateParam = selectedDate|date('Y-m-d') %}
 
@@ -101,11 +101,11 @@
                         {% endif %}
 
                         {% if studentFilter.studentGradeGroups|length > 0 %}
-                            {% include "_filter/student.html.twig" with { params: { userType: userTypeParam, date: dateParam } } %}
+                            {% include "_filter/student.html.twig" with { params: { user_type: userTypeParam, date: dateParam } } %}
                         {% endif %}
 
                         {% if userTypeFilter.types|length > 0 %}
-                            {% include "_filter/user_type.html.twig" with { params: { studentId: studentParam, date: dateParam } } %}
+                            {% include "_filter/user_type.html.twig" with { params: { student: studentParam, date: dateParam } } %}
                         {% endif %}
 
                         <form role="form" method="get" class="form hidden-print">

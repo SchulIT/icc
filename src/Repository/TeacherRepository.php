@@ -36,6 +36,19 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
     /**
      * @inheritDoc
      */
+    public function findOneByUuid(string $uuid): ?Teacher {
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qb->where('t.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findOneByAcronym(string $acronym): ?Teacher {
         $qb = $this->createDefaultQueryBuilder();
 

@@ -2,7 +2,7 @@
     <strong>
         {% set isCourse = lesson.tuition.studyGroup.type.value == 2 %}
         <span title="{{ lesson.tuition.subject.name }}">
-            <a href="{{ path('list_tuition', { id: lesson.tuition.id }) }}">
+            <a href="{{ path('list_tuition', { uuid: lesson.tuition.uuid }) }}">
                 {% if isCourse %}
                     {{ lesson.tuition.studyGroup.name }}
                 {% else %}

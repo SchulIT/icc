@@ -9,21 +9,6 @@
     </ol>
 {% endblock %}
 
-{% macro applyAllFilters(exclude, studentFilter, gradeFilter, categoryFilter, query) %}
-    {% if exclude != 'studentId' and studentFilter.currentStudent != null %}
-        <input type="hidden" name="studentId" value="{{ studentFilter.currentStudent.id }}">
-    {% endif %}
-    {% if exclude != 'gradeId' and gradeFilter.currentGrade != null %}
-        <input type="hidden" name="gradeId" value="{{ gradeFilter.currentGrade.id }}">
-    {% endif %}
-    {% if exclude != 'categoryId' and categoryFilter != null and categoryFilter.currentCategories|length > 0 %}
-        {% for c in categoryFilter.currentCategories %}<input type="hidden" name="categoryId[]" value="{{ c.id }}">{% endfor %}
-    {% endif %}
-    {% if exclude != 'query' and query != null %}
-        <input type="hidden" name="query" value="{{ query }}">
-    {% endif %}
-{% endmacro %}
-
 {% block post_javascript %}
     <script src="{{ asset('build/appointments.js') }}"></script>
 {% endblock %}
@@ -75,9 +60,9 @@
                         <form role="form" method="get" class="form hidden-print">
                             <div class="form-group">
                                 <label for="categories" class="control-label">{{ 'label.categories'|trans }}:</label>
-                                <select name="categoryIds" multiple="multiple" id="categories" class="form-control" data-choice="true" placeholder="{{ 'label.select.category'|trans }}">
+                                <select name="categories" multiple="multiple" id="categories" class="form-control" data-choice="true" placeholder="{{ 'label.select.category'|trans }}">
                                     {% for c in categoryFilter.categories %}
-                                        <option data-custom-properties="{{ c.color }}" value="{{ c.id }}" {% if c in categoryFilter.currentCategories %}selected="selected"{% endif %}>{{ c.name }}</option>
+                                        <option data-custom-properties="{{ c.color }}" value="{{ c.uuid }}" {% if c in categoryFilter.currentCategories %}selected="selected"{% endif %}>{{ c.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>

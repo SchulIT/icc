@@ -69,7 +69,7 @@
             <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
         </button>
 
-        <a href="{{ referer_path({'view': 'show_document'}, 'admin_documents', { id: document.id, slug: document.slug }) }}" class="btn btn-secondary btn-sm">
+        <a href="{{ referer_path({'view': 'show_document'}, 'admin_documents', { uuid: document.uuid }) }}" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
         </a>
     </div>

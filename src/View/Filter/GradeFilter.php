@@ -20,7 +20,7 @@ class GradeFilter {
         $this->gradeRepository = $gradeRepository;
     }
 
-    public function handle(?int $gradeId, User $user) {
+    public function handle(?string $gradeUuid, User $user) {
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
         $defaultGrade = null;
 
@@ -36,12 +36,12 @@ class GradeFilter {
         $grades = ArrayUtils::createArrayWithKeys(
             $grades,
             function(Grade $grade) {
-                return $grade->getId();
+                return (string)$grade->getUuid();
             }
         );
 
-        $grade = $gradeId !== null ?
-            $grades[$gradeId] ?? $defaultGrade : $defaultGrade;
+        $grade = $gradeUuid !== null ?
+            $grades[$gradeUuid] ?? $defaultGrade : $defaultGrade;
 
         $this->sorter->sort($grades, GradeNameStrategy::class);
 

@@ -8,7 +8,7 @@
         <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin_messages') }}">{{ 'admin.messages.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ message.title }}</li>
-        <li class="breadcrumb-item"><a href="{{ path('message_downloads_admin', { id: message.id}) }}">{{ 'messages.downloads.label'|trans }}</a> </li>
+        <li class="breadcrumb-item"><a href="{{ path('message_downloads_admin', { uuid: message.uuid }) }}">{{ 'messages.downloads.label'|trans }}</a> </li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -29,7 +29,7 @@
             <i class="fa fa-trash"></i> {{ 'remove.confirm'|trans }}
         </button>
 
-        <a href="{{ referer_path({ view: 'show_message' }, 'admin_messages', { id: message.id }) }}" class="btn btn-secondary btn-sm">
+        <a href="{{ referer_path({ view: 'show_message' }, 'admin_messages', { uuid: message.uuid }) }}" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
         </a>
     </div>

@@ -73,7 +73,7 @@ class WikiAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/edit", name="edit_wiki_article")
+     * @Route("/{uuid}/edit", name="edit_wiki_article")
      */
     public function edit(WikiArticle $article, Request $request) {
         $form = $this->createForm(WikiArticleType::class, $article);
@@ -82,7 +82,7 @@ class WikiAdminController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $this->repository->persist($article);
 
-            return $this->redirectToReferer(['view' => 'show_wiki_article'], 'admin_wiki', [ 'id' => $article->getId(), 'slug' => $article->getSlug() ]);
+            return $this->redirectToReferer(['view' => 'show_wiki_article'], 'admin_wiki', [ 'uuid' => $article->getUuid() ]);
         }
 
         return $this->render('admin/wiki/edit.html.twig', [
@@ -92,7 +92,7 @@ class WikiAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/versions", name="wiki_article_versions")
+     * @Route("/{uuid}/versions", name="wiki_article_versions")
      */
     public function versions(WikiArticle $article, Request $request, LogRepositoryInterface $logRepository, Sorter $sorter) {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
@@ -110,7 +110,7 @@ class WikiAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/versions/{version}", name="wiki_article_version")
+     * @Route("/{uuid}/versions/{version}", name="wiki_article_version")
      */
     public function version(WikiArticle $article, Request $request, LogRepositoryInterface $logRepository, int $version) {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
@@ -140,7 +140,7 @@ class WikiAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/restore", name="restore_wiki_article_version")
+     * @Route("/{uuid}/restore", name="restore_wiki_article_version")
      */
     public function restore(WikiArticle $article, Request $request, LogRepositoryInterface $logRepository, TranslatorInterface $translator) {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
@@ -149,7 +149,7 @@ class WikiAdminController extends AbstractController {
             $this->addFlash('error', $translator->trans('The CSRF token is invalid. Please try to resubmit the form.', [], 'validators'));
 
             return $this->redirectToRoute('wiki_article_versions', [
-                'id' => $article->getId()
+                'uuid' => $article->getUuid()
             ]);
         }
 
@@ -159,13 +159,12 @@ class WikiAdminController extends AbstractController {
         $this->addFlash('success', 'versions.restore.success');
 
         return $this->redirectToRoute('show_wiki_article', [
-            'id' => $article->getId(),
-            'slug' => $article->getSlug()
+            'uuid' => $article->getUuid()
         ]);
     }
 
     /**
-     * @Route("/{id}/remove", name="remove_wiki_article")
+     * @Route("/{uuid}/remove", name="remove_wiki_article")
      */
     public function remove(WikiArticle $article, Request $request, TranslatorInterface $translator) {
         $this->denyAccessUnlessGranted(WikiVoter::Remove, $article);
@@ -183,7 +182,7 @@ class WikiAdminController extends AbstractController {
             $this->addFlash('success', 'admin.wiki.remove.success');
 
             return $this->redirectToRoute('admin_wiki', [
-                'id' => $article->getParent() !== null ? $article->getParent()->getId() : null
+                'uuid' => $article->getParent() !== null ? $article->getParent()->getUuid() : null
             ]);
         }
 

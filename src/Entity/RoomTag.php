@@ -3,18 +3,16 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
  */
 class RoomTag {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string", length=64)
@@ -33,11 +31,8 @@ class RoomTag {
      */
     private $hasValue = false;
 
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int {
-        return $this->id;
+    public function __construct() {
+        $this->uuid = Uuid::uuid4();
     }
 
     /**

@@ -84,7 +84,7 @@ class DocumentAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/edit", name="admin_edit_document")
+     * @Route("/{uuid}/edit", name="admin_edit_document")
      */
     public function edit(Document $document, Request $request) {
         $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
@@ -96,7 +96,7 @@ class DocumentAdminController extends AbstractController {
             $this->repository->persist($document);
 
             $this->addFlash('success', 'admin.documents.edit.success');
-            return $this->redirectToReferer(['view' => 'show_document'], 'admin_documents', [ 'id' => $document->getId(), 'slug' => $document->getSlug() ]);
+            return $this->redirectToReferer(['view' => 'show_document'], 'admin_documents', [ 'uuid' => $document->getUuid() ]);
         }
 
         return $this->render('admin/documents/edit.html.twig', [
@@ -106,7 +106,7 @@ class DocumentAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/versions", name="document_versions")
+     * @Route("/{uuid}/versions", name="document_versions")
      */
     public function versions(Document $document, Request $request, LogRepositoryInterface $logRepository, Sorter $sorter) {
         $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
@@ -124,7 +124,7 @@ class DocumentAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/versions/{version}", name="show_document_version")
+     * @Route("/{uuid}/versions/{version}", name="show_document_version")
      */
     public function version(Document $document, LogRepositoryInterface $logRepository, int $version) {
         $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
@@ -154,7 +154,7 @@ class DocumentAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/restore", name="restore_document_version")
+     * @Route("/{uuid}/restore", name="restore_document_version")
      */
     public function restore(Document $document, Request $request, LogRepositoryInterface $logRepository, TranslatorInterface $translator) {
         $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
@@ -163,7 +163,7 @@ class DocumentAdminController extends AbstractController {
             $this->addFlash('error', $translator->trans('The CSRF token is invalid. Please try to resubmit the form.', [], 'validators'));
 
             return $this->redirectToRoute('document_versions', [
-                'id' => $document->getId()
+                'uuid' => $document->getUuid()
             ]);
         }
 
@@ -173,13 +173,12 @@ class DocumentAdminController extends AbstractController {
         $this->addFlash('success', 'versions.restore.success');
 
         return $this->redirectToRoute('show_document', [
-            'id' => $document->getId(),
-            'slug' => $document->getSlug()
+            'uuid' => $document->getUuid()
         ]);
     }
 
     /**
-     * @Route("/{id}/remove", name="admin_remove_document")
+     * @Route("/{uuid}/remove", name="admin_remove_document")
      */
     public function remove(Document $document, Request $request, TranslatorInterface $translator) {
         $this->denyAccessUnlessGranted(DocumentVoter::Remove, $document);

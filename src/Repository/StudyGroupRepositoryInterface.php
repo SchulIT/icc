@@ -16,6 +16,12 @@ interface StudyGroupRepositoryInterface extends TransactionalRepositoryInterface
     public function findOneById(int $id): ?StudyGroup;
 
     /**
+     * @param string $uuid
+     * @return StudyGroup|null
+     */
+    public function findOneByUuid(string $uuid): ?StudyGroup;
+
+    /**
      * @param string $externalId
      * @return StudyGroup|null
      */

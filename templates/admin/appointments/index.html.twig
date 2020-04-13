@@ -75,19 +75,19 @@
                                         <td class="align-middle">{{ start }}</td>
                                         <td class="align-middle">{{ end }}</td>
                                         <td class="align-middle">
-                                            {% include '_includes/study_groups.html.twig' with { studyGroups: appointment.studyGroups, id: appointment.id } only %}
+                                            {% include '_includes/study_groups.html.twig' with { studyGroups: appointment.studyGroups, id: appointment.uuid } only %}
                                         </td>
                                         <td class="align-middle">
                                             {% for organizer in appointment.organizers %}{{ organizer|teacher }}{% if not loop.last or appointment.externalOrganizers is not null %}, {% endif %}{% endfor %}{{ appointment.externalOrganizers }}
                                         </td>
                                         <td class="align-middle">
                                             {% if is_granted('edit', appointment) %}
-                                                <a href="{{ path('edit_appointment', { id: appointment.id }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
+                                                <a href="{{ path('edit_appointment', { uuid: appointment.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
                                                     <i class="fa fa-edit"></i>
                                                 </a>
                                             {% endif %}
                                             {% if is_granted('remove', appointment) %}
-                                                <a href="{{ path('remove_appointment', { id: appointment.id }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
+                                                <a href="{{ path('remove_appointment', { uuid: appointment.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
                                                     <i class="fa fa-trash"></i>
                                                 </a>
                                             {% endif %}
@@ -124,13 +124,13 @@
                                 <select name="categoryId" id="category" class="form-control" data-trigger="submit" data-choice="true">
                                     <option value="" placeholder>{{ 'label.select.category'|trans }}</option>
                                     {% for c in categoryFilter.categories %}
-                                        <option value="{{ c.id }}" {% if categoryFilter.currentCategory != null and categoryFilter.currentCategory.id == c.id %}selected="selected"{% endif %}>{{ c.name }}</option>
+                                        <option value="{{ c.uuid }}" {% if categoryFilter.currentCategory != null and categoryFilter.currentCategory.id == c.id %}selected="selected"{% endif %}>{{ c.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </form>
 
-                        {% include "_filter/query.html.twig" with { params: { q: q, categoryId: categoryFilter.currentCategory != null ? categoryFilter.currentCategory.id : null }, route: 'admin_appointments' } %}
+                        {% include "_filter/query.html.twig" with { params: { q: q, categoryId: categoryFilter.currentCategory != null ? categoryFilter.currentCategory.uuid : null }, route: 'admin_appointments' } %}
                     </div>
                 </div>
             </div>

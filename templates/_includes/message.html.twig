@@ -7,11 +7,11 @@
     <div class="card-body">
         <div class="float-right ml-2">
 
-            <button data-toggle="popover" data-popover-title="{{ 'label.details'|trans }}" data-popover-container="#message-{{ message.id }}-info" class="btn btn-outline-secondary btn-sm">
+            <button data-toggle="popover" data-popover-title="{{ 'label.details'|trans }}" data-popover-container="#message-{{ message.uuid }}-info" class="btn btn-outline-secondary btn-sm">
                 <i class="fa fa-info-circle"></i>
             </button>
 
-            <div class="d-none" id="message-{{ message.id }}-info">
+            <div class="d-none" id="message-{{ message.uuid }}-info">
                 <p class="m-0 mb-1">
                     <span class="text-muted">{{ 'label.lastchange'|trans }}</span> {{ message.updatedAt|format_datetime }}
                 </p>
@@ -23,14 +23,14 @@
 
                 {% if message.studyGroups|length > 0 %}
                     <p class="m-0 mb-1">
-                        <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': message.studyGroups|length }) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, id: message.id } only  %}
+                        <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': message.studyGroups|length }) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, id: message.uuid } only  %}
                     </p>
                 {% endif %}
             </div>
 
             {% if message.mustConfirm and is_granted('confirm', message) %}
                 {% if not is_confirmed(message) and is_granted('confirm', message) %}
-                    <a href="{{ path('confirm_message', { id: message.id }) }}" class="btn btn-warning btn-sm" title="{{ 'actions.confirm'|trans }}">
+                    <a href="{{ path('confirm_message', { uuid: message.uuid }) }}" class="btn btn-warning btn-sm" title="{{ 'actions.confirm'|trans }}">
                         <i class="fa fa-check"></i>
                     </a>
                 {% else %}
@@ -42,7 +42,7 @@
 
             {% if message.uploadsEnabled and is_granted('upload', message) %}
             <div class="btn-group" role="group">
-                <a href="{{ path('show_message', { id: message.id }) }}" class="btn {% if missingUploads|length > 0 %}btn-warning{% else %}btn-success{% endif %} btn-sm" title="{{ 'messages.uploads.info'|trans }}">
+                <a href="{{ path('show_message', { uuid: message.uuid }) }}" class="btn {% if missingUploads|length > 0 %}btn-warning{% else %}btn-success{% endif %} btn-sm" title="{{ 'messages.uploads.info'|trans }}">
                     <i class="fa fa-upload"></i>
                 </a>
             </div>
@@ -51,18 +51,18 @@
             {% if is_granted('edit', message) or is_granted('remove', message) %}
                 <div class="btn-group" role="group">
                     {% if is_granted('edit', message) %}
-                        <a href="{{ path('edit_message', { id: message.id, ref: 'view' }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
+                        <a href="{{ path('edit_message', { uuid: message.uuid, ref: 'view' }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
                             <i class="fa fa-edit"></i>
                         </a>
 
                         {% if message.mustConfirm %}
-                            <a href="{{ path('message_confirmations', { id: message.id })}}" class="btn btn-primary btn-sm" title="{{ 'admin.messages.confirmations.label'|trans }}">
+                            <a href="{{ path('message_confirmations', { uuid: message.uuid })}}" class="btn btn-primary btn-sm" title="{{ 'admin.messages.confirmations.label'|trans }}">
                                 <i class="fas fa-tasks"></i>
                             </a>
                         {% endif %}
                     {% endif %}
                     {% if is_granted('remove', message) %}
-                        <a href="{{ path('remove_message', { id: message.id })}}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
+                        <a href="{{ path('remove_message', { uuid: message.uuid })}}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
                             <i class="fa fa-trash"></i>
                         </a>
                     {% endif %}
@@ -71,18 +71,18 @@
 
             {% if is_granted('dismiss', message) %}
                 {% if is_dismissed(message) %}
-                    <a href="{{ path('reenable_message', { id: message.id }) }}" class="btn btn-secondary btn-sm" title="{{ 'message.reenable'|trans }}">
+                    <a href="{{ path('reenable_message', { uuid: message.uuid }) }}" class="btn btn-secondary btn-sm" title="{{ 'message.reenable'|trans }}">
                         <span aria-hidden="true"><i class="fas fa-eye"></i></span>
                     </a>
                 {% else %}
-                    <a href="{{ path('dismiss_message', { id: message.id }) }}" class="btn btn-secondary btn-sm" title="{{ 'message.dismiss'|trans }}">
+                    <a href="{{ path('dismiss_message', { uuid: message.uuid }) }}" class="btn btn-secondary btn-sm" title="{{ 'message.dismiss'|trans }}">
                         <span aria-hidden="true"><i class="fas fa-eye-slash"></i></span>
                     </a>
                 {% endif %}
             {% endif %}
         </div>
 
-        <h5 class="card-title"><a href="{{ path('show_message', { id: message.id }) }}">{{ message.title }}</a></h5>
+        <h5 class="card-title"><a href="{{ path('show_message', { uuid: message.uuid }) }}">{{ message.title }}</a></h5>
 
         {% if not is_dismissed(message) %}
             {{ message.content|markdown }}
@@ -94,13 +94,13 @@
         <div class="card-footer">
             {% for attachment in message.attachments %}
                 <span class="mr-2">
-                    <a href="{{ path('download_message_attachment', { id: attachment.id, message: message.id }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
+                    <a href="{{ path('download_message_attachment', { uuid: attachment.uuid, message: message.uuid }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
                 </span>
             {% endfor %}
             {% if message.downloadsEnabled %}
                 {% for file in userDownloads %}
                     <span class="mr-2">
-                        <a href="{{ path('download_user_file', { id: message.id, filename: file.basename }) }}"><i class="fa fa-download"></i> {{ file.basename }}</a>
+                        <a href="{{ path('download_user_file', { uuid: message.uuid, filename: file.basename }) }}"><i class="fa fa-download"></i> {{ file.basename }}</a>
                     </span>
                 {% endfor %}
             {% endif %}

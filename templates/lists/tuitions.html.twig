@@ -80,13 +80,13 @@
                                 {% if teacherFilter.currentTeacher == null %}
                                 <td>
                                     {% if tuition.teacher is not null %}
-                                        <a href="{{ path('list_tuitions', { teacherAcronym: tuition.teacher.acronym }) }}">{{ tuition.teacher|teacher }}</a>
+                                        <a href="{{ path('list_tuitions', { teacher: tuition.teacher.acronym }) }}">{{ tuition.teacher|teacher }}</a>
                                     {% endif %}
                                 </td>
                                 {% endif %}
                                 {% if studentFilter.currentStudent == null %}
                                     <td>
-                                        <a href="{{ path('list_studygroups', { studyGroupId: tuition.studyGroup.id}) }}">{{ tuition.studyGroup.name }}</a>
+                                        <a href="{{ path('list_studygroups', { study_group: tuition.studyGroup.uuid}) }}">{{ tuition.studyGroup.name }}</a>
                                     </td>
                                     <td>
                                         {{ tuition.studyGroup.memberships|length }}
@@ -95,7 +95,7 @@
                                     <td>{{ memberships[tuition.externalId] }}</td>
                                 {% endif %}
                                 <td>
-                                    <a href="{{ path('list_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
+                                    <a href="{{ path('list_tuition', { uuid: tuition.uuid }) }}">{{ 'label.details'|trans }}</a>
                                 </td>
                             </tr>
                         {% endfor %}

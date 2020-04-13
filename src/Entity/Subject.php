@@ -6,6 +6,7 @@ use App\Validator\Color;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -15,13 +16,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Subject {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true)
@@ -109,14 +105,8 @@ class Subject {
     private $teachers;
 
     public function __construct() {
+        $this->uuid = Uuid::uuid4();
         $this->teachers = new ArrayCollection();
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int {
-        return $this->id;
     }
 
     /**

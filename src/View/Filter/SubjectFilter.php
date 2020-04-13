@@ -19,7 +19,7 @@ class SubjectFilter {
         $this->subjectRepository = $subjectRepository;
     }
 
-    public function handle(?int $subjectId, bool $onlySubjectsWithTeachers = true) {
+    public function handle(?string $subjectUuid, bool $onlySubjectsWithTeachers = true) {
         if($onlySubjectsWithTeachers === true) {
             $subjects = $this->subjectRepository->findAllWithTeachers();
         } else {
@@ -29,11 +29,11 @@ class SubjectFilter {
         $this->sorter->sort($subjects, SubjectNameStrategy::class);
 
         $subjects = ArrayUtils::createArrayWithKeys($subjects, function(Subject $subject) {
-            return $subject->getId();
+            return (string)$subject->getUuid();
         });
 
-        $subject = $subjectId !== null ?
-            $subjects[$subjectId] ?? null : null;
+        $subject = $subjectUuid !== null ?
+            $subjects[$subjectUuid] ?? null : null;
 
         return new SubjectFilterView($subjects, $subject);
     }

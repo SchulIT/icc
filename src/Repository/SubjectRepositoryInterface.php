@@ -13,6 +13,12 @@ interface SubjectRepositoryInterface extends TransactionalRepositoryInterface {
     public function findOneById(int $id): ?Subject;
 
     /**
+     * @param string $uuid
+     * @return Subject|null
+     */
+    public function findOneByUuid(string $uuid): ?Subject;
+
+    /**
      * @param string $abbreviation
      * @return Subject|null
      */

@@ -27,7 +27,7 @@ class StudyGroupFilter {
         $this->studyGroupRepository = $studyGroupRepository;
     }
 
-    public function handle(?int $studyGroupId, User $user, bool $onlyGrades = false) {
+    public function handle(?string $studyGroupUuid, User $user, bool $onlyGrades = false) {
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
         $studyGroups = [ ];
@@ -58,12 +58,12 @@ class StudyGroupFilter {
         $studyGroups = ArrayUtils::createArrayWithKeys(
             $studyGroups,
             function(StudyGroup $studyGroup) {
-                return $studyGroup->getId();
+                return (string)$studyGroup->getUuid();
             }
         );
 
-        $studyGroup = $studyGroupId !== null ?
-            $studyGroups[$studyGroupId] ?? null : null;
+        $studyGroup = $studyGroupUuid !== null ?
+            $studyGroups[$studyGroupUuid] ?? null : null;
 
         $groups = $this->grouper->group($studyGroups, StudyGroupGradeStrategy::class);
         $this->sorter->sort($groups, StudyGroupGradeGroupStrategy::class);

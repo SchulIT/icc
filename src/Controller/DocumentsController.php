@@ -17,6 +17,7 @@ use App\Sorting\Sorter;
 use App\Utils\RefererHelper;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\UserTypeFilter;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -38,13 +39,13 @@ class DocumentsController extends AbstractController {
     /**
      * @Route("", name="documents")
      */
-    public function index(DocumentRepositoryInterface $documentRepository, StudyGroupFilter $studyGroupFilter, UserTypeFilter $userTypeFilter,
-                          ?int $studyGroupId = null, ?string $userType = null, ?string $q = null) {
+    public function index(DocumentRepositoryInterface $documentRepository, StudyGroupFilter $studyGroupFilter, UserTypeFilter $userTypeFilter, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $studyGroupFilterView = $studyGroupFilter->handle($studyGroupId, $user, true);
-        $userTypeFilterView = $userTypeFilter->handle($userType, $user);
+        $q = $request->query->get('q', null);
+        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user, true);
+        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user);
 
         $documents = $documentRepository->findAllFor($userTypeFilterView->getCurrentType(), $studyGroupFilterView->getCurrentStudyGroup(), $q);
 
@@ -61,7 +62,7 @@ class DocumentsController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/{slug}", name="show_document", requirements={"id": "\d+"})
+     * @Route("/{uuid}", name="show_document")
      */
     public function show(Document $document) {
         $this->denyAccessUnlessGranted(DocumentVoter::View, $document);
@@ -72,7 +73,7 @@ class DocumentsController extends AbstractController {
     }
 
     /**
-     * @Route("/{document}/{alias}/attachment/{id}", name="download_document_attachment", requirements={"id": "\d+"})
+     * @Route("/{document}/{alias}/attachment/{uuid}", name="download_document_attachment")
      */
     public function downloadAttachment(DocumentAttachment $attachment, DocumentFilesystem $documentFilesystem) {
         $this->denyAccessUnlessGranted(DocumentVoter::View, $attachment->getDocument());

@@ -18,6 +18,16 @@ class SubjectRepository extends AbstractTransactionalRepository implements Subje
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findOneByUuid(string $uuid): ?Subject {
+        return $this->em->getRepository(Subject::class)
+            ->findOneBy([
+                'uuid'=> $uuid
+            ]);
+    }
+
+    /**
      * @param string $abbreviation
      * @return Subject|null
      */

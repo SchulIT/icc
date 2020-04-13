@@ -60,7 +60,7 @@ class TimetablePeriodAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/edit", name="admin_edit_timetable_period")
+     * @Route("/{uuid}/edit", name="admin_edit_timetable_period")
      */
     public function edit(TimetablePeriod $period, Request $request) {
         $form = $this->createForm(TimetablePeriodType::class, $period);
@@ -79,7 +79,7 @@ class TimetablePeriodAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/remove", name="admin_remove_timetable_period")
+     * @Route("/{uuid}/remove", name="admin_remove_timetable_period")
      */
     public function remove(TimetablePeriod $period, Request $request) {
 

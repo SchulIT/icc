@@ -1,6 +1,6 @@
 {% macro wiki_article(article, prefix) %}
     {% set prefix = prefix ~ " / " %}
-    <a href="#" data-insert-link="wiki:{{ article.id }}" class="list-group-item list-group-item-action">
+    <a href="#" data-insert-link="wiki:{{ article.uuid }}" class="list-group-item list-group-item-action">
         <span class="d-block">
             {{ prefix }}<strong>{{ article.title }}</strong>
             {% if article.isOnline %}
@@ -49,7 +49,7 @@
                                 <div class="card-header">{{ category.category.name }}</div>
                                 <div class="list-group list-group-flush">
                                     {% for document in category.documents %}
-                                    <a href="#" data-insert-link="document:{{ document.id }}" class="list-group-item list-group-item-action">
+                                    <a href="#" data-insert-link="document:{{ document.uuid }}" class="list-group-item list-group-item-action">
                                         <span class="d-block">{{ document.title }}</span>
                                         <span class="d-block text-muted small">
                                             {% for visibility in document.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}

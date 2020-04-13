@@ -14,6 +14,12 @@ interface RoomRepositoryInterface extends TransactionalRepositoryInterface {
     public function findOneById(int $id): ?Room;
 
     /**
+     * @param string $uuid
+     * @return Room|null
+     */
+    public function findOneByUuid(string $uuid): ?Room;
+
+    /**
      * @param string $externalId
      * @return Room|null
      */

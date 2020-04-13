@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -14,13 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Message {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
+   use IdTrait;
+   use UuidTrait;
 
     /**
      * @ORM\Column(type="string")
@@ -236,6 +232,8 @@ class Message {
     private $priority;
 
     public function __construct() {
+        $this->uuid = Uuid::uuid4();
+
         $this->studyGroups = new ArrayCollection();
         $this->attachments = new ArrayCollection();
         $this->files = new ArrayCollection();
@@ -250,13 +248,6 @@ class Message {
 
         $this->scope = MessageScope::Messages();
         $this->priority = MessagePriority::Normal();
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int {
-        return $this->id;
     }
 
     /**

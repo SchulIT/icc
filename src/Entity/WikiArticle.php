@@ -6,15 +6,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
  * @ORM\Table(
  *     name="wiki",
- *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="unique_parent_slug", columns={"parent", "slug"})
- *     },
  *     indexes={
  *         @ORM\Index(columns={"title"}, flags={"fulltext"}),
  *         @ORM\Index(columns={"content"}, flags={"fulltext"})
@@ -25,13 +23,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class WikiArticle {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string")
@@ -40,13 +33,6 @@ class WikiArticle {
      * @var string
      */
     private $title;
-
-    /**
-     * @ORM\Column(type="string")
-     * @Gedmo\Slug(fields={"title"})
-     * @var string
-     */
-    private $slug;
 
     /**
      * @ORM\Column(type="boolean")
@@ -131,15 +117,10 @@ class WikiArticle {
     private $children;
 
     public function __construct() {
+        $this->uuid = Uuid::uuid4();
+
         $this->visibilities = new ArrayCollection();
         $this->children = new ArrayCollection();
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int {
-        return $this->id;
     }
 
     /**
@@ -156,13 +137,6 @@ class WikiArticle {
     public function setTitle(?string $title): WikiArticle {
         $this->title = $title;
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSlug() {
-        return $this->slug;
     }
 
     /**

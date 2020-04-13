@@ -23,7 +23,7 @@ class TeacherFilter {
         $this->teacherRepository = $teacherRepository;
     }
 
-    public function handle(?string $acronym, User $user, bool $setDefaultTeacher): TeacherFilterView {
+    public function handle(?string $uuid, User $user, bool $setDefaultTeacher): TeacherFilterView {
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
         $teachers = [ ];
@@ -35,14 +35,14 @@ class TeacherFilter {
         $teachers = ArrayUtils::createArrayWithKeys(
             $teachers,
             function(Teacher $teacher) {
-                return $teacher->getAcronym();
+                return (string)$teacher->getUuid();
             }
         );
 
         $fallbackTeacher = $setDefaultTeacher ? $user->getTeacher() : null;
 
-        $teacher = $acronym !== null ?
-            $teachers[$acronym] ?? $fallbackTeacher : $fallbackTeacher;
+        $teacher = $uuid !== null ?
+            $teachers[$uuid] ?? $fallbackTeacher : $fallbackTeacher;
 
         $this->sorter->sort($teachers, TeacherStrategy::class);
 

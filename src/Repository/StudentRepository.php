@@ -32,6 +32,17 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findOneByUuid(string $uuid): ?Student {
+        return $this->getDefaultQueryBuilder()
+            ->andWhere('s.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
      * @param string $externalId
      * @return Student|null
      */

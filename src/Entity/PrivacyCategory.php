@@ -4,19 +4,16 @@ namespace App\Entity;
 
 use App\Validator\NullOrNotBlank;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
  */
 class PrivacyCategory {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int|null
-     */
-    private $id;
+
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
@@ -38,11 +35,8 @@ class PrivacyCategory {
      */
     private $description;
 
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int {
-        return $this->id;
+    public function __construct() {
+        $this->uuid = Uuid::uuid4();
     }
 
     /**

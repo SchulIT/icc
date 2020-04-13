@@ -41,8 +41,9 @@ class AppointmentAdminController extends AbstractController {
     /**
      * @Route("", name="admin_appointments")
      */
-    public function index(AppointmentCategoryFilter $categoryFilter, ?int $categoryId = null, ?string $q = null) {
-        $categoryFilterView = $categoryFilter->handle($categoryId);
+    public function index(AppointmentCategoryFilter $categoryFilter, Request $request) {
+        $q = $request->query->get('q', null);
+        $categoryFilterView = $categoryFilter->handle($request->query->get('category', null));
         $categories = $categoryFilterView->getCurrentCategory() === null ? [ ] : [$categoryFilterView->getCurrentCategory()];
         $appointments = $this->repository->findAll($categories, $q);
 
@@ -78,7 +79,7 @@ class AppointmentAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/edit", name="edit_appointment")
+     * @Route("/{uuid}/edit", name="edit_appointment")
      */
     public function edit(Appointment $appointment, Request $request) {
         $form = $this->createForm(AppointmentType::class, $appointment);
@@ -98,7 +99,7 @@ class AppointmentAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/remove", name="remove_appointment")
+     * @Route("/{uuid}/remove", name="remove_appointment")
      */
     public function remove(Appointment $appointment, Request $request, TranslatorInterface $translator) {
         $form = $this->createForm(ConfirmType::class, null, [

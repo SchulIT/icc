@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -20,20 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Document {
 
-    /**
-     * @ORM\GeneratedValue()
-     * @ORM\Id()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string")
-     * @Gedmo\Slug(fields={"title"})
-     * @var string
-     */
-    private $slug;
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string")
@@ -107,24 +96,12 @@ class Document {
     private $authors;
 
     public function __construct() {
+        $this->uuid = Uuid::uuid4();
+
         $this->studyGroups = new ArrayCollection();
         $this->attachments = new ArrayCollection();
         $this->visibilities = new ArrayCollection();
         $this->authors = new ArrayCollection();
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int {
-        return $this->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSlug(): string {
-        return $this->slug;
     }
 
     /**

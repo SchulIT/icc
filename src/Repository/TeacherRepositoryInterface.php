@@ -14,6 +14,12 @@ interface TeacherRepositoryInterface extends TransactionalRepositoryInterface {
     public function findOneById(int $id): ?Teacher;
 
     /**
+     * @param string $uuid
+     * @return Teacher|null
+     */
+    public function findOneByUuid(string $uuid): ?Teacher;
+
+    /**
      * @param string $acronym
      * @return Teacher|null
      */

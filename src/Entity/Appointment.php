@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -12,13 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Appointment {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
@@ -113,16 +109,11 @@ class Appointment {
     private $visibilities;
 
     public function __construct() {
+        $this->uuid = Uuid::uuid4();
+
         $this->studyGroups = new ArrayCollection();
         $this->organizers = new ArrayCollection();
         $this->visibilities = new ArrayCollection();
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int {
-        return $this->id;
     }
 
     /**

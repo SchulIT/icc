@@ -35,6 +35,7 @@ use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\SubjectFilter;
 use App\View\Filter\TeacherFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ListController extends AbstractControllerWithMessages {
@@ -58,16 +59,15 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/lists/tuitions", name="list_tuitions")
      */
-    public function tuitions(GradeFilter $gradeFilter, StudentFilter $studentFilter, TeacherFilter $teacherFilter, TuitionRepositoryInterface $tuitionRepository,
-                             ?int $studentId = null, ?int $gradeId = null, ?string $teacherAcronym = null) {
+    public function tuitions(GradeFilter $gradeFilter, StudentFilter $studentFilter, TeacherFilter $teacherFilter, TuitionRepositoryInterface $tuitionRepository, Request $request) {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
 
         /** @var User $user */
         $user = $this->getUser();
 
-        $gradeFilterView = $gradeFilter->handle($gradeId, $user);
-        $studentFilterView = $studentFilter->handle($studentId, $user);
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user, $gradeFilterView->getCurrentGrade() === null && $studentFilterView->getCurrentStudent() === null);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $gradeFilterView->getCurrentGrade() === null && $studentFilterView->getCurrentStudent() === null);
 
         $tuitions = [ ];
         $memberships = [ ];
@@ -99,7 +99,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/tuitions/{id}", name="list_tuition")
+     * @Route("/lists/tuitions/{uuid}", name="list_tuition")
      */
     public function tuition(Tuition $tuition, TuitionRepositoryInterface $tuitionRepository, ExamRepositoryInterface $examRepository) {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
@@ -122,7 +122,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/tuitions/{id}/export", name="export_tuition")
+     * @Route("/lists/tuitions/{uuid}/export", name="export_tuition")
      */
     public function exportTuition(Tuition $tuition, TuitionCsvExporter $tuitionCsvExporter) {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
@@ -133,13 +133,13 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/lists/study_groups", name="list_studygroups")
      */
-    public function studyGroups(StudyGroupFilter $studyGroupFilter, ?int $studyGroupId = null) {
+    public function studyGroups(StudyGroupFilter $studyGroupFilter, Request $request) {
         $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);
 
         /** @var User $user */
         $user = $this->getUser();
 
-        $studyGroupFilterView = $studyGroupFilter->handle($studyGroupId, $user);
+        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
 
         $students = [ ];
 
@@ -194,10 +194,10 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/lists/teachers", name="list_teachers")
      */
-    public function teachers(SubjectFilter $subjectFilter, TeacherRepositoryInterface $teacherRepository, ?int $subjectId = null) {
+    public function teachers(SubjectFilter $subjectFilter, TeacherRepositoryInterface $teacherRepository, Request $request) {
         $this->denyAccessUnlessGranted(ListsVoter::Teachers);
 
-        $subjectFilterView = $subjectFilter->handle($subjectId);
+        $subjectFilterView = $subjectFilter->handle($request->query->get('subject', null));
         $teachers = [ ];
 
         if($subjectFilterView->getCurrentSubject() !== null) {

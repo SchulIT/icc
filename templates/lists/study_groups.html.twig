@@ -119,7 +119,7 @@
                                         <td>{{ tuition.subject.name }}</td>
                                         <td>{{ tuition.teacher|teacher }}</td>
                                         <td>
-                                            <a href="{{ path('list_tuition', { id: tuition.id }) }}">{{ 'label.details'|trans }}</a>
+                                            <a href="{{ path('list_tuition', { uuid: tuition.uuid }) }}">{{ 'label.details'|trans }}</a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -133,7 +133,7 @@
                 {% if students|length > 0 %}
                     <div class="card">
                         <div class="list-group list-group-flush">
-                            <a href="{{ path('export_studygroup', { id: studyGroupFilter.currentStudyGroup.id }) }}" class="list-group-item list-group-item-action">
+                            <a href="{{ path('export_studygroup', { uuid: studyGroupFilter.currentStudyGroup.uuid }) }}" class="list-group-item list-group-item-action">
                                 <i class="fas fa-download"></i> {{ 'lists.study_groups.export.csv'|trans }}
                             </a>
 

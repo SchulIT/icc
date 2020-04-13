@@ -32,7 +32,7 @@
 
                             <div class="list-group list-group-flush">
                                 {% for document in group.documents %}
-                                    <a href="{{ path('show_document', { id: document.id, slug: document.slug }) }}" class="list-group-item list-group-item-action"><i class="far fa-file"></i> {{ document.title }}</a>
+                                    <a href="{{ path('show_document', { uuid: document.uuid }) }}" class="list-group-item list-group-item-action"><i class="far fa-file"></i> {{ document.title }}</a>
                                 {% endfor %}
                             </div>
                         </div>
@@ -59,18 +59,18 @@
 
                 <div class="card">
                     <div class="card-body">
-                            {% set studyGroupParam = (studyGroupFilter.currentStudyGroup == null) ? null : studyGroupFilter.currentStudyGroup.id %}
+                            {% set studyGroupParam = (studyGroupFilter.currentStudyGroup == null) ? null : studyGroupFilter.currentStudyGroup.uuid %}
                             {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
 
                             {% if studyGroupFilter.studyGroupGroups|length > 0 %}
-                                {% include "_filter/study_group.html.twig" with { grouped: false, params: { q: q, userType: userTypeParam } } %}
+                                {% include "_filter/study_group.html.twig" with { grouped: false, params: { q: q, user_type: userTypeParam } } %}
                             {% endif %}
 
                             {% if userTypeFilter.types|length > 0 %}
-                                {% include "_filter/user_type.html.twig" with { params: { q: q, studyGroupId: studyGroupParam } } %}
+                                {% include "_filter/user_type.html.twig" with { params: { q: q, study_group: studyGroupParam } } %}
                             {% endif %}
 
-                            {% include "_filter/query.html.twig" with { params: { q: q, studyGroupId: studyGroupParam }, route: 'documents' } %}
+                            {% include "_filter/query.html.twig" with { params: { q: q, study_group: studyGroupParam }, route: 'documents' } %}
                         </div>
                     </div>
                 </div>

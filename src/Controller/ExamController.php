@@ -54,15 +54,15 @@ class ExamController extends AbstractControllerWithMessages {
      * @Route("", name="exams")
      */
     public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter,
-                          ExamRepositoryInterface $examRepository, ExamSettings $examSettings,
-                          ?int $studentId = null, ?string $teacherAcronym = null, ?int $gradeId = null, ?bool $all = false) {
+                          ExamRepositoryInterface $examRepository, ExamSettings $examSettings, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
-        $studentFilterView = $studentsFilter->handle($studentId, $user);
-        $gradeFilterView = $gradeFilter->handle($gradeId, $user);
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null);
+        $all = $request->query->getBoolean('all', false);
+        $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null);
 
         $exams = [ ];
         $today = $all ? null : $this->dateHelper->getToday();
@@ -113,7 +113,7 @@ class ExamController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/{id}", name="show_exam", requirements={"id": "\d+"})
+     * @Route("/{uuid}", name="show_exam", requirements={"id": "\d+"})
      */
     public function show(Exam $exam) {
         $this->denyAccessUnlessGranted(ExamVoter::Show, $exam);

@@ -6,7 +6,7 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('messages') }}">{{ 'admin.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('show_message', { id: message.id }) }}">{{ message.title }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_message', { uuid: message.uuid }) }}">{{ message.title }}</a></li>
         <li class="breadcrumb-item">{{ 'messages.uploads.label'|trans }}
         <li class="breadcrumb-item">{{ file.label }}</li>
         <li class="breadcrumb-item">{{ upload.filename }}</li>
@@ -30,7 +30,7 @@
             <i class="fa fa-trash"></i> {{ 'remove.confirm'|trans }}
         </button>
 
-        <a href="{{ referer_path({ view: 'show_message' }, 'admin_messages', { id: message.id }) }}" class="btn btn-secondary btn-sm">
+        <a href="{{ referer_path({ view: 'show_message' }, 'admin_messages', { uuid: message.uuid }) }}" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
         </a>
     </div>

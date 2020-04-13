@@ -15,7 +15,7 @@
         {% if article.parent is not null %}
             {{ _self.wiki_breadcrumb(article.parent) }}
         {% endif %}
-        <li class="breadcrumb-item"><a href="{{ path('show_wiki_article', { id: article.id, slug: article.slug}) }}">{{ article.title }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_wiki_article', { uuid: article.uuid }) }}">{{ article.title }}</a></li>
     {% endif %}
 {% endmacro %}
 
@@ -31,7 +31,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">
-                                <a href="{{ path('show_wiki_article', { id: article.id, slug: article.slug}) }}">{{ article.title }}</a>
+                                <a href="{{ path('show_wiki_article', { uuid: article.uuid }) }}">{{ article.title }}</a>
                             </h5>
 
                             <ol class="breadcrumb">

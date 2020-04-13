@@ -6,6 +6,7 @@ use App\Utils\CollectionUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -13,13 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Grade {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $id;
+    use IdTrait;
+    use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
@@ -49,6 +45,8 @@ class Grade {
     private $teachers;
 
     public function __construct() {
+        $this->uuid = Uuid::uuid4();
+
         $this->students = new ArrayCollection();
         $this->teachers = new ArrayCollection();
     }

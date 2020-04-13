@@ -7,12 +7,17 @@ use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * @deprecated
+ */
 class QueryStringArgumentValueResolver implements ArgumentValueResolverInterface {
 
     /**
      * @inheritDoc
      */
     public function supports(Request $request, ArgumentMetadata $argument) {
+        return false;
+
         $name = $argument->getName();
 
         if($request->query->has($name) !== true) {

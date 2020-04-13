@@ -39,6 +39,17 @@ class RoomRepository extends AbstractTransactionalRepository implements RoomRepo
     /**
      * @inheritDoc
      */
+    public function findOneByUuid(string $uuid): ?Room {
+        return $this->getDefaultQueryBuilder()
+            ->where('r.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findOneByExternalId(string $externalId): ?Room {
         return $this->getDefaultQueryBuilder()
             ->where('r.externalId = :externalId')

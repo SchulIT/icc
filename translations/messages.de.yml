@@ -89,7 +89,7 @@ label:
     status: Status
     online: online
     offline: offline
-    none: Keiner
+    none: Keine
     tags: Tags
     gender: Geschlecht
     must_confirm: muss vom Benutzer bestätigt werden
@@ -103,6 +103,7 @@ label:
     priority: Priorität
     description: Beschreibung
     tuitions: Unterricht
+    nobody: Niemand
 
 progress:
     status: "%current% von %total%"

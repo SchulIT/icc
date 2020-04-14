@@ -117,7 +117,13 @@
                                     <tr>
                                         <td>{{ tuition.name }}</td>
                                         <td>{{ tuition.subject.name }}</td>
-                                        <td>{{ tuition.teacher|teacher }}</td>
+                                        <td>
+                                            {% if tuition.teacher is null %}
+                                                <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
+                                            {% else %}
+                                                {{ tuition.teacher|teacher }}
+                                            {% endif %}
+                                        </td>
                                         <td>
                                             <a href="{{ path('list_tuition', { uuid: tuition.uuid }) }}">{{ 'label.details'|trans }}</a>
                                         </td>

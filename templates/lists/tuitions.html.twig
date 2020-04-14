@@ -81,15 +81,25 @@
                                 <td>
                                     {% if tuition.teacher is not null %}
                                         <a href="{{ path('list_tuitions', { teacher: tuition.teacher.acronym }) }}">{{ tuition.teacher|teacher }}</a>
+                                    {% else %}
+                                        <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
                                     {% endif %}
                                 </td>
                                 {% endif %}
                                 {% if studentFilter.currentStudent == null %}
                                     <td>
-                                        <a href="{{ path('list_studygroups', { study_group: tuition.studyGroup.uuid}) }}">{{ tuition.studyGroup.name }}</a>
+                                        {% if tuition.studyGroup is not null %}
+                                            <a href="{{ path('list_studygroups', { study_group: tuition.studyGroup.uuid}) }}">{{ tuition.studyGroup.name }}</a>
+                                        {% else %}
+                                            <span class="badge badge-secondary">{{ 'label.none'|trans }}</span>
+                                        {% endif %}
                                     </td>
                                     <td>
-                                        {{ tuition.studyGroup.memberships|length }}
+                                        {% if tuition.studyGroup is not null %}
+                                            {{ tuition.studyGroup.memberships|length }}
+                                        {% else %}
+                                            <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
+                                        {% endif %}
                                     </td>
                                 {% else %}
                                     <td>{{ memberships[tuition.externalId] }}</td>

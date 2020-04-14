@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use LightSaml\Model\Protocol\Response;
 use LightSaml\SpBundle\Security\User\UserCreatorInterface;
 use LightSaml\SpBundle\Security\User\UsernameMapperInterface;
+use SchoolIT\CommonBundle\Saml\ClaimTypes;
 
 class UserCreator implements UserCreatorInterface {
 
@@ -24,8 +25,19 @@ class UserCreator implements UserCreatorInterface {
      * @inheritDoc
      */
     public function createUser(Response $response) {
-        $user = (new User())
-            ->setUsername($this->usernameMapper->getUsername($response));
+        // Second chance: map user by ID
+        $id = $response->getFirstAssertion()
+            ->getFirstAttributeStatement()
+            ->getFirstAttributeByName(ClaimTypes::ID)
+            ->getFirstAttributeValue();
+
+        $user = $this->em->getRepository(User::class)
+            ->findOneBy(['idpId' => $id ]);
+
+        if($user === null) {
+            $user = (new User())
+                ->setIdpId($id);
+        }
 
         $this->userMapper->mapUser($user, $response);
         $this->em->persist($user);

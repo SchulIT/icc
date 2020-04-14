@@ -95,7 +95,7 @@
                                     <td>{{ 'label.exam_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}</td>
                                     <td>{{ exam.students|length }}</td>
                                     <td>
-                                        <a href="{{ path('show_exam', { uuid exam.uuid }) }}">{{ 'label.details'|trans }}</a>
+                                        <a href="{{ path('show_exam', { uuid: exam.uuid }) }}">{{ 'label.details'|trans }}</a>
                                     </td>
                                 </tr>
                             {% endfor %}

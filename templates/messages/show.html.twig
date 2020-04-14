@@ -147,7 +147,7 @@
 
                     {% if message.studyGroups|length > 0 %}
                         <p>
-                            <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': message.studyGroups|length }) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, uuid: message.uuid } only  %}
+                            <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': message.studyGroups|length }) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, details: true } only  %}
                         </p>
                     {% endif %}
                 </div>
@@ -158,7 +158,6 @@
 
 <div id="confirm-upload" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">{{ 'messages.uploads.confirm.title'|trans }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -167,6 +166,7 @@
             </div>
             <div class="modal-body">
                 <p>{{ 'messages.uploads.confirm.message'|trans }}</p>
+                <div class="modal-content">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'actions.cancel'|trans }}</button>

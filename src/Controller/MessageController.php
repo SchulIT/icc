@@ -102,7 +102,10 @@ class MessageController extends AbstractController {
     /**
      * @Route("/{uuid}", name="show_message")
      */
-    public function show(Message $message, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem, Request $request) {
+    public function show(Message $message, MessageRepositoryInterface $messageRepository, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem, Request $request) {
+        // Requery message for better performance
+        $message = $messageRepository->findOneById($message->getId());
+
         /** @var User $user */
         $user = $this->getUser();
 

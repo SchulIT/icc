@@ -16,10 +16,20 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
      * @return Message|null
      */
     public function findOneById(int $id): ?Message {
-        return $this->em->getRepository(Message::class)
-            ->findOneBy([
-                'id' => $id
-            ]);
+        return $this->em->createQueryBuilder()
+            ->select(['m', 'sg', 'sgg', 'v', 'f', 'c', 'a'])
+            ->from(Message::class, 'm')
+            ->leftJoin('m.attachments', 'a')
+            ->leftJoin('m.createdBy', 'c')
+            ->leftJoin('m.files', 'f')
+            ->leftJoin('m.studyGroups', 'sg')
+            ->leftJoin('sg.grades', 'sgg')
+            ->leftJoin('m.visibilities', 'v')
+            ->where('m.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+
     }
 
     private function getFindByQueryBuilder(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [], bool $archive = false): QueryBuilder {
@@ -136,12 +146,9 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
 
     private function createDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
-            ->select(['m', 'sg', 'v', 'f', 'c', 'a'])
+            ->select(['m', 'v', 'c'])
             ->from(Message::class, 'm')
-            ->leftJoin('m.attachments', 'a')
             ->leftJoin('m.createdBy', 'c')
-            ->leftJoin('m.files', 'f')
-            ->leftJoin('m.studyGroups', 'sg')
             ->leftJoin('m.visibilities', 'v');
     }
 
@@ -152,6 +159,5 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
         $this->em->remove($file);
         $this->em->flush();
     }
-
 
 }

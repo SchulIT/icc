@@ -31,7 +31,7 @@ class StudentFilter {
         if($isStudentOrParent) {
             $students = $user->getStudents()->toArray();
         } else {
-            $students = $this->studentRepository->findAll();
+            $students = $this->studentRepository->findAll(true);
         }
 
         $students = ArrayUtils::createArrayWithKeys(

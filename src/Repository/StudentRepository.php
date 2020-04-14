@@ -9,7 +9,14 @@ use Doctrine\ORM\QueryBuilder;
 
 class StudentRepository extends AbstractTransactionalRepository implements StudentRepositoryInterface {
 
-    private function getDefaultQueryBuilder(): QueryBuilder {
+    private function getDefaultQueryBuilder(bool $simple = false): QueryBuilder {
+        if($simple === true) {
+            return $this->em->createQueryBuilder()
+                ->select(['s', 'g'])
+                ->from(Student::class, 's')
+                ->leftJoin('s.grade', 'g');
+        }
+
         return $this->em->createQueryBuilder()
             ->select(['s', 'g', 'sgm', 'sg', 'sgg'])
             ->from(Student::class, 's')
@@ -58,7 +65,7 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
      * @inheritDoc
      */
     public function findAllByGrade(Grade $grade): array {
-        return $this->getDefaultQueryBuilder()
+        return $this->getDefaultQueryBuilder(true)
             ->andWhere('g.id = :gradeId')
             ->setParameter('gradeId', $grade->getId())
             ->getQuery()
@@ -69,7 +76,7 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
      * @inheritDoc
      */
     public function findAllByQuery(string $query): array {
-        $qb = $this->getDefaultQueryBuilder();
+        $qb = $this->getDefaultQueryBuilder(true);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('sInner.id')
@@ -93,7 +100,7 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
      * @return Student[]
      */
     public function findAll() {
-        return $this->getDefaultQueryBuilder()
+        return $this->getDefaultQueryBuilder(true)
             ->getQuery()
             ->getResult();
     }

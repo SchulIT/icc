@@ -1,2 +1,7 @@
-{% set studyGroupsView = studyGroups|studygroups(true) %}
-{% if studyGroups|length > 7 %}<a href="#" id="grades-{{ id }}" data-show=".grades-{{ id }}" data-remove="#grades-{{ id }}">{{ 'messages.overview.show_all'|trans({'%num%': studyGroups|length}) }}</a> <span class="grades-{{ id }}" style="display: none">{{ studyGroupsView }}</span>{% else %}{{ studyGroupsView }}{% endif %}
+{% set details = details|default(false) %}
+{% if details %}
+    {{ studyGroups|studygroups(true) }}
+{% else %}
+    {% if studyGroups|length > 10 %}{{ 'label.study_groups_count'|trans({'%count%': studyGroups|length}) }}
+    {% else %}{{ studyGroups|studygroups(true) }}{% endif %}
+{% endif %}

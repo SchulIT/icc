@@ -118,15 +118,10 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
      * @return StudyGroup[]
      */
     public function findAll() {
-        $qb = $this->em->createQueryBuilder();
-
-        $qb
-            ->select(['sg', 'g', 'm', 't', 's'])
+        $qb = $this->em->createQueryBuilder()
+            ->select(['sg', 'g'])
             ->from(StudyGroup::class, 'sg')
-            ->leftJoin('sg.grades', 'g')
-            ->leftJoin('sg.memberships', 'm')
-            ->leftJoin('sg.tuitions', 't')
-            ->leftJoin('m.student', 's');
+            ->leftJoin('sg.grades', 'g');
 
         return $qb->getQuery()->getResult();
     }

@@ -17,6 +17,7 @@ label:
     grades: Klassen
     study_group: Lerngruppe
     study_groups: "{0} Lerngruppen|{1} Lerngruppe|]1,Inf[ Lerngruppen"
+    study_groups_count: "{0} keine Lerngruppen|{1} eine Lerngruppe|]1,Inf[ %count% Lerngruppen"
     study_groups_simple: Lerngruppen
     usertype: Benutzertyp
     usertypes: Benutzertypen

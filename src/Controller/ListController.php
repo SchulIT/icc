@@ -183,7 +183,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/study_groups/{id}/export", name="export_studygroup")
+     * @Route("/lists/study_groups/{uuid}/export", name="export_studygroup")
      */
     public function exportStudyGroup(StudyGroup $studyGroup, StudyGroupCsvExporter $csvExporter) {
         $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);

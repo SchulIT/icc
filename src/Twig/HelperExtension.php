@@ -11,6 +11,7 @@ use App\Message\MessageFileUploadHelper;
 use App\Security\Voter\MessageVoter;
 use App\Utils\ColorUtils;
 use App\Utils\RefererHelper;
+use App\View\Filter\FilterViewInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -53,7 +54,8 @@ class HelperExtension extends AbstractExtension {
             new TwigFunction('message_downloads', [ $this, 'messageDownloads' ]),
             new TwigFunction('referer_path', [ $this, 'refererPath' ]),
             new TwigFunction('foreground', [ $this, 'foregroundColor' ]),
-            new TwigFunction('validation_errors', [ $this, 'validate' ])
+            new TwigFunction('validation_errors', [ $this, 'validate' ]),
+            new TwigFunction('contains_active_filters', [ $this, 'containsActiveFilters'])
         ];
     }
 
@@ -115,5 +117,19 @@ class HelperExtension extends AbstractExtension {
 
     public function validate($object): ConstraintViolationListInterface {
         return $this->validator->validate($object);
+    }
+
+    /**
+     * @param FilterViewInterface[] $filters
+     * @return bool
+     */
+    public function containsActiveFilters(array $filters): bool {
+        foreach($filters as $filter) {
+            if($filter->isEnabled()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -105,6 +105,9 @@ label:
     tuitions: Unterricht
     nobody: Niemand
 
+filter:
+    reset: zurücksetzen
+
 progress:
     status: "%current% von %total%"
 

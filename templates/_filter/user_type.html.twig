@@ -1,7 +1,7 @@
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
-    <div class="form-group">
+    <div class="form-group {{ class|default('') }}">
         <label for="usertype">{{ 'label.usertype'|trans }}:</label>
         <select name="user_type" id="usertype" class="form-control" data-trigger="submit" data-choice="true">
             {% if userTypeFilter.handleNull %}

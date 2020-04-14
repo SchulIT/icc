@@ -58,7 +58,7 @@
                         {% endif %}
 
                         <form role="form" method="get" class="form hidden-print">
-                            <div class="form-group">
+                            <div class="form-group mb-0">
                                 <label for="categories" class="control-label">{{ 'label.categories'|trans }}:</label>
                                 <select name="categories" multiple="multiple" id="categories" class="form-control" data-choice="true" placeholder="{{ 'label.select.category'|trans }}">
                                     {% for c in categoryFilter.categories %}
@@ -67,6 +67,9 @@
                                 </select>
                             </div>
                         </form>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ path('appointments') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
                     </div>
                 </div>
             </div>

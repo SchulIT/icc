@@ -4,7 +4,7 @@ namespace App\View\Filter;
 
 use App\Entity\AppointmentCategory;
 
-class AppointmentCategoriesFilterView {
+class AppointmentCategoriesFilterView implements FilterViewInterface {
 
     /** @var AppointmentCategory[] */
     private $categories;
@@ -29,5 +29,9 @@ class AppointmentCategoriesFilterView {
      */
     public function getCurrentCategories(): array {
         return $this->currentCategories;
+    }
+
+    public function isEnabled(): bool {
+        return count($this->categories) > 0;
     }
 }

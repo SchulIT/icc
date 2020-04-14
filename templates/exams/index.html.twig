@@ -74,6 +74,7 @@
                     </div>
                 </div>
 
+                {% if contains_active_filters([teacherFilter, studentFilter, gradeFilter]) %}
                 <div class="card">
                     <div class="card-body">
                         {% if teacherFilter.teachers|length > 0 %}
@@ -84,7 +85,7 @@
                             {% include "_filter/student.html.twig" with { params: { all: showAll } } %}
                         {% endif %}
 
-                        {% if studentFilter.studentGradeGroups|length > 0 %}
+                        {% if gradeFilter.grades|length > 0 %}
                             {% include "_filter/grade.html.twig" with { params: { all: showAll } } %}
                         {% endif %}
 
@@ -103,7 +104,7 @@
                             {% include "_filter/_params.html.twig" %}
 
                             <label class="control-label">{{ 'label.options'|trans }}:</label>
-                            <div class="form-group">
+                            <div class="form-group mb-0">
                                 <div class="custom-control custom-checkbox">
 
                                     <input class="custom-control-input" data-trigger="submit" type="checkbox" value="true" id="all" name="all" {% if showAll %} checked="checked"{% endif %}>
@@ -114,7 +115,12 @@
                             </div>
                         </form>
                     </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('exams') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
+                    </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

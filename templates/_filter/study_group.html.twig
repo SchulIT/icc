@@ -5,7 +5,7 @@
 <form role="form" method="get" class="form">
     {% include "_filter/_params.html.twig" %}
 
-    <div class="form-group">
+    <div class="form-group {{ class|default('') }}">
         <label for="study_group" class="control-label">{{ 'label.study_group'|trans }}:</label>
         <select name="study_group" id="study_group" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="true">
             <option value="" placeholder>{{ 'label.select.study_group'|trans }}</option>

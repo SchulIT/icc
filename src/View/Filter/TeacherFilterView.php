@@ -4,7 +4,7 @@ namespace App\View\Filter;
 
 use App\Entity\Teacher;
 
-class TeacherFilterView {
+class TeacherFilterView implements FilterViewInterface {
 
     /** @var Teacher[] */
     private $teachers;
@@ -29,5 +29,9 @@ class TeacherFilterView {
      */
     public function getCurrentTeacher(): ?Teacher {
         return $this->currentTeacher;
+    }
+
+    public function isEnabled(): bool {
+        return count($this->teachers) > 0;
     }
 }

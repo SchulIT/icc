@@ -4,7 +4,7 @@ namespace App\View\Filter;
 
 use App\Entity\UserType;
 
-class UserTypeFilterView {
+class UserTypeFilterView implements FilterViewInterface {
 
     /** @var UserType[] */
     private $types;
@@ -50,4 +50,7 @@ class UserTypeFilterView {
         return $this;
     }
 
+    public function isEnabled(): bool {
+        return count($this->types) > 0;
+    }
 }

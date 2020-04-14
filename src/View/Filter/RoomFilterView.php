@@ -4,7 +4,7 @@ namespace App\View\Filter;
 
 use App\Entity\Room;
 
-class RoomFilterView {
+class RoomFilterView implements FilterViewInterface {
 
     /** @var Room[] */
     private $rooms;
@@ -33,5 +33,9 @@ class RoomFilterView {
      */
     public function getCurrentRoom(): ?Room {
         return $this->currentRoom;
+    }
+
+    public function isEnabled(): bool {
+        return count($this->rooms) > 0;
     }
 }

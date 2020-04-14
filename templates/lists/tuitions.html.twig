@@ -123,6 +123,10 @@
 
                         {% include "_filter/student.html.twig" %}
                     </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('list_tuitions') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
+                    </div>
                 </div>
             </div>
         </div>

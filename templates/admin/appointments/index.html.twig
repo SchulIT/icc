@@ -130,7 +130,11 @@
                             </div>
                         </form>
 
-                        {% include "_filter/query.html.twig" with { params: { q: q, categoryId: categoryFilter.currentCategory != null ? categoryFilter.currentCategory.uuid : null }, route: 'admin_appointments' } %}
+                        {% include "_filter/query.html.twig" with { class: 'mb-0', params: { q: q, categoryId: categoryFilter.currentCategory != null ? categoryFilter.currentCategory.uuid : null }, route: 'admin_appointments' } %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('admin_appointments') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
                     </div>
                 </div>
             </div>

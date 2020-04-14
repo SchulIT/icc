@@ -1,7 +1,7 @@
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
-    <div class="form-group">
+    <div class="form-group {{ class|default('') }}">
         <label for="subject">{{ 'label.subject'|trans }}:</label>
         <select name="subject" id="subject" class="form-control" data-trigger="submit" data-choice="true">
             <option value="" placeholder>{{ 'label.select.subject'|trans }}</option>

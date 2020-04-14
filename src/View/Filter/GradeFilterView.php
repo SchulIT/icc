@@ -4,7 +4,7 @@ namespace App\View\Filter;
 
 use App\Entity\Grade;
 
-class GradeFilterView {
+class GradeFilterView implements FilterViewInterface {
 
     /** @var Grade[] */
     private $grades;
@@ -34,5 +34,9 @@ class GradeFilterView {
      */
     public function getCurrentGrade(): ?Grade {
         return $this->currentGrade;
+    }
+
+    public function isEnabled(): bool {
+        return count($this->grades) > 0;
     }
 }

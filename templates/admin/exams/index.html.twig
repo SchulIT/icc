@@ -133,8 +133,12 @@
                 <div class="card">
                     <div class="card-body">
                         {% if gradeFilter.grades|length > 0 %}
-                            {% include "_filter/grade.html.twig" %}
+                            {% include "_filter/grade.html.twig" with { class: 'mb-0'} %}
                         {% endif %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('admin_exams') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
                     </div>
                 </div>
             </div>

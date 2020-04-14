@@ -1,9 +1,9 @@
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
-    <div class="form-group">
+    <div class="form-group {{ class|default('') }}">
         <label for="q">{{ 'label.query'|trans }}:</label>
-        <div class="input-group mb-3">
+        <div class="input-group">
             <input name="q" type="text" value="{{ q }}" class="form-control">
             <div class="input-group-append">
                 <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i></button>

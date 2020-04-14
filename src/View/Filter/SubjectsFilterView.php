@@ -4,7 +4,7 @@ namespace App\View\Filter;
 
 use App\Entity\Subject;
 
-class SubjectsFilterView {
+class SubjectsFilterView implements FilterViewInterface {
 
     /** @var Subject[] */
     private $subjects;
@@ -45,4 +45,7 @@ class SubjectsFilterView {
         return false;
     }*/
 
+    public function isEnabled(): bool {
+        return count($this->subjects) > 0;
+    }
 }

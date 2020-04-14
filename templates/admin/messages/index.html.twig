@@ -95,7 +95,11 @@
 
                 <div class="card">
                     <div class="card-body">
-                        {% include "_filter/user_type.html.twig" %}
+                        {% include "_filter/user_type.html.twig" with { class: 'mb-0'} %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('admin_messages') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
                     </div>
                 </div>
             </div>

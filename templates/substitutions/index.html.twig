@@ -132,7 +132,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group mb-0">
                             <div class="btn-group" role="group" aria-label="{{ 'plans.substitutions.group_by.label'|trans }}" title="{{ 'plans.substitutions.group_by.label'|trans }}">
                                 <a href="{{ path('substitutions', currentFilter|merge({'groupBy': 'teachers'})) }}" class="btn btn-outline-secondary {% if groupBy == 'teachers' %}active{% endif %}">
                                     <i class="fa fa-table"></i> {{ 'plans.substitutions.group_by.teachers'|trans }}
@@ -144,6 +144,12 @@
                             </div>
                         </div>
                     </div>
+
+                    {% if contains_active_filters([teacherFilter, studentFilter, gradeFilter]) %}
+                        <div class="card-footer">
+                            <a href="{{ path('substitutions') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

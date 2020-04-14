@@ -59,19 +59,21 @@
 
                 <div class="card">
                     <div class="card-body">
-                            {% set studyGroupParam = (studyGroupFilter.currentStudyGroup == null) ? null : studyGroupFilter.currentStudyGroup.uuid %}
-                            {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
+                        {% set studyGroupParam = (studyGroupFilter.currentStudyGroup == null) ? null : studyGroupFilter.currentStudyGroup.uuid %}
+                        {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
 
-                            {% if studyGroupFilter.studyGroupGroups|length > 0 %}
-                                {% include "_filter/study_group.html.twig" with { grouped: false, params: { q: q, user_type: userTypeParam } } %}
-                            {% endif %}
+                        {% if studyGroupFilter.studyGroupGroups|length > 0 %}
+                            {% include "_filter/study_group.html.twig" with { grouped: false, params: { q: q, user_type: userTypeParam } } %}
+                        {% endif %}
 
-                            {% if userTypeFilter.types|length > 0 %}
-                                {% include "_filter/user_type.html.twig" with { params: { q: q, study_group: studyGroupParam } } %}
-                            {% endif %}
+                        {% if userTypeFilter.types|length > 0 %}
+                            {% include "_filter/user_type.html.twig" with { params: { q: q, study_group: studyGroupParam } } %}
+                        {% endif %}
 
-                            {% include "_filter/query.html.twig" with { params: { q: q, study_group: studyGroupParam }, route: 'documents' } %}
-                        </div>
+                        {% include "_filter/query.html.twig" with { params: { q: q, study_group: studyGroupParam }, class: 'mb-0', route: 'documents' } %}
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ path('documents') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
                     </div>
                 </div>
             </div>

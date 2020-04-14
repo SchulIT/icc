@@ -5,7 +5,7 @@ namespace App\View\Filter;
 use App\Entity\StudyGroup;
 use App\Grouping\StudyGroupGradeGroup;
 
-class StudyGroupFilterView {
+class StudyGroupFilterView implements FilterViewInterface {
 
     /** @var StudyGroupGradeGroup[] */
     private $studyGroupGroups;
@@ -34,5 +34,9 @@ class StudyGroupFilterView {
      */
     public function getCurrentStudyGroup(): ?StudyGroup {
         return $this->currentStudyGroup;
+    }
+
+    public function isEnabled(): bool {
+        return count($this->studyGroupGroups) > 0;
     }
 }

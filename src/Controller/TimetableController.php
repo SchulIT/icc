@@ -49,16 +49,15 @@ class TimetableController extends AbstractControllerWithMessages {
      */
     public function index(StudentFilter $studentFilter, TeacherFilter $teacherFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableWeekRepositoryInterface $weekRepository, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
-                          TimetableSupervisionRepositoryInterface $supervisionRepository, Request $request,
-                          ?int $studentId = null, ?string $teacherAcronym = null, ?int $roomId = null, ?int $gradeId = null, ?bool $print = false) {
+                          TimetableSupervisionRepositoryInterface $supervisionRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $studentFilterView = $studentFilter->handle($studentId, $user);
-        $gradeFilterView = $gradeFilter->handle($gradeId, $user);
-        $roomFilterView = $roomFilter->handle($roomId);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
+        $roomFilterView = $roomFilter->handle($request->query->get('room', null));
         $subjectFilterView = $subjectFilter->handle($request->query->get('subjects', [ ]));
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
 
         $periods = $periodRepository->findAll();
         $this->sorter->sort($periods, TimetablePeriodStrategy::class);
@@ -101,7 +100,7 @@ class TimetableController extends AbstractControllerWithMessages {
 
         $template = 'timetable/index.html.twig';
 
-        if($print === true) {
+        if($request->query->getBoolean('print', false) === true) {
             $template = 'timetable/index_print.html.twig';
         }
 

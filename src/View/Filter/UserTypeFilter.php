@@ -45,7 +45,11 @@ class UserTypeFilter {
             return $type->getValue();
         });
 
-        $fallbackUserType = $types[$user->getUserType()->getValue()] ?? null;
+        if($user === null) {
+            $fallbackUserType = null;
+        } else {
+            $fallbackUserType = $types[$user->getUserType()->getValue()] ?? null;
+        }
 
         if($user !== null) {
             $type = $userType != null ?

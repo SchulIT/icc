@@ -42,6 +42,16 @@ easy_admin:
 
         Student:
             class: App\Entity\Student
+            list:
+                fields:
+                    - externalId
+                    - firstname
+                    - lastname
+                    - { property: gender, template: 'admin/ea/enum.html.twig' }
+                    - email
+                    - status
+                    - isFullAged
+                    - approvedPrivacyCategories
             form:
                 fields:
                     - { property: externalId, required: false }
@@ -56,6 +66,14 @@ easy_admin:
 
         StudyGroup:
             class: App\Entity\StudyGroup
+            list:
+                fields:
+                    - externalId
+                    - name
+                    - { property: type, template: 'admin/ea/enum.html.twig' }
+                    - grades
+                    - memberships
+                    - tuitions
             form:
                 fields:
                     - { property: externalId, required: false }
@@ -80,9 +98,10 @@ easy_admin:
                     - firstname
                     - lastname
                     - email
-                    - { property: userType, trans: true, domain: enums }
+                    - { property: userType, template: 'admin/ea/enum.html.twig' }
                     - teacher
                     - students
+                    - { property: idpId, template: 'admin/ea/uuid.html.twig' }
             form:
                 fields:
                     - username

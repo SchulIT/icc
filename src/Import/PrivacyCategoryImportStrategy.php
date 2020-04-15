@@ -42,8 +42,11 @@ class PrivacyCategoryImportStrategy implements ImportStrategyInterface {
      * @return PrivacyCategory
      */
     public function createNewEntity($data) {
-        return (new PrivacyCategory())
+        $category = (new PrivacyCategory())
             ->setExternalId($data->getId());
+        $this->updateEntity($category, $data);
+
+        return $category;
     }
 
     /**

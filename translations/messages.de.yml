@@ -279,6 +279,13 @@ lists:
             short: (stv.)
             long: stellvertretend
 
+    privacy:
+        label: Datenschutz
+        info: Die grün hinterlegten Lernenden haben in allen Kategorien eingewilligt. Die gelb hinterlegten Lernenden haben mindestens einer Kategorie nicht zugestimmt.
+        explanations: Erläuterungen zu den Kategorien
+        empty: Es wurden keine Lernenden gefunden, die der Suche entsprechen.
+        start: Bitte eine Lerngruppe auswählen oder einen Lernenden suchen.
+
 teachers:
     export:
         headings:

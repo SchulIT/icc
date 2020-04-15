@@ -19,6 +19,9 @@ use App\Grouping\TeacherFirstCharacterStrategy;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
+use App\Repository\PrivacyCategoryRepositoryInterface;
+use App\Repository\StudentRepositoryInterface;
+use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Security\Voter\ExamVoter;
@@ -213,6 +216,34 @@ class ListController extends AbstractControllerWithMessages {
         return $this->renderWithMessages('lists/teachers.html.twig', [
             'groups' => $groups,
             'subjectFilter' => $subjectFilterView
+        ]);
+    }
+
+    /**
+     * @Route("/lists/privacy", name="list_privacy")
+     */
+    public function privacy(StudyGroupFilter $studyGroupFilter, Request $request, StudentRepositoryInterface $studentRepository, PrivacyCategoryRepositoryInterface $privacyCategoryRepository) {
+        $this->denyAccessUnlessGranted(ListsVoter::Privacy);
+
+        $q = $request->query->get('q', null);
+        $studygroupView = $studyGroupFilter->handle($request->query->get('study_group', null), $this->getUser());
+
+        $students = [ ];
+
+        if($q !== null) {
+            $students = $studentRepository->findAllByQuery($q);
+        } else if($studygroupView->getCurrentStudyGroup() !== null) {
+            $students = $studentRepository->findAllByStudyGroups([$studygroupView->getCurrentStudyGroup()]);
+        }
+
+        $this->sorter->sort($students, StudentStrategy::class);
+
+        return $this->render('lists/privacy.html.twig', [
+            'students' => $students,
+            'categories' => $privacyCategoryRepository->findAll(),
+            'q' => $q,
+            'studyGroupFilter' => $studygroupView,
+            'isStart' => $request->query->has('q') === false && $request->query->has('study_group') === false
         ]);
     }
 }

@@ -15,6 +15,7 @@ class ListsVoter extends Voter {
     public const Students = 'students';
     public const Tuitions = 'tuitions';
     public const StudyGroups = 'studygroups';
+    public const Privacy = 'privacy';
 
     private $accessDecisionManager;
 
@@ -30,7 +31,8 @@ class ListsVoter extends Voter {
             static::Teachers,
             static::Students,
             static::Tuitions,
-            static::StudyGroups
+            static::StudyGroups,
+            static::Privacy
         ];
 
         return in_array($attribute, $attributes)
@@ -48,6 +50,7 @@ class ListsVoter extends Voter {
             case static::Students:
             case static::StudyGroups:
             case static::Tuitions:
+            case static::Privacy:
                 return $this->canViewLists($token);
         }
 
@@ -64,7 +67,8 @@ class ListsVoter extends Voter {
 
         return EnumArrayUtils::inArray($user->getUserType(), [
             UserType::Student(),
-            UserType::Parent()
-        ]) !== true; // Everyone but students/parents are allowed to view lists
+            UserType::Parent(),
+            UserType::Intern()
+        ]) !== true; // Everyone but students/parents/interns are allowed to view lists
     }
 }

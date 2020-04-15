@@ -7,7 +7,7 @@
             <input name="q" type="text" value="{{ q }}" class="form-control">
             <div class="input-group-append">
                 <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i></button>
-                {% if q is not null %}
+                {% if q is not null and q is not empty %}
                     <a href="{{ path(route, params|merge({q: null})) }}" class="btn btn-outline-primary">
                         <i class="fa fa-times"></i>
                     </a>

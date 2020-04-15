@@ -105,6 +105,13 @@ class Builder {
             ]);
         }
 
+        if($this->authorizationChecker->isGranted(ListsVoter::Privacy)) {
+            $lists->addChild('lists.privacy.label', [
+                'route' => 'list_privacy'
+            ])
+                ->setAttribute('icon', 'fas fa-user-shield');
+        }
+
         return $lists;
     }
 

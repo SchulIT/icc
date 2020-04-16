@@ -11,7 +11,7 @@
 
 {% block content %}
     <div class="card-deck mb-3">
-        {% for item in menu %}
+        {% for item in menu.admin %}
             <div class="card">
                 <a href="{{ item.uri }}" class="card-body">
                     <h5 class="card-title">{{ item.label|trans }}</h5>

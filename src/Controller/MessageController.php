@@ -156,7 +156,7 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{message}/attachments/{uuid}", name="download_message_attachment")
+     * @Route("/attachments/{uuid}", name="download_message_attachment")
      */
     public function downloadAttachment(MessageAttachment $attachment, MessageFilesystem $messageFilesystem) {
         $this->denyAccessUnlessGranted(MessageVoter::View, $attachment->getMessage());
@@ -185,7 +185,7 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{message}/uploads/{uuid}/download", name="download_uploaded_user_file")
+     * @Route("/uploads/{uuid}/download", name="download_uploaded_user_file")
      */
     public function downloadUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem) {
         /** @var User $user */
@@ -207,7 +207,7 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{message}/uploads/{uuid}/remove", name="remove_uploaded_user_file")
+     * @Route("/uploads/{uuid}/remove", name="remove_uploaded_user_file")
      */
     public function removeUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $filesystem, Request $request) {
         /** @var User $user */

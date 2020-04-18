@@ -5,7 +5,7 @@ namespace App\Markdown\Renderer;
 use League\CommonMark\Block\Element\AbstractBlock;
 use League\CommonMark\Block\Renderer\BlockRendererInterface;
 use League\CommonMark\ElementRendererInterface;
-use League\CommonMark\Ext\Table\Table;
+use League\CommonMark\Extension\Table\Table;
 use League\CommonMark\HtmlElement;
 use League\CommonMark\Util\Xml;
 

@@ -124,12 +124,11 @@ class Builder {
 
         foreach($this->wikiRepository->findAll() as $article) {
             if($this->authorizationChecker->isGranted(WikiVoter::View, $article)) {
-                $wiki->addChild(sprintf('wiki.%d', $article->getId()), [
+                $wiki->addChild(sprintf('wiki.%s', $article->getUuid()), [
                     'label' => $article->getTitle(),
                     'route' => 'show_wiki_article',
                     'routeParameters' => [
-                        'id' => $article->getId(),
-                        'slug' => $article->getSlug()
+                        'uuid' => (string)$article->getUuid(),
                     ]
                 ]);
             }

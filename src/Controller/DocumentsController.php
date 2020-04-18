@@ -62,18 +62,7 @@ class DocumentsController extends AbstractController {
     }
 
     /**
-     * @Route("/{uuid}", name="show_document")
-     */
-    public function show(Document $document) {
-        $this->denyAccessUnlessGranted(DocumentVoter::View, $document);
-
-        return $this->render('documents/show.html.twig', [
-            'document' => $document
-        ]);
-    }
-
-    /**
-     * @Route("/{document}/{alias}/attachment/{uuid}", name="download_document_attachment")
+     * @Route("/attachment/{uuid}", name="download_document_attachment")
      */
     public function downloadAttachment(DocumentAttachment $attachment, DocumentFilesystem $documentFilesystem) {
         $this->denyAccessUnlessGranted(DocumentVoter::View, $attachment->getDocument());
@@ -83,5 +72,16 @@ class DocumentsController extends AbstractController {
         } catch (FileNotFoundException $exception) {
             throw new NotFoundHttpException();
         }
+    }
+
+    /**
+     * @Route("/{uuid}", name="show_document")
+     */
+    public function show(Document $document) {
+        $this->denyAccessUnlessGranted(DocumentVoter::View, $document);
+
+        return $this->render('documents/show.html.twig', [
+            'document' => $document
+        ]);
     }
 }

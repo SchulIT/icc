@@ -27,7 +27,7 @@
         <div class="card-header">{{ 'label.attachments'|trans }}</div>
 
         <div class="card-body">
-            <div class="attachments" data-collectin="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}">
+            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}">
                 {% for attachment in form.group_attachments.attachments %}
                     {% if attachment.vars.value is not null and attachment.vars.value.id is not null %}
                         <div class="form-group row">

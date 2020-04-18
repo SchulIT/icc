@@ -131,10 +131,10 @@ class MessageFilesystem implements DirectoryNamerInterface {
      */
     public function getMessageUploadsDirectory($messageOrUpload, ?User $user): string {
         if($user === null) {
-            return sprintf('/%d/uploads', $messageOrUpload->getId());
+            return sprintf('/%s/uploads', $messageOrUpload->getUuid());
         }
 
-        return sprintf('/%d/uploads/%s', $messageOrUpload->getMessageFile()->getMessage()->getId(), $user->getUsername());
+        return sprintf('/%s/uploads/%s', $messageOrUpload->getMessageFile()->getMessage()->getUuid(), $user->getUsername());
     }
 
     /**

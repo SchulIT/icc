@@ -35,6 +35,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -378,7 +379,13 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/{uuid}/uploads/download", name="download_message_upload")
      */
-    public function downloadUploads(Message $message, string $path, MessageFilesystem $filesystem) {
+    public function downloadUploads(Message $message, MessageFilesystem $filesystem, Request $request) {
+        $path = $request->query->get('path', null);
+
+        if($path === null) {
+            throw new NotFoundHttpException();
+        }
+
         return $filesystem->getMessageUploadedFileDownloadResponse($message, $path);
     }
 }

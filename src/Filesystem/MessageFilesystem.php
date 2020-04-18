@@ -93,8 +93,9 @@ class MessageFilesystem implements DirectoryNamerInterface {
      * @return string
      */
     private function getMessageAttachmentPath(MessageAttachment $attachment): string {
-        return sprintf('/%d/%s', $attachment->getMessage()->getId(), $attachment->getPath());
+        return sprintf('/%s/%s', $attachment->getMessage()->getUuid(), $attachment->getPath());
     }
+
 
     /**
      * Returns the messages basedir which is used for any sorts of file (attachments and user specific downloads/uploads)
@@ -103,7 +104,7 @@ class MessageFilesystem implements DirectoryNamerInterface {
      * @return string
      */
     private function getMessageDirectory(Message $message): string {
-        return sprintf('/%d/', $message->getId());
+        return sprintf('/%s/', $message->getUuid());
     }
 
     /**
@@ -115,10 +116,10 @@ class MessageFilesystem implements DirectoryNamerInterface {
      */
     public function getMessageDownloadsDirectory(Message $message, ?User $user): string {
         if($user === null) {
-            return sprintf('/%d/downloads', $message->getId());
+            return sprintf('/%s/downloads', $message->getUuid());
         }
 
-        return sprintf('/%d/downloads/%s', $message->getId(), $user->getUsername());
+        return sprintf('/%s/downloads/%s', $message->getUuid(), $user->getUsername());
     }
 
     /**
@@ -151,10 +152,8 @@ class MessageFilesystem implements DirectoryNamerInterface {
             }
 
             throw new \RuntimeException('User must not be null.');
-        } else if($object instanceof Message) {
-            return $this->getMessageDirectory($object);
         } else if($object instanceof MessageAttachment) {
-            return $this->getMessageAttachmentPath($object);
+            return $this->getMessageDirectory($object->getMessage());
         }
 
         throw new UnexpectedTypeException($object, [ MessageFileUpload::class, Message::class, MessageAttachment::class ]);

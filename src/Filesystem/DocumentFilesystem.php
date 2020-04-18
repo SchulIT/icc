@@ -62,11 +62,11 @@ class DocumentFilesystem implements DirectoryNamerInterface {
     }
 
     private function getAttachmentsDirectory(Document $document): string {
-        return sprintf('/%d/', $document->getId());
+        return sprintf('/%s/', $document->getUuid());
     }
 
     private function getAttachmentPath(DocumentAttachment $attachment): string {
-        return sprintf('/%d/%s', $attachment->getDocument()->getId(), $attachment->getPath());
+        return sprintf('/%s/%s', $attachment->getDocument()->getUuid(), $attachment->getPath());
     }
 
     /**

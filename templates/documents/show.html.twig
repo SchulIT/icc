@@ -21,21 +21,19 @@
 
                         {{ document.content|markdown }}
                     </div>
-                </div>
 
-                {% if document.attachments|length > 0 %}
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ 'label.attachments'|trans }}</h5>
-
-                        <ul class="list-unstyled">
+                    {% if document.attachments|length > 0 %}
+                        <div class="card-footer">
                             {% for attachment in document.attachments %}
-                                <li><i class="fa fa-file"></i> <a href="{{ path('download_document_attachment', { document: document.uuid, uuid: attachment.uuid }) }}">{{ attachment.filename }}</a> <span class="text-muted">{{ attachment.size|filesize }}</span></li>
+                                <span class="mr-2">
+                                    <a href="{{ path('download_document_attachment', { uuid: attachment.uuid }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
+                                </span>
                             {% endfor %}
-                        </ul>
-                    </div>
+                        </div>
+                    {% endif %}
                 </div>
-                {% endif %}
+
+
             </div>
 
             <div class="col-md-3">

@@ -55,7 +55,7 @@ class WikiArticle {
     private $updatedAt;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text")
      * @Gedmo\Versioned()
      * @Assert\NotBlank()
      * @var string

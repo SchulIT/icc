@@ -119,10 +119,10 @@ class MessageAttachment {
     }
 
     /**
-     * @param string $path
+     * @param string|null $path
      * @return MessageAttachment
      */
-    public function setPath(string $path): MessageAttachment {
+    public function setPath(?string $path): MessageAttachment {
         $this->path = $path;
         return $this;
     }

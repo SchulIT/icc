@@ -120,10 +120,10 @@ class DocumentAttachment {
     }
 
     /**
-     * @param string $path
+     * @param string|null $path
      * @return DocumentAttachment
      */
-    public function setPath(string $path): DocumentAttachment {
+    public function setPath(?string $path): DocumentAttachment {
         $this->path = $path;
         return $this;
     }

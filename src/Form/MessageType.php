@@ -112,7 +112,8 @@ class MessageType extends AbstractType {
                         ->add('attachments', CollectionType::class, [
                             'entry_type' => MessageAttachmentType::class,
                             'allow_add' => true,
-                            'allow_delete' => true
+                            'allow_delete' => false,
+                            'by_reference' => false
                         ]);
                 }
             ])

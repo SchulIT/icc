@@ -91,7 +91,7 @@ class DocumentType extends AbstractType {
                         ->add('attachments', CollectionType::class, [
                             'entry_type' => DocumentAttachmentType::class,
                             'allow_add' => true,
-                            'allow_delete' => true,
+                            'allow_delete' => false,
                             'by_reference' => false
                         ]);
                 }

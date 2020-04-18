@@ -105,6 +105,9 @@ label:
     tuitions: Unterricht
     nobody: Niemand
 
+markdown:
+    link_broken: Dieser Verweis ist defekt.
+
 filter:
     reset: zurücksetzen
 

@@ -17,6 +17,12 @@ interface DocumentRepositoryInterface {
     public function findOneById(int $id): ?Document;
 
     /**
+     * @param string $uuid
+     * @return Document|null
+     */
+    public function findOneByUuid(string $uuid): ?Document;
+
+    /**
      * @param DocumentCategory $category
      * @return Document[]
      */

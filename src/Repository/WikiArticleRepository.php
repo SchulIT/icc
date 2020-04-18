@@ -23,6 +23,14 @@ class WikiArticleRepository extends AbstractRepository implements WikiArticleRep
             ]);
     }
 
+    public function findOneByUuid(string $uuid): ?WikiArticle {
+        return $this->em
+            ->getRepository(WikiArticle::class)
+            ->findOneBy([
+                'uuid' => $uuid
+            ]);
+    }
+
     /**
      * @inheritDoc
      */

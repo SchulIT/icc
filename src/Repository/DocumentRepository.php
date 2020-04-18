@@ -34,7 +34,16 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
             ->setParameter('id', $id)
             ->setMaxResults(1);
 
-        return $qb->getQuery()->getSingleResult();
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function findOneByUuid(string $uuid): ?Document {
+        $qb = $this->createDefaultQueryBuilder();
+        $qb->where('d.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**

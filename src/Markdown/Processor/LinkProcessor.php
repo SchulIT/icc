@@ -2,11 +2,13 @@
 
 namespace App\Markdown\Processor;
 
+use App\Markdown\Element\Icon;
 use App\Repository\DocumentRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use League\CommonMark\Event\DocumentParsedEvent;
 use League\CommonMark\Inline\Element\HtmlInline;
 use League\CommonMark\Inline\Element\Link;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -42,37 +44,54 @@ class LinkProcessor {
             $node->data['attributes']['class'] = 'link';
 
             $url = $node->getUrl();
+
             if(substr($url, 0, 7) === 'mailto:') {
                 $node->data['attributes']['class'] = 'mail';
-            } else if(substr($url, 0, 8)  === 'document:') {
-                $id = substr($url, 8);
-                $document = $this->documentRepository->findOneById($id);
+            } else if(substr($url, 0, 9)  === 'document:') {
+                $uuid = substr($url, 9);
 
-                if($document !== null) {
-                    $url = $this->urlGenerator->generate('show_document', [
-                        'id' => $document->getId(),
-                        'slug' => $document->getSlug()
-                    ]);
-                    $node->setUrl($url);
+                if(Uuid::isValid($uuid)) {
+                    $document = $this->documentRepository->findOneByUuid($uuid);
+
+                    if ($document !== null) {
+                        $url = $this->urlGenerator->generate('show_document', [
+                            'uuid' => $document->getUuid()
+                        ]);
+                        $node->setUrl($url);
+                    } else {
+                        $this->appendBroken($node);
+                    }
                 } else {
-                    $node->setUrl('#');
-                    $node->appendChild(new HtmlInline('broken'));
+                    $this->appendBroken($node);
                 }
             } else if(substr($url, 0, 5) === 'wiki:') {
-                $id = intval(substr($url, 5));
-                $article = $this->wikiArticleRepository->findOneById($id);
+                $uuid = substr($url, 5);
 
-                if($article !== null) {
-                    $url = $this->urlGenerator->generate('show_wiki_article', [
-                        'id' => $article->getId(),
-                        'slug' => $article->getSlug()
-                    ]);
-                    $node->setUrl($url);
+                if(Uuid::isValid($uuid)) {
+                    $article = $this->wikiArticleRepository->findOneByUuid($uuid);
+
+                    if ($article !== null) {
+                        $url = $this->urlGenerator->generate('show_wiki_article', [
+                            'uuid' => $article->getUuid()
+                        ]);
+                        $node->setUrl($url);
+                    } else {
+                        $this->appendBroken($node);
+                    }
                 } else {
-                    $node->setUrl('#');
-                    $node->appendChild(new HtmlInline('broken'));
+                    $this->appendBroken($node);
                 }
             }
         }
+    }
+
+    private function appendBroken(Link $node) {
+        $node->setUrl('');
+        $node->prependChild(new HtmlInline(' '));
+
+        $icon = new Icon('fas fa-unlink');
+        $icon->data['attributes']['title'] = $this->translator->trans('markdown.link_broken');
+
+        $node->prependChild($icon);
     }
 }

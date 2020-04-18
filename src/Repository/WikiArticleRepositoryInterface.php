@@ -13,6 +13,12 @@ interface WikiArticleRepositoryInterface {
     public function findOneById(int $id): ?WikiArticle;
 
     /**
+     * @param string $uuid
+     * @return WikiArticle|null
+     */
+    public function findOneByUuid(string $uuid): ?WikiArticle;
+
+    /**
      * @return WikiArticle[]
      */
     public function findAll(): array;

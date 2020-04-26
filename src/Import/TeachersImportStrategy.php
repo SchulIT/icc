@@ -29,9 +29,10 @@ class TeachersImportStrategy implements ImportStrategyInterface {
     }
 
     /**
+     * @param TeachersData $requestData
      * @return array<string, Teacher>
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->teacherRepository->findAll(),
             function(Teacher $teacher) {
@@ -42,13 +43,14 @@ class TeachersImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param TeacherData $data
+     * @param TeachersData $requestData
      * @return Teacher
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data, $requestData) {
         $teacher = (new Teacher())
             ->setExternalId($data->getId());
 
-        $this->updateEntity($teacher, $data);
+        $this->updateEntity($teacher, $data, $requestData);
 
         return $teacher;
     }
@@ -73,8 +75,9 @@ class TeachersImportStrategy implements ImportStrategyInterface {
     /**
      * @param Teacher $entity
      * @param TeacherData $data
+     * @param TeachersData $requestData
      */
-    public function updateEntity($entity, $data): void {
+    public function updateEntity($entity, $data, $requestData): void {
         $entity->setAcronym($data->getAcronym());
         $entity->setTitle($data->getTitle());
         $entity->setGender(new Gender($data->getGender()));

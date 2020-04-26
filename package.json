@@ -18,6 +18,7 @@
         "@fullcalendar/timeline": "^4.4.0",
         "@symfony/webpack-encore": "^0.27.0",
         "bootstrap": "^4.0.0",
+        "bootstrap-darkmode": "^0.5.0",
         "bootstrap.native": "^2.0.26",
         "bootstrap.native-loader": "^2.0.0",
         "bootstrap4-card-tables": "^1.1.1",

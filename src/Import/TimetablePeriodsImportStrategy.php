@@ -18,9 +18,10 @@ class TimetablePeriodsImportStrategy implements ImportStrategyInterface {
     }
 
     /**
+     * @param TimetablePeriodsData $requestData
      * @return array<string, TimetablePeriod>
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(),
             function(TimetablePeriod $period) {
@@ -31,12 +32,13 @@ class TimetablePeriodsImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param TimetablePeriodData $data
+     * @param TimetablePeriodsData $requestData
      * @return TimetablePeriod
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data, $requestData) {
         $period = (new TimetablePeriod())
             ->setExternalId($data->getId());
-        $this->updateEntity($period, $data);
+        $this->updateEntity($period, $data, $requestData);
 
         return $period;
     }
@@ -61,8 +63,9 @@ class TimetablePeriodsImportStrategy implements ImportStrategyInterface {
     /**
      * @param TimetablePeriod $entity
      * @param TimetablePeriodData $data
+     * @param TimetablePeriodsData $requestData
      */
-    public function updateEntity($entity, $data): void {
+    public function updateEntity($entity, $data, $requestData): void {
         $entity->setName($data->getName());
         $entity->setStart($data->getStart());
         $entity->setEnd($data->getEnd());

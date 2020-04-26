@@ -18,9 +18,10 @@ class GradesImportStrategy implements ImportStrategyInterface {
     }
 
     /**
+     * @param GradesData $requestData
      * @return array<string, Grade>
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(),
             function (Grade $grade) {
@@ -31,13 +32,14 @@ class GradesImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param GradeData $data
+     * @param GradesData $requestData
      * @return Grade
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data, $requestData) {
         $grade = (new Grade())
             ->setExternalId($data->getId());
 
-        $this->updateEntity($grade, $data);
+        $this->updateEntity($grade, $data, $requestData);
         return $grade;
     }
 
@@ -60,9 +62,10 @@ class GradesImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param Grade $entity
+     * @param GradesData $requestData
      * @param GradeData $data
      */
-    public function updateEntity($entity, $data): void {
+    public function updateEntity($entity, $data, $requestData): void {
         $entity->setName($data->getName());
     }
 

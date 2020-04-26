@@ -26,9 +26,10 @@ class PrivacyCategoryImportStrategy implements ImportStrategyInterface {
     }
 
     /**
-     * @inheritDoc
+     * @param PrivacyCategoriesData $requestData
+     * @return PrivacyCategory[]
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(),
             function (PrivacyCategory $category) {
@@ -39,12 +40,13 @@ class PrivacyCategoryImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param PrivacyCategoryData $data
+     * @param PrivacyCategoriesData $requestData
      * @return PrivacyCategory
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data, $requestData) {
         $category = (new PrivacyCategory())
             ->setExternalId($data->getId());
-        $this->updateEntity($category, $data);
+        $this->updateEntity($category, $data, $requestData);
 
         return $category;
     }
@@ -68,9 +70,10 @@ class PrivacyCategoryImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param PrivacyCategory $entity
+     * @param PrivacyCategoriesData $requestData
      * @param PrivacyCategoryData $data
      */
-    public function updateEntity($entity, $data): void {
+    public function updateEntity($entity, $data, $requestData): void {
         $entity->setLabel($data->getLabel());
         $entity->setDescription($data->getDescription());
     }

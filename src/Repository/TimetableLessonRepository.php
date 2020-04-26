@@ -62,6 +62,27 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
     /**
      * @inheritDoc
      */
+    public function findAllByPeriod(TimetablePeriod $period) {
+        $qb = $this->getDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('lInner')
+            ->from(TimetableLesson::class, 'lInner')
+            ->leftJoin('lInner.period', 'pInner')
+            ->where('pInner.id = :period');
+
+        $qb->setParameter('period', $period->getId());
+
+        $qb->where(
+            $qb->expr()->in('l.id', $qbInner->getDQL())
+        );
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAllByPeriodAndGrade(TimetablePeriod $period, Grade $grade) {
         $qb = $this->getDefaultQueryBuilder();
 
@@ -197,4 +218,5 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
 
         return $qb->getQuery()->getResult();
     }
+
 }

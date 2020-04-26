@@ -28,9 +28,10 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
     }
 
     /**
+     * @param SubstitutionsData $requestData
      * @return array<string, Substitution>
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->substitutionRepository->findAll(),
             function (Substitution $substitution) {
@@ -41,13 +42,14 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param SubstitutionData $data
+     * @param SubstitutionsData $requestData
      * @return Substitution
      * @throws ImportException
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data, $requestData) {
         $substitution = (new Substitution())
             ->setExternalId($data->getId());
-        $this->updateEntity($substitution, $data);
+        $this->updateEntity($substitution, $data, $requestData);
 
         return $substitution;
     }
@@ -72,9 +74,10 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
     /**
      * @param Substitution $entity
      * @param SubstitutionData $data
+     * @param SubstitutionsData $requestData
      * @throws ImportException
      */
-    public function updateEntity($entity, $data): void {
+    public function updateEntity($entity, $data, $requestData): void {
         $teacherIdSelector = function(Teacher $teacher) {
             return $teacher->getId();
         };

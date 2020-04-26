@@ -28,11 +28,19 @@ class TimetableSupervisionsImportStrategy implements ImportStrategyInterface {
     }
 
     /**
+     * @param TimetableSupervisionsData $requestData
      * @return array<string, TimetableSupervision>
+     * @throws ImportException
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
+        $period = $this->periodRepository->findOneByExternalId($requestData->getPeriod());
+
+        if($period === null) {
+            throw new ImportException(sprintf('Cannot find period with external ID "%s".', $requestData->getPeriod()));
+        }
+
         return ArrayUtils::createArrayWithKeys(
-            $this->supervisionRepository->findAll(),
+            $this->supervisionRepository->findAllByPeriod($period),
             function(TimetableSupervision $supervision) {
                 return $supervision->getExternalId();
             }
@@ -42,12 +50,13 @@ class TimetableSupervisionsImportStrategy implements ImportStrategyInterface {
     /**
      * @param TimetableSupervisionData $data
      * @return TimetableSupervision
+     * @param TimetableSupervisionsData $requestData
      * @throws ImportException
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data, $requestData) {
         $supervision = (new TimetableSupervision())
             ->setExternalId($data->getId());
-        $this->updateEntity($supervision, $data);
+        $this->updateEntity($supervision, $data, $requestData);
 
         return $supervision;
     }
@@ -72,13 +81,14 @@ class TimetableSupervisionsImportStrategy implements ImportStrategyInterface {
     /**
      * @param TimetableSupervision $entity
      * @param TimetableSupervisionData $data
+     * @param TimetableSupervisionsData $requestData
      * @throws ImportException
      */
-    public function updateEntity($entity, $data): void {
-        $period = $this->periodRepository->findOneByExternalId($data->getPeriod());
+    public function updateEntity($entity, $data, $requestData): void {
+        $period = $this->periodRepository->findOneByExternalId($requestData->getPeriod());
 
         if($period === null) {
-            throw new ImportException(sprintf('Period "%s" on timetable supervision ID "%s" was not found.', $data->getPeriod(), $data->getId()));
+            throw new ImportException(sprintf('Period "%s" on timetable supervision ID "%s" was not found.', $requestData->getPeriod(), $data->getId()));
         }
 
         $week = $this->weekRepository->findOneByKey($data->getWeek());

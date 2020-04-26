@@ -54,9 +54,10 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
     }
 
     /**
+     * @param AppointmentsData $requestData
      * @return array<string, Appointment>
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->appointmentRepository->findAll(),
             function (Appointment $appointment) {
@@ -67,13 +68,14 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param AppointmentData $data
+     * @param AppointmentsData $requestData
      * @return Appointment
      * @throws ImportException
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data, $requestData) {
         $appointment = (new Appointment())
             ->setExternalId($data->getId());
-        $this->updateEntity($appointment, $data);
+        $this->updateEntity($appointment, $data, $requestData);
 
         return $appointment;
     }
@@ -98,9 +100,10 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
     /**
      * @param Appointment $entity
      * @param AppointmentData $data
+     * @param AppointmentsData $requestData
      * @throws ImportException
      */
-    public function updateEntity($entity, $data): void {
+    public function updateEntity($entity, $data, $requestData): void {
         $this->initializeIfNecessary();
 
         $entity->setStart($data->getStart());

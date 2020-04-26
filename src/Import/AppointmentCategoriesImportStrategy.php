@@ -18,9 +18,10 @@ class AppointmentCategoriesImportStrategy implements ImportStrategyInterface {
     }
 
     /**
+     * @param AppointmentCategoriesData $requestData
      * @return array<string, AppointmentCategory>
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(),
             function(AppointmentCategory $category) {
@@ -31,13 +32,14 @@ class AppointmentCategoriesImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param AppointmentCategoryData $data
+     * @param AppointmentCategoriesData $requestData
      * @return AppointmentCategory
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data, $requestData) {
         $category = (new AppointmentCategory())
             ->setExternalId($data->getId());
 
-        $this->updateEntity($category, $data);
+        $this->updateEntity($category, $data, $requestData);
         return $category;
     }
 
@@ -60,9 +62,10 @@ class AppointmentCategoriesImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param AppointmentCategory $entity
-     * @param AppointmentCategoryData $data
+     * @param AppointmentCategoryData
+     * @param AppointmentCategoriesData $requestData
      */
-    public function updateEntity($entity, $data): void {
+    public function updateEntity($entity, $data, $requestData): void {
         $entity->setName($data->getName());
         $entity->setColor($data->getColor());
     }

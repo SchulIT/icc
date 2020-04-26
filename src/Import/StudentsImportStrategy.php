@@ -47,9 +47,10 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
     }
 
     /**
+     * @param StudentsData $requestData
      * @return array<string,Student>
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->studentRepository->findAll(),
             function(Student $student) {
@@ -60,13 +61,14 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
 
     /**
      * @param StudentData $data
+     * @param StudentsData $requestData
      * @return Student
      * @throws ImportException
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data, $requestData) {
         $student = (new Student())
             ->setExternalId($data->getId());
-        $this->updateEntity($student, $data);
+        $this->updateEntity($student, $data, $requestData);
 
         return $student;
     }
@@ -91,9 +93,10 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
     /**
      * @param Student $entity
      * @param StudentData $data
+     * @param StudentsData $requestData
      * @throws ImportException
      */
-    public function updateEntity($entity, $data): void {
+    public function updateEntity($entity, $data, $requestData): void {
         $entity->setFirstname($data->getFirstname());
         $entity->setLastname($data->getLastname());
         $entity->setGender(new Gender($data->getGender()));

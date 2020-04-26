@@ -18,9 +18,10 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
     }
 
     /**
+     * @param SubjectsData $requestData
      * @return array<string, Subject>
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(),
             function(Subject $subject) {
@@ -31,12 +32,13 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param SubjectData $data
+     * @param SubjectsData $requestData
      * @return Subject
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data,$requestData) {
         $subject = (new Subject())
             ->setExternalId($data->getId());
-        $this->updateEntity($subject, $data);
+        $this->updateEntity($subject, $data, $requestData);
 
         return $subject;
     }
@@ -61,8 +63,9 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
     /**
      * @param Subject $entity
      * @param SubjectData $data
+     * @param SubjectsData $requestData
      */
-    public function updateEntity($entity, $data): void {
+    public function updateEntity($entity, $data, $requestData): void {
         $entity->setName($data->getName());
         $entity->setAbbreviation($data->getAbbreviation());
     }

@@ -32,6 +32,16 @@ class TimetableSupervisionRepository extends AbstractTransactionalRepository imp
     /**
      * @inheritDoc
      */
+    public function findAllByPeriod(TimetablePeriod $period) {
+        return $this->em->getRepository(TimetableSupervision::class)
+            ->findBy([
+                'period' => $period
+            ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAll() {
         return $this->em->getRepository(TimetableSupervision::class)
             ->findAll();

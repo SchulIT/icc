@@ -9,25 +9,27 @@ interface ImportStrategyInterface {
     /**
      * Returns the entities which are to be imported.
      *
-     * @param object $data The data object of the request body.
+     * @param object $requestData The data object of the request body.
      * @return array
      */
-    public function getData($data): array;
+    public function getData($requestData): array;
 
     /**
      * Returns all existing entities
      *
+     * @param object $requestData The data object of the request body.
      * @return array
      */
-    public function getExistingEntities(): array;
+    public function getExistingEntities($requestData): array;
 
     /**
      * Creates a new entity based on the given data (which is imported from JSON)
      *
      * @param mixed $data
+     * @param object $requestData The data object of the request body.
      * @return mixed
      */
-    public function createNewEntity($data);
+    public function createNewEntity($data, $requestData);
 
     /**
      * Returns an existing entity based on the imported data or null if such entity does not exist
@@ -51,8 +53,9 @@ interface ImportStrategyInterface {
      *
      * @param mixed $entity
      * @param mixed $data
+     * @param mixed $requestData The data object of the request body.
      */
-    public function updateEntity($entity, $data): void;
+    public function updateEntity($entity, $data, $requestData): void;
 
     /**
      * Persists an entity to the database

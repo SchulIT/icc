@@ -67,9 +67,10 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
     }
 
     /**
+     * @param TuitionsData $requestData
      * @return array<string, Tuition>
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->tuitionRepository->findAll(),
             function(Tuition $tuition) {
@@ -80,13 +81,14 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param TuitionData $data
+     * @param TuitionsData $requestData
      * @return Tuition
      * @throws ImportException
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data, $requestData) {
         $tuition = (new Tuition())
             ->setExternalId($data->getId());
-        $this->updateEntity($tuition, $data);
+        $this->updateEntity($tuition, $data, $requestData);
 
         return $tuition;
     }
@@ -111,9 +113,10 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
     /**
      * @param Tuition $entity
      * @param TuitionData $data
+     * @param TuitionsData $requestData
      * @throws ImportException
      */
-    public function updateEntity($entity, $data): void {
+    public function updateEntity($entity, $data, $requestData): void {
         $this->initialize();
 
         $subject = $this->subjectCache[$data->getSubject()] ?? null;

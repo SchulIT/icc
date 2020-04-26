@@ -19,13 +19,6 @@ class TimetableSupervisionData {
      * @Assert\NotBlank()
      * @var string
      */
-    private $period;
-
-    /**
-     * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
-     */
     private $week;
 
     /**
@@ -76,22 +69,6 @@ class TimetableSupervisionData {
      */
     public function setId(?string $id): TimetableSupervisionData {
         $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPeriod(): ?string {
-        return $this->period;
-    }
-
-    /**
-     * @param string|null $period
-     * @return TimetableSupervisionData
-     */
-    public function setPeriod(?string $period): TimetableSupervisionData {
-        $this->period = $period;
         return $this;
     }
 

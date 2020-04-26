@@ -24,9 +24,10 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
     }
 
     /**
+     * @param StudyGroupsData $requestData
      * @return array<string, StudyGroup>
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->studyGroupRepository->findAll(),
             function(StudyGroup $studyGroup) {
@@ -37,13 +38,14 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param StudyGroupData $data
+     * @param StudyGroupsData $requestData
      * @return StudyGroup
      * @throws ImportException
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data, $requestData) {
         $studyGroup = (new StudyGroup())
             ->setExternalId($data->getId());
-        $this->updateEntity($studyGroup, $data);
+        $this->updateEntity($studyGroup, $data, $requestData);
 
         return $studyGroup;
     }
@@ -68,9 +70,10 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
     /**
      * @param StudyGroup $entity
      * @param StudyGroupData $data
+     * @param StudyGroupsData $requestData
      * @throws ImportException
      */
-    public function updateEntity($entity, $data): void {
+    public function updateEntity($entity, $data, $requestData): void {
         $entity->setName($data->getName());
         $entity->setType(new StudyGroupType($data->getType()));
 

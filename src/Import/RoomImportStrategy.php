@@ -5,6 +5,7 @@ namespace App\Import;
 use App\Entity\Room;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
+use App\Request\Data\GradesData;
 use App\Request\Data\RoomData;
 use App\Request\Data\RoomsData;
 use App\Utils\ArrayUtils;
@@ -26,9 +27,10 @@ class RoomImportStrategy implements ImportStrategyInterface {
     }
 
     /**
+     * @param GradesData $requestData
      * @return Room[]
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->roomRepository->findAll(),
             function (Room $room) {
@@ -38,11 +40,15 @@ class RoomImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param RoomData $data
+     * @param GradesData $requestData
      * @return Room
      */
-    public function createNewEntity($data) {
-        return (new Room())
+    public function createNewEntity($data, $requestData) {
+        $room = (new Room())
             ->setExternalId($data->getId());
+        $this->updateEntity($room, $data, $requestData);
+
+        return $room;
     }
 
     /**
@@ -64,9 +70,10 @@ class RoomImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param Room $entity
+     * @param GradesData $requestData
      * @param RoomData $data
      */
-    public function updateEntity($entity, $data): void {
+    public function updateEntity($entity, $data, $requestData): void {
         $entity->setName($data->getName());
         $entity->setSeats($data->getCapacity());
     }

@@ -59,7 +59,7 @@ class Importer {
             $repository = $strategy->getRepository();
             $repository->beginTransaction();
 
-            $currentEntities = $strategy->getExistingEntities();
+            $currentEntities = $strategy->getExistingEntities($data);
             $updatedEntitiesIds = [];
 
             $addedEntities = [];
@@ -74,10 +74,10 @@ class Importer {
 
                 if ($entity !== null) {
                     $updatedEntities[] = $entity;
-                    $strategy->updateEntity($entity, $object);
+                    $strategy->updateEntity($entity, $object, $data);
                     $updatedEntitiesIds[] = $strategy->getEntityId($entity);
                 } else {
-                    $entity = $strategy->createNewEntity($object);
+                    $entity = $strategy->createNewEntity($object, $data);
                     $addedEntities[] = $entity;
                 }
 

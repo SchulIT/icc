@@ -31,11 +31,19 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
     }
 
     /**
+     * @param TimetableLessonsData $requestData
      * @return array<string, TimetableLesson>
+     * @throws ImportException
      */
-    public function getExistingEntities(): array {
+    public function getExistingEntities($requestData): array {
+        $period = $this->periodRepository->findOneByExternalId($requestData->getPeriod());
+
+        if($period === null) {
+            throw new ImportException(sprintf('Cannot find period with external ID "%s".', $requestData->getPeriod()));
+        }
+
         return ArrayUtils::createArrayWithKeys(
-            $this->timetableRepository->findAll(),
+            $this->timetableRepository->findAllByPeriod($period),
             function(TimetableLesson $lesson) {
                 return $lesson->getExternalId();
             }
@@ -44,13 +52,14 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param TimetableLessonData $data
+     * @param TimetableLessonsData $requestData
      * @return TimetableLesson
      * @throws ImportException
      */
-    public function createNewEntity($data) {
+    public function createNewEntity($data, $requestData) {
         $lesson = (new TimetableLesson())
             ->setExternalId($data->getId());
-        $this->updateEntity($lesson, $data);
+        $this->updateEntity($lesson, $data, $requestData);
 
         return $lesson;
     }
@@ -75,13 +84,14 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
     /**
      * @param TimetableLesson $entity
      * @param TimetableLessonData $data
+     * @param TimetableLessonsData $requestData
      * @throws ImportException
      */
-    public function updateEntity($entity, $data): void {
-        $period = $this->periodRepository->findOneByExternalId($data->getPeriod());
+    public function updateEntity($entity, $data, $requestData): void {
+        $period = $this->periodRepository->findOneByExternalId($requestData->getPeriod());
 
         if($period === null) {
-            throw new ImportException(sprintf('Period "%s" on timetable lesson ID "%s" was not found.', $data->getPeriod(), $data->getId()));
+            throw new ImportException(sprintf('Period "%s" on timetable lesson ID "%s" was not found.', $requestData->getPeriod(), $data->getId()));
         }
 
         $tuition = $this->tuitionRepository->findOneByExternalId($data->getTuition());

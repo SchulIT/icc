@@ -55,6 +55,12 @@ interface TimetableLessonRepositoryInterface extends TransactionalRepositoryInte
     public function findAllByPeriodAndSubjects(TimetablePeriod $period, array $subjects);
 
     /**
+     * @param TimetablePeriod $period
+     * @return TimetableLesson[]
+     */
+    public function findAllByPeriod(TimetablePeriod $period);
+
+    /**
      * @return TimetableLesson[]
      */
     public function findAll();

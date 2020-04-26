@@ -8,11 +8,34 @@ use Symfony\Component\Validator\Constraints as Assert;
 class TimetableSupervisionsData {
 
     /**
+     * @Serializer\Type("string")
+     * @Assert\NotBlank()
+     * @var string|null
+     */
+    private $period;
+
+    /**
      * @Serializer\Type("array<App\Request\Data\TimetableSupervisionData>")
      * @Assert\Valid()
      * @var TimetableSupervisionData[]
      */
     private $supervisions = [ ];
+
+    /**
+     * @return string|null
+     */
+    public function getPeriod(): ?string {
+        return $this->period;
+    }
+
+    /**
+     * @param string|null $period
+     * @return TimetableSupervisionsData
+     */
+    public function setPeriod(?string $period): TimetableSupervisionsData {
+        $this->period = $period;
+        return $this;
+    }
 
     /**
      * @return TimetableSupervisionData[]

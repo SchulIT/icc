@@ -22,6 +22,12 @@ interface TimetableSupervisionRepositoryInterface extends TransactionalRepositor
     public function findAllByPeriodAndTeacher(TimetablePeriod $period, Teacher $teacher);
 
     /**
+     * @param TimetablePeriod $period
+     * @return TimetableSupervision[]
+     */
+    public function findAllByPeriod(TimetablePeriod $period);
+
+    /**
      * @return TimetableSupervision[]
      */
     public function findAll();

@@ -1349,6 +1349,11 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
+bootstrap-darkmode@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/bootstrap-darkmode/-/bootstrap-darkmode-0.5.0.tgz#e2d1c90aa44e26aee8b3cc801deb525d612d1788"
+  integrity sha512-9aStSRi9FUYmAxNeavp3Dv5/MHKGnhpGHqR2bRlobo1WnbLX8TJ3na5ElmilQK6G83Zww3GbTWacemXYHESVsg==
+
 bootstrap.native-loader@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/bootstrap.native-loader/-/bootstrap.native-loader-2.0.0.tgz#9aa833d7565453058547b08b1905c2af4fa48f18"

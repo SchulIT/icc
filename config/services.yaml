@@ -183,3 +183,7 @@ services:
     # DOCTRINE:
     Doctrine\Persistence\ManagerRegistry:
         alias: 'doctrine'
+
+    # DARK MODE:
+    SchoolIT\CommonBundle\DarkMode\DarkModeManagerInterface:
+        class: App\DarkMode\DarkModeManager

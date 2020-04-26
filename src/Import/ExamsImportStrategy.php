@@ -48,7 +48,7 @@ class ExamsImportStrategy implements ImportStrategyInterface {
     public function createNewEntity($data, $requestData) {
         $exam = (new Exam())
             ->setExternalId($data->getId());
-        $this->updateEntity($exam, $data);
+        $this->updateEntity($exam, $data, $requestData);
 
         return $exam;
     }

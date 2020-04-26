@@ -19,10 +19,14 @@ $enable-gradients: true;
 @import '../../vendor/schoolit/common-bundle/Resources/assets/css/additions.scss';
 @import '../../vendor/schoolit/common-bundle/Resources/assets/css/div-tables.scss';
 @import '../../vendor/schoolit/common-bundle/Resources/assets/css/swagger.scss';
+@import '../../node_modules/bootstrap-darkmode/darktheme';
+@import '../../vendor/schoolit/common-bundle/Resources/assets/css/dark/variables.scss';
+@import '../../vendor/schoolit/common-bundle/Resources/assets/css/dark/layout';
 
 // Import editor
 @import '../../node_modules/easymde/src/css/easymde.css';
 @import '../../node_modules/codemirror/lib/codemirror.css';
+@import '../../vendor/schoolit/common-bundle/Resources/assets/css/dark/editor';
 
 // Import Bootstrap 4 Card Tables
 @import '../../node_modules/bootstrap4-card-tables/src/bootstrap4-card-tables';
@@ -31,6 +35,7 @@ $enable-gradients: true;
 // Import choices.js
 @import '../../node_modules/choices.js/src/styles/choices';
 @import '../../vendor/schoolit/common-bundle/Resources/assets/css/choices-fixes.scss';
+@import '../../vendor/schoolit/common-bundle/Resources/assets/css/dark/choices';
 
 // Import color picker
 @import '../../node_modules/vanilla-picker/src/index';

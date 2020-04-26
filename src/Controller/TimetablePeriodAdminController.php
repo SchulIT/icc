@@ -7,6 +7,7 @@ use App\Form\TimetablePeriodType;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
+use SchoolIT\CommonBundle\Form\ConfirmType;
 use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -70,6 +71,25 @@ class TimetablePeriodAdminController extends AbstractController {
      * @Route("/{uuid}/remove", name="admin_remove_timetable_period")
      */
     public function remove(TimetablePeriod $period, Request $request) {
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'admin.timetable.periods.remove.confirm',
+            'message_parameters' => [
+                '%name%' => $period->getName()
+            ]
+        ]);
+        $form->handleRequest($request);
 
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($period);
+
+            $this->addFlash('success', 'admin.timetable.periods.remove.success');
+
+            return $this->redirectToRoute('admin_timetable');
+        }
+
+        return $this->render('admin/timetable/periods/remove.html.twig', [
+            'form' => $form->createView(),
+            'period' => $period
+        ]);
     }
 }

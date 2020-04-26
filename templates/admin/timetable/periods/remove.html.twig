@@ -1,0 +1,43 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.timetable.periods.remove.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_timetable') }}">{{ 'admin.timetable.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">{{ 'remove.header'|trans }}</div>
+
+        <div class="card-body">
+            <div class="bs-callout bs-callout-danger">
+                <h4><i class="fa fa-exclamation-triangle"></i> {{ 'admin.timetable.periods.remove.caution.header'|trans }}</h4>
+
+                <p>{{ 'admin.timetable.periods.remove.caution.message'|trans }}</p>
+            </div>
+
+            {{ form_widget(form.group_general.confirm) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fa fa-trash"></i> {{ 'remove.confirm'|trans }}
+        </button>
+
+        <a href="{{ path('admin_timetable')}}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}
+

@@ -489,6 +489,14 @@ admin:
             add_default:
                 label: Standard-A/B-Wochen hinzufügen
                 success: Standard-A/B-Wochen erfolgreich hinzugefügt
+                error: Standard-A/B-Wochen können nur hinzugefügt werden solange keine Wochen definiert wurden.
+                weeks:
+                    0:
+                        label: B-Woche
+                        key: B
+                    1:
+                        label: A-Woche
+                        key: A
             add:
                 label: Neue Stundenplan-Woche
                 success: Stundenplan-Woche erfolgreich hinzugefügt
@@ -499,7 +507,9 @@ admin:
                 label: Stundenplan-Woche löschen
                 confirm: 'Soll die Stundenplan-Woche "%name%" wirklich gelöscht werden?'
                 success: Stundenplan-Woche erfolgreich gelöscht
-
+                caution:
+                    header: Achtung
+                    message: Beim Löschen dieser Stundenplan-Woche wird der zugehörige Stundenplan ebenfalls gelöscht.
 
         periods:
             label: Stundenplan-Perioden
@@ -515,6 +525,9 @@ admin:
                 label: Stundenplan-Periode löschen
                 confirm: 'Soll die Stundenplan-Periode "%name%" wirklich gelöscht werden?'
                 success: Stundenplan-Periode erfolgreich gelöscht
+                caution:
+                    header: Achtung
+                    message: Beim Löschen dieser Stundenplan-Periode wird der zugehörige Stundenplan ebenfalls gelöscht.
 
     messages:
         label: Mitteilungen

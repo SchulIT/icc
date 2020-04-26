@@ -1,11 +1,11 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'admin.timetable.periods.label'|trans }}{% endblock %}
+{% block title %}{{ 'admin.timetable.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'admin.settings.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -81,7 +81,7 @@
 
                                 <p>{{ 'admin.timetable.weeks.overview.empty'|trans }}</p>
 
-                                <a href="#" class="btn btn-primary btn-sm">
+                                <a href="{{ path('add_default_timetable_weeks') }}" class="btn btn-primary btn-sm">
                                     <i class="fa fa-plus"></i> {{ 'admin.timetable.weeks.add_default.label'|trans }}
                                 </a>
                             </div>

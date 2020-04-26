@@ -31,13 +31,13 @@ use App\Sorting\StudentGroupMembershipStrategy;
 use App\Sorting\StudentStrategy;
 use App\Sorting\TeacherFirstCharacterGroupStrategy;
 use App\Sorting\TeacherStrategy;
-use App\Utils\RefererHelper;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\SubjectFilter;
 use App\View\Filter\TeacherFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 

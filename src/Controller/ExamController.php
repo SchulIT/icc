@@ -25,11 +25,11 @@ use App\Sorting\ExamDateGroupStrategy;
 use App\Sorting\ExamLessonStrategy as ExamDateSortingStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
-use App\Utils\RefererHelper;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 

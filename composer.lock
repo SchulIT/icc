@@ -4655,12 +4655,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SchulIT/common-bundle.git",
-                "reference": "a697ec72ae597344ca524d9801afdec1eca12480"
+                "reference": "f9ad75e3b440d37f40db20acd1549a9798059933"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/a697ec72ae597344ca524d9801afdec1eca12480",
-                "reference": "a697ec72ae597344ca524d9801afdec1eca12480",
+                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/f9ad75e3b440d37f40db20acd1549a9798059933",
+                "reference": "f9ad75e3b440d37f40db20acd1549a9798059933",
                 "shasum": ""
             },
             "require": {
@@ -4700,7 +4700,7 @@
                 "source": "https://github.com/SchulIT/common-bundle/tree/master",
                 "issues": "https://github.com/SchulIT/common-bundle/issues"
             },
-            "time": "2020-04-03T12:08:58+00:00"
+            "time": "2020-04-26T12:38:25+00:00"
         },
         {
             "name": "sensio/framework-extra-bundle",

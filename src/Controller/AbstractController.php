@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Utils\RefererHelper;
+use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as SymfonyAbstractController;
 use Symfony\Component\HttpFoundation\Response;
 

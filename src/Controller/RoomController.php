@@ -11,8 +11,8 @@ use App\Rooms\RoomQueryBuilder;
 use App\Security\Voter\RoomVoter;
 use App\Sorting\RoomNameStrategy;
 use App\Sorting\Sorter;
-use App\Utils\RefererHelper;
 use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 

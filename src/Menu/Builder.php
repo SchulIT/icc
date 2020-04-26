@@ -61,24 +61,29 @@ class Builder {
 
         $plans->addChild('plans.timetable.label', [
             'route' => 'timetable'
-        ]);
+        ])
+            ->setAttribute('icon', 'far fa-clock');
 
         $plans->addChild('plans.substitutions.label', [
             'route' => 'substitutions'
-        ]);
+        ])
+            ->setAttribute('icon', 'fas fa-random');
 
         $plans->addChild('plans.exams.label', [
             'route' => 'exams'
-        ]);
+        ])
+            ->setAttribute('icon', 'fas fa-pen');
 
         $plans->addChild('plans.appointments.label', [
             'route' => 'appointments'
-        ]);
+        ])
+            ->setAttribute('icon', 'far fa-calendar');
 
         if($this->authorizationChecker->isGranted(RoomVoter::View)) {
             $plans->addChild('plans.rooms.label', [
                 'route' => 'rooms'
-            ]);
+            ])
+                ->setAttribute('icon', 'fas fa-door-open');
         }
 
         return $plans;
@@ -93,19 +98,22 @@ class Builder {
         if($this->authorizationChecker->isGranted(ListsVoter::Tuitions)) {
             $lists->addChild('lists.tuitions.label', [
                 'route' => 'list_tuitions'
-            ]);
+            ])
+                ->setAttribute('icon', 'fas fa-chalkboard-teacher');
         }
 
         if($this->authorizationChecker->isGranted(ListsVoter::StudyGroups)) {
             $lists->addChild('lists.study_groups.label', [
                 'route' => 'list_studygroups'
-            ]);
+            ])
+                ->setAttribute('icon', 'fas fa-users');
         }
 
         if($this->authorizationChecker->isGranted(ListsVoter::Teachers)) {
             $lists->addChild('lists.teachers.label', [
                 'route' => 'list_teachers'
-            ]);
+            ])
+                ->setAttribute('icon', 'fas fa-sort-alpha-down');
         }
 
         if($this->authorizationChecker->isGranted(ListsVoter::Privacy)) {
@@ -133,7 +141,8 @@ class Builder {
                     'routeParameters' => [
                         'uuid' => (string)$article->getUuid(),
                     ]
-                ]);
+                ])
+                    ->setAttribute('icon', 'far fa-file');
             }
         }
 
@@ -164,12 +173,14 @@ class Builder {
 
         $userMenu->addChild('profile.overview.label', [
             'route' => 'profile'
-        ]);
+        ])
+            ->setAttribute('icon', 'far fa-user');
 
         $userMenu->addChild('profile.label', [
             'uri' => $this->idpProfileUrl
         ])
-            ->setAttribute('target', '_blank');
+            ->setAttribute('target', '_blank')
+            ->setAttribute('icon', 'far fa-address-card');
 
         $label = 'dark_mode.enable';
         $icon = 'far fa-moon';
@@ -212,45 +223,53 @@ class Builder {
         if($this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN')) {
             $menu->addChild('admin.documents.label', [
                 'route' => 'admin_documents'
-            ]);
+            ])
+                ->setAttribute('icon', 'far fa-file-alt');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_MESSAGE_CREATOR')) {
             $menu->addChild('admin.messages.label', [
                 'route' => 'admin_messages'
-            ]);
+            ])
+                ->setAttribute('icon', 'fas fa-envelope-open-text');
         }
 
         if($this->authorizationChecker->isGranted(ExamVoter::Manage)) {
             $menu->addChild('admin.exams.label', [
                 'route' => 'admin_exams'
-            ]);
+            ])
+                ->setAttribute('icon', 'fas fa-pen');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_APPOINTMENTS_ADMIN')) {
             $menu->addChild('admin.appointments.label', [
                 'route' => 'admin_appointments'
-            ]);
+            ])
+                ->setAttribute('icon', 'far fa-calendar');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_WIKI_ADMIN')) {
             $menu->addChild('admin.wiki.label', [
                 'route' => 'admin_wiki'
-            ]);
+            ])
+                ->setAttribute('icon', 'fab fa-wikipedia-w');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $menu->addChild('admin.timetable.weeks.label', [
                 'route' => 'admin_timetable_weeks'
-            ]);
+            ])
+                ->setAttribute('icon', 'far fa-clock');
 
             $menu->addChild('admin.timetable.periods.label', [
                 'route' => 'admin_timetable_periods'
-            ]);
+            ])
+                ->setAttribute('icon', 'far fa-clock');
 
             $menu->addChild('admin.teachers.label', [
                 'route' => 'admin_teachers'
-            ]);
+            ])
+                ->setAttribute('icon', 'fas fa-sort-alpha-down');
 
             $menu->addChild('api.doc', [
                 'uri' => '/docs/api/import'

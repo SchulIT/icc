@@ -256,13 +256,8 @@ class Builder {
         }
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            $menu->addChild('admin.timetable.weeks.label', [
-                'route' => 'admin_timetable_weeks'
-            ])
-                ->setAttribute('icon', 'far fa-clock');
-
-            $menu->addChild('admin.timetable.periods.label', [
-                'route' => 'admin_timetable_periods'
+            $menu->addChild('admin.timetable.label', [
+                'route' => 'admin_timetable'
             ])
                 ->setAttribute('icon', 'far fa-clock');
 

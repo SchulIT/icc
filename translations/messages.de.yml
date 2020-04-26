@@ -481,6 +481,7 @@ admin:
 
 
     timetable:
+        label: Stundenplan
         weeks:
             label: Stundenplan-Wochen
             overview:

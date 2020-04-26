@@ -27,18 +27,6 @@ class TimetablePeriodAdminController extends AbstractController {
     }
 
     /**
-     * @Route("", name="admin_timetable_periods")
-     */
-    public function index(Sorter $sorter) {
-        $periods = $this->repository->findAll();
-        $sorter->sort($periods, TimetablePeriodStrategy::class);
-
-        return $this->render('admin/timetable/periods/index.html.twig', [
-            'periods' => $periods
-        ]);
-    }
-
-    /**
      * @Route("/add", name="admin_add_timetable_period")
      */
     public function add(Request $request) {
@@ -50,8 +38,8 @@ class TimetablePeriodAdminController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $this->repository->persist($period);
 
-            $this->addFlash('success', '...');
-            return $this->redirectToRoute('admin_timetable_periods');
+            $this->addFlash('success', 'admin.timetable.periods.add.success');
+            return $this->redirectToRoute('admin_timetable');
         }
 
         return $this->render('admin/timetable/periods/add.html.twig', [
@@ -69,8 +57,8 @@ class TimetablePeriodAdminController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $this->repository->persist($period);
 
-            $this->addFlash('success', '...');
-            return $this->redirectToRoute('admin_timetable_periods');
+            $this->addFlash('success', 'admin.timetable.periods.edit.success');
+            return $this->redirectToRoute('admin_timetable');
         }
 
         return $this->render('admin/timetable/periods/edit.html.twig', [

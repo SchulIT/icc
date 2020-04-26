@@ -6,7 +6,7 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'admin.settings.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('admin_timetable_periods') }}">{{ 'admin.timetable.periods.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_timetable') }}">{{ 'admin.timetable.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -26,7 +26,7 @@
             <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
         </button>
 
-        <a href="{{ path('admin_timetable_periods') }}" class="btn btn-secondary btn-sm">
+        <a href="{{ path('admin_timetable') }}" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
         </a>
     </div>

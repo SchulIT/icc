@@ -25,15 +25,6 @@ class TimetableWeekAdminController extends AbstractController {
     }
 
     /**
-     * @Route("", name="admin_timetable_weeks")
-     */
-    public function index() {
-        return $this->render('admin/timetable/weeks/index.html.twig', [
-            'weeks' => $this->repository->findAll()
-        ]);
-    }
-
-    /**
      * @Route("/add", name="admin_add_timetable_week")
      */
     public function add(Request $request) {
@@ -45,7 +36,7 @@ class TimetableWeekAdminController extends AbstractController {
             $this->repository->persist($week);
 
             $this->addFlash('success', 'admin.timetable.weeks.add.success');
-            return $this->redirectToRoute('admin_timetable_weeks');
+            return $this->redirectToRoute('admin_timetable');
         }
 
         return $this->render('admin/timetable/weeks/add.html.twig', [
@@ -64,7 +55,7 @@ class TimetableWeekAdminController extends AbstractController {
             $this->repository->persist($week);
 
             $this->addFlash('success', 'admin.timetable.weeks.add.success');
-            return $this->redirectToRoute('admin_timetable_weeks');
+            return $this->redirectToRoute('admin_timetable');
         }
 
         return $this->render('admin/timetable/weeks/edit.html.twig', [

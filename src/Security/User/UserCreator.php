@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use LightSaml\Model\Protocol\Response;
 use LightSaml\SpBundle\Security\User\UserCreatorInterface;
 use LightSaml\SpBundle\Security\User\UsernameMapperInterface;
+use Ramsey\Uuid\Uuid;
 use SchoolIT\CommonBundle\Saml\ClaimTypes;
 
 class UserCreator implements UserCreatorInterface {
@@ -36,7 +37,7 @@ class UserCreator implements UserCreatorInterface {
 
         if($user === null) {
             $user = (new User())
-                ->setIdpId($id);
+                ->setIdpId(Uuid::fromString($id));
         }
 
         $this->userMapper->mapUser($user, $response);

@@ -20,10 +20,16 @@ class DashboardController extends AbstractController {
     private const DaysInPast = 1;
 
     /**
-     * @Route("/")
+     * @Route("/", name="index")
+     */
+    public function index() {
+        return $this->redirectToRoute('dashboard');
+    }
+
+    /**
      * @Route("/dashboard", name="dashboard")
      */
-    public function index(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
+    public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
                           DashboardViewHelper $dashboardViewHelper, DateHelper $dateHelper, SubstitutionSettings $dashboardSettings, Request $request) {
         /** @var User $user */
         $user = $this->getUser();

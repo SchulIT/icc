@@ -61,7 +61,7 @@
                         {% include "_filter/_params.html.twig" with { params: { user_type: userTypeParam, student: studentParam } } %}
 
                         <label class="control-label">{{ 'label.options'|trans }}:</label>
-                        <div class="form-group">
+                        <div class="form-group mb-0">
                             <div class="custom-control custom-checkbox">
 
                                 <input class="custom-control-input" data-trigger="submit" type="checkbox" value="true" id="archive" name="archive" {% if archive %} checked="checked"{% endif %}>

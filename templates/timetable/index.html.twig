@@ -170,7 +170,7 @@
 
                 {% if contains_active_filters([teacherFilter, studentFilter, gradeFilter, subjectFilter, roomFilter]) %}
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body pb-1">
                         {% if teacherFilter.teachers|length > 0 %}
                             {% include "_filter/teacher.html.twig" %}
                         {% endif %}

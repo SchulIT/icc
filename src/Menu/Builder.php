@@ -275,7 +275,8 @@ class Builder {
             $menu->addChild('admin.ea.label', [
                 'uri' => '/admin/ea'
             ])
-                ->setAttribute('target', '_blank');
+                ->setAttribute('target', '_blank')
+                ->setAttribute('icon', 'fas fa-tools');
         }
 
         return $root;

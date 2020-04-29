@@ -113,6 +113,10 @@ class UserMapper extends AbstractUserMapper {
             if($internalId !== null) {
                 $teacher = $this->teacherRepository->findOneByExternalId($internalId);
 
+                if($teacher === null) {
+                    $teacher = $this->teacherRepository->findOneByAcronym($internalId);
+                }
+
                 if ($teacher !== null) {
                     $user->setTeacher($teacher);
                 } else {

@@ -56,7 +56,7 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
             ->setParameter('acronym', $acronym)
             ->setMaxResults(1);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**

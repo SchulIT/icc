@@ -69,7 +69,7 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
             ->setParameter('externalId', $externalId)
             ->setMaxResults(1) ;
 
-        return $qb->getQuery()->getSingleResult();
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**

@@ -1,0 +1,19 @@
+{% extends "@Common/simple/main.html.twig" %}
+
+{% block title %}{{ 'invalid_account.title'|trans({}, 'security') }}{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+    <div class="text-center">
+        <i class="fas fa-sign-in fa-3x d-block text-secondary"></i>
+        <h4>{{ 'invalid_account.title'|trans({}, 'security') }}</h4>
+        <p>{{ message }}</p>
+    </div>
+
+    <hr>
+
+    <p class="text-muted mb-0">
+        Exception: {{ type }}
+    </p>
+{% endblock %}

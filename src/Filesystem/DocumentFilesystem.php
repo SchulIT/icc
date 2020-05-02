@@ -50,14 +50,16 @@ class DocumentFilesystem implements DirectoryNamerInterface {
     public function removeDocumentAttachment(DocumentAttachment $attachment): void {
         $path = $this->getAttachmentPath($attachment);
 
-        if($attachment->getId() !== null && $attachment->getDocument() !== null && $attachment->getDocument()->getId() !== null && $this->filesystem->has($path)) {
+        if($attachment->getDocument() !== null && $this->filesystem->has($path)) {
             $this->filesystem->delete($this->getAttachmentPath($attachment));
         }
     }
 
     public function removeDocumentDirectory(Document $document): void {
-        if($document->getId() !== null) {
-            $this->filesystem->deleteDir($this->getAttachmentsDirectory($document));
+        $path = $this->getAttachmentsDirectory($document);
+
+        if($this->filesystem->has($path)) {
+            $this->filesystem->deleteDir($path);
         }
     }
 

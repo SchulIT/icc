@@ -67,14 +67,16 @@ class MessageFilesystem implements DirectoryNamerInterface {
     public function removeMessageAttachment(MessageAttachment $attachment): void {
         $path = $this->getMessageAttachmentPath($attachment);
 
-        if($attachment->getId() !== null && $attachment->getMessage() !== null && $attachment->getMessage()->getId() !== null && $this->filesystem->has($path)) {
+        if($attachment->getMessage() !== null && $this->filesystem->has($path)) {
             $this->filesystem->delete($path);
         }
     }
 
     public function removeMessageDirectoy(Message $message): void {
-        if($message->getId() !== null) {
-            $this->filesystem->deleteDir($this->getMessageDirectory($message));
+        $path = $this->getMessageDirectory($message);
+
+        if($this->filesystem->has($path)) {
+            $this->filesystem->deleteDir($path);
         }
     }
 

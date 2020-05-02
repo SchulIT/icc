@@ -7,6 +7,7 @@ use App\Entity\MessageConfirmation;
 use App\Entity\MessageScope;
 use App\Entity\User;
 use App\Entity\UserType;
+use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class MessageConfirmationTest extends WebTestCase {
@@ -37,6 +38,7 @@ class MessageConfirmationTest extends WebTestCase {
             ->setScope(MessageScope::Appointments());
 
         $user = (new User())
+            ->setIdpId(Uuid::fromString('1f1248d4-8742-4b89-a0c4-1f345ce5664a'))
             ->setFirstname('firstname')
             ->setLastname('lastname')
             ->setUsername('username')

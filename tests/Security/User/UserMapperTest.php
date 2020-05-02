@@ -77,6 +77,8 @@ class UserMapperTest extends TestCase {
         // Test with array
         $user = new User();
         $data = [
+            SamlClaimTypes::ID => '1f1248d4-8742-4b89-a0c4-1f345ce5664a',
+            ClaimTypes::COMMON_NAME => 'username',
             ClaimTypes::GIVEN_NAME => 'Vorname',
             ClaimTypes::SURNAME => 'Nachname',
             ClaimTypes::EMAIL_ADDRESS => 'vorname.nachname@example.org',
@@ -84,11 +86,13 @@ class UserMapperTest extends TestCase {
                 'ROLE_USER'
             ],
             SamlClaimTypes::TYPE => 'teacher',
-            SamlClaimTypes::INTERNAL_ID => 'TEST'
+            SamlClaimTypes::EXTERNAL_ID => 'TEST'
         ];
 
         $mapper->mapUser($user, $data);
 
+        $this->assertEquals('1f1248d4-8742-4b89-a0c4-1f345ce5664a', $user->getIdpId()->toString());
+        $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
         $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
@@ -104,6 +108,8 @@ class UserMapperTest extends TestCase {
         // Test with array
         $user = new User();
         $data = [
+            SamlClaimTypes::ID => '1f1248d4-8742-4b89-a0c4-1f345ce5664a',
+            ClaimTypes::COMMON_NAME => 'username',
             ClaimTypes::GIVEN_NAME => 'Vorname',
             ClaimTypes::SURNAME => 'Nachname',
             ClaimTypes::EMAIL_ADDRESS => 'vorname.nachname@example.org',
@@ -111,11 +117,13 @@ class UserMapperTest extends TestCase {
                 'ROLE_USER'
             ],
             SamlClaimTypes::TYPE => 'teacher',
-            SamlClaimTypes::INTERNAL_ID => 'NOTEXISTING'
+            SamlClaimTypes::EXTERNAL_ID => 'NOTEXISTING'
         ];
 
         $mapper->mapUser($user, $data);
 
+        $this->assertEquals('1f1248d4-8742-4b89-a0c4-1f345ce5664a', $user->getIdpId()->toString());
+        $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
         $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
@@ -130,6 +138,8 @@ class UserMapperTest extends TestCase {
         // Test with array
         $user = new User();
         $data = [
+            SamlClaimTypes::ID => '1f1248d4-8742-4b89-a0c4-1f345ce5664a',
+            ClaimTypes::COMMON_NAME => 'username',
             ClaimTypes::GIVEN_NAME => 'Vorname',
             ClaimTypes::SURNAME => 'Nachname',
             ClaimTypes::EMAIL_ADDRESS => 'vorname.nachname@example.org',
@@ -137,11 +147,13 @@ class UserMapperTest extends TestCase {
                 'ROLE_USER'
             ],
             SamlClaimTypes::TYPE => 'student',
-            SamlClaimTypes::INTERNAL_ID => '1234'
+            SamlClaimTypes::EXTERNAL_ID => '1234'
         ];
 
         $mapper->mapUser($user, $data);
 
+        $this->assertEquals('1f1248d4-8742-4b89-a0c4-1f345ce5664a', $user->getIdpId()->toString());
+        $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
         $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
@@ -157,6 +169,8 @@ class UserMapperTest extends TestCase {
         // Test with array
         $user = new User();
         $data = [
+            SamlClaimTypes::ID => '1f1248d4-8742-4b89-a0c4-1f345ce5664a',
+            ClaimTypes::COMMON_NAME => 'username',
             ClaimTypes::GIVEN_NAME => 'Vorname',
             ClaimTypes::SURNAME => 'Nachname',
             ClaimTypes::EMAIL_ADDRESS => 'vorname.nachname@example.org',
@@ -164,11 +178,13 @@ class UserMapperTest extends TestCase {
                 'ROLE_USER'
             ],
             SamlClaimTypes::TYPE => 'student',
-            SamlClaimTypes::INTERNAL_ID => '4567'
+            SamlClaimTypes::EXTERNAL_ID => '4567'
         ];
 
         $mapper->mapUser($user, $data);
 
+        $this->assertEquals('1f1248d4-8742-4b89-a0c4-1f345ce5664a', $user->getIdpId()->toString());
+        $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
         $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
@@ -183,6 +199,8 @@ class UserMapperTest extends TestCase {
         // Test with array
         $user = new User();
         $data = [
+            SamlClaimTypes::ID => '1f1248d4-8742-4b89-a0c4-1f345ce5664a',
+            ClaimTypes::COMMON_NAME => 'username',
             ClaimTypes::GIVEN_NAME => 'Vorname',
             ClaimTypes::SURNAME => 'Nachname',
             ClaimTypes::EMAIL_ADDRESS => 'vorname.nachname@example.org',
@@ -190,11 +208,13 @@ class UserMapperTest extends TestCase {
                 'ROLE_USER'
             ],
             SamlClaimTypes::TYPE => 'parent',
-            SamlClaimTypes::INTERNAL_ID => '1234,4567,9876'
+            SamlClaimTypes::EXTERNAL_ID => '1234,4567,9876'
         ];
 
         $mapper->mapUser($user, $data);
 
+        $this->assertEquals('1f1248d4-8742-4b89-a0c4-1f345ce5664a', $user->getIdpId()->toString());
+        $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
         $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
@@ -210,6 +230,8 @@ class UserMapperTest extends TestCase {
         // Test with array
         $user = new User();
         $data = [
+            SamlClaimTypes::ID => '1f1248d4-8742-4b89-a0c4-1f345ce5664a',
+            ClaimTypes::COMMON_NAME => 'username',
             ClaimTypes::GIVEN_NAME => 'Vorname',
             ClaimTypes::SURNAME => 'Nachname',
             ClaimTypes::EMAIL_ADDRESS => 'vorname.nachname@example.org',
@@ -217,11 +239,13 @@ class UserMapperTest extends TestCase {
                 'ROLE_USER'
             ],
             SamlClaimTypes::TYPE => 'parent',
-            SamlClaimTypes::INTERNAL_ID => '4567'
+            SamlClaimTypes::EXTERNAL_ID => '4567'
         ];
 
         $mapper->mapUser($user, $data);
 
+        $this->assertEquals('1f1248d4-8742-4b89-a0c4-1f345ce5664a', $user->getIdpId()->toString());
+        $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
         $this->assertEquals('vorname.nachname@example.org', $user->getEmail());

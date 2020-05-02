@@ -2,6 +2,7 @@
 
 namespace App\Tests\Entity;
 
+use App\Entity\Room;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
 use App\Entity\TimetableWeek;
@@ -20,8 +21,9 @@ class TimetableLessonTest extends TestCase {
         $lesson->setLesson(2);
         $this->assertEquals(2, $lesson->getLesson());
 
-        $lesson->setRoom('room');
-        $this->assertEquals('room', $lesson->getRoom());
+        $room = new Room();
+        $lesson->setRoom($room);
+        $this->assertEquals($room, $lesson->getRoom());
 
         $week = new TimetableWeek();
         $lesson->setWeek($week);

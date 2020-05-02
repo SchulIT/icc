@@ -54,30 +54,4 @@ class DocumentTest extends WebTestCase {
         $document->removeAuthor($author);
         $this->assertFalse($document->getAuthors()->contains($author));
     }
-
-    public function testSlug() {
-        $kernel = static::createKernel();
-        $kernel->boot();
-
-        $em = $kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-
-        $category = (new DocumentCategory())
-            ->setName('category');
-
-        $document = (new Document())
-            ->setTitle('My fancy document')
-            ->setContent('content')
-            ->setCategory($category);
-
-        $em->persist($category);
-        $em->persist($document);
-        $em->flush();
-
-        $this->assertNotNull($document->getSlug());
-        $this->assertEquals('my-fancy-document', $document->getSlug());
-
-        $this->assertNotNull($document->getUpdatedAt());
-    }
 }

@@ -5,32 +5,45 @@ namespace App\Tests\Filesystem;
 use App\Entity\Document;
 use App\Entity\DocumentAttachment;
 use App\Filesystem\DocumentFilesystem;
+use App\Filesystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemInterface;
 use League\Flysystem\Memory\MemoryAdapter;
 use Mimey\MimeTypes;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 class DocumentFilesystemTest extends TestCase {
 
-    private function getDocument(?int $id) {
+    private $documentOneUuid;
+    private $documentTwoUuid;
+
+    public function __construct($name = null, array $data = [], $dataName = '') {
+        parent::__construct($name, $data, $dataName);
+
+        $this->documentOneUuid = Uuid::fromString('1f1248d4-8742-4b89-a0c4-1f345ce5664a');
+        $this->documentTwoUuid = Uuid::fromString('08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e');
+    }
+
+    private function getDocument(UuidInterface $uuid) {
         $document = $this->createMock(Document::class);
         $document
-            ->method('getId')
-            ->willReturn($id);
+            ->method('getUuid')
+            ->willReturn($uuid);
 
         return $document;
     }
 
-    private function getAttachment(?int $id, string $filename, ?int $documentId) {
+    private function getAttachment(UuidInterface $uuid, string $filename, UuidInterface $documentUuid) {
         $attachment = $this->createMock(DocumentAttachment::class);
         $attachment
-            ->method('getId')
-            ->willReturn($id);
+            ->method('getUuid')
+            ->willReturn($uuid);
 
         $attachment
             ->method('getDocument')
-            ->willReturn($this->getDocument($documentId));
+            ->willReturn($this->getDocument($documentUuid));
 
         $attachment
             ->method('getFilename')
@@ -45,10 +58,10 @@ class DocumentFilesystemTest extends TestCase {
 
     private function getFilesystem(FilesystemInterface $flysystem): DocumentFilesystem {
         $filesystem = new DocumentFilesystem($flysystem, new MimeTypes());
-        $flysystem->put('/1/foo.txt', 'bla');
-        $flysystem->put('/1/bla.txt', 'foo');
-        $flysystem->put('/2/foo.txt', 'bla');
-        $flysystem->put('/2/bla.txt', 'foo');
+        $flysystem->put('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/foo.txt', 'bla');
+        $flysystem->put('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/bla.txt', 'foo');
+        $flysystem->put('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/foo.txt', 'bla');
+        $flysystem->put('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/bla.txt', 'foo');
 
         return $filesystem;
     }
@@ -57,18 +70,17 @@ class DocumentFilesystemTest extends TestCase {
         $flysystem = new Filesystem(new MemoryAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
-        $response = $filesystem->getDownloadResponse($this->getAttachment(1, 'foo.txt', 1));
+        $response = $filesystem->getDownloadResponse($this->getAttachment(Uuid::uuid4(), 'foo.txt', $this->documentOneUuid));
         $this->assertNotNull($response);
     }
 
-    /**
-     * @expectedException App\Filesystem\FileNotFoundException
-     */
     public function testGetDownloadResponseFileNotExistent() {
+        $this->expectException(FileNotFoundException::class);
+
         $flysystem = new Filesystem(new MemoryAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
-        $response = $filesystem->getDownloadResponse($this->getAttachment(1, 'non_existing_file.txt', 1));
+        $response = $filesystem->getDownloadResponse($this->getAttachment(Uuid::uuid4(), 'non_existing_file.txt', $this->documentOneUuid));
         $this->assertNotNull($response);
     }
 
@@ -76,35 +88,35 @@ class DocumentFilesystemTest extends TestCase {
         $flysystem = new Filesystem(new MemoryAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
-        $filesystem->removeDocumentDirectory($this->getDocument(1));
+        $filesystem->removeDocumentDirectory($this->getDocument($this->documentOneUuid));
 
-        $this->assertFalse($flysystem->has('/1/foo.txt'));
-        $this->assertFalse($flysystem->has('/1/bla.txt'));
-        $this->assertTrue($flysystem->has('/2/foo.txt'));
-        $this->assertTrue($flysystem->has('/2/bla.txt'));
+        $this->assertFalse($flysystem->has('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/foo.txt'));
+        $this->assertFalse($flysystem->has('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/bla.txt'));
+        $this->assertTrue($flysystem->has('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/foo.txt'));
+        $this->assertTrue($flysystem->has('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/bla.txt'));
     }
 
     public function testRemoveNonExistingDocumentDirectory() {
         $flysystem = new Filesystem(new MemoryAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
-        $filesystem->removeDocumentDirectory($this->getDocument(42));
+        $filesystem->removeDocumentDirectory($this->getDocument(Uuid::uuid4()));
 
-        $this->assertTrue($flysystem->has('/1/foo.txt'));
-        $this->assertTrue($flysystem->has('/1/bla.txt'));
-        $this->assertTrue($flysystem->has('/2/foo.txt'));
-        $this->assertTrue($flysystem->has('/2/bla.txt'));
+        $this->assertTrue($flysystem->has('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/foo.txt'));
+        $this->assertTrue($flysystem->has('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/bla.txt'));
+        $this->assertTrue($flysystem->has('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/foo.txt'));
+        $this->assertTrue($flysystem->has('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/bla.txt'));
     }
 
     public function testRemoveDocumentAttachment() {
         $flysystem = new Filesystem(new MemoryAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
-        $filesystem->removeDocumentAttachment($this->getAttachment(1, 'foo.txt', 1));
-        $this->assertFalse($flysystem->has('/1/foo.txt'));
-        $this->assertTrue($flysystem->has('/1/bla.txt'));
-        $this->assertTrue($flysystem->has('/2/foo.txt'));
-        $this->assertTrue($flysystem->has('/2/bla.txt'));
+        $filesystem->removeDocumentAttachment($this->getAttachment(Uuid::uuid4(), 'foo.txt', $this->documentOneUuid));
+        $this->assertFalse($flysystem->has('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/foo.txt'));
+        $this->assertTrue($flysystem->has('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/bla.txt'));
+        $this->assertTrue($flysystem->has('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/foo.txt'));
+        $this->assertTrue($flysystem->has('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/bla.txt'));
     }
 
     public function testRemoveNonExistingDocumentAttachment() {
@@ -118,7 +130,7 @@ class DocumentFilesystemTest extends TestCase {
 
         $filesystem = $this->getFilesystem($flysystem);
 
-        $filesystem->removeDocumentAttachment($this->getAttachment(1, 'non_existing_file.txt', 1));
+        $filesystem->removeDocumentAttachment($this->getAttachment(Uuid::uuid4(), 'non_existing_file.txt', $this->documentOneUuid));
     }
 
     public function testInvalidDocument() {
@@ -132,30 +144,6 @@ class DocumentFilesystemTest extends TestCase {
 
         $filesystem = $this->getFilesystem($flysystem);
 
-        $filesystem->removeDocumentDirectory($this->getDocument(null));
-    }
-
-    public function testInvalidDocumentAttachment() {
-        $flysystem = $this->getMockBuilder(Filesystem::class)
-            ->setConstructorArgs([new MemoryAdapter()])
-            ->setMethods(['delete'])
-            ->getMock();
-        $flysystem
-            ->expects($this->never())
-            ->method('delete');
-
-        $filesystem = $this->getFilesystem($flysystem);
-
-        $filesystem->removeDocumentAttachment($this->getAttachment(null, 'file.txt', 1));
-        $filesystem->removeDocumentAttachment($this->getAttachment(null, 'file.txt', null));
-        $filesystem->removeDocumentAttachment($this->getAttachment(1, 'file.txt', null));
-
-
-        $attachment = $this->getAttachment(1, 'file.txt', null);
-        $attachment
-            ->method('getDocument')
-            ->willReturn(null);
-
-        $filesystem->removeDocumentAttachment($attachment);
+        $filesystem->removeDocumentDirectory($this->getDocument(Uuid::uuid4()));
     }
 }

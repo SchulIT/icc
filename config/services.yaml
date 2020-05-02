@@ -57,7 +57,7 @@ services:
             $keyFile: '%sp_cert_key%'
             $certFile: '%sp_cert_file%'
 
-    SchoolIT\CommonBundle\EventListener\SamlExceptionListener:
+    SchoolIT\CommonBundle\EventSubscriber\SamlExceptionSubscriber:
         arguments:
             $retryRoute: 'lightsaml_sp.login'
             $loggedInRoute: 'dashboard'

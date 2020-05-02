@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventListener;
+namespace App\EventSubscriber;
 
 use App\Request\ValidationFailedException;
 use App\Response\ErrorResponse;

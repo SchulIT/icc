@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventListener;
+namespace App\EventSubscriber;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -10,7 +10,7 @@ use Vich\UploaderBundle\Event\Events;
 /**
  * Removes the file entity which uses @Vich\Uploadable() from the database.
  */
-class VichUploaderListener implements EventSubscriberInterface {
+class VichUploaderSubscriber implements EventSubscriberInterface {
 
     private $em;
 

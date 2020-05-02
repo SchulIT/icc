@@ -1,10 +1,9 @@
 <?php
 
-namespace App\EventListener;
+namespace App\EventSubscriber;
 
 use App\Entity\Message;
 use App\Event\MessageCreatedEvent;
-use App\Events\MessageEvents;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
@@ -14,7 +13,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * This listener listens for new messages being created and
  * dispatches an event into the EventDispatcher
  */
-class MessageNotificationListener implements EventSubscriber {
+class MessageNotificationSubscriber implements EventSubscriber {
 
     private $dispatcher;
 
@@ -26,7 +25,7 @@ class MessageNotificationListener implements EventSubscriber {
         $entity = $eventArgs->getEntity();
 
         if($entity instanceof Message) {
-            $this->dispatcher->dispatch(MessageEvents::onCreated, new MessageCreatedEvent($entity));
+            $this->dispatcher->dispatch(new MessageCreatedEvent($entity));
         }
     }
 

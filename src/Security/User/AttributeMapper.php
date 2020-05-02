@@ -11,7 +11,7 @@ class AttributeMapper implements AttributeMapperInterface {
     public function getAttributes(SamlSpResponseToken $token) {
         return [
             'name_id' => $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue(),
-            'internal_id' => $this->getValue($token, ClaimTypes::INTERNAL_ID),
+            'internal_id' => $this->getValue($token, ClaimTypes::EXTERNAL_ID),
             'services' => $this->getServices($token)
         ];
     }

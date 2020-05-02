@@ -2,9 +2,10 @@
 
 namespace App\EventListener;
 
-use App\Import\ValidationFailedException;
-use App\Request\BadRequestException;
+use App\Request\ValidationFailedException;
 use App\Response\ErrorResponse;
+use App\Response\Violation;
+use App\Response\ViolationList;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,15 +36,20 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
         $message = new ErrorResponse('An unknown error occured.');
 
         // Case 1: general HttpException (Authorization/Authentication) or BadRequest
-        if($throwable instanceof HttpException || $throwable instanceof BadRequestException) {
+        if($throwable instanceof HttpException) {
             $code = $throwable->getStatusCode();
-            $message = new ErrorResponse($throwable->getMessage());
+            $message = null;
         } else if($throwable instanceof ValidationFailedException) { // Case 2: validation failed
             $code = Response::HTTP_BAD_REQUEST;
-            $message = new ErrorResponse($throwable->getMessage());
-            $message->setData($throwable->getViolations());
+
+            $violations = [ ];
+            foreach($throwable->getViolations() as $violation) {
+                $violations[] = new Violation($violation->getPropertyPath(), (string)$violation->getMessage());
+            }
+
+            $message = new ViolationList($violations);
         } else { // Case 3: General error
-            $message = new ErrorResponse($throwable->getMessage());
+            $message = new ErrorResponse($throwable->getMessage(), get_class($throwable));
         }
 
         $validStatusCodes = array_keys(Response::$statusTexts);
@@ -52,7 +58,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
         }
 
         $response = new Response(
-            $this->serializer->serialize($message, 'json'),
+            $message !== null ? $this->serializer->serialize($message, 'json') : null,
             $code
         );
 

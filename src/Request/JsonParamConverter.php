@@ -2,7 +2,6 @@
 
 namespace App\Request;
 
-use App\Response\ErrorResponse;
 use JMS\Serializer\ContextFactory\DeserializationContextFactoryInterface;
 use JMS\Serializer\DeserializationContext;
 use JMS\Serializer\Exception\Exception as SerializerException;
@@ -10,7 +9,7 @@ use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class JsonParamConverter implements ParamConverterInterface {
@@ -41,13 +40,14 @@ class JsonParamConverter implements ParamConverterInterface {
      * @param Request $request
      * @param ParamConverter $configuration
      * @return bool
-     * @throws BadRequestException
+     * @throws BadRequestHttpException
+     * @throws ValidationFailedException
      */
     public function apply(Request $request, ParamConverter $configuration) {
         $contentType = $request->getContentType();
 
         if($contentType !== static::ContentType) {
-            throw new BadRequestException(sprintf('Request header "Content-Type" must be "application/json", "%s" provided.', $contentType));
+            throw new BadRequestHttpException(sprintf('Request header "Content-Type" must be "application/json", "%s" provided.', $contentType));
         }
 
         $name = $configuration->getName();
@@ -61,16 +61,16 @@ class JsonParamConverter implements ParamConverterInterface {
             $object = $this->serializer->deserialize($json, $class, 'json', $context);
 
             if($options['validate'] === true) {
-                $validations = $this->validator->validate($object);
+                $violations = $this->validator->validate($object);
 
-                if($validations->count() > 0) {
-                    throw new BadRequestException($this->createErrorResponseData($validations));
+                if($violations->count() > 0) {
+                    throw new ValidationFailedException($violations);
                 }
             }
 
             $request->attributes->set($name, $object);
         } catch (SerializerException $e) {
-            throw new BadRequestException('Request body does not contain valid JSON.');
+            throw new BadRequestHttpException('Request body does not contain valid JSON.');
         }
 
         return true;
@@ -107,25 +107,5 @@ class JsonParamConverter implements ParamConverterInterface {
 
     private function getOptions(ParamConverter $configuration): array {
         return array_replace($this->defaultOptions, $configuration->getOptions());
-    }
-
-    /**
-     * @param ConstraintViolationListInterface $violationList
-     * @return ErrorResponse
-     */
-    private function createErrorResponseData(ConstraintViolationListInterface $violationList): ErrorResponse {
-        $violations = [ ];
-
-        foreach($violationList as $violation) {
-            $violations[] = [
-                'property' => $violation->getPropertyPath(),
-                'message' => $violation->getMessage()
-            ];
-        }
-
-        $response = new ErrorResponse('Error validating request data.');
-        $response->setData($violations);
-
-        return $response;
     }
 }

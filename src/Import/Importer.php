@@ -2,6 +2,7 @@
 
 namespace App\Import;
 
+use App\Request\ValidationFailedException;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
@@ -26,18 +27,7 @@ class Importer {
             return;
         }
 
-        // Validation not passed
-        $data = [ ];
-
-        /** @var ConstraintViolation $violation */
-        foreach($violations as $violation) {
-            $data[] = [
-                'property' => $violation->getPropertyPath(),
-                'message' => $violation->getMessage()
-            ];
-        }
-
-        throw new ValidationFailedException($data, 'Input JSON failed validation.');
+        throw new ValidationFailedException($violations);
     }
 
 

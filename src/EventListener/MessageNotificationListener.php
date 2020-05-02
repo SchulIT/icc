@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Listener;
+namespace App\EventListener;
 
 use App\Entity\Message;
 use App\Event\MessageCreatedEvent;

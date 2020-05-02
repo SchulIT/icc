@@ -6,24 +6,21 @@ use App\Entity\WikiArticle;
 use App\Form\WikiArticleType;
 use App\Repository\LogRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
-use App\Request\BadRequestException;
 use App\Security\Voter\WikiVoter;
 use App\Sorting\LogEntryStrategy;
 use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
 use EasySlugger\SluggerInterface;
-use Gedmo\Loggable\Entity\LogEntry;
-use Gedmo\Loggable\Entity\Repository\LogEntryRepository;
 use League\Flysystem\FilesystemInterface;
 use SchoolIT\CommonBundle\Form\ConfirmType;
 use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -200,7 +197,7 @@ class WikiAdminController extends AbstractController {
         $file = $request->files->get('file');
 
         if($file === null) {
-            throw new BadRequestException('File is missing.');
+            throw new BadRequestHttpException('File is missing.');
         }
 
         if($file->isValid()) {
@@ -222,6 +219,6 @@ class WikiAdminController extends AbstractController {
             ]);
         }
 
-        throw new BadRequestException('Invalid file uploaded.');
+        throw new BadRequestHttpException('Invalid file uploaded.');
     }
 }

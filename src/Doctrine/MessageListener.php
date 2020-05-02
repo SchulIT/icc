@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Listener;
+namespace App\Doctrine;
 
 use App\Entity\Message;
 use App\Entity\MessageAttachment;

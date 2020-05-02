@@ -3,7 +3,6 @@
 namespace App\Response;
 
 use JMS\Serializer\Annotation as Serializer;
-use Swagger\Annotations as SWG;
 
 /**
  * Indicates a non-successful import.
@@ -11,31 +10,32 @@ use Swagger\Annotations as SWG;
 class ErrorResponse {
 
     /**
+     * Type of exception (optional).
+     *
+     * @Serializer\Type("string")
+     * @Serializer\SerializedName("type")
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @Serializer\SerializedName("message")
      * @Serializer\Type("string")
      * @var string
      */
     private $message;
 
-    /**
-     * @Serializer\Type("array")
-     * @SWG\Property(description="This property may or may not contain information about the error.")
-     * @var mixed[]
-     */
-    private $data = [ ];
-
-    public function __construct(string $message) {
+    public function __construct(string $message, ?string $type = null) {
         $this->message = $message;
+        $this->type = $type;
+    }
+
+    public function getType(): ?string {
+        return $this->type;
     }
 
     public function getMessage(): string {
         return $this->message;
     }
 
-    public function getData() {
-        return $this->data;
-    }
-
-    public function setData(array $data) {
-        $this->data = $data;
-    }
 }

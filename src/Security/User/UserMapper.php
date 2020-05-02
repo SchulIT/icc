@@ -67,7 +67,7 @@ class UserMapper extends AbstractUserMapper {
                 ClaimTypes::GIVEN_NAME,
                 ClaimTypes::SURNAME,
                 ClaimTypes::EMAIL_ADDRESS,
-                SamlClaimTypes::INTERNAL_ID,
+                SamlClaimTypes::EXTERNAL_ID,
                 SamlClaimTypes::TYPE,
             ],
             [
@@ -108,27 +108,27 @@ class UserMapper extends AbstractUserMapper {
             ->setRoles($roles);
 
         if(UserType::Teacher()->equals($type)) {
-            $internalId = $data[SamlClaimTypes::INTERNAL_ID];
+            $externalId = $data[SamlClaimTypes::EXTERNAL_ID];
 
-            if($internalId !== null) {
-                $teacher = $this->teacherRepository->findOneByExternalId($internalId);
+            if($externalId !== null) {
+                $teacher = $this->teacherRepository->findOneByExternalId($externalId);
 
                 if($teacher === null) {
-                    $teacher = $this->teacherRepository->findOneByAcronym($internalId);
+                    $teacher = $this->teacherRepository->findOneByAcronym($externalId);
                 }
 
                 if ($teacher !== null) {
                     $user->setTeacher($teacher);
                 } else {
                     $this->logger
-                        ->notice(sprintf('Cannot map teacher with internal ID "%s" as such teacher does not exist.', $internalId));
+                        ->notice(sprintf('Cannot map teacher with internal ID "%s" as such teacher does not exist.', $externalId));
                 }
             } else {
                 $this->logger
                     ->notice(sprintf('Cannot map teacher with username "%s" as his/her internal ID is not set.', $user->getUsername()));
             }
         } else if(UserType::Student()->equals($type)) {
-            $studentId = $data[SamlClaimTypes::INTERNAL_ID];
+            $studentId = $data[SamlClaimTypes::EXTERNAL_ID];
 
             if($studentId !== null) {
                 $student = $this->studentRepository->findOneByExternalId($studentId);
@@ -150,7 +150,7 @@ class UserMapper extends AbstractUserMapper {
                     ->notice(sprintf('Cannot map student with username "%s" as his/her internal ID is not set.', $user->getUsername()));
             }
         } else if(UserType::Parent()->equals($type)) {
-            $rawStudentIds = $data[SamlClaimTypes::INTERNAL_ID];
+            $rawStudentIds = $data[SamlClaimTypes::EXTERNAL_ID];
 
             if($rawStudentIds !== null) {
                 $studentIds = explode(',', $rawStudentIds);

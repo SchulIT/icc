@@ -62,7 +62,7 @@ class AppointmentCategoriesImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param AppointmentCategory $entity
-     * @param AppointmentCategoryData
+     * @param AppointmentCategoryData $data
      * @param AppointmentCategoriesData $requestData
      */
     public function updateEntity($entity, $data, $requestData): void {

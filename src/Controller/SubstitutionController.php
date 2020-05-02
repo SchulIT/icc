@@ -18,6 +18,7 @@ use App\View\Filter\TeacherFilter;
 use App\View\Parameter\GroupByParameter;
 use App\View\Parameter\ViewParameter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SubstitutionController extends AbstractControllerWithMessages {
@@ -31,16 +32,19 @@ class SubstitutionController extends AbstractControllerWithMessages {
      */
     public function index(SubstitutionRepositoryInterface $substitutionRepository, InfotextRepositoryInterface $infotextRepository, StudentFilter $studentFilter,
                           GradeFilter $gradeFilter, TeacherFilter $teacherFilter, GroupByParameter $groupByParameter, ViewParameter $viewParameter,
-                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, SubstitutionSettings $dashboardSettings,
-                          ?string $date, ?int $studentId = null, ?int $gradeId = null, ?string $teacherAcronym = null, ?string $groupBy = null, ?string $view = null) {
+                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, SubstitutionSettings $dashboardSettings, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
         $days = $this->getListOfNextDays($dateHelper, $dashboardSettings->getNumberOfAheadDaysForSubstitutions(), $dashboardSettings->skipWeekends());
+        $date = $request->query->get('date', null);
         $selectedDate = $this->getCurrentDate($days, $date);
 
-        $studentFilterView = $studentFilter->handle($studentId, $user);
-        $gradeFilterView = $gradeFilter->handle($gradeId, $user);
-        $teacherFilterView = $teacherFilter->handle($teacherAcronym, $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null);
+        $groupBy = $request->query->get('group_by', null);
+        $view = $request->query->get('view', null);
+
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null);
 
         /** @var Substitution[] $substitutions */
         $substitutions = [ ];

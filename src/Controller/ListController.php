@@ -225,8 +225,11 @@ class ListController extends AbstractControllerWithMessages {
     public function privacy(StudyGroupFilter $studyGroupFilter, Request $request, StudentRepositoryInterface $studentRepository, PrivacyCategoryRepositoryInterface $privacyCategoryRepository) {
         $this->denyAccessUnlessGranted(ListsVoter::Privacy);
 
+        /** @var User $user */
+        $user = $this->getUser();
+
         $q = $request->query->get('q', null);
-        $studygroupView = $studyGroupFilter->handle($request->query->get('study_group', null), $this->getUser());
+        $studygroupView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
 
         $students = [ ];
 

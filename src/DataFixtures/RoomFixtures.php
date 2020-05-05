@@ -24,7 +24,7 @@ class RoomFixtures extends Fixture {
         foreach($this->roomGenerator->getRooms() as $roomName) {
             $room = (new Room())
                 ->setName($roomName)
-                ->setSeats($this->generator->numberBetween(25, 35));
+                ->setCapacity($this->generator->numberBetween(25, 35));
 
             $manager->persist($room);
         }

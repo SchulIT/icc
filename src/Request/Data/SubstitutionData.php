@@ -16,7 +16,7 @@ class SubstitutionData {
     private $id;
 
     /**
-     * @Serializer\Type("datetime")
+     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      * @Assert\Date()
      * @var \DateTime
      */

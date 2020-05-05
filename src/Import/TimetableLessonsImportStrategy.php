@@ -112,7 +112,12 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
         $entity->setLesson($data->getLesson());
         $entity->setIsDoubleLesson($data->isDoubleLesson());
         $entity->setDay($data->getDay());
-        $entity->setRoom($this->roomRepository->findOneByExternalId($data->getRoom()));
+
+        if(!empty($data->getRoom())) {
+            $entity->setRoom($this->roomRepository->findOneByExternalId($data->getRoom()));
+        } else {
+            $entity->setRoom(null);
+        }
     }
 
     /**

@@ -36,8 +36,7 @@ class InfotextRepository extends AbstractTransactionalRepository implements Info
 
     public function removeAll(): void {
         $this->em->createQueryBuilder()
-            ->delete('i')
-            ->from(Infotext::class, 'i')
+            ->delete(Infotext::class, 'i')
             ->getQuery()
             ->execute();
 

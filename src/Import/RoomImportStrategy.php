@@ -75,7 +75,8 @@ class RoomImportStrategy implements ImportStrategyInterface {
      */
     public function updateEntity($entity, $data, $requestData): void {
         $entity->setName($data->getName());
-        $entity->setSeats($data->getCapacity());
+        $entity->setDescription($data->getDescription());
+        $entity->setCapacity($data->getCapacity());
     }
 
     /**

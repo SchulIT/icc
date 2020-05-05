@@ -25,13 +25,13 @@ class RoomData {
      * @Serializer\Type("string")
      * @var string|null
      */
-    private $longName;
+    private $description;
 
     /**
      * @Serializer\Type("int")
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(allowNull=true)
      * @Assert\GreaterThanOrEqual(0)
-     * @var int
+     * @var int|null
      */
     private $capacity;
 
@@ -70,23 +70,23 @@ class RoomData {
     /**
      * @return string|null
      */
-    public function getLongName(): ?string {
-        return $this->longName;
+    public function getDescription(): ?string {
+        return $this->description;
     }
 
     /**
-     * @param string|null $longName
+     * @param string|null $description
      * @return RoomData
      */
-    public function setLongName(?string $longName): RoomData {
-        $this->longName = $longName;
+    public function setDescription(?string $description): RoomData {
+        $this->description = $description;
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getCapacity(): int {
+    public function getCapacity(): ?int {
         return $this->capacity;
     }
 
@@ -94,7 +94,7 @@ class RoomData {
      * @param int $capacity
      * @return RoomData
      */
-    public function setCapacity(int $capacity): RoomData {
+    public function setCapacity(?int $capacity): RoomData {
         $this->capacity = $capacity;
         return $this;
     }

@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class JsonParamConverter implements ParamConverterInterface {
 
-    private const ContentType = 'application/json';
+    private const ContentType = 'json';
 
     private $prefix;
 

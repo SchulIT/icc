@@ -164,7 +164,7 @@ plans:
         title: "Klausurplan für %for%"
         title_grades: "Klausurplan der %for%"
         empty: Aktuell sind keine Klausuren im System.
-        tuitions: "{1} Kurs|]1,Inf[ Kurse"
+        tuitions: "{0} Kurse|{1} Kurs|]1,Inf[ Kurse"
         time: Zeitraum
         invigilators: Aufsicht
         show_all: Alte Klausuren anzeigen

@@ -94,8 +94,7 @@ class AbsenceRepository extends AbstractTransactionalRepository implements Absen
 
     public function removeAll(): void {
         $this->em->createQueryBuilder()
-            ->delete('p')
-            ->from(Absence::class, 'p')
+            ->delete(Absence::class, 'p')
             ->getQuery()
             ->execute();
 

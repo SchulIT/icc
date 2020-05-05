@@ -7,6 +7,7 @@ use App\Response\ErrorResponse;
 use App\Response\Violation;
 use App\Response\ViolationList;
 use JMS\Serializer\SerializerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -18,9 +19,11 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
     private const JsonContentType = 'application/json';
 
     private $serializer;
+    private $logger;
 
-    public function __construct(SerializerInterface $serializer) {
+    public function __construct(SerializerInterface $serializer, LoggerInterface $logger) {
         $this->serializer = $serializer;
+        $this->logger = $logger;
     }
 
     public function onKernelException(ExceptionEvent $event) {
@@ -34,6 +37,10 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
 
         $code = Response::HTTP_INTERNAL_SERVER_ERROR;
         $message = new ErrorResponse('An unknown error occured.');
+
+        $this->logger->error('An uncaught exception was thrown.', [
+            'exception' => $throwable
+        ]);
 
         // Case 1: general HttpException (Authorization/Authentication) or BadRequest
         if($throwable instanceof HttpException) {

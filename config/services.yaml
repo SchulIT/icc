@@ -32,7 +32,7 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Request/Data,Kernel.php}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -65,7 +65,7 @@ services:
     # JSON
     App\Request\JsonParamConverter:
         arguments:
-            $prefix: 'App\\Request\\Data'
+            $prefix: 'App\Request\Data'
 
     JMS\Serializer\SerializationContext:
         calls:

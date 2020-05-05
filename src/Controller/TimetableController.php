@@ -104,6 +104,8 @@ class TimetableController extends AbstractControllerWithMessages {
             $template = 'timetable/index_print.html.twig';
         }
 
+        dump($timetable);
+
         return $this->renderWithMessages($template, [
             'timetable' => $timetable,
             'studentFilter' => $studentFilterView,

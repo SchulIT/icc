@@ -53,8 +53,8 @@ class TimetableLessonData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotNull()
-     * @var string
+     * @Assert\NotBlank(allowNull=true)
+     * @var string|null
      */
     private $room;
 

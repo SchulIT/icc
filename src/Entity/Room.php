@@ -38,10 +38,11 @@ class Room {
     private $description;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\NotBlank(allowNull=true)
      * @Assert\GreaterThanOrEqual(0)
      */
-    private $seats;
+    private $capacity;
 
     /**
      * @ORM\OneToMany(targetEntity="RoomTagInfo", mappedBy="room", cascade={"persist"})
@@ -110,18 +111,18 @@ class Room {
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getSeats() {
-        return $this->seats;
+    public function getCapacity() {
+        return $this->capacity;
     }
 
     /**
-     * @param int $seats
+     * @param int|null $capacity
      * @return Room $this
      */
-    public function setSeats($seats) {
-        $this->seats = $seats;
+    public function setCapacity($capacity) {
+        $this->capacity = $capacity;
         return $this;
     }
 

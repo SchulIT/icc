@@ -54,12 +54,12 @@ class ExamsImportStrategy implements ImportStrategyInterface {
     }
 
     /**
-     * @param Exam $object
+     * @param ExamData $object
      * @param Exam[] $existingEntities
      * @return Exam|null
      */
     public function getExistingEntity($object, array $existingEntities) {
-        return $existingEntities[$object->getExternalId()] ?? null;
+        return $existingEntities[$object->getId()] ?? null;
     }
 
     /**
@@ -82,13 +82,13 @@ class ExamsImportStrategy implements ImportStrategyInterface {
         $entity->setLessonEnd($data->getLessonEnd());
         $entity->setRooms($data->getRooms());
 
-        CollectionUtils::synchronize(
+        /*CollectionUtils::synchronize(
             $entity->getStudents(),
             $this->studentRepository->findAllByExternalId($data->getStudents()),
             function(Student $student) {
                 return $student->getId();
             }
-        );
+        );*/
 
         CollectionUtils::synchronize(
             $entity->getTuitions(),

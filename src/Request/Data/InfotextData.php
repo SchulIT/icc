@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class InfotextData {
 
     /**
-     * @Serializer\Type("datetime")
+     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      * @Assert\Date()
      * @Assert\NotNull()
      * @var \DateTime

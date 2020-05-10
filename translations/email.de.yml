@@ -1,0 +1,17 @@
+greeting: 'Hallo %name%,'
+farewell: Gruß
+footer: 'Diese Nachricht wurde automatisch vom System versendet. Diese Benachrichtung kann in den Einstellungen im ICC geändert werden. Zu den Einstellungen: %link%'
+
+substitution:
+  title: Neuer Vertretungsplan
+  content: es wurde ein neuer Vertretungsplan hochgeladen.
+  sender: Vertretungsplaner
+
+exam:
+  title: Neuer Klausurplan
+  content: es wurde ein neuer Klausurplan hochgeladen.
+
+message:
+  title: "Neue Mitteilung: %title%"
+  content: 'es wurde eine neue Mitteilung "%title%" erstellt. Die Nachricht ist auf dem ICC verfügbar: %link%'
+

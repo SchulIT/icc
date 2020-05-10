@@ -38,4 +38,12 @@ class SubstitutionSettings extends AbstractSettings {
     public function setNotificationReplyToAddress(?string $address): void {
         $this->setValue('substitutions.notifications.reply_to', $address);
     }
+
+    public function getNotificationSender(): ?string {
+        return (string)$this->getValue('substitutions.notifications.sender', null);
+    }
+
+    public function setNotificationSender(?string $sender): void {
+        $this->setValue('substitutions.notifications.sender', $sender);
+    }
 }

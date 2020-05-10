@@ -7,23 +7,41 @@ use App\Entity\User;
 interface EmailStrategyInterface {
 
     /**
-     * Returns the Reply-To email address (if any is given)
+     * Returns whether this strategy is enabled.
      *
-     * @return string|null
+     * @return bool
      */
-    public function getReplyTo(): ?string;
+    public function isEnabled(): bool;
 
     /**
+     * Returns the Reply-To email address (if any is given)
+     *
+     * @param object $objective The object which is the objective of the notification.
+     * @return string|null
+     */
+    public function getReplyTo($objective): ?string;
+
+    /**
+     * @param object $objective The object which is the objective of the notification.
      * @return User[]
      */
-    public function getUserEnrolledForNotification();
+    public function getRecipients($objective): array;
 
     /**
      * Returns the translation key for the subject of the email
      *
+     * @param object $objective The object which is the objective of the notification.
      * @return string
      */
-    public function getSubject(): string;
+    public function getSubject($objective): string;
+
+    /**
+     * Returns the name of the sender, which signs the email
+     *
+     * @param $objective
+     * @return string
+     */
+    public function getSender($objective): string;
 
     /**
      * Returns the template which will be rendered as content

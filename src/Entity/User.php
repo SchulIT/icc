@@ -95,6 +95,24 @@ class User implements UserInterface, \Serializable {
     private $dismissedMessages;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $isSubstitutionNotificationsEnabled = false;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $isExamNotificationsEnabled = false;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $isMessageNotificationsEnabled = false;
+
+    /**
      * @ORM\Column(type="json_array")
      * @var string[]
      */
@@ -268,6 +286,54 @@ class User implements UserInterface, \Serializable {
      */
     public function getStudents(): Collection {
         return $this->students;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSubstitutionNotificationsEnabled(): bool {
+        return $this->isSubstitutionNotificationsEnabled;
+    }
+
+    /**
+     * @param bool $isSubstitutionNotificationsEnabled
+     * @return User
+     */
+    public function setIsSubstitutionNotificationsEnabled(bool $isSubstitutionNotificationsEnabled): User {
+        $this->isSubstitutionNotificationsEnabled = $isSubstitutionNotificationsEnabled;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExamNotificationsEnabled(): bool {
+        return $this->isExamNotificationsEnabled;
+    }
+
+    /**
+     * @param bool $isExamNotificationsEnabled
+     * @return User
+     */
+    public function setIsExamNotificationsEnabled(bool $isExamNotificationsEnabled): User {
+        $this->isExamNotificationsEnabled = $isExamNotificationsEnabled;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMessageNotificationsEnabled(): bool {
+        return $this->isMessageNotificationsEnabled;
+    }
+
+    /**
+     * @param bool $isMessageNotificationsEnabled
+     * @return User
+     */
+    public function setIsMessageNotificationsEnabled(bool $isMessageNotificationsEnabled): User {
+        $this->isMessageNotificationsEnabled = $isMessageNotificationsEnabled;
+        return $this;
     }
 
     public function getData(string $key, $default = null) {

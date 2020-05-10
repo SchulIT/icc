@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\DeviceToken;
 use App\Entity\User;
+use App\Form\NotificationsType;
 use App\Grouping\Grouper;
 use App\Grouping\UserTypeAndGradeStrategy;
+use App\Notification\Email\EmailNotificationService;
 use App\Repository\DeviceTokenRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\DeviceTokenVoter;
@@ -13,6 +15,7 @@ use App\Sorting\Sorter;
 use App\Sorting\StringGroupStrategy;
 use App\Sorting\StringStrategy;
 use App\Sorting\UserUsernameStrategy;
+use App\Utils\EnumArrayUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,8 +37,31 @@ class ProfileController extends AbstractController {
     /**
      * @Route("/notifications", name="profile_notifications")
      */
-    public function notifications() {
+    public function notifications(Request $request, UserRepositoryInterface $userRepository, EmailNotificationService $emailNotificationService) {
+        /** @var User $user */
+        $user = $this->getUser();
+        $allowedUserTypes = $emailNotificationService->getAllowedUserTypesForNotifications();
+        $isAllowed = false;
+        $form = null;
 
+        if(EnumArrayUtils::inArray($user->getUserType(), $allowedUserTypes) !== false) {
+            $isAllowed = true;
+
+            $form = $this->createForm(NotificationsType::class, $user);
+            $form->handleRequest($request);
+
+            if($form->isSubmitted() && $form->isValid()) {
+                $userRepository->persist($user);
+                $this->addFlash('success', 'profile.notifications.success');
+
+                return $this->redirectToRoute('profile_notifications');
+            }
+        }
+
+        return $this->render('profile/notifications.html.twig', [
+            'form' => $form !== null ? $form->createView() : null,
+            'is_allowed' => $isAllowed
+        ]);
     }
 
     /**

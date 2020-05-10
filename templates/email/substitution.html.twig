@@ -1,0 +1,9 @@
+{{ 'greeting'|trans({'%name%': recipient }, 'email') }}
+
+{{ 'substitution.content'|trans({}, 'email') }}
+
+{{ 'farewell'|trans({}, 'email') }}
+{{ sender }}
+
+---
+{{ 'footer'|trans({'%link%': url('profile_notifications')}, 'email') }}

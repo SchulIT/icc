@@ -70,6 +70,14 @@ class ExamSettings extends AbstractSettings {
         $this->setValue('exams.notifications.reply_to', $address);
     }
 
+    public function getNotificationSender(): ?string {
+        return (string)$this->getValue('exams.notifications.sender', null);
+    }
+
+    public function setNotificationSender(?string $sender): void {
+        $this->setValue('exams.notifications.sender', $sender);
+    }
+
     public function getMaximumNumberOfExamsPerWeek(): int {
         return (int)$this->getValue('exams.max_per_week', 2);
     }

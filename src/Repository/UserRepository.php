@@ -2,10 +2,14 @@
 
 namespace App\Repository;
 
+use App\Entity\Message;
 use App\Entity\Student;
+use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
+use function Doctrine\ORM\QueryBuilder;
 
 class UserRepository extends AbstractRepository implements UserRepositoryInterface {
 
@@ -185,21 +189,30 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
      * @inheritDoc
      */
     public function findAllByNotifyExams() {
-        // TODO: Implement findAllByNotifyExams() method.
+        return $this->em->getRepository(User::class)
+            ->findBy([
+                'isExamNotificationsEnabled'
+            ]);
     }
 
     /**
      * @inheritDoc
      */
     public function findAllByNotifySubstitutions() {
-        // TODO: Implement findAllByNotifySubstitutions() method.
+        return $this->em->getRepository(User::class)
+            ->findBy([
+                'isSubstitutionNotificationsEnabled'
+            ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function findAllByNotifyMessages() {
-        // TODO: Implement findAllByNotifyMessages() method.
+    public function findAllByNotifyMessages(Message $message) {
+        return $this->em->getRepository(User::class)
+            ->findBy([
+                'isMessageNotificationsEnabled'
+            ]);
     }
 
     /**

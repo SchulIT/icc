@@ -2,43 +2,63 @@
 
 namespace App\Notification\Email;
 
+use App\Entity\Substitution;
 use App\Repository\UserRepositoryInterface;
+use App\Settings\SubstitutionSettings;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SubstitutionStrategy implements EmailStrategyInterface {
 
-    private $replyTo = null;
+    private $settings;
+    private $translator;
     private $userRepository;
 
-    public function __construct(?string $replyTo, UserRepositoryInterface $userRepository) {
-        $this->replyTo = $replyTo;
+    public function __construct(SubstitutionSettings $settings, UserRepositoryInterface $userRepository, TranslatorInterface $translator) {
+        $this->settings = $settings;
         $this->userRepository = $userRepository;
+        $this->translator = $translator;
     }
 
     /**
      * @inheritDoc
      */
-    public function getReplyTo(): ?string {
-        return $this->replyTo;
+    public function getReplyTo($objective): ?string {
+        return $this->settings->getNotificationReplyToAddress();
     }
 
     /**
      * @inheritDoc
      */
-    public function getUserEnrolledForNotification() {
+    public function getRecipients($objective): array {
         return $this->userRepository->findAllByNotifySubstitutions();
     }
 
     /**
+     * @param Substitution $objective
+     * @return string
+     */
+    public function getSender($objective): string {
+        return $this->settings->getNotificationReplyToAddress();
+    }
+
+    /**
      * @inheritDoc
      */
-    public function getSubject(): string {
-        return 'notifications.email.substitutions';
+    public function getSubject($objective): string {
+        return $this->translator->trans('substitution.title', [], 'email');
     }
 
     /**
      * @inheritDoc
      */
     public function getTemplate(): string {
-        return 'emails/notifications/substitutions.plain.html.twig';
+        return 'email/substitution.html.twig';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isEnabled(): bool {
+        return $this->settings->isNotificationsEnabled();
     }
 }

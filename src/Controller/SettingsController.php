@@ -61,7 +61,10 @@ class SettingsController extends AbstractController {
                 'expanded' => true,
                 'multiple' => true,
                 'label' => 'label.visibility',
-                'data' => $examSettings->getVisibility()
+                'data' => $examSettings->getVisibility(),
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ])
             ->add('window', IntegerType::class, [
                 'label' => 'admin.settings.exams.window.label',
@@ -85,7 +88,16 @@ class SettingsController extends AbstractController {
                 'label' => 'admin.settings.exams.notifications.enabled.label',
                 'help' => 'admin.settings.exams.notifications.enabled.help',
                 'required' => false,
-                'data' => $examSettings->isNotificationsEnabled()
+                'data' => $examSettings->isNotificationsEnabled(),
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
+            ])
+            ->add('notifications_sender', TextType::class, [
+                'label' => 'admin.settings.exams.notifications.sender.label',
+                'help' => 'admin.settings.exams.notifications.sender.help',
+                'required' => false,
+                'data' => $examSettings->getNotificationSender()
             ])
             ->add('notifications_replyaddress', EmailType::class, [
                 'label' => 'admin.settings.exams.notifications.reply_address.label',
@@ -122,6 +134,9 @@ class SettingsController extends AbstractController {
                 },
                 'notifications_enabled' => function(bool $enabled) use ($examSettings) {
                     $examSettings->setNotificationsEnabled($enabled);
+                },
+                'notifications_sender' => function(?string $sender) use ($examSettings) {
+                    $examSettings->setNotificationSender($sender);
                 },
                 'notifications_replyaddress' => function(?string $address) use($examSettings) {
                     $examSettings->setNotificationReplyToAddress($address);
@@ -178,7 +193,10 @@ class SettingsController extends AbstractController {
                 'choice_label' => function(AppointmentCategory $category) {
                     return $category->getName();
                 },
-                'data' => $timetableSettings->getCategoryIds()
+                'data' => $timetableSettings->getCategoryIds(),
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ]);
 
         for($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
@@ -205,7 +223,10 @@ class SettingsController extends AbstractController {
                     ->add(sprintf('lesson_%d_collapsible', $lesson), CheckboxType::class, [
                         'label' => $translator->trans('admin.settings.timetable.lesson.collapsible', ['%lesson%' => $lesson]),
                         'data' => $timetableSettings->isCollapsible($lesson),
-                        'required' => false
+                        'required' => false,
+                        'label_attr' => [
+                            'class' => 'checkbox-custom'
+                        ]
                     ]);
             }
         }
@@ -294,17 +315,29 @@ class SettingsController extends AbstractController {
                 'label' => 'admin.settings.substitutions.skip_weekends.label',
                 'help' => 'admin.settings.substitutions.skip_weekends.help',
                 'required' => false,
-                'data' => $substitutionSettings->skipWeekends()
+                'data' => $substitutionSettings->skipWeekends(),
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ])
             ->add('notifications_enabled', CheckboxType::class, [
-                'label' => 'admin.settings.exams.notifications.enabled.label',
-                'help' => 'admin.settings.exams.notifications.enabled.help',
+                'label' => 'admin.settings.substitutions.notifications.enabled.label',
+                'help' => 'admin.settings.substitutions.notifications.enabled.help',
                 'required' => false,
-                'data' => $substitutionSettings->isNotificationsEnabled()
+                'data' => $substitutionSettings->isNotificationsEnabled(),
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
+            ])
+            ->add('notifications_sender', TextType::class, [
+                'label' => 'admin.settings.substitutions.notifications.sender.label',
+                'help' => 'admin.settings.substitutions.notifications.sender.help',
+                'required' => false,
+                'data' => $substitutionSettings->getNotificationSender()
             ])
             ->add('notifications_replyaddress', EmailType::class, [
-                'label' => 'admin.settings.exams.notifications.reply_address.label',
-                'help' => 'admin.settings.exams.notifications.reply_address.help',
+                'label' => 'admin.settings.substitutions.notifications.reply_address.label',
+                'help' => 'admin.settings.substitutions.notifications.reply_address.help',
                 'required' => false,
                 'data' => $substitutionSettings->getNotificationReplyToAddress()
             ]);
@@ -322,6 +355,9 @@ class SettingsController extends AbstractController {
                 },
                 'notifications_enabled' => function(bool $enabled) use ($substitutionSettings) {
                     $substitutionSettings->setNotificationsEnabled($enabled);
+                },
+                'notifications_sender' => function(?string $sender) use($substitutionSettings) {
+                    $substitutionSettings->setNotificationSender($sender);
                 },
                 'notifications_replyaddress' => function(?string $address) use($substitutionSettings) {
                     $substitutionSettings->setNotificationReplyToAddress($address);

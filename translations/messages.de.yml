@@ -432,6 +432,17 @@ admin:
             skip_weekends:
                 label: Wochenenden überspringen
                 help: Gibt an, ob Wochenendtage im Vertretungsplan übersprungen werden sollen.
+            notifications:
+                enabled:
+                    label: Benachrichtigungen aktiviert
+                    help: Wenn diese Option aktiviert ist, werden Lehrkräfte informiert, sobald ein neuer Vertretungsplan verfügbar ist.
+                sender:
+                    label: Absender
+                    help: Dieser Name wird als Absender bei E-Mail Benachrichtungen angezeigt. E-Mails werden mit diesem Namen unterschrieben.
+                reply_address:
+                    label: Antwort-E-Mail Adresse
+                    help: Diese E-Mail Adresse wird bei E-Mail Benachrichtungen in das 'Reply-To'-Feld eingefügt, sodass Antworten auf die Benachrichtungsmail an diese E-Mail Adresse geschickt werden.
+
 
         exams:
             label: Klausurplan
@@ -445,6 +456,9 @@ admin:
                 enabled:
                     label: Benachrichtigungen aktiviert
                     help: Wenn diese Option aktiviert ist, werden Lehrkräfte informiert, sobald ein neuer Klausurplan verfügbar ist.
+                sender:
+                    label: Absender
+                    help: Dieser Name wird als Absender bei E-Mail Benachrichtungen angezeigt. E-Mails werden mit diesem Namen unterschrieben.
                 reply_address:
                     label: Antwort-E-Mail Adresse
                     help: Diese E-Mail Adresse wird bei E-Mail Benachrichtungen in das 'Reply-To'-Feld eingefügt, sodass Antworten auf die Benachrichtungsmail an diese E-Mail Adresse geschickt werden.
@@ -718,6 +732,17 @@ profile:
 
     notifications:
         label: Benachrichtigungen
+        success: Benachrichtigungseinstellungen erfolgreich aktualisiert
+        not_allowed: Leider können Benachrichtungs-E-Mails nicht angeboten werden.
+        substitutions:
+            label: Neuer Vertretungsplan
+            help: Wenn diese Option aktiv ist, wird eine E-Mail versendet, sobald ein neuer Vertretungsplan bereitgestellt wurde.
+        exams:
+            label: Neuer Klausurplan
+            help: Wenn diese Option aktiv ist, wird eine E-Mail versendet, sobald ein neuer Klausurplan bereitgestellt wurde.
+        messages:
+            label: Neue Mitteilung
+            help: Wenn diese Option aktiv ist, wird eine E-Mail versendet, sobald eine neue Mitteilung erstellt wurde.
 
     apps:
         label: Verbundene Apps

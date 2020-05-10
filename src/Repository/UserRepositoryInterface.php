@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Message;
 use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\User;
@@ -68,9 +69,10 @@ interface UserRepositoryInterface {
     public function findAllByNotifySubstitutions();
 
     /**
+     * @param Message $message Restrict users to only those who are in the message recipients.
      * @return User[]
      */
-    public function findAllByNotifyMessages();
+    public function findAllByNotifyMessages(Message $message);
 
     /**
      * @return User[]

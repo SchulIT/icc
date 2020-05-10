@@ -45,113 +45,112 @@
                 </div>
 
                 <div class="card-body">
-                    {% if timetable != null %}
-                            <h5 class="card-title">
-                                {% include "timetable/_title.html.twig" %}
-                            </h5>
+                {% if timetable != null %}
+                        <h5 class="card-title">
+                            {% include "timetable/_title.html.twig" %}
+                        </h5>
 
-                            {% for week in timetable.weeks %}
-                                <h6 class="card-subtitle mb-3">{{ week.weekType }}</h6>
+                        {% for week in timetable.weeks %}
+                            <h6 class="card-subtitle mb-3">{{ week.weekType }}</h6>
 
-                                <table class="table table-bordered timetable">
-                                    <colgroup>
-                                        <col class="col-lesson" />
-                                        {% for day in week.days %}
-                                            <col class="col-day" />
-                                        {% endfor %}
-                                    </colgroup>
-
-                                    <thead>
-                                    <th>{{ 'label.lesson'|trans }}</th>
+                            <table class="table table-bordered timetable">
+                                <colgroup>
+                                    <col class="col-lesson" />
                                     {% for day in week.days %}
-                                        <th{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %}>{{ day.day|weekday }} {% if day.isCurrentDay %}<span class="badge badge-secondary">{{ 'plans.timetable.today'|trans }}</span>{% endif %}{% if day.isUpcomingDay %}<span class="badge badge-secondary">{{ 'plans.timetable.upcoming'|trans }}</span>{% endif %}</th>
+                                        <col class="col-day" />
                                     {% endfor %}
-                                    </thead>
+                                </colgroup>
 
-                                    <tbody>
-                                    {% for i in 1..week.maxLessons  %}
-                                        {% if week.maxLessons > 0 %}
-                                            {% if continue is not defined %}{% set continue = false %}{% endif %}
-                                            {% if not continue %}
-                                                {% set isCombined = week.areCombinedLessons(i, i+1) %}
-                                                {% if week.hasSupervisionBefore(i) %}
-                                                    <tr>
-                                                        <td>
-                                                            {{ supervisionLabels[i] }}
-                                                        </td>
+                                <thead>
+                                <th>{{ 'label.lesson'|trans }}</th>
+                                {% for day in week.days %}
+                                    <th{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %}>{{ day.day|weekday }} {% if day.isCurrentDay %}<span class="badge badge-secondary">{{ 'plans.timetable.today'|trans }}</span>{% endif %}{% if day.isUpcomingDay %}<span class="badge badge-secondary">{{ 'plans.timetable.upcoming'|trans }}</span>{% endif %}</th>
+                                {% endfor %}
+                                </thead>
 
-                                                        {% for day in week.days %}
-                                                            {% set lessons = day.getTimetableLesson(i) %}
-                                                            {% set background = null %}
-                                                            {% set foreground = null %}
-
-                                                            {#
-                                                            {% if lessons.supervisions|length > 0 and subjects[supervisionSubject] is defined and subjects[supervisionSubject].getColor() != null %}
-                                                                {% set background = '#' ~ subjects[supervisionSubject].getColor() %}
-                                                                {% set foreground = background|foreground %}
-                                                            {% endif %}
-                                                            #}
-
-                                                            <td{% if day.isCurrentDay %} class="current" {% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
-                                                                {% for supervision in lessons.supervisions %}
-                                                                    {% include 'timetable/supervision.html.twig' %}
-                                                                {% endfor %}
-                                                            </td>
-                                                        {% endfor %}
-                                                    </tr>
-                                                {% endif %}
-
+                                <tbody>
+                                {% for i in 1..week.maxLessons  %}
+                                    {% if week.maxLessons > 0 %}
+                                        {% if continue is not defined %}{% set continue = false %}{% endif %}
+                                        {% if not continue %}
+                                            {% set isCombined = week.areCombinedLessons(i, i+1) %}
+                                            {% if week.hasSupervisionBefore(i) %}
                                                 <tr>
                                                     <td>
-                                                        {% set start = startTimes[i] %}
-                                                        {% if isCombined %}
-                                                            <strong>{{ i }}./{{ i+1 }}.</strong>
-                                                            {% set end = endTimes[i+1] %}
-                                                        {% else %}
-                                                            <strong>{{ i }}.</strong>
-                                                            {% set end = endTimes[i] %}
-                                                        {% endif %}
-                                                        {% if start != null and end != null %}
-                                                        <span class="text-muted">
-                                                            {{ start }} - {{ end }}
-                                                        </span>
-                                                        {% endif %}
+                                                        {{ supervisionLabels[i] }}
                                                     </td>
+
                                                     {% for day in week.days %}
                                                         {% set lessons = day.getTimetableLesson(i) %}
-                                                        {% if not lessons.isCollapsed %}
+                                                        {% set background = null %}
+                                                        {% set foreground = null %}
 
-                                                            {% set background = null %}
-                                                            {% set foreground = null %}
-
-                                                            {#
-                                                            {% if lessons.lessons|length == 1 and subjects[lessons.lessons[0].getSubject()] is defined and subjects[lessons.lessons[0].getSubject()].getColor() != null %}
-                                                                {% set background = '#' ~ subjects[lessons.lessons[0].getSubject()].getColor() %}
-                                                                {% set foreground = background|foreground %}
-                                                            {% endif %}
-                                                            #}
-
-                                                            <td{% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %}{% if day.isCurrentDay %} class="current" {% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
-                                                                {% for lesson in lessons.lessons %}
-                                                                    {% include 'timetable/lesson.html.twig' %}
-                                                                    {% if not loop.last %}<hr />{% endif %}
-                                                                {% endfor %}
-                                                            </td>
+                                                        {#
+                                                        {% if lessons.supervisions|length > 0 and subjects[supervisionSubject] is defined and subjects[supervisionSubject].getColor() != null %}
+                                                            {% set background = '#' ~ subjects[supervisionSubject].getColor() %}
+                                                            {% set foreground = background|foreground %}
                                                         {% endif %}
+                                                        #}
+
+                                                        <td{% if day.isCurrentDay %} class="current" {% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
+                                                            {% for supervision in lessons.supervisions %}
+                                                                {% include 'timetable/supervision.html.twig' %}
+                                                            {% endfor %}
+                                                        </td>
                                                     {% endfor %}
                                                 </tr>
-                                                {% if isCombined %}
-                                                    {% set continue = true %}
-                                                {% endif %}
-                                            {% else %}
-                                                {% set continue = false %}
                                             {% endif %}
+
+                                            <tr>
+                                                <td>
+                                                    {% set start = startTimes[i] %}
+                                                    {% if isCombined %}
+                                                        <strong>{{ i }}./{{ i+1 }}.</strong>
+                                                        {% set end = endTimes[i+1] %}
+                                                    {% else %}
+                                                        <strong>{{ i }}.</strong>
+                                                        {% set end = endTimes[i] %}
+                                                    {% endif %}
+                                                    {% if start != null and end != null %}
+                                                    <span class="text-muted">
+                                                        {{ start }} - {{ end }}
+                                                    </span>
+                                                    {% endif %}
+                                                </td>
+                                                {% for day in week.days %}
+                                                    {% set lessons = day.getTimetableLesson(i) %}
+                                                    {% if not lessons.isCollapsed %}
+
+                                                        {% set background = null %}
+                                                        {% set foreground = null %}
+
+                                                        {#
+                                                        {% if lessons.lessons|length == 1 and subjects[lessons.lessons[0].getSubject()] is defined and subjects[lessons.lessons[0].getSubject()].getColor() != null %}
+                                                            {% set background = '#' ~ subjects[lessons.lessons[0].getSubject()].getColor() %}
+                                                            {% set foreground = background|foreground %}
+                                                        {% endif %}
+                                                        #}
+
+                                                        <td{% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %}{% if day.isCurrentDay %} class="current" {% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
+                                                            {% for lesson in lessons.lessons %}
+                                                                {% include 'timetable/lesson.html.twig' %}
+                                                                {% if not loop.last %}<hr />{% endif %}
+                                                            {% endfor %}
+                                                        </td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </tr>
+                                            {% if isCombined %}
+                                                {% set continue = true %}
+                                            {% endif %}
+                                        {% else %}
+                                            {% set continue = false %}
                                         {% endif %}
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% endfor %}
-                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endfor %}
                     {% else %}
                         <div class="bs-callout bs-callout-info">
                             <h4>Information</h4>
@@ -160,6 +159,7 @@
                             </p>
                         </div>
                     {% endif %}
+                </div>
             </div>
         {% endif %}
         </div>

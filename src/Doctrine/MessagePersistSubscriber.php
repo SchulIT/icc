@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventSubscriber;
+namespace App\Doctrine;
 
 use App\Entity\Message;
 use App\Event\MessageCreatedEvent;
@@ -13,7 +13,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * This listener listens for new messages being created and
  * dispatches an event into the EventDispatcher
  */
-class MessageNotificationSubscriber implements EventSubscriber {
+class MessagePersistSubscriber implements EventSubscriber {
 
     private $dispatcher;
 

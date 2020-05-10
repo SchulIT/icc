@@ -12,7 +12,7 @@ use Doctrine\ORM\Events;
 /**
  * Listens to Message/MessageAttachment removals in order to remove files and directories from the filesystem.
  */
-class MessageListener implements EventSubscriber {
+class MessageRemoveSubscriber implements EventSubscriber {
 
     private $filesystem;
 

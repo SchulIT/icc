@@ -70,7 +70,8 @@ class MessageType extends AbstractType {
                             'multiple' => true,
                             'attr' => [
                                 'size' => 10
-                            ]
+                            ],
+                            'required' => false
                         ])
                         ->add('startDate', DateType::class, [
                             'label' => 'label.message.start',

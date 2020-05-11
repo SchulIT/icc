@@ -92,7 +92,7 @@
                                                         {% endif %}
                                                         #}
 
-                                                        <td{% if day.isCurrentDay %} class="current" {% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
+                                                        <td{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
                                                             {% for supervision in lessons.supervisions %}
                                                                 {% include 'timetable/supervision.html.twig' %}
                                                             {% endfor %}
@@ -131,7 +131,7 @@
                                                         {% endif %}
                                                         #}
 
-                                                        <td{% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %}{% if day.isCurrentDay %} class="current" {% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
+                                                        <td{% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %}{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
                                                             {% for lesson in lessons.lessons %}
                                                                 {% include 'timetable/lesson.html.twig' %}
                                                                 {% if not loop.last %}<hr />{% endif %}

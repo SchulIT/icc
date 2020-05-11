@@ -7,18 +7,17 @@ use App\Repository\ExamRepositoryInterface;
 use App\Settings\ExamSettings;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-class NotTooManyExamsPerWeekValidator extends ConstraintValidator {
+class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
 
     private $examSettings;
-    private $examRepository;
     private $authorizationChecker;
 
     public function __construct(ExamSettings $examSettings, ExamRepositoryInterface $examRepository, AuthorizationCheckerInterface $authorizationChecker) {
+        parent::__construct($examRepository);
+
         $this->examSettings = $examSettings;
-        $this->examRepository = $examRepository;
         $this->authorizationChecker = $authorizationChecker;
     }
 
@@ -46,7 +45,7 @@ class NotTooManyExamsPerWeekValidator extends ConstraintValidator {
 
         $examWeek = $value->getDate()->format('W');
 
-        $exams = $this->examRepository->findAllByTuitions($value->getTuitions()->toArray());
+        $exams = [ ]; $this->findAllByTuitions($value->getTuitions()->toArray());
         $numberOfExams = 1;
 
         foreach($exams as $existingExam) {

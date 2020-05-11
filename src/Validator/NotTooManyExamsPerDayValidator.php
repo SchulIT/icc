@@ -6,17 +6,17 @@ use App\Entity\Exam;
 use App\Repository\ExamRepositoryInterface;
 use App\Settings\ExamSettings;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-class NotTooManyExamsPerDayValidator extends ConstraintValidator {
+class NotTooManyExamsPerDayValidator extends AbstractExamConstraintValidator {
 
     private $examSettings;
-    private $examRepository;
+
 
     public function __construct(ExamSettings $examSettings, ExamRepositoryInterface $examRepository) {
+        parent::__construct($examRepository);
+
         $this->examSettings = $examSettings;
-        $this->examRepository = $examRepository;
     }
 
     /**
@@ -36,7 +36,7 @@ class NotTooManyExamsPerDayValidator extends ConstraintValidator {
             return true;
         }
 
-        $exams = $this->examRepository->findAllByTuitions($value->getTuitions()->toArray());
+        $exams = $this->findAllByTuitions($value->getTuitions()->toArray());
         $numberOfExams = 1;
 
         foreach($exams as $existingExam) {

@@ -22,7 +22,7 @@ use App\Security\Devices\DeviceManager;
 use App\Security\Voter\ExamVoter;
 use App\Settings\ExamSettings;
 use App\Sorting\ExamDateGroupStrategy;
-use App\Sorting\ExamLessonStrategy as ExamDateSortingStrategy;
+use App\Sorting\ExamDateLessonStrategy as ExamDateSortingStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\View\Filter\GradeFilter;

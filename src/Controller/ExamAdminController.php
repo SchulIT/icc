@@ -14,7 +14,7 @@ use App\Grouping\ExamWeekStrategy;
 use App\Grouping\Grouper;
 use App\Repository\ExamRepositoryInterface;
 use App\Security\Voter\ExamVoter;
-use App\Sorting\ExamLessonStrategy as ExamDateSortingStrategy;
+use App\Sorting\ExamDateGroupStrategy as ExamDateSortingStrategy;
 use App\Sorting\ExamWeekGroupStrategy;
 use App\Sorting\Sorter;
 use App\Utils\CollectionUtils;

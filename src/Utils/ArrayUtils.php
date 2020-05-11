@@ -65,4 +65,16 @@ class ArrayUtils {
 
         return $result;
     }
+
+    public static function unique(array $items) {
+        $result = [ ];
+
+        foreach($items as $item) {
+            if(!in_array($item, $result)) {
+                $result[] = $item;
+            }
+        }
+
+        return $result;
+    }
 }

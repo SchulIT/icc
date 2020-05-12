@@ -406,6 +406,7 @@ studygroup:
 date:
     range: "%from% bis %to%"
     format: d.m.Y
+    format_short: d.m.
     time_format: "H:i"
     days:
         0: Sonntag
@@ -415,6 +416,14 @@ date:
         4: Donnerstag
         5: Freitag
         6: Samstag
+    days_short:
+        0: So
+        1: Mo
+        2: Di
+        3: Mi
+        4: Do
+        5: Fr
+        6: Sa
     months:
         1: Januar
         2: Februar

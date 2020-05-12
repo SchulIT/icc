@@ -26,9 +26,11 @@ class TimetableExtension extends AbstractExtension {
         ];
     }
 
-    public function getWeekday(int $day) {
+    public function getWeekday(int $day, bool $short = false) {
+        $id = $short ? 'date.days_short.%d' : 'date.days.%d';
+
         return $this->translator->trans(
-            sprintf('date.days.%d', $day)
+            sprintf($id, $day)
         );
     }
 

@@ -32,7 +32,7 @@
         {% if periods|length > 0 %}
             <div class="card">
                 <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs">
+                    <ul class="nav nav-pills card-header-pills">
                         {% for period in periods %}
                             <li class="nav-item">
                                 <a class="nav-link{% if currentPeriod != null and period.id == currentPeriod.id %} active{% endif %}" href="{{ path('timetable', { period: period.uuid, grade: gradeFilter.currentGrade, student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid, subject: subjectFilter.currentSubjects, room: roomFilter.currentRoom ? roomFilter.currentRoom.uuid }) }}">

@@ -12,15 +12,14 @@
 {% block content %}
     <div class="container-fluid px-0">
         <div class="row">
+            {% if studentFilter.currentStudent == null and gradeFilter.currentGrade == null and teacherFilter.currentTeacher == null %}
+            <div class="col-md-12">
+            {% else %}
             <div class="col-md-9">
+            {% endif %}
                 {% include "_messages.html.twig" %}
 
-                {% if studentFilter.currentStudent == null and gradeFilter.currentGrade == null and teacherFilter.currentTeacher == null%}
-                    <div class="bs-callout bs-callout-info">
-                        <h4>{{ 'info.label'|trans }}</h4>
-
-                        <p>{{ 'lists.tuitions.start'|trans }}</p>
-                    </div>
+                {% if studentFilter.currentStudent == null and gradeFilter.currentGrade == null and teacherFilter.currentTeacher == null %}
                 {% elseif tuitions|length == 0 %}
                     <div class="bs-callout bs-callout-info">
                         <h4>{{ 'info.label'|trans }}</h4>
@@ -113,8 +112,12 @@
                     </table>
                 </div>
                 {% endif %}
+
+            {% if studentFilter.currentStudent == null and gradeFilter.currentGrade == null and teacherFilter.currentTeacher == null %}
+            {% else %}
             </div>
             <div class="col-md-3">
+            {% endif %}
                 <div class="card">
                     <div class="card-body pb-1">
                         {% include "_filter/grade.html.twig" %}

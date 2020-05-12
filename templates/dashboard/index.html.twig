@@ -53,7 +53,10 @@
                         {# Loop lessons #}
                         {% for lesson in view.lessons %}
                             {% if view.itemsBefore(lesson)|length > 0 %}
-                                <h3>{{ 'dashboard.before_lesson'|trans({'%lesson%': lesson }) }}</h3>
+                                <h4>
+                                    {{ 'dashboard.before_lesson'|trans({'%lesson%': lesson }) }}
+                                    <small class="text-muted">{{ endTimes[lesson - 1] }} - {{ startTimes[lesson] }}</small>
+                                </h4>
 
                                 {% for item in view.itemsBefore(lesson) %}
                                     {% set type = item.blockName %}
@@ -67,7 +70,10 @@
                             {% endif %}
 
                             {% if view.items(lesson)|length > 0 %}
-                                <h3>{{ 'dashboard.lesson'|trans({'%lesson%': lesson }) }}</h3>
+                                <h4>
+                                    {{ 'dashboard.lesson'|trans({'%lesson%': lesson }) }}
+                                    <small class="text-muted">{{ startTimes[lesson] }} - {{ endTimes[lesson] }}</small>
+                                </h4>
 
                                 {% for item in view.items(lesson) %}
                                     {% set type = item.blockName %}

@@ -4,28 +4,39 @@
 
 {% macro lesson(item) %}
     {% set lesson = item.lesson %}
+    {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
+    {%- set showCourseName = false -%}
+    {%- for grade in lesson.tuition.studyGroup.grades -%}
+        {% if grade.id in gradesWithCourseNames -%}
+            {% set showCourseName = true -%}
+        {% endif -%}
+    {%- endfor -%}
     <div class="card">
         <div class="card-body">
             <div class="row no-gutters">
                 <p class="w-100">
-                    <strong>{{ 'plans.exams.tuitions'|trans({'%count%': 1} ) }}:</strong>
-                    {{ lesson.tuition.name }}
+                    {%- if showCourseName -%}
+                        {{ lesson.tuition.studyGroup.name }}
+                    {%- else -%}
+                        {%- if lesson.tuition.subject.replaceSubjectAbbreviation -%}
+                            {{ lesson.tuition.subject.name }}
+                        {%- else -%}
+                            {{ lesson.tuition.subject.abbreviation }}
+                        {%- endif -%}
+                    {%- endif %}
 
-                    <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
                     <i class="fa fa-users"></i> {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-                </p>
-                <p class="w-100">
-                    <strong>{{ 'label.room'|trans }}:</strong> {{ lesson.room }}
+                    <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    <i class="fa fa-door-open"></i> {{ lesson.room.name }}
                 </p>
             </div>
-
-            {% if item.absentStudents|length > 0 %}
-                <div class="card-footer">
-                    <strong>{{ 'dashboard.absent_students'|trans }} <span class="badge badge-danger">{{ item.absentStudents|length }} / {{ item.tuituion.studyGroup.memberships|length }}</span>: </strong>
-                    {% for student in absentStudents %}{{ 'dashboard.absent_student'|trans({'%student%': student.student|student, '%reason%': student.reason|enum }) }}{% if not loop.last %}, {% endif %}{% endfor %}
-                </div>
-            {% endif %}
         </div>
+        {% if item.absentStudents|length > 0 %}
+            <div class="card-footer">
+                <strong>{{ 'dashboard.absent_students'|trans }} <span class="badge badge-danger">{{ item.absentStudents|length }} / {{ lesson.tuition.studyGroup.memberships|length }}</span>: </strong>
+                {% for absentStudent in item.absentStudents %}{{ absentStudent.student|student }} <span class="badge badge-info">{{ absentStudent.reason|enum }}</span>{% if not loop.last %}, {% endif %}{% endfor %}
+            </div>
+        {% endif %}
     </div>
 {% endmacro %}
 

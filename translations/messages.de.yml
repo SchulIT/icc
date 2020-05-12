@@ -153,7 +153,6 @@ dashboard:
     lesson: "%lesson%. Stunde"
     before_lesson: "vor %lesson%. Stunde"
     absent_students: Abwesend
-    absent_student: "%student% (%reason%)"
     supervision: Aufsicht
     empty: Für diesen Tag sind keine Daten hinterlegt.
 

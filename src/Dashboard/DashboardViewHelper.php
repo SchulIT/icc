@@ -25,10 +25,11 @@ use App\Repository\TimetableWeekRepositoryInterface;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\SubstitutionVoter;
+use App\Sorting\AbsentStudentStrategy;
 use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
-use App\Sorting\StudentStrategy;
 use App\Timetable\TimetablePeriodHelper;
+use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
 use App\Utils\StudyGroupHelper;
 use DateTime;
@@ -129,7 +130,7 @@ class DashboardViewHelper {
     private function addTimetableLessons(iterable $lessons, \DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences, int $numberOfWeeks): void {
         foreach($lessons as $lesson) {
             $isWeek = (int)$dateTime->format('W') % $numberOfWeeks === $lesson->getWeek()->getWeekMod();
-            $isDay = (int)$dateTime->format('w') === $lesson->getDay();
+            $isDay = (int)$dateTime->format('N') === $lesson->getDay();
 
             if($isWeek === false || $isDay === false) {
                 continue;
@@ -242,13 +243,15 @@ class DashboardViewHelper {
             })
             ->toArray();
 
-        $absentStudents = array_unique(array_merge(
-            $this->absenceRepository->findAllStudentsByDateAndLesson($dateTime, $lessonStudents, $lesson),
-            $this->computeExamStudents($lessonEntity, $lesson, $dateTime)
-        ));
+        $absentStudents = ArrayUtils::unique(
+            array_merge(
+                $this->absenceRepository->findAllStudentsByDateAndLesson($dateTime, $lessonStudents, $lesson),
+                $this->computeExamStudents($lessonEntity, $lesson, $dateTime)
+            )
+        );
 
         // Sort the students
-        $this->sorter->sort($absentStudents, StudentStrategy::class);
+        $this->sorter->sort($absentStudents, AbsentStudentStrategy::class);
 
         return $absentStudents;
     }

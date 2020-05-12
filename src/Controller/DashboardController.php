@@ -6,6 +6,7 @@ use App\Dashboard\DashboardViewHelper;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Settings\SubstitutionSettings;
+use App\Settings\TimetableSettings;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
@@ -30,7 +31,7 @@ class DashboardController extends AbstractController {
      * @Route("/dashboard", name="dashboard")
      */
     public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
-                          DashboardViewHelper $dashboardViewHelper, DateHelper $dateHelper, SubstitutionSettings $dashboardSettings, Request $request) {
+                              DashboardViewHelper $dashboardViewHelper, DateHelper $dateHelper, TimetableSettings $timetableSettings, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -58,13 +59,24 @@ class DashboardController extends AbstractController {
             $view = $dashboardViewHelper->createViewForUser($user, $selectedDate);
         }
 
+        $startTimes = [ ];
+        $endTimes = [ ];
+
+        for($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
+            $startTimes[$lesson] = $timetableSettings->getStart($lesson);
+            $endTimes[$lesson] = $timetableSettings->getEnd($lesson);
+        }
+
         return $this->render('dashboard/index.html.twig', [
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
             'userTypeFilter' => $userTypeFilterView,
             'view' => $view,
             'days' => $days,
-            'selectedDate' => $selectedDate
+            'selectedDate' => $selectedDate,
+            'startTimes' => $startTimes,
+            'endTimes' => $endTimes,
+            'gradesWithCourseNames' => $timetableSettings->getGradeIdsWithCourseNames(),
         ]);
     }
 

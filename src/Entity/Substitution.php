@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -26,9 +27,8 @@ class Substitution {
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\Date()
      * @Assert\NotNull()
-     * @var \DateTime
+     * @var DateTimeInterface
      */
     private $date;
 
@@ -159,17 +159,17 @@ class Substitution {
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTimeInterface |null
      */
-    public function getDate(): ?\DateTime {
+    public function getDate(): ?DateTimeInterface  {
         return $this->date;
     }
 
     /**
-     * @param \DateTime|null $date
+     * @param DateTimeInterface|null $date
      * @return Substitution
      */
-    public function setDate(?\DateTime $date): Substitution {
+    public function setDate(?DateTimeInterface $date): Substitution {
         $this->date = $date;
         return $this;
     }

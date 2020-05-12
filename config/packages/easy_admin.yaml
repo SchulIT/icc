@@ -84,6 +84,23 @@ easy_admin:
 
         Substitution:
             class: App\Entity\Substitution
+            form:
+                fields:
+                    - externalId
+                    - { property: date, type_options: { widget: 'single_text' } }
+                    - lessonStart
+                    - lessonEnd
+                    - startsBefore
+                    - type
+                    - subject
+                    - replacementSubject
+                    - room
+                    - replacementRoom
+                    - remark
+                    - teachers
+                    - replacementTeachers
+                    - studyGroups
+                    - replacementStudyGroups
 
         Tuition:
             class: App\Entity\Tuition

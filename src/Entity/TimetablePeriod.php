@@ -66,7 +66,10 @@ class TimetablePeriod {
      */
     private $lessons;
 
-
+    /**
+     * @ORM\OneToMany(targetEntity="TimetableSupervision", mappedBy="period")
+     * @var Collection<TimetableSupervision>
+     */
     private $supervisions;
 
     public function __construct() {

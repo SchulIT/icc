@@ -23,6 +23,10 @@ class DeviceTokenListener {
         $request = $event->getRequest();
         $requestToken = $request->attributes->get('token');
 
+        if(empty($requestToken)) {
+            throw new AuthenticationException('You must provide an authentication token.');
+        }
+
         $token = new DeviceToken($requestToken);
 
         try {

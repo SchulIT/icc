@@ -43,7 +43,8 @@ class ExamIcsExporter {
         return $this->icsHelper->getIcsResponse(
             $this->translator->trans('exams.export.title'),
             $this->translator->trans('exams.export.description', [ '%user%' => $user->getUsername() ]),
-            $this->getIcsItems($user)
+            $this->getIcsItems($user),
+            $this->translator->trans('plans.exams.export.download.filename')
         );
     }
 

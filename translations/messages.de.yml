@@ -201,6 +201,17 @@ plans:
             empty: Es kann kein Stundenplan gedruckt werden, da kein Unterricht für die Auswahl existiert.
         export:
             label: Eigenen Stundenplan exportieren
+            title: Stundenplan
+            description: 'Stundenplan von %name%'
+            download:
+                label: Einmaliger Download
+                info: Der Stundenplan wird bei dieser Methode nicht aktualisiert!
+                filename: stundenplan.ics
+            sync:
+                label: Link zur Synchronisation
+                info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Stundenplan damit aktuell hält.
+                name_help: Unter diesem Namen kann in den Profil-Einstellungen der Zugriff wieder entzogen werden.
+                success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
         today: heute
         upcoming: demnächst
 

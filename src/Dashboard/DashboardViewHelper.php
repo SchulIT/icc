@@ -31,6 +31,7 @@ use App\Sorting\StudentStrategy;
 use App\Timetable\TimetablePeriodHelper;
 use App\Utils\EnumArrayUtils;
 use App\Utils\StudyGroupHelper;
+use DateTime;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DashboardViewHelper {
@@ -71,7 +72,7 @@ class DashboardViewHelper {
     public function createViewForTeacher(Teacher $teacher, \DateTime $dateTime): DashboardView {
         $view = new DashboardView();
 
-        $currentPeriod = $this->getCurrentTimetablePeriod(UserType::Teacher(), $dateTime);
+        $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
         $numberOfWeeks = count($this->timetableWeekRepository->findAll());
 
         if($currentPeriod !== null) {
@@ -96,7 +97,7 @@ class DashboardViewHelper {
 
         $studyGroups = $this->studyGroupHelper->getStudyGroups([$student])->toArray();
 
-        $currentPeriod = $this->getCurrentTimetablePeriod($userType, $dateTime);
+        $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
         $numberOfWeeks = count($this->timetableWeekRepository->findAll());
 
         if($currentPeriod !== null) {
@@ -227,8 +228,8 @@ class DashboardViewHelper {
         }
     }
 
-    private function getCurrentTimetablePeriod(UserType $userType, \DateTime $dateTime): ?TimetablePeriod {
-        return $this->timetablePeriodHelper->getPeriod($userType, $dateTime);
+    private function getCurrentTimetablePeriod(DateTime $dateTime): ?TimetablePeriod {
+        return $this->timetablePeriodHelper->getPeriod($dateTime);
     }
 
     private function computeAbsentStudents(TimetableLesson $lessonEntity, int $lesson, \DateTime $dateTime) {

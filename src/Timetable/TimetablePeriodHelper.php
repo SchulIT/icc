@@ -6,6 +6,7 @@ use App\Entity\TimetablePeriod;
 use App\Entity\UserType;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Security\Voter\TimetablePeriodVoter;
+use DateTime;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -27,7 +28,7 @@ class TimetablePeriodHelper {
      * @param UserType $userType
      * @return TimetablePeriod[]
      */
-    public function getPeriods(UserType $userType): array {
+    public function getPeriods(): array {
         $periods = $this->timetablePeriodRepository->findAll();
         $allowedPeriods = [ ];
 
@@ -44,12 +45,11 @@ class TimetablePeriodHelper {
      * Returns the period a given date belongs to in case the given user type is allowed to view it.
      * Returns null in case the user is not allowed to view the period or the date does not belong to any period.
      *
-     * @param UserType $userType
-     * @param \DateTime $dateTime
+     * @param DateTime $dateTime
      * @return TimetablePeriod|null
      */
-    public function getPeriod(UserType $userType, \DateTime $dateTime): ?TimetablePeriod {
-        $periods = $this->getPeriods($userType);
+    public function getPeriod(DateTime $dateTime): ?TimetablePeriod {
+        $periods = $this->getPeriods();
 
         foreach($periods as $period) {
             if($this->dateHelper->isBetween($dateTime, $period->getStart(), $period->getEnd())) {

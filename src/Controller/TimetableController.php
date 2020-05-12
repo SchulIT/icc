@@ -2,11 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\DeviceToken;
+use App\Entity\DeviceTokenType;
 use App\Entity\MessageScope;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
 use App\Entity\TimetablePeriod;
 use App\Entity\User;
+use App\Export\TimetableIcsExporter;
+use App\Form\DeviceTokenType as DeviceTokenTypeForm;
 use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\MessageRepositoryInterface;
@@ -14,6 +18,7 @@ use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
+use App\Security\Devices\DeviceManager;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
@@ -29,6 +34,9 @@ use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/timetable")
+ */
 class TimetableController extends AbstractControllerWithMessages {
 
     private $timetableHelper;
@@ -48,7 +56,7 @@ class TimetableController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/timetable", name="timetable")
+     * @Route("", name="timetable")
      */
     public function index(StudentFilter $studentFilter, TeacherFilter $teacherFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableWeekRepositoryInterface $weekRepository, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
@@ -149,24 +157,38 @@ class TimetableController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/timetable/print", name="print_timetable")
+     * @Route("/export", name="timetable_export")
      */
-    private function print() {
+    public function export(Request $request, DeviceManager $manager) {
+        /** @var User $user */
+        $user = $this->getUser();
 
+        $deviceToken = (new DeviceToken())
+            ->setType(DeviceTokenType::Calendar())
+            ->setUser($user);
+
+        $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $deviceToken = $manager->persistDeviceToken($deviceToken);
+        }
+
+        return $this->renderWithMessages('timetable/export.html.twig', [
+            'form' => $form->createView(),
+            'token' => $deviceToken
+        ]);
     }
 
     /**
-     * @Route("/timetable/export", name="timetable_export")
+     * @Route("/ics/download", name="timetable_ics")
+     * @Route("/ics/downloads/{token}", name="timetable_ics_token")
      */
-    public function export() {
+    public function ics(TimetableIcsExporter $icsExporter) {
+        /** @var User $user */
+        $user = $this->getUser();
 
-    }
-
-    /**
-     * @Route("/timetable/ics", name="timetable_ics")
-     */
-    public function ics() {
-
+        return $icsExporter->getIcsResponse($user);
     }
 
     /**

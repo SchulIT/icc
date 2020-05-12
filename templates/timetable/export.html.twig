@@ -1,0 +1,57 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'plans.timetable.export.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('timetable') }}">{{ 'plans.timetable.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ 'plans.timetable.export.download.label'|trans }}</h5>
+
+            <div class="bs-callout bs-callout-danger">
+                <p>{{ 'plans.timetable.export.download.info'|trans }}</p>
+            </div>
+
+            <a href="{{ path('timetable_ics') }}" class="btn btn-outline-primary btn-sm">
+                <i class="fa fa-download"></i> {{ 'plans.timetable.export.download.filename'|trans }}
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ 'plans.timetable.export.sync.label'|trans }}</h5>
+
+            <p>{{ 'plans.timetable.export.sync.info'|trans }}</p>
+
+            {% if token.token is null %}
+                {{ form_start(form) }}
+                {{ form_row(form.name) }}
+
+                <button type="submit" class="btn btn-outline-primary btn-sm">
+                    <i class="fa fa-check"></i> {{ 'actions.create'|trans }}
+                </button>
+
+                {{ form_end(form) }}
+            {% else %}
+                <div class="bs-callout bs-callout-success">
+                    <p>{{ 'plans.timetable.export.sync.success'|trans }}</p>
+                </div>
+
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" value="{{ url('timetable_ics_token', { token: token.token }) }}" disabled="disabled">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" data-toggle="tooltip" data-clipboard-text="{{ url('timetable_ics_token', { token: token.token }) }}" title="{{ 'clipboard.copy'|trans }}"><i class="fa fa-copy"></i></button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

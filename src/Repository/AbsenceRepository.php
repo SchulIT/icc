@@ -69,8 +69,8 @@ class AbsenceRepository extends AbstractTransactionalRepository implements Absen
                 $qb->expr()->orX(
                     $qb->expr()->isNull('aInner.lessonStart'),
                     $qb->expr()->andX(
-                        'aInner.lessonStart >= :lesson',
-                        'aInner.lessonEnd <= :lesson'
+                        'aInner.lessonStart <= :lesson',
+                        'aInner.lessonEnd >= :lesson'
                     )
                 )
             );

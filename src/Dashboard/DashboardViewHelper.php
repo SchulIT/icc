@@ -12,6 +12,7 @@ use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
 use App\Entity\TimetableSupervision;
+use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Repository\AbsenceRepositoryInterface;
@@ -245,7 +246,9 @@ class DashboardViewHelper {
 
         $absentStudents = ArrayUtils::unique(
             array_merge(
-                $this->absenceRepository->findAllStudentsByDateAndLesson($dateTime, $lessonStudents, $lesson),
+                array_map(function(Student $student) {
+                    return new AbsentStudent($student, AbsenceReason::Other());
+                }, $this->absenceRepository->findAllStudentsByDateAndLesson($dateTime, $lessonStudents, $lesson)),
                 $this->computeExamStudents($lessonEntity, $lesson, $dateTime)
             )
         );
@@ -277,6 +280,13 @@ class DashboardViewHelper {
                 }
             }
         }
+
+        $absentStudents = array_filter($absentStudents, function(AbsentExamStudent $absentStudent) use($lessonEntity) {
+            $tuitionIds = $absentStudent->getExam()->getTuitions()->map(function(Tuition $tuition) {
+                return $tuition->getId();
+            })->toArray();
+            return !in_array($lessonEntity->getTuition()->getId(), $tuitionIds);
+        });
 
         return $absentStudents;
     }

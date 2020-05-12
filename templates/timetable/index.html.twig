@@ -85,12 +85,10 @@
                                                         {% set background = null %}
                                                         {% set foreground = null %}
 
-                                                        {#
-                                                        {% if lessons.supervisions|length > 0 and subjects[supervisionSubject] is defined and subjects[supervisionSubject].getColor() != null %}
-                                                            {% set background = '#' ~ subjects[supervisionSubject].getColor() %}
+                                                        {% if lessons.lessons|length == 1 and lessons.lessons[0].tuition.subject.color is not empty %}
+                                                            {% set background = lessons.lessons[0].tuition.subject.color %}
                                                             {% set foreground = background|foreground %}
                                                         {% endif %}
-                                                        #}
 
                                                         <td{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
                                                             {% for supervision in lessons.supervisions %}
@@ -124,17 +122,15 @@
                                                         {% set background = null %}
                                                         {% set foreground = null %}
 
-                                                        {#
-                                                        {% if lessons.lessons|length == 1 and subjects[lessons.lessons[0].getSubject()] is defined and subjects[lessons.lessons[0].getSubject()].getColor() != null %}
-                                                            {% set background = '#' ~ subjects[lessons.lessons[0].getSubject()].getColor() %}
+                                                        {% if lessons.lessons|length == 1 and lessons.lessons[0].tuition.subject.color is not empty %}
+                                                            {% set background = lessons.lessons[0].tuition.subject.color %}
                                                             {% set foreground = background|foreground %}
                                                         {% endif %}
-                                                        #}
 
                                                         <td{% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %}{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
                                                             {% for lesson in lessons.lessons %}
-                                                                {% include 'timetable/lesson.html.twig' %}
-                                                                {% if not loop.last %}<hr />{% endif %}
+                                                                {% include 'timetable/lesson.html.twig' with { student: studentFilter.currentStudent, memberships: memberships }%}
+                                                                {% if not loop.last %}<hr>{% endif %}
                                                             {% endfor %}
                                                         </td>
                                                     {% endif %}
@@ -165,8 +161,18 @@
         </div>
 
             <div class="col-md-3">
-
-                <!-- TODO: Export -->
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% if timetable is not null %}
+                        <a href="{{ path('timetable', query|merge({'print': true})) }}" class="list-group-item list-group-item-action" target="_blank">
+                            <i class="fa fa-print"></i> {{ 'plans.timetable.print.label'|trans }}
+                        </a>
+                        {% endif %}
+                        <a href="{{ path('timetable_export') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-download"></i> {{ 'plans.timetable.export.label'|trans }}
+                        </a>
+                    </div>
+                </div>
 
                 {% if contains_active_filters([teacherFilter, studentFilter, gradeFilter, subjectFilter, roomFilter]) %}
                 <div class="card">

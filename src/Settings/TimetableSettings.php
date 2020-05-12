@@ -11,6 +11,8 @@ class TimetableSettings extends AbstractSettings {
     private const CollapsibleKey = 'lesson.%d.collapsable';
     private const SupervisionLabelKey = 'supervision.label';
     private const CategoriesKey = 'no_lessons_categories';
+    private const GradesWithCourseNames = 'course_names';
+    private const GradesWithMembershipTypes = 'membership_types';
 
     public function __construct(SettingsManager $manager) {
         parent::__construct($manager);
@@ -99,6 +101,34 @@ class TimetableSettings extends AbstractSettings {
      */
     public function setCategoryIds(array $ids): void {
         $this->setValue(static::CategoriesKey, $ids);
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getGradeIdsWithCourseNames(): array {
+        return $this->getValue(static::GradesWithCourseNames, [ ]);
+    }
+
+    /**
+     * @param int[] $ids
+     */
+    public function setGradeIdsWithCourseNames(array $ids): void {
+        $this->setValue(static::GradesWithCourseNames, $ids);
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getGradeIdsWithMembershipTypes(): array {
+        return $this->getValue(static::GradesWithMembershipTypes, [ ]);
+    }
+
+    /**
+     * @param int[] $ids
+     */
+    public function setGradeIdsWithMembershipTypes(array $ids): void {
+        $this->setValue(static::GradesWithMembershipTypes, $ids);
     }
 
     public function setSupervisionLabel(?string $label): void {

@@ -4,9 +4,12 @@ namespace App\Controller;
 
 use App\Converter\EnumStringConverter;
 use App\Entity\AppointmentCategory;
+use App\Entity\Grade;
 use App\Entity\UserType;
+use App\Form\IdEntityType;
 use App\Menu\Builder;
 use App\Repository\AppointmentCategoryRepositoryInterface;
+use App\Repository\GradeRepositoryInterface;
 use App\Settings\AbstractSettings;
 use App\Settings\AppointmentsSettings;
 use App\Settings\ExamSettings;
@@ -167,7 +170,7 @@ class SettingsController extends AbstractController {
     /**
      * @Route("/timetable", name="admin_settings_timetable")
      */
-    public function timetable(Request $request, TimetableSettings $timetableSettings,
+    public function timetable(Request $request, TimetableSettings $timetableSettings, GradeRepositoryInterface $gradeRepository,
                               AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, TranslatorInterface $translator) {
         $builder = $this->createFormBuilder();
         $builder
@@ -197,6 +200,36 @@ class SettingsController extends AbstractController {
                 'label_attr' => [
                     'class' => 'checkbox-custom'
                 ]
+            ])
+            ->add('grades_course_names', ChoiceType::class, [
+                'label' => 'admin.settings.timetable.grades_course_names.label',
+                'help' => 'admin.settings.timetable.grades_course_names.help',
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
+                    return $grade->getName();
+                }, function (Grade $grade) {
+                    return $grade->getId();
+                }),
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => [
+                    'size' => 10
+                ],
+                'data' => $timetableSettings->getGradeIdsWithCourseNames()
+            ])
+            ->add('grades_membership_types', ChoiceType::class, [
+                'label' => 'admin.settings.timetable.grades_membership_types.label',
+                'help' => 'admin.settings.timetable.grades_membership_types.help',
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
+                    return $grade->getName();
+                }, function (Grade $grade) {
+                    return $grade->getId();
+                }),
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => [
+                    'size' => 10
+                ],
+                'data' => $timetableSettings->getGradeIdsWithMembershipTypes()
             ]);
 
         for($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
@@ -262,6 +295,8 @@ class SettingsController extends AbstractController {
             $timetableSettings->setCategoryIds($form->get('categories')->getData());
             $timetableSettings->setSupervisionLabel($form->get('supervision_label')->getData());
             $timetableSettings->setStart(0, $form->get('supervision_begin')->getData());
+            $timetableSettings->setGradeIdsWithCourseNames($form->get('grades_course_names')->getData());
+            $timetableSettings->setGradeIdsWithMembershipTypes($form->get('grades_membership_types')->getData());
 
             for($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
                 $startKey = sprintf('lesson_%d_start', $lesson);

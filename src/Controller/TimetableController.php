@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\MessageScope;
+use App\Entity\Student;
+use App\Entity\StudyGroupMembership;
 use App\Entity\TimetablePeriod;
 use App\Entity\User;
 use App\Grouping\Grouper;
@@ -15,6 +17,7 @@ use App\Repository\TimetableWeekRepositoryInterface;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
+use App\Timetable\TimetableFilter;
 use App\Timetable\TimetableHelper;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\RoomFilter;
@@ -49,7 +52,7 @@ class TimetableController extends AbstractControllerWithMessages {
      */
     public function index(StudentFilter $studentFilter, TeacherFilter $teacherFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableWeekRepositoryInterface $weekRepository, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
-                          TimetableSupervisionRepositoryInterface $supervisionRepository, Request $request) {
+                          TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -68,19 +71,36 @@ class TimetableController extends AbstractControllerWithMessages {
 
         $lessons = [ ];
         $supervisions = [ ];
+        $membershipsTypes = [ ];
 
         if($currentPeriod !== null) {
             if ($studentFilterView->getCurrentStudent() !== null) {
                 $lessons = $lessonRepository->findAllByPeriodAndStudent($currentPeriod, $studentFilterView->getCurrentStudent());
+                $lessons = $timetableFilter->filterStudentLessons($lessons);
+
+                $gradeIdsWithMembershipTypes = $this->timetableSettings->getGradeIdsWithMembershipTypes();
+
+                /** @var StudyGroupMembership $membership */
+                foreach($studentFilterView->getCurrentStudent()->getStudyGroupMemberships() as $membership) {
+                    foreach($membership->getStudyGroup()->getGrades() as $grade) {
+                        if (in_array($grade->getId(), $gradeIdsWithMembershipTypes)) {
+                            $membershipsTypes[$membership->getStudyGroup()->getId()] = $membership->getType();
+                        }
+                    }
+                }
             } else if ($teacherFilterView->getCurrentTeacher() !== null) {
                 $lessons = $lessonRepository->findAllByPeriodAndTeacher($currentPeriod, $teacherFilterView->getCurrentTeacher());
+                $lessons = $timetableFilter->filterTeacherLessons($lessons);
                 $supervisions = $supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacherFilterView->getCurrentTeacher());
             } else if ($gradeFilterView->getCurrentGrade() !== null) {
                 $lessons = $lessonRepository->findAllByPeriodAndGrade($currentPeriod, $gradeFilterView->getCurrentGrade());
+                $lessons = $timetableFilter->filterGradeLessons($lessons);
             } else if ($roomFilterView->getCurrentRoom() !== null) {
                 $lessons = $lessonRepository->findAllByPeriodAndRoom($currentPeriod, $roomFilterView->getCurrentRoom());
+                $lessons = $timetableFilter->filterRoomLessons($lessons);
             } else if (count($subjectFilterView->getSubjects()) > 0) {
                 $lessons = $lessonRepository->findAllByPeriodAndSubjects($currentPeriod, $subjectFilterView->getCurrentSubjects());
+                $lessons = $timetableFilter->filterSubjectsLessons($lessons);
             }
         }
 
@@ -102,9 +122,14 @@ class TimetableController extends AbstractControllerWithMessages {
 
         if($request->query->getBoolean('print', false) === true) {
             $template = 'timetable/index_print.html.twig';
-        }
 
-        dump($timetable);
+            if($timetable === null) {
+                $query = $request->query->all();
+                unset($query['print']);
+                $this->addFlash('info', 'plans.timetable.print.empty');
+                return $this->redirectToRoute('timetable', $query);
+            }
+        }
 
         return $this->renderWithMessages($template, [
             'timetable' => $timetable,
@@ -116,7 +141,10 @@ class TimetableController extends AbstractControllerWithMessages {
             'periods' => $periods,
             'currentPeriod' => $currentPeriod,
             'startTimes' => $startTimes,
-            'endTimes' => $endTimes
+            'endTimes' => $endTimes,
+            'gradesWithCourseNames' => $this->timetableSettings->getGradeIdsWithCourseNames(),
+            'memberships' => $membershipsTypes,
+            'query' => $request->query->all()
         ]);
     }
 
@@ -124,6 +152,13 @@ class TimetableController extends AbstractControllerWithMessages {
      * @Route("/timetable/print", name="print_timetable")
      */
     private function print() {
+
+    }
+
+    /**
+     * @Route("/timetable/export", name="timetable_export")
+     */
+    public function export() {
 
     }
 

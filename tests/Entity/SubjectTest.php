@@ -21,11 +21,11 @@ class SubjectTest extends TestCase {
         $subject->setColor('color');
         $this->assertEquals('color', $subject->getColor());
 
-        $subject->setIsVisibleCourses(true);
-        $this->assertTrue($subject->isVisibleCourses());
+        $subject->setIsVisibleLists(true);
+        $this->assertTrue($subject->isVisibleLists());
 
-        $subject->setIsVisibleCourses(false);
-        $this->assertFalse($subject->isVisibleCourses());
+        $subject->setIsVisibleLists(false);
+        $this->assertFalse($subject->isVisibleLists());
 
         $subject->setIsVisibleGrades(true);
         $this->assertTrue($subject->isVisibleGrades());

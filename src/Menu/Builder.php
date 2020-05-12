@@ -261,6 +261,11 @@ class Builder {
             ])
                 ->setAttribute('icon', 'far fa-clock');
 
+            $menu->addChild('admin.subjects.label', [
+                'route' => 'admin_subjects'
+            ])
+                ->setAttribute('icon', 'fas fa-graduation-cap');
+
             $menu->addChild('admin.teachers.label', [
                 'route' => 'admin_teachers'
             ])

@@ -54,6 +54,16 @@ class ArrayUtils {
         return $array;
     }
 
+    public static function createArrayWithKeysAndValues(array $items, \Closure $keyFunc, \Closure $valueFunc): array {
+        $array = [ ];
+
+        foreach($items as $item) {
+            $array[$keyFunc($item)] = $valueFunc($item);
+        }
+
+        return $array;
+    }
+
     public static function findAllWithKeys(array $items, array $keys): array {
         $result = [ ];
 

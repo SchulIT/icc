@@ -1,6 +1,7 @@
 label:
     general: Allgemeine Informationen
     acronym: Kürzel
+    abbreviation: Kürzel
     firstname: Vorname
     lastname: Nachname
     name: Name
@@ -195,7 +196,11 @@ plans:
         lesson: Stunde
         title: "Stundenplan für %name%"
         print:
+            label: Stundenplan drucken
             date: "gedruckt am %date%"
+            empty: Es kann kein Stundenplan gedruckt werden, da kein Unterricht für die Auswahl existiert.
+        export:
+            label: Eigenen Stundenplan exportieren
         today: heute
         upcoming: demnächst
 
@@ -492,6 +497,12 @@ admin:
                 start: "Beginn %lesson%. Stunde"
                 end: "Ende %lesson%. Stunde"
                 collapsible: "%lesson%. Stunde kann mit voriger Stunde zu einer Doppelstunde zusammengefasst werden"
+            grades_course_names:
+                label: Klassen mit Kursbezeichnungen
+                help: Bei Stundenplaneinträgen in diesen Klassen wird anstatt des Faches die Kursbezeichnung angezeigt.
+            grades_membership_types:
+                label: Klassen mit Kursarten
+                help: Bei Stundenplaneinträgen von Kursen in diesen Klassen wird die Kursart eines Lernenden angezeigt.
 
 
     timetable:
@@ -703,6 +714,39 @@ admin:
             help: Hiermit werden für jeden Unterricht entsprechend der angegebenen Anzahl Klausuren erstellt. Die Lehrkraft des Unterrichts kann anschließend das Datum sowie die Unterrichtsstunden für die Klausur festlegen.
             success: Klausuren erfolgreich angelegt
             number_of_exams: Anzahl der Klausuren
+
+    subjects:
+        label: Fächer
+        empty: Keine Fächer vorhanden.
+        add:
+            label: Neues Fach
+            success: Fach erfolgreich aktualisiert
+        edit:
+            label: Fach bearbeiten
+            success: Fach erfolgreich aktualisiert
+        remove:
+            label: Fach löschen
+            confirm: 'Soll das Fach %name% (%abbreviation%) wirklich gelöscht werden?'
+            error: Das Fach kann nicht gelöscht werden, da ihm Unterrichte zugeordnet sind.
+            success: Fach erfolgreich gelöscht
+        replace:
+            short: ersetzen
+            long: Kürzel immer durch Namen ersetzen
+            long_false: Kürzel nie durch den Namen ersetzen
+        visibility:
+            short: Sichtbarkeit
+            grades: sichtbar im Klassen-Stundenplan
+            grades_false: nicht sichtbar im Klassen-Stundenplan
+            students: sichtbar im Lernenden-Stundenplan
+            students_false: nicht sichtbar im Lernenden-Stundenplan
+            teachers: sichtbar im Lehrkraft-Stundenplan
+            teachers_false: nicht sichtbar im Lehrkraft-Stundenplan
+            rooms: sichtbar im Raum-Stundenplan
+            rooms_false: nicht sichtbar im Raum-Stundenplan
+            subjects: sichtbar im Fächer-Stundenplan
+            subjects_false: nicht sichtbar im Fächer-Stundenplan
+            lists: Kurse mit diesem Fach in Kurslisten sichtbar
+            lists_false: Kurse mit diesem Fach in Kurslisten nicht sichtbar
 
 versions:
     label: Versionen

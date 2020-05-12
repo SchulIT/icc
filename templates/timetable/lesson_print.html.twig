@@ -1,35 +1,30 @@
 {% if lesson != null %}
     <div class="lesson print">
-        <div class="clearfix">
-            <div class="subject pull-left">
-                {% if isCourse %}
-                    {{ lesson.tuition.studyGroup.name }}
-                {% else %}
-                    {% if lesson.tuition.subject.replaceSubjectAbbreviation %}
-                        {{ lesson.tuition.subject.name }}
-                    {% else %}
-                        {{ lesson.tuition.subject.abbreviation }}
-                    {% endif %}
-                {% endif %}
-            </div>
-        </div>
+        {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
+        {%- set showCourseName = false -%}
+        {%- for grade in lesson.tuition.studyGroup.grades -%}
+            {% if grade.id in gradesWithCourseNames -%}
+                {% set showCourseName = true -%}
+            {% endif -%}
+        {%- endfor -%}
+        <strong>
+            {%- if showCourseName -%}
+                {{ lesson.tuition.studyGroup.name }}
+            {%- else -%}
+                {{ lesson.tuition.subject.abbreviation }}
+            {%- endif -%}
+        </strong>
 
-        <div class="clearfix">
-            <div class="teacher pull-left">
-                {% if teacher != null %}
-                    {% for g in lesson.getGrades() %}{{ g.getName() }}{% if not loop.last %}, {% endif %}{% endfor %}
-                {% else %}
-                    {{ lesson.getTeacher().getAcronym() }}
-                {% endif %}
-            </div>
+        {% if teacherFilter.currentTeacher is not null %}
+            {% for g in lesson.tuition.studyGroup.grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+        {% else %}
+            {{ lesson.tuition.teacher.getAcronym() }}
+        {% endif %}
 
-            <div class="room pull-left">
-                {% if room != null %}
-                    {% for g in lesson.getGrades() %}{{ g.getName() }}{% if not loop.last %}, {% endif %}{% endfor %}
-                {% elseif not lesson.getRoom() is null %}
-                    {{ lesson.room.name }}
-                {% endif %}
-            </div>
-        </div>
+        {% if roomFilter.currentRoom != null %}
+            ({% for g in lesson.tuition.studyGroup.grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+        {% elseif not lesson.room is null %}
+            ({{ lesson.room.name }})
+        {% endif %}
     </div>
 {% endif %}

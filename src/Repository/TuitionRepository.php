@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Grade;
 use App\Entity\Student;
+use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use Doctrine\ORM\QueryBuilder;
@@ -131,6 +132,31 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
+    public function findAllBySubjects(array $subjects) {
+        $subjectIds = array_map(function(Subject $subject) {
+            return $subject->getId();
+        }, $subjects);
+
+        $qb = $this->em->createQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(Tuition::class, 'tInner')
+            ->leftJoin('tInner.subject', 'sInner')
+            ->where(
+                $qb->expr()->in('sInner.id', ':subjects')
+            );
+
+        $qb = $this->getDefaultQueryBuilder()
+            ->where($qb->expr()->in('t.id', $qbInner->getDQL()))
+            ->setParameter('subjects', $subjectIds);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAll() {
         return $this->getDefaultQueryBuilder()
             ->getQuery()
@@ -152,5 +178,6 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         $this->em->remove($tuition);
         $this->flushIfNotInTransaction();
     }
+
 
 }

@@ -32,22 +32,13 @@ table.timetable tr td {
     page-break-inside: avoid;
 }
 
-.lesson.print {
-    .subject,
-    .teacher {
-        width: 50px;
-        padding: 0 !important;
-        margin: 0 !important;
+.timetable-print {
+    .timetable {
+        table-layout: fixed;
     }
 
-    .subject.huge {
-        width: 100px !important;
-    }
-
-    .course,
-    .room {
-        padding: 0 !important;
-        margin: 0 !important;
+    .column-lesson {
+        width: 70px;
     }
 }
 
@@ -62,9 +53,5 @@ hr {
         border-color: black !important;
         padding: 5px !important;
     }
-}
-
-#footer-wrapper {
-    display:none;
 }
 

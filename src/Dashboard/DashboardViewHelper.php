@@ -3,6 +3,7 @@
 namespace App\Dashboard;
 
 use App\Entity\Exam;
+use App\Entity\ExamInvigilator;
 use App\Entity\Message;
 use App\Entity\MessageScope;
 use App\Entity\Student;
@@ -23,10 +24,14 @@ use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
+use App\Security\Voter\AbsenceVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\SubstitutionVoter;
+use App\Settings\SubstitutionSettings;
 use App\Sorting\AbsentStudentStrategy;
+use App\Sorting\AbsentStudyGroupStrategy;
+use App\Sorting\AbsentTeacherStrategy;
 use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
 use App\Timetable\TimetablePeriodHelper;
@@ -84,8 +89,10 @@ class DashboardViewHelper {
 
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), UserType::Teacher(), $dateTime), $view);
         $this->addSubstitutions($this->substitutionRepository->findAllForTeacher($teacher, $dateTime), $view);
-        $this->addExams($this->examRepository->findAllByTeacher($teacher, $dateTime, true), $view);
+        $this->addExams($exams = $this->examRepository->findAllByTeacher($teacher, $dateTime, true), $view, $teacher);
         $this->addInfotexts($dateTime, $view);
+        $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
+        $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
 
         return $view;
     }
@@ -108,8 +115,10 @@ class DashboardViewHelper {
 
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $userType, $dateTime, $studyGroups), $view);
         $this->addSubstitutions($this->substitutionRepository->findAllForStudyGroups($studyGroups, $dateTime), $view);
-        $this->addExams($this->examRepository->findAllByStudents([$student], $dateTime, true), $view);
+        $this->addExams($exams = $this->examRepository->findAllByStudents([$student], $dateTime, true), $view, null);
         $this->addInfotexts($dateTime, $view);
+        $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
+        $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
 
         return $view;
     }
@@ -127,6 +136,7 @@ class DashboardViewHelper {
      * @param \DateTime $dateTime
      * @param DashboardView $dashboardView
      * @param bool $computeAbsences
+     * @param int $numberOfWeeks
      */
     private function addTimetableLessons(iterable $lessons, \DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences, int $numberOfWeeks): void {
         foreach($lessons as $lesson) {
@@ -138,6 +148,7 @@ class DashboardViewHelper {
             }
 
             $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lesson, $lesson->getLesson(), $dateTime) : [ ];
+
             $dashboardView->addItem($lesson->getLesson(), new LessonViewItem($lesson, $absentStudents, false));
 
             if($lesson->isDoubleLesson()) {
@@ -205,15 +216,45 @@ class DashboardViewHelper {
     /**
      * @param Exam[] $exams
      * @param DashboardView $dashboardView
+     * @param Teacher|null $teacher
      */
-    private function addExams(iterable $exams, DashboardView $dashboardView): void {
+    private function addExams(iterable $exams, DashboardView $dashboardView, ?Teacher $teacher): void {
         foreach($exams as $exam) {
             if($this->authorizationChecker->isGranted(ExamVoter::Show, $exam) !== true) {
                 continue;
             }
 
+            /** @var int[] $tuitionTeacherIds */
+            $tuitionTeacherIds = [ ];
+
+            /** @var Tuition $tuition */
+            foreach($exam->getTuitions() as $tuition) {
+                $tuitionTeacherIds = array_merge($tuitionTeacherIds, array_map(function(Teacher $teacher) {
+                    return $teacher->getId();
+                }, $tuition->getTeachers()));
+            }
+
+            $invigilators = [ ];
+
+            if($teacher !== null) {
+                /** @var ExamInvigilator $invigilator */
+                foreach($exam->getInvigilators() as $invigilator) {
+                    $invigilators[$invigilator->getLesson()] = $invigilator->getTeacher()->getId();
+                }
+            }
+
             for($lesson = $exam->getLessonStart(); $lesson <= $exam->getLessonEnd(); $lesson++) {
-                $dashboardView->addItem($lesson, new ExamViewItem($exam));
+                if($teacher !== null) {
+                    if(in_array($teacher->getId(), $tuitionTeacherIds)) {
+                        $dashboardView->addItem($lesson, new ExamViewItem($exam));
+                    }
+
+                    if(isset($invigilators[$lesson]) && $invigilators[$lesson] === $teacher->getId()) {
+                        $dashboardView->addItem($lesson, new ExamInvigilatorViewItem($exam));
+                    }
+                } else {
+                    $dashboardView->addItem($lesson, new ExamViewItem($exam));
+                }
             }
         }
     }
@@ -227,6 +268,24 @@ class DashboardViewHelper {
 
         foreach($infotexts as $infotext) {
             $view->addInfotext($infotext);
+        }
+    }
+
+    private function addAbsentTeachers(array $absences, DashboardView $view): void {
+        $this->sorter->sort($absences, AbsentTeacherStrategy::class);
+        foreach($absences as $absence) {
+            if($this->authorizationChecker->isGranted(AbsenceVoter::View, $absence)) {
+                $view->addAbsence($absence);
+            }
+        }
+    }
+
+    private function addAbsentStudyGroup(array $absences, DashboardView $view): void {
+        $this->sorter->sort($absences, AbsentStudyGroupStrategy::class);
+        foreach($absences as $absence) {
+            if($this->authorizationChecker->isGranted(AbsenceVoter::View, $absence)) {
+                $view->addAbsence($absence);
+            }
         }
     }
 

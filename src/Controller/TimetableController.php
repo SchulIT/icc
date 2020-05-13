@@ -139,6 +139,11 @@ class TimetableController extends AbstractControllerWithMessages {
             }
         }
 
+        $supervisionLabels = [ ];
+        for($i = 1; $i <= $this->timetableSettings->getMaxLessons(); $i++) {
+            $supervisionLabels[$i] = $this->timetableSettings->getDescriptionBeforeLesson($i);
+        }
+
         return $this->renderWithMessages($template, [
             'timetable' => $timetable,
             'studentFilter' => $studentFilterView,
@@ -152,7 +157,8 @@ class TimetableController extends AbstractControllerWithMessages {
             'endTimes' => $endTimes,
             'gradesWithCourseNames' => $this->timetableSettings->getGradeIdsWithCourseNames(),
             'memberships' => $membershipsTypes,
-            'query' => $request->query->all()
+            'query' => $request->query->all(),
+            'supervisionLabels' => $supervisionLabels
         ]);
     }
 

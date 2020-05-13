@@ -2,6 +2,7 @@
 
 namespace App\Dashboard;
 
+use App\Entity\Absence;
 use App\Entity\Infotext;
 use App\Entity\Message;
 
@@ -12,6 +13,12 @@ class DashboardView {
 
     /** @var Infotext[] */
     private $infotexts = [ ];
+
+    /** @var Absence[] */
+    private $absentTeachers = [ ];
+
+    /** @var Absence[] */
+    private $absentStudyGroups = [ ];
 
     private $items = [ ];
 
@@ -28,7 +35,7 @@ class DashboardView {
         $lessons = array_merge(array_keys($this->items), array_keys($this->beforeItems));
         sort($lessons, SORT_NUMERIC);
 
-        return $lessons;
+        return array_unique($lessons);
     }
 
     /**
@@ -50,6 +57,20 @@ class DashboardView {
      */
     public function getInfotexts(): array {
         return $this->infotexts;
+    }
+
+    /**
+     * @return Absence[]
+     */
+    public function getAbsentTeachers(): array {
+        return $this->absentTeachers;
+    }
+
+    /**
+     * @return Absence[]
+     */
+    public function getAbsentStudyGroups(): array {
+        return $this->absentStudyGroups;
     }
 
     public function addItem(int $lesson, AbstractViewItem $item): void {
@@ -76,10 +97,20 @@ class DashboardView {
         $this->infotexts[] = $infotext;
     }
 
+    public function addAbsence(Absence $absence): void {
+        if($absence->getStudyGroup() !== null) {
+            $this->absentStudyGroups[] = $absence;
+        } else if($absence->getTeacher() !== null) {
+            $this->absentTeachers[] = $absence;
+        }
+    }
+
     public function isEmpty(): bool {
         return count($this->messages) === 0
             && count($this->infotexts) === 0
             && count($this->items) === 0
-            && count($this->beforeItems) === 0;
+            && count($this->beforeItems) === 0
+            && count($this->absentStudyGroups) === 0
+            && count($this->absentTeachers) === 0;
     }
 }

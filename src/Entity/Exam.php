@@ -45,7 +45,7 @@ class Exam {
     /**
      * @ORM\Column(type="integer")
      * @Assert\GreaterThan(0)
-     * @Assert\GreaterThan(propertyPath="lessonStart")
+     * @Assert\GreaterThanOrEqual(propertyPath="lessonStart")
      * @var int
      */
     private $lessonEnd = 0;

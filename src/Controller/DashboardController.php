@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dashboard\DashboardViewHelper;
+use App\Dashboard\DashboardViewMergeHelper;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Settings\SubstitutionSettings;
@@ -31,7 +32,7 @@ class DashboardController extends AbstractController {
      * @Route("/dashboard", name="dashboard")
      */
     public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
-                              DashboardViewHelper $dashboardViewHelper, DateHelper $dateHelper, TimetableSettings $timetableSettings, Request $request) {
+                              DashboardViewHelper $dashboardViewHelper, DashboardViewMergeHelper $dashboardViewMergeHelper, DateHelper $dateHelper, TimetableSettings $timetableSettings, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -67,6 +68,17 @@ class DashboardController extends AbstractController {
             $endTimes[$lesson] = $timetableSettings->getEnd($lesson);
         }
 
+        if($view !== null) {
+            $dashboardViewMergeHelper->mergeView($view);
+        }
+
+        $supervisionLabels = [ ];
+        for($i = 1; $i <= $timetableSettings->getMaxLessons(); $i++) {
+            $supervisionLabels[$i] = $timetableSettings->getDescriptionBeforeLesson($i);
+        }
+
+        dump($view);
+
         return $this->render('dashboard/index.html.twig', [
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
@@ -77,6 +89,7 @@ class DashboardController extends AbstractController {
             'startTimes' => $startTimes,
             'endTimes' => $endTimes,
             'gradesWithCourseNames' => $timetableSettings->getGradeIdsWithCourseNames(),
+            'supervisionLabels' => $supervisionLabels
         ]);
     }
 

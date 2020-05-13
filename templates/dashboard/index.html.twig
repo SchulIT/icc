@@ -49,11 +49,19 @@
                             {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
                         {% endfor %}
 
+                        {# Absences #}
+                        {% include "substitutions/_absent_teachers.html.twig" with { absentTeachers: view.absentTeachers } only %}
+                        {% include "substitutions/_absent_study_groups.html.twig" with { absentStudyGroups: view.absentStudyGroups } only %}
+
                         {# Loop lessons #}
                         {% for lesson in view.lessons %}
                             {% if view.itemsBefore(lesson)|length > 0 %}
                                 <h4>
-                                    {{ 'dashboard.before_lesson'|trans({'%lesson%': lesson }) }}
+                                    {% if supervisionLabels[lesson] is defined and supervisionLabels[lesson] is not empty %}
+                                        {{ supervisionLabels[lesson] }}
+                                    {% else %}
+                                        {{ 'dashboard.before_lesson'|trans({'%lesson%': lesson }) }}
+                                    {% endif %}
                                     <small class="text-muted">{{ endTimes[lesson - 1] }} - {{ startTimes[lesson] }}</small>
                                 </h4>
 
@@ -80,13 +88,15 @@
                                     {% if type == 'exam' %}
                                         {{ dashboard.exam(item) }}
                                     {% elseif type == 'lesson' %}
-                                        {{ dashboard.lesson(item) }}
+                                        {{ dashboard.lesson(item, gradesWithCourseNames) }}
                                     {% elseif type == 'supervision' %}
                                         {{ dashboard.supervision(item) }}
                                     {% elseif type == 'substitution' %}
                                         {{ dashboard.substitution(item) }}
                                     {% elseif type == 'appointment' %}
                                         {{ dashboard.appointment(item) }}
+                                    {% elseif type == 'invigilator' %}
+                                        {{ dashboard.invigilator(item) }}
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}

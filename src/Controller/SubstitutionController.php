@@ -7,9 +7,12 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\Substitution;
 use App\Entity\User;
 use App\Grouping\Grouper;
+use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Settings\SubstitutionSettings;
+use App\Sorting\AbsentStudyGroupStrategy;
+use App\Sorting\AbsentTeacherStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\SubstitutionStrategy;
 use App\View\Filter\GradeFilter;
@@ -30,12 +33,12 @@ class SubstitutionController extends AbstractControllerWithMessages {
     /**
      * @Route("/substitutions", name="substitutions")
      */
-    public function index(SubstitutionRepositoryInterface $substitutionRepository, InfotextRepositoryInterface $infotextRepository, StudentFilter $studentFilter,
-                          GradeFilter $gradeFilter, TeacherFilter $teacherFilter, GroupByParameter $groupByParameter, ViewParameter $viewParameter,
-                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, SubstitutionSettings $dashboardSettings, Request $request) {
+    public function index(SubstitutionRepositoryInterface $substitutionRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
+                          StudentFilter $studentFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, GroupByParameter $groupByParameter, ViewParameter $viewParameter,
+                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, SubstitutionSettings $substitutionSettings, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
-        $days = $this->getListOfNextDays($dateHelper, $dashboardSettings->getNumberOfAheadDaysForSubstitutions(), $dashboardSettings->skipWeekends());
+        $days = $this->getListOfNextDays($dateHelper, $substitutionSettings->getNumberOfAheadDaysForSubstitutions(), $substitutionSettings->skipWeekends());
         $date = $request->query->get('date', null);
         $selectedDate = $this->getCurrentDate($days, $date);
 
@@ -73,6 +76,17 @@ class SubstitutionController extends AbstractControllerWithMessages {
 
         $viewType = $viewParameter->getViewType($view, $user, static::SectionKey);
 
+        $absentTeachers = [ ];
+        $absentStudyGroups = [ ];
+
+        if($substitutionSettings->areAbsencesVisibleFor($user->getUserType())) {
+            $absentTeachers = $absenceRepository->findAllTeachers($selectedDate);
+            $absentStudyGroups = $absenceRepository->findAllStudyGroups($selectedDate);
+
+            $sorter->sort($absentTeachers, AbsentTeacherStrategy::class);
+            $sorter->sort($absentStudyGroups, AbsentStudyGroupStrategy::class);
+        }
+
         return $this->renderWithMessages('substitutions/index.html.twig', [
             'infotexts' => $infotextRepository->findAllByDate($selectedDate),
             'groups' => $groups,
@@ -82,7 +96,9 @@ class SubstitutionController extends AbstractControllerWithMessages {
             'gradeFilter' => $gradeFilterView,
             'teacherFilter' => $teacherFilterView,
             'view' => $viewType,
-            'groupBy' => $groupByParameter->getGroupingStrategyKey($groupingClass)
+            'groupBy' => $groupByParameter->getGroupingStrategyKey($groupingClass),
+            'absentTeachers' => $absentTeachers,
+            'absentStudyGroups' => $absentStudyGroups
         ]);
     }
 

@@ -1,43 +1,114 @@
-{% macro exam(item) %}
-    {% include "_includes/exam.html.twig" with { exam: item.exam, showDate: true } only %}
+{% macro replacement(original, replacement) %}
+    {% if original is same as(replacement) %}
+        {{ original }}
+    {% else %}
+        {% if original is not empty and replacement is not empty %}<s>{{ original }}</s> ⟶ {% elseif original is not empty %}{{ original }}{% endif %}{% if replacement is not empty %}{{ replacement }}{% endif %}
+    {% endif %}
 {% endmacro %}
 
-{% macro lesson(item) %}
-    {% set lesson = item.lesson %}
-    {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
-    {%- set showCourseName = false -%}
-    {%- for grade in lesson.tuition.studyGroup.grades -%}
-        {% if grade.id in gradesWithCourseNames -%}
-            {% set showCourseName = true -%}
-        {% endif -%}
-    {%- endfor -%}
-    <div class="card">
-        <div class="card-body">
-            <div class="row no-gutters">
-                <p class="w-100">
-                    {%- if showCourseName -%}
-                        {{ lesson.tuition.studyGroup.name }}
-                    {%- else -%}
-                        {%- if lesson.tuition.subject.replaceSubjectAbbreviation -%}
-                            {{ lesson.tuition.subject.name }}
-                        {%- else -%}
-                            {{ lesson.tuition.subject.abbreviation }}
-                        {%- endif -%}
-                    {%- endif %}
+{% macro exam(item) %}
+    {% if item.visible %}
+        {% set exam = item.exam %}
+        <div class="card border-primary">
+            <div class="card-body d-flex align-items-sm-center">
+                <span class="mr-auto align-self-center">
+                    <span class="badge badge-primary">{{ 'dashboard.exam'|trans|upper }}</span>
 
-                    <i class="fa fa-users"></i> {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-                    <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
-                    <i class="fa fa-door-open"></i> {{ lesson.room.name }}
-                </p>
+                    {% for tuition in exam.tuitions %}
+                        {{ tuition.name }}
+
+                        <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    {% endfor %}
+
+                    {% if exam.rooms is not empty %}
+                        <i class="fa fa-door-open"></i> {{ exam.rooms|join(', ') }}
+                    {% endif %}
+                </span>
+
+                <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">
+                    {{ 'label.details'|trans }}
+                </a>
             </div>
         </div>
-        {% if item.absentStudents|length > 0 %}
-            <div class="card-footer">
-                <strong>{{ 'dashboard.absent_students'|trans }} <span class="badge badge-danger">{{ item.absentStudents|length }} / {{ lesson.tuition.studyGroup.memberships|length }}</span>: </strong>
-                {% for absentStudent in item.absentStudents %}{{ absentStudent.student|student }} <span class="badge badge-info">{{ absentStudent.reason|enum }}</span>{% if not loop.last %}, {% endif %}{% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% macro invigilator(item) %}
+    {% if item.visible %}
+        <div class="card border-primary">
+            <div class="card-body d-flex align-items-center">
+                <span class="mr-auto align-self-center">
+                    <span class="badge badge-primary">{{ 'dashboard.invigilator'|trans|upper }}</span>
+
+                    {% for tuition in item.exam.tuitions %}
+                        {{ tuition.name }}
+
+                        <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    {% endfor %}
+
+                    <i class="fa fa-door-open"></i> {{ item.exam.rooms|first }}
+                </span>
+
+                <a href="{{ path('show_exam', { uuid: item.exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">{{ 'label.details'|trans }}</a>
             </div>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro lesson(item, gradesWithCourseNames) %}
+    {% if item.visible %}
+        {% set lesson = item.lesson %}
+        {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
+        {%- set showCourseName = false -%}
+        {%- for grade in lesson.tuition.studyGroup.grades -%}
+            {% if grade.id in gradesWithCourseNames -%}
+                {% set showCourseName = true -%}
+            {% endif -%}
+        {%- endfor -%}
+        <div class="card">
+            <div class="card-body">
+                <div class="row no-gutters">
+                    <p class="w-100">
+                        {%- if showCourseName -%}
+                            {{ lesson.tuition.studyGroup.name }}
+                        {%- else -%}
+                            {{ lesson.tuition.subject.name }}
+                        {%- endif %}
+
+                        <i class="fa fa-users"></i> {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        <i class="fa fa-door-open"></i> {{ lesson.room.name }}
+                    </p>
+                </div>
+            </div>
+            {% for mergedItem in item.mergedItems %}
+                {% set type = mergedItem.blockName %}
+                {% if type == 'exam' %}
+                    <div class="card-footer d-flex">
+                        <span class="mr-auto align-self-center">
+                            <strong>{{ 'label.exam'|trans }}</strong>
+                        </span>
+                        <a href="{{ path('show_exam', { uuid: mergedItem.exam.uuid }) }}" class="btn btn-outline-primary btn-sm">
+                            {{ 'label.details'|trans }}
+                        </a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% if item.absentStudents|length > 0 %}
+                <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#absences-{{ item.lesson.lesson }}">
+                    <span class="mr-auto align-self-center">
+                        <strong>{{ 'dashboard.absent_students'|trans }} <span class="badge badge-danger">{{ item.absentStudents|length }} / {{ lesson.tuition.studyGroup.memberships|length }}</span></strong>
+                    </span>
+                    <i class="fa indicator align-self-center fa-chevron-down"></i>
+                </div>
+                <div class="card-footer collapse border-top-0" id="absences-{{ item.lesson.lesson }}">
+                    {% for absentStudent in item.absentStudents %}{{ absentStudent.student|student }} <span class="badge badge-info" {% if absentStudent.exam is defined %} title="{% for tuition in absentStudent.exam.tuitions %}{{ tuition.name }} ({{ tuition.teachers|teachers }}){% if not loop.last %}, {% endif %}{% endfor %}"{% endif %}>{{ absentStudent.reason|enum }}</span>{% if not loop.last %}, {% endif %}{% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endmacro %}
 
 {% macro supervision(item) %}
@@ -45,7 +116,7 @@
         <div class="card-body">
             <div class="row no-gutters">
                 <p class="w-100">
-                    <strong>{{ 'dashboard.supervision'|trans }}:</strong> {{ item.supervision.location }}
+                    <span class="badge badge-primary">{{ 'dashboard.supervision'|trans|upper }}</span> {{ item.supervision.location }}
                 </p>
             </div>
         </div>
@@ -53,7 +124,42 @@
 {% endmacro %}
 
 {% macro substitution(item) %}
-    {% include "_includes/substitution.html.twig" with { substitution: item.substitution } only %}
+    {% if item.visible %}
+        {% set substitution = item.substitution %}
+        <div class="card border-primary">
+            <div class="card-body">
+                <span class="badge badge-primary">
+                    {% if substitution.type is not empty %}
+                        {{ substitution.type|upper }}
+                    {% else %}
+                        {{ 'dashboard.substitution'|trans|upper }}
+                    {% endif %}
+                </span>
+
+                {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
+                    {{ _self.replacement(substitution.subject, substitution.replacementSubject) }}
+                {% endif %}
+
+                {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
+                    <i class="fa fa-users"></i> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
+                {% endif %}
+
+                <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
+
+                {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
+                    <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
+                {% endif %}
+
+
+            </div>
+
+            {% if substitution.remark %}
+                <div class="card-footer">
+                    {{ substitution.remark }}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endmacro %}
 
 {% macro appointment(item) %}

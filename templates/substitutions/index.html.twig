@@ -23,12 +23,11 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs">
+                        <ul class="nav nav-pills card-header-pills">
                             {% for day in days %}
                                 <li class="nav-item">
                                     <a class="nav-link{% if selectedDate == day %} active{% endif %}" href="{{ path('substitutions', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
-                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday }}
-                                        <div class="text-muted">{{ day.format('d.m.Y') }}</div>
+                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday(true) }}., {{ day.format('date.format_short'|trans) }}
                                     </a>
                                 </li>
                             {% endfor %}
@@ -39,6 +38,9 @@
                         {% for infotext in infotexts %}
                             {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
                         {% endfor %}
+
+                        {% include "substitutions/_absent_teachers.html.twig" with { absentTeachers: absentTeachers } only %}
+                        {% include "substitutions/_absent_study_groups.html.twig" with { absentStudyGroups: absentStudyGroups } only %}
 
                         {% if groups|length == 0 %}
                             <div class="bs-callout bs-callout-info">

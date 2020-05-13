@@ -14,7 +14,11 @@ class StudyGroupStringConverter {
         $this->translator = $translator;
     }
 
-    public function convert(StudyGroup $group): string {
+    public function convert(StudyGroup $group, bool $short = false): string {
+        if($short === true) {
+            return $group->getName();
+        }
+
         $type = $this->translator->trans('studygroup.type.grade');
 
         if($group->getType()->equals(StudyGroupType::Course())) {

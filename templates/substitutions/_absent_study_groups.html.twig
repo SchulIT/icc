@@ -1,0 +1,14 @@
+{% if absentStudyGroups|length > 0 %}
+    <div class="card">
+        <div class="card-body">
+            <i class="fa fa-info-circle"></i> {{ 'plans.substitutions.absence.study_groups'|trans }}:
+            {% for absence in absentStudyGroups -%}
+                {{ absence.studyGroup|studygroup(true) }}
+                {%- if absence.lessonStart is not null and absence.lessonEnd is not null %}
+                    ({{ 'label.substitution_lessons'|trans({'%start%': absence.lessonStart, '%end%': absence.lessonEnd, '%count%': (absence.lessonEnd - absence.lessonStart)}) }})
+                {%- endif -%}
+                {%- if not loop.last -%}, {%- endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

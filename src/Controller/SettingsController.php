@@ -334,7 +334,7 @@ class SettingsController extends AbstractController {
     /**
      * @Route("/substitutions", name="admin_settings_substitutions")
      */
-    public function substitutions(Request $request, SubstitutionSettings $substitutionSettings) {
+    public function substitutions(Request $request, SubstitutionSettings $substitutionSettings, EnumStringConverter $enumStringConverter) {
         $builder = $this->createFormBuilder();
         $builder
             ->add('ahead_days', IntegerType::class, [
@@ -351,6 +351,22 @@ class SettingsController extends AbstractController {
                 'help' => 'admin.settings.substitutions.skip_weekends.help',
                 'required' => false,
                 'data' => $substitutionSettings->skipWeekends(),
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
+            ])
+            ->add('absence_visibility', ChoiceType::class, [
+                'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
+                'choice_label' => function(UserType $userType) use($enumStringConverter) {
+                    return $enumStringConverter->convert($userType);
+                },
+                'choice_value' => function(UserType $userType) {
+                    return $userType->getValue();
+                },
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'label.visibility',
+                'data' => $substitutionSettings->getAbsenceVisibility(),
                 'label_attr' => [
                     'class' => 'checkbox-custom'
                 ]
@@ -387,6 +403,9 @@ class SettingsController extends AbstractController {
                 },
                 'skip_weekends' => function(bool $skipWeekends) use ($substitutionSettings) {
                     $substitutionSettings->setSkipWeekends($skipWeekends);
+                },
+                'absence_visibility' => function(array $visibility) use ($substitutionSettings) {
+                    $substitutionSettings->setAbsenceVisibility($visibility);
                 },
                 'notifications_enabled' => function(bool $enabled) use ($substitutionSettings) {
                     $substitutionSettings->setNotificationsEnabled($enabled);

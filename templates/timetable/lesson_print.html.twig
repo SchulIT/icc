@@ -26,5 +26,9 @@
         {% elseif not lesson.room is null %}
             ({{ lesson.room.name }})
         {% endif %}
+
+        {% if studentFilter.currentStudent is not null and lesson.tuition is not null and memberships[lesson.tuition.studyGroup.id] is defined %}
+            [{{ memberships[lesson.tuition.studyGroup.id] }}]
+        {% endif %}
     </div>
 {% endif %}

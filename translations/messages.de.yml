@@ -154,6 +154,9 @@ dashboard:
     before_lesson: "vor %lesson%. Stunde"
     absent_students: Abwesend
     supervision: Aufsicht
+    invigilator: Klausuraufsicht
+    substitution: Vertretung
+    exam: Klausur
     empty: Für diesen Tag sind keine Daten hinterlegt.
 
 plans:
@@ -221,11 +224,14 @@ plans:
             label: Ansicht
             table: Tabelle
             card: Liste
-
         group_by:
             label: Gruppieren
             grades: Klassen
             teachers: Lehrkräfte
+        absence:
+            teacher: Abwesende Lehrkräfte
+            study_groups: Abwesende Lerngruppen
+
     appointments:
         label: Terminplan
         not_available: Aktuell ist der Terminplan nicht verfügbar.
@@ -466,6 +472,8 @@ admin:
                 reply_address:
                     label: Antwort-E-Mail Adresse
                     help: Diese E-Mail Adresse wird bei E-Mail Benachrichtungen in das 'Reply-To'-Feld eingefügt, sodass Antworten auf die Benachrichtungsmail an diese E-Mail Adresse geschickt werden.
+            absence_visibility:
+                label: Abwenheiten sichtbar für
 
 
         exams:

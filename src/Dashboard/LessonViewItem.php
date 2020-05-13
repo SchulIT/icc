@@ -10,6 +10,8 @@ class LessonViewItem extends AbstractViewItem {
     private $lesson;
     private $absentStudents = [ ];
 
+    private $mergedItems = [ ];
+
     /**
      * @param TimetableLesson $lesson
      * @param AbsentStudent[] $absentStudents
@@ -33,6 +35,20 @@ class LessonViewItem extends AbstractViewItem {
      */
     public function getLesson(): TimetableLesson {
         return $this->lesson;
+    }
+
+    /**
+     * @return AbstractViewItem[]
+     */
+    public function getMergedItems(): array {
+        return $this->mergedItems;
+    }
+
+    /**
+     * @param AbstractViewItem $item
+     */
+    public function addMergedItem(AbstractViewItem $item): void {
+        $this->mergedItems[] = $item;
     }
 
     /**

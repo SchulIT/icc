@@ -3,23 +3,24 @@
 namespace App\Dashboard;
 
 use App\Entity\TimetableLesson;
+use App\Grouping\AbsentStudentGroup;
 
 class LessonViewItem extends AbstractViewItem {
 
     private $isOutdated;
     private $lesson;
-    private $absentStudents = [ ];
+    private $absentStudentGroups = [ ];
 
     private $mergedItems = [ ];
 
     /**
-     * @param TimetableLesson $lesson
-     * @param AbsentStudent[] $absentStudents
+     * @param TimetableLesson|null $lesson
+     * @param AbsentStudentGroup[] $absentStudentGroups
      * @param bool $isOutdated
      */
-    public function __construct(TimetableLesson $lesson, array $absentStudents, bool $isOutdated) {
+    public function __construct(?TimetableLesson $lesson, array $absentStudentGroups, bool $isOutdated) {
         $this->lesson = $lesson;
-        $this->absentStudents = $absentStudents;
+        $this->absentStudentGroups = $absentStudentGroups;
         $this->isOutdated = $isOutdated;
     }
 
@@ -31,9 +32,9 @@ class LessonViewItem extends AbstractViewItem {
     }
 
     /**
-     * @return TimetableLesson
+     * @return TimetableLesson|null
      */
-    public function getLesson(): TimetableLesson {
+    public function getLesson(): ?TimetableLesson {
         return $this->lesson;
     }
 
@@ -54,8 +55,18 @@ class LessonViewItem extends AbstractViewItem {
     /**
      * @return AbsentStudent[]
      */
-    public function getAbsentStudents(): array {
-        return $this->absentStudents;
+    public function getAbsentStudentGroups(): array {
+        return $this->absentStudentGroups;
+    }
+
+    public function getAbsentStudentsCount(): int {
+        $count = 0;
+
+        foreach($this->absentStudentGroups as $group) {
+            $count += count($group->getStudents());
+        }
+
+        return $count;
     }
 
     public function getBlockName(): string {

@@ -72,7 +72,7 @@ class Builder {
         $plans->addChild('plans.exams.label', [
             'route' => 'exams'
         ])
-            ->setAttribute('icon', 'fas fa-pen');
+            ->setAttribute('icon', 'fas fa-edit');
 
         $plans->addChild('plans.appointments.label', [
             'route' => 'appointments'

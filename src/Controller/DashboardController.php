@@ -39,6 +39,7 @@ class DashboardController extends AbstractController {
         $selectedDate = null;
         try {
             $selectedDate = new \DateTime($request->query->get('date', null));
+            $selectedDate->setTime(0, 0, 0);
         } catch (\Exception $e) {
             $selectedDate = $dateHelper->getToday();
         }
@@ -69,7 +70,7 @@ class DashboardController extends AbstractController {
         }
 
         if($view !== null) {
-            $dashboardViewMergeHelper->mergeView($view);
+            $dashboardViewMergeHelper->mergeView($view, $user->getUserType());
         }
 
         $supervisionLabels = [ ];

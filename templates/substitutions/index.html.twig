@@ -23,24 +23,36 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <ul class="nav nav-pills card-header-pills">
+                        <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
+                            {% set previousDate = selectedDate|previous_date %}
+                            {% set canNavigatePrevious = is_in_datetime_array(previousDate, days) %}
+                            <li class="nav-item" data-resize="show">
+                                <a class="nav-link {% if not canNavigatePrevious %}disabled{% endif %}" {% if canNavigatePrevious %}href="{{ path('substitutions', currentFilter|merge({ date: previousDate|date('Y-m-d') })) }}" {% endif %}>
+                                    <i class="fa fa-chevron-left"></i>
+                                </a>
+                            </li>
+
                             {% for day in days %}
-                                <li class="nav-item">
+                                <li class="nav-item" {% if selectedDate == day%}data-resize="prevent"{% endif%}>
                                     <a class="nav-link{% if selectedDate == day %} active{% endif %}" href="{{ path('substitutions', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
                                         <i class="fa fa-calendar"></i> {{ day.format('w')|weekday(true) }}., {{ day.format('date.format_short'|trans) }}
                                     </a>
                                 </li>
                             {% endfor %}
+
+                            {% set nextDate = selectedDate|next_date %}
+                            {% set canNavigateNext = is_in_datetime_array(nextDate, days) %}
+                            <li class="nav-item" data-resize="show">
+                                <a class="nav-link {% if not canNavigateNext %}disabled{% endif %}" {% if canNavigateNext %}href="{{ path('substitutions', currentFilter|merge({ date: nextDate|date('Y-m-d') })) }}" {% endif %}>
+                                    <i class="fa fa-chevron-right"></i>
+                                </a>
+                            </li>
                         </ul>
                     </div>
 
                     <div class="card-body">
-                        {% for infotext in infotexts %}
-                            {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
-                        {% endfor %}
-
-                        {% include "substitutions/_absent_teachers.html.twig" with { absentTeachers: absentTeachers } only %}
-                        {% include "substitutions/_absent_study_groups.html.twig" with { absentStudyGroups: absentStudyGroups } only %}
+                        {% include "_includes/infotexts.html.twig" with { infotexts: infotexts} only %}
+                        {% include "_includes/absences.html.twig" with { absentTeachers: absentTeachers, absentStudyGroups: absentStudyGroups } only %}
 
                         {% if groups|length == 0 %}
                             <div class="bs-callout bs-callout-info">

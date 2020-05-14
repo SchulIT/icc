@@ -160,3 +160,16 @@ $enable-gradients: true;
   border-color: $warning;
   background: mix(#fff, $warning, 90);
 }
+
+.dashboard-lesson {
+  @include font-size(1.75rem);
+  @extend .p-3;
+}
+
+.gray-300 {
+  color: $gray-300;
+}
+
+.hide {
+  display: none;
+}

@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Grouping;
+
+use App\Dashboard\AbsentExamStudent;
+use App\Dashboard\AbsentStudent;
+use App\Entity\Appointment;
+use App\Entity\Exam;
+
+class AbsentStudentStrategy implements GroupingStrategyInterface {
+
+    /**
+     * @param AbsentStudent $object
+     * @return Appointment|Exam|null
+     */
+    public function computeKey($object) {
+        if($object instanceof AbsentExamStudent) {
+            return $object->getExam();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param Appointment|Exam|null $keyA
+     * @param Appointment|Exam|null $keyB
+     * @return bool
+     */
+    public function areEqualKeys($keyA, $keyB): bool {
+        return $keyA === $keyB;
+    }
+
+    /**
+     * @param AbsentStudent $key
+     * @return GroupInterface
+     */
+    public function createGroup($key): GroupInterface {
+        return new AbsentStudentGroup($key);
+    }
+}

@@ -3,12 +3,16 @@
 namespace App\Dashboard;
 
 use App\Entity\Tuition;
+use App\Entity\UserType;
+use App\Utils\EnumArrayUtils;
 
 /**
  * Tries to merge dashboard items
  */
 class DashboardViewMergeHelper {
-    public function mergeView(DashboardView $view) {
+    public function mergeView(DashboardView $view, UserType $userType) {
+        $isStudentOrParent = EnumArrayUtils::inArray($userType, [ UserType::Student(), UserType::Parent() ]);
+
         /**
          * @var int $lesson
          * @var AbstractViewItem[] $items
@@ -17,14 +21,16 @@ class DashboardViewMergeHelper {
             $items = $view->getItems($lesson);
             foreach($items as $item) {
                 if($item instanceof LessonViewItem) {
-                    $examView = $this->findTuitionExam($item->getLesson()->getTuition(), $items);
+                    if($item->getLesson() !== null) {
+                        $examView = $this->findTuitionExam($item->getLesson()->getTuition(), $items);
 
-                    if($examView !== null) {
-                        $this->mergeLessonAndExam($item, $examView);
+                        if ($examView !== null) {
+                            $this->mergeLessonAndExam($item, $examView);
+                        }
                     }
 
-                    foreach($items as $substitutionItem) {
-                        if($substitutionItem instanceof SubstitutionViewItem) {
+                    foreach($items as $viewItem) {
+                        if($viewItem instanceof SubstitutionViewItem || $viewItem instanceof ExamInvigilatorViewItem) {
                             $item->hide();
                         }
                     }

@@ -16,17 +16,30 @@
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9">
-
                 <div class="card">
                     <div class="card-header">
-                        <ul class="nav nav-pills card-header-pills">
+                        <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
+                            {% set previousDate = selectedDate|previous_date %}
+                            <li class="nav-item" data-resize="show">
+                                <a class="nav-link" href="{{ path('dashboard', currentFilter|merge({ date: previousDate|date('Y-m-d') })) }}">
+                                    <i class="fa fa-chevron-left"></i>
+                                </a>
+                            </li>
+
                             {% for day in days %}
                                 <li class="nav-item">
-                                    <a class="nav-link{% if selectedDate == day %} active{% endif %}" href="{{ path('dashboard', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
+                                    <a class="nav-link{% if selectedDate == day %} active{% endif %}" {% if selectedDate == day %}data-resize="prevent"{% endif %} href="{{ path('dashboard', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
                                         <i class="fa fa-calendar"></i> {{ day.format('w')|weekday(true) }}., {{ day.format('date.format_short'|trans) }}
                                     </a>
                                 </li>
                             {% endfor %}
+
+                            {% set nextDate = selectedDate|next_date %}
+                            <li class="nav-item" data-resize="show">
+                                <a class="nav-link" href="{{ path('dashboard', currentFilter|merge({ date: nextDate|date('Y-m-d') })) }}">
+                                    <i class="fa fa-chevron-right"></i>
+                                </a>
+                            </li>
                         </ul>
                     </div>
 
@@ -39,68 +52,78 @@
                             </div>
                         {% endif %}
 
+                        <ul class="nav nav-pills nav-justified mb-3 mx-n1">
+                            <a href="#infotexts" class="nav-item nav-link bg-primary text-white mx-1">
+                                {{ 'dashboard.nav.infotexts'|trans({'%count%': view.infotexts|length}) }}
+                                <span class="badge badge-light">
+                                    {{ view.infotexts|length }}
+                                </span>
+                            </a>
+                            {% if is_granted('view-absences') %}
+                                <a href="#absences" class="nav-item nav-link bg-primary text-white mx-1">
+                                    {{ 'plans.substitutions.absence.teacher'|trans() }}
+
+                                    <span class="badge badge-light">
+                                        {{ view.absentTeachers|length }}
+                                    </span>
+                                </a>
+                                <a href="#absences" class="nav-item nav-link bg-primary text-white mx-1">
+                                    {{ 'plans.substitutions.absence.study_groups'|trans() }}
+
+                                    <span class="badge badge-light">
+                                        {{ view.absentStudyGroups|length }}
+                                    </span>
+                                </a>
+                            {% endif %}
+                        </ul>
+
                         {# Messages #}
                         {% for message in view.messages %}
                             {% include "_includes/message.html.twig" with { message: message } only %}
                         {% endfor %}
 
-                        {# Daily infos #}
-                        {% for infotext in view.infotexts %}
-                            {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
-                        {% endfor %}
-
-                        {# Absences #}
-                        {% include "substitutions/_absent_teachers.html.twig" with { absentTeachers: view.absentTeachers } only %}
-                        {% include "substitutions/_absent_study_groups.html.twig" with { absentStudyGroups: view.absentStudyGroups } only %}
-
                         {# Loop lessons #}
                         {% for lesson in view.lessons %}
                             {% if view.itemsBefore(lesson)|length > 0 %}
-                                <h4>
-                                    {% if supervisionLabels[lesson] is defined and supervisionLabels[lesson] is not empty %}
-                                        {{ supervisionLabels[lesson] }}
-                                    {% else %}
-                                        {{ 'dashboard.before_lesson'|trans({'%lesson%': lesson }) }}
-                                    {% endif %}
-                                    <small class="text-muted">{{ endTimes[lesson - 1] }} - {{ startTimes[lesson] }}</small>
-                                </h4>
-
                                 {% for item in view.itemsBefore(lesson) %}
                                     {% set type = item.blockName %}
 
                                     {% if type == 'supervision' %}
-                                        {{ dashboard.supervision(item) }}
+                                        {{ dashboard.supervision(item, lesson, supervisionLabels) }}
                                     {% elseif type == 'substitution' %}
-                                        {{ dashboard.substitution(item) }}
+                                        {{ dashboard.substitution(item, lesson) }}
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}
 
                             {% if view.items(lesson)|length > 0 %}
-                                <h4>
-                                    {{ 'dashboard.lesson'|trans({'%lesson%': lesson }) }}
-                                    <small class="text-muted">{{ startTimes[lesson] }} - {{ endTimes[lesson] }}</small>
-                                </h4>
-
                                 {% for item in view.items(lesson) %}
                                     {% set type = item.blockName %}
 
                                     {% if type == 'exam' %}
-                                        {{ dashboard.exam(item) }}
+                                        {{ dashboard.exam(item, lesson) }}
                                     {% elseif type == 'lesson' %}
-                                        {{ dashboard.lesson(item, gradesWithCourseNames) }}
+                                        {{ dashboard.lesson(item, lesson, gradesWithCourseNames) }}
                                     {% elseif type == 'supervision' %}
-                                        {{ dashboard.supervision(item) }}
+                                        {{ dashboard.supervision(item, lesson, supervisionLabels) }}
                                     {% elseif type == 'substitution' %}
-                                        {{ dashboard.substitution(item) }}
+                                        {{ dashboard.substitution(item, lesson) }}
                                     {% elseif type == 'appointment' %}
-                                        {{ dashboard.appointment(item) }}
+                                        {{ dashboard.appointment(item, lesson) }}
                                     {% elseif type == 'invigilator' %}
-                                        {{ dashboard.invigilator(item) }}
+                                        {{ dashboard.invigilator(item, lesson) }}
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}
                         {% endfor %}
+
+                        {# Daily infos #}
+                        <a id="infotexts"></a>
+                        {% include "_includes/infotexts.html.twig" with { infotexts: view.infotexts } only %}
+
+                        {# Absences #}
+                        <a id="absences"></a>
+                        {% include "_includes/absences.html.twig" with {absentTeachers: view.absentTeachers, absentStudyGroups: view.absentStudyGroups} only %}
                     </div>
                 </div>
             </div>

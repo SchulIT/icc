@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class AbsenceVoter extends Voter {
 
     public const View = 'view';
+    public const ViewAny = 'view-absences';
 
     private $substitutionSettings;
 
@@ -22,7 +23,7 @@ class AbsenceVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject) {
-        return $attribute === static::View && $subject instanceof Absence;
+        return $attribute === static::ViewAny || ($attribute === static::View && $subject instanceof Absence);
     }
 
     /**

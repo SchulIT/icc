@@ -158,6 +158,9 @@ dashboard:
     substitution: Vertretung
     exam: Klausur
     empty: Für diesen Tag sind keine Daten hinterlegt.
+    free_hour: Freistunde
+    nav:
+        infotexts: '{0} Infotexte|{1} Infotext|]1,Inf[ Infotexte'
 
 plans:
     label: Pläne

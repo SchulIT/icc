@@ -208,5 +208,83 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    let hideElementsIfNotEnoughSpace = function() {
+        document.querySelectorAll('[data-trigger=resize-hide]').forEach(function(element) {
+            // Important: retrieve width at the beginning because after applying the hide class, the element has 0 width
+            let children = Array.prototype.slice.call(element.children);
+
+            children.forEach(function(child) {
+                if(child.hasAttribute('data-width') === false) {
+                    child.setAttribute('data-width', child.offsetWidth);
+                }
+            });
+
+            let containerWidth = element.clientWidth;
+            let occupiedWidth = 0;
+            let canAddChild = true;
+
+            console.log('container: ' + containerWidth);
+
+            // First: add all children which are prevented from begin hidden
+            element.querySelectorAll('[data-resize=show]').forEach(function (child) {
+                let childWidth = parseInt(child.getAttribute('data-width'));
+                occupiedWidth += childWidth;
+                child.classList.remove('hide');
+            });
+
+            // Second: start with the item which is prevented to be hidden and go left and right starting from there
+            let startIdx = 0;
+            for(let idx = 0; idx < element.children.length; idx++) {
+                let elementAtIdx = element.children[idx];
+
+                if(elementAtIdx === null || (elementAtIdx.hasAttribute('data-resize') && elementAtIdx.getAttribute('data-resize') === 'show') || elementAtIdx.hasAttribute('data-resize') === false || elementAtIdx.getAttribute('data-resize') !== 'prevent') {
+                    continue;
+                }
+
+                startIdx = idx;
+            }
+
+            let startElement = element.children[startIdx] || null;
+            if(startElement !== null) {
+                occupiedWidth += parseInt(startElement.getAttribute('data-width'));
+                startElement.classList.remove('hide');
+            }
+
+            console.log('length: ' + element.children.length + '/startIdx:' + startIdx);
+            for(let leftIdx = startIdx-1, rightIdx = startIdx + 1; leftIdx >= 0 || rightIdx < element.children.length; leftIdx--, rightIdx++) {
+                console.log('left: ' + leftIdx + '/right: ' + rightIdx);
+                let leftElement = element.children[leftIdx] || null;
+                if(leftElement !== null && leftElement.hasAttribute('data-width') && leftElement.getAttribute('data-resize') !== 'show') {
+                    let leftWidth = parseInt(leftElement.getAttribute('data-width'));
+                    if(canAddChild && occupiedWidth + leftWidth < containerWidth) {
+                        occupiedWidth += leftWidth;
+                        leftElement.classList.remove('hide');
+                    } else {
+                        canAddChild = false;
+                        leftElement.classList.add('hide');
+                    }
+                }
+
+                let rightElement = element.children[rightIdx] || null;
+                if(rightElement !== null && rightElement.hasAttribute('data-width')  && rightElement.getAttribute('data-resize') !== 'show') {
+                    let rightWidth = parseInt(rightElement.getAttribute('data-width'));
+                    if(canAddChild && occupiedWidth + rightWidth < containerWidth) {
+                        occupiedWidth += rightWidth;
+                        rightElement.classList.remove('hide');
+                    } else {
+                        canAddChild = false;
+                        rightElement.classList.add('hide');
+                    }
+                }
+            }
+        });
+    };
+
+    window.addEventListener('resize', function(event) {
+        hideElementsIfNotEnoughSpace();
+    });
+
+    hideElementsIfNotEnoughSpace();
 });
 

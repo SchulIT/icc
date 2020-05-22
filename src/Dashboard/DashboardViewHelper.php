@@ -4,6 +4,7 @@ namespace App\Dashboard;
 
 use App\Entity\Exam;
 use App\Entity\ExamInvigilator;
+use App\Entity\GradeTeacher;
 use App\Entity\Message;
 use App\Entity\MessageScope;
 use App\Entity\Student;
@@ -23,6 +24,7 @@ use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
+use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
@@ -55,6 +57,7 @@ class DashboardViewHelper {
     private $messageRepository;
     private $infotextRepository;
     private $absenceRepository;
+    private $studyGroupRepository;
 
     private $studyGroupHelper;
     private $timetablePeriodHelper;
@@ -66,7 +69,7 @@ class DashboardViewHelper {
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
-                                MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
+                                MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository, StudyGroupRepositoryInterface $studyGroupRepository,
                                 StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, Sorter $sorter, Grouper $grouper, TimetableSettings $timetableSettings, AuthorizationCheckerInterface $authorizationChecker) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
@@ -76,6 +79,7 @@ class DashboardViewHelper {
         $this->messageRepository = $messageRepository;
         $this->infotextRepository = $infotextRepository;
         $this->absenceRepository = $absenceRepository;
+        $this->studyGroupRepository = $studyGroupRepository;
         $this->studyGroupHelper = $studyGroupHelper;
         $this->timetablePeriodHelper = $timetablePeriodHelper;
         $this->timetableSettings = $timetableSettings;
@@ -84,7 +88,7 @@ class DashboardViewHelper {
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function createViewForTeacher(Teacher $teacher, DateTime $dateTime): DashboardView {
+    public function createViewForTeacher(Teacher $teacher, DateTime $dateTime, bool $includeGradeMessages = false): DashboardView {
         $view = new DashboardView();
 
         $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
@@ -96,7 +100,26 @@ class DashboardViewHelper {
             $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
         }
 
-        $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), UserType::Teacher(), $dateTime), $view);
+        $messages = [ ];
+
+        if($includeGradeMessages === true) {
+            /** @var GradeTeacher $gradeTeacher */
+            foreach($teacher->getGrades() as $gradeTeacher) {
+                $studyGroups = $this->studyGroupRepository->findAllByGrades($gradeTeacher->getGrade());
+                $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages(), UserType::Student(), $dateTime, $studyGroups));
+            }
+        }
+
+        $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages(), UserType::Teacher(), $dateTime));
+
+        $messages = ArrayUtils::createArrayWithKeys($messages, function(Message $message) {
+            return $message->getId();
+        });
+
+        $this->addMessages($messages, $view);
+
+        if($includeGradeMessages)
+
         $this->addSubstitutions($this->substitutionRepository->findAllForTeacher($teacher, $dateTime), $view);
         $this->addExams($exams = $this->examRepository->findAllByTeacher($teacher, $dateTime, true), $view, $teacher);
         $this->addInfotexts($dateTime, $view);

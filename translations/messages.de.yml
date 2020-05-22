@@ -171,6 +171,7 @@ dashboard:
     settings:
         label: Einstellungen
         show_times: Uhrzeiten der Unterrichtsstunden anzeigen
+        include_grade_messages: Mitteilungen der eigenen Klassen anzeigen
 
 plans:
     label: Pläne

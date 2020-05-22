@@ -234,6 +234,17 @@
                         </div>
 
                         <div class="card-body">
+                            {% if canIncludeGradeMessages %}
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox" value="true" id="include_grade_messages" name="include_grade_messages" {% if includeGradeMessages %} checked="checked"{% endif %}>
+                                    <label for="include_grade_messages" class="custom-control-label">
+                                        {{ 'dashboard.settings.include_grade_messages'|trans }}
+                                    </label>
+                                </div>
+                            </div>
+                            {% endif %}
+
                             <div class="form-group mb-0">
                                 <div class="custom-control custom-checkbox">
                                     <input class="custom-control-input" type="checkbox" value="true" id="show_times" name="show_times" {% if showTimes %} checked="checked"{% endif %}>

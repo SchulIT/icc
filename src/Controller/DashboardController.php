@@ -6,6 +6,7 @@ use App\Dashboard\DashboardViewHelper;
 use App\Dashboard\DashboardViewCollapseHelper;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
@@ -22,6 +23,9 @@ class DashboardController extends AbstractController {
     private const DaysInFuture = 5;
     private const DaysInPast = 1;
 
+    private const ShowTimesKey = 'dashboard.show_times';
+    private const IncludeGradeMessagesKey = 'dashboard.include_grade_messages';
+
     /**
      * @Route("/", name="index")
      */
@@ -34,13 +38,18 @@ class DashboardController extends AbstractController {
      */
     public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
                               DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper,
-                              DateHelper $dateHelper, TimetableSettings $timetableSettings, UserRepositoryInterface $userRepository, Request $request) {
+                              DateHelper $dateHelper, TimetableSettings $timetableSettings, UserRepositoryInterface $userRepository,
+                              Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
         if($request->isMethod('POST')) {
             $showTimes = $request->request->getBoolean('show_times', false);
-            $user->setData('dashboard.show_times', $showTimes);
+            $user->setData(static::ShowTimesKey, $showTimes);
+
+            $includeGradeMessages = $request->request->getBoolean('include_grade_messages', false);
+            $user->setData(static::IncludeGradeMessagesKey, $includeGradeMessages);
+
             $userRepository->persist($user);
 
             return $this->redirectToRoute('dashboard', $request->query->all());
@@ -60,13 +69,20 @@ class DashboardController extends AbstractController {
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null);
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]), UserType::Student(), [ UserType::Student(), UserType::Parent() ]);
 
+        $includeGradeMessages = $user->getData(static::IncludeGradeMessagesKey, false);
+
         if($studentFilterView->getCurrentStudent() !== null) {
             if($userTypeFilterView->getCurrentType() === null) {
                 $userTypeFilterView->setCurrentType(UserType::Student());
             }
             $view = $dashboardViewHelper->createViewForStudentOrParent($studentFilterView->getCurrentStudent(), $selectedDate, $userTypeFilterView->getCurrentType());
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
-            $view = $dashboardViewHelper->createViewForTeacher($teacherFilterView->getCurrentTeacher(), $selectedDate);
+            if($user->getTeacher() === null || $user->getTeacher()->getId() !== $teacherFilterView->getCurrentTeacher()->getId()) {
+                // Only include grade messages if the current user is the selected user in the teacher filter.
+                $includeGradeMessages = false;
+            }
+
+            $view = $dashboardViewHelper->createViewForTeacher($teacherFilterView->getCurrentTeacher(), $selectedDate, $includeGradeMessages);
         } else {
             $view = $dashboardViewHelper->createViewForUser($user, $selectedDate);
         }
@@ -74,7 +90,7 @@ class DashboardController extends AbstractController {
         $startTimes = [ ];
         $endTimes = [ ];
 
-        $showTimes = $user->getData('dashboard.show_times', true) === true;
+        $showTimes = $user->getData(static::ShowTimesKey, true) === true;
 
         for ($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
             $startTimes[$lesson] = $showTimes ? $timetableSettings->getStart($lesson) : null;
@@ -101,7 +117,9 @@ class DashboardController extends AbstractController {
             'endTimes' => $endTimes,
             'gradesWithCourseNames' => $timetableSettings->getGradeIdsWithCourseNames(),
             'supervisionLabels' => $supervisionLabels,
-            'showTimes' => $showTimes
+            'showTimes' => $showTimes,
+            'includeGradeMessages' => $user->getData(static::IncludeGradeMessagesKey, false),
+            'canIncludeGradeMessages' => $user->getTeacher() !== null
         ]);
     }
 

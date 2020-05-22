@@ -33,9 +33,16 @@
             <div class="card">
                 <div class="card-header">
                     <ul class="nav nav-pills card-header-pills">
+                        {% set urlSubjects = [ ] %}
+                        {% if subjectFilter.currentSubjects is not empty %}
+                            {% for subject in subjectFilter.currentSubjects %}
+                                {% set urlSubjects = urlSubjects|merge([subject.uuid.toString()]) %}
+                            {% endfor %}
+                        {% endif %}
+
                         {% for period in periods %}
                             <li class="nav-item">
-                                <a class="nav-link{% if currentPeriod != null and period.id == currentPeriod.id %} active{% endif %}" href="{{ path('timetable', { period: period.uuid, grade: gradeFilter.currentGrade, student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid, subject: subjectFilter.currentSubjects, room: roomFilter.currentRoom ? roomFilter.currentRoom.uuid }) }}">
+                                <a class="nav-link{% if currentPeriod != null and period.id == currentPeriod.id %} active{% endif %}" href="{{ path('timetable', { period: period.uuid.toString() , grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString() : null, student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null, subjects: (urlSubjects is not empty ? urlSubjects : null), room: roomFilter.currentRoom ? roomFilter.currentRoom.uuid.toString() : null }) }}">
                                     <i class="fa fa-calendar"></i> {{ period.getName() }}
                                     <div>{{ period.getStart().format('d.m.Y') }} - {{ period.getEnd().format('d.m.Y') }}</div>
                                 </a>

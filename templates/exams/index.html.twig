@@ -92,13 +92,13 @@
                         <form role="form" method="get" class="form hidden-print">
                             {% set params = { } %}
                             {% if teacherFilter.currentTeacher is not null %}
-                                {% set params = params|merge({ teacher: teacherFilter.currentTeacher.acronym }) %}
+                                {% set params = params|merge({ teacher: teacherFilter.currentTeacher.uuid.toString() }) %}
                             {% endif %}
                             {% if studentFilter.currentStudent is not null %}
-                                {% set params = params|merge({ student: studentFilter.currentStudent.uuid }) %}
+                                {% set params = params|merge({ student: studentFilter.currentStudent.uuid.toString() }) %}
                             {% endif %}
                             {% if gradeFilter.currentGrade is not null %}
-                                {% set params = params|merge({ grade: gradeFilter.currentGrade.uuid }) %}
+                                {% set params = params|merge({ grade: gradeFilter.currentGrade.uuid.toString() }) %}
                             {% endif %}
 
                             {% include "_filter/_params.html.twig" %}

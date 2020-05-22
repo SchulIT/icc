@@ -84,7 +84,7 @@ class DashboardViewHelper {
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function createViewForTeacher(Teacher $teacher, \DateTime $dateTime): DashboardView {
+    public function createViewForTeacher(Teacher $teacher, DateTime $dateTime): DashboardView {
         $view = new DashboardView();
 
         $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
@@ -106,7 +106,7 @@ class DashboardViewHelper {
         return $view;
     }
 
-    public function createViewForStudentOrParent(Student $student, \DateTime $dateTime, UserType $userType): DashboardView {
+    public function createViewForStudentOrParent(Student $student, DateTime $dateTime, UserType $userType): DashboardView {
         if(!EnumArrayUtils::inArray($userType, [ UserType::Student(), UserType::Parent() ])) {
             throw new \InvalidArgumentException(sprintf('$userType must be either Student or Parent, "%s" given.', $userType->getValue()));
         }
@@ -133,7 +133,7 @@ class DashboardViewHelper {
         return $view;
     }
 
-    public function createViewForUser(User $user, \DateTime $dateTime): DashboardView {
+    public function createViewForUser(User $user, DateTime $dateTime): DashboardView {
         $view = new DashboardView();
 
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $user->getUserType(), $dateTime), $view);
@@ -143,12 +143,12 @@ class DashboardViewHelper {
 
     /**
      * @param TimetableLesson[] $lessons
-     * @param \DateTime $dateTime
+     * @param DateTime $dateTime
      * @param DashboardView $dashboardView
      * @param bool $computeAbsences
      * @param int $numberOfWeeks
      */
-    private function addTimetableLessons(iterable $lessons, \DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences, int $numberOfWeeks): void {
+    private function addTimetableLessons(iterable $lessons, DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences, int $numberOfWeeks): void {
         foreach($lessons as $lesson) {
             $isWeek = (int)$dateTime->format('W') % $numberOfWeeks === $lesson->getWeek()->getWeekMod();
             $isDay = (int)$dateTime->format('N') === $lesson->getDay();
@@ -159,35 +159,41 @@ class DashboardViewHelper {
 
             $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lesson, $lesson->getLesson(), $dateTime) : [ ];
 
-            $dashboardView->addItem($lesson->getLesson(), new LessonViewItem($lesson, $absentStudents, false));
+            $dashboardView->addItem($lesson->getLesson(), new TimetableLessonViewItem($lesson, $absentStudents));
 
             if($lesson->isDoubleLesson()) {
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lesson, $lesson->getLesson() + 1, $dateTime) : [ ];
-                $dashboardView->addItem($lesson->getLesson() + 1, new LessonViewItem($lesson, $absentStudents, false));
+                $dashboardView->addItem($lesson->getLesson() + 1, new TimetableLessonViewItem($lesson, $absentStudents));
             }
         }
     }
 
     private function addEmptyTimetableLessons(DashboardView $view, int $numberOfLessons) {
-        $lessons = $view->getLessons();
+        $lessons = $view->getLessonNumbers();
 
         for($i = 1; $i <= $numberOfLessons; $i++) {
             if(!in_array($i, $lessons)) {
-                $view->addItem($i, new LessonViewItem(null, [], false));
+                $view->addItem($i, new TimetableLessonViewItem(null, []));
             }
         }
 
-        foreach($lessons as $lesson) {
+        foreach($lessons as $lessonNumber) {
             $hasLessonEntry = false;
-            foreach($view->getItems($lesson) as $item) {
-                if($item instanceof LessonViewItem) {
-                    $hasLessonEntry = true;
-                    break;
+            $lesson = $view->getLesson($lessonNumber);
+
+            if($lesson !== null) {
+                foreach ($lesson->getItems() as $item) {
+                    if ($item instanceof TimetableLessonViewItem) {
+                        $hasLessonEntry = true;
+                        break;
+                    }
                 }
+            } else {
+                $hasLessonEntry = false;
             }
 
             if($hasLessonEntry === false) {
-                $view->addItem($lesson, new LessonViewItem(null, [], false));
+                $view->addItem($lessonNumber, new TimetableLessonViewItem(null, []));
             }
         }
     }
@@ -284,7 +290,7 @@ class DashboardViewHelper {
                     }
 
                     if(isset($invigilators[$lesson]) && $invigilators[$lesson] === $teacher->getId()) {
-                        $dashboardView->addItem($lesson, new ExamInvigilatorViewItem($exam));
+                        $dashboardView->addItem($lesson, new ExamSupervisionViewItem($exam));
                     }
                 } else {
                     $dashboardView->addItem($lesson, new ExamViewItem($exam));
@@ -294,10 +300,10 @@ class DashboardViewHelper {
     }
 
     /**
-     * @param \DateTime $dateTime
+     * @param DateTime $dateTime
      * @param DashboardView $view
      */
-    private function addInfotexts(\DateTime $dateTime, DashboardView $view): void {
+    private function addInfotexts(DateTime $dateTime, DashboardView $view): void {
         $infotexts = $this->infotextRepository->findAllByDate($dateTime);
 
         foreach($infotexts as $infotext) {
@@ -333,7 +339,7 @@ class DashboardViewHelper {
      * @param DateTime $dateTime
      * @return AbsentStudentGroup[]
      */
-    private function computeAbsentStudents(TimetableLesson $lessonEntity, int $lesson, \DateTime $dateTime) {
+    private function computeAbsentStudents(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime) {
         $lessonStudents = $lessonEntity
             ->getTuition()
             ->getStudyGroup()
@@ -358,7 +364,7 @@ class DashboardViewHelper {
         return $groups;
     }
 
-    private function computeExamStudents(TimetableLesson $lessonEntity, int $lesson, \DateTime $dateTime) {
+    private function computeExamStudents(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime) {
         $lessonStudents = $lessonEntity
             ->getTuition()
             ->getStudyGroup()

@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Dashboard\DashboardViewHelper;
-use App\Dashboard\DashboardViewMergeHelper;
+use App\Dashboard\DashboardViewCollapseHelper;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Settings\SubstitutionSettings;
@@ -32,7 +32,7 @@ class DashboardController extends AbstractController {
      * @Route("/dashboard", name="dashboard")
      */
     public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
-                              DashboardViewHelper $dashboardViewHelper, DashboardViewMergeHelper $dashboardViewMergeHelper, DateHelper $dateHelper, TimetableSettings $timetableSettings, Request $request) {
+                              DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper, DateHelper $dateHelper, TimetableSettings $timetableSettings, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -70,15 +70,13 @@ class DashboardController extends AbstractController {
         }
 
         if($view !== null) {
-            $dashboardViewMergeHelper->mergeView($view, $user->getUserType());
+            $dashboardViewMergeHelper->collapseView($view, $teacherFilterView->getCurrentTeacher());
         }
 
         $supervisionLabels = [ ];
         for($i = 1; $i <= $timetableSettings->getMaxLessons(); $i++) {
             $supervisionLabels[$i] = $timetableSettings->getDescriptionBeforeLesson($i);
         }
-
-        dump($view);
 
         return $this->render('dashboard/index.html.twig', [
             'studentFilter' => $studentFilterView,

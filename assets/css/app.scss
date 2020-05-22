@@ -153,7 +153,7 @@ $enable-gradients: true;
 
 .message-danger {
   border-color: $danger;
-  background: mix(#fff, $danger, 90);
+  background-color: theme-color-level("danger", $alert-bg-level)
 }
 
 .message-warning {
@@ -164,6 +164,24 @@ $enable-gradients: true;
 .dashboard-lesson {
   @include font-size(1.75rem);
   @extend .p-3;
+
+  .lesson-time {
+    @include font-size(0.6rem);
+  }
+}
+
+.bg-danger-light {
+  background-color: theme-color-level("danger", $alert-bg-level)
+}
+
+[data-theme=dark] {
+  .border-primary {
+    border-color: $default-border !important;
+  }
+
+  .dashboard-lesson {
+    @extend .text-white-50;
+  }
 }
 
 .gray-300 {

@@ -6,153 +6,172 @@
     {% endif %}
 {% endmacro %}
 
-{% macro exam(item, lesson) %}
-    {% if item.visible %}
-        {% set exam = item.exam %}
-        <div class="card">
-            <div class="d-flex">
-                <div class="align-self-center p-3 dashboard-lesson text-black-50">{{ lesson }}</div>
-
-                <span class="align-self-center badge badge-light">{{ 'dashboard.exam'|trans|upper }}</span>
-
-                <div class="card-body align-self-baseline d-flex align-items-sm-center">
-                    <span class="mr-auto align-self-center">
-                        {% for tuition in exam.tuitions %}
-                            {{ tuition.name }}
-                            <span class="mx-1"></span>
-                            <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-                            <span class="mx-1"></span>
-                            <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
-                            <span class="mx-1"></span>
-                        {% endfor %}
-
-                        {% if exam.rooms is not empty %}
-                            <i class="fa fa-door-open"></i> {{ exam.rooms|join(', ') }}
-                        {% endif %}
-                    </span>
-
-                    <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">
-                        {{ 'label.details'|trans }}
-                    </a>
-                </div>
+{% macro show_lesson(lesson, start, end, warning) %}
+    <div class="align-self-center text-center p-3 dashboard-lesson text-black-50">
+        {% if start is not empty %}
+            <div class="d-block lesson-time">
+                {{ start }}
             </div>
+        {% endif %}
+
+        {{ lesson }}
+
+        {% if end is not empty %}
+            <div class="d-block lesson-time">
+                {{ end }}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro show_warning(hasWarning) %}
+    {% if hasWarning|default(false) %}
+        <div class="align-self-center text-center pr-3 text-danger">
+            <i class="fa fa-exclamation-triangle" title="{{ 'dashboard.collision.single_label'|trans }} {{ 'dashboard.collision.hint'|trans }}"></i>
         </div>
     {% endif %}
 {% endmacro %}
 
-{% macro invigilator(item, lesson) %}
-    {% if item.visible %}
-        <div class="card border-warning">
-            <div class="d-flex">
-                <div class="align-self-center p-3 dashboard-lesson">{{ lesson }}</div>
-                <span class="align-self-center badge badge-warning">{{ 'dashboard.invigilator'|trans|upper }}</span>
+{% macro exam(item, lesson, start, end, hasWarning) %}
+    {% set exam = item.exam %}
+    <div class="card">
+        <div class="d-flex">
+            {% if lesson is  null %}
+                {% set lesson = 'label.substitution_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) %}
+            {% endif %}
+            {{ _self.show_lesson(lesson, start, end) }}
+            {{ _self.show_warning(hasWarning) }}
 
-                <div class="align-self-center card-body d-flex align-items-center">
-                    <span class="mr-auto align-self-center">
-                        {% for tuition in item.exam.tuitions %}
-                            {{ tuition.name }}
-                            <span class="mx-1"></span>
-                            <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-                            <span class="mx-1"></span>
-                            <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
-                            <span class="mx-1"></span>
-                        {% endfor %}
+            <span class="align-self-center badge badge-light">{{ 'dashboard.exam'|trans|upper }}</span>
 
-                        <i class="fa fa-door-open"></i> {{ item.exam.rooms|first }}
-                    </span>
-
-                    <a href="{{ path('show_exam', { uuid: item.exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">{{ 'label.details'|trans }}</a>
-                </div>
-            </div>
-        </div>
-    {% endif %}
-{% endmacro %}
-
-{% macro lesson(item, lesson, gradesWithCourseNames) %}
-    {% if item.visible %}
-        <div class="card border-primary">
-            <div class="d-flex">
-                <div class="align-self-center p-3 dashboard-lesson">{{ lesson }}</div>
-
-                {% if item.lesson is null %}
-                    <span class="align-self-center badge badge-primary">{{ 'dashboard.free_hour'|trans|upper }}</span>
-                {% else %}
-                    {% set lesson = item.lesson %}
-                    {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
-                    {%- set showCourseName = false -%}
-                    {%- for grade in lesson.tuition.studyGroup.grades -%}
-                        {% if grade.id in gradesWithCourseNames -%}
-                            {% set showCourseName = true -%}
-                        {% endif -%}
-                    {%- endfor -%}
-
-                    <span class="align-self-center badge badge-primary mr-3">
-                        {%- if showCourseName -%}
-                            {{ lesson.tuition.studyGroup.name|upper }}
-                        {%- else -%}
-                            {{ lesson.tuition.subject.name|upper }}
-                        {%- endif %}
-                    </span>
-
-                    <div class="card-body align-self-center pl-0">
-                        <i class="fa fa-users"></i> {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+            <div class="card-body align-self-center d-flex align-items-sm-center">
+                <span class="mr-auto align-self-center">
+                    {% for tuition in exam.tuitions %}
+                        {{ tuition.name }}
                         <span class="mx-1"></span>
-                        <i class="fa fa-door-open"></i> {{ lesson.room.name }}
+                        <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
                         <span class="mx-1"></span>
-                        <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            {% for mergedItem in item.mergedItems %}
-                {% set type = mergedItem.blockName %}
-                {% if type == 'exam' %}
-                    <div class="card-footer d-flex">
-                        <span class="mr-auto align-self-center">
-                            <strong>{{ 'label.exam'|trans }}</strong>
-                        </span>
-                        <a href="{{ path('show_exam', { uuid: mergedItem.exam.uuid }) }}" class="btn btn-outline-primary btn-sm">
-                            {{ 'label.details'|trans }}
-                        </a>
-                    </div>
-                {% endif %}
-            {% endfor %}
-            {% if item.absentStudentGroups|length > 0 %}
-                <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#absences-{{ item.lesson.lesson }}">
-                    <span class="mr-auto align-self-center">
-                        <strong>{{ 'dashboard.absent_students'|trans }} <span class="badge badge-warning">{{ item.absentStudentsCount }} / {{ lesson.tuition.studyGroup.memberships|length }}</span></strong>
-                    </span>
-                    <i class="fa indicator align-self-center fa-chevron-down"></i>
-                </div>
-                <div class="card-footer collapse border-top-0" id="absences-{{ item.lesson.lesson }}">
-                    {% for group in item.absentStudentGroups %}
-                        <div class="d-flex">
-                            <div class="align-self-baseline flex-shrink-0 mr-1">
-                                {% if group.isExam %}
-                                    <i class="fa fa-edit"></i> {% for tuition in group.objective.tuitions %}{{ tuition.name }} ({{ tuition.teachers|teachers }}){% if not loop.last %}, {% endif %}{% endfor %}:
-                                {% elseif group.isAppointment %}
-
-                                {% else %}
-
-                                {% endif %}
-                            </div>
-                            <div class="align-self-baseline w-100">
-                                {% for absentStudent in group.students %}{{ absentStudent.student|student }}{% if not loop.last %}, {% endif %}{% endfor %}
-                            </div>
-                        </div>
+                        <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        <span class="mx-1"></span>
                     {% endfor %}
+
+                    {% if exam.rooms is not empty %}
+                        <i class="fa fa-door-open"></i> {{ exam.rooms|join(', ') }}
+                    {% endif %}
+                </span>
+
+                <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">
+                    {{ 'label.details'|trans }}
+                </a>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro invigilator(item, lesson, start, end, hasWarning) %}
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %}">
+        <div class="d-flex">
+            {{ _self.show_lesson(lesson, start, end) }}
+            {{ _self.show_warning(hasWarning) }}
+
+            <span class="align-self-center badge badge-warning">{{ 'dashboard.invigilator'|trans|upper }}</span>
+
+            <div class="align-self-center card-body d-flex align-items-center">
+                <span class="mr-auto align-self-center">
+                    {% for tuition in item.exam.tuitions %}
+                        {{ tuition.name }}
+                        <span class="mx-1"></span>
+                        <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        <span class="mx-1"></span>
+                        <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        <span class="mx-1"></span>
+                    {% endfor %}
+
+                    <i class="fa fa-door-open"></i> {{ item.exam.rooms|first }}
+                </span>
+
+                <a href="{{ path('show_exam', { uuid: item.exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">{{ 'label.details'|trans }}</a>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro lesson(item, lesson, start, end, hasWarning, gradesWithCourseNames) %}
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-primary{% endif %}">
+        <div class="d-flex">
+            {{ _self.show_lesson(lesson, start, end) }}
+            {{ _self.show_warning(hasWarning) }}
+
+            {% if item.lesson is null %}
+                <span class="align-self-center badge badge-primary">{{ 'dashboard.free_hour'|trans|upper }}</span>
+            {% else %}
+                {% set lesson = item.lesson %}
+                {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
+                {%- set showCourseName = false -%}
+                {%- for grade in lesson.tuition.studyGroup.grades -%}
+                    {% if grade.id in gradesWithCourseNames -%}
+                        {% set showCourseName = true -%}
+                    {% endif -%}
+                {%- endfor -%}
+
+                <span class="align-self-center badge badge-primary mr-3">
+                    {%- if showCourseName -%}
+                        {{ lesson.tuition.studyGroup.name|upper }}
+                    {%- else -%}
+                        {{ lesson.tuition.subject.name|upper }}
+                    {%- endif %}
+                </span>
+
+                <div class="card-body align-self-center pl-0">
+                    <i class="fa fa-users"></i> {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    <span class="mx-1"></span>
+                    <i class="fa fa-door-open"></i> {{ lesson.room.name }}
+                    <span class="mx-1"></span>
+                    <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
                 </div>
             {% endif %}
         </div>
-    {% endif %}
+        {% if item.absentStudentGroups|length > 0 %}
+            <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#absences-{{ item.lesson.lesson }}">
+                <span class="mr-auto align-self-center">
+                    <strong>{{ 'dashboard.absent_students'|trans }} <span class="badge badge-warning">{{ item.absentStudentsCount }} / {{ lesson.tuition.studyGroup.memberships|length }}</span></strong>
+                </span>
+                <i class="fa indicator align-self-center fa-chevron-down"></i>
+            </div>
+            <div class="card-footer collapse border-top-0" id="absences-{{ item.lesson.lesson }}">
+                {% for group in item.absentStudentGroups %}
+                    <div class="d-flex">
+                        <div class="align-self-baseline flex-shrink-0 mr-1">
+                            {% if group.isExam %}
+                                <i class="fa fa-edit"></i> {% for tuition in group.objective.tuitions %}{{ tuition.name }} ({{ tuition.teachers|teachers }}){% if not loop.last %}, {% endif %}{% endfor %}:
+                            {% elseif group.isAppointment %}
+
+                            {% else %}
+
+                            {% endif %}
+                        </div>
+                        <div class="align-self-baseline w-100">
+                            {% for absentStudent in group.students %}{{ absentStudent.student|student }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 {% endmacro %}
 
-{% macro supervision(item, lesson, supervisionLabels) %}
-    <div class="card border-primary">
+{% macro supervision(item, lesson, start, end, hasWarning, supervisionLabels) %}
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-primary{% endif %}">
         <div class="d-flex">
             {% if not item.supervision.isBefore %}
-                <div class="align-self-center p-3 dashboard-lesson">{{ lesson }}</div>
+                {{ _self.show_lesson(lesson, start, end) }}
+            {% else %}
+                <span class="ml-3"></span>
             {% endif %}
-            <span class="align-self-center badge badge-primary {% if item.supervision.isBefore %}ml-3{% endif %}">
+
+            {{ _self.show_warning(hasWarning) }}
+
+            <span class="align-self-center badge badge-primary {% if item.supervision.isBefore and not hasWarning %}ml-3{% endif %}">
                 {% if supervisionLabels[lesson] is defined and supervisionLabels[lesson] is not empty %}
                     {{ supervisionLabels[lesson]|upper }}
                 {% else %}
@@ -167,48 +186,50 @@
     </div>
 {% endmacro %}
 
-{% macro substitution(item, lesson) %}
-    {% if item.visible %}
-        {% set substitution = item.substitution %}
-        <div class="card border-warning">
-            <div class="d-flex">
-                <div class="align-self-center p-3 dashboard-lesson">{{ lesson }}</div>
-
-                <span class="badge badge-warning align-self-center">
-                    {% if substitution.type is not empty %}
-                        {{ substitution.type|upper }}
-                    {% else %}
-                        {{ 'dashboard.substitution'|trans|upper }}
-                    {% endif %}
-                </span>
-
-                <div class="card-body align-self-center">
-                    {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
-                        {{ _self.replacement(substitution.subject, substitution.replacementSubject) }}
-                        <span class="mx-1"></span>
-                    {% endif %}
-
-                    {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
-                        <i class="fa fa-users"></i> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
-                        <span class="mx-1"></span>
-                    {% endif %}
-
-                    <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
-                    <span class="mx-1"></span>
-
-                    {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
-                        <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
-                    {% endif %}
-                </div>
-            </div>
-
-            {% if substitution.remark %}
-                <div class="card-footer">
-                    {{ substitution.remark }}
-                </div>
+{% macro substitution(item, lesson, start, end, hasWarning) %}
+    {% set substitution = item.substitution %}
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %}">
+        <div class="d-flex">
+            {% if lesson is null %}
+                {% set lesson = 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': (substitution.lessonEnd - substitution.lessonStart)}) %}
             {% endif %}
+            {{ _self.show_lesson(lesson, start, end) }}
+            {{ _self.show_warning(hasWarning) }}
+
+            <span class="badge badge-warning align-self-center">
+                {% if substitution.type is not empty %}
+                    {{ substitution.type|upper }}
+                {% else %}
+                    {{ 'dashboard.substitution'|trans|upper }}
+                {% endif %}
+            </span>
+
+            <div class="card-body align-self-center">
+                {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
+                    {{ _self.replacement(substitution.subject, substitution.replacementSubject) }}
+                    <span class="mx-1"></span>
+                {% endif %}
+
+                {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
+                    <i class="fa fa-users"></i> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
+                    <span class="mx-1"></span>
+                {% endif %}
+
+                <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
+                <span class="mx-1"></span>
+
+                {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
+                    <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
+                {% endif %}
+            </div>
         </div>
-    {% endif %}
+
+        {% if substitution.remark %}
+            <div class="card-footer">
+                {{ substitution.remark }}
+            </div>
+        {% endif %}
+    </div>
 {% endmacro %}
 
 {% macro appointment(item, lesson) %}

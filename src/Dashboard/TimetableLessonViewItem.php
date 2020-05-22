@@ -5,30 +5,21 @@ namespace App\Dashboard;
 use App\Entity\TimetableLesson;
 use App\Grouping\AbsentStudentGroup;
 
-class LessonViewItem extends AbstractViewItem {
+class TimetableLessonViewItem extends AbstractViewItem {
 
-    private $isOutdated;
+    /** @var TimetableLesson|null */
     private $lesson;
-    private $absentStudentGroups = [ ];
 
-    private $mergedItems = [ ];
+    /** @var AbsentStudentGroup[] */
+    private $absentStudentGroups = [ ];
 
     /**
      * @param TimetableLesson|null $lesson
      * @param AbsentStudentGroup[] $absentStudentGroups
-     * @param bool $isOutdated
      */
-    public function __construct(?TimetableLesson $lesson, array $absentStudentGroups, bool $isOutdated) {
+    public function __construct(?TimetableLesson $lesson, array $absentStudentGroups) {
         $this->lesson = $lesson;
         $this->absentStudentGroups = $absentStudentGroups;
-        $this->isOutdated = $isOutdated;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isOutdated(): bool {
-        return $this->isOutdated;
     }
 
     /**
@@ -36,20 +27,6 @@ class LessonViewItem extends AbstractViewItem {
      */
     public function getLesson(): ?TimetableLesson {
         return $this->lesson;
-    }
-
-    /**
-     * @return AbstractViewItem[]
-     */
-    public function getMergedItems(): array {
-        return $this->mergedItems;
-    }
-
-    /**
-     * @param AbstractViewItem $item
-     */
-    public function addMergedItem(AbstractViewItem $item): void {
-        $this->mergedItems[] = $item;
     }
 
     /**

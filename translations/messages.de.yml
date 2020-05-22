@@ -156,11 +156,17 @@ dashboard:
     supervision: Aufsicht
     invigilator: Klausuraufsicht
     substitution: Vertretung
+    substitution_mentions: Erwähnungen
+    collision:
+        hint: Bitte überprüfen und den entsprechenden Ansprechpartner kontaktieren.
+        single_label: Mögliche Kollision gefunden.
+        label: "{0} %count% Kollisionen gefunden gefunden.|{1} %count% Kollision gefunden.|]1,Inf[ %count% Kollisionen gefunden."
     exam: Klausur
     empty: Für diesen Tag sind keine Daten hinterlegt.
     free_hour: Freistunde
+    absences: Absenzen
     nav:
-        infotexts: '{0} Infotexte|{1} Infotext|]1,Inf[ Infotexte'
+        infotexts: '{0} Tagestexte|{1} Tagestext|]1,Inf[ Tagestexte'
 
 plans:
     label: Pläne
@@ -533,6 +539,15 @@ admin:
             grades_membership_types:
                 label: Klassen mit Kursarten
                 help: Bei Stundenplaneinträgen von Kursen in diesen Klassen wird die Kursart eines Lernenden angezeigt.
+
+        dashboard:
+            label: Dashboard
+            removable_substitutions:
+                label: Vertretungsarten mit geringer Priorität
+                help: Kommaseparierte Liste von Vertretungsarten, welche bei mehreren Vertretungen automatisch ausgeblendet werden.
+            additional_substitution:
+                label: Ergänzende Vertretungsarten
+                help: Kommaseparierte Liste von Vertretungsarten, welche immer zusätzlich angezeigt werden.
 
 
     timetable:

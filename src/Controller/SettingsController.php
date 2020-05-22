@@ -12,6 +12,7 @@ use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Repository\GradeRepositoryInterface;
 use App\Settings\AbstractSettings;
 use App\Settings\AppointmentsSettings;
+use App\Settings\DashboardSettings;
 use App\Settings\ExamSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
@@ -29,6 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function foo\func;
 
 /**
  * @Route("/admin/settings")
@@ -44,6 +46,51 @@ class SettingsController extends AbstractController {
 
         return $this->render('admin/settings/index.html.twig', [
             'menu' => $settingsMenu->getChildren()
+        ]);
+    }
+
+    /**
+     * @Route("/dashboard", name="admin_settings_dashboard")
+     */
+    public function dashboard(Request $request, DashboardSettings $dashboardSettings) {
+        $builder = $this->createFormBuilder();
+        $builder
+            ->add('removable_types', TextType::class, [
+                'label' => 'admin.settings.dashboard.removable_substitutions.label',
+                'help' => 'admin.settings.dashboard.removable_substitutions.help',
+                'data' => implode(',', $dashboardSettings->getRemovableSubstitutionTypes())
+            ])
+            ->add('additional_types', TextType::class, [
+                'label' => 'admin.settings.dashboard.additional_substitutions.label',
+                'help' => 'admin.settings.dashboard.additional_substitutions.help',
+                'data' => implode(',', $dashboardSettings->getAdditionalSubstitutionTypes())
+            ]);
+
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $map = [
+                'removable_types' => function($types) use ($dashboardSettings) {
+                    $dashboardSettings->setRemovableSubstitutionTypes(explode(',', $types));
+                },
+                'additional_types' => function($types) use ($dashboardSettings) {
+                    $dashboardSettings->setAdditionalSubstitutionTypes(explode(',', $types));
+                }
+            ];
+
+            foreach($map as $formKey => $callable) {
+                $value = $form->get($formKey)->getData();
+                $callable($value);
+            }
+
+            $this->addFlash('success', 'admin.settings.success');
+
+            return $this->redirectToRoute('admin_settings_dashboard');
+        }
+
+        return $this->render('admin/settings/dashboard.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 

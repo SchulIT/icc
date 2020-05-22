@@ -2,9 +2,7 @@
 
 namespace App\Dashboard;
 
-use App\Entity\Exam;
-
-class ExamInvigilatorViewItem extends ExamViewItem {
+class ExamSupervisionViewItem extends ExamViewItem {
 
     public function getBlockName(): string {
         return 'invigilator';

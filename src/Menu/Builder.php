@@ -303,6 +303,10 @@ class Builder {
             ->setAttribute('title', $this->translator->trans('admin.settings.label'));
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $menu->addChild('admin.settings.dashboard.label', [
+                'route' => 'admin_settings_dashboard'
+            ]);
+
             $menu->addChild('admin.settings.timetable.label', [
                 'route' => 'admin_settings_timetable'
             ]);

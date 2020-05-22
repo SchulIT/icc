@@ -41,7 +41,6 @@ class TimetableCalenderExportHelper {
         $currentDay = clone $period->getStart();
 
         while($currentDay <= $period->getEnd()) {
-            dump($currentDay);
             $views[] = $this->createCalendarDayView($currentDay, $numberOfWeeks, $lessons, $supervisions);
 
             $currentDay->modify('+1 day');

@@ -17,6 +17,7 @@ use App\Settings\TimetableSettings;
 use App\Sorting\GradeNameStrategy;
 use App\Sorting\Sorter;
 use App\Timetable\TimetableCalenderExportHelper;
+use App\Timetable\TimetableTimeHelper;
 use DateInterval;
 use DateTime;
 use Exception;
@@ -30,14 +31,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TimetableIcsExporter {
 
-    private $initialized = false;
-    private $startTimes = [ ];
-    private $endTimes = [ ];
-
     private $sorter;
     private $translator;
     private $timetableSettings;
     private $timetableExportHelper;
+    private $timetableTimeHelper;
     private $icsHelper;
     private $authorizationChecker;
 
@@ -47,11 +45,12 @@ class TimetableIcsExporter {
 
     public function __construct(Sorter $sorter, TranslatorInterface $translator, TimetableSettings $timetableSettings, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
                                 TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableCalenderExportHelper $timetableExportHelper,
-                                IcsHelper $icsHelper, AuthorizationCheckerInterface $authorizationChecker) {
+                                IcsHelper $icsHelper, TimetableTimeHelper $timetableTimeHelper, AuthorizationCheckerInterface $authorizationChecker) {
         $this->sorter = $sorter;
         $this->translator = $translator;
         $this->timetableSettings = $timetableSettings;
         $this->timetableExportHelper = $timetableExportHelper;
+        $this->timetableTimeHelper = $timetableTimeHelper;
         $this->icsHelper = $icsHelper;
         $this->authorizationChecker = $authorizationChecker;
 
@@ -62,8 +61,6 @@ class TimetableIcsExporter {
 
     public function getIcsResponse(User $user): Response {
         $events = $this->makeIcsItems($user);
-
-        dump($events);
 
         return $this->icsHelper->getIcsResponse(
             $this->translator->trans('plans.timetable.export.title'),
@@ -142,16 +139,8 @@ class TimetableIcsExporter {
         $event->setAllDay(false);
         $event->setSummary($this->getSubject($lesson));
 
-        $startTime = $this->getStartTime($lesson->getLesson(), false);
-        $endTime = $this->getEndTime($lesson->getLesson(), false);
-
-        if($startTime === null || $endTime === null) {
-            dump('problem with start or end time');
-            return null;
-        }
-
-        $event->setStart((clone $day)->add($startTime));
-        $event->setEnd((clone $day)->add($endTime));
+        $event->setStart($this->timetableTimeHelper->getLessonStartDateTime($day, $lesson->getLesson()));
+        $event->setEnd($this->timetableTimeHelper->getLessonEndDateTime($day, $lesson->getLesson() + ($lesson->isDoubleLesson() ? 1 : 0)));
 
         $teacher = $lesson->getTuition()->getTeacher();
         if($teacher !== null) {
@@ -177,15 +166,8 @@ class TimetableIcsExporter {
         $event->setAllDay(false);
         $event->setSummary($this->timetableSettings->getSupervisionLabel());
 
-        $startTime = $this->getStartTime($supervision->getLesson(), $supervision->isBefore());
-        $endTime = $this->getEndTime($supervision->getLesson(), $supervision->isBefore());
-
-        if(!empty($startTime) || !empty($endTime)) {
-            return null;
-        }
-
-        $event->setStart((clone $day)->add($startTime));
-        $event->setEnd((clone $day)->add($endTime));
+        $event->setStart($this->timetableTimeHelper->getLessonStartDateTime($day, $supervision->getLesson(), $supervision->isBefore()));
+        $event->setEnd($this->timetableTimeHelper->getLessonEndDateTime($day, $supervision->getLesson(), $supervision->isBefore()));
 
         $teacher = $supervision->getTeacher();
         if($teacher !== null) {
@@ -198,72 +180,10 @@ class TimetableIcsExporter {
 
         if(!empty($supervision->getLocation())) {
             $location = new Location();
-            $location->setName($supervision->getName());
+            $location->setName($supervision->getLocation());
             $event->setLocations([$location]);
         }
 
         return $event;
-    }
-
-    private function initialize() {
-        if($this->initialized === true) {
-            return;
-        }
-
-        $numberOfLessons = $this->timetableSettings->getMaxLessons();
-
-        for($i = 1; $i <= $numberOfLessons; $i++) {
-            $this->startTimes[$i] = $this->timetableSettings->getStart($i);
-            $this->endTimes[$i] = $this->timetableSettings->getEnd($i);
-        }
-
-        $this->startTimes[0] = $this->timetableSettings->getStart(0);
-        $this->endTimes[0] = $this->startTimes[1] ?? null;
-
-        $this->initialized = true;
-    }
-
-    private function getStartTime(int $lesson, bool $isBefore): ?DateInterval {
-        $this->initialize();
-
-        $start = $this->startTimes[$lesson] ?? null;
-
-        if($isBefore === true) {
-            $start = $this->endTimes[$lesson - 1] ?? null;
-        }
-
-        if($start !== null) {
-            list($hour, $minute) = explode(':', $start);
-            try {
-                $format = sprintf('PT%dH%dM', $hour, $minute);
-                return new DateInterval($format);
-            } catch (Exception $e) {
-                return null;
-            }
-        }
-
-        return null;
-    }
-
-    private function getEndTime(int $lesson, bool $isBefore): ?DateInterval {
-        $this->initialize();
-
-        $end = $this->endTimes[$lesson] ?? null;
-
-        if($isBefore === true) {
-            $end = $this->startTimes[$lesson - 1] ?? null;
-        }
-
-        if($end !== null) {
-            list($hour, $minute) = explode(':', $end);
-            try {
-                $format = sprintf('PT%dH%dM', $hour, $minute);
-                return new DateInterval($format);
-            } catch (Exception $e) {
-                return null;
-            }
-        }
-
-        return null;
     }
 }

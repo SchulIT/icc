@@ -13,27 +13,25 @@ use App\Ics\IcsHelper;
 use App\Repository\ExamRepositoryInterface;
 use App\Security\Voter\ExamVoter;
 use App\Settings\ExamSettings;
-use App\Settings\TimetableSettings;
+use App\Timetable\TimetableTimeHelper;
 use Jsvrcek\ICS\Model\CalendarEvent;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExamIcsExporter {
     private $examSettings;
     private $examRepository;
-    private $timetableSettings;
+    private $timetableTimeHelper;
     private $icsHelper;
     private $translator;
     private $authorizationChecker;
 
-    public function __construct(ExamSettings $examSettings, ExamRepositoryInterface $examRepository, TimetableSettings $timetableSettings,
+    public function __construct(ExamSettings $examSettings, ExamRepositoryInterface $examRepository, TimetableTimeHelper $timetableTimeHelper,
                                 IcsHelper $icsHelper, TranslatorInterface $translator, AuthorizationCheckerInterface $authorizationChecker) {
         $this->examSettings = $examSettings;
         $this->examRepository = $examRepository;
-        $this->timetableSettings = $timetableSettings;
+        $this->timetableTimeHelper = $timetableTimeHelper;
         $this->icsHelper = $icsHelper;
         $this->translator = $translator;
         $this->authorizationChecker = $authorizationChecker;
@@ -109,8 +107,8 @@ class ExamIcsExporter {
     }
 
     private function makeIcsItem(Exam $exam): CalendarEvent {
-        $start = $this->getDateTime($exam->getDate(), $this->timetableSettings->getStart($exam->getLessonStart()));
-        $end = $this->getDateTime($exam->getDate(), $this->timetableSettings->getEnd($exam->getLessonEnd()));
+        $start = $this->getDateTime($exam->getDate(), $this->timetableTimeHelper->getLessonStartDateTime($exam->getDate(), $exam->getLessonStart()));
+        $end = $this->getDateTime($exam->getDate(), $this->timetableTimeHelper->getLessonEndDateTime($exam->getDate(), $exam->getLessonEnd()));
         $description = $this->translator->trans('exams.export.exam_description', [
             '%tuitions%' => $this->getTuitionsAsString($exam->getTuitions()->toArray())
         ]);
@@ -125,8 +123,8 @@ class ExamIcsExporter {
     }
 
     private function makeIcsItemInvigilator(Exam $exam, int $lesson): CalendarEvent {
-        $start = $this->getDateTime($exam->getDate(), $this->timetableSettings->getStart($lesson));
-        $end = $this->getDateTime($exam->getDate(), $this->timetableSettings->getEnd($lesson));
+        $start = $this->getDateTime($exam->getDate(), $this->timetableTimeHelper->getLessonStartDateTime($exam->getDate(), $lesson));
+        $end = $this->getDateTime($exam->getDate(), $this->timetableTimeHelper->getLessonEndDateTime($exam->getDate(), $lesson));
         $description = $this->translator->trans('exams.export.invigilator_description', [
             '%tuitions%' => $this->getTuitionsAsString($exam->getTuitions()->toArray())
         ]);

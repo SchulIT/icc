@@ -318,6 +318,10 @@ class Builder {
             $menu->addChild('admin.settings.substitutions.label', [
                 'route' => 'admin_settings_substitutions'
             ]);
+
+            $menu->addChild('admin.settings.appointments.label', [
+                'route' => 'admin_settings_appointments'
+            ]);
         }
 
         return $root;

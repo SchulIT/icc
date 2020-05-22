@@ -7,17 +7,17 @@ import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 import deLocale from '@fullcalendar/core/locales/de';
-var bsn = require('bootstrap.native');
+let bsn = require('bootstrap.native');
 
 require('@fullcalendar/core/locales-all');
 
 document.addEventListener('DOMContentLoaded', function () {
-    var appEl = document.getElementById('appointments');
-    var lastQuery = { };
-    var popovers = { };
+    let appEl = document.getElementById('appointments');
+    let lastQuery = { };
+    let popovers = { };
 
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new Calendar(calendarEl, {
+    let calendarEl = document.getElementById('calendar');
+    let calendar = new Calendar(calendarEl, {
         plugins: [
             dayGridPlugin,
             timeGridPlugin,
@@ -44,16 +44,19 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         ],
         eventMouseEnter: function(info) {
-            var event = info.event;
-            var title = event.title;
-            var content = event.extendedProps.content;
-            var view = event.extendedProps.view;
+            let event = info.event;
+            let title = event.title;
+            let content = event.extendedProps.content;
+            let view = event.extendedProps.view;
 
-            var template = '<div class="popover" role="tooltip">' +
+            let template = '<div class="popover" role="tooltip">' +
                 '<div class="arrow"></div>' +
                 '<h3 class="popover-header">' + title + ' <span class="badge" style="background: ' + event.backgroundColor + '; color: ' + event.textColor + '">' + event.extendedProps.category + '</span></h3>' +
-                '<div class="popover-body">' +
-                '<p>' + content + '</p>';
+                '<div class="popover-body">';
+
+            if(content !== null) {
+                template += '<p>' + content + '</p>';
+            }
 
             view.forEach(function(viewItem) {
                 template += '<p><span class="text-muted">' + viewItem.label + '</span> ' + viewItem.content + '</p>';
@@ -61,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             template += '</div></div>';
 
-            var popover = new bsn.Popover(info.el, {
+            let popover = new bsn.Popover(info.el, {
                 placement: 'right',
                 template: template,
                 trigger: 'focus',
@@ -71,11 +74,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             popover.show();
 
-            var eventId = event.id;
+            let eventId = event.id;
             popovers[eventId] = popover;
         },
         eventMouseLeave: function(info) {
-            var eventId = info.event.id;
+            let eventId = info.event.id;
             if(popovers[eventId] !== null) {
                 popovers[eventId].hide();
             }
@@ -84,30 +87,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
     calendar.render();
 
-    var studentIdEl = document.getElementById('student');
-    var studyGroupIdEl = document.getElementById('study_group');
-    var teacherIdEl = document.getElementById('teacher');
-    var categoriyIdsEl = document.getElementById('categories');
+    let studentIdEl = document.getElementById('student');
+    let studyGroupIdEl = document.getElementById('study_group');
+    let teacherIdEl = document.getElementById('teacher');
+    let categoryIdsEl = document.getElementById('categories');
+    let examGradeIdsEl = document.getElementById('exam_grades');
 
-    [studentIdEl, studyGroupIdEl, teacherIdEl, categoriyIdsEl ].forEach(function(el) {
+    [studentIdEl, studyGroupIdEl, teacherIdEl, categoryIdsEl, examGradeIdsEl ].forEach(function(el) {
         el.addEventListener('change', function(el) {
             loadEvents();
         });
     });
 
     function loadEvents() {
-        var query = { };
+        let query = { };
 
-        [studentIdEl, studyGroupIdEl, teacherIdEl, categoriyIdsEl ].forEach(function(el) {
+        [studentIdEl, studyGroupIdEl, teacherIdEl, categoryIdsEl, examGradeIdsEl ].forEach(function(el) {
             if(el.multiple !== null && el.multiple !== false) {
                 query[el.name] = Array.from(el.selectedOptions).map(x => x.value);
             } else {
-
                 query[el.name] = el.value === "" ? null : el.value;
             }
         });
 
-        var eventSource = calendar.getEventSourceById('json');
+        let eventSource = calendar.getEventSourceById('json');
         lastQuery = query;
         eventSource.refetch();
     }

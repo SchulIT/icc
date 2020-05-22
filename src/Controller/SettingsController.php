@@ -6,6 +6,7 @@ use App\Converter\EnumStringConverter;
 use App\Entity\AppointmentCategory;
 use App\Entity\Grade;
 use App\Entity\UserType;
+use App\Form\ColorType;
 use App\Form\IdEntityType;
 use App\Menu\Builder;
 use App\Repository\AppointmentCategoryRepositoryInterface;
@@ -17,10 +18,12 @@ use App\Settings\ExamSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\ArrayUtils;
+use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -480,9 +483,77 @@ class SettingsController extends AbstractController {
         ]);
     }
 
-    public function appointments(Request $request, AppointmentsSettings $appointmentsSettings) {
+    /**
+     * @Route("/appointments", name="admin_settings_appointments")
+     */
+    public function appointments(Request $request, AppointmentsSettings $appointmentsSettings, EnumStringConverter $enumStringConverter) {
         $builder = $this->createFormBuilder();
+        $userTypes = UserType::values();
 
+        foreach($userTypes as $name => $userType) {
+            $builder
+                ->add(sprintf('start_%s', $name), DateType::class, [
+                    'label' => 'admin.settings.appointments.start.label',
+                    'label_translation_parameters' => [
+                        '%type%' => $enumStringConverter->convert($userType)
+                    ],
+                    'help' => 'admin.settings.appointments.start.help',
+                    'data' => $appointmentsSettings->getStart($userType),
+                    'widget' => 'single_text',
+                    'required' => false
+                ])
+                ->add(sprintf('end_%s', $name), DateType::class, [
+                    'label' => 'admin.settings.appointments.end.label',
+                    'label_translation_parameters' => [
+                        '%type%' => $enumStringConverter->convert($userType)
+                    ],
+                    'help' => 'admin.settings.appointments.end.help',
+                    'data' => $appointmentsSettings->getEnd($userType),
+                    'widget' => 'single_text',
+                    'required' => false
+                ]);
+        }
 
+        $builder->add('exam_color', ColorType::class, [
+            'label' => 'admin.settings.appointments.exam_color.label',
+            'help' => 'admin.settings.appointments.exam_color.help',
+            'data' => $appointmentsSettings->getExamColor(),
+            'required' => false
+        ]);
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $map = [
+                'exam_color' => function(?string $color) use($appointmentsSettings) {
+                    $appointmentsSettings->setExamColor($color);
+                }
+            ];
+
+            foreach($userTypes as $name => $userType) {
+                $map['start_' . $name] = function(?DateTime $dateTime) use ($appointmentsSettings, $userType) {
+                    $appointmentsSettings->setStart($userType, $dateTime);
+                };
+
+                $map['end_' . $name] = function(?DateTime $dateTime) use ($appointmentsSettings, $userType) {
+                    $appointmentsSettings->setEnd($userType, $dateTime);
+                };
+            }
+
+            foreach($map as $formKey => $callable) {
+                $value = $form->get($formKey)->getData();
+                $callable($value);
+            }
+
+            $this->addFlash('success', 'admin.settings.success');
+
+            return $this->redirectToRoute('admin_settings_appointments');
+
+        }
+
+        return $this->render('admin/settings/appointments.html.twig', [
+            'form' => $form->createView(),
+            'userTypes' => $userTypes
+        ]);
     }
 }

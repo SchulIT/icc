@@ -247,6 +247,9 @@ plans:
         empty: Aktuell sind keine Termine eingetragen.
         filter:
             show_past: Zurückliegende Termine anzeigen
+            exam_grades:
+                label: Klausurplan hinzufügen
+                placeholder: Klassen/Jgst. auswählen
         export:
             label: Kalender exportieren
             download:
@@ -549,6 +552,19 @@ admin:
                 label: Ergänzende Vertretungsarten
                 help: Kommaseparierte Liste von Vertretungsarten, welche immer zusätzlich angezeigt werden.
 
+        appointments:
+            label: Terminplan
+            time_window: Zeitfenster
+            exams: Klausuren
+            start:
+                label: 'Beginn Zeitraum (%type%)'
+                help: Legt den Beginn des Zeitraumes fest, für den die Benutzergruppe Termine sieht.
+            end:
+                label: 'Ende Zeitraum (%type%)'
+                help: Legt das Ende des Zeitraumes fest, für den die Benutzergruppe Termine sieht.
+            exam_color:
+                label: Farbe für Klausuren
+                help: Legt die Farbe für Klausuren fest, die im Terminkalender angezeigt werden.
 
     timetable:
         label: Stundenplan

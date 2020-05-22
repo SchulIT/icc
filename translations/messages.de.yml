@@ -7,6 +7,7 @@ label:
     name: Name
     email: E-Mail
     subject: Fach
+    subjects: Fächer
     teacher: Lehrkraft
     teachers: "{0} Lehrkraft|{1} Lehrkraft|]1,Inf[ Lehrkräfte"
     student: Lernender
@@ -38,7 +39,7 @@ label:
         teacher: Lehrkraft auswählen
         study_group: Lerngruppe auswählen
         room: Raum auswählen
-        subjects: Fächer
+        subjects: Fächer auswählen
         subject: Fach auswählen
         category: Kategorie auswählen
         usertype: Benutzertyp auswählen

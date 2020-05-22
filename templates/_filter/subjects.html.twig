@@ -2,8 +2,9 @@
     {% include "_filter/_params.html.twig" %}
 
     <div class="form-group {{ class|default('') }}">
-        <label for="subjects">{{ 'label.select.subjects'|trans }}:</label>
-        <select name="subjects[]" id="subjects" multiple="multiple" class="form-control" data-trigger="submit" data-choice="true" placeholder="{{ 'label.select.subjects'|trans }}">
+        <label for="subjects">{{ 'label.subjects'|trans }}:</label>
+        <select name="subjects[]" id="subjects" multiple="multiple" class="form-control" data-trigger="submit" data-choice="true">
+            <option value="">{{ 'label.select.subjects'|trans }}</option>
             {% for s in subjectFilter.subjects %}
                 <option value="{{ s.uuid }}" {% if s in subjectFilter.currentSubjects %}selected="selected"{% endif %}>{{ s.name }}</option>
             {% endfor %}

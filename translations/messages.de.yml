@@ -168,6 +168,9 @@ dashboard:
     absences: Absenzen
     nav:
         infotexts: '{0} Tagestexte|{1} Tagestext|]1,Inf[ Tagestexte'
+    settings:
+        label: Einstellungen
+        show_times: Uhrzeiten der Unterrichtsstunden anzeigen
 
 plans:
     label: Pläne

@@ -6,6 +6,7 @@ use App\Dashboard\DashboardViewHelper;
 use App\Dashboard\DashboardViewCollapseHelper;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Repository\UserRepositoryInterface;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\EnumArrayUtils;
@@ -32,9 +33,18 @@ class DashboardController extends AbstractController {
      * @Route("/dashboard", name="dashboard")
      */
     public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
-                              DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper, DateHelper $dateHelper, TimetableSettings $timetableSettings, Request $request) {
+                              DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper,
+                              DateHelper $dateHelper, TimetableSettings $timetableSettings, UserRepositoryInterface $userRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
+
+        if($request->isMethod('POST')) {
+            $showTimes = $request->request->getBoolean('show_times', false);
+            $user->setData('dashboard.show_times', $showTimes);
+            $userRepository->persist($user);
+
+            return $this->redirectToRoute('dashboard', $request->query->all());
+        }
 
         $selectedDate = null;
         try {
@@ -64,9 +74,11 @@ class DashboardController extends AbstractController {
         $startTimes = [ ];
         $endTimes = [ ];
 
-        for($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
-            $startTimes[$lesson] = $timetableSettings->getStart($lesson);
-            $endTimes[$lesson] = $timetableSettings->getEnd($lesson);
+        $showTimes = $user->getData('dashboard.show_times', true) === true;
+
+        for ($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
+            $startTimes[$lesson] = $showTimes ? $timetableSettings->getStart($lesson) : null;
+            $endTimes[$lesson] = $showTimes ? $timetableSettings->getEnd($lesson) : null;
         }
 
         if($view !== null) {
@@ -88,7 +100,8 @@ class DashboardController extends AbstractController {
             'startTimes' => $startTimes,
             'endTimes' => $endTimes,
             'gradesWithCourseNames' => $timetableSettings->getGradeIdsWithCourseNames(),
-            'supervisionLabels' => $supervisionLabels
+            'supervisionLabels' => $supervisionLabels,
+            'showTimes' => $showTimes
         ]);
     }
 

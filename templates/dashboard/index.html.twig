@@ -219,18 +219,37 @@
                                 </div>
                                 <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
                             </div>
-
-                            <!--
-                            <div class="form-group">
-                                <label for="usertype">{{ 'label.date'|trans }}:</label>
-                                <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
-                            </div>-->
                         </form>
                     </div>
 
                     <div class="card-footer">
                         <a href="{{ path('dashboard') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
                     </div>
+                </div>
+
+                <div class="card">
+                    <form method="post" action="{{ path('dashboard', currentFilter) }}">
+                        <div class="card-header">
+                            {{ 'dashboard.settings.label'|trans }}
+                        </div>
+
+                        <div class="card-body">
+                            <div class="form-group mb-0">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox" value="true" id="show_times" name="show_times" {% if showTimes %} checked="checked"{% endif %}>
+                                    <label for="show_times" class="custom-control-label">
+                                        {{ 'dashboard.settings.show_times'|trans }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

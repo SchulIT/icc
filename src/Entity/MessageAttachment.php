@@ -142,4 +142,11 @@ class MessageAttachment {
         $this->size = $size;
         return $this;
     }
+
+    /**
+     * @return \DateTimeImmutable
+     */
+    public function getUpdatedAt(): \DateTimeImmutable {
+        return $this->updatedAt;
+    }
 }

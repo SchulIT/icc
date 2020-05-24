@@ -23,6 +23,7 @@
         "lightsaml/sp-bundle": "^1.2",
         "myclabs/php-enum": "^1.6",
         "nelmio/api-doc-bundle": "^3.4",
+        "nyholm/psr7": "^1.2",
         "oneup/flysystem-bundle": "^3.0",
         "ralouphie/mimey": "^2.1",
         "ramsey/uuid-doctrine": "^1.6",
@@ -48,6 +49,7 @@
         "symfony/web-link": "^4.2",
         "symfony/webpack-encore-bundle": "^1.4",
         "symfony/yaml": "^4.2",
+        "trikoder/oauth2-bundle": "^3.1",
         "vich/uploader-bundle": "^1.9"
     },
     "require-dev": {

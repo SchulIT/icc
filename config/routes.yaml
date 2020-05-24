@@ -18,6 +18,11 @@ app.swagger_ui.default:
     methods: GET
     defaults: { _controller: nelmio_api_doc.controller.swagger_ui, area: default }
 
+app.swagger_ui.default.json:
+    path: /docs/api/app.json
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger, area: default }
+
 app.swagger_ui.import:
     path: /docs/api/import
     methods: GET

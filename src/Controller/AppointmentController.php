@@ -215,11 +215,6 @@ class AppointmentController extends AbstractControllerWithMessages {
                             $teachers[] = $teacherStringConverter->convert($teacher);
                         }
 
-                        /** @var Teacher $teacher */
-                        foreach($tuition->getAdditionalTeachers() as $teacher) {
-                            $teachers[] = $teacherStringConverter->convert($teacher);
-                        }
-
                         $grades = array_unique($grades);
                         $teachers = array_unique($teachers);
                     }

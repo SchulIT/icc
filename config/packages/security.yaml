@@ -14,6 +14,7 @@ security:
         - { path: ^/admin/(messages|exams), roles: ROLE_USER }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api/import, roles: ROLE_IMPORT }
+        - { path: ^/authorize, roles: IS_AUTHENTICATED_REMEMBERED }
 
     role_hierarchy:
         # Administrator
@@ -61,6 +62,16 @@ security:
                 authenticators:
                     - App\Security\ImportUserAuthenticator
             stateless: true
+
+        api_token:
+            pattern: ^/oauth2/token$
+            security: false
+
+        api:
+            pattern: ^/api
+            security: true
+            stateless: true
+            oauth2: true
 
         ics:
             pattern: ^/(appointments|timetable|exams)/ics/download(?!$)

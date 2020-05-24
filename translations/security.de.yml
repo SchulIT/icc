@@ -3,3 +3,16 @@ invalid_account:
   teacher: Der Account ist nicht mit einem Lehrer verknüpft.
   student: Der Account ist nicht mit einer Schülerin oder einem Schüler verknüpft.
   parent: Der Account ist mit keiner Schülerin und keinem Schüler verknüpft.
+
+oauth:
+  scope:
+    exams: Klausurplan
+    messages: Mitteilungen
+    substitutions: Vertretungen
+
+  authorize:
+    label: Anwendung authorisieren
+    message: "Die Anwendung %name% möchte auf das ICC zugreifen. Diese Berechtigung muss zunächst genehmigt werden. Der Zugriff kann jederzeit widerrufen werden."
+    scopes: Die Anwendung erhält Zugriff auf folgende Bereiche des ICC
+    authorize: Authorisieren
+    decline: Abbrechen

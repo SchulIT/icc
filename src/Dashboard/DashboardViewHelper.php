@@ -3,7 +3,7 @@
 namespace App\Dashboard;
 
 use App\Entity\Exam;
-use App\Entity\ExamInvigilator;
+use App\Entity\ExamSupervision;
 use App\Entity\GradeTeacher;
 use App\Entity\Message;
 use App\Entity\MessageScope;
@@ -297,12 +297,12 @@ class DashboardViewHelper {
                 }, $tuition->getTeachers()));
             }
 
-            $invigilators = [ ];
+            $supervisions = [ ];
 
             if($teacher !== null) {
-                /** @var ExamInvigilator $invigilator */
-                foreach($exam->getInvigilators() as $invigilator) {
-                    $invigilators[$invigilator->getLesson()] = $invigilator->getTeacher()->getId();
+                /** @var ExamSupervision $supervision */
+                foreach($exam->getSupervisions() as $supervision) {
+                    $supervisions[$supervision->getLesson()] = $supervision->getTeacher()->getId();
                 }
             }
 
@@ -312,7 +312,7 @@ class DashboardViewHelper {
                         $dashboardView->addItem($lesson, new ExamViewItem($exam));
                     }
 
-                    if(isset($invigilators[$lesson]) && $invigilators[$lesson] === $teacher->getId()) {
+                    if(isset($supervisions[$lesson]) && $supervisions[$lesson] === $teacher->getId()) {
                         $dashboardView->addItem($lesson, new ExamSupervisionViewItem($exam));
                     }
                 } else {

@@ -25,8 +25,8 @@
                 {% for week in groups %}
                 <div class="card">
                     <div class="card-header">
-                        {% if week.week is not null %}
-                            {{ 'admin.exams.week'|trans({'%week%': week.week}) }}
+                        {% if week.weekOfYear is not null %}
+                            {{ 'admin.exams.week'|trans({'%week%': week.weekOfYear.weekNumber}) }}
                         {% else %}
                             {{ 'plans.exams.not_planned'|trans }}
                         {% endif %}
@@ -51,7 +51,7 @@
                         </thead>
                         <tbody>
                         {% for exam in week.exams %}
-                            {% if week.week is not null %}
+                            {% if week.weekOfYear is not null %}
                                 {% set errors = validation_errors(exam) %}
                             {% endif %}
                             <tr {% if errors|default([])|length > 0 %} class="table-warning"{% endif %}>
@@ -121,8 +121,6 @@
                         <a href="{{ path('new_exam') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-plus"></i> {{ 'admin.exams.add.label'|trans }}
                         </a>
-                    </div>
-                    <div class="list-group list-group-flush">
                         <a href="{{ path('bulk_exams') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-plus"></i> {{ 'admin.exams.bulk.label'|trans }}
                         </a>

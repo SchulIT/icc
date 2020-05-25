@@ -14,11 +14,11 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $qb = $this->em->createQueryBuilder();
 
         $qb
-            ->select(['e', 'i', 's', 't', 'sg', 'g', 'at', 'tt', 'it'])
+            ->select(['e', 's', 'es', 't', 'sg', 'g', 'at', 'tt', 'st'])
             ->from(Exam::class, 'e')
-            ->leftJoin('e.invigilators', 'i')
-            ->leftJoin('i.teacher', 'it')
-            ->leftJoin('e.students', 's')
+            ->leftJoin('e.supervisions', 's')
+            ->leftJoin('s.teacher', 'st')
+            ->leftJoin('e.students', 'es')
             ->leftJoin('e.tuitions', 't')
             ->leftJoin('t.teacher', 'tt')
             ->leftJoin('t.additionalTeachers', 'at')
@@ -90,13 +90,13 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
             ->from(Exam::class, 'eInner')
-            ->leftJoin('eInner.invigilators', 'iInner')
+            ->leftJoin('eInner.supervisions', 'sInner')
             ->leftJoin('eInner.tuitions', 'tInner')
             ->leftJoin('tInner.additionalTeachers', 'teacherInner')
             ->andWhere(
                 $qb->expr()->orX(
                     'teacherInner.id = :teacher',
-                    'iInner.teacher = :teacher',
+                    'sInner.teacher = :teacher',
                     'tInner.teacher = :teacher'
                 )
             );

@@ -4,54 +4,48 @@
 
 {% set duration = substitution.lessonEnd - substitution.lessonStart %}
 <div class="card">
-    <div class="card-body">
-        <div class="row no-gutters">
-            <p class="col">
-                <strong>{{ 'label.substitution_lessons_label'|trans({'%count%': duration}) }}:</strong>
+    <div class="card-body p-0">
+        <div class="d-flex">
+            <div class="align-self-center text-center p-3 dashboard-lesson text-black-50">
                 {% if substitution.startsBefore %}
                     {{ substitution.lessonStart|before_lesson }}
                 {% else %}
                     {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
                 {% endif %}
-            </p>
+            </div>
 
-            {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
-            <p class="col">
-                <strong>{{ 'label.room'|trans }}:</strong> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
-            </p>
-            {% endif %}
+            <span class="badge badge-primary align-self-center">
+                {% if substitution.type is not empty %}
+                    {{ substitution.type|upper }}
+                {% else %}
+                    {{ 'dashboard.substitution'|trans|upper }}
+                {% endif %}
+            </span>
 
-            <p class="col">
-                <strong>{{ 'label.subject'|trans }}:</strong> {{ _self.replacement(substitution.subject, substitution.replacementSubject) }}
-            </p>
+            <div class="card-body align-self-center">
+                {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
+                    {{ _self.replacement(substitution.subject, substitution.replacementSubject) }}
+                    <span class="mx-1"></span>
+                {% endif %}
 
-            <p class="w-100">
-                <strong>{{ 'label.teachers'|trans({'%count%': max(substitution.teachers|length, substitution.replacementTeachers|length)}) }}:</strong> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
-            </p>
+                {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
+                    <i class="fa fa-users"></i> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
+                    <span class="mx-1"></span>
+                {% endif %}
 
-            {% if substitution.remark is not empty and substitution.type is not empty %}
-                <p class="w-100">
-                    <strong>{{ 'label.type'|trans }}:</strong> {{ substitution.type }}
-                </p>
-            {% endif %}
+                <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
+                <span class="mx-1"></span>
 
-            {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
-                <p class="w-100">
-                    <strong>{{ 'label.study_group'|trans }}:</strong> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
-                </p>
-            {% endif %}
-
-            {% if substitution.type is not empty or substitution.remark is not empty %}
-                <hr class="w-100"/>
-
-                <p class="w-100 remark">
-                    {% if substitution.remark is not empty %}
-                        {{ substitution.remark }}
-                    {% else %}
-                        {{ substitution.type }}
-                    {% endif %}
-                </p>
-            {% endif %}
+                {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
+                    <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
+                {% endif %}
+            </div>
         </div>
     </div>
+
+    {% if substitution.remark %}
+        <div class="card-footer">
+            {{ substitution.remark }}
+        </div>
+    {% endif %}
 </div>

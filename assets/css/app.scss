@@ -165,8 +165,21 @@ $enable-gradients: true;
   @include font-size(1.75rem);
   @extend .p-3;
 
+  min-width: 55px;
+
   .lesson-time {
     @include font-size(0.6rem);
+  }
+}
+
+.exam-lesson {
+  @include font-size(1.75rem);
+  @extend .p-3;
+
+  min-width: 90px;
+
+  .exam-date {
+    @include font-size(0.8rem);
   }
 }
 

@@ -156,8 +156,8 @@
                                         {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
                                     {% elseif type == 'appointment' %}
                                         {{ dashboard.appointment(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
-                                    {% elseif type == 'invigilator' %}
-                                        {{ dashboard.invigilator(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                                    {% elseif type == 'exam_supervision' %}
+                                        {{ dashboard.exam_supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}

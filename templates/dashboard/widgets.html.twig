@@ -68,13 +68,13 @@
     </div>
 {% endmacro %}
 
-{% macro invigilator(item, lesson, start, end, hasWarning) %}
+{% macro exam_supervision(item, lesson, start, end, hasWarning) %}
     <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %}">
         <div class="d-flex">
             {{ _self.show_lesson(lesson, start, end) }}
             {{ _self.show_warning(hasWarning) }}
 
-            <span class="align-self-center badge badge-warning">{{ 'dashboard.invigilator'|trans|upper }}</span>
+            <span class="align-self-center badge badge-warning">{{ 'dashboard.exam_supervision'|trans|upper }}</span>
 
             <div class="align-self-center card-body d-flex align-items-center">
                 <span class="mr-auto align-self-center">
@@ -166,12 +166,12 @@
             {% if not item.supervision.isBefore %}
                 {{ _self.show_lesson(lesson, start, end) }}
             {% else %}
-                <span class="ml-3"></span>
+                <div class="align-self-center text-center p-3 dashboard-lesson text-black-50"></div>
             {% endif %}
 
             {{ _self.show_warning(hasWarning) }}
 
-            <span class="align-self-center badge badge-primary {% if item.supervision.isBefore and not hasWarning %}ml-3{% endif %}">
+            <span class="align-self-center badge badge-primary">
                 {% if supervisionLabels[lesson] is defined and supervisionLabels[lesson] is not empty %}
                     {{ supervisionLabels[lesson]|upper }}
                 {% else %}

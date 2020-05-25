@@ -15,7 +15,44 @@
             <div class="col-md-9">
 
                 {% include "_messages.html.twig" %}
+                {% set currentFilter = { all: showAll, student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null, grade : gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null } %}
                 <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
+
+                            <li class="nav-item d-flex align-items-center" data-resize="show">
+                                <a class="nav-link {% if previousGroup is null %}disabled{% endif %}" href="{% if previousGroup is null %}#{% else %}{{ path('exams', currentFilter|merge({ week: previousGroup.weekOfYear.weekNumber, year: previousGroup.weekOfYear.year })) }}{% endif %}">
+                                    <i class="fa fa-chevron-left"></i>
+                                </a>
+                            </li>
+
+                            {% if examWeekGroups is empty %}
+                                <li class="nav-item d-flex align-items-center">
+                                    <a href="#" class="nav-link disabled">
+                                        <i class="fa fa-info-circle"></i> {{ 'plans.exams.empty'|trans }}
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for group in examWeekGroups %}
+                                <li class="nav-item d-flex align-items-center">
+                                    <a class="nav-link {% if group == currentGroup %} active{% endif %}" {% if group == currentGroup %}data-resize="prevent" {% endif %} href="{{ path('exams', currentFilter|merge({ week: group.weekOfYear.weekNumber, year: group.weekOfYear.year })) }}">
+                                        <i class="fa fa-calendar"></i> {{ 'admin.exams.week'|trans({'%week%': group.weekOfYear.weekNumber }) }}
+                                        <div class="d-block">
+                                            {{ group.weekOfYear.firstDay|format_date }}
+                                        </div>
+                                    </a>
+                                </li>
+                            {% endfor %}
+
+                            <li class="nav-item d-flex align-items-center" data-resize="show">
+                                <a class="nav-link {% if nextGroup is null %}disabled{% endif %}" href="{% if nextGroup is null %}#{% else %}{{ path('exams', currentFilter|merge({ week: nextGroup.weekOfYear.weekNumber, year: nextGroup.weekOfYear.year })) }}{% endif %}">
+                                    <i class="fa fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
                     <div class="card-body">
                         <h5 class="card-title">
                             {% if teacherFilter.currentTeacher is not null %}
@@ -49,12 +86,8 @@
                             </div>
                         {% endif %}
 
-                        {% for group in examGroups %}
-                            <h6>{{ ('date.days.'~group.date|date('w'))|trans }}, {{ group.date|format_date }}</h6>
-
-                            {% for exam in group.exams %}
-                                {% include "_includes/exam.html.twig" with { exam: exam } %}
-                            {% endfor %}
+                        {% for exam in exams %}
+                            {% include "_includes/exam.html.twig" with { exam: exam, showDate: true } %}
                         {% endfor %}
                     </div>
                 </div>

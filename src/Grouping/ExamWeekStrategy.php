@@ -8,27 +8,37 @@ class ExamWeekStrategy implements GroupingStrategyInterface {
 
     /**
      * @param Exam $object
-     * @return int|null
+     * @return WeekOfYear|null
      */
     public function computeKey($object) {
         if($object->getDate() === null) {
             return null;
         }
 
-        return (int)$object->getDate()->format('W');
+        $weekNumber = (int)$object->getDate()->format('W');
+        $year = (int)$object->getDate()->format('Y');
+
+        return new WeekOfYear($year, $weekNumber);
     }
 
     /**
-     * @param int|null $keyA
-     * @param int|null $keyB
+     * @param WeekOfYear|null $keyA
+     * @param WeekOfYear|null $keyB
      * @return bool
      */
     public function areEqualKeys($keyA, $keyB): bool {
-        return $keyA === $keyB;
+        if($keyA === null && $keyB === null) {
+            return true;
+        } else if($keyA === null || $keyB === null) {
+            return false;
+        }
+
+        return $keyA->getWeekNumber() === $keyB->getWeekNumber()
+            && $keyA->getYear() === $keyB->getYear();
     }
 
     /**
-     * @param int $key
+     * @param WeekOfYear $key
      * @return GroupInterface
      */
     public function createGroup($key): GroupInterface {

@@ -146,7 +146,7 @@ exams:
     export:
         title: Klausurplan
         description: "Klausurplan für %user%"
-        invigilator_description: "Klausuraufsicht %tuitions%"
+        supervision_description: "Klausuraufsicht %tuitions%"
         exam_description: "Klausur %tuition%"
         tuition: "%name% (%grades%)"
 
@@ -155,7 +155,7 @@ dashboard:
     before_lesson: "vor %lesson%. Stunde"
     absent_students: Abwesend
     supervision: Aufsicht
-    invigilator: Klausuraufsicht
+    exam_supervision: Klausuraufsicht
     substitution: Vertretung
     substitution_mentions: Erwähnungen
     collision:
@@ -183,7 +183,7 @@ plans:
         empty: Aktuell sind keine Klausuren im System.
         tuitions: "{0} Kurse|{1} Kurs|]1,Inf[ Kurse"
         time: Zeitraum
-        invigilators: Aufsicht
+        supervisions: Aufsicht
         show_all: Alte Klausuren anzeigen
         not_visible: Aktuell ist der Klausurplan nicht freigeschaltet.
         visible_admin: "Aktuell ist der Klausurplan aufgrund einer Rolle sichtbar, obwohl er für den Benutzertyp %type% nicht freigeschaltet ist."
@@ -498,7 +498,7 @@ admin:
             window:
                 label: Vorausblick für Lernende
                 help: Anzahl der Tage, die Lernende in die Zukunft blicken können (0 bedeutet unbegrenzte Anzahl an Tagen).
-                invigilators:
+                supervisions:
                     label: Vorausblick der Aufsichten für Lernende
                     help: Anzahl der Tage, die Lernende Aufsichten zukünftiger Klausuren sehen können (0 bedeutet unbegrenze Anzahl an Tagen).
             notifications:

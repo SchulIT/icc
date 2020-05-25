@@ -14,6 +14,8 @@ use App\Entity\UserType;
 use App\Export\ExamIcsExporter;
 use App\Form\DeviceTokenType as DeviceTokenTypeForm;
 use App\Grouping\ExamDateStrategy;
+use App\Grouping\ExamWeekGroup;
+use App\Grouping\ExamWeekStrategy;
 use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
@@ -23,6 +25,7 @@ use App\Security\Voter\ExamVoter;
 use App\Settings\ExamSettings;
 use App\Sorting\ExamDateGroupStrategy;
 use App\Sorting\ExamDateLessonStrategy as ExamDateSortingStrategy;
+use App\Sorting\ExamWeekGroupStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\View\Filter\GradeFilter;
@@ -54,7 +57,7 @@ class ExamController extends AbstractControllerWithMessages {
      * @Route("", name="exams")
      */
     public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter,
-                          ExamRepositoryInterface $examRepository, ExamSettings $examSettings, Request $request) {
+                          ExamRepositoryInterface $examRepository, ExamSettings $examSettings, Request $request, DateHelper $dateHelper) {
         /** @var User $user */
         $user = $this->getUser();
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
@@ -97,18 +100,60 @@ class ExamController extends AbstractControllerWithMessages {
             });
         }
 
-        $examGroups = $this->grouper->group($exams, ExamDateStrategy::class);
-        $this->sorter->sort($examGroups, ExamDateGroupStrategy::class);
-        $this->sorter->sortGroupItems($examGroups, ExamDateSortingStrategy::class);
+        $exams = array_filter($exams, function(Exam $exam) {
+            return $exam->getDate() !== null;
+        });
+
+        $examWeekGroups = $this->grouper->group($exams, ExamWeekStrategy::class);
+        $this->sorter->sort($examWeekGroups, ExamWeekGroupStrategy::class);
+
+        $week = $request->query->getInt('week', null);
+        $year = $request->query->getInt('year', null);
+
+        $exams = [ ];
+        $currentGroup = null;
+        $previousGroup = null;
+        $nextGroup = null;
+
+        // $week==null
+        /** @var ExamWeekGroup $group */
+        for($idx = 0; $idx < count($examWeekGroups); $idx++) {
+            $group = $examWeekGroups[$idx];
+
+            if($group->getKey()->getWeekNumber() === $week && $group->getKey()->getYear() === $year) {
+                $currentGroup = $group;
+
+                $previousGroup = $examWeekGroups[$idx - 1] ?? null;
+                $nextGroup = $examWeekGroups[$idx + 1] ?? null;
+            }
+        }
+
+        if($currentGroup === null && count($examWeekGroups) > 0) {
+            $currentGroup = $examWeekGroups[0];
+
+            if(count($examWeekGroups) > 1) {
+                $nextGroup = $examWeekGroups[1];
+            }
+        }
+
+        if($currentGroup !== null) {
+            $exams = $currentGroup->getExams();
+        }
+
+        $this->sorter->sort($exams, ExamDateSortingStrategy::class);
 
         return $this->renderWithMessages('exams/index.html.twig', [
-            'examGroups' => $examGroups,
+            'examWeekGroups' => $examWeekGroups,
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
             'gradeFilter' => $gradeFilterView,
             'showAll' => $all,
             'isVisible' => $isVisible,
-            'isVisibleAdmin' => $isVisibleAdmin
+            'isVisibleAdmin' => $isVisibleAdmin,
+            'exams' => $exams,
+            'currentGroup' => $currentGroup,
+            'nextGroup' => $nextGroup,
+            'previousGroup' => $previousGroup
         ]);
     }
 

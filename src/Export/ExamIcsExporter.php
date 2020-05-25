@@ -3,7 +3,7 @@
 namespace App\Export;
 
 use App\Entity\Exam;
-use App\Entity\ExamInvigilator;
+use App\Entity\ExamSupervision;
 use App\Entity\Grade;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
@@ -93,12 +93,12 @@ class ExamIcsExporter {
         }
 
         if($user->getTeacher() !== null) {
-            /** @var ExamInvigilator[] $invigilators */
-            $invigilators = $exam->getInvigilators();
+            /** @var ExamSupervision[] $supervisions */
+            $supervisions = $exam->getSupervisions();
 
-            foreach($invigilators as $invigilator) {
-                if($invigilator->getTeacher()->getId() === $user->getTeacher()->getId()) {
-                    $items[] = $this->makeIcsItemInvigilator($exam,$exam->getLessonStart() + $invigilator->getLesson() - 1);
+            foreach($supervisions as $supervision) {
+                if($supervision->getTeacher()->getId() === $user->getTeacher()->getId()) {
+                    $items[] = $this->makeIcsItemSupervision($exam,$exam->getLessonStart() + $supervision->getLesson() - 1);
                 }
             }
         }
@@ -122,15 +122,15 @@ class ExamIcsExporter {
             ->setLocations($exam->getRooms());
     }
 
-    private function makeIcsItemInvigilator(Exam $exam, int $lesson): CalendarEvent {
+    private function makeIcsItemSupervision(Exam $exam, int $lesson): CalendarEvent {
         $start = $this->getDateTime($exam->getDate(), $this->timetableTimeHelper->getLessonStartDateTime($exam->getDate(), $lesson));
         $end = $this->getDateTime($exam->getDate(), $this->timetableTimeHelper->getLessonEndDateTime($exam->getDate(), $lesson));
-        $description = $this->translator->trans('exams.export.invigilator_description', [
+        $description = $this->translator->trans('exams.export.supervision_description', [
             '%tuitions%' => $this->getTuitionsAsString($exam->getTuitions()->toArray())
         ]);
 
         return (new CalendarEvent())
-            ->setUid(sprintf('exam-%d-invigilator-%d', $exam->getId(), $lesson))
+            ->setUid(sprintf('exam-%d-supervision-%d', $exam->getId(), $lesson))
             ->setSummary($description)
             ->setDescription($description)
             ->setStart($start)

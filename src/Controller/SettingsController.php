@@ -128,14 +128,14 @@ class SettingsController extends AbstractController {
                 ],
                 'data' => $examSettings->getTimeWindowForStudents()
             ])
-            ->add('window_invigilators', IntegerType::class, [
-                'label' => 'admin.settings.exams.window.invigilators.label',
-                'help' => 'admin.settings.exams.window.invigilators.help',
+            ->add('window_supervisions', IntegerType::class, [
+                'label' => 'admin.settings.exams.window.supervisions.label',
+                'help' => 'admin.settings.exams.window.supervisions.help',
                 'constraints' => [
                     new Type(['type' => 'integer']),
                     new GreaterThanOrEqual(['value' => 0])
                 ],
-                'data' => $examSettings->getTimeWindowForStudentsToSeeInvigilators()
+                'data' => $examSettings->getTimeWindowForStudentsToSeeSupervisions()
             ])
             ->add('notifications_enabled', CheckboxType::class, [
                 'label' => 'admin.settings.exams.notifications.enabled.label',
@@ -182,8 +182,8 @@ class SettingsController extends AbstractController {
                 'window' => function(int $window) use ($examSettings) {
                     $examSettings->setTimeWindowForStudents($window);
                 },
-                'window_invigilators' => function(int $window) use ($examSettings) {
-                    $examSettings->setTimeWindowForStudentsToSeeInvigilators($window);
+                'window_supervisions' => function(int $window) use ($examSettings) {
+                    $examSettings->setTimeWindowForStudentsToSeeSupervisions($window);
                 },
                 'notifications_enabled' => function(bool $enabled) use ($examSettings) {
                     $examSettings->setNotificationsEnabled($enabled);

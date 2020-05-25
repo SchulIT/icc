@@ -79,11 +79,11 @@ class Exam {
     private $students;
 
     /**
-     * @ORM\OneToMany(targetEntity="ExamInvigilator", mappedBy="exam")
+     * @ORM\OneToMany(targetEntity="ExamSupervision", mappedBy="exam")
      * @ORM\OrderBy({"lesson" = "asc"})
-     * @var Collection<ExamInvigilator>
+     * @var Collection<ExamSupervision>
      */
-    private $invigilators;
+    private $supervisions;
 
     /**
      * @ORM\Column(type="json_array")
@@ -96,7 +96,7 @@ class Exam {
 
         $this->tuitions = new ArrayCollection();
         $this->students = new ArrayCollection();
-        $this->invigilators = new ArrayCollection();
+        $this->supervisions = new ArrayCollection();
     }
 
     /**
@@ -216,19 +216,19 @@ class Exam {
         $this->students->removeElement($student);
     }
 
-    public function addInvigilator(ExamInvigilator $examInvigilator) {
-        $this->invigilators->add($examInvigilator);
+    public function addSupervision(ExamSupervision $examSupervision) {
+        $this->supervisions->add($examSupervision);
     }
 
-    public function removeInvigilator(ExamInvigilator $examInvigilator) {
-        $this->invigilators->removeElement($examInvigilator);
+    public function removeSupervision(ExamSupervision $examSupervision) {
+        $this->supervisions->removeElement($examSupervision);
     }
 
     /**
-     * @return Collection<ExamInvigilator>
+     * @return Collection<ExamSupervision>
      */
-    public function getInvigilators(): Collection {
-        return $this->invigilators;
+    public function getSupervisions(): Collection {
+        return $this->supervisions;
     }
 
     /**

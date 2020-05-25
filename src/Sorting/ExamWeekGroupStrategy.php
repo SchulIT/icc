@@ -12,6 +12,18 @@ class ExamWeekGroupStrategy implements SortingStrategyInterface {
      * @return int
      */
     public function compare($objectA, $objectB): int {
-        return $objectA->getWeek() - $objectB->getWeek();
+        if($objectA->getWeekOfYear() === null && $objectB->getWeekOfYear() === null) {
+            return true;
+        } else if($objectA->getWeekOfYear() === null) {
+            return -1;
+        } else if($objectB->getWeekOfYear() === null) {
+            return 1;
+        }
+
+        if($objectA->getWeekOfYear()->getYear() === $objectB->getWeekOfYear()->getYear()) {
+            return $objectA->getWeekOfYear()->getWeekNumber() - $objectB->getWeekOfYear()->getWeekNumber();
+        }
+
+        return $objectA->getWeekOfYear()->getYear() - $objectB->getWeekOfYear()->getYear();
     }
 }

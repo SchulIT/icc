@@ -32,22 +32,38 @@
         {% if periods|length > 0 %}
             <div class="card">
                 <div class="card-header">
-                    <ul class="nav nav-pills card-header-pills">
-                        {% set urlSubjects = [ ] %}
-                        {% if subjectFilter.currentSubjects is not empty %}
-                            {% for subject in subjectFilter.currentSubjects %}
-                                {% set urlSubjects = urlSubjects|merge([subject.uuid.toString()]) %}
-                            {% endfor %}
-                        {% endif %}
+                    {% set urlSubjects = [ ] %}
+                    {% if subjectFilter.currentSubjects is not empty %}
+                        {% for subject in subjectFilter.currentSubjects %}
+                            {% set urlSubjects = urlSubjects|merge([subject.uuid.toString()]) %}
+                        {% endfor %}
+                    {% endif %}
+
+                    {% set currentFilter = { grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString() : null, student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null, subjects: (urlSubjects is not empty ? urlSubjects : null), room: roomFilter.currentRoom ? roomFilter.currentRoom.uuid.toString() : null } %}
+
+                    <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
+                        {% set canNavigatePrevious = previousPeriod is not null %}
+                        <li class="nav-item d-flex align-items-center" data-resize="show">
+                            <a class="nav-link {% if not canNavigatePrevious %}disabled{% endif %}" {% if canNavigatePrevious %}href="{{ path('timetable', currentFilter|merge({ period: previousPeriod.uuid.toString() })) }}" {% endif %}>
+                                <i class="fa fa-chevron-left"></i>
+                            </a>
+                        </li>
 
                         {% for period in periods %}
                             <li class="nav-item">
-                                <a class="nav-link{% if currentPeriod != null and period.id == currentPeriod.id %} active{% endif %}" href="{{ path('timetable', { period: period.uuid.toString() , grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString() : null, student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null, subjects: (urlSubjects is not empty ? urlSubjects : null), room: roomFilter.currentRoom ? roomFilter.currentRoom.uuid.toString() : null }) }}">
+                                <a class="nav-link{% if currentPeriod != null and period.id == currentPeriod.id %} active{% endif %}" {% if currentPeriod != null and period.id == currentPeriod.id %}data-resize="prevent"{% endif %} href="{{ path('timetable', currentFilter|merge({ period: period.uuid.toString() } )) }}">
                                     <i class="fa fa-calendar"></i> {{ period.getName() }}
                                     <div>{{ period.getStart().format('d.m.Y') }} - {{ period.getEnd().format('d.m.Y') }}</div>
                                 </a>
                             </li>
                         {% endfor %}
+
+                        {% set canNavigateNext = nextPeriod is not null %}
+                        <li class="nav-item d-flex align-items-center" data-resize="show">
+                            <a class="nav-link {% if not canNavigateNext %}disabled{% endif %}" {% if canNavigateNext %}href="{{ path('timetable', currentFilter|merge({ period: nextPeriod.uuid.toString() })) }}" {% endif %}>
+                                <i class="fa fa-chevron-right"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
 

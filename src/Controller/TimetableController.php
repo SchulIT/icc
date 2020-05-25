@@ -75,6 +75,14 @@ class TimetableController extends AbstractControllerWithMessages {
 
         $currentPeriod = $this->getCurrentPeriod($periods);
 
+        if($request->query->get('period') !== null) {
+            foreach($periods as $period) {
+                if($period->getUuid()->toString() === $request->query->get('period')) {
+                    $currentPeriod = $period;
+                }
+            }
+        }
+
         $weeks = $weekRepository->findAll();
 
         $lessons = [ ];
@@ -144,6 +152,26 @@ class TimetableController extends AbstractControllerWithMessages {
             $supervisionLabels[$i] = $this->timetableSettings->getDescriptionBeforeLesson($i);
         }
 
+        $nextPeriod = null;
+        $previousPeriod = null;
+
+        if($currentPeriod !== null) {
+            // Search previous and next period (if any)
+            $periodIdx = null;
+
+            for($idx = 0; $idx < count($periods); $idx++) {
+                if($currentPeriod->getUuid() === $periods[$idx]->getUuid()) {
+                    $periodIdx = $idx;
+                    break;
+                }
+            }
+
+            if($periodIdx !== null) {
+                $nextPeriod = $periods[$periodIdx + 1] ?? null;
+                $previousPeriod = $periods[$periodIdx - 1] ?? null;
+            }
+        }
+
         return $this->renderWithMessages($template, [
             'timetable' => $timetable,
             'studentFilter' => $studentFilterView,
@@ -153,6 +181,8 @@ class TimetableController extends AbstractControllerWithMessages {
             'subjectFilter' => $subjectFilterView,
             'periods' => $periods,
             'currentPeriod' => $currentPeriod,
+            'nextPeriod' => $nextPeriod,
+            'previousPeriod' => $previousPeriod,
             'startTimes' => $startTimes,
             'endTimes' => $endTimes,
             'gradesWithCourseNames' => $this->timetableSettings->getGradeIdsWithCourseNames(),

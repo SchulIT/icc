@@ -34,9 +34,15 @@ class WeekOfYear {
 
     public function getFirstDay(): DateTime {
         $dateTime = new DateTime();
-        $dateTime->setDate($this->year, 1, 1);
-        $diff = sprintf('P%dW', $this->weekNumber);
+        $dateTime->setISODate($this->year, $this->weekNumber);
 
-        return $dateTime->add(new DateInterval($diff));
+        return $dateTime;
+    }
+
+    public function getLastDay(): DateTime {
+        $dateTime = new DateTime();
+        $dateTime->setISODate($this->year, $this->weekNumber, 7);
+
+        return $dateTime;
     }
 }

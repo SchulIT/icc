@@ -99,7 +99,7 @@ class ArrayUtils {
         $result = [ ];
 
         foreach($items as $item) {
-            if(!in_array($item, $result)) {
+            if(!in_array($item, $result, true)) {
                 $result[] = $item;
             }
         }

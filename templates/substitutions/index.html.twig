@@ -35,7 +35,7 @@
                             {% for day in days %}
                                 <li class="nav-item" {% if selectedDate == day%}data-resize="prevent"{% endif%}>
                                     <a class="nav-link{% if selectedDate == day %} active{% endif %}" href="{{ path('substitutions', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
-                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday(true) }}., {{ day.format('date.format_short'|trans) }}
+                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday(true) }}., {{ day.format('date.format_short'|trans) }} {% if counts[loop.index0] is defined %}<span class="badge badge-primary badge-pill">{{ counts[loop.index0] }}</span>{% endif %}
                                     </a>
                                 </li>
                             {% endfor %}

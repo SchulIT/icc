@@ -5,7 +5,9 @@ namespace App\Repository;
 use App\Entity\Exam;
 use App\Entity\Grade;
 use App\Entity\Student;
+use App\Entity\StudyGroup;
 use App\Entity\Teacher;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
 class ExamRepository extends AbstractTransactionalRepository implements ExamRepositoryInterface {
@@ -77,6 +79,26 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $qb
             ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
             ->setParameter('tuitions', $tuitions);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null) {
+        $qb = $this->getDefaultQueryBuilder($today);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.tuitions', 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sInner')
+            ->where('sInner.id = :studyGroup');
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->setParameter('studyGroup', $studyGroup->getId());
 
         return $qb->getQuery()->getResult();
     }
@@ -203,4 +225,5 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $this->em->remove($exam);
         $this->flushIfNotInTransaction();
     }
+
 }

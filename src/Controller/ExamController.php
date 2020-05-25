@@ -30,6 +30,7 @@ use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
+use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\TeacherFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use SchoolIT\CommonBundle\Utils\RefererHelper;
@@ -56,7 +57,7 @@ class ExamController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="exams")
      */
-    public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter,
+    public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter, StudyGroupFilter $studyGroupFilter,
                           ExamRepositoryInterface $examRepository, ExamSettings $examSettings, Request $request, DateHelper $dateHelper) {
         /** @var User $user */
         $user = $this->getUser();
@@ -64,6 +65,7 @@ class ExamController extends AbstractControllerWithMessages {
 
         $all = $request->query->getBoolean('all', false);
         $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user);
+        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null);
 
@@ -79,19 +81,15 @@ class ExamController extends AbstractControllerWithMessages {
 
             if ($studentFilterView->getCurrentStudent() !== null) {
                 $exams = $examRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $today);
-            } else {
-                if ($gradeFilterView->getCurrentGrade() !== null) {
+            } else if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
+                $exams = $examRepository->findAllByStudyGroup($studyGroupFilterView->getCurrentStudyGroup());
+            } else if ($gradeFilterView->getCurrentGrade() !== null) {
                     $exams = $examRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $today);
+            } else if ($isStudentOrParent === false) {
+                if ($teacherFilterView->getCurrentTeacher() !== null) {
+                    $exams = $examRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $today);
                 } else {
-                    if ($isStudentOrParent) {
-                        $exams = [];
-                    } else {
-                        if ($teacherFilterView->getCurrentTeacher() !== null) {
-                            $exams = $examRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $today);
-                        } else {
-                            $exams = $examRepository->findAll($today);
-                        }
-                    }
+                    $exams = $examRepository->findAll($today);
                 }
             }
 
@@ -147,6 +145,7 @@ class ExamController extends AbstractControllerWithMessages {
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
             'gradeFilter' => $gradeFilterView,
+            'studyGroupFilter' => $studyGroupFilterView,
             'showAll' => $all,
             'isVisible' => $isVisible,
             'isVisibleAdmin' => $isVisibleAdmin,

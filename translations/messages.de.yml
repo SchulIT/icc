@@ -536,6 +536,7 @@ admin:
                     label: "Text vor %lesson%. Stunde"
                     help: "Gibt den Text in der Stundenspalte an, der vor der %lesson%. Stunde angezeigt wird (bspw. 1. große Pause, Mittagspause, ...)."
                 start: Aufsichtsbeginn vor 1. Stunde
+                color: Farbe
             lesson:
                 legend: Unterrichtsstuden
                 start: "Beginn %lesson%. Stunde"

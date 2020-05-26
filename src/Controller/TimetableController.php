@@ -188,7 +188,9 @@ class TimetableController extends AbstractControllerWithMessages {
             'gradesWithCourseNames' => $this->timetableSettings->getGradeIdsWithCourseNames(),
             'memberships' => $membershipsTypes,
             'query' => $request->query->all(),
-            'supervisionLabels' => $supervisionLabels
+            'supervisionLabels' => $supervisionLabels,
+            'supervisionSubject' => $this->timetableSettings->getSupervisionLabel(),
+            'supervisionColor' => $this->timetableSettings->getSupervisionColor()
         ]);
     }
 

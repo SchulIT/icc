@@ -336,6 +336,11 @@ class SettingsController extends AbstractController {
                 'data' => $timetableSettings->getStart(0),
                 'widget' => 'single_text',
                 'input' => 'string'
+            ])
+            ->add('supervision_color', ColorType::class, [
+                'label' => 'admin.settings.timetable.supervision.color',
+                'data' => $timetableSettings->getSupervisionColor(),
+                'required' => false
             ]);
 
         for($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
@@ -355,6 +360,7 @@ class SettingsController extends AbstractController {
             $timetableSettings->setMaxLessons($form->get('lessons')->getData());
             $timetableSettings->setCategoryIds($form->get('categories')->getData());
             $timetableSettings->setSupervisionLabel($form->get('supervision_label')->getData());
+            $timetableSettings->setSupervisionColor($form->get('supervision_color')->getData());
             $timetableSettings->setStart(0, $form->get('supervision_begin')->getData());
             $timetableSettings->setGradeIdsWithCourseNames($form->get('grades_course_names')->getData());
             $timetableSettings->setGradeIdsWithMembershipTypes($form->get('grades_membership_types')->getData());

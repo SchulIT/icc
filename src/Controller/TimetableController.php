@@ -172,7 +172,9 @@ class TimetableController extends AbstractControllerWithMessages {
             }
         }
 
-        $this->sorter->sort($timetable->getWeeks(), TimetableWeekStrategy::class);
+        if($timetable !== null) {
+            $this->sorter->sort($timetable->getWeeks(), TimetableWeekStrategy::class);
+        }
 
         return $this->renderWithMessages($template, [
             'timetable' => $timetable,

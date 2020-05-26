@@ -118,8 +118,6 @@ class DashboardViewHelper {
 
         $this->addMessages($messages, $view);
 
-        if($includeGradeMessages)
-
         $this->addSubstitutions($this->substitutionRepository->findAllForTeacher($teacher, $dateTime), $view);
         $this->addExams($exams = $this->examRepository->findAllByTeacher($teacher, $dateTime, true), $view, $teacher);
         $this->addInfotexts($dateTime, $view);

@@ -115,14 +115,18 @@
                 {%- endfor -%}
 
                 <span class="align-self-center badge badge-primary mr-3">
-                    {%- if showCourseName -%}
-                        {{ lesson.tuition.studyGroup.name|upper }}
-                    {%- else -%}
+                    {% if lesson.tuition.subject.replaceSubjectAbbreviation %}
                         {{ lesson.tuition.subject.name|upper }}
-                    {%- endif %}
+                    {% else %}
+                        {{ lesson.tuition.subject.abbreviation|upper }}
+                    {% endif %}
                 </span>
 
                 <div class="card-body align-self-center pl-0">
+                    {% if showCourseName %}
+                        {{ lesson.tuition.studyGroup.name }}
+                    {% endif %}
+                    <span class="mx-1"></span>
                     <i class="fa fa-users"></i> {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
                     <span class="mx-1"></span>
                     <i class="fa fa-door-open"></i> {{ lesson.room.name }}

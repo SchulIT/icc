@@ -43,7 +43,7 @@ class Subject {
      * @ORM\Column(type="boolean")
      * @var bool
      */
-    private $replaceSubjectAbbreviation = false;
+    private $replaceSubjectAbbreviation = true;
 
     /**
      * @ORM\Column(type="boolean")

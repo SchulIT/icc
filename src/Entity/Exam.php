@@ -79,7 +79,7 @@ class Exam {
     private $students;
 
     /**
-     * @ORM\OneToMany(targetEntity="ExamSupervision", mappedBy="exam")
+     * @ORM\OneToMany(targetEntity="ExamSupervision", mappedBy="exam", cascade={"persist"}, orphanRemoval=true)
      * @ORM\OrderBy({"lesson" = "asc"})
      * @var Collection<ExamSupervision>
      */

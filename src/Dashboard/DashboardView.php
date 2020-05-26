@@ -9,8 +9,12 @@ use App\Entity\Infotext;
 use App\Entity\Message;
 use App\Entity\MessagePriority;
 use App\Entity\Substitution;
+use DateTime;
 
 class DashboardView {
+
+    /** @var DateTime */
+    private $dateTime;
 
     /** @var Message[] */
     private $messages = [ ];
@@ -41,6 +45,14 @@ class DashboardView {
 
     /** @var Appointment[] */
     private $appointments = [ ];
+
+    public function __construct(DateTime $dateTime) {
+        $this->dateTime = $dateTime;
+    }
+
+    public function getDateTime(): DateTime {
+        return $this->dateTime;
+    }
 
     /**
      * @return Message[]

@@ -41,6 +41,7 @@ use App\Sorting\AbsentTeacherStrategy;
 use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
 use App\Timetable\TimetablePeriodHelper;
+use App\Timetable\TimetableWeekHelper;
 use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
 use App\Utils\StudyGroupHelper;
@@ -62,6 +63,7 @@ class DashboardViewHelper {
     private $studyGroupHelper;
     private $timetablePeriodHelper;
     private $timetableSettings;
+    private $timetableWeekHelper;
     private $sorter;
     private $grouper;
 
@@ -70,7 +72,7 @@ class DashboardViewHelper {
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
                                 MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository, StudyGroupRepositoryInterface $studyGroupRepository,
-                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, Sorter $sorter, Grouper $grouper, TimetableSettings $timetableSettings, AuthorizationCheckerInterface $authorizationChecker) {
+                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, Sorter $sorter, Grouper $grouper, TimetableSettings $timetableSettings, AuthorizationCheckerInterface $authorizationChecker) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->timetableRepository = $timetableRepository;
@@ -83,13 +85,14 @@ class DashboardViewHelper {
         $this->studyGroupHelper = $studyGroupHelper;
         $this->timetablePeriodHelper = $timetablePeriodHelper;
         $this->timetableSettings = $timetableSettings;
+        $this->timetableWeekHelper = $weekHelper;
         $this->sorter = $sorter;
         $this->grouper = $grouper;
         $this->authorizationChecker = $authorizationChecker;
     }
 
     public function createViewForTeacher(Teacher $teacher, DateTime $dateTime, bool $includeGradeMessages = false): DashboardView {
-        $view = new DashboardView();
+        $view = new DashboardView($dateTime);
 
         $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
         $numberOfWeeks = count($this->timetableWeekRepository->findAll());
@@ -134,7 +137,7 @@ class DashboardViewHelper {
             throw new \InvalidArgumentException(sprintf('$userType must be either Student or Parent, "%s" given.', $userType->getValue()));
         }
 
-        $view = new DashboardView();
+        $view = new DashboardView($dateTime);
 
         $studyGroups = $this->studyGroupHelper->getStudyGroups([$student])->toArray();
 
@@ -157,7 +160,7 @@ class DashboardViewHelper {
     }
 
     public function createViewForUser(User $user, DateTime $dateTime): DashboardView {
-        $view = new DashboardView();
+        $view = new DashboardView($dateTime);
 
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $user->getUserType(), $dateTime), $view);
 
@@ -226,11 +229,15 @@ class DashboardViewHelper {
      * @param DashboardView $dashboardView
      */
     private function addSupervisions(iterable $supervisions, DashboardView $dashboardView): void {
+        $dayOfWeek = (int)$dashboardView->getDateTime()->format('w'); // PHP gives the day of week 0-based
+
         foreach($supervisions as $supervision) {
-            if($supervision->isBefore()) {
-                $dashboardView->addItemBefore($supervision->getLesson(), new SupervisionViewItem($supervision));
-            } else {
-                $dashboardView->addItem($supervision->getLesson(), new SupervisionViewItem($supervision));
+            if($supervision->getDay() === $dayOfWeek && $this->timetableWeekHelper->isTimetableWeek($dashboardView->getDateTime(), $supervision->getWeek())) {
+                if ($supervision->isBefore()) {
+                    $dashboardView->addItemBefore($supervision->getLesson(), new SupervisionViewItem($supervision));
+                } else {
+                    $dashboardView->addItem($supervision->getLesson(), new SupervisionViewItem($supervision));
+                }
             }
         }
     }

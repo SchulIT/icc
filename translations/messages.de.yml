@@ -234,6 +234,7 @@ plans:
     substitutions:
         label: Vertretungsplan
         empty: Für diesen Tag gibt es keine Vertretungen zum Anzeigen.
+        no_grade: Ohne Klassen
         view:
             label: Ansicht
             table: Tabelle

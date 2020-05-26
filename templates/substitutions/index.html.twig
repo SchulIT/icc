@@ -14,7 +14,12 @@
 {% endmacro %}
 
 {% block content %}
-    {% set currentFilter = { student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null, grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null } %}
+    {% set currentFilter = {
+        date: selectedDate ? selectedDate.format('Y-m-d') : null,
+        student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid : null,
+        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null
+    } %}
 
     <div class="container-fluid px-0">
         <div class="row">
@@ -63,7 +68,7 @@
 
                         {% for group in groups %}
                             <h5 class="card-title">
-                                {% if group.grade is defined %}{{ group.grade.name }}{% endif %}
+                                {% if group.grade is defined %}{{ group.grade.name|default('plans.substitutions.no_grade'|trans) }}{% endif %}
                                 {% if group.teacher is defined %}{{ group.teacher.acronym }} ({{ group.teacher|teacher(false) }}){% endif %}
                             </h5>
 
@@ -148,11 +153,11 @@
 
                         <div class="form-group mb-0">
                             <div class="btn-group" role="group" aria-label="{{ 'plans.substitutions.group_by.label'|trans }}" title="{{ 'plans.substitutions.group_by.label'|trans }}">
-                                <a href="{{ path('substitutions', currentFilter|merge({'groupBy': 'teachers'})) }}" class="btn btn-outline-secondary {% if groupBy == 'teachers' %}active{% endif %}">
+                                <a href="{{ path('substitutions', currentFilter|merge({'group_by': 'teachers'})) }}" class="btn btn-outline-secondary {% if groupBy == 'teachers' %}active{% endif %}">
                                     <i class="fa fa-table"></i> {{ 'plans.substitutions.group_by.teachers'|trans }}
                                 </a>
 
-                                <a href="{{ path('substitutions', currentFilter|merge({'groupBy': 'grades'})) }}" class="btn btn-outline-secondary {% if groupBy == 'grades' %}active{% endif %}">
+                                <a href="{{ path('substitutions', currentFilter|merge({'group_by': 'grades'})) }}" class="btn btn-outline-secondary {% if groupBy == 'grades' %}active{% endif %}">
                                     <i class="fa fa-list"></i> {{ 'plans.substitutions.group_by.grades'|trans }}
                                 </a>
                             </div>

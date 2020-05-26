@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\DeviceToken;
 use App\Entity\DeviceTokenType;
 use App\Entity\MessageScope;
-use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
 use App\Entity\TimetablePeriod;
 use App\Entity\User;
@@ -22,6 +21,7 @@ use App\Security\Devices\DeviceManager;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
+use App\Sorting\TimetableWeekStrategy;
 use App\Timetable\TimetableFilter;
 use App\Timetable\TimetableHelper;
 use App\View\Filter\GradeFilter;
@@ -171,6 +171,8 @@ class TimetableController extends AbstractControllerWithMessages {
                 $previousPeriod = $periods[$periodIdx - 1] ?? null;
             }
         }
+
+        $this->sorter->sort($timetable->getWeeks(), TimetableWeekStrategy::class);
 
         return $this->renderWithMessages($template, [
             'timetable' => $timetable,

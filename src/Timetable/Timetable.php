@@ -11,7 +11,7 @@ class Timetable {
     /**
      * @return TimetableWeek[]
      */
-    public function getWeeks() {
+    public function &getWeeks() {
         return $this->weeks;
     }
 

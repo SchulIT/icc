@@ -47,7 +47,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
 
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, false);
 
         /** @var Substitution[] $substitutions */
         $substitutions = [ ];

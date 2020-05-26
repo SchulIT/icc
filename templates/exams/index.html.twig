@@ -33,7 +33,7 @@
                             </li>
 
                             {% if examWeekGroups is empty %}
-                                <li class="nav-item d-flex align-items-center">
+                                <li class="nav-item d-flex align-items-center" data-resize="show">
                                     <a href="#" class="nav-link disabled">
                                         <i class="fa fa-info-circle"></i> {{ 'plans.exams.empty'|trans }}
                                     </a>
@@ -41,8 +41,8 @@
                             {% endif %}
 
                             {% for group in examWeekGroups %}
-                                <li class="nav-item d-flex align-items-center">
-                                    <a class="nav-link {% if group == currentGroup %} active{% endif %}" {% if group == currentGroup %}data-resize="prevent" {% endif %} href="{{ path('exams', currentFilter|merge({ week: group.weekOfYear.weekNumber, year: group.weekOfYear.year })) }}">
+                                <li class="nav-item d-flex align-items-center" {% if group == currentGroup %}data-resize="prevent" {% endif %}>
+                                    <a class="nav-link {% if group == currentGroup %} active{% endif %}" href="{{ path('exams', currentFilter|merge({ week: group.weekOfYear.weekNumber, year: group.weekOfYear.year })) }}">
                                         <i class="fa fa-calendar"></i> {{ 'admin.exams.week'|trans({'%week%': group.weekOfYear.weekNumber }) }} <span class="badge badge-primary badge-pill">{{ group.exams|length }}</span>
                                         <div class="d-block">
                                             {{ group.weekOfYear.firstDay|date('date.format_short'|trans) }} - {{ group.weekOfYear.lastDay|date('date.format_short'|trans) }}

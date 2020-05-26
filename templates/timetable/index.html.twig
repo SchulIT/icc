@@ -50,8 +50,8 @@
                         </li>
 
                         {% for period in periods %}
-                            <li class="nav-item">
-                                <a class="nav-link{% if currentPeriod != null and period.id == currentPeriod.id %} active{% endif %}" {% if currentPeriod != null and period.id == currentPeriod.id %}data-resize="prevent"{% endif %} href="{{ path('timetable', currentFilter|merge({ period: period.uuid.toString() } )) }}">
+                            <li class="nav-item" {% if currentPeriod != null and period.id == currentPeriod.id %}data-resize="prevent"{% endif %}>
+                                <a class="nav-link{% if currentPeriod != null and period.id == currentPeriod.id %} active{% endif %}" href="{{ path('timetable', currentFilter|merge({ period: period.uuid.toString() } )) }}">
                                     <i class="fa fa-calendar"></i> {{ period.getName() }}
                                     <div>{{ period.getStart().format('d.m.Y') }} - {{ period.getEnd().format('d.m.Y') }}</div>
                                 </a>

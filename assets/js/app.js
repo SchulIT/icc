@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
             for(let idx = 0; idx < element.children.length; idx++) {
                 let elementAtIdx = element.children[idx];
 
-                if(elementAtIdx === null || (elementAtIdx.hasAttribute('data-resize') && elementAtIdx.getAttribute('data-resize') === 'show') || elementAtIdx.hasAttribute('data-resize') === false || elementAtIdx.getAttribute('data-resize') !== 'prevent') {
+                if(elementAtIdx === null || elementAtIdx.hasAttribute('data-resize') === false || elementAtIdx.getAttribute('data-resize') === 'show' || elementAtIdx.getAttribute('data-resize') !== 'prevent') {
                     continue;
                 }
 

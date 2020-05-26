@@ -47,9 +47,8 @@
             <div class="card-body align-self-center d-flex align-items-sm-center">
                 <span class="mr-auto align-self-center">
                     {% for tuition in exam.tuitions %}
-                        {{ tuition.name }}
                         <span class="mx-1"></span>
-                        <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        <i class="fa fa-users"></i> {{ tuition.name }} ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
                         <span class="mx-1"></span>
                         <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
                         <span class="mx-1"></span>
@@ -123,11 +122,14 @@
                 </span>
 
                 <div class="card-body align-self-center pl-0">
+                    <span class="mx-1"></span>
+                    <i class="fa fa-users"></i>
                     {% if showCourseName %}
                         {{ lesson.tuition.studyGroup.name }}
+                        ({% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                    {% else %}
+                        {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
                     {% endif %}
-                    <span class="mx-1"></span>
-                    <i class="fa fa-users"></i> {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
                     <span class="mx-1"></span>
                     <i class="fa fa-door-open"></i> {{ lesson.room.name }}
                     <span class="mx-1"></span>

@@ -183,6 +183,17 @@ $enable-gradients: true;
   }
 }
 
+.substitution-lesson {
+  @include font-size(1.75rem);
+  @extend .p-3;
+
+  min-width: 90px;
+
+  .exam-date {
+    @include font-size(0.8rem);
+  }
+}
+
 .bg-danger-light {
   background-color: theme-color-level("danger", $alert-bg-level)
 }

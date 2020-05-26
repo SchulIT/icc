@@ -97,13 +97,13 @@
 {% endmacro %}
 
 {% macro lesson(item, lesson, start, end, hasWarning, gradesWithCourseNames) %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-primary{% endif %}">
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% elseif item.lesson is not null %}border-primary{% endif %}">
         <div class="d-flex">
             {{ _self.show_lesson(lesson, start, end) }}
             {{ _self.show_warning(hasWarning) }}
 
             {% if item.lesson is null %}
-                <span class="align-self-center badge badge-primary">{{ 'dashboard.free_hour'|trans|upper }}</span>
+                <span class="align-self-center badge badge-light badge-card">{{ 'dashboard.free_hour'|trans|upper }}</span>
             {% else %}
                 {% set lesson = item.lesson %}
                 {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
@@ -192,7 +192,7 @@
 
 {% macro substitution(item, lesson, start, end, hasWarning) %}
     {% set substitution = item.substitution %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %}">
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% elseif not item.isFreeLesson %}border-warning{% else %}text-black-50{% endif %}">
         <div class="d-flex">
             {% if lesson is null %}
                 {% set lesson = 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': (substitution.lessonEnd - substitution.lessonStart)}) %}
@@ -200,7 +200,7 @@
             {{ _self.show_lesson(lesson, start, end) }}
             {{ _self.show_warning(hasWarning) }}
 
-            <span class="badge badge-warning align-self-center">
+            <span class="badge {% if item.isFreeLesson %}badge-light badge-card{% else %}badge-warning{% endif%} align-self-center">
                 {% if substitution.type is not empty %}
                     {{ substitution.type|upper }}
                 {% else %}

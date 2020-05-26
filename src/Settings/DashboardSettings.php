@@ -22,4 +22,12 @@ class DashboardSettings extends AbstractSettings {
     public function setAdditionalSubstitutionTypes(array $types): void {
         $this->setValue('dashboard.substitutions.additional_types', $types);
     }
+
+    public function getFreeLessonSubstitutionTypes(): array {
+        return $this->getValue('dashboard.substitutions.free_lesson_types', [ ]);
+    }
+
+    public function setFreeLessonSubstitutionTypes(array $types): void {
+        $this->setValue('dashboard.substitutions.free_lesson_types', $types);
+    }
 }

@@ -553,9 +553,12 @@ admin:
             removable_substitutions:
                 label: Vertretungsarten mit geringer Priorität
                 help: Kommaseparierte Liste von Vertretungsarten, welche bei mehreren Vertretungen automatisch ausgeblendet werden.
-            additional_substitution:
+            additional_substitutions:
                 label: Ergänzende Vertretungsarten
                 help: Kommaseparierte Liste von Vertretungsarten, welche immer zusätzlich angezeigt werden.
+            free_lesson_types:
+                label: Vertretungsarten Freistunden
+                help: Kommaseparierte Liste von Vertretungsarten, bei denen eine Vertretung als Freistunde angezeigt wird.
 
         appointments:
             label: Terminplan

@@ -33,6 +33,7 @@ use App\Security\Voter\AbsenceVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\SubstitutionVoter;
+use App\Settings\DashboardSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Sorting\AbsentStudentStrategy;
@@ -66,13 +67,15 @@ class DashboardViewHelper {
     private $timetableWeekHelper;
     private $sorter;
     private $grouper;
+    private $dashboardSettings;
 
     private $authorizationChecker;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
                                 MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository, StudyGroupRepositoryInterface $studyGroupRepository,
-                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, Sorter $sorter, Grouper $grouper, TimetableSettings $timetableSettings, AuthorizationCheckerInterface $authorizationChecker) {
+                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, Sorter $sorter, Grouper $grouper,
+                                TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->timetableRepository = $timetableRepository;
@@ -88,6 +91,7 @@ class DashboardViewHelper {
         $this->timetableWeekHelper = $weekHelper;
         $this->sorter = $sorter;
         $this->grouper = $grouper;
+        $this->dashboardSettings = $dashboardSettings;
         $this->authorizationChecker = $authorizationChecker;
     }
 
@@ -245,13 +249,17 @@ class DashboardViewHelper {
      * @param DashboardView $dashboardView
      */
     private function addSubstitutions(iterable $substitutions, DashboardView $dashboardView): void {
+        $freeTypes = $this->dashboardSettings->getFreeLessonSubstitutionTypes();
+
         foreach($substitutions as $substitution) {
             if($this->authorizationChecker->isGranted(SubstitutionVoter::View, $substitution) !== true) {
                 continue;
             }
 
+            $isFreeLesson = in_array($substitution->getType(), $freeTypes);
+
             if($substitution->startsBefore()) {
-                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution));
+                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution, $isFreeLesson));
 
                 if($substitution->getLessonEnd() - $substitution->getLessonStart() === 0) {
                     // Do not expand more lessons when the end is the same lesson as the beginning
@@ -260,7 +268,7 @@ class DashboardViewHelper {
             }
 
             for ($lesson = $substitution->getLessonStart(); $lesson <= $substitution->getLessonEnd(); $lesson++) {
-                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution));
+                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson));
             }
         }
     }

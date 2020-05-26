@@ -204,3 +204,8 @@ $enable-gradients: true;
 .hide {
   display: none;
 }
+
+
+.badge-light.badge-card {
+  @extend .text-secondary;
+}

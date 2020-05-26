@@ -61,12 +61,20 @@ class SettingsController extends AbstractController {
             ->add('removable_types', TextType::class, [
                 'label' => 'admin.settings.dashboard.removable_substitutions.label',
                 'help' => 'admin.settings.dashboard.removable_substitutions.help',
-                'data' => implode(',', $dashboardSettings->getRemovableSubstitutionTypes())
+                'data' => implode(',', $dashboardSettings->getRemovableSubstitutionTypes()),
+                'required' => false
             ])
             ->add('additional_types', TextType::class, [
                 'label' => 'admin.settings.dashboard.additional_substitutions.label',
                 'help' => 'admin.settings.dashboard.additional_substitutions.help',
-                'data' => implode(',', $dashboardSettings->getAdditionalSubstitutionTypes())
+                'data' => implode(',', $dashboardSettings->getAdditionalSubstitutionTypes()),
+                'required' => false
+            ])
+            ->add('free_lesson_types', TextType::class, [
+                'label' => 'admin.settings.dashboard.free_lesson_types.label',
+                'help' => 'admin.settings.dashboard.free_lesson_types.help',
+                'data' => implode(',', $dashboardSettings->getFreeLessonSubstitutionTypes()),
+                'required' => false
             ]);
 
         $form = $builder->getForm();
@@ -79,6 +87,9 @@ class SettingsController extends AbstractController {
                 },
                 'additional_types' => function($types) use ($dashboardSettings) {
                     $dashboardSettings->setAdditionalSubstitutionTypes(explode(',', $types));
+                },
+                'free_lesson_types' => function($types) use ($dashboardSettings) {
+                    $dashboardSettings->setFreeLessonSubstitutionTypes(explode(',', $types));
                 }
             ];
 

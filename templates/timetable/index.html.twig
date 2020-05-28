@@ -107,7 +107,7 @@
                                                         {% set lessons = day.getTimetableLesson(i) %}
                                                         {% set background = supervisionColor %}
 
-                                                        <td{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %} {% if background != null and lessons.beforeSupervisions|length > 0 %}style="background: {{ background }}; color: {{ background|foreground }}"{% endif %}>
+                                                        <td{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %} {% if background != null and lessons.beforeSupervisions|length > 0 %}style="background: {{ background }}; color: {{ foreground(background) }}"{% endif %}>
                                                             {% for supervision in lessons.beforeSupervisions %}
                                                                 {% include 'timetable/supervision.html.twig' %}
                                                             {% endfor %}
@@ -141,7 +141,7 @@
 
                                                         {% if lessons.lessons|length == 1 and lessons.lessons[0].tuition.subject.color is not empty %}
                                                             {% set background = lessons.lessons[0].tuition.subject.color %}
-                                                            {% set foreground = background|foreground %}
+                                                            {% set foreground = foreground(background) %}
                                                         {% endif %}
 
                                                         <td{% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %}{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>

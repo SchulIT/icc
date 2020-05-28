@@ -43,14 +43,14 @@ class AppointmentData {
     private $content;
 
     /**
-     * @Serializer\Type("datetime")
+     * @Serializer\Type("DateTime")
      * @Assert\NotNull()
      * @var DateTime
      */
     private $start;
 
     /**
-     * @Serializer\Type("datetime")
+     * @Serializer\Type("DateTime")
      * @Assert\NotNull()
      * @var DateTime
      */

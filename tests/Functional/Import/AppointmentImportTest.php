@@ -18,8 +18,8 @@ class AppointmentImportTest extends WebTestCase {
             "subject": "Fancy appointment",
             "content": "My content",
             "location": "On Earth",
-            "start": "2020-05-28T10:00:00Z",
-            "end": "2020-05-28T12:00:00Z",
+            "start": "2020-05-28T10:00:00",
+            "end": "2020-05-28T12:00:00",
             "visibilities": [ "student" ],
             "category": "category-id",
             "is_all_day": false,
@@ -59,8 +59,10 @@ JSON;
                 'externalId' => 'my-id'
             ]);
 
+        $doctrine->clear();
+
         $this->assertNotNull($appointment);
-        $this->assertEquals(new DateTime('2020-05-28T10:00:00Z'), $appointment->getStart());
-        $this->assertEquals(new DateTime('2020-05-28T12:00:00Z'), $appointment->getEnd());
+        $this->assertEquals(new DateTime('2020-05-28T10:00:00'), $appointment->getStart());
+        $this->assertEquals(new DateTime('2020-05-28T12:00:00'), $appointment->getEnd());
     }
 }

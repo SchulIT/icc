@@ -36,7 +36,6 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
         $throwable = $event->getThrowable();
 
         $code = Response::HTTP_INTERNAL_SERVER_ERROR;
-        $message = new ErrorResponse('An unknown error occured.');
 
         $this->logger->error('An uncaught exception was thrown.', [
             'exception' => $throwable
@@ -45,7 +44,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
         // Case 1: general HttpException (Authorization/Authentication) or BadRequest
         if($throwable instanceof HttpException) {
             $code = $throwable->getStatusCode();
-            $message = null;
+            $message = new ErrorResponse($throwable->getMessage(), get_class($throwable));
         } else if($throwable instanceof ValidationFailedException) { // Case 2: validation failed
             $code = Response::HTTP_BAD_REQUEST;
 
@@ -56,7 +55,10 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
 
             $message = new ViolationList($violations);
         } else { // Case 3: General error
-            $message = new ErrorResponse($throwable->getMessage(), get_class($throwable));
+            $message = new ErrorResponse(
+                !empty($throwable->getMessage()) ? $throwable->getMessage() : 'An unknown error occured.',
+                get_class($throwable)
+            );
         }
 
         $validStatusCodes = array_keys(Response::$statusTexts);
@@ -66,7 +68,10 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
 
         $response = new Response(
             $message !== null ? $this->serializer->serialize($message, 'json') : null,
-            $code
+            $code,
+            [
+                'Content-Type' => 'application/json'
+            ]
         );
 
         $event->setResponse($response);

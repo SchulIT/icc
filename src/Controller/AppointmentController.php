@@ -53,7 +53,7 @@ class AppointmentController extends AbstractControllerWithMessages {
         $categoryFilterView = $categoryFilter->handle([ ]);
         $studentFilterView = $studentFilter->handle(null, $user);
         $studyGroupView = $studyGroupFilter->handle(null, $user);
-        $teacherFilterView = $teacherFilter->handle(null, $user, $studentFilterView->getCurrentStudent() === null && $studyGroupView->getCurrentStudyGroup() === null);
+        $teacherFilterView = $teacherFilter->handle(null, $user, false);
         $gradesFilterView = $gradesFilter->handle([], $user);
 
         return $this->renderWithMessages('appointments/index.html.twig', [

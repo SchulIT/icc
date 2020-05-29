@@ -249,6 +249,7 @@ plans:
 
     appointments:
         label: Terminplan
+        loading: Termine laden...
         not_available: Aktuell ist der Terminplan nicht verfügbar.
         empty: Aktuell sind keine Termine eingetragen.
         filter:

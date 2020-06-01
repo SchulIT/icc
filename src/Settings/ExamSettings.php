@@ -42,16 +42,16 @@ class ExamSettings extends AbstractSettings {
     }
 
     /**
-     * Returns the number of days students can view invigilators for future exams. Detaults to 0 (unlimited days)
+     * Returns the number of days students can view supervisions for future exams. Defaults to 0 (unlimited days)
      *
      * @return int
      */
-    public function getTimeWindowForStudentsToSeeInvigilators(): int {
-        return (int)$this->getValue('exams.window.invigilators', 0);
+    public function getTimeWindowForStudentsToSeeSupervisions(): int {
+        return (int)$this->getValue('exams.window.supervisions', 0);
     }
 
-    public function setTimeWindowForStudentsToSeeInvigilators(int $timeWindow) {
-        $this->setValue('exams.window.invigilators', $timeWindow);
+    public function setTimeWindowForStudentsToSeeSupervisions(int $timeWindow) {
+        $this->setValue('exams.window.supervisions', $timeWindow);
     }
 
     public function isNotificationsEnabled(): bool {

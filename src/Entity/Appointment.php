@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use DateInterval;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -303,5 +305,20 @@ class Appointment {
      */
     public function getVisibilities(): Collection {
         return $this->visibilities;
+    }
+
+    public function getRealEnd(): DateTime {
+        if($this->isAllDay() === false) {
+            return $this->getEnd();
+        }
+
+        return (clone $this->getEnd())->modify('-1 second');
+    }
+
+    /**
+     * @return DateInterval
+     */
+    public function getDuration(): DateInterval {
+        return $this->getStart()->diff($this->getEnd());
     }
 }

@@ -11,23 +11,35 @@
 
 {% block content %}
 
-    {% set currentFilter = { student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.acronym : null, user_type: userTypeFilter.currentType ?  userTypeFilter.currentType.value : null } %}
+    {% set currentFilter = { student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null, user_type: userTypeFilter.currentType ?  userTypeFilter.currentType.value : null } %}
 
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9">
-
                 <div class="card">
                     <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs">
+                        <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
+                            {% set previousDate = selectedDate|previous_date %}
+                            <li class="nav-item" data-resize="show">
+                                <a class="nav-link" href="{{ path('dashboard', currentFilter|merge({ date: previousDate|date('Y-m-d') })) }}">
+                                    <i class="fa fa-chevron-left"></i>
+                                </a>
+                            </li>
+
                             {% for day in days %}
                                 <li class="nav-item">
-                                    <a class="nav-link{% if selectedDate == day %} active{% endif %}" href="{{ path('dashboard', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
-                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday }}
-                                        <div class="text-muted">{{ day.format('d.m.Y') }}</div>
+                                    <a class="nav-link{% if selectedDate == day %} active{% endif %}" {% if selectedDate == day %}data-resize="prevent"{% endif %} href="{{ path('dashboard', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
+                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday(true) }}., {{ day.format('date.format_short'|trans) }}
                                     </a>
                                 </li>
                             {% endfor %}
+
+                            {% set nextDate = selectedDate|next_date %}
+                            <li class="nav-item" data-resize="show">
+                                <a class="nav-link" href="{{ path('dashboard', currentFilter|merge({ date: nextDate|date('Y-m-d') })) }}">
+                                    <i class="fa fa-chevron-right"></i>
+                                </a>
+                            </li>
                         </ul>
                     </div>
 
@@ -40,52 +52,157 @@
                             </div>
                         {% endif %}
 
-                        {# Messages #}
+                        {% set collisions = view.numberOfCollisions %}
+                        {% if collisions > 0 %}
+                        <div class="alert alert-danger border-danger d-flex">
+                            <span class="align-self-center mr-2">
+                                <i class="fa fa-exclamation-triangle"></i>
+                            </span>
+
+                            <span class="align-self-center">
+                                {{ 'dashboard.collision.label'|trans({'%count%': collisions}) }} {{ 'dashboard.collision.hint'|trans }}
+                            </span>
+                        </div>
+                        {% endif %}
+
+                        <nav class="nav nav-pills nav-justified mb-3 mx-n1 mt-n2">
+                            <a href="#infotexts" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                <div class="align-self-center text-center w-100">
+                                    {{ 'dashboard.nav.infotexts'|trans({'%count%': view.infotexts|length}) }}
+                                    <span class="badge badge-light badge-pill">
+                                        {{ view.infotexts|length }}
+                                    </span>
+                                </div>
+                            </a>
+                            {% if is_granted('view-absences') %}
+                                <a href="#absences" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                    <div class="align-self-center text-center w-100">
+                                        {{ 'dashboard.absences'|trans() }}
+
+                                        <span class="badge badge-light badge-pill">
+                                            {{ view.absentTeachers|length + view.absentStudyGroups|length}}
+                                        </span>
+                                    </div>
+                                </a>
+                            {% endif %}
+                            {% if view.messages|length > 0 %}
+                                <a href="#messages" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                    <div class="align-self-center text-center w-100">
+                                        {{ 'messages.overview.label'|trans }}
+
+                                        <span class="badge badge-light badge-pill">
+                                            {{ view.messages|length }}
+                                        </span>
+                                    </div>
+                                </a>
+                            {% endif %}
+                            {% if view.exams|length > 0 %}
+                                <a href="#exams" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                    <div class="align-self-center text-center w-100">
+                                        {{ 'label.exams'|trans }}
+
+                                        <span class="badge badge-light badge-pill">
+                                            {{ view.exams|length }}
+                                        </span>
+                                    </div>
+                                </a>
+                            {% endif %}
+                            {% if view.substitutionMentions|length > 0 %}
+                                <a href="#mentions" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                    <div class="align-self-center text-center w-100">
+                                        {{ 'dashboard.substitution_mentions'|trans }}
+
+                                        <span class="badge badge-light badge-pill">
+                                            {{ view.substitutionMentions|length }}
+                                        </span>
+                                    </div>
+                                </a>
+                            {% endif %}
+                            <a href="#appointments" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                <div class="align-self-center text-center w-100">
+                                    {{ 'dashboard.appointments'|trans }}
+
+                                    <span class="badge badge-light badge-pill">
+                                        {{ view.appointments|length }}
+                                    </span>
+                                </div>
+                            </a>
+                        </nav>
+
+                        {# Priority Messages #}
+                        {% for message in view.priorityMessages %}
+                            {% include "_includes/message.html.twig" with { message: message } only %}
+                        {% endfor %}
+
+                        {# Loop lessons #}
+                        {% for lessonNumber in view.lessonNumbers %}
+                            {% set lesson = view.lesson(lessonNumber, true) %}
+
+                            {% if lesson is not null %}
+                                {% for item in lesson.items %}
+                                    {% set type = item.blockName %}
+
+                                    {% if type == 'supervision' %}
+                                        {{ dashboard.supervision(item, lessonNumber, null, null, lesson.warning, supervisionLabels) }}
+                                    {% elseif type == 'substitution' %}
+                                        {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+
+                            {% set lesson = view.lesson(lessonNumber, false) %}
+                            {% if lesson is not null %}
+                                {% for item in lesson.items %}
+                                    {% set type = item.blockName %}
+
+                                    {% if type == 'exam' %}
+                                        {{ dashboard.exam(item, lessonNumber, startTimes[lessonNumber], lesson.warning, endTimes[lessonNumber]) }}
+                                    {% elseif type == 'lesson' %}
+                                        {{ dashboard.lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, gradesWithCourseNames) }}
+                                    {% elseif type == 'supervision' %}
+                                        {{ dashboard.supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, supervisionLabels) }}
+                                    {% elseif type == 'substitution' %}
+                                        {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                                    {% elseif type == 'appointment' %}
+                                        {{ dashboard.appointment(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                                    {% elseif type == 'exam_supervision' %}
+                                        {{ dashboard.exam_supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {# Exams #}
+                        <a id="exams"></a>
+                        {% for exam in view.exams %}
+                            {{ dashboard.exam(exam, null, null, null) }}
+                        {% endfor %}
+
+                        {# Mentions #}
+                        <a id="mentions"></a>
+                        {% for mention in view.substitutionMentions %}
+                            {{ dashboard.substitution(mention, null, null, null) }}
+                        {% endfor %}
+
+                        {# Appointments #}
+                        <a id="appointments"></a>
+                        {% for appointment in view.appointments %}
+                            {{ dashboard.appointment(appointment) }}
+                        {% endfor %}
+
+                        {# Priority Messages #}
+                        <a id="messages"></a>
                         {% for message in view.messages %}
                             {% include "_includes/message.html.twig" with { message: message } only %}
                         {% endfor %}
 
                         {# Daily infos #}
-                        {% for infotext in view.infotexts %}
-                            {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
-                        {% endfor %}
+                        <a id="infotexts"></a>
+                        {% include "_includes/infotexts.html.twig" with { infotexts: view.infotexts } only %}
 
-                        {# Loop lessons #}
-                        {% for lesson in view.lessons %}
-                            {% if view.itemsBefore(lesson)|length > 0 %}
-                                <h3>{{ 'dashboard.before_lesson'|trans({'%lesson%': lesson }) }}</h3>
-
-                                {% for item in view.itemsBefore(lesson) %}
-                                    {% set type = item.blockName %}
-
-                                    {% if type == 'supervision' %}
-                                        {{ dashboard.supervision(item) }}
-                                    {% elseif type == 'substitution' %}
-                                        {{ dashboard.substitution(item) }}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-
-                            {% if view.items(lesson)|length > 0 %}
-                                <h3>{{ 'dashboard.lesson'|trans({'%lesson%': lesson }) }}</h3>
-
-                                {% for item in view.items(lesson) %}
-                                    {% set type = item.blockName %}
-
-                                    {% if type == 'exam' %}
-                                        {{ dashboard.exam(item) }}
-                                    {% elseif type == 'lesson' %}
-                                        {{ dashboard.lesson(item) }}
-                                    {% elseif type == 'supervision' %}
-                                        {{ dashboard.supervision(item) }}
-                                    {% elseif type == 'substitution' %}
-                                        {{ dashboard.substitution(item) }}
-                                    {% elseif type == 'appointment' %}
-                                        {{ dashboard.appointment(item) }}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                        {% endfor %}
+                        {# Absences #}
+                        <a id="absences"></a>
+                        {% include "_includes/absences.html.twig" with {absentTeachers: view.absentTeachers, absentStudyGroups: view.absentStudyGroups} only %}
                     </div>
                 </div>
             </div>
@@ -117,18 +234,48 @@
                                 </div>
                                 <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
                             </div>
-
-                            <!--
-                            <div class="form-group">
-                                <label for="usertype">{{ 'label.date'|trans }}:</label>
-                                <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
-                            </div>-->
                         </form>
                     </div>
 
                     <div class="card-footer">
                         <a href="{{ path('dashboard') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
                     </div>
+                </div>
+
+                <div class="card">
+                    <form method="post" action="{{ path('dashboard', currentFilter) }}">
+                        <div class="card-header">
+                            {{ 'dashboard.settings.label'|trans }}
+                        </div>
+
+                        <div class="card-body">
+                            {% if canIncludeGradeMessages %}
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox" value="true" id="include_grade_messages" name="include_grade_messages" {% if includeGradeMessages %} checked="checked"{% endif %}>
+                                    <label for="include_grade_messages" class="custom-control-label">
+                                        {{ 'dashboard.settings.include_grade_messages'|trans }}
+                                    </label>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="form-group mb-0">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox" value="true" id="show_times" name="show_times" {% if showTimes %} checked="checked"{% endif %}>
+                                    <label for="show_times" class="custom-control-label">
+                                        {{ 'dashboard.settings.show_times'|trans }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

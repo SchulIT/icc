@@ -14,7 +14,12 @@
 {% endmacro %}
 
 {% block content %}
-    {% set currentFilter = { student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid : null, grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.acronym : null } %}
+    {% set currentFilter = {
+        date: selectedDate ? selectedDate.format('Y-m-d') : null,
+        student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid : null,
+        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null
+    } %}
 
     <div class="container-fluid px-0">
         <div class="row">
@@ -23,22 +28,36 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs">
+                        <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
+                            {% set previousDate = selectedDate|previous_date %}
+                            {% set canNavigatePrevious = is_in_datetime_array(previousDate, days) %}
+                            <li class="nav-item" data-resize="show">
+                                <a class="nav-link {% if not canNavigatePrevious %}disabled{% endif %}" {% if canNavigatePrevious %}href="{{ path('substitutions', currentFilter|merge({ date: previousDate|date('Y-m-d') })) }}" {% endif %}>
+                                    <i class="fa fa-chevron-left"></i>
+                                </a>
+                            </li>
+
                             {% for day in days %}
-                                <li class="nav-item">
+                                <li class="nav-item" {% if selectedDate == day%}data-resize="prevent"{% endif%}>
                                     <a class="nav-link{% if selectedDate == day %} active{% endif %}" href="{{ path('substitutions', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
-                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday }}
-                                        <div class="text-muted">{{ day.format('d.m.Y') }}</div>
+                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday(true) }}., {{ day.format('date.format_short'|trans) }} {% if counts[loop.index0] is defined %}<span class="badge badge-primary badge-pill">{{ counts[loop.index0] }}</span>{% endif %}
                                     </a>
                                 </li>
                             {% endfor %}
+
+                            {% set nextDate = selectedDate|next_date %}
+                            {% set canNavigateNext = is_in_datetime_array(nextDate, days) %}
+                            <li class="nav-item" data-resize="show">
+                                <a class="nav-link {% if not canNavigateNext %}disabled{% endif %}" {% if canNavigateNext %}href="{{ path('substitutions', currentFilter|merge({ date: nextDate|date('Y-m-d') })) }}" {% endif %}>
+                                    <i class="fa fa-chevron-right"></i>
+                                </a>
+                            </li>
                         </ul>
                     </div>
 
                     <div class="card-body">
-                        {% for infotext in infotexts %}
-                            {% include "_includes/infotext.html.twig" with { infotext: infotext } only %}
-                        {% endfor %}
+                        {% include "_includes/infotexts.html.twig" with { infotexts: infotexts} only %}
+                        {% include "_includes/absences.html.twig" with { absentTeachers: absentTeachers, absentStudyGroups: absentStudyGroups } only %}
 
                         {% if groups|length == 0 %}
                             <div class="bs-callout bs-callout-info">
@@ -49,7 +68,7 @@
 
                         {% for group in groups %}
                             <h5 class="card-title">
-                                {% if group.grade is defined %}{{ group.grade.name }}{% endif %}
+                                {% if group.grade is defined %}{{ group.grade.name|default('plans.substitutions.no_grade'|trans) }}{% endif %}
                                 {% if group.teacher is defined %}{{ group.teacher.acronym }} ({{ group.teacher|teacher(false) }}){% endif %}
                             </h5>
 
@@ -134,11 +153,11 @@
 
                         <div class="form-group mb-0">
                             <div class="btn-group" role="group" aria-label="{{ 'plans.substitutions.group_by.label'|trans }}" title="{{ 'plans.substitutions.group_by.label'|trans }}">
-                                <a href="{{ path('substitutions', currentFilter|merge({'groupBy': 'teachers'})) }}" class="btn btn-outline-secondary {% if groupBy == 'teachers' %}active{% endif %}">
+                                <a href="{{ path('substitutions', currentFilter|merge({'group_by': 'teachers'})) }}" class="btn btn-outline-secondary {% if groupBy == 'teachers' %}active{% endif %}">
                                     <i class="fa fa-table"></i> {{ 'plans.substitutions.group_by.teachers'|trans }}
                                 </a>
 
-                                <a href="{{ path('substitutions', currentFilter|merge({'groupBy': 'grades'})) }}" class="btn btn-outline-secondary {% if groupBy == 'grades' %}active{% endif %}">
+                                <a href="{{ path('substitutions', currentFilter|merge({'group_by': 'grades'})) }}" class="btn btn-outline-secondary {% if groupBy == 'grades' %}active{% endif %}">
                                     <i class="fa fa-list"></i> {{ 'plans.substitutions.group_by.grades'|trans }}
                                 </a>
                             </div>

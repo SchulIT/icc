@@ -64,9 +64,34 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
         }
 
         if($today !== null) {
-            $qb->andWhere('a.start <= :today')
-                ->andWhere('a.end >= :today')
-                ->setParameter('today', $today);
+            $start = clone $today;
+            $end = clone $today;
+            $end->modify('+1 day');
+            $start->modify('+1 second');
+
+            $qb->andWhere(
+                $qb->expr()->orX(
+                // appointments starts today
+                    $qb->expr()->andX(
+                        'a.start >= :start',
+                        'a.start < :end'
+                    ),
+
+                    // appointment is on
+                    $qb->expr()->andX(
+                        'a.start <= :start',
+                        'a.end >= :end'
+                    ),
+
+                    // last day of appointment
+                    $qb->expr()->andX(
+                        'a.end >= :start',
+                        'a.end < :end'
+                    )
+                )
+            )
+                ->setParameter('start', $start)
+                ->setParameter('end', $end);
         }
 
         $qb->orderBy('a.start', 'asc');
@@ -123,7 +148,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
         /**
          * Appointment for teacher means either:
          * - he/she is organizer (1)
-         * - appointment has no study groups associated (2)
+         * - appointment has visibility "teachers" (2)
          */
 
         // Query (1)
@@ -138,8 +163,8 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
         $qbTeacherAppointments
             ->select('aTAInner.id')
             ->from(Appointment::class, 'aTAInner')
-            ->leftJoin('aTAInner.studyGroups', 'sgTAInner')
-            ->where($qbTeacherAppointments->expr()->isNull('sgTAInner.id'));
+            ->leftJoin('aTAInner.visibilities', 'vTAInner')
+            ->where('vTAInner.userType = :userType');
 
         // Combine (1) and (2)
         $qbAppointments = $this->em->createQueryBuilder();
@@ -153,7 +178,10 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
                 )
             );
 
-        return $this->getAppointments($qbAppointments, ['teacherId' => $teacher->getId() ], $today);
+        return $this->getAppointments($qbAppointments, [
+            'teacherId' => $teacher->getId(),
+            'userType' => UserType::Teacher()
+        ], $today);
     }
 
     /**

@@ -27,3 +27,7 @@ fervo_enum:
         App\Entity\DeviceTokenType:
             doctrine_type: device_token_type
             form_type: device_token_type
+
+        App\Dashboard\AbsenceReason:
+            doctrine_type: absence_reason
+            form_type: absence_reason

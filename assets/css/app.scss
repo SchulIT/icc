@@ -153,10 +153,70 @@ $enable-gradients: true;
 
 .message-danger {
   border-color: $danger;
-  background: mix(#fff, $danger, 90);
+  background-color: theme-color-level("danger", $alert-bg-level)
 }
 
 .message-warning {
   border-color: $warning;
   background: mix(#fff, $warning, 90);
+}
+
+.dashboard-lesson {
+  @include font-size(1.75rem);
+  @extend .p-3;
+
+  min-width: 55px;
+
+  .lesson-time {
+    @include font-size(0.6rem);
+  }
+}
+
+.exam-lesson {
+  @include font-size(1.75rem);
+  @extend .p-3;
+
+  min-width: 90px;
+
+  .exam-date {
+    @include font-size(0.8rem);
+  }
+}
+
+.substitution-lesson {
+  @include font-size(1.75rem);
+  @extend .p-3;
+
+  min-width: 90px;
+
+  .exam-date {
+    @include font-size(0.8rem);
+  }
+}
+
+.bg-danger-light {
+  background-color: theme-color-level("danger", $alert-bg-level)
+}
+
+[data-theme=dark] {
+  .border-primary {
+    border-color: $default-border !important;
+  }
+
+  .dashboard-lesson {
+    @extend .text-white-50;
+  }
+}
+
+.gray-300 {
+  color: $gray-300;
+}
+
+.hide {
+  display: none !important;
+}
+
+
+.badge-light.badge-card {
+  @extend .text-secondary;
 }

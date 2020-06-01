@@ -37,7 +37,7 @@ class AbsenceRepository extends AbstractTransactionalRepository implements Absen
         $qb = $this->em->createQueryBuilder();
 
         $qb
-            ->select(['p', 't'])
+            ->select('p')
             ->from(Absence::class, 'p')
             ->leftJoin('p.studyGroup', 'sg')
             ->where($qb->expr()->isNotNull('sg.id'))
@@ -69,8 +69,8 @@ class AbsenceRepository extends AbstractTransactionalRepository implements Absen
                 $qb->expr()->orX(
                     $qb->expr()->isNull('aInner.lessonStart'),
                     $qb->expr()->andX(
-                        'aInner.lessonStart >= :lesson',
-                        'aInner.lessonEnd <= :lesson'
+                        'aInner.lessonStart <= :lesson',
+                        'aInner.lessonEnd >= :lesson'
                     )
                 )
             );

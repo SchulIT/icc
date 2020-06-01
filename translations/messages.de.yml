@@ -1,11 +1,13 @@
 label:
     general: Allgemeine Informationen
     acronym: Kürzel
+    abbreviation: Kürzel
     firstname: Vorname
     lastname: Nachname
     name: Name
     email: E-Mail
     subject: Fach
+    subjects: Fächer
     teacher: Lehrkraft
     teachers: "{0} Lehrkraft|{1} Lehrkraft|]1,Inf[ Lehrkräfte"
     student: Lernender
@@ -37,7 +39,7 @@ label:
         teacher: Lehrkraft auswählen
         study_group: Lerngruppe auswählen
         room: Raum auswählen
-        subjects: Fächer
+        subjects: Fächer auswählen
         subject: Fach auswählen
         category: Kategorie auswählen
         usertype: Benutzertyp auswählen
@@ -144,7 +146,7 @@ exams:
     export:
         title: Klausurplan
         description: "Klausurplan für %user%"
-        invigilator_description: "Klausuraufsicht %tuitions%"
+        supervision_description: "Klausuraufsicht %tuitions%"
         exam_description: "Klausur %tuition%"
         tuition: "%name% (%grades%)"
 
@@ -152,9 +154,25 @@ dashboard:
     lesson: "%lesson%. Stunde"
     before_lesson: "vor %lesson%. Stunde"
     absent_students: Abwesend
-    absent_student: "%student% (%reason%)"
     supervision: Aufsicht
+    exam_supervision: Klausuraufsicht
+    substitution: Vertretung
+    substitution_mentions: Erwähnungen
+    appointments: Termine
+    collision:
+        hint: Bitte überprüfen und den entsprechenden Ansprechpartner kontaktieren.
+        single_label: Mögliche Kollision gefunden.
+        label: "{0} %count% Kollisionen gefunden gefunden.|{1} %count% Kollision gefunden.|]1,Inf[ %count% Kollisionen gefunden."
+    exam: Klausur
     empty: Für diesen Tag sind keine Daten hinterlegt.
+    free_hour: Freistunde
+    absences: Absenzen
+    nav:
+        infotexts: '{0} Tagestexte|{1} Tagestext|]1,Inf[ Tagestexte'
+    settings:
+        label: Einstellungen
+        show_times: Uhrzeiten der Unterrichtsstunden anzeigen
+        include_grade_messages: Mitteilungen der eigenen Klassen anzeigen
 
 plans:
     label: Pläne
@@ -166,7 +184,7 @@ plans:
         empty: Aktuell sind keine Klausuren im System.
         tuitions: "{0} Kurse|{1} Kurs|]1,Inf[ Kurse"
         time: Zeitraum
-        invigilators: Aufsicht
+        supervisions: Aufsicht
         show_all: Alte Klausuren anzeigen
         not_visible: Aktuell ist der Klausurplan nicht freigeschaltet.
         visible_admin: "Aktuell ist der Klausurplan aufgrund einer Rolle sichtbar, obwohl er für den Benutzertyp %type% nicht freigeschaltet ist."
@@ -195,37 +213,60 @@ plans:
         lesson: Stunde
         title: "Stundenplan für %name%"
         print:
+            label: Stundenplan drucken
             date: "gedruckt am %date%"
+            empty: Es kann kein Stundenplan gedruckt werden, da kein Unterricht für die Auswahl existiert.
+        export:
+            label: Eigenen Stundenplan exportieren
+            title: Stundenplan
+            description: 'Stundenplan von %name%'
+            download:
+                label: Einmaliger Download
+                info: Der Stundenplan wird bei dieser Methode nicht aktualisiert!
+                filename: stundenplan.ics
+            sync:
+                label: Link zur Synchronisation
+                info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Stundenplan damit aktuell hält.
+                name_help: Unter diesem Namen kann in den Profil-Einstellungen der Zugriff wieder entzogen werden.
+                success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
         today: heute
         upcoming: demnächst
 
     substitutions:
         label: Vertretungsplan
         empty: Für diesen Tag gibt es keine Vertretungen zum Anzeigen.
+        no_grade: Ohne Klassen
         view:
             label: Ansicht
             table: Tabelle
             card: Liste
-
         group_by:
             label: Gruppieren
             grades: Klassen
             teachers: Lehrkräfte
+        absence:
+            teacher: Abwesende Lehrkräfte
+            study_groups: Abwesende Lerngruppen
+
     appointments:
         label: Terminplan
+        loading: Termine laden...
         not_available: Aktuell ist der Terminplan nicht verfügbar.
         empty: Aktuell sind keine Termine eingetragen.
         filter:
             show_past: Zurückliegende Termine anzeigen
+            exam_grades:
+                label: Klausurplan hinzufügen
+                placeholder: Klassen/Jgst. auswählen
         export:
             label: Kalender exportieren
             download:
                 label: Einmaliger Download
-                info: Der Stundenplan wird bei dieser Methode nicht aktualisiert!
+                info: Der Kalender wird bei dieser Methode nicht aktualisiert!
                 filename: termine.ics
             sync:
                 label: Link zur Synchronisation
-                info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Stundenplan damit aktuell hält.
+                info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Kalender damit aktuell hält.
                 name_help: Unter diesem Namen kann in den Profil-Einstellungen der Zugriff wieder entzogen werden.
                 success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
             name: Schulkalender
@@ -391,6 +432,7 @@ studygroup:
 date:
     range: "%from% bis %to%"
     format: d.m.Y
+    format_short: d.m.
     time_format: "H:i"
     days:
         0: Sonntag
@@ -400,6 +442,14 @@ date:
         4: Donnerstag
         5: Freitag
         6: Samstag
+    days_short:
+        0: So
+        1: Mo
+        2: Di
+        3: Mi
+        4: Do
+        5: Fr
+        6: Sa
     months:
         1: Januar
         2: Februar
@@ -442,6 +492,8 @@ admin:
                 reply_address:
                     label: Antwort-E-Mail Adresse
                     help: Diese E-Mail Adresse wird bei E-Mail Benachrichtungen in das 'Reply-To'-Feld eingefügt, sodass Antworten auf die Benachrichtungsmail an diese E-Mail Adresse geschickt werden.
+            absence_visibility:
+                label: Abwenheiten sichtbar für
 
 
         exams:
@@ -449,7 +501,7 @@ admin:
             window:
                 label: Vorausblick für Lernende
                 help: Anzahl der Tage, die Lernende in die Zukunft blicken können (0 bedeutet unbegrenzte Anzahl an Tagen).
-                invigilators:
+                supervisions:
                     label: Vorausblick der Aufsichten für Lernende
                     help: Anzahl der Tage, die Lernende Aufsichten zukünftiger Klausuren sehen können (0 bedeutet unbegrenze Anzahl an Tagen).
             notifications:
@@ -487,12 +539,44 @@ admin:
                     label: "Text vor %lesson%. Stunde"
                     help: "Gibt den Text in der Stundenspalte an, der vor der %lesson%. Stunde angezeigt wird (bspw. 1. große Pause, Mittagspause, ...)."
                 start: Aufsichtsbeginn vor 1. Stunde
+                color: Farbe
             lesson:
                 legend: Unterrichtsstuden
                 start: "Beginn %lesson%. Stunde"
                 end: "Ende %lesson%. Stunde"
                 collapsible: "%lesson%. Stunde kann mit voriger Stunde zu einer Doppelstunde zusammengefasst werden"
+            grades_course_names:
+                label: Klassen mit Kursbezeichnungen
+                help: Bei Stundenplaneinträgen in diesen Klassen wird anstatt des Faches die Kursbezeichnung angezeigt.
+            grades_membership_types:
+                label: Klassen mit Kursarten
+                help: Bei Stundenplaneinträgen von Kursen in diesen Klassen wird die Kursart eines Lernenden angezeigt.
 
+        dashboard:
+            label: Dashboard
+            removable_substitutions:
+                label: Vertretungsarten mit geringer Priorität
+                help: Kommaseparierte Liste von Vertretungsarten, welche bei mehreren Vertretungen automatisch ausgeblendet werden.
+            additional_substitutions:
+                label: Ergänzende Vertretungsarten
+                help: Kommaseparierte Liste von Vertretungsarten, welche immer zusätzlich angezeigt werden.
+            free_lesson_types:
+                label: Vertretungsarten Freistunden
+                help: Kommaseparierte Liste von Vertretungsarten, bei denen eine Vertretung als Freistunde angezeigt wird.
+
+        appointments:
+            label: Terminplan
+            time_window: Zeitfenster
+            exams: Klausuren
+            start:
+                label: 'Beginn Zeitraum (%type%)'
+                help: Legt den Beginn des Zeitraumes fest, für den die Benutzergruppe Termine sieht.
+            end:
+                label: 'Ende Zeitraum (%type%)'
+                help: Legt das Ende des Zeitraumes fest, für den die Benutzergruppe Termine sieht.
+            exam_color:
+                label: Farbe für Klausuren
+                help: Legt die Farbe für Klausuren fest, die im Terminkalender angezeigt werden.
 
     timetable:
         label: Stundenplan
@@ -703,6 +787,39 @@ admin:
             help: Hiermit werden für jeden Unterricht entsprechend der angegebenen Anzahl Klausuren erstellt. Die Lehrkraft des Unterrichts kann anschließend das Datum sowie die Unterrichtsstunden für die Klausur festlegen.
             success: Klausuren erfolgreich angelegt
             number_of_exams: Anzahl der Klausuren
+
+    subjects:
+        label: Fächer
+        empty: Keine Fächer vorhanden.
+        add:
+            label: Neues Fach
+            success: Fach erfolgreich aktualisiert
+        edit:
+            label: Fach bearbeiten
+            success: Fach erfolgreich aktualisiert
+        remove:
+            label: Fach löschen
+            confirm: 'Soll das Fach %name% (%abbreviation%) wirklich gelöscht werden?'
+            error: Das Fach kann nicht gelöscht werden, da ihm Unterrichte zugeordnet sind.
+            success: Fach erfolgreich gelöscht
+        replace:
+            short: ersetzen
+            long: Kürzel immer durch Namen ersetzen
+            long_false: Kürzel nie durch den Namen ersetzen
+        visibility:
+            short: Sichtbarkeit
+            grades: sichtbar im Klassen-Stundenplan
+            grades_false: nicht sichtbar im Klassen-Stundenplan
+            students: sichtbar im Lernenden-Stundenplan
+            students_false: nicht sichtbar im Lernenden-Stundenplan
+            teachers: sichtbar im Lehrkraft-Stundenplan
+            teachers_false: nicht sichtbar im Lehrkraft-Stundenplan
+            rooms: sichtbar im Raum-Stundenplan
+            rooms_false: nicht sichtbar im Raum-Stundenplan
+            subjects: sichtbar im Fächer-Stundenplan
+            subjects_false: nicht sichtbar im Fächer-Stundenplan
+            lists: Kurse mit diesem Fach in Kurslisten sichtbar
+            lists_false: Kurse mit diesem Fach in Kurslisten nicht sichtbar
 
 versions:
     label: Versionen

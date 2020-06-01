@@ -1,0 +1,31 @@
+{% if absentTeachers|length > 0 or absentStudyGroups|length > 0 %}
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex align-items-baseline mb-2">
+            <span class="mr-1"><i class="fa fa-graduation-cap"></i> {{ 'plans.substitutions.absence.teacher'|trans }}:</span>
+            <span>
+                {% for absence in absentTeachers -%}
+                    {{ absence.teacher|teacher }}
+                    {%- if absence.lessonStart is not null and absence.lessonEnd is not null %}
+                        ({{ 'label.substitution_lessons'|trans({'%start%': absence.lessonStart, '%end%': absence.lessonEnd, '%count%': (absence.lessonEnd - absence.lessonStart)}) }})
+                    {%- endif -%}
+                    {%- if not loop.last -%}, {%- endif %}
+                {% endfor %}
+            </span>
+        </div>
+
+        <div class="d-flex align-items-baseline">
+            <span class="mr-1"><i class="fa fa-users"></i> {{ 'plans.substitutions.absence.study_groups'|trans }}:</span>
+            <span>
+                {% for absence in absentStudyGroups -%}
+                    {{ absence.studyGroup|studygroup(true) }}
+                    {%- if absence.lessonStart is not null and absence.lessonEnd is not null %}
+                        ({{ 'label.substitution_lessons'|trans({'%start%': absence.lessonStart, '%end%': absence.lessonEnd, '%count%': (absence.lessonEnd - absence.lessonStart)}) }})
+                    {%- endif -%}
+                    {%- if not loop.last -%}, {%- endif %}
+                {% endfor %}
+            </span>
+        </div>
+    </div>
+</div>
+{% endif %}

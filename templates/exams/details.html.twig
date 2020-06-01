@@ -11,9 +11,7 @@
 {% endblock %}
 
 {% block content %}
-    <h2 class="mb-3">{{ 'plans.exam.label'|trans }}</h2>
-
-    {% include "_includes/exam.html.twig" with { exam: exam, details: 0, showDate: true } %}
+    {% include "_includes/exam.html.twig" with { exam: exam, hideDetails: true, showDate: true, header: 'plans.exam.label' } %}
 
     <div class="card">
         <div class="card-header">{{ 'plans.exam.students'|trans }} <span class="badge badge-primary badge-pill">{{ exam.students|length }}</span></div>

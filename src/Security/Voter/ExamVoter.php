@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class ExamVoter extends Voter {
 
     public const Show = 'show';
-    public const Invigilators = 'invigilators';
+    public const Supervisions = 'supervisions';
     public const Details = 'details';
 
     public const Manage = 'manage-exams';
@@ -39,7 +39,7 @@ class ExamVoter extends Voter {
     protected function supports($attribute, $subject) {
         $attributes = [
             static::Details,
-            static::Invigilators,
+            static::Supervisions,
             static::Show,
             static::Edit,
             static::Remove
@@ -59,8 +59,8 @@ class ExamVoter extends Voter {
             case static::Details:
                 return $this->canViewDetails($subject, $token);
 
-            case static::Invigilators:
-                return $this->canViewInvigilators($subject, $token);
+            case static::Supervisions:
+                return $this->canViewSupervisions($subject, $token);
 
             case static::Add:
                 return $this->canAdd($token);
@@ -198,8 +198,8 @@ class ExamVoter extends Voter {
         return true;
     }
 
-    public function canViewInvigilators(Exam $exam, TokenInterface $token): bool {
-        $days = $this->examSettings->getTimeWindowForStudentsToSeeInvigilators();
+    public function canViewSupervisions(Exam $exam, TokenInterface $token): bool {
+        $days = $this->examSettings->getTimeWindowForStudentsToSeeSupervisions();
         if($this->isStudentOrParent($token) && $days > 0) {
             $threshold = $this->dateHelper->getToday()
                 ->modify(sprintf('+%d days', $days));

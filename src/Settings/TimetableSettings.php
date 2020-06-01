@@ -10,7 +10,10 @@ class TimetableSettings extends AbstractSettings {
     private const EndKey = 'lesson.%d.end';
     private const CollapsibleKey = 'lesson.%d.collapsable';
     private const SupervisionLabelKey = 'supervision.label';
+    private const SupervisionColorKey = 'supervision.color';
     private const CategoriesKey = 'no_lessons_categories';
+    private const GradesWithCourseNames = 'course_names';
+    private const GradesWithMembershipTypes = 'membership_types';
 
     public function __construct(SettingsManager $manager) {
         parent::__construct($manager);
@@ -101,12 +104,48 @@ class TimetableSettings extends AbstractSettings {
         $this->setValue(static::CategoriesKey, $ids);
     }
 
+    /**
+     * @return int[]
+     */
+    public function getGradeIdsWithCourseNames(): array {
+        return $this->getValue(static::GradesWithCourseNames, [ ]);
+    }
+
+    /**
+     * @param int[] $ids
+     */
+    public function setGradeIdsWithCourseNames(array $ids): void {
+        $this->setValue(static::GradesWithCourseNames, $ids);
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getGradeIdsWithMembershipTypes(): array {
+        return $this->getValue(static::GradesWithMembershipTypes, [ ]);
+    }
+
+    /**
+     * @param int[] $ids
+     */
+    public function setGradeIdsWithMembershipTypes(array $ids): void {
+        $this->setValue(static::GradesWithMembershipTypes, $ids);
+    }
+
     public function setSupervisionLabel(?string $label): void {
         $this->setValue(static::SupervisionLabelKey, $label);
     }
 
     public function getSupervisionLabel(): ?string {
         return $this->getValue(static::SupervisionLabelKey);
+    }
+
+    public function setSupervisionColor(?string $color): void {
+        $this->setValue(static::SupervisionColorKey, $color);
+    }
+
+    public function getSupervisionColor(): ?string {
+        return $this->getValue(static::SupervisionColorKey, null);
     }
 
     public function getMaxLessons(): int {

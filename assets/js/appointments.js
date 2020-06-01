@@ -7,17 +7,33 @@ import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 import deLocale from '@fullcalendar/core/locales/de';
-var bsn = require('bootstrap.native');
+import Choices from "choices.js";
+let bsn = require('bootstrap.native');
+
 
 require('@fullcalendar/core/locales-all');
 
 document.addEventListener('DOMContentLoaded', function () {
-    var appEl = document.getElementById('appointments');
-    var lastQuery = { };
-    var popovers = { };
+    let options = {
+        itemSelectText: '',
+        shouldSort: false,
+        shouldSortItems: false,
+        removeItemButton: true
+    };
 
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new Calendar(calendarEl, {
+    let studentChoice = new Choices(document.getElementById('student'), options);
+    let studyGroupChoice = new Choices(document.getElementById('study_group'), options);
+    let teacherChoice = new Choices(document.getElementById('teacher'), options);
+    let categoriesChoice = new Choices(document.getElementById('categories'), options);
+    let examGradesChoice = new Choices(document.getElementById('exam_grades'), options);
+
+    let suppressFilterChangedEvent = false;
+    let appEl = document.getElementById('appointments');
+    let lastQuery = { };
+    let popovers = { };
+
+    let calendarEl = document.getElementById('calendar');
+    let calendar = new Calendar(calendarEl, {
         plugins: [
             dayGridPlugin,
             timeGridPlugin,
@@ -44,16 +60,19 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         ],
         eventMouseEnter: function(info) {
-            var event = info.event;
-            var title = event.title;
-            var content = event.extendedProps.content;
-            var view = event.extendedProps.view;
+            let event = info.event;
+            let title = event.title;
+            let content = event.extendedProps.content;
+            let view = event.extendedProps.view;
 
-            var template = '<div class="popover" role="tooltip">' +
+            let template = '<div class="popover" role="tooltip">' +
                 '<div class="arrow"></div>' +
                 '<h3 class="popover-header">' + title + ' <span class="badge" style="background: ' + event.backgroundColor + '; color: ' + event.textColor + '">' + event.extendedProps.category + '</span></h3>' +
-                '<div class="popover-body">' +
-                '<p>' + content + '</p>';
+                '<div class="popover-body">';
+
+            if(content !== null) {
+                template += '<p>' + content + '</p>';
+            }
 
             view.forEach(function(viewItem) {
                 template += '<p><span class="text-muted">' + viewItem.label + '</span> ' + viewItem.content + '</p>';
@@ -61,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             template += '</div></div>';
 
-            var popover = new bsn.Popover(info.el, {
+            let popover = new bsn.Popover(info.el, {
                 placement: 'right',
                 template: template,
                 trigger: 'focus',
@@ -71,46 +90,74 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             popover.show();
 
-            var eventId = event.id;
+            let eventId = event.id;
             popovers[eventId] = popover;
         },
         eventMouseLeave: function(info) {
-            var eventId = info.event.id;
+            let eventId = info.event.id;
             if(popovers[eventId] !== null) {
                 popovers[eventId].hide();
             }
+        },
+        loading: function(isLoading) {
+            if(isLoading) {
+                document.getElementById('loading-indicator')?.classList.remove('hide');
+            } else {
+                document.getElementById('loading-indicator')?.classList.add('hide');
+            }
+
+            [studentChoice, studyGroupChoice, teacherChoice, categoriesChoice, examGradesChoice ].forEach(function(choices) {
+                if(isLoading) {
+                    choices.disable();
+                } else {
+                    choices.enable();
+                }
+            });
         }
     });
 
-    calendar.render();
-
-    var studentIdEl = document.getElementById('student');
-    var studyGroupIdEl = document.getElementById('study_group');
-    var teacherIdEl = document.getElementById('teacher');
-    var categoriyIdsEl = document.getElementById('categories');
-
-    [studentIdEl, studyGroupIdEl, teacherIdEl, categoriyIdsEl ].forEach(function(el) {
-        el.addEventListener('change', function(el) {
-            loadEvents();
+    [studentChoice, studyGroupChoice, teacherChoice, categoriesChoice, examGradesChoice ].forEach(function(choices) {
+        choices.passedElement.element.addEventListener('change', function(el) {
+            if(suppressFilterChangedEvent === false) {
+                loadEvents(choices);
+            }
         });
     });
 
-    function loadEvents() {
-        var query = { };
+    function loadEvents(initiator) {
+        let query = { };
 
-        [studentIdEl, studyGroupIdEl, teacherIdEl, categoriyIdsEl ].forEach(function(el) {
-            if(el.multiple !== null && el.multiple !== false) {
-                query[el.name] = Array.from(el.selectedOptions).map(x => x.value);
-            } else {
+        // Ensure that filters are not combined
+        suppressFilterChangedEvent = true; // suppress any other changed events
 
-                query[el.name] = el.value === "" ? null : el.value;
-            }
+        if(initiator === studentChoice) {
+            studyGroupChoice.setChoiceByValue('');
+            teacherChoice.setChoiceByValue('');
+        } else if(initiator === studyGroupChoice) {
+            studentChoice.setChoiceByValue('');
+            teacherChoice.setChoiceByValue('');
+        } else if(initiator === teacherChoice) {
+            studentChoice.setChoiceByValue('');
+            studyGroupChoice.setChoiceByValue('');
+        }
+
+        suppressFilterChangedEvent = false;
+
+        // Serialize the filter data
+        [studentChoice, studyGroupChoice, teacherChoice, categoriesChoice, examGradesChoice ].forEach(function(el) {
+            query[el.passedElement.element.name] = el.getValue(true);
         });
 
-        var eventSource = calendar.getEventSourceById('json');
+        let eventSource = calendar.getEventSourceById('json');
         lastQuery = query;
         eventSource.refetch();
     }
 
-    loadEvents();
+    calendar.render();
+
+    // Insert loading indicator
+    let heading = calendarEl.querySelector('.fc-center h2');
+    heading.innerHTML = heading.innerHTML + " <i class=\"fas fa-spinner fa-pulse hide\" id=\"loading-indicator\"></i>";
+
+    loadEvents(null);
 });

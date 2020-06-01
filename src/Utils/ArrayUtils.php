@@ -54,6 +54,16 @@ class ArrayUtils {
         return $array;
     }
 
+    public static function createArrayWithKeysAndValues(array $items, \Closure $keyFunc, \Closure $valueFunc): array {
+        $array = [ ];
+
+        foreach($items as $item) {
+            $array[$keyFunc($item)] = $valueFunc($item);
+        }
+
+        return $array;
+    }
+
     public static function findAllWithKeys(array $items, array $keys): array {
         $result = [ ];
 
@@ -66,11 +76,30 @@ class ArrayUtils {
         return $result;
     }
 
+    /**
+     * Returns all items of an array of object which are the same type as given.
+     *
+     * @param array $items
+     * @param string $type
+     * @return array
+     */
+    public static function filterByType(array $items, string $type): array {
+        $result = [ ];
+
+        foreach($items as $item) {
+            if(is_object($item) && get_class($item) === $type) {
+                $result[] = $item;
+            }
+        }
+
+        return $result;
+    }
+
     public static function unique(array $items) {
         $result = [ ];
 
         foreach($items as $item) {
-            if(!in_array($item, $result)) {
+            if(!in_array($item, $result, true)) {
                 $result[] = $item;
             }
         }

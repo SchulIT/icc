@@ -11,12 +11,15 @@ use App\Message\MessageFileUploadHelper;
 use App\Security\Voter\MessageVoter;
 use App\Utils\ColorUtils;
 use App\View\Filter\FilterViewInterface;
+use DateInterval;
+use DateTime;
 use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class HelperExtension extends AbstractExtension {
@@ -46,6 +49,13 @@ class HelperExtension extends AbstractExtension {
         $this->validator = $validator;
     }
 
+    public function getFilters() {
+        return [
+            new TwigFilter('previous_date', [ $this, 'getPreviousDate' ]),
+            new TwigFilter('next_date', [ $this, 'getNextDate'])
+        ];
+    }
+
     public function getFunctions() {
         return [
             new TwigFunction('is_confirmed', [ $this, 'isConfirmed' ]),
@@ -55,8 +65,27 @@ class HelperExtension extends AbstractExtension {
             new TwigFunction('referer_path', [ $this, 'refererPath' ]),
             new TwigFunction('foreground', [ $this, 'foregroundColor' ]),
             new TwigFunction('validation_errors', [ $this, 'validate' ]),
-            new TwigFunction('contains_active_filters', [ $this, 'containsActiveFilters'])
+            new TwigFunction('contains_active_filters', [ $this, 'containsActiveFilters']),
+            new TwigFunction('is_in_datetime_array', [ $this, 'isInDateTimeArray'])
         ];
+    }
+
+    public function getPreviousDate(\DateTime $dateTime): DateTime {
+        return (clone $dateTime)->sub(new DateInterval('P1D'));
+    }
+
+    public function getNextDate(\DateTime $dateTime): DateTime {
+        return (clone $dateTime)->add(new DateInterval('P1D'));
+    }
+
+    public function isInDateTimeArray(\DateTime $dateTime, array $dateTimes): bool {
+        foreach($dateTimes as $item) {
+            if($item == $dateTime) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function isConfirmed(Message $message) {

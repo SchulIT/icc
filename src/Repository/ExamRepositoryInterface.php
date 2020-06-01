@@ -5,8 +5,10 @@ namespace App\Repository;
 use App\Entity\Exam;
 use App\Entity\Grade;
 use App\Entity\Student;
+use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
+use DateTime;
 
 interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
 
@@ -28,6 +30,13 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Exam[]
      */
     public function findAllByTuitions(array $tuitions, ?\DateTime $today = null);
+
+    /**
+     * @param StudyGroup $studyGroup
+     * @param DateTime|null $today
+     * @return Exam[]
+     */
+    public function findAllByStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null);
 
     /**
      * @param Teacher $teacher

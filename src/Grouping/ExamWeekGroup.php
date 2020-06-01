@@ -4,19 +4,19 @@ namespace App\Grouping;
 
 class ExamWeekGroup implements GroupInterface, SortableGroupInterface {
 
-    private $week;
+    private $weekOfYear;
     private $exams;
 
-    public function __construct(?int $week) {
-        $this->week = $week;
+    public function __construct(?WeekOfYear $weekOfYear) {
+        $this->weekOfYear = $weekOfYear;
     }
 
-    public function getWeek() {
-        return $this->week;
+    public function getWeekOfYear() {
+        return $this->weekOfYear;
     }
 
     public function getKey() {
-        return $this->week;
+        return $this->weekOfYear;
     }
 
     public function addItem($item) {

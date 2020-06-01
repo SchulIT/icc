@@ -1,0 +1,46 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.settings.appointments.label'|trans }}{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/picker.js') }}"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'admin.settings.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.appointments.time_window'|trans }}</div>
+
+        <div class="card-body">
+            {% for name, type in userTypes %}
+                {{ form_row(form['start_' ~ name]) }}
+                {{ form_row(form['end_' ~ name]) }}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.appointments.exams'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_row(form.exam_color) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+        </button>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

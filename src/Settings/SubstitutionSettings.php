@@ -2,6 +2,8 @@
 
 namespace App\Settings;
 
+use App\Entity\UserType;
+
 class SubstitutionSettings extends AbstractSettings {
 
     public const AheadDaysKeys = 'substitutions.days_ahead';
@@ -45,5 +47,23 @@ class SubstitutionSettings extends AbstractSettings {
 
     public function setNotificationSender(?string $sender): void {
         $this->setValue('substitutions.notifications.sender', $sender);
+    }
+
+    public function getAbsenceVisibility() {
+        return $this->getValue('substitutions.absences.visibility', [ ]);
+    }
+
+    public function setAbsenceVisibility(array $visibility) {
+        $this->setValue('substitutions.absences.visibility', $visibility);
+    }
+
+    public function areAbsencesVisibleFor(UserType $type) {
+        foreach($this->getAbsenceVisibility() as $visibleUserType) {
+            if($type->equals($visibleUserType)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

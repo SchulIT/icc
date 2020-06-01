@@ -5,7 +5,9 @@ namespace App\Repository;
 use App\Entity\Exam;
 use App\Entity\Grade;
 use App\Entity\Student;
+use App\Entity\StudyGroup;
 use App\Entity\Teacher;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
 class ExamRepository extends AbstractTransactionalRepository implements ExamRepositoryInterface {
@@ -14,11 +16,11 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $qb = $this->em->createQueryBuilder();
 
         $qb
-            ->select(['e', 'i', 's', 't', 'sg', 'g', 'at', 'tt', 'it'])
+            ->select(['e', 's', 'es', 't', 'sg', 'g', 'at', 'tt', 'st'])
             ->from(Exam::class, 'e')
-            ->leftJoin('e.invigilators', 'i')
-            ->leftJoin('i.teacher', 'it')
-            ->leftJoin('e.students', 's')
+            ->leftJoin('e.supervisions', 's')
+            ->leftJoin('s.teacher', 'st')
+            ->leftJoin('e.students', 'es')
             ->leftJoin('e.tuitions', 't')
             ->leftJoin('t.teacher', 'tt')
             ->leftJoin('t.additionalTeachers', 'at')
@@ -84,19 +86,39 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
+    public function findAllByStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null) {
+        $qb = $this->getDefaultQueryBuilder($today);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.tuitions', 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sInner')
+            ->where('sInner.id = :studyGroup');
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->setParameter('studyGroup', $studyGroup->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAllByTeacher(Teacher $teacher, ?\DateTime $today = null, bool $onlyToday = false) {
         $qb = $this->getDefaultQueryBuilder($today, $onlyToday);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
             ->from(Exam::class, 'eInner')
-            ->leftJoin('eInner.invigilators', 'iInner')
+            ->leftJoin('eInner.supervisions', 'sInner')
             ->leftJoin('eInner.tuitions', 'tInner')
             ->leftJoin('tInner.additionalTeachers', 'teacherInner')
             ->andWhere(
                 $qb->expr()->orX(
                     'teacherInner.id = :teacher',
-                    'iInner.teacher = :teacher',
+                    'sInner.teacher = :teacher',
                     'tInner.teacher = :teacher'
                 )
             );
@@ -203,4 +225,5 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $this->em->remove($exam);
         $this->flushIfNotInTransaction();
     }
+
 }

@@ -28,16 +28,14 @@ class Subject {
     /**
      * @ORM\Column(type="string", unique=true)
      * @Assert\NotBlank()
-     * @Assert\NotNull()
-     * @var string
+     * @var string|null
      */
     private $abbreviation;
 
     /**
      * @ORM\Column(type="string")
      * @Assert\NotNull()
-     * @Assert\NotBlank()
-     * @var string
+     * @var string|null
      */
     private $name;
 
@@ -45,7 +43,7 @@ class Subject {
      * @ORM\Column(type="boolean")
      * @var bool
      */
-    private $replaceSubjectAbbreviation = false;
+    private $replaceSubjectAbbreviation = true;
 
     /**
      * @ORM\Column(type="boolean")
@@ -87,14 +85,14 @@ class Subject {
      * @Serializer\Exclude()
      * @var bool
      */
-    private $isVisibleCourses = true;
+    private $isVisibleLists = true;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank()
-     * @Assert\Length(min="6", max="6")
+     * @Assert\Length(min="7", max="7")
      * @Color()
      * @Serializer\Exclude()
+     * @var string|null
      */
     private $color;
 
@@ -126,33 +124,33 @@ class Subject {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getAbbreviation(): string {
+    public function getAbbreviation(): ?string {
         return $this->abbreviation;
     }
 
     /**
-     * @param string $abbreviation
+     * @param string|null $abbreviation
      * @return Subject
      */
-    public function setAbbreviation(string $abbreviation): Subject {
+    public function setAbbreviation(?string $abbreviation): Subject {
         $this->abbreviation = $abbreviation;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getName(): string {
+    public function getName(): ?string {
         return $this->name;
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      * @return Subject
      */
-    public function setName(string $name): Subject {
+    public function setName(?string $name): Subject {
         $this->name = $name;
         return $this;
     }
@@ -256,31 +254,31 @@ class Subject {
     /**
      * @return bool
      */
-    public function isVisibleCourses(): bool {
-        return $this->isVisibleCourses;
+    public function isVisibleLists(): bool {
+        return $this->isVisibleLists;
     }
 
     /**
-     * @param bool $isVisibleCourses
+     * @param bool $isVisibleLists
      * @return Subject
      */
-    public function setIsVisibleCourses(bool $isVisibleCourses): Subject {
-        $this->isVisibleCourses = $isVisibleCourses;
+    public function setIsVisibleLists(bool $isVisibleLists): Subject {
+        $this->isVisibleLists = $isVisibleLists;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getColor(): string {
+    public function getColor(): ?string {
         return $this->color;
     }
 
     /**
-     * @param string $color
+     * @param string|null $color
      * @return Subject
      */
-    public function setColor(string $color): Subject {
+    public function setColor(?string $color): Subject {
         $this->color = $color;
         return $this;
     }

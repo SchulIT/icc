@@ -12,16 +12,15 @@
 {% block content %}
     <div class="container-fluid px-0">
         <div class="row">
+            {% if studyGroupFilter.currentStudyGroup == null %}
+            <div class="col-md-12">
+            {% else %}
             <div class="col-md-9">
+            {% endif %}
+
                 {% include "_messages.html.twig" %}
 
-                {% if studyGroupFilter.currentStudyGroup == null %}
-                    <div class="bs-callout bs-callout-info">
-                        <h4>{{ 'info.label'|trans }}</h4>
-
-                        <p>{{ 'lists.study_groups.start'|trans }}</p>
-                    </div>
-                {% else %}
+                {% if studyGroupFilter.currentStudyGroup != null %}
                     {% if studyGroupFilter.currentStudyGroup.type.value == "grade" %}
                         {% set grade = studyGroupFilter.currentStudyGroup.grades[0] %}
 
@@ -134,8 +133,11 @@
                         </div>
                     {% endif %}
                 {% endif %}
+
+            {% if studyGroupFilter.currentStudyGroup != null %}
             </div>
             <div class="col-md-3">
+            {% endif %}
                 {% if students|length > 0 %}
                     <div class="card">
                         <div class="list-group list-group-flush">

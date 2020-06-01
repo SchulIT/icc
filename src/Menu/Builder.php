@@ -72,7 +72,7 @@ class Builder {
         $plans->addChild('plans.exams.label', [
             'route' => 'exams'
         ])
-            ->setAttribute('icon', 'fas fa-pen');
+            ->setAttribute('icon', 'fas fa-edit');
 
         $plans->addChild('plans.appointments.label', [
             'route' => 'appointments'
@@ -261,6 +261,11 @@ class Builder {
             ])
                 ->setAttribute('icon', 'far fa-clock');
 
+            $menu->addChild('admin.subjects.label', [
+                'route' => 'admin_subjects'
+            ])
+                ->setAttribute('icon', 'fas fa-graduation-cap');
+
             $menu->addChild('admin.teachers.label', [
                 'route' => 'admin_teachers'
             ])
@@ -298,6 +303,10 @@ class Builder {
             ->setAttribute('title', $this->translator->trans('admin.settings.label'));
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $menu->addChild('admin.settings.dashboard.label', [
+                'route' => 'admin_settings_dashboard'
+            ]);
+
             $menu->addChild('admin.settings.timetable.label', [
                 'route' => 'admin_settings_timetable'
             ]);
@@ -308,6 +317,10 @@ class Builder {
 
             $menu->addChild('admin.settings.substitutions.label', [
                 'route' => 'admin_settings_substitutions'
+            ]);
+
+            $menu->addChild('admin.settings.appointments.label', [
+                'route' => 'admin_settings_appointments'
             ]);
         }
 

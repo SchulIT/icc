@@ -97,8 +97,8 @@ class RoomRepository extends AbstractTransactionalRepository implements RoomRepo
             ->groupBy('rInner.name');
 
         if($query->hasSeats()) {
-            $qbInner->andWhere('rInner.seats >= :seats');
-            $qb->setParameter('seats', $query->getSeatsValueOrDefault());
+            $qbInner->andWhere('rInner.capacity >= :capacity');
+            $qb->setParameter('capacity', $query->getSeatsValueOrDefault());
         }
 
         if($query->hasName()) {

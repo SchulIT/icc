@@ -1,0 +1,12 @@
+{% if infotexts|length > 0 %}
+<div class="card">
+    <div class="card-body">
+        {% for infotext in infotexts %}
+            <div class="d-flex {% if not loop.last %}mb-2{% endif %}">
+                <i class="fa fa-info-circle align-self-baseline mr-2"></i>
+                <span class="align-self-baseline">{{ infotext.content }}</span>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

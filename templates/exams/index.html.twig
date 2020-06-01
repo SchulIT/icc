@@ -15,7 +15,50 @@
             <div class="col-md-9">
 
                 {% include "_messages.html.twig" %}
+                {% set currentFilter = {
+                    all: showAll,
+                    student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null,
+                    teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null,
+                    grade : gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
+                    study_group: studyGroupFilter.currentStudyGroup ? studyGroupFilter.currentStudyGroup.uuid.toString() : null
+                } %}
                 <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
+
+                            <li class="nav-item d-flex align-items-center" data-resize="show">
+                                <a class="nav-link {% if previousGroup is null %}disabled{% endif %}" href="{% if previousGroup is null %}#{% else %}{{ path('exams', currentFilter|merge({ week: previousGroup.weekOfYear.weekNumber, year: previousGroup.weekOfYear.year })) }}{% endif %}">
+                                    <i class="fa fa-chevron-left"></i>
+                                </a>
+                            </li>
+
+                            {% if examWeekGroups is empty %}
+                                <li class="nav-item d-flex align-items-center" data-resize="show">
+                                    <a href="#" class="nav-link disabled">
+                                        <i class="fa fa-info-circle"></i> {{ 'plans.exams.empty'|trans }}
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for group in examWeekGroups %}
+                                <li class="nav-item d-flex align-items-center" {% if group == currentGroup %}data-resize="prevent" {% endif %}>
+                                    <a class="nav-link {% if group == currentGroup %} active{% endif %}" href="{{ path('exams', currentFilter|merge({ week: group.weekOfYear.weekNumber, year: group.weekOfYear.year })) }}">
+                                        <i class="fa fa-calendar"></i> {{ 'admin.exams.week'|trans({'%week%': group.weekOfYear.weekNumber }) }} <span class="badge badge-primary badge-pill">{{ group.exams|length }}</span>
+                                        <div class="d-block">
+                                            {{ group.weekOfYear.firstDay|date('date.format_short'|trans) }} - {{ group.weekOfYear.lastDay|date('date.format_short'|trans) }}
+                                        </div>
+                                    </a>
+                                </li>
+                            {% endfor %}
+
+                            <li class="nav-item d-flex align-items-center" data-resize="show">
+                                <a class="nav-link {% if nextGroup is null %}disabled{% endif %}" href="{% if nextGroup is null %}#{% else %}{{ path('exams', currentFilter|merge({ week: nextGroup.weekOfYear.weekNumber, year: nextGroup.weekOfYear.year })) }}{% endif %}">
+                                    <i class="fa fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
                     <div class="card-body">
                         <h5 class="card-title">
                             {% if teacherFilter.currentTeacher is not null %}
@@ -49,12 +92,8 @@
                             </div>
                         {% endif %}
 
-                        {% for group in examGroups %}
-                            <h6>{{ ('date.days.'~group.date|date('w'))|trans }}, {{ group.date|format_date }}</h6>
-
-                            {% for exam in group.exams %}
-                                {% include "_includes/exam.html.twig" with { exam: exam } %}
-                            {% endfor %}
+                        {% for exam in exams %}
+                            {% include "_includes/exam.html.twig" with { exam: exam, showDate: true } %}
                         {% endfor %}
                     </div>
                 </div>
@@ -74,7 +113,7 @@
                     </div>
                 </div>
 
-                {% if contains_active_filters([teacherFilter, studentFilter, gradeFilter]) %}
+                {% if contains_active_filters([teacherFilter, studentFilter, gradeFilter, studyGroupFilter]) %}
                 <div class="card">
                     <div class="card-body">
                         {% if teacherFilter.teachers|length > 0 %}
@@ -89,16 +128,20 @@
                             {% include "_filter/grade.html.twig" with { params: { all: showAll } } %}
                         {% endif %}
 
+                        {% if studyGroupFilter.studyGroupGroups|length > 0 %}
+                            {% include "_filter/study_group.html.twig" with { params: { all: showAll } } %}
+                        {% endif %}
+
                         <form role="form" method="get" class="form hidden-print">
                             {% set params = { } %}
                             {% if teacherFilter.currentTeacher is not null %}
-                                {% set params = params|merge({ teacher: teacherFilter.currentTeacher.acronym }) %}
+                                {% set params = params|merge({ teacher: teacherFilter.currentTeacher.uuid.toString() }) %}
                             {% endif %}
                             {% if studentFilter.currentStudent is not null %}
-                                {% set params = params|merge({ student: studentFilter.currentStudent.uuid }) %}
+                                {% set params = params|merge({ student: studentFilter.currentStudent.uuid.toString() }) %}
                             {% endif %}
                             {% if gradeFilter.currentGrade is not null %}
-                                {% set params = params|merge({ grade: gradeFilter.currentGrade.uuid }) %}
+                                {% set params = params|merge({ grade: gradeFilter.currentGrade.uuid.toString() }) %}
                             {% endif %}
 
                             {% include "_filter/_params.html.twig" %}

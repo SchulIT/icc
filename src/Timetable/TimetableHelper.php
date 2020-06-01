@@ -124,7 +124,7 @@ class TimetableHelper {
      * @return TimetableWeek
      */
     private function makeTimetableWeek(TimetableWeekEntity $week, int $numberWeeks, array $lessons, array $supervision): TimetableWeek {
-        $timetableWeek = new TimetableWeek($week->getDisplayName(), $week->getWeekMod());
+        $timetableWeek = new TimetableWeek($week);
 
         $lessons = array_filter($lessons, function(TimetableLessonEntity $lesson) use ($week) {
             return $lesson->getWeek()->getId() === $week->getId();

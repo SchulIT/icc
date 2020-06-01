@@ -17,7 +17,6 @@ class Infotext {
     /**
      * @ORM\Column(type="date")
      * @Assert\NotNull()
-     * @Assert\Date()
      */
     private $date;
 

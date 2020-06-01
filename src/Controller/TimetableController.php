@@ -2,9 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\DeviceToken;
+use App\Entity\DeviceTokenType;
 use App\Entity\MessageScope;
+use App\Entity\StudyGroupMembership;
 use App\Entity\TimetablePeriod;
 use App\Entity\User;
+use App\Export\TimetableIcsExporter;
+use App\Form\DeviceTokenType as DeviceTokenTypeForm;
 use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\MessageRepositoryInterface;
@@ -12,9 +17,12 @@ use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
+use App\Security\Devices\DeviceManager;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
+use App\Sorting\TimetableWeekStrategy;
+use App\Timetable\TimetableFilter;
 use App\Timetable\TimetableHelper;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\RoomFilter;
@@ -26,6 +34,9 @@ use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/timetable")
+ */
 class TimetableController extends AbstractControllerWithMessages {
 
     private $timetableHelper;
@@ -45,11 +56,11 @@ class TimetableController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/timetable", name="timetable")
+     * @Route("", name="timetable")
      */
     public function index(StudentFilter $studentFilter, TeacherFilter $teacherFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableWeekRepositoryInterface $weekRepository, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
-                          TimetableSupervisionRepositoryInterface $supervisionRepository, Request $request) {
+                          TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -64,23 +75,48 @@ class TimetableController extends AbstractControllerWithMessages {
 
         $currentPeriod = $this->getCurrentPeriod($periods);
 
+        if($request->query->get('period') !== null) {
+            foreach($periods as $period) {
+                if($period->getUuid()->toString() === $request->query->get('period')) {
+                    $currentPeriod = $period;
+                }
+            }
+        }
+
         $weeks = $weekRepository->findAll();
 
         $lessons = [ ];
         $supervisions = [ ];
+        $membershipsTypes = [ ];
 
         if($currentPeriod !== null) {
             if ($studentFilterView->getCurrentStudent() !== null) {
                 $lessons = $lessonRepository->findAllByPeriodAndStudent($currentPeriod, $studentFilterView->getCurrentStudent());
+                $lessons = $timetableFilter->filterStudentLessons($lessons);
+
+                $gradeIdsWithMembershipTypes = $this->timetableSettings->getGradeIdsWithMembershipTypes();
+
+                /** @var StudyGroupMembership $membership */
+                foreach($studentFilterView->getCurrentStudent()->getStudyGroupMemberships() as $membership) {
+                    foreach($membership->getStudyGroup()->getGrades() as $grade) {
+                        if (in_array($grade->getId(), $gradeIdsWithMembershipTypes)) {
+                            $membershipsTypes[$membership->getStudyGroup()->getId()] = $membership->getType();
+                        }
+                    }
+                }
             } else if ($teacherFilterView->getCurrentTeacher() !== null) {
                 $lessons = $lessonRepository->findAllByPeriodAndTeacher($currentPeriod, $teacherFilterView->getCurrentTeacher());
+                $lessons = $timetableFilter->filterTeacherLessons($lessons);
                 $supervisions = $supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacherFilterView->getCurrentTeacher());
             } else if ($gradeFilterView->getCurrentGrade() !== null) {
                 $lessons = $lessonRepository->findAllByPeriodAndGrade($currentPeriod, $gradeFilterView->getCurrentGrade());
+                $lessons = $timetableFilter->filterGradeLessons($lessons);
             } else if ($roomFilterView->getCurrentRoom() !== null) {
                 $lessons = $lessonRepository->findAllByPeriodAndRoom($currentPeriod, $roomFilterView->getCurrentRoom());
+                $lessons = $timetableFilter->filterRoomLessons($lessons);
             } else if (count($subjectFilterView->getSubjects()) > 0) {
                 $lessons = $lessonRepository->findAllByPeriodAndSubjects($currentPeriod, $subjectFilterView->getCurrentSubjects());
+                $lessons = $timetableFilter->filterSubjectsLessons($lessons);
             }
         }
 
@@ -102,9 +138,43 @@ class TimetableController extends AbstractControllerWithMessages {
 
         if($request->query->getBoolean('print', false) === true) {
             $template = 'timetable/index_print.html.twig';
+
+            if($timetable === null) {
+                $query = $request->query->all();
+                unset($query['print']);
+                $this->addFlash('info', 'plans.timetable.print.empty');
+                return $this->redirectToRoute('timetable', $query);
+            }
         }
 
-        dump($timetable);
+        $supervisionLabels = [ ];
+        for($i = 1; $i <= $this->timetableSettings->getMaxLessons(); $i++) {
+            $supervisionLabels[$i] = $this->timetableSettings->getDescriptionBeforeLesson($i);
+        }
+
+        $nextPeriod = null;
+        $previousPeriod = null;
+
+        if($currentPeriod !== null) {
+            // Search previous and next period (if any)
+            $periodIdx = null;
+
+            for($idx = 0; $idx < count($periods); $idx++) {
+                if($currentPeriod->getUuid() === $periods[$idx]->getUuid()) {
+                    $periodIdx = $idx;
+                    break;
+                }
+            }
+
+            if($periodIdx !== null) {
+                $nextPeriod = $periods[$periodIdx + 1] ?? null;
+                $previousPeriod = $periods[$periodIdx - 1] ?? null;
+            }
+        }
+
+        if($timetable !== null) {
+            $this->sorter->sort($timetable->getWeeks(), TimetableWeekStrategy::class);
+        }
 
         return $this->renderWithMessages($template, [
             'timetable' => $timetable,
@@ -115,23 +185,52 @@ class TimetableController extends AbstractControllerWithMessages {
             'subjectFilter' => $subjectFilterView,
             'periods' => $periods,
             'currentPeriod' => $currentPeriod,
+            'nextPeriod' => $nextPeriod,
+            'previousPeriod' => $previousPeriod,
             'startTimes' => $startTimes,
-            'endTimes' => $endTimes
+            'endTimes' => $endTimes,
+            'gradesWithCourseNames' => $this->timetableSettings->getGradeIdsWithCourseNames(),
+            'memberships' => $membershipsTypes,
+            'query' => $request->query->all(),
+            'supervisionLabels' => $supervisionLabels,
+            'supervisionSubject' => $this->timetableSettings->getSupervisionLabel(),
+            'supervisionColor' => $this->timetableSettings->getSupervisionColor()
         ]);
     }
 
     /**
-     * @Route("/timetable/print", name="print_timetable")
+     * @Route("/export", name="timetable_export")
      */
-    private function print() {
+    public function export(Request $request, DeviceManager $manager) {
+        /** @var User $user */
+        $user = $this->getUser();
 
+        $deviceToken = (new DeviceToken())
+            ->setType(DeviceTokenType::Calendar())
+            ->setUser($user);
+
+        $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $deviceToken = $manager->persistDeviceToken($deviceToken);
+        }
+
+        return $this->renderWithMessages('timetable/export.html.twig', [
+            'form' => $form->createView(),
+            'token' => $deviceToken
+        ]);
     }
 
     /**
-     * @Route("/timetable/ics", name="timetable_ics")
+     * @Route("/ics/download", name="timetable_ics")
+     * @Route("/ics/downloads/{token}", name="timetable_ics_token")
      */
-    public function ics() {
+    public function ics(TimetableIcsExporter $icsExporter) {
+        /** @var User $user */
+        $user = $this->getUser();
 
+        return $icsExporter->getIcsResponse($user);
     }
 
     /**

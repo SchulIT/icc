@@ -70,7 +70,7 @@
                                         <td class="align-middle">
                                             {{ appointment.title }}
 
-                                            <span class="badge" style="background: {{ appointment.category.color }}; color: {{ appointment.category.color|foreground }}">{{ appointment.category.name }}</span>
+                                            <span class="badge" style="background: {{ appointment.category.color }}; color: {{ foreground(appointment.category.color) }}">{{ appointment.category.name }}</span>
                                         </td>
                                         <td class="align-middle">{{ start }}</td>
                                         <td class="align-middle">{{ end }}</td>

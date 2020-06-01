@@ -9,13 +9,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  */
-class ExamInvigilator {
+class ExamSupervision {
 
     use IdTrait;
     use UuidTrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Exam", inversedBy="invigilators", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Exam", inversedBy="supervisions", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Exam
      */
@@ -48,9 +48,9 @@ class ExamInvigilator {
 
     /**
      * @param Exam $exam
-     * @return ExamInvigilator
+     * @return ExamSupervision
      */
-    public function setExam(Exam $exam): ExamInvigilator {
+    public function setExam(Exam $exam): ExamSupervision {
         $this->exam = $exam;
         return $this;
     }
@@ -64,9 +64,9 @@ class ExamInvigilator {
 
     /**
      * @param Teacher $teacher
-     * @return ExamInvigilator
+     * @return ExamSupervision
      */
-    public function setTeacher(Teacher $teacher): ExamInvigilator {
+    public function setTeacher(Teacher $teacher): ExamSupervision {
         $this->teacher = $teacher;
         return $this;
     }
@@ -80,9 +80,9 @@ class ExamInvigilator {
 
     /**
      * @param int $lesson
-     * @return ExamInvigilator
+     * @return ExamSupervision
      */
-    public function setLesson(int $lesson): ExamInvigilator {
+    public function setLesson(int $lesson): ExamSupervision {
         $this->lesson = $lesson;
         return $this;
     }

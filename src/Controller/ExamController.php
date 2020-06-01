@@ -14,6 +14,8 @@ use App\Entity\UserType;
 use App\Export\ExamIcsExporter;
 use App\Form\DeviceTokenType as DeviceTokenTypeForm;
 use App\Grouping\ExamDateStrategy;
+use App\Grouping\ExamWeekGroup;
+use App\Grouping\ExamWeekStrategy;
 use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
@@ -23,10 +25,12 @@ use App\Security\Voter\ExamVoter;
 use App\Settings\ExamSettings;
 use App\Sorting\ExamDateGroupStrategy;
 use App\Sorting\ExamDateLessonStrategy as ExamDateSortingStrategy;
+use App\Sorting\ExamWeekGroupStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
+use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\TeacherFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use SchoolIT\CommonBundle\Utils\RefererHelper;
@@ -53,16 +57,17 @@ class ExamController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="exams")
      */
-    public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter,
-                          ExamRepositoryInterface $examRepository, ExamSettings $examSettings, Request $request) {
+    public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter, StudyGroupFilter $studyGroupFilter,
+                          ExamRepositoryInterface $examRepository, ExamSettings $examSettings, Request $request, DateHelper $dateHelper) {
         /** @var User $user */
         $user = $this->getUser();
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
         $all = $request->query->getBoolean('all', false);
         $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user);
+        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, false);
 
         $exams = [ ];
         $today = $all ? null : $this->dateHelper->getToday();
@@ -76,19 +81,15 @@ class ExamController extends AbstractControllerWithMessages {
 
             if ($studentFilterView->getCurrentStudent() !== null) {
                 $exams = $examRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $today);
-            } else {
-                if ($gradeFilterView->getCurrentGrade() !== null) {
+            } else if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
+                $exams = $examRepository->findAllByStudyGroup($studyGroupFilterView->getCurrentStudyGroup());
+            } else if ($gradeFilterView->getCurrentGrade() !== null) {
                     $exams = $examRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $today);
+            } else if ($isStudentOrParent === false) {
+                if ($teacherFilterView->getCurrentTeacher() !== null) {
+                    $exams = $examRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $today);
                 } else {
-                    if ($isStudentOrParent) {
-                        $exams = [];
-                    } else {
-                        if ($teacherFilterView->getCurrentTeacher() !== null) {
-                            $exams = $examRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $today);
-                        } else {
-                            $exams = $examRepository->findAll($today);
-                        }
-                    }
+                    $exams = $examRepository->findAll($today);
                 }
             }
 
@@ -97,18 +98,61 @@ class ExamController extends AbstractControllerWithMessages {
             });
         }
 
-        $examGroups = $this->grouper->group($exams, ExamDateStrategy::class);
-        $this->sorter->sort($examGroups, ExamDateGroupStrategy::class);
-        $this->sorter->sortGroupItems($examGroups, ExamDateSortingStrategy::class);
+        $exams = array_filter($exams, function(Exam $exam) {
+            return $exam->getDate() !== null;
+        });
+
+        $examWeekGroups = $this->grouper->group($exams, ExamWeekStrategy::class);
+        $this->sorter->sort($examWeekGroups, ExamWeekGroupStrategy::class);
+
+        $week = $request->query->getInt('week', null);
+        $year = $request->query->getInt('year', null);
+
+        $exams = [ ];
+        $currentGroup = null;
+        $previousGroup = null;
+        $nextGroup = null;
+
+        // $week==null
+        /** @var ExamWeekGroup $group */
+        for($idx = 0; $idx < count($examWeekGroups); $idx++) {
+            $group = $examWeekGroups[$idx];
+
+            if($group->getKey()->getWeekNumber() === $week && $group->getKey()->getYear() === $year) {
+                $currentGroup = $group;
+
+                $previousGroup = $examWeekGroups[$idx - 1] ?? null;
+                $nextGroup = $examWeekGroups[$idx + 1] ?? null;
+            }
+        }
+
+        if($currentGroup === null && count($examWeekGroups) > 0) {
+            $currentGroup = $examWeekGroups[0];
+
+            if(count($examWeekGroups) > 1) {
+                $nextGroup = $examWeekGroups[1];
+            }
+        }
+
+        if($currentGroup !== null) {
+            $exams = $currentGroup->getExams();
+        }
+
+        $this->sorter->sort($exams, ExamDateSortingStrategy::class);
 
         return $this->renderWithMessages('exams/index.html.twig', [
-            'examGroups' => $examGroups,
+            'examWeekGroups' => $examWeekGroups,
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
             'gradeFilter' => $gradeFilterView,
+            'studyGroupFilter' => $studyGroupFilterView,
             'showAll' => $all,
             'isVisible' => $isVisible,
-            'isVisibleAdmin' => $isVisibleAdmin
+            'isVisibleAdmin' => $isVisibleAdmin,
+            'exams' => $exams,
+            'currentGroup' => $currentGroup,
+            'nextGroup' => $nextGroup,
+            'previousGroup' => $previousGroup
         ]);
     }
 

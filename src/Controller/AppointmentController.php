@@ -8,28 +8,32 @@ use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
 use App\Entity\DeviceToken;
 use App\Entity\DeviceTokenType;
+use App\Entity\Exam;
+use App\Entity\Grade;
 use App\Entity\MessageScope;
-use App\Entity\StudyGroup;
 use App\Entity\Teacher;
+use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Export\AppointmentIcsExporter;
 use App\Form\DeviceTokenType as DeviceTokenTypeForm;
-use App\Grouping\AppointmentDateStrategy;
-use App\Grouping\Grouper;
 use App\Repository\AppointmentRepositoryInterface;
+use App\Repository\ExamRepositoryInterface;
 use App\Security\Devices\DeviceManager;
 use App\Security\Voter\AppointmentVoter;
-use App\Sorting\AppointmentDateGroupStrategy;
-use App\Sorting\AppointmentDateStrategy as AppointmentDateSortingStrategy;
-use App\Sorting\Sorter;
+use App\Security\Voter\ExamVoter;
+use App\Settings\AppointmentsSettings;
+use App\Settings\TimetableSettings;
+use App\Timetable\TimetableTimeHelper;
+use App\Utils\ArrayUtils;
 use App\Utils\ColorUtils;
 use App\View\Filter\AppointmentCategoriesFilter;
-use App\View\Filter\GradeFilter;
+use App\View\Filter\GradesFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\TeacherFilter;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use DateInterval;
+use DateTime;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -42,20 +46,22 @@ class AppointmentController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="appointments")
      */
-    public function index(AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter) {
+    public function index(AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter, GradesFilter $gradesFilter) {
         /** @var User $user */
         $user = $this->getUser();
 
         $categoryFilterView = $categoryFilter->handle([ ]);
         $studentFilterView = $studentFilter->handle(null, $user);
         $studyGroupView = $studyGroupFilter->handle(null, $user);
-        $teacherFilterView = $teacherFilter->handle(null, $user, $studentFilterView->getCurrentStudent() === null && $studyGroupView->getCurrentStudyGroup() === null);
+        $teacherFilterView = $teacherFilter->handle(null, $user, false);
+        $gradesFilterView = $gradesFilter->handle([], $user);
 
         return $this->renderWithMessages('appointments/index.html.twig', [
             'categoryFilter' => $categoryFilterView,
             'studentFilter' => $studentFilterView,
             'studyGroupFilter' => $studyGroupView,
-            'teacherFilter' => $teacherFilterView
+            'teacherFilter' => $teacherFilterView,
+            'examGradesFilter' => $gradesFilterView
         ]);
     }
 
@@ -64,7 +70,9 @@ class AppointmentController extends AbstractControllerWithMessages {
      */
     public function indexXhr(AppointmentRepositoryInterface $appointmentRepository, ColorUtils $colorUtils, TranslatorInterface $translator,
                              StudyGroupsGradeStringConverter $studyGroupsGradeStringConverter, TeacherStringConverter $teacherStringConverter,
-                             AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter, Request $request) {
+                             AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter,
+                             TeacherFilter $teacherFilter, GradesFilter $gradesFilter, ExamRepositoryInterface $examRepository,
+                             AppointmentsSettings $appointmentsSettings, TimetableTimeHelper $timetableTimeHelper, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
         $isStudent = $user->getUserType()->equals(UserType::Student());
@@ -75,6 +83,7 @@ class AppointmentController extends AbstractControllerWithMessages {
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $studyGroupView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $studyGroupView->getCurrentStudyGroup() === null);
+        $examGradesFilterView = $gradesFilter->handle(explode(',', $request->query->get('exam_grades', '')), $user);
 
         $appointments = [ ];
         $today = null;
@@ -110,16 +119,25 @@ class AppointmentController extends AbstractControllerWithMessages {
                 continue;
             }
 
-            $view = [
-                [
-                    'label' => $translator->trans('label.start'),
-                    'content' => $appointment->getStart()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
-                ],
-                [
-                    'label' => $translator->trans('label.end'),
-                    'content' => $appointment->getEnd()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
-                ]
-            ];
+            if($appointment->isAllDay() && $appointment->getDuration()->d === 1) {
+                $view = [
+                    [
+                        'label' => $translator->trans('label.date'),
+                        'content' => $appointment->getStart()->format($translator->trans('date.format'))
+                    ]
+                ];
+            } else {
+                $view = [
+                    [
+                        'label' => $translator->trans('label.start'),
+                        'content' => $appointment->getStart()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
+                    ],
+                    [
+                        'label' => $translator->trans('label.end'),
+                        'content' => $appointment->getRealEnd()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
+                    ]
+                ];
+            }
 
             if(!empty($appointment->getLocation())) {
                 $view[] = [
@@ -165,6 +183,96 @@ class AppointmentController extends AbstractControllerWithMessages {
                     'view' => $view
                 ]
             ];
+        }
+
+        // Add exams
+        if(count($examGradesFilterView->getCurrentGrades()) > 0) {
+            $exams = [ ];
+
+            foreach($examGradesFilterView->getCurrentGrades() as $grade) {
+                $exams = array_merge($exams, $examRepository->findAllByGrade($grade));
+            }
+
+            $exams = ArrayUtils::createArrayWithKeys($exams, function(Exam $exam) {
+                return $exam->getUuid()->toString();
+            });
+
+            /** @var Exam $exam */
+            foreach($exams as $exam) {
+                if($this->isGranted(ExamVoter::Show, $exam)) {
+                    $view = [ ];
+
+                    $tuitions = implode(', ', $exam->getTuitions()->map(function(Tuition $tuition) { return $tuition->getName(); })->toArray());
+
+                    $view[] = [
+                        'label' => $translator->trans('label.tuitions'),
+                        'content' => $tuitions
+                    ];
+
+                    $grades = [ ];
+                    $teachers = [ ];
+
+                    /** @var Tuition $tuition */
+                    foreach($exam->getTuitions() as $tuition) {
+                        /** @var Grade $grade */
+                        foreach($tuition->getStudyGroup()->getGrades() as $grade) {
+                            $grades[] = $grade->getName();
+                        }
+
+                        /** @var Teacher $teacher */
+                        foreach($tuition->getTeachers() as $teacher) {
+                            $teachers[] = $teacherStringConverter->convert($teacher);
+                        }
+
+                        /** @var Teacher $teacher */
+                        foreach($tuition->getAdditionalTeachers() as $teacher) {
+                            $teachers[] = $teacherStringConverter->convert($teacher);
+                        }
+
+                        $grades = array_unique($grades);
+                        $teachers = array_unique($teachers);
+                    }
+
+                    $view[] = [
+                        'label' => $translator->trans('label.teacher'),
+                        'content' => $teachers
+                    ];
+
+                    $view[] = [
+                        'label' => $translator->trans('label.grades'),
+                        'content' => implode(', ', $grades)
+                    ];
+
+                    $view[] = [
+                        'label' => $translator->trans('label.room'),
+                        'content' => implode(', ', $exam->getRooms())
+                    ];
+
+                    $view[] = [
+                        'label' => $translator->trans('plans.exams.time'),
+                        'content' => $translator->trans('label.exam_lessons', [
+                            '%start%' => $exam->getLessonStart(),
+                            '%end%' => $exam->getLessonEnd(),
+                            '%count%' => $exam->getLessonEnd() - $exam->getLessonStart()
+                        ])
+                    ];
+
+                    $json[] = [
+                        'uuid' => $exam->getUuid(),
+                        'allDay' => false,
+                        'title' => sprintf('%s: %s', implode(', ', $grades), $tuitions),
+                        'textColor' => empty($appointmentsSettings->getExamColor()) ? '#000000' : $colorUtils->getForeground($appointmentsSettings->getExamColor()),
+                        'backgroundColor' => empty($appointmentsSettings->getExamColor()) ? '#ffffff' : $appointmentsSettings->getExamColor(),
+                        'start' => $timetableTimeHelper->getLessonStartDateTime($exam->getDate(), $exam->getLessonStart())->format('Y-m-d H:i'),
+                        'end' => $timetableTimeHelper->getLessonEndDateTime($exam->getDate(), $exam->getLessonEnd())->format('Y-m-d H:i'),
+                        'extendedProps' => [
+                            'category' => $translator->trans('plans.exams.label'),
+                            'content' => $exam->getDescription(),
+                            'view' => $view
+                        ]
+                    ];
+                }
+            }
         }
 
         return $this->json($json);

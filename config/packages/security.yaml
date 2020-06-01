@@ -63,7 +63,7 @@ security:
             stateless: true
 
         ics:
-            pattern: ^/(appointments|timetable|exams)/ics/
+            pattern: ^/(appointments|timetable|exams)/ics/download(?!$)
             stateless: true
             device: true
 

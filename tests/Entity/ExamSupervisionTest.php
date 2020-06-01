@@ -3,13 +3,13 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Exam;
-use App\Entity\ExamInvigilator;
+use App\Entity\ExamSupervision;
 use App\Entity\Teacher;
 use PHPUnit\Framework\TestCase;
 
-class ExamInvigilatorTest extends TestCase {
+class ExamSupervisionTest extends TestCase {
     public function testGettersSetters() {
-        $invigilator = new ExamInvigilator();
+        $invigilator = new ExamSupervision();
 
         $this->assertNull($invigilator->getId());
 

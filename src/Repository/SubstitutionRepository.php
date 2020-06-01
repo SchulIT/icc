@@ -6,6 +6,7 @@ use App\Entity\Grade;
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
 class SubstitutionRepository extends AbstractTransactionalRepository implements SubstitutionRepositoryInterface {
@@ -174,5 +175,24 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
         }
 
         return $qb;
+    }
+
+    /*
+     * TODO: The following methods need improvement -> count in database!
+     */
+    public function countAllByDate(DateTime $date): int {
+        return count($this->findAllByDate($date));
+    }
+
+    public function countAllForStudyGroups(array $studyGroups, ?DateTime $date = null): int {
+        return count($this->findAllForStudyGroups($studyGroups, $date));
+    }
+
+    public function countAllForTeacher(Teacher $teacher, ?DateTime $date = null): int {
+        return count($this->findAllForTeacher($teacher, $date));
+    }
+
+    public function countAllForGrade(Grade $grade, ?DateTime $date = null): int {
+        return count($this->findAllForGrade($grade, $date));
     }
 }

@@ -4,19 +4,26 @@ namespace App\Controller;
 
 use App\Converter\EnumStringConverter;
 use App\Entity\AppointmentCategory;
+use App\Entity\Grade;
 use App\Entity\UserType;
+use App\Form\ColorType;
+use App\Form\IdEntityType;
 use App\Menu\Builder;
 use App\Repository\AppointmentCategoryRepositoryInterface;
+use App\Repository\GradeRepositoryInterface;
 use App\Settings\AbstractSettings;
 use App\Settings\AppointmentsSettings;
+use App\Settings\DashboardSettings;
 use App\Settings\ExamSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\ArrayUtils;
+use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -26,6 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function foo\func;
 
 /**
  * @Route("/admin/settings")
@@ -41,6 +49,62 @@ class SettingsController extends AbstractController {
 
         return $this->render('admin/settings/index.html.twig', [
             'menu' => $settingsMenu->getChildren()
+        ]);
+    }
+
+    /**
+     * @Route("/dashboard", name="admin_settings_dashboard")
+     */
+    public function dashboard(Request $request, DashboardSettings $dashboardSettings) {
+        $builder = $this->createFormBuilder();
+        $builder
+            ->add('removable_types', TextType::class, [
+                'label' => 'admin.settings.dashboard.removable_substitutions.label',
+                'help' => 'admin.settings.dashboard.removable_substitutions.help',
+                'data' => implode(',', $dashboardSettings->getRemovableSubstitutionTypes()),
+                'required' => false
+            ])
+            ->add('additional_types', TextType::class, [
+                'label' => 'admin.settings.dashboard.additional_substitutions.label',
+                'help' => 'admin.settings.dashboard.additional_substitutions.help',
+                'data' => implode(',', $dashboardSettings->getAdditionalSubstitutionTypes()),
+                'required' => false
+            ])
+            ->add('free_lesson_types', TextType::class, [
+                'label' => 'admin.settings.dashboard.free_lesson_types.label',
+                'help' => 'admin.settings.dashboard.free_lesson_types.help',
+                'data' => implode(',', $dashboardSettings->getFreeLessonSubstitutionTypes()),
+                'required' => false
+            ]);
+
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $map = [
+                'removable_types' => function($types) use ($dashboardSettings) {
+                    $dashboardSettings->setRemovableSubstitutionTypes(explode(',', $types));
+                },
+                'additional_types' => function($types) use ($dashboardSettings) {
+                    $dashboardSettings->setAdditionalSubstitutionTypes(explode(',', $types));
+                },
+                'free_lesson_types' => function($types) use ($dashboardSettings) {
+                    $dashboardSettings->setFreeLessonSubstitutionTypes(explode(',', $types));
+                }
+            ];
+
+            foreach($map as $formKey => $callable) {
+                $value = $form->get($formKey)->getData();
+                $callable($value);
+            }
+
+            $this->addFlash('success', 'admin.settings.success');
+
+            return $this->redirectToRoute('admin_settings_dashboard');
+        }
+
+        return $this->render('admin/settings/dashboard.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 
@@ -75,14 +139,14 @@ class SettingsController extends AbstractController {
                 ],
                 'data' => $examSettings->getTimeWindowForStudents()
             ])
-            ->add('window_invigilators', IntegerType::class, [
-                'label' => 'admin.settings.exams.window.invigilators.label',
-                'help' => 'admin.settings.exams.window.invigilators.help',
+            ->add('window_supervisions', IntegerType::class, [
+                'label' => 'admin.settings.exams.window.supervisions.label',
+                'help' => 'admin.settings.exams.window.supervisions.help',
                 'constraints' => [
                     new Type(['type' => 'integer']),
                     new GreaterThanOrEqual(['value' => 0])
                 ],
-                'data' => $examSettings->getTimeWindowForStudentsToSeeInvigilators()
+                'data' => $examSettings->getTimeWindowForStudentsToSeeSupervisions()
             ])
             ->add('notifications_enabled', CheckboxType::class, [
                 'label' => 'admin.settings.exams.notifications.enabled.label',
@@ -129,8 +193,8 @@ class SettingsController extends AbstractController {
                 'window' => function(int $window) use ($examSettings) {
                     $examSettings->setTimeWindowForStudents($window);
                 },
-                'window_invigilators' => function(int $window) use ($examSettings) {
-                    $examSettings->setTimeWindowForStudentsToSeeInvigilators($window);
+                'window_supervisions' => function(int $window) use ($examSettings) {
+                    $examSettings->setTimeWindowForStudentsToSeeSupervisions($window);
                 },
                 'notifications_enabled' => function(bool $enabled) use ($examSettings) {
                     $examSettings->setNotificationsEnabled($enabled);
@@ -167,7 +231,7 @@ class SettingsController extends AbstractController {
     /**
      * @Route("/timetable", name="admin_settings_timetable")
      */
-    public function timetable(Request $request, TimetableSettings $timetableSettings,
+    public function timetable(Request $request, TimetableSettings $timetableSettings, GradeRepositoryInterface $gradeRepository,
                               AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, TranslatorInterface $translator) {
         $builder = $this->createFormBuilder();
         $builder
@@ -183,20 +247,48 @@ class SettingsController extends AbstractController {
             ->add('categories', ChoiceType::class, [
                 'label' => 'admin.settings.timetable.no_school_category.label',
                 'help' => 'admin.settings.timetable.no_school_category.help',
-                'choices' => $appointmentCategoryRepository->findAll(),
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($appointmentCategoryRepository->findAll(), function(AppointmentCategory $category) {
+                    return $category->getName();
+                }, function (AppointmentCategory $category) {
+                    return $category->getId();
+                }),
                 'placeholder' => 'admin.settings.timetable.no_school_category.none',
                 'required' => false,
                 'multiple' => true,
-                'choice_value' => function(AppointmentCategory $category) {
-                    return $category->getId();
-                },
-                'choice_label' => function(AppointmentCategory $category) {
-                    return $category->getName();
-                },
                 'data' => $timetableSettings->getCategoryIds(),
                 'label_attr' => [
                     'class' => 'checkbox-custom'
                 ]
+            ])
+            ->add('grades_course_names', ChoiceType::class, [
+                'label' => 'admin.settings.timetable.grades_course_names.label',
+                'help' => 'admin.settings.timetable.grades_course_names.help',
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
+                    return $grade->getName();
+                }, function (Grade $grade) {
+                    return $grade->getId();
+                }),
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => [
+                    'size' => 10
+                ],
+                'data' => $timetableSettings->getGradeIdsWithCourseNames()
+            ])
+            ->add('grades_membership_types', ChoiceType::class, [
+                'label' => 'admin.settings.timetable.grades_membership_types.label',
+                'help' => 'admin.settings.timetable.grades_membership_types.help',
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
+                    return $grade->getName();
+                }, function (Grade $grade) {
+                    return $grade->getId();
+                }),
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => [
+                    'size' => 10
+                ],
+                'data' => $timetableSettings->getGradeIdsWithMembershipTypes()
             ]);
 
         for($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
@@ -242,6 +334,11 @@ class SettingsController extends AbstractController {
                 'data' => $timetableSettings->getStart(0),
                 'widget' => 'single_text',
                 'input' => 'string'
+            ])
+            ->add('supervision_color', ColorType::class, [
+                'label' => 'admin.settings.timetable.supervision.color',
+                'data' => $timetableSettings->getSupervisionColor(),
+                'required' => false
             ]);
 
         for($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
@@ -261,7 +358,10 @@ class SettingsController extends AbstractController {
             $timetableSettings->setMaxLessons($form->get('lessons')->getData());
             $timetableSettings->setCategoryIds($form->get('categories')->getData());
             $timetableSettings->setSupervisionLabel($form->get('supervision_label')->getData());
+            $timetableSettings->setSupervisionColor($form->get('supervision_color')->getData());
             $timetableSettings->setStart(0, $form->get('supervision_begin')->getData());
+            $timetableSettings->setGradeIdsWithCourseNames($form->get('grades_course_names')->getData());
+            $timetableSettings->setGradeIdsWithMembershipTypes($form->get('grades_membership_types')->getData());
 
             for($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
                 $startKey = sprintf('lesson_%d_start', $lesson);
@@ -299,7 +399,7 @@ class SettingsController extends AbstractController {
     /**
      * @Route("/substitutions", name="admin_settings_substitutions")
      */
-    public function substitutions(Request $request, SubstitutionSettings $substitutionSettings) {
+    public function substitutions(Request $request, SubstitutionSettings $substitutionSettings, EnumStringConverter $enumStringConverter) {
         $builder = $this->createFormBuilder();
         $builder
             ->add('ahead_days', IntegerType::class, [
@@ -316,6 +416,22 @@ class SettingsController extends AbstractController {
                 'help' => 'admin.settings.substitutions.skip_weekends.help',
                 'required' => false,
                 'data' => $substitutionSettings->skipWeekends(),
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
+            ])
+            ->add('absence_visibility', ChoiceType::class, [
+                'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
+                'choice_label' => function(UserType $userType) use($enumStringConverter) {
+                    return $enumStringConverter->convert($userType);
+                },
+                'choice_value' => function(UserType $userType) {
+                    return $userType->getValue();
+                },
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'label.visibility',
+                'data' => $substitutionSettings->getAbsenceVisibility(),
                 'label_attr' => [
                     'class' => 'checkbox-custom'
                 ]
@@ -353,6 +469,9 @@ class SettingsController extends AbstractController {
                 'skip_weekends' => function(bool $skipWeekends) use ($substitutionSettings) {
                     $substitutionSettings->setSkipWeekends($skipWeekends);
                 },
+                'absence_visibility' => function(array $visibility) use ($substitutionSettings) {
+                    $substitutionSettings->setAbsenceVisibility($visibility);
+                },
                 'notifications_enabled' => function(bool $enabled) use ($substitutionSettings) {
                     $substitutionSettings->setNotificationsEnabled($enabled);
                 },
@@ -379,9 +498,77 @@ class SettingsController extends AbstractController {
         ]);
     }
 
-    public function appointments(Request $request, AppointmentsSettings $appointmentsSettings) {
+    /**
+     * @Route("/appointments", name="admin_settings_appointments")
+     */
+    public function appointments(Request $request, AppointmentsSettings $appointmentsSettings, EnumStringConverter $enumStringConverter) {
         $builder = $this->createFormBuilder();
+        $userTypes = UserType::values();
 
+        foreach($userTypes as $name => $userType) {
+            $builder
+                ->add(sprintf('start_%s', $name), DateType::class, [
+                    'label' => 'admin.settings.appointments.start.label',
+                    'label_translation_parameters' => [
+                        '%type%' => $enumStringConverter->convert($userType)
+                    ],
+                    'help' => 'admin.settings.appointments.start.help',
+                    'data' => $appointmentsSettings->getStart($userType),
+                    'widget' => 'single_text',
+                    'required' => false
+                ])
+                ->add(sprintf('end_%s', $name), DateType::class, [
+                    'label' => 'admin.settings.appointments.end.label',
+                    'label_translation_parameters' => [
+                        '%type%' => $enumStringConverter->convert($userType)
+                    ],
+                    'help' => 'admin.settings.appointments.end.help',
+                    'data' => $appointmentsSettings->getEnd($userType),
+                    'widget' => 'single_text',
+                    'required' => false
+                ]);
+        }
 
+        $builder->add('exam_color', ColorType::class, [
+            'label' => 'admin.settings.appointments.exam_color.label',
+            'help' => 'admin.settings.appointments.exam_color.help',
+            'data' => $appointmentsSettings->getExamColor(),
+            'required' => false
+        ]);
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $map = [
+                'exam_color' => function(?string $color) use($appointmentsSettings) {
+                    $appointmentsSettings->setExamColor($color);
+                }
+            ];
+
+            foreach($userTypes as $name => $userType) {
+                $map['start_' . $name] = function(?DateTime $dateTime) use ($appointmentsSettings, $userType) {
+                    $appointmentsSettings->setStart($userType, $dateTime);
+                };
+
+                $map['end_' . $name] = function(?DateTime $dateTime) use ($appointmentsSettings, $userType) {
+                    $appointmentsSettings->setEnd($userType, $dateTime);
+                };
+            }
+
+            foreach($map as $formKey => $callable) {
+                $value = $form->get($formKey)->getData();
+                $callable($value);
+            }
+
+            $this->addFlash('success', 'admin.settings.success');
+
+            return $this->redirectToRoute('admin_settings_appointments');
+
+        }
+
+        return $this->render('admin/settings/appointments.html.twig', [
+            'form' => $form->createView(),
+            'userTypes' => $userTypes
+        ]);
     }
 }

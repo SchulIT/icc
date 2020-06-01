@@ -17,22 +17,30 @@ class AppointmentsSettings extends AbstractSettings {
     }
 
     public function getStart(UserType $userType) {
-        $key = $this->getKeyName($userType->getValue(), AppointmentsSettings::StartDate);
+        $key = $this->getKeyName($userType, AppointmentsSettings::StartDate);
         return $this->getValue($key);
     }
 
     public function getEnd(UserType $userType) {
-        $key = $this->getKeyName($userType->getValue(), AppointmentsSettings::EndDate);
+        $key = $this->getKeyName($userType, AppointmentsSettings::EndDate);
         return $this->getValue($key);
     }
 
     public function setStart(UserType $userType, \DateTime $dateTime = null) {
-        $key = $this->getKeyName($userType->getValue(), AppointmentsSettings::StartDate);
+        $key = $this->getKeyName($userType, AppointmentsSettings::StartDate);
         $this->setValue($key, $dateTime);
     }
 
     public function setEnd(UserType $userType, \DateTime $dateTime = null) {
-        $key = $this->getKeyName($userType->getValue(), AppointmentsSettings::EndDate);
+        $key = $this->getKeyName($userType, AppointmentsSettings::EndDate);
         $this->setValue($key, $dateTime);
+    }
+
+    public function getExamColor(): ?string {
+        return $this->getValue('appointments.exam_color', null);
+    }
+
+    public function setExamColor(?string $color): void {
+        $this->setValue('appointments.exam_color', $color);
     }
 }

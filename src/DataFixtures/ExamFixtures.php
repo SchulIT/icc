@@ -3,7 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Exam;
-use App\Entity\ExamInvigilator;
+use App\Entity\ExamSupervision;
 use App\Entity\Grade;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
@@ -93,15 +93,15 @@ class ExamFixtures extends Fixture implements DependentFixtureInterface {
                 }
 
                 if($this->generator->boolean) {
-                    $invigilatorTeachers = $this->generator->randomElements($teachers, $duration);
+                    $supervisionTeachers = $this->generator->randomElements($teachers, $duration);
 
                     for($lesson = $exam->getLessonStart(); $lesson <= $exam->getLessonEnd(); $lesson++) {
-                        $invigilator = (new ExamInvigilator())
-                            ->setTeacher($invigilatorTeachers[$lesson - $exam->getLessonStart()])
+                        $supervision = (new ExamSupervision())
+                            ->setTeacher($supervisionTeachers[$lesson - $exam->getLessonStart()])
                             ->setLesson($lesson)
                             ->setExam($exam);
 
-                        $manager->persist($invigilator);
+                        $manager->persist($supervision);
                     }
                 }
 

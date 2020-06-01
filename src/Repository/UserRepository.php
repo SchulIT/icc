@@ -191,7 +191,7 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
     public function findAllByNotifyExams() {
         return $this->em->getRepository(User::class)
             ->findBy([
-                'isExamNotificationsEnabled'
+                'isExamNotificationsEnabled' => true
             ]);
     }
 
@@ -201,7 +201,7 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
     public function findAllByNotifySubstitutions() {
         return $this->em->getRepository(User::class)
             ->findBy([
-                'isSubstitutionNotificationsEnabled'
+                'isSubstitutionNotificationsEnabled' => true
             ]);
     }
 
@@ -211,7 +211,7 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
     public function findAllByNotifyMessages(Message $message) {
         return $this->em->getRepository(User::class)
             ->findBy([
-                'isMessageNotificationsEnabled'
+                'isMessageNotificationsEnabled' => true
             ]);
     }
 

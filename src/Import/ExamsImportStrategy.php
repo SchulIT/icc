@@ -3,10 +3,12 @@
 namespace App\Import;
 
 use App\Entity\Exam;
+use App\Entity\ExamSupervision;
 use App\Entity\Student;
 use App\Entity\Tuition;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
+use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Request\Data\ExamData;
@@ -19,12 +21,14 @@ class ExamsImportStrategy implements ImportStrategyInterface {
     private $examRepository;
     private $tuitionRepository;
     private $studentRepository;
+    private $teacherRepository;
 
     public function __construct(ExamRepositoryInterface $examRepository, TuitionRepositoryInterface $tuitionRepository,
-                                StudentRepositoryInterface $studentRepository) {
+                                StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository) {
         $this->examRepository = $examRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->studentRepository = $studentRepository;
+        $this->teacherRepository = $teacherRepository;
     }
 
     /**
@@ -81,6 +85,26 @@ class ExamsImportStrategy implements ImportStrategyInterface {
         $entity->setLessonStart($data->getLessonStart());
         $entity->setLessonEnd($data->getLessonEnd());
         $entity->setRooms($data->getRooms());
+
+        $supervisions = $data->getSupervisions();
+
+        for($lesson = $data->getLessonStart(), $idx = 0; $lesson <= $data->getLessonEnd(); $lesson++, $idx++) {
+            $supervision = $entity->getSupervisions()->filter(function(ExamSupervision $supervision) use ($lesson) {
+                return $supervision->getLesson() === $lesson;
+            })->first();
+
+            if($supervision === false) {
+                $supervision = (new ExamSupervision())
+                    ->setExam($entity)
+                    ->setLesson($lesson);
+                $entity->addSupervision($supervision);
+            } else if(!isset($supervisions[$idx])) {
+                $entity->removeSupervision($supervision);
+                continue;
+            }
+
+            $supervision->setTeacher($this->teacherRepository->findOneByExternalId($supervision[$idx]));
+        }
 
         /*CollectionUtils::synchronize(
             $entity->getStudents(),

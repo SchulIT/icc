@@ -8,7 +8,9 @@ class RoomTagRepository extends AbstractRepository implements RoomTagRepositoryI
 
     public function findAll(): array {
         return $this->em->getRepository(RoomTag::class)
-            ->findAll();
+            ->findBy( [], [
+                'name' => 'asc'
+            ]);
     }
 
     public function persist(RoomTag $roomTag): void {

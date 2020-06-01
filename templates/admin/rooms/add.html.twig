@@ -1,0 +1,41 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.rooms.add.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_rooms') }}">{{ 'admin.rooms.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+    {{ form_row(form.group_general) }}
+
+    <div class="card">
+        <div class="card-header">
+            {{ 'label.tags'|trans }}
+        </div>
+
+        <div class="card-body">
+            {% for child in form.group_tags %}
+                {{ form_widget(child) }}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+        </button>
+
+        <a href="{{ path('admin_rooms') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

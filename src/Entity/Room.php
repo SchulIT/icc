@@ -45,7 +45,7 @@ class Room {
     private $capacity;
 
     /**
-     * @ORM\OneToMany(targetEntity="RoomTagInfo", mappedBy="room", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="RoomTagInfo", mappedBy="room", cascade={"persist"}, orphanRemoval=true)
      * @var Collection
      */
     private $tags;
@@ -145,5 +145,12 @@ class Room {
      */
     public function getTags(): Collection {
         return $this->tags;
+    }
+
+    public function ensureAllTagsHaveRoomAssociated(): void {
+        /** @var RoomTagInfo $tag */
+        foreach($this->getTags() as $tag) {
+            $tag->setRoom($this);
+        }
     }
 }

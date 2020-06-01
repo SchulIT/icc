@@ -256,6 +256,11 @@ class Builder {
         }
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $menu->addChild('admin.rooms.label', [
+                'route' => 'admin_rooms'
+            ])
+                ->setAttribute('icon', 'fas fa-door-open');
+
             $menu->addChild('admin.timetable.label', [
                 'route' => 'admin_timetable'
             ])

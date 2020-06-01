@@ -106,6 +106,8 @@ label:
     description: Beschreibung
     tuitions: Unterricht
     nobody: Niemand
+    capacity: Kapazität
+    has_value: hat Wert
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -821,6 +823,35 @@ admin:
             lists: Kurse mit diesem Fach in Kurslisten sichtbar
             lists_false: Kurse mit diesem Fach in Kurslisten nicht sichtbar
 
+    rooms:
+        label: Räume
+        empty: Keine Räume vorhanden.
+        add:
+            label: Neuer Raum
+            success: Raum erfolgreich angelegt
+        edit:
+            label: Raum bearbeiten
+            success: Raum erfolgreich aktualisiert
+        remove:
+            label: Raum löschen
+            confirm: 'Soll der Raum "%name%" wirklich gelöscht werden?'
+            success: Raum erfolgreich gelöscht
+
+        tags:
+            label: Raum-Tags
+            empty: Keine Raum-Tags vorhanden.
+            add:
+                label: Neuer Raum-Tag
+                success: Raum-Tag erfolgreich angelegt
+            edit:
+                label: Raum-Tag bearbeiten
+                success: Raum-Tag erfolgreich aktualisiert
+            remove:
+                label: Raum-Tag löschen
+                confirm: 'Soll der Raum-Tag "%name%" wirklich gelöscht werden?'
+                success: Raum-Tag erfolgreich gelöscht
+
+
 versions:
     label: Versionen
     restore:
@@ -829,7 +860,7 @@ versions:
         confirm: 'Soll die Version vom %date% wirklich wiederhergestellt werden?'
         success: Version erfolgreich wiederherstellt
     show:
-        label: "Version %version%"
+        label: 'Version %version%"'
         button: anzeigen
         info: "Es wird Version %version% vom %date% des Wiki-Artikels angezeigt."
 

@@ -1,0 +1,83 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.rooms.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if rooms|length == 0 %}
+                <div class="bs-callout bs-callout-info">
+                    <h4>{{ 'info.label'|trans }}</h4>
+
+                    <p>{{ 'admin.rooms.empty'|trans }}</p>
+                </div>
+                {% else %}
+                <div class="card">
+                    <table class="table table-striped table-bordered table-hover">
+                        <colgroup>
+                            <col>
+                            <col>
+                            <col class="column-md">
+                            <col class="column-md">
+                        </colgroup>
+
+                        <thead>
+                        <tr>
+                            <th>{{ 'label.name'|trans }}</th>
+                            <th>{{ 'label.description'|trans }}</th>
+                            <th>{{ 'label.capacity'|trans }}</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for room in rooms %}
+                            <tr>
+                                <td>{{ room.name }}</td>
+                                <td>{{ room.description }}</td>
+                                <td>{{ room.capacity }}</td>
+                                <td>
+                                    {% if is_granted('edit', room) %}
+                                        <a href="{{ path('edit_room', { uuid: room.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.rooms.edit.label'|trans }}">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                    {% endif %}
+                                    {% if is_granted('remove', room) %}
+                                        <a href="{{ path('remove_room', { uuid: room.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.rooms.remove.label'|trans }}">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('add_room') }}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-plus"></i> {{ 'admin.rooms.add.label'|trans }}
+                        </a>
+
+                        <a href="{{ path('admin_room_tags') }}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-cogs"></i> {{ 'admin.rooms.tags.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

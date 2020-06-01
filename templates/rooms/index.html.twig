@@ -13,16 +13,26 @@
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-3 order-md-2">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            <a href="{{ path('admin_rooms') }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-cogs"></i> {{ 'admin.rooms.label'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">{{ 'plans.rooms.filter.label'|trans }}</h5>
 
-                        <form method="post" role="form">
+                        <form method="get" role="form">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="mr-1 custom-control-input" type="checkbox" id="check-name" name="name" {% if query.hasName() %} checked{% endif %}>
+                                            <input class="mr-1 custom-control-input" value="✓" type="checkbox" id="check-name" name="name" {% if query.hasName() %} checked{% endif %}>
                                             <label class="custom-control-label" for="check-name">{{ 'plans.rooms.filter.name.label'|trans }}</label>
                                         </div>
                                     </div>
@@ -41,7 +51,7 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="mr-1 custom-control-input" type="checkbox" id="check-seats" name="seats" {% if query.hasSeats() %} checked{% endif %}>
+                                            <input class="mr-1 custom-control-input" value="✓" type="checkbox" id="check-seats" name="seats" {% if query.hasSeats() %} checked{% endif %}>
                                             <label for="check-seats" class="custom-control-label">
                                                 {{ 'plans.rooms.seats'|trans }}
                                             </label>
@@ -63,22 +73,22 @@
                                     <div class="input-group-prepend">
                                         <div class="input-group-text">
                                             <div class="custom-control custom-checkbox">
-                                                <input class="mr-1 custom-control-input" type="checkbox" id="check-tag-{{ tag.getId() }}" name="tag-{{ tag.getId() }}" value="true" {% if query.hasTag(tag) %} checked{% endif %}>
-                                                <label for="check-tag-{{ tag.getId() }}" class="custom-control-label">
-                                                    {{ tag.getName() }}
+                                                <input class="mr-1 custom-control-input" type="checkbox" id="check-tag-{{ tag.uuid }}" name="tag-{{ tag.uuid }}" value="✓" {% if query.hasTag(tag) %} checked{% endif %}>
+                                                <label for="check-tag-{{ tag.uuid }}" class="custom-control-label">
+                                                    {{ tag.name }}
                                                 </label>
                                             </div>
                                         </div>
                                     </div>
 
                                     {% if tag.hasValue() %}
-                                        <input type="number" min="0" name="tag-{{ tag.getId() }}-value" class="form-control input-sm" value="{{ query.getValueOrDefault(tag) }}" data-enable="#check-tag-{{ tag.getId() }}">
+                                        <input type="number" min="0" name="tag-{{ tag.uuid }}-value" class="form-control input-sm" value="{{ query.getValueOrDefault(tag) }}" data-enable="#check-tag-{{ tag.uuid }}">
                                     {% endif %}
 
-                                    {% if not tag.getDescription() is empty %}
+                                    {% if not tag.description is empty %}
                                         <div class="input-group-append">
                                             <div class="input-group-text">
-                                                <i class="fa fa-info-circle" title="{{ tag.getDescription() }}" data-toggle="tooltip"></i>
+                                                <i class="fa fa-info-circle" title="{{ tag.description }}" data-toggle="tooltip"></i>
                                             </div>
                                         </div>
                                     {% endif %}
@@ -97,12 +107,30 @@
                 {% for room in rooms %}
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">{{ room.name }}</h5>
+                            <div class="float-right ml-2">
+                                <div class="btn-group" role="group">
+                                    {% if is_granted('edit', room) %}
+                                        <a href="{{ path('edit_room', { uuid: room.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.rooms.edit.label'|trans }}">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                    {% endif %}
+                                    {% if is_granted('remove', room) %}
+                                        <a href="{{ path('remove_room', { uuid: room.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.rooms.remove.label'|trans }}">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
 
-                            <p>
-                                <strong>{{ 'plans.rooms.seats'|trans }}: </strong>
-                                {{ room.capacity }}
-                            </p>
+                            <h5 class="card-title">
+                                {{ room.name }}
+
+                                {% if room.capacity is not null %}
+                                <span class="badge badge-primary">
+                                    <i class="fas fa-chair"></i> {{ room.capacity }}
+                                </span>
+                                {% endif %}
+                            </h5>
 
                             <p>
                                 {% for tagInfo in room.tags %}
@@ -111,19 +139,13 @@
                                     </span>
                                 {% endfor %}
                             </p>
-
-                            {% if room.description is not empty %}
-                                <hr />
-
-                                <p>
-                                    {{ room.description }}
-                                </p>
-                            {% endif %}
-
-                            <a href="{{ path('timetable', { roomId: room.uuid }) }}" class="btn btn-outline-primary btn-sm">
-                                {{ 'plans.rooms.timetable'|trans }}
-                            </a>
                         </div>
+
+                        {% if room.description is not empty %}
+                            <div class="card-footer">
+                                {{ room.description }}
+                            </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>

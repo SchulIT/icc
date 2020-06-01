@@ -68,7 +68,7 @@ class MessageController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
 
-        $archive = $request->query->getBoolean('archive', false);
+        $archive = $request->query->get('archive', false) === '✓';
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user);
 

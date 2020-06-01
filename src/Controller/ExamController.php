@@ -63,7 +63,7 @@ class ExamController extends AbstractControllerWithMessages {
         $user = $this->getUser();
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
-        $all = $request->query->getBoolean('all', false);
+        $all = $request->query->get('all', false) === '✓';
         $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user);
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);

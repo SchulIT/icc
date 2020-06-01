@@ -825,6 +825,7 @@ admin:
 
     rooms:
         label: Räume
+        empty: Keine Räume vorhanden.
         add:
             label: Neuer Raum
             success: Raum erfolgreich angelegt
@@ -838,6 +839,7 @@ admin:
 
         tags:
             label: Raum-Tags
+            empty: Keine Raum-Tags vorhanden.
             add:
                 label: Neuer Raum-Tag
                 success: Raum-Tag erfolgreich angelegt

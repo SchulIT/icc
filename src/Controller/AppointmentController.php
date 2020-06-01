@@ -119,16 +119,25 @@ class AppointmentController extends AbstractControllerWithMessages {
                 continue;
             }
 
-            $view = [
-                [
-                    'label' => $translator->trans('label.start'),
-                    'content' => $appointment->getStart()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
-                ],
-                [
-                    'label' => $translator->trans('label.end'),
-                    'content' => $appointment->getEnd()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
-                ]
-            ];
+            if($appointment->isAllDay() && $appointment->getDuration()->d === 1) {
+                $view = [
+                    [
+                        'label' => $translator->trans('label.date'),
+                        'content' => $appointment->getStart()->format($translator->trans('date.format'))
+                    ]
+                ];
+            } else {
+                $view = [
+                    [
+                        'label' => $translator->trans('label.start'),
+                        'content' => $appointment->getStart()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
+                    ],
+                    [
+                        'label' => $translator->trans('label.end'),
+                        'content' => $appointment->getRealEnd()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
+                    ]
+                ];
+            }
 
             if(!empty($appointment->getLocation())) {
                 $view[] = [

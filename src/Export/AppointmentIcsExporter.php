@@ -10,45 +10,48 @@ use App\Entity\User;
 use App\Entity\UserType;
 use App\Ics\IcsHelper;
 use App\Repository\AppointmentRepositoryInterface;
+use App\Security\Voter\AppointmentVoter;
 use Jsvrcek\ICS\Model\CalendarEvent;
 use Jsvrcek\ICS\Model\Relationship\Attendee;
 use Jsvrcek\ICS\Utility\Formatter;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AppointmentIcsExporter {
-    private static $filename = 'appointments.ics';
 
     private $appointmentsRepository;
     private $icsHelper;
     private $studyGroupsConverter;
     private $teacherConverter;
+    private $authorizationChecker;
     private $translator;
 
     public function __construct(AppointmentRepositoryInterface $appointmentsRepository, IcsHelper $icsHelper,
                                 StudyGroupsGradeStringConverter $studyGroupsConverter, TeacherStringConverter $teacherConverter,
-                                TranslatorInterface $translator) {
+                                AuthorizationCheckerInterface $authorizationChecker, TranslatorInterface $translator) {
         $this->appointmentsRepository = $appointmentsRepository;
         $this->icsHelper = $icsHelper;
         $this->studyGroupsConverter = $studyGroupsConverter;
+        $this->authorizationChecker = $authorizationChecker;
         $this->translator = $translator;
         $this->teacherConverter = $teacherConverter;
     }
 
     /**
      * @param User $user
-     * @param bool $onlyOwn
      * @return CalendarEvent[]
      */
-    private function getEvents(User $user, bool $onlyOwn = true): array {
-        $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Teacher());
+    private function getEvents(User $user): array {
+        $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
         $isTeacher = $user->getUserType()->equals(UserType::Teacher());
 
         $appointments = [ ];
 
         if($isStudentOrParent) {
             $appointments = $this->appointmentsRepository->findAllForStudents($user->getStudents()->toArray());
-        } else if($onlyOwn === true && $isTeacher) {
+        } else if($isTeacher) {
             $appointments = $this->appointmentsRepository->findAllForTeacher($user->getTeacher());
         } else {
             $appointments = $this->appointmentsRepository->findAll();
@@ -57,7 +60,9 @@ class AppointmentIcsExporter {
         $items = [ ];
 
         foreach($appointments as $appointment) {
-            $items[] = $this->getEvent($appointment);
+            if($this->authorizationChecker->isGranted(AppointmentVoter::View, $appointment)) {
+                $items[] = $this->getEvent($appointment);
+            }
         }
 
         return $items;
@@ -118,7 +123,7 @@ class AppointmentIcsExporter {
 
             $description[] = $this->translator->trans('plans.appointments.export.organizers', [
                 '%count%' => count($organizers),
-                '%names%' => implode(', ', $organizers)
+                '%name%' => implode(', ', $organizers)
             ]);
         }
 

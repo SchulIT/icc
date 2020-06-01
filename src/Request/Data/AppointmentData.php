@@ -50,6 +50,9 @@ class AppointmentData {
     private $start;
 
     /**
+     * End of the appointment. Note: this value is exclusive which means that an all day appointment on April 30, 2020
+     * has a start date of "2020-04-30T00:00:00" and end date of "2020-05-01T00:00:00".
+     *
      * @Serializer\Type("DateTime")
      * @Assert\NotNull()
      * @var DateTime

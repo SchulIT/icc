@@ -247,16 +247,14 @@ class SettingsController extends AbstractController {
             ->add('categories', ChoiceType::class, [
                 'label' => 'admin.settings.timetable.no_school_category.label',
                 'help' => 'admin.settings.timetable.no_school_category.help',
-                'choices' => $appointmentCategoryRepository->findAll(),
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($appointmentCategoryRepository->findAll(), function(AppointmentCategory $category) {
+                    return $category->getName();
+                }, function (AppointmentCategory $category) {
+                    return $category->getId();
+                }),
                 'placeholder' => 'admin.settings.timetable.no_school_category.none',
                 'required' => false,
                 'multiple' => true,
-                'choice_value' => function(AppointmentCategory $category) {
-                    return $category->getId();
-                },
-                'choice_label' => function(AppointmentCategory $category) {
-                    return $category->getName();
-                },
                 'data' => $timetableSettings->getCategoryIds(),
                 'label_attr' => [
                     'class' => 'checkbox-custom'

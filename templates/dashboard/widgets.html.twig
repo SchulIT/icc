@@ -238,6 +238,6 @@
     </div>
 {% endmacro %}
 
-{% macro appointment(item, lesson) %}
-    {% include "_includes/appointment.html.twig" with { appointment: item.appointment } only %}
+{% macro appointment(appointment) %}
+    {% include "_includes/appointment.html.twig" with { appointment: appointment } only %}
 {% endmacro %}

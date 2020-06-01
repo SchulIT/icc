@@ -2,6 +2,7 @@
 
 namespace App\Dashboard;
 
+use App\Entity\Appointment;
 use App\Entity\Exam;
 use App\Entity\ExamSupervision;
 use App\Entity\GradeTeacher;
@@ -21,6 +22,7 @@ use App\Grouping\AbsentStudentGroup;
 use App\Grouping\Grouper;
 use App\Grouping\AbsentStudentStrategy as AbstentStudentGroupStrategy;
 use App\Repository\AbsenceRepositoryInterface;
+use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
@@ -30,6 +32,7 @@ use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
 use App\Security\Voter\AbsenceVoter;
+use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\SubstitutionVoter;
@@ -60,6 +63,7 @@ class DashboardViewHelper {
     private $infotextRepository;
     private $absenceRepository;
     private $studyGroupRepository;
+    private $appointmentRepository;
 
     private $studyGroupHelper;
     private $timetablePeriodHelper;
@@ -73,7 +77,8 @@ class DashboardViewHelper {
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
-                                MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository, StudyGroupRepositoryInterface $studyGroupRepository,
+                                MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
+                                StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository,
                                 StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, Sorter $sorter, Grouper $grouper,
                                 TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker) {
         $this->substitutionRepository = $substitutionRepository;
@@ -85,6 +90,7 @@ class DashboardViewHelper {
         $this->infotextRepository = $infotextRepository;
         $this->absenceRepository = $absenceRepository;
         $this->studyGroupRepository = $studyGroupRepository;
+        $this->appointmentRepository = $appointmentRepository;
         $this->studyGroupHelper = $studyGroupHelper;
         $this->timetablePeriodHelper = $timetablePeriodHelper;
         $this->timetableSettings = $timetableSettings;
@@ -130,6 +136,7 @@ class DashboardViewHelper {
         $this->addInfotexts($dateTime, $view);
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
+        $this->addAppointments($this->appointmentRepository->findAllForTeacher($teacher, $dateTime), $view);
 
         return $view;
     }
@@ -157,6 +164,7 @@ class DashboardViewHelper {
         $this->addInfotexts($dateTime, $view);
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
+        $this->addAppointments($this->appointmentRepository->findAllForStudents([$student], $dateTime), $view);
 
         return $view;
     }
@@ -361,6 +369,24 @@ class DashboardViewHelper {
         foreach($absences as $absence) {
             if($this->authorizationChecker->isGranted(AbsenceVoter::View, $absence)) {
                 $view->addAbsence($absence);
+            }
+        }
+    }
+
+    /**
+     * @param Appointment[] $appointments
+     * @param DashboardView $view
+     */
+    private function addAppointments(array $appointments, DashboardView $view): void {
+        $freeCategories = $this->timetableSettings->getCategoryIds();
+
+        foreach($appointments as $appointment) {
+            if($this->authorizationChecker->isGranted(AppointmentVoter::View, $appointment)) {
+                if(in_array($appointment->getCategory()->getId(), $freeCategories)) {
+                    $view->removeLessons();;
+                }
+
+                $view->addAppointment($appointment);
             }
         }
     }

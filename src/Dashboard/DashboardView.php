@@ -198,6 +198,39 @@ class DashboardView {
         return $collisions;
     }
 
+    public function addAppointment(Appointment $appointment): void {
+        $this->appointments[] = $appointment;
+    }
+
+    /**
+     * @return Appointment[]
+     */
+    public function getAppointments(): array {
+        return $this->appointments;
+    }
+
+    /**
+     * Removes all timetable and supervisions from the dashboard view
+     * (because the day is free)
+     */
+    public function removeLessons(): void {
+        foreach($this->getLessons() as $idx => $lesson) {
+            $lesson->removeLessons();
+
+            if(count($lesson->getItems()) === 0) {
+                unset($this->lessons[$idx]);
+            }
+        }
+
+        foreach($this->getBeforeLessons() as $idx => $lesson) {
+            $lesson->removeLessons();
+
+            if(count($lesson->getItems()) === 0) {
+                unset($this->beforeLessons[$idx]);
+            }
+        }
+    }
+
     public function isEmpty(): bool {
         return count($this->messages) === 0
             && count($this->infotexts) === 0

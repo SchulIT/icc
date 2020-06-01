@@ -158,6 +158,7 @@ dashboard:
     exam_supervision: Klausuraufsicht
     substitution: Vertretung
     substitution_mentions: Erwähnungen
+    appointments: Termine
     collision:
         hint: Bitte überprüfen und den entsprechenden Ansprechpartner kontaktieren.
         single_label: Mögliche Kollision gefunden.
@@ -261,11 +262,11 @@ plans:
             label: Kalender exportieren
             download:
                 label: Einmaliger Download
-                info: Der Stundenplan wird bei dieser Methode nicht aktualisiert!
+                info: Der Kalender wird bei dieser Methode nicht aktualisiert!
                 filename: termine.ics
             sync:
                 label: Link zur Synchronisation
-                info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Stundenplan damit aktuell hält.
+                info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Kalender damit aktuell hält.
                 name_help: Unter diesem Namen kann in den Profil-Einstellungen der Zugriff wieder entzogen werden.
                 success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
             name: Schulkalender

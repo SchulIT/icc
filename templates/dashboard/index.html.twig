@@ -118,6 +118,15 @@
                                     </div>
                                 </a>
                             {% endif %}
+                            <a href="#appointments" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                <div class="align-self-center text-center w-100">
+                                    {{ 'dashboard.appointments'|trans }}
+
+                                    <span class="badge badge-light badge-pill">
+                                        {{ view.appointments|length }}
+                                    </span>
+                                </div>
+                            </a>
                         </nav>
 
                         {# Priority Messages #}
@@ -173,6 +182,12 @@
                         <a id="mentions"></a>
                         {% for mention in view.substitutionMentions %}
                             {{ dashboard.substitution(mention, null, null, null) }}
+                        {% endfor %}
+
+                        {# Appointments #}
+                        <a id="appointments"></a>
+                        {% for appointment in view.appointments %}
+                            {{ dashboard.appointment(appointment) }}
                         {% endfor %}
 
                         {# Priority Messages #}

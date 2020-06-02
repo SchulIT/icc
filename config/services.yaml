@@ -190,6 +190,11 @@ services:
             $appName: '%env(APP_NAME)%'
             $sender: '%env(MAILER_FROM)%'
 
+    App\EventSubscriber\ReservationCheckerSubscriber:
+        arguments:
+            $appName: '%env(APP_NAME)%'
+            $sender: '%env(MAILER_FROM)%'
+
     # COMMANDS
     App\Command\SendMailsTask:
         arguments:

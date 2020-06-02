@@ -15,3 +15,7 @@ message:
   title: "Neue Mitteilung: %title%"
   content: 'es wurde eine neue Mitteilung "%title%" erstellt. Die Nachricht ist auf dem ICC verfügbar: %link%'
 
+reservation:
+  title: Konflikt bei Raum-Reservierung
+  content: 'Bei der Raumreservierung für %room% am %date% (%lesson%) ist es zu einem Konflikt gekommen.'
+

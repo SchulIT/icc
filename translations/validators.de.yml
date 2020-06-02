@@ -4,4 +4,5 @@
 "Only {{ maxNumber }} exam(s) per day are allowed. Got {{ number }}.": "Die Anzahl der Klausuren pro Tag beträgt {{ maxNumber }}. Mit dieser Klausur sind es bereits {{ number }}."
 "This room reservation collides with an existing reservation by {{ teacher }} in lesson {{ lessonNumber }}.": "Diese Raum-Reservierung kollidiert mit einer bestehenden Reservierung von {{ teacher }} in der {{ lessonNumber }}. Stunde."
 "This room reservation collides with an existing timetable lesson {{ tuition }} ({{ teacher }}) in lesson {{ lessonNumber }}.": "Diese Raum-Reservierung kollidiert mit bestehendem Unterricht {{ tuition }} von {{ teacher }} in der {{ lessonNumber }}. Stunde."
+"This room reservation collides with an existing substitution in lesson {{ lessonNumber }}.": "Diese Raum-Reservierung kollidiert mit einer Vertretung in der {{ lessonNumber }}. Stunde."
 "This value must not be in the past.": "Dieses Datum darf nicht in der Vergangenheit liegen."

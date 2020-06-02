@@ -8,6 +8,7 @@ use App\Entity\ExamSupervision;
 use App\Entity\GradeTeacher;
 use App\Entity\Message;
 use App\Entity\MessageScope;
+use App\Entity\RoomReservation;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Substitution;
@@ -26,6 +27,7 @@ use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
+use App\Repository\RoomReservationRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
@@ -35,6 +37,7 @@ use App\Security\Voter\AbsenceVoter;
 use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
+use App\Security\Voter\RoomReservationVoter;
 use App\Security\Voter\SubstitutionVoter;
 use App\Settings\DashboardSettings;
 use App\Settings\SubstitutionSettings;
@@ -51,6 +54,7 @@ use App\Utils\EnumArrayUtils;
 use App\Utils\StudyGroupHelper;
 use DateTime;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DashboardViewHelper {
 
@@ -64,6 +68,7 @@ class DashboardViewHelper {
     private $absenceRepository;
     private $studyGroupRepository;
     private $appointmentRepository;
+    private $roomReservationRepository;
 
     private $studyGroupHelper;
     private $timetablePeriodHelper;
@@ -74,13 +79,15 @@ class DashboardViewHelper {
     private $dashboardSettings;
 
     private $authorizationChecker;
+    private $validator;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
                                 MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository,
+                                StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, RoomReservationRepositoryInterface $reservationRepository,
                                 StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, Sorter $sorter, Grouper $grouper,
-                                TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker) {
+                                TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
+                                ValidatorInterface $validator) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->timetableRepository = $timetableRepository;
@@ -91,6 +98,7 @@ class DashboardViewHelper {
         $this->absenceRepository = $absenceRepository;
         $this->studyGroupRepository = $studyGroupRepository;
         $this->appointmentRepository = $appointmentRepository;
+        $this->roomReservationRepository = $reservationRepository;
         $this->studyGroupHelper = $studyGroupHelper;
         $this->timetablePeriodHelper = $timetablePeriodHelper;
         $this->timetableSettings = $timetableSettings;
@@ -99,6 +107,7 @@ class DashboardViewHelper {
         $this->grouper = $grouper;
         $this->dashboardSettings = $dashboardSettings;
         $this->authorizationChecker = $authorizationChecker;
+        $this->validator = $validator;
     }
 
     public function createViewForTeacher(Teacher $teacher, DateTime $dateTime, bool $includeGradeMessages = false): DashboardView {
@@ -137,6 +146,7 @@ class DashboardViewHelper {
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
         $this->addAppointments($this->appointmentRepository->findAllForTeacher($teacher, $dateTime), $view);
+        $this->addRoomReservations($this->roomReservationRepository->findAllByTeacherAndDate($teacher, $dateTime), $view);
 
         return $view;
     }
@@ -387,6 +397,22 @@ class DashboardViewHelper {
                 }
 
                 $view->addAppointment($appointment);
+            }
+        }
+    }
+
+    /**
+     * @param RoomReservation[] $reservations
+     * @param DashboardView $view
+     */
+    private function addRoomReservations(array $reservations, DashboardView $view): void {
+        foreach($reservations as $reservation) {
+            if($this->authorizationChecker->isGranted(RoomReservationVoter::View)) {
+                $violations = $this->validator->validate($reservation);
+
+                for($lessonNumber = $reservation->getLessonStart(); $lessonNumber <= $reservation->getLessonEnd(); $lessonNumber++) {
+                    $view->addItem($lessonNumber, new RoomReservationViewItem($reservation, $violations));
+                }
             }
         }
     }

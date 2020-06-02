@@ -83,4 +83,24 @@ class RoomReservationRepository extends AbstractRepository implements RoomReserv
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByTeacherAndDate(Teacher $teacher, DateTime $date): array {
+        $qb = $this->em->createQueryBuilder()
+            ->select('r')
+            ->from(RoomReservation::class, 'r')
+            ->leftJoin('r.room', 'rr')
+            ->leftJoin('r.teacher', 'rt')
+            ->andWhere('rt.id = :teacher')
+            ->setParameter('teacher', $teacher->getId());
+
+        if($date !== null) {
+            $qb->andWhere('r.date = :date')
+                ->setParameter('date', $date);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

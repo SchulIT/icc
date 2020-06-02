@@ -23,6 +23,13 @@ interface RoomReservationRepositoryInterface {
     public function findAllByRoomAndTeacher(?Room $room, ?Teacher $teacher, ?DateTime $from): array;
 
     /**
+     * @param Teacher $teacher
+     * @param DateTime $date
+     * @return RoomReservation[]
+     */
+    public function findAllByTeacherAndDate(Teacher $teacher, DateTime $date): array;
+
+    /**
      * @param DateTime $dateTime
      * @param Room $room
      * @param int $lessonNumber

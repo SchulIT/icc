@@ -158,6 +158,7 @@ dashboard:
     before_lesson: "vor %lesson%. Stunde"
     absent_students: Abwesend
     supervision: Aufsicht
+    reservation: Raum-Reservierung
     exam_supervision: Klausuraufsicht
     substitution: Vertretung
     substitution_mentions: Erwähnungen

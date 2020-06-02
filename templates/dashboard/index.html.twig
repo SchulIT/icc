@@ -167,6 +167,8 @@
                                         {{ dashboard.appointment(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
                                     {% elseif type == 'exam_supervision' %}
                                         {{ dashboard.exam_supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                                    {% elseif type == 'reservation' %}
+                                        {{ dashboard.reservation(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber]) }}
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}

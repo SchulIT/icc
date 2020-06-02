@@ -241,3 +241,30 @@
 {% macro appointment(appointment) %}
     {% include "_includes/appointment.html.twig" with { appointment: appointment } only %}
 {% endmacro %}
+
+{% macro reservation(item, lesson, start, end) %}
+    {% set reservation = item.reservation %}
+    {% set violations = item.violations %}
+
+    <div class="card">
+        <div class="d-flex">
+            {{ _self.show_lesson(lesson) }}
+
+            {% for error in violations %}
+                <div class="align-self-center text-center pr-3 text-danger">
+                    <i class="fa fa-exclamation-triangle" title="{{ error.message|trans(error.parameters, 'validators') }}"></i>
+                </div>
+            {% endfor %}
+
+            <span class="badge {% if violations|length == 0 %}badge-light badge-card{% else %}badge-warning{% endif%} align-self-center">
+                {{ 'dashboard.reservation'|trans|upper }}
+            </span>
+
+
+
+            <div class="card-body align-self-center">
+                {{ reservation.room.name }} <span class="text-muted">{{ reservation.room.description }}</span>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

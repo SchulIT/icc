@@ -107,6 +107,7 @@
                 {% for room in rooms %}
                     <div class="card">
                         <div class="card-body">
+                            {% if is_granted('edit', room) or is_granted('remove', room) %}
                             <div class="float-right ml-2">
                                 <div class="btn-group" role="group">
                                     {% if is_granted('edit', room) %}
@@ -120,6 +121,13 @@
                                         </a>
                                     {% endif %}
                                 </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="float-right ml-2">
+                                <a href="{{ path('room_reservations', { rooms: [ room.uuid.toString ]}) }}" class="btn btn-outline-primary btn-sm" title="{{ 'admin.rooms.show_reservations'|trans }}">
+                                    <i class="fa fa-door-closed"></i>
+                                </a>
                             </div>
 
                             <h5 class="card-title">

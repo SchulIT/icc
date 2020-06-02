@@ -57,6 +57,7 @@ label:
     file: Datei
     choose_file: Datei auswählen
     room: Raum
+    rooms: Räume
     options: Optionen
     external_id: Externe ID
     key: Schlüssel
@@ -290,6 +291,29 @@ plans:
         seats: Sitzplätze
         timetable: Stundenplan anzeigen
 
+        reservations:
+            label: Raumbelegplan
+            help: Zum Erstellen einer Reservierung entweder auf ein grünes Feld klicken oder die obige Schaltfläche nutzen.
+            info: Informationen
+            available: Der Raum ist nicht belegt und kann reserviert werden.
+            reservation: Reservierung
+            add:
+                label: Neue Reservierung
+                success: Raum-Reservierung erfolgreich angelegt
+            edit:
+                label: Reservierung bearbeiten
+                success: Raum-Reservierung erfolgreich aktualisiert
+            remove:
+                label: Reservierung löschen
+                success: Raum-Reservierung erfolgreich gelöscht
+                confirm: 'Soll die Raum-Reservierung für %room% am %date% (%lessons%) wirklich gelöscht werden?'
+                info: Nach dem Löschen der Reservierung kann der Raum von anderen Lehrkräften reserviert werden. Er steht dann für den eigenen Unterricht nicht mehr zur Verfügung.
+            collision:
+                label: 'Die Reservierung kollidiert mit folgenden Einträgen:'
+            list:
+                label: Alle Reservierungen
+                empty: Keine Reservierungen für den aktuellen Filter gefunden.
+                all: vergangene Reservierungen anzeigen
 
 lists:
     label: Listen
@@ -436,6 +460,7 @@ date:
     format: d.m.Y
     format_short: d.m.
     time_format: "H:i"
+    week_label: 'KW %week%'
     days:
         0: Sonntag
         1: Montag
@@ -826,6 +851,7 @@ admin:
     rooms:
         label: Räume
         empty: Keine Räume vorhanden.
+        show_reservations: Raum-Belegplan anzeigen
         add:
             label: Neuer Raum
             success: Raum erfolgreich angelegt

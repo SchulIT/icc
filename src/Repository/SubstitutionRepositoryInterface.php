@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Room;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
 use DateTime;
@@ -60,6 +61,13 @@ interface SubstitutionRepositoryInterface extends TransactionalRepositoryInterfa
     public function findAllForGrade(Grade $grade, ?\DateTime $date = null);
 
     public function countAllForGrade(Grade $grade, ?DateTime $date = null): int;
+
+    /**
+     * @param Room[] $rooms
+     * @param DateTime|null $date
+     * @return Substitution[]
+     */
+    public function findAllForRooms(array $rooms, ?DateTime $date): array;
 
     /**
      * @param Substitution $substitution

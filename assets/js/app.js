@@ -3,6 +3,7 @@ require('../css/app.scss');
 require('bootstrap.native');
 require('emojione');
 import Choices from "choices.js";
+import { v4 as uuidv4 } from 'uuid';
 
 let bsCustomFileInput = require('bs-custom-file-input');
 let ClipboardJS = require('clipboard');
@@ -116,13 +117,75 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    document.querySelectorAll('[data-toggle=xhr-popover]').forEach(function(el) {
+        let title = el.getAttribute('data-popover-title');
+        let url = el.getAttribute('data-popover-url');
+        let contentId = 'popover-' + uuidv4();
+        let spinner = '<i class="fas fa-spinner fa-pulse"></i>';
+        let initialized = false;
+
+        let template = '<div class="popover" role="tooltip">' +
+            '<div class="arrow"></div>' +
+            '<h3 class="popover-header">' + title + '</h3>' +
+            '<div class="popover-body" id="' + contentId +'">' +
+            spinner +
+            '</div></div>';
+
+        new bsn.Popover(el, {
+            placement: 'bottom',
+            template: template,
+            trigger: 'hover',
+            animation: 'none'
+        });
+
+        el.addEventListener('shown.bs.popover', function(event) {
+            if(initialized === true) {
+                return;
+            }
+
+            let xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                if(xhr.status >= 200 && xhr.status < 300) {
+                    // Update popover
+                    let contentElement = document.getElementById(contentId);
+
+                    if(contentElement !== null) {
+                        contentElement.innerHTML = xhr.responseText;
+                    }
+
+                    el.Popover.template = '<div class="popover" role="tooltip">' +
+                        '<div class="arrow"></div>' +
+                        '<h3 class="popover-header">' + title + '</h3>' +
+                        '<div class="popover-body" id="' + contentId +'">' +
+                            xhr.responseText +
+                        '</div></div>';
+
+                    /*new bsn.Popover(el, {
+                        placement: 'bottom',
+                        template: template,
+                        trigger: 'hover',
+                        animation: 'none'
+                    });*/
+
+                    initialized = true;
+                    console.log(el.Popover);
+                } else {
+                    console.error('XMLHttpRequest error');
+                    console.error(xhr);
+                }
+            }
+            xhr.open('GET', url);
+            xhr.send();
+        });
+    });
+
     document.querySelectorAll('[data-toggle=popover]').forEach(function(el) {
         let title = el.getAttribute('data-popover-title');
 
         let contentSelector = el.getAttribute('data-popover-container');
         let content = document.querySelector(contentSelector).innerHTML;
 
-        var template = '<div class="popover" role="tooltip">' +
+        let template = '<div class="popover" role="tooltip">' +
             '<div class="arrow"></div>' +
             '<h3 class="popover-header">' + title + '</h3>' +
             '<div class="popover-body">' +

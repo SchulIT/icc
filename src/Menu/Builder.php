@@ -10,6 +10,7 @@ use App\Repository\MessageRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\ListsVoter;
+use App\Security\Voter\RoomReservationVoter;
 use App\Security\Voter\RoomVoter;
 use App\Security\Voter\WikiVoter;
 use Knp\Menu\FactoryInterface;
@@ -84,6 +85,13 @@ class Builder {
                 'route' => 'rooms'
             ])
                 ->setAttribute('icon', 'fas fa-door-open');
+        }
+
+        if($this->authorizationChecker->isGranted(RoomReservationVoter::View)) {
+            $plans->addChild('plans.rooms.reservations.label', [
+                'route' => 'room_reservations'
+            ])
+                ->setAttribute('icon', 'fas fa-door-closed');
         }
 
         return $plans;

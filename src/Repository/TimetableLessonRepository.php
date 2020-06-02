@@ -9,6 +9,7 @@ use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
+use App\Entity\TimetableWeek;
 use Doctrine\ORM\QueryBuilder;
 
 class TimetableLessonRepository extends AbstractTransactionalRepository implements TimetableLessonRepositoryInterface {
@@ -219,4 +220,68 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function findOneByPeriodAndRoomAndWeekAndDayAndLesson(TimetablePeriod $period, TimetableWeek $week, Room $room, int $day, int $lessonNumber): ?TimetableLesson {
+        $qb = $this->getDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('lInner.id')
+            ->from(TimetableLesson::class, 'lInner')
+            ->leftJoin('lInner.period', 'pInner')
+            ->leftJoin('lInner.week', 'wInner')
+            ->leftJoin('lInner.room', 'rInner')
+            ->where('pInner.id = :period')
+            ->andWhere('rInner.id = :room')
+            ->andWhere('wInner.id = :week')
+            ->andWhere('lInner.day = :day')
+            ->andWhere(
+                $qb->expr()->orX(
+                    'lInner.lesson = :lesson',
+                    $qb->expr()->andX(
+                        'lInner.lesson = :previousLesson',
+                        'lInner.isDoubleLesson = true'
+                    )
+                )
+            );
+
+        $qb->setParameter('room', $room->getId())
+            ->setParameter('period', $period->getId())
+            ->setParameter('week', $week->getId())
+            ->setParameter('day', $day)
+            ->setParameter('lesson', $lessonNumber)
+            ->setParameter('previousLesson', $lessonNumber-1);
+
+        $qb->where(
+            $qb->expr()->in('l.id', $qbInner->getDQL())
+        )
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByPeriodAndWeek(TimetablePeriod $period, TimetableWeek $week): array {
+        $qb = $this->getDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('lInner')
+            ->from(TimetableLesson::class, 'lInner')
+            ->leftJoin('lInner.period', 'pInner')
+            ->leftJoin('lInner.week', 'wInner')
+            ->where('pInner.id = :period')
+            ->andWhere('wInner.id = :week');
+
+        $qb->setParameter('period', $period->getId())
+            ->setParameter('week', $week->getId());
+
+        $qb->where(
+            $qb->expr()->in('l.id', $qbInner->getDQL())
+        );
+
+        return $qb->getQuery()->getResult();
+    }
 }

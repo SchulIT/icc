@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Validator\DateIsNotInPast;
+use App\Validator\NoReservationCollision;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
@@ -9,6 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @NoReservationCollision()
  */
 class RoomReservation {
 
@@ -26,6 +29,7 @@ class RoomReservation {
     /**
      * @ORM\Column(type="date")
      * @Assert\NotNull()
+     * @DateIsNotInPast()
      * @var DateTime
      */
     private $date;

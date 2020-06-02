@@ -8,26 +8,18 @@ use App\Entity\TimetableLesson;
 
 class RoomAvailability {
 
-    private $lesson;
-
     private $reservation;
 
     private $timetableLesson;
 
     private $substitution;
 
-    public function __construct(int $lesson, ?RoomReservation $reservation, ?TimetableLesson $timetableLesson, ?Substitution $substitution) {
-        $this->lesson = $lesson;
+    private $isTimetableLessonCancelled = false;
+
+    public function __construct(?RoomReservation $reservation, ?TimetableLesson $timetableLesson, ?Substitution $substitution) {
         $this->reservation = $reservation;
         $this->timetableLesson = $timetableLesson;
         $this->substitution = $substitution;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLesson(): int {
-        return $this->lesson;
     }
 
     /**
@@ -51,9 +43,17 @@ class RoomAvailability {
         return $this->substitution;
     }
 
+    public function setTimetableLessonCancelled(): void {
+        $this->isTimetableLessonCancelled = true;
+    }
+
+    public function isTimetableLessonCancelled(): bool {
+        return $this->isTimetableLessonCancelled;
+    }
+
     public function isAvailable(): bool {
         return $this->reservation === null
-            && $this->timetableLesson === null
-            && $this->substitution === null;
+            && $this->substitution === null
+            && ($this->timetableLesson === null || $this->isTimetableLessonCancelled());
     }
 }

@@ -4,7 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\AppointmentCategory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 
 class AppointmentCategoryFixtures extends Fixture {

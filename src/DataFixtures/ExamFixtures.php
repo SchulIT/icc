@@ -5,14 +5,12 @@ namespace App\DataFixtures;
 use App\Entity\Exam;
 use App\Entity\ExamSupervision;
 use App\Entity\Grade;
-use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Teacher;
-use App\Entity\Tuition;
 use App\Repository\TuitionRepositoryInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 
 class ExamFixtures extends Fixture implements DependentFixtureInterface {

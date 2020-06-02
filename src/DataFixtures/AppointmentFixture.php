@@ -4,12 +4,12 @@ namespace App\DataFixtures;
 
 use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
-use App\Entity\AppointmentVisibility;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
+use App\Entity\UserTypeEntity;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 
 class AppointmentFixture extends Fixture implements DependentFixtureInterface {
@@ -26,7 +26,6 @@ class AppointmentFixture extends Fixture implements DependentFixtureInterface {
     public function getDependencies() {
         return [
             AppointmentCategoryFixtures::class,
-            AppointmentVisibilityFixture::class,
             StudyGroupFixtures::class
         ];
     }
@@ -38,7 +37,7 @@ class AppointmentFixture extends Fixture implements DependentFixtureInterface {
         $studyGroups = $manager->getRepository(StudyGroup::class)->findAll();
         $teachers = $manager->getRepository(Teacher::class)->findAll();
         $categories = $manager->getRepository(AppointmentCategory::class)->findAll();
-        $visibilities = $manager->getRepository(AppointmentVisibility::class)->findAll();
+        $visibilities = $manager->getRepository(UserTypeEntity::class)->findAll();
 
         for($i = 0; $i < 200; $i++) {
             $start = $this->generator->dateTimeBetween('-180 days', '+180 days');

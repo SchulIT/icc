@@ -7,7 +7,7 @@ use App\Entity\RoomTag;
 use App\Entity\RoomTagInfo;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 class RoomTagInfoFixtures extends Fixture implements DependentFixtureInterface {
 

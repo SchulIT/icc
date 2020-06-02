@@ -7,12 +7,10 @@ use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use App\Entity\StudyGroupType;
-use App\Entity\Subject;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Symfony\Component\ExpressionLanguage\Tests\Node\Obj;
 
 class StudyGroupFixtures extends Fixture implements DependentFixtureInterface {
 
@@ -109,7 +107,7 @@ class StudyGroupFixtures extends Fixture implements DependentFixtureInterface {
                 for ($studentIndex = $courseNumber - 1; $studentIndex < count($students); $studentIndex += 3) {
                     $type = in_array($subject, $writtenSubjects) ?
                         'GKS' :
-                        $this->generator->boolean ? 'GKS' : 'GKM';
+                        ($this->generator->boolean ? 'GKS' : 'GKM');
 
                     $membership = (new StudyGroupMembership())
                         ->setStudyGroup($studyGroup)

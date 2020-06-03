@@ -69,7 +69,7 @@ class MessageType extends AbstractType {
                             'label' => 'label.study_groups_simple',
                             'multiple' => true,
                             'attr' => [
-                                'size' => 10
+                                'size' => 10,
                             ],
                             'required' => false
                         ])
@@ -99,7 +99,8 @@ class MessageType extends AbstractType {
                             'label' => 'label.priority',
                             'attr' => [
                                 'data-choice' => 'true'
-                            ]
+                            ],
+                            'help' => 'help.priority'
                         ]);
                     }
                 ]);

@@ -99,7 +99,7 @@
                                             {% set isCombined = week.areCombinedLessons(i, i+1) %}
                                             {% if week.hasSupervisionBefore(i) %}
                                                 <tr>
-                                                    <td>
+                                                    <td class="align-middle">
                                                         {{ supervisionLabels[i] }}
                                                     </td>
 
@@ -107,7 +107,7 @@
                                                         {% set lessons = day.getTimetableLesson(i) %}
                                                         {% set background = supervisionColor %}
 
-                                                        <td{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %} {% if background != null and lessons.beforeSupervisions|length > 0 %}style="background: {{ background }}; color: {{ foreground(background) }}"{% endif %}>
+                                                        <td class="align-middle {% if day.isCurrentDay or day.isUpcomingDay %}current{% endif %}" {% if background != null and lessons.beforeSupervisions|length > 0 %}style="background: {{ background }}; color: {{ foreground(background) }}"{% endif %}>
                                                             {% for supervision in lessons.beforeSupervisions %}
                                                                 {% include 'timetable/supervision.html.twig' %}
                                                             {% endfor %}
@@ -144,7 +144,7 @@
                                                             {% set foreground = foreground(background) %}
                                                         {% endif %}
 
-                                                        <td{% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %}{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
+                                                        <td class="align-middle {% if day.isCurrentDay or day.isUpcomingDay %}current{% endif %}" {% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
                                                             {% for lesson in lessons.lessons %}
                                                                 {% include 'timetable/lesson.html.twig' with { student: studentFilter.currentStudent, memberships: memberships }%}
                                                                 {% if not loop.last %}<hr>{% endif %}

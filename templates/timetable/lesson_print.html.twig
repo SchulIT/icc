@@ -8,7 +8,9 @@
             {% endif -%}
         {%- endfor -%}
         <strong>
-            {%- if showCourseName -%}
+            {% if lesson.tuition.displayName is not empty -%}
+                {{ lesson.tuition.displayName }}
+            {%- elseif showCourseName -%}
                 {{ lesson.tuition.studyGroup.name }}
             {%- else -%}
                 {{ lesson.tuition.subject.abbreviation }}

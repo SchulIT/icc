@@ -108,6 +108,15 @@ easy_admin:
 
         Tuition:
             class: App\Entity\Tuition
+            form:
+                fields:
+                    - externalId
+                    - name
+                    - displayName
+                    - subject
+                    - teacher
+                    - additionalTeachers
+                    - studyGroup
 
         User:
             class: App\Entity\User

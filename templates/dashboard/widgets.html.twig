@@ -114,7 +114,9 @@
                 {%- endfor -%}
 
                 <span class="align-self-center badge badge-primary mr-3">
-                    {% if lesson.tuition.subject.replaceSubjectAbbreviation %}
+                    {% if lesson.tuition.displayName is not empty %}
+                        {{ lesson.tuition.displayName|upper }}
+                    {% elseif lesson.tuition.subject.replaceSubjectAbbreviation %}
                         {{ lesson.tuition.subject.name|upper }}
                     {% else %}
                         {{ lesson.tuition.subject.abbreviation|upper }}

@@ -33,6 +33,14 @@ class Tuition {
     private $name;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(allowNull=true)
+     *
+     * @var string|null
+     */
+    private $displayName = null;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Subject")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Subject
@@ -98,6 +106,22 @@ class Tuition {
      */
     public function setName(string $name): Tuition {
         $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDisplayName(): ?string {
+        return $this->displayName;
+    }
+
+    /**
+     * @param string|null $displayName
+     * @return Tuition
+     */
+    public function setDisplayName(?string $displayName): Tuition {
+        $this->displayName = $displayName;
         return $this;
     }
 

@@ -9,7 +9,9 @@
     {%- endfor -%}
     <strong>
         <a href="{{ path('list_tuition', { uuid: lesson.tuition.uuid }) }}" title="{{ lesson.tuition.subject.name }}">
-            {%- if showCourseName -%}
+            {% if lesson.tuition.displayName is not empty -%}
+                {{ lesson.tuition.displayName }}
+            {%- elseif showCourseName -%}
                 {{ lesson.tuition.studyGroup.name }}
             {%- else -%}
                 {%- if lesson.tuition.subject.replaceSubjectAbbreviation -%}

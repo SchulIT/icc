@@ -4,21 +4,31 @@ namespace App\EventSubscriber;
 
 use App\Event\ExamImportEvent;
 use App\Notification\Email\EmailNotificationService;
-use App\Notification\Email\ExamStrategy;
+use App\Notification\Email\ExamStrategy as EmailStrategy;
+use App\Notification\WebPush\PushNotificationService;
+use App\Notification\WebPush\ExamStrategy as PushStrategy;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ExamsImportedSubscriber implements EventSubscriberInterface {
 
     private $emailNotificationService;
-    private $strategy;
+    private $emailNotificationStrategy;
 
-    public function __construct(EmailNotificationService $emailNotificationService, ExamStrategy $strategy) {
+    private $pushNotificationService;
+    private $pushNotificationStrategy;
+
+    public function __construct(EmailNotificationService $emailNotificationService, EmailStrategy $emailStrategy,
+                                PushNotificationService $pushNotificationService, PushStrategy $pushStrategy) {
         $this->emailNotificationService = $emailNotificationService;
-        $this->strategy = $strategy;
+        $this->emailNotificationStrategy = $emailStrategy;
+
+        $this->pushNotificationService = $pushNotificationService;
+        $this->pushNotificationStrategy = $pushStrategy;
     }
 
     public function onExamsImported(ExamImportEvent $event) {
-        $this->emailNotificationService->sendNotification(null, $this->strategy);
+        $this->emailNotificationService->sendNotification(null, $this->emailNotificationStrategy);
+        $this->pushNotificationService->sendNotifications(null, $this->pushNotificationStrategy);
     }
 
     /**

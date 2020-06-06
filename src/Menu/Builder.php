@@ -320,6 +320,10 @@ class Builder {
                 'route' => 'admin_settings_dashboard'
             ]);
 
+            $menu->addChild('admin.settings.notifications.label', [
+                'route' => 'admin_settings_notifications'
+            ]);
+
             $menu->addChild('admin.settings.timetable.label', [
                 'route' => 'admin_settings_timetable'
             ]);

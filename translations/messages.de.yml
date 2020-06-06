@@ -523,7 +523,6 @@ admin:
             absence_visibility:
                 label: Abwenheiten sichtbar für
 
-
         exams:
             label: Klausurplan
             window:
@@ -605,6 +604,15 @@ admin:
             exam_color:
                 label: Farbe für Klausuren
                 help: Legt die Farbe für Klausuren fest, die im Terminkalender angezeigt werden.
+
+        notifications:
+            label: Benachrichtigungen
+            push:
+                label: Push-Benachrichtigungen aktiviert für
+                help: Schaltet Push-Benachrichtigungen für diese Benutzergruppen frei oder sperrt sie.
+            email:
+                label: E-Mail Benachrichtigungen aktiviert für
+                help: Schaltet E-Mail-Benachrichtigungen für diese Benutzergruppen frei oder sperrt sie.
 
     timetable:
         label: Stundenplan
@@ -911,13 +919,16 @@ profile:
         not_allowed: Leider können Benachrichtungs-E-Mails nicht angeboten werden.
         substitutions:
             label: Neuer Vertretungsplan
-            help: Wenn diese Option aktiv ist, wird eine E-Mail versendet, sobald ein neuer Vertretungsplan bereitgestellt wurde.
+            help: Wenn diese Option aktiv ist, wird eine Benachrichtigung versendet, sobald ein neuer Vertretungsplan bereitgestellt wurde.
         exams:
             label: Neuer Klausurplan
-            help: Wenn diese Option aktiv ist, wird eine E-Mail versendet, sobald ein neuer Klausurplan bereitgestellt wurde.
+            help: Wenn diese Option aktiv ist, wird eine Benachrichtigung versendet, sobald ein neuer Klausurplan bereitgestellt wurde.
         messages:
             label: Neue Mitteilung
-            help: Wenn diese Option aktiv ist, wird eine E-Mail versendet, sobald eine neue Mitteilung erstellt wurde.
+            help: Wenn diese Option aktiv ist, wird eine Benachrichtigung versendet, sobald eine neue Mitteilung erstellt wurde.
+        email:
+            label: E-Mail Benachrichtigungen aktiviert
+            help: Wenn diese Option aktiv ist, werden Benachrichtigungen per E-Mail versendet.
 
     apps:
         label: Verbundene Apps
@@ -945,3 +956,26 @@ remove:
 
 api:
     doc: API-Dokumentation
+
+webpush:
+    label: Push Benachrichtigungen
+    configure: Push Benachrichtigungen einrichten
+    info: Über WebPush können Push Benachrichtigungen über den Browser empfangen werden.
+    caution:
+        browser: Dieses Feature funktioniert nur in Google Chrome, Mozilla Firefox und Microsoft Edge.
+        running: Dieses Feature funktioniert nur, wenn der Browser im Hintergrund laufen darf.
+    state:
+        enabled: aktiviert
+        disabled: nicht aktiviert
+        not_supported: nicht unterstützt
+        not_granted: nicht erlaubt
+    enable:
+        label: aktivieren
+        success: Erfolgreich aktiviert.
+        loading: Push Benachrichtigung wird aktiviert - bitte warten...
+    disable:
+        label: deaktivieren
+        success: Erfolgreich deaktiviert.
+        loading: Push Benachrichtigung wird deaktiviert - bitte warten...
+    not_granted:
+        message: Push Benachrichtigungen wurden im Browser deaktiviert. Bitte Berechtigungen prüfen.

@@ -199,3 +199,8 @@ services:
     App\Command\SendMailsTask:
         arguments:
             $messageLimit: '%env(int:MAILER_LIMIT)%'
+
+    # WEBPUSH
+    App\Notification\WebPush\UserSubscriptionManager:
+        tags:
+            - { name: bentools_webpush.subscription_manager, user_class: 'App\Entity\User' }

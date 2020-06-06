@@ -15,6 +15,7 @@ use App\Settings\AbstractSettings;
 use App\Settings\AppointmentsSettings;
 use App\Settings\DashboardSettings;
 use App\Settings\ExamSettings;
+use App\Settings\NotificationSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\ArrayUtils;
@@ -104,6 +105,75 @@ class SettingsController extends AbstractController {
         }
 
         return $this->render('admin/settings/dashboard.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/notifications", name="admin_settings_notifications")
+     */
+    public function notifications(Request $request, NotificationSettings $notificationSettings, EnumStringConverter $enumStringConverter) {
+        $builder = $this->createFormBuilder();
+        $builder
+            ->add('push_enabled', ChoiceType::class, [
+                'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
+                'choice_label' => function(UserType $userType) use($enumStringConverter) {
+                    return $enumStringConverter->convert($userType);
+                },
+                'choice_value' => function(UserType $userType) {
+                    return $userType->getValue();
+                },
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'admin.settings.notifications.push.label',
+                'help' => 'admin.settings.notifications.push.help',
+                'data' => $notificationSettings->getPushEnabledUserTypes(),
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
+            ])
+            ->add('email_enabled', ChoiceType::class, [
+                'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
+                'choice_label' => function(UserType $userType) use($enumStringConverter) {
+                    return $enumStringConverter->convert($userType);
+                },
+                'choice_value' => function(UserType $userType) {
+                    return $userType->getValue();
+                },
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'admin.settings.notifications.email.label',
+                'help' => 'admin.settings.notifications.email.help',
+                'data' => $notificationSettings->getEmailEnabledUserTypes(),
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
+            ]);
+
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $map = [
+                'push_enabled' => function($types) use ($notificationSettings) {
+                    $notificationSettings->setPushEnabledUserTypes($types);
+                },
+                'email_enabled' => function($types) use ($notificationSettings) {
+                    $notificationSettings->setEmailEnabledUserTypes($types);
+                }
+            ];
+
+            foreach($map as $formKey => $callable) {
+                $value = $form->get($formKey)->getData();
+                $callable($value);
+            }
+
+            $this->addFlash('success', 'admin.settings.success');
+
+            return $this->redirectToRoute('admin_settings_notifications');
+        }
+
+        return $this->render('admin/settings/notifications.html.twig', [
             'form' => $form->createView()
         ]);
     }

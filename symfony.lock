@@ -20,6 +20,9 @@
     "behat/transliterator": {
         "version": "v1.2.0"
     },
+    "bentools/webpush-bundle": {
+        "version": "0.6"
+    },
     "brick/math": {
         "version": "0.8.14"
     },
@@ -154,6 +157,9 @@
     "fervo/enum-bundle": {
         "version": "2.0.x-dev"
     },
+    "fgrosse/phpasn1": {
+        "version": "v2.1.1"
+    },
     "frostiede/composer-dependency-list": {
         "version": "1.0.1"
     },
@@ -165,6 +171,15 @@
     },
     "gedmo/doctrine-extensions": {
         "version": "v2.4.38"
+    },
+    "guzzlehttp/guzzle": {
+        "version": "6.5.4"
+    },
+    "guzzlehttp/promises": {
+        "version": "v1.3.1"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.6.1"
     },
     "hoa/compiler": {
         "version": "3.17.08.08"
@@ -264,6 +279,9 @@
     "lightsaml/symfony-bridge": {
         "version": "1.3.0"
     },
+    "minishlink/web-push": {
+        "version": "v5.2.4"
+    },
     "monolog/monolog": {
         "version": "1.24.0"
     },
@@ -330,6 +348,9 @@
     },
     "pagerfanta/pagerfanta": {
         "version": "v2.1.3"
+    },
+    "paragonie/sodium_compat": {
+        "version": "v1.13.0"
     },
     "phar-io/manifest": {
         "version": "1.0.1"
@@ -400,11 +421,17 @@
     "psr/container": {
         "version": "1.0.0"
     },
+    "psr/http-message": {
+        "version": "1.0.1"
+    },
     "psr/link": {
         "version": "1.0.0"
     },
     "psr/log": {
         "version": "1.1.0"
+    },
+    "ralouphie/getallheaders": {
+        "version": "3.0.3"
     },
     "ralouphie/mimey": {
         "version": "2.1.0"
@@ -480,6 +507,9 @@
     },
     "sensiolabs/ansi-to-html": {
         "version": "v1.1.3"
+    },
+    "spomky-labs/base64url": {
+        "version": "v2.0.1"
     },
     "swiftmailer/swiftmailer": {
         "version": "v6.1.3"
@@ -878,6 +908,33 @@
         "files": [
             "./config/packages/vich_uploader.yaml"
         ]
+    },
+    "web-token/jwt-core": {
+        "version": "v1.3.10"
+    },
+    "web-token/jwt-key-mgmt": {
+        "version": "v1.3.10"
+    },
+    "web-token/jwt-signature": {
+        "version": "v1.3.10"
+    },
+    "web-token/jwt-signature-algorithm-ecdsa": {
+        "version": "v1.3.10"
+    },
+    "web-token/jwt-signature-algorithm-eddsa": {
+        "version": "v1.3.10"
+    },
+    "web-token/jwt-signature-algorithm-hmac": {
+        "version": "v1.3.10"
+    },
+    "web-token/jwt-signature-algorithm-none": {
+        "version": "v1.3.10"
+    },
+    "web-token/jwt-signature-algorithm-rsa": {
+        "version": "v1.3.10"
+    },
+    "web-token/jwt-util-ecc": {
+        "version": "v1.3.10"
     },
     "webmozart/assert": {
         "version": "1.4.0"

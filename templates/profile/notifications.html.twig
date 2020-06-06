@@ -9,6 +9,16 @@
 {% block profile_content %}
     {% if is_allowed %}
 
+        {% if push_allowed %}
+            <div class="bs-callout bs-callout-info">
+                <h4>{{ 'webpush.label'|trans }}</h4>
+                <p>{{ 'webpush.info'|trans }}</p>
+                <a href="#" data-toggle="webpush_modal" class="btn btn-primary btn-sm">
+                    <i class="far fa-bell"></i> {{ 'webpush.configure'|trans }}
+                </a>
+            </div>
+        {% endif %}
+
         {{ form_start(form) }}
         {{ form_widget(form) }}
 

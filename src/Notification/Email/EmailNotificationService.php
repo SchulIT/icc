@@ -2,7 +2,7 @@
 
 namespace App\Notification\Email;
 
-use App\Entity\UserType;
+use App\Settings\NotificationSettings;
 use App\Utils\EnumArrayUtils;
 use Psr\Log\LoggerInterface;
 use Swift_Message;
@@ -16,15 +16,17 @@ class EmailNotificationService {
     private $mailer;
     private $twig;
     private $urlGenerator;
+    private $settings;
     private $logger;
 
-    public function __construct(bool $isEnabled, $appName, string $sender, \Swift_Mailer $mailer, Environment $twig, UrlGeneratorInterface $urlGenerator, LoggerInterface $logger = null) {
+    public function __construct(bool $isEnabled, $appName, string $sender, \Swift_Mailer $mailer, Environment $twig, UrlGeneratorInterface $urlGenerator, NotificationSettings $notificationSettings, LoggerInterface $logger = null) {
         $this->isEnabled = $isEnabled;
         $this->appName = $appName;
         $this->sender = $sender;
         $this->mailer = $mailer;
         $this->twig = $twig;
         $this->urlGenerator = $urlGenerator;
+        $this->settings = $notificationSettings;
         $this->logger = $logger;
     }
 
@@ -40,7 +42,7 @@ class EmailNotificationService {
         }
 
         foreach($strategy->getRecipients($objective) as $recipient) {
-            if(EnumArrayUtils::inArray($recipient->getUserType(), $this->getAllowedUserTypesForNotifications()) !== true) {
+            if(EnumArrayUtils::inArray($recipient->getUserType(), $this->settings->getEmailEnabledUserTypes()) !== true) {
                 continue;
             }
 
@@ -72,12 +74,5 @@ class EmailNotificationService {
         if($strategy instanceof PostEmailSendActionInterface) {
             $strategy->onNotificationSent($objective);
         }
-    }
-
-    /**
-     * @return UserType[]
-     */
-    public function getAllowedUserTypesForNotifications(): array {
-        return [ UserType::Teacher() ];
     }
 }

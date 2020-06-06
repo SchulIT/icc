@@ -113,6 +113,12 @@ class User implements UserInterface, \Serializable {
     private $isMessageNotificationsEnabled = false;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $isEmailNotificationsEnabled = false;
+
+    /**
      * @ORM\Column(type="json_array")
      * @var string[]
      */
@@ -333,6 +339,22 @@ class User implements UserInterface, \Serializable {
      */
     public function setIsMessageNotificationsEnabled(bool $isMessageNotificationsEnabled): User {
         $this->isMessageNotificationsEnabled = $isMessageNotificationsEnabled;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmailNotificationsEnabled(): bool {
+        return $this->isEmailNotificationsEnabled;
+    }
+
+    /**
+     * @param bool $isEmailNotificationsEnabled
+     * @return User
+     */
+    public function setIsEmailNotificationsEnabled(bool $isEmailNotificationsEnabled): User {
+        $this->isEmailNotificationsEnabled = $isEmailNotificationsEnabled;
         return $this;
     }
 

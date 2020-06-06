@@ -1,16 +1,17 @@
 require('../css/app.scss');
 
-require('bootstrap.native');
 require('emojione');
 import Choices from "choices.js";
 import { v4 as uuidv4 } from 'uuid';
 
 let bsCustomFileInput = require('bs-custom-file-input');
 let ClipboardJS = require('clipboard');
-var bsn = require('bootstrap.native');
+let bsn = require('bootstrap.native');
 
 require('../../vendor/schoolit/common-bundle/Resources/assets/js/polyfill');
 require('../../vendor/schoolit/common-bundle/Resources/assets/js/menu');
+
+require('./webpush');
 
 document.addEventListener('DOMContentLoaded', function() {
     bsCustomFileInput.init();

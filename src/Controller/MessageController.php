@@ -308,7 +308,7 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/confirmations", name="message_confirmations")
+     * @Route("/{uuid}/confirmations", name="message_confirmations")
      */
     public function confirmations(Message $message, MessageConfirmationViewHelper $confirmationViewHelper, Grouper $grouper) {
         $view = $confirmationViewHelper->createView($message);

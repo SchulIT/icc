@@ -28,7 +28,6 @@ Encore
     .addEntry('appointments', './assets/js/appointments.js')
     .addEntry('message-downloads', './assets/js/message-downloads.js')
     .addEntry('zipper', './assets/js/zipper.js')
-    .addEntry('sw', './assets/js/sw.js')
     .addStyleEntry('simple', './vendor/schoolit/common-bundle/Resources/assets/css/simple.scss')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.

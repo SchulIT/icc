@@ -38,8 +38,20 @@
                             {% set urlSubjects = urlSubjects|merge([subject.uuid.toString()]) %}
                         {% endfor %}
                     {% endif %}
+                    {% set urlTeachers = [ ] %}
+                    {% if teachersFilter.currentTeachers is not empty %}
+                        {% for teacher in teachersFilter.currentTeachers %}
+                            {% set urlTeachers = urlTeachers|merge([teacher.uuid.toString() ]) %}
+                        {% endfor %}
+                    {% endif %}
 
-                    {% set currentFilter = { grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString() : null, student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null, subjects: (urlSubjects is not empty ? urlSubjects : null), room: roomFilter.currentRoom ? roomFilter.currentRoom.uuid.toString() : null } %}
+                    {% set currentFilter = {
+                        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString() : null,
+                        student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null,
+                        teachers: (urlTeachers is not empty ? urlTeachers : null),
+                        subjects: (urlSubjects is not empty ? urlSubjects : null),
+                        room: roomFilter.currentRoom ? roomFilter.currentRoom.uuid.toString() : null }
+                    %}
 
                     <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
                         {% set canNavigatePrevious = previousPeriod is not null %}
@@ -191,11 +203,11 @@
                     </div>
                 </div>
 
-                {% if contains_active_filters([teacherFilter, studentFilter, gradeFilter, subjectFilter, roomFilter]) %}
+                {% if contains_active_filters([teachersFilter, studentFilter, gradeFilter, subjectFilter, roomFilter]) %}
                 <div class="card">
                     <div class="card-body pb-1">
-                        {% if teacherFilter.teachers|length > 0 %}
-                            {% include "_filter/teacher.html.twig" %}
+                        {% if teachersFilter.teachers|length > 0 %}
+                            {% include "_filter/teachers.html.twig" %}
                         {% endif %}
 
                         {% if studentFilter.studentGradeGroups|length > 0 %}

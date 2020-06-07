@@ -32,11 +32,11 @@
     {% if student is not null and lesson.tuition is not null and memberships[lesson.tuition.studyGroup.id] is defined %}
         [{{ memberships[lesson.tuition.studyGroup.id] }}]
     {% endif %}
-    {% if teacherFilter.currentTeacher == null %}
+    {% if teachersFilter.currentTeachers|length != 1 %}
         <br>
         {{ lesson.tuition.teacher|teacher }}
     {% endif %}
-    {% if teacherFilter.currentTeacher != null or subjectFilter.currentSubjects|length > 0 %}
+    {% if teachersFilter.currentTeachers|length > 0 or subjectFilter.currentSubjects|length > 0 %}
         <br>
         {% for g in lesson.tuition.studyGroup.grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %}
     {% endif %}

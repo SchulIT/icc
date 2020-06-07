@@ -29,6 +29,7 @@ use App\View\Filter\RoomFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\SubjectsFilter;
 use App\View\Filter\TeacherFilter;
+use App\View\Filter\TeachersFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,7 +59,7 @@ class TimetableController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="timetable")
      */
-    public function index(StudentFilter $studentFilter, TeacherFilter $teacherFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
+    public function index(StudentFilter $studentFilter, TeachersFilter $teachersFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableWeekRepositoryInterface $weekRepository, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
                           TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, Request $request) {
         /** @var User $user */
@@ -68,7 +69,7 @@ class TimetableController extends AbstractControllerWithMessages {
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
         $roomFilterView = $roomFilter->handle($request->query->get('room', null));
         $subjectFilterView = $subjectFilter->handle($request->query->get('subjects', [ ]));
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
+        $teachersFilterView = $teachersFilter->handle($request->query->get('teachers', []), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
 
         $periods = $periodRepository->findAll();
         $this->sorter->sort($periods, TimetablePeriodStrategy::class);
@@ -104,10 +105,14 @@ class TimetableController extends AbstractControllerWithMessages {
                         }
                     }
                 }
-            } else if ($teacherFilterView->getCurrentTeacher() !== null) {
-                $lessons = $lessonRepository->findAllByPeriodAndTeacher($currentPeriod, $teacherFilterView->getCurrentTeacher());
-                $lessons = $timetableFilter->filterTeacherLessons($lessons);
-                $supervisions = $supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacherFilterView->getCurrentTeacher());
+            } else if (count($teachersFilterView->getCurrentTeachers()) > 0) {
+                $lessons = [ ];
+                $supervisions = [ ];
+
+                foreach($teachersFilterView->getCurrentTeachers() as $teacher) {
+                    $lessons = array_merge($lessons, $timetableFilter->filterTeacherLessons($lessonRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher)));
+                    $supervisions = array_merge($supervisions, $supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher));
+                }
             } else if ($gradeFilterView->getCurrentGrade() !== null) {
                 $lessons = $lessonRepository->findAllByPeriodAndGrade($currentPeriod, $gradeFilterView->getCurrentGrade());
                 $lessons = $timetableFilter->filterGradeLessons($lessons);
@@ -179,7 +184,7 @@ class TimetableController extends AbstractControllerWithMessages {
         return $this->renderWithMessages($template, [
             'timetable' => $timetable,
             'studentFilter' => $studentFilterView,
-            'teacherFilter' => $teacherFilterView,
+            'teachersFilter' => $teachersFilterView,
             'gradeFilter' => $gradeFilterView,
             'roomFilter'=> $roomFilterView,
             'subjectFilter' => $subjectFilterView,

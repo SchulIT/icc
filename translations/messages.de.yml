@@ -10,6 +10,7 @@ label:
     subjects: Fächer
     teacher: Lehrkraft
     teachers: "{0} Lehrkraft|{1} Lehrkraft|]1,Inf[ Lehrkräfte"
+    teachers_simple: Lehrkräfte
     student: Lernender
     students: "{0} %count% Lernende|{1} %count% Lernender|]1,Inf[ %count% Lernende"
     students_simple: Lernende

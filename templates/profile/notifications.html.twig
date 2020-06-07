@@ -12,6 +12,11 @@
         {% if push_allowed %}
             <div class="bs-callout bs-callout-info">
                 <h4>{{ 'webpush.label'|trans }}</h4>
+
+                <div class="alert alert-danger">
+                    <i class="fa fa-exclamation-triangle"></i> {{ 'webpush.caution.experimental'|trans }}
+                </div>
+
                 <p>{{ 'webpush.info'|trans }}</p>
                 <a href="#" data-toggle="webpush_modal" class="btn btn-primary btn-sm">
                     <i class="far fa-bell"></i> {{ 'webpush.configure'|trans }}

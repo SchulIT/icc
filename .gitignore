@@ -113,3 +113,4 @@ yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
 /config/packages/bentools_webpush.yaml
+*.rnd

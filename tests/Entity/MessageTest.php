@@ -80,12 +80,6 @@ class MessageTest extends TestCase {
         $message->removeFile($file);
         $this->assertFalse($message->getFiles()->contains($file));
 
-        $message->setHiddenFromDashboard(true);
-        $this->assertTrue($message->isHiddenFromDashboard());
-
-        $message->setHiddenFromDashboard(false);
-        $this->assertFalse($message->isHiddenFromDashboard());
-
         $message->setIsEmailNotificationSent(true);
         $this->assertTrue($message->isEmailNotificationSent());
 

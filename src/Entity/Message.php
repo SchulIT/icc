@@ -181,12 +181,6 @@ class Message {
      * @ORM\Column(type="boolean")
      * @var bool
      */
-    private $hiddenFromDashboard = false;
-
-    /**
-     * @ORM\Column(type="boolean")
-     * @var bool
-     */
     private $isEmailNotificationSent = false;
 
     /**
@@ -456,22 +450,6 @@ class Message {
      */
     public function getFiles(): Collection {
         return $this->files;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHiddenFromDashboard(): bool {
-        return $this->hiddenFromDashboard;
-    }
-
-    /**
-     * @param bool $hiddenFromDashboard
-     * @return Message
-     */
-    public function setHiddenFromDashboard(bool $hiddenFromDashboard): Message {
-        $this->hiddenFromDashboard = $hiddenFromDashboard;
-        return $this;
     }
 
     /**

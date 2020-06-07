@@ -2,6 +2,7 @@
 
 namespace App\Notification\Email;
 
+use App\Event\ExamImportEvent;
 use App\Repository\UserRepositoryInterface;
 use App\Settings\ExamSettings;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -58,5 +59,12 @@ class ExamStrategy implements EmailStrategyInterface {
      */
     public function getTemplate(): string {
         return 'email/exam.html.twig';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports($objective): bool {
+        return $objective instanceof ExamImportEvent;
     }
 }

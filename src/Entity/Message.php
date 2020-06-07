@@ -187,7 +187,13 @@ class Message {
      * @ORM\Column(type="boolean")
      * @var bool
      */
-    private $isNotificationSent = false;
+    private $isEmailNotificationSent = false;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $isPushNotificationSent = false;
 
     /**
      * @ORM\Column(type="boolean")
@@ -471,16 +477,32 @@ class Message {
     /**
      * @return bool
      */
-    public function isNotificationSent(): bool {
-        return $this->isNotificationSent;
+    public function isEmailNotificationSent(): bool {
+        return $this->isEmailNotificationSent;
     }
 
     /**
-     * @param bool $isNotificationSent
+     * @param bool $isEmailNotificationSent
      * @return Message
      */
-    public function setIsNotificationSent(bool $isNotificationSent): Message {
-        $this->isNotificationSent = $isNotificationSent;
+    public function setIsEmailNotificationSent(bool $isEmailNotificationSent): Message {
+        $this->isEmailNotificationSent = $isEmailNotificationSent;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPushNotificationSent(): bool {
+        return $this->isPushNotificationSent;
+    }
+
+    /**
+     * @param bool $isPushNotificationSent
+     * @return Message
+     */
+    public function setIsPushNotificationSent(bool $isPushNotificationSent): Message {
+        $this->isPushNotificationSent = $isPushNotificationSent;
         return $this;
     }
 

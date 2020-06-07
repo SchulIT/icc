@@ -38,5 +38,9 @@ class PushNotificationService {
                 $this->subscriptionManager->delete($response->getSubscription());
             }
         }
+
+        if($strategy instanceof PostPushSendActionInterface) {
+            $strategy->onNotificationSent($objective);
+        }
     }
 }

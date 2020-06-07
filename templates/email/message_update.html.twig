@@ -1,6 +1,6 @@
 {{ 'greeting'|trans({'%name%': recipient }, 'email') }}
 
-{{ 'message.create.content'|trans({'%title%': objective.title, '%link%': url('show_message', { uuid: objective.uuid })}, 'email') }}
+{{ 'message.update.content'|trans({'%title%': objective.title, '%link%': url('show_message', { uuid: objective.uuid })}, 'email') }}
 
 {{ 'farewell'|trans({}, 'email') }}
 {{ sender }}

@@ -5,6 +5,16 @@ namespace App\Notification\WebPush;
 use App\Entity\UserWebPushSubscription;
 
 interface PushNotificationStrategyInterface {
+
+    /**
+     * Returns whether this strategy supports the given objective. This controls
+     * whether or not this strategy is executed.
+     *
+     * @param $objective
+     * @return bool
+     */
+    public function supports($objective): bool;
+
     /**
      * @return UserWebPushSubscription[]
      */

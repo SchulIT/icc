@@ -1,6 +1,10 @@
 message:
-  title: '[Mitteilung] %title%'
-  content: '%author% hat eine Mitteilung im ICC hinterlegt.'
+  create:
+    title: '[Mitteilung] %title%'
+    content: '%author% hat eine Mitteilung im ICC hinterlegt.'
+  update:
+    title: '[Mitteilung aktualisiert] %title%'
+    content: '%author% hat die Mitteilung auf dem ICC aktualisiert.'
 
 exam:
   title: Neuer Klausurplan verfügbar

@@ -27,6 +27,10 @@ services:
             tags: [ 'app.grouping_strategy' ]
         App\Sorting\SortingStrategyInterface:
             tags: [ 'app.sorting_strategy' ]
+        App\Notification\Email\EmailStrategyInterface:
+            tags: [ 'app.notifications.email_strategy' ]
+        App\Notification\WebPush\PushNotificationStrategyInterface:
+            tags: [ 'app.notifications.push_strategy' ]
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -184,6 +188,17 @@ services:
         class: App\DarkMode\DarkModeManager
 
     # NOTIFICATIONS
+    App\Notification\Email\:
+        resource: '../src/Notification/Email/*Strategy.php'
+
+    App\Notification\WebPush\:
+        resource: '../src/Notification/WebPush/*Strategy.php'
+
+    App\Notification\NotificationService:
+        arguments:
+            $emailStrategies: !tagged app.notifications.email_strategy
+            $pushStrategies: !tagged app.notifications.push_strategy
+
     App\Notification\Email\EmailNotificationService:
         arguments:
             $isEnabled: '%env(bool:NOTIFICATIONS_ENABLED)%'

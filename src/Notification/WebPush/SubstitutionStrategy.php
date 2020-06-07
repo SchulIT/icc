@@ -3,6 +3,7 @@
 namespace App\Notification\WebPush;
 
 use App\Converter\UserStringConverter;
+use App\Event\SubstitutionImportEvent;
 use App\Repository\UserWebPushSubscriptionRepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -45,5 +46,12 @@ class SubstitutionStrategy implements PushNotificationStrategyInterface {
             [ ],
             'push'
         );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports($objective): bool {
+        return $objective instanceof SubstitutionImportEvent;
     }
 }

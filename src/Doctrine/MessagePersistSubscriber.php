@@ -4,6 +4,7 @@ namespace App\Doctrine;
 
 use App\Entity\Message;
 use App\Event\MessageCreatedEvent;
+use App\Event\MessageUpdatedEvent;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
@@ -29,12 +30,21 @@ class MessagePersistSubscriber implements EventSubscriber {
         }
     }
 
+    public function postUpdate(LifecycleEventArgs $eventArgs) {
+        $entity = $eventArgs->getEntity();
+
+        if($entity instanceof Message) {
+            $this->dispatcher->dispatch(new MessageUpdatedEvent($entity));
+        }
+    }
+
     /**
      * @inheritDoc
      */
     public function getSubscribedEvents() {
         return [
-            Events::postPersist
+            Events::postPersist,
+            Events::postUpdate
         ];
     }
 }

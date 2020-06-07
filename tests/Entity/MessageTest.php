@@ -86,11 +86,11 @@ class MessageTest extends TestCase {
         $message->setHiddenFromDashboard(false);
         $this->assertFalse($message->isHiddenFromDashboard());
 
-        $message->setIsNotificationSent(true);
-        $this->assertTrue($message->isNotificationSent());
+        $message->setIsEmailNotificationSent(true);
+        $this->assertTrue($message->isEmailNotificationSent());
 
-        $message->setIsNotificationSent(false);
-        $this->assertFalse($message->isNotificationSent());
+        $message->setIsEmailNotificationSent(false);
+        $this->assertFalse($message->isEmailNotificationSent());
 
         $message->setMustConfirm(true);
         $this->assertTrue($message->mustConfirm());

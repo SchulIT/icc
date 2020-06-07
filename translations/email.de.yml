@@ -12,8 +12,12 @@ exam:
   content: es wurde ein neuer Klausurplan hochgeladen.
 
 message:
-  title: "Neue Mitteilung: %title%"
-  content: 'es wurde eine neue Mitteilung "%title%" erstellt. Die Nachricht ist auf dem ICC verfügbar: %link%'
+  create:
+    title: "Neue Mitteilung: %title%"
+    content: 'es wurde eine neue Mitteilung "%title%" erstellt. Die Nachricht ist auf dem ICC verfügbar: %link%'
+  update:
+    title: "Mitteilung aktualisiert: %title%"
+    content: 'die Mitteilung "%title%" wurde aktualisiert. Die Nachricht ist auf dem ICC verfügbar: %link%'
 
 reservation:
   title: Konflikt bei Raum-Reservierung

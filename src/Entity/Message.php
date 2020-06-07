@@ -389,6 +389,15 @@ class Message {
     }
 
     /**
+     * @param User $createdBy
+     * @return Message
+     */
+    public function setCreatedBy(User $createdBy): Message {
+        $this->createdBy = $createdBy;
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isDownloadsEnabled(): bool {

@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
- * @NoReservationCollision()
+ * @NoReservationCollision(groups={"Default", "collision"})
  */
 class RoomReservation {
 

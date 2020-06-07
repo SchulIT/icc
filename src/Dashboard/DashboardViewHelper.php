@@ -408,7 +408,7 @@ class DashboardViewHelper {
     private function addRoomReservations(array $reservations, DashboardView $view): void {
         foreach($reservations as $reservation) {
             if($this->authorizationChecker->isGranted(RoomReservationVoter::View)) {
-                $violations = $this->validator->validate($reservation);
+                $violations = $this->validator->validate($reservation, null, ['collision']);
 
                 for($lessonNumber = $reservation->getLessonStart(); $lessonNumber <= $reservation->getLessonEnd(); $lessonNumber++) {
                     $view->addItem($lessonNumber, new RoomReservationViewItem($reservation, $violations));

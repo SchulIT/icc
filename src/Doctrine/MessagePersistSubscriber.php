@@ -30,21 +30,12 @@ class MessagePersistSubscriber implements EventSubscriber {
         }
     }
 
-    public function postUpdate(LifecycleEventArgs $eventArgs) {
-        $entity = $eventArgs->getEntity();
-
-        if($entity instanceof Message) {
-            $this->dispatcher->dispatch(new MessageUpdatedEvent($entity));
-        }
-    }
-
     /**
      * @inheritDoc
      */
     public function getSubscribedEvents() {
         return [
-            Events::postPersist,
-            Events::postUpdate
+            Events::postPersist
         ];
     }
 }

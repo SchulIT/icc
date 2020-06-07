@@ -47,27 +47,29 @@
         </div>
     {% else %}
         <div class="card">
-            <table class="table table-hover table-bordered table-striped">
-                <colgroup>
-                    <col>
-                    <col class="column-sm">
-                    <col class="column-320">
-                    <col class="column-lg">
-                </colgroup>
-                <thead>
-                <tr>
-                    <th>{{ 'label.title'|trans }}</th>
-                    <th>{{ 'label.status'|trans }}</th>
-                    <th>{{ 'label.visibility'|trans }}</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for article in tree %}
-                    {{ _self.wiki_article(article, 0) }}
-                {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-striped card-table">
+                    <colgroup>
+                        <col>
+                        <col class="column-sm">
+                        <col class="column-320">
+                        <col class="column-lg">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.title'|trans }}</th>
+                        <th>{{ 'label.status'|trans }}</th>
+                        <th>{{ 'label.visibility'|trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for article in tree %}
+                        {{ _self.wiki_article(article, 0) }}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     {% endif %}
 

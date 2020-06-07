@@ -30,64 +30,66 @@
                     </div>
                 {% else %}
                     <div class="card">
-                        <table class="table table-striped table-bordered table-hover">
-                            <colgroup>
-                                <col>
-                                <col>
-                                <col class="column-md">
-                                <col class="column-md">
-                                <col class="column-md">
-                                <col class="column-md">
-                            </colgroup>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover card-table">
+                                <colgroup>
+                                    <col>
+                                    <col>
+                                    <col class="column-md">
+                                    <col class="column-md">
+                                    <col class="column-md">
+                                    <col class="column-md">
+                                </colgroup>
 
-                            <thead>
-                            <tr>
-                                <th>{{ 'label.abbreviation'|trans }}</th>
-                                <th>{{ 'label.name'|trans }}</th>
-                                <th>{{ 'admin.subjects.visibility.short'|trans }}</th>
-                                <th>{{ 'admin.subjects.replace.short'|trans }}</th>
-                                <th>{{ 'lists.label'|trans }}</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-                            {% for subject in subjects %}
+                                <thead>
                                 <tr>
-                                    <td class="align-middle">
-                                        {{ subject.abbreviation }}
-
-                                        {% if subject.color is not empty %}
-                                            <span class="color-rect" style="background-color: {{ subject.color }}"></span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="align-middle">{{ subject.name }}</td>
-                                    <td class="align-middle">
-                                        {{ _self.show_boolean(subject.visibleGrades, 'admin.subjects.visibility.grades', 'admin.subjects.visibility.grades') }}
-                                        {{ _self.show_boolean(subject.visibleStudents, 'admin.subjects.visibility.students', 'admin.subjects.visibility.students') }}
-                                        {{ _self.show_boolean(subject.visibleTeachers, 'admin.subjects.visibility.teachers', 'admin.subjects.visibility.teachers') }}
-                                        {{ _self.show_boolean(subject.visibleRooms, 'admin.subjects.visibility.rooms', 'admin.subjects.visibility.rooms') }}
-                                        {{ _self.show_boolean(subject.visibleSubjects, 'admin.subjects.visibility.subjects', 'admin.subjects.visibility.subjects') }}
-                                    </td>
-                                    <td class="align-middle">
-                                        {{ _self.show_boolean(subject.replaceSubjectAbbreviation, 'admin.subjects.replace.long', 'admin.subjects.replace.long_false') }}
-                                    </td>
-                                    <td class="align-middle">
-                                        {{ _self.show_boolean(subject.visibleLists, 'admin.subjects.visibility.lists', 'admin.subjects.visibility.lists_false') }}
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="{{ path('edit_subject', { uuid: subject.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.subjects.edit.label'|trans }}">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-
-                                        <a href="{{ path('remove_subject', { uuid: subject.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.subjects.remove.label'|trans }}">
-                                            <i class="fa fa-trash"></i>
-                                        </a>
-                                    </td>
+                                    <th>{{ 'label.abbreviation'|trans }}</th>
+                                    <th>{{ 'label.name'|trans }}</th>
+                                    <th>{{ 'admin.subjects.visibility.short'|trans }}</th>
+                                    <th>{{ 'admin.subjects.replace.short'|trans }}</th>
+                                    <th>{{ 'lists.label'|trans }}</th>
+                                    <th></th>
                                 </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+
+                                <tbody>
+                                {% for subject in subjects %}
+                                    <tr>
+                                        <td class="align-middle">
+                                            {{ subject.abbreviation }}
+
+                                            {% if subject.color is not empty %}
+                                                <span class="color-rect" style="background-color: {{ subject.color }}"></span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="align-middle">{{ subject.name }}</td>
+                                        <td class="align-middle">
+                                            {{ _self.show_boolean(subject.visibleGrades, 'admin.subjects.visibility.grades', 'admin.subjects.visibility.grades') }}
+                                            {{ _self.show_boolean(subject.visibleStudents, 'admin.subjects.visibility.students', 'admin.subjects.visibility.students') }}
+                                            {{ _self.show_boolean(subject.visibleTeachers, 'admin.subjects.visibility.teachers', 'admin.subjects.visibility.teachers') }}
+                                            {{ _self.show_boolean(subject.visibleRooms, 'admin.subjects.visibility.rooms', 'admin.subjects.visibility.rooms') }}
+                                            {{ _self.show_boolean(subject.visibleSubjects, 'admin.subjects.visibility.subjects', 'admin.subjects.visibility.subjects') }}
+                                        </td>
+                                        <td class="align-middle">
+                                            {{ _self.show_boolean(subject.replaceSubjectAbbreviation, 'admin.subjects.replace.long', 'admin.subjects.replace.long_false') }}
+                                        </td>
+                                        <td class="align-middle">
+                                            {{ _self.show_boolean(subject.visibleLists, 'admin.subjects.visibility.lists', 'admin.subjects.visibility.lists_false') }}
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="{{ path('edit_subject', { uuid: subject.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.subjects.edit.label'|trans }}">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+
+                                            <a href="{{ path('remove_subject', { uuid: subject.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.subjects.remove.label'|trans }}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 {% endif %}
             </div>

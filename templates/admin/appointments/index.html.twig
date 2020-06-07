@@ -26,76 +26,78 @@
                         <div class="card">
                             <div class="card-header">{{ ('date.months.' ~ group.month)|trans }} {{ group.year }} <span class="badge badge-pill badge-primary">{{ group.appointments|length }}</span> </div>
 
-                            <table class="table table-striped table-bordered table-hover">
-                                <colgroup>
-                                    <col>
-                                    <col class="column-lg">
-                                    <col class="column-lg">
-                                    <col class="column-lg">
-                                    <col class="column-lg">
-                                    <col class="column-md">
-                                </colgroup>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover card-table">
+                                    <colgroup>
+                                        <col>
+                                        <col class="column-lg">
+                                        <col class="column-lg">
+                                        <col class="column-lg">
+                                        <col class="column-lg">
+                                        <col class="column-md">
+                                    </colgroup>
 
-                                <thead>
-                                <tr>
-                                    <th>{{ 'label.title'|trans }} </th>
-                                    <th>{{ 'label.start'|trans }}</th>
-                                    <th>{{ 'label.end'|trans }}</th>
-                                    <th>{{ 'label.study_groups'|trans({'%count%': 0}) }}</th>
-                                    <th>{{ 'label.organizers'|trans }}</th>
-                                    <th> </th>
-                                </tr>
-                                </thead>
+                                    <thead>
+                                    <tr>
+                                        <th>{{ 'label.title'|trans }} </th>
+                                        <th>{{ 'label.start'|trans }}</th>
+                                        <th>{{ 'label.end'|trans }}</th>
+                                        <th>{{ 'label.study_groups'|trans({'%count%': 0}) }}</th>
+                                        <th>{{ 'label.organizers'|trans }}</th>
+                                        <th> </th>
+                                    </tr>
+                                    </thead>
 
-                                <tbody>
-                                {% for appointment in group.appointments %}
-                                    {% if appointment.isAllDay %}
-                                        {% set start = appointment.start|format_date %}
-                                    {% else %}
-                                        {% set start = appointment.start|format_datetime %}
-                                    {% endif %}
-                                    {% if appointment.end is not null %}
+                                    <tbody>
+                                    {% for appointment in group.appointments %}
                                         {% if appointment.isAllDay %}
-                                            {% set end = appointment.end|format_date %}
+                                            {% set start = appointment.start|format_date %}
                                         {% else %}
-                                            {% set end = appointment.end|format_datetime %}
+                                            {% set start = appointment.start|format_datetime %}
+                                        {% endif %}
+                                        {% if appointment.end is not null %}
+                                            {% if appointment.isAllDay %}
+                                                {% set end = appointment.end|format_date %}
+                                            {% else %}
+                                                {% set end = appointment.end|format_datetime %}
+                                            {% endif %}
+
+                                            {% set date = 'date.range'|trans({'%from%': start, '%to%': end }) %}
+                                        {% else %}
+                                            {% set date = start %}
                                         {% endif %}
 
-                                        {% set date = 'date.range'|trans({'%from%': start, '%to%': end }) %}
-                                    {% else %}
-                                        {% set date = start %}
-                                    {% endif %}
+                                        <tr>
+                                            <td class="align-middle">
+                                                {{ appointment.title }}
 
-                                    <tr>
-                                        <td class="align-middle">
-                                            {{ appointment.title }}
-
-                                            <span class="badge" style="background: {{ appointment.category.color }}; color: {{ foreground(appointment.category.color) }}">{{ appointment.category.name }}</span>
-                                        </td>
-                                        <td class="align-middle">{{ start }}</td>
-                                        <td class="align-middle">{{ end }}</td>
-                                        <td class="align-middle">
-                                            {% include '_includes/study_groups.html.twig' with { studyGroups: appointment.studyGroups, id: appointment.uuid } only %}
-                                        </td>
-                                        <td class="align-middle">
-                                            {% for organizer in appointment.organizers %}{{ organizer|teacher }}{% if not loop.last or appointment.externalOrganizers is not null %}, {% endif %}{% endfor %}{{ appointment.externalOrganizers }}
-                                        </td>
-                                        <td class="align-middle">
-                                            {% if is_granted('edit', appointment) %}
-                                                <a href="{{ path('edit_appointment', { uuid: appointment.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
-                                                    <i class="fa fa-edit"></i>
-                                                </a>
-                                            {% endif %}
-                                            {% if is_granted('remove', appointment) %}
-                                                <a href="{{ path('remove_appointment', { uuid: appointment.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
-                                                    <i class="fa fa-trash"></i>
-                                                </a>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                                                <span class="badge" style="background: {{ appointment.category.color }}; color: {{ foreground(appointment.category.color) }}">{{ appointment.category.name }}</span>
+                                            </td>
+                                            <td class="align-middle">{{ start }}</td>
+                                            <td class="align-middle">{{ end }}</td>
+                                            <td class="align-middle">
+                                                {% include '_includes/study_groups.html.twig' with { studyGroups: appointment.studyGroups, id: appointment.uuid } only %}
+                                            </td>
+                                            <td class="align-middle">
+                                                {% for organizer in appointment.organizers %}{{ organizer|teacher }}{% if not loop.last or appointment.externalOrganizers is not null %}, {% endif %}{% endfor %}{{ appointment.externalOrganizers }}
+                                            </td>
+                                            <td class="align-middle">
+                                                {% if is_granted('edit', appointment) %}
+                                                    <a href="{{ path('edit_appointment', { uuid: appointment.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                {% endif %}
+                                                {% if is_granted('remove', appointment) %}
+                                                    <a href="{{ path('remove_appointment', { uuid: appointment.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     {% endfor %}
                 {% endif %}

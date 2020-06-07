@@ -55,41 +55,43 @@
 
                             </div>
 
-                            <table class="table table-striped table-hover table-bordered">
-                                <colgroup>
-                                    <col class="column-lg">
-                                    <col class="column-lg">
-                                    <col class="column-md">
-                                    <col>
-                                </colgroup>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover table-bordered card-table">
+                                    <colgroup>
+                                        <col class="column-lg">
+                                        <col class="column-lg">
+                                        <col class="column-md">
+                                        <col>
+                                    </colgroup>
 
-                                <thead>
-                                <tr>
-                                    <th>{{ 'label.lastname'|trans }}</th>
-                                    <th>{{ 'label.firstname'|trans }}</th>
-                                    <th>{{ 'label.grade'|trans }}</th>
-                                    <th>{{ 'label.email'|trans }}</th>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                {% for student in students %}
+                                    <thead>
                                     <tr>
-                                        <td>{{ student.lastname }}</td>
-                                        <td>{{ student.firstname }}</td>
-                                        <td>{{ student.grade.name }}</td>
-                                        <td>
-                                            {% if student.email is not empty %}
-                                                <i class="fa fa-envelope"></i>
-                                                <a href="mailto: {{ student.email}}" target="_blank">
-                                                    {{ student.email}}
-                                                </a>
-                                            {% endif %}
-                                        </td>
+                                        <th>{{ 'label.lastname'|trans }}</th>
+                                        <th>{{ 'label.firstname'|trans }}</th>
+                                        <th>{{ 'label.grade'|trans }}</th>
+                                        <th>{{ 'label.email'|trans }}</th>
                                     </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                                    </thead>
+
+                                    <tbody>
+                                    {% for student in students %}
+                                        <tr>
+                                            <td>{{ student.lastname }}</td>
+                                            <td>{{ student.firstname }}</td>
+                                            <td>{{ student.grade.name }}</td>
+                                            <td>
+                                                {% if student.email is not empty %}
+                                                    <i class="fa fa-envelope"></i>
+                                                    <a href="mailto: {{ student.email}}" target="_blank">
+                                                        {{ student.email}}
+                                                    </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
                         <div class="card">

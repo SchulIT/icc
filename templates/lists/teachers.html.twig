@@ -27,49 +27,51 @@
                             </ul>
                         </div>
 
-                        <table class="table table-striped table-hover">
-                            <tbody>
-                            {% for group in groups %}
-                                {% for teacher in group.teachers %}
-                                    <tr{% if loop.first %} id="{{ group.key }}"{% endif %}>
-                                        <td><strong>{{ teacher.acronym }}</strong></td>
-                                        <td>
-                                            {{ teacher|teacher }}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover card-table">
+                                <tbody>
+                                {% for group in groups %}
+                                    {% for teacher in group.teachers %}
+                                        <tr{% if loop.first %} id="{{ group.key }}"{% endif %}>
+                                            <td><strong>{{ teacher.acronym }}</strong></td>
+                                            <td>
+                                                {{ teacher|teacher }}
 
-                                            {% for tag in teacher.tags %}
-                                                <span class="badge" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
-                                            {% endfor %}
-                                        </td>
-                                        <td>
-                                            <i class="fa fa-envelope"></i> <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>
-                                        </td>
-                                        <td>
-                                            {% for gradeTeacher in teacher.grades %}
-                                                {{ gradeTeacher.grade.name }}{% if gradeTeacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}{% if not loop.last %}, {% endif %}
-                                            {% endfor %}
-                                        </td>
-                                        <td>
-                                            {% if teacher.getSubjects().count() > 0 %}
-                                                {{ teacher.subjects[0].name }}
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if teacher.subjects.count() > 1 %}
-                                                {{ teacher.subjects[1].name }}
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if teacher.subjects|length > 2 %}
-                                                {% for subject in teacher.subjects %}
-                                                    {% if loop.index0 > 1 %}{{ subject.getName() }}{% if not loop.last %}, {% endif %}{% endif %}
+                                                {% for tag in teacher.tags %}
+                                                    <span class="badge" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
                                                 {% endfor %}
-                                            {% endif %}
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td>
+                                                <i class="fa fa-envelope"></i> <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>
+                                            </td>
+                                            <td>
+                                                {% for gradeTeacher in teacher.grades %}
+                                                    {{ gradeTeacher.grade.name }}{% if gradeTeacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                            <td>
+                                                {% if teacher.getSubjects().count() > 0 %}
+                                                    {{ teacher.subjects[0].name }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if teacher.subjects.count() > 1 %}
+                                                    {{ teacher.subjects[1].name }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if teacher.subjects|length > 2 %}
+                                                    {% for subject in teacher.subjects %}
+                                                        {% if loop.index0 > 1 %}{{ subject.getName() }}{% if not loop.last %}, {% endif %}{% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
                                 {% endfor %}
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 {% else %}
                     <div class="bs-callout bs-callout-info">

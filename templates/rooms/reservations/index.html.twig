@@ -45,51 +45,53 @@
                         </ul>
                     </div>
 
-                    <table class="table table-striped table-bordered table-hover">
-                        <colgroup>
-                            <col>
-                            {% for lesson in 1..overview.maxLessons %}
-                            <col class="column-sm">
-                            {% endfor %}
-                        </colgroup>
-
-                        <thead>
-                        <tr>
-                            <th>{{ 'label.room'|trans }}</th>
-                            {% for lesson in 1..overview.maxLessons %}
-                                <th class="text-center">{{ lesson }}.</th>
-                            {% endfor %}
-                        </tr>
-                        </thead>
-
-                        <tbody>
-                        {% for room in rooms %}
-                            <tr>
-                                <td>
-                                    {{ room.name }}
-
-                                    <span class="text-muted">{{ room.description }}</span>
-                                </td>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover card-table">
+                            <colgroup>
+                                <col>
                                 {% for lesson in 1..overview.maxLessons %}
-                                    {% set availability = overview.availability(room, lesson) %}
-                                    {% set isAvailable = availability.isAvailable %}
+                                <col class="column-sm">
+                                {% endfor %}
+                            </colgroup>
 
-                                    <td data-toggle="xhr-popover" data-popover-title="{{ 'plans.rooms.reservations.info'|trans }}" data-popover-url="{{ path('reservation_xhr', { room: room.uuid.toString, date: date|date('Y-m-d'), lessonNumber: lesson }) }}" class="{% if isAvailable %}table-success{% elseif availability.reservation is not null %}bg-warning{% else %}bg-danger{% endif %} text-center align-middle p-0">
-                                        {% if isAvailable %}
-                                            <a href="{{ path('add_room_reservation', { room: room.uuid.toString, date: date|date('Y-m-d'), lessonStart: lesson }) }}" class="w-100 h-100 p-3">
-                                                <i class="fa fa-check"></i>
-                                            </a>
-                                        {% elseif availability.reservation is not null and availability.substitution is not null %}
-                                            <i class="fa fa-exclamation-triangle"></i>
-                                        {% else %}
-                                            <i class="fa fa-times"></i>
-                                        {% endif %}
-                                    </td>
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.room'|trans }}</th>
+                                {% for lesson in 1..overview.maxLessons %}
+                                    <th class="text-center">{{ lesson }}.</th>
                                 {% endfor %}
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+
+                            <tbody>
+                            {% for room in rooms %}
+                                <tr>
+                                    <td>
+                                        {{ room.name }}
+
+                                        <span class="text-muted">{{ room.description }}</span>
+                                    </td>
+                                    {% for lesson in 1..overview.maxLessons %}
+                                        {% set availability = overview.availability(room, lesson) %}
+                                        {% set isAvailable = availability.isAvailable %}
+
+                                        <td data-toggle="xhr-popover" data-popover-title="{{ 'plans.rooms.reservations.info'|trans }}" data-popover-url="{{ path('reservation_xhr', { room: room.uuid.toString, date: date|date('Y-m-d'), lessonNumber: lesson }) }}" class="{% if isAvailable %}table-success{% elseif availability.reservation is not null %}bg-warning{% else %}bg-danger{% endif %} text-center align-middle p-0">
+                                            {% if isAvailable %}
+                                                <a href="{{ path('add_room_reservation', { room: room.uuid.toString, date: date|date('Y-m-d'), lessonStart: lesson }) }}" class="w-100 h-100 p-3">
+                                                    <i class="fa fa-check"></i>
+                                                </a>
+                                            {% elseif availability.reservation is not null and availability.substitution is not null %}
+                                                <i class="fa fa-exclamation-triangle"></i>
+                                            {% else %}
+                                                <i class="fa fa-times"></i>
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 

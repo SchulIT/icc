@@ -173,16 +173,18 @@
 
                 <div class="card">
                     <div class="card-header">{{ 'messages.downloads.statistics.label'|trans }}</div>
-                    <table class="table table-bordered table-hover table-striped">
-                        <tbody>
-                        {% for num, count in statistics %}
-                            <tr>
-                                <td>{{ 'messages.downloads.statistics.info'|trans({'%count%': num}) }}</td>
-                                <td>{{ 'messages.downloads.statistics.user'|trans({'%count%': count}) }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped card-table">
+                            <tbody>
+                            {% for num, count in statistics %}
+                                <tr>
+                                    <td>{{ 'messages.downloads.statistics.info'|trans({'%count%': num}) }}</td>
+                                    <td>{{ 'messages.downloads.statistics.user'|trans({'%count%': count}) }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="card-footer">
                         <i class="fa fa-exclamation-triangle"></i> {{ 'messages.downloads.statistics.caution'|trans }}
                     </div>

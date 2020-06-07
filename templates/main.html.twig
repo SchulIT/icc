@@ -128,7 +128,13 @@
                 <p>{{ 'webpush.disable.success'|trans }}</p>
             </div>
 
-            <p>{{ 'webpush.info'|trans }}</p>
+            <p>
+                {{ 'webpush.info'|trans }}
+            </p>
+
+            <a href="{{ path('profile_notifications') }}" class="btn btn-outline-primary btn-sm">
+                <i class="far fa-bell"></i> {{ 'webpush.settings'|trans }}
+            </a>
 
             <p id="enable_push_loading" class="d-none">
                 <span>

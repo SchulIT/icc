@@ -961,6 +961,7 @@ webpush:
     label: Push Benachrichtigungen
     configure: Push Benachrichtigungen einrichten
     info: Über WebPush können Push Benachrichtigungen über den Browser empfangen werden.
+    settings: Elemente auswählen, über die benachrichtigt wird
     caution:
         browser: Dieses Feature funktioniert nur in Google Chrome, Mozilla Firefox und Microsoft Edge.
         running: Dieses Feature funktioniert nur, wenn der Browser im Hintergrund laufen darf.

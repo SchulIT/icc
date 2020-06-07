@@ -246,11 +246,9 @@
 
                 <div class="card">
                     <form method="post" action="{{ path('dashboard', currentFilter) }}">
-                        <div class="card-header">
-                            {{ 'dashboard.settings.label'|trans }}
-                        </div>
-
                         <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-users-cog"></i> {{ 'dashboard.settings.label'|trans }}</h5>
+
                             {% if canIncludeGradeMessages %}
                             <div class="form-group">
                                 <div class="custom-control custom-checkbox">

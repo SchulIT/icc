@@ -4,14 +4,18 @@ namespace App\Controller;
 
 use App\Entity\DeviceToken;
 use App\Entity\DeviceTokenType;
+use App\Entity\Exam;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroupMembership;
+use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
+use App\Entity\TimetableSupervision;
 use App\Entity\User;
 use App\Export\TimetableIcsExporter;
 use App\Form\DeviceTokenType as DeviceTokenTypeForm;
 use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetablePeriodRepositoryInterface;
@@ -61,7 +65,7 @@ class TimetableController extends AbstractControllerWithMessages {
      */
     public function index(StudentFilter $studentFilter, TeachersFilter $teachersFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableWeekRepositoryInterface $weekRepository, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
-                          TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, Request $request) {
+                          TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -199,7 +203,9 @@ class TimetableController extends AbstractControllerWithMessages {
             'query' => $request->query->all(),
             'supervisionLabels' => $supervisionLabels,
             'supervisionSubject' => $this->timetableSettings->getSupervisionLabel(),
-            'supervisionColor' => $this->timetableSettings->getSupervisionColor()
+            'supervisionColor' => $this->timetableSettings->getSupervisionColor(),
+            'last_import_lessons' => $importDateTypeRepository->findOneByEntityClass(TimetableLesson::class),
+            'last_import_supervisions' => $importDateTypeRepository->findOneByEntityClass(TimetableSupervision::class),
         ]);
     }
 

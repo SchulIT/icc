@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\MessageScope;
+use App\Entity\Room;
 use App\Message\DismissedMessagesHelper;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\RoomTagRepositoryInterface;
@@ -30,7 +32,8 @@ class RoomController extends AbstractControllerWithMessages {
     /**
      * @Route("/rooms", name="rooms")
      */
-    public function index(Request $request, RoomQueryBuilder $queryBuilder, RoomRepositoryInterface $roomRepository, RoomTagRepositoryInterface $roomTagRepository) {
+    public function index(Request $request, RoomQueryBuilder $queryBuilder, RoomRepositoryInterface $roomRepository,
+                          RoomTagRepositoryInterface $roomTagRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository) {
         $this->denyAccessUnlessGranted(RoomVoter::View);
 
         $query = $queryBuilder->buildFromRequest($request);
@@ -46,7 +49,8 @@ class RoomController extends AbstractControllerWithMessages {
         return $this->renderWithMessages('rooms/index.html.twig', [
             'rooms' => $rooms,
             'query' => $query,
-            'tags' => $roomTagRepository->findAll()
+            'tags' => $roomTagRepository->findAll(),
+            'last_import' => $importDateTypeRepository->findOneByEntityClass(Room::class)
         ]);
     }
 

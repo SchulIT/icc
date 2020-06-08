@@ -6,6 +6,7 @@ use App\Entity\DeviceToken;
 use App\Entity\DeviceTokenType;
 use App\Entity\Exam;
 use App\Entity\MessageScope;
+use App\Entity\Room;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Tuition;
@@ -19,6 +20,7 @@ use App\Grouping\ExamWeekStrategy;
 use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Security\Devices\DeviceManager;
 use App\Security\Voter\ExamVoter;
@@ -46,12 +48,15 @@ class ExamController extends AbstractControllerWithMessages {
     private $grouper;
     private $sorter;
 
-    public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
+    private $importDateTypeRepository;
+
+    public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper, ImportDateTypeRepositoryInterface $importDateTypeRepository,
                                 DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper, $refererHelper);
 
         $this->grouper = $grouper;
         $this->sorter = $sorter;
+        $this->importDateTypeRepository = $importDateTypeRepository;
     }
 
     /**
@@ -152,7 +157,8 @@ class ExamController extends AbstractControllerWithMessages {
             'exams' => $exams,
             'currentGroup' => $currentGroup,
             'nextGroup' => $nextGroup,
-            'previousGroup' => $previousGroup
+            'previousGroup' => $previousGroup,
+            'last_import' => $this->importDateTypeRepository->findOneByEntityClass(Exam::class)
         ]);
     }
 
@@ -184,7 +190,8 @@ class ExamController extends AbstractControllerWithMessages {
         return $this->renderWithMessages('exams/details.html.twig', [
             'exam' => $exam,
             'students' => $students,
-            'studyGroups' => $studyGroups
+            'studyGroups' => $studyGroups,
+            'last_import' => $this->importDateTypeRepository->findOneByEntityClass(Exam::class)
         ]);
     }
 

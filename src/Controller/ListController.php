@@ -7,9 +7,12 @@ use App\Entity\Grade;
 use App\Entity\GradeTeacher;
 use App\Entity\GradeTeacherType;
 use App\Entity\MessageScope;
+use App\Entity\PrivacyCategory;
+use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use App\Entity\StudyGroupType;
+use App\Entity\Teacher;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Export\StudyGroupCsvExporter;
@@ -18,10 +21,10 @@ use App\Grouping\Grouper;
 use App\Grouping\TeacherFirstCharacterStrategy;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\PrivacyCategoryRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
-use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Security\Voter\ExamVoter;
@@ -45,14 +48,16 @@ class ListController extends AbstractControllerWithMessages {
 
     private $grouper;
     private $sorter;
+    private $importDateTimeRepository;
 
-    public function __construct(Grouper $grouper, Sorter $sorter,
+    public function __construct(Grouper $grouper, Sorter $sorter, ImportDateTypeRepositoryInterface $importDateTimeRepository,
                                 MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
                                 DateHelper $dateHelper, RefererHelper $refererHelper) {
         parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper, $refererHelper);
 
         $this->grouper = $grouper;
         $this->sorter = $sorter;
+        $this->importDateTimeRepository = $importDateTimeRepository;
     }
 
     protected function getMessageScope(): MessageScope {
@@ -97,7 +102,8 @@ class ListController extends AbstractControllerWithMessages {
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
             'tuitions' => $tuitions,
-            'memberships' => $memberships
+            'memberships' => $memberships,
+            'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Tuition::class)
         ]);
     }
 
@@ -120,7 +126,8 @@ class ListController extends AbstractControllerWithMessages {
         return $this->renderWithMessages('lists/tuition.html.twig', [
             'tuition' => $tuition,
             'memberships' => $memberships,
-            'exams' => $exams
+            'exams' => $exams,
+            'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Tuition::class)
         ]);
     }
 
@@ -181,7 +188,8 @@ class ListController extends AbstractControllerWithMessages {
             'students' => $students,
             'grade' => $grade,
             'gradeTeachers' => $gradeTeachers,
-            'substitutionalGradeTeachers' => $substitutionalGradeTeachers
+            'substitutionalGradeTeachers' => $substitutionalGradeTeachers,
+            'last_import' => $this->importDateTimeRepository->findOneByEntityClass(StudyGroup::class)
         ]);
     }
 
@@ -215,7 +223,8 @@ class ListController extends AbstractControllerWithMessages {
 
         return $this->renderWithMessages('lists/teachers.html.twig', [
             'groups' => $groups,
-            'subjectFilter' => $subjectFilterView
+            'subjectFilter' => $subjectFilterView,
+            'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Teacher::class)
         ]);
     }
 
@@ -246,7 +255,9 @@ class ListController extends AbstractControllerWithMessages {
             'categories' => $privacyCategoryRepository->findAll(),
             'q' => $q,
             'studyGroupFilter' => $studygroupView,
-            'isStart' => $request->query->has('q') === false && $request->query->has('study_group') === false
+            'isStart' => $request->query->has('q') === false && $request->query->has('study_group') === false,
+            'last_import_categories' => $this->importDateTimeRepository->findOneByEntityClass(PrivacyCategory::class),
+            'last_import_students' => $this->importDateTimeRepository->findOneByEntityClass(Student::class)
         ]);
     }
 }

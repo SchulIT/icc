@@ -234,6 +234,30 @@
                     </div>
                 </div>
                 {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'label.last_import'|trans }}</h5>
+                        <p class="mb-0">
+                            <span class="text-muted">{{ 'label.lessons'|trans }}</span>
+
+                            {% if last_import_lessons is not null %}
+                                {{ last_import_lessons.updatedAt|format_datetime }}
+                            {% else %}
+                                {{ 'label.never'|trans }}
+                            {% endif %}
+                        </p>
+                        <p>
+                            <span class="text-muted">{{ 'label.supervisions'|trans }}</span>
+
+                            {% if last_import_supervisions is not null %}
+                                {{ last_import_supervisions.updatedAt|format_datetime }}
+                            {% else %}
+                                {{ 'label.never'|trans }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

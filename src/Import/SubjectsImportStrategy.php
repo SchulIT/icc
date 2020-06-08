@@ -98,4 +98,11 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
     public function getData($data): array {
         return $data->getSubjects();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Subject::class;
+    }
 }

@@ -64,4 +64,11 @@ class StudyGroupMembershipImportStrategy implements ReplaceImportStrategyInterfa
     public function getData($data): array {
         return $data->getMemberships();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return StudyGroupMembership::class;
+    }
 }

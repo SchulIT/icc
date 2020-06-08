@@ -99,4 +99,11 @@ class RoomImportStrategy implements ImportStrategyInterface {
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->roomRepository;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Room::class;
+    }
 }

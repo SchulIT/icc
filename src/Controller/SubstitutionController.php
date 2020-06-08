@@ -8,6 +8,7 @@ use App\Entity\Substitution;
 use App\Entity\User;
 use App\Grouping\Grouper;
 use App\Repository\AbsenceRepositoryInterface;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Settings\SubstitutionSettings;
@@ -35,7 +36,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
      */
     public function index(SubstitutionRepositoryInterface $substitutionRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                           StudentFilter $studentFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, GroupByParameter $groupByParameter, ViewParameter $viewParameter,
-                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, SubstitutionSettings $substitutionSettings, Request $request) {
+                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, SubstitutionSettings $substitutionSettings, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
         $days = $this->getListOfNextDays($dateHelper, $substitutionSettings->getNumberOfAheadDaysForSubstitutions(), $substitutionSettings->skipWeekends());
@@ -117,7 +118,8 @@ class SubstitutionController extends AbstractControllerWithMessages {
             'groupBy' => $groupByParameter->getGroupingStrategyKey($groupingClass),
             'absentTeachers' => $absentTeachers,
             'absentStudyGroups' => $absentStudyGroups,
-            'counts' => $counts
+            'counts' => $counts,
+            'last_import' => $importDateTypeRepository->findOneByEntityClass(Substitution::class)
         ]);
     }
 

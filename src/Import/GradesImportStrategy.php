@@ -97,4 +97,11 @@ class GradesImportStrategy implements ImportStrategyInterface {
     public function getData($data): array {
         return $data->getGrades();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Grade::class;
+    }
 }

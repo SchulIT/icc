@@ -104,6 +104,30 @@
                         <p>{{ 'lists.privacy.info'|trans }}</p>
                     </div>
                 </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'label.last_import'|trans }}</h5>
+                        <p class="mb-0">
+                            <span class="text-muted">{{ 'label.students_simple'|trans }}</span>
+
+                            {% if last_import_students is not null %}
+                                {{ last_import_students.updatedAt|format_datetime }}
+                            {% else %}
+                                {{ 'label.never'|trans }}
+                            {% endif %}
+                        </p>
+                        <p>
+                            <span class="text-muted">{{ 'label.categories'|trans }}</span>
+
+                            {% if last_import_categories is not null %}
+                                {{ last_import_categories.updatedAt|format_datetime }}
+                            {% else %}
+                                {{ 'label.never'|trans }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

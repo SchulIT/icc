@@ -110,6 +110,10 @@ label:
     nobody: Niemand
     capacity: Kapazität
     has_value: hat Wert
+    last_import: Letzter Import
+    last_import_type: 'Letzter Import "%type%"'
+    never: Nie
+    supervisions: Aufsichten
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

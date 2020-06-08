@@ -19,6 +19,7 @@ use App\Export\AppointmentIcsExporter;
 use App\Form\DeviceTokenType as DeviceTokenTypeForm;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Security\Devices\DeviceManager;
 use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
@@ -46,7 +47,8 @@ class AppointmentController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="appointments")
      */
-    public function index(AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter, GradesFilter $gradesFilter) {
+    public function index(AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter,
+                          TeacherFilter $teacherFilter, GradesFilter $gradesFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -61,7 +63,8 @@ class AppointmentController extends AbstractControllerWithMessages {
             'studentFilter' => $studentFilterView,
             'studyGroupFilter' => $studyGroupView,
             'teacherFilter' => $teacherFilterView,
-            'examGradesFilter' => $gradesFilterView
+            'examGradesFilter' => $gradesFilterView,
+            'last_import' => $importDateTypeRepository->findOneByEntityClass(Appointment::class)
         ]);
     }
 

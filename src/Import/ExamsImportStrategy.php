@@ -151,4 +151,11 @@ class ExamsImportStrategy implements ImportStrategyInterface {
     public function getData($data): array {
         return $data->getExams();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Exam::class;
+    }
 }

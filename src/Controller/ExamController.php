@@ -68,14 +68,12 @@ class ExamController extends AbstractControllerWithMessages {
         $user = $this->getUser();
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
-        $all = $request->query->get('all', false) === '✓';
         $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user);
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, false);
 
         $exams = [ ];
-        $today = $all ? null : $this->dateHelper->getToday();
 
         $isVisible = $examSettings->isVisibileFor($user->getUserType());
         $isVisibleAdmin = false;
@@ -85,16 +83,16 @@ class ExamController extends AbstractControllerWithMessages {
             $isVisibleAdmin = true;
 
             if ($studentFilterView->getCurrentStudent() !== null) {
-                $exams = $examRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $today);
+                $exams = $examRepository->findAllByStudents([$studentFilterView->getCurrentStudent()]);
             } else if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
                 $exams = $examRepository->findAllByStudyGroup($studyGroupFilterView->getCurrentStudyGroup());
             } else if ($gradeFilterView->getCurrentGrade() !== null) {
-                    $exams = $examRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $today);
+                    $exams = $examRepository->findAllByGrade($gradeFilterView->getCurrentGrade());
             } else if ($isStudentOrParent === false) {
                 if ($teacherFilterView->getCurrentTeacher() !== null) {
-                    $exams = $examRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $today);
+                    $exams = $examRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher());
                 } else {
-                    $exams = $examRepository->findAll($today);
+                    $exams = $examRepository->findAll();
                 }
             }
 
@@ -131,6 +129,16 @@ class ExamController extends AbstractControllerWithMessages {
             }
         }
 
+        $today = $dateHelper->getToday();
+
+        for ($idx = 0; $idx < count($examWeekGroups) && $currentGroup === null; $idx++) {
+            $group = $examWeekGroups[$idx];
+
+            if ($today <= $group->getWeekOfYear()->getFirstDay()) {
+                $currentGroup = $group;
+            }
+        }
+
         if($currentGroup === null && count($examWeekGroups) > 0) {
             $currentGroup = $examWeekGroups[0];
 
@@ -151,7 +159,6 @@ class ExamController extends AbstractControllerWithMessages {
             'teacherFilter' => $teacherFilterView,
             'gradeFilter' => $gradeFilterView,
             'studyGroupFilter' => $studyGroupFilterView,
-            'showAll' => $all,
             'isVisible' => $isVisible,
             'isVisibleAdmin' => $isVisibleAdmin,
             'exams' => $exams,

@@ -13,7 +13,7 @@ class WeekOfYearStrategy implements SortingStrategyInterface {
      */
     public function compare($objectA, $objectB): int {
         if($objectA === null && $objectB === null) {
-            return true;
+            return 0;
         } else if($objectA === null) {
             return -1;
         } else if($objectB === null) {

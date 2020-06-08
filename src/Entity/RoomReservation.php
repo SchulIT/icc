@@ -50,7 +50,7 @@ class RoomReservation {
 
     /**
      * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumn()
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
      * @var Teacher
      */

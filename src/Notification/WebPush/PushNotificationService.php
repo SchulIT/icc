@@ -31,6 +31,8 @@ class PushNotificationService {
             PushNotification::BODY => $strategy->getBody($objective)
         ]);
 
+        $this->sender->setMaxPaddingLength(2000);
+
         $responses = $this->sender->push($notification->createMessage(), $subscriptions);
 
         foreach($responses as $response) {

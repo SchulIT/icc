@@ -9,6 +9,8 @@ oauth:
     exams: Klausurplan
     messages: Mitteilungen
     substitutions: Vertretungen
+    timetable: Stundenplan
+    appointments: Terminplan
 
   authorize:
     label: Anwendung authorisieren

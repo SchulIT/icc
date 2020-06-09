@@ -2,14 +2,23 @@
 
 namespace App\Response\Api\V1;
 
-use App\Entity\ExamInvigilator as ExamSupervisionEntity;
+use App\Entity\ExamSupervision as ExamSupervisionEntity;
+use JMS\Serializer\Annotation as Serializer;
 
 class ExamSupervision {
 
-    /** @var int */
+    /**
+     * @Serializer\SerializedName("lesson")
+     * @Serializer\Type("int")
+     * @var int
+     */
     private $lesson;
 
-    /** @var Teacher */
+    /**
+     * @Serializer\SerializedName("teacher")
+     * @Serializer\Type("App\Response\Api\V1\Teacher")
+     * @var Teacher
+     */
     private $teacher;
 
     /**

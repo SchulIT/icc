@@ -2,32 +2,50 @@
 
 namespace App\Controller;
 
+use App\Entity\Appointment as AppointmentEntity;
 use App\Entity\Exam as ExamEntity;
 use App\Entity\Message as MessageEntity;
 use App\Entity\MessageAttachment;
 use App\Entity\MessageConfirmation;
 use App\Entity\MessageScope;
+use App\Entity\Student;
 use App\Entity\Student as StudentEntity;
 use App\Entity\StudyGroup as StudyGroupEntity;
 use App\Entity\StudyGroupMembership as StudyGroupMembershipEntity;
 use App\Entity\Substitution as SubstitutionEntity;
+use App\Entity\TimetableLesson as TimetableLessonEntity;
+use App\Entity\TimetablePeriod as TimetablePeriodEntity;
+use App\Entity\TimetableSupervision as TimetableSupervisionEntity;
 use App\Entity\User as UserEntity;
 use App\Entity\UserType;
 use App\Filesystem\FileNotFoundException;
 use App\Filesystem\MessageFilesystem;
+use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
+use App\Repository\TimetableLessonRepositoryInterface;
+use App\Repository\TimetablePeriodRepositoryInterface;
+use App\Repository\TimetableSupervisionRepositoryInterface;
+use App\Response\Api\V1\Appointment;
+use App\Response\Api\V1\AppointmentList;
 use App\Response\Api\V1\Exam;
 use App\Response\Api\V1\ExamList;
 use App\Response\Api\V1\Message;
 use App\Response\Api\V1\MessageList;
 use App\Response\Api\V1\Substitution;
 use App\Response\Api\V1\SubstitutionList;
+use App\Response\Api\V1\Timetable;
+use App\Response\Api\V1\TimetableLesson;
+use App\Response\Api\V1\TimetablePeriod;
+use App\Response\Api\V1\TimetablePeriodList;
+use App\Response\Api\V1\TimetableSupervision;
 use App\Response\Api\V1\User;
+use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\SubstitutionVoter;
+use App\Security\Voter\TimetablePeriodVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -93,6 +111,7 @@ class ApiV1Controller extends AbstractController {
      *     description="Returns a list of exams.",
      *     @Model(type=ExamList::class)
      * )
+     * @SWG\Tag(name="exams")
      */
     public function exams(ExamRepositoryInterface $examRepository) {
         /** @var UserEntity $user */
@@ -136,6 +155,7 @@ class ApiV1Controller extends AbstractController {
      *     description="Returns a list of messages.",
      *     @Model(type=MessageList::class)
      * )
+     * @SWG\Tag(name="messages")
      */
     public function messages(MessageRepositoryInterface $messageRepository, DateHelper $dateHelper) {
         /** @var UserEntity $user */
@@ -177,6 +197,7 @@ class ApiV1Controller extends AbstractController {
      *     type="string",
      *     description="UUID of the message."
      * )
+     * @SWG\Tag(name="messages")
      */
     public function confirmMessage(MessageEntity $message, EntityManagerInterface $entityManager) {
         $this->denyAccessUnlessGranted(MessageVoter::Confirm, $message);
@@ -226,6 +247,7 @@ class ApiV1Controller extends AbstractController {
      *     type="string",
      *     description="UUID of the attachment."
      * )
+     * @SWG\Tag(name="messages")
      */
     public function downloadAttachment(MessageAttachment $messageAttachment, MessageFilesystem $messageFilesystem) {
         $this->denyAccessUnlessGranted(MessageVoter::View, $messageAttachment->getMessage());
@@ -249,6 +271,7 @@ class ApiV1Controller extends AbstractController {
      *     description="Returns a list of substitutions.",
      *     @Model(type=SubstitutionList::class)
      * )
+     * @SWG\Tag(name="substitutions")
      */
     public function substitutions(SubstitutionRepositoryInterface $substitutionRepository, DateHelper $dateHelper, Request $request) {
         /** @var UserEntity $user */
@@ -276,6 +299,168 @@ class ApiV1Controller extends AbstractController {
             ->setSubstitutions(array_map(function(SubstitutionEntity $substitution) {
                 return Substitution::fromEntity($substitution);
             }, $substitutions))
+        );
+    }
+
+    /**
+     * Gets all visible timetable periods for the current user.
+     *
+     * @Route("/timetable/periods", methods={"GET"})
+     * @IsGranted("ROLE_OAUTH2_TIMETABLE")
+     *
+     * @SWG\Get()
+     * @SWG\Response(
+     *     response="200",
+     *     description="Returns a list of timetable periods."
+     * )
+     * @SWG\Tag(name="timetable")
+     */
+    public function timetablePeriods(TimetablePeriodRepositoryInterface $periodRepository, Request $request) {
+        $periods = array_filter(
+            $periodRepository->findAll(),
+            function(TimetablePeriodEntity $period) {
+                return $this->isGranted(TimetablePeriodVoter::View, $period);
+            });
+
+        return $this->returnJson(
+            (new TimetablePeriodList())
+                ->setPeriods(array_map(function(TimetablePeriodEntity $period) {
+                    return TimetablePeriod::fromEntity($period);
+                }, $periods))
+        );
+    }
+
+    /**
+     * Get timetable lessons for the current user.
+     *
+     * Note about users with multiple students (e.g. parents):
+     * By default, only the timetable of the first student is returned. You should specify the student
+     * in the query string.
+     *
+     * @Route("/timetable/{uuid}", methods={"GET"})
+     * @IsGranted("ROLE_OAUTH2_TIMETABLE")
+     *
+     * @SWG\Get()
+     * @SWG\Parameter(
+     *     in="path",
+     *     name="uuid",
+     *     type="string",
+     *     description="UUID of the timetable period."
+     * )
+     * @SWG\Parameter(
+     *     in="query",
+     *     name="student",
+     *     type="string",
+     *     description="UUID of the student which the timetable should be returned for",
+     *     required=false
+     * )
+     * @SWG\Response(
+     *     response="200",
+     *     description="Returns a list of timetable lessons and supervisions.",
+     *     @Model(type=Timetable::class)
+     * )
+     * @SWG\Tag(name="timetable")
+     */
+    public function timetable(TimetablePeriodEntity $period, TimetableLessonRepositoryInterface $lessonRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, Request $request) {
+        /** @var UserEntity $user */
+        $user = $this->getUser();
+        $requestedStudentUuid = $request->query->get('student', null);
+
+        $student = $user->getStudents()->count() > 0 ? $user->getStudents()->first() : null;
+
+        if(!empty($requestedStudentUuid) && $user->getStudents()->count() > 1) {
+            /** @var Student $s */
+            foreach($user->getStudents() as $s) {
+                if($s->getUuid()->toString() === $requestedStudentUuid) {
+                    $student = $s;
+                    break;
+                }
+            }
+        }
+
+        $lessons = [ ];
+        $supervisions = [ ];
+
+        if($student !== null) {
+            $lessons = $lessonRepository->findAllByPeriodAndStudent($period, $student);
+        } else if($user->getTeacher() !== null) {
+            $lessons = $lessonRepository->findAllByPeriodAndTeacher($period, $user->getTeacher());
+            $supervisions = $supervisionRepository->findAllByPeriodAndTeacher($period, $user->getTeacher());
+        }
+
+        return $this->returnJson(
+            (new Timetable())
+                ->setPeriod(TimetablePeriod::fromEntity($period))
+                ->setLessons(array_map(function(TimetableLessonEntity $lesson) {
+                    return TimetableLesson::fromEntity($lesson);
+                }, $lessons))
+                ->setSupervisions(array_map(function(TimetableSupervisionEntity $supervision) {
+                    return TimetableSupervision::fromEntity($supervision);
+                }, $supervisions))
+        );
+    }
+
+    /**
+     * Get appointments for the current user.
+     *
+     * Note about users with multiple students (e.g. parents):
+     * By default, only the appointments of the first student is returned. You should specify the student
+     * in the query string.
+     *
+     * @Route("/appointments", methods={"GET"})
+     * @IsGranted("ROLE_OAUTH2_APPOINTMENTS")
+     *
+     * @SWG\Get()
+     * @SWG\Parameter(
+     *     in="query",
+     *     name="student",
+     *     type="string",
+     *     description="UUID of the student which the appointments should be returned for",
+     *     required=false
+     * )
+     * @SWG\Response(
+     *     response="200",
+     *     description="Returns a list of appointments.",
+     *     @Model(type=AppointmentList::class)
+     * )
+     * @SWG\Tag(name="appointments")
+     */
+    public function appointments(AppointmentRepositoryInterface $appointmentRepository, Request $request) {
+        /** @var UserEntity $user */
+        $user = $this->getUser();
+        $requestedStudentUuid = $request->query->get('student', null);
+
+        $student = $user->getStudents()->count() > 0 ? $user->getStudents()->first() : null;
+
+        if(!empty($requestedStudentUuid) && $user->getStudents()->count() > 1) {
+            /** @var Student $s */
+            foreach($user->getStudents() as $s) {
+                if($s->getUuid()->toString() === $requestedStudentUuid) {
+                    $student = $s;
+                    break;
+                }
+            }
+        }
+
+        $appointments = [ ];
+
+        if($student !== null) {
+            $appointments = $appointmentRepository->findAllForStudents([$student]);
+        } else if($user->getTeacher() !== null) {
+            $appointments = $appointmentRepository->findAllForTeacher($user->getTeacher());
+        } else {
+            $appointments = $appointmentRepository->findAll();
+        }
+
+        $appointments = array_filter($appointments, function(AppointmentEntity $appointment) {
+            return $this->isGranted(AppointmentVoter::View, $appointment);
+        });
+
+        return $this->returnJson(
+            (new AppointmentList())
+                ->setAppointments(array_map(function(AppointmentEntity $appointment) {
+                    return Appointment::fromEntity($appointment);
+                }, $appointments))
         );
     }
 

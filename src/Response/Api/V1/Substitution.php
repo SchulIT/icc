@@ -54,7 +54,7 @@ class Substitution {
 
     /**
      * @Serializer\SerializedName("subject")
-     * @Serializer\Type("subject")
+     * @Serializer\Type("string")
      *
      * @var string|null
      */

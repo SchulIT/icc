@@ -6,6 +6,11 @@ jms_serializer:
     handlers:
         datetime:
             default_format: "Y-m-d\\TH:i:s" # As the system does not care about timezones (yet?!), we do not want them
+
+    default_context:
+        serialization:
+            serialize_null: true
+
 #    metadata:
 #        auto_detection: false
 #        directories:

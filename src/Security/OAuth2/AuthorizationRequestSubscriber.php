@@ -2,6 +2,7 @@
 
 namespace App\Security\OAuth2;
 
+use App\Repository\OAuthClientInfoRepositoryInterface;
 use Nyholm\Psr7\Response;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -16,11 +17,13 @@ class AuthorizationRequestSubscriber implements EventSubscriberInterface {
     private $requestStack;
     private $csrfTokenManager;
     private $twig;
+    private $clientInfoRepository;
 
-    public function __construct(RequestStack $requestStack, CsrfTokenManagerInterface $csrfTokenManager, Environment $twig) {
+    public function __construct(RequestStack $requestStack, CsrfTokenManagerInterface $csrfTokenManager, Environment $twig, OAuthClientInfoRepositoryInterface $clientInfoRepository) {
         $this->requestStack = $requestStack;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->twig = $twig;
+        $this->clientInfoRepository = $clientInfoRepository;
     }
 
     public function onAuthorizationRequestResolve(AuthorizationRequestResolveEvent $event) {
@@ -40,6 +43,7 @@ class AuthorizationRequestSubscriber implements EventSubscriberInterface {
                 [],
                 $this->twig->render('oauth2/authorize.html.twig', [
                     'client' => $event->getClient(),
+                    'info' => $this->clientInfoRepository->findOneByClient($event->getClient()),
                     'scopes' => $event->getScopes()
                 ])
             );

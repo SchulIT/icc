@@ -3,14 +3,27 @@
 {% block title %}{% endblock %}
 
 {% block content %}
+    {% if info is not null %}
+        {% set name = info.name %}
+        {% set description = info.description %}
+    {% else %}
+        {% set name = client.identifier %}
+        {% set description = null %}
+    {% endif %}
 
     <form method="post">
         <div class="text-center">
             <i class="fas fa-mobile-alt fa-3x d-block text-secondary"></i>
             <h4>{{ 'oauth.authorize.label'|trans({}, 'security') }}</h4>
 
-            <p>{{ 'oauth.authorize.message'|trans({'%name%': client.identifier }, 'security') }}</p>
+            <p>{{ 'oauth.authorize.message'|trans({'%name%': name }, 'security')|raw }}</p>
         </div>
+
+        <hr>
+
+        {% if description is not empty %}
+            <p>{{ description }}</p>
+        {% endif %}
 
         <hr>
 

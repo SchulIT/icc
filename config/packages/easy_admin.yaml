@@ -141,3 +141,10 @@ easy_admin:
                     - { property: userType, type_options: { translation_domain: enums } }
                     - teacher
                     - students
+        OAuthClientInfo:
+            class: App\Entity\OAuthClientInfo
+            form:
+                fields:
+                    - name
+                    - description
+                    - client

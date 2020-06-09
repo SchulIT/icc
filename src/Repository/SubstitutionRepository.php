@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Room;
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
 class SubstitutionRepository extends AbstractTransactionalRepository implements SubstitutionRepositoryInterface {
@@ -155,6 +157,28 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function findAllForRooms(array $rooms, ?DateTime $date): array {
+        $roomIds = array_filter(array_map(function(Room $room) {
+            return $room->getExternalId();
+        }, $rooms), function($input) {
+            return !empty($input);
+        });
+
+        $qb = $this->getDefaultQueryBuilder($date);
+        $qb->andWhere(
+            $qb->expr()->orX(
+                $qb->expr()->in('s.room', ':roomIds'),
+                $qb->expr()->in('s.replacementRoom', ':roomIds')
+            )
+        );
+        $qb->setParameter('roomIds', $roomIds);
+
+        return $qb->getQuery()->getResult();
+    }
+
     private function getDefaultQueryBuilder(\DateTime $date = null): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
 
@@ -174,5 +198,24 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
         }
 
         return $qb;
+    }
+
+    /*
+     * TODO: The following methods need improvement -> count in database!
+     */
+    public function countAllByDate(DateTime $date): int {
+        return count($this->findAllByDate($date));
+    }
+
+    public function countAllForStudyGroups(array $studyGroups, ?DateTime $date = null): int {
+        return count($this->findAllForStudyGroups($studyGroups, $date));
+    }
+
+    public function countAllForTeacher(Teacher $teacher, ?DateTime $date = null): int {
+        return count($this->findAllForTeacher($teacher, $date));
+    }
+
+    public function countAllForGrade(Grade $grade, ?DateTime $date = null): int {
+        return count($this->findAllForGrade($grade, $date));
     }
 }

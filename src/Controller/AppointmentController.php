@@ -19,6 +19,7 @@ use App\Export\AppointmentIcsExporter;
 use App\Form\DeviceTokenType as DeviceTokenTypeForm;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Security\Devices\DeviceManager;
 use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
@@ -46,14 +47,15 @@ class AppointmentController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="appointments")
      */
-    public function index(AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter, GradesFilter $gradesFilter) {
+    public function index(AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter,
+                          TeacherFilter $teacherFilter, GradesFilter $gradesFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository) {
         /** @var User $user */
         $user = $this->getUser();
 
         $categoryFilterView = $categoryFilter->handle([ ]);
         $studentFilterView = $studentFilter->handle(null, $user);
         $studyGroupView = $studyGroupFilter->handle(null, $user);
-        $teacherFilterView = $teacherFilter->handle(null, $user, $studentFilterView->getCurrentStudent() === null && $studyGroupView->getCurrentStudyGroup() === null);
+        $teacherFilterView = $teacherFilter->handle(null, $user, false);
         $gradesFilterView = $gradesFilter->handle([], $user);
 
         return $this->renderWithMessages('appointments/index.html.twig', [
@@ -61,7 +63,8 @@ class AppointmentController extends AbstractControllerWithMessages {
             'studentFilter' => $studentFilterView,
             'studyGroupFilter' => $studyGroupView,
             'teacherFilter' => $teacherFilterView,
-            'examGradesFilter' => $gradesFilterView
+            'examGradesFilter' => $gradesFilterView,
+            'last_import' => $importDateTypeRepository->findOneByEntityClass(Appointment::class)
         ]);
     }
 
@@ -119,16 +122,25 @@ class AppointmentController extends AbstractControllerWithMessages {
                 continue;
             }
 
-            $view = [
-                [
-                    'label' => $translator->trans('label.start'),
-                    'content' => $appointment->getStart()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
-                ],
-                [
-                    'label' => $translator->trans('label.end'),
-                    'content' => $appointment->getEnd()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
-                ]
-            ];
+            if($appointment->isAllDay() && $appointment->getDuration()->d === 1) {
+                $view = [
+                    [
+                        'label' => $translator->trans('label.date'),
+                        'content' => $appointment->getStart()->format($translator->trans('date.format'))
+                    ]
+                ];
+            } else {
+                $view = [
+                    [
+                        'label' => $translator->trans('label.start'),
+                        'content' => $appointment->getStart()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
+                    ],
+                    [
+                        'label' => $translator->trans('label.end'),
+                        'content' => $appointment->getRealEnd()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
+                    ]
+                ];
+            }
 
             if(!empty($appointment->getLocation())) {
                 $view[] = [

@@ -14,6 +14,15 @@ interface EmailStrategyInterface {
     public function isEnabled(): bool;
 
     /**
+     * Returns whether this strategy supports the given objective. This controls
+     * whether or not this strategy is executed.
+     *
+     * @param $objective
+     * @return bool
+     */
+    public function supports($objective): bool;
+
+    /**
      * Returns the Reply-To email address (if any is given)
      *
      * @param object $objective The object which is the objective of the notification.

@@ -101,4 +101,11 @@ class TimetablePeriodsImportStrategy implements ImportStrategyInterface {
     public function getData($data): array {
         return $data->getPeriods();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return TimetablePeriod::class;
+    }
 }

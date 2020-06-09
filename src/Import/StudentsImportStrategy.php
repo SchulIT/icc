@@ -157,4 +157,11 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
     public function getData($data): array {
         return $data->getStudents();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Student::class;
+    }
 }

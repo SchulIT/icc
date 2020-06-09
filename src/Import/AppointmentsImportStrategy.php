@@ -176,4 +176,11 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
     public function getData($data): array {
         return $data->getAppointments();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Appointment::class;
+    }
 }

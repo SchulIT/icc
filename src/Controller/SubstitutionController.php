@@ -8,6 +8,7 @@ use App\Entity\Substitution;
 use App\Entity\User;
 use App\Grouping\Grouper;
 use App\Repository\AbsenceRepositoryInterface;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Settings\SubstitutionSettings;
@@ -35,7 +36,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
      */
     public function index(SubstitutionRepositoryInterface $substitutionRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                           StudentFilter $studentFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, GroupByParameter $groupByParameter, ViewParameter $viewParameter,
-                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, SubstitutionSettings $substitutionSettings, Request $request) {
+                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, SubstitutionSettings $substitutionSettings, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
         $days = $this->getListOfNextDays($dateHelper, $substitutionSettings->getNumberOfAheadDaysForSubstitutions(), $substitutionSettings->skipWeekends());
@@ -47,23 +48,41 @@ class SubstitutionController extends AbstractControllerWithMessages {
 
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, false);
 
         /** @var Substitution[] $substitutions */
         $substitutions = [ ];
+        /** @var int[] $counts Substitution counts for the upcoming days (idx: 0 -> first date, idx: 1 -> second date etc.) - TODO: improve this with a proper data structure! */
+        $counts = [ ];
 
         if($teacherFilterView->getCurrentTeacher() !== null) {
             $substitutions = $substitutionRepository->findAllForTeacher($teacherFilterView->getCurrentTeacher(), $selectedDate);
+
+            for($idx = 0; $idx < count($days); $idx++) {
+                $counts[$idx] = $substitutionRepository->countAllForTeacher($teacherFilterView->getCurrentTeacher(), $days[$idx]);
+            }
         } else if($gradeFilterView->getCurrentGrade() !== null) {
             $substitutions = $substitutionRepository->findAllForGrade($gradeFilterView->getCurrentGrade(), $selectedDate);
+
+            for($idx = 0; $idx < count($days); $idx++) {
+                $counts[$idx] = $substitutionRepository->countAllForGrade($gradeFilterView->getCurrentGrade(), $days[$idx]);
+            }
         } else if($studentFilterView->getCurrentStudent() !== null) {
             $studyGroups = array_map(function(StudyGroupMembership $membership) {
                 return $membership->getStudyGroup();
             }, $studentFilterView->getCurrentStudent()->getStudyGroupMemberships()->toArray());
 
             $substitutions = $substitutionRepository->findAllForStudyGroups($studyGroups, $selectedDate);
+
+            for($idx = 0; $idx < count($days); $idx++) {
+                $counts[$idx] = $substitutionRepository->countAllForStudyGroups($studyGroups, $days[$idx]);
+            }
         } else {
             $substitutions = $substitutionRepository->findAllByDate($selectedDate);
+
+            for($idx = 0; $idx < count($days); $idx++) {
+                $counts[$idx] = $substitutionRepository->countAllByDate($days[$idx]);
+            }
         }
 
         $groupingClass = $groupByParameter->getGroupingStrategyClassName($groupBy, $user, static::SectionKey);
@@ -98,7 +117,9 @@ class SubstitutionController extends AbstractControllerWithMessages {
             'view' => $viewType,
             'groupBy' => $groupByParameter->getGroupingStrategyKey($groupingClass),
             'absentTeachers' => $absentTeachers,
-            'absentStudyGroups' => $absentStudyGroups
+            'absentStudyGroups' => $absentStudyGroups,
+            'counts' => $counts,
+            'last_import' => $importDateTypeRepository->findOneByEntityClass(Substitution::class)
         ]);
     }
 

@@ -140,4 +140,11 @@ class TeachersImportStrategy implements ImportStrategyInterface {
     public function getData($data): array {
         return $data->getTeachers();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Teacher::class;
+    }
 }

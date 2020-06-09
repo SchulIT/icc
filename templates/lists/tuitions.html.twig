@@ -38,78 +38,80 @@
                         {% endif %}
                     </div>
 
-                    <table class="table table-striped table-bordered">
-                        <colgroup>
-                            <col class="column-md">
-                            <col>
-                            {% if teacherFilter.currentTeacher == null %}
-                            <col class="column-lg">
-                            {% endif %}
-                            {% if studentFilter.currentStudent == null %}
-                            <col class="column-md">
-                            <col class="column-md">
-                            {% else %}
-                            <col class="column-md">
-                            {% endif %}
-                            <col class="column-md">
-                        </colgroup>
-
-                        <thead>
-                        <tr>
-                            <th>{{ 'label.name'|trans }}</th>
-                            <th>{{ 'label.subject'|trans }}</th>
-                            {% if teacherFilter.currentTeacher == null %}
-                            <th>{{ 'label.teacher'|trans }}</th>
-                            {% endif %}
-                            {% if studentFilter.currentStudent == null %}
-                            <th>{{ 'label.study_group'|trans }}</th>
-                            <th>{{ 'label.students_simple'|trans }}</th>
-                            {% else %}
-                            <th>{{ 'lists.tuitions.type'|trans }}</th>
-                            {% endif %}
-                            <th></th>
-                        </tr>
-                        </thead>
-
-                        <tbody>
-                        {% for tuition in tuitions %}
-                            <tr>
-                                <td>{{ tuition.name }}</td>
-                                <td>{{ tuition.subject.name }}</td>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered card-table">
+                            <colgroup>
+                                <col class="column-md">
+                                <col>
                                 {% if teacherFilter.currentTeacher == null %}
-                                <td>
-                                    {% if tuition.teacher is not null %}
-                                        <a href="{{ path('list_tuitions', { teacher: tuition.teacher.acronym }) }}">{{ tuition.teacher|teacher }}</a>
-                                    {% else %}
-                                        <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
-                                    {% endif %}
-                                </td>
+                                <col class="column-lg">
                                 {% endif %}
                                 {% if studentFilter.currentStudent == null %}
+                                <col class="column-md">
+                                <col class="column-md">
+                                {% else %}
+                                <col class="column-md">
+                                {% endif %}
+                                <col class="column-md">
+                            </colgroup>
+
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.name'|trans }}</th>
+                                <th>{{ 'label.subject'|trans }}</th>
+                                {% if teacherFilter.currentTeacher == null %}
+                                <th>{{ 'label.teacher'|trans }}</th>
+                                {% endif %}
+                                {% if studentFilter.currentStudent == null %}
+                                <th>{{ 'label.study_group'|trans }}</th>
+                                <th>{{ 'label.students_simple'|trans }}</th>
+                                {% else %}
+                                <th>{{ 'lists.tuitions.type'|trans }}</th>
+                                {% endif %}
+                                <th></th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for tuition in tuitions %}
+                                <tr>
+                                    <td>{{ tuition.name }}</td>
+                                    <td>{{ tuition.subject.name }}</td>
+                                    {% if teacherFilter.currentTeacher == null %}
                                     <td>
-                                        {% if tuition.studyGroup is not null %}
-                                            <a href="{{ path('list_studygroups', { study_group: tuition.studyGroup.uuid}) }}">{{ tuition.studyGroup.name }}</a>
-                                        {% else %}
-                                            <span class="badge badge-secondary">{{ 'label.none'|trans }}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if tuition.studyGroup is not null %}
-                                            {{ tuition.studyGroup.memberships|length }}
+                                        {% if tuition.teacher is not null %}
+                                            <a href="{{ path('list_tuitions', { teacher: tuition.teacher.acronym }) }}">{{ tuition.teacher|teacher }}</a>
                                         {% else %}
                                             <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
                                         {% endif %}
                                     </td>
-                                {% else %}
-                                    <td>{{ memberships[tuition.externalId] }}</td>
-                                {% endif %}
-                                <td>
-                                    <a href="{{ path('list_tuition', { uuid: tuition.uuid }) }}">{{ 'label.details'|trans }}</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                                    {% endif %}
+                                    {% if studentFilter.currentStudent == null %}
+                                        <td>
+                                            {% if tuition.studyGroup is not null %}
+                                                <a href="{{ path('list_studygroups', { study_group: tuition.studyGroup.uuid}) }}">{{ tuition.studyGroup.name }}</a>
+                                            {% else %}
+                                                <span class="badge badge-secondary">{{ 'label.none'|trans }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if tuition.studyGroup is not null %}
+                                                {{ tuition.studyGroup.memberships|length }}
+                                            {% else %}
+                                                <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
+                                            {% endif %}
+                                        </td>
+                                    {% else %}
+                                        <td>{{ memberships[tuition.externalId] }}</td>
+                                    {% endif %}
+                                    <td>
+                                        <a href="{{ path('list_tuition', { uuid: tuition.uuid }) }}">{{ 'label.details'|trans }}</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 {% endif %}
 
@@ -129,6 +131,19 @@
 
                     <div class="card-footer">
                         <a href="{{ path('list_tuitions') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'label.last_import'|trans }}</h5>
+                        <p>
+                            {% if last_import is not null %}
+                                {{ last_import.updatedAt|format_datetime }}
+                            {% else %}
+                                {{ 'label.never'|trans }}
+                            {% endif %}
+                        </p>
                     </div>
                 </div>
             </div>

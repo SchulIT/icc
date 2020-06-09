@@ -202,4 +202,11 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
     public function getData($data): array {
         return $data->getSubstitutions();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Substitution::class;
+    }
 }

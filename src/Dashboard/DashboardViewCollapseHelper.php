@@ -170,6 +170,20 @@ class DashboardViewCollapseHelper {
         if(count($lesson->getItems()) === 0) {
             $lesson->addItem(new TimetableLessonViewItem(null, [ ]));
         }
+
+        // ADD ALL ITEMS THAT HAVE NOT BEEN TAKE CONCIDERATION
+        $concideredTypes = [
+            ExamViewItem::class,
+            SubstitutionViewItem::class,
+            SupervisionViewItem::class,
+            TimetableLessonViewItem::class
+        ];
+
+        foreach($originalItems as $originalItem) {
+            if(!in_array(get_class($originalItem), $concideredTypes)) {
+                $lesson->addItem($originalItem);
+            }
+        }
     }
 
     private function isRemovableSubstitution(SubstitutionViewItem $viewItem) {

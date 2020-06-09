@@ -4,15 +4,18 @@ namespace App\Controller;
 
 use App\Entity\DeviceToken;
 use App\Entity\DeviceTokenType;
+use App\Entity\Exam;
 use App\Entity\MessageScope;
-use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
+use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
+use App\Entity\TimetableSupervision;
 use App\Entity\User;
 use App\Export\TimetableIcsExporter;
 use App\Form\DeviceTokenType as DeviceTokenTypeForm;
 use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetablePeriodRepositoryInterface;
@@ -22,6 +25,7 @@ use App\Security\Devices\DeviceManager;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
+use App\Sorting\TimetableWeekStrategy;
 use App\Timetable\TimetableFilter;
 use App\Timetable\TimetableHelper;
 use App\View\Filter\GradeFilter;
@@ -29,6 +33,7 @@ use App\View\Filter\RoomFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\SubjectsFilter;
 use App\View\Filter\TeacherFilter;
+use App\View\Filter\TeachersFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,9 +63,9 @@ class TimetableController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="timetable")
      */
-    public function index(StudentFilter $studentFilter, TeacherFilter $teacherFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
+    public function index(StudentFilter $studentFilter, TeachersFilter $teachersFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableWeekRepositoryInterface $weekRepository, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
-                          TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, Request $request) {
+                          TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -68,12 +73,20 @@ class TimetableController extends AbstractControllerWithMessages {
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
         $roomFilterView = $roomFilter->handle($request->query->get('room', null));
         $subjectFilterView = $subjectFilter->handle($request->query->get('subjects', [ ]));
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
+        $teachersFilterView = $teachersFilter->handle($request->query->get('teachers', []), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
 
         $periods = $periodRepository->findAll();
         $this->sorter->sort($periods, TimetablePeriodStrategy::class);
 
         $currentPeriod = $this->getCurrentPeriod($periods);
+
+        if($request->query->get('period') !== null) {
+            foreach($periods as $period) {
+                if($period->getUuid()->toString() === $request->query->get('period')) {
+                    $currentPeriod = $period;
+                }
+            }
+        }
 
         $weeks = $weekRepository->findAll();
 
@@ -96,10 +109,14 @@ class TimetableController extends AbstractControllerWithMessages {
                         }
                     }
                 }
-            } else if ($teacherFilterView->getCurrentTeacher() !== null) {
-                $lessons = $lessonRepository->findAllByPeriodAndTeacher($currentPeriod, $teacherFilterView->getCurrentTeacher());
-                $lessons = $timetableFilter->filterTeacherLessons($lessons);
-                $supervisions = $supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacherFilterView->getCurrentTeacher());
+            } else if (count($teachersFilterView->getCurrentTeachers()) > 0) {
+                $lessons = [ ];
+                $supervisions = [ ];
+
+                foreach($teachersFilterView->getCurrentTeachers() as $teacher) {
+                    $lessons = array_merge($lessons, $timetableFilter->filterTeacherLessons($lessonRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher)));
+                    $supervisions = array_merge($supervisions, $supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher));
+                }
             } else if ($gradeFilterView->getCurrentGrade() !== null) {
                 $lessons = $lessonRepository->findAllByPeriodAndGrade($currentPeriod, $gradeFilterView->getCurrentGrade());
                 $lessons = $timetableFilter->filterGradeLessons($lessons);
@@ -144,21 +161,51 @@ class TimetableController extends AbstractControllerWithMessages {
             $supervisionLabels[$i] = $this->timetableSettings->getDescriptionBeforeLesson($i);
         }
 
+        $nextPeriod = null;
+        $previousPeriod = null;
+
+        if($currentPeriod !== null) {
+            // Search previous and next period (if any)
+            $periodIdx = null;
+
+            for($idx = 0; $idx < count($periods); $idx++) {
+                if($currentPeriod->getUuid() === $periods[$idx]->getUuid()) {
+                    $periodIdx = $idx;
+                    break;
+                }
+            }
+
+            if($periodIdx !== null) {
+                $nextPeriod = $periods[$periodIdx + 1] ?? null;
+                $previousPeriod = $periods[$periodIdx - 1] ?? null;
+            }
+        }
+
+        if($timetable !== null) {
+            $this->sorter->sort($timetable->getWeeks(), TimetableWeekStrategy::class);
+        }
+
         return $this->renderWithMessages($template, [
             'timetable' => $timetable,
             'studentFilter' => $studentFilterView,
-            'teacherFilter' => $teacherFilterView,
+            'teachersFilter' => $teachersFilterView,
             'gradeFilter' => $gradeFilterView,
             'roomFilter'=> $roomFilterView,
             'subjectFilter' => $subjectFilterView,
             'periods' => $periods,
             'currentPeriod' => $currentPeriod,
+            'nextPeriod' => $nextPeriod,
+            'previousPeriod' => $previousPeriod,
             'startTimes' => $startTimes,
             'endTimes' => $endTimes,
             'gradesWithCourseNames' => $this->timetableSettings->getGradeIdsWithCourseNames(),
             'memberships' => $membershipsTypes,
             'query' => $request->query->all(),
-            'supervisionLabels' => $supervisionLabels
+            'supervisionLabels' => $supervisionLabels,
+            'supervisionSubject' => $this->timetableSettings->getSupervisionLabel(),
+            'supervisionColor' => $this->timetableSettings->getSupervisionColor(),
+            'last_import_lessons' => $importDateTypeRepository->findOneByEntityClass(TimetableLesson::class),
+            'last_import_supervisions' => $importDateTypeRepository->findOneByEntityClass(TimetableSupervision::class),
         ]);
     }
 

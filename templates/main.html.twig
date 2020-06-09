@@ -13,6 +13,15 @@
         {{ knp_menu_render('adminMenu', {'currentClass': 'active' }) }}
     {% endif %}
     {{ knp_menu_render('servicesMenu', {'currentClass': 'active' }) }}
+
+    <ul class="navbar-nav float-lg-right">
+        <li class="nav-item" title="{{ 'webpush.label'|trans }}">
+            <a href="#" class="nav-link" data-toggle="webpush_modal">
+                <i class="far fa-bell"></i>
+            </a>
+        </li>
+    </ul>
+
     {{ knp_menu_render('userMenu', {'currentClass': 'active' }) }}
 {% endblock %}
 
@@ -80,5 +89,78 @@
 {% endblock %}
 
 {% block javascript %}
+    <script>
+        window.webpushKey = "{{ bentools_webpush.server_key }}";
+        window.serviceWorkerUrl = "/sw.js";
+        window.serverUrl = "{{ url('bentools_webpush.subscription') }}";
+    </script>
     <script src="{{ asset('build/app.js') }}"></script>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal_webpush">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+                {{ 'webpush.label'|trans }}
+
+                <span id="push_status_enabled" class="badge badge-success d-none">
+                    {{ 'webpush.state.enabled'|trans }}
+                </span>
+                <span id="push_status_disabled" class="badge badge-danger d-none">
+                    {{ 'webpush.state.disabled'|trans }}
+                </span>
+                <span id="push_not_supported" class="badge badge-danger">
+                    {{ 'webpush.state.not_supported'|trans }}
+                </span>
+                <span id="push_not_granted" class="badge badge-danger d-none">
+                    {{ 'webpush.state.not_granted'|trans }}
+                </span>
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="bs-callout bs-callout-success d-none" id="enable_webpush_success">
+                <p>{{ 'webpush.enable.success'|trans }}</p>
+            </div>
+            <div class="bs-callout bs-callout-success d-none" id="disable_webpush_success">
+                <p>{{ 'webpush.disable.success'|trans }}</p>
+            </div>
+
+            <div class="alert alert-danger">
+                <i class="fa fa-exclamation-triangle"></i> {{ 'webpush.caution.experimental'|trans }}
+            </div>
+
+            <p>
+                {{ 'webpush.info'|trans }}
+            </p>
+
+            <a href="{{ path('profile_notifications') }}" class="btn btn-outline-primary btn-sm">
+                <i class="far fa-bell"></i> {{ 'webpush.settings'|trans }}
+            </a>
+
+            <p id="enable_push_loading" class="d-none">
+                <span>
+                    <i class="fa fa-spin fa-spinner"></i> {{ 'webpush.enable.loading'|trans }}
+                </span>
+            </p>
+
+            <p id="disable_push_loading" class="d-none">
+                <span>
+                    <i class="fa fa-spin fa-spinner"></i> {{ 'webpush.disable.loading'|trans }}
+                </span>
+            </p>
+
+            <p id="push_not_supported_message">{{ 'webpush.caution.browser'|trans }}</p>
+            <p id="push_not_granted_message" class="d-none">{{ 'webpush.caution.browser'|trans }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="enable_webpush">{{ 'webpush.enable.label'|trans }}</button>
+            <button type="button" class="btn btn-danger" id="disable_webpush">{{ 'webpush.disable.label'|trans }}</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'action.cancel'|trans }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
 {% endblock %}

@@ -4,7 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\TeacherTag;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 
 class TeacherTagFixtures extends Fixture {

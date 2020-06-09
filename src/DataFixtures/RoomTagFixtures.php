@@ -4,7 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\RoomTag;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 class RoomTagFixtures extends Fixture {
 

@@ -208,4 +208,11 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
     public function getData($data): array {
         return $data->getTuitions();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Tuition::class;
+    }
 }

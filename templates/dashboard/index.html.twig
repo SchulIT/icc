@@ -118,6 +118,15 @@
                                     </div>
                                 </a>
                             {% endif %}
+                            <a href="#appointments" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                <div class="align-self-center text-center w-100">
+                                    {{ 'dashboard.appointments'|trans }}
+
+                                    <span class="badge badge-light badge-pill">
+                                        {{ view.appointments|length }}
+                                    </span>
+                                </div>
+                            </a>
                         </nav>
 
                         {# Priority Messages #}
@@ -156,8 +165,10 @@
                                         {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
                                     {% elseif type == 'appointment' %}
                                         {{ dashboard.appointment(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
-                                    {% elseif type == 'invigilator' %}
-                                        {{ dashboard.invigilator(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                                    {% elseif type == 'exam_supervision' %}
+                                        {{ dashboard.exam_supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                                    {% elseif type == 'reservation' %}
+                                        {{ dashboard.reservation(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber]) }}
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}
@@ -173,6 +184,12 @@
                         <a id="mentions"></a>
                         {% for mention in view.substitutionMentions %}
                             {{ dashboard.substitution(mention, null, null, null) }}
+                        {% endfor %}
+
+                        {# Appointments #}
+                        <a id="appointments"></a>
+                        {% for appointment in view.appointments %}
+                            {{ dashboard.appointment(appointment) }}
                         {% endfor %}
 
                         {# Priority Messages #}
@@ -229,11 +246,9 @@
 
                 <div class="card">
                     <form method="post" action="{{ path('dashboard', currentFilter) }}">
-                        <div class="card-header">
-                            {{ 'dashboard.settings.label'|trans }}
-                        </div>
-
                         <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-users-cog"></i> {{ 'dashboard.settings.label'|trans }}</h5>
+
                             {% if canIncludeGradeMessages %}
                             <div class="form-group">
                                 <div class="custom-control custom-checkbox">

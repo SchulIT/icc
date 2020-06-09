@@ -1,0 +1,98 @@
+{% macro replacement(original, replacement) %}
+    {% if original is not empty and replacement is not empty %}<s>{{ original }}</s> ⟶ {% elseif original is not empty %}{{ original }}{% endif %}{% if replacement is not empty %}{{ replacement }}{% endif %}
+{% endmacro %}
+
+{% if availability.isAvailable %}
+    {{ 'plans.rooms.reservations.available'|trans }}
+{% endif %}
+
+{% if availability.timetableLesson is not null %}
+    <div class="d-block">
+        {%- set lesson = availability.timetableLesson -%}
+        {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
+        {%- set showCourseName = false -%}
+        {%- for grade in lesson.tuition.studyGroup.grades -%}
+            {% if grade.id in gradesWithCourseNames -%}
+                {% set showCourseName = true -%}
+            {% endif -%}
+        {%- endfor -%}
+
+        {% if availability.timetableLessonCancelled %}
+        <s>
+        {% endif %}
+
+        <span class="badge badge-primary">
+            {% if lesson.tuition.subject.replaceSubjectAbbreviation %}
+                {{ lesson.tuition.subject.name|upper }}
+            {% else %}
+                {{ lesson.tuition.subject.abbreviation|upper }}
+            {% endif %}
+        </span>
+
+        <span class="mx-1"></span>
+
+        <i class="fa fa-users"></i>
+        {% if showCourseName %}
+            {{ lesson.tuition.studyGroup.name }}
+            ({% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+        {% else %}
+            {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+        {% endif %}
+        <span class="mx-1"></span>
+        <i class="fa fa-door-open"></i> {{ lesson.room.name }}
+        <span class="mx-1"></span>
+        <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+
+        {% if availability.timetableLessonCancelled %}
+        </s>
+        {% endif %}
+    </div>
+{% endif %}
+
+{% if availability.substitution is not null %}
+    <div class="d-block">
+        {% set substitution = availability.substitution %}
+
+        <span class="badge badge-primary align-self-center">
+            {% if substitution.type is not empty %}
+                {{ substitution.type|upper }}
+            {% else %}
+                {{ 'dashboard.substitution'|trans|upper }}
+            {% endif %}
+        </span>
+
+        <span class="mx-1"></span>
+
+        {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
+            {{ _self.replacement(substitution.subject, substitution.replacementSubject) }}
+            <span class="mx-1"></span>
+        {% endif %}
+
+        {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
+            <i class="fa fa-users"></i> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
+            <span class="mx-1"></span>
+        {% endif %}
+
+        <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
+        <span class="mx-1"></span>
+
+        {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
+            <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
+        {% endif %}
+    </div>
+{% endif %}
+
+{% if availability.reservation is not null %}
+    <div class="d-block">
+        {% set reservation = availability.reservation %}
+        <span class="badge badge-primary">
+            {{ 'plans.rooms.reservations.reservation'|trans|upper }}
+        </span>
+
+        <i class="fa fa-clock"></i>
+        {{ 'label.substitution_lessons'|trans({'%start%': reservation.lessonStart, '%end%': reservation.lessonEnd, '%count%': (reservation.lessonEnd-reservation.lessonStart)}) }}
+
+        <i class="fa fa-graduation-cap"></i>
+        {{ reservation.teacher|teacher }}
+    </div>
+{% endif %}

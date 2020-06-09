@@ -10,6 +10,7 @@ use App\Repository\MessageRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\ListsVoter;
+use App\Security\Voter\RoomReservationVoter;
 use App\Security\Voter\RoomVoter;
 use App\Security\Voter\WikiVoter;
 use Knp\Menu\FactoryInterface;
@@ -84,6 +85,13 @@ class Builder {
                 'route' => 'rooms'
             ])
                 ->setAttribute('icon', 'fas fa-door-open');
+        }
+
+        if($this->authorizationChecker->isGranted(RoomReservationVoter::View)) {
+            $plans->addChild('plans.rooms.reservations.label', [
+                'route' => 'room_reservations'
+            ])
+                ->setAttribute('icon', 'fas fa-door-closed');
         }
 
         return $plans;
@@ -256,6 +264,11 @@ class Builder {
         }
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $menu->addChild('admin.rooms.label', [
+                'route' => 'admin_rooms'
+            ])
+                ->setAttribute('icon', 'fas fa-door-open');
+
             $menu->addChild('admin.timetable.label', [
                 'route' => 'admin_timetable'
             ])
@@ -305,6 +318,10 @@ class Builder {
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $menu->addChild('admin.settings.dashboard.label', [
                 'route' => 'admin_settings_dashboard'
+            ]);
+
+            $menu->addChild('admin.settings.notifications.label', [
+                'route' => 'admin_settings_notifications'
             ]);
 
             $menu->addChild('admin.settings.timetable.label', [

@@ -66,12 +66,12 @@ class ExamData {
     private $students;
 
     /**
-     * Acronyms of the teachers (their acronyms) which invigilate the exam.
+     * Acronyms of the teachers (their acronyms) which supervise the exam.
      *
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $invigilators;
+    private $supervisions;
 
     /**
      * List of rooms, in which the exam takes place.
@@ -196,16 +196,16 @@ class ExamData {
     /**
      * @return string[]
      */
-    public function getInvigilators(): array {
-        return $this->invigilators;
+    public function getSupervisions(): array {
+        return $this->supervisions;
     }
 
     /**
-     * @param string[] $invigilators
+     * @param string[] $supervisions
      * @return ExamData
      */
-    public function setInvigilators(array $invigilators): ExamData {
-        $this->invigilators = $invigilators;
+    public function setSupervisions(array $supervisions): ExamData {
+        $this->supervisions = $supervisions;
         return $this;
     }
 

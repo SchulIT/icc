@@ -3,6 +3,7 @@
 namespace App\Notification\Email;
 
 use App\Entity\Substitution;
+use App\Event\SubstitutionImportEvent;
 use App\Repository\UserRepositoryInterface;
 use App\Settings\SubstitutionSettings;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -60,5 +61,12 @@ class SubstitutionStrategy implements EmailStrategyInterface {
      */
     public function isEnabled(): bool {
         return $this->settings->isNotificationsEnabled();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports($objective): bool {
+        return $objective instanceof SubstitutionImportEvent;
     }
 }

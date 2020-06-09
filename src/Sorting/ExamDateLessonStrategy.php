@@ -24,6 +24,6 @@ class ExamDateLessonStrategy implements SortingStrategyInterface {
             return $cmpDate;
         }
 
-        return $objectA->getLessonStart() - $objectB->getLessonStart();
+        return $objectB->getLessonStart() - $objectA->getLessonStart();
     }
 }

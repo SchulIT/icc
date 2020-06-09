@@ -6,14 +6,32 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NotificationsType extends AbstractType {
+
+    public function configureOptions(OptionsResolver $resolver) {
+        $resolver->setDefault('allow_email', false);
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options) {
+        if($options['allow_email']) {
+            $builder
+                ->add('email', TextType::class, [
+                    'disabled' => true,
+                    'label' => 'label.email'
+                ])
+                ->add('isEmailNotificationsEnabled', CheckboxType::class, [
+                    'label' => 'profile.notifications.email.label',
+                    'help' => 'profile.notifications.email.help',
+                    'label_attr' => [
+                        'class' => 'checkbox-custom'
+                    ],
+                    'required' => false
+                ]);
+        }
+
         $builder
-            ->add('email', TextType::class, [
-                'disabled' => true,
-                'label' => 'label.email'
-            ])
             ->add('isSubstitutionNotificationsEnabled', CheckboxType::class, [
                 'label' => 'profile.notifications.substitutions.label',
                 'help' => 'profile.notifications.substitutions.help',

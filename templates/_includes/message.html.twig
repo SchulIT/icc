@@ -108,13 +108,13 @@
     {% endif %}
 
     {% if message.mustConfirm and is_granted('confirm', message) and not is_dismissed(message) and not is_confirmed(message) %}
-        <div class="card-footer bg-warning">
+        <div class="card-footer bg-warning text-dark">
             <i class="fa fa-info-circle"></i> {% if is_granted('confirm', message) %}{{ 'messages.confirm.prompt'|trans }}{% else %}{{ 'messages.confirm.info'|trans }}{% endif %}
         </div>
     {% endif %}
 
     {% if message.uploadsEnabled and is_granted('upload', message) and missingUploads|length > 0 %}
-        <div class="card-footer bg-warning">
+        <div class="card-footer bg-warning text-dark">
             <i class="fa fa-exclamation-triangle"></i> {{ 'messages.uploads.status.missing_long'|trans({'%count%': missingUploads|length }) }}
         </div>
     {% endif %}

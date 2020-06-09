@@ -5,10 +5,9 @@ namespace App\DataFixtures;
 use App\Entity\Gender;
 use App\Entity\Subject;
 use App\Entity\Teacher;
-use App\Utils\ArrayUtils;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 
 class TeacherFixtures extends Fixture implements DependentFixtureInterface {

@@ -1,38 +1,69 @@
-{% if appointment.isAllDay %}
-    {% set start = appointment.start|format_date %}
-{% else %}
-    {% set start = appointment.start|format_datetime %}
-{% endif %}
-{% if appointment.end is not null %}
-    {% if appointment.isAllDay %}
-        {% set end = appointment.end|format_date %}
-    {% else %}
-        {% set end = appointment.end|format_datetime %}
+<div class="card">
+    <div class="d-flex flex-wrap">
+        <div class="align-self-center text-center p-3 dashboard-lesson text-black-50">
+            <i class="fa fa-calendar-alt fa-1em"></i>
+        </div>
+
+        <span class="badge badge-light badge-card align-self-center">
+            {{ appointment.title|upper }}
+        </span>
+
+        <div class="card-body align-self-center">
+            {% set icon = "fa-calendar-alt" %}
+            {% if appointment.isAllDay %}
+                {% set start = appointment.start|format_date %}
+            {% elseif appointment.duration.d is same as(0) %}
+                {% set start = appointment.start|format_time %}
+                {% set icon = "fa-clock" %}
+            {% else %}
+                {% set start = appointment.start|format_datetime %}
+            {% endif %}
+            {% if appointment.end is not null %}
+                {% if appointment.isAllDay %}
+                    {% set end = appointment.end.modify('-1 second')|format_date %}
+                {% elseif appointment.duration.d is same as(0) %}
+                    {% set end = appointment.end|format_time %}
+                {% else %}
+                    {% set end = appointment.end|format_datetime %}
+                {% endif %}
+
+                {% set date = 'date.range'|trans({'%from%': start, '%to%': end }) %}
+            {% else %}
+                {% set date = start %}
+            {% endif %}
+
+            {% if not appointment.allDay or appointment.duration.d > 1 %}
+                <i class="fa {{ icon }}"></i> {{ date }}
+                <span class="mx-1"></span>
+            {% endif %}
+
+            {% if appointment.location is not empty %}
+                <i class="fa fa-map-marker-alt"></i> {{ appointment.location }}
+            {% endif %}
+
+            {% if appointment.studyGroups|length > 0 %}
+                <i class="fa fa-users"></i>
+                {% for studyGroup in appointment.studyGroups %}
+                    {{ studyGroup.name }}
+                    ({% for grade in studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                {% endfor %}
+            {% endif %}
+
+            <span class="d-md-inline d-block mx-1">
+                <span class="color-rect" style="background: {{ appointment.category.color }}"></span> {{ appointment.category.name }}
+            </span>
+        </div>
+    </div>
+
+    {% if appointment.content is not empty %}
+        <div class="card-footer">
+            {{ appointment.content }}
+        </div>
     {% endif %}
 
-    {% set date = 'date.range'|trans({'%from%': start, '%to%': end }) %}
-{% else %}
-    {% set date = start %}
-{% endif %}
-
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">{{ appointment.title }}</h5>
-        <p><i class="fa fa-calendar"></i> {{ date }}</p>
-        <p>{{ appointment.content }}</p>
-        <hr />
-        <span class="d-md-inline d-block">
-            <span class="color-rect" style="background: {{ appointment.category.color }}"></span> {{ appointment.category.name }}
-        </span>
-        {% if appointment.studyGroups is not empty %}
-        <span class="d-md-inline d-block">
-            <i class="fas fa-graduation-cap"></i> {{ appointment.studyGroups|studygroups }}
-        </span>
-        {% endif %}
-        {% if appointment.organizers is not empty or appointment.externalOrganizers is not null %}
-        <span class="d-md-inline d-block">
-            <i class="fa fa-users"></i> {% for organizer in appointment.organizers %}{{ organizer|teacher }}{% if not loop.last or appointment.externalOrganizers is not null %}, {% endif %}{% endfor %}{{ appointment.externalOrganizers }}
-        </span>
-        {% endif %}
-    </div>
+    {% if appointment.organizers|length > 0 or appointment.externalOrganizers is not empty %}
+        <div class="card-footer">
+            <i class="fa fa-user"></i> {{ appointment.organizers|teachers }}{% if appointment.organizers|length > 0 and appointment.externalOrganizers is not empty %}, {% endif %}{{ appointment.externalOrganizers }}
+        </div>
+    {% endif %}
 </div>

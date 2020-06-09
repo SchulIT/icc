@@ -181,13 +181,13 @@ class Message {
      * @ORM\Column(type="boolean")
      * @var bool
      */
-    private $hiddenFromDashboard = false;
+    private $isEmailNotificationSent = false;
 
     /**
      * @ORM\Column(type="boolean")
      * @var bool
      */
-    private $isNotificationSent = false;
+    private $isPushNotificationSent = false;
 
     /**
      * @ORM\Column(type="boolean")
@@ -389,6 +389,15 @@ class Message {
     }
 
     /**
+     * @param User $createdBy
+     * @return Message
+     */
+    public function setCreatedBy(User $createdBy): Message {
+        $this->createdBy = $createdBy;
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isDownloadsEnabled(): bool {
@@ -455,32 +464,32 @@ class Message {
     /**
      * @return bool
      */
-    public function isHiddenFromDashboard(): bool {
-        return $this->hiddenFromDashboard;
+    public function isEmailNotificationSent(): bool {
+        return $this->isEmailNotificationSent;
     }
 
     /**
-     * @param bool $hiddenFromDashboard
+     * @param bool $isEmailNotificationSent
      * @return Message
      */
-    public function setHiddenFromDashboard(bool $hiddenFromDashboard): Message {
-        $this->hiddenFromDashboard = $hiddenFromDashboard;
+    public function setIsEmailNotificationSent(bool $isEmailNotificationSent): Message {
+        $this->isEmailNotificationSent = $isEmailNotificationSent;
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isNotificationSent(): bool {
-        return $this->isNotificationSent;
+    public function isPushNotificationSent(): bool {
+        return $this->isPushNotificationSent;
     }
 
     /**
-     * @param bool $isNotificationSent
+     * @param bool $isPushNotificationSent
      * @return Message
      */
-    public function setIsNotificationSent(bool $isNotificationSent): Message {
-        $this->isNotificationSent = $isNotificationSent;
+    public function setIsPushNotificationSent(bool $isPushNotificationSent): Message {
+        $this->isPushNotificationSent = $isPushNotificationSent;
         return $this;
     }
 

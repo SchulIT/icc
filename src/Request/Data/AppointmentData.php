@@ -2,7 +2,7 @@
 
 namespace App\Request\Data;
 
-use App\Validator\NullOrNotBlank;
+use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -34,31 +34,36 @@ class AppointmentData {
     private $subject;
 
     /**
+     * Content of the appointment - must not be empty but may be null.
+     *
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
+     * @Assert\NotBlank(allowNull=true)
+     * @var string|null
      */
     private $content;
 
     /**
-     * @Serializer\Type("datetime")
-     * @Assert\DateTime()
+     * @Serializer\Type("DateTime")
      * @Assert\NotNull()
-     * @var \DateTime
+     * @var DateTime
      */
     private $start;
 
     /**
-     * @Serializer\Type("datetime")
-     * @Assert\DateTime()
+     * End of the appointment. Note: this value is exclusive which means that an all day appointment on April 30, 2020
+     * has a start date of "2020-04-30T00:00:00" and end date of "2020-05-01T00:00:00".
+     *
+     * @Serializer\Type("DateTime")
      * @Assert\NotNull()
-     * @var \DateTime
+     * @var DateTime
      */
     private $end;
 
     /**
+     * Location of the appointment - must not be empty but may be null.
+     *
      * @Serializer\Type("string")
-     * @NullOrNotBlank()
+     * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */
     private $location;
@@ -78,7 +83,7 @@ class AppointmentData {
     private $visibilities;
 
     /**
-     * List of external study group IDs, which this appointment belongs to.
+     * List of external study group IDs, which this appointment belongs to. May be empty.
      *
      * @Serializer\Type("array<string>")
      * @var string[]
@@ -94,8 +99,10 @@ class AppointmentData {
     private $organizers;
 
     /**
+     * List of external organizers - must not be empty but may be null.
+     *
      * @Serializer\Type("string")
-     * @NullOrNotBlank()
+     * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */
     private $externalOrganizers;
@@ -149,17 +156,17 @@ class AppointmentData {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getContent() {
+    public function getContent(): ?string {
         return $this->content;
     }
 
     /**
-     * @param string $content
+     * @param string|null $content
      * @return AppointmentData
      */
-    public function setContent($content): AppointmentData {
+    public function setContent(?string $content): AppointmentData {
         $this->content = $content;
         return $this;
     }

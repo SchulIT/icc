@@ -14,43 +14,45 @@
 
 {% block content %}
     <div class="card">
-        <table class="table table-striped table-bordered table-hover">
-            <colgroup>
-                <col class="column-sm">
-                <col class="column-sm">
-                <col class="column-lg">
-                <col class="column-lg">
-            </colgroup>
-            <thead>
-            <tr>
-                <th>{{ 'label.version'|trans }}</th>
-                <th>{{ 'versions.type.label'|trans }}</th>
-                <th>{{ 'label.user'|trans }}</th>
-                <th>{{ 'label.date'|trans }}</th>
-                <th> </th>
-            </tr>
-            </thead>
-
-            <tbody>
-                {% for entry in logs %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover card-table">
+                <colgroup>
+                    <col class="column-sm">
+                    <col class="column-sm">
+                    <col class="column-lg">
+                    <col class="column-lg">
+                </colgroup>
+                <thead>
                 <tr>
-                    <td>{{ entry.version }}</td>
-                    <td>{{ ('versions.type.'~entry.action)|trans }}</td>
-                    <td>{{ entry.username }}</td>
-                    <td>{{ entry.loggedAt|format_datetime }}</td>
-                    <td>
-                        <a href="{{ path('show_document_version', { uuid: document.uuid, version: entry.version}) }}" class="btn btn-sm btn-primary">
-                            <i class="fa fa-eye"></i> {{ 'versions.show.button'|trans }}
-                        </a>
-
-                        <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#restore-modal" data-modal-content="{{ 'versions.restore.confirm'|trans({'%date%': entry.loggedAt|format_datetime}) }}" data-entity-target="input[name={{ version_param }}]" data-entity-id="{{ entry.id }}">
-                            <i class="fa fa-trash-restore"></i> {{ 'versions.restore.button'|trans }}
-                        </a>
-                    </td>
+                    <th>{{ 'label.version'|trans }}</th>
+                    <th>{{ 'versions.type.label'|trans }}</th>
+                    <th>{{ 'label.user'|trans }}</th>
+                    <th>{{ 'label.date'|trans }}</th>
+                    <th> </th>
                 </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody>
+                    {% for entry in logs %}
+                    <tr>
+                        <td>{{ entry.version }}</td>
+                        <td>{{ ('versions.type.'~entry.action)|trans }}</td>
+                        <td>{{ entry.username }}</td>
+                        <td>{{ entry.loggedAt|format_datetime }}</td>
+                        <td>
+                            <a href="{{ path('show_document_version', { uuid: document.uuid, version: entry.version}) }}" class="btn btn-sm btn-primary">
+                                <i class="fa fa-eye"></i> {{ 'versions.show.button'|trans }}
+                            </a>
+
+                            <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#restore-modal" data-modal-content="{{ 'versions.restore.confirm'|trans({'%date%': entry.loggedAt|format_datetime}) }}" data-entity-target="input[name={{ version_param }}]" data-entity-id="{{ entry.id }}">
+                                <i class="fa fa-trash-restore"></i> {{ 'versions.restore.button'|trans }}
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="buttons">

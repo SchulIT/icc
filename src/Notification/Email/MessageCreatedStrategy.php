@@ -2,13 +2,13 @@
 
 namespace App\Notification\Email;
 
-use App\Entity\Message;
+use App\Event\MessageCreatedEvent;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class MessageStrategy implements EmailStrategyInterface, PostEmailSendActionInterface {
+class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendActionInterface {
 
     private $translator;
     private $userRepository;
@@ -30,11 +30,11 @@ class MessageStrategy implements EmailStrategyInterface, PostEmailSendActionInte
     }
 
     /**
-     * @param Message $objective
+     * @param MessageCreatedEvent $objective
      * @return string|null
      */
     public function getReplyTo($objective): ?string {
-        $creator = $objective->getCreatedBy();
+        $creator = $objective->getMessage()->getCreatedBy();
 
         if($creator === null) {
             return null;
@@ -44,31 +44,31 @@ class MessageStrategy implements EmailStrategyInterface, PostEmailSendActionInte
     }
 
     /**
-     * @param Message $objective
+     * @param MessageCreatedEvent $objective
      * @return array
      */
     public function getRecipients($objective): array {
-        if($objective->isNotificationSent() || $objective->getStartDate() > $this->dateHelper->getToday()) {
+        if($objective->getMessage()->isEmailNotificationSent() || $objective->getMessage()->getStartDate() > $this->dateHelper->getToday()) {
             return [ ];
         }
 
-        return $this->userRepository->findAllByNotifyMessages($objective);
+        return $this->userRepository->findAllByNotifyMessages($objective->getMessage());
     }
 
     /**
-     * @param Message $objective
+     * @param MessageCreatedEvent $objective
      * @return string
      */
     public function getSubject($objective): string {
-        return $this->translator->trans('message.title', ['%title%' => $objective->getTitle()], 'email');
+        return $this->translator->trans('message.create.title', ['%title%' => $objective->getMessage()->getTitle()], 'email');
     }
 
     /**
-     * @param Message $objective
+     * @param MessageCreatedEvent $objective
      * @return string
      */
     public function getSender($objective): string {
-        $creator = $objective->getCreatedBy();
+        $creator = $objective->getMessage()->getCreatedBy();
 
         if($creator === null) {
             return '';
@@ -85,10 +85,17 @@ class MessageStrategy implements EmailStrategyInterface, PostEmailSendActionInte
     }
 
     /**
-     * @param Message $objective
+     * @param MessageCreatedEvent $objective
      */
     public function onNotificationSent($objective): void {
-        $objective->setIsNotificationSent(true);
-        $this->messageRepository->persist($objective);
+        $objective->getMessage()->setIsEmailNotificationSent(true);
+        $this->messageRepository->persist($objective->getMessage());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports($objective): bool {
+        return $objective instanceof MessageCreatedEvent;
     }
 }

@@ -11,6 +11,7 @@ use App\Notification\Email\EmailNotificationService;
 use App\Repository\DeviceTokenRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\DeviceTokenVoter;
+use App\Settings\NotificationSettings;
 use App\Sorting\Sorter;
 use App\Sorting\StringGroupStrategy;
 use App\Sorting\StringStrategy;
@@ -37,17 +38,23 @@ class ProfileController extends AbstractController {
     /**
      * @Route("/notifications", name="profile_notifications")
      */
-    public function notifications(Request $request, UserRepositoryInterface $userRepository, EmailNotificationService $emailNotificationService) {
+    public function notifications(Request $request, UserRepositoryInterface $userRepository, NotificationSettings $notificationSettings) {
         /** @var User $user */
         $user = $this->getUser();
-        $allowedUserTypes = $emailNotificationService->getAllowedUserTypesForNotifications();
-        $isAllowed = false;
+
+        $allowedEmailUserTypes = $notificationSettings->getEmailEnabledUserTypes();
+        $allowedPushUserTypes = $notificationSettings->getPushEnabledUserTypes();
+
+        $isEmailAllowed = EnumArrayUtils::inArray($user->getUserType(), $allowedEmailUserTypes) !== false;
+        $isPushAllowed = EnumArrayUtils::inArray($user->getUserType(), $allowedPushUserTypes);
+
+        $isAllowed = $isEmailAllowed || $isPushAllowed;
         $form = null;
 
-        if(EnumArrayUtils::inArray($user->getUserType(), $allowedUserTypes) !== false) {
-            $isAllowed = true;
-
-            $form = $this->createForm(NotificationsType::class, $user);
+        if($isAllowed === true) {
+            $form = $this->createForm(NotificationsType::class, $user, [
+                'allow_email' => $isEmailAllowed
+            ]);
             $form->handleRequest($request);
 
             if($form->isSubmitted() && $form->isValid()) {
@@ -60,7 +67,9 @@ class ProfileController extends AbstractController {
 
         return $this->render('profile/notifications.html.twig', [
             'form' => $form !== null ? $form->createView() : null,
-            'is_allowed' => $isAllowed
+            'is_allowed' => $isAllowed,
+            'email_allowed' => $isEmailAllowed,
+            'push_allowed' => $isPushAllowed
         ]);
     }
 

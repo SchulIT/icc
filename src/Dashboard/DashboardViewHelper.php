@@ -2,11 +2,13 @@
 
 namespace App\Dashboard;
 
+use App\Entity\Appointment;
 use App\Entity\Exam;
-use App\Entity\ExamInvigilator;
+use App\Entity\ExamSupervision;
 use App\Entity\GradeTeacher;
 use App\Entity\Message;
 use App\Entity\MessageScope;
+use App\Entity\RoomReservation;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Substitution;
@@ -21,18 +23,23 @@ use App\Grouping\AbsentStudentGroup;
 use App\Grouping\Grouper;
 use App\Grouping\AbsentStudentStrategy as AbstentStudentGroupStrategy;
 use App\Repository\AbsenceRepositoryInterface;
+use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
+use App\Repository\RoomReservationRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
 use App\Security\Voter\AbsenceVoter;
+use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
+use App\Security\Voter\RoomReservationVoter;
 use App\Security\Voter\SubstitutionVoter;
+use App\Settings\DashboardSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Sorting\AbsentStudentStrategy;
@@ -41,11 +48,13 @@ use App\Sorting\AbsentTeacherStrategy;
 use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
 use App\Timetable\TimetablePeriodHelper;
+use App\Timetable\TimetableWeekHelper;
 use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
 use App\Utils\StudyGroupHelper;
 use DateTime;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DashboardViewHelper {
 
@@ -58,19 +67,27 @@ class DashboardViewHelper {
     private $infotextRepository;
     private $absenceRepository;
     private $studyGroupRepository;
+    private $appointmentRepository;
+    private $roomReservationRepository;
 
     private $studyGroupHelper;
     private $timetablePeriodHelper;
     private $timetableSettings;
+    private $timetableWeekHelper;
     private $sorter;
     private $grouper;
+    private $dashboardSettings;
 
     private $authorizationChecker;
+    private $validator;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
-                                MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository, StudyGroupRepositoryInterface $studyGroupRepository,
-                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, Sorter $sorter, Grouper $grouper, TimetableSettings $timetableSettings, AuthorizationCheckerInterface $authorizationChecker) {
+                                MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
+                                StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, RoomReservationRepositoryInterface $reservationRepository,
+                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, Sorter $sorter, Grouper $grouper,
+                                TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
+                                ValidatorInterface $validator) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->timetableRepository = $timetableRepository;
@@ -80,16 +97,21 @@ class DashboardViewHelper {
         $this->infotextRepository = $infotextRepository;
         $this->absenceRepository = $absenceRepository;
         $this->studyGroupRepository = $studyGroupRepository;
+        $this->appointmentRepository = $appointmentRepository;
+        $this->roomReservationRepository = $reservationRepository;
         $this->studyGroupHelper = $studyGroupHelper;
         $this->timetablePeriodHelper = $timetablePeriodHelper;
         $this->timetableSettings = $timetableSettings;
+        $this->timetableWeekHelper = $weekHelper;
         $this->sorter = $sorter;
         $this->grouper = $grouper;
+        $this->dashboardSettings = $dashboardSettings;
         $this->authorizationChecker = $authorizationChecker;
+        $this->validator = $validator;
     }
 
     public function createViewForTeacher(Teacher $teacher, DateTime $dateTime, bool $includeGradeMessages = false): DashboardView {
-        $view = new DashboardView();
+        $view = new DashboardView($dateTime);
 
         $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
         $numberOfWeeks = count($this->timetableWeekRepository->findAll());
@@ -118,13 +140,13 @@ class DashboardViewHelper {
 
         $this->addMessages($messages, $view);
 
-        if($includeGradeMessages)
-
         $this->addSubstitutions($this->substitutionRepository->findAllForTeacher($teacher, $dateTime), $view);
         $this->addExams($exams = $this->examRepository->findAllByTeacher($teacher, $dateTime, true), $view, $teacher);
         $this->addInfotexts($dateTime, $view);
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
+        $this->addAppointments($this->appointmentRepository->findAllForTeacher($teacher, $dateTime), $view);
+        $this->addRoomReservations($this->roomReservationRepository->findAllByTeacherAndDate($teacher, $dateTime), $view);
 
         return $view;
     }
@@ -134,7 +156,7 @@ class DashboardViewHelper {
             throw new \InvalidArgumentException(sprintf('$userType must be either Student or Parent, "%s" given.', $userType->getValue()));
         }
 
-        $view = new DashboardView();
+        $view = new DashboardView($dateTime);
 
         $studyGroups = $this->studyGroupHelper->getStudyGroups([$student])->toArray();
 
@@ -152,12 +174,13 @@ class DashboardViewHelper {
         $this->addInfotexts($dateTime, $view);
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
+        $this->addAppointments($this->appointmentRepository->findAllForStudents([$student], $dateTime), $view);
 
         return $view;
     }
 
     public function createViewForUser(User $user, DateTime $dateTime): DashboardView {
-        $view = new DashboardView();
+        $view = new DashboardView($dateTime);
 
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $user->getUserType(), $dateTime), $view);
 
@@ -226,11 +249,15 @@ class DashboardViewHelper {
      * @param DashboardView $dashboardView
      */
     private function addSupervisions(iterable $supervisions, DashboardView $dashboardView): void {
+        $dayOfWeek = (int)$dashboardView->getDateTime()->format('w'); // PHP gives the day of week 0-based
+
         foreach($supervisions as $supervision) {
-            if($supervision->isBefore()) {
-                $dashboardView->addItemBefore($supervision->getLesson(), new SupervisionViewItem($supervision));
-            } else {
-                $dashboardView->addItem($supervision->getLesson(), new SupervisionViewItem($supervision));
+            if($supervision->getDay() === $dayOfWeek && $this->timetableWeekHelper->isTimetableWeek($dashboardView->getDateTime(), $supervision->getWeek())) {
+                if ($supervision->isBefore()) {
+                    $dashboardView->addItemBefore($supervision->getLesson(), new SupervisionViewItem($supervision));
+                } else {
+                    $dashboardView->addItem($supervision->getLesson(), new SupervisionViewItem($supervision));
+                }
             }
         }
     }
@@ -240,13 +267,17 @@ class DashboardViewHelper {
      * @param DashboardView $dashboardView
      */
     private function addSubstitutions(iterable $substitutions, DashboardView $dashboardView): void {
+        $freeTypes = $this->dashboardSettings->getFreeLessonSubstitutionTypes();
+
         foreach($substitutions as $substitution) {
             if($this->authorizationChecker->isGranted(SubstitutionVoter::View, $substitution) !== true) {
                 continue;
             }
 
+            $isFreeLesson = in_array($substitution->getType(), $freeTypes);
+
             if($substitution->startsBefore()) {
-                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution));
+                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution, $isFreeLesson));
 
                 if($substitution->getLessonEnd() - $substitution->getLessonStart() === 0) {
                     // Do not expand more lessons when the end is the same lesson as the beginning
@@ -255,7 +286,7 @@ class DashboardViewHelper {
             }
 
             for ($lesson = $substitution->getLessonStart(); $lesson <= $substitution->getLessonEnd(); $lesson++) {
-                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution));
+                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson));
             }
         }
     }
@@ -297,12 +328,12 @@ class DashboardViewHelper {
                 }, $tuition->getTeachers()));
             }
 
-            $invigilators = [ ];
+            $supervisions = [ ];
 
             if($teacher !== null) {
-                /** @var ExamInvigilator $invigilator */
-                foreach($exam->getInvigilators() as $invigilator) {
-                    $invigilators[$invigilator->getLesson()] = $invigilator->getTeacher()->getId();
+                /** @var ExamSupervision $supervision */
+                foreach($exam->getSupervisions() as $supervision) {
+                    $supervisions[$supervision->getLesson()] = $supervision->getTeacher()->getId();
                 }
             }
 
@@ -312,7 +343,7 @@ class DashboardViewHelper {
                         $dashboardView->addItem($lesson, new ExamViewItem($exam));
                     }
 
-                    if(isset($invigilators[$lesson]) && $invigilators[$lesson] === $teacher->getId()) {
+                    if(isset($supervisions[$lesson]) && $supervisions[$lesson] === $teacher->getId()) {
                         $dashboardView->addItem($lesson, new ExamSupervisionViewItem($exam));
                     }
                 } else {
@@ -348,6 +379,40 @@ class DashboardViewHelper {
         foreach($absences as $absence) {
             if($this->authorizationChecker->isGranted(AbsenceVoter::View, $absence)) {
                 $view->addAbsence($absence);
+            }
+        }
+    }
+
+    /**
+     * @param Appointment[] $appointments
+     * @param DashboardView $view
+     */
+    private function addAppointments(array $appointments, DashboardView $view): void {
+        $freeCategories = $this->timetableSettings->getCategoryIds();
+
+        foreach($appointments as $appointment) {
+            if($this->authorizationChecker->isGranted(AppointmentVoter::View, $appointment)) {
+                if(in_array($appointment->getCategory()->getId(), $freeCategories)) {
+                    $view->removeLessons();;
+                }
+
+                $view->addAppointment($appointment);
+            }
+        }
+    }
+
+    /**
+     * @param RoomReservation[] $reservations
+     * @param DashboardView $view
+     */
+    private function addRoomReservations(array $reservations, DashboardView $view): void {
+        foreach($reservations as $reservation) {
+            if($this->authorizationChecker->isGranted(RoomReservationVoter::View)) {
+                $violations = $this->validator->validate($reservation, null, ['collision']);
+
+                for($lessonNumber = $reservation->getLessonStart(); $lessonNumber <= $reservation->getLessonEnd(); $lessonNumber++) {
+                    $view->addItem($lessonNumber, new RoomReservationViewItem($reservation, $violations));
+                }
             }
         }
     }

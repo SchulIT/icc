@@ -7,7 +7,7 @@ use App\Entity\Grade;
 use App\Entity\Student;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 
 class StudentFixtures extends Fixture implements DependentFixtureInterface {

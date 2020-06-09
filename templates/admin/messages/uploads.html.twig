@@ -94,29 +94,31 @@
                                 <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                             </div>
 
-                            <table class="table table-bordered collapse card-table" id="uploads-students-{{ grade.grade.uuid }}">
-                                <colgroup>
-                                    <col class="column-lg">
-                                    <col>
-                                    <col class="column-lg">
-                                    <col class="column-lg">
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th>{{ 'label.name'|trans }}</th>
-                                    <th>{{ 'label.file'|trans }}</th>
-                                    <th>{{ 'label.filesize'|trans }}</th>
-                                    <th>{{ 'label.date'|trans }}</th>
-                                </tr>
-                                </thead>
+                            <div class="table-responsive">
+                                <table class="table table-bordered collapse card-table" id="uploads-students-{{ grade.grade.uuid }}">
+                                    <colgroup>
+                                        <col class="column-lg">
+                                        <col>
+                                        <col class="column-lg">
+                                        <col class="column-lg">
+                                    </colgroup>
+                                    <thead>
+                                    <tr>
+                                        <th>{{ 'label.name'|trans }}</th>
+                                        <th>{{ 'label.file'|trans }}</th>
+                                        <th>{{ 'label.filesize'|trans }}</th>
+                                        <th>{{ 'label.date'|trans }}</th>
+                                    </tr>
+                                    </thead>
 
-                                <tbody>
-                                {% for student in grade.students %}
-                                    {% set users = view.studentUsers(student) %}
-                                    {{ _self.printUsers(view, message, users, student|student ) }}
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                                    <tbody>
+                                    {% for student in grade.students %}
+                                        {% set users = view.studentUsers(student) %}
+                                        {{ _self.printUsers(view, message, users, student|student ) }}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
 
                             <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-parents-{{ grade.grade.uuid }}">
                                 <span class="mr-auto align-self-center">{{ 'user_type.parent'|trans({}, 'enums') }}</span>
@@ -125,29 +127,31 @@
                                 <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                             </div>
 
-                            <table class="table table-bordered collapse card-table" id="uploads-parents-{{ grade.grade.uuid }}">
-                                <colgroup>
-                                    <col class="column-lg">
-                                    <col>
-                                    <col class="column-lg">
-                                    <col class="column-lg">
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th>{{ 'label.name'|trans }}</th>
-                                    <th>{{ 'label.file'|trans }}</th>
-                                    <th>{{ 'label.filesize'|trans }}</th>
-                                    <th>{{ 'label.date'|trans }}</th>
-                                </tr>
-                                </thead>
+                            <div class="table-responsive">
+                                <table class="table table-bordered collapse card-table" id="uploads-parents-{{ grade.grade.uuid }}">
+                                    <colgroup>
+                                        <col class="column-lg">
+                                        <col>
+                                        <col class="column-lg">
+                                        <col class="column-lg">
+                                    </colgroup>
+                                    <thead>
+                                    <tr>
+                                        <th>{{ 'label.name'|trans }}</th>
+                                        <th>{{ 'label.file'|trans }}</th>
+                                        <th>{{ 'label.filesize'|trans }}</th>
+                                        <th>{{ 'label.date'|trans }}</th>
+                                    </tr>
+                                    </thead>
 
-                                <tbody>
-                                {% for student in grade.students %}
-                                    {% set users = view.parentUsers(student) %}
-                                    {{ _self.printUsers(view, message, users, student|student ) }}
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                                    <tbody>
+                                    {% for student in grade.students %}
+                                        {% set users = view.parentUsers(student) %}
+                                        {{ _self.printUsers(view, message, users, student|student ) }}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
@@ -161,29 +165,31 @@
                             <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                         </div>
 
-                        <table class="table table-bordered collapse" id="uploads-teachers">
-                            <colgroup>
-                                <col class="column-lg">
-                                <col>
-                                <col class="column-lg">
-                                <col class="column-lg">
-                            </colgroup>
-                            <thead>
-                            <tr>
-                                <th>{{ 'label.name'|trans }}</th>
-                                <th>{{ 'label.file'|trans }}</th>
-                                <th>{{ 'label.filesize'|trans }}</th>
-                                <th>{{ 'label.date'|trans }}</th>
-                            </tr>
-                            </thead>
+                        <div class="table-responsive">
+                            <table class="table table-bordered card-table collapse" id="uploads-teachers">
+                                <colgroup>
+                                    <col class="column-lg">
+                                    <col>
+                                    <col class="column-lg">
+                                    <col class="column-lg">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>{{ 'label.name'|trans }}</th>
+                                    <th>{{ 'label.file'|trans }}</th>
+                                    <th>{{ 'label.filesize'|trans }}</th>
+                                    <th>{{ 'label.date'|trans }}</th>
+                                </tr>
+                                </thead>
 
-                            <tbody>
-                            {% for teacher in teachers %}
-                                {% set users = view.teacherUsers(teacher) %}
-                                {{ _self.printUsers(view, message, users, teacher|teacher ) }}
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                <tbody>
+                                {% for teacher in teachers %}
+                                    {% set users = view.teacherUsers(teacher) %}
+                                    {{ _self.printUsers(view, message, users, teacher|teacher ) }}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 {% endif %}
 
@@ -197,28 +203,30 @@
                             <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                         </div>
 
-                        <table class="table table-bordered collapse" id="uploads-users">
-                            <colgroup>
-                                <col class="column-lg">
-                                <col>
-                                <col class="column-lg">
-                                <col class="column-lg">
-                            </colgroup>
-                            <thead>
-                            <tr>
-                                <th>{{ 'label.name'|trans }}</th>
-                                <th>{{ 'label.file'|trans }}</th>
-                                <th>{{ 'label.filesize'|trans }}</th>
-                                <th>{{ 'label.date'|trans }}</th>
-                            </tr>
-                            </thead>
+                        <div class="table-responsive">
+                            <table class="table table-bordered card-table collapse" id="uploads-users">
+                                <colgroup>
+                                    <col class="column-lg">
+                                    <col>
+                                    <col class="column-lg">
+                                    <col class="column-lg">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>{{ 'label.name'|trans }}</th>
+                                    <th>{{ 'label.file'|trans }}</th>
+                                    <th>{{ 'label.filesize'|trans }}</th>
+                                    <th>{{ 'label.date'|trans }}</th>
+                                </tr>
+                                </thead>
 
-                            <tbody>
-                                {% for user in group.users %}
-                                    {{ _self.printUsers(view, message, [ user ], user|user ) }}
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                <tbody>
+                                    {% for user in group.users %}
+                                        {{ _self.printUsers(view, message, [ user ], user|user ) }}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 {% endfor %}
             </div>

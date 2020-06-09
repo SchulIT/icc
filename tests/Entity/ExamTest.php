@@ -3,7 +3,7 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Exam;
-use App\Entity\ExamInvigilator;
+use App\Entity\ExamSupervision;
 use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
@@ -51,11 +51,11 @@ class ExamTest extends TestCase {
         $exam->removeStudent($student);
         $this->assertFalse($exam->getStudents()->contains($student));
 
-        $invigilator = new ExamInvigilator();
-        $exam->addInvigilator($invigilator);
-        $this->assertTrue($exam->getInvigilators()->contains($invigilator));
+        $invigilator = new ExamSupervision();
+        $exam->addSupervision($invigilator);
+        $this->assertTrue($exam->getSupervisions()->contains($invigilator));
 
-        $exam->removeInvigilator($invigilator);
-        $this->assertFalse($exam->getInvigilators()->contains($invigilator));
+        $exam->removeSupervision($invigilator);
+        $this->assertFalse($exam->getSupervisions()->contains($invigilator));
     }
 }

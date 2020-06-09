@@ -44,21 +44,21 @@
                 <div class="card">
                     <div class="card-body">
                         {% if studentFilter.studentGradeGroups|length > 0 %}
-                            {% include "_filter/student.html.twig" with { trigger: 'none' } %}
+                            {% include "_filter/student.html.twig" with { trigger: 'none', isChoice: false } %}
                         {% endif %}
 
                         {% if studyGroupFilter.studyGroupGroups|length > 0 %}
-                            {% include "_filter/study_group.html.twig" with { trigger: 'none' } %}
+                            {% include "_filter/study_group.html.twig" with { trigger: 'none', isChoice: false } %}
                         {% endif %}
 
                         {% if teacherFilter.teachers|length > 0 %}
-                            {% include "_filter/teacher.html.twig" with { trigger: 'none' } %}
+                            {% include "_filter/teacher.html.twig" with { trigger: 'none', isChoice: false } %}
                         {% endif %}
 
                         <form role="form" method="get" class="form hidden-print mb-2">
                             <div class="form-group">
                                 <label for="categories" class="control-label">{{ 'label.categories'|trans }}:</label>
-                                <select name="categories" multiple="multiple" id="categories" class="form-control" data-choice="true">
+                                <select name="categories" multiple="multiple" id="categories" class="form-control">
                                     <option value="">{{ 'label.select.category'|trans }}</option>
                                     {% for c in categoryFilter.categories %}
                                         <option data-custom-properties="{{ c.color }}" value="{{ c.uuid }}" {% if c in categoryFilter.currentCategories %}selected="selected"{% endif %}>{{ c.name }}</option>
@@ -70,7 +70,7 @@
                         <form role="form" method="get">
                             <div class="form-group mb-0">
                                 <label for="exam_grades" class="control-label">{{ 'plans.appointments.filter.exam_grades.label'|trans }}:</label>
-                                <select name="exam_grades" multiple="multiple" id="exam_grades" class="form-control" data-choice="true">
+                                <select name="exam_grades" multiple="multiple" id="exam_grades" class="form-control">
                                     <option value="">{{ 'plans.appointments.filter.exam_grades.placeholder'|trans }}</option>
                                     {% for g in examGradesFilter.grades %}
                                         <option value="{{ g.uuid }}" {% if g in examGradesFilter.currentGrades %}selected="selected"{% endif %}>{{ g.name }}</option>
@@ -94,6 +94,19 @@
                             <li class="list-group-item"><span class="color-rect" style="background: {{ category.color }}"></span> {{ category.name}} </li>
                         {% endfor %}
                     </ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'label.last_import'|trans }}</h5>
+                        <p>
+                            {% if last_import is not null %}
+                                {{ last_import.updatedAt|format_datetime }}
+                            {% else %}
+                                {{ 'label.never'|trans }}
+                            {% endif %}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

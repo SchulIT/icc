@@ -2,17 +2,21 @@
 
 namespace App\Import;
 
+use App\Entity\ImportDateTime;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Request\ValidationFailedException;
-use Symfony\Component\Validator\ConstraintViolation;
+use DateTime;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 
 class Importer {
 
     private $validator;
+    private $importDateTimeRepository;
 
-    public function __construct(ValidatorInterface $validator) {
+    public function __construct(ValidatorInterface $validator, ImportDateTypeRepositoryInterface $importDateTimeRepository) {
         $this->validator = $validator;
+        $this->importDateTimeRepository = $importDateTimeRepository;
     }
 
     /**
@@ -89,6 +93,8 @@ class Importer {
             return new ImportResult($addedEntities, $updatedEntities, $removedEntities);
         } catch (Throwable $e) {
             throw new ImportException($e->getMessage(), $e->getCode(), $e);
+        } finally {
+            $this->updateImportDateTime($strategy->getEntityClassName());
         }
     }
 
@@ -126,5 +132,19 @@ class Importer {
         } catch (Throwable $e) {
             throw new ImportException($e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    private function updateImportDateTime(string $className): void {
+        $dateTime = $this->importDateTimeRepository->findOneByEntityClass($className);
+
+        if($dateTime === null) {
+            $dateTime = (new ImportDateTime())
+                ->setEntityClass($className);
+
+        }
+
+        $dateTime->setUpdatedAt(new DateTime('now'));
+
+        $this->importDateTimeRepository->persist($dateTime);
     }
 }

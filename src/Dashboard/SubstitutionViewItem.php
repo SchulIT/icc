@@ -6,10 +6,18 @@ use App\Entity\Substitution;
 
 class SubstitutionViewItem extends AbstractViewItem {
 
+    /** @var bool */
+    private $isFreeLessonType;
+
     private $substitution;
 
-    public function __construct(Substitution $substitution) {
+    public function __construct(Substitution $substitution, bool $isFreeLessonType) {
         $this->substitution = $substitution;
+        $this->isFreeLessonType = $isFreeLessonType;
+    }
+
+    public function isFreeLesson(): bool {
+        return $this->isFreeLessonType;
     }
 
     /**

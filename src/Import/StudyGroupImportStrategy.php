@@ -137,4 +137,11 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
     public function getData($data): array {
         return $data->getStudyGroups();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return StudyGroup::class;
+    }
 }

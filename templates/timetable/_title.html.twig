@@ -1,8 +1,7 @@
 {% set name = "" %}
 
 {% if studentFilter.currentStudent != null %}{% set name = studentFilter.currentStudent|student %}
-{% elseif teacherFilter.currentTeacher != null %}{% set name = teacherFilter.currentTeacher|teacher %}
-{% elseif roomFilter.currentRoom != null %}{% set name = roomFilter.currentRoom.name %}
+{% elseif teachersFilter.currentTeachers|length > 0 %}{% elseif roomFilter.currentRoom != null %}{% set name = roomFilter.currentRoom.name %}
 {% elseif gradeFilter.currentGrade != null %}{% set name = gradeFilter.currentGrade.name %}
 {% elseif subjectFilter.currentSubjects|length > 0%}
     {% set names = [] %}

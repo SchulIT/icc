@@ -9,7 +9,9 @@
     {%- endfor -%}
     <strong>
         <a href="{{ path('list_tuition', { uuid: lesson.tuition.uuid }) }}" title="{{ lesson.tuition.subject.name }}">
-            {%- if showCourseName -%}
+            {% if lesson.tuition.displayName is not empty -%}
+                {{ lesson.tuition.displayName }}
+            {%- elseif showCourseName -%}
                 {{ lesson.tuition.studyGroup.name }}
             {%- else -%}
                 {%- if lesson.tuition.subject.replaceSubjectAbbreviation -%}
@@ -30,11 +32,11 @@
     {% if student is not null and lesson.tuition is not null and memberships[lesson.tuition.studyGroup.id] is defined %}
         [{{ memberships[lesson.tuition.studyGroup.id] }}]
     {% endif %}
-    {% if teacherFilter.currentTeacher == null %}
+    {% if teachersFilter.currentTeachers|length != 1 %}
         <br>
         {{ lesson.tuition.teacher|teacher }}
     {% endif %}
-    {% if teacherFilter.currentTeacher != null or subjectFilter.currentSubjects|length > 0 %}
+    {% if teachersFilter.currentTeachers|length > 0 or subjectFilter.currentSubjects|length > 0 %}
         <br>
         {% for g in lesson.tuition.studyGroup.grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %}
     {% endif %}

@@ -98,4 +98,11 @@ class PrivacyCategoryImportStrategy implements ImportStrategyInterface {
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->repository;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return PrivacyCategory::class;
+    }
 }

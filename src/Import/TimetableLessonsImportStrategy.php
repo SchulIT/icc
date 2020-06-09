@@ -148,4 +148,11 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
     public function getData($data): array {
         return $data->getLessons();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return TimetableLesson::class;
+    }
 }

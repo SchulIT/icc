@@ -7,7 +7,7 @@ use App\Entity\Substitution;
 use App\Entity\Teacher;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 

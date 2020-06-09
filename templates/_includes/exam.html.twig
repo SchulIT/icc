@@ -1,64 +1,58 @@
 {% set showDate = showDate|default(false) %}
+{% set hideDetails = hideDetails|default(false) %}
 <div class="card">
-    <div class="card-body">
-        <div class="row no-gutters">
-            <p class="w-100">
-                <strong>{{ 'plans.exams.tuitions'|trans({'%count%': exam.tuitions|length} ) }}:</strong>
-                {% for tuition in exam.tuitions %}
-                    {{ tuition.name }} ({{ tuition.subject.name }})
+    {% if header|default("") is not empty %}
+    <div class="card-header">
+        {{ header|trans }}
+    </div>
+    {% endif %}
 
-                    <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
-                    <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-                {% endfor %}
-            </p>
-            <p class="col">
-                <strong>{{ 'plans.exams.time'|trans }}:</strong>
-                {% if exam.date is not null %}
-                    {{ 'label.exam_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
-                    {% if showDate %}<i class="fa fa-calendar"></i> {{ exam.date|format_date }}{% endif %}
-                {% else %}
-                    <span class="badge badge-info">{{ 'plans.exams.not_planned'|trans }}</span>
-                {% endif %}
-            </p>
-            <p class="col">
-                <strong>{{ 'label.room'|trans }}:</strong>
-
-                {% if exam.rooms|length > 0 %}
-                    {{ exam.rooms|first }}
-                {% else %}
-                    <span class="badge badge-info">{{ 'plans.exams.not_available'|trans }}</span>
-                {% endif %}
-            </p>
-
-            {% if exam.description is not null %}
-                <hr class="w-100">
-
-                <p class="w-100 remark">
-                    {{ exam.description }}
-                </p>
-            {% endif %}
-
-            {% if exam.invigilators|length > 0 and is_granted('invigilators', exam) %}
-                <hr class="w-100">
-
-                <div class="w-100">
-                    <strong>{{ 'plans.exams.invigilators'|trans }}:</strong>
-
-                    <ul>
-                        {% for invigilator in exam.invigilators %}
-                            <li>{{ invigilator.teacher|teacher }} ({{ 'label.exam_lessons'|trans({'%start%': invigilator.lesson, '%count%': 0}) }})</li>
-                        {% endfor %}
-                    </ul>
+    <div class="d-flex">
+        <div class="align-self-center text-center p-3 exam-lesson text-black-50">
+            {% if showDate %}
+                <div class="d-block exam-date">
+                    {{ exam.date.format('w')|weekday(true) }}, {{ exam.date|date('date.format_short'|trans) }}
                 </div>
             {% endif %}
 
-            {% if details|default(true) == true and is_granted('invigilators', exam) %}
-                <p class="w-100 mb-0">
-                    <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm">
-                        <i class="fa fa-info-circle"></i> {{ 'label.details'|trans }}
-                    </a>
-                </p>
+            {{ 'label.substitution_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
+        </div>
+
+        <div class="card-body align-self-center d-flex align-items-sm-center pl-0">
+            <span class="mr-auto align-self-center">
+                {% for tuition in exam.tuitions %}
+                    <span class="badge badge-primary">{{ tuition.name|upper }}</span>
+                    <span class="mx-1"></span>
+                    <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    <span class="mx-1"></span>
+                    <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    <span class="mx-1"></span>
+                {% endfor %}
+
+                {% if exam.rooms is not empty %}
+                    <i class="fa fa-door-open"></i> {{ exam.rooms|first }}
+                {% endif %}
+            </span>
+
+            {% if hideDetails == false %}
+            <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">
+                {{ 'label.details'|trans }}
+            </a>
             {% endif %}
         </div>
     </div>
+    {% if exam.description is not null %}
+        <div class="card-footer">
+            <i class="fa fa-info-circle"></i> {{ exam.description }}
+        </div>
+    {% endif %}
+    {% if exam.supervisions|length > 0 and is_granted('supervisions', exam) %}
+        <div class="card-footer">
+            <i class="fa fa-eye"></i>
+
+            {% for invigilator in exam.supervisions -%}
+                {{ invigilator.teacher|teacher }} ({{ 'label.exam_lessons'|trans({'%start%': invigilator.lesson, '%count%': 0}) }}) {%- if not loop.last -%}, {% endif %}
+            {%- endfor -%}
+        </div>
+    {% endif %}
 </div>

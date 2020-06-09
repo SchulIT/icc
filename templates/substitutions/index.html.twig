@@ -14,7 +14,12 @@
 {% endmacro %}
 
 {% block content %}
-    {% set currentFilter = { student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null, grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null } %}
+    {% set currentFilter = {
+        date: selectedDate ? selectedDate.format('Y-m-d') : null,
+        student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid : null,
+        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null
+    } %}
 
     <div class="container-fluid px-0">
         <div class="row">
@@ -35,7 +40,7 @@
                             {% for day in days %}
                                 <li class="nav-item" {% if selectedDate == day%}data-resize="prevent"{% endif%}>
                                     <a class="nav-link{% if selectedDate == day %} active{% endif %}" href="{{ path('substitutions', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
-                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday(true) }}., {{ day.format('date.format_short'|trans) }}
+                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday(true) }}., {{ day.format('date.format_short'|trans) }} {% if counts[loop.index0] is defined %}<span class="badge badge-primary badge-pill">{{ counts[loop.index0] }}</span>{% endif %}
                                     </a>
                                 </li>
                             {% endfor %}
@@ -63,53 +68,55 @@
 
                         {% for group in groups %}
                             <h5 class="card-title">
-                                {% if group.grade is defined %}{{ group.grade.name }}{% endif %}
+                                {% if group.grade is defined %}{{ group.grade.name|default('plans.substitutions.no_grade'|trans) }}{% endif %}
                                 {% if group.teacher is defined %}{{ group.teacher.acronym }} ({{ group.teacher|teacher(false) }}){% endif %}
                             </h5>
 
                             {% if view == 'table' %}
-                                <table class="table table-striped table-bordered table-hover">
-                                    <colgroup>
-                                        <col class="column-md">
-                                        <col class="column-lg">
-                                        <col class="column-md">
-                                        <col class="column-md">
-                                        <col class="column-lg">
-                                        <col class="column-md">
-                                        <col>
-                                    </colgroup>
-                                    <thead>
-                                    <tr>
-                                        <th>{{ 'label.lesson'|trans }}</th>
-                                        <th>{{ 'label.study_group'|trans }}</th>
-                                        <th>{{ 'label.room'|trans }}</th>
-                                        <th>{{ 'label.subject'|trans }}</th>
-                                        <th>{{ 'label.teacher'|trans }}</th>
-                                        <th>{{ 'label.type'|trans }}</th>
-                                        <th>{{ 'label.remark'|trans }}</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for substitution in group.substitutions %}
-                                            {% set duration = substitution.lessonEnd - substitution.lessonStart %}
-                                            <tr>
-                                                <td class="align-middle">
-                                                    {% if substitution.startsBefore %}
-                                                        {{ substitution.lessonStart|before_lesson }}
-                                                    {% else %}
-                                                        {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
-                                                    {% endif %}
-                                                </td>
-                                                <td class="align-middle">{{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}</td>
-                                                <td class="align-middle">{{ _self.replacement(substitution.room, substitution.replacementRoom) }}</td>
-                                                <td class="align-middle">{{ _self.replacement(substitution.subject, substitution.replacementSubject) }}</td>
-                                                <td class="align-middle">{{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}</td>
-                                                <td class="align-middle">{{ substitution.type }}</td>
-                                                <td class="align-middle">{{ substitution.remark }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover card-table">
+                                        <colgroup>
+                                            <col class="column-md">
+                                            <col class="column-lg">
+                                            <col class="column-md">
+                                            <col class="column-md">
+                                            <col class="column-lg">
+                                            <col class="column-md">
+                                            <col>
+                                        </colgroup>
+                                        <thead>
+                                        <tr>
+                                            <th>{{ 'label.lesson'|trans }}</th>
+                                            <th>{{ 'label.study_group'|trans }}</th>
+                                            <th>{{ 'label.room'|trans }}</th>
+                                            <th>{{ 'label.subject'|trans }}</th>
+                                            <th>{{ 'label.teacher'|trans }}</th>
+                                            <th>{{ 'label.type'|trans }}</th>
+                                            <th>{{ 'label.remark'|trans }}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for substitution in group.substitutions %}
+                                                {% set duration = substitution.lessonEnd - substitution.lessonStart %}
+                                                <tr>
+                                                    <td class="align-middle">
+                                                        {% if substitution.startsBefore %}
+                                                            {{ substitution.lessonStart|before_lesson }}
+                                                        {% else %}
+                                                            {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td class="align-middle">{{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}</td>
+                                                    <td class="align-middle">{{ _self.replacement(substitution.room, substitution.replacementRoom) }}</td>
+                                                    <td class="align-middle">{{ _self.replacement(substitution.subject, substitution.replacementSubject) }}</td>
+                                                    <td class="align-middle">{{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}</td>
+                                                    <td class="align-middle">{{ substitution.type }}</td>
+                                                    <td class="align-middle">{{ substitution.remark }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
                             {% else %}
                                 {% for substitution in group.substitutions %}
                                     {% include "_includes/substitution.html.twig" with { substitution: substitution } only %}
@@ -148,11 +155,11 @@
 
                         <div class="form-group mb-0">
                             <div class="btn-group" role="group" aria-label="{{ 'plans.substitutions.group_by.label'|trans }}" title="{{ 'plans.substitutions.group_by.label'|trans }}">
-                                <a href="{{ path('substitutions', currentFilter|merge({'groupBy': 'teachers'})) }}" class="btn btn-outline-secondary {% if groupBy == 'teachers' %}active{% endif %}">
+                                <a href="{{ path('substitutions', currentFilter|merge({'group_by': 'teachers'})) }}" class="btn btn-outline-secondary {% if groupBy == 'teachers' %}active{% endif %}">
                                     <i class="fa fa-table"></i> {{ 'plans.substitutions.group_by.teachers'|trans }}
                                 </a>
 
-                                <a href="{{ path('substitutions', currentFilter|merge({'groupBy': 'grades'})) }}" class="btn btn-outline-secondary {% if groupBy == 'grades' %}active{% endif %}">
+                                <a href="{{ path('substitutions', currentFilter|merge({'group_by': 'grades'})) }}" class="btn btn-outline-secondary {% if groupBy == 'grades' %}active{% endif %}">
                                     <i class="fa fa-list"></i> {{ 'plans.substitutions.group_by.grades'|trans }}
                                 </a>
                             </div>
@@ -164,6 +171,19 @@
                             <a href="{{ path('substitutions') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
                         </div>
                     {% endif %}
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'label.last_import'|trans }}</h5>
+                        <p>
+                            {% if last_import is not null %}
+                                {{ last_import.updatedAt|format_datetime }}
+                            {% else %}
+                                {{ 'label.never'|trans }}
+                            {% endif %}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

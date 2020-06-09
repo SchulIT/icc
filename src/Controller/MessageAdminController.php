@@ -142,7 +142,7 @@ class MessageAdminController extends AbstractController {
                 $eventDispatcher->dispatch(new MessageUpdatedEvent($message));
             }
 
-            $this->addFlash('success', 'admin.messages.edit.succes');
+            $this->addFlash('success', 'admin.messages.edit.success');
             return $this->redirectToReferer(['view' => 'show_message'], 'admin_messages', [ 'uuid' => $message->getUuid() ]);
         }
 

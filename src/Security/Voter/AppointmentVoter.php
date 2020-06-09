@@ -8,7 +8,9 @@ use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Settings\AppointmentsSettings;
 use App\Utils\EnumArrayUtils;
+use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -20,9 +22,13 @@ class AppointmentVoter extends Voter {
     const Remove = 'remove';
     const View = 'view';
 
+    private $settings;
+    private $dateHelper;
     private $accessDecisionManager;
 
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
+    public function __construct(AppointmentsSettings $settings, DateHelper $dateHelper, AccessDecisionManagerInterface $accessDecisionManager) {
+        $this->settings = $settings;
+        $this->dateHelper = $dateHelper;
         $this->accessDecisionManager = $accessDecisionManager;
     }
 
@@ -80,6 +86,14 @@ class AppointmentVoter extends Voter {
 
         /** @var User $user */
         $user = $token->getUser();
+
+        $start = $this->settings->getStart($user->getUserType());
+        $end = $this->settings->getEnd($user->getUserType());
+        $today = $this->dateHelper->getToday();
+
+        if($start === null || $start > $today || ($end !== null && $end < $today)) {
+            return false;
+        }
 
         $isStudentOrParent = EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]);
 

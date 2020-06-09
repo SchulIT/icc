@@ -42,8 +42,23 @@ class TimetableHelper {
 
         $this->addEmptyLessons($timetable);
         $this->collapseTimetable($timetable);
+        $this->ensureAllLessonsAreDisplayed($timetable);
 
         return $timetable;
+    }
+
+    /**
+     * Ensures that no lessons are missed out even if they are free because otherwise
+     * rendering will glitch.
+     *
+     * @param Timetable $timetable
+     */
+    private function ensureAllLessonsAreDisplayed(Timetable $timetable): void {
+        $numberOfLessons = $this->settings->getMaxLessons();
+
+        foreach($timetable->getWeeks() as $week) {
+            $week->setMaxLesson($numberOfLessons);
+        }
     }
 
     /**
@@ -124,7 +139,7 @@ class TimetableHelper {
      * @return TimetableWeek
      */
     private function makeTimetableWeek(TimetableWeekEntity $week, int $numberWeeks, array $lessons, array $supervision): TimetableWeek {
-        $timetableWeek = new TimetableWeek($week->getDisplayName(), $week->getWeekMod());
+        $timetableWeek = new TimetableWeek($week);
 
         $lessons = array_filter($lessons, function(TimetableLessonEntity $lesson) use ($week) {
             return $lesson->getWeek()->getId() === $week->getId();

@@ -6,12 +6,18 @@ use App\Grouping\ExamWeekGroup;
 
 class ExamWeekGroupStrategy implements SortingStrategyInterface {
 
+    private $weekOfYearStrategy;
+
+    public function __construct(WeekOfYearStrategy $weekOfYearStrategy) {
+        $this->weekOfYearStrategy = $weekOfYearStrategy;
+    }
+
     /**
      * @param ExamWeekGroup $objectA
      * @param ExamWeekGroup $objectB
      * @return int
      */
     public function compare($objectA, $objectB): int {
-        return $objectA->getWeek() - $objectB->getWeek();
+        return $this->weekOfYearStrategy->compare($objectA->getWeekOfYear(), $objectB->getWeekOfYear());
     }
 }

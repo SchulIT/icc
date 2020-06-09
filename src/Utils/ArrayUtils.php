@@ -2,12 +2,24 @@
 
 namespace App\Utils;
 
+use Closure;
+
 class ArrayUtils {
 
     public static function apply(array &$items, \Closure $closure): void {
         foreach($items as $item) {
             $closure($item);
         }
+    }
+
+    public static function first(array $items, Closure $predicate) {
+        foreach($items as $item) {
+            if($predicate($item) === true) {
+                return $item;
+            }
+        }
+
+        return null;
     }
 
     public static function createArray(array $keys, array $values) {
@@ -99,7 +111,7 @@ class ArrayUtils {
         $result = [ ];
 
         foreach($items as $item) {
-            if(!in_array($item, $result)) {
+            if(!in_array($item, $result, true)) {
                 $result[] = $item;
             }
         }

@@ -3,23 +3,32 @@
 namespace App\Controller;
 
 use App\Entity\DeviceToken;
+use App\Entity\OAuthClientInfo;
 use App\Entity\User;
 use App\Form\NotificationsType;
 use App\Grouping\Grouper;
 use App\Grouping\UserTypeAndGradeStrategy;
 use App\Notification\Email\EmailNotificationService;
 use App\Repository\DeviceTokenRepositoryInterface;
+use App\Repository\OAuthClientInfoRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
+use App\Security\OAuth2\AppManager;
+use App\Security\Voter\AccessTokenVoter;
 use App\Security\Voter\DeviceTokenVoter;
 use App\Settings\NotificationSettings;
 use App\Sorting\Sorter;
 use App\Sorting\StringGroupStrategy;
 use App\Sorting\StringStrategy;
 use App\Sorting\UserUsernameStrategy;
+use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
+use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Trikoder\Bundle\OAuth2Bundle\Manager\ClientManagerInterface;
+use Trikoder\Bundle\OAuth2Bundle\Manager\RefreshTokenManagerInterface;
+use Trikoder\Bundle\OAuth2Bundle\Model\AccessToken;
 
 /**
  * @Route("/profile")
@@ -76,14 +85,23 @@ class ProfileController extends AbstractController {
     /**
      * @Route("/apps", name="profile_apps")
      */
-    public function apps(DeviceTokenRepositoryInterface $deviceTokenRepository) {
+    public function apps(DeviceTokenRepositoryInterface $deviceTokenRepository, AppManager $appManager, OAuthClientInfoRepositoryInterface $clientInfoRepository) {
         /** @var User $user */
         $user = $this->getUser();
 
         $devices = $deviceTokenRepository->findAllBy($user);
+        $tokens = $appManager->getAccessTokens($user);
+        $clientInfo = ArrayUtils::createArrayWithKeys(
+            $clientInfoRepository->findAll(),
+            function(OAuthClientInfo $clientInfo) {
+                return $clientInfo->getClient()->getIdentifier();
+            }
+        );
 
         return $this->render('profile/apps.html.twig', [
             'apps' => $devices,
+            'tokens' => $tokens,
+            'info' => $clientInfo,
             'csrf_key' => static::RemoveAppCrsfTokenKey
         ]);
     }
@@ -97,6 +115,24 @@ class ProfileController extends AbstractController {
         $csrfToken = $request->request->get('_csrf_token');
         if($this->isCsrfTokenValid(static::RemoveAppCrsfTokenKey, $csrfToken)) {
             $deviceTokenRepository->remove($token);
+
+            $this->addFlash('success', 'profile.apps.remove.success');
+        } else {
+            $this->addFlash('success', 'profile.apps.remove.error.csrf');
+        }
+
+        return $this->redirectToRoute('profile_apps');
+    }
+
+    /**
+     * @Route("/tokens/{identifier}/revoke", name="profile_revoke_token", methods={"POST"})
+     */
+    public function revokeToken(AccessToken $token, Request $request, AppManager $appManager) {
+        $this->denyAccessUnlessGranted(AccessTokenVoter::Revoke, $token);
+
+        $csrfToken = $request->request->get('_csrf_token');
+        if($this->isCsrfTokenValid(static::RemoveAppCrsfTokenKey, $csrfToken)) {
+            $appManager->revokeAccessToken($token);
 
             $this->addFlash('success', 'profile.apps.remove.success');
         } else {

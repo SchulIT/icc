@@ -18,4 +18,12 @@ class OAuthClientInfoRepository extends AbstractRepository implements OAuthClien
                 'client' => $client
             ]);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAll(): array {
+        return $this->em->getRepository(OAuthClientInfo::class)
+            ->findAll();
+    }
 }

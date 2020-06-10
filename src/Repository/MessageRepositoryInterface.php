@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Grade;
 use App\Entity\Message;
 use App\Entity\MessageFile;
 use App\Entity\MessageScope;
@@ -42,6 +43,12 @@ interface MessageRepositoryInterface {
      * @return Message[]
      */
     public function findAllByUserType(UserType $userType);
+
+    /**
+     * @param Grade $grade
+     * @return Message[]
+     */
+    public function findAllByGrade(Grade $grade);
 
     /**
      * @return Message[]

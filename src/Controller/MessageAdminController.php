@@ -26,6 +26,8 @@ use App\Sorting\StudentStudyGroupGroupStrategy;
 use App\Sorting\TeacherStrategy;
 use App\Sorting\UserLastnameFirstnameStrategy;
 use App\Sorting\UserUserTypeGroupStrategy;
+use App\View\Filter\GradeFilter;
+use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use SchoolIT\CommonBundle\Form\ConfirmType;
@@ -63,16 +65,20 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("", name="admin_messages")
      */
-    public function index(UserTypeFilter $userTypeFilter, Request $request) {
+    public function index(UserTypeFilter $userTypeFilter, GradeFilter $gradeFilter, Request $request) {
         $this->denyAccessUnlessGranted('ROLE_MESSAGE_CREATOR');
 
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null));
         $userTypeFilterView->setHandleNull(true);
 
-        if($userTypeFilterView->getCurrentType() === null) {
-            $messages = $this->repository->findAll();
-        } else {
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $this->getUser());
+
+        if($userTypeFilterView->getCurrentType() !== null) {
             $messages = $this->repository->findAllByUserType($userTypeFilterView->getCurrentType());
+        } else if($gradeFilterView->getCurrentGrade() !== null) {
+            $messages = $this->repository->findAllByGrade($gradeFilterView->getCurrentGrade());
+        } else {
+            $messages = $this->repository->findAll();
         }
 
         /** @var MessageExpirationGroup[] $groups */
@@ -80,7 +86,8 @@ class MessageAdminController extends AbstractController {
 
         return $this->render('admin/messages/index.html.twig', [
             'groups' => $groups,
-            'userTypeFilter' => $userTypeFilterView
+            'userTypeFilter' => $userTypeFilterView,
+            'gradeFilter' => $gradeFilterView
         ]);
     }
 

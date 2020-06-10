@@ -176,7 +176,8 @@ class DashboardViewCollapseHelper {
             ExamViewItem::class,
             SubstitutionViewItem::class,
             SupervisionViewItem::class,
-            TimetableLessonViewItem::class
+            TimetableLessonViewItem::class,
+            ExamSupervisionViewItem::class
         ];
 
         foreach($originalItems as $originalItem) {

@@ -98,21 +98,29 @@ class ExamsImportStrategy implements ImportStrategyInterface {
                     ->setExam($entity)
                     ->setLesson($lesson);
                 $entity->addSupervision($supervision);
-            } else if(!isset($supervisions[$idx])) {
+            }
+
+            if(!isset($supervisions[$idx])) {
                 $entity->removeSupervision($supervision);
                 continue;
             }
 
-            $supervision->setTeacher($this->teacherRepository->findOneByExternalId($supervision[$idx]));
+            $teacher = $this->teacherRepository->findOneByExternalId($supervisions[$idx]);
+
+            if($teacher !== null) {
+                $supervision->setTeacher($teacher);
+            } else {
+                $entity->removeSupervision($supervision);
+            }
         }
 
-        /*CollectionUtils::synchronize(
+        CollectionUtils::synchronize(
             $entity->getStudents(),
             $this->studentRepository->findAllByExternalId($data->getStudents()),
             function(Student $student) {
                 return $student->getId();
             }
-        );*/
+        );
 
         CollectionUtils::synchronize(
             $entity->getTuitions(),

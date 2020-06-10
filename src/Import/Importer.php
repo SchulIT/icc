@@ -6,6 +6,7 @@ use App\Entity\ImportDateTime;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Request\ValidationFailedException;
 use DateTime;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 
@@ -13,10 +14,12 @@ class Importer {
 
     private $validator;
     private $importDateTimeRepository;
+    private $logger;
 
-    public function __construct(ValidatorInterface $validator, ImportDateTypeRepositoryInterface $importDateTimeRepository) {
+    public function __construct(ValidatorInterface $validator, ImportDateTypeRepositoryInterface $importDateTimeRepository, LoggerInterface $logger) {
         $this->validator = $validator;
         $this->importDateTimeRepository = $importDateTimeRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -92,6 +95,9 @@ class Importer {
 
             return new ImportResult($addedEntities, $updatedEntities, $removedEntities);
         } catch (Throwable $e) {
+            $this->logger->error('Import failed.', [
+                'exception' => $e
+            ]);
             throw new ImportException($e->getMessage(), $e->getCode(), $e);
         } finally {
             $this->updateImportDateTime($strategy->getEntityClassName());

@@ -6,19 +6,20 @@ use App\Entity\Grade;
 use App\Import\Importer;
 use App\Import\StudentsImportStrategy;
 use App\Repository\GradeRepository;
+use App\Repository\ImportDateTypeRepository;
 use App\Repository\PrivacyCategoryRepository;
 use App\Repository\StudentRepository;
 use App\Request\Data\StudentData;
 use App\Request\Data\StudentsData;
+use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class StudentsImportStrategyTest extends WebTestCase {
 
-    /**
-     * @expectedException \App\Import\ImportException
-     * @expectedExceptionMessage Grade "Q2" does not exist (Student ID: "2", Lastname: "Housecoat")
-     */
     public function testImportMissingGrade() {
+        $this->expectExceptionMessage("Grade \"Q2\" does not exist (Student ID: \"2\", Lastname: \"Housecoat\")");
+        $this->expectException(\App\Import\ImportException::class);
+
         $kernel = static::createKernel();
         $kernel->boot();
 
@@ -54,8 +55,9 @@ class StudentsImportStrategyTest extends WebTestCase {
                 ->setGender('female'),
         ];
 
+        $dateTimeRepository = new ImportDateTypeRepository($kernel->getContainer()->get('doctrine')->getManager());
         $strategy = new StudentsImportStrategy($repository, $gradeRepository, $privacyRepository);
-        $importer = new Importer($kernel->getContainer()->get('validator'));
+        $importer = new Importer($kernel->getContainer()->get('validator'), $dateTimeRepository, new NullLogger());
         $importer->import((new StudentsData())->setStudents($data), $strategy);
     }
 }

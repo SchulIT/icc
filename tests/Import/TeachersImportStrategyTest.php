@@ -7,11 +7,13 @@ use App\Entity\Teacher;
 use App\Entity\TeacherTag;
 use App\Import\Importer;
 use App\Import\TeachersImportStrategy;
+use App\Repository\ImportDateTypeRepository;
 use App\Repository\SubjectRepository;
 use App\Repository\TeacherRepository;
 use App\Repository\TeacherTagRepository;
 use App\Request\Data\TeacherData;
 use App\Request\Data\TeachersData;
+use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TeachersImportStrategyTest extends WebTestCase {
@@ -86,7 +88,8 @@ class TeachersImportStrategyTest extends WebTestCase {
         $repository = new TeacherRepository($this->em);
         $subjectRepository = new SubjectRepository($this->em);
         $tagRepository = new TeacherTagRepository($this->em);
-        $importer = new Importer($this->validator);
+        $dateTimeRepository = new ImportDateTypeRepository($this->em);
+        $importer = new Importer($this->validator, $dateTimeRepository, new NullLogger());
         $strategy = new TeachersImportStrategy($repository, $subjectRepository, $tagRepository);
         $result = $importer->import((new TeachersData())->setTeachers($teachersData), $strategy);
 

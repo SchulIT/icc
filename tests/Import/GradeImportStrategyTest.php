@@ -6,8 +6,10 @@ use App\Entity\Grade;
 use App\Import\GradesImportStrategy;
 use App\Import\Importer;
 use App\Repository\GradeRepository;
+use App\Repository\ImportDateTypeRepository;
 use App\Request\Data\GradeData;
 use App\Request\Data\GradesData;
+use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class GradeImportStrategyTest extends WebTestCase {
@@ -41,7 +43,8 @@ class GradeImportStrategyTest extends WebTestCase {
         ];
 
         $strategy = new GradesImportStrategy($repository);
-        $importer = new Importer($kernel->getContainer()->get('validator'));
+        $dateTimeRepository = new ImportDateTypeRepository($kernel->getContainer()->get('doctrine')->getManager());
+        $importer = new Importer($kernel->getContainer()->get('validator'), $dateTimeRepository, new NullLogger());
         $result = $importer->import((new GradesData())->setGrades($gradeData), $strategy);
 
         $this->assertNotNull($result);

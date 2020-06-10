@@ -86,8 +86,8 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null) {
-        $qb = $this->getDefaultQueryBuilder($today);
+    public function findAllByStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null, bool $onlyToday = false) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
@@ -101,6 +101,25 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->setParameter('studyGroup', $studyGroup->getId());
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findAllDatesByStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null) {
+        $qb = $this->getDefaultQueryBuilder($today)
+            ->select(['e.date', 'COUNT(DISTINCT e.id) AS count'])
+            ->groupBy('e.date');
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.tuitions', 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sInner')
+            ->where('sInner.id = :studyGroup');
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->setParameter('studyGroup', $studyGroup->getId());
+
+        return $qb->getQuery()->getScalarResult();
     }
 
     /**
@@ -133,6 +152,35 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
+    public function findAllDatesByTeacher(Teacher $teacher, ?DateTime $today = null, bool $onlyToday = false) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday)
+            ->select(['e.date', 'COUNT(DISTINCT e.id) AS count'])
+            ->groupBy('e.date');
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.supervisions', 'sInner')
+            ->leftJoin('eInner.tuitions', 'tInner')
+            ->leftJoin('tInner.additionalTeachers', 'teacherInner')
+            ->andWhere(
+                $qb->expr()->orX(
+                    'teacherInner.id = :teacher',
+                    'sInner.teacher = :teacher',
+                    'tInner.teacher = :teacher'
+                )
+            );
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->setParameter('teacher', $teacher->getId());
+
+        return $qb->getQuery()->getScalarResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAllByStudents(array $students, ?\DateTime $today = null, bool $onlyToday = false) {
         $qb = $this->getDefaultQueryBuilder($today, $onlyToday);
 
@@ -153,6 +201,33 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->setParameter('studentIds', $studentIds);
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllDatesByStudents(array $students, ?DateTime $today = null, bool $onlyToday = false) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday)
+            ->select(['e.date', 'COUNT(DISTINCT e.id) AS count'])
+            ->groupBy('e.date');
+
+        $studentIds = array_map(function(Student $student) {
+            return $student->getId();
+        }, $students);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.students', 'sInner')
+            ->where(
+                $qb->expr()->in('sInner.id', ':studentIds')
+            );
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->setParameter('studentIds', $studentIds);
+
+        return $qb->getQuery()->getScalarResult();
     }
 
     /**
@@ -179,6 +254,29 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
+    public function findAllDatesByGrade(Grade $grade, ?DateTime $today = null, bool $onlyToday = false) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday)
+            ->select(['e.date', 'COUNT(DISTINCT e.id) AS count'])
+            ->groupBy('e.date');
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.tuitions', 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.grades', 'gInner')
+            ->where('gInner.id = :grade');
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->setParameter('grade', $grade->getId());
+
+        return $qb->getQuery()->getScalarResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAllByDateAndLesson(\DateTime $today, int $lesson): array {
         $qb = $this->getDefaultQueryBuilder($today, true);
 
@@ -193,10 +291,22 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
      * @param \DateTime|null $today
      * @return Exam[]
      */
-    public function findAll(?\DateTime $today = null) {
-        return $this->getDefaultQueryBuilder($today)
+    public function findAll(?\DateTime $today = null, bool $onlyToday = false) {
+        return $this->getDefaultQueryBuilder($today, $onlyToday)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param \DateTime|null $today
+     * @return array
+     */
+    public function findAllDates(?\DateTime $today = null) {
+        return $this->getDefaultQueryBuilder($today)
+            ->select(['e.date', 'COUNT(DISTINCT e.id) AS count'])
+            ->groupBy('e.date')
+            ->getQuery()
+            ->getScalarResult();
     }
 
     /**
@@ -225,5 +335,10 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $this->em->remove($exam);
         $this->flushIfNotInTransaction();
     }
+
+
+
+
+
 
 }

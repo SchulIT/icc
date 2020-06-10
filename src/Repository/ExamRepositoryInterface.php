@@ -34,9 +34,17 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
     /**
      * @param StudyGroup $studyGroup
      * @param DateTime|null $today
+     * @param bool $onlyToday If set to true, only return exams for the given $today date
      * @return Exam[]
      */
-    public function findAllByStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null);
+    public function findAllByStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null, bool $onlyToday = false);
+
+    /**
+     * @param StudyGroup $studyGroup
+     * @param DateTime|null $today
+     * @return array
+     */
+    public function findAllDatesByStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null);
 
     /**
      * @param Teacher $teacher
@@ -47,12 +55,28 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllByTeacher(Teacher $teacher, ?\DateTime $today = null, bool $onlyToday = false);
 
     /**
+     * @param Teacher $teacher
+     * @param \DateTime|null $today If set, only exams on $today or later are returned
+     * @param bool $onlyToday If set to true, only return exams for the given $today date
+     * @return array
+     */
+    public function findAllDatesByTeacher(Teacher $teacher, ?\DateTime $today = null, bool $onlyToday = false);
+
+    /**
      * @param Student[] $students
      * @param \DateTime|null $today If set, only exams on $today or later are returned
      * @param bool $onlyToday If set to true, only return exams for the given $today date
      * @return Exam[]
      */
     public function findAllByStudents(array $students, ?\DateTime $today = null, bool $onlyToday = false);
+
+    /**
+     * @param Student[] $students
+     * @param \DateTime|null $today If set, only exams on $today or later are returned
+     * @param bool $onlyToday If set to true, only return exams for the given $today date
+     * @return array
+     */
+    public function findAllDatesByStudents(array $students, ?\DateTime $today = null, bool $onlyToday = false);
 
     /**
      * @param Grade $grade
@@ -63,6 +87,14 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllByGrade(Grade $grade, ?\DateTime $today = null, bool $onlyToday = false);
 
     /**
+     * @param Grade $grade
+     * @param \DateTime|null $today If set, only exams on $today or later are returned
+     * @param bool $onlyToday If set to true, only return exams for the given $today date
+     * @return array
+     */
+    public function findAllDatesByGrade(Grade $grade, ?\DateTime $today = null, bool $onlyToday = false);
+
+    /**
      * @param \DateTime $today
      * @param int $lesson
      * @return Exam[]
@@ -71,9 +103,16 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
 
     /**
      * @param \DateTime|null $today If set, only exams on $today or later are returned
+     * @param bool $onlyToday If set to true, only return exams for the given $today date
      * @return Exam[]
      */
-    public function findAll(?\DateTime $today = null);
+    public function findAll(?\DateTime $today = null, bool $onlyToday = false);
+
+    /**
+     * @param \DateTime|null $today
+     * @return Exam[]
+     */
+    public function findAllDates(?\DateTime $today = null);
 
     /**
      * @param \DateTime|null $today If set, only exams on $today or later are returned

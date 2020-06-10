@@ -241,10 +241,12 @@ class AppointmentController extends AbstractControllerWithMessages {
                         'content' => implode(', ', $grades)
                     ];
 
-                    $view[] = [
-                        'label' => $translator->trans('label.room'),
-                        'content' => implode(', ', $exam->getRooms())
-                    ];
+                    if(count($exam->getRooms()) > 0) {
+                        $view[] = [
+                            'label' => $translator->trans('label.room'),
+                            'content' => $exam->getRooms()[0]
+                        ];
+                    }
 
                     $view[] = [
                         'label' => $translator->trans('plans.exams.time'),

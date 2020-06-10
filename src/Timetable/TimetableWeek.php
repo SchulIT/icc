@@ -18,6 +18,11 @@ class TimetableWeek {
     /** @var TimetableDay[] */
     public $days = [ ];
 
+    /**
+     * @var bool
+     */
+    public $isCurrentOrUpcoming = false;
+
     public function __construct(TimetableWeekEntity $week) {
         $this->week = $week;
     }
@@ -88,5 +93,13 @@ class TimetableWeek {
         }
 
         return true;
+    }
+
+    public function setCurrentOrUpcoming(): void {
+        $this->isCurrentOrUpcoming = true;
+    }
+
+    public function isCurrentOrUpcoming(): bool {
+        return $this->isCurrentOrUpcoming;
     }
 }

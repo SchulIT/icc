@@ -4,6 +4,8 @@ namespace App\Timetable;
 
 use App\Entity\TimetableSupervision;
 use App\Settings\TimetableSettings;
+use App\Sorting\Sorter;
+use App\Sorting\TimetableWeekStrategy;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use App\Entity\TimetableLesson as TimetableLessonEntity;
 use App\Entity\TimetableWeek as TimetableWeekEntity;
@@ -13,14 +15,13 @@ use App\Entity\TimetableWeek as TimetableWeekEntity;
  * into a Timetable object for easy traversing
  */
 class TimetableHelper {
+
+    private $sorter;
     private $dateHelper;
     private $settings;
 
-    /**
-     * @param DateHelper $dateHelper
-     * @param TimetableSettings $settingsManager
-     */
-    public function __construct(DateHelper $dateHelper, TimetableSettings $settingsManager) {
+    public function __construct(Sorter $sorter, DateHelper $dateHelper, TimetableSettings $settingsManager) {
+        $this->sorter = $sorter;
         $this->dateHelper = $dateHelper;
         $this->settings = $settingsManager;
     }
@@ -43,6 +44,21 @@ class TimetableHelper {
         $this->addEmptyLessons($timetable);
         $this->collapseTimetable($timetable);
         $this->ensureAllLessonsAreDisplayed($timetable);
+
+        $this->sorter->sort($timetable->getWeeks(), TimetableWeekStrategy::class);
+        $numWeeks = count($timetable->getWeeks());
+
+        if($numWeeks > 0){
+            for($i = 0; $i < $numWeeks; $i++) {
+                $first = array_shift($timetable->getWeeks());
+
+                if($first->isCurrentOrUpcoming()) {
+                    array_unshift($timetable->getWeeks(), $first);
+                } else {
+                    $timetable->addWeek($first);
+                }
+            }
+        }
 
         return $timetable;
     }
@@ -150,7 +166,14 @@ class TimetableHelper {
         });
 
         for($i = 1; $i <= 5; $i++) {
-            $day = $this->makeTimetableDay($i, $this->isCurrentDay($week, $numberWeeks, $i), $this->isUpcomingDay($week, $numberWeeks, $i), $lessons, $supervision);
+            $isCurrent = $this->isCurrentDay($week, $numberWeeks, $i);
+            $isUpcoming = $this->isUpcomingDay($week, $numberWeeks, $i);
+            $day = $this->makeTimetableDay($i, $isCurrent, $isUpcoming, $lessons, $supervision);
+
+            if($isCurrent || $isUpcoming) {
+                $timetableWeek->setCurrentOrUpcoming();
+            }
+
             $timetableWeek->days[$i] = $day;
         }
 

@@ -181,10 +181,6 @@ class TimetableController extends AbstractControllerWithMessages {
             }
         }
 
-        if($timetable !== null) {
-            $this->sorter->sort($timetable->getWeeks(), TimetableWeekStrategy::class);
-        }
-
         return $this->renderWithMessages($template, [
             'timetable' => $timetable,
             'studentFilter' => $studentFilterView,

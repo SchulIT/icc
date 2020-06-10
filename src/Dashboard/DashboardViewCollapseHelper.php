@@ -172,7 +172,7 @@ class DashboardViewCollapseHelper {
         }
 
         // ADD ALL ITEMS THAT HAVE NOT BEEN TAKE CONCIDERATION
-        $concideredTypes = [
+        $consideredTypes = [
             ExamViewItem::class,
             SubstitutionViewItem::class,
             SupervisionViewItem::class,
@@ -181,7 +181,7 @@ class DashboardViewCollapseHelper {
         ];
 
         foreach($originalItems as $originalItem) {
-            if(!in_array(get_class($originalItem), $concideredTypes)) {
+            if(!in_array(get_class($originalItem), $consideredTypes)) {
                 $lesson->addItem($originalItem);
             }
         }

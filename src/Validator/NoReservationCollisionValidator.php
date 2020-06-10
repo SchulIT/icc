@@ -55,7 +55,7 @@ class NoReservationCollisionValidator extends ConstraintValidator {
                     ->buildViolation($constraint->messageTimetable)
                     ->setParameter('{{ tuition }}', $timetableLesson->getTuition()->getName())
                     ->setParameter('{{ teacher }}', $this->teacherConverter->convert($timetableLesson->getTuition()->getTeacher()))
-                    ->setParameter('{{ lessonNumber }}', $lessonNumber)
+                    ->setParameter('{{ lessonNumber }}', (string)$lessonNumber)
                     ->addViolation();
             }
 
@@ -64,7 +64,7 @@ class NoReservationCollisionValidator extends ConstraintValidator {
             if($substitution !== null) {
                 $this->context
                     ->buildViolation($constraint->messageSubstitution)
-                    ->setParameter('{{ lessonNumber }}', $lessonNumber)
+                    ->setParameter('{{ lessonNumber }}', (string)$lessonNumber)
                     ->addViolation();
             }
 
@@ -74,7 +74,7 @@ class NoReservationCollisionValidator extends ConstraintValidator {
                 $this->context
                     ->buildViolation($constraint->messageReservation)
                     ->setParameter('{{ teacher }}', $this->teacherConverter->convert($existingReservation->getTeacher()))
-                    ->setParameter('{{ lessonNumber }}', $lessonNumber)
+                    ->setParameter('{{ lessonNumber }}', (string)$lessonNumber)
                     ->addViolation();
             }
         }

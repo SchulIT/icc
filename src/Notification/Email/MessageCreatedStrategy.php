@@ -34,13 +34,7 @@ class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendAct
      * @return string|null
      */
     public function getReplyTo($objective): ?string {
-        $creator = $objective->getMessage()->getCreatedBy();
-
-        if($creator === null) {
-            return null;
-        }
-
-        return $creator->getEmail();
+        return $objective->getMessage()->getCreatedBy()->getEmail();
     }
 
     /**
@@ -69,10 +63,6 @@ class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendAct
      */
     public function getSender($objective): string {
         $creator = $objective->getMessage()->getCreatedBy();
-
-        if($creator === null) {
-            return '';
-        }
 
         return sprintf('%s %s', $creator->getFirstname(), $creator->getLastname());
     }

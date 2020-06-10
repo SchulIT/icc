@@ -7,8 +7,8 @@ use App\Grouping\WeekOfYear;
 class WeekOfYearStrategy implements SortingStrategyInterface {
 
     /**
-     * @param WeekOfYear $objectA
-     * @param WeekOfYear $objectB
+     * @param WeekOfYear|null $objectA
+     * @param WeekOfYear|null $objectB
      * @return int
      */
     public function compare($objectA, $objectB): int {

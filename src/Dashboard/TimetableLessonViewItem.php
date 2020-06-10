@@ -30,7 +30,7 @@ class TimetableLessonViewItem extends AbstractViewItem {
     }
 
     /**
-     * @return AbsentStudent[]
+     * @return AbsentStudentGroup[]
      */
     public function getAbsentStudentGroups(): array {
         return $this->absentStudentGroups;

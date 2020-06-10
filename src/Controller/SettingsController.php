@@ -7,11 +7,9 @@ use App\Entity\AppointmentCategory;
 use App\Entity\Grade;
 use App\Entity\UserType;
 use App\Form\ColorType;
-use App\Form\IdEntityType;
 use App\Menu\Builder;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Repository\GradeRepositoryInterface;
-use App\Settings\AbstractSettings;
 use App\Settings\AppointmentsSettings;
 use App\Settings\DashboardSettings;
 use App\Settings\ExamSettings;
@@ -34,7 +32,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use function foo\func;
 
 /**
  * @Route("/admin/settings")

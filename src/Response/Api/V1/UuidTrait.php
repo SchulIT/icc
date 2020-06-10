@@ -25,9 +25,9 @@ trait UuidTrait {
 
     /**
      * @param UuidInterface $uuid
-     * @return UuidTrait
+     * @return self
      */
-    public function setUuid(UuidInterface $uuid) {
+    public function setUuid(UuidInterface $uuid): self {
         $this->uuid = $uuid;
         return $this;
     }

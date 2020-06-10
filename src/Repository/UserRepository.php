@@ -4,12 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Message;
 use App\Entity\Student;
-use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
-use App\Entity\UserTypeEntity;
-use function Doctrine\ORM\QueryBuilder;
 
 class UserRepository extends AbstractRepository implements UserRepositoryInterface {
 

@@ -2,6 +2,7 @@
 
 namespace App\Notification\WebPush;
 
+use App\Entity\User;
 use App\Entity\UserWebPushSubscription;
 use BenTools\WebPushBundle\Model\Subscription\UserSubscriptionInterface;
 use BenTools\WebPushBundle\Model\Subscription\UserSubscriptionManagerInterface;
@@ -17,7 +18,11 @@ class UserSubscriptionManager implements UserSubscriptionManagerInterface {
     }
 
     /**
-     * @inheritDoc
+     * @param User $user
+     * @param string $subscriptionHash
+     * @param array $subscription
+     * @param array $options
+     * @return UserSubscriptionInterface
      */
     public function factory(UserInterface $user, string $subscriptionHash, array $subscription, array $options = []): UserSubscriptionInterface {
         return new UserWebPushSubscription($user, $subscriptionHash, $subscription);

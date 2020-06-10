@@ -18,4 +18,11 @@ class Timetable {
     public function addWeek(TimetableWeek $week): void {
         $this->weeks[] = $week;
     }
+
+    /**
+     * @param TimetableWeek[] $weeks
+     */
+    public function setWeeks(array $weeks): void {
+        $this->weeks = $weeks;
+    }
 }

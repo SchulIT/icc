@@ -3,7 +3,7 @@
 namespace App\Response\Api\V1;
 
 use App\Entity\Exam as ExamEntity;
-use App\Entity\ExamInvigilator;
+use App\Entity\ExamSupervision as ExamSupervisionEntity;
 use App\Entity\Tuition as TuitionEntity;
 use DateTime;
 use JMS\Serializer\Annotation as Serializer;
@@ -201,7 +201,7 @@ class Exam {
             ->setLessonStart($exam->getLessonStart())
             ->setLessonEnd($exam->getLessonEnd())
             ->setRooms($exam->getRooms())
-            ->setSupervisions(array_map(function(ExamInvigilator $supervisionEntity) {
+            ->setSupervisions(array_map(function(ExamSupervisionEntity $supervisionEntity) {
                 return ExamSupervision::fromEntity($supervisionEntity);
             }, $supervisions))
             ->setTuitions(array_map(function(TuitionEntity $tuitionEntity) {

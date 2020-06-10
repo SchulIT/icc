@@ -12,7 +12,6 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
-use function foo\func;
 
 class RoomTagChoiceType extends AbstractType implements DataMapperInterface {
 
@@ -72,7 +71,7 @@ class RoomTagChoiceType extends AbstractType implements DataMapperInterface {
 
             $valueId = sprintf('tag-%s-value', $tagInfo->getTag()->getId());
 
-            if($tagInfo->getTag()->hasValue() && $forms[$valueId]) {
+            if($tagInfo->getTag()->hasValue() && isset($forms[$valueId])) {
                 $forms[$valueId]->setData($tagInfo->getValue());
             }
         }

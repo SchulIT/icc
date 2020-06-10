@@ -2,6 +2,7 @@
 
 namespace App\Notification\WebPush;
 
+use App\Entity\User;
 use App\Entity\UserWebPushSubscription;
 use App\Settings\NotificationSettings;
 use App\Utils\EnumArrayUtils;
@@ -28,7 +29,10 @@ class PushNotificationService {
     public function sendNotifications($objective, PushNotificationStrategyInterface $strategy) {
         $subscriptions = $strategy->getSubscriptions($objective);
         $subscriptions = array_filter($subscriptions, function(UserWebPushSubscription $subscription) {
-            return EnumArrayUtils::inArray($subscription->getUser()->getUserType(), $this->settings->getPushEnabledUserTypes());
+            /** @var User $user */
+            $user = $subscription->getUser();
+
+            return EnumArrayUtils::inArray($user->getUserType(), $this->settings->getPushEnabledUserTypes());
         });
 
         $notification = new PushNotification($strategy->getTitle($objective), [

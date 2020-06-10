@@ -23,9 +23,8 @@ class TimetablePeriodHelper {
     }
 
     /**
-     * Returns all periods a given user type is allowed to view.
+     * Returns all periods a given user is allowed to view.
      *
-     * @param UserType $userType
      * @return TimetablePeriod[]
      */
     public function getPeriods(): array {

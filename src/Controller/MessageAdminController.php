@@ -68,10 +68,13 @@ class MessageAdminController extends AbstractController {
     public function index(UserTypeFilter $userTypeFilter, GradeFilter $gradeFilter, Request $request) {
         $this->denyAccessUnlessGranted('ROLE_MESSAGE_CREATOR');
 
+        /** @var User $user */
+        $user = $this->getUser();
+
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null));
         $userTypeFilterView->setHandleNull(true);
 
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $this->getUser());
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
 
         if($userTypeFilterView->getCurrentType() !== null) {
             $messages = $this->repository->findAllByUserType($userTypeFilterView->getCurrentType());

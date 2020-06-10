@@ -32,7 +32,7 @@ class NotificationService implements EventSubscriberInterface {
     /**
      * Sends notifications based on the given objective.
      *
-     * @param $objective
+     * @param object $objective
      */
     public function sendNotifications($objective) {
         foreach($this->emailStrategies as $strategy) {

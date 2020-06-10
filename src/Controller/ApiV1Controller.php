@@ -134,8 +134,8 @@ class ApiV1Controller extends AbstractController {
                 ->setExams(array_map(function (ExamEntity $exam) {
                     $supervisions = [ ];
 
-                    if($this->isGranted(ExamVoter::Invigilators, $exam)) {
-                        $supervisions = $exam->getInvigilators()->toArray();
+                    if($this->isGranted(ExamVoter::Supervisions, $exam)) {
+                        $supervisions = $exam->getSupervisions()->toArray();
                     }
 
                     return Exam::fromEntity($exam, $supervisions);

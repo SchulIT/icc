@@ -91,7 +91,7 @@ class RoomReservationVoter extends Voter {
             return false;
         }
 
-        if($user->getTeacher() !== null && $reservation->getTeacher()->getId() === $user->getTeacher()) {
+        if($user->getTeacher() !== null && $reservation->getTeacher()->getId() === $user->getTeacher()->getId()) {
             return true;
         }
 

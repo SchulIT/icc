@@ -16,7 +16,7 @@ class UserWebPushSubscription implements UserSubscriptionInterface {
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn()
-     * @var
+     * @var User
      */
     private $user;
 

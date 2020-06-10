@@ -10,7 +10,7 @@ interface PushNotificationStrategyInterface {
      * Returns whether this strategy supports the given objective. This controls
      * whether or not this strategy is executed.
      *
-     * @param $objective
+     * @param object $objective
      * @return bool
      */
     public function supports($objective): bool;
@@ -21,13 +21,13 @@ interface PushNotificationStrategyInterface {
     public function getSubscriptions($objective): array;
 
     /**
-     * @param $objective
+     * @param object $objective
      * @return string
      */
     public function getTitle($objective): string;
 
     /**
-     * @param $objective
+     * @param object $objective
      * @return string
      */
     public function getBody($objective): string;

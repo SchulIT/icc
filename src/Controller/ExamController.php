@@ -76,8 +76,8 @@ class ExamController extends AbstractControllerWithMessages {
         $isVisible = $examSettings->isVisibileFor($user->getUserType());
         $isVisibleAdmin = false;
 
-        $week = $request->query->getInt('week', null);
-        $year = $request->query->getInt('year', null);
+        $week = $request->query->has('week') ? $request->query->getInt('week') : null;
+        $year = $request->query->has('year') ? $request->query->getInt('year') : null;
 
         $groups = [ ];
         $currentGroup = null;
@@ -123,7 +123,7 @@ class ExamController extends AbstractControllerWithMessages {
                                 $groups = $this->computeGroups($examRepository->findAllDates());
                                 $currentGroup = $this->getCurrentGroup($groups, $year, $week, $dateHelper);
 
-                                $exams = $this->getExams($currentGroup, function (DateTime $dateTime) use ($teacherFilterView, $examRepository) {
+                                $exams = $this->getExams($currentGroup, function (DateTime $dateTime) use ($examRepository) {
                                     return $examRepository->findAll($dateTime, true);
                                 });
                             }

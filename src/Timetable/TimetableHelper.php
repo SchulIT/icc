@@ -59,15 +59,20 @@ class TimetableHelper {
         $numWeeks = count($timetable->getWeeks());
 
         if($numWeeks > 0){
+            $weeks = $timetable->getWeeks();
+
             for($i = 0; $i < $numWeeks; $i++) {
-                $first = array_shift($timetable->getWeeks());
+                /** @var TimetableWeek $first */
+                $first = array_shift($weeks);
 
                 if($first->isCurrentOrUpcoming()) {
-                    array_unshift($timetable->getWeeks(), $first);
+                    array_unshift($weeks, $first);
                 } else {
-                    $timetable->addWeek($first);
+                    $weeks[] = $first;
                 }
             }
+
+            $timetable->setWeeks($weeks);
         }
 
         return $timetable;

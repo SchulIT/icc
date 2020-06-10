@@ -31,7 +31,7 @@ class MessageUpdatedStrategy implements EmailStrategyInterface {
      * @return string|null
      */
     public function getReplyTo($objective): ?string {
-        $creator = $objective->getMessage()->getCreatedBy();
+        $creator = $objective->getMessage()->getUpdatedBy();
 
         if($creator === null) {
             return null;
@@ -65,7 +65,7 @@ class MessageUpdatedStrategy implements EmailStrategyInterface {
      * @return string
      */
     public function getSender($objective): string {
-        $creator = $objective->getMessage()->getCreatedBy();
+        $creator = $objective->getMessage()->getUpdatedBy();
 
         if($creator === null) {
             return '';

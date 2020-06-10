@@ -50,7 +50,7 @@ class MessageUpdatedStrategy implements PushNotificationStrategyInterface {
         return $this->translator->trans(
             'message.update.content',
             [
-                '%author%' => $this->userConverter->convert($objective->getMessage()->getCreatedBy())
+                '%author%' => $this->userConverter->convert($objective->getMessage()->getUpdatedBy())
             ],
             'push'
         );

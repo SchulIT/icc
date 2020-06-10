@@ -85,7 +85,7 @@ class Message {
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="SET NULL")
      * @Gedmo\Blameable(on="create")
-     * @var User
+     * @var User|null
      */
     private $createdBy = null;
 
@@ -103,6 +103,15 @@ class Message {
      * @var \DateTime
      */
     private $updatedAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(onDelete="SET NULL")
+     * @Gedmo\Blameable(on="update")
+     * @Gedmo\Blameable(on="create")
+     * @var User|null
+     */
+    private $updatedBy;
 
     /**
      * @ORM\Column(type="boolean")
@@ -382,9 +391,9 @@ class Message {
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getCreatedBy(): User {
+    public function getCreatedBy(): ?User {
         return $this->createdBy;
     }
 
@@ -586,6 +595,13 @@ class Message {
      */
     public function getUpdatedAt(): \DateTime {
         return $this->updatedAt;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getUpdatedBy(): ?User {
+        return $this->updatedBy;
     }
 
     public function __toString() {

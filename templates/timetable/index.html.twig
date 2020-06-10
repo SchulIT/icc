@@ -100,7 +100,18 @@
                                     <thead>
                                     <th>{{ 'label.lesson'|trans }}</th>
                                     {% for day in week.days %}
-                                        <th{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %}>{{ day.day|weekday }} {% if day.isCurrentDay %}<span class="badge badge-secondary">{{ 'plans.timetable.today'|trans }}</span>{% endif %}{% if day.isUpcomingDay %}<span class="badge badge-secondary">{{ 'plans.timetable.upcoming'|trans }}</span>{% endif %}</th>
+                                        <th{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %}>
+                                            {{ day.day|weekday }}
+                                            {% if day.isCurrentDay %}
+                                                <span class="badge badge-secondary">{{ 'plans.timetable.today'|trans }}</span>
+                                            {% endif %}
+                                            {% if day.isUpcomingDay %}
+                                                <span class="badge badge-secondary">{{ 'plans.timetable.upcoming'|trans }}</span>
+                                            {% endif %}
+                                            {% if day.isFree %}
+                                                <span class="badge badge-secondary">{{ 'plans.timetable.free'|trans }}</span>
+                                            {% endif %}
+                                        </th>
                                     {% endfor %}
                                     </thead>
 
@@ -120,7 +131,7 @@
                                                             {% set lessons = day.getTimetableLesson(i) %}
                                                             {% set background = supervisionColor %}
 
-                                                            <td class="align-middle {% if day.isCurrentDay or day.isUpcomingDay %}current{% endif %}" {% if background != null and lessons.beforeSupervisions|length > 0 %}style="background: {{ background }}; color: {{ foreground(background) }}"{% endif %}>
+                                                            <td class="align-middle {% if day.isCurrentDay or day.isUpcomingDay %}current{% endif %} {% if day.isFree %}text-secondary{% endif %}" {% if background != null and lessons.beforeSupervisions|length > 0 %}style="background: {{ background }}; color: {{ foreground(background) }}"{% endif %}>
                                                                 {% for supervision in lessons.beforeSupervisions %}
                                                                     {% include 'timetable/supervision.html.twig' %}
                                                                 {% endfor %}
@@ -157,7 +168,7 @@
                                                                 {% set foreground = foreground(background) %}
                                                             {% endif %}
 
-                                                            <td class="align-middle {% if day.isCurrentDay or day.isUpcomingDay %}current{% endif %}" {% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
+                                                            <td class="align-middle {% if day.isCurrentDay or day.isUpcomingDay %}current{% endif %} {% if day.isFree %}text-secondary{% endif %}" {% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
                                                                 {% for lesson in lessons.lessons %}
                                                                     {% include 'timetable/lesson.html.twig' with { student: studentFilter.currentStudent, memberships: memberships }%}
                                                                     {% if not loop.last %}<hr>{% endif %}

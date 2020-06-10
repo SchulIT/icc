@@ -200,7 +200,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
         if(count($categories) > 0) {
             $qbIds
                 ->leftJoin('aInner.category', 'cInner')
-                ->andWhere('cInner.id IN :categories');
+                ->andWhere('cInner.id IN (:categories)');
 
             $params['categories'] = array_map(function(AppointmentCategory $category) {
                 return $category->getId();

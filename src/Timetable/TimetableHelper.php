@@ -2,13 +2,16 @@
 
 namespace App\Timetable;
 
+use App\Entity\TimetableLesson as TimetableLessonEntity;
 use App\Entity\TimetableSupervision;
+use App\Entity\TimetableWeek as TimetableWeekEntity;
+use App\Repository\AppointmentCategoryRepositoryInterface;
+use App\Repository\AppointmentRepositoryInterface;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetableWeekStrategy;
+use DateTime;
 use SchoolIT\CommonBundle\Helper\DateHelper;
-use App\Entity\TimetableLesson as TimetableLessonEntity;
-use App\Entity\TimetableWeek as TimetableWeekEntity;
 
 /**
  * Helper which transforms a list of TimetableLessons
@@ -19,11 +22,16 @@ class TimetableHelper {
     private $sorter;
     private $dateHelper;
     private $settings;
+    private $appointmentRepository;
+    private $appointmentCategoryRepository;
 
-    public function __construct(Sorter $sorter, DateHelper $dateHelper, TimetableSettings $settingsManager) {
+    public function __construct(Sorter $sorter, DateHelper $dateHelper, TimetableSettings $settingsManager,
+                                AppointmentRepositoryInterface $appointmentRepository, AppointmentCategoryRepositoryInterface $appointmentCategoryRepository) {
         $this->sorter = $sorter;
         $this->dateHelper = $dateHelper;
         $this->settings = $settingsManager;
+        $this->appointmentRepository = $appointmentRepository;
+        $this->appointmentCategoryRepository = $appointmentCategoryRepository;
     }
 
     /**
@@ -35,9 +43,11 @@ class TimetableHelper {
     public function makeTimetable(array $weeks, array $lessons, array $supervision = [ ]) {
         $timetable = new Timetable();
 
+        $freeDays = $this->getFreeDays();
+
         foreach($weeks as $week) {
             $timetable->addWeek(
-                $this->makeTimetableWeek($week, count($weeks), $lessons, $supervision)
+                $this->makeTimetableWeek($week, count($weeks), $lessons, $supervision, $freeDays)
             );
         }
 
@@ -61,6 +71,39 @@ class TimetableHelper {
         }
 
         return $timetable;
+    }
+
+    /**
+     * @return DateTime[]
+     */
+    private function getFreeDays() {
+        $categoryIds = $this->settings->getCategoryIds();
+        $freeCategories = [ ];
+
+        foreach($this->appointmentCategoryRepository->findAll() as $category) {
+            if(in_array($category->getId(), $categoryIds)) {
+                $freeCategories[] = $category;
+            }
+        }
+
+        $appointments = $this->appointmentRepository->findAll($freeCategories);
+
+        $freeDays = [ ];
+
+        foreach($appointments as $appointment) {
+            if($appointment->isAllDay() === false) {
+                continue;
+            }
+
+            $date = clone $appointment->getStart();
+            while($date < $appointment->getEnd()) {
+                $freeDays[] = $date;
+
+                $date = (clone $date)->modify('+1 day');
+            }
+        }
+
+        return $freeDays;
     }
 
     /**
@@ -152,9 +195,10 @@ class TimetableHelper {
      * @param int $numberWeeks
      * @param TimetableLessonEntity[] $lessons
      * @param TimetableSupervision[] $supervision
+     * @param DateTime[] $freeDays
      * @return TimetableWeek
      */
-    private function makeTimetableWeek(TimetableWeekEntity $week, int $numberWeeks, array $lessons, array $supervision): TimetableWeek {
+    private function makeTimetableWeek(TimetableWeekEntity $week, int $numberWeeks, array $lessons, array $supervision, array $freeDays): TimetableWeek {
         $timetableWeek = new TimetableWeek($week);
 
         $lessons = array_filter($lessons, function(TimetableLessonEntity $lesson) use ($week) {
@@ -168,7 +212,8 @@ class TimetableHelper {
         for($i = 1; $i <= 5; $i++) {
             $isCurrent = $this->isCurrentDay($week, $numberWeeks, $i);
             $isUpcoming = $this->isUpcomingDay($week, $numberWeeks, $i);
-            $day = $this->makeTimetableDay($i, $isCurrent, $isUpcoming, $lessons, $supervision);
+            $isFree = $this->isFree($week, $numberWeeks, $i, $freeDays);
+            $day = $this->makeTimetableDay($i, $isCurrent, $isUpcoming, $isFree, $lessons, $supervision);
 
             if($isCurrent || $isUpcoming) {
                 $timetableWeek->setCurrentOrUpcoming();
@@ -196,12 +241,13 @@ class TimetableHelper {
      * @param int $day
      * @param bool $isCurrentDay
      * @param bool $isUpcomingDay
+     * @param bool $isFree
      * @param TimetableLessonEntity[] $lessons
      * @param TimetableSupervision[] $supervision
      * @return TimetableDay
      */
-    private function makeTimetableDay(int $day, bool $isCurrentDay, bool $isUpcomingDay, array $lessons, array $supervision) {
-        $timetableDay = new TimetableDay($day, $isCurrentDay, $isUpcomingDay);
+    private function makeTimetableDay(int $day, bool $isCurrentDay, bool $isUpcomingDay, bool $isFree, array $lessons, array $supervision) {
+        $timetableDay = new TimetableDay($day, $isCurrentDay, $isUpcomingDay, $isFree);
 
         /** @var TimetableLessonEntity[] $lessons */
         $lessons = array_filter($lessons, function(TimetableLessonEntity $lesson) use ($day) {
@@ -261,6 +307,29 @@ class TimetableHelper {
 
         return $weekNumber % $numberWeeks === $week->getWeekMod()
             && $dayNumber === $day;
+    }
+
+    /**
+     * @param TimetableWeekEntity $week
+     * @param int $numberWeeks
+     * @param int $day
+     * @param DateTime[] $freeDays
+     * @return bool
+     */
+    private function isFree(TimetableWeekEntity $week, int $numberWeeks, int $day, array $freeDays): bool {
+        $today = $this->dateHelper->getToday();
+        $currentWeekNumber = (int)$today->format('W');
+
+        foreach($freeDays as $freeDay) {
+            $weekNumber = (int)$freeDay->format('W');
+            $dayNumber = (int)$freeDay->format('w');
+
+            if(($currentWeekNumber === $weekNumber || $currentWeekNumber + 1 === $weekNumber) && $weekNumber % $numberWeeks === $week->getWeekMod() && $dayNumber === $day) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function isWeekend(\DateTime $dateTime): bool {

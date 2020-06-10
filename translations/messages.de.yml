@@ -240,6 +240,7 @@ plans:
                 success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
         today: heute
         upcoming: demnächst
+        free: unterrichtsfrei
 
     substitutions:
         label: Vertretungsplan

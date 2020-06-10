@@ -109,6 +109,12 @@ $enable-gradients: true;
   .current {
     background: #efefef;
   }
+
+  .text-secondary {
+    a {
+      color: $secondary !important;
+    }
+  }
 }
 
 // Wiki

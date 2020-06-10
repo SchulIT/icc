@@ -65,7 +65,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/tuitions", name="list_tuitions")
+     * @Route("/tuitions", name="list_tuitions")
      */
     public function tuitions(GradeFilter $gradeFilter, StudentFilter $studentFilter, TeacherFilter $teacherFilter, TuitionRepositoryInterface $tuitionRepository, Request $request) {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
@@ -108,7 +108,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/tuitions/{uuid}", name="list_tuition")
+     * @Route("/tuitions/{uuid}", name="list_tuition")
      */
     public function tuition(Tuition $tuition, TuitionRepositoryInterface $tuitionRepository, ExamRepositoryInterface $examRepository) {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
@@ -132,7 +132,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/tuitions/{uuid}/export", name="export_tuition")
+     * @Route("/tuitions/{uuid}/export", name="export_tuition")
      */
     public function exportTuition(Tuition $tuition, TuitionCsvExporter $tuitionCsvExporter) {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
@@ -141,7 +141,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/study_groups", name="list_studygroups")
+     * @Route("/study_groups", name="list_studygroups")
      */
     public function studyGroups(StudyGroupFilter $studyGroupFilter, Request $request) {
         $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);
@@ -194,7 +194,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/study_groups/{uuid}/export", name="export_studygroup")
+     * @Route("/study_groups/{uuid}/export", name="export_studygroup")
      */
     public function exportStudyGroup(StudyGroup $studyGroup, StudyGroupCsvExporter $csvExporter) {
         $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);
@@ -203,7 +203,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/teachers", name="list_teachers")
+     * @Route("/teachers", name="list_teachers")
      */
     public function teachers(SubjectFilter $subjectFilter, TeacherRepositoryInterface $teacherRepository, Request $request) {
         $this->denyAccessUnlessGranted(ListsVoter::Teachers);
@@ -229,7 +229,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     /**
-     * @Route("/lists/privacy", name="list_privacy")
+     * @Route("/privacy", name="list_privacy")
      */
     public function privacy(StudyGroupFilter $studyGroupFilter, Request $request, StudentRepositoryInterface $studentRepository, PrivacyCategoryRepositoryInterface $privacyCategoryRepository) {
         $this->denyAccessUnlessGranted(ListsVoter::Privacy);

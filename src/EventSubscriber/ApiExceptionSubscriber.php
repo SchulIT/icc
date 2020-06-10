@@ -56,7 +56,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
             $message = new ViolationList($violations);
         } else { // Case 3: General error
             $message = new ErrorResponse(
-                !empty($throwable->getMessage()) ? $throwable->getMessage() : 'An unknown error occured.',
+                'An unknown error occured.',
                 get_class($throwable)
             );
         }

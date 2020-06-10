@@ -2,6 +2,7 @@
 
 namespace App\Request\Data;
 
+use App\Validator\UniqueId;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -9,6 +10,7 @@ class AbsencesData {
     /**
      * @Serializer\Type("array<App\Request\Data\AbsenceData>")
      * @Assert\Valid()
+     * @UniqueId(propertyPath="id")
      * @var AbsenceData[]
      */
     private $absences = [ ];

@@ -237,18 +237,4 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
         $this->em->remove($appointment);
         $this->flushIfNotInTransaction();
     }
-
-    private function filterUserType(QueryBuilder $builder, UserType $userType, string $prefix): QueryBuilder {
-        $allowedUserTypes = [
-
-        ];
-
-        $builder
-            ->andWhere(
-
-            );
-
-        return $builder;
-    }
-
 }

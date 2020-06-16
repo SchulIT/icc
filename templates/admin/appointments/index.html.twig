@@ -136,7 +136,7 @@
                         <form role="form" method="get" class="form hidden-print">
                             <div class="form-group">
                                 <label for="category" class="control-label">{{ 'label.category'|trans }}:</label>
-                                <select name="categoryId" id="category" class="form-control" data-trigger="submit" data-choice="true">
+                                <select name="category" id="category" class="form-control" data-trigger="submit" data-choice="true">
                                     <option value="" placeholder>{{ 'label.select.category'|trans }}</option>
                                     {% for c in categoryFilter.categories %}
                                         <option value="{{ c.uuid }}" {% if categoryFilter.currentCategory != null and categoryFilter.currentCategory.id == c.id %}selected="selected"{% endif %}>{{ c.name }}</option>

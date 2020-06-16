@@ -11,7 +11,6 @@ class StudyGroupMembershipsData {
     /**
      * @Serializer\Type("array<App\Request\Data\StudyGroupMembershipData>")
      * @Assert\Valid()
-     * @UniqueId(propertyPath="id")
      * @var StudyGroupMembershipData[]
      */
     private $memberships = [ ];

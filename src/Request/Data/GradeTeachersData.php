@@ -11,7 +11,6 @@ class GradeTeachersData {
     /**
      * @Serializer\Type("array<App\Request\Data\GradeTeacherData>")
      * @Assert\Valid()
-     * @UniqueId(propertyPath="id")
      * @var GradeTeacherData[]
      */
     private $gradeTeachers = [ ];

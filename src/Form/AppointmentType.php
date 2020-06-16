@@ -74,6 +74,14 @@ class AppointmentType extends AbstractType {
                             'label_attr' => [
                                 'class' => 'checkbox-custom'
                             ]
+                        ])
+                        ->add('visibilities', UserTypeEntityType::class, [
+                            'label' => 'label.visibility',
+                            'multiple' => true,
+                            'expanded' => true,
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
                         ]);
                 }
             ])

@@ -31,6 +31,13 @@ class ImportResponse {
     private $removed;
 
     /**
+     * Ignored entities.
+     *
+     * @var object[]
+     */
+    private $ignored;
+
+    /**
      * Number of added entities.
      *
      * @Serializer\Type("int")
@@ -54,14 +61,23 @@ class ImportResponse {
      */
     private $removedCount;
 
-    public function __construct(array $added, array $updated, array $removed) {
+    /**
+     * Number of ignored entities.
+     * @Serializer\Type("int")
+     * @var int
+     */
+    private $ignoredCount;
+
+    public function __construct(array $added, array $updated, array $removed, array $ignored) {
         $this->added = $added;
         $this->updated = $updated;
         $this->removed = $removed;
+        $this->ignored = $ignored;
 
         $this->addedCount = count($added);
         $this->updatedCount = count($updated);
         $this->removedCount = count($removed);
+        $this->ignoredCount = count($ignored);
     }
 
     /**
@@ -84,5 +100,6 @@ class ImportResponse {
     public function getRemoved() {
         return $this->removed;
     }
+
 
 }

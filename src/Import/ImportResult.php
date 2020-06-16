@@ -13,10 +13,14 @@ class ImportResult {
     /** @var array */
     private $removed;
 
-    public function __construct(array $added, array $updated, array $removed) {
+    /** @var array */
+    private $ignored;
+
+    public function __construct(array $added, array $updated, array $removed, array $ignored) {
         $this->added = $added;
         $this->updated = $updated;
         $this->removed = $removed;
+        $this->ignored = $ignored;
     }
 
     /**
@@ -38,5 +42,12 @@ class ImportResult {
      */
     public function getRemoved(): array {
         return $this->removed;
+    }
+
+    /**
+     * @return array
+     */
+    public function getIgnored(): array {
+        return $this->ignored;
     }
 }

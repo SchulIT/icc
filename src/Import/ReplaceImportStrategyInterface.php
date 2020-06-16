@@ -26,5 +26,9 @@ interface ReplaceImportStrategyInterface {
 
     public function removeAll(): void;
 
+    /**
+     * @param $data
+     * @throws EntityIgnoredException
+     */
     public function persist($data): void;
 }

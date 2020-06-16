@@ -70,7 +70,7 @@ class ImportController extends AbstractController {
     }
 
     private function fromResult(ImportResult $importResult): Response {
-        $response = new ImportResponse($importResult->getAdded(), $importResult->getUpdated(), $importResult->getRemoved());
+        $response = new ImportResponse($importResult->getAdded(), $importResult->getUpdated(), $importResult->getRemoved(), $importResult->getIgnored());
         $json = $this->serializer->serialize($response, 'json');
 
         return new Response(

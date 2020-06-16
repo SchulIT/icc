@@ -62,6 +62,7 @@ class Importer {
             $addedEntities = [];
             $updatedEntities = [];
             $removedEntities = [];
+            $ignoredEntities = [];
 
             $entities = $strategy->getData($data);
 
@@ -93,7 +94,7 @@ class Importer {
 
             $repository->commit();
 
-            return new ImportResult($addedEntities, $updatedEntities, $removedEntities);
+            return new ImportResult($addedEntities, $updatedEntities, $removedEntities, $ignoredEntities);
         } catch (Throwable $e) {
             $this->logger->error('Import failed.', [
                 'exception' => $e
@@ -124,17 +125,22 @@ class Importer {
             $strategy->removeAll();
 
             $addedEntities = [];
+            $ignoredEntities = [];
 
             $entities = $strategy->getData($data);
 
             foreach ($entities as $object) {
-                $strategy->persist($object);
-                $addedEntities[] = $object;
+                try {
+                    $strategy->persist($object);
+                    $addedEntities[] = $object;
+                } catch (EntityIgnoredException $e) {
+                    $ignoredEntities[] = $e->getEntity();
+                }
             }
 
             $repository->commit();
 
-            return new ImportResult($addedEntities, [], []);
+            return new ImportResult($addedEntities, [], [], $ignoredEntities);
         } catch (Throwable $e) {
             throw new ImportException($e->getMessage(), $e->getCode(), $e);
         }

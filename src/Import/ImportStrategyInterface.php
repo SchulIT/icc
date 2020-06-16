@@ -62,6 +62,7 @@ interface ImportStrategyInterface {
      * @param mixed $entity
      * @param mixed $data
      * @param mixed $requestData The data object of the request body.
+     * @throws EntityIgnoredException
      */
     public function updateEntity($entity, $data, $requestData): void;
 

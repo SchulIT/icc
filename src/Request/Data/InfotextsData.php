@@ -11,7 +11,6 @@ class InfotextsData {
     /**
      * @Serializer\Type("array<App\Request\Data\InfotextData>")
      * @Assert\Valid()
-     * @UniqueId(propertyPath="id")
      * @var InfotextData[]
      */
     private $infotexts = [ ];

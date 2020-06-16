@@ -10,7 +10,6 @@ class AbsencesData {
     /**
      * @Serializer\Type("array<App\Request\Data\AbsenceData>")
      * @Assert\Valid()
-     * @UniqueId(propertyPath="id")
      * @var AbsenceData[]
      */
     private $absences = [ ];

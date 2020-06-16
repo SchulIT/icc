@@ -32,6 +32,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    document.querySelectorAll('a[data-trigger=scroll]').forEach(function(el) {
+        el.addEventListener('click', function(event) {
+            let target = document.querySelector(el.getAttribute('href'));
+
+            if(target !== null) {
+                event.preventDefault();
+                window.scrollTo({
+                    top: target.offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
     document.querySelectorAll('[data-trigger="submit"]').forEach(function (el) {
         el.addEventListener('change', function (event) {
             let confirmModalSelector = el.getAttribute('data-confirm');

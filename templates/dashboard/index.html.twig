@@ -66,7 +66,7 @@
                         {% endif %}
 
                         <nav class="nav nav-pills nav-justified mb-3 mx-n1 mt-n2">
-                            <a href="#infotexts" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                            <a href="#infotexts" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
                                 <div class="align-self-center text-center w-100">
                                     {{ 'dashboard.nav.infotexts'|trans({'%count%': view.infotexts|length}) }}
                                     <span class="badge badge-light badge-pill">
@@ -75,7 +75,7 @@
                                 </div>
                             </a>
                             {% if is_granted('view-absences') %}
-                                <a href="#absences" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                <a href="#absences" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
                                     <div class="align-self-center text-center w-100">
                                         {{ 'dashboard.absences'|trans() }}
 
@@ -85,7 +85,7 @@
                                     </div>
                                 </a>
                             {% endif %}
-                            <a href="#messages" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                            <a href="#messages" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
                                 <div class="align-self-center text-center w-100">
                                     {{ 'messages.overview.label'|trans }}
 
@@ -95,7 +95,7 @@
                                 </div>
                             </a>
                             {% if view.exams|length > 0 %}
-                                <a href="#exams" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                <a href="#exams" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
                                     <div class="align-self-center text-center w-100">
                                         {{ 'label.exams'|trans }}
 
@@ -106,7 +106,7 @@
                                 </a>
                             {% endif %}
                             {% if view.substitutionMentions|length > 0 %}
-                                <a href="#mentions" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                <a href="#mentions" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
                                     <div class="align-self-center text-center w-100">
                                         {{ 'dashboard.substitution_mentions'|trans }}
 
@@ -116,7 +116,7 @@
                                     </div>
                                 </a>
                             {% endif %}
-                            <a href="#appointments" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                            <a href="#appointments" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
                                 <div class="align-self-center text-center w-100">
                                     {{ 'dashboard.appointments'|trans }}
 

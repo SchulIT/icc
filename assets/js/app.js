@@ -65,8 +65,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.preventDefault();
                 event.stopImmediatePropagation();
 
-                console.log(form);
-
                 form.submit();
             });
         });
@@ -175,15 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             xhr.responseText +
                         '</div></div>';
 
-                    /*new bsn.Popover(el, {
-                        placement: 'bottom',
-                        template: template,
-                        trigger: 'hover',
-                        animation: 'none'
-                    });*/
-
                     initialized = true;
-                    console.log(el.Popover);
                 } else {
                     console.error('XMLHttpRequest error');
                     console.error(xhr);
@@ -268,8 +258,6 @@ document.addEventListener('DOMContentLoaded', function() {
             let occupiedWidth = 0;
             let canAddChild = true;
 
-            console.log('container: ' + containerWidth);
-
             // First: add all children which are prevented from begin hidden
             element.querySelectorAll('[data-resize=show]').forEach(function (child) {
                 let childWidth = parseInt(child.getAttribute('data-width'));
@@ -295,9 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 startElement.classList.remove('hide');
             }
 
-            console.log('length: ' + element.children.length + '/startIdx:' + startIdx);
             for(let leftIdx = startIdx-1, rightIdx = startIdx + 1; leftIdx >= 0 || rightIdx < element.children.length; leftIdx--, rightIdx++) {
-                console.log('left: ' + leftIdx + '/right: ' + rightIdx);
                 let leftElement = element.children[leftIdx] || null;
                 if(leftElement !== null && leftElement.hasAttribute('data-width') && leftElement.getAttribute('data-resize') !== 'show') {
                     let leftWidth = parseInt(leftElement.getAttribute('data-width'));

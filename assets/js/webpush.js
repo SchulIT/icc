@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideDisableLoading();
             })
             .catch(e => {
-                console.log('An error occurred while unsubscribing.', e);
+                console.error('An error occurred while unsubscribing.', e);
                 showState(state.disabled);
                 hideDisableLoading();
             });

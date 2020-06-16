@@ -30,8 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Display the form in the page in an li
         let newForm = htmlToElement(newFormHtml);
 
-        console.log(newForm);
-
         collectionHolder.appendChild(newForm);
 
         newForm.querySelectorAll('.btn-delete').forEach(function(el) {

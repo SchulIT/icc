@@ -12,6 +12,7 @@ use App\Entity\UserType;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class AppointmentRepository extends AbstractTransactionalRepository implements AppointmentRepositoryInterface {
     /**
@@ -40,9 +41,9 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
      * @param string|null $idsDQL
      * @param array $parameters
      * @param DateTime|null $today
-     * @return Appointment[]
+     * @return QueryBuilder
      */
-    private function getAppointments(?string $idsDQL, array $parameters, ?DateTime $today): array {
+    private function getAppointments(?string $idsDQL, array $parameters, ?DateTime $today): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
 
         $qb
@@ -96,7 +97,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
 
         $qb->orderBy('a.start', 'asc');
 
-        return $qb->getQuery()->getResult();
+        return $qb;
     }
 
     /**
@@ -109,7 +110,8 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->leftJoin('aInner.studyGroups', 'aSgInner')
             ->where('aSgInner.id = :studyGroupId');
 
-        return $this->getAppointments($qbAppointments, ['studyGroupId' => $studyGroup->getId() ], $today);
+        return $this->getAppointments($qbAppointments, ['studyGroupId' => $studyGroup->getId() ], $today)
+            ->getQuery()->getResult();
     }
 
     /**
@@ -136,7 +138,8 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             return $student->getId();
         }, $students);
 
-        return $this->getAppointments($qbAppointments, ['studentIds' => $studentIds ], $today);
+        return $this->getAppointments($qbAppointments, ['studentIds' => $studentIds ], $today)
+            ->getQuery()->getResult();
     }
 
     /**
@@ -181,7 +184,8 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
         return $this->getAppointments($qbAppointments, [
             'teacherId' => $teacher->getId(),
             'userType' => UserType::Teacher()
-        ], $today);
+        ], $today)
+            ->getQuery()->getResult();
     }
 
     /**
@@ -219,7 +223,54 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             $params['query'] = '%' . $q . '%';
         }
 
-        return  $this->getAppointments($qbIds->getDQL(), $params, $today);
+        return $this->getAppointments($qbIds->getDQL(), $params, $today)
+            ->getQuery()->getResult();
+    }
+
+    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null): Paginator {
+        $qbIds = $this->em->createQueryBuilder();
+        $params = [ ];
+
+        $qbIds
+            ->select('aInner.id')
+            ->from(Appointment::class, 'aInner');
+
+        if(count($categories) > 0) {
+            $qbIds
+                ->leftJoin('aInner.category', 'cInner')
+                ->andWhere('cInner.id IN (:categories)');
+
+            $params['categories'] = array_map(function(AppointmentCategory $category) {
+                return $category->getId();
+            }, $categories);
+        }
+
+        if($q !== null) {
+            $qbIds
+                ->andWhere(
+                    $qbIds->expr()->orX(
+                        'aInner.title LIKE :query',
+                        'aInner.content LIKE :query'
+                    )
+                );
+
+            $params['query'] = '%' . $q . '%';
+        }
+
+        $qb = $this->getAppointments($qbIds->getDQL(), $params, null);
+
+        if(!is_numeric($page) || $page < 1) {
+            $page = 1;
+        }
+
+        $offset = ($page - 1) * $itemsPerPage;
+
+        $paginator = new Paginator($qb);
+        $paginator->getQuery()
+            ->setMaxResults($itemsPerPage)
+            ->setFirstResult($offset);
+
+        return $paginator;
     }
 
     /**

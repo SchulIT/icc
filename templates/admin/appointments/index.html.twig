@@ -12,6 +12,11 @@
 
 {% block content %}
 
+    {% set currentFilter = {
+        q: q,
+        categoryId: categoryFilter.currentCategory != null ? categoryFilter.currentCategory.uuid : null }
+    %}
+
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9">
@@ -100,6 +105,14 @@
                             </div>
                         </div>
                     {% endfor %}
+
+                    {% include '@Common/includes/pagination.html.twig' with {
+                        currentFilters: currentFilter,
+                        currentPage: page,
+                        paginationPath: 'admin_appointments',
+                        lastPage: pages,
+                        showAlwaysFirstAndLast: true
+                    } only %}
                 {% endif %}
             </div>
 
@@ -132,7 +145,7 @@
                             </div>
                         </form>
 
-                        {% include "_filter/query.html.twig" with { class: 'mb-0', params: { q: q, categoryId: categoryFilter.currentCategory != null ? categoryFilter.currentCategory.uuid : null }, route: 'admin_appointments' } %}
+                        {% include "_filter/query.html.twig" with { class: 'mb-0', params: currentFilter, route: 'admin_appointments' } %}
                     </div>
 
                     <div class="card-footer">

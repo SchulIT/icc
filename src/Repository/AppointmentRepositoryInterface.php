@@ -11,6 +11,7 @@ use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
 use DateTime;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 interface AppointmentRepositoryInterface extends TransactionalRepositoryInterface {
 
@@ -64,4 +65,13 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
      * @param Appointment $appointment
      */
     public function remove(Appointment $appointment): void;
+
+    /**
+     * @param int $itemsPerPage
+     * @param int $page
+     * @param array $categories
+     * @param string|null $q
+     * @return Paginator
+     */
+    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null): Paginator;
 }

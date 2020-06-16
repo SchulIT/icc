@@ -85,17 +85,15 @@
                                     </div>
                                 </a>
                             {% endif %}
-                            {% if view.messages|length > 0 %}
-                                <a href="#messages" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
-                                    <div class="align-self-center text-center w-100">
-                                        {{ 'messages.overview.label'|trans }}
+                            <a href="#messages" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                <div class="align-self-center text-center w-100">
+                                    {{ 'messages.overview.label'|trans }}
 
-                                        <span class="badge badge-light badge-pill">
-                                            {{ view.messages|length }}
-                                        </span>
-                                    </div>
-                                </a>
-                            {% endif %}
+                                    <span class="badge badge-light badge-pill">
+                                        {{ view.messages|length }}
+                                    </span>
+                                </div>
+                            </a>
                             {% if view.exams|length > 0 %}
                                 <a href="#exams" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
                                     <div class="align-self-center text-center w-100">

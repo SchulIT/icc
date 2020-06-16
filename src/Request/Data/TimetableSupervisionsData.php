@@ -11,7 +11,6 @@ class TimetableSupervisionsData {
     /**
      * @Serializer\Type("string")
      * @Assert\NotBlank()
-     * @UniqueId(propertyPath="id")
      * @var string|null
      */
     private $period;
@@ -19,6 +18,7 @@ class TimetableSupervisionsData {
     /**
      * @Serializer\Type("array<App\Request\Data\TimetableSupervisionData>")
      * @Assert\Valid()
+     * @UniqueId(propertyPath="id")
      * @var TimetableSupervisionData[]
      */
     private $supervisions = [ ];

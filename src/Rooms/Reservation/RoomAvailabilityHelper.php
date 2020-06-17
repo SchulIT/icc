@@ -125,11 +125,15 @@ class RoomAvailabilityHelper {
     /**
      * @param DateTime $date
      * @param Room[] $rooms
-     * @return RoomAvailabilityOverview
+     * @return RoomAvailabilityOverview|null
      */
-    public function getAvailabilities(DateTime $date, array $rooms): RoomAvailabilityOverview {
+    public function getAvailabilities(DateTime $date, array $rooms): ?RoomAvailabilityOverview {
         $week = $this->weekHelper->getTimetableWeek($date);
         $period = $this->periodHelper->getPeriod($date);
+
+        if($period === null || $week === null) {
+            return null;
+        }
 
         $lessons = $this->timetableRepository->findAllByPeriodAndWeek($period, $week);
         $reservations = $this->reservationRepository->findAllByDate($date);

@@ -303,6 +303,7 @@ plans:
             help: Zum Erstellen einer Reservierung entweder auf ein grünes Feld klicken oder die obige Schaltfläche nutzen.
             info: Informationen
             available: Der Raum ist nicht belegt und kann reserviert werden.
+            not_available: Der Raumbelegplan kann nicht angezeigt werden, da es dem ausgewählten Datum keine Periode oder Woche zugeordnet werden kann.
             reservation: Reservierung
             add:
                 label: Neue Reservierung

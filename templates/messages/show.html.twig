@@ -59,6 +59,10 @@
 
                         </h5>
 
+                        {% if message.uploadDescription is not empty %}
+                            {{ message.uploadDescription|markdown }}
+                        {% endif %}
+
                         {{ form_start(form) }}
 
                         {% for item in form.uploads %}

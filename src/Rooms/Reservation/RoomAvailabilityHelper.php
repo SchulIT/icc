@@ -43,7 +43,7 @@ class RoomAvailabilityHelper {
      * @return bool
      */
     private function isSubstitutionInLesson(Substitution $substitution, int $lessonNumber): bool {
-        return $substitution->getLessonStart() <= $lessonNumber && $substitution->getLessonEnd() >= $lessonNumber;
+        return $substitution->startsBefore() === false && $substitution->getLessonStart() <= $lessonNumber && $substitution->getLessonEnd() >= $lessonNumber;
     }
 
     /**

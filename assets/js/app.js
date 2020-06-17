@@ -144,11 +144,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
             let values = this.getAttribute('data-select-values').split(',');
 
-            target.querySelectorAll('option').forEach(function(optionEl) {
-                if(values.indexOf(optionEl.value) > -1) {
-                    optionEl.selected = true;
-                }
-            });
+            if('choices' in target) {
+                values.forEach(function (value) {
+                    target.choices.setChoiceByValue(value);
+                });
+            } else {
+                target.querySelectorAll('option').forEach(function (optionEl) {
+                    if (values.indexOf(optionEl.value) > -1) {
+                        optionEl.selected = true;
+                    }
+                });
+            }
+        });
+    });
+
+    document.querySelectorAll('[data-toggle=unselect]').forEach(function(el) {
+        el.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            let targetSelector = this.getAttribute('data-target');
+            let target = document.querySelector(targetSelector);
+
+            if('choices' in target) {
+                target.choices.removeActiveItems();
+            } else {
+                target.querySelectorAll('option').forEach(function(el) { el.selected = false; });
+            }
         });
     });
 

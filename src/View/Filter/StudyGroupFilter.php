@@ -10,10 +10,12 @@ use App\Entity\User;
 use App\Entity\UserType;
 use App\Grouping\Grouper;
 use App\Grouping\StudyGroupGradeStrategy;
+use App\Grouping\StudyGroupTypeStrategy;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\StudyGroupGradeGroupStrategy;
 use App\Sorting\StudyGroupStrategy;
+use App\Sorting\StudyGroupTypeGroupStrategy;
 use App\Utils\ArrayUtils;
 
 class StudyGroupFilter {
@@ -65,8 +67,8 @@ class StudyGroupFilter {
         $studyGroup = $studyGroupUuid !== null ?
             $studyGroups[$studyGroupUuid] ?? null : null;
 
-        $groups = $this->grouper->group($studyGroups, StudyGroupGradeStrategy::class);
-        $this->sorter->sort($groups, StudyGroupGradeGroupStrategy::class);
+        $groups = $this->grouper->group($studyGroups, StudyGroupTypeStrategy::class);
+        $this->sorter->sort($groups, StudyGroupTypeGroupStrategy::class);
         $this->sorter->sortGroupItems($groups, StudyGroupStrategy::class);
 
         return new StudyGroupFilterView($groups, $studyGroup);

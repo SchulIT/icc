@@ -2,9 +2,10 @@
 
 namespace App\Form;
 
+use App\Converter\EnumStringConverter;
 use App\Converter\StudyGroupStringConverter;
-use App\Entity\Grade;
 use App\Entity\StudyGroup;
+use App\Entity\StudyGroupType as StudyGroupEntityType;
 use App\Sorting\StringStrategy;
 use App\Sorting\StudyGroupStrategy;
 use Doctrine\ORM\EntityRepository;
@@ -12,7 +13,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\ChoiceList\View\ChoiceGroupView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use App\Entity\StudyGroupType as StudyGroupEntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class StudyGroupType extends SortableEntityType {
@@ -20,14 +20,16 @@ class StudyGroupType extends SortableEntityType {
     private $studyGroupConverter;
     private $stringStrategy;
     private $studyGroupStrategy;
+    private $enumStringConverter;
 
     public function __construct(ManagerRegistry $registry, StudyGroupStringConverter $studyGroupConverter,
-                                StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy) {
+                                StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy, EnumStringConverter $enumStringConverter) {
         parent::__construct($registry);
 
         $this->stringStrategy = $stringStrategy;
         $this->studyGroupConverter = $studyGroupConverter;
         $this->studyGroupStrategy = $studyGroupStrategy;
+        $this->enumStringConverter = $enumStringConverter;
     }
 
     public function configureOptions(OptionsResolver $resolver) {
@@ -42,14 +44,10 @@ class StudyGroupType extends SortableEntityType {
                     ->leftJoin('sg.grades', 'g');
             })
             ->setDefault('group_by', function(StudyGroup $group) {
-                $grades = array_map(function(Grade $grade) {
-                    return $grade->getName();
-                }, $group->getGrades()->toArray());
-
-                return join(', ', $grades);
+                return $this->enumStringConverter->convert($group->getType());
             })
             ->setDefault('choice_label', function(StudyGroup $group) {
-                return $this->studyGroupConverter->convert($group);
+                return $this->studyGroupConverter->convert($group, false, true);
             })
             ->setDefault('sort_by', $this->stringStrategy)
             ->setDefault('sort_items_by', $this->studyGroupStrategy);
@@ -62,6 +60,9 @@ class StudyGroupType extends SortableEntityType {
 
         $gradeIds = [ ]; // List of grade ids
         $choices = $view->vars['choices'];
+        $view->vars['buttons'] = false;
+        $view->vars['attr']['data-choice'] = 'true';
+        $view->vars['placeholder'] = 'label.select.study_group';
 
         foreach($choices as $choice) {
             if($choice instanceof ChoiceGroupView) {
@@ -78,6 +79,7 @@ class StudyGroupType extends SortableEntityType {
         }
 
         $view->vars['grades'] = $gradeIds;
+
     }
 
     public function getBlockPrefix()

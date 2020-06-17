@@ -14,10 +14,14 @@
             <option value="" placeholder>{{ 'label.select.study_group'|trans }}</option>
             {% for group in studyGroupFilter.studyGroupGroups %}
                 {% if grouped %}
-                <optgroup label="{{ group.grade.name }}">
+                <optgroup label="{{ group.type|enum }}">
                 {% endif %}
                     {% for g in group.studyGroups %}
-                        <option value="{{ g.uuid }}" {% if studyGroupFilter.currentStudyGroup != null and studyGroupFilter.currentStudyGroup.id == g.id %}selected="selected"{% endif %}>{{ g|studygroup }}</option>
+                        <option value="{{ g.uuid }}" {% if studyGroupFilter.currentStudyGroup != null and studyGroupFilter.currentStudyGroup.id == g.id %}selected="selected"{% endif %}>
+                            {{ g|studygroup }}
+
+                            ({% for grade in g.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                        </option>
                     {% endfor %}
                 {% if grouped %}
                 </optgroup>

@@ -73,9 +73,17 @@
 {%- block study_group_widget -%}
     {{- block('choice_widget') -}}
 
-    <button type="button" class="btn btn-secondary btn-sm" data-select-values="{{ form.vars.grades|join(',') }}" data-target="#{{ id }}" data-toggle="select-values">
-        <i class="far fa-check-square" aria-hidden="true"></i> {{ 'forms.select.all_grades'|trans }}
-    </button>
+    {% if multiple %}
+    <div class="mt-n3">
+        <button type="button" class="btn btn-secondary btn-sm" data-select-values="{{ form.vars.grades|join(',') }}" data-target="#{{ id }}" data-toggle="select-values">
+            <i class="far fa-check-square" aria-hidden="true"></i> {{ 'forms.select.all_grades'|trans }}
+        </button>
+
+        <button type="button" class="btn btn-secondary btn-sm" data-toggle="unselect" data-target="#{{ id }}">
+            <i class="far fa-square"></i> {{ 'forms.select.multiple.unselect_all'|trans }}
+        </button>
+    </div>
+    {% endif %}
 {%- endblock -%}
 
 {%- block message_file_widget -%}

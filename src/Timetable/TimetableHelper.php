@@ -91,6 +91,11 @@ class TimetableHelper {
             }
         }
 
+        if(count($freeCategories) === 0) {
+            // In case there are no free categories, return fast (findAll([]) will not filter for any category!)
+            return [];
+        }
+
         $appointments = $this->appointmentRepository->findAll($freeCategories);
 
         $freeDays = [ ];

@@ -114,6 +114,7 @@ label:
     last_import_type: 'Letzter Import "%type%"'
     never: Nie
     supervisions: Aufsichten
+    toggle_multiple: Mehrfachauswahl aktivieren
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

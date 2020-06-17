@@ -70,18 +70,46 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    document.querySelectorAll('select[data-choice=true]').forEach(function(el) {
+    let initializeChoice = function(el, selected) {
         let removeItemButton = false;
 
         if(el.getAttribute('multiple') !== null) {
             removeItemButton = true;
         }
 
-        new Choices(el, {
+        el.choices = new Choices(el, {
             itemSelectText: '',
             shouldSort: false,
             shouldSortItems: false,
             removeItemButton: removeItemButton
+        });
+
+        if(selected !== undefined) {
+            if(Array.isArray(selected) === false) {
+                for(let i = 0; i < selected.length; i++) {
+                    el.choices.setChoiceByValue(selected[i]);
+                }
+            }
+
+            el.choices.setChoiceByValue(selected);
+        }
+    };
+
+    document.querySelectorAll('select[data-choice=true]').forEach(el => initializeChoice(el));
+
+    document.querySelectorAll('[data-toggle=multiple-choice]').forEach(function(el) {
+        el.addEventListener('change', function(event) {
+            let target = document.querySelector(el.getAttribute('data-target'));
+
+            if(el.checked) {
+                target.setAttribute("multiple", "multiple");
+            } else {
+                target.removeAttribute('multiple');
+            }
+
+            let selected = target.choices.getValue(true);
+            target.choices.destroy();
+            initializeChoice(target, selected);
         });
     });
 

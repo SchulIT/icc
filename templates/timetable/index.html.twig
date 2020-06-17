@@ -220,7 +220,7 @@
                 <div class="card">
                     <div class="card-body pb-1">
                         {% if teachersFilter.teachers|length > 0 %}
-                            {% include "_filter/teachers.html.twig" %}
+                            {% include "_filter/teachers.html.twig" with { canSwitch: true } %}
                         {% endif %}
 
                         {% if studentFilter.studentGradeGroups|length > 0 %}

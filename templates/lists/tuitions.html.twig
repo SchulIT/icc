@@ -89,7 +89,7 @@
                                     {% if studentFilter.currentStudent == null %}
                                         <td>
                                             {% if tuition.studyGroup is not null %}
-                                                <a href="{{ path('list_studygroups', { study_group: tuition.studyGroup.uuid}) }}">{{ tuition.studyGroup.name }}</a>
+                                                <a href="{{ path('list_studygroups', { study_group: tuition.studyGroup.uuid.toString() }) }}">{{ tuition.studyGroup.name }}</a>
                                             {% else %}
                                                 <span class="badge badge-secondary">{{ 'label.none'|trans }}</span>
                                             {% endif %}

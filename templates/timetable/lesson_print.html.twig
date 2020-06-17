@@ -17,9 +17,10 @@
             {%- endif -%}
         </strong>
 
-        {% if teacherFilter.currentTeacher is not null %}
+        {% if teachersFilter.currentTeachers|length > 0 %}
             {% for g in lesson.tuition.studyGroup.grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-        {% else %}
+        {% endif %}
+        {% if teachersFilter.currentTeachers|length != 1 %}
             {{ lesson.tuition.teacher.getAcronym() }}
         {% endif %}
 

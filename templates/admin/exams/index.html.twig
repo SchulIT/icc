@@ -114,6 +114,14 @@
                     </div>
                 </div>
                 {% endfor %}
+
+                {% include '@Common/includes/pagination.html.twig' with {
+                    currentFilters: { grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null },
+                    currentPage: page,
+                    paginationPath: 'admin_exams',
+                    lastPage: pages,
+                    showAlwaysFirstAndLast: true
+                } only %}
             </div>
 
             <div class="col-md-3">

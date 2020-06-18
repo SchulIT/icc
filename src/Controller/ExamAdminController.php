@@ -33,6 +33,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ExamAdminController extends AbstractController {
 
+    private const NumberOfExams = 25;
+
     private $repository;
 
     public function __construct(RefererHelper $redirectHelper, ExamRepositoryInterface $examRepository) {
@@ -47,21 +49,26 @@ class ExamAdminController extends AbstractController {
     public function index(GradeFilter $gradeFilter, Grouper $grouper, ExamRepositoryInterface $examRepository, Sorter $sorter, Request $request) {
         $this->denyAccessUnlessGranted(ExamVoter::Manage);
 
+        $page = $request->query->getInt('page');
+
         /** @var User $user */
         $user = $this->getUser();
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
 
-        $exams = [ ];
+        $paginator = $this->repository->getPaginator(static::NumberOfExams, $page, $gradeFilterView->getCurrentGrade());
+        $pages = 1;
 
-        if($gradeFilterView->getCurrentGrade() !== null) {
-            $exams = $examRepository->findAllByGrade($gradeFilterView->getCurrentGrade());
-        } else {
-            $exams = $examRepository->findAll();
+        if($paginator->count() > 0) {
+            $pages = ceil((float)$paginator->count() / static::NumberOfExams);
         }
 
-        $exams = array_filter($exams, function(Exam $exam) {
-            return $this->isGranted(ExamVoter::Edit, $exam);
-        });
+        $exams = [ ];
+
+        foreach($paginator->getIterator() as $exam) {
+            if($this->isGranted(ExamVoter::Edit, $exam)) {
+                $exams[] = $exam;
+            }
+        }
 
         $groups = $grouper->group($exams, ExamWeekStrategy::class);
         $sorter->sort($groups, ExamWeekGroupStrategy::class);
@@ -69,7 +76,9 @@ class ExamAdminController extends AbstractController {
 
         return $this->render('admin/exams/index.html.twig', [
             'groups' => $groups,
-            'gradeFilter' => $gradeFilterView
+            'gradeFilter' => $gradeFilterView,
+            'page' => $page,
+            'pages' => $pages
         ]);
     }
 

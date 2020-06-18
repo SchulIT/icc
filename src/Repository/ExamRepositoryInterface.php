@@ -9,6 +9,7 @@ use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use DateTime;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
 
@@ -129,4 +130,11 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
      * @param Exam $exam
      */
     public function remove(Exam $exam): void;
+
+    /**
+     * @param int $itemsPerPage
+     * @param int $page
+     * @return Paginator
+     */
+    public function getPaginator(int $itemsPerPage, int &$page): Paginator;
 }

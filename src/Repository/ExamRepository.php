@@ -9,6 +9,7 @@ use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ExamRepository extends AbstractTransactionalRepository implements ExamRepositoryInterface {
 
@@ -337,8 +338,38 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     }
 
 
+    /**
+     * @inheritDoc
+     */
+    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null): Paginator {
+        $qb = $this->getDefaultQueryBuilder();
 
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.tuitions', 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.grades', 'gInner');
 
+        if($grade !== null) {
+            $qbInner->where('gInner.id = :grade');
+            $qb->setParameter('grade', $grade->getId());
+        }
 
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()));
 
+        if(!is_numeric($page) || $page < 1) {
+            $page = 1;
+        }
+
+        $offset = ($page - 1) * $itemsPerPage;
+
+        $paginator = new Paginator($qb);
+        $paginator->getQuery()
+            ->setMaxResults($itemsPerPage)
+            ->setFirstResult($offset);
+
+        return $paginator;
+    }
 }

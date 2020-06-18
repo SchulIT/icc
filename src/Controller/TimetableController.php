@@ -7,6 +7,7 @@ use App\Entity\DeviceTokenType;
 use App\Entity\Exam;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroupMembership;
+use App\Entity\Subject;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
 use App\Entity\TimetableSupervision;
@@ -17,6 +18,7 @@ use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
+use App\Repository\SubjectRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
@@ -28,6 +30,7 @@ use App\Sorting\TimetablePeriodStrategy;
 use App\Sorting\TimetableWeekStrategy;
 use App\Timetable\TimetableFilter;
 use App\Timetable\TimetableHelper;
+use App\Utils\ArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\RoomFilter;
 use App\View\Filter\StudentFilter;
@@ -38,6 +41,7 @@ use SchoolIT\CommonBundle\Helper\DateHelper;
 use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use function foo\func;
 
 /**
  * @Route("/timetable")
@@ -65,7 +69,8 @@ class TimetableController extends AbstractControllerWithMessages {
      */
     public function index(StudentFilter $studentFilter, TeachersFilter $teachersFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableWeekRepositoryInterface $weekRepository, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
-                          TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
+                          TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository,
+                          SubjectRepositoryInterface $subjectRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -181,6 +186,13 @@ class TimetableController extends AbstractControllerWithMessages {
             }
         }
 
+        $subjects = ArrayUtils::createArrayWithKeys(
+            $subjectRepository->findAll(),
+            function (Subject $subject) {
+                return $subject->getAbbreviation();
+            }
+        );
+
         return $this->renderWithMessages($template, [
             'timetable' => $timetable,
             'studentFilter' => $studentFilterView,
@@ -202,6 +214,7 @@ class TimetableController extends AbstractControllerWithMessages {
             'supervisionColor' => $this->timetableSettings->getSupervisionColor(),
             'last_import_lessons' => $importDateTypeRepository->findOneByEntityClass(TimetableLesson::class),
             'last_import_supervisions' => $importDateTypeRepository->findOneByEntityClass(TimetableSupervision::class),
+            'subjects' => $subjects
         ]);
     }
 

@@ -89,4 +89,8 @@ class TimetableWeek {
         $this->weekMod = $weekMod;
         return $this;
     }
+
+    public function __toString() {
+        return $this->displayName;
+    }
 }

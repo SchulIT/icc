@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\FreestyleTimetableLesson;
 use App\Entity\Grade;
 use App\Entity\Room;
 use App\Entity\Student;
@@ -10,14 +11,23 @@ use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
 use App\Entity\TimetableWeek;
+use App\Entity\TuitionTimetableLesson;
 use Doctrine\ORM\QueryBuilder;
 
 class TimetableLessonRepository extends AbstractTransactionalRepository implements TimetableLessonRepositoryInterface {
 
+    private function getDefaultFreeStyleQueryBuilder(): QueryBuilder {
+        return $this->em->createQueryBuilder()
+            ->select(['l', 'p', 'w'])
+            ->from(FreestyleTimetableLesson::class, 'l')
+            ->leftJoin('l.period', 'p')
+            ->leftJoin('l.week', 'w');
+    }
+
     private function getDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
             ->select(['l', 'p', 't', 'w', 'r'])
-            ->from(TimetableLesson::class, 'l')
+            ->from(TuitionTimetableLesson::class, 'l')
             ->leftJoin('l.period', 'p')
             ->leftJoin('l.tuition', 't')
             ->leftJoin('l.week', 'w')
@@ -39,9 +49,15 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
      * @inheritDoc
      */
     public function findAll() {
-        return $this->getDefaultQueryBuilder()
-            ->getQuery()
-            ->getResult();
+        return
+            array_merge(
+                $this->getDefaultQueryBuilder()
+                    ->getQuery()
+                    ->getResult(),
+                $this->getDefaultFreeStyleQueryBuilder()
+                    ->getQuery()
+                    ->getResult()
+            );
     }
 
     /**
@@ -68,7 +84,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner')
-            ->from(TimetableLesson::class, 'lInner')
+            ->from(TuitionTimetableLesson::class, 'lInner')
             ->leftJoin('lInner.period', 'pInner')
             ->where('pInner.id = :period');
 
@@ -89,7 +105,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner')
-            ->from(TimetableLesson::class, 'lInner')
+            ->from(TuitionTimetableLesson::class, 'lInner')
             ->leftJoin('lInner.period', 'pInner')
             ->leftJoin('lInner.tuition', 'tInner')
             ->leftJoin('tInner.studyGroup', 'sgInner')
@@ -111,31 +127,48 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
      * @inheritDoc
      */
     public function findAllByPeriodAndTeacher(TimetablePeriod $period, Teacher $teacher) {
-        $qb = $this->getDefaultQueryBuilder();
+        $qbTuitionLessons = $this->getDefaultQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner.id')
-            ->from(TimetableLesson::class, 'lInner')
+            ->from(TuitionTimetableLesson::class, 'lInner')
             ->leftJoin('lInner.period', 'pInner')
             ->leftJoin('lInner.tuition', 'tInner')
             ->leftJoin('tInner.teacher', 'ttInner')
             ->leftJoin('tInner.additionalTeachers', 'atInner')
             ->where('pInner.id = :period')
             ->andWhere(
-                $qb->expr()->orX(
+                $qbTuitionLessons->expr()->orX(
                     'ttInner.id = :teacher',
                     'atInner.id = :teacher'
                 )
             );
 
-        $qb->setParameter('teacher', $teacher->getId())
+        $qbTuitionLessons->setParameter('teacher', $teacher->getId())
             ->setParameter('period', $period->getId());
 
-        $qb->where(
-            $qb->expr()->in('l.id', $qbInner->getDQL())
+        $qbTuitionLessons->where(
+            $qbTuitionLessons->expr()->in('l.id', $qbInner->getDQL())
         );
 
-        return $qb->getQuery()->getResult();
+        $qbFreestyleLessons = $this->getDefaultFreeStyleQueryBuilder();
+        $qbInnerFreestyle = $this->em->createQueryBuilder()
+            ->select('lInner.id')
+            ->from(FreestyleTimetableLesson::class, 'lInner')
+            ->leftJoin('lInner.period', 'pInner')
+            ->leftJoin('lInner.teachers', 'tInner')
+            ->where('pInner.id = :period')
+            ->andWhere('tInner.id = :teacher');
+
+        $qbFreestyleLessons
+            ->where($qbFreestyleLessons->expr()->in('l.id', $qbInnerFreestyle->getDQL()))
+            ->setParameter('period', $period->getId())
+            ->setParameter('teacher', $teacher->getId());
+
+        return array_merge(
+            $qbTuitionLessons->getQuery()->getResult(),
+            $qbFreestyleLessons->getQuery()->getResult()
+        );
     }
 
     /**
@@ -146,7 +179,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner.id')
-            ->from(TimetableLesson::class, 'lInner')
+            ->from(TuitionTimetableLesson::class, 'lInner')
             ->leftJoin('lInner.period', 'pInner')
             ->leftJoin('lInner.room', 'rInner')
             ->where('pInner.id = :period')
@@ -170,7 +203,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner')
-            ->from(TimetableLesson::class, 'lInner')
+            ->from(TuitionTimetableLesson::class, 'lInner')
             ->leftJoin('lInner.period', 'pInner')
             ->leftJoin('lInner.tuition', 'tInner')
             ->leftJoin('tInner.studyGroup', 'sgInner')
@@ -193,31 +226,47 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
      * @inheritDoc
      */
     public function findAllByPeriodAndSubjects(TimetablePeriod $period, array $subjects) {
-        $qb = $this->getDefaultQueryBuilder();
+        $qbTuitionLessons = $this->getDefaultQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner')
-            ->from(TimetableLesson::class, 'lInner')
+            ->from(TuitionTimetableLesson::class, 'lInner')
             ->leftJoin('lInner.period', 'pInner')
             ->leftJoin('lInner.tuition', 'tInner')
             ->leftJoin('tInner.subject', 'sInner')
             ->where('pInner.id = :period')
             ->andWhere(
-                $qb->expr()->in('sInner.id', ':subjects')
+                $qbTuitionLessons->expr()->in('sInner.id', ':subjects')
             );
 
         $subjectIds = array_map(function(Subject $subject) {
             return $subject->getId();
         }, $subjects);
 
-        $qb->setParameter('subjects', $subjectIds)
+        $qbTuitionLessons->setParameter('subjects', $subjectIds)
             ->setParameter('period', $period->getId());
 
-        $qb->where(
-            $qb->expr()->in('l.id', $qbInner->getDQL())
+        $qbTuitionLessons->where(
+            $qbTuitionLessons->expr()->in('l.id', $qbInner->getDQL())
         );
 
-        return $qb->getQuery()->getResult();
+        $qbFreestyle = $this->getDefaultFreeStyleQueryBuilder();
+        $abbreviations = array_map(function(Subject $subject) {
+            return $subject->getAbbreviation();
+        }, $subjects);
+
+        $qbFreestyle
+            ->where(
+                $qbFreestyle->expr()->in('l.subject', ':abbreviations')
+            )
+            ->andWhere('l.period = :period')
+            ->setParameter('abbreviations', $abbreviations)
+            ->setParameter('period', $period->getId());
+
+        return array_merge(
+            $qbTuitionLessons->getQuery()->getResult(),
+            $qbFreestyle->getQuery()->getResult()
+        );
     }
 
     /**
@@ -228,7 +277,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner.id')
-            ->from(TimetableLesson::class, 'lInner')
+            ->from(TuitionTimetableLesson::class, 'lInner')
             ->leftJoin('lInner.period', 'pInner')
             ->leftJoin('lInner.week', 'wInner')
             ->leftJoin('lInner.room', 'rInner')
@@ -269,7 +318,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner')
-            ->from(TimetableLesson::class, 'lInner')
+            ->from(TuitionTimetableLesson::class, 'lInner')
             ->leftJoin('lInner.period', 'pInner')
             ->leftJoin('lInner.week', 'wInner')
             ->where('pInner.id = :period')

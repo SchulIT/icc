@@ -118,6 +118,33 @@ easy_admin:
                     - additionalTeachers
                     - studyGroup
 
+        TuitionTimetableLesson:
+            class: App\Entity\TuitionTimetableLesson
+            form:
+                fields:
+                    - externalId
+                    - period
+                    - week
+                    - day
+                    - lesson
+                    - isDoubleLesson
+                    - tuition
+                    - room
+
+
+        FreestyleTimetableLesson:
+            class: App\Entity\FreestyleTimetableLesson
+            form:
+                fields:
+                    - externalId
+                    - period
+                    - week
+                    - day
+                    - lesson
+                    - isDoubleLesson
+                    - teachers
+                    - subject
+
         User:
             class: App\Entity\User
             disabled_actions:

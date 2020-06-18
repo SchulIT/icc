@@ -2,11 +2,13 @@
 
 namespace App\Export;
 
+use App\Entity\FreestyleTimetableLesson;
 use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetableSupervision;
+use App\Entity\TuitionTimetableLesson;
 use App\Entity\User;
 use App\Ics\IcsHelper;
 use App\Repository\TimetableLessonRepositoryInterface;
@@ -25,6 +27,7 @@ use Jsvrcek\ICS\Model\CalendarEvent;
 use Jsvrcek\ICS\Model\Description\Location;
 use Jsvrcek\ICS\Model\Relationship\Organizer;
 use Jsvrcek\ICS\Utility\Formatter;
+use LogicException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -113,16 +116,22 @@ class TimetableIcsExporter {
         // initialize
         $gradesWithCourseNames = $this->timetableSettings->getGradeIdsWithCourseNames();
 
-        $subject = $lesson->getTuition()->getSubject()->getAbbreviation();
-        $grades = $this->getGradesAsString($lesson->getTuition()->getStudyGroup()->getGrades()->toArray());
+        if($lesson instanceof TuitionTimetableLesson) {
+            $subject = $lesson->getTuition()->getSubject()->getAbbreviation();
+            $grades = $this->getGradesAsString($lesson->getTuition()->getStudyGroup()->getGrades()->toArray());
 
-        foreach($lesson->getTuition()->getStudyGroup()->getGrades() as $grade) {
-            if(in_array($grade->getId(), $gradesWithCourseNames)) {
-                $subject = $lesson->getTuition()->getStudyGroup()->getName();
+            foreach ($lesson->getTuition()->getStudyGroup()->getGrades() as $grade) {
+                if (in_array($grade->getId(), $gradesWithCourseNames)) {
+                    $subject = $lesson->getTuition()->getStudyGroup()->getName();
+                }
             }
+
+            return sprintf('%s - %s', $subject, $grades);
+        } else if($lesson instanceof FreestyleTimetableLesson) {
+            return $lesson->getSubject();
         }
 
-        return sprintf('%s - %s', $subject, $grades);
+        throw new LogicException('This code should not be executed. Has anyone added a new type of TimetableLesson?');
     }
 
     private function getGradesAsString(array $grades): string {
@@ -142,19 +151,29 @@ class TimetableIcsExporter {
         $event->setStart($this->timetableTimeHelper->getLessonStartDateTime($day, $lesson->getLesson()));
         $event->setEnd($this->timetableTimeHelper->getLessonEndDateTime($day, $lesson->getLesson() + ($lesson->isDoubleLesson() ? 1 : 0)));
 
-        $teacher = $lesson->getTuition()->getTeacher();
-        if($teacher !== null) {
-            $organizer = new Organizer(new Formatter());
-            $organizer->setName(sprintf('%s %s', $teacher->getFirstname(), $teacher->getLastname()));
-            $organizer->setValue($teacher->getEmail());
+        if($lesson instanceof TuitionTimetableLesson) {
+            $teacher = $lesson->getTuition()->getTeacher();
+            if ($teacher !== null) {
+                $organizer = new Organizer(new Formatter());
+                $organizer->setName(sprintf('%s %s', $teacher->getFirstname(), $teacher->getLastname()));
+                $organizer->setValue($teacher->getEmail());
 
-            $event->setOrganizer($organizer);
-        }
+                $event->setOrganizer($organizer);
+            }
 
-        if($lesson->getRoom() !== null) {
-            $location = new Location();
-            $location->setName($lesson->getRoom()->getName());
-            $event->setLocations([$location]);
+            if($lesson->getRoom() !== null) {
+                $location = new Location();
+                $location->setName($lesson->getRoom()->getName());
+                $event->setLocations([$location]);
+            }
+        } else if($lesson instanceof FreestyleTimetableLesson) {
+            foreach($lesson->getTeachers() as $teacher) {
+                $organizer = new Organizer(new Formatter());
+                $organizer->setName(sprintf('%s %s', $teacher->getFirstname(), $teacher->getLastname()));
+                $organizer->setValue($teacher->getEmail());
+
+                $event->setOrganizer($organizer);
+            }
         }
 
         return $event;

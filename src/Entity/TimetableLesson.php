@@ -8,8 +8,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="`type`", type="string")
+ * @ORM\DiscriminatorMap({
+ *      "tuition" = "TuitionTimetableLesson",
+ *      "freestyle" = "FreestyleTimetableLesson"
+ * })
  */
-class TimetableLesson {
+abstract class TimetableLesson {
 
     use IdTrait;
     use UuidTrait;
@@ -24,39 +30,31 @@ class TimetableLesson {
      * @ORM\ManyToOne(targetEntity="TimetablePeriod", inversedBy="lessons")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
-     * @var TimetablePeriod
+     * @var TimetablePeriod|null
      */
     private $period;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Tuition")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Assert\NotNull()
-     * @var Tuition
-     */
-    private $tuition;
 
     /**
      * @ORM\ManyToOne(targetEntity="TimetableWeek")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
-     * @var TimetableWeek
+     * @var TimetableWeek|null
      */
     private $week;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\Range(min="1", min="7")
+     * @Assert\Range(min="1", max="7")
      * @var int
      */
-    private $day;
+    private $day = 0;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\GreaterThan(0)
      * @var int
      */
-    private $lesson;
+    private $lesson = 0;
 
     /**
      * @ORM\Column(type="boolean")
@@ -64,15 +62,9 @@ class TimetableLesson {
      */
     private $isDoubleLesson = false;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Room")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     * @var Room|null
-     */
-    private $room;
-
     public function __construct() {
         $this->uuid = Uuid::uuid4();
+
     }
 
     /**
@@ -92,49 +84,33 @@ class TimetableLesson {
     }
 
     /**
-     * @return TimetablePeriod
+     * @return TimetablePeriod|null
      */
-    public function getPeriod(): TimetablePeriod {
+    public function getPeriod(): ?TimetablePeriod {
         return $this->period;
     }
 
     /**
-     * @param TimetablePeriod $period
+     * @param TimetablePeriod|null $period
      * @return TimetableLesson
      */
-    public function setPeriod(TimetablePeriod $period): TimetableLesson {
+    public function setPeriod(?TimetablePeriod $period): TimetableLesson {
         $this->period = $period;
         return $this;
     }
 
     /**
-     * @return Tuition
+     * @return TimetableWeek|null
      */
-    public function getTuition(): Tuition {
-        return $this->tuition;
-    }
-
-    /**
-     * @param Tuition $tuition
-     * @return TimetableLesson
-     */
-    public function setTuition(Tuition $tuition): TimetableLesson {
-        $this->tuition = $tuition;
-        return $this;
-    }
-
-    /**
-     * @return TimetableWeek
-     */
-    public function getWeek(): TimetableWeek {
+    public function getWeek(): ?TimetableWeek {
         return $this->week;
     }
 
     /**
-     * @param TimetableWeek $week
+     * @param TimetableWeek|null $week
      * @return TimetableLesson
      */
-    public function setWeek(TimetableWeek $week): TimetableLesson {
+    public function setWeek(?TimetableWeek $week): TimetableLesson {
         $this->week = $week;
         return $this;
     }
@@ -184,22 +160,6 @@ class TimetableLesson {
      */
     public function setIsDoubleLesson(bool $isDoubleLesson): TimetableLesson {
         $this->isDoubleLesson = $isDoubleLesson;
-        return $this;
-    }
-
-    /**
-     * @return Room|null
-     */
-    public function getRoom(): ?Room {
-        return $this->room;
-    }
-
-    /**
-     * @param Room|null $room
-     * @return TimetableLesson
-     */
-    public function setRoom(?Room $room): TimetableLesson {
-        $this->room = $room;
         return $this;
     }
 }

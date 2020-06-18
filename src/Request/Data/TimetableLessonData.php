@@ -4,8 +4,14 @@ namespace App\Request\Data;
 
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\GroupSequence;
+use Symfony\Component\Validator\GroupSequenceProviderInterface;
 
-class TimetableLessonData {
+/**
+ * @Assert\GroupSequenceProvider()
+ */
+class TimetableLessonData implements GroupSequenceProviderInterface {
+
 
     /**
      * @Serializer\Type("string")
@@ -16,7 +22,7 @@ class TimetableLessonData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotNull()
+     * @Assert\NotNull(groups={"tuition_lesson"})
      * @var string
      */
     private $tuition;
@@ -53,10 +59,24 @@ class TimetableLessonData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank(allowNull=true)
+     * @Assert\NotBlank(allowNull=true, groups={"tuition_lesson"})
      * @var string|null
      */
     private $room;
+
+    /**
+     * @Serializer\Type("array<string>")
+     * @Assert\Count(min="1", groups={"freestyle_lesson"})
+     * @var string[]
+     */
+    private $teachers = [ ];
+
+    /**
+     * @Serializer\Type("string")
+     * @Assert\NotBlank(groups={"freestyle_lesson"})
+     * @var string|null
+     */
+    private $subject;
 
     /**
      * @return string|null
@@ -168,5 +188,48 @@ class TimetableLessonData {
     public function setRoom(?string $room): TimetableLessonData {
         $this->room = $room;
         return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTeachers(): array {
+        return $this->teachers;
+    }
+
+    /**
+     * @param string[] $teachers
+     * @return TimetableLessonData
+     */
+    public function setTeachers(array $teachers): TimetableLessonData {
+        $this->teachers = $teachers;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSubject(): ?string {
+        return $this->subject;
+    }
+
+    /**
+     * @param string|null $subject
+     * @return TimetableLessonData
+     */
+    public function setSubject(?string $subject): TimetableLessonData {
+        $this->subject = $subject;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getGroupSequence() {
+        if($this->tuition === null) {
+            return [[ 'Default', 'freestyle_lesson' ]];
+        }
+
+        return [[ 'Default', 'tuition_lesson' ]];
     }
 }

@@ -172,4 +172,8 @@ class TimetablePeriod {
     public function getSupervisions(): Collection {
         return $this->supervisions;
     }
+
+    public function __toString() {
+        return $this->name;
+    }
 }

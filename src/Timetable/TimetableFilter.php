@@ -2,6 +2,7 @@
 
 namespace App\Timetable;
 
+use App\Entity\FreestyleTimetableLesson;
 use App\Entity\Subject;
 use App\Entity\TimetableLesson as TimetableLessonEntity;
 
@@ -19,11 +20,15 @@ class TimetableFilter {
         $result = [ ];
 
         foreach($lessons as $lesson) {
-            $tuition = $lesson->getTuition();
-            $subject = $tuition->getSubject();
-
-            if($subject !== null && $predicate($subject)) {
+            if($lesson instanceof FreestyleTimetableLesson) {
                 $result[] = $lesson;
+            } else {
+                $tuition = $lesson->getTuition();
+                $subject = $tuition->getSubject();
+
+                if ($subject !== null && $predicate($subject)) {
+                    $result[] = $lesson;
+                }
             }
         }
 

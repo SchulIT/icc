@@ -1,0 +1,9 @@
+{% if lesson != null %}
+    <strong>
+        {{ lesson.subject }}
+    </strong>
+
+    {% if teachersFilter.currentTeachers|length > 1 %}
+        {{ lesson.teachers|teachers }}
+    {% endif %}
+{% endif %}

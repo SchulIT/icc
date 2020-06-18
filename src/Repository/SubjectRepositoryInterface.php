@@ -30,9 +30,10 @@ interface SubjectRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllWithTeachers(): array;
 
     /**
+     * @param bool $onlyExternal
      * @return Subject[]
      */
-    public function findAll();
+    public function findAll(bool $onlyExternal = false);
 
     /**
      * @param string[] $externalIds

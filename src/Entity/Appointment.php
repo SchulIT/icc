@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Request\Data\AppointmentData;
 use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -75,6 +76,12 @@ class Appointment {
      * @var ArrayCollection<StudyGroup>
      */
     private $studyGroups;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $markStudentsAbsent = true;
 
     /**
      * @ORM\ManyToMany(targetEntity="Teacher", cascade={"persist"})
@@ -290,6 +297,22 @@ class Appointment {
      */
     public function getStudyGroups() {
         return $this->studyGroups;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMarkStudentsAbsent(): bool {
+        return $this->markStudentsAbsent;
+    }
+
+    /**
+     * @param bool $markStudentsAbsent
+     * @return Appointment
+     */
+    public function setMarkStudentsAbsent(bool $markStudentsAbsent): Appointment {
+        $this->markStudentsAbsent = $markStudentsAbsent;
+        return $this;
     }
 
     public function addVisibility(UserTypeEntity $visibility) {

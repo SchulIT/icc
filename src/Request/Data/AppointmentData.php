@@ -91,6 +91,14 @@ class AppointmentData {
     private $studyGroups;
 
     /**
+     * @Serializer\Type("bool")
+     * @Serializer\SerializedName("mark_students_absent")
+     * Whether or not to mark students absent during this appointment
+     * @var bool
+     */
+    private $markStudentsAbsent = true;
+
+    /**
      * List of teachers (their acronyms) which attend this appointment.
      *
      * @Serializer\Type("array<string>")
@@ -264,6 +272,22 @@ class AppointmentData {
      */
     public function setStudyGroups($studyGroups): AppointmentData {
         $this->studyGroups = $studyGroups;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMarkStudentsAbsent(): bool {
+        return $this->markStudentsAbsent;
+    }
+
+    /**
+     * @param bool $markStudentsAbsent
+     * @return AppointmentData
+     */
+    public function setMarkStudentsAbsent(bool $markStudentsAbsent): AppointmentData {
+        $this->markStudentsAbsent = $markStudentsAbsent;
         return $this;
     }
 

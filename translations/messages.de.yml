@@ -115,6 +115,7 @@ label:
     never: Nie
     supervisions: Aufsichten
     toggle_multiple: Mehrfachauswahl aktivieren
+    not_available: N/A
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

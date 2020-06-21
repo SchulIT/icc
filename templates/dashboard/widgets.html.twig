@@ -86,7 +86,9 @@
                         <span class="mx-1"></span>
                     {% endfor %}
 
-                    <i class="fa fa-door-open"></i> {{ item.exam.rooms|first }}
+                    {% item.exam.rooms is not null and item.exam.rooms|length > 0 %}
+                        <i class="fa fa-door-open"></i> {{ item.exam.rooms|first }}
+                    {% endif %}
                 </span>
 
                 <a href="{{ path('show_exam', { uuid: item.exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">{{ 'label.details'|trans }}</a>
@@ -133,7 +135,7 @@
                         {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
                     {% endif %}
                     <span class="mx-1"></span>
-                    <i class="fa fa-door-open"></i> {{ lesson.room.name }}
+                    <i class="fa fa-door-open"></i> {% if lesson.room is not null%}{{ lesson.room.name }}{% else %}{{ 'label.not_available'|trans }}{% endif %}
                     <span class="mx-1"></span>
                     <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
                 </div>

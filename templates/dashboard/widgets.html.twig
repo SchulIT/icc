@@ -86,7 +86,7 @@
                         <span class="mx-1"></span>
                     {% endfor %}
 
-                    {% item.exam.rooms is not null and item.exam.rooms|length > 0 %}
+                    {% if item.exam.rooms is not null and item.exam.rooms|length > 0 %}
                         <i class="fa fa-door-open"></i> {{ item.exam.rooms|first }}
                     {% endif %}
                 </span>

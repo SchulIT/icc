@@ -205,6 +205,8 @@
                     {% set lesson = 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': (substitution.lessonEnd - substitution.lessonStart)}) %}
                 {% endif %}
                 {{ _self.show_lesson(lesson, start, end) }}
+            {% else %}
+                <div class="align-self-center text-center p-3 dashboard-lesson text-black-50"></div>
             {% endif %}
             {{ _self.show_warning(hasWarning) }}
 

@@ -193,7 +193,14 @@ $enable-gradients: true;
   @include font-size(1.75rem);
   @extend .p-3;
 
-  min-width: 90px;
+  width: 90px;
+  hyphens: auto;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+
+  &.text-small {
+    font-size: 0.9rem;
+  }
 
   .exam-date {
     @include font-size(0.8rem);

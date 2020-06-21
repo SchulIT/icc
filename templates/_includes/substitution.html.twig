@@ -6,7 +6,7 @@
 <div class="card">
     <div class="card-body p-0">
         <div class="d-flex">
-            <div class="align-self-center text-center p-3 substitution-lesson text-black-50">
+            <div class="align-self-center text-center p-3 substitution-lesson {% if substitution.startsBefore %}text-small{% endif%} text-black-50">
                 {% if substitution.startsBefore %}
                     {{ substitution.lessonStart|before_lesson }}
                 {% else %}

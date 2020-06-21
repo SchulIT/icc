@@ -2,7 +2,10 @@
 
 namespace App\Response\Api\V1;
 
+use App\Entity\FreestyleTimetableLesson;
+use App\Entity\Teacher as TeacherEntity;
 use App\Entity\TimetableLesson as TimetableLessonEntity;
+use App\Entity\TuitionTimetableLesson;
 use JMS\Serializer\Annotation as Serializer;
 
 class TimetableLesson {
@@ -50,6 +53,22 @@ class TimetableLesson {
      * @var Room
      */
     private $room;
+
+    /**
+     * Contains the list of teachers (which is the same as tuition.teachers in case tuition is not null)
+     *
+     * @Serializer\SerializedName("teachers")
+     * @var Teacher[]
+     */
+    private $teachers;
+
+    /**
+     * Contains the subject as a string (which is the same as tuition.subject.name in case tuition is not null)
+     *
+     * @Serializer\SerializedName("subject")
+     * @var string
+     */
+    private $subject;
 
     /**
      * @return Tuition
@@ -147,13 +166,59 @@ class TimetableLesson {
         return $this;
     }
 
+    /**
+     * @return Teacher[]
+     */
+    public function getTeachers(): array {
+        return $this->teachers;
+    }
+
+    /**
+     * @param Teacher[] $teachers
+     * @return TimetableLesson
+     */
+    public function setTeachers(array $teachers): TimetableLesson {
+        $this->teachers = $teachers;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubject(): string {
+        return $this->subject;
+    }
+
+    /**
+     * @param string $subject
+     * @return TimetableLesson
+     */
+    public function setSubject(string $subject): TimetableLesson {
+        $this->subject = $subject;
+        return $this;
+    }
+
     public static function fromEntity(TimetableLessonEntity $entity): self {
-        return (new static())
+        $lesson = (new static())
             ->setUuid($entity->getUuid())
-            ->setTuition(Tuition::fromEntity($entity->getTuition()))
             ->setWeek(TimetableWeek::fromEntity($entity->getWeek()))
             ->setDay($entity->getDay())
-            ->setIsDoubleLesson($entity->isDoubleLesson())
-            ->setRoom(Room::fromEntity($entity->getRoom()));
+            ->setIsDoubleLesson($entity->isDoubleLesson());
+
+        if($entity instanceof TuitionTimetableLesson) {
+            $lesson
+                ->setTuition(Tuition::fromEntity($entity->getTuition()))
+                ->setRoom(Room::fromEntity($entity->getRoom()));
+
+            $lesson->setSubject($lesson->getTuition()->getSubject()->getAbbreviation());
+            $lesson->setTeachers($lesson->getTuition()->getTeachers());
+        } elseif($entity instanceof FreestyleTimetableLesson) {
+            $lesson->setTeachers(array_map(function(TeacherEntity $entity) {
+                return Teacher::fromEntity($entity);
+            }, $entity->getTeachers()->toArray()))
+                ->setSubject($entity->getSubject());
+        }
+
+        return $lesson;
     }
 }

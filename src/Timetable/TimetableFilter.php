@@ -5,6 +5,7 @@ namespace App\Timetable;
 use App\Entity\FreestyleTimetableLesson;
 use App\Entity\Subject;
 use App\Entity\TimetableLesson as TimetableLessonEntity;
+use App\Entity\TuitionTimetableLesson;
 
 /**
  * This helper filters lessons which are allowed to be visible due to their subjects.
@@ -22,7 +23,7 @@ class TimetableFilter {
         foreach($lessons as $lesson) {
             if($lesson instanceof FreestyleTimetableLesson) {
                 $result[] = $lesson;
-            } else {
+            } else if($lesson instanceof TuitionTimetableLesson) {
                 $tuition = $lesson->getTuition();
                 $subject = $tuition->getSubject();
 

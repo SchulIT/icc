@@ -6,6 +6,7 @@ use App\Entity\Room;
 use App\Entity\RoomReservation;
 use App\Entity\Substitution;
 use App\Entity\TimetableLesson;
+use App\Entity\TuitionTimetableLesson;
 use App\Repository\RoomReservationRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
@@ -143,7 +144,8 @@ class RoomAvailabilityHelper {
 
         foreach($rooms as $room) {
             $roomLessons = array_filter($lessons, function(TimetableLesson $lesson) use($room, $date) {
-                return $lesson->getRoom() !== null && $lesson->getRoom()->getId() === $room->getId()
+                return $lesson instanceof TuitionTimetableLesson
+                    && $lesson->getRoom() !== null && $lesson->getRoom()->getId() === $room->getId()
                     && $lesson->getDay() === (int)$date->format('w');
             });
             $roomReservations = array_filter($reservations, function(RoomReservation $reservation) use ($room) {

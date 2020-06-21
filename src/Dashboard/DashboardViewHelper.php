@@ -17,6 +17,7 @@ use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
 use App\Entity\TimetableSupervision;
 use App\Entity\Tuition;
+use App\Entity\TuitionTimetableLesson;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Grouping\AbsentStudentGroup;
@@ -428,6 +429,10 @@ class DashboardViewHelper {
      * @return AbsentStudentGroup[]
      */
     private function computeAbsentStudents(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime) {
+        if(!$lessonEntity instanceof TuitionTimetableLesson) {
+            return [];
+        }
+
         $lessonStudents = $lessonEntity
             ->getTuition()
             ->getStudyGroup()
@@ -453,6 +458,10 @@ class DashboardViewHelper {
     }
 
     private function computeExamStudents(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime) {
+        if(!$lessonEntity instanceof TuitionTimetableLesson) {
+            return [];
+        }
+
         $lessonStudents = $lessonEntity
             ->getTuition()
             ->getStudyGroup()

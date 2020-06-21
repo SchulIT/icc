@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\DeviceToken;
 use App\Entity\DeviceTokenType;
-use App\Entity\Exam;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Subject;
@@ -27,7 +26,6 @@ use App\Security\Devices\DeviceManager;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
-use App\Sorting\TimetableWeekStrategy;
 use App\Timetable\TimetableFilter;
 use App\Timetable\TimetableHelper;
 use App\Utils\ArrayUtils;
@@ -35,13 +33,11 @@ use App\View\Filter\GradeFilter;
 use App\View\Filter\RoomFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\SubjectsFilter;
-use App\View\Filter\TeacherFilter;
 use App\View\Filter\TeachersFilter;
 use SchoolIT\CommonBundle\Helper\DateHelper;
 use SchoolIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use function foo\func;
 
 /**
  * @Route("/timetable")

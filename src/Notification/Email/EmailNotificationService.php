@@ -10,6 +10,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
 class EmailNotificationService {
+
+    private $blacklistDomains = [ 'example.com' ];
+
     private $isEnabled;
     private $appName;
     private $sender;
@@ -50,6 +53,10 @@ class EmailNotificationService {
                 continue;
             }
 
+            if($this->isBlacklistedEmailDomain($recipient->getEmail())) {
+                continue;
+            }
+
             $content = $this->twig->render($strategy->getTemplate(), [
                 'objective' => $objective,
                 'sender' => $strategy->getSender($objective)
@@ -74,5 +81,16 @@ class EmailNotificationService {
         if($strategy instanceof PostEmailSendActionInterface) {
             $strategy->onNotificationSent($objective);
         }
+    }
+
+    private function isBlacklistedEmailDomain(string $email): bool {
+        foreach($this->blacklistDomains as $blacklistDomain) {
+            $suffix = sprintf('@%s', $blacklistDomain);
+            if(substr($email, -strlen($suffix)) === $suffix) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

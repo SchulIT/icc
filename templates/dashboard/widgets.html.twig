@@ -200,10 +200,12 @@
     {% set substitution = item.substitution %}
     <div class="card {% if hasWarning %}border-danger bg-danger-light{% elseif not item.isFreeLesson %}border-warning{% else %}text-black-50{% endif %}">
         <div class="d-flex">
-            {% if lesson is null %}
-                {% set lesson = 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': (substitution.lessonEnd - substitution.lessonStart)}) %}
+            {% if not substitution.startsBefore %}
+                {% if lesson is null %}
+                    {% set lesson = 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': (substitution.lessonEnd - substitution.lessonStart)}) %}
+                {% endif %}
+                {{ _self.show_lesson(lesson, start, end) }}
             {% endif %}
-            {{ _self.show_lesson(lesson, start, end) }}
             {{ _self.show_warning(hasWarning) }}
 
             <span class="badge {% if item.isFreeLesson %}badge-light badge-card{% else %}badge-warning{% endif%} align-self-center">

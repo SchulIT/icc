@@ -82,6 +82,10 @@ security:
             anonymous: ~
             pattern: ^/saml/(login|discovery)$
 
+        logout:
+            anonymous: ~
+            pattern: ^/logout/success
+
         auth:
             anonymous: ~
             pattern: ^/auth
@@ -98,6 +102,7 @@ security:
                 failure_path: /auth/error
             logout:
                 path: /logout
+                target: /logout/success
             switch_user: true
 
         main:

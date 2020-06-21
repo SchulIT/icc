@@ -13,6 +13,10 @@ common:
 logout:
     path: /logout
 
+logout_success:
+    path: /logout/success
+    defaults: { _controller: SchoolIT\CommonBundle\Controller\LogoutController::logout }
+
 app.swagger_ui.default:
     path: /docs/api/app
     methods: GET

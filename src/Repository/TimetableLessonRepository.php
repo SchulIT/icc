@@ -127,41 +127,27 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
      * @inheritDoc
      */
     public function findAllByPeriodAndTeacher(TimetablePeriod $period, Teacher $teacher) {
-        $qbTuitionLessons = $this->getDefaultQueryBuilder();
-
-        $qbInner = $this->em->createQueryBuilder()
-            ->select('lInner.id')
-            ->from(TuitionTimetableLesson::class, 'lInner')
-            ->leftJoin('lInner.period', 'pInner')
-            ->leftJoin('lInner.teacher', 'tInner')
-            ->where('pInner.id = :period')
-            ->andWhere('tInner.id = :teacher');
-
-        $qbTuitionLessons->setParameter('teacher', $teacher->getId())
+        $qb = $this->em->createQueryBuilder()
+            ->select(['l', 'p', 'w'])
+            ->from(TimetableLesson::class, 'l')
+            ->leftJoin('l.period', 'p')
+            ->leftJoin('l.week', 'w')
+            ->setParameter('teacher', $teacher->getId())
             ->setParameter('period', $period->getId());
 
-        $qbTuitionLessons->where(
-            $qbTuitionLessons->expr()->in('l.id', $qbInner->getDQL())
-        );
-
-        $qbFreestyleLessons = $this->getDefaultFreeStyleQueryBuilder();
-        $qbInnerFreestyle = $this->em->createQueryBuilder()
-            ->select('lInner.id')
-            ->from(FreestyleTimetableLesson::class, 'lInner')
-            ->leftJoin('lInner.period', 'pInner')
-            ->leftJoin('lInner.teachers', 'tInner')
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(TimetableLesson::class, 'tInner')
+            ->leftJoin('tInner.period', 'pInner')
+            ->leftJoin('tInner.teachers', 'teacherInner')
             ->where('pInner.id = :period')
-            ->andWhere('tInner.id = :teacher');
+            ->andWhere('teacherInner.id = :teacher');
 
-        $qbFreestyleLessons
-            ->where($qbFreestyleLessons->expr()->in('l.id', $qbInnerFreestyle->getDQL()))
-            ->setParameter('period', $period->getId())
-            ->setParameter('teacher', $teacher->getId());
-
-        return array_merge(
-            $qbTuitionLessons->getQuery()->getResult(),
-            $qbFreestyleLessons->getQuery()->getResult()
+        $qb->andWhere(
+            $qb->expr()->in('l.id', $qbInner->getDQL())
         );
+
+        return $qb->getQuery()->getResult();
     }
 
     /**

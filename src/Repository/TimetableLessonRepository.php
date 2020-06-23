@@ -80,17 +80,20 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
      * @inheritDoc
      */
     public function findAllByPeriod(TimetablePeriod $period) {
-        $qb = $this->getDefaultQueryBuilder();
+        $qb = $this->em->createQueryBuilder()
+            ->select(['l', 'p', 'w'])
+            ->from(TimetableLesson::class, 'l')
+            ->leftJoin('l.period', 'p')
+            ->leftJoin('l.week', 'w')
+            ->setParameter('period', $period->getId());
 
         $qbInner = $this->em->createQueryBuilder()
-            ->select('lInner')
-            ->from(TuitionTimetableLesson::class, 'lInner')
-            ->leftJoin('lInner.period', 'pInner')
+            ->select('tInner.id')
+            ->from(TimetableLesson::class, 'tInner')
+            ->leftJoin('tInner.period', 'pInner')
             ->where('pInner.id = :period');
 
-        $qb->setParameter('period', $period->getId());
-
-        $qb->where(
+        $qb->andWhere(
             $qb->expr()->in('l.id', $qbInner->getDQL())
         );
 

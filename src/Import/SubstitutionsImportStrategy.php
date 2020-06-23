@@ -96,7 +96,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
             $this->throwMissingTeacher($data->getReplacementTeachers(), $replacementTeachers, $data->getId());
         }
 
-        CollectionUtils::synchronize($entity->getTeachers(), $teachers, $teacherIdSelector);
+        CollectionUtils::synchronize($entity->getReplacementTeachers(), $replacementTeachers, $teacherIdSelector);
 
         $entity->setDate($data->getDate());
         $entity->setLessonStart($data->getLessonStart());

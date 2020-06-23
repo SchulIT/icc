@@ -21,7 +21,9 @@
             {% for g in lesson.tuition.studyGroup.grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %}
         {% endif %}
         {% if teachersFilter.currentTeachers|length != 1 %}
-            {{ lesson.tuition.teacher.getAcronym() }}
+            {%- for teacher in lesson.teachers -%}
+                {{ teacher.getAcronym() }}{%- if not loop.last -%}, {%- endif -%}
+            {%- endfor -%}
         {% endif %}
 
         {% if roomFilter.currentRoom != null %}

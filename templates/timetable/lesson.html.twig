@@ -34,7 +34,7 @@
     {% endif %}
     {% if teachersFilter.currentTeachers|length != 1 %}
         <br>
-        {{ lesson.tuition.teacher|teacher }}
+        {{ lesson.teachers|teachers }}
     {% endif %}
     {% if teachersFilter.currentTeachers|length > 0 or subjectFilter.currentSubjects|length > 0 %}
         <br>

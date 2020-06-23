@@ -33,24 +33,23 @@ class User implements UserInterface, \Serializable {
     private $username;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\NotNull()
-     * @Assert\NotBlank()
-     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(allowNull=true)
+     * @var string|null
      */
     private $firstname;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\NotNull()
-     * @Assert\NotBlank()
-     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(allowNull=true)
+     * @var string|null
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
      * @Assert\Email()
+     * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */
     private $email;
@@ -155,33 +154,33 @@ class User implements UserInterface, \Serializable {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFirstname(): string {
+    public function getFirstname(): ?string {
         return $this->firstname;
     }
 
     /**
-     * @param string $firstname
+     * @param string|null $firstname
      * @return User
      */
-    public function setFirstname(string $firstname): User {
+    public function setFirstname(?string $firstname): User {
         $this->firstname = $firstname;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLastname(): string {
+    public function getLastname(): ?string {
         return $this->lastname;
     }
 
     /**
-     * @param string $lastname
+     * @param string|null $lastname
      * @return User
      */
-    public function setLastname(string $lastname): User {
+    public function setLastname(?string $lastname): User {
         $this->lastname = $lastname;
         return $this;
     }

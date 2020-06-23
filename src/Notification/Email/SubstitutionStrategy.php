@@ -3,6 +3,7 @@
 namespace App\Notification\Email;
 
 use App\Entity\Substitution;
+use App\Entity\User;
 use App\Event\SubstitutionImportEvent;
 use App\Repository\UserRepositoryInterface;
 use App\Settings\SubstitutionSettings;
@@ -31,7 +32,11 @@ class SubstitutionStrategy implements EmailStrategyInterface {
      * @inheritDoc
      */
     public function getRecipients($objective): array {
-        return $this->userRepository->findAllByNotifySubstitutions();
+        return array_filter(
+            $this->userRepository->findAllByNotifySubstitutions(),
+            function(User $user) {
+                return $user->getEmail() !== null;
+            });
     }
 
     /**

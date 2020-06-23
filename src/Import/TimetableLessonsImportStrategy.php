@@ -123,15 +123,15 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
             }
         } else if($entity instanceof FreestyleTimetableLesson) {
             $entity->setSubject($data->getSubject());
-
-            CollectionUtils::synchronize(
-                $entity->getTeachers(),
-                $teachers = $this->teacherRepository->findAllByExternalId($data->getTeachers()),
-                function(Teacher $teacher) {
-                    return $teacher->getId();
-                }
-            );
         }
+
+        CollectionUtils::synchronize(
+            $entity->getTeachers(),
+            $teachers = $this->teacherRepository->findAllByExternalId($data->getTeachers()),
+            function(Teacher $teacher) {
+                return $teacher->getId();
+            }
+        );
 
         $week = $this->weekRepository->findOneByKey($data->getWeek());
 

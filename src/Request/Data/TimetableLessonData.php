@@ -66,7 +66,7 @@ class TimetableLessonData implements GroupSequenceProviderInterface {
 
     /**
      * @Serializer\Type("array<string>")
-     * @Assert\Count(min="1", groups={"freestyle_lesson"})
+     * @Assert\Count(min="1", groups={"freestyle_lesson", "tuition_lesson"})
      * @var string[]
      */
     private $teachers = [ ];

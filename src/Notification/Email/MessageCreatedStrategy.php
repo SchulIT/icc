@@ -2,6 +2,7 @@
 
 namespace App\Notification\Email;
 
+use App\Entity\User;
 use App\Event\MessageCreatedEvent;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
@@ -46,7 +47,11 @@ class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendAct
             return [ ];
         }
 
-        return $this->userRepository->findAllByNotifyMessages($objective->getMessage());
+        return array_filter(
+            $this->userRepository->findAllByNotifyMessages($objective->getMessage()),
+            function(User $user) {
+                return $user->getEmail() !== null;
+            });
     }
 
     /**

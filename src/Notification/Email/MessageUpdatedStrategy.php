@@ -2,6 +2,7 @@
 
 namespace App\Notification\Email;
 
+use App\Entity\User;
 use App\Event\MessageUpdatedEvent;
 use App\Repository\UserRepositoryInterface;
 use SchoolIT\CommonBundle\Helper\DateHelper;
@@ -49,7 +50,11 @@ class MessageUpdatedStrategy implements EmailStrategyInterface {
             return [ ];
         }
 
-        return $this->userRepository->findAllByNotifyMessages($objective->getMessage());
+        return array_filter(
+            $this->userRepository->findAllByNotifyMessages($objective->getMessage()),
+            function(User $user) {
+                return $user->getEmail() !== null;
+            });
     }
 
     /**

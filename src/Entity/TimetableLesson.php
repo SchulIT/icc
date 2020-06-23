@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -62,9 +64,16 @@ abstract class TimetableLesson {
      */
     private $isDoubleLesson = false;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Teacher")
+     * @ORM\JoinTable()
+     * @var Collection<Teacher>
+     */
+    private $teachers;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
-
+        $this->teachers = new ArrayCollection();
     }
 
     /**
@@ -161,5 +170,26 @@ abstract class TimetableLesson {
     public function setIsDoubleLesson(bool $isDoubleLesson): TimetableLesson {
         $this->isDoubleLesson = $isDoubleLesson;
         return $this;
+    }
+
+    /**
+     * @param Teacher $teacher
+     */
+    public function addTeacher(Teacher $teacher): void {
+        $this->teachers->add($teacher);
+    }
+
+    /**
+     * @param Teacher $teacher
+     */
+    public function removeTeacher(Teacher $teacher): void {
+        $this->teachers->removeElement($teacher);
+    }
+
+    /**
+     * @return Collection<Teacher>
+     */
+    public function getTeachers(): Collection {
+        return $this->teachers;
     }
 }

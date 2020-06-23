@@ -4,6 +4,8 @@
     </strong>
 
     {% if teachersFilter.currentTeachers|length > 1 %}
-        {{ lesson.teachers|teachers }}
+        {%- for teacher in lesson.teachers -%}
+            {{ teacher.getAcronym() }}{%- if not loop.last -%}, {%- endif -%}
+        {%- endfor -%}
     {% endif %}
 {% endif %}

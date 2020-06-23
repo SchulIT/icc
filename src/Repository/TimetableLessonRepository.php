@@ -26,7 +26,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
 
     private function getDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
-            ->select(['l', 'p', 't', 'w', 'r'])
+            ->select(['l', 'p', 't', 'w', 'r', 't'])
             ->from(TuitionTimetableLesson::class, 'l')
             ->leftJoin('l.period', 'p')
             ->leftJoin('l.tuition', 't')
@@ -133,16 +133,9 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
             ->select('lInner.id')
             ->from(TuitionTimetableLesson::class, 'lInner')
             ->leftJoin('lInner.period', 'pInner')
-            ->leftJoin('lInner.tuition', 'tInner')
-            ->leftJoin('tInner.teacher', 'ttInner')
-            ->leftJoin('tInner.additionalTeachers', 'atInner')
+            ->leftJoin('lInner.teacher', 'tInner')
             ->where('pInner.id = :period')
-            ->andWhere(
-                $qbTuitionLessons->expr()->orX(
-                    'ttInner.id = :teacher',
-                    'atInner.id = :teacher'
-                )
-            );
+            ->andWhere('tInner.id = :teacher');
 
         $qbTuitionLessons->setParameter('teacher', $teacher->getId())
             ->setParameter('period', $period->getId());

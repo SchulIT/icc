@@ -7,6 +7,7 @@ use App\Entity\UserWebPushSubscription;
 use App\Event\MessageCreatedEvent;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserWebPushSubscriptionRepositoryInterface;
+use SchoolIT\CommonBundle\Helper\DateHelper;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MessageCreatedStrategy implements PushNotificationStrategyInterface, PostPushSendActionInterface {
@@ -15,12 +16,15 @@ class MessageCreatedStrategy implements PushNotificationStrategyInterface, PostP
     private $messageRepository;
     private $translator;
     private $userConverter;
+    private $dateHelper;
 
-    public function __construct(UserWebPushSubscriptionRepositoryInterface $subscriptionRepository, MessageRepositoryInterface $messageRepository, TranslatorInterface $translator, UserStringConverter $userConverter) {
+    public function __construct(UserWebPushSubscriptionRepositoryInterface $subscriptionRepository, MessageRepositoryInterface $messageRepository,
+                                TranslatorInterface $translator, UserStringConverter $userConverter, DateHelper $dateHelper) {
         $this->subscriptionRepository = $subscriptionRepository;
         $this->messageRepository = $messageRepository;
         $this->translator = $translator;
         $this->userConverter = $userConverter;
+        $this->dateHelper = $dateHelper;
     }
 
     /**
@@ -28,6 +32,10 @@ class MessageCreatedStrategy implements PushNotificationStrategyInterface, PostP
      * @return UserWebPushSubscription[]
      */
     public function getSubscriptions($objective): array {
+        if($objective->getMessage()->isEmailNotificationSent() || $objective->getMessage()->getStartDate() > $this->dateHelper->getToday()) {
+            return [ ];
+        }
+
         return $this->subscriptionRepository->findAllForMessage($objective->getMessage());
     }
 

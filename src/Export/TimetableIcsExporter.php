@@ -142,7 +142,7 @@ class TimetableIcsExporter {
         }, $grades));
     }
 
-    private function makeIcsItemForLesson(DateTime $day, TimetableLesson $lesson): ?CalendarEvent {
+    private function makeIcsItemForLesson(DateTime $day, TimetableLesson $lesson): CalendarEvent {
         $event = new CalendarEvent();
         $event->setUid(sprintf('timetable-%d-%d-%d', $day->format('W'), $day->format('N'), $lesson->getLesson()));
         $event->setAllDay(false);
@@ -179,7 +179,7 @@ class TimetableIcsExporter {
         return $event;
     }
 
-    private function makeIcsItemForSupervision(DateTime $day, TimetableSupervision $supervision): ?CalendarEvent {
+    private function makeIcsItemForSupervision(DateTime $day, TimetableSupervision $supervision): CalendarEvent {
         $event = new CalendarEvent();
         $event->setUid(sprintf('supervision-%d-%d-%d-%d', $day->format('W'), $day->format('N'), $supervision->getLesson(), $supervision->isBefore()));
         $event->setAllDay(false);

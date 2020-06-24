@@ -349,7 +349,7 @@ class Substitution {
     }
 
     public static function fromEntity(SubstitutionEntity $substitutionEntity): self {
-        return (new static())
+        return (new self())
             ->setUuid($substitutionEntity->getUuid())
             ->setDate($substitutionEntity->getDate())
             ->setLessonStart($substitutionEntity->getLessonStart())

@@ -73,15 +73,16 @@ abstract class AbstractMessageFileViewHelper {
             );
         }
 
+        /** @var UserType[] $remainingUserTypes */
+        $remainingUserTypes = EnumArrayUtils::remove($visibilities,
+            [
+                UserType::Student(),
+                UserType::Teacher(),
+                UserType::Parent()
+            ]);
+
         $users = ArrayUtils::createArrayWithKeys(
-            $this->userRepository->findAllByUserTypes(
-                EnumArrayUtils::remove($visibilities,
-                    [
-                        UserType::Student(),
-                        UserType::Teacher(),
-                        UserType::Parent()
-                    ])
-            ),
+            $this->userRepository->findAllByUserTypes($remainingUserTypes),
             function(User $user) {
                 return $user->getId();
             }

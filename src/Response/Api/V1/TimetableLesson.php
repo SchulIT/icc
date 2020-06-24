@@ -199,7 +199,7 @@ class TimetableLesson {
     }
 
     public static function fromEntity(TimetableLessonEntity $entity): self {
-        $lesson = (new static())
+        $lesson = (new self())
             ->setUuid($entity->getUuid())
             ->setWeek(TimetableWeek::fromEntity($entity->getWeek()))
             ->setDay($entity->getDay())

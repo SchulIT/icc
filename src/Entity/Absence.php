@@ -145,5 +145,6 @@ class Absence {
      */
     public function setRoom(Room $room): Absence {
         $this->room = $room;
+        return $this;
     }
 }

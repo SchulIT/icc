@@ -80,7 +80,7 @@ class StudyGroupMembership {
     }
 
     public static function fromEntity(StudyGroupMembershipEntity $studyGroupMembershipEntity): self {
-        return (new static())
+        return (new self())
             ->setType($studyGroupMembershipEntity->getType())
             ->setStudent(Student::fromEntity($studyGroupMembershipEntity->getStudent()))
             ->setStudyGroup(StudyGroup::fromEntity($studyGroupMembershipEntity->getStudyGroup()));

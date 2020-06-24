@@ -134,7 +134,8 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
     /**
      * @param int $itemsPerPage
      * @param int $page
+     * @param Grade|null $grade
      * @return Paginator
      */
-    public function getPaginator(int $itemsPerPage, int &$page): Paginator;
+    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null): Paginator;
 }

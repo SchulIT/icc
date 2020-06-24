@@ -12,7 +12,7 @@ class DocumentCategoryRepository extends AbstractRepository implements DocumentC
      * @return DocumentCategory|null
      */
     public function findOneById(int $id): ?DocumentCategory {
-        $this->em->getRepository(DocumentCategory::class)
+        return $this->em->getRepository(DocumentCategory::class)
             ->findOneBy([
                 'id' => $id
             ]);

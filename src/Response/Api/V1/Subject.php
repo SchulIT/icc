@@ -62,7 +62,7 @@ class Subject {
             return null;
         }
 
-        return (new static())
+        return (new self())
             ->setName($subjectEntity->getName())
             ->setUuid($subjectEntity->getUuid())
             ->setAbbreviation($subjectEntity->getAbbreviation());

@@ -38,7 +38,7 @@ class Grade {
             return null;
         }
 
-        return (new static())
+        return (new self())
             ->setName($gradeEntity->getName())
             ->setUuid($gradeEntity->getUuid());
     }

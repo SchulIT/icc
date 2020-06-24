@@ -58,7 +58,7 @@ class AppointmentCategory {
     }
 
     public static function fromEntity(AppointmentCategoryEntity $entity): self {
-        return (new static())
+        return (new self())
             ->setUuid($entity->getUuid())
             ->setName($entity->getName())
             ->setColor($entity->getColor());

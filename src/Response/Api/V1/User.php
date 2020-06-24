@@ -193,7 +193,7 @@ class User {
             return null;
         }
 
-        return (new static())
+        return (new self())
             ->setUsername($userEntity->getUsername())
             ->setLastname($userEntity->getLastname())
             ->setFirstname($userEntity->getFirstname())

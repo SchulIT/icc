@@ -451,6 +451,7 @@ class DashboardViewHelper {
             )
         );
 
+        /** @var AbsentStudentGroup[] $groups */
         $groups = $this->grouper->group($absentStudents, AbstentStudentGroupStrategy::class);
         $this->sorter->sortGroupItems($groups, AbsentStudentStrategy::class);
 

@@ -42,6 +42,8 @@ class SetupCommand extends Command {
 
         $this->setupSessions($style);
         $this->addMissingUserTypeEntities($style);
+
+        return 0;
     }
 
     private function addMissingUserTypeEntities(SymfonyStyle $style) {

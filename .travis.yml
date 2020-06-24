@@ -19,7 +19,7 @@ install:
   - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist --no-interaction
 
 script:
-  - vendor/bin/phpstan analyze ./src --level 5
+  - vendor/bin/phpstan analyze ./src --level 5 --memory-limit 1G
   - vendor/bin/phpunit --coverage-clover clover.xml
 
 after_script:

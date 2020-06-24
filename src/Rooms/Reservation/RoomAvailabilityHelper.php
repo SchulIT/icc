@@ -108,7 +108,7 @@ class RoomAvailabilityHelper {
             return null;
         }
 
-        $lesson = $this->timetableRepository->findOneByPeriodAndRoomAndWeekAndDayAndLesson($period, $week, $room, $date->format('w'), $lessonNumber);
+        $lesson = $this->timetableRepository->findOneByPeriodAndRoomAndWeekAndDayAndLesson($period, $week, $room, (int)$date->format('w'), $lessonNumber);
         $reservation = $this->reservationRepository->findOneByDateAndRoomAndLesson($date, $room, $lessonNumber);
 
         $substitutions = $this->substitutionRepository->findAllForRooms([$room], $date);

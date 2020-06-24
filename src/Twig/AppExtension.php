@@ -14,6 +14,7 @@ use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use MyCLabs\Enum\Enum;
 use ReflectionClass;
@@ -97,6 +98,11 @@ class AppExtension extends AbstractExtension {
         return $this->studyGroupConverter->convert($group, $short);
     }
 
+    /**
+     * @param StudyGroup[]|ArrayCollection $studyGroups
+     * @param bool $sort
+     * @return string
+     */
     public function studyGroups(iterable $studyGroups, bool $sort = false) {
         return $this->studyGroupsConverter->convert($studyGroups, $sort);
     }

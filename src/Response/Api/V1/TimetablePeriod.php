@@ -80,7 +80,7 @@ class TimetablePeriod {
     }
 
     public static function fromEntity(TimetablePeriodEntity $entity): self {
-        return (new static())
+        return (new self())
             ->setUuid($entity->getUuid())
             ->setName($entity->getName())
             ->setStart($entity->getStart())

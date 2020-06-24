@@ -33,7 +33,7 @@ class Room {
     }
 
     public static function fromEntity(RoomEntity $entity): self {
-        return (new static())
+        return (new self())
             ->setUuid($entity->getUuid())
             ->setName($entity->getName());
     }

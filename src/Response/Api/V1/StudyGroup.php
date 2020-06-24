@@ -96,7 +96,7 @@ class StudyGroup {
             return null;
         }
 
-        return (new static())
+        return (new self())
             ->setUuid($studyGroupEntity->getUuid())
             ->setName($studyGroupEntity->getName())
             ->setType($studyGroupEntity->getType())

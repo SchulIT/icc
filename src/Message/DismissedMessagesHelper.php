@@ -79,6 +79,7 @@ class DismissedMessagesHelper {
 
     public function isMessageDismissed(Message $message, User $user = null) {
         if($user === null) {
+            /** @var User $user */
             $user = $this->tokenStorage->getToken()->getUser();
         }
 

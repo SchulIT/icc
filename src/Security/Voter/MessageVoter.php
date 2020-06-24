@@ -196,7 +196,13 @@ class MessageVoter extends Voter {
         }
 
         // only allow dismissing message in case the user has confirmed the message!
-        return $this->confirmationHelper->isMessageConfirmed($message, $token->getUser());
+        $user = $token->getUser();
+
+        if(!$user instanceof User) {
+            return false;
+        }
+
+        return $this->confirmationHelper->isMessageConfirmed($message, $user);
     }
 
     /**

@@ -56,7 +56,7 @@ class TimetableWeek {
     }
 
     public static function fromEntity(TimetableWeekEntity $entity): self {
-        return (new static())
+        return (new self())
             ->setUuid($entity->getUuid())
             ->setName($entity->getDisplayName())
             ->setWeekMod($entity->getWeekMod());

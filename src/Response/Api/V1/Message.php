@@ -543,7 +543,7 @@ class Message {
     }
 
     public static function fromEntity(MessageEntity $messageEntity): self {
-        return (new static())
+        return (new self())
             ->setUuid($messageEntity->getUuid())
             ->setTitle($messageEntity->getTitle())
             ->setContent($messageEntity->getContent())

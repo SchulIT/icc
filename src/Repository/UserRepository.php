@@ -215,13 +215,6 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
     /**
      * @inheritDoc
      */
-    public function findAllByNotifyTimetable() {
-        // TODO: Implement findAllByNotifyTimetable() method.
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function findAllByUserTypes(array $types): array {
         $typeNames = array_map(function(UserType $type) {
             return $type->getValue();

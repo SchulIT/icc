@@ -75,11 +75,6 @@ interface UserRepositoryInterface {
     public function findAllByNotifyMessages(Message $message);
 
     /**
-     * @return User[]
-     */
-    public function findAllByNotifyTimetable();
-
-    /**
      * @param UserType[] $types
      * @return User[]
      */

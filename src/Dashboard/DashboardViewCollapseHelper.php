@@ -88,7 +88,7 @@ class DashboardViewCollapseHelper {
         }
 
         // STEP 3: SUBSTITUTIONS
-        /** @var SubstitutionViewItem[] $substitutions */
+        /** @var SubstitutionViewItem[] $originalSubstitutions */
         $originalSubstitutions = ArrayUtils::filterByType($originalItems, SubstitutionViewItem::class);
 
         // Classify

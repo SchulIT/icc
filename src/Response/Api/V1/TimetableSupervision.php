@@ -148,7 +148,7 @@ class TimetableSupervision {
     }
 
     public static function fromEntity(TimetableSupervisionEntity $entity): self {
-        return (new static())
+        return (new self())
             ->setUuid($entity->getUuid())
             ->setDay($entity->getDay())
             ->setWeek(TimetableWeek::fromEntity($entity->getWeek()))

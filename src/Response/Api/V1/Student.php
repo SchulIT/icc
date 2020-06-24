@@ -185,7 +185,7 @@ class Student {
             return null;
         }
 
-        return (new static())
+        return (new self())
             ->setFirstname($studentEntity->getFirstname())
             ->setLastname($studentEntity->getLastname())
             ->setEmail($studentEntity->getEmail())

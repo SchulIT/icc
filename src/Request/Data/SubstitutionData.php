@@ -99,13 +99,13 @@ class SubstitutionData {
 
     /**
      * @Serializer\Type("array<string>")
-     * @var int[]
+     * @var string[]
      */
     private $studyGroups;
 
     /**
      * @Serializer\Type("array<string>")
-     * @var int[]
+     * @var string[]
      */
     private $replacementStudyGroups;
 
@@ -318,14 +318,14 @@ class SubstitutionData {
     }
 
     /**
-     * @return int[]
+     * @return string[]
      */
     public function getStudyGroups(): array {
         return $this->studyGroups;
     }
 
     /**
-     * @param int[] $studyGroups
+     * @param string[] $studyGroups
      * @return SubstitutionData
      */
     public function setStudyGroups(array $studyGroups): SubstitutionData {
@@ -334,14 +334,14 @@ class SubstitutionData {
     }
 
     /**
-     * @return int[]
+     * @return string[]
      */
     public function getReplacementStudyGroups(): array {
         return $this->replacementStudyGroups;
     }
 
     /**
-     * @param int[] $replacementStudyGroups
+     * @param string[] $replacementStudyGroups
      * @return SubstitutionData
      */
     public function setReplacementStudyGroups(array $replacementStudyGroups): SubstitutionData {

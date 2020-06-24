@@ -4,9 +4,11 @@ namespace App\Notification\WebPush;
 
 use App\Entity\User;
 use App\Entity\UserWebPushSubscription;
+use App\Exception\UnexpectedTypeException;
 use BenTools\WebPushBundle\Model\Subscription\UserSubscriptionInterface;
 use BenTools\WebPushBundle\Model\Subscription\UserSubscriptionManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserSubscriptionManager implements UserSubscriptionManagerInterface {
@@ -18,13 +20,18 @@ class UserSubscriptionManager implements UserSubscriptionManagerInterface {
     }
 
     /**
-     * @param User $user
+     * @param UserInterface $user
      * @param string $subscriptionHash
      * @param array $subscription
      * @param array $options
      * @return UserSubscriptionInterface
+     * @throws UnexpectedTypeException
      */
     public function factory(UserInterface $user, string $subscriptionHash, array $subscription, array $options = []): UserSubscriptionInterface {
+        if(!$user instanceof User) {
+            throw new UnexpectedTypeException($user, User::class);
+        }
+
         return new UserWebPushSubscription($user, $subscriptionHash, $subscription);
     }
 

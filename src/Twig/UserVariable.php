@@ -24,11 +24,11 @@ class UserVariable {
     }
 
     public function getFirstname(): string {
-        return $this->tokenStorage->getToken()->getUser()->getFirstname();
+        return $this->getUser()->getFirstname();
     }
 
     public function getLastname(): string {
-        return $this->tokenStorage->getToken()->getUser()->getLastname();
+        return $this->getUser()->getLastname();
     }
 
     public function getServices() {

@@ -194,7 +194,7 @@ class Exam {
     }
 
     public static function fromEntity(ExamEntity $exam, array $supervisions): self {
-        return (new static())
+        return (new self())
             ->setUuid($exam->getUuid())
             ->setDescription($exam->getDescription())
             ->setDate($exam->getDate())

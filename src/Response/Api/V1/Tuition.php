@@ -108,7 +108,7 @@ class Tuition {
             return null;
         }
 
-        return (new static())
+        return (new self())
             ->setName($tuitionEntity->getName())
             ->setStudyGroup(StudyGroup::fromEntity($tuitionEntity->getStudyGroup()))
             ->setSubject(Subject::fromEntity($tuitionEntity->getSubject()))

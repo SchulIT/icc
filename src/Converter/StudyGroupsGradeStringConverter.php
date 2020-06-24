@@ -23,6 +23,7 @@ class StudyGroupsGradeStringConverter {
 
     /**
      * @param StudyGroup[]|ArrayCollection $studyGroups
+     * @return string
      */
     public function convert(iterable $studyGroups, bool $sort = false) {
         if($studyGroups instanceof Collection) {

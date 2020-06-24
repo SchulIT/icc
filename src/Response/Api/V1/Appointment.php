@@ -249,7 +249,7 @@ class Appointment {
     }
 
     public static function fromEntity(AppointmentEntity $entity): self {
-        return (new static())
+        return (new self())
             ->setUuid($entity->getUuid())
             ->setTitle($entity->getTitle())
             ->setContent($entity->getContent())

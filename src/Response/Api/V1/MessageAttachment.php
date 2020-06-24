@@ -83,7 +83,7 @@ class MessageAttachment {
     }
 
     public static function fromEntity(MessageAttachmentEntity $messageAttachmentEntity): self {
-        return (new static())
+        return (new self())
             ->setUuid($messageAttachmentEntity->getUuid())
             ->setFilename($messageAttachmentEntity->getFilename())
             ->setSize($messageAttachmentEntity->getSize())

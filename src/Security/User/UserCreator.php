@@ -32,6 +32,7 @@ class UserCreator implements UserCreatorInterface {
             ->getFirstAttributeByName(ClaimTypes::ID)
             ->getFirstAttributeValue();
 
+        /** @var User|null $user */
         $user = $this->em->getRepository(User::class)
             ->findOneBy(['idpId' => $id ]);
 

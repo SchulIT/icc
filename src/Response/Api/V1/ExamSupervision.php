@@ -54,7 +54,7 @@ class ExamSupervision {
     }
 
     public static function fromEntity(ExamSupervisionEntity $supervisionEntity): self {
-        return (new static())
+        return (new self())
             ->setTeacher(Teacher::fromEntity($supervisionEntity->getTeacher()))
             ->setLesson($supervisionEntity->getLesson());
     }

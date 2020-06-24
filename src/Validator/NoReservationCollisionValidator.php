@@ -3,7 +3,9 @@
 namespace App\Validator;
 
 use App\Converter\TeacherStringConverter;
+use App\Entity\FreestyleTimetableLesson;
 use App\Entity\RoomReservation;
+use App\Entity\TuitionTimetableLesson;
 use App\Rooms\Reservation\RoomAvailabilityHelper;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -51,10 +53,18 @@ class NoReservationCollisionValidator extends ConstraintValidator {
             $timetableLesson = $availability->getTimetableLesson();
 
             if($timetableLesson !== null && $availability->isTimetableLessonCancelled() === false) {
+                $tuition = null;
+
+                if($timetableLesson instanceof TuitionTimetableLesson) {
+                    $tuition = $timetableLesson->getTuition()->getName();
+                } else if($timetableLesson instanceof FreestyleTimetableLesson) {
+                    $tuition = $timetableLesson->getSubject();
+                }
+
                 $this->context
                     ->buildViolation($constraint->messageTimetable)
-                    ->setParameter('{{ tuition }}', $timetableLesson->getTuition()->getName())
-                    ->setParameter('{{ teacher }}', $this->teacherConverter->convert($timetableLesson->getTuition()->getTeacher()))
+                    ->setParameter('{{ tuition }}', $tuition)
+                    ->setParameter('{{ teacher }}', $this->teacherConverter->convert($timetableLesson->getTeachers()->first()))
                     ->setParameter('{{ lessonNumber }}', (string)$lessonNumber)
                     ->addViolation();
             }

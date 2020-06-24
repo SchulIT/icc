@@ -19,6 +19,7 @@ class DeviceManager {
     }
 
     public function getDeviceToken(string $token): ?DeviceToken {
+        /** @var DeviceToken|null $token */
         $token = $this->em->getRepository(DeviceToken::class)
             ->findOneBy([
                 'token' => $token

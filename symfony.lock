@@ -1,5 +1,8 @@
 {
     "php": {
         "version": "7.4"
+    },
+    "psr/event-dispatcher": {
+        "version": "1.0.0"
     }
 }

@@ -41,14 +41,15 @@ class MessageConfirmationViewHelper {
             $students = $this->studentRepository->findAllByStudyGroups($message->getConfirmationRequiredStudyGroups()->toArray());
         }
 
-        $users = $this->userRepository->findAllByUserTypes(
-            EnumArrayUtils::remove($visibilities,
-                [
-                    UserType::Student(),
-                    UserType::Teacher(),
-                    UserType::Parent()
-                ])
-        );
+        /** @var UserType[] $remainingUserTypes */
+        $remainingUserTypes = EnumArrayUtils::remove($visibilities,
+            [
+                UserType::Student(),
+                UserType::Teacher(),
+                UserType::Parent()
+            ]);
+
+        $users = $this->userRepository->findAllByUserTypes($remainingUserTypes);
 
         return new MessageConfirmationView(
             $students,

@@ -169,7 +169,7 @@ class Teacher {
             return null;
         }
 
-        return (new static())
+        return (new self())
             ->setGender($teacherEntity->getGender())
             ->setEmail($teacherEntity->getEmail())
             ->setLastname($teacherEntity->getLastname())

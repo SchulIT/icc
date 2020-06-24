@@ -2,6 +2,8 @@
 
 namespace App\Response\Api\V1;
 
+use JMS\Serializer\Annotation as Serializer;
+
 class TuitionList {
 
     /**

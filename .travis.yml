@@ -12,6 +12,9 @@ matrix:
 services:
   - mysql
 
+before_install:
+  - php -i
+
 install:
   - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist --no-interaction
 

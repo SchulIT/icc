@@ -8,6 +8,7 @@ use App\Entity\MessageFile;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroup;
 use App\Entity\UserType;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
 class MessageRepository extends AbstractRepository implements MessageRepositoryInterface {
@@ -185,5 +186,25 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
     public function removeMessageFile(MessageFile $file): void {
         $this->em->remove($file);
         $this->em->flush();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllNotificationNotSent(DateTime $dateTime): array {
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qb->where(
+            $qb->expr()->andX(
+                $qb->expr()->orX(
+                    'm.isEmailNotificationSent = false',
+                    'm.isPushNotificationSent = false'
+                ),
+                'm.startDate <= :date'
+            )
+        )
+            ->setParameter('date', $dateTime);
+
+        return $qb->getQuery()->getResult();
     }
 }

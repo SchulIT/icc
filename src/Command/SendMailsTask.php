@@ -28,7 +28,7 @@ class SendMailsTask extends Command {
     }
 
     public function configure() {
-        $this->setName('tasks:mails:send')
+        $this->setName('app:mails:send')
             ->setDescription('Sends next batch of mails');
     }
 

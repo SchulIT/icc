@@ -9,6 +9,7 @@ use App\Entity\MessageScope;
 use App\Entity\StudyGroup;
 use App\Entity\User;
 use App\Entity\UserType;
+use DateTime;
 
 interface MessageRepositoryInterface {
 
@@ -69,5 +70,11 @@ interface MessageRepositoryInterface {
      * @param MessageFile $file
      */
     public function removeMessageFile(MessageFile $file): void;
+
+    /**
+     * @param DateTime $dateTime
+     * @return Message[]
+     */
+    public function findAllNotificationNotSent(DateTime $dateTime): array;
 
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "79287d108de342f75d17b0b991637932",
+    "content-hash": "eee2bf2f2c0c734541fb414c61433fe6",
     "packages": [
         {
             "name": "acelaya/doctrine-enum-type",
@@ -4517,6 +4517,51 @@
             "time": "2020-05-22T07:31:27+00:00"
         },
         {
+            "name": "mtdowling/cron-expression",
+            "version": "v1.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mtdowling/cron-expression.git",
+                "reference": "9be552eebcc1ceec9776378f7dcc085246cacca6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mtdowling/cron-expression/zipball/9be552eebcc1ceec9776378f7dcc085246cacca6",
+                "reference": "9be552eebcc1ceec9776378f7dcc085246cacca6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0|~5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cron\\": "src/Cron/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
+            "keywords": [
+                "cron",
+                "schedule"
+            ],
+            "abandoned": "dragonmantank/cron-expression",
+            "time": "2019-12-28T04:23:06+00:00"
+        },
+        {
             "name": "myclabs/php-enum",
             "version": "1.7.6",
             "source": {
@@ -6064,6 +6109,98 @@
             ],
             "description": "A library to convert a text with ANSI codes to HTML",
             "time": "2020-05-26T08:39:32+00:00"
+        },
+        {
+            "name": "shapecode/cron-bundle",
+            "version": "4.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shapecode/cron-bundle.git",
+                "reference": "1c01d61f9443062101698a9d64daf87504827fd3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shapecode/cron-bundle/zipball/1c01d61f9443062101698a9d64daf87504827fd3",
+                "reference": "1c01d61f9443062101698a9d64daf87504827fd3",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/annotations": "^1.8",
+                "doctrine/collections": "^1.6",
+                "doctrine/common": "^2.8",
+                "doctrine/event-manager": "^1.1",
+                "doctrine/orm": "^2.6",
+                "doctrine/persistence": "^1.2",
+                "mtdowling/cron-expression": "^1.1",
+                "php": "~7.2",
+                "symfony/config": "^4.4|^5.0",
+                "symfony/console": "^4.4|^5.0",
+                "symfony/dependency-injection": "^4.4|^5.0",
+                "symfony/event-dispatcher": "^4.4|^5.0",
+                "symfony/event-dispatcher-contracts": "^1.1|^2.0",
+                "symfony/framework-bundle": "^4.4|^5.0",
+                "symfony/http-foundation": "^4.4|^5.0",
+                "symfony/http-kernel": "^4.4|^5.0",
+                "symfony/process": "^4.4|^5.0",
+                "symfony/stopwatch": "^4.4|^5.0"
+            },
+            "require-dev": {
+                "dg/bypass-finals": "~1.1",
+                "doctrine/coding-standard": "~7.0",
+                "maglnet/composer-require-checker": "~2.0",
+                "phpstan/phpstan": "~0.12",
+                "phpstan/phpstan-deprecation-rules": "~0.12",
+                "phpstan/phpstan-phpunit": "~0.12",
+                "phpstan/phpstan-strict-rules": "~0.12",
+                "phpunit/phpunit": "~9.0",
+                "roave/security-advisories": "dev-master",
+                "squizlabs/php_codesniffer": "~3.4",
+                "symfony/var-dumper": "~5.0"
+            },
+            "suggest": {
+                "shapecode/cron-sonata-admin-bundle": "to manage cronjobs in the sonata admin panel"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-integration": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Shapecode\\Bundle\\CronBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nikita Loges",
+                    "email": "dev@loges.one",
+                    "homepage": "https://loges.one"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/shapecode/cron-bundle/graphs/contributors"
+                }
+            ],
+            "description": "This bundle provides scheduled execution of Symfony commands",
+            "homepage": "https://github.com/shapecode/cron-bundle",
+            "keywords": [
+                "bundle",
+                "command",
+                "cron",
+                "cronjob",
+                "execute",
+                "interval",
+                "schedule",
+                "shapecode",
+                "symfony",
+                "time"
+            ],
+            "time": "2020-05-02T12:38:35+00:00"
         },
         {
             "name": "spomky-labs/base64url",

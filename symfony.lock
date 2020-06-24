@@ -1,8 +1,14 @@
 {
+    "mtdowling/cron-expression": {
+        "version": "v1.2.3"
+    },
     "php": {
         "version": "7.4"
     },
     "psr/event-dispatcher": {
         "version": "1.0.0"
+    },
+    "shapecode/cron-bundle": {
+        "version": "4.0.2"
     }
 }

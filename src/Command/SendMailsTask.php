@@ -2,12 +2,15 @@
 
 namespace App\Command;
 
+use Shapecode\Bundle\CronBundle\Annotation\CronJob;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
+ * @CronJob("*\/2 * * * *")
+ *
  * Spooled emails are sent using this command.
  */
 class SendMailsTask extends Command {

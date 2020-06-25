@@ -289,7 +289,40 @@ class Builder {
             ]);
         }
 
+        return $root;
+    }
+
+    public function systemMenu(array $options): ItemInterface {
+        $root = $this->factory->createItem('root')
+            ->setChildrenAttributes([
+                'class' => 'navbar-nav float-lg-right'
+            ]);
+
+        $menu = $root->addChild('system', [
+            'label' => ''
+        ])
+            ->setAttribute('icon', 'fa fa-tools')
+            ->setExtra('menu', 'system')
+            ->setExtra('menu-container', '#submenu')
+            ->setExtra('pull-right', true)
+            ->setAttribute('title', $this->translator->trans('system.label'));
+
         if($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
+            $menu->addChild('cron.label', [
+                'route' => 'admin_cronjobs'
+            ])
+                ->setAttribute('icon', 'fas fa-history');
+
+            $menu->addChild('logs.label', [
+                'route' => 'admin_logs'
+            ])
+                ->setAttribute('icon', 'fas fa-info-circle');
+
+            $menu->addChild('mails.label', [
+                'route' => 'admin_mails'
+            ])
+                ->setAttribute('icon', 'far fa-envelope');
+
             $menu->addChild('admin.ea.label', [
                 'uri' => '/admin/ea'
             ])

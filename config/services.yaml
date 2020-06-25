@@ -120,6 +120,7 @@ services:
             - { name: knp_menu.menu_builder, method: adminMenu, alias: adminMenu }
             - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
             - { name: knp_menu.menu_builder, method: servicesMenu, alias: servicesMenu }
+            - { name: knp_menu.menu_builder, method: systemMenu, alias: systemMenu }
 
     SchoolIT\CommonBundle\Menu\Voter:
         tags:

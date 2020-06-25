@@ -12,6 +12,10 @@
     {% if adminMenu.getChild('admin').getChildren()|length > 0 %}
         {{ knp_menu_render('adminMenu', {'currentClass': 'active' }) }}
     {% endif %}
+    {% set systemMenu = knp_menu_get('systemMenu') %}
+    {% if systemMenu.getChild('system').getChildren()|length > 0 %}
+        {{ knp_menu_render('systemMenu', {'currentClass': 'active' }) }}
+    {% endif %}
     {{ knp_menu_render('servicesMenu', {'currentClass': 'active' }) }}
 
     <ul class="navbar-nav float-lg-right">
@@ -30,6 +34,7 @@
 
     {{ knp_menu_render('settingsMenu', {'currentClass': 'active', 'template': '@Common/submenu.html.twig' }) }}
     {{ knp_menu_render('adminMenu', {'currentClass': 'active', 'template': '@Common/submenu.html.twig' }) }}
+    {{ knp_menu_render('systemMenu', {'currentClass': 'active', 'template': '@Common/submenu.html.twig' }) }}
     {{ knp_menu_render('servicesMenu', {'currentClass': 'active', 'template': '@Common/submenu.html.twig' }) }}
     {{ knp_menu_render('userMenu', {'currentClass': 'active', 'template': '@Common/submenu.html.twig' }) }}
 {% endblock %}

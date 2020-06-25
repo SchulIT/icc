@@ -11,3 +11,7 @@ common:
         small_logo: "%env(APP_SMALLLOGO)%"
     locales: "%locales%"
     menu: mainMenu
+    templates:
+        mail: '_mail/index.html.twig'
+        logs: '_logs/index.html.twig'
+        clear_logs: '_logs/clear.html.twig'

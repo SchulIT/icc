@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eee2bf2f2c0c734541fb414c61433fe6",
+    "content-hash": "9385775d5bb15ed26c81ed7ded28183f",
     "packages": [
         {
             "name": "acelaya/doctrine-enum-type",

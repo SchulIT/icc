@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * @CronJob("*\/10 * * * *")
+ * @CronJob("*\/5 * * * *")
  */
 class SendPushNotifications extends Command {
 

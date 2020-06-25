@@ -31,6 +31,7 @@
         "ramsey/uuid-doctrine": "^1.6",
         "schoolit/common-bundle": "dev-master",
         "sensio/framework-extra-bundle": "^5.1",
+        "sensiolabs/ansi-to-html": "^1.2",
         "shapecode/cron-bundle": "^4.0",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "^4.4",

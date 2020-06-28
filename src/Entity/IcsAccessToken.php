@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  */
-class DeviceToken {
+class IcsAccessToken {
 
     use IdTrait;
     use UuidTrait;
@@ -22,8 +22,8 @@ class DeviceToken {
     private $token;
 
     /**
-     * @ORM\Column(type="device_token_type")
-     * @var DeviceTokenType
+     * @ORM\Column(type="ics_access_token_type")
+     * @var IcsAccessTokenType
      */
     private $type;
 
@@ -67,25 +67,25 @@ class DeviceToken {
 
     /**
      * @param string $token
-     * @return DeviceToken
+     * @return IcsAccessToken
      */
-    public function setToken(string $token): DeviceToken {
+    public function setToken(string $token): IcsAccessToken {
         $this->token = $token;
         return $this;
     }
 
     /**
-     * @return DeviceTokenType
+     * @return IcsAccessTokenType
      */
-    public function getType(): ?DeviceTokenType {
+    public function getType(): ?IcsAccessTokenType {
         return $this->type;
     }
 
     /**
-     * @param DeviceTokenType $type
-     * @return DeviceToken
+     * @param IcsAccessTokenType $type
+     * @return IcsAccessToken
      */
-    public function setType(DeviceTokenType $type): DeviceToken {
+    public function setType(IcsAccessTokenType $type): IcsAccessToken {
         $this->type = $type;
         return $this;
     }
@@ -99,9 +99,9 @@ class DeviceToken {
 
     /**
      * @param User $user
-     * @return DeviceToken
+     * @return IcsAccessToken
      */
-    public function setUser(User $user): DeviceToken {
+    public function setUser(User $user): IcsAccessToken {
         $this->user = $user;
         return $this;
     }
@@ -115,9 +115,9 @@ class DeviceToken {
 
     /**
      * @param string $name
-     * @return DeviceToken
+     * @return IcsAccessToken
      */
-    public function setName(string $name): DeviceToken {
+    public function setName(string $name): IcsAccessToken {
         $this->name = $name;
         return $this;
     }
@@ -138,9 +138,9 @@ class DeviceToken {
 
     /**
      * @param \DateTime $lastActive
-     * @return DeviceToken
+     * @return IcsAccessToken
      */
-    public function setLastActive(\DateTime $lastActive): DeviceToken {
+    public function setLastActive(\DateTime $lastActive): IcsAccessToken {
         $this->lastActive = $lastActive;
         return $this;
     }

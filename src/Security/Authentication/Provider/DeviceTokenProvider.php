@@ -3,7 +3,7 @@
 namespace App\Security\Authentication\Provider;
 
 use App\Security\Authentication\Token\DeviceToken;
-use App\Security\Devices\DeviceManager;
+use App\Security\IcsAccessToken\IcsAccessTokenManager;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -12,7 +12,7 @@ class DeviceTokenProvider implements AuthenticationProviderInterface {
 
     private $deviceManager;
 
-    public function __construct(DeviceManager $deviceManager) {
+    public function __construct(IcsAccessTokenManager $deviceManager) {
         $this->deviceManager = $deviceManager;
     }
 
@@ -22,7 +22,7 @@ class DeviceTokenProvider implements AuthenticationProviderInterface {
     public function authenticate(TokenInterface $token) {
         /** @var DeviceToken $deviceToken */
         $deviceToken = $token;
-        $device = $this->deviceManager->getDeviceToken($deviceToken->getToken());
+        $device = $this->deviceManager->getToken($deviceToken->getToken());
 
         if($device !== null) {
             $user = $device->getUser();

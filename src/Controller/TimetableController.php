@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\DeviceToken;
-use App\Entity\DeviceTokenType;
+use App\Entity\IcsAccessToken;
+use App\Entity\IcsAccessTokenType;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Subject;
@@ -12,7 +12,7 @@ use App\Entity\TimetablePeriod;
 use App\Entity\TimetableSupervision;
 use App\Entity\User;
 use App\Export\TimetableIcsExporter;
-use App\Form\DeviceTokenType as DeviceTokenTypeForm;
+use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
 use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ImportDateTypeRepositoryInterface;
@@ -22,7 +22,7 @@ use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
-use App\Security\Devices\DeviceManager;
+use App\Security\IcsAccessToken\IcsAccessTokenManager;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
@@ -217,19 +217,19 @@ class TimetableController extends AbstractControllerWithMessages {
     /**
      * @Route("/export", name="timetable_export")
      */
-    public function export(Request $request, DeviceManager $manager) {
+    public function export(Request $request, IcsAccessTokenManager $manager) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $deviceToken = (new DeviceToken())
-            ->setType(DeviceTokenType::Calendar())
+        $deviceToken = (new IcsAccessToken())
+            ->setType(IcsAccessTokenType::Calendar())
             ->setUser($user);
 
         $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $deviceToken = $manager->persistDeviceToken($deviceToken);
+            $deviceToken = $manager->persistToken($deviceToken);
         }
 
         return $this->renderWithMessages('timetable/export.html.twig', [

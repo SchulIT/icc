@@ -6,8 +6,8 @@ use App\Converter\StudyGroupsGradeStringConverter;
 use App\Converter\TeacherStringConverter;
 use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
-use App\Entity\DeviceToken;
-use App\Entity\DeviceTokenType;
+use App\Entity\IcsAccessToken;
+use App\Entity\IcsAccessTokenType;
 use App\Entity\Exam;
 use App\Entity\Grade;
 use App\Entity\MessageScope;
@@ -16,11 +16,11 @@ use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Export\AppointmentIcsExporter;
-use App\Form\DeviceTokenType as DeviceTokenTypeForm;
+use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;
-use App\Security\Devices\DeviceManager;
+use App\Security\IcsAccessToken\IcsAccessTokenManager;
 use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
 use App\Settings\AppointmentsSettings;
@@ -281,19 +281,19 @@ class AppointmentController extends AbstractControllerWithMessages {
     /**
      * @Route("/export", name="appointments_export")
      */
-    public function export(Request $request, DeviceManager $manager) {
+    public function export(Request $request, IcsAccessTokenManager $manager) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $deviceToken = (new DeviceToken())
-            ->setType(DeviceTokenType::Calendar())
+        $deviceToken = (new IcsAccessToken())
+            ->setType(IcsAccessTokenType::Calendar())
             ->setUser($user);
 
         $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $deviceToken = $manager->persistDeviceToken($deviceToken);
+            $deviceToken = $manager->persistToken($deviceToken);
         }
 
         return $this->renderWithMessages('appointments/export.html.twig', [

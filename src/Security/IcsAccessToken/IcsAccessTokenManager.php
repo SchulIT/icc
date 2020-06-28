@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Security\Devices;
+namespace App\Security\IcsAccessToken;
 
-use App\Entity\DeviceToken;
+use App\Entity\IcsAccessToken;
 use App\Utils\SecurityUtilsInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
-class DeviceManager {
+class IcsAccessTokenManager {
     private $em;
     private $security;
     private $utils;
@@ -18,9 +18,9 @@ class DeviceManager {
         $this->utils = $securityUtils;
     }
 
-    public function getDeviceToken(string $token): ?DeviceToken {
-        /** @var DeviceToken|null $token */
-        $token = $this->em->getRepository(DeviceToken::class)
+    public function getToken(string $token): ?IcsAccessToken {
+        /** @var IcsAccessToken|null $token */
+        $token = $this->em->getRepository(IcsAccessToken::class)
             ->findOneBy([
                 'token' => $token
             ]);
@@ -28,8 +28,8 @@ class DeviceManager {
         return $token;
     }
 
-    public function persistDeviceToken(DeviceToken $deviceToken): DeviceToken {
-        $repository = $this->em->getRepository(DeviceToken::class);
+    public function persistToken(IcsAccessToken $deviceToken): IcsAccessToken {
+        $repository = $this->em->getRepository(IcsAccessToken::class);
 
         do {
             $deviceToken->setToken($this->utils->generateRandom(128));
@@ -39,9 +39,5 @@ class DeviceManager {
         $this->em->flush();
 
         return $deviceToken;
-    }
-
-    public function removeDeviceToken(DeviceToken $deviceToken) {
-        // TODO
     }
 }

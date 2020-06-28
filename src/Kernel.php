@@ -4,8 +4,8 @@ namespace App;
 
 use Acelaya\Doctrine\Type\PhpEnumType;
 use App\DependencyInjection\Security\Factory\DeviceTokenFactory;
-use App\Entity\DeviceToken;
-use App\Entity\DeviceTokenType;
+use App\Entity\IcsAccessToken;
+use App\Entity\IcsAccessTokenType;
 use App\Entity\Gender;
 use App\Entity\GradeTeacherType;
 use App\Entity\MessageScope;

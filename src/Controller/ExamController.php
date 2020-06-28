@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\DeviceToken;
-use App\Entity\DeviceTokenType;
+use App\Entity\IcsAccessToken;
+use App\Entity\IcsAccessTokenType;
 use App\Entity\Exam;
 use App\Entity\MessageScope;
 use App\Entity\Student;
@@ -13,7 +13,7 @@ use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Export\ExamIcsExporter;
-use App\Form\DeviceTokenType as DeviceTokenTypeForm;
+use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
 use App\Grouping\ExamWeekGroup;
 use App\Grouping\Grouper;
 use App\Grouping\StudentStudyGroupGroup;
@@ -22,7 +22,7 @@ use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
-use App\Security\Devices\DeviceManager;
+use App\Security\IcsAccessToken\IcsAccessTokenManager;
 use App\Security\Voter\ExamVoter;
 use App\Settings\ExamSettings;
 use App\Sorting\ExamDateLessonStrategy as ExamDateSortingStrategy;
@@ -293,19 +293,19 @@ class ExamController extends AbstractControllerWithMessages {
     /**
      * @Route("/export", name="exams_export")
      */
-    public function export(Request $request, DeviceManager $manager) {
+    public function export(Request $request, IcsAccessTokenManager $manager) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $deviceToken = (new DeviceToken())
-            ->setType(DeviceTokenType::Exams())
+        $deviceToken = (new IcsAccessToken())
+            ->setType(IcsAccessTokenType::Exams())
             ->setUser($user);
 
         $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $deviceToken = $manager->persistDeviceToken($deviceToken);
+            $deviceToken = $manager->persistToken($deviceToken);
         }
 
         return $this->renderWithMessages('exams/export.html.twig', [

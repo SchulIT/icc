@@ -11,7 +11,7 @@ gender:
   female: weiblich
   x: divers
 
-device_token_type:
+ics_access_token_type:
   calendar: Kalender-Synchronisation
   exams: Klausurplan-Synchronisation
   timetable: Stundenplan-Synchronisation

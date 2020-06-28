@@ -5,11 +5,11 @@ namespace App\Entity;
 use MyCLabs\Enum\Enum;
 
 /**
- * @method static DeviceTokenType Timetable()
- * @method static DeviceTokenType Calendar()
- * @method static DeviceTokenType Exams()
+ * @method static IcsAccessTokenType Timetable()
+ * @method static IcsAccessTokenType Calendar()
+ * @method static IcsAccessTokenType Exams()
  */
-class DeviceTokenType extends Enum {
+class IcsAccessTokenType extends Enum {
     private const Timetable = 'timetable';
     private const Calendar = 'calendar';
     private const Exams = 'exams';

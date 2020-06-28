@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\DeviceToken;
+use App\Entity\IcsAccessToken;
 use App\Entity\OAuthClientInfo;
 use App\Entity\User;
 use App\Form\NotificationsType;
@@ -109,7 +109,7 @@ class ProfileController extends AbstractController {
     /**
      * @Route("/apps/{uuid}/remove", name="profile_remove_app", methods={"POST"})
      */
-    public function removeApp(DeviceToken $token, Request $request, DeviceTokenRepositoryInterface $deviceTokenRepository) {
+    public function removeApp(IcsAccessToken $token, Request $request, DeviceTokenRepositoryInterface $deviceTokenRepository) {
         $this->denyAccessUnlessGranted(DeviceTokenVoter::Remove, $token);
 
         $csrfToken = $request->request->get('_csrf_token');

@@ -2,29 +2,29 @@
 
 namespace App\Repository;
 
-use App\Entity\DeviceToken;
+use App\Entity\IcsAccessToken;
 use App\Entity\User;
 
 interface DeviceTokenRepositoryInterface {
 
     /**
-     * @return DeviceToken[]
+     * @return IcsAccessToken[]
      */
     public function findAll(): array;
 
     /**
      * @param User $user
-     * @return DeviceToken[]
+     * @return IcsAccessToken[]
      */
     public function findAllBy(User $user): array;
 
     /**
-     * @param DeviceToken $token
+     * @param IcsAccessToken $token
      */
-    public function persist(DeviceToken $token): void;
+    public function persist(IcsAccessToken $token): void;
 
     /**
-     * @param DeviceToken $token
+     * @param IcsAccessToken $token
      */
-    public function remove(DeviceToken $token): void;
+    public function remove(IcsAccessToken $token): void;
 }

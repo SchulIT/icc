@@ -2,7 +2,7 @@ Updates
 =======
 
 Schritt 1: Quelltext aktualisieren
----------------------------------
+----------------------------------
 
 Möglichkeit 1: Installation mit Git
 ###################################

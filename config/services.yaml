@@ -62,8 +62,13 @@ services:
 
     SchoolIT\CommonBundle\Command\CreateCertificateCommand:
         arguments:
-            $keyFile: '%sp_cert_key%'
-            $certFile: '%sp_cert_file%'
+            $types:
+                saml:
+                    keyFile: '%sp_cert_key%'
+                    certFile: '%sp_cert_file%'
+                oauth2:
+                    keyFile: '%kernel.project_dir%/oauth/oauth.key'
+                    certFile: '%kernel.project_dir%/oauth/oauth.pub'
 
     SchoolIT\CommonBundle\EventSubscriber\SamlExceptionSubscriber:
         arguments:

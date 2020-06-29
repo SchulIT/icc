@@ -56,7 +56,7 @@ erstellt werden:
 
 .. code-block:: shell
 
-    $ php bin/console app:create-certificate --saml
+    $ php bin/console app:create-certificate --type saml
 
 Anschließend werden einige Daten abgefragt. Diese können abgesehen vom ``commonName`` frei beantwortet werden.
 
@@ -70,7 +70,7 @@ Anschließend muss noch ein Zertifikat für die OAuth2-Authentifizierung erstell
 
 .. code-block:: shell
 
-    $ php bin/console app:create-certificate --oauth2
+    $ php bin/console app:create-certificate --type oauth2
 
 Es werden erneut einige Daten abgefragt (siehe oben).
 

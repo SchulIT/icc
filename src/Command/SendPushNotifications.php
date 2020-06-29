@@ -44,7 +44,7 @@ class SendPushNotifications extends Command {
             $style->section(sprintf('Send notifications for message "%s"', $message->getTitle()));
 
             $this->notificationService->sendNotifications($message);
-            $style->success('Done (%d still queued for sending notifications)', count($messages) - 1);
+            $style->success(sprintf('Done (%d still queued for sending notifications)', count($messages) - 1));
         }
 
         return 0;

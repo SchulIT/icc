@@ -7,6 +7,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
 use Shapecode\Bundle\CronBundle\Entity\CronJob;
 use Shapecode\Bundle\CronBundle\Entity\CronJobResult;
+use Shapecode\Bundle\CronBundle\Repository\CronJobResultRepository;
+use Shapecode\Bundle\CronBundle\Repository\CronJobResultRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -44,7 +46,7 @@ class CronjobController extends AbstractController {
      * @Route("/admin/cron", name="admin_cronjobs")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function index(EntityManagerInterface $manager) {
+    public function index(EntityManagerInterface $manager, CronJobResultRepositoryInterface $cronJobResultRepository) {
         $jobs = $manager->getRepository(CronJob::class)
             ->findAll();
 
@@ -52,7 +54,7 @@ class CronjobController extends AbstractController {
         $results = [ ];
 
         foreach($jobs as $job) {
-            $results[$job->getCommand()] = $manager->getRepository(CronJobResult::class)
+            $results[$job->getCommand()] = $cronJobResultRepository
                 ->findMostRecent($job);
         }
 

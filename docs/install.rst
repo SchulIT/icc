@@ -40,7 +40,7 @@ Den Quelltext der Anwendung von `GitHub <https://github.com/schulit/icc/releases
 entpacken. Anschließend kann mit der Konfiguration fortgefahren werden.
 
 Schritt 2: Konfiguration
------------
+------------------------
 
 Nachdem der Quelltext und seine Abhängigkeiten installiert sind, müssen alle benötigten Zertifikate und Konfigurationsdateien erstellt werden.
 
@@ -76,7 +76,7 @@ Anschließend muss noch ein Zertifikat für die OAuth2-Authentifizierung erstell
 Es werden erneut einige Daten abgefragt (siehe oben).
 
 Schritt 2.3: Schlüssel für Webpush erstellen
-##########################################
+############################################
 
 Zunächst auf der Konsole folgendes Kommando ausführen und anschließend eine Datei ``config/packages/bentools_webpush.yaml`` erstellen:
 

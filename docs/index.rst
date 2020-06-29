@@ -20,5 +20,3 @@ zu Workflows.
 .. toctree::
    :caption: Benutzer-Handbuch
    :maxdepth: 2
-
-   room-reservations

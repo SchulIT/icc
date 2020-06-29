@@ -37,7 +37,7 @@ jobs:
         - yarn encore production
     - stage: build
       language: python
-      install:
+      script:
         - pip install sphinx
         - pip install sphinx_rtd_theme
         - cd docs
@@ -49,4 +49,4 @@ jobs:
         - yarn install
         - yarn encore production
         - rm -rf node_modules
-        - zip -r icc.zip
+        - zip -r icc.zip .

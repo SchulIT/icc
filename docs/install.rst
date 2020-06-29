@@ -24,8 +24,7 @@ Anschließend in das Verzeichnis ``icc`` wechseln und alle Abhängigkeiten insta
 
 Die Direktive ``no-scripts`` ist wichtig, da es ansonsten zu Fehlermeldungen kommt.
 
-.. warning:: Der folgende Teil funktioniert nur, wenn Node und yarn verfügbar sind. Falls die beiden Tools nicht verfügbar
-sind, müssen die Dateien manuell hochgeladen werden.
+.. warning:: Der folgende Teil funktioniert nur, wenn Node und yarn verfügbar sind. Falls die beiden Tools nicht verfügbar sind, müssen die Dateien manuell hochgeladen werden.
 
 Nun müssen noch die Assets installiert werden:
 

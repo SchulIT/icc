@@ -1,8 +1,8 @@
 # Information & Communication Center
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/SchulIT/icc/badges/quality-score.png?b=master&style=flat-square)](https://scrutinizer-ci.com/g/SchulIT/icc/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/SchulIT/icc/badges/coverage.png?b=master&style=flat-square)](https://scrutinizer-ci.com/g/SchulIT/icc/?branch=master)
-[![Build Status](https://travis-ci.org/SchulIT/icc.svg?branch=master&style=flat-square)](https://travis-ci.org/SchulIT/icc)
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/schulit/icc.svg?style=flat-square)](https://scrutinizer-ci.com/g/SchulIT/icc/?branch=master) 
+[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/schulit/icc.svg?style=flat-square)](https://scrutinizer-ci.com/g/SchulIT/icc/?branch=master) 
+[![Build Status](https://img.shields.io/travis/SchulIT/icc.svg?style=flat-square)](https://travis-ci.org/SchulIT/icc) 
 ![PHP 7.4](https://img.shields.io/badge/PHP-7.4-success.svg?style=flat-square) 
 ![MIT License](https://img.shields.io/github/license/schulit/icc.svg?style=flat-square)
 

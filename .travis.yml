@@ -45,7 +45,7 @@ jobs:
     - stage: build
       script:
         - nvm install 10
-        - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist --no-interaction --no-dev
+        - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist --no-interaction --no-dev --no-scripts
         - yarn install
         - yarn encore production
         - rm -rf node_modules

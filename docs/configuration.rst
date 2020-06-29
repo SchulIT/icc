@@ -121,3 +121,13 @@ Verbindungszeichenfolge für das E-Mail-Postfach, welches zum Versand von E-Mail
 
 Dabei sind die Parameter ``SMTPSERVER``, ``USERNAME`` und ``PASSWORD`` entsprechend anzupassen.
 
+OAUTH2_ENCRYPTION_KEY
+#####################
+
+Ein Verschlüsselungsschlüssel für die OAuth2 Authentifizierung. Dieser kann mittels
+
+.. code-block:: shell
+
+    $ php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
+
+erzeugt werden und anschließend eingefügt werden.

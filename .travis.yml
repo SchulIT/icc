@@ -21,18 +21,18 @@ cache: yarn
 jobs:
   include:
     - stage: test
-      language: php
       script:
         - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist --no-interaction
+        - php bin/console cache:clear --env=dev
         - vendor/bin/phpstan analyze ./src --level 5 --memory-limit 1G
         - vendor/bin/phpunit --coverage-clover clover.xml
       after_script:
         - wget https://scrutinizer-ci.com/ocular.phar
         - php ocular.phar code-coverage:upload --format=php-clover clover.xml
     - stage: build
-      language: node_js
-      node_js: 10
       script:
+        - nvm install 10
+        - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist --no-interaction --no-dev
         - yarn install
         - yarn encore production
     - stage: build

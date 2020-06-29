@@ -66,7 +66,6 @@ class TimetableSupervision {
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotNull()
      * @Assert\NotBlank()
      * @var string
      */

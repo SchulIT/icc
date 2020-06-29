@@ -64,15 +64,15 @@ class User implements UserInterface, \Serializable {
     /**
      * @ORM\ManyToMany(targetEntity="Student")
      * @ORM\JoinTable(name="user_students",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE", onDelete="CASCADE")}
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Student>
      */
     private $students;
 
     /**
-     * @ORM\Column(type="json_array")
+     * @ORM\Column(type="json")
      * @var string[]
      */
     private $roles = ['ROLE_USER'];
@@ -86,8 +86,8 @@ class User implements UserInterface, \Serializable {
     /**
      * @ORM\ManyToMany(targetEntity="Message")
      * @ORM\JoinTable(name="user_dismissed_messages",
-     *     joinColumns={@ORM\JoinColumn(name="user", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="message", referencedColumnName="id", onDelete="CASCADE")}
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var ArrayCollection<Message>
      */
@@ -118,7 +118,7 @@ class User implements UserInterface, \Serializable {
     private $isEmailNotificationsEnabled = false;
 
     /**
-     * @ORM\Column(type="json_array")
+     * @ORM\Column(type="json")
      * @var string[]
      */
     private $data = [ ];

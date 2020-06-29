@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -15,7 +16,7 @@ class Absence {
     /**
      * @ORM\Column(type="date")
      * @Assert\NotNull()
-     * @var \DateTime
+     * @var DateTime
      */
     private $date;
 
@@ -53,17 +54,17 @@ class Absence {
     private $room;
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getDate(): ?\DateTime {
+    public function getDate(): ?DateTime {
         return $this->date;
     }
 
     /**
-     * @param \DateTime|null $date
+     * @param DateTime|null $date
      * @return Absence
      */
-    public function setDate(?\DateTime $date): Absence {
+    public function setDate(?DateTime $date): Absence {
         $this->date = $date;
         return $this;
     }

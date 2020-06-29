@@ -73,10 +73,9 @@ class Substitution {
 
     /**
      * @ORM\ManyToMany(targetEntity="Teacher")
-     * @ORM\JoinTable(
-     *     name="substitution_teachers",
-     *     joinColumns={@ORM\JoinColumn(name="substitution", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="teacher", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="substitution_teachers",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Teacher>
      */
@@ -84,10 +83,9 @@ class Substitution {
 
     /**
      * @ORM\ManyToMany(targetEntity="Teacher")
-     * @ORM\JoinTable(
-     *     name="substitution_replacmentteachers",
-     *     joinColumns={@ORM\JoinColumn(name="substitution", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="teacher", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="substitution_replacement_teachers",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Teacher>
      */
@@ -113,10 +111,9 @@ class Substitution {
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(
-     *     name="substitution_studygroups",
-     *     joinColumns={@ORM\JoinColumn(name="substitution", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="grade", referencedColumnName="id", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="substitution_studygroups",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var ArrayCollection<StudyGroup>
      */
@@ -124,10 +121,9 @@ class Substitution {
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(
-     *     name="substitution_replacementstudygroups",
-     *     joinColumns={@ORM\JoinColumn(name="substitution", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="grade", referencedColumnName="id", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="substitution_replacement_studygroups",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var ArrayCollection<StudyGroup>
      */

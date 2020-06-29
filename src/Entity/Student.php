@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
- * @UniqueEntity(fields={"internalId"})
+ * @UniqueEntity(fields={"externalId"})
  */
 class Student {
 
@@ -29,7 +29,6 @@ class Student {
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * @Assert\NotNull()
      * @var string
      */
     private $firstname;
@@ -37,7 +36,6 @@ class Student {
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * @Assert\NotNull()
      * @var string
      */
     private $lastname;
@@ -83,7 +81,7 @@ class Student {
 
     /**
      * @ORM\ManyToMany(targetEntity="PrivacyCategory")
-     * @ORM\JoinTable(name="student_privacy",
+     * @ORM\JoinTable(name="student_approved_privacy_categories",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )

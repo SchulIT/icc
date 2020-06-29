@@ -26,7 +26,6 @@ class StudyGroup {
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * @Assert\NotNull()
      * @var string
      */
     private $name;
@@ -40,10 +39,9 @@ class StudyGroup {
 
     /**
      * @ORM\ManyToMany(targetEntity="Grade")
-     * @ORM\JoinTable(
-     *     name="studygroup_grades",
-     *     joinColumns={@ORM\JoinColumn(name="studygroup", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="grade", referencedColumnName="id", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="study_group_grades",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Grade>
      */

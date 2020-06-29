@@ -51,10 +51,9 @@ class Document {
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(
-     *     name="document_studygroups",
-     *     joinColumns={@ORM\JoinColumn(name="page", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="studygroup", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="document_studygroups",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
      * @var Collection<StudyGroup>
@@ -86,10 +85,9 @@ class Document {
 
     /**
      * @ORM\ManyToMany(targetEntity="User")
-     * @ORM\JoinTable(
-     *     name="document_authors",
-     *     joinColumns={@ORM\JoinColumn(name="page", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="user", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="document_authors",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Teacher>
      */

@@ -12,14 +12,14 @@ class RoomTagInfo {
     /**
      * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="Room", inversedBy="tags")
-     * @ORM\JoinColumn(name="room", onDelete="CASCADE")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $room;
 
     /**
      * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="RoomTag")
-     * @ORM\JoinColumn(name="tag", onDelete="CASCADE")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $tag;
 

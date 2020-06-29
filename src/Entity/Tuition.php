@@ -26,7 +26,6 @@ class Tuition {
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotNull()
      * @Assert\NotBlank()
      * @var string
      */
@@ -56,10 +55,9 @@ class Tuition {
 
     /**
      * @ORM\ManyToMany(targetEntity="Teacher")
-     * @ORM\JoinTable(
-     *     name="tuition_teachers",
-     *     joinColumns={@ORM\JoinColumn(name="studygroup", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="teacher", referencedColumnName="id", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="tuition_additional_teachers",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Teacher>
      */

@@ -9,25 +9,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class UserTypeEntity {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    use IdTrait;
 
     /**
      * @ORM\Column(type="user_type", unique=true)
      * @var UserType
      */
     private $userType;
-
-    /**
-     * @return int
-     */
-    public function getId(): int {
-        return $this->id;
-    }
 
     /**
      * @return UserType
@@ -46,6 +34,6 @@ class UserTypeEntity {
     }
 
     public function __toString() {
-        return $this->getUserType();
+        return $this->getUserType()->getKey();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Validator\SubsetOf;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -35,7 +36,7 @@ class Message {
     /**
      * @ORM\Column(type="datetime", name="start_date")
      * @Assert\NotNull()
-     * @var \DateTime
+     * @var DateTime
      */
     private $startDate;
 
@@ -43,14 +44,13 @@ class Message {
      * @ORM\Column(type="datetime", name="expire_date")
      * @Assert\GreaterThan(propertyPath="startDate")
      * @Assert\NotNull()
-     * @var \DateTime
+     * @var DateTime
      */
     private $expireDate;
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(
-     *     name="message_studygroups",
+     * @ORM\JoinTable(name="message_studygroups",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
@@ -60,7 +60,7 @@ class Message {
     private $studyGroups;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\MessageAttachment", mappedBy="message", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="MessageAttachment", mappedBy="message", cascade={"persist"})
      * @var ArrayCollection<MessageAttachment>
      */
     private $attachments;
@@ -92,7 +92,7 @@ class Message {
     /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
-     * @var \DateTime
+     * @var DateTime
      */
     private $createdAt;
 
@@ -100,7 +100,7 @@ class Message {
      * @Gedmo\Timestampable(on="create")
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
-     * @var \DateTime
+     * @var DateTime
      */
     private $updatedAt;
 
@@ -121,7 +121,7 @@ class Message {
 
     /**
      * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="message_download_enabled_usertypes",
+     * @ORM\JoinTable(name="message_download_usertypes",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
@@ -132,8 +132,7 @@ class Message {
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(
-     *     name="message_download_enabled_studygroups",
+     * @ORM\JoinTable(name="message_download_studygroups",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
@@ -151,7 +150,7 @@ class Message {
 
     /**
      * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="message_upload_enabled_usertypes",
+     * @ORM\JoinTable(name="message_upload_usertypes",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
@@ -162,8 +161,7 @@ class Message {
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(
-     *     name="message_upload_enabled_studygroups",
+     * @ORM\JoinTable(name="message_upload_studygroups",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
@@ -206,7 +204,7 @@ class Message {
 
     /**
      * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="message_confirmation_required_usertypes",
+     * @ORM\JoinTable(name="message_confirmation_usertypes",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
@@ -217,8 +215,7 @@ class Message {
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(
-     *     name="message_confirmation_required_studygroups",
+     * @ORM\JoinTable(name="message_confirmation_studygroups",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
@@ -292,33 +289,33 @@ class Message {
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getStartDate(): ?\DateTime {
+    public function getStartDate(): ?DateTime {
         return $this->startDate;
     }
 
     /**
-     * @param \DateTime $startDate
+     * @param DateTime $startDate
      * @return Message
      */
-    public function setStartDate(\DateTime $startDate): Message {
+    public function setStartDate(DateTime $startDate): Message {
         $this->startDate = $startDate;
         return $this;
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getExpireDate(): ?\DateTime {
+    public function getExpireDate(): ?DateTime {
         return $this->expireDate;
     }
 
     /**
-     * @param \DateTime $expireDate
+     * @param DateTime $expireDate
      * @return Message
      */
-    public function setExpireDate(\DateTime $expireDate): Message {
+    public function setExpireDate(DateTime $expireDate): Message {
         $this->expireDate = $expireDate;
         return $this;
     }
@@ -584,16 +581,16 @@ class Message {
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getCreatedAt(): \DateTime {
+    public function getCreatedAt(): DateTime {
         return $this->createdAt;
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getUpdatedAt(): \DateTime {
+    public function getUpdatedAt(): DateTime {
         return $this->updatedAt;
     }
 

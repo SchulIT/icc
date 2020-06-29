@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -17,11 +18,13 @@ class Infotext {
     /**
      * @ORM\Column(type="date")
      * @Assert\NotNull()
+     * @var DateTime|null
      */
     private $date;
 
     /**
      * @ORM\Column(type="text")
+     * @var string|null
      */
     private $content;
 
@@ -30,17 +33,17 @@ class Infotext {
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getDate(): ?\DateTime {
+    public function getDate(): ?DateTime {
         return $this->date;
     }
 
     /**
-     * @param \DateTime|null $date
+     * @param DateTime|null $date
      * @return Infotext
      */
-    public function setDate(?\DateTime $date) {
+    public function setDate(?DateTime $date) {
         $this->date = $date;
         return $this;
     }

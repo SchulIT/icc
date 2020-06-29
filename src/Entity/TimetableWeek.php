@@ -26,7 +26,6 @@ class TimetableWeek {
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * @Assert\NotNull()
      * @var string
      */
     private $displayName;

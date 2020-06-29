@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Validator\Color;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -51,7 +52,7 @@ class DocumentAttachment {
 
     /**
      * @ORM\Column(type="datetime")
-     * @var \DateTimeImmutable
+     * @var DateTimeImmutable
      */
     private $updatedAt;
 

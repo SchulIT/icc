@@ -66,7 +66,10 @@ abstract class TimetableLesson {
 
     /**
      * @ORM\ManyToMany(targetEntity="Teacher")
-     * @ORM\JoinTable()
+     * @ORM\JoinTable(name="timetable_lesson_teachers",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
      * @var Collection<Teacher>
      */
     private $teachers;

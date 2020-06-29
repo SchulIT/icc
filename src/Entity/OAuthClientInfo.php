@@ -35,7 +35,7 @@ class OAuthClientInfo {
 
     /**
      * @ORM\OneToOne(targetEntity="Trikoder\Bundle\OAuth2Bundle\Model\Client")
-     * @ORM\JoinColumn(onDelete="CASCADE",  referencedColumnName="identifier")
+     * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="identifier")
      * @Assert\NotNull()
      * @var Client|null
      */

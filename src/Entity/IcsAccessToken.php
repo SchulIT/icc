@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
@@ -44,13 +45,13 @@ class IcsAccessToken {
     /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
-     * @var \DateTime
+     * @var DateTime
      */
     private $registered;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @var \DateTime|null
+     * @var DateTime|null
      */
     private $lastActive;
 
@@ -123,24 +124,24 @@ class IcsAccessToken {
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getRegistered(): \DateTime {
+    public function getRegistered(): DateTime {
         return $this->registered;
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getLastActive(): ?\DateTime {
+    public function getLastActive(): ?DateTime {
         return $this->lastActive;
     }
 
     /**
-     * @param \DateTime $lastActive
+     * @param DateTime $lastActive
      * @return IcsAccessToken
      */
-    public function setLastActive(\DateTime $lastActive): IcsAccessToken {
+    public function setLastActive(DateTime $lastActive): IcsAccessToken {
         $this->lastActive = $lastActive;
         return $this;
     }

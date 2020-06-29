@@ -58,10 +58,9 @@ class Exam {
 
     /**
      * @ORM\ManyToMany(targetEntity="Tuition")
-     * @ORM\JoinTable(
-     *     name="exam_tuitions",
-     *     joinColumns={@ORM\JoinColumn(name="exam", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="tuition", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="exam_tuitions",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Tuition>
      */
@@ -69,10 +68,9 @@ class Exam {
 
     /**
      * @ORM\ManyToMany(targetEntity="Student")
-     * @ORM\JoinTable(
-     *     name="exam_students",
-     *     joinColumns={@ORM\JoinColumn(name="exam", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="student", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="exam_students",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Student>
      */
@@ -86,7 +84,7 @@ class Exam {
     private $supervisions;
 
     /**
-     * @ORM\Column(type="json_array")
+     * @ORM\Column(type="json")
      * @var string[]
      */
     private $rooms = [ ];

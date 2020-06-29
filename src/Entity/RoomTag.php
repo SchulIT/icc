@@ -27,7 +27,7 @@ class RoomTag {
     private $description;
 
     /**
-     * @ORM\Column(type="boolean", name="has_value")
+     * @ORM\Column(type="boolean")
      */
     private $hasValue = false;
 

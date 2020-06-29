@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -53,7 +54,7 @@ class MessageFileUpload {
 
     /**
      * @ORM\Column(type="datetime")
-     * @var \DateTime
+     * @var DateTime
      */
     private $updatedAt;
 
@@ -104,7 +105,7 @@ class MessageFileUpload {
         $this->file = $file;
 
         if($file !== null) {
-            $this->updatedAt = new \DateTime();
+            $this->updatedAt = new DateTime();
         }
 
         return $this;
@@ -159,9 +160,9 @@ class MessageFileUpload {
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getUpdatedAt(): \DateTime {
+    public function getUpdatedAt(): DateTime {
         return $this->updatedAt;
     }
 

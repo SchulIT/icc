@@ -2,6 +2,7 @@
 
 namespace App\EventSubscriber;
 
+use App\Import\ImportException;
 use App\Request\ValidationFailedException;
 use App\Response\ErrorResponse;
 use App\Response\Violation;
@@ -54,6 +55,13 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
             }
 
             $message = new ViolationList($violations);
+        } else if($throwable instanceof ImportException) {
+            $code = Response::HTTP_BAD_REQUEST;
+
+            $message = new ErrorResponse(
+                $throwable->getMessage(),
+                get_class($throwable)
+            );
         } else { // Case 3: General error
             $message = new ErrorResponse(
                 'An unknown error occured.',

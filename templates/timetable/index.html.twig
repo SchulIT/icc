@@ -50,7 +50,9 @@
                         student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null,
                         teachers: (urlTeachers is not empty ? urlTeachers : null),
                         subjects: (urlSubjects is not empty ? urlSubjects : null),
-                        room: roomFilter.currentRoom ? roomFilter.currentRoom.uuid.toString() : null }
+                        room: roomFilter.currentRoom ? roomFilter.currentRoom.uuid.toString() : null,
+                        period: currentPeriod ? currentPeriod.uuid.toString : null
+                    }
                     %}
 
                     <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
@@ -233,24 +235,26 @@
                 {% if contains_active_filters([teachersFilter, studentFilter, gradeFilter, subjectFilter, roomFilter]) %}
                 <div class="card">
                     <div class="card-body pb-1">
+                        {% set params = { period: currentPeriod ? currentPeriod.uuid.toString : null } %}
+
                         {% if teachersFilter.teachers|length > 0 %}
-                            {% include "_filter/teachers.html.twig" with { canSwitch: true } %}
+                            {% include "_filter/teachers.html.twig" with { canSwitch: true, params: params } %}
                         {% endif %}
 
                         {% if studentFilter.studentGradeGroups|length > 0 %}
-                            {% include "_filter/student.html.twig" %}
+                            {% include "_filter/student.html.twig" with { params: params } %}
                         {% endif %}
 
                         {% if gradeFilter.grades|length > 0 %}
-                            {% include "_filter/grade.html.twig" %}
+                            {% include "_filter/grade.html.twig" with { params: params } %}
                         {% endif %}
 
                         {% if subjectFilter.subjects|length > 0 %}
-                            {% include "_filter/room.html.twig" %}
+                            {% include "_filter/room.html.twig" with { params: params } %}
                         {% endif %}
 
                         {% if roomFilter.rooms|length > 0 %}
-                            {% include "_filter/subjects.html.twig" %}
+                            {% include "_filter/subjects.html.twig" with { params: params } %}
                         {% endif %}
                     </div>
 

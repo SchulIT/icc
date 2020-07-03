@@ -17,6 +17,11 @@ class TimetableWeekHelper {
     public function getTimetableWeek(DateTime $dateTime): ?TimetableWeekEntity {
         $all = $this->timetableWeekRepository->findAll();
         $count = count($all);
+
+        if($count === 0) {
+            return null;
+        }
+
         $mod = (int)$dateTime->format('W') % $count;
 
         foreach($all as $week) {

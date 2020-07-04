@@ -522,7 +522,7 @@ admin:
             notifications:
                 enabled:
                     label: Benachrichtigungen aktiviert
-                    help: Wenn diese Option aktiviert ist, werden Lehrkräfte informiert, sobald ein neuer Vertretungsplan verfügbar ist.
+                    help: Wenn diese Option aktiviert ist, werden Benachrichtigungen versendet, sobald ein neuer Vertretungsplan verfügbar ist.
                 sender:
                     label: Absender
                     help: Dieser Name wird als Absender bei E-Mail Benachrichtungen angezeigt. E-Mails werden mit diesem Namen unterschrieben.
@@ -543,7 +543,7 @@ admin:
             notifications:
                 enabled:
                     label: Benachrichtigungen aktiviert
-                    help: Wenn diese Option aktiviert ist, werden Lehrkräfte informiert, sobald ein neuer Klausurplan verfügbar ist.
+                    help: Wenn diese Option aktiviert ist, werden Benachrichtigungen versendet, sobald ein neuer Klausurplan verfügbar ist.
                 sender:
                     label: Absender
                     help: Dieser Name wird als Absender bei E-Mail Benachrichtungen angezeigt. E-Mails werden mit diesem Namen unterschrieben.
@@ -925,7 +925,7 @@ profile:
     notifications:
         label: Benachrichtigungen
         success: Benachrichtigungseinstellungen erfolgreich aktualisiert
-        not_allowed: Leider können Benachrichtungs-E-Mails nicht angeboten werden.
+        not_allowed: Es sind keine Benachrichtigungsmöglichkeiten freigeschaltet.
         substitutions:
             label: Neuer Vertretungsplan
             help: Wenn diese Option aktiv ist, wird eine Benachrichtigung versendet, sobald ein neuer Vertretungsplan bereitgestellt wurde.

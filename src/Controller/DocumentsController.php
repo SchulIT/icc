@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Document;
 use App\Entity\DocumentAttachment;
 use App\Entity\User;
+use App\Entity\UserType;
 use App\Filesystem\DocumentFilesystem;
 use App\Filesystem\FileNotFoundException;
 use App\Grouping\DocumentCategoryStrategy as DocumentCategoryGroupingStrategy;
@@ -45,7 +46,7 @@ class DocumentsController extends AbstractController {
 
         $q = $request->query->get('q', null);
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user, true);
-        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user);
+        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent()), $user->getUserType());
 
         $documents = $documentRepository->findAllFor($userTypeFilterView->getCurrentType(), $studyGroupFilterView->getCurrentStudyGroup(), $q);
 

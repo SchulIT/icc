@@ -260,6 +260,10 @@ class TimetableController extends AbstractControllerWithMessages {
             }
         }
 
+        if(count($periods) > 0) {
+            return $periods[count($periods) - 1];
+        }
+
         return null;
     }
 

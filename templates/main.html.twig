@@ -18,13 +18,10 @@
     {% endif %}
     {{ knp_menu_render('servicesMenu', {'currentClass': 'active' }) }}
 
-    <ul class="navbar-nav float-lg-right">
-        <li class="nav-item" title="{{ 'webpush.label'|trans }}">
-            <a href="#" class="nav-link" data-toggle="webpush_modal">
-                <i class="far fa-bell"></i>
-            </a>
-        </li>
-    </ul>
+    {% set notificationsMenu = knp_menu_get('notificationsMenu') %}
+    {% if notificationsMenu.children|length > 0 %}
+        {{ knp_menu_render('notificationsMenu', { 'currentClass': 'active'}) }}
+    {% endif %}
 
     {{ knp_menu_render('userMenu', {'currentClass': 'active' }) }}
 {% endblock %}

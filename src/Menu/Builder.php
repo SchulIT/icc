@@ -13,6 +13,8 @@ use App\Security\Voter\ListsVoter;
 use App\Security\Voter\RoomReservationVoter;
 use App\Security\Voter\RoomVoter;
 use App\Security\Voter\WikiVoter;
+use App\Settings\NotificationSettings;
+use App\Utils\EnumArrayUtils;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Knp\Menu\MenuItem;
@@ -35,13 +37,14 @@ class Builder {
     private $userConverter;
     private $translator;
     private $darkModeManager;
+    private $notificationSettings;
 
     private $idpProfileUrl;
 
     public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authorizationChecker,
                                 WikiArticleRepositoryInterface $wikiRepository, MessageRepositoryInterface $messageRepository,
                                 TokenStorageInterface $tokenStorage, DateHelper $dateHelper, UserStringConverter $userConverter,
-                                TranslatorInterface $translator, DarkModeManagerInterface $darkModeManager, string $idpProfileUrl) {
+                                TranslatorInterface $translator, DarkModeManagerInterface $darkModeManager, NotificationSettings $notificationSettings, string $idpProfileUrl) {
         $this->factory = $factory;
         $this->authorizationChecker = $authorizationChecker;
         $this->wikiRepository = $wikiRepository;
@@ -52,6 +55,7 @@ class Builder {
         $this->translator = $translator;
         $this->darkModeManager = $darkModeManager;
         $this->idpProfileUrl = $idpProfileUrl;
+        $this->notificationSettings = $notificationSettings;
     }
 
     private function plansMenu(ItemInterface $menu): ItemInterface {
@@ -447,6 +451,40 @@ class Builder {
                     ->setAttribute('title', $service->description)
                     ->setAttribute('target', '_blank');
             }
+        }
+
+        return $root;
+    }
+
+    public function notificationsMenu(): ItemInterface {
+        $root = $this->factory->createItem('root')
+            ->setChildrenAttributes([
+                'class' => 'navbar-nav float-lg-right'
+            ]);
+
+        $enabledFor = $this->notificationSettings->getPushEnabledUserTypes();
+
+        $token = $this->tokenStorage->getToken();
+
+        if($token === null) {
+            return $root;
+        }
+
+        $user = $token->getUser();
+
+        if(!$user instanceof User) {
+            return $root;
+        }
+
+        if(EnumArrayUtils::inArray($user->getUserType(), $enabledFor)) {
+            $menu = $root->addChild('services', [
+                'label' => 'webpush.label',
+                'uri' => '#'
+            ])
+                ->setAttribute('icon', 'far fa-bell')
+                ->setExtra('pull-right', true)
+                ->setAttribute('title', $this->translator->trans('webpush.label'))
+                ->setAttribute('data-toggle', 'webpush_modal');
         }
 
         return $root;

@@ -29,7 +29,7 @@ Dieser Wert muss eine zufällige Zeichenfolge beinhalten. Diese kann beispielswe
 APP_URL
 #######
 
-Dieser Wert beinhaltet die URL zur ICC-Instanz, bspw. https://icc.schulit.de/
+Dieser Wert beinhaltet die URL zur ICC-Instanz, bspw. https://icc.example.com/
 
 APP_NAME
 ########
@@ -50,7 +50,7 @@ SAML_ENTITY_ID
 ##############
 
 ID des ICCs, welche für SAML-Anfragen (Authentifizierung) genutzt wird. Dieser Wert muss mit dem Wert im Identity Provider übereinstimmen.
-Als Entity ID wird in der Regel die URL der Anwendung (bspw. ``https://icc.schulit.de/`` verwendet).
+Als Entity ID wird in der Regel die URL der Anwendung (bspw. ``https://icc.example.com/`` verwendet).
 
 IDP_PROFILE_URL
 ###############

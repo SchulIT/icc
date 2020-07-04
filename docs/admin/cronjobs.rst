@@ -39,7 +39,7 @@ Cronjob einrichten
 
 Folgende Daten in der Cronjob-Verwaltung des Webspace festlegen
 
-- URL: ``https://icc.schulit.de/cron`` (``icc.schulit.de`` durch die echte Adresse des ICC ersetzen)
+- URL: ``https://icc.example.com/cron`` (``icc.example.com`` durch die echte Adresse des ICC ersetzen)
 - Intervall: alle zwei Minuten
 - Authentifizierung:
     - Art: HTTP-Basic

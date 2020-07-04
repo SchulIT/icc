@@ -7,6 +7,7 @@ Obligatorische Software
 -----------------------
 
 - Webserver (Apache oder nginx)
+    - das ICC muss auf einer Subdomain laufen, also bspw. ``icc.example.com``
 - PHP 7.4
     - aktivierte Plugins: json, ctype, iconv, openssl
 - MySQL 5.7+ oder MariaDB 10.3+

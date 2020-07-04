@@ -63,7 +63,7 @@ Anschließend werden einige Daten abgefragt. Diese können abgesehen vom ``commo
 - ``countryName``, ``stateOrProvinceName``, ``localityName`` geben den Standort der Schule an
 - ``organizationName`` entspricht dem Namen der Schule
 - ``organizationalUnitName`` entspricht der Fachabteilung der Schule, welche das ICC administriert, bspw. Schulname und IT-Suffix
-- ``commonName`` Domainname des ICCs, bspw. ``icc.schulit.de``
+- ``commonName`` Domainname des ICCs, bspw. ``icc.example.com``
 - ``emailAddress`` entspricht der E-Mail-Adresse des Administrators
 
 Anschließend muss noch ein Zertifikat für die OAuth2-Authentifizierung erstellt werden, damit sich Apps mit dem ICC verbinden können:
@@ -167,8 +167,8 @@ Im Identity Provider muss das ICC als neuer Dienst registriert werden.
 - Entity ID: Ist die in der Konfigurationsdatei gewählte Entity ID.
 - Name: ICC*
 - Beschreibung: *
-- Assertion Customer Service URL: ``https://icc.schulit.de/saml/login_check`` (dabei muss ``icc.schulit.de`` durch die korrekte URL zum ICC ersetzt werden)
-- URL: ``https://icc.schulit.de`` (dabei muss ``icc.schulit.de`` durch die korrekte URL zum ICC ersetzt werden)
+- Assertion Customer Service URL: ``https://icc.example.com/saml/login_check`` (dabei muss ``icc.example.com`` durch die korrekte URL zum ICC ersetzt werden)
+- URL: ``https://icc.example.com`` (dabei muss ``icc.example.com`` durch die korrekte URL zum ICC ersetzt werden)
 - Zertifikat: hier muss der Inhalt der Datei ``saml/sp.crt`` hineinkopiert werden
 
 Schritt 4.2: Attribut für Rollen erstellen
@@ -194,7 +194,7 @@ Anschließend unten unter Optionen folgende Optionen konfigurieren:
 Schritt 5: ICC im Webspace einrichten
 -------------------------------------
 
-Das ICC muss auf einer Subdomain (bspw. ``icc.schulit.de``) betrieben werden. Das Betreiben des ICC in einem Unterordner
+Das ICC muss auf einer Subdomain (bspw. ``icc.example.com``) betrieben werden. Das Betreiben des ICC in einem Unterordner
 wird nicht unterstützt.
 
 .. warning:: Der Root-Pfad der Subdomain muss auf das ``public/``-Verzeichnis zeigen. Anderenfalls funktioniert das ICC nicht und es können wichtige Konfigurationsdaten abgerufen werden.

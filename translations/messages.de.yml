@@ -116,6 +116,15 @@ label:
     supervisions: Aufsichten
     toggle_multiple: Mehrfachauswahl aktivieren
     not_available: N/A
+    show:
+        week: Woche anzeigen
+        date: Datum anzeigen
+        time: Zeit anzeigen
+        abesences: Absenzen anzeigen
+        infotexts: Tagestexte anzeigen
+    background_color: Hintergrundfarbe
+    number_of_rows: Anzahl Zeilen
+    font_family: Schriftart
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -895,6 +904,19 @@ admin:
                 confirm: 'Soll der Raum-Tag "%name%" wirklich gelöscht werden?'
                 success: Raum-Tag erfolgreich gelöscht
 
+    displays:
+        label: Public Displays
+        empty: Aktuell sind keine Public Displays im System.
+        add:
+            label: Neues Display
+            success: Display erfolgreich angelegt
+        edit:
+            label: Display bearbeiten
+            success: Display erfolgreich aktualisiert
+        remove:
+            label: Display löschen
+            confirm: 'Soll das Display "%name%" wirklich gelöscht werden?'
+            success: Display erfolgreich gelöscht
 
 versions:
     label: Versionen
@@ -1008,3 +1030,6 @@ cron:
         result: Statuscode
         show:
             label: Ausgabe ansehen
+
+display:
+    last_update: Letzte Aktualisierung

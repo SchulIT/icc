@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block meta %}{% endblock %}
+    <title>{{ config.name }} | {{ display.name }}</title>
+
+    <link rel="stylesheet" href="{{ asset('build/display.css') }}">
+</head>
+
+<body class="d-flex flex-column p-5" {% if display.backgroundColor is not empty %}style="background-color: {{ display.backgroundColor }}"{% endif %}>
+
+    <div class="top d-flex align-items-center">
+        <div class="flex-grow-1">
+            <h1 class="m-0">Guten Morgen!</h1>
+        </div>
+
+        <div>
+            <div>
+            {% if display.showDate %}
+            <span id="date">
+                {{ 'now'|date('date.format'|trans) }}
+            </span>
+            {% endif %}
+
+            {% if display.showTime %}
+                <span id="time">{{ 'now'|date('date.time_format'|trans) }}</span>
+            {% endif %}
+            </div>
+
+            <div class="text-right">
+            {% if display.showWeek and week is not null %}
+                <span id="week">
+                    {{ week.displayName }}
+                </span>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="content d-flex flex-grow-1 my-4 mx-n2" style="font-size: 70% !important;">
+        <div class="flex-even px-2">
+            {% set counter = 0 %}
+            {% for group in groups %}
+                {% if group.teacher is defined %}
+                    <h3>{{ group.teacher.acronym }}</h3>
+                {% elseif group.grade is defined %}
+                    <h3>{{ group.grade.name }}</h3>
+                {% endif %}
+
+            <div class="list-group">
+
+                {% for substitution in group.substitutions %}
+                    <div class="list-group-item p-0">
+                        {% include "_includes/substitution.html.twig" with { substitution: substitution, onlyAcronym: true, onlyContent: true } %}
+                    </div>
+                    {% set counter = counter + 1 %}
+
+                    {% if counter is divisible by(display.maxNumberOfRows) %}
+            </div>
+        </div>
+        <div class="flex-even px-2">
+            {% if not loop.last %}
+                {% if group.teacher is defined %}
+                    <h3>{{ group.teacher.acronym }}</h3>
+                {% elseif group.grade is defined %}
+                    <h3>{{ group.grade.name }}</h3>
+                {% endif %}
+            {% endif %}
+
+            <div class="list-group">
+
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="flex-even px-2">
+            {% if display.showInfotexts %}
+                {% include "_includes/infotexts.html.twig" with { infotexts: infotexts } only %}
+            {% endif %}
+
+            {% if display.showAbsences %}
+                {% include "_includes/absences.html.twig" with {absentTeachers: absent_teachers, absentStudyGroups: absent_studygroups } only %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="bottom d-flex align-items-center">
+        <div class="logo flex-grow-1">
+            {% if config.logo is defined and config.logo is not empty %}
+                <img src="{{ asset(config.logo) }}" class="logo" alt="">
+            {% endif %}
+        </div>
+
+        <div class="info text-right">
+            {{ 'display.last_update'|trans }}<br>
+            {{ 'now'|date('date.time_format'|trans) }}
+        </div>
+    </div>
+
+<script src="{{ asset('build/display.js') }}"></script>
+</body>
+</html>

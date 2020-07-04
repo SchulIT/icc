@@ -28,6 +28,10 @@ fervo_enum:
             doctrine_type: ics_access_token_type
             form_type: ics_access_token_type
 
+        App\Entity\DisplayTargetUserType:
+            doctrine_type: display_target_user_type
+            form_type: display_target_user_type
+
         App\Dashboard\AbsenceReason:
             doctrine_type: absence_reason
             form_type: absence_reason

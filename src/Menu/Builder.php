@@ -288,6 +288,11 @@ class Builder {
             ])
                 ->setAttribute('icon', 'fas fa-sort-alpha-down');
 
+            $menu->addChild('admin.displays.label', [
+                'route' => 'admin_displays'
+            ])
+                ->setAttribute('icon', 'fas fa-tv');
+
             $menu->addChild('api.doc', [
                 'uri' => '/docs/api/import'
             ]);

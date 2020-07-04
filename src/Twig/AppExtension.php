@@ -74,14 +74,19 @@ class AppExtension extends AbstractExtension {
     /**
      * @param Teacher[]|Collection<Teacher> $teachers
      * @param bool $includeAcronyms
+     * @param bool $onlyAcronyms
      * @return string
      */
-    public function teachers(iterable $teachers, bool $includeAcronyms = false) {
+    public function teachers(iterable $teachers, bool $includeAcronyms = false, bool $onlyAcronyms = false) {
         if($teachers instanceof Collection) {
             $teachers = $teachers->toArray();
         }
 
-        return implode(', ', array_map(function(Teacher $teacher) use ($includeAcronyms) {
+        return implode(', ', array_map(function(Teacher $teacher) use ($includeAcronyms, $onlyAcronyms) {
+            if($onlyAcronyms === true) {
+                return $teacher->getAcronym();
+            }
+
             return $this->teacherConverter->convert($teacher, $includeAcronyms);
         }, $teachers));
     }

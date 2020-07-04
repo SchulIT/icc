@@ -1,0 +1,62 @@
+$enable-shadows: true;
+$enable-gradients: true;
+
+// Import Bootstrap
+@import '../../node_modules/bootstrap/scss/bootstrap';
+
+// Import FontAwesome
+@import '../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome';
+@import '../../node_modules/@fortawesome/fontawesome-free/scss/solid';
+@import '../../node_modules/@fortawesome/fontawesome-free/scss/regular';
+@import '../../node_modules/@fortawesome/fontawesome-free/scss/brands';
+
+// Import SchoolIT design
+@import '../../vendor/schoolit/common-bundle/Resources/assets/css/variables.scss';
+@import '../../vendor/schoolit/common-bundle/Resources/assets/css/layout.scss';
+@import '../../vendor/schoolit/common-bundle/Resources/assets/css/additions.scss';
+
+html,
+body {
+  font-size: 110% !important;
+}
+
+.color-rect {
+  vertical-align: baseline;
+  border-radius: .25em;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  margin-bottom: -3px;
+}
+
+.substitution-lesson {
+  /*@include font-size(1.75rem);*/
+  @extend .p-3;
+  font-weight: bold;
+
+  width: 90px;
+  hyphens: auto;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+
+  &.text-small {
+    font-size: 0.9rem;
+  }
+
+  .exam-date {
+    @include font-size(0.8rem);
+  }
+}
+
+
+.bottom {
+  .logo {
+    img {
+      max-height: 80px;
+    }
+  }
+}
+
+.flex-even {
+  flex: 1;
+}

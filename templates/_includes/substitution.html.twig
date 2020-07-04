@@ -1,10 +1,14 @@
 {% macro replacement(original, replacement) %}
     {% if original is not empty and replacement is not empty %}<s>{{ original }}</s> ⟶ {% elseif original is not empty %}{{ original }}{% endif %}{% if replacement is not empty %}{{ replacement }}{% endif %}
 {% endmacro %}
+{% set onlyAcronym = onlyAcronym|default(false) %}
+{% set onlyContent = onlyContent|default(false) %}
 
 {% set duration = substitution.lessonEnd - substitution.lessonStart %}
+{% if not onlyContent %}
 <div class="card">
     <div class="card-body p-0">
+{% endif %}
         <div class="d-flex">
             <div class="align-self-center text-center p-3 substitution-lesson {% if substitution.startsBefore %}text-small{% endif%} text-black-50">
                 {% if substitution.startsBefore %}
@@ -33,7 +37,7 @@
                     <span class="mx-1"></span>
                 {% endif %}
 
-                <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
+                <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers(true, onlyAcronym), substitution.replacementTeachers|teachers(true, onlyAcronym)) }}
                 <span class="mx-1"></span>
 
                 {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
@@ -41,6 +45,7 @@
                 {% endif %}
             </div>
         </div>
+{% if not onlyContent %}
     </div>
 
     {% if substitution.remark %}
@@ -49,3 +54,4 @@
         </div>
     {% endif %}
 </div>
+{% endif %}

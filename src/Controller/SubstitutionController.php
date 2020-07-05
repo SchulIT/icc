@@ -21,7 +21,7 @@ use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Parameter\GroupByParameter;
 use App\View\Parameter\ViewParameter;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 

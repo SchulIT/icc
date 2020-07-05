@@ -1,6 +1,4 @@
-{% extends "main.html.twig" %}
-
-{% block title %}{{ 'cron.results.show.label'|trans }}{% endblock %}
+{% extends "@!Common/cron/result.html.twig" %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -11,18 +9,4 @@
         <li class="breadcrumb-item">{{ result.runAt|format_datetime }}</li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
-{% endblock %}
-
-{% block content %}
-    <div class="card">
-        <div class="card-header">
-            {{ result.cronJob.command }} @ {{ result.runAt|format_datetime }}
-        </div>
-
-        <div class="card-body">
-            <pre>
-                {{ result.output }}
-            </pre>
-        </div>
-    </div>
 {% endblock %}

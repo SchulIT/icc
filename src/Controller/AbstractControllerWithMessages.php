@@ -6,8 +6,8 @@ use App\Entity\MessageScope;
 use App\Entity\User;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\MessageRepositoryInterface;
-use SchoolIT\CommonBundle\Helper\DateHelper;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractControllerWithMessages extends AbstractController {

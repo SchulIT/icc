@@ -60,7 +60,7 @@ services:
     LightSaml\SpBundle\Security\User\UsernameMapperInterface:
         alias: lightsaml_sp.username_mapper.simple
 
-    SchoolIT\CommonBundle\Command\CreateCertificateCommand:
+    SchulIT\CommonBundle\Command\CreateCertificateCommand:
         arguments:
             $types:
                 saml:
@@ -70,7 +70,7 @@ services:
                     keyFile: '%kernel.project_dir%/oauth/oauth.key'
                     certFile: '%kernel.project_dir%/oauth/oauth.pub'
 
-    SchoolIT\CommonBundle\EventSubscriber\SamlExceptionSubscriber:
+    SchulIT\CommonBundle\EventSubscriber\SamlExceptionSubscriber:
         arguments:
             $retryRoute: 'lightsaml_sp.login'
             $loggedInRoute: 'dashboard'
@@ -128,7 +128,7 @@ services:
             - { name: knp_menu.menu_builder, method: systemMenu, alias: systemMenu }
             - { name: knp_menu.menu_builder, method: notificationsMenu, alias: notificationsMenu }
 
-    SchoolIT\CommonBundle\Menu\Voter:
+    SchulIT\CommonBundle\Menu\Voter:
         tags:
             - { name: knp_menu.voter }
 
@@ -196,7 +196,7 @@ services:
         alias: 'doctrine'
 
     # DARK MODE:
-    SchoolIT\CommonBundle\DarkMode\DarkModeManagerInterface:
+    SchulIT\CommonBundle\DarkMode\DarkModeManagerInterface:
         class: App\DarkMode\DarkModeManager
 
     # NOTIFICATIONS
@@ -223,9 +223,11 @@ services:
             $sender: '%env(MAILER_FROM)%'
 
     # COMMANDS
-    App\Command\SendMailsTask:
+    SchulIT\CommonBundle\Command\SendMailsCommand:
         arguments:
             $messageLimit: '%env(int:MAILER_LIMIT)%'
+        tags:
+            - { name: shapecode_cron.cron_job, expression: '*\/2 * * * *' }
 
     # WEBPUSH
     App\Notification\WebPush\UserSubscriptionManager:

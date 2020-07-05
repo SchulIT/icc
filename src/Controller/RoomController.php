@@ -13,8 +13,8 @@ use App\Rooms\RoomQueryBuilder;
 use App\Security\Voter\RoomVoter;
 use App\Sorting\RoomNameStrategy;
 use App\Sorting\Sorter;
-use SchoolIT\CommonBundle\Helper\DateHelper;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 

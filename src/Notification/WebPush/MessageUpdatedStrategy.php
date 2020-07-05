@@ -6,7 +6,7 @@ use App\Converter\UserStringConverter;
 use App\Entity\UserWebPushSubscription;
 use App\Event\MessageUpdatedEvent;
 use App\Repository\UserWebPushSubscriptionRepositoryInterface;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MessageUpdatedStrategy implements PushNotificationStrategyInterface {

@@ -7,7 +7,7 @@ use App\Entity\UserType;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Security\Voter\TimetablePeriodVoter;
 use DateTime;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class TimetablePeriodHelper {

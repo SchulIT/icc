@@ -9,7 +9,7 @@ use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
 use App\Settings\TimetableSettings;
 use DateTime;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 
 /**
  * This helper creates a series of events based on the timetable.

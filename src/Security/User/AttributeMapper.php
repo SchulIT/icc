@@ -4,7 +4,7 @@ namespace App\Security\User;
 
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpResponseToken;
 use LightSaml\SpBundle\Security\User\AttributeMapperInterface;
-use SchoolIT\CommonBundle\Saml\ClaimTypes;
+use SchulIT\CommonBundle\Saml\ClaimTypes;
 
 class AttributeMapper implements AttributeMapperInterface {
 

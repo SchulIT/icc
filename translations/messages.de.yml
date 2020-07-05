@@ -994,17 +994,3 @@ webpush:
 system:
     label: System
 
-cron:
-    label: Cronjobs
-    command: Befehl
-    overview:
-        last_run: Letzte Ausführung
-        next_run: Nächste Ausführung
-        last_result: Letzter Statuscode
-    show:
-        label: Cronjob-Details
-    results:
-        label: Ergebnisse
-        result: Statuscode
-        show:
-            label: Ausgabe ansehen

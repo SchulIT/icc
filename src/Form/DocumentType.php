@@ -9,7 +9,7 @@ use App\Entity\UserType;
 use App\Sorting\DocumentCategoryNameStrategy;
 use App\Sorting\UserUsernameStrategy;
 use Doctrine\ORM\EntityRepository;
-use SchoolIT\CommonBundle\Form\FieldsetType;
+use SchulIT\CommonBundle\Form\FieldsetType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

@@ -1,10 +1,9 @@
-{% extends "@Common/logs/clear.html.twig" %}
+{% extends "@!Common/logs/index.html.twig" %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('system') }}">{{ 'system.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('admin_logs') }}">{{ 'logs.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9385775d5bb15ed26c81ed7ded28183f",
+    "content-hash": "ee18a38411913b7caf69a4092491e668",
     "packages": [
         {
             "name": "acelaya/doctrine-enum-type",
@@ -5145,17 +5145,17 @@
             "time": "2020-04-22T17:19:51+00:00"
         },
         {
-            "name": "schoolit/common-bundle",
+            "name": "schulit/common-bundle",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SchulIT/common-bundle.git",
-                "reference": "03a91174a98879f89fdd700633bfe9404460a968"
+                "reference": "350e204c4c601a11790ae3d69913b4bbe0b0334a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/03a91174a98879f89fdd700633bfe9404460a968",
-                "reference": "03a91174a98879f89fdd700633bfe9404460a968",
+                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/350e204c4c601a11790ae3d69913b4bbe0b0334a",
+                "reference": "350e204c4c601a11790ae3d69913b4bbe0b0334a",
                 "shasum": ""
             },
             "require": {
@@ -5170,7 +5170,6 @@
                 "symfony/form": "^4.0|^5.0",
                 "symfony/framework-bundle": "^4.0|^5.0",
                 "symfony/security": "^4.2|^5.0",
-                "symfony/security-core": "^4.2|^5.0",
                 "symfony/translation": "^4.0|^5.0",
                 "symfony/validator": "^4.2|^5.0",
                 "symfony/yaml": "^4.0|^5.0",
@@ -5180,12 +5179,13 @@
                 "knplabs/knp-menu-bundle": "",
                 "knplabs/knp-time-bundle": "",
                 "lightsaml/lightsaml": "",
+                "shapecode/cron-bundle": "",
                 "swiftmailer/swiftmailer": ""
             },
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
-                    "SchoolIT\\CommonBundle\\": ""
+                    "SchulIT\\CommonBundle\\": ""
                 }
             },
             "license": [
@@ -5195,7 +5195,7 @@
                 "source": "https://github.com/SchulIT/common-bundle/tree/master",
                 "issues": "https://github.com/SchulIT/common-bundle/issues"
             },
-            "time": "2020-06-29T15:19:05+00:00"
+            "time": "2020-07-05T14:59:01+00:00"
         },
         {
             "name": "sensio/framework-extra-bundle",
@@ -12687,7 +12687,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "fervo/enum-bundle": 20,
-        "schoolit/common-bundle": 20
+        "schulit/common-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

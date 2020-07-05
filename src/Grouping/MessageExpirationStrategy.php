@@ -3,7 +3,7 @@
 namespace App\Grouping;
 
 use App\Entity\Message;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 
 class MessageExpirationStrategy implements GroupingStrategyInterface {
 

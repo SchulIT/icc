@@ -34,8 +34,8 @@ use App\View\Filter\RoomFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\SubjectsFilter;
 use App\View\Filter\TeachersFilter;
-use SchoolIT\CommonBundle\Helper\DateHelper;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 

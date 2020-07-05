@@ -13,7 +13,7 @@ use App\Utils\ColorUtils;
 use App\View\Filter\FilterViewInterface;
 use DateInterval;
 use DateTime;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;

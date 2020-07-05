@@ -17,7 +17,7 @@ use App\Sorting\DocumentNameStrategy;
 use App\Sorting\Sorter;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\UserTypeFilter;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;

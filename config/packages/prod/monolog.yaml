@@ -9,7 +9,7 @@ monolog:
                 - ^/
         nested:
             type: service
-            id: SchoolIT\CommonBundle\Monolog\DatabaseHandler
+            id: SchulIT\CommonBundle\Monolog\DatabaseHandler
             level: debug
         console:
             type:   console

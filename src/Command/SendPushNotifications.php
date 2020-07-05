@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Notification\NotificationService;
 use App\Repository\MessageRepositoryInterface;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Shapecode\Bundle\CronBundle\Annotation\CronJob;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

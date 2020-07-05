@@ -19,10 +19,11 @@ security:
 
     access_control:
         - { path: ^/admin/ea/, roles: ROLE_SUPER_ADMIN }
-        - { path: ^/admin/(messages|exams), roles: ROLE_USER }
+        - { path: ^/admin/(messages|exams|documents), roles: ROLE_USER }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api/import, roles: ROLE_IMPORT }
         - { path: ^/authorize, roles: IS_AUTHENTICATED_REMEMBERED }
+        - { path: ^/cron, roles: ROLE_CRON }
 
     role_hierarchy:
         # Administrator
@@ -120,7 +121,7 @@ security:
                 login_path: /saml/login
                 check_path: /saml/login_check
                 attribute_mapper: App\Security\User\AttributeMapper
-                token_factory: SchoolIT\CommonBundle\Security\Factory\SamlSpTokenFactory
+                token_factory: SchulIT\CommonBundle\Security\Factory\SamlSpTokenFactory
                 failure_path: /auth/error
             logout:
                 path: /logout

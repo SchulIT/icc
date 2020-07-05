@@ -8,6 +8,9 @@
     "psr/event-dispatcher": {
         "version": "1.0.0"
     },
+    "schulit/common-bundle": {
+        "version": "dev-master"
+    },
     "shapecode/cron-bundle": {
         "version": "4.0.2"
     },

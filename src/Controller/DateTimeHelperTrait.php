@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 
 trait DateTimeHelperTrait {
     private function getListOfNextDays(DateHelper $dateHelper, int $numberOfDays, bool $skipWeekends) {

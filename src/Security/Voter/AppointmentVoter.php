@@ -10,7 +10,7 @@ use App\Entity\User;
 use App\Entity\UserType;
 use App\Settings\AppointmentsSettings;
 use App\Utils\EnumArrayUtils;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;

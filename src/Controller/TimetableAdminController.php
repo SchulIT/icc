@@ -6,7 +6,7 @@ use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Routing\Annotation\Route;
 

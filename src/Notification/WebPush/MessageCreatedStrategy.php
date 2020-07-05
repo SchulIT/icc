@@ -7,7 +7,7 @@ use App\Entity\UserWebPushSubscription;
 use App\Event\MessageCreatedEvent;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserWebPushSubscriptionRepositoryInterface;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MessageCreatedStrategy implements PushNotificationStrategyInterface, PostPushSendActionInterface {

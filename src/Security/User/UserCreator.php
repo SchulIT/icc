@@ -8,7 +8,7 @@ use LightSaml\Model\Protocol\Response;
 use LightSaml\SpBundle\Security\User\UserCreatorInterface;
 use LightSaml\SpBundle\Security\User\UsernameMapperInterface;
 use Ramsey\Uuid\Uuid;
-use SchoolIT\CommonBundle\Saml\ClaimTypes;
+use SchulIT\CommonBundle\Saml\ClaimTypes;
 
 class UserCreator implements UserCreatorInterface {
 

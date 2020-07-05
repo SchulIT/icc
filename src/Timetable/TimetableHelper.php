@@ -11,7 +11,7 @@ use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetableWeekStrategy;
 use DateTime;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 
 /**
  * Helper which transforms a list of TimetableLessons

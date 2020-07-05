@@ -13,7 +13,7 @@ class TuitionTimetableLesson extends TimetableLesson {
      * @ORM\ManyToOne(targetEntity="Tuition")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
-     * @var Tuition
+     * @var Tuition|null
      */
     private $tuition;
 
@@ -25,17 +25,17 @@ class TuitionTimetableLesson extends TimetableLesson {
     private $room;
 
     /**
-     * @return Tuition
+     * @return Tuition|null
      */
-    public function getTuition(): Tuition {
+    public function getTuition(): ?Tuition {
         return $this->tuition;
     }
 
     /**
-     * @param Tuition $tuition
+     * @param Tuition|null $tuition
      * @return TimetableLesson
      */
-    public function setTuition(Tuition $tuition): TimetableLesson {
+    public function setTuition(?Tuition $tuition): TimetableLesson {
         $this->tuition = $tuition;
         return $this;
     }

@@ -40,6 +40,7 @@ jobs:
       script:
         - pip install sphinx
         - pip install sphinx_rtd_theme
+        - pip install -r docs/requirements.txt
         - cd docs
         - make html
     - stage: build

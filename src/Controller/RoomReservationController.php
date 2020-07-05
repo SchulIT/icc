@@ -95,7 +95,7 @@ class RoomReservationController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
 
-        $roomsFilterView = $roomFilter->handle($request->query->get('room', null));
+        $roomsFilterView = $roomFilter->handle($request->query->get('room', null), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, !$request->query->has('teacher'));
         $room = $roomsFilterView->getCurrentRoom();
         $all = $request->query->get('all', null) === '✓';

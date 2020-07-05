@@ -39,43 +39,54 @@
 
 {% block content %}
 
-    {% if tree|length == 0 %}
-        <div class="bs-callout bs-callout-info">
-            <h4>{{ 'info.label'|trans }}</h4>
+<div class="container-fluid px-0">
+    <div class="row">
+        <div class="col-md-9">
+            {% if tree|length == 0 %}
+                <div class="bs-callout bs-callout-info">
+                    <h4>{{ 'info.label'|trans }}</h4>
 
-            <p>{{ 'admin.wiki.overview.empty'|trans }}</p>
+                    <p>{{ 'admin.wiki.overview.empty'|trans }}</p>
+                </div>
+            {% else %}
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered table-striped card-table">
+                            <colgroup>
+                                <col>
+                                <col class="column-sm">
+                                <col class="column-320">
+                                <col class="column-lg">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.title'|trans }}</th>
+                                <th>{{ 'label.status'|trans }}</th>
+                                <th>{{ 'label.visibility'|trans }}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for article in tree %}
+                                {{ _self.wiki_article(article, 0) }}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
         </div>
-    {% else %}
-        <div class="card">
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered table-striped card-table">
-                    <colgroup>
-                        <col>
-                        <col class="column-sm">
-                        <col class="column-320">
-                        <col class="column-lg">
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th>{{ 'label.title'|trans }}</th>
-                        <th>{{ 'label.status'|trans }}</th>
-                        <th>{{ 'label.visibility'|trans }}</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for article in tree %}
-                        {{ _self.wiki_article(article, 0) }}
-                    {% endfor %}
-                    </tbody>
-                </table>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="list-group list-group-flush">
+                    <a href="{{ path('add_wiki_article') }}" class="list-group-item list-group-item-action">
+                        <i class="fa fa-plus"></i> {{ 'admin.wiki.add.label'|trans }}
+                    </a>
+                </div>
             </div>
         </div>
-    {% endif %}
-
-    <div class="buttons">
-        <a href="{{ path('add_wiki_article') }}" class="btn btn-primary btn-sm">
-            <i class="fa fa-plus"></i> {{ 'admin.wiki.add.label'|trans }}
-        </a>
     </div>
+</div>
+
 {% endblock %}

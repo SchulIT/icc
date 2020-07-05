@@ -249,11 +249,11 @@
                             {% include "_filter/grade.html.twig" with { params: params } %}
                         {% endif %}
 
-                        {% if subjectFilter.subjects|length > 0 %}
+                        {% if roomFilter.rooms|length > 0 %}
                             {% include "_filter/room.html.twig" with { params: params } %}
                         {% endif %}
 
-                        {% if roomFilter.rooms|length > 0 %}
+                        {% if subjectFilter.subjects|length > 0 %}
                             {% include "_filter/subjects.html.twig" with { params: params } %}
                         {% endif %}
                     </div>

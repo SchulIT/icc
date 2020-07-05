@@ -10,5 +10,8 @@
     },
     "shapecode/cron-bundle": {
         "version": "4.0.2"
+    },
+    "symfony/deprecation-contracts": {
+        "version": "v2.1.2"
     }
 }

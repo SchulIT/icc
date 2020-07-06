@@ -10,7 +10,7 @@ security:
         database:
             entity:
                 class: App:User
-                property: username
+                property: idpId
         cron:
             id: App\Security\CronUserProvider
 

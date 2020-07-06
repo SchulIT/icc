@@ -11,7 +11,7 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Security\User\UserMapper;
 use LightSaml\ClaimTypes;
 use PHPUnit\Framework\TestCase;
-use SchoolIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
+use SchulIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
 
 class UserMapperTest extends TestCase {
 

@@ -62,40 +62,41 @@ class Builder {
         $plans = $menu->addChild('plans.label')
             ->setExtra('menu', 'plans')
             ->setExtra('menu-container', '#submenu')
-            ->setAttribute('icon', 'fa fa-school');
+            ->setExtra('icon', 'fa fa-school');
 
         $plans->addChild('plans.timetable.label', [
             'route' => 'timetable'
         ])
-            ->setAttribute('icon', 'far fa-clock');
+            ->setExtra('icon', 'fa fa-clock');
+
 
         $plans->addChild('plans.substitutions.label', [
             'route' => 'substitutions'
         ])
-            ->setAttribute('icon', 'fas fa-random');
+            ->setExtra('icon', 'fas fa-random');
 
         $plans->addChild('plans.exams.label', [
             'route' => 'exams'
         ])
-            ->setAttribute('icon', 'fas fa-edit');
+            ->setExtra('icon', 'fas fa-edit');
 
         $plans->addChild('plans.appointments.label', [
             'route' => 'appointments'
         ])
-            ->setAttribute('icon', 'far fa-calendar');
+            ->setExtra('icon', 'far fa-calendar');
 
         if($this->authorizationChecker->isGranted(RoomVoter::View)) {
             $plans->addChild('plans.rooms.label', [
                 'route' => 'rooms'
             ])
-                ->setAttribute('icon', 'fas fa-door-open');
+                ->setExtra('icon', 'fas fa-door-open');
         }
 
         if($this->authorizationChecker->isGranted(RoomReservationVoter::View)) {
             $plans->addChild('plans.rooms.reservations.label', [
                 'route' => 'room_reservations'
             ])
-                ->setAttribute('icon', 'fas fa-door-closed');
+                ->setExtra('icon', 'fas fa-door-closed');
         }
 
         return $plans;
@@ -105,34 +106,35 @@ class Builder {
         $lists = $menu->addChild('lists.label')
             ->setExtra('menu', 'lists')
             ->setExtra('menu-container', '#submenu')
-            ->setAttribute('icon', 'fas fa-list');
+            ->setExtra('icon', 'fas fa-list');
 
         if($this->authorizationChecker->isGranted(ListsVoter::Tuitions)) {
             $lists->addChild('lists.tuitions.label', [
                 'route' => 'list_tuitions'
             ])
-                ->setAttribute('icon', 'fas fa-chalkboard-teacher');
+                ->setExtra('icon', 'fas fa-chalkboard-teacher');
         }
+
 
         if($this->authorizationChecker->isGranted(ListsVoter::StudyGroups)) {
             $lists->addChild('lists.study_groups.label', [
                 'route' => 'list_studygroups'
             ])
-                ->setAttribute('icon', 'fas fa-users');
+                ->setExtra('icon', 'fas fa-users');
         }
 
         if($this->authorizationChecker->isGranted(ListsVoter::Teachers)) {
             $lists->addChild('lists.teachers.label', [
                 'route' => 'list_teachers'
             ])
-                ->setAttribute('icon', 'fas fa-sort-alpha-down');
+                ->setExtra('icon', 'fas fa-sort-alpha-down');
         }
 
         if($this->authorizationChecker->isGranted(ListsVoter::Privacy)) {
             $lists->addChild('lists.privacy.label', [
                 'route' => 'list_privacy'
             ])
-                ->setAttribute('icon', 'fas fa-user-shield');
+                ->setExtra('icon', 'fas fa-user-shield');
         }
 
         return $lists;
@@ -141,8 +143,9 @@ class Builder {
     private function wikiMenu(ItemInterface $menu): ItemInterface {
         $wiki = $menu->addChild('wiki.label', [
             'route' => 'wiki'
-        ])->setExtra('menu', 'wiki')
-            ->setAttribute('icon', 'fab fa-wikipedia-w')
+        ])
+            ->setExtra('menu', 'wiki')
+            ->setExtra('icon', 'fab fa-wikipedia-w')
             ->setExtra('menu-container', '#submenu');
 
         foreach($this->wikiRepository->findAll() as $article) {
@@ -154,7 +157,7 @@ class Builder {
                         'uuid' => (string)$article->getUuid(),
                     ]
                 ])
-                    ->setAttribute('icon', 'far fa-file');
+                    ->setExtra('icon', 'far fa-file');
             }
         }
 
@@ -178,7 +181,7 @@ class Builder {
         $userMenu = $menu->addChild('user', [
                 'label' => $displayName
             ])
-            ->setAttribute('icon', 'fa fa-user')
+            ->setExtra('icon', 'fa fa-user')
             ->setExtra('menu', 'user')
             ->setExtra('menu-container', '#submenu')
             ->setExtra('pull-right', true);
@@ -186,13 +189,13 @@ class Builder {
         $userMenu->addChild('profile.overview.label', [
             'route' => 'profile'
         ])
-            ->setAttribute('icon', 'far fa-user');
+            ->setExtra('icon', 'far fa-user');
 
         $userMenu->addChild('profile.label', [
             'uri' => $this->idpProfileUrl
         ])
-            ->setAttribute('target', '_blank')
-            ->setAttribute('icon', 'far fa-address-card');
+            ->setLinkAttribute('target', '_blank')
+            ->setExtra('icon', 'far fa-address-card');
 
         $label = 'dark_mode.enable';
         $icon = 'far fa-moon';
@@ -205,13 +208,13 @@ class Builder {
         $userMenu->addChild($label, [
             'route' => 'toggle_darkmode'
         ])
-            ->setAttribute('icon', $icon);
+            ->setExtra('icon', $icon);
 
         $menu->addChild('label.logout', [
             'route' => 'logout',
             'label' => ''
         ])
-            ->setAttribute('icon', 'fas fa-sign-out-alt')
+            ->setExtra('icon', 'fas fa-sign-out-alt')
             ->setAttribute('title', $this->translator->trans('auth.logout'));
 
         return $menu;
@@ -226,7 +229,7 @@ class Builder {
         $menu = $root->addChild('admin', [
             'label' => ''
         ])
-            ->setAttribute('icon', 'fa fa-cogs')
+            ->setExtra('icon', 'fa fa-cogs')
             ->setAttribute('title', $this->translator->trans('admin.label'))
             ->setExtra('menu', 'admin')
             ->setExtra('menu-container', '#submenu')
@@ -236,57 +239,57 @@ class Builder {
             $menu->addChild('admin.documents.label', [
                 'route' => 'admin_documents'
             ])
-                ->setAttribute('icon', 'far fa-file-alt');
+                ->setExtra('icon', 'far fa-file-alt');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_MESSAGE_CREATOR')) {
             $menu->addChild('admin.messages.label', [
                 'route' => 'admin_messages'
             ])
-                ->setAttribute('icon', 'fas fa-envelope-open-text');
+                ->setExtra('icon', 'fas fa-envelope-open-text');
         }
 
         if($this->authorizationChecker->isGranted(ExamVoter::Manage)) {
             $menu->addChild('admin.exams.label', [
                 'route' => 'admin_exams'
             ])
-                ->setAttribute('icon', 'fas fa-pen');
+                ->setExtra('icon', 'fas fa-pen');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_APPOINTMENTS_ADMIN')) {
             $menu->addChild('admin.appointments.label', [
                 'route' => 'admin_appointments'
             ])
-                ->setAttribute('icon', 'far fa-calendar');
+                ->setExtra('icon', 'far fa-calendar');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_WIKI_ADMIN')) {
             $menu->addChild('admin.wiki.label', [
                 'route' => 'admin_wiki'
             ])
-                ->setAttribute('icon', 'fab fa-wikipedia-w');
+                ->setExtra('icon', 'fab fa-wikipedia-w');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $menu->addChild('admin.rooms.label', [
                 'route' => 'admin_rooms'
             ])
-                ->setAttribute('icon', 'fas fa-door-open');
+                ->setExtra('icon', 'fas fa-door-open');
 
             $menu->addChild('admin.timetable.label', [
                 'route' => 'admin_timetable'
             ])
-                ->setAttribute('icon', 'far fa-clock');
+                ->setExtra('icon', 'far fa-clock');
 
             $menu->addChild('admin.subjects.label', [
                 'route' => 'admin_subjects'
             ])
-                ->setAttribute('icon', 'fas fa-graduation-cap');
+                ->setExtra('icon', 'fas fa-graduation-cap');
 
             $menu->addChild('admin.teachers.label', [
                 'route' => 'admin_teachers'
             ])
-                ->setAttribute('icon', 'fas fa-sort-alpha-down');
+                ->setExtra('icon', 'fas fa-sort-alpha-down');
 
             $menu->addChild('api.doc', [
                 'uri' => '/docs/api/import'
@@ -305,7 +308,7 @@ class Builder {
         $menu = $root->addChild('system', [
             'label' => ''
         ])
-            ->setAttribute('icon', 'fa fa-tools')
+            ->setExtra('icon', 'fa fa-tools')
             ->setExtra('menu', 'system')
             ->setExtra('menu-container', '#submenu')
             ->setExtra('pull-right', true)
@@ -315,23 +318,23 @@ class Builder {
             $menu->addChild('cron.label', [
                 'route' => 'admin_cronjobs'
             ])
-                ->setAttribute('icon', 'fas fa-history');
+                ->setExtra('icon', 'fas fa-history');
 
             $menu->addChild('logs.label', [
                 'route' => 'admin_logs'
             ])
-                ->setAttribute('icon', 'fas fa-info-circle');
+                ->setExtra('icon', 'fas fa-info-circle');
 
             $menu->addChild('mails.label', [
                 'route' => 'admin_mails'
             ])
-                ->setAttribute('icon', 'far fa-envelope');
+                ->setExtra('icon', 'far fa-envelope');
 
             $menu->addChild('admin.ea.label', [
                 'uri' => '/admin/ea'
             ])
-                ->setAttribute('target', '_blank')
-                ->setAttribute('icon', 'fas fa-tools');
+                ->setLinkAttribute('target', '_blank')
+                ->setExtra('icon', 'fas fa-tools');
         }
 
         return $root;
@@ -346,7 +349,7 @@ class Builder {
         $menu = $root->addChild('settings', [
             'label' => ''
         ])
-            ->setAttribute('icon', 'fa fa-wrench')
+            ->setExtra('icon', 'fa fa-wrench')
             ->setExtra('menu', 'settings')
             ->setExtra('menu-container', '#submenu')
             ->setExtra('pull-right', true)
@@ -388,7 +391,7 @@ class Builder {
         $menu->addChild('dashboard.label', [
             'route' => 'dashboard'
         ])
-            ->setAttribute('icon', 'fa fa-home');
+            ->setExtra('icon', 'fa fa-home');
 
         $messageCount = 0;
 
@@ -411,8 +414,8 @@ class Builder {
         $menu->addChild('messages.overview.label', [
             'route' => 'messages'
         ])
-            ->setAttribute('count', $messageCount)
-            ->setAttribute('icon', 'fas fa-envelope-open-text');
+            ->setExtra('count', $messageCount)
+            ->setExtra('icon', 'fas fa-envelope-open-text');
 
         $this->plansMenu($menu);
         $this->listsMenu($menu);
@@ -420,7 +423,7 @@ class Builder {
         $menu->addChild('documents.label', [
             'route' => 'documents'
         ])
-            ->setAttribute('icon', 'far fa-file-alt');
+            ->setExtra('icon', 'far fa-file-alt');
 
         $this->wikiMenu($menu);
 
@@ -439,7 +442,7 @@ class Builder {
             $menu = $root->addChild('services', [
                 'label' => ''
             ])
-                ->setAttribute('icon', 'fa fa-th')
+                ->setExtra('icon', 'fa fa-th')
                 ->setExtra('menu', 'services')
                 ->setExtra('pull-right', true)
                 ->setAttribute('title', $this->translator->trans('services.label'));
@@ -449,7 +452,7 @@ class Builder {
                     'uri' => $service->url
                 ])
                     ->setAttribute('title', $service->description)
-                    ->setAttribute('target', '_blank');
+                    ->setLinkAttribute('target', '_blank');
             }
         }
 
@@ -481,7 +484,7 @@ class Builder {
                 'label' => 'webpush.label',
                 'uri' => '#'
             ])
-                ->setAttribute('icon', 'far fa-bell')
+                ->setExtra('icon', 'far fa-bell')
                 ->setExtra('pull-right', true)
                 ->setAttribute('title', $this->translator->trans('webpush.label'))
                 ->setAttribute('data-toggle', 'webpush_modal');

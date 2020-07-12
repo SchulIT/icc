@@ -75,7 +75,7 @@
                                 <tbody>
                                 {% for room in rooms %}
                                     <tr>
-                                        <td>
+                                        <td class="align-middle">
                                             {{ room.name }}
 
                                             <span class="text-muted">{{ room.description }}</span>
@@ -87,7 +87,7 @@
 
                                                 <td data-toggle="xhr-popover" data-popover-title="{{ 'plans.rooms.reservations.info'|trans }}" data-popover-url="{{ path('reservation_xhr', { room: room.uuid.toString, date: date|date('Y-m-d'), lessonNumber: lesson }) }}" class="{% if isAvailable %}table-success{% elseif availability is not null and availability.reservation is not null %}bg-warning{% else %}bg-danger{% endif %} text-center align-middle p-0">
                                                     {% if isAvailable %}
-                                                        <a href="{{ path('add_room_reservation', { room: room.uuid.toString, date: date|date('Y-m-d'), lessonStart: lesson }) }}" class="w-100 h-100 p-3">
+                                                        <a href="{{ path('add_room_reservation', { room: room.uuid.toString, date: date|date('Y-m-d'), lessonStart: lesson }) }}" class="w-100 h-100 py-3 d-block">
                                                             <i class="fa fa-check"></i>
                                                         </a>
                                                     {% elseif availability is not null and availability.reservation is not null and availability.substitution is not null %}

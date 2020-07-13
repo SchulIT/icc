@@ -55,6 +55,7 @@ Encore
     .enableSassLoader(function(options) {
         options.importer = GlobImporter();
     })
+    .enablePostCssLoader()
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()

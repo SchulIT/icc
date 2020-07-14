@@ -67,6 +67,7 @@ class ExamType extends AbstractType {
                                 'size' => 10,
                                 'disabled' => $this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR') !== true
                             ],
+                            'label' => 'label.tuitions',
                             'multiple' => true,
                             'class' => Tuition::class,
                             'choice_label' => function(Tuition $tuition) {

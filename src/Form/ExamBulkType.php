@@ -31,6 +31,7 @@ class ExamBulkType extends AbstractType {
                 ]
             ])
             ->add('tuitions', SortableEntityType::class, [
+                'label' => 'label.tuitions',
                 'attr' => [
                     'size' => 10
                 ],

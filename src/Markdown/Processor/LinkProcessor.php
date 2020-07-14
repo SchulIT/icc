@@ -41,12 +41,10 @@ class LinkProcessor {
                 continue;
             }
 
-            $node->data['attributes']['class'] = 'link';
-
             $url = $node->getUrl();
 
             if(substr($url, 0, 7) === 'mailto:') {
-                $node->data['attributes']['class'] = 'mail';
+                $this->prependIcon($node, 'far fa-envelope');
             } else if(substr($url, 0, 9)  === 'document:') {
                 $uuid = substr($url, 9);
 
@@ -58,6 +56,7 @@ class LinkProcessor {
                             'uuid' => $document->getUuid()
                         ]);
                         $node->setUrl($url);
+                        $this->prependIcon($node, 'fas fa-arrow-right');
                     } else {
                         $this->appendBroken($node);
                     }
@@ -75,23 +74,30 @@ class LinkProcessor {
                             'uuid' => $article->getUuid()
                         ]);
                         $node->setUrl($url);
+                        $this->prependIcon($node, 'fas fa-arrow-right');
                     } else {
                         $this->appendBroken($node);
                     }
                 } else {
                     $this->appendBroken($node);
                 }
+            } else {
+                $this->prependIcon($node, 'fas fa-external-link-alt');
             }
         }
     }
 
+    private function prependIcon(Link $node, string $class): Icon {
+        $icon = new Icon($class);
+        $node->insertBefore($icon);
+        $node->insertBefore(new HtmlInline(' '));
+
+        return $icon;
+    }
+
     private function appendBroken(Link $node) {
         $node->setUrl('');
-        $node->prependChild(new HtmlInline(' '));
-
-        $icon = new Icon('fas fa-unlink');
+        $icon = $this->prependIcon($node, 'fas fa-unlink');
         $icon->data['attributes']['title'] = $this->translator->trans('markdown.link_broken');
-
-        $node->prependChild($icon);
     }
 }

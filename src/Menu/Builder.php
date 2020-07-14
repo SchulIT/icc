@@ -481,7 +481,7 @@ class Builder {
 
         if(EnumArrayUtils::inArray($user->getUserType(), $enabledFor)) {
             $menu = $root->addChild('services', [
-                'label' => 'webpush.label',
+                'label' => '',
                 'uri' => '#'
             ])
                 ->setExtra('icon', 'far fa-bell')

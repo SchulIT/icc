@@ -55,6 +55,14 @@ class ExamType extends AbstractType {
                         ->add('description', TextareaType::class, [
                             'label' => 'label.description',
                             'required' => false
+                        ])
+                        ->add('tuitionTeachersCanEditExam', CheckboxType::class, [
+                            'label' => 'admin.exams.tuition_teachers_can_edit.label',
+                            'help' => 'admin.exams.tuition_teachers_can_edit.help',
+                            'required' => false,
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
                         ]);
                 }
             ])

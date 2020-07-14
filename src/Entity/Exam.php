@@ -57,6 +57,12 @@ class Exam {
     private $description;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $tuitionTeachersCanEditExam = true;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Tuition")
      * @ORM\JoinTable(name="exam_tuitions",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
@@ -181,6 +187,22 @@ class Exam {
      */
     public function setDescription(?string $description): Exam {
         $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTuitionTeachersCanEditExam(): bool {
+        return $this->tuitionTeachersCanEditExam;
+    }
+
+    /**
+     * @param bool $tuitionTeachersCanEditExam
+     * @return Exam
+     */
+    public function setTuitionTeachersCanEditExam(bool $tuitionTeachersCanEditExam): Exam {
+        $this->tuitionTeachersCanEditExam = $tuitionTeachersCanEditExam;
         return $this;
     }
 

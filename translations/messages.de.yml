@@ -823,6 +823,9 @@ admin:
             success: Klausurschreiber aktualisiert
             info: Lernende werden individuell einer Klausur zugeordnet. Diese können nach dem Erstellen der Klausur ausgewählt werden.
             add_all: Alle Lernenden der ausgewählten Unterrichte als Klausurschreiber zuordnen
+        tuition_teachers_can_edit:
+            label: Lehrkräfte können Klausur bearbeiten
+            help: Wenn diese Option ausgewählt ist, können Lehrkräfte der ausgewählten Unterrichte die Klausurdetails (Datum, Stunde, Raum, Beschreibung) bearbeiten.
         remove:
             label: Klausur löschen
             confirm: 'Soll die Klausur am %date% (%lessons%) wirklich gelöscht werden?'

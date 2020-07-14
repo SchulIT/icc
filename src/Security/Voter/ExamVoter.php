@@ -112,6 +112,11 @@ class ExamVoter extends Voter {
             return false;
         }
 
+        if($exam->isTuitionTeachersCanEditExam() !== true) {
+            // Non-Admins cannot edit this exam
+            return false;
+        }
+
         $user = $token->getUser();
 
         if(!$user instanceof User) {

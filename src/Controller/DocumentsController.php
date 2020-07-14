@@ -12,7 +12,7 @@ use App\Grouping\DocumentCategoryStrategy as DocumentCategoryGroupingStrategy;
 use App\Grouping\Grouper;
 use App\Repository\DocumentRepositoryInterface;
 use App\Security\Voter\DocumentVoter;
-use App\Sorting\DocumentCategoryStrategy;
+use App\Sorting\DocumentCategoryGroupStrategy;
 use App\Sorting\DocumentNameStrategy;
 use App\Sorting\Sorter;
 use App\View\Filter\StudyGroupFilter;
@@ -52,7 +52,7 @@ class DocumentsController extends AbstractController {
 
         $this->sorter->sort($documents, DocumentNameStrategy::class);
         $categories = $this->grouper->group($documents, DocumentCategoryGroupingStrategy::class);
-        $this->sorter->sort($categories, DocumentCategoryStrategy::class);
+        $this->sorter->sort($categories, DocumentCategoryGroupStrategy::class);
 
         return $this->render('documents/index.html.twig', [
             'studyGroupFilter' => $studyGroupFilterView,

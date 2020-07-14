@@ -71,6 +71,10 @@ class ExamType extends AbstractType {
                             'multiple' => true,
                             'class' => Tuition::class,
                             'choice_label' => function(Tuition $tuition) {
+                                if($tuition->getName() === $tuition->getStudyGroup()->getName()) {
+                                    return sprintf('%s - %s', $tuition->getName(), $tuition->getSubject()->getName());
+                                }
+
                                 return sprintf('%s - %s - %s', $tuition->getName(), $tuition->getStudyGroup()->getName(), $tuition->getSubject()->getName());
                             },
                             'group_by' => function(Tuition $tuition) {

@@ -9,7 +9,7 @@ use App\Grouping\Grouper;
 use App\Repository\DocumentRepositoryInterface;
 use App\Repository\LogRepositoryInterface;
 use App\Security\Voter\DocumentVoter;
-use App\Sorting\DocumentCategoryStrategy as DocumentCategorySortingStrategy;
+use App\Sorting\DocumentCategoryGroupStrategy;
 use App\Sorting\DocumentNameStrategy;
 use App\Sorting\LogEntryStrategy;
 use App\Sorting\SortDirection;
@@ -53,7 +53,7 @@ class DocumentAdminController extends AbstractController {
         }
 
         $categories = $grouper->group($documents, DocumentCategoryStrategy::class);
-        $sorter->sort($categories, DocumentCategorySortingStrategy::class);
+        $sorter->sort($categories, DocumentCategoryGroupStrategy::class);
         $sorter->sortGroupItems($categories, DocumentNameStrategy::class);
 
         return $this->render('admin/documents/index.html.twig', [

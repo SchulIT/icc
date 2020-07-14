@@ -813,7 +813,7 @@ admin:
         label: Klausuren
         week: 'KW %week%'
         add:
-            label: Neue Klasur
+            label: Neue Klausur
             success: Klausur erfolgreich angelegt
         edit:
             label: Klausur bearbeiten

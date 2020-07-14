@@ -2,6 +2,7 @@
 
 namespace App\Markdown\Processor;
 
+use App\Markdown\Element\AnchorLink;
 use App\Markdown\Element\Icon;
 use App\Repository\DocumentRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
@@ -37,7 +38,7 @@ class LinkProcessor {
         while($event = $walker->next()) {
             $node = $event->getNode();
 
-            if(!$node instanceof Link || !$event->isEntering()) {
+            if(!$node instanceof Link || $node instanceof AnchorLink || !$event->isEntering()) {
                 continue;
             }
 

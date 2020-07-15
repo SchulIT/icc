@@ -323,7 +323,7 @@ class Builder {
             $menu->addChild('logs.label', [
                 'route' => 'admin_logs'
             ])
-                ->setExtra('icon', 'fas fa-info-circle');
+                ->setExtra('icon', 'fas fa-clipboard-list');
 
             $menu->addChild('mails.label', [
                 'route' => 'admin_mails'

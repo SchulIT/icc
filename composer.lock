@@ -5143,16 +5143,16 @@
         },
         {
             "name": "schulit/common-bundle",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SchulIT/common-bundle.git",
-                "reference": "4702016dc75bdf660d83c2a70969306a351bd4f2"
+                "reference": "0cc0f659aeef368fdabc31eb7b1a1ccbf0b09d81"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/4702016dc75bdf660d83c2a70969306a351bd4f2",
-                "reference": "4702016dc75bdf660d83c2a70969306a351bd4f2",
+                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/0cc0f659aeef368fdabc31eb7b1a1ccbf0b09d81",
+                "reference": "0cc0f659aeef368fdabc31eb7b1a1ccbf0b09d81",
                 "shasum": ""
             },
             "require": {
@@ -5189,7 +5189,7 @@
             "license": [
                 "MIT"
             ],
-            "time": "2020-07-08T13:26:05+00:00"
+            "time": "2020-07-15T11:23:07+00:00"
         },
         {
             "name": "sensio/framework-extra-bundle",

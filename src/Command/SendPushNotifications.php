@@ -45,6 +45,8 @@ class SendPushNotifications extends Command {
 
             $this->notificationService->sendNotifications($message);
             $style->success(sprintf('Done (%d still queued for sending notifications)', count($messages) - 1));
+        } else {
+            $style->success('No messages found with unsent notifications.');
         }
 
         return 0;

@@ -14,7 +14,7 @@
                         {% for group in groups %}
                             <optgroup label="{{ group.key }}">
                                 {% for user in group.items %}
-                                    <option value="{{ user.username }}">{{ user.username }} ({{ user|user }})</option>
+                                    <option value="{{ user.idpId }}">{{ user.username }} ({{ user|user }})</option>
                                 {% endfor %}
                             </optgroup>
                         {% endfor %}

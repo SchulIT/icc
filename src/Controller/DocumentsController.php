@@ -49,6 +49,9 @@ class DocumentsController extends AbstractController {
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent()), $user->getUserType());
 
         $documents = $documentRepository->findAllFor($userTypeFilterView->getCurrentType(), $studyGroupFilterView->getCurrentStudyGroup(), $q);
+        $documents = array_filter($documents, function(Document $document) {
+            return $this->isGranted(DocumentVoter::View, $document);
+        });
 
         $this->sorter->sort($documents, DocumentNameStrategy::class);
         $categories = $this->grouper->group($documents, DocumentCategoryGroupingStrategy::class);

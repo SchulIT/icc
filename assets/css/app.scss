@@ -238,3 +238,8 @@ $enable-gradients: true;
 .fa-1em {
   font-size: 1em;
 }
+
+.link-hover:hover {
+  background: $nav-pills-link-active-bg;
+  color: $nav-pills-link-active-color;
+}

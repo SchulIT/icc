@@ -92,18 +92,20 @@
     {% set userDownloads = message_downloads(message) %}
     {% if message.attachments|length > 0 or userDownloads|length > 0 %}
         <div class="card-footer">
+            <ul class="nav nav-pills card-header-pills">
             {% for attachment in message.attachments %}
-                <span class="mr-2">
-                    <a href="{{ path('download_message_attachment', { uuid: attachment.uuid, message: message.uuid }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
-                </span>
+                <li class="nav-item">
+                    <a class="nav-link link-hover" href="{{ path('download_message_attachment', { uuid: attachment.uuid, message: message.uuid }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
+                </li>
             {% endfor %}
             {% if message.downloadsEnabled %}
                 {% for file in userDownloads %}
-                    <span class="mr-2">
-                        <a href="{{ path('download_user_file', { uuid: message.uuid, filename: file.basename }) }}"><i class="fa fa-download"></i> {{ file.basename }}</a>
-                    </span>
+                    <li class="nav-item">
+                        <a class="nav-link link-hover" href="{{ path('download_user_file', { uuid: message.uuid, filename: file.basename }) }}"><i class="fa fa-download"></i> {{ file.basename }}</a>
+                    </li>
                 {% endfor %}
             {% endif %}
+            </ul>
         </div>
     {% endif %}
 

@@ -114,3 +114,4 @@ yarn-error.log
 
 /config/packages/bentools_webpush.yaml
 *.rnd
+/public/favicon.ico

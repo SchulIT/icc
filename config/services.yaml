@@ -107,9 +107,6 @@ services:
         arguments:
             $typesMap: '%types_map%'
 
-    security.user_checker:
-        alias: App\Security\UserChecker
-
     App\Security\CronUserProvider:
         arguments:
             $username: 'cron'

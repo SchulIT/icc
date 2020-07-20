@@ -31,6 +31,7 @@ use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use SchulIT\CommonBundle\Form\ConfirmType;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -97,10 +98,12 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/add", name="add_message")
      */
-    public function add(Request $request) {
+    public function add(Request $request, DateHelper $dateHelper) {
         $this->denyAccessUnlessGranted(MessageVoter::New);
 
-        $message = new Message();
+        $message = (new Message())
+            ->setStartDate($dateHelper->getToday())
+            ->setExpireDate($dateHelper->getToday()->modify('+7 days'));
         $form = $this->createForm(MessageType::class, $message);
         $form->handleRequest($request);
 

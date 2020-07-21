@@ -32,6 +32,7 @@ use App\Security\Voter\ListsVoter;
 use App\Sorting\Sorter;
 use App\Sorting\StudentGroupMembershipStrategy;
 use App\Sorting\StudentStrategy;
+use App\Sorting\StudyGroupStrategy;
 use App\Sorting\TeacherFirstCharacterGroupStrategy;
 use App\Sorting\TeacherStrategy;
 use App\View\Filter\GradeFilter;
@@ -143,23 +144,36 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/study_groups", name="list_studygroups")
      */
-    public function studyGroups(StudyGroupFilter $studyGroupFilter, Request $request) {
+    public function studyGroups(StudyGroupFilter $studyGroupFilter, StudentFilter $studentFilter, Request $request) {
         $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);
 
         /** @var User $user */
         $user = $this->getUser();
 
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
 
         $students = [ ];
+        $studyGroups = [ ];
+        $memberships = [ ];
 
         if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
             $students = $studyGroupFilterView->getCurrentStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
                 return $membership->getStudent();
             })->toArray();
-        }
+            $this->sorter->sort($students, StudentStrategy::class);
+        } else if($studentFilterView->getCurrentStudent() !== null) {
+            $studyGroups = [ ];
+            $memberships = [ ];
 
-        $this->sorter->sort($students, StudentStrategy::class);
+            /** @var StudyGroupMembership $membership */
+            foreach($studentFilterView->getCurrentStudent()->getStudyGroupMemberships() as $membership) {
+                $studyGroups[] = $membership->getStudyGroup();
+                $memberships[$membership->getStudyGroup()->getId()] = $membership->getType();
+            }
+
+            $this->sorter->sort($studyGroups, StudyGroupStrategy::class);
+        }
 
         $grade = null;
         $gradeTeachers = [ ];
@@ -168,6 +182,11 @@ class ListController extends AbstractControllerWithMessages {
         if($studyGroupFilterView->getCurrentStudyGroup() !== null && $studyGroupFilterView->getCurrentStudyGroup()->getType()->equals(StudyGroupType::Grade())) {
             /** @var Grade $grade */
             $grade = $studyGroupFilterView->getCurrentStudyGroup()->getGrades()->first();
+        } else if($studentFilterView->getCurrentStudent() !== null) {
+            $grade = $studentFilterView->getCurrentStudent()->getGrade();
+        }
+
+        if($grade !== null) {
             $gradeTeachers = array_map(function(GradeTeacher $gradeTeacher) {
                 return $gradeTeacher->getTeacher();
             }, array_filter($grade->getTeachers()->toArray(), function(GradeTeacher $gradeTeacher){
@@ -185,6 +204,9 @@ class ListController extends AbstractControllerWithMessages {
 
         return $this->renderWithMessages('lists/study_groups.html.twig', [
             'studyGroupFilter' => $studyGroupFilterView,
+            'studentFilter' => $studentFilterView,
+            'study_groups' => $studyGroups,
+            'memberships' => $memberships,
             'students' => $students,
             'grade' => $grade,
             'gradeTeachers' => $gradeTeachers,

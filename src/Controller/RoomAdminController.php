@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/admin/rooms")
- * @Security("is_granted('ROLE_APPOINTMENTS_ADMIN')")
+ * @Security("is_granted('ROLE_ADMIN')")
  */
 class RoomAdminController extends AbstractController {
 

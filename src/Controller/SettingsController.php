@@ -497,7 +497,7 @@ class SettingsController extends AbstractController {
                 },
                 'expanded' => true,
                 'multiple' => true,
-                'label' => 'label.visibility',
+                'label' => 'label.absence_visibility',
                 'data' => $substitutionSettings->getAbsenceVisibility(),
                 'label_attr' => [
                     'class' => 'checkbox-custom'

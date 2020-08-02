@@ -49,6 +49,7 @@ label:
     scope: Bereich
     author: Autor
     visibility: Sichtbar für
+    absence_visibility: Absenzen sichtbar für
     message:
         subject: Betreff
         start: Start-Datum

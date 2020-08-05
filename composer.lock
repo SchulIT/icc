@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6bbabd4518e4b1f09cf96f47cac9442c",
+    "content-hash": "435560e78af2aee2727ccb0958ea0faf",
     "packages": [
         {
             "name": "acelaya/doctrine-enum-type",
@@ -2728,16 +2728,16 @@
         },
         {
             "name": "jsvrcek/ics",
-            "version": "0.6",
+            "version": "0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jasvrcek/ICS.git",
-                "reference": "de8251cccf0ec556375b08ea22c1e2a72aa68b53"
+                "reference": "2d7203e65637713a8e38ac3c65d609ef8a05feba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jasvrcek/ICS/zipball/de8251cccf0ec556375b08ea22c1e2a72aa68b53",
-                "reference": "de8251cccf0ec556375b08ea22c1e2a72aa68b53",
+                "url": "https://api.github.com/repos/jasvrcek/ICS/zipball/2d7203e65637713a8e38ac3c65d609ef8a05feba",
+                "reference": "2d7203e65637713a8e38ac3c65d609ef8a05feba",
                 "shasum": ""
             },
             "require": {
@@ -2772,7 +2772,7 @@
                 "ical",
                 "multi-byte safe"
             ],
-            "time": "2018-04-12T20:25:44+00:00"
+            "time": "2020-02-27T15:59:00+00:00"
         },
         {
             "name": "knplabs/knp-menu",

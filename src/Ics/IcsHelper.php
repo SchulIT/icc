@@ -53,7 +53,7 @@ class IcsHelper {
 
         $export = new CalendarExport(new CalendarStream(), new Formatter());
         $export->addCalendar($calendar);
-        $export->setDateTimeFormat('local-tz');
+        $export->setDateTimeFormat('utc');
 
         $export->getStreamObject()->setDoImmediateOutput(true);
         return $export->getStream();

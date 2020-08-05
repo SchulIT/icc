@@ -23,6 +23,7 @@ use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
 use App\Security\IcsAccessToken\IcsAccessTokenManager;
+use App\Security\Voter\TimetablePeriodVoter;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
@@ -77,6 +78,10 @@ class TimetableController extends AbstractControllerWithMessages {
         $teachersFilterView = $teachersFilter->handle($request->query->get('teachers', []), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
 
         $periods = $periodRepository->findAll();
+        $periods = array_filter($periods, function(TimetablePeriod $period) {
+            return $this->isGranted(TimetablePeriodVoter::View, $period);
+        });
+
         $this->sorter->sort($periods, TimetablePeriodStrategy::class);
 
         $currentPeriod = $this->getCurrentPeriod($periods);

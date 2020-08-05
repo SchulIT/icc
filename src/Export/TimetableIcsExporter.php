@@ -67,7 +67,7 @@ class TimetableIcsExporter {
 
         return $this->icsHelper->getIcsResponse(
             $this->translator->trans('plans.timetable.export.title'),
-            $this->translator->trans('plans.timetable.export.description', [ '%user%' => $user->getUsername() ]),
+            $this->translator->trans('plans.timetable.export.description', [ '%name%' => $user->getUsername() ]),
             $events,
             $this->translator->trans('plans.timetable.export.download.filename')
         );

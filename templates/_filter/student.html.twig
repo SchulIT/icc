@@ -11,7 +11,7 @@
             {% for group in studentFilter.studentGradeGroups %}
                 <optgroup label="{{ group.grade.name }}">
                     {% for s in group.students %}
-                        <option value="{{ s.uuid }}"{% if studentFilter.currentStudent != null and studentFilter.currentStudent.id == s.id %}selected="selected"{% endif %}>{{ s|student }}</option>
+                        <option value="{{ s.uuid }}"{% if studentFilter.currentStudent != null and studentFilter.currentStudent.id == s.id %}selected="selected"{% endif %}>{{ s|student }} [{{ s.grade.name }}]</option>
                     {% endfor %}
                 </optgroup>
             {% endfor %}

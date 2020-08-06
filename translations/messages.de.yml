@@ -75,6 +75,8 @@ label:
     title: Titel
     messages_files:
         label: Personalisierte Dateien
+        badge_upload: (Benutzer laden personalisierte Dateien hoch)
+        badge_download: (Benutzer laden personalisierte Dateien herunter)
         info_downloads: Es ist möglich, dass für jeden Benutzer personalisierte Dateien zum Download angeboten werden.
         enable_downloads: Benutzer können personalisierte Dateien herunterladen
         info_uploads: Darüber hinaus ist es möglich, dass Benutzer personalisierte Dateien einsenden können.

@@ -118,7 +118,7 @@ $enable-gradients: true;
   }
 }
 
-// Wiki
+  // Wiki
 .card-columns {
   @include media-breakpoint-only(lg) {
     column-count: 2;
@@ -217,8 +217,14 @@ $enable-gradients: true;
     border-color: $default-border !important;
   }
 
-  .dashboard-lesson {
+  .dashboard-lesson,
+  .substitution-lesson {
     @extend .text-white-50;
+  }
+  .timetable {
+    .current {
+      background: rgba(#efefef, 0.4) !important;
+    }
   }
 }
 

@@ -35,6 +35,7 @@ use App\Sorting\StudentStrategy;
 use App\Sorting\StudyGroupStrategy;
 use App\Sorting\TeacherFirstCharacterGroupStrategy;
 use App\Sorting\TeacherStrategy;
+use App\Sorting\TuitionStrategy;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
@@ -97,6 +98,8 @@ class ListController extends AbstractControllerWithMessages {
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher());
         }
+
+        $this->sorter->sort($tuitions, TuitionStrategy::class);
 
         return $this->renderWithMessages('lists/tuitions.html.twig', [
             'gradeFilter' => $gradeFilterView,

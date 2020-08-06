@@ -227,6 +227,14 @@ $enable-gradients: true;
   }
   .timetable {
     .current {
+      &.text-secondary {
+        a {
+          @extend .text-white-50;
+        }
+
+        @extend .text-white-50;
+      }
+
       background: rgba(#efefef, 0.4) !important;
     }
   }

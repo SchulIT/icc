@@ -217,6 +217,10 @@ $enable-gradients: true;
     border-color: $default-border !important;
   }
 
+  .text-black-50 {
+    @extend .text-white-50;
+  }
+
   .dashboard-lesson,
   .substitution-lesson {
     @extend .text-white-50;

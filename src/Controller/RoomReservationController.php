@@ -13,6 +13,7 @@ use App\Repository\RoomReservationRepositoryInterface;
 use App\Rooms\Reservation\RoomAvailabilityHelper;
 use App\Security\Voter\RoomReservationVoter;
 use App\Settings\TimetableSettings;
+use App\Sorting\RoomNameStrategy;
 use App\Sorting\RoomReservationDateStrategy;
 use App\Sorting\RoomReservationWeekGroupStrategy;
 use App\Sorting\Sorter;
@@ -48,13 +49,14 @@ class RoomReservationController extends AbstractController {
      * @Route("", name="room_reservations")
      */
     public function index(DateHelper $dateHelper, RoomRepositoryInterface $roomRepository, RoomsFilter $roomsFilter,
-                          RoomAvailabilityHelper $availabilityHelper, TimetableSettings $timetableSettings, Request $request) {
+                          RoomAvailabilityHelper $availabilityHelper, Sorter $sorter, Request $request) {
         $date = $this->getDateFromRequest($request, $dateHelper);
         $roomsFilterView = $roomsFilter->handle($request->query->get('rooms', []));
         $rooms = $roomsFilterView->getCurrentRooms();
 
         if(count($rooms) === 0) {
             $rooms = $roomRepository->findAll();
+            $sorter->sort($rooms, RoomNameStrategy::class);
         }
 
         $overview = $availabilityHelper->getAvailabilities($date, $rooms);

@@ -5,6 +5,6 @@ namespace App\Sorting;
 class StringStrategy implements SortingStrategyInterface {
 
     public function compare($objectA, $objectB): int {
-        return strnatcmp((string)$objectA, (string)$objectB);
+        return strnatcasecmp((string)$objectA, (string)$objectB);
     }
 }

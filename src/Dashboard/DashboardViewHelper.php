@@ -40,6 +40,7 @@ use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\RoomReservationVoter;
 use App\Security\Voter\SubstitutionVoter;
+use App\Security\Voter\TimetablePeriodVoter;
 use App\Settings\DashboardSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
@@ -197,6 +198,10 @@ class DashboardViewHelper {
      */
     private function addTimetableLessons(iterable $lessons, DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences, int $numberOfWeeks): void {
         foreach($lessons as $lesson) {
+            if($this->authorizationChecker->isGranted(TimetablePeriodVoter::View, $lesson->getPeriod()) !== true) {
+                continue;
+            }
+
             $isWeek = (int)$dateTime->format('W') % $numberOfWeeks === $lesson->getWeek()->getWeekMod();
             $isDay = (int)$dateTime->format('N') === $lesson->getDay();
 
@@ -253,6 +258,10 @@ class DashboardViewHelper {
         $dayOfWeek = (int)$dashboardView->getDateTime()->format('w'); // PHP gives the day of week 0-based
 
         foreach($supervisions as $supervision) {
+            if($this->authorizationChecker->isGranted(TimetablePeriodVoter::View, $supervision->getPeriod()) !== true) {
+                continue;
+            }
+
             if($supervision->getDay() === $dayOfWeek && $this->timetableWeekHelper->isTimetableWeek($dashboardView->getDateTime(), $supervision->getWeek())) {
                 if ($supervision->isBefore()) {
                     $dashboardView->addItemBefore($supervision->getLesson(), new SupervisionViewItem($supervision));

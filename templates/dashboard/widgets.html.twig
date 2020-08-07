@@ -107,38 +107,49 @@
                 <span class="align-self-center badge badge-light badge-card">{{ 'dashboard.free_hour'|trans|upper }}</span>
             {% else %}
                 {% set lesson = item.lesson %}
-                {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
-                {%- set showCourseName = false -%}
-                {%- for grade in lesson.tuition.studyGroup.grades -%}
-                    {% if grade.id in gradesWithCourseNames -%}
-                        {% set showCourseName = true -%}
-                    {% endif -%}
-                {%- endfor -%}
+                {% if lesson is instanceof('App\\Entity\\FreestyleTimetableLesson') %}
+                    <span class="align-self-center badge badge-primary mr-3">
+                        {{ lesson.subject }}
+                    </span>
 
-                <span class="align-self-center badge badge-primary mr-3">
-                    {% if lesson.tuition.displayName is not empty %}
-                        {{ lesson.tuition.displayName|upper }}
-                    {% elseif lesson.tuition.subject.replaceSubjectAbbreviation %}
-                        {{ lesson.tuition.subject.name|upper }}
-                    {% else %}
-                        {{ lesson.tuition.subject.abbreviation|upper }}
-                    {% endif %}
-                </span>
+                    <div class="card-body align-self-center pl-0">
+                        <span class="mx-1"></span>
+                        <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    </div>
+                {% else %}
+                    {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
+                    {%- set showCourseName = false -%}
+                    {%- for grade in lesson.tuition.studyGroup.grades -%}
+                        {% if grade.id in gradesWithCourseNames -%}
+                            {% set showCourseName = true -%}
+                        {% endif -%}
+                    {%- endfor -%}
 
-                <div class="card-body align-self-center pl-0">
-                    <span class="mx-1"></span>
-                    <i class="fa fa-users"></i>
-                    {% if showCourseName %}
-                        {{ lesson.tuition.studyGroup.name }}
-                        ({% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
-                    {% else %}
-                        {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-                    {% endif %}
-                    <span class="mx-1"></span>
-                    <i class="fa fa-door-open"></i> {% if lesson.room is not null%}{{ lesson.room.name }}{% else %}{{ 'label.not_available'|trans }}{% endif %}
-                    <span class="mx-1"></span>
-                    <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
-                </div>
+                    <span class="align-self-center badge badge-primary mr-3">
+                        {% if lesson.tuition.displayName is not empty %}
+                            {{ lesson.tuition.displayName|upper }}
+                        {% elseif lesson.tuition.subject.replaceSubjectAbbreviation %}
+                            {{ lesson.tuition.subject.name|upper }}
+                        {% else %}
+                            {{ lesson.tuition.subject.abbreviation|upper }}
+                        {% endif %}
+                    </span>
+
+                    <div class="card-body align-self-center pl-0">
+                        <span class="mx-1"></span>
+                        <i class="fa fa-users"></i>
+                        {% if showCourseName %}
+                            {{ lesson.tuition.studyGroup.name }}
+                            ({% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                        {% else %}
+                            {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        {% endif %}
+                        <span class="mx-1"></span>
+                        <i class="fa fa-door-open"></i> {% if lesson.room is not null%}{{ lesson.room.name }}{% else %}{{ 'label.not_available'|trans }}{% endif %}
+                        <span class="mx-1"></span>
+                        <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    </div>
+                {% endif %}
             {% endif %}
         </div>
         {% if item.absentStudentGroups|length > 0 %}

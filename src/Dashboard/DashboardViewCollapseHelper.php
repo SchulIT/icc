@@ -104,14 +104,49 @@ class DashboardViewCollapseHelper {
         }
 
         // Further classication
+        /** @var SubstitutionViewItem[] $additionalSubstitutions */
         $additionalSubstitutions = array_filter($substitutions, [ $this, 'isAdditionalSubstitution']);
+        /** @var SubstitutionViewItem[] $removableSubstitutions */
         $removableSubstitutions = array_filter($substitutions, [ $this, 'isRemovableSubstitution']);
+        /** @var SubstitutionViewItem[] $defaultSubstitutions */
         $defaultSubstitutions = array_filter($substitutions, [ $this, 'isDefault' ]);
+
+        dump($additionalSubstitutions);
+        dump($removableSubstitutions);
+        dump($defaultSubstitutions);
 
         if(count($removableSubstitutions) > 1 || count($defaultSubstitutions) > 1) {
             $lesson->setWarning();
             $lesson->replaceItems($originalItems);
             return;
+        }
+
+        if($timetableCount > 0 && count($defaultSubstitutions) === 1) {
+            /**
+             * Collision detection: in case we have a non-free lesson and the substitution is a default one,
+             * we have to check whether the teacher is not the same as the lesson teacher -> collision.
+             */
+            $isFree = false;
+            $isSubstitutionTeacherSameAsLessonTeacher = false;
+            foreach($timetableLessons as $timetableLesson) {
+                if($timetableLesson->getLesson() === null) {
+                    $isFree = true;
+                } else {
+                    foreach($timetableLesson->getLesson()->getTeachers() as $lessonTeacher) {
+                        foreach($defaultSubstitutions[0]->getSubstitution()->getTeachers() as $substitutionTeacher) {
+                            if($lessonTeacher->getId() === $substitutionTeacher->getId()) {
+                                $isSubstitutionTeacherSameAsLessonTeacher = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if($isFree === false && $isSubstitutionTeacherSameAsLessonTeacher === false) {
+                $lesson->setWarning();
+                $lesson->replaceItems($originalItems);
+                return;
+            }
         }
 
         foreach($removableSubstitutions as $substitution) {

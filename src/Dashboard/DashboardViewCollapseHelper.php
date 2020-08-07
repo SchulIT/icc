@@ -111,10 +111,6 @@ class DashboardViewCollapseHelper {
         /** @var SubstitutionViewItem[] $defaultSubstitutions */
         $defaultSubstitutions = array_filter($substitutions, [ $this, 'isDefault' ]);
 
-        dump($additionalSubstitutions);
-        dump($removableSubstitutions);
-        dump($defaultSubstitutions);
-
         if(count($removableSubstitutions) > 1 || count($defaultSubstitutions) > 1) {
             $lesson->setWarning();
             $lesson->replaceItems($originalItems);

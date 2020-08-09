@@ -105,11 +105,11 @@ class DashboardViewCollapseHelper {
 
         // Further classication
         /** @var SubstitutionViewItem[] $additionalSubstitutions */
-        $additionalSubstitutions = array_filter($substitutions, [ $this, 'isAdditionalSubstitution']);
+        $additionalSubstitutions = array_values(array_filter($substitutions, [ $this, 'isAdditionalSubstitution']));
         /** @var SubstitutionViewItem[] $removableSubstitutions */
-        $removableSubstitutions = array_filter($substitutions, [ $this, 'isRemovableSubstitution']);
+        $removableSubstitutions = array_values(array_filter($substitutions, [ $this, 'isRemovableSubstitution']));
         /** @var SubstitutionViewItem[] $defaultSubstitutions */
-        $defaultSubstitutions = array_filter($substitutions, [ $this, 'isDefault' ]);
+        $defaultSubstitutions = array_values(array_filter($substitutions, [ $this, 'isDefault' ]));
 
         if(count($removableSubstitutions) > 1 || count($defaultSubstitutions) > 1) {
             $lesson->setWarning();

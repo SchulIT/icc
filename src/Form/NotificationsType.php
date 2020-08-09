@@ -15,22 +15,6 @@ class NotificationsType extends AbstractType {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        if($options['allow_email']) {
-            $builder
-                ->add('email', TextType::class, [
-                    'disabled' => true,
-                    'label' => 'label.email'
-                ])
-                ->add('isEmailNotificationsEnabled', CheckboxType::class, [
-                    'label' => 'profile.notifications.email.label',
-                    'help' => 'profile.notifications.email.help',
-                    'label_attr' => [
-                        'class' => 'checkbox-custom'
-                    ],
-                    'required' => false
-                ]);
-        }
-
         $builder
             ->add('isSubstitutionNotificationsEnabled', CheckboxType::class, [
                 'label' => 'profile.notifications.substitutions.label',
@@ -56,5 +40,21 @@ class NotificationsType extends AbstractType {
                 ],
                 'required' => false
             ]);
+
+        if($options['allow_email']) {
+            $builder
+                ->add('email', TextType::class, [
+                    'disabled' => true,
+                    'label' => 'label.email'
+                ])
+                ->add('isEmailNotificationsEnabled', CheckboxType::class, [
+                    'label' => 'profile.notifications.email.label',
+                    'help' => 'profile.notifications.email.help',
+                    'label_attr' => [
+                        'class' => 'checkbox-custom'
+                    ],
+                    'required' => false
+                ]);
+        }
     }
 }

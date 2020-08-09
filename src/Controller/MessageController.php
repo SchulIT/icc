@@ -106,6 +106,8 @@ class MessageController extends AbstractController {
         // Requery message for better performance
         $message = $messageRepository->findOneById($message->getId());
 
+        $this->denyAccessUnlessGranted(MessageVoter::View, $message);
+
         /** @var User $user */
         $user = $this->getUser();
 

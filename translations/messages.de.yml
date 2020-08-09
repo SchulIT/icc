@@ -930,6 +930,7 @@ profile:
 
     notifications:
         label: Benachrichtigungen
+        select_elements: Elemente auswählen
         success: Benachrichtigungseinstellungen erfolgreich aktualisiert
         not_allowed: Es sind keine Benachrichtigungsmöglichkeiten freigeschaltet.
         substitutions:
@@ -942,6 +943,7 @@ profile:
             label: Neue Mitteilung
             help: Wenn diese Option aktiv ist, wird eine Benachrichtigung versendet, sobald eine neue Mitteilung erstellt wurde.
         email:
+            label_short: E-Mail Benachrichtigungen
             label: E-Mail Benachrichtigungen aktiviert
             help: Wenn diese Option aktiv ist, werden Benachrichtigungen per E-Mail versendet.
 

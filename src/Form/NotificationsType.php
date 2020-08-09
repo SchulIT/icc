@@ -45,7 +45,8 @@ class NotificationsType extends AbstractType {
             $builder
                 ->add('email', TextType::class, [
                     'disabled' => true,
-                    'label' => 'label.email'
+                    'required' => false,
+                    'label' => 'profile.notifications.email.label_short'
                 ])
                 ->add('isEmailNotificationsEnabled', CheckboxType::class, [
                     'label' => 'profile.notifications.email.label',

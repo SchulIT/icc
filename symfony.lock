@@ -2,6 +2,9 @@
     "frostiede/enum-bundle": {
         "version": "3.0.0"
     },
+    "league/mime-type-detection": {
+        "version": "1.4.0"
+    },
     "mtdowling/cron-expression": {
         "version": "v1.2.3"
     },

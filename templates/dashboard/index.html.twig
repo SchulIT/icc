@@ -66,31 +66,22 @@
                         {% endif %}
 
                         <nav class="nav nav-pills nav-justified mb-3 mx-n1 mt-n2">
+                            {% if view.substitutionMentions|length > 0 %}
+                                <a href="#mentions" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
+                                    <div class="align-self-center text-center w-100">
+                                        {{ 'dashboard.substitution_mentions'|trans }}
+
+                                        <span class="badge badge-light badge-pill">
+                                            {{ view.substitutionMentions|length }}
+                                        </span>
+                                    </div>
+                                </a>
+                            {% endif %}
                             <a href="#infotexts" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
                                 <div class="align-self-center text-center w-100">
                                     {{ 'dashboard.nav.infotexts'|trans({'%count%': view.infotexts|length}) }}
                                     <span class="badge badge-light badge-pill">
                                         {{ view.infotexts|length }}
-                                    </span>
-                                </div>
-                            </a>
-                            {% if is_granted('view-absences') %}
-                                <a href="#absences" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
-                                    <div class="align-self-center text-center w-100">
-                                        {{ 'dashboard.absences'|trans() }}
-
-                                        <span class="badge badge-light badge-pill">
-                                            {{ view.absentTeachers|length + view.absentStudyGroups|length}}
-                                        </span>
-                                    </div>
-                                </a>
-                            {% endif %}
-                            <a href="#messages" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
-                                <div class="align-self-center text-center w-100">
-                                    {{ 'messages.overview.label'|trans }}
-
-                                    <span class="badge badge-light badge-pill">
-                                        {{ view.messages|length }}
                                     </span>
                                 </div>
                             </a>
@@ -105,17 +96,15 @@
                                     </div>
                                 </a>
                             {% endif %}
-                            {% if view.substitutionMentions|length > 0 %}
-                                <a href="#mentions" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
-                                    <div class="align-self-center text-center w-100">
-                                        {{ 'dashboard.substitution_mentions'|trans }}
+                            <a href="#messages" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
+                                <div class="align-self-center text-center w-100">
+                                    {{ 'messages.overview.label'|trans }}
 
-                                        <span class="badge badge-light badge-pill">
-                                            {{ view.substitutionMentions|length }}
-                                        </span>
-                                    </div>
-                                </a>
-                            {% endif %}
+                                    <span class="badge badge-light badge-pill">
+                                        {{ view.messages|length }}
+                                    </span>
+                                </div>
+                            </a>
                             <a href="#appointments" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
                                 <div class="align-self-center text-center w-100">
                                     {{ 'dashboard.appointments'|trans }}
@@ -125,6 +114,17 @@
                                     </span>
                                 </div>
                             </a>
+                            {% if is_granted('view-absences') %}
+                                <a href="#absences" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
+                                    <div class="align-self-center text-center w-100">
+                                        {{ 'dashboard.absences'|trans() }}
+
+                                        <span class="badge badge-light badge-pill">
+                                            {{ view.absentTeachers|length + view.absentStudyGroups|length}}
+                                        </span>
+                                    </div>
+                                </a>
+                            {% endif %}
                         </nav>
 
                         {# Priority Messages #}
@@ -172,16 +172,26 @@
                             {% endif %}
                         {% endfor %}
 
+                        {# Mentions #}
+                        <a id="mentions"></a>
+                        {% for mention in view.substitutionMentions %}
+                            {{ dashboard.substitution(mention, null, null, null) }}
+                        {% endfor %}
+
+                        {# Daily infos #}
+                        <a id="infotexts"></a>
+                        {% include "_includes/infotexts.html.twig" with { infotexts: view.infotexts } only %}
+
                         {# Exams #}
                         <a id="exams"></a>
                         {% for exam in view.exams %}
                             {{ dashboard.exam(exam, null, null, null) }}
                         {% endfor %}
 
-                        {# Mentions #}
-                        <a id="mentions"></a>
-                        {% for mention in view.substitutionMentions %}
-                            {{ dashboard.substitution(mention, null, null, null) }}
+                        {# Messages #}
+                        <a id="messages"></a>
+                        {% for message in view.messages %}
+                            {% include "_includes/message.html.twig" with { message: message } only %}
                         {% endfor %}
 
                         {# Appointments #}
@@ -189,16 +199,6 @@
                         {% for appointment in view.appointments %}
                             {{ dashboard.appointment(appointment) }}
                         {% endfor %}
-
-                        {# Priority Messages #}
-                        <a id="messages"></a>
-                        {% for message in view.messages %}
-                            {% include "_includes/message.html.twig" with { message: message } only %}
-                        {% endfor %}
-
-                        {# Daily infos #}
-                        <a id="infotexts"></a>
-                        {% include "_includes/infotexts.html.twig" with { infotexts: view.infotexts } only %}
 
                         {# Absences #}
                         <a id="absences"></a>

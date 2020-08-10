@@ -5,6 +5,7 @@ namespace App\Import;
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
+use App\Event\SubstitutionImportEvent;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
@@ -13,18 +14,21 @@ use App\Request\Data\SubstitutionData;
 use App\Request\Data\SubstitutionsData;
 use App\Utils\CollectionUtils;
 use App\Utils\ArrayUtils;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class SubstitutionsImportStrategy implements ImportStrategyInterface {
+class SubstitutionsImportStrategy implements ImportStrategyInterface, PostActionStrategyInterface {
 
     private $substitutionRepository;
     private $teacherRepository;
     private $studyGroupRepository;
+    private $dispatcher;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, TeacherRepositoryInterface $teacherRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository) {
+                                StudyGroupRepositoryInterface $studyGroupRepository, EventDispatcherInterface $eventDispatcher) {
         $this->substitutionRepository = $substitutionRepository;
         $this->teacherRepository = $teacherRepository;
         $this->studyGroupRepository = $studyGroupRepository;
+        $this->dispatcher = $eventDispatcher;
     }
 
     /**
@@ -208,5 +212,9 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
      */
     public function getEntityClassName(): string {
         return Substitution::class;
+    }
+
+    public function onFinished(ImportResult $result) {
+        $this->dispatcher->dispatch(new SubstitutionImportEvent($result->getAdded(), $result->getUpdated(), $result->getRemoved()));
     }
 }

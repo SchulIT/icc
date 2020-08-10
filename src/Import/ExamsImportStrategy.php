@@ -6,6 +6,8 @@ use App\Entity\Exam;
 use App\Entity\ExamSupervision;
 use App\Entity\Student;
 use App\Entity\Tuition;
+use App\Event\ExamImportEvent;
+use App\Event\SubstitutionImportEvent;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
@@ -15,20 +17,23 @@ use App\Request\Data\ExamData;
 use App\Request\Data\ExamsData;
 use App\Utils\CollectionUtils;
 use App\Utils\ArrayUtils;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class ExamsImportStrategy implements ImportStrategyInterface {
+class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategyInterface {
 
     private $examRepository;
     private $tuitionRepository;
     private $studentRepository;
     private $teacherRepository;
+    private $dispatcher;
 
     public function __construct(ExamRepositoryInterface $examRepository, TuitionRepositoryInterface $tuitionRepository,
-                                StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository) {
+                                StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository, EventDispatcherInterface $eventDispatcher) {
         $this->examRepository = $examRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->studentRepository = $studentRepository;
         $this->teacherRepository = $teacherRepository;
+        $this->dispatcher = $eventDispatcher;
     }
 
     /**
@@ -165,5 +170,9 @@ class ExamsImportStrategy implements ImportStrategyInterface {
      */
     public function getEntityClassName(): string {
         return Exam::class;
+    }
+
+    public function onFinished(ImportResult $result) {
+        $this->dispatcher->dispatch(new ExamImportEvent($result->getAdded(), $result->getUpdated(), $result->getRemoved()));
     }
 }

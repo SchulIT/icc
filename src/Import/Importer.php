@@ -94,7 +94,13 @@ class Importer {
 
             $repository->commit();
 
-            return new ImportResult($addedEntities, $updatedEntities, $removedEntities, $ignoredEntities);
+            $result = new ImportResult($addedEntities, $updatedEntities, $removedEntities, $ignoredEntities);
+
+            if($strategy instanceof PostActionStrategyInterface) {
+                $strategy->onFinished($result);
+            }
+
+            return $result;
         } catch (Throwable $e) {
             $this->logger->error('Import failed.', [
                 'exception' => $e

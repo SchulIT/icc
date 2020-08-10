@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
         },
+        weekNumbers: true,
         themeSystem: 'bootstrap',
         locales: [ deLocale ],
         locale: 'de',

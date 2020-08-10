@@ -40,7 +40,7 @@ class EmailNotificationService {
         }
 
         if($strategy->isEnabled() === false) {
-            $this->logger->info(sprintf('E-Mail notifications for strategy %s are disabled. Skipt sending them.', get_class($strategy)));
+            $this->logger->info(sprintf('E-Mail notifications for strategy %s are disabled. Skip sending them.', get_class($strategy)));
             return;
         }
 

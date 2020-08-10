@@ -1,4 +1,4 @@
-greeting: 'Hallo %name%,'
+greeting: 'Hallo,'
 farewell: Gruß
 footer: 'Diese Nachricht wurde automatisch vom System versendet. Diese Benachrichtung kann in den Einstellungen im ICC geändert werden. Zu den Einstellungen: %link%'
 

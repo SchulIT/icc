@@ -214,7 +214,7 @@
                         {% set dateParam = selectedDate|date('Y-m-d') %}
 
                         {% if teacherFilter.teachers|length > 0 %}
-                            {% include "_filter/teacher.html.twig" with { params: {} } %}
+                            {% include "_filter/teacher.html.twig" with { params: { date: dateParam } } %}
                         {% endif %}
 
                         {% if studentFilter.studentGradeGroups|length > 0 %}

@@ -130,15 +130,15 @@
                 <div class="card">
                     <div class="card-body">
                         {% if teacherFilter.teachers|length > 0 %}
-                            {% include "_filter/teacher.html.twig" %}
+                            {% include "_filter/teacher.html.twig" with { params: { date: selectedDate ? selectedDate.format('Y-m-d') : null } } %}
                         {% endif %}
 
                         {% if studentFilter.studentGradeGroups|length > 0 %}
-                            {% include "_filter/student.html.twig" %}
+                            {% include "_filter/student.html.twig" with { params: { date: selectedDate ? selectedDate.format('Y-m-d') : null } } %}
                         {% endif %}
 
                         {% if gradeFilter.grades|length > 0 %}
-                            {% include "_filter/grade.html.twig" %}
+                            {% include "_filter/grade.html.twig" with { params: { date: selectedDate ? selectedDate.format('Y-m-d') : null } } %}
                         {% endif %}
 
                         <div class="form-group">

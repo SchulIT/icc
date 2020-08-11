@@ -6,6 +6,7 @@ use App\Entity\TimetablePeriod;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Entity\UserTypeEntity;
+use App\Security\ImportUser;
 use App\Utils\EnumArrayUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -60,8 +61,18 @@ class TimetablePeriodVoter extends Voter {
     }
 
     private function canView(TimetablePeriod $period, TokenInterface $token): bool {
-        /** @var User $user */
         $user = $token->getUser();
+
+        if($user instanceof ImportUser) {
+            /*
+             * This is important as the collision detection after a substitution import is checked in the context
+             * of the ImportUser
+             */
+            return true;
+        } else if(!$user instanceof User) {
+            return false;
+        }
+
         $userType = $user->getUserType();
 
         $allowedUserTypes = $period->getVisibilities()

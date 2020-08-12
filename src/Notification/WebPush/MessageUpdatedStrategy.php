@@ -70,4 +70,11 @@ class MessageUpdatedStrategy implements PushNotificationStrategyInterface {
     public function supports($objective): bool {
         return $objective instanceof MessageUpdatedEvent;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function isEnabled(): bool {
+        return true;
+    }
 }

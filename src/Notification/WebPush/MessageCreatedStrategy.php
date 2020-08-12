@@ -81,4 +81,11 @@ class MessageCreatedStrategy implements PushNotificationStrategyInterface, PostP
         $objective->getMessage()->setIsPushNotificationSent(true);
         $this->messageRepository->persist($objective->getMessage());
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function isEnabled(): bool {
+        return true;
+    }
 }

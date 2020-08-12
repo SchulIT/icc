@@ -31,4 +31,9 @@ interface PushNotificationStrategyInterface {
      * @return string
      */
     public function getBody($objective): string;
+
+    /**
+     * @return bool
+     */
+    public function isEnabled(): bool;
 }

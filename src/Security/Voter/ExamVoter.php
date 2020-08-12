@@ -112,6 +112,10 @@ class ExamVoter extends Voter {
             return false;
         }
 
+        if($this->accessDecisionManager->decide($token, ['ROLE_EXAMS_CREATOR'])) {
+            return true;
+        }
+
         if($exam->isTuitionTeachersCanEditExam() !== true) {
             // Non-Admins cannot edit this exam
             return false;

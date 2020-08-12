@@ -32,6 +32,10 @@ class TimetableTimeHelper {
 
     public function getLessonStartDateTime(DateTime $date, int $lesson, bool $isBefore = false): DateTime {
         if($isBefore === true) {
+            if($lesson === 1) {
+                return $this->getDateTime($date, $this->timetableSettings->getStart(0));
+            }
+
             return $this->getDateTime($date, $this->timetableSettings->getEnd($lesson - 1));
         }
 

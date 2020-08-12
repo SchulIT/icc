@@ -21,11 +21,11 @@ document.addEventListener('DOMContentLoaded', function () {
         removeItemButton: true
     };
 
-    let studentChoice = new Choices(document.getElementById('student'), options);
-    let studyGroupChoice = new Choices(document.getElementById('study_group'), options);
-    let teacherChoice = new Choices(document.getElementById('teacher'), options);
-    let categoriesChoice = new Choices(document.getElementById('categories'), options);
-    let examGradesChoice = new Choices(document.getElementById('exam_grades'), options);
+    let studentChoice = document.getElementById('student') !== null ? new Choices(document.getElementById('student'), options) : null;
+    let studyGroupChoice = document.getElementById('study_group') !== null ? new Choices(document.getElementById('study_group'), options) : null;
+    let teacherChoice = document.getElementById('teacher') !== null ? new Choices(document.getElementById('teacher'), options) : null;
+    let categoriesChoice = document.getElementById('categories') !== null ? new Choices(document.getElementById('categories'), options) : null;
+    let examGradesChoice = document.getElementById('exam_grades') !== null ? new Choices(document.getElementById('exam_grades'), options) : null;
 
     let suppressFilterChangedEvent = false;
     let appEl = document.getElementById('appointments');
@@ -108,6 +108,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             [studentChoice, studyGroupChoice, teacherChoice, categoriesChoice, examGradesChoice ].forEach(function(choices) {
+                if(choices === null) {
+                    return;
+                }
+
                 if(isLoading) {
                     choices.disable();
                 } else {
@@ -118,6 +122,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     [studentChoice, studyGroupChoice, teacherChoice, categoriesChoice, examGradesChoice ].forEach(function(choices) {
+        if(choices === null) {
+            return;
+        }
+
         choices.passedElement.element.addEventListener('change', function(el) {
             if(suppressFilterChangedEvent === false) {
                 loadEvents(choices);
@@ -132,20 +140,24 @@ document.addEventListener('DOMContentLoaded', function () {
         suppressFilterChangedEvent = true; // suppress any other changed events
 
         if(initiator === studentChoice) {
-            studyGroupChoice.setChoiceByValue('');
-            teacherChoice.setChoiceByValue('');
+            studyGroupChoice?.setChoiceByValue('');
+            teacherChoice?.setChoiceByValue('');
         } else if(initiator === studyGroupChoice) {
-            studentChoice.setChoiceByValue('');
-            teacherChoice.setChoiceByValue('');
+            studentChoice?.setChoiceByValue('');
+            teacherChoice?.setChoiceByValue('');
         } else if(initiator === teacherChoice) {
-            studentChoice.setChoiceByValue('');
-            studyGroupChoice.setChoiceByValue('');
+            studentChoice?.setChoiceByValue('');
+            studyGroupChoice?.setChoiceByValue('');
         }
 
         suppressFilterChangedEvent = false;
 
         // Serialize the filter data
         [studentChoice, studyGroupChoice, teacherChoice, categoriesChoice, examGradesChoice ].forEach(function(el) {
+            if(el === null) {
+                return;
+            }
+
             query[el.passedElement.element.name] = el.getValue(true);
         });
 

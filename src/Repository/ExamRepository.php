@@ -357,7 +357,8 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         }
 
         $qb
-            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()));
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->orderBy('e.date', 'asc');
 
         if(!is_numeric($page) || $page < 1) {
             $page = 1;

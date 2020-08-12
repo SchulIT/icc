@@ -240,6 +240,45 @@ class ExamController extends AbstractControllerWithMessages {
     }
 
     /**
+     * @Route("/export", name="exams_export")
+     */
+    public function export(Request $request, IcsAccessTokenManager $manager) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $deviceToken = (new IcsAccessToken())
+            ->setType(IcsAccessTokenType::Exams())
+            ->setUser($user);
+
+        $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $deviceToken = $manager->persistToken($deviceToken);
+        }
+
+        return $this->renderWithMessages('exams/export.html.twig', [
+            'form' => $form->createView(),
+            'token' => $deviceToken
+        ]);
+    }
+
+    /**
+     * @Route("/ics/download", name="exams_ics")
+     * @Route("/ics/download/{token}", name="exams_ics_token")
+     */
+    public function ics(ExamIcsExporter $exporter) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $exporter->getIcsResponse($user);
+    }
+
+    protected function getMessageScope(): MessageScope {
+        return MessageScope::Exams();
+    }
+
+    /**
      * @Route("/{uuid}", name="show_exam", requirements={"id": "\d+"})
      */
     public function show(Exam $exam) {
@@ -288,44 +327,5 @@ class ExamController extends AbstractControllerWithMessages {
             'studyGroups' => $studyGroups,
             'last_import' => $this->importDateTypeRepository->findOneByEntityClass(Exam::class)
         ]);
-    }
-
-    /**
-     * @Route("/export", name="exams_export")
-     */
-    public function export(Request $request, IcsAccessTokenManager $manager) {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        $deviceToken = (new IcsAccessToken())
-            ->setType(IcsAccessTokenType::Exams())
-            ->setUser($user);
-
-        $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-            $deviceToken = $manager->persistToken($deviceToken);
-        }
-
-        return $this->renderWithMessages('exams/export.html.twig', [
-            'form' => $form->createView(),
-            'token' => $deviceToken
-        ]);
-    }
-
-    /**
-     * @Route("/ics/download", name="exams_ics")
-     * @Route("/ics/download/{token}", name="exams_ics_token")
-     */
-    public function ics(ExamIcsExporter $exporter) {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        return $exporter->getIcsResponse($user);
-    }
-
-    protected function getMessageScope(): MessageScope {
-        return MessageScope::Exams();
     }
 }

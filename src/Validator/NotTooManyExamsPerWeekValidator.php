@@ -33,11 +33,6 @@ class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
             throw new UnexpectedTypeException($constraint, NotTooManyExamsPerWeek::class);
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR')) {
-            // Users with ROLE_EXAMS_CREATOR can override those rules
-            return true;
-        }
-
         if($value->getDate() === null || $value->getTuitions()->count() === 0) {
             // Planned exams are fine
             return true;

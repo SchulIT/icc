@@ -1,25 +1,35 @@
 greeting: 'Hallo,'
 farewell: Gruß
-footer: 'Diese Nachricht wurde automatisch vom System versendet. Diese Benachrichtung kann in den Einstellungen im ICC geändert werden. Zu den Einstellungen: %link%'
+footer: 'Diese Nachricht wurde automatisch vom System versendet.'
+unsubscribe: Benachrichtigungen deaktivieren
 
 substitution:
   title: Neuer Vertretungsplan
   content: es wurde ein neuer Vertretungsplan hochgeladen.
   sender: Vertretungsplaner
+  link: Vertretungsplan anzeigen
 
 exam:
   title: Neuer Klausurplan
   content: es wurde ein neuer Klausurplan hochgeladen.
+  link: Klausur anzeigen
 
 message:
   create:
     title: "Neue Mitteilung: %title%"
-    content: 'es wurde eine neue Mitteilung "%title%" erstellt. Die Nachricht ist auf dem ICC verfügbar: %link%'
+    content: 'es wurde eine neue Mitteilung <strong>%title%</strong> erstellt. Eine Kopie der Nachricht ist unten angehangen.'
+    link: Mitteilung anzeigen
   update:
     title: "Mitteilung aktualisiert: %title%"
-    content: 'die Mitteilung "%title%" wurde aktualisiert. Die Nachricht ist auf dem ICC verfügbar: %link%'
+    content: 'es wurde eine neue Mitteilung <strong>%title%</strong> wurde aktualisiert. Eine Kopie der Nachricht ist unten angehangen.'
+    link: Mitteilung anzeigen
+  attachments: Diese Mitteilung hat Anhänge. Diese werden nur auf dem ICC angezeigt.
+  must_confirm: Diese Mitteilung muss bestätigt werden.
+  has_downloads: Diese Mitteilung besitzt personalisierte Downloads. Diese werden nur auf dem ICC angezeigt.
+  has_uploads: Diese Mitteilung besitzt personalisierte Uploads. Diese werden nur auf dem ICC angezeigt.
 
 reservation:
   title: Konflikt bei Raum-Reservierung
-  content: 'Bei der Raumreservierung für %room% am %date% (%lesson%) ist es zu einem Konflikt gekommen.'
+  content: 'bei der Raumreservierung für %room% am %date% (%lesson%) ist es zu einem Konflikt gekommen.'
+  link: Reservierung anzeigen
 

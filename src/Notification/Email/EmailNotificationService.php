@@ -66,7 +66,7 @@ class EmailNotificationService {
                 ->setSubject($strategy->getSubject($objective))
                 ->setFrom([$this->sender], $this->appName)
                 ->setSender($this->sender, $this->appName)
-                ->setBody($content)
+                ->setBody($content, 'text/html')
                 ->setTo([ $recipient->getEmail() ]);
 
             $replyTo = $strategy->getReplyTo($objective);

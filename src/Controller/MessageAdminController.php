@@ -19,6 +19,7 @@ use App\Message\MessageFileUploadViewHelper;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\MessageVoter;
+use App\Sorting\MessageExpirationGroupStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentGradeGroupStrategy;
 use App\Sorting\StudentStrategy;
@@ -87,6 +88,7 @@ class MessageAdminController extends AbstractController {
 
         /** @var MessageExpirationGroup[] $groups */
         $groups = $this->grouper->group($messages, MessageExpirationStrategy::class);
+        $this->sorter->sort($groups, MessageExpirationGroupStrategy::class);
 
         return $this->render('admin/messages/index.html.twig', [
             'groups' => $groups,

@@ -8,7 +8,7 @@ use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
 
 trait DateTimeHelperTrait {
-    private function getTodayOrNextDay(DateHelper $dateHelper, string $threshold): DateTime {
+    private function getTodayOrNextDay(DateHelper $dateHelper, ?string $threshold): DateTime {
         $today = $dateHelper->getToday();
 
         if(empty($threshold)) {

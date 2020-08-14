@@ -603,6 +603,9 @@ admin:
             free_lesson_types:
                 label: Vertretungsarten Freistunden
                 help: Kommaseparierte Liste von Vertretungsarten, bei denen eine Vertretung als Freistunde angezeigt wird.
+            next_day_threshold:
+                label: Nächster Tag ab
+                help: Ab dieser Uhrzeit wird der nächste Tag automatisch ausgewählt. Ist dieser Wert nicht gesetzt, so wird stets der aktuelle Tag automatisch ausgewählt.
 
         appointments:
             label: Terminplan

@@ -2,11 +2,32 @@
 
 namespace App\Controller;
 
+use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 
 trait DateTimeHelperTrait {
-    private function getListOfNextDays(DateHelper $dateHelper, int $numberOfDays, bool $skipWeekends) {
+    private function getTodayOrNextDay(DateHelper $dateHelper, string $threshold): DateTime {
         $today = $dateHelper->getToday();
+
+        if(empty($threshold)) {
+            return $today;
+        }
+
+        list($hour, $minute) = explode(':', $threshold);
+
+        $threshold = $dateHelper->getToday()->setTime($hour, $minute);
+
+        if($dateHelper->getNow() > $threshold) {
+            $today = $today->modify('+1 day');
+        }
+
+        return $today;
+    }
+
+    private function getListOfNextDays(DateHelper $dateHelper, int $numberOfDays, bool $skipWeekends, DateTime $today = null) {
+        if($today === null) {
+            $today = $dateHelper->getToday();
+        }
 
         if($skipWeekends) {
             // Ensure to start at a weekday in case weekends are skipped

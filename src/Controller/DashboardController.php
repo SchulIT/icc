@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Entity\UserType;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
+use App\Settings\DashboardSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\EnumArrayUtils;
@@ -19,6 +20,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractController {
+
+    use DateTimeHelperTrait;
 
     private const DaysInFuture = 5;
     private const DaysInPast = 1;
@@ -38,8 +41,8 @@ class DashboardController extends AbstractController {
      */
     public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
                               DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper,
-                              DateHelper $dateHelper, TimetableSettings $timetableSettings, UserRepositoryInterface $userRepository,
-                              Request $request) {
+                              DateHelper $dateHelper, DashboardSettings $settings, TimetableSettings $timetableSettings,
+                              UserRepositoryInterface $userRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -57,10 +60,16 @@ class DashboardController extends AbstractController {
 
         $selectedDate = null;
         try {
-            $selectedDate = new \DateTime($request->query->get('date', null));
-            $selectedDate->setTime(0, 0, 0);
+            if($request->query->has('date')) {
+                $selectedDate = new \DateTime($request->query->get('date', null));
+                $selectedDate->setTime(0, 0, 0);
+            }
         } catch (\Exception $e) {
-            $selectedDate = $dateHelper->getToday();
+            $selectedDate = null;
+        }
+
+        if($selectedDate === null) {
+            $selectedDate = $this->getTodayOrNextDay($dateHelper, $settings->getNextDayThresholdTime());
         }
 
         $days = $this->getListOfSurroundingDays($selectedDate, static::DaysInFuture, static::DaysInPast);

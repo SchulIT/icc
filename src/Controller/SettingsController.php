@@ -73,6 +73,15 @@ class SettingsController extends AbstractController {
                 'help' => 'admin.settings.dashboard.free_lesson_types.help',
                 'data' => implode(',', $dashboardSettings->getFreeLessonSubstitutionTypes()),
                 'required' => false
+            ])
+            ->add('next_day_threshold', TimeType::class, [
+                'label' => 'admin.settings.dashboard.next_day_threshold.label',
+                'help' => 'admin.settings.dashboard.next_day_threshold.help',
+                'data' => $dashboardSettings->getNextDayThresholdTime(),
+                'required' => false,
+                'input' => 'string',
+                'input_format' => 'H:i',
+                'widget' => 'single_text'
             ]);
 
         $form = $builder->getForm();
@@ -88,6 +97,9 @@ class SettingsController extends AbstractController {
                 },
                 'free_lesson_types' => function($types) use ($dashboardSettings) {
                     $dashboardSettings->setFreeLessonSubstitutionTypes(explode(',', $types));
+                },
+                'next_day_threshold' => function($threshold) use ($dashboardSettings) {
+                    $dashboardSettings->setNextDayThresholdTime($threshold);
                 }
             ];
 

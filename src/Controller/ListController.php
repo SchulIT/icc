@@ -121,7 +121,7 @@ class ListController extends AbstractControllerWithMessages {
         $memberships = $tuition->getStudyGroup()->getMemberships()->toArray();
         $this->sorter->sort($memberships, StudentGroupMembershipStrategy::class);
 
-        $exams = $examRepository->findAllByTuitions([$tuition]);
+        $exams = $examRepository->findAllByTuitions([$tuition], null, true);
 
         $exams = array_filter($exams, function(Exam $exam) {
             return $this->isGranted(ExamVoter::Show, $exam);

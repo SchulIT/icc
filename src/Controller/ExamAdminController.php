@@ -55,7 +55,7 @@ class ExamAdminController extends AbstractController {
         $user = $this->getUser();
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
 
-        $paginator = $this->repository->getPaginator(static::NumberOfExams, $page, $gradeFilterView->getCurrentGrade());
+        $paginator = $this->repository->getPaginator(static::NumberOfExams, $page, $gradeFilterView->getCurrentGrade(), false);
         $pages = 1;
 
         if($paginator->count() > 0) {

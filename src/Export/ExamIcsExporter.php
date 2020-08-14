@@ -58,9 +58,9 @@ class ExamIcsExporter {
         $exams = [ ];
 
         if($user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent())) {
-            $exams = $this->examRepository->findAllByStudents($user->getStudents()->toArray());
+            $exams = $this->examRepository->findAllByStudents($user->getStudents()->toArray(), null, false, true);
         } else if($user->getUserType()->equals(UserType::Teacher())) {
-            $exams = $this->examRepository->findAllByTeacher($user->getTeacher());
+            $exams = $this->examRepository->findAllByTeacher($user->getTeacher(), null, false, true);
         }
 
         $exams = array_filter($exams, function(Exam $exam) {

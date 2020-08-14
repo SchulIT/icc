@@ -2,8 +2,8 @@
 
 namespace App\Notification\Email;
 
-use App\Entity\User;
 use App\Event\MessageUpdatedEvent;
+use App\Message\MessageRecipientResolver;
 use App\Repository\UserRepositoryInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -13,11 +13,13 @@ class MessageUpdatedStrategy implements EmailStrategyInterface {
     private $translator;
     private $userRepository;
     private $dateHelper;
+    private $recipientResolver;
 
-    public function __construct(TranslatorInterface $translator, UserRepositoryInterface $userRepository, DateHelper $dateHelper) {
+    public function __construct(TranslatorInterface $translator, MessageRecipientResolver $recipientResolver, UserRepositoryInterface $userRepository, DateHelper $dateHelper) {
         $this->translator = $translator;
         $this->userRepository = $userRepository;
         $this->dateHelper = $dateHelper;
+        $this->recipientResolver = $recipientResolver;
     }
 
     /**
@@ -50,11 +52,7 @@ class MessageUpdatedStrategy implements EmailStrategyInterface {
             return [ ];
         }
 
-        return array_filter(
-            $this->userRepository->findAllByNotifyMessages($objective->getMessage()),
-            function(User $user) {
-                return $user->getEmail() !== null;
-            });
+        return $this->recipientResolver->resolveRecipients($objective->getMessage());
     }
 
     /**

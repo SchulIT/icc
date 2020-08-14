@@ -2,25 +2,24 @@
 
 namespace App\Notification\Email;
 
-use App\Entity\User;
 use App\Event\MessageCreatedEvent;
+use App\Message\MessageRecipientResolver;
 use App\Repository\MessageRepositoryInterface;
-use App\Repository\UserRepositoryInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendActionInterface {
 
     private $translator;
-    private $userRepository;
     private $messageRepository;
     private $dateHelper;
+    private $recipientResolver;
 
-    public function __construct(TranslatorInterface $translator, UserRepositoryInterface $userRepository, MessageRepositoryInterface $messageRepository, DateHelper $dateHelper) {
+    public function __construct(TranslatorInterface $translator, MessageRecipientResolver $recipientResolver, MessageRepositoryInterface $messageRepository, DateHelper $dateHelper) {
         $this->translator = $translator;
-        $this->userRepository = $userRepository;
         $this->messageRepository = $messageRepository;
         $this->dateHelper = $dateHelper;
+        $this->recipientResolver = $recipientResolver;
     }
 
     /**
@@ -47,11 +46,7 @@ class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendAct
             return [ ];
         }
 
-        return array_filter(
-            $this->userRepository->findAllByNotifyMessages($objective->getMessage()),
-            function(User $user) {
-                return $user->getEmail() !== null;
-            });
+        return $this->recipientResolver->resolveRecipients($objective->getMessage());
     }
 
     /**

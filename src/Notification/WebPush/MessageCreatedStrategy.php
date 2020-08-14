@@ -5,6 +5,7 @@ namespace App\Notification\WebPush;
 use App\Converter\UserStringConverter;
 use App\Entity\UserWebPushSubscription;
 use App\Event\MessageCreatedEvent;
+use App\Message\MessageRecipientResolver;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserWebPushSubscriptionRepositoryInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
@@ -17,14 +18,16 @@ class MessageCreatedStrategy implements PushNotificationStrategyInterface, PostP
     private $translator;
     private $userConverter;
     private $dateHelper;
+    private $recipientResolver;
 
     public function __construct(UserWebPushSubscriptionRepositoryInterface $subscriptionRepository, MessageRepositoryInterface $messageRepository,
-                                TranslatorInterface $translator, UserStringConverter $userConverter, DateHelper $dateHelper) {
+                                MessageRecipientResolver $recipientResolver, TranslatorInterface $translator, UserStringConverter $userConverter, DateHelper $dateHelper) {
         $this->subscriptionRepository = $subscriptionRepository;
         $this->messageRepository = $messageRepository;
         $this->translator = $translator;
         $this->userConverter = $userConverter;
         $this->dateHelper = $dateHelper;
+        $this->recipientResolver = $recipientResolver;
     }
 
     /**
@@ -36,7 +39,9 @@ class MessageCreatedStrategy implements PushNotificationStrategyInterface, PostP
             return [ ];
         }
 
-        return $this->subscriptionRepository->findAllForMessage($objective->getMessage());
+        return $this->subscriptionRepository->findAllForUsers(
+            $this->recipientResolver->resolveRecipients($objective->getMessage())
+        );
     }
 
     /**

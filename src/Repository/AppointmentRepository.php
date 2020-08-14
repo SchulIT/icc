@@ -227,6 +227,35 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->getQuery()->getResult();
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function findAllStartEnd(DateTime $start, DateTime $end, array $categories = []): array {
+        $qbIds = $this->em->createQueryBuilder();
+        $params = [ ];
+
+        $qbIds
+            ->select('aInner.id')
+            ->from(Appointment::class, 'aInner');
+
+        if(count($categories) > 0) {
+            $qbIds
+                ->leftJoin('aInner.category', 'cInner')
+                ->andWhere('cInner.id IN (:categories)');
+
+            $params['categories'] = array_map(function(AppointmentCategory $category) {
+                return $category->getId();
+            }, $categories);
+        }
+
+        return $this->getAppointments($qbIds->getDQL(), $params, null)
+            ->andWhere('a.start <= :end')
+            ->andWhere('a.end >= :start')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()->getResult();
+    }
+
     public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null): Paginator {
         $qbIds = $this->em->createQueryBuilder();
         $params = [ ];

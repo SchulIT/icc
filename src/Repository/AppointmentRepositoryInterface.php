@@ -57,6 +57,14 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function findAll(array $categories = [ ], ?string $q = null, ?DateTime $today = null);
 
     /**
+     * @param DateTime $start
+     * @param DateTime $end
+     * @param AppointmentCategory[] $categories
+     * @return Appointment[]
+     */
+    public function findAllStartEnd(DateTime $start, DateTime $end, array $categories = [ ]): array;
+
+    /**
      * @param Appointment $appointment
      */
     public function persist(Appointment $appointment): void;

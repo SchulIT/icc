@@ -46,7 +46,7 @@ class ExamAdminController extends AbstractController {
     /**
      * @Route("", name="admin_exams")
      */
-    public function index(GradeFilter $gradeFilter, Grouper $grouper, ExamRepositoryInterface $examRepository, Sorter $sorter, Request $request) {
+    public function index(GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Grouper $grouper, ExamRepositoryInterface $examRepository, Sorter $sorter, Request $request) {
         $this->denyAccessUnlessGranted(ExamVoter::Manage);
 
         $page = $request->query->getInt('page');
@@ -54,8 +54,9 @@ class ExamAdminController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, true);
 
-        $paginator = $this->repository->getPaginator(static::NumberOfExams, $page, $gradeFilterView->getCurrentGrade(), false);
+        $paginator = $this->repository->getPaginator(static::NumberOfExams, $page, $gradeFilterView->getCurrentGrade(), $teacherFilterView->getCurrentTeacher(), false);
         $pages = 1;
 
         if($paginator->count() > 0) {
@@ -77,6 +78,7 @@ class ExamAdminController extends AbstractController {
         return $this->render('admin/exams/index.html.twig', [
             'groups' => $groups,
             'gradeFilter' => $gradeFilterView,
+            'teacherFilter' => $teacherFilterView,
             'page' => $page,
             'pages' => $pages
         ]);

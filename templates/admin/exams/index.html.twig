@@ -116,7 +116,10 @@
                 {% endfor %}
 
                 {% include '@Common/includes/pagination.html.twig' with {
-                    currentFilters: { grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null },
+                    currentFilters: {
+                        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
+                        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null
+                    },
                     currentPage: page,
                     paginationPath: 'admin_exams',
                     lastPage: pages,
@@ -141,7 +144,11 @@
                 <div class="card">
                     <div class="card-body">
                         {% if gradeFilter.grades|length > 0 %}
-                            {% include "_filter/grade.html.twig" with { class: 'mb-0'} %}
+                            {% include "_filter/grade.html.twig" %}
+                        {% endif %}
+
+                        {% if teacherFilter.teachers|length > 0 %}
+                            {% include "_filter/teacher.html.twig" with { class: 'mb-0'} %}
                         {% endif %}
                     </div>
 

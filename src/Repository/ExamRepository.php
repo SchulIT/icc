@@ -349,19 +349,31 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, bool $onlyPlanned = true): Paginator {
+    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, ?Teacher $teacher = null, bool $onlyPlanned = true): Paginator {
         $qb = $this->getDefaultQueryBuilder(null, false, $onlyPlanned);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
             ->from(Exam::class, 'eInner')
             ->leftJoin('eInner.tuitions', 'tInner')
-            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('tInner.teacher', 'sgInner')
             ->leftJoin('sgInner.grades', 'gInner');
 
         if($grade !== null) {
             $qbInner->where('gInner.id = :grade');
             $qb->setParameter('grade', $grade->getId());
+        }
+
+        if($teacher !== null) {
+             $qbInner
+                 ->leftJoin('tInner.additionalTeachers', 'atInner')
+                 ->andWhere(
+                 $qb->expr()->orX(
+                     'tInner.teacher = :teacher',
+                     'atInner.id = :teacher'
+                 )
+             );
+             $qb->setParameter('teacher', $teacher->getId());
         }
 
         $qb

@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use DateInterval;
 use DateTime;
+use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
 
 trait DateTimeHelperTrait {
@@ -15,7 +17,12 @@ trait DateTimeHelperTrait {
 
         list($hour, $minute) = explode(':', $threshold);
 
-        $threshold = $dateHelper->getToday()->setTime($hour, $minute);
+        try {
+            $interval = new DateInterval(sprintf('PT%dH%dM', $hour, $minute));
+            $threshold = (clone $today)->add($interval);
+        } catch (Exception $e) {
+            $threshold = $today;
+        }
 
         if($dateHelper->getNow() > $threshold) {
             $today = $today->modify('+1 day');

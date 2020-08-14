@@ -8,7 +8,11 @@
         {% endif -%}
     {%- endfor -%}
     <strong>
-        <a href="{{ path('list_tuition', { uuid: lesson.tuition.uuid }) }}" title="{{ lesson.tuition.subject.name }}">
+        {% set link = null %}
+        {% if is_granted('view', lesson.tuition) %}
+            {% set link = path('list_tuition', { uuid: lesson.tuition.uuid }) %}
+        {% endif %}
+        <a {% if link is not empty %}href="{{ link }}"{% endif%} title="{{ lesson.tuition.subject.name }}">
             {% if lesson.tuition.displayName is not empty -%}
                 {{ lesson.tuition.displayName }}
             {%- elseif showCourseName -%}

@@ -1,0 +1,16 @@
+{% extends "email/main.html.twig" %}
+
+{% block title %}{{ 'substitution.title'|trans({}, 'email') }}{% endblock %}
+
+{% block button_content %}{{ 'substitution.link'|trans({}, 'email') }}{% endblock %}
+{% block button_url%}{{ url('substitutions') }}{% endblock %}
+
+{% block preview %}{{ 'substitution.content'|trans({}, 'email') }}{% endblock %}
+
+{% block content %}
+    <p>
+        {{ 'substitution.content'|trans({}, 'email') }}
+    </p>
+{% endblock %}
+
+{% block additional %}{% endblock %}

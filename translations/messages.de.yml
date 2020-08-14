@@ -139,6 +139,7 @@ actions:
     create: erzeugen
     upload: hochladen
     pick: auswählen
+    view: anzeigen
 
 clipboard:
     copy: In die Zwischenablage kopieren

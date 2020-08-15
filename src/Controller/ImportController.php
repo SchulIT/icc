@@ -6,6 +6,7 @@ use App\Import\AbsencesImportStrategy;
 use App\Import\AppointmentCategoriesImportStrategy;
 use App\Import\AppointmentsImportStrategy;
 use App\Import\ExamsImportStrategy;
+use App\Import\FreeTimespanImportStrategy;
 use App\Import\GradesImportStrategy;
 use App\Import\GradeTeachersImportStrategy;
 use App\Import\Importer;
@@ -28,6 +29,7 @@ use App\Request\Data\AbsencesData;
 use App\Request\Data\AppointmentCategoriesData;
 use App\Request\Data\AppointmentsData;
 use App\Request\Data\ExamsData;
+use App\Request\Data\FreeLessonTimespansData;
 use App\Request\Data\GradesData;
 use App\Request\Data\GradeTeachersData;
 use App\Request\Data\InfotextsData;
@@ -592,6 +594,33 @@ class ImportController extends AbstractController {
      */
     public function rooms(RoomsData $roomsData, RoomImportStrategy $strategy): Response {
         $result = $this->importer->import($roomsData, $strategy);
+        return $this->fromResult($result);
+    }
+
+    /**
+     * Imports rooms.
+     *
+     * @Route("/free_lessons", methods={"POST"})
+     * @SWG\Post(operationId="import_lessons")
+     * @SWG\Parameter(
+     *     name="payload",
+     *     in="body",
+     *     @Model(type=FreeLessonTimespansData::class)
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Import was successful",
+     *     @Model(type=ImportResponse::class)
+     * )
+     * @SWG\Response(
+     *     response=400,
+     *     description="Import was not successful",
+     *     @Model(type=ErrorResponse::class)
+     * )
+     * @throws ImportException
+     */
+    public function freeLessons(FreeLessonTimespansData $timespansData, FreeTimespanImportStrategy $strategy): Response {
+        $result = $this->importer->replaceImport($timespansData, $strategy);
         return $this->fromResult($result);
     }
 }

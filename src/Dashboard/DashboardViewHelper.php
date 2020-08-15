@@ -5,6 +5,7 @@ namespace App\Dashboard;
 use App\Entity\Appointment;
 use App\Entity\Exam;
 use App\Entity\ExamSupervision;
+use App\Entity\FreeTimespan;
 use App\Entity\GradeTeacher;
 use App\Entity\Message;
 use App\Entity\MessageScope;
@@ -26,6 +27,7 @@ use App\Grouping\AbsentStudentStrategy as AbstentStudentGroupStrategy;
 use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
+use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\RoomReservationRepositoryInterface;
@@ -71,6 +73,7 @@ class DashboardViewHelper {
     private $studyGroupRepository;
     private $appointmentRepository;
     private $roomReservationRepository;
+    private $freeTimespanRepository;
 
     private $studyGroupHelper;
     private $timetablePeriodHelper;
@@ -86,7 +89,7 @@ class DashboardViewHelper {
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
                                 MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, RoomReservationRepositoryInterface $reservationRepository,
+                                StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, RoomReservationRepositoryInterface $reservationRepository, FreeTimespanRepositoryInterface $freeTimespanRepository,
                                 StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, Sorter $sorter, Grouper $grouper,
                                 TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
                                 ValidatorInterface $validator) {
@@ -101,6 +104,7 @@ class DashboardViewHelper {
         $this->studyGroupRepository = $studyGroupRepository;
         $this->appointmentRepository = $appointmentRepository;
         $this->roomReservationRepository = $reservationRepository;
+        $this->freeTimespanRepository = $freeTimespanRepository;
         $this->studyGroupHelper = $studyGroupHelper;
         $this->timetablePeriodHelper = $timetablePeriodHelper;
         $this->timetableSettings = $timetableSettings;
@@ -149,6 +153,7 @@ class DashboardViewHelper {
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
         $this->addAppointments($this->appointmentRepository->findAllForTeacher($teacher, $dateTime), $view);
         $this->addRoomReservations($this->roomReservationRepository->findAllByTeacherAndDate($teacher, $dateTime), $view);
+        $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
 
         return $view;
     }
@@ -177,6 +182,7 @@ class DashboardViewHelper {
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
         $this->addAppointments($this->appointmentRepository->findAllForStudents([$student], $dateTime), $view);
+        $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
 
         return $view;
     }
@@ -423,6 +429,18 @@ class DashboardViewHelper {
                 for($lessonNumber = $reservation->getLessonStart(); $lessonNumber <= $reservation->getLessonEnd(); $lessonNumber++) {
                     $view->addItem($lessonNumber, new RoomReservationViewItem($reservation, $violations));
                 }
+            }
+        }
+    }
+
+    /**
+     * @param FreeTimespan[] $timespans
+     * @param DashboardView $view
+     */
+    private function addFreeTimespans(array $timespans, DashboardView $view): void {
+         foreach($timespans as $timespan) {
+            for($lessonNumber = $timespan->getStart(); $lessonNumber <= $timespan->getEnd(); $lessonNumber++) {
+                $view->addItem($lessonNumber, new FreeLessonView());
             }
         }
     }

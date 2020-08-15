@@ -65,9 +65,14 @@ class DashboardViewCollapseHelper {
         /** @var TimetableLessonViewItem[] $timetableLessons */
         $timetableLessons = ArrayUtils::filterByType($originalItems, TimetableLessonViewItem::class);
         $timetableCount = count($timetableLessons);
+        $freeTimetableLessons = ArrayUtils::filterByType($originalItems, FreeLessonView::class);
 
         if($timetableCount === 1 && $timetableLessons[0]->getLesson() !== null) {
-            $lesson->addItem($timetableLessons[0]);
+            if(count($freeTimetableLessons) > 0) {
+                $lesson->addItem($freeTimetableLessons[0]);
+            } else {
+                $lesson->addItem($timetableLessons[0]);
+            }
         } else if($timetableCount > 1) {
             $lesson->setWarning();
             $lesson->replaceItems($originalItems);
@@ -180,7 +185,8 @@ class DashboardViewCollapseHelper {
             SubstitutionViewItem::class,
             SupervisionViewItem::class,
             TimetableLessonViewItem::class,
-            ExamSupervisionViewItem::class
+            ExamSupervisionViewItem::class,
+            FreeLessonView::class
         ];
 
         foreach($originalItems as $originalItem) {

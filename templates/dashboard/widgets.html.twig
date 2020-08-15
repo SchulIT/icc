@@ -181,6 +181,17 @@
     </div>
 {% endmacro %}
 
+{% macro free_lesson(item, lesson, start, end, hasWarning) %}
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %}">
+        <div class="d-flex">
+            {{ _self.show_lesson(lesson, start, end) }}
+            {{ _self.show_warning(hasWarning) }}
+
+            <span class="align-self-center badge badge-light badge-card">{{ 'dashboard.free_lesson'|trans|upper }}</span>
+        </div>
+    </div>
+{% endmacro %}
+
 {% macro supervision(item, lesson, start, end, hasWarning, supervisionLabels) %}
     <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-primary{% endif %}">
         <div class="d-flex">

@@ -181,6 +181,7 @@ dashboard:
     exam: Klausur
     empty: Für diesen Tag sind keine Daten hinterlegt.
     free_hour: Freistunde
+    free_lesson: Unterrichtsfrei
     absences: Absenzen
     nav:
         infotexts: '{0} Tagestexte|{1} Tagestext|]1,Inf[ Tagestexte'

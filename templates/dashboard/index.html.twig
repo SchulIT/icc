@@ -157,6 +157,8 @@
                                         {{ dashboard.exam(item, lessonNumber, startTimes[lessonNumber], lesson.warning, endTimes[lessonNumber]) }}
                                     {% elseif type == 'lesson' %}
                                         {{ dashboard.lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, gradesWithCourseNames) }}
+                                    {% elseif type == 'free_lesson' %}
+                                        {{ dashboard.free_lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
                                     {% elseif type == 'supervision' %}
                                         {{ dashboard.supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, supervisionLabels) }}
                                     {% elseif type == 'substitution' %}

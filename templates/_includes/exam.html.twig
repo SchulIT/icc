@@ -19,20 +19,28 @@
         </div>
 
         <div class="card-body align-self-center d-flex align-items-sm-center pl-0">
-            <span class="mr-auto align-self-center">
+            <div class="mr-auto align-self-center d-flex flex-wrap">
                 {% for tuition in exam.tuitions %}
-                    <span class="badge badge-primary">{{ tuition.name|upper }}</span>
-                    <span class="mx-1"></span>
-                    <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-                    <span class="mx-1"></span>
-                    <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
-                    <span class="mx-1"></span>
+                    <span class="d-flex flex-wrap align-self-center mb-1">
+                        <span>
+                            <span class="badge badge-primary">{{ tuition.name|upper }}</span>
+                            <span class="mx-1"></span>
+                        </span>
+                        <span>
+                            <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                            <span class="mx-1"></span>
+                        </span>
+                        <span>
+                            <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                            <span class="mx-1"></span>
+                        </span>
+                    </span>
                 {% endfor %}
 
                 {% if exam.rooms is not empty %}
                     <i class="fa fa-door-open"></i> {{ exam.rooms|first }}
                 {% endif %}
-            </span>
+            </div>
 
             {% if hideDetails == false %}
             <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">

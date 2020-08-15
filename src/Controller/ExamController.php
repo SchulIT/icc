@@ -71,7 +71,7 @@ class ExamController extends AbstractControllerWithMessages {
         $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user);
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, false);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $studyGroupFilterView->getCurrentStudyGroup() === null && $gradeFilterView->getCurrentGrade() === null);
 
         $isVisible = $examSettings->isVisibileFor($user->getUserType());
         $isVisibleAdmin = false;
@@ -84,8 +84,9 @@ class ExamController extends AbstractControllerWithMessages {
         $exams = [ ];
 
         if($isVisible === true || $this->isGranted('ROLE_EXAMS_CREATOR') || $this->isGranted('ROLE_EXAMS_ADMIN')) {
-            $isVisible = true;
-            $isVisibleAdmin = true;
+            if($isVisible === false) {
+                $isVisibleAdmin = $this->isGranted('ROLE_EXAMS_CREATOR') || $this->isGranted('ROLE_EXAMS_ADMIN');
+            }
 
             if ($studentFilterView->getCurrentStudent() !== null) {
                 $groups = $this->computeGroups($examRepository->findAllDatesByStudents([$studentFilterView->getCurrentStudent()]));

@@ -161,7 +161,7 @@ exams:
         title: Klausurplan
         description: "Klausurplan für %user%"
         supervision_description: "Klausuraufsicht %tuitions%"
-        exam_description: "Klausur %tuition%"
+        exam_description: "Klausur %tuitions%"
         tuition: "%name% (%grades%)"
 
 dashboard:

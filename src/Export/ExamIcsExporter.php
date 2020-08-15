@@ -51,7 +51,7 @@ class ExamIcsExporter {
      * @return CalendarEvent[]
      */
     private function getIcsItems(User $user) {
-        if($this->examSettings->isVisibileFor($user->getUserType())) {
+        if($this->examSettings->isVisibileFor($user->getUserType()) === false) {
             return [ ];
         }
 
@@ -70,7 +70,7 @@ class ExamIcsExporter {
         $items = [ ];
 
         foreach($exams as $exam) {
-            $items += $this->makeIcsItems($exam, $user);
+            $items = array_merge($items, $this->makeIcsItems($exam, $user));
         }
 
         return $items;

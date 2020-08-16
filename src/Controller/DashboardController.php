@@ -24,7 +24,7 @@ class DashboardController extends AbstractController {
     use DateTimeHelperTrait;
 
     private const DaysInFuture = 5;
-    private const DaysInPast = 1;
+    private const DaysInPast = 0;
 
     private const ShowTimesKey = 'dashboard.show_times';
     private const IncludeGradeMessagesKey = 'dashboard.include_grade_messages';

@@ -1,9 +1,13 @@
-{% macro replacement(original, replacement) %}
-    {% if original is same as(replacement) %}
-        {{ original }}
-    {% else %}
-        {% if original is not empty and replacement is not empty %}<s>{{ original }}</s> ⟶ {% elseif original is not empty %}{{ original }}{% endif %}{% if replacement is not empty %}{{ replacement }}{% endif %}
-    {% endif %}
+{% macro replacement(original, replacement) -%}
+    {%- if original is same as (replacement) -%}{{ original }}
+    {%- else -%}
+        {% if original is not empty -%}
+            <s>{{ original }}</s>
+        {%- endif -%}
+        {%- if replacement is not empty %}
+            ⟶ {{ replacement }}
+        {%- endif -%}
+    {%- endif -%}
 {% endmacro %}
 
 {% macro show_lesson(lesson, start, end, warning) %}

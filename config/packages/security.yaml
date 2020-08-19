@@ -20,7 +20,8 @@ security:
     access_control:
         - { path: ^/admin/ea/, roles: ROLE_SUPER_ADMIN }
         - { path: ^/admin/(messages|exams|documents), roles: ROLE_USER }
-        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin$, roles: ROLE_USER }
+        - { path: ^/admin/, roles: ROLE_ADMIN }
         - { path: ^/api/import, roles: ROLE_IMPORT }
         - { path: ^/authorize, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/cron, roles: ROLE_CRON }

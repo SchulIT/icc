@@ -374,4 +374,37 @@ class Substitution {
         return $this->replacementStudyGroups;
     }
 
+    public function clone() {
+        $clone = new self();
+
+        $clone->setDate($this->getDate());
+        $clone->setType($this->getType());
+        $clone->setExternalId($this->getExternalId());
+        $clone->setSubject($this->getSubject());
+        $clone->setReplacementSubject($this->getSubject());
+        $clone->setRoom($this->getRoom());
+        $clone->setReplacementRoom($this->getReplacementRoom());
+        $clone->setLessonStart($this->getLessonStart());
+        $clone->setLessonEnd($this->getLessonEnd());
+        $clone->setStartsBefore($this->startsBefore());
+        $clone->setRemark($this->getRemark());
+
+        foreach($this->getTeachers() as $teacher) {
+            $clone->addTeacher($teacher);
+        }
+
+        foreach($this->getReplacementTeachers() as $teacher) {
+            $clone->addReplacementTeacher($teacher);
+        }
+
+        foreach($this->getStudyGroups() as $studyGroup) {
+            $clone->addStudyGroup($studyGroup);
+        }
+
+        foreach($this->getReplacementStudyGroups() as $studyGroup) {
+            $clone->addReplacementStudyGroup($studyGroup);
+        }
+
+        return $clone;
+    }
 }

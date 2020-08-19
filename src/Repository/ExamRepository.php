@@ -356,7 +356,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->select('eInner.id')
             ->from(Exam::class, 'eInner')
             ->leftJoin('eInner.tuitions', 'tInner')
-            ->leftJoin('tInner.teacher', 'sgInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
             ->leftJoin('sgInner.grades', 'gInner');
 
         if($grade !== null) {

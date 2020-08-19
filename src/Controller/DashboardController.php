@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Dashboard\DashboardViewHelper;
 use App\Dashboard\DashboardViewCollapseHelper;
+use App\Entity\Substitution;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Settings\DashboardSettings;
@@ -42,7 +44,7 @@ class DashboardController extends AbstractController {
     public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
                               DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper,
                               DateHelper $dateHelper, DashboardSettings $settings, TimetableSettings $timetableSettings,
-                              UserRepositoryInterface $userRepository, Request $request) {
+                              UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -128,7 +130,8 @@ class DashboardController extends AbstractController {
             'supervisionLabels' => $supervisionLabels,
             'showTimes' => $showTimes,
             'includeGradeMessages' => $user->getData(static::IncludeGradeMessagesKey, false),
-            'canIncludeGradeMessages' => $user->getTeacher() !== null
+            'canIncludeGradeMessages' => $user->getTeacher() !== null,
+            'last_import' => $importDateTypeRepository->findOneByEntityClass(Substitution::class)
         ]);
     }
 

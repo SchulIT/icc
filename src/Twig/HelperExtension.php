@@ -70,12 +70,24 @@ class HelperExtension extends AbstractExtension {
         ];
     }
 
-    public function getPreviousDate(\DateTime $dateTime): DateTime {
-        return (clone $dateTime)->sub(new DateInterval('P1D'));
+    public function getPreviousDate(\DateTime $dateTime, ?bool $skipWeekends): DateTime {
+        $previous = (clone $dateTime)->sub(new DateInterval('P1D'));
+
+        while($skipWeekends === true && $previous->format('N') > 5) {
+            $previous->modify('-1 day');
+        }
+
+        return $previous;
     }
 
-    public function getNextDate(\DateTime $dateTime): DateTime {
-        return (clone $dateTime)->add(new DateInterval('P1D'));
+    public function getNextDate(\DateTime $dateTime, ?bool $skipWeekends): DateTime {
+        $next = (clone $dateTime)->add(new DateInterval('P1D'));
+
+        while($skipWeekends === true && $next->format('N') > 5) {
+            $next->modify('+1 day');
+        }
+
+        return $next;
     }
 
     public function isInDateTimeArray(\DateTime $dateTime, array $dateTimes): bool {

@@ -72,9 +72,13 @@ class DashboardController extends AbstractController {
 
         if($selectedDate === null) {
             $selectedDate = $this->getTodayOrNextDay($dateHelper, $settings->getNextDayThresholdTime());
+
+            while($settings->skipWeekends() && $selectedDate->format('N') > 5) {
+                $selectedDate->modify('+1 day');
+            }
         }
 
-        $days = $this->getListOfSurroundingDays($selectedDate, static::DaysInFuture, static::DaysInPast);
+        $days = $this->getListOfSurroundingDays($selectedDate, static::DaysInFuture, static::DaysInPast, $settings->skipWeekends());
 
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null);
@@ -131,7 +135,8 @@ class DashboardController extends AbstractController {
             'showTimes' => $showTimes,
             'includeGradeMessages' => $user->getData(static::IncludeGradeMessagesKey, false),
             'canIncludeGradeMessages' => $user->getTeacher() !== null,
-            'last_import' => $importDateTypeRepository->findOneByEntityClass(Substitution::class)
+            'last_import' => $importDateTypeRepository->findOneByEntityClass(Substitution::class),
+            'settings' => $settings
         ]);
     }
 
@@ -139,19 +144,28 @@ class DashboardController extends AbstractController {
      * @param \DateTime $dateTime
      * @param int $daysInFuture
      * @param int $daysInPast
+     * @param bool $skipWeekends
      * @return \DateTime[]
      */
-    private function getListOfSurroundingDays(\DateTime $dateTime, int $daysInFuture, int $daysInPast): array {
+    private function getListOfSurroundingDays(\DateTime $dateTime, int $daysInFuture, int $daysInPast, bool $skipWeekends): array {
         $days = [ ];
 
         for($i = $daysInPast; $i > 0; $i--) {
-            $days[] = (clone $dateTime)->modify(sprintf('-%d days', $i));
+            $day = (clone $dateTime)->modify(sprintf('-%d days', $i));
+
+            if($skipWeekends === false || $day->format('N') < 6) {
+                $days[] = $day;
+            }
         }
 
         $days[] = $dateTime;
 
         for($i = 1; $i <= $daysInFuture; $i++) {
-            $days[] = (clone $dateTime)->modify(sprintf('+%d days', $i));
+            $day = (clone $dateTime)->modify(sprintf('+%d days', $i));
+
+            if($skipWeekends === false || $day->format('N') < 6) {
+                $days[] = $day;
+            }
         }
 
         return $days;

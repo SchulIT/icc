@@ -82,6 +82,15 @@ class SettingsController extends AbstractController {
                 'input' => 'string',
                 'input_format' => 'H:i',
                 'widget' => 'single_text'
+            ])
+            ->add('skip_weekends', CheckboxType::class, [
+                'label' => 'admin.settings.dashboard.skip_weekends.label',
+                'help' => 'admin.settings.dashboard.skip_weekends.help',
+                'required' => false,
+                'data' => $dashboardSettings->skipWeekends(),
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ]);
 
         $form = $builder->getForm();
@@ -100,6 +109,9 @@ class SettingsController extends AbstractController {
                 },
                 'next_day_threshold' => function($threshold) use ($dashboardSettings) {
                     $dashboardSettings->setNextDayThresholdTime($threshold);
+                },
+                'skip_weekends' => function($skipWeekends) use ($dashboardSettings) {
+                    $dashboardSettings->setSkipWeekends($skipWeekends);
                 }
             ];
 

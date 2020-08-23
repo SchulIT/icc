@@ -607,6 +607,9 @@ admin:
             next_day_threshold:
                 label: Nächster Tag ab
                 help: Ab dieser Uhrzeit wird der nächste Tag automatisch ausgewählt. Ist dieser Wert nicht gesetzt, so wird stets der aktuelle Tag automatisch ausgewählt.
+            skip_weekends:
+                label: Wochenenden überspringen
+                help: Gibt an, ob Wochenendtage auf der Übersicht übersprungen werden sollen.
 
         appointments:
             label: Terminplan

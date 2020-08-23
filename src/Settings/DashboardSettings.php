@@ -40,4 +40,12 @@ class DashboardSettings extends AbstractSettings {
     public function setNextDayThresholdTime($threshold): void {
         $this->setValue('dashboard.next_day_threshold', $threshold);
     }
+
+    public function skipWeekends(): bool {
+        return $this->getValue('dashboard.skip_weekends', false);
+    }
+
+    public function setSkipWeekends(bool $skipWeekends): void {
+        $this->setValue('dashboard.skip_weekends', $skipWeekends);
+    }
 }

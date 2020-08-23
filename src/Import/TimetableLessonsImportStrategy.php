@@ -2,11 +2,12 @@
 
 namespace App\Import;
 
-use App\Entity\FreestyleTimetableLesson;
+use App\Entity\Grade;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
-use App\Entity\TuitionTimetableLesson;
+use App\Repository\GradeRepositoryInterface;
 use App\Repository\RoomRepositoryInterface;
+use App\Repository\SubjectRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetablePeriodRepositoryInterface;
@@ -26,16 +27,21 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
     private $tuitionRepository;
     private $roomRepository;
     private $teacherRepository;
+    private $subjectRepository;
+    private $gradeRepository;
 
     public function __construct(TimetableLessonRepositoryInterface $timetableRepository, TimetablePeriodRepositoryInterface $periodRepository,
                                 TimetableWeekRepositoryInterface $weekRepository, TuitionRepositoryInterface $tuitionRepository,
-                                RoomRepositoryInterface $roomRepository, TeacherRepositoryInterface $teacherRepository) {
+                                RoomRepositoryInterface $roomRepository, TeacherRepositoryInterface $teacherRepository,
+                                SubjectRepositoryInterface $substitutionRepository, GradeRepositoryInterface $gradeRepository) {
         $this->timetableRepository = $timetableRepository;
         $this->periodRepository = $periodRepository;
         $this->weekRepository = $weekRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->roomRepository = $roomRepository;
         $this->teacherRepository = $teacherRepository;
+        $this->subjectRepository = $substitutionRepository;
+        $this->gradeRepository = $gradeRepository;
     }
 
     /**
@@ -65,12 +71,7 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
      * @throws ImportException
      */
     public function createNewEntity($data, $requestData) {
-        if($data->getTuition() === null) {
-            $lesson = (new FreestyleTimetableLesson());
-        } else {
-            $lesson = (new TuitionTimetableLesson());
-        }
-
+        $lesson = new TimetableLesson();
         $lesson->setExternalId($data->getId());
         $this->updateEntity($lesson, $data, $requestData);
 
@@ -107,7 +108,7 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
             throw new ImportException(sprintf('Period "%s" on timetable lesson ID "%s" was not found.', $requestData->getPeriod(), $data->getId()));
         }
 
-        if($entity instanceof TuitionTimetableLesson) {
+        if($data->getTuition() !== null) {
             $tuition = $this->tuitionRepository->findOneByExternalId($data->getTuition());
 
             if ($tuition === null) {
@@ -115,15 +116,35 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
             }
 
             $entity->setTuition($tuition);
-
-            if(!empty($data->getRoom())) {
-                $entity->setRoom($this->roomRepository->findOneByExternalId($data->getRoom()));
-            } else {
-                $entity->setRoom(null);
-            }
-        } else if($entity instanceof FreestyleTimetableLesson) {
-            $entity->setSubject($data->getSubject());
         }
+
+        if(!empty($data->getRoom())) {
+            $room = $this->roomRepository->findOneByExternalId($data->getRoom());
+            $entity->setRoom($room);
+
+            if($room === null) {
+                $entity->setLocation($data->getRoom());
+            }
+        } else {
+            $entity->setRoom(null);
+        }
+
+        if($data->getSubject() !== null) {
+            $subject = $this->subjectRepository->findOneByAbbreviation($data->getSubject());
+            $entity->setSubject($subject);
+        }
+
+        if($entity->getTuition() === null && $entity->getSubject() === null) {
+            throw new ImportException(sprintf('Subject "%s" on timetable lesson ID "%s" was not found.', $data->getSubject(), $data->getId()));
+        }
+
+        CollectionUtils::synchronize(
+            $entity->getGrades(),
+            $this->gradeRepository->findAllByExternalId($data->getGrades()),
+            function(Grade $grade) {
+                return $grade->getId();
+            }
+        );
 
         CollectionUtils::synchronize(
             $entity->getTeachers(),

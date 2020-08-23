@@ -21,15 +21,17 @@ class TimetableFilter {
         $result = [ ];
 
         foreach($lessons as $lesson) {
-            if($lesson instanceof FreestyleTimetableLesson) {
-                $result[] = $lesson;
-            } else if($lesson instanceof TuitionTimetableLesson) {
-                $tuition = $lesson->getTuition();
-                $subject = $tuition->getSubject();
-
-                if ($subject !== null && $predicate($subject)) {
+            if($lesson->getTuition() !== null && $lesson->getTuition()->getSubject() !== null) {
+                if($predicate($lesson->getTuition()->getSubject())) {
                     $result[] = $lesson;
                 }
+            } else if($lesson->getSubject() !== null) {
+                if($predicate($lesson->getSubject()) === true) {
+                    $result[] = $lesson;
+                }
+            } else {
+                // Subject not provided
+                $result[] = $lesson;
             }
         }
 

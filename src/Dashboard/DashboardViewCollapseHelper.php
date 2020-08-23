@@ -2,10 +2,10 @@
 
 namespace App\Dashboard;
 
-use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Settings\DashboardSettings;
 use App\Utils\ArrayUtils;
+use InvalidArgumentException;
 
 /**
  * Applies an algorithm in order to reduce the amount of items of one lesson to one.
@@ -67,6 +67,7 @@ class DashboardViewCollapseHelper {
         $timetableLessons = ArrayUtils::filterByType($originalItems, TimetableLessonViewItem::class);
         $timetableCount = count($timetableLessons);
         $freeTimetableLessons = ArrayUtils::filterByType($originalItems, FreeLessonView::class);
+        $mergeTimetableLessons = false;
 
         if($timetableCount === 1 && $timetableLessons[0]->getLesson() !== null) {
             if(count($freeTimetableLessons) > 0) {
@@ -75,9 +76,14 @@ class DashboardViewCollapseHelper {
                 $lesson->addItem($timetableLessons[0]);
             }
         } else if($timetableCount > 1) {
-            $lesson->setWarning();
-            $lesson->replaceItems($originalItems);
-            return;
+            if($this->canMergeTimetableLessons($timetableLessons)) {
+                $mergeTimetableLessons = true;
+                $lesson->addItem($this->mergeTimetableLessons($timetableLessons));
+            } else {
+                $lesson->setWarning();
+                $lesson->replaceItems($originalItems);
+                return;
+            }
         }
 
         // STEP 2: SUPERVISIONS
@@ -130,12 +136,16 @@ class DashboardViewCollapseHelper {
         }
 
         foreach($removableSubstitutions as $substitution) {
-            $lesson->clearItems();
+            if($mergeTimetableLessons === false) {
+                $lesson->clearItems();
+            }
             $lesson->addItem($substitution);
         }
 
         if($defaultSubstitutionsCount > 0) {
-            $lesson->clearItems();
+            if($mergeTimetableLessons === false) {
+                $lesson->clearItems();
+            }
             $mergedDefaultSubstitutions = $this->mergeSubstitutions($defaultSubstitutions);
 
             foreach ($mergedDefaultSubstitutions as $substitution) {
@@ -205,6 +215,70 @@ class DashboardViewCollapseHelper {
                 $lesson->addItem($originalItem);
             }
         }
+    }
+
+    /**
+     * @param TimetableLessonViewItem[] $lessonViews
+     * @return boolean
+     */
+    private function canMergeTimetableLessons(array $lessonViews) {
+        $rooms = [ ];
+        $locations = [ ];
+
+        foreach($lessonViews as $view) {
+            $lesson = $view->getLesson();
+
+            if($lesson->getRoom() !== null) {
+                $rooms[] = $lesson->getRoom()->getId();
+            }
+
+            if($lesson->getLocation() !== null) {
+                $locations[] = $lesson->getLocation();
+            }
+        }
+
+        $distinctRooms = array_unique($rooms);
+        $distinctLocations = array_unique($locations);
+
+        if(count($distinctRooms) === 0 && $distinctLocations === 0) {
+            return true;
+        }
+
+        if(count($distinctRooms) === 1 && count($distinctLocations) === 0) {
+            return true;
+        }
+
+        if(count($distinctRooms) === 0 && count($distinctLocations) === 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param TimetableLessonViewItem[] $lessonViews
+     * @return TimetableLessonViewItem
+     */
+    private function mergeTimetableLessons(array $lessonViews) {
+        if(count($lessonViews) === 0) {
+            throw new InvalidArgumentException('$lessonView must at least contain one element.');
+        }
+
+        $absentGroups = [ ];
+
+        foreach($lessonViews as $lessonView) {
+            $absentGroups = array_merge($lessonView->getAbsentStudentGroups());
+        }
+
+        $firstView = array_shift($lessonViews);
+
+        $view = new TimetableLessonViewItem($firstView->getLesson(), $absentGroups);
+
+        foreach($lessonViews as $lessonView) {
+            $view->addAdditionalLesson($lessonView->getLesson());
+        }
+
+        return $view;
     }
 
     /**

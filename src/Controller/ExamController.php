@@ -73,7 +73,7 @@ class ExamController extends AbstractControllerWithMessages {
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $studyGroupFilterView->getCurrentStudyGroup() === null && $gradeFilterView->getCurrentGrade() === null);
 
-        $isVisible = $examSettings->isVisibileFor($user->getUserType());
+        $isVisible = $examSettings->isVisibileFor($user->getUserType()) && $this->isVisibleForGrade($user, $examSettings);
         $isVisibleAdmin = false;
 
         $week = $request->query->has('week') ? $request->query->getInt('week') : null;
@@ -167,6 +167,18 @@ class ExamController extends AbstractControllerWithMessages {
             'previousGroup' => $previousGroup,
             'last_import' => $this->importDateTypeRepository->findOneByEntityClass(Exam::class)
         ]);
+    }
+
+    private function isVisibleForGrade(User $user, ExamSettings $examSettings) {
+        $visibleGradeIds = $examSettings->getVisibleGradeIds();
+        $gradeIds = [ ];
+
+        /** @var Student $student */
+        foreach($user->getStudents() as $student) {
+            $gradeIds[] = $student->getGrade()->getId();
+        }
+
+        return count(array_intersect($visibleGradeIds, $gradeIds)) > 0;
     }
 
     private function getExams(?ExamWeekGroup $group, \Closure $repositoryCall) {

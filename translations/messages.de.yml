@@ -539,6 +539,9 @@ admin:
 
         exams:
             label: Klausurplan
+            visible_grades:
+                label: Klassen
+                help: Nur Lernende dieser Klassen können den Klausurplan einsehen.
             window:
                 label: Vorausblick für Lernende
                 help: Anzahl der Tage, die Lernende in die Zukunft blicken können (0 bedeutet unbegrenzte Anzahl an Tagen).

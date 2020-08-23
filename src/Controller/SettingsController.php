@@ -202,7 +202,7 @@ class SettingsController extends AbstractController {
     /**
      * @Route("/exams", name="admin_settings_exams")
      */
-    public function exams(Request $request, ExamSettings $examSettings, EnumStringConverter $enumStringConverter) {
+    public function exams(Request $request, ExamSettings $examSettings, EnumStringConverter $enumStringConverter, GradeRepositoryInterface $gradeRepository) {
         $builder = $this->createFormBuilder();
         $builder
             ->add('visibility', ChoiceType::class, [
@@ -271,6 +271,21 @@ class SettingsController extends AbstractController {
                 'help' => 'admin.settings.exams.planning.number_of_exams_day.help',
                 'required' => true,
                 'data' => $examSettings->getMaximumNumberOfExamsPerDay()
+            ])
+            ->add('visible_grades', ChoiceType::class, [
+                'label' => 'admin.settings.exams.visible_grades.label',
+                'help' => 'admin.settings.exams.visible_grades.help',
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
+                    return $grade->getName();
+                }, function (Grade $grade) {
+                    return $grade->getId();
+                }),
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => [
+                    'size' => 10
+                ],
+                'data' => $examSettings->getVisibleGradeIds()
             ]);
 
         $form = $builder->getForm();
@@ -301,6 +316,9 @@ class SettingsController extends AbstractController {
                 },
                 'number_of_exams_day' => function(int $number) use ($examSettings) {
                     $examSettings->setMaximumNumberOfExamsPerDay($number);
+                },
+                'visible_grades' => function(?array $visibleGrades) use($examSettings) {
+                    $examSettings->setVisibleGradeIds($visibleGrades ?? [ ]);
                 }
             ];
 

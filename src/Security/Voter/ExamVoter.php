@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Exam;
+use App\Entity\Student;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
@@ -192,6 +193,22 @@ class ExamVoter extends Voter {
 
         if($this->examSettings->isVisibileFor($userType) === false) {
             return false;
+        }
+
+        $user = $token->getUser();
+
+        if($user instanceof User && $this->isStudentOrParent($token)) {
+            $visibleGradeIds = $this->examSettings->getVisibleGradeIds();
+            $gradeIds = [ ];
+
+            /** @var Student $student */
+            foreach($user->getStudents() as $student) {
+                $gradeIds[] = $student->getGrade()->getId();
+            }
+
+            if(count(array_intersect($visibleGradeIds, $gradeIds)) === 0) {
+                return false;
+            }
         }
 
         if($this->isStudentOrParent($token) && $exam->getDate() === null) {

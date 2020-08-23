@@ -21,6 +21,7 @@ class ExamVoter extends Voter {
     public const Manage = 'manage-exams';
     public const Add = 'new-exam';
     public const Edit = 'edit';
+    public const Unplan = 'unplan';
     public const Remove = 'remove';
 
     private $dateHelper;
@@ -42,7 +43,8 @@ class ExamVoter extends Voter {
             static::Supervisions,
             static::Show,
             static::Edit,
-            static::Remove
+            static::Remove,
+            static::Unplan
         ];
 
         return in_array($attribute , [ static::Add, static::Manage ]) || ($subject instanceof Exam && in_array($attribute, $attributes));
@@ -66,6 +68,7 @@ class ExamVoter extends Voter {
                 return $this->canAdd($token);
 
             case static::Edit:
+            case static::Unplan:
                 return $this->canEdit($subject, $token);
 
             case static::Remove:

@@ -166,6 +166,42 @@ class ExamAdminController extends AbstractController {
     }
 
     /**
+     * @Route("/{uuid}/unplan", name="unplan_exam")
+     */
+    public function unplan(Exam $exam, Request $request, TranslatorInterface $translator) {
+        $this->denyAccessUnlessGranted(ExamVoter::Unplan, $exam);
+
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'admin.exams.unplan.confirm',
+            'message_parameters' => [
+                '%date%' => $exam->getDate()->format($translator->trans('date.format')),
+                '%lessons%' => $translator->trans('label.exam_lessons', [
+                    '%start%' => $exam->getLessonStart(),
+                    '%end%' => $exam->getLessonEnd(),
+                    '%count%' => $exam->getLessonEnd() - $exam->getLessonStart() + 1
+                ])
+            ]
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $exam->setDate(null);
+            $exam->setLessonStart(0);
+            $exam->setLessonEnd(0);
+
+            $this->repository->persist($exam);
+
+            $this->addFlash('success', 'admin.exams.unplan.success');
+            return $this->redirectToRoute('admin_exams');
+        }
+
+        return $this->render('admin/exams/unplan.html.twig', [
+            'form' => $form->createView(),
+            'exam' => $exam
+        ]);
+    }
+
+    /**
      * @Route("/{uuid}/remove", name="remove_exam")
      */
     public function remove(Exam $exam, Request $request, TranslatorInterface $translator) {

@@ -837,6 +837,10 @@ admin:
         tuition_teachers_can_edit:
             label: Lehrkräfte können Klausur bearbeiten
             help: Wenn diese Option ausgewählt ist, können Lehrkräfte der ausgewählten Unterrichte die Klausurdetails (Datum, Stunde, Raum, Beschreibung) bearbeiten.
+        unplan:
+            label: Klausurplanung rückgängig machen
+            confirm: 'Soll die Klausurplanung am %date% (%lessons%) wirklich rückgängig werden?'
+            success: Klausurplanung erfolgreich rückgängig gemacht
         remove:
             label: Klausur löschen
             confirm: 'Soll die Klausur am %date% (%lessons%) wirklich gelöscht werden?'

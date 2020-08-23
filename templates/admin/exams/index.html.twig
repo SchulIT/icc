@@ -101,6 +101,12 @@
                                             </a>
                                         {% endif %}
 
+                                        {% if is_granted('unplan', exam) and exam.date is not null %}
+                                            <a href="{{ path('unplan_exam', { uuid: exam.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.exams.unplan.label'|trans }}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        {% endif %}
+
                                         {% if is_granted('remove', exam) %}
                                             <a href="{{ path('remove_exam', { uuid: exam.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.exams.remove.label'|trans }}">
                                                 <i class="fa fa-trash"></i>

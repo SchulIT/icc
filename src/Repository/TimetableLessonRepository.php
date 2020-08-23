@@ -205,7 +205,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
                 $qbTuitionLessons->expr()->orX(
                     $qbTuitionLessons->expr()->in('sInner.id', ':subjects'),
                     $qbTuitionLessons->expr()->in('lsInner.id', ':subjects')
-                )                
+                )
             );
 
         $subjectIds = array_map(function(Subject $subject) {

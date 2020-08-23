@@ -119,7 +119,12 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
         }
 
         if(!empty($data->getRoom())) {
-            $entity->setRoom($this->roomRepository->findOneByExternalId($data->getRoom()));
+            $room = $this->roomRepository->findOneByExternalId($data->getRoom());
+            $entity->setRoom($room);
+
+            if($room === null) {
+                $entity->setLocation($data->getRoom());
+            }
         } else {
             $entity->setRoom(null);
         }
@@ -127,6 +132,10 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
         if($data->getSubject() !== null) {
             $subject = $this->subjectRepository->findOneByAbbreviation($data->getSubject());
             $entity->setSubject($subject);
+        }
+
+        if($entity->getTuition() === null && $entity->getSubject() === null) {
+            throw new ImportException(sprintf('Subject "%s" on timetable lesson ID "%s" was not found.', $data->getSubject(), $data->getId()));
         }
 
         CollectionUtils::synchronize(

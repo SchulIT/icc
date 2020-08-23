@@ -73,6 +73,12 @@ class TimetableLesson {
     private $room;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string|null
+     */
+    private $location;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Subject")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @var Subject|null
@@ -230,6 +236,22 @@ class TimetableLesson {
      */
     public function setRoom(?Room $room): TimetableLesson {
         $this->room = $room;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLocation(): ?string {
+        return $this->location;
+    }
+
+    /**
+     * @param string|null $location
+     * @return TimetableLesson
+     */
+    public function setLocation(?string $location): TimetableLesson {
+        $this->location = $location;
         return $this;
     }
 

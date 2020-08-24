@@ -68,9 +68,9 @@ class ExamController extends AbstractControllerWithMessages {
         $user = $this->getUser();
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
-        $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user);
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
+        $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user, $studyGroupFilterView->getCurrentStudyGroup() === null && $gradeFilterView->getCurrentGrade() === null);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $studyGroupFilterView->getCurrentStudyGroup() === null && $gradeFilterView->getCurrentGrade() === null);
 
         $isVisible = $examSettings->isVisibileFor($user->getUserType()) && $this->isVisibleForGrade($user, $examSettings);

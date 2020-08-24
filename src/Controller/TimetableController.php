@@ -71,10 +71,10 @@ class TimetableController extends AbstractControllerWithMessages {
         /** @var User $user */
         $user = $this->getUser();
 
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
         $roomFilterView = $roomFilter->handle($request->query->get('room', null), $user);
         $subjectFilterView = $subjectFilter->handle($request->query->get('subjects', [ ]), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user, $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
         $teachersFilterView = $teachersFilter->handle($request->query->get('teachers', []), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
 
         $periods = $periodRepository->findAll();

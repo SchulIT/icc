@@ -25,7 +25,7 @@ class StudentFilter {
         $this->studentRepository = $studentRepository;
     }
 
-    public function handle(?string $studentUuid, User $user): StudentFilterView {
+    public function handle(?string $studentUuid, User $user, bool $setDefaultStudent = true): StudentFilterView {
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
         if($isStudentOrParent) {
@@ -46,6 +46,10 @@ class StudentFilter {
 
         if($student === null && $user->getStudents()->count() > 0) {
             $student = $user->getStudents()->first();
+        }
+
+        if($setDefaultStudent === false) {
+            $student = null;
         }
 
         $groups = $this->grouper->group($students, StudentGradeStrategy::class);

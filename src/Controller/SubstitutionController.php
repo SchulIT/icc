@@ -48,8 +48,8 @@ class SubstitutionController extends AbstractControllerWithMessages {
         $groupBy = $request->query->get('group_by', null);
         $view = $request->query->get('view', null);
 
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user, $gradeFilterView->getCurrentGrade() === null);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, false);
 
         /** @var Substitution[] $substitutions */

@@ -144,7 +144,7 @@ class RoomAvailabilityHelper {
 
         foreach($rooms as $room) {
             $roomLessons = array_filter($lessons, function(TimetableLesson $lesson) use($room, $date) {
-                return $lesson instanceof TuitionTimetableLesson
+                return $lesson instanceof TimetableLesson
                     && $lesson->getRoom() !== null && $lesson->getRoom()->getId() === $room->getId()
                     && $lesson->getDay() === (int)$date->format('w');
             });

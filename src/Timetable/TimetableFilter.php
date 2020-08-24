@@ -2,10 +2,8 @@
 
 namespace App\Timetable;
 
-use App\Entity\FreestyleTimetableLesson;
 use App\Entity\Subject;
 use App\Entity\TimetableLesson as TimetableLessonEntity;
-use App\Entity\TuitionTimetableLesson;
 
 /**
  * This helper filters lessons which are allowed to be visible due to their subjects.

@@ -2,13 +2,9 @@
 
 namespace App\Export;
 
-use App\Entity\FreestyleTimetableLesson;
 use App\Entity\Grade;
-use App\Entity\Student;
-use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetableSupervision;
-use App\Entity\TuitionTimetableLesson;
 use App\Entity\User;
 use App\Ics\IcsHelper;
 use App\Repository\TimetableLessonRepositoryInterface;
@@ -20,14 +16,11 @@ use App\Sorting\GradeNameStrategy;
 use App\Sorting\Sorter;
 use App\Timetable\TimetableCalenderExportHelper;
 use App\Timetable\TimetableTimeHelper;
-use DateInterval;
 use DateTime;
-use Exception;
 use Jsvrcek\ICS\Model\CalendarEvent;
 use Jsvrcek\ICS\Model\Description\Location;
 use Jsvrcek\ICS\Model\Relationship\Organizer;
 use Jsvrcek\ICS\Utility\Formatter;
-use LogicException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -116,7 +109,7 @@ class TimetableIcsExporter {
         // initialize
         $gradesWithCourseNames = $this->timetableSettings->getGradeIdsWithCourseNames();
 
-        if($lesson instanceof TuitionTimetableLesson) {
+        if($lesson->getTuition()) {
             $subject = $lesson->getTuition()->getSubject()->getAbbreviation();
             $grades = $this->getGradesAsString($lesson->getTuition()->getStudyGroup()->getGrades()->toArray());
 
@@ -127,11 +120,9 @@ class TimetableIcsExporter {
             }
 
             return sprintf('%s - %s', $subject, $grades);
-        } else if($lesson instanceof FreestyleTimetableLesson) {
-            return $lesson->getSubject();
         }
 
-        throw new LogicException('This code should not be executed. Has anyone added a new type of TimetableLesson?');
+        return $lesson->getSubject();
     }
 
     private function getGradesAsString(array $grades): string {
@@ -151,7 +142,7 @@ class TimetableIcsExporter {
         $event->setStart($this->timetableTimeHelper->getLessonStartDateTime($day, $lesson->getLesson()));
         $event->setEnd($this->timetableTimeHelper->getLessonEndDateTime($day, $lesson->getLesson() + ($lesson->isDoubleLesson() ? 1 : 0)));
 
-        if($lesson instanceof TuitionTimetableLesson) {
+        if($lesson->getTuition() !== null) {
             $teacher = $lesson->getTuition()->getTeacher();
             if ($teacher !== null) {
                 $organizer = new Organizer(new Formatter());
@@ -166,7 +157,7 @@ class TimetableIcsExporter {
                 $location->setName($lesson->getRoom()->getName());
                 $event->setLocations([$location]);
             }
-        } else if($lesson instanceof FreestyleTimetableLesson) {
+        } else {
             foreach($lesson->getTeachers() as $teacher) {
                 $organizer = new Organizer(new Formatter());
                 $organizer->setName(sprintf('%s %s', $teacher->getFirstname(), $teacher->getLastname()));

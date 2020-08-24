@@ -72,7 +72,7 @@ class TimetableLessonData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank(groups={"freestyle_lesson"})
+     * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */
     private $subject;

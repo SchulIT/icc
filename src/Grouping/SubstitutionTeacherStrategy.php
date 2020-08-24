@@ -5,6 +5,7 @@ namespace App\Grouping;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
 use App\Repository\TeacherRepositoryInterface;
+use App\Utils\ArrayUtils;
 
 class SubstitutionTeacherStrategy implements GroupingStrategyInterface {
 
@@ -66,7 +67,7 @@ class SubstitutionTeacherStrategy implements GroupingStrategyInterface {
             }
         }
 
-        return $teachers;
+        return ArrayUtils::unique($teachers);
     }
 
     /**

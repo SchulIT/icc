@@ -25,10 +25,14 @@
             {% endif %}
 
             <span class="badge badge-primary">
-                {% if lesson.tuition.subject.replaceSubjectAbbreviation %}
-                    {{ lesson.tuition.subject.name|upper }}
-                {% else %}
-                    {{ lesson.tuition.subject.abbreviation|upper }}
+                {% if lesson.tuition is not null %}
+                    {% if lesson.tuition.subject.replaceSubjectAbbreviation %}
+                        {{ lesson.tuition.subject.name|upper }}
+                    {% else %}
+                        {{ lesson.tuition.subject.abbreviation|upper }}
+                    {% endif %}
+                {% else if lesson.subject is not null %}
+                    {{ lesson.subject.name|upper }}
                 {% endif %}
             </span>
 
@@ -37,14 +41,14 @@
             <i class="fa fa-users"></i>
             {% if showCourseName %}
                 {{ lesson.tuition.studyGroup.name }}
-                ({% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                ({% for grade in lesson.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
             {% else %}
-                {% for grade in lesson.tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                {% for grade in lesson.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
             {% endif %}
             <span class="mx-1"></span>
             <i class="fa fa-door-open"></i> {{ lesson.room.name }}
             <span class="mx-1"></span>
-            <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+            <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
 
             {% if availability.timetableLessonCancelled %}
             </s>

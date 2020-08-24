@@ -27,9 +27,11 @@
     {% set currentFilter = {
         date: selectedDate ? selectedDate.format('Y-m-d') : null,
         student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null,
-        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString() : null,
         teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null
     } %}
+
+    {{ dump(currentFilter) }}
 
     <div class="container-fluid px-0">
         <div class="row">

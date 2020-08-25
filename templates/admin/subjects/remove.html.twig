@@ -6,8 +6,8 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('admin_documents') }}">{{ 'admin.teachers.label'|trans }}</a></li>
-        <li class="breadcrumb-item">{{ teacher|teacher }}</li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_subjects') }}">{{ 'admin.subjects.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ subject.name }} ({{ subject.abbreviation }})</li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}

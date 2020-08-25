@@ -93,4 +93,18 @@ class ExamSettings extends AbstractSettings {
     public function setMaximumNumberOfExamsPerDay(int $number): void {
         $this->setValue('exams.max_per_day', $number);
     }
+
+    /**
+     * @return int[]
+     */
+    public function getVisibleGradeIds(): array {
+        return $this->getValue('exams.visible_for', [ ]);
+    }
+
+    /**
+     * @param int[] $ids
+     */
+    public function setVisibleGradeIds(array $ids): void {
+        $this->setValue('exams.visible_for', $ids);
+    }
 }

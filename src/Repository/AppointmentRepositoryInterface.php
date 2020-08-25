@@ -11,6 +11,7 @@ use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
 use DateTime;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 interface AppointmentRepositoryInterface extends TransactionalRepositoryInterface {
 
@@ -56,6 +57,14 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function findAll(array $categories = [ ], ?string $q = null, ?DateTime $today = null);
 
     /**
+     * @param DateTime $start
+     * @param DateTime $end
+     * @param AppointmentCategory[] $categories
+     * @return Appointment[]
+     */
+    public function findAllStartEnd(DateTime $start, DateTime $end, array $categories = [ ]): array;
+
+    /**
      * @param Appointment $appointment
      */
     public function persist(Appointment $appointment): void;
@@ -64,4 +73,13 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
      * @param Appointment $appointment
      */
     public function remove(Appointment $appointment): void;
+
+    /**
+     * @param int $itemsPerPage
+     * @param int $page
+     * @param array $categories
+     * @param string|null $q
+     * @return Paginator
+     */
+    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null): Paginator;
 }

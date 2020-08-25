@@ -1,12 +1,22 @@
-{% macro replacement(original, replacement) %}
-    {% if original is not empty and replacement is not empty %}<s>{{ original }}</s> ⟶ {% elseif original is not empty %}{{ original }}{% endif %}{% if replacement is not empty %}{{ replacement }}{% endif %}
+{% macro replacement(original, replacement) -%}
+    {%- if original is same as (replacement) -%}{{ original }}
+    {%- else -%}
+        {% if original is not empty and replacement is not empty -%}
+            <s>{{ original }}</s>
+        {%- elseif original is not empty -%}
+            {{ original }}
+        {% endif %}
+        {%- if replacement is not empty %}
+            ⟶ {{ replacement }}
+        {%- endif -%}
+    {%- endif -%}
 {% endmacro %}
 
 {% set duration = substitution.lessonEnd - substitution.lessonStart %}
 <div class="card">
     <div class="card-body p-0">
         <div class="d-flex">
-            <div class="align-self-center text-center p-3 dashboard-lesson text-black-50">
+            <div class="align-self-center text-center p-3 substitution-lesson {% if substitution.startsBefore %}text-small{% endif%} text-black-50">
                 {% if substitution.startsBefore %}
                     {{ substitution.lessonStart|before_lesson }}
                 {% else %}
@@ -14,31 +24,41 @@
                 {% endif %}
             </div>
 
-            <span class="badge badge-primary align-self-center">
-                {% if substitution.type is not empty %}
-                    {{ substitution.type|upper }}
-                {% else %}
-                    {{ 'dashboard.substitution'|trans|upper }}
-                {% endif %}
-            </span>
+            <div class="align-self-center d-flex flex-wrap">
+                <span class="align-self-center badge badge-primary my-1 mr-3">
+                    {% if substitution.type is not empty %}
+                        {{ substitution.type|upper }}
+                    {% else %}
+                        {{ 'dashboard.substitution'|trans|upper }}
+                    {% endif %}
+                </span>
 
-            <div class="card-body align-self-center">
-                {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
-                    {{ _self.replacement(substitution.subject, substitution.replacementSubject) }}
-                    <span class="mx-1"></span>
-                {% endif %}
+                <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
+                    {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
+                        <span>
+                            {{ _self.replacement(substitution.subject, substitution.replacementSubject) }}
+                            <span class="mx-1"></span>
+                        </span>
+                    {% endif %}
 
-                {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
-                    <i class="fa fa-users"></i> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
-                    <span class="mx-1"></span>
-                {% endif %}
+                    {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
+                        <span>
+                            <i class="fa fa-users"></i> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
+                            <span class="mx-1"></span>
+                        </span>
+                    {% endif %}
 
-                <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
-                <span class="mx-1"></span>
+                    <span>
+                        <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
+                        <span class="mx-1"></span>
+                    </span>
 
-                {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
-                    <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
-                {% endif %}
+                    {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
+                        <span>
+                            <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
+                        </span>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

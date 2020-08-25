@@ -30,13 +30,6 @@ class MessageConfirmationTest extends WebTestCase {
         $em = $kernel->getContainer()->get('doctrine')
             ->getManager();
 
-        $message = (new Message())
-            ->setTitle('subject')
-            ->setContent('content')
-            ->setStartDate(new \DateTime('2019-01-01'))
-            ->setExpireDate(new \DateTime('2019-01-03'))
-            ->setScope(MessageScope::Appointments());
-
         $user = (new User())
             ->setIdpId(Uuid::fromString('1f1248d4-8742-4b89-a0c4-1f345ce5664a'))
             ->setFirstname('firstname')
@@ -44,6 +37,14 @@ class MessageConfirmationTest extends WebTestCase {
             ->setUsername('username')
             ->setEmail('username@school.it')
             ->setUserType(UserType::Teacher());
+
+        $message = (new Message())
+            ->setTitle('subject')
+            ->setContent('content')
+            ->setStartDate(new \DateTime('2019-01-01'))
+            ->setExpireDate(new \DateTime('2019-01-03'))
+            ->setScope(MessageScope::Appointments())
+            ->setCreatedBy($user);
 
         $confirmation = (new MessageConfirmation())
             ->setMessage($message)

@@ -1,0 +1,21 @@
+trikoder_oauth2:
+
+    authorization_server:
+        private_key: "%kernel.project_dir%/oauth/oauth.key"
+        private_key_passphrase: null
+
+        encryption_key: '%env(string:OAUTH2_ENCRYPTION_KEY)%'
+
+    resource_server:
+        public_key: "%kernel.project_dir%/oauth/oauth.pub"
+
+    scopes:
+        - exams
+        - messages
+        - substitutions
+        - timetable
+        - appointments
+
+    persistence:
+        doctrine:
+            entity_manager: default

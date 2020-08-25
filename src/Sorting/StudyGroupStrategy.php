@@ -3,9 +3,16 @@
 namespace App\Sorting;
 
 use App\Entity\StudyGroup;
-use App\Entity\StudyGroupType;
 
 class StudyGroupStrategy implements SortingStrategyInterface {
+
+    private $stringStrategy;
+    private $gradeStrategy;
+
+    public function __construct(StringStrategy $strategy, GradeNameStrategy $gradeStrategy) {
+        $this->stringStrategy = $strategy;
+        $this->gradeStrategy = $gradeStrategy;
+    }
 
     /**
      * @param StudyGroup $objectA
@@ -13,16 +20,21 @@ class StudyGroupStrategy implements SortingStrategyInterface {
      * @return int
      */
     public function compare($objectA, $objectB): int {
-        $gradeType = StudyGroupType::Grade();
+        $nameCmp = $this->stringStrategy->compare($objectA->getName(), $objectB->getName());
 
-        if($objectA->getType()->equals($gradeType) && $objectB->getType()->equals($gradeType)) {
-            return strnatcmp($objectA->getName(), $objectB->getName());
-        } else if($objectA->getType()->equals($gradeType)) {
-            return -1;
-        } else if($objectB->getType()->equals($gradeType)) {
-            return 1;
+        if($nameCmp === 0) {
+            // Sort by grades
+            foreach($objectA->getGrades() as $gradeA) {
+                foreach($objectB->getGrades() as $gradeB) {
+                    $gradeCmp = $this->gradeStrategy->compare($gradeA, $gradeB);
+
+                    if($gradeCmp !== 0) {
+                        return $gradeCmp;
+                    }
+                }
+            }
         }
 
-        return strnatcmp($objectA->getName(), $objectB->getName());
+        return $nameCmp;
     }
 }

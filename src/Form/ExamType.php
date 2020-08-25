@@ -7,7 +7,7 @@ use App\Entity\Tuition;
 use App\Sorting\StringStrategy;
 use App\Sorting\TuitionStrategy;
 use Doctrine\ORM\EntityRepository;
-use SchoolIT\CommonBundle\Form\FieldsetType;
+use SchulIT\CommonBundle\Form\FieldsetType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -56,6 +56,17 @@ class ExamType extends AbstractType {
                             'label' => 'label.description',
                             'required' => false
                         ]);
+
+                    if($this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR')) {
+                        $builder->add('tuitionTeachersCanEditExam', CheckboxType::class, [
+                            'label' => 'admin.exams.tuition_teachers_can_edit.label',
+                            'help' => 'admin.exams.tuition_teachers_can_edit.help',
+                            'required' => false,
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
+                        ]);
+                    }
                 }
             ])
             ->add('group_tuitions', FieldsetType::class, [
@@ -67,9 +78,14 @@ class ExamType extends AbstractType {
                                 'size' => 10,
                                 'disabled' => $this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR') !== true
                             ],
+                            'label' => 'label.tuitions',
                             'multiple' => true,
                             'class' => Tuition::class,
                             'choice_label' => function(Tuition $tuition) {
+                                if($tuition->getName() === $tuition->getStudyGroup()->getName()) {
+                                    return sprintf('%s - %s', $tuition->getName(), $tuition->getSubject()->getName());
+                                }
+
                                 return sprintf('%s - %s - %s', $tuition->getName(), $tuition->getStudyGroup()->getName(), $tuition->getSubject()->getName());
                             },
                             'group_by' => function(Tuition $tuition) {

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use DateInterval;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -40,14 +42,14 @@ class Appointment {
      * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      * @Assert\NotNull()
-     * @var \DateTime|null
+     * @var DateTime|null
      */
     private $start;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Assert\GreaterThan(propertyPath="start")
-     * @var \DateTime|null
+     * @var DateTime|null
      */
     private $end;
 
@@ -65,21 +67,25 @@ class Appointment {
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup", cascade={"persist"})
-     * @ORM\JoinTable(
-     *     name="appointment_studygroups",
-     *     joinColumns={@ORM\JoinColumn(name="grade", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="studygroup", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="appointment_studygroups",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var ArrayCollection<StudyGroup>
      */
     private $studyGroups;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $markStudentsAbsent = true;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Teacher", cascade={"persist"})
-     * @ORM\JoinTable(
-     *     name="appointment_organizers",
-     *     joinColumns={@ORM\JoinColumn(name="appointment", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="teacher", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="appointment_organizers",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var ArrayCollection<Teacher>
      */
@@ -165,33 +171,33 @@ class Appointment {
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getStart(): ?\DateTime {
+    public function getStart(): ?DateTime {
         return $this->start;
     }
 
     /**
-     * @param \DateTime $start
+     * @param DateTime $start
      * @return Appointment
      */
-    public function setStart(?\DateTime $start): Appointment {
+    public function setStart(?DateTime $start): Appointment {
         $this->start = $start;
         return $this;
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getEnd(): ?\DateTime {
+    public function getEnd(): ?DateTime {
         return $this->end;
     }
 
     /**
-     * @param \DateTime $end
+     * @param DateTime $end
      * @return Appointment
      */
-    public function setEnd(?\DateTime $end): Appointment {
+    public function setEnd(?DateTime $end): Appointment {
         $this->end = $end;
         return $this;
     }
@@ -290,6 +296,22 @@ class Appointment {
         return $this->studyGroups;
     }
 
+    /**
+     * @return bool
+     */
+    public function isMarkStudentsAbsent(): bool {
+        return $this->markStudentsAbsent;
+    }
+
+    /**
+     * @param bool $markStudentsAbsent
+     * @return Appointment
+     */
+    public function setMarkStudentsAbsent(bool $markStudentsAbsent): Appointment {
+        $this->markStudentsAbsent = $markStudentsAbsent;
+        return $this;
+    }
+
     public function addVisibility(UserTypeEntity $visibility) {
         $this->visibilities->add($visibility);
     }
@@ -303,5 +325,20 @@ class Appointment {
      */
     public function getVisibilities(): Collection {
         return $this->visibilities;
+    }
+
+    public function getRealEnd(): DateTime {
+        if($this->isAllDay() === false) {
+            return $this->getEnd();
+        }
+
+        return (clone $this->getEnd())->modify('-1 second');
+    }
+
+    /**
+     * @return DateInterval
+     */
+    public function getDuration(): DateInterval {
+        return $this->getStart()->diff($this->getEnd());
     }
 }

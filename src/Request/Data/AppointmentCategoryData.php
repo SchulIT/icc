@@ -16,7 +16,7 @@ class AppointmentCategoryData {
     private $id;
 
     /**
-     * @Serializer\Type("integer")
+     * @Serializer\Type("string")
      * @Assert\NotBlank()
      * @var string
      */

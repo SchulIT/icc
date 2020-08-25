@@ -13,7 +13,7 @@ use App\Utils\ColorUtils;
 use App\View\Filter\FilterViewInterface;
 use DateInterval;
 use DateTime;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -70,12 +70,24 @@ class HelperExtension extends AbstractExtension {
         ];
     }
 
-    public function getPreviousDate(\DateTime $dateTime): DateTime {
-        return (clone $dateTime)->sub(new DateInterval('P1D'));
+    public function getPreviousDate(\DateTime $dateTime, bool $skipWeekends = false): DateTime {
+        $previous = (clone $dateTime)->sub(new DateInterval('P1D'));
+
+        while($skipWeekends === true && $previous->format('N') > 5) {
+            $previous->modify('-1 day');
+        }
+
+        return $previous;
     }
 
-    public function getNextDate(\DateTime $dateTime): DateTime {
-        return (clone $dateTime)->add(new DateInterval('P1D'));
+    public function getNextDate(\DateTime $dateTime, bool $skipWeekends = false): DateTime {
+        $next = (clone $dateTime)->add(new DateInterval('P1D'));
+
+        while($skipWeekends === true && $next->format('N') > 5) {
+            $next->modify('+1 day');
+        }
+
+        return $next;
     }
 
     public function isInDateTimeArray(\DateTime $dateTime, array $dateTimes): bool {

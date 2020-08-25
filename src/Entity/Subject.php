@@ -20,8 +20,8 @@ class Subject {
     use UuidTrait;
 
     /**
-     * @ORM\Column(type="string", unique=true)
-     * @var string
+     * @ORM\Column(type="string", unique=true, nullable=true)
+     * @var string|null
      */
     private $externalId;
 
@@ -43,7 +43,7 @@ class Subject {
      * @ORM\Column(type="boolean")
      * @var bool
      */
-    private $replaceSubjectAbbreviation = false;
+    private $replaceSubjectAbbreviation = true;
 
     /**
      * @ORM\Column(type="boolean")
@@ -108,17 +108,17 @@ class Subject {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getExternalId(): string {
+    public function getExternalId(): ?string {
         return $this->externalId;
     }
 
     /**
-     * @param string $externalId
+     * @param string|null $externalId
      * @return Subject
      */
-    public function setExternalId(string $externalId): Subject {
+    public function setExternalId(?string $externalId): Subject {
         $this->externalId = $externalId;
         return $this;
     }

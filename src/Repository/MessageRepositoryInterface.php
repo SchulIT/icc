@@ -2,12 +2,14 @@
 
 namespace App\Repository;
 
+use App\Entity\Grade;
 use App\Entity\Message;
 use App\Entity\MessageFile;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroup;
 use App\Entity\User;
 use App\Entity\UserType;
+use DateTime;
 
 interface MessageRepositoryInterface {
 
@@ -44,6 +46,12 @@ interface MessageRepositoryInterface {
     public function findAllByUserType(UserType $userType);
 
     /**
+     * @param Grade $grade
+     * @return Message[]
+     */
+    public function findAllByGrade(Grade $grade);
+
+    /**
      * @return Message[]
      */
     public function findAll();
@@ -62,5 +70,11 @@ interface MessageRepositoryInterface {
      * @param MessageFile $file
      */
     public function removeMessageFile(MessageFile $file): void;
+
+    /**
+     * @param DateTime $dateTime
+     * @return Message[]
+     */
+    public function findAllNotificationNotSent(DateTime $dateTime): array;
 
 }

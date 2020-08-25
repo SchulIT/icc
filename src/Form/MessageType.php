@@ -7,8 +7,8 @@ use App\Security\Voter\MessageScopeVoter;
 use App\Utils\ArrayUtils;
 use FervoEnumBundle\Generated\Form\MessagePriorityType;
 use FervoEnumBundle\Generated\Form\MessageScopeType;
-use SchoolIT\CommonBundle\Form\FieldsetType;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Form\FieldsetType;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -43,18 +43,11 @@ class MessageType extends AbstractType {
                         $years[] = $year;
                     }
 
-                    $scopes = array_filter(ArrayUtils::createArray(MessageScope::keys(), MessageScope::values()),
-                        function(MessageScope $scope) {
-                            return $this->authorizationChecker->isGranted(MessageScopeVoter::USE, $scope);
-                        }
-                    );
-
                     $builder
                         ->add('title', TextType::class, [
                             'label' => 'label.title'
                         ])
                         ->add('scope', MessageScopeType::class, [
-                            'choices' => $scopes,
                             'label' => 'label.scope'
                         ])
                         ->add('visibilities', UserTypeEntityType::class, [
@@ -69,7 +62,7 @@ class MessageType extends AbstractType {
                             'label' => 'label.study_groups_simple',
                             'multiple' => true,
                             'attr' => [
-                                'size' => 10
+                                'size' => 10,
                             ],
                             'required' => false
                         ])
@@ -90,6 +83,12 @@ class MessageType extends AbstractType {
                 }
             ]);
 
+        if($this->authorizationChecker->isGranted('ROLE_MESSAGE_ADMIN') === false) {
+            $builder
+                ->get('group_general')
+                ->remove('scope');
+        }
+
         if($this->authorizationChecker->isGranted('ROLE_MESSAGE_PRIORITY')) {
             $builder
                 ->add('group_priority', FieldsetType::class, [
@@ -99,7 +98,8 @@ class MessageType extends AbstractType {
                             'label' => 'label.priority',
                             'attr' => [
                                 'data-choice' => 'true'
-                            ]
+                            ],
+                            'help' => 'help.priority'
                         ]);
                     }
                 ]);

@@ -6,10 +6,27 @@ use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Security\InvalidAccountException;
 use App\Security\UserChecker;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 
 class UserCheckerTest extends TestCase {
+
+    private function getEvent($token) {
+        $mock = $this->createMock(AuthenticationSuccessEvent::class);
+        $mock->method('getAuthenticationToken')->willReturn($token);
+
+        return $mock;
+    }
+
+    private function getToken(?User $user) {
+        $mock = $this->createMock(TokenInterface::class);
+        $mock->method('getUser')->willReturn($user);
+
+        return $mock;
+    }
 
     public function testValidTeacher() {
         $user = (new User())
@@ -17,21 +34,19 @@ class UserCheckerTest extends TestCase {
             ->setUserType(UserType::Teacher());
 
         $checker = new UserChecker();
-        $checker->checkPostAuth($user);
+        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
 
         $this->assertTrue(true);
     }
 
-    /**
-     * @expectedException App\Security\InvalidAccountException
-     */
     public function testInvalidTeacher() {
+        $this->expectException(InvalidAccountException::class);
         $user = (new User())
             ->setTeacher(null)
             ->setUserType(UserType::Teacher());
 
         $checker = new UserChecker();
-        $checker->checkPostAuth($user);
+        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
     }
 
     public function testValidStudent() {
@@ -40,33 +55,29 @@ class UserCheckerTest extends TestCase {
         $user->addStudent(new Student());
 
         $checker = new UserChecker();
-        $checker->checkPostAuth($user);
+        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
 
         $this->assertTrue(true);
     }
 
-    /**
-     * @expectedException App\Security\InvalidAccountException
-     */
     public function testInvalidStudentEmptyStudents() {
+        $this->expectException(InvalidAccountException::class);
         $user = (new User())
             ->setUserType(UserType::Student());
 
         $checker = new UserChecker();
-        $checker->checkPostAuth($user);
+        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
     }
 
-    /**
-     * @expectedException App\Security\InvalidAccountException
-     */
     public function testInvalidStudentTwoStudents() {
+        $this->expectException(InvalidAccountException::class);
         $user = (new User())
             ->setUserType(UserType::Student());
         $user->addStudent(new Student());
         $user->addStudent(new Student());
 
         $checker = new UserChecker();
-        $checker->checkPostAuth($user);
+        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
     }
 
     public function testValidParent() {
@@ -75,19 +86,17 @@ class UserCheckerTest extends TestCase {
         $user->addStudent(new Student());
 
         $checker = new UserChecker();
-        $checker->checkPostAuth($user);
+        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
 
         $this->assertTrue(true);
     }
 
-    /**
-     * @expectedException App\Security\InvalidAccountException
-     */
     public function testInvalidParent() {
+        $this->expectException(InvalidAccountException::class);
         $user = (new User())
             ->setUserType(UserType::Parent());
 
         $checker = new UserChecker();
-        $checker->checkPostAuth($user);
+        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
     }
 }

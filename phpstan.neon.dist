@@ -1,8 +1,10 @@
 includes:
 	- vendor/phpstan/phpstan-doctrine/extension.neon
+	- vendor/phpstan/phpstan-doctrine/rules.neon
 	- vendor/phpstan/phpstan-symfony/extension.neon
 
 parameters:
+	inferPrivatePropertyTypeFromConstructor: true
 	ignoreErrors:
 	    - "~Parameter \\#1 \\$array of method App\\\\Sorting\\\\Sorter::sort\\(\\) is passed by reference, so it expects variables only\\.~"
 	    - "~Class FervoEnumBundle\\\\Generated\\\\Form\\\\[A-Za-z]+ not found\\.~"

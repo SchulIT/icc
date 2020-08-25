@@ -2,17 +2,24 @@
 
 namespace App\Import;
 
+use App\Entity\ImportDateTime;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Request\ValidationFailedException;
-use Symfony\Component\Validator\ConstraintViolation;
+use DateTime;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 
 class Importer {
 
     private $validator;
+    private $importDateTimeRepository;
+    private $logger;
 
-    public function __construct(ValidatorInterface $validator) {
+    public function __construct(ValidatorInterface $validator, ImportDateTypeRepositoryInterface $importDateTimeRepository, LoggerInterface $logger) {
         $this->validator = $validator;
+        $this->importDateTimeRepository = $importDateTimeRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -55,6 +62,7 @@ class Importer {
             $addedEntities = [];
             $updatedEntities = [];
             $removedEntities = [];
+            $ignoredEntities = [];
 
             $entities = $strategy->getData($data);
 
@@ -86,9 +94,20 @@ class Importer {
 
             $repository->commit();
 
-            return new ImportResult($addedEntities, $updatedEntities, $removedEntities);
+            $result = new ImportResult($addedEntities, $updatedEntities, $removedEntities, $ignoredEntities);
+
+            if($strategy instanceof PostActionStrategyInterface) {
+                $strategy->onFinished($result);
+            }
+
+            return $result;
         } catch (Throwable $e) {
+            $this->logger->error('Import failed.', [
+                'exception' => $e
+            ]);
             throw new ImportException($e->getMessage(), $e->getCode(), $e);
+        } finally {
+            $this->updateImportDateTime($strategy->getEntityClassName());
         }
     }
 
@@ -112,19 +131,38 @@ class Importer {
             $strategy->removeAll();
 
             $addedEntities = [];
+            $ignoredEntities = [];
 
             $entities = $strategy->getData($data);
 
             foreach ($entities as $object) {
-                $strategy->persist($object);
-                $addedEntities[] = $object;
+                try {
+                    $strategy->persist($object);
+                    $addedEntities[] = $object;
+                } catch (EntityIgnoredException $e) {
+                    $ignoredEntities[] = $e->getEntity();
+                }
             }
 
             $repository->commit();
 
-            return new ImportResult($addedEntities, [], []);
+            return new ImportResult($addedEntities, [], [], $ignoredEntities);
         } catch (Throwable $e) {
             throw new ImportException($e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    private function updateImportDateTime(string $className): void {
+        $dateTime = $this->importDateTimeRepository->findOneByEntityClass($className);
+
+        if($dateTime === null) {
+            $dateTime = (new ImportDateTime())
+                ->setEntityClass($className);
+
+        }
+
+        $dateTime->setUpdatedAt(new DateTime('now'));
+
+        $this->importDateTimeRepository->persist($dateTime);
     }
 }

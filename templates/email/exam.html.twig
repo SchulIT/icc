@@ -1,9 +1,16 @@
-{{ 'greeting'|trans({'%name%': recipient }, 'email') }}
+{% extends "email/main.html.twig" %}
 
-{{ 'exam.content'|trans({}, 'email') }}
+{% block title %}{{ 'exam.title'|trans({}, 'email') }}{% endblock %}
 
-{{ 'farewell'|trans({}, 'email') }}
-{{ sender }}
-profile_notifications
----
-{{ 'footer'|trans({'%link%': url('')}, 'email') }}
+{% block button_content %}{{ 'exam.link'|trans({}, 'email') }}{% endblock %}
+{% block button_url%}{{ url('exams') }}{% endblock %}
+
+{% block preview %}{{ 'exam.content'|trans({}, 'email') }}{% endblock %}
+
+{% block content %}
+    <p>
+        {{ 'exam.content'|trans({}, 'email') }}
+    </p>
+{% endblock %}
+
+{% block additional %}{% endblock %}

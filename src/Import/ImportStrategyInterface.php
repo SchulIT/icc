@@ -7,6 +7,14 @@ use App\Repository\TransactionalRepositoryInterface;
 interface ImportStrategyInterface {
 
     /**
+     * Returns the class name of the entity which is imported in order to
+     * save the timestamp of the last import.
+     *
+     * @return string
+     */
+    public function getEntityClassName(): string;
+
+    /**
      * Returns the entities which are to be imported.
      *
      * @param object $requestData The data object of the request body.
@@ -54,6 +62,7 @@ interface ImportStrategyInterface {
      * @param mixed $entity
      * @param mixed $data
      * @param mixed $requestData The data object of the request body.
+     * @throws EntityIgnoredException
      */
     public function updateEntity($entity, $data, $requestData): void;
 

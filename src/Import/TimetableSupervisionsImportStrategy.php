@@ -140,4 +140,11 @@ class TimetableSupervisionsImportStrategy implements ImportStrategyInterface {
     public function getData($data): array {
         return $data->getSupervisions();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return TimetableSupervision::class;
+    }
 }

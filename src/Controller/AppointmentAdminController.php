@@ -12,8 +12,8 @@ use App\Sorting\AppointmentDateGroupStrategy;
 use App\Sorting\Sorter;
 use App\View\Filter\AppointmentCategoriesFilter;
 use App\View\Filter\AppointmentCategoryFilter;
-use SchoolIT\CommonBundle\Form\ConfirmType;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Form\ConfirmType;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,6 +25,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * @Security("is_granted('ROLE_APPOINTMENTS_ADMIN')")
  */
 class AppointmentAdminController extends AbstractController {
+
+    private const NumberOfAppointments = 25;
 
     private $repository;
     private $grouper;
@@ -45,7 +47,20 @@ class AppointmentAdminController extends AbstractController {
         $q = $request->query->get('q', null);
         $categoryFilterView = $categoryFilter->handle($request->query->get('category', null));
         $categories = $categoryFilterView->getCurrentCategory() === null ? [ ] : [$categoryFilterView->getCurrentCategory()];
-        $appointments = $this->repository->findAll($categories, $q);
+        $page = $request->query->getInt('page');
+
+        $paginator = $this->repository->getPaginator(static::NumberOfAppointments, $page, $categories, $q);
+        $pages = 1;
+
+        if($paginator->count() > 0) {
+            $pages = ceil((float)$paginator->count() / static::NumberOfAppointments);
+        }
+
+        $appointments = [ ];
+
+        foreach($paginator->getIterator() as $appointment) {
+            $appointments[] = $appointment;
+        }
 
         $groups = $this->grouper->group($appointments, AppointmentGroupingStrategy::class);
         $this->sorter->sortGroupItems($groups, AppointmentSortingStrategy::class);
@@ -53,6 +68,8 @@ class AppointmentAdminController extends AbstractController {
 
         return $this->render('admin/appointments/index.html.twig', [
             'groups' => $groups,
+            'pages' => $pages,
+            'page' => $page,
             'categoryFilter' => $categoryFilterView,
             'q' => $q
         ]);

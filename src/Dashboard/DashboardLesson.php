@@ -2,6 +2,8 @@
 
 namespace App\Dashboard;
 
+use phpDocumentor\Reflection\Types\This;
+
 class DashboardLesson {
     /** @var int */
     private $lessonNumber;
@@ -50,5 +52,16 @@ class DashboardLesson {
 
     public function addItem(AbstractViewItem $item) {
         $this->items[] = $item;
+    }
+
+    /**
+     * Removes all timetable lessons from the lesson
+     */
+    public function removeLessons(): void {
+        foreach($this->items as $idx => $item) {
+            if($item instanceof TimetableLessonViewItem || $item instanceof SupervisionViewItem) {
+                unset($this->items[$idx]);
+            }
+        }
     }
 }

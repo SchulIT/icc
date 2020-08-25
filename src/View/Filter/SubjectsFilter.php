@@ -2,9 +2,12 @@
 
 namespace App\View\Filter;
 
+use App\Entity\User;
+use App\Entity\UserType;
 use App\Repository\SubjectRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\SubjectNameStrategy;
+use App\Utils\EnumArrayUtils;
 
 class SubjectsFilter {
     private $sorter;
@@ -15,12 +18,16 @@ class SubjectsFilter {
         $this->subjectRepository = $subjectRepository;
     }
 
-    public function handle(?array $subjectUuids) {
+    public function handle(?array $subjectUuids, User $user) {
         if($subjectUuids === null) {
             $subjectUuids = [ ];
         }
 
-        $subjects = $this->subjectRepository->findAll();
+        $subjects = [ ];
+
+        if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent()]) === false) {
+            $subjects = $this->subjectRepository->findAll();
+        }
         $this->sorter->sort($subjects, SubjectNameStrategy::class);
 
         $currentSubjects = [ ];

@@ -34,9 +34,9 @@ use App\Sorting\UserUserTypeGroupStrategy;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\ORM\EntityManagerInterface;
-use SchoolIT\CommonBundle\Form\ConfirmType;
-use SchoolIT\CommonBundle\Helper\DateHelper;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Form\ConfirmType;
+use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -68,7 +68,7 @@ class MessageController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
 
-        $archive = $request->query->getBoolean('archive', false);
+        $archive = $request->query->get('archive', false) === '✓';
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user);
 
@@ -105,6 +105,8 @@ class MessageController extends AbstractController {
     public function show(Message $message, MessageRepositoryInterface $messageRepository, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem, Request $request) {
         // Requery message for better performance
         $message = $messageRepository->findOneById($message->getId());
+
+        $this->denyAccessUnlessGranted(MessageVoter::View, $message);
 
         /** @var User $user */
         $user = $this->getUser();
@@ -308,7 +310,7 @@ class MessageController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/confirmations", name="message_confirmations")
+     * @Route("/{uuid}/confirmations", name="message_confirmations")
      */
     public function confirmations(Message $message, MessageConfirmationViewHelper $confirmationViewHelper, Grouper $grouper) {
         $view = $confirmationViewHelper->createView($message);

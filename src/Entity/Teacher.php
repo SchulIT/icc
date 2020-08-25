@@ -39,7 +39,6 @@ class Teacher {
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotNull()
      * @Assert\NotBlank()
      * @var string
      */
@@ -47,7 +46,6 @@ class Teacher {
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotNull()
      * @Assert\NotBlank()
      * @var string
      */
@@ -69,10 +67,9 @@ class Teacher {
 
     /**
      * @ORM\ManyToMany(targetEntity="Subject", inversedBy="teachers")
-     * @ORM\JoinTable(
-     *     name="subject_teachers",
-     *     joinColumns={@ORM\JoinColumn(name="teacher", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="subject", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="teacher_subjects",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Subject>
      */
@@ -86,10 +83,9 @@ class Teacher {
 
     /**
      * @ORM\ManyToMany(targetEntity="TeacherTag", cascade={"persist"})
-     * @ORM\JoinTable(
-     *     name="teacher_tags",
-     *     joinColumns={@ORM\JoinColumn(name="teacher", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="tag", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="teacher_tags",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      */
     private $tags;

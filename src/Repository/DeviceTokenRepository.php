@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\DeviceToken;
+use App\Entity\IcsAccessToken;
 use App\Entity\User;
 
 class DeviceTokenRepository extends AbstractRepository implements DeviceTokenRepositoryInterface {
@@ -12,7 +12,7 @@ class DeviceTokenRepository extends AbstractRepository implements DeviceTokenRep
      */
     public function findAll(): array {
         return $this->em
-            ->getRepository(DeviceToken::class)
+            ->getRepository(IcsAccessToken::class)
             ->findAll();
     }
 
@@ -21,7 +21,7 @@ class DeviceTokenRepository extends AbstractRepository implements DeviceTokenRep
      */
     public function findAllBy(User $user): array {
         return $this->em
-            ->getRepository(DeviceToken::class)
+            ->getRepository(IcsAccessToken::class)
             ->findBy([
                 'user' => $user
             ]);
@@ -30,7 +30,7 @@ class DeviceTokenRepository extends AbstractRepository implements DeviceTokenRep
     /**
      * @inheritDoc
      */
-    public function persist(DeviceToken $token): void {
+    public function persist(IcsAccessToken $token): void {
         $this->em->persist($token);
         $this->em->flush();
     }
@@ -38,7 +38,7 @@ class DeviceTokenRepository extends AbstractRepository implements DeviceTokenRep
     /**
      * @inheritDoc
      */
-    public function remove(DeviceToken $token): void {
+    public function remove(IcsAccessToken $token): void {
         $this->em->remove($token);
         $this->em->flush();
     }

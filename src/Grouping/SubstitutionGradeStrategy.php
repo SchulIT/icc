@@ -38,6 +38,8 @@ class SubstitutionGradeStrategy implements GroupingStrategyInterface {
     public function areEqualKeys($keyA, $keyB): bool {
         if($keyA === null && $keyB === null) {
             return true;
+        } else if($keyA === null || $keyB === null) {
+            return false;
         }
 
         return $keyA === $keyB || $keyA->getId() === $keyB->getId();

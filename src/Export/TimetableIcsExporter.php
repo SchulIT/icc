@@ -3,8 +3,6 @@
 namespace App\Export;
 
 use App\Entity\Grade;
-use App\Entity\Student;
-use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetableSupervision;
 use App\Entity\User;
@@ -18,9 +16,7 @@ use App\Sorting\GradeNameStrategy;
 use App\Sorting\Sorter;
 use App\Timetable\TimetableCalenderExportHelper;
 use App\Timetable\TimetableTimeHelper;
-use DateInterval;
 use DateTime;
-use Exception;
 use Jsvrcek\ICS\Model\CalendarEvent;
 use Jsvrcek\ICS\Model\Description\Location;
 use Jsvrcek\ICS\Model\Relationship\Organizer;
@@ -64,7 +60,7 @@ class TimetableIcsExporter {
 
         return $this->icsHelper->getIcsResponse(
             $this->translator->trans('plans.timetable.export.title'),
-            $this->translator->trans('plans.timetable.export.description', [ '%user%' => $user->getUsername() ]),
+            $this->translator->trans('plans.timetable.export.description', [ '%name%' => $user->getUsername() ]),
             $events,
             $this->translator->trans('plans.timetable.export.download.filename')
         );
@@ -113,16 +109,20 @@ class TimetableIcsExporter {
         // initialize
         $gradesWithCourseNames = $this->timetableSettings->getGradeIdsWithCourseNames();
 
-        $subject = $lesson->getTuition()->getSubject()->getAbbreviation();
-        $grades = $this->getGradesAsString($lesson->getTuition()->getStudyGroup()->getGrades()->toArray());
+        if($lesson->getTuition()) {
+            $subject = $lesson->getTuition()->getSubject()->getAbbreviation();
+            $grades = $this->getGradesAsString($lesson->getTuition()->getStudyGroup()->getGrades()->toArray());
 
-        foreach($lesson->getTuition()->getStudyGroup()->getGrades() as $grade) {
-            if(in_array($grade->getId(), $gradesWithCourseNames)) {
-                $subject = $lesson->getTuition()->getStudyGroup()->getName();
+            foreach ($lesson->getTuition()->getStudyGroup()->getGrades() as $grade) {
+                if (in_array($grade->getId(), $gradesWithCourseNames)) {
+                    $subject = $lesson->getTuition()->getStudyGroup()->getName();
+                }
             }
+
+            return sprintf('%s - %s', $subject, $grades);
         }
 
-        return sprintf('%s - %s', $subject, $grades);
+        return $lesson->getSubject();
     }
 
     private function getGradesAsString(array $grades): string {
@@ -133,7 +133,7 @@ class TimetableIcsExporter {
         }, $grades));
     }
 
-    private function makeIcsItemForLesson(DateTime $day, TimetableLesson $lesson): ?CalendarEvent {
+    private function makeIcsItemForLesson(DateTime $day, TimetableLesson $lesson): CalendarEvent {
         $event = new CalendarEvent();
         $event->setUid(sprintf('timetable-%d-%d-%d', $day->format('W'), $day->format('N'), $lesson->getLesson()));
         $event->setAllDay(false);
@@ -142,25 +142,35 @@ class TimetableIcsExporter {
         $event->setStart($this->timetableTimeHelper->getLessonStartDateTime($day, $lesson->getLesson()));
         $event->setEnd($this->timetableTimeHelper->getLessonEndDateTime($day, $lesson->getLesson() + ($lesson->isDoubleLesson() ? 1 : 0)));
 
-        $teacher = $lesson->getTuition()->getTeacher();
-        if($teacher !== null) {
-            $organizer = new Organizer(new Formatter());
-            $organizer->setName(sprintf('%s %s', $teacher->getFirstname(), $teacher->getLastname()));
-            $organizer->setValue($teacher->getEmail());
+        if($lesson->getTuition() !== null) {
+            $teacher = $lesson->getTuition()->getTeacher();
+            if ($teacher !== null) {
+                $organizer = new Organizer(new Formatter());
+                $organizer->setName(sprintf('%s %s', $teacher->getFirstname(), $teacher->getLastname()));
+                $organizer->setValue($teacher->getEmail());
 
-            $event->setOrganizer($organizer);
-        }
+                $event->setOrganizer($organizer);
+            }
 
-        if($lesson->getRoom() !== null) {
-            $location = new Location();
-            $location->setName($lesson->getRoom()->getName());
-            $event->setLocations([$location]);
+            if($lesson->getRoom() !== null) {
+                $location = new Location();
+                $location->setName($lesson->getRoom()->getName());
+                $event->setLocations([$location]);
+            }
+        } else {
+            foreach($lesson->getTeachers() as $teacher) {
+                $organizer = new Organizer(new Formatter());
+                $organizer->setName(sprintf('%s %s', $teacher->getFirstname(), $teacher->getLastname()));
+                $organizer->setValue($teacher->getEmail());
+
+                $event->setOrganizer($organizer);
+            }
         }
 
         return $event;
     }
 
-    private function makeIcsItemForSupervision(DateTime $day, TimetableSupervision $supervision): ?CalendarEvent {
+    private function makeIcsItemForSupervision(DateTime $day, TimetableSupervision $supervision): CalendarEvent {
         $event = new CalendarEvent();
         $event->setUid(sprintf('supervision-%d-%d-%d-%d', $day->format('W'), $day->format('N'), $supervision->getLesson(), $supervision->isBefore()));
         $event->setAllDay(false);

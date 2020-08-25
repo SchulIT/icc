@@ -22,4 +22,11 @@ class ViolationList extends ErrorResponse {
 
         $this->violations = $violations;
     }
+
+    /**
+     * @return Violation[]
+     */
+    public function getViolations(): array {
+        return $this->violations;
+    }
 }

@@ -23,43 +23,45 @@
                     </div>
                 {% else %}
                     <div class="card">
-                        <table class="table table-striped table-bordered table-hover">
-                            <colgroup>
-                                <col>
-                                <col class="column-lg">
-                                <col class="column-md">
-                            </colgroup>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover card-table">
+                                <colgroup>
+                                    <col>
+                                    <col class="column-lg">
+                                    <col class="column-md">
+                                </colgroup>
 
-                            <thead>
-                            <tr>
-                                <th>{{ 'label.name'|trans }} </th>
-                                <th>{{ 'admin.documents.categories.overview.num_documents'|trans }}</th>
-                                <th> </th>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-                            {% for category in categories %}
+                                <thead>
                                 <tr>
-                                    <td class="align-middle">
-                                        {{ category.name }}
-                                    </td>
-                                    <td class="align-middle">
-                                        {{ category.documents.count }}
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="{{ path('admin_edit_document_category', { uuid: category.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-
-                                        <a href="{{ path('admin_remove_document_category', { uuid: category.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
-                                            <i class="fa fa-trash"></i>
-                                        </a>
-                                    </td>
+                                    <th>{{ 'label.name'|trans }} </th>
+                                    <th>{{ 'admin.documents.categories.overview.num_documents'|trans }}</th>
+                                    <th> </th>
                                 </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+
+                                <tbody>
+                                {% for category in categories %}
+                                    <tr>
+                                        <td class="align-middle">
+                                            {{ category.name }}
+                                        </td>
+                                        <td class="align-middle">
+                                            {{ category.documents.count }}
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="{{ path('admin_edit_document_category', { uuid: category.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+
+                                            <a href="{{ path('admin_remove_document_category', { uuid: category.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 {% endif %}
             </div>

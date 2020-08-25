@@ -51,16 +51,16 @@ class ExamIcsExporter {
      * @return CalendarEvent[]
      */
     private function getIcsItems(User $user) {
-        if($this->examSettings->isVisibileFor($user->getUserType())) {
+        if($this->examSettings->isVisibileFor($user->getUserType()) === false) {
             return [ ];
         }
 
         $exams = [ ];
 
         if($user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent())) {
-            $exams = $this->examRepository->findAllByStudents($user->getStudents()->toArray());
+            $exams = $this->examRepository->findAllByStudents($user->getStudents()->toArray(), null, false, true);
         } else if($user->getUserType()->equals(UserType::Teacher())) {
-            $exams = $this->examRepository->findAllByTeacher($user->getTeacher());
+            $exams = $this->examRepository->findAllByTeacher($user->getTeacher(), null, false, true);
         }
 
         $exams = array_filter($exams, function(Exam $exam) {
@@ -70,7 +70,7 @@ class ExamIcsExporter {
         $items = [ ];
 
         foreach($exams as $exam) {
-            $items += $this->makeIcsItems($exam, $user);
+            $items = array_merge($items, $this->makeIcsItems($exam, $user));
         }
 
         return $items;

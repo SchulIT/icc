@@ -17,6 +17,7 @@
         "@fullcalendar/timegrid": "^4.4.0",
         "@fullcalendar/timeline": "^4.4.0",
         "@symfony/webpack-encore": "^0.27.0",
+        "autoprefixer": "^9.8.5",
         "bootstrap": "^4.0.0",
         "bootstrap-darkmode": "^0.5.0",
         "bootstrap.native": "^2.0.26",
@@ -37,8 +38,22 @@
         "jszip-utils": "^0.1.0",
         "node-sass": "^4.8.3",
         "node-sass-glob-importer": "^5.3.2",
+        "postcss-loader": "^3.0.0",
         "sass-loader": "^7.0.1",
         "uglify-js": "^3.6.0",
+        "uuid": "^8.1.0",
         "vanilla-picker": "^2.10.0"
-    }
+    },
+    "browserslist": [
+        "last 1 major version",
+        ">= 1%",
+        "Chrome >= 45",
+        "Firefox >= 38",
+        "Edge >= 12",
+        "Explorer >= 10",
+        "iOS >= 9",
+        "Safari >= 9",
+        "Android >= 4.4",
+        "Opera >= 30"
+    ]
 }

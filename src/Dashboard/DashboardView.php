@@ -9,8 +9,12 @@ use App\Entity\Infotext;
 use App\Entity\Message;
 use App\Entity\MessagePriority;
 use App\Entity\Substitution;
+use DateTime;
 
 class DashboardView {
+
+    /** @var DateTime */
+    private $dateTime;
 
     /** @var Message[] */
     private $messages = [ ];
@@ -41,6 +45,14 @@ class DashboardView {
 
     /** @var Appointment[] */
     private $appointments = [ ];
+
+    public function __construct(DateTime $dateTime) {
+        $this->dateTime = $dateTime;
+    }
+
+    public function getDateTime(): DateTime {
+        return $this->dateTime;
+    }
 
     /**
      * @return Message[]
@@ -184,6 +196,39 @@ class DashboardView {
         }
 
         return $collisions;
+    }
+
+    public function addAppointment(Appointment $appointment): void {
+        $this->appointments[] = $appointment;
+    }
+
+    /**
+     * @return Appointment[]
+     */
+    public function getAppointments(): array {
+        return $this->appointments;
+    }
+
+    /**
+     * Removes all timetable and supervisions from the dashboard view
+     * (because the day is free)
+     */
+    public function removeLessons(): void {
+        foreach($this->getLessons() as $idx => $lesson) {
+            $lesson->removeLessons();
+
+            if(count($lesson->getItems()) === 0) {
+                unset($this->lessons[$idx]);
+            }
+        }
+
+        foreach($this->getBeforeLessons() as $idx => $lesson) {
+            $lesson->removeLessons();
+
+            if(count($lesson->getItems()) === 0) {
+                unset($this->beforeLessons[$idx]);
+            }
+        }
     }
 
     public function isEmpty(): bool {

@@ -19,12 +19,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         picker.onDone = function(color) {
-            console.log('onDone()');
             input.value = convertColor(color.hex);
         };
 
         picker.onClose = function(color) {
-            console.log('onClose()');
             colorRect.style.backgroundColor  = convertColor(color.hex);
         };
     });

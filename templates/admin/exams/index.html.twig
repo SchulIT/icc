@@ -32,86 +32,105 @@
                         {% endif %}
                     </div>
 
-                    <table class="table table-striped table-bordered table-hover">
-                        <colgroup>
-                            <col class="column-md">
-                            <col class="column-md">
-                            <col>
-                            <col class="column-md">
-                            <col class="column-180">
-                        </colgroup>
-                        <thead>
-                        <tr>
-                            <th>{{ 'label.date'|trans }}</th>
-                            <th>{{ 'plans.exams.time'|trans }}</th>
-                            <th>{{ 'label.tuitions'|trans }}</th>
-                            <th>{{ 'label.students_simple'|trans }}</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for exam in week.exams %}
-                            {% if week.weekOfYear is not null %}
-                                {% set errors = validation_errors(exam) %}
-                            {% endif %}
-                            <tr {% if errors|default([])|length > 0 %} class="table-warning"{% endif %}>
-                                <td class="align-middle">
-                                    {% if exam.date is not null %}
-                                        {{ exam.date|format_date }}
-                                    {% else %}
-                                        <span class="badge badge-danger">{{ 'plans.exams.not_planned'|trans }}</span>
-                                    {% endif %}
-
-
-                                    {% for error in errors|default([]) %}
-                                        <i class="fa fa-exclamation-triangle" title="{{ error.message|trans(error.parameters) }}"></i>
-                                    {% endfor %}
-                                </td>
-                                <td class="align-middle">
-                                    {% if exam.lessonStart > 0 and exam.lessonEnd > 0 %}
-                                        {{ 'label.exam_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
-                                    {% else %}
-                                        <span class="badge badge-danger">{{ 'plans.exams.not_planned'|trans }}</span>
-                                    {% endif %}
-                                </td>
-                                <td class="align-middle">
-                                    {% for tuition in exam.tuitions %}
-                                        {{ tuition.name }} ({{ tuition.subject.name }})
-
-                                        <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
-                                        <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-                                    {% endfor %}
-                                </td>
-                                <td class="align-middle">
-                                    {% if exam.students|length == 0 %}
-                                        <i class="fa fa-exclamation-triangle"></i>
-                                    {% endif %}
-
-                                    {{ exam.students|length }}
-                                </td>
-                                <td class="align-middle">
-                                    {% if is_granted('edit', exam) %}
-                                        <a href="{{ path('edit_exam', { uuid: exam.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.exams.edit.label'|trans }}">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-
-                                        <a href="{{ path('edit_exam_students', { uuid: exam.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.exams.students.label'|trans }}">
-                                            <i class="fa fa-users"></i>
-                                        </a>
-                                    {% endif %}
-
-                                    {% if is_granted('remove', exam) %}
-                                        <a href="{{ path('remove_exam', { uuid: exam.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.exams.remove.label'|trans }}">
-                                            <i class="fa fa-trash"></i>
-                                        </a>
-                                    {% endif %}
-                                </td>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover card-table">
+                            <colgroup>
+                                <col class="column-md">
+                                <col class="column-md">
+                                <col>
+                                <col class="column-md">
+                                <col class="column-180">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.date'|trans }}</th>
+                                <th>{{ 'plans.exams.time'|trans }}</th>
+                                <th>{{ 'label.tuitions'|trans }}</th>
+                                <th>{{ 'label.students_simple'|trans }}</th>
+                                <th></th>
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            {% for exam in week.exams %}
+                                {% if week.weekOfYear is not null %}
+                                    {% set errors = validation_errors(exam) %}
+                                {% endif %}
+                                <tr {% if errors|default([])|length > 0 %} class="table-warning"{% endif %}>
+                                    <td class="align-middle">
+                                        {% if exam.date is not null %}
+                                            {{ exam.date|format_date }}
+                                        {% else %}
+                                            <span class="badge badge-danger">{{ 'plans.exams.not_planned'|trans }}</span>
+                                        {% endif %}
+
+
+                                        {% for error in errors|default([]) %}
+                                            <i class="fa fa-exclamation-triangle" title="{{ error.message|trans(error.parameters) }}"></i>
+                                        {% endfor %}
+                                    </td>
+                                    <td class="align-middle">
+                                        {% if exam.lessonStart > 0 and exam.lessonEnd > 0 %}
+                                            {{ 'label.exam_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
+                                        {% else %}
+                                            <span class="badge badge-danger">{{ 'plans.exams.not_planned'|trans }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="align-middle">
+                                        {% for tuition in exam.tuitions %}
+                                            {{ tuition.name }} ({{ tuition.subject.name }})
+
+                                            <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                            <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                        {% endfor %}
+                                    </td>
+                                    <td class="align-middle">
+                                        {% if exam.students|length == 0 %}
+                                            <i class="fa fa-exclamation-triangle"></i>
+                                        {% endif %}
+
+                                        {{ exam.students|length }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {% if is_granted('edit', exam) %}
+                                            <a href="{{ path('edit_exam', { uuid: exam.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.exams.edit.label'|trans }}">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+
+                                            <a href="{{ path('edit_exam_students', { uuid: exam.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.exams.students.label'|trans }}">
+                                                <i class="fa fa-users"></i>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if is_granted('unplan', exam) and exam.date is not null %}
+                                            <a href="{{ path('unplan_exam', { uuid: exam.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.exams.unplan.label'|trans }}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if is_granted('remove', exam) %}
+                                            <a href="{{ path('remove_exam', { uuid: exam.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.exams.remove.label'|trans }}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 {% endfor %}
+
+                {% include '@Common/includes/pagination.html.twig' with {
+                    currentFilters: {
+                        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
+                        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null
+                    },
+                    currentPage: page,
+                    paginationPath: 'admin_exams',
+                    lastPage: pages,
+                    showAlwaysFirstAndLast: true
+                } only %}
             </div>
 
             <div class="col-md-3">
@@ -131,7 +150,11 @@
                 <div class="card">
                     <div class="card-body">
                         {% if gradeFilter.grades|length > 0 %}
-                            {% include "_filter/grade.html.twig" with { class: 'mb-0'} %}
+                            {% include "_filter/grade.html.twig" %}
+                        {% endif %}
+
+                        {% if teacherFilter.teachers|length > 0 %}
+                            {% include "_filter/teacher.html.twig" with { class: 'mb-0'} %}
                         {% endif %}
                     </div>
 

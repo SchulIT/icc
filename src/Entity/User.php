@@ -33,24 +33,23 @@ class User implements UserInterface, \Serializable {
     private $username;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\NotNull()
-     * @Assert\NotBlank()
-     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(allowNull=true)
+     * @var string|null
      */
     private $firstname;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\NotNull()
-     * @Assert\NotBlank()
-     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(allowNull=true)
+     * @var string|null
      */
     private $lastname;
 
     /**
-     * @ORM\Column(type="string", unique=true, nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      * @Assert\Email()
+     * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */
     private $email;
@@ -65,15 +64,15 @@ class User implements UserInterface, \Serializable {
     /**
      * @ORM\ManyToMany(targetEntity="Student")
      * @ORM\JoinTable(name="user_students",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE", onDelete="CASCADE")}
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Student>
      */
     private $students;
 
     /**
-     * @ORM\Column(type="json_array")
+     * @ORM\Column(type="json")
      * @var string[]
      */
     private $roles = ['ROLE_USER'];
@@ -87,8 +86,8 @@ class User implements UserInterface, \Serializable {
     /**
      * @ORM\ManyToMany(targetEntity="Message")
      * @ORM\JoinTable(name="user_dismissed_messages",
-     *     joinColumns={@ORM\JoinColumn(name="user", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="message", referencedColumnName="id", onDelete="CASCADE")}
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var ArrayCollection<Message>
      */
@@ -113,7 +112,13 @@ class User implements UserInterface, \Serializable {
     private $isMessageNotificationsEnabled = false;
 
     /**
-     * @ORM\Column(type="json_array")
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $isEmailNotificationsEnabled = false;
+
+    /**
+     * @ORM\Column(type="json")
      * @var string[]
      */
     private $data = [ ];
@@ -149,33 +154,33 @@ class User implements UserInterface, \Serializable {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFirstname(): string {
+    public function getFirstname(): ?string {
         return $this->firstname;
     }
 
     /**
-     * @param string $firstname
+     * @param string|null $firstname
      * @return User
      */
-    public function setFirstname(string $firstname): User {
+    public function setFirstname(?string $firstname): User {
         $this->firstname = $firstname;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLastname(): string {
+    public function getLastname(): ?string {
         return $this->lastname;
     }
 
     /**
-     * @param string $lastname
+     * @param string|null $lastname
      * @return User
      */
-    public function setLastname(string $lastname): User {
+    public function setLastname(?string $lastname): User {
         $this->lastname = $lastname;
         return $this;
     }
@@ -333,6 +338,22 @@ class User implements UserInterface, \Serializable {
      */
     public function setIsMessageNotificationsEnabled(bool $isMessageNotificationsEnabled): User {
         $this->isMessageNotificationsEnabled = $isMessageNotificationsEnabled;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmailNotificationsEnabled(): bool {
+        return $this->isEmailNotificationsEnabled;
+    }
+
+    /**
+     * @param bool $isEmailNotificationsEnabled
+     * @return User
+     */
+    public function setIsEmailNotificationsEnabled(bool $isEmailNotificationsEnabled): User {
+        $this->isEmailNotificationsEnabled = $isEmailNotificationsEnabled;
         return $this;
     }
 

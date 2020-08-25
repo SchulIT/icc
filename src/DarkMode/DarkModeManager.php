@@ -4,7 +4,7 @@ namespace App\DarkMode;
 
 use App\Entity\User;
 use App\Repository\UserRepositoryInterface;
-use SchoolIT\CommonBundle\DarkMode\DarkModeManagerInterface;
+use SchulIT\CommonBundle\DarkMode\DarkModeManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class DarkModeManager implements DarkModeManagerInterface {

@@ -3,6 +3,7 @@
 namespace App\Validator;
 
 use App\Entity\Exam;
+use App\Entity\Student;
 use App\Entity\Tuition;
 use App\Repository\ExamRepositoryInterface;
 use App\Utils\ArrayUtils;
@@ -26,13 +27,13 @@ abstract class AbstractExamConstraintValidator extends ConstraintValidator {
         $exams = $this->examRepository->findAll();
 
         foreach($exams as $exam) {
-            /** @var Tuition $tuition */
-            foreach($exam->getTuitions() as $tuition) {
-                if(!isset($this->examCache[$tuition->getId()])) {
-                    $this->examCache[$tuition->getId()] = [ ];
+            /** @var Student $student */
+            foreach($exam->getStudents() as $student) {
+                if(!isset($this->examCache[$student->getId()])) {
+                    $this->examCache[$student->getId()] = [ ];
                 }
 
-                $this->examCache[$tuition->getId()][] = $exam;
+                $this->examCache[$student->getId()][] = $exam;
             }
         }
 
@@ -40,17 +41,17 @@ abstract class AbstractExamConstraintValidator extends ConstraintValidator {
     }
 
     /**
-     * @param Tuition[] $tuitions
+     * @param Student[] $students
      * @return Exam[]
      */
-    protected function findAllByTuitions(array $tuitions): array {
+    protected function findAllByStudents(array $students): array {
         $this->initializeCache();
 
         $exams = [ ];
 
-        foreach($tuitions as $tuition) {
-            if(isset($this->examCache[$tuition->getId()])) {
-                $exams = array_merge($exams, $this->examCache[$tuition->getId()]);
+        foreach($students as $student) {
+            if (isset($this->examCache[$student->getId()])) {
+                $exams = array_merge($exams, $this->examCache[$student->getId()]);
             }
         }
 

@@ -110,7 +110,12 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
         }
 
         if($q !== null) {
-            $qbInner->andWhere('MATCH (d.content) AGAINST(:q) > 0');
+            $qbInner->andWhere(
+                $qb->expr()->orX(
+                    'MATCH (dInner.title) AGAINST(:q) > 0',
+                    'MATCH (dInner.content) AGAINST(:q) > 0'
+                )
+            );
             $qb->setParameter('q', $q);
         }
 

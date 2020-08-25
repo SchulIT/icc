@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -43,14 +44,14 @@ class WikiArticle {
     /**
      * @ORM\Column(type="datetime")
      * @Gedmo\Timestampable(on="create")
-     * @var \DateTime|null
+     * @var DateTime|null
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
      * @Gedmo\Timestampable(on="update")
-     * @var \DateTime|null
+     * @var DateTime|null
      */
     private $updatedAt;
 
@@ -156,16 +157,16 @@ class WikiArticle {
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getCreatedAt(): ?\DateTime {
+    public function getCreatedAt(): ?DateTime {
         return $this->createdAt;
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getUpdatedAt(): ?\DateTime {
+    public function getUpdatedAt(): ?DateTime {
         return $this->updatedAt;
     }
 

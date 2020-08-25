@@ -1,0 +1,58 @@
+{% extends "@Common/simple/main.html.twig" %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+    {% if info is not null %}
+        {% set name = info.name %}
+        {% set description = info.description %}
+    {% else %}
+        {% set name = client.identifier %}
+        {% set description = null %}
+    {% endif %}
+
+    <form method="post">
+        <div class="text-center">
+            <i class="fas fa-mobile-alt fa-3x d-block text-secondary"></i>
+            <h4>{{ 'oauth.authorize.label'|trans({}, 'security') }}</h4>
+
+            <p>{{ 'oauth.authorize.message'|trans({'%name%': name }, 'security')|raw }}</p>
+        </div>
+
+        <hr>
+
+        {% if description is not empty %}
+            <p>{{ description }}</p>
+        {% endif %}
+
+        <hr>
+
+        <p>
+            {{ 'oauth.authorize.scopes'|trans({}, 'security') }}
+        </p>
+
+        <ul>
+            {% for scope in scopes %}
+                <li>{{ ('oauth.scope.'~scope)|trans({}, 'security') }}</li>
+            {% endfor %}
+        </ul>
+
+        <div class="container-fluid px-0">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('oauth_authorize') }}">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-primary btn-block" type="submit" name="authorize">
+                        {{ 'oauth.authorize.authorize'|trans({}, 'security') }}
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-secondary btn-block" type="submit" name="decline">
+                        {{ 'oauth.authorize.decline'|trans({}, 'security') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

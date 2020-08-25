@@ -7,7 +7,7 @@ use App\Grouping\DocumentCategoryStrategy as DocumentCategoryGroupingStrategy;
 use App\Grouping\Grouper;
 use App\Repository\DocumentRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
-use App\Sorting\DocumentCategoryStrategy;
+use App\Sorting\DocumentCategoryGroupStrategy;
 use App\Sorting\DocumentNameStrategy;
 use App\Sorting\Sorter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as SymfonyAbstractController;
@@ -38,7 +38,7 @@ class EditorController extends SymfonyAbstractController {
 
         $this->sorter->sort($documents, DocumentNameStrategy::class);
         $categories = $this->grouper->group($documents, DocumentCategoryGroupingStrategy::class);
-        $this->sorter->sort($categories, DocumentCategoryStrategy::class);
+        $this->sorter->sort($categories, DocumentCategoryGroupStrategy::class);
 
         // Wiki articles
         $articles = $wikiArticleRepository->findAll();

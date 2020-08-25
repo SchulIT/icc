@@ -15,7 +15,6 @@ class Setting {
     /**
      * @ORM\Id()
      * @ORM\Column(name="`key`", type="string", unique=true)
-     * @Assert\NotNull()
      * @Assert\NotBlank()
      * @var string
      */

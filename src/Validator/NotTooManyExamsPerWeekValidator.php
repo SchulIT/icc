@@ -33,11 +33,6 @@ class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
             throw new UnexpectedTypeException($constraint, NotTooManyExamsPerWeek::class);
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR')) {
-            // Users with ROLE_EXAMS_CREATOR can override those rules
-            return true;
-        }
-
         if($value->getDate() === null || $value->getTuitions()->count() === 0) {
             // Planned exams are fine
             return true;
@@ -45,7 +40,7 @@ class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
 
         $examWeek = $value->getDate()->format('W');
 
-        $exams = [ ]; $this->findAllByTuitions($value->getTuitions()->toArray());
+        $exams = $this->findAllByStudents($value->getStudents()->toArray());
         $numberOfExams = 1;
 
         foreach($exams as $existingExam) {

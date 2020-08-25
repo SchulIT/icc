@@ -2,38 +2,40 @@
 
 namespace App\Controller;
 
-use App\Entity\DeviceToken;
-use App\Entity\DeviceTokenType;
+use App\Entity\IcsAccessToken;
+use App\Entity\IcsAccessTokenType;
 use App\Entity\Exam;
 use App\Entity\MessageScope;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
+use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Export\ExamIcsExporter;
-use App\Form\DeviceTokenType as DeviceTokenTypeForm;
-use App\Grouping\ExamDateStrategy;
+use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
 use App\Grouping\ExamWeekGroup;
-use App\Grouping\ExamWeekStrategy;
 use App\Grouping\Grouper;
+use App\Grouping\StudentStudyGroupGroup;
+use App\Grouping\WeekOfYear;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
-use App\Security\Devices\DeviceManager;
+use App\Security\IcsAccessToken\IcsAccessTokenManager;
 use App\Security\Voter\ExamVoter;
 use App\Settings\ExamSettings;
-use App\Sorting\ExamDateGroupStrategy;
 use App\Sorting\ExamDateLessonStrategy as ExamDateSortingStrategy;
-use App\Sorting\ExamWeekGroupStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
+use App\Sorting\StudentStudyGroupGroupStrategy;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\TeacherFilter;
-use SchoolIT\CommonBundle\Helper\DateHelper;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use DateTime;
+use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -46,12 +48,15 @@ class ExamController extends AbstractControllerWithMessages {
     private $grouper;
     private $sorter;
 
-    public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
+    private $importDateTypeRepository;
+
+    public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper, ImportDateTypeRepositoryInterface $importDateTypeRepository,
                                 DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper, $refererHelper);
 
         $this->grouper = $grouper;
         $this->sorter = $sorter;
+        $this->importDateTypeRepository = $importDateTypeRepository;
     }
 
     /**
@@ -63,33 +68,68 @@ class ExamController extends AbstractControllerWithMessages {
         $user = $this->getUser();
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
-        $all = $request->query->getBoolean('all', false);
-        $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user);
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null);
+        $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user, $studyGroupFilterView->getCurrentStudyGroup() === null && $gradeFilterView->getCurrentGrade() === null);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $studyGroupFilterView->getCurrentStudyGroup() === null && $gradeFilterView->getCurrentGrade() === null);
 
-        $exams = [ ];
-        $today = $all ? null : $this->dateHelper->getToday();
-
-        $isVisible = $examSettings->isVisibileFor($user->getUserType());
+        $isVisible = $examSettings->isVisibileFor($user->getUserType()) && $this->isVisibleForGrade($user, $examSettings);
         $isVisibleAdmin = false;
 
+        $week = $request->query->has('week') ? $request->query->getInt('week') : null;
+        $year = $request->query->has('year') ? $request->query->getInt('year') : null;
+
+        $groups = [ ];
+        $currentGroup = null;
+        $exams = [ ];
+
         if($isVisible === true || $this->isGranted('ROLE_EXAMS_CREATOR') || $this->isGranted('ROLE_EXAMS_ADMIN')) {
-            $isVisible = true;
-            $isVisibleAdmin = true;
+            if($isVisible === false) {
+                $isVisibleAdmin = $this->isGranted('ROLE_EXAMS_CREATOR') || $this->isGranted('ROLE_EXAMS_ADMIN');
+            }
 
             if ($studentFilterView->getCurrentStudent() !== null) {
-                $exams = $examRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $today);
-            } else if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
-                $exams = $examRepository->findAllByStudyGroup($studyGroupFilterView->getCurrentStudyGroup());
-            } else if ($gradeFilterView->getCurrentGrade() !== null) {
-                    $exams = $examRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $today);
-            } else if ($isStudentOrParent === false) {
-                if ($teacherFilterView->getCurrentTeacher() !== null) {
-                    $exams = $examRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $today);
+                $groups = $this->computeGroups($examRepository->findAllDatesByStudents([$studentFilterView->getCurrentStudent()]));
+                $currentGroup = $this->getCurrentGroup($groups, $year, $week, $dateHelper);
+
+                $exams = $this->getExams($currentGroup, function (DateTime $dateTime) use ($studentFilterView, $examRepository) {
+                    return $examRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $dateTime, true);
+                });
+            } else {
+                if ($studyGroupFilterView->getCurrentStudyGroup() !== null) {
+                    $groups = $this->computeGroups($examRepository->findAllDatesByStudyGroup($studyGroupFilterView->getCurrentStudyGroup()));
+                    $currentGroup = $this->getCurrentGroup($groups, $year, $week, $dateHelper);
+
+                    $exams = $this->getExams($currentGroup, function (DateTime $dateTime) use ($studyGroupFilterView, $examRepository) {
+                        return $examRepository->findAllByStudyGroup($studyGroupFilterView->getCurrentStudyGroup(), $dateTime, true,);
+                    });
                 } else {
-                    $exams = $examRepository->findAll($today);
+                    if ($gradeFilterView->getCurrentGrade() !== null) {
+                        $groups = $this->computeGroups($examRepository->findAllDatesByGrade($gradeFilterView->getCurrentGrade()));
+                        $currentGroup = $this->getCurrentGroup($groups, $year, $week, $dateHelper);
+
+                        $exams = $this->getExams($currentGroup, function (DateTime $dateTime) use ($gradeFilterView, $examRepository) {
+                            return $examRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $dateTime, true);
+                        });
+                    } else {
+                        if ($isStudentOrParent === false) {
+                            if ($teacherFilterView->getCurrentTeacher() !== null) {
+                                $groups = $this->computeGroups($examRepository->findAllDatesByTeacher($teacherFilterView->getCurrentTeacher()));
+                                $currentGroup = $this->getCurrentGroup($groups, $year, $week, $dateHelper);
+
+                                $exams = $this->getExams($currentGroup, function (DateTime $dateTime) use ($teacherFilterView, $examRepository) {
+                                    return $examRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $dateTime, true);
+                                });
+                            } else {
+                                $groups = $this->computeGroups($examRepository->findAllDates());
+                                $currentGroup = $this->getCurrentGroup($groups, $year, $week, $dateHelper);
+
+                                $exams = $this->getExams($currentGroup, function (DateTime $dateTime) use ($examRepository) {
+                                    return $examRepository->findAll($dateTime, true);
+                                });
+                            }
+                        }
+                    }
                 }
             }
 
@@ -98,112 +138,136 @@ class ExamController extends AbstractControllerWithMessages {
             });
         }
 
-        $exams = array_filter($exams, function(Exam $exam) {
-            return $exam->getDate() !== null;
-        });
-
-        $examWeekGroups = $this->grouper->group($exams, ExamWeekStrategy::class);
-        $this->sorter->sort($examWeekGroups, ExamWeekGroupStrategy::class);
-
-        $week = $request->query->getInt('week', null);
-        $year = $request->query->getInt('year', null);
-
-        $exams = [ ];
-        $currentGroup = null;
         $previousGroup = null;
         $nextGroup = null;
 
-        // $week==null
         /** @var ExamWeekGroup $group */
-        for($idx = 0; $idx < count($examWeekGroups); $idx++) {
-            $group = $examWeekGroups[$idx];
+        for($idx = 0; $idx < count($groups); $idx++) {
+            $group = $groups[$idx];
 
-            if($group->getKey()->getWeekNumber() === $week && $group->getKey()->getYear() === $year) {
-                $currentGroup = $group;
-
+            if($group === $currentGroup) {
                 $previousGroup = $examWeekGroups[$idx - 1] ?? null;
                 $nextGroup = $examWeekGroups[$idx + 1] ?? null;
             }
         }
 
-        if($currentGroup === null && count($examWeekGroups) > 0) {
-            $currentGroup = $examWeekGroups[0];
-
-            if(count($examWeekGroups) > 1) {
-                $nextGroup = $examWeekGroups[1];
-            }
-        }
-
-        if($currentGroup !== null) {
-            $exams = $currentGroup->getExams();
-        }
-
         $this->sorter->sort($exams, ExamDateSortingStrategy::class);
 
         return $this->renderWithMessages('exams/index.html.twig', [
-            'examWeekGroups' => $examWeekGroups,
+            'examWeekGroups' => $groups,
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
             'gradeFilter' => $gradeFilterView,
             'studyGroupFilter' => $studyGroupFilterView,
-            'showAll' => $all,
             'isVisible' => $isVisible,
             'isVisibleAdmin' => $isVisibleAdmin,
             'exams' => $exams,
             'currentGroup' => $currentGroup,
             'nextGroup' => $nextGroup,
-            'previousGroup' => $previousGroup
+            'previousGroup' => $previousGroup,
+            'last_import' => $this->importDateTypeRepository->findOneByEntityClass(Exam::class)
         ]);
     }
 
+    private function isVisibleForGrade(User $user, ExamSettings $examSettings) {
+        $visibleGradeIds = $examSettings->getVisibleGradeIds();
+        $gradeIds = [ ];
+
+        /** @var Student $student */
+        foreach($user->getStudents() as $student) {
+            $gradeIds[] = $student->getGrade()->getId();
+        }
+
+        return count(array_intersect($visibleGradeIds, $gradeIds)) > 0;
+    }
+
+    private function getExams(?ExamWeekGroup $group, \Closure $repositoryCall) {
+        if($group === null) {
+            return [];
+        }
+
+        $date = clone $group->getWeekOfYear()->getFirstDay();
+        $exams = [ ];
+
+        while($date <= $group->getWeekOfYear()->getLastDay()) {
+            $exams = array_merge($exams, $repositoryCall($date));
+
+            $date = $date->modify('+1 day');
+        }
+
+        return $exams;
+    }
+
     /**
-     * @Route("/{uuid}", name="show_exam", requirements={"id": "\d+"})
+     * @param ExamWeekGroup[] $groups
+     * @param int|null $year
+     * @param int|null $weekNumber
+     * @param DateHelper $dateHelper
+     * @return ExamWeekGroup|null
      */
-    public function show(Exam $exam) {
-        $this->denyAccessUnlessGranted(ExamVoter::Show, $exam);
+    private function getCurrentGroup(array $groups, ?int $year, ?int $weekNumber, DateHelper $dateHelper): ?ExamWeekGroup {
+        if ($year === null || $weekNumber === null) {
+            $today = $dateHelper->getToday();
+            $weekNumber = (int)$today->format('W');
+            $year = (int)$today->format('Y');
+        }
 
-        $studyGroups = [ ];
-        /** @var Student[] $students */
-        $students = $exam->getStudents();
+        $currentGroup = null;
 
-        /** @var StudyGroup[] $studyGroups */
-        $studyGroups = $exam->getTuitions()
-            ->map(function(Tuition $tuition) {
-                return $tuition->getStudyGroup();
-            });
+        foreach ($groups as $group) {
+            if ($group->getWeekOfYear()->getYear() >= $year && $group->getWeekOfYear()->getWeekNumber() >= $weekNumber) {
+                $currentGroup = $group;
 
-        foreach($studyGroups as $studyGroup) {
-            foreach($studyGroup->getMemberships() as $membership) {
-                $studyGroups[$membership->getStudent()->getId()] = $membership->getStudyGroup();
+                if ($group->getWeekOfYear()->getYear() === $year && $group->getWeekOfYear()->getWeekNumber() === $weekNumber) {
+                    break;
+                }
             }
         }
 
-        $students = $exam->getStudents()->toArray();
-        $this->sorter->sort($students, StudentStrategy::class);
+        return $currentGroup;
+    }
 
-        return $this->renderWithMessages('exams/details.html.twig', [
-            'exam' => $exam,
-            'students' => $students,
-            'studyGroups' => $studyGroups
-        ]);
+    private function computeGroups(array $examInfo) {
+        $groups = [ ];
+
+        foreach($examInfo as $info) {
+            $date = new DateTime($info['date']);
+            $count = intval($info['count']);
+
+            $weekNumber = (int)$date->format('W');
+            $year = (int)$date->format('Y');
+
+            $key = sprintf('%d-%d', $year, $weekNumber);
+
+            if(!array_key_exists($key, $groups)) {
+                $groups[$key] = new ExamWeekGroup(new WeekOfYear($year, $weekNumber));
+            }
+
+            // Add fake counter
+            for($i = 0; $i < $count; $i++) {
+                $groups[$key]->addItem(new Exam());
+            }
+        }
+
+        return array_values($groups);
     }
 
     /**
      * @Route("/export", name="exams_export")
      */
-    public function export(Request $request, DeviceManager $manager) {
+    public function export(Request $request, IcsAccessTokenManager $manager) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $deviceToken = (new DeviceToken())
-            ->setType(DeviceTokenType::Exams())
+        $deviceToken = (new IcsAccessToken())
+            ->setType(IcsAccessTokenType::Exams())
             ->setUser($user);
 
         $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $deviceToken = $manager->persistDeviceToken($deviceToken);
+            $deviceToken = $manager->persistToken($deviceToken);
         }
 
         return $this->renderWithMessages('exams/export.html.twig', [
@@ -225,5 +289,56 @@ class ExamController extends AbstractControllerWithMessages {
 
     protected function getMessageScope(): MessageScope {
         return MessageScope::Exams();
+    }
+
+    /**
+     * @Route("/{uuid}", name="show_exam", requirements={"id": "\d+"})
+     */
+    public function show(Exam $exam) {
+        $this->denyAccessUnlessGranted(ExamVoter::Show, $exam);
+
+        $studyGroups = [ ];
+        /** @var Student[] $students */
+        $students = $exam->getStudents();
+
+        $studentsWithoutStudyGroup = [ ];
+
+        /** @var StudyGroup[] $studyGroups */
+        $studyGroups = $exam->getTuitions()
+            ->map(function(Tuition $tuition) {
+                return $tuition->getStudyGroup();
+            })->toArray();
+
+        $groups = [ ];
+
+        foreach($studyGroups as $studyGroup) {
+            $groups[$studyGroup->getId()] = new StudentStudyGroupGroup($studyGroup);
+        }
+
+        foreach($students as $student) {
+            /** @var StudyGroupMembership $membership */
+            foreach($student->getStudyGroupMemberships() as $membership) {
+                $id = $membership->getStudyGroup()->getId();
+                if(isset($groups[$id])) {
+                    $groups[$id]->addItem($student);
+                    continue 2;
+                }
+            }
+
+            $studentsWithoutStudyGroup[] = $student;
+        }
+
+        $this->sorter->sort($groups, StudentStudyGroupGroupStrategy::class);
+        $this->sorter->sortGroupItems($groups, StudentStrategy::class);
+
+        $this->sorter->sort($studentsWithoutStudyGroup, StudentStrategy::class);
+
+        return $this->renderWithMessages('exams/details.html.twig', [
+            'exam' => $exam,
+            'groups' => $groups,
+            'studentsWithoutStudyGroup' => $studentsWithoutStudyGroup,
+            'studyGroups' => $studyGroups,
+            'last_import' => $this->importDateTypeRepository->findOneByEntityClass(Exam::class)
+        ]);
     }
 }

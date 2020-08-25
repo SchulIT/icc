@@ -36,7 +36,7 @@ class NotTooManyExamsPerDayValidator extends AbstractExamConstraintValidator {
             return true;
         }
 
-        $exams = $this->findAllByTuitions($value->getTuitions()->toArray());
+        $exams = $this->findAllByStudents($value->getStudents()->toArray());
         $numberOfExams = 1;
 
         foreach($exams as $existingExam) {

@@ -7,7 +7,7 @@ use App\Entity\AppointmentCategory;
 use App\Entity\Teacher;
 use App\Sorting\AppointmentCategoryStrategy;
 use App\Sorting\TeacherStrategy;
-use SchoolIT\CommonBundle\Form\FieldsetType;
+use SchulIT\CommonBundle\Form\FieldsetType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -71,6 +71,14 @@ class AppointmentType extends AbstractType {
                         ->add('allDay', CheckboxType::class, [
                             'label' => 'label.all_day',
                             'required' => false,
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
+                        ])
+                        ->add('visibilities', UserTypeEntityType::class, [
+                            'label' => 'label.visibility',
+                            'multiple' => true,
+                            'expanded' => true,
                             'label_attr' => [
                                 'class' => 'checkbox-custom'
                             ]

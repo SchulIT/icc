@@ -10,6 +10,7 @@ class TimetableSettings extends AbstractSettings {
     private const EndKey = 'lesson.%d.end';
     private const CollapsibleKey = 'lesson.%d.collapsable';
     private const SupervisionLabelKey = 'supervision.label';
+    private const SupervisionColorKey = 'supervision.color';
     private const CategoriesKey = 'no_lessons_categories';
     private const GradesWithCourseNames = 'course_names';
     private const GradesWithMembershipTypes = 'membership_types';
@@ -137,6 +138,14 @@ class TimetableSettings extends AbstractSettings {
 
     public function getSupervisionLabel(): ?string {
         return $this->getValue(static::SupervisionLabelKey);
+    }
+
+    public function setSupervisionColor(?string $color): void {
+        $this->setValue(static::SupervisionColorKey, $color);
+    }
+
+    public function getSupervisionColor(): ?string {
+        return $this->getValue(static::SupervisionColorKey, null);
     }
 
     public function getMaxLessons(): int {

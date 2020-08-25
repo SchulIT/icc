@@ -2,6 +2,7 @@
 
 namespace App\Converter;
 
+use App\Entity\Grade;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupType;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -14,7 +15,7 @@ class StudyGroupStringConverter {
         $this->translator = $translator;
     }
 
-    public function convert(StudyGroup $group, bool $short = false): string {
+    public function convert(StudyGroup $group, bool $short = false, bool $includeGrades = false): string {
         if($short === true) {
             return $group->getName();
         }
@@ -25,9 +26,19 @@ class StudyGroupStringConverter {
             $type = $this->translator->trans('studygroup.type.course');
         }
 
-        return $this->translator->trans('studygroup.name', [
+        $name = $this->translator->trans('studygroup.name', [
             '%name%' => $group->getName(),
             '%type%' => $type
         ]);
+
+        if($includeGrades === true && $group->getType()->equals(StudyGroupType::Grade()) === false) {
+            $grades = $group->getGrades()->map(function(Grade $grade) {
+                return $grade->getName();
+            })->toArray();
+
+            return sprintf('%s (%s)', $name, implode(', ', $grades));
+        }
+
+        return $name;
     }
 }

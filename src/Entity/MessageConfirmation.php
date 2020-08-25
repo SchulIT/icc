@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
@@ -29,7 +30,7 @@ class MessageConfirmation {
     /**
      * @ORM\Column(type="datetime")
      * @Gedmo\Timestampable(on="create")
-     * @var \DateTime
+     * @var DateTime
      */
     private $createdAt;
 
@@ -66,9 +67,9 @@ class MessageConfirmation {
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getCreatedAt(): \DateTime {
+    public function getCreatedAt(): DateTime {
         return $this->createdAt;
     }
 

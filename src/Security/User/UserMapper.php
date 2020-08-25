@@ -13,8 +13,8 @@ use LightSaml\Model\Protocol\Response;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Ramsey\Uuid\Uuid;
-use SchoolIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
-use SchoolIT\CommonBundle\Security\User\AbstractUserMapper;
+use SchulIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
+use SchulIT\CommonBundle\Security\User\AbstractUserMapper;
 
 class UserMapper extends AbstractUserMapper {
     const ROLES_ASSERTION_NAME = 'urn:roles';
@@ -82,7 +82,6 @@ class UserMapper extends AbstractUserMapper {
      * @return User
      */
     private function mapUserFromArray(User $user, array $data) {
-        $id = $data[SamlClaimTypes::ID];
         $username = $data[ClaimTypes::COMMON_NAME];
         $firstname = $data[ClaimTypes::GIVEN_NAME];
         $lastname = $data[ClaimTypes::SURNAME];
@@ -100,7 +99,6 @@ class UserMapper extends AbstractUserMapper {
 
         $user
             ->setUsername($username)
-            ->setIdpId(Uuid::fromString($id))
             ->setFirstname($firstname)
             ->setLastname($lastname)
             ->setEmail($email)

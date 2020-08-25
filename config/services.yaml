@@ -27,6 +27,10 @@ services:
             tags: [ 'app.grouping_strategy' ]
         App\Sorting\SortingStrategyInterface:
             tags: [ 'app.sorting_strategy' ]
+        App\Notification\Email\EmailStrategyInterface:
+            tags: [ 'app.notifications.email_strategy' ]
+        App\Notification\WebPush\PushNotificationStrategyInterface:
+            tags: [ 'app.notifications.push_strategy' ]
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -56,12 +60,17 @@ services:
     LightSaml\SpBundle\Security\User\UsernameMapperInterface:
         alias: lightsaml_sp.username_mapper.simple
 
-    SchoolIT\CommonBundle\Command\CreateCertificateCommand:
+    SchulIT\CommonBundle\Command\CreateCertificateCommand:
         arguments:
-            $keyFile: '%sp_cert_key%'
-            $certFile: '%sp_cert_file%'
+            $types:
+                saml:
+                    keyFile: '%sp_cert_key%'
+                    certFile: '%sp_cert_file%'
+                oauth2:
+                    keyFile: '%kernel.project_dir%/oauth/oauth.key'
+                    certFile: '%kernel.project_dir%/oauth/oauth.pub'
 
-    SchoolIT\CommonBundle\EventSubscriber\SamlExceptionSubscriber:
+    SchulIT\CommonBundle\EventSubscriber\SamlExceptionSubscriber:
         arguments:
             $retryRoute: 'lightsaml_sp.login'
             $loggedInRoute: 'dashboard'
@@ -98,8 +107,10 @@ services:
         arguments:
             $typesMap: '%types_map%'
 
-    security.user_checker:
-        alias: App\Security\UserChecker
+    App\Security\CronUserProvider:
+        arguments:
+            $username: 'cron'
+            $password: '%env(CRON_PASSWORD)%'
 
     # MENU
     App\Menu\Builder:
@@ -111,8 +122,10 @@ services:
             - { name: knp_menu.menu_builder, method: adminMenu, alias: adminMenu }
             - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
             - { name: knp_menu.menu_builder, method: servicesMenu, alias: servicesMenu }
+            - { name: knp_menu.menu_builder, method: systemMenu, alias: systemMenu }
+            - { name: knp_menu.menu_builder, method: notificationsMenu, alias: notificationsMenu }
 
-    SchoolIT\CommonBundle\Menu\Voter:
+    SchulIT\CommonBundle\Menu\Voter:
         tags:
             - { name: knp_menu.voter }
 
@@ -180,17 +193,40 @@ services:
         alias: 'doctrine'
 
     # DARK MODE:
-    SchoolIT\CommonBundle\DarkMode\DarkModeManagerInterface:
+    SchulIT\CommonBundle\DarkMode\DarkModeManagerInterface:
         class: App\DarkMode\DarkModeManager
 
     # NOTIFICATIONS
+    App\Notification\Email\:
+        resource: '../src/Notification/Email/*Strategy.php'
+
+    App\Notification\WebPush\:
+        resource: '../src/Notification/WebPush/*Strategy.php'
+
+    App\Notification\NotificationService:
+        arguments:
+            $emailStrategies: !tagged app.notifications.email_strategy
+            $pushStrategies: !tagged app.notifications.push_strategy
+
     App\Notification\Email\EmailNotificationService:
         arguments:
             $isEnabled: '%env(bool:NOTIFICATIONS_ENABLED)%'
             $appName: '%env(APP_NAME)%'
             $sender: '%env(MAILER_FROM)%'
 
+    App\EventSubscriber\ReservationCheckerSubscriber:
+        arguments:
+            $appName: '%env(APP_NAME)%'
+            $sender: '%env(MAILER_FROM)%'
+
     # COMMANDS
-    App\Command\SendMailsTask:
+    SchulIT\CommonBundle\Command\SendMailsCommand:
         arguments:
             $messageLimit: '%env(int:MAILER_LIMIT)%'
+        tags:
+            - { name: shapecode_cron.cron_job, expression: '*\/2 * * * *' }
+
+    # WEBPUSH
+    App\Notification\WebPush\UserSubscriptionManager:
+        tags:
+            - { name: bentools_webpush.subscription_manager, user_class: 'App\Entity\User' }

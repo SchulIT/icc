@@ -14,10 +14,13 @@ use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use MyCLabs\Enum\Enum;
+use ReflectionClass;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+use Twig\TwigTest;
 
 class AppExtension extends AbstractExtension {
 
@@ -58,6 +61,12 @@ class AppExtension extends AbstractExtension {
         ];
     }
 
+    public function getTests() {
+        return [
+            new TwigTest('instanceof', [ $this, 'isInstanceOf' ])
+        ];
+    }
+
     public function teacher(?Teacher $teacher, bool $includeAcronym = false) {
         return $this->teacherConverter->convert($teacher, $includeAcronym);
     }
@@ -89,6 +98,11 @@ class AppExtension extends AbstractExtension {
         return $this->studyGroupConverter->convert($group, $short);
     }
 
+    /**
+     * @param StudyGroup[]|ArrayCollection $studyGroups
+     * @param bool $sort
+     * @return string
+     */
     public function studyGroups(iterable $studyGroups, bool $sort = false) {
         return $this->studyGroupsConverter->convert($studyGroups, $sort);
     }
@@ -103,5 +117,10 @@ class AppExtension extends AbstractExtension {
 
     public function enum(Enum $enum): string {
         return $this->enumStringConverter->convert($enum);
+    }
+
+    public function isInstanceOf($object, string $className): bool {
+        $reflectionClass = new ReflectionClass($className);
+        return $reflectionClass->isInstance($object);
     }
 }

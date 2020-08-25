@@ -3,6 +3,30 @@ nelmio_api_doc:
         info:
             title: "%env(APP_NAME)%"
             version: "%version%"
+        securityDefinitions:
+            oauth:
+                type: oauth2
+                flow: accessCode
+                authorizationUrl: /oauth2/authorize
+                tokenUrl: /oauth2/token
+                scopes:
+                    - messages
+                    - exams
+                    - substitutions
+                    - timetable
+                    - appointments
+            apiKey:
+                type: apiKey
+                in: header
+                name: X-Token
+        security:
+            oauth:
+                - messages
+                - exams
+                - substitutions
+                - timetable
+                - appointments
+            apiKey: []
 
     areas: # to filter documented areas
         default:
@@ -10,4 +34,5 @@ nelmio_api_doc:
 
         import:
             path_patterns: [^/api/import]
+
 

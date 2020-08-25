@@ -19,15 +19,14 @@ class StudyGroup {
     /**
      * @ORM\Column(type="string", unique=true)
      * @Assert\NotBlank(allowNull=true)
-     * @var string
+     * @var string|null
      */
     private $externalId;
 
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * @Assert\NotNull()
-     * @var string
+     * @var string|null
      */
     private $name;
 
@@ -40,10 +39,9 @@ class StudyGroup {
 
     /**
      * @ORM\ManyToMany(targetEntity="Grade")
-     * @ORM\JoinTable(
-     *     name="studygroup_grades",
-     *     joinColumns={@ORM\JoinColumn(name="studygroup", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="grade", referencedColumnName="id", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="study_group_grades",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Grade>
      */
@@ -63,46 +61,40 @@ class StudyGroup {
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
+        $this->type = StudyGroupType::Course();
         $this->grades = new ArrayCollection();
         $this->memberships = new ArrayCollection();
         $this->tuitions = new ArrayCollection();
     }
 
     /**
-     * @return int|null
+     * @return string|null
      */
-    public function getId(): ?int {
-        return $this->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getExternalId(): string {
+    public function getExternalId(): ?string {
         return $this->externalId;
     }
 
     /**
-     * @param string $externalId
+     * @param string|null $externalId
      * @return StudyGroup
      */
-    public function setExternalId(string $externalId): StudyGroup {
+    public function setExternalId(?string $externalId): StudyGroup {
         $this->externalId = $externalId;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getName(): string {
+    public function getName(): ?string {
         return $this->name;
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      * @return StudyGroup
      */
-    public function setName(string $name): StudyGroup {
+    public function setName(?string $name): StudyGroup {
         $this->name = $name;
         return $this;
     }

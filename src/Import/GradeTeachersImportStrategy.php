@@ -67,4 +67,11 @@ class GradeTeachersImportStrategy implements ReplaceImportStrategyInterface {
     public function getData($data): array {
         return $data->getGradeTeachers();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return GradeTeacher::class;
+    }
 }

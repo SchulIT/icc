@@ -1,0 +1,159 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'plans.rooms.reservations.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        {% set currentFilter = {
+                            date: date|date('Y-m-d'),
+                            rooms: roomsFilter.currentRooms|map(r => r.uuid.toString)
+                        } %}
+
+                        <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
+                            {% set previousDate = date|previous_date %}
+                            <li class="nav-item" data-resize="show">
+                                <a class="nav-link" href="{{ path('room_reservations', currentFilter|merge({ date: previousDate|date('Y-m-d') })) }}">
+                                    <i class="fa fa-chevron-left"></i>
+                                </a>
+                            </li>
+
+                            {% for day in days %}
+                                <li class="nav-item" {% if date == day%}data-resize="prevent"{% endif%}>
+                                    <a class="nav-link{% if date == day %} active{% endif %}" href="{{ path('room_reservations', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
+                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday(true) }}., {{ day.format('date.format_short'|trans) }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+
+                            {% set nextDate = date|next_date %}
+                            <li class="nav-item" data-resize="show">
+                                <a class="nav-link" href="{{ path('room_reservations', currentFilter|merge({ date: nextDate|date('Y-m-d') })) }}">
+                                    <i class="fa fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {% if overview is null %}
+                    <div class="card-body">
+                        {{ 'plans.rooms.reservations.not_available'|trans }}
+                    </div>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover card-table">
+                                <colgroup>
+                                    <col>
+                                    {% if overview.maxLessons > 0 %}
+                                        {% for lesson in 1..overview.maxLessons %}
+                                        <col class="column-sm">
+                                        {% endfor %}
+                                    {% endif %}
+                                </colgroup>
+
+                                <thead>
+                                <tr>
+                                    <th>{{ 'label.room'|trans }}</th>
+                                    {% if overview.maxLessons > 0 %}
+                                        {% for lesson in 1..overview.maxLessons %}
+                                            <th class="text-center">{{ lesson }}.</th>
+                                        {% endfor %}
+                                    {% endif %}
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {% for room in rooms %}
+                                    <tr>
+                                        <td class="align-middle">
+                                            {{ room.name }}
+
+                                            <span class="text-muted">{{ room.description }}</span>
+                                        </td>
+                                        {% if overview.maxLessons > 0 %}
+                                            {% for lesson in 1..overview.maxLessons %}
+                                                {% set availability = overview.availability(room, lesson) %}
+                                                {% set isAvailable = availability ? availability.isAvailable : false %}
+
+                                                <td data-toggle="xhr-popover" data-popover-title="{{ 'plans.rooms.reservations.info'|trans }}" data-popover-url="{{ path('reservation_xhr', { room: room.uuid.toString, date: date|date('Y-m-d'), lessonNumber: lesson }) }}" class="{% if isAvailable %}table-success{% elseif availability is not null and availability.reservation is not null %}bg-warning{% else %}bg-danger{% endif %} text-center align-middle p-0">
+                                                    {% if isAvailable %}
+                                                        <a href="{{ path('add_room_reservation', { room: room.uuid.toString, date: date|date('Y-m-d'), lessonStart: lesson }) }}" class="w-100 h-100 py-3 d-block">
+                                                            <i class="fa fa-check"></i>
+                                                        </a>
+                                                    {% elseif availability is not null and availability.reservation is not null and availability.substitution is not null %}
+                                                        <i class="fa fa-exclamation-triangle"></i>
+                                                    {% else %}
+                                                        <i class="fa fa-times"></i>
+                                                    {% endif %}
+                                                </td>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('add_room_reservation') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus"></i> {{ 'plans.rooms.reservations.add.label'|trans }}
+                        </a>
+                        <a href="{{ path('list_reservations') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-door-closed"></i> {{ 'plans.rooms.reservations.list.label'|trans }}
+                        </a>
+
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        {% set dateParam = date|date('Y-m-d') %}
+                        {% include "_filter/rooms.html.twig" with { params: { date: dateParam } }%}
+
+                        <form role="form" method="get" class="form hidden-print">
+                            {% include "_filter/_params.html.twig" with { params: { rooms: [] } } %}
+
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('room_reservations') }}" class="btn btn-primary btn-sm">
+                            {{ 'filter.reset'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fa fa-info-circle"></i> {{ 'info.label'|trans }}
+                        </h5>
+
+                        <p>{{ 'plans.rooms.reservations.help'|trans }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

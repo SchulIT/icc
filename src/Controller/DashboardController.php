@@ -4,24 +4,29 @@ namespace App\Controller;
 
 use App\Dashboard\DashboardViewHelper;
 use App\Dashboard\DashboardViewCollapseHelper;
+use App\Entity\Substitution;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
+use App\Settings\DashboardSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Filter\UserTypeFilter;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractController {
 
+    use DateTimeHelperTrait;
+
     private const DaysInFuture = 5;
-    private const DaysInPast = 1;
+    private const DaysInPast = 0;
 
     private const ShowTimesKey = 'dashboard.show_times';
     private const IncludeGradeMessagesKey = 'dashboard.include_grade_messages';
@@ -38,8 +43,8 @@ class DashboardController extends AbstractController {
      */
     public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
                               DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper,
-                              DateHelper $dateHelper, TimetableSettings $timetableSettings, UserRepositoryInterface $userRepository,
-                              Request $request) {
+                              DateHelper $dateHelper, DashboardSettings $settings, TimetableSettings $timetableSettings,
+                              UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -57,13 +62,23 @@ class DashboardController extends AbstractController {
 
         $selectedDate = null;
         try {
-            $selectedDate = new \DateTime($request->query->get('date', null));
-            $selectedDate->setTime(0, 0, 0);
+            if($request->query->has('date')) {
+                $selectedDate = new \DateTime($request->query->get('date', null));
+                $selectedDate->setTime(0, 0, 0);
+            }
         } catch (\Exception $e) {
-            $selectedDate = $dateHelper->getToday();
+            $selectedDate = null;
         }
 
-        $days = $this->getListOfSurroundingDays($selectedDate, static::DaysInFuture, static::DaysInPast);
+        if($selectedDate === null) {
+            $selectedDate = $this->getTodayOrNextDay($dateHelper, $settings->getNextDayThresholdTime());
+
+            while($settings->skipWeekends() && $selectedDate->format('N') > 5) {
+                $selectedDate->modify('+1 day');
+            }
+        }
+
+        $days = $this->getListOfSurroundingDays($selectedDate, static::DaysInFuture, static::DaysInPast, $settings->skipWeekends());
 
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null);
@@ -119,7 +134,9 @@ class DashboardController extends AbstractController {
             'supervisionLabels' => $supervisionLabels,
             'showTimes' => $showTimes,
             'includeGradeMessages' => $user->getData(static::IncludeGradeMessagesKey, false),
-            'canIncludeGradeMessages' => $user->getTeacher() !== null
+            'canIncludeGradeMessages' => $user->getTeacher() !== null,
+            'last_import' => $importDateTypeRepository->findOneByEntityClass(Substitution::class),
+            'settings' => $settings
         ]);
     }
 
@@ -127,19 +144,28 @@ class DashboardController extends AbstractController {
      * @param \DateTime $dateTime
      * @param int $daysInFuture
      * @param int $daysInPast
+     * @param bool $skipWeekends
      * @return \DateTime[]
      */
-    private function getListOfSurroundingDays(\DateTime $dateTime, int $daysInFuture, int $daysInPast): array {
+    private function getListOfSurroundingDays(\DateTime $dateTime, int $daysInFuture, int $daysInPast, bool $skipWeekends): array {
         $days = [ ];
 
         for($i = $daysInPast; $i > 0; $i--) {
-            $days[] = (clone $dateTime)->modify(sprintf('-%d days', $i));
+            $day = (clone $dateTime)->modify(sprintf('-%d days', $i));
+
+            if($skipWeekends === false || $day->format('N') < 6) {
+                $days[] = $day;
+            }
         }
 
         $days[] = $dateTime;
 
         for($i = 1; $i <= $daysInFuture; $i++) {
-            $days[] = (clone $dateTime)->modify(sprintf('+%d days', $i));
+            $day = (clone $dateTime)->modify(sprintf('+%d days', $i));
+
+            if($skipWeekends === false || $day->format('N') < 6) {
+                $days[] = $day;
+            }
         }
 
         return $days;

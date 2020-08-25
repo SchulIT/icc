@@ -116,29 +116,13 @@ class MessageVoter extends Voter {
             return true;
         }
 
-        if($this->isMemberOfTypeAndStudyGroup($token, $this->getUserTypes($message->getVisibilities()), $message->getStudyGroups()->toArray(), false) !== true) {
-            return false;
+        if($this->isMemberOfTypeAndStudyGroup($token, $this->getUserTypes($message->getVisibilities()), $message->getStudyGroups()->toArray(), false) === true) {
+            return true;
         }
 
         if($user->getUserType()->equals(UserType::Student()) !== true && $user->getUserType()->equals(UserType::Parent()) !== true) {
             // all checks passed for non-student/-parent users
             return true;
-        }
-
-        /** @var Student[] $students */
-        $students = $user->getStudents();
-        $messageStudyGroupIds = $message->getStudyGroups()->map(function(StudyGroup $group) {
-            return $group->getId();
-        })->toArray();
-
-        foreach($students as $student) {
-            $studyGroupIds = $student->getStudyGroupMemberships()->map(function(StudyGroupMembership $membership) {
-                return $membership->getStudyGroup()->getId();
-            })->toArray();
-
-            if(count(array_intersect($messageStudyGroupIds, $studyGroupIds)) > 1) {
-                return true;
-            }
         }
 
         return false;
@@ -196,7 +180,13 @@ class MessageVoter extends Voter {
         }
 
         // only allow dismissing message in case the user has confirmed the message!
-        return $this->confirmationHelper->isMessageConfirmed($message, $token->getUser());
+        $user = $token->getUser();
+
+        if(!$user instanceof User) {
+            return false;
+        }
+
+        return $this->confirmationHelper->isMessageConfirmed($message, $user);
     }
 
     /**

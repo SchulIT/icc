@@ -1,24 +1,53 @@
-dist: xenial
+os: linux
+dist: bionic
 language: php
 
 php:
-  - '7.3'
-  - nightly
-
-matrix:
-  allow_failures:
-    - php: nightly
+  - '7.4'
 
 services:
   - mysql
 
-install:
-  - composer install
+before_install:
+  - php -i
 
-script:
-  - vendor/bin/phpstan analyze ./src --level 5
-  - vendor/bin/phpunit --coverage-clover clover.xml
+stages:
+  - test
+  - build
+  - release
 
-after_script:
-  - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover clover.xml
+cache: yarn
+
+jobs:
+  include:
+    - stage: test
+      script:
+        - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist --no-interaction
+        - php bin/console cache:clear --env=dev
+        - vendor/bin/phpstan analyze ./src --level 5 --memory-limit 1G
+        - vendor/bin/phpunit --coverage-clover clover.xml
+      after_script:
+        - wget https://scrutinizer-ci.com/ocular.phar
+        - php ocular.phar code-coverage:upload --format=php-clover clover.xml
+    - stage: build
+      script:
+        - nvm install 10
+        - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist --no-interaction --no-dev
+        - yarn install
+        - yarn encore production
+    - stage: build
+      language: python
+      script:
+        - pip install sphinx
+        - pip install sphinx_rtd_theme
+        - pip install -r docs/requirements.txt
+        - cd docs
+        - make html
+    - stage: build
+      script:
+        - nvm install 10
+        - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist --no-interaction --no-dev --no-scripts
+        - yarn install
+        - yarn encore production
+        - rm -rf node_modules
+        - zip -r icc.zip .

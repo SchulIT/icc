@@ -24,9 +24,9 @@ fervo_enum:
             doctrine_type: user_type
             form_type: user_type
 
-        App\Entity\DeviceTokenType:
-            doctrine_type: device_token_type
-            form_type: device_token_type
+        App\Entity\IcsAccessTokenType:
+            doctrine_type: ics_access_token_type
+            form_type: ics_access_token_type
 
         App\Dashboard\AbsenceReason:
             doctrine_type: absence_reason

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Room;
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
@@ -152,6 +153,28 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
             $qb->expr()->in('s.id', $qbInner->getDQL())
         );
         $qb->setParameter('id', $grade->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllForRooms(array $rooms, ?DateTime $date): array {
+        $roomIds = array_filter(array_map(function(Room $room) {
+            return $room->getExternalId();
+        }, $rooms), function($input) {
+            return !empty($input);
+        });
+
+        $qb = $this->getDefaultQueryBuilder($date);
+        $qb->andWhere(
+            $qb->expr()->orX(
+                $qb->expr()->in('s.room', ':roomIds'),
+                $qb->expr()->in('s.replacementRoom', ':roomIds')
+            )
+        );
+        $qb->setParameter('roomIds', $roomIds);
 
         return $qb->getQuery()->getResult();
     }

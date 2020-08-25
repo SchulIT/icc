@@ -1,20 +1,27 @@
 {% if grouped is not defined %}
     {% set grouped = true %}
 {% endif %}
+{% if isChoice is not defined %}
+    {% set isChoice = true %}
+{% endif %}
 
 <form role="form" method="get" class="form">
     {% include "_filter/_params.html.twig" %}
 
     <div class="form-group {{ class|default('') }}">
         <label for="study_group" class="control-label">{{ 'label.study_group'|trans }}:</label>
-        <select name="study_group" id="study_group" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="true">
+        <select name="study_group" id="study_group" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="{{ isChoice ? 'true' : 'false' }}">
             <option value="" placeholder>{{ 'label.select.study_group'|trans }}</option>
             {% for group in studyGroupFilter.studyGroupGroups %}
                 {% if grouped %}
-                <optgroup label="{{ group.grade.name }}">
+                <optgroup label="{{ group.type|enum }}">
                 {% endif %}
                     {% for g in group.studyGroups %}
-                        <option value="{{ g.uuid }}" {% if studyGroupFilter.currentStudyGroup != null and studyGroupFilter.currentStudyGroup.id == g.id %}selected="selected"{% endif %}>{{ g|studygroup }}</option>
+                        <option value="{{ g.uuid }}" {% if studyGroupFilter.currentStudyGroup != null and studyGroupFilter.currentStudyGroup.id == g.id %}selected="selected"{% endif %}>
+                            {{ g|studygroup }}
+
+                            ({% for grade in g.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                        </option>
                     {% endfor %}
                 {% if grouped %}
                 </optgroup>

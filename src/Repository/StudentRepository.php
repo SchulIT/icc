@@ -86,12 +86,11 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
                     $qb->expr()->like('sInner.firstname', ':query'),
                     $qb->expr()->like('sInner.lastname', ':query')
                 )
-            )
-            ->setParameter('query', '%' . $query . '%');
+            );
 
         $qb
             ->andWhere($qb->expr()->in('s.id', $qbInner->getDQL()))
-            ->setParameter('query', $query);
+            ->setParameter('query', '%' . $query . '%');
 
         return $qb->getQuery()->getResult();
     }

@@ -1,0 +1,3 @@
+doctrine:
+  dbal:
+    server_version: 'mariadb-10.4.0'

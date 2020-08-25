@@ -10,6 +10,7 @@ label:
     subjects: Fächer
     teacher: Lehrkraft
     teachers: "{0} Lehrkraft|{1} Lehrkraft|]1,Inf[ Lehrkräfte"
+    teachers_simple: Lehrkräfte
     student: Lernender
     students: "{0} %count% Lernende|{1} %count% Lernender|]1,Inf[ %count% Lernende"
     students_simple: Lernende
@@ -48,6 +49,7 @@ label:
     scope: Bereich
     author: Autor
     visibility: Sichtbar für
+    absence_visibility: Absenzen sichtbar für
     message:
         subject: Betreff
         start: Start-Datum
@@ -57,6 +59,7 @@ label:
     file: Datei
     choose_file: Datei auswählen
     room: Raum
+    rooms: Räume
     options: Optionen
     external_id: Externe ID
     key: Schlüssel
@@ -72,6 +75,8 @@ label:
     title: Titel
     messages_files:
         label: Personalisierte Dateien
+        badge_upload: (Benutzer laden personalisierte Dateien hoch)
+        badge_download: (Benutzer laden personalisierte Dateien herunter)
         info_downloads: Es ist möglich, dass für jeden Benutzer personalisierte Dateien zum Download angeboten werden.
         enable_downloads: Benutzer können personalisierte Dateien herunterladen
         info_uploads: Darüber hinaus ist es möglich, dass Benutzer personalisierte Dateien einsenden können.
@@ -106,6 +111,14 @@ label:
     description: Beschreibung
     tuitions: Unterricht
     nobody: Niemand
+    capacity: Kapazität
+    has_value: hat Wert
+    last_import: Letzter Import
+    last_import_type: 'Letzter Import "%type%"'
+    never: Nie
+    supervisions: Aufsichten
+    toggle_multiple: Mehrfachauswahl aktivieren
+    not_available: N/A
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -126,6 +139,7 @@ actions:
     create: erzeugen
     upload: hochladen
     pick: auswählen
+    view: anzeigen
 
 clipboard:
     copy: In die Zwischenablage kopieren
@@ -147,7 +161,7 @@ exams:
         title: Klausurplan
         description: "Klausurplan für %user%"
         supervision_description: "Klausuraufsicht %tuitions%"
-        exam_description: "Klausur %tuition%"
+        exam_description: "Klausur %tuitions%"
         tuition: "%name% (%grades%)"
 
 dashboard:
@@ -155,9 +169,11 @@ dashboard:
     before_lesson: "vor %lesson%. Stunde"
     absent_students: Abwesend
     supervision: Aufsicht
+    reservation: Raum-Reservierung
     exam_supervision: Klausuraufsicht
     substitution: Vertretung
     substitution_mentions: Erwähnungen
+    appointments: Termine
     collision:
         hint: Bitte überprüfen und den entsprechenden Ansprechpartner kontaktieren.
         single_label: Mögliche Kollision gefunden.
@@ -165,6 +181,7 @@ dashboard:
     exam: Klausur
     empty: Für diesen Tag sind keine Daten hinterlegt.
     free_hour: Freistunde
+    free_lesson: Unterrichtsfrei
     absences: Absenzen
     nav:
         infotexts: '{0} Tagestexte|{1} Tagestext|]1,Inf[ Tagestexte'
@@ -230,10 +247,12 @@ plans:
                 success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
         today: heute
         upcoming: demnächst
+        free: unterrichtsfrei
 
     substitutions:
         label: Vertretungsplan
         empty: Für diesen Tag gibt es keine Vertretungen zum Anzeigen.
+        no_grade: Ohne Klassen
         view:
             label: Ansicht
             table: Tabelle
@@ -248,6 +267,7 @@ plans:
 
     appointments:
         label: Terminplan
+        loading: Termine laden...
         not_available: Aktuell ist der Terminplan nicht verfügbar.
         empty: Aktuell sind keine Termine eingetragen.
         filter:
@@ -259,11 +279,11 @@ plans:
             label: Kalender exportieren
             download:
                 label: Einmaliger Download
-                info: Der Stundenplan wird bei dieser Methode nicht aktualisiert!
+                info: Der Kalender wird bei dieser Methode nicht aktualisiert!
                 filename: termine.ics
             sync:
                 label: Link zur Synchronisation
-                info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Stundenplan damit aktuell hält.
+                info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Kalender damit aktuell hält.
                 name_help: Unter diesem Namen kann in den Profil-Einstellungen der Zugriff wieder entzogen werden.
                 success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
             name: Schulkalender
@@ -285,6 +305,30 @@ plans:
         seats: Sitzplätze
         timetable: Stundenplan anzeigen
 
+        reservations:
+            label: Raumbelegplan
+            help: Zum Erstellen einer Reservierung entweder auf ein grünes Feld klicken oder die obige Schaltfläche nutzen.
+            info: Informationen
+            available: Der Raum ist nicht belegt und kann reserviert werden.
+            not_available: Der Raumbelegplan kann nicht angezeigt werden, da dem ausgewählten Datum keine Periode oder Woche zugeordnet werden kann.
+            reservation: Reservierung
+            add:
+                label: Neue Reservierung
+                success: Raum-Reservierung erfolgreich angelegt
+            edit:
+                label: Reservierung bearbeiten
+                success: Raum-Reservierung erfolgreich aktualisiert
+            remove:
+                label: Reservierung löschen
+                success: Raum-Reservierung erfolgreich gelöscht
+                confirm: 'Soll die Raum-Reservierung für %room% am %date% (%lessons%) wirklich gelöscht werden?'
+                info: Nach dem Löschen der Reservierung kann der Raum von anderen Lehrkräften reserviert werden. Er steht dann für den eigenen Unterricht nicht mehr zur Verfügung.
+            collision:
+                label: 'Die Reservierung kollidiert mit folgenden Einträgen:'
+            list:
+                label: Alle Reservierungen
+                empty: Keine Reservierungen für den aktuellen Filter gefunden.
+                all: vergangene Reservierungen anzeigen
 
 lists:
     label: Listen
@@ -406,7 +450,7 @@ message:
     dismissed_info: '{1} %count% Mitteilung wird ausgeblendet.|]1,Inf[ %count% Mitteilungen werden ausgeblendet.'
     dismissed_action: '{1} Mitteilung einblenden|]1,Inf[ %count% Mitteilungen einblenden'
     must_confirm: Diese Mitteilung muss bestätigt werden.
-
+    expires: 'läuft ab: %date%'
     confirmations:
         label: Bestätigungen
 
@@ -431,6 +475,7 @@ date:
     format: d.m.Y
     format_short: d.m.
     time_format: "H:i"
+    week_label: 'KW %week%'
     days:
         0: Sonntag
         1: Montag
@@ -482,7 +527,7 @@ admin:
             notifications:
                 enabled:
                     label: Benachrichtigungen aktiviert
-                    help: Wenn diese Option aktiviert ist, werden Lehrkräfte informiert, sobald ein neuer Vertretungsplan verfügbar ist.
+                    help: Wenn diese Option aktiviert ist, werden Benachrichtigungen versendet, sobald ein neuer Vertretungsplan verfügbar ist.
                 sender:
                     label: Absender
                     help: Dieser Name wird als Absender bei E-Mail Benachrichtungen angezeigt. E-Mails werden mit diesem Namen unterschrieben.
@@ -492,9 +537,11 @@ admin:
             absence_visibility:
                 label: Abwenheiten sichtbar für
 
-
         exams:
             label: Klausurplan
+            visible_grades:
+                label: Klassen
+                help: Nur Lernende dieser Klassen können den Klausurplan einsehen.
             window:
                 label: Vorausblick für Lernende
                 help: Anzahl der Tage, die Lernende in die Zukunft blicken können (0 bedeutet unbegrenzte Anzahl an Tagen).
@@ -504,7 +551,7 @@ admin:
             notifications:
                 enabled:
                     label: Benachrichtigungen aktiviert
-                    help: Wenn diese Option aktiviert ist, werden Lehrkräfte informiert, sobald ein neuer Klausurplan verfügbar ist.
+                    help: Wenn diese Option aktiviert ist, werden Benachrichtigungen versendet, sobald ein neuer Klausurplan verfügbar ist.
                 sender:
                     label: Absender
                     help: Dieser Name wird als Absender bei E-Mail Benachrichtungen angezeigt. E-Mails werden mit diesem Namen unterschrieben.
@@ -536,6 +583,7 @@ admin:
                     label: "Text vor %lesson%. Stunde"
                     help: "Gibt den Text in der Stundenspalte an, der vor der %lesson%. Stunde angezeigt wird (bspw. 1. große Pause, Mittagspause, ...)."
                 start: Aufsichtsbeginn vor 1. Stunde
+                color: Farbe
             lesson:
                 legend: Unterrichtsstuden
                 start: "Beginn %lesson%. Stunde"
@@ -553,9 +601,18 @@ admin:
             removable_substitutions:
                 label: Vertretungsarten mit geringer Priorität
                 help: Kommaseparierte Liste von Vertretungsarten, welche bei mehreren Vertretungen automatisch ausgeblendet werden.
-            additional_substitution:
+            additional_substitutions:
                 label: Ergänzende Vertretungsarten
                 help: Kommaseparierte Liste von Vertretungsarten, welche immer zusätzlich angezeigt werden.
+            free_lesson_types:
+                label: Vertretungsarten Freistunden
+                help: Kommaseparierte Liste von Vertretungsarten, bei denen eine Vertretung als Freistunde angezeigt wird.
+            next_day_threshold:
+                label: Nächster Tag ab
+                help: Ab dieser Uhrzeit wird der nächste Tag automatisch ausgewählt. Ist dieser Wert nicht gesetzt, so wird stets der aktuelle Tag automatisch ausgewählt.
+            skip_weekends:
+                label: Wochenenden überspringen
+                help: Gibt an, ob Wochenendtage auf der Übersicht übersprungen werden sollen.
 
         appointments:
             label: Terminplan
@@ -570,6 +627,15 @@ admin:
             exam_color:
                 label: Farbe für Klausuren
                 help: Legt die Farbe für Klausuren fest, die im Terminkalender angezeigt werden.
+
+        notifications:
+            label: Benachrichtigungen
+            push:
+                label: Push-Benachrichtigungen aktiviert für
+                help: Schaltet Push-Benachrichtigungen für diese Benutzergruppen frei oder sperrt sie.
+            email:
+                label: E-Mail Benachrichtigungen aktiviert für
+                help: Schaltet E-Mail-Benachrichtigungen für diese Benutzergruppen frei oder sperrt sie.
 
     timetable:
         label: Stundenplan
@@ -761,7 +827,7 @@ admin:
         label: Klausuren
         week: 'KW %week%'
         add:
-            label: Neue Klasur
+            label: Neue Klausur
             success: Klausur erfolgreich angelegt
         edit:
             label: Klausur bearbeiten
@@ -771,6 +837,13 @@ admin:
             success: Klausurschreiber aktualisiert
             info: Lernende werden individuell einer Klausur zugeordnet. Diese können nach dem Erstellen der Klausur ausgewählt werden.
             add_all: Alle Lernenden der ausgewählten Unterrichte als Klausurschreiber zuordnen
+        tuition_teachers_can_edit:
+            label: Lehrkräfte können Klausur bearbeiten
+            help: Wenn diese Option ausgewählt ist, können Lehrkräfte der ausgewählten Unterrichte die Klausurdetails (Datum, Stunde, Raum, Beschreibung) bearbeiten.
+        unplan:
+            label: Klausurplanung rückgängig machen
+            confirm: 'Soll die Klausurplanung am %date% (%lessons%) wirklich rückgängig werden?'
+            success: Klausurplanung erfolgreich rückgängig gemacht
         remove:
             label: Klausur löschen
             confirm: 'Soll die Klausur am %date% (%lessons%) wirklich gelöscht werden?'
@@ -814,6 +887,36 @@ admin:
             lists: Kurse mit diesem Fach in Kurslisten sichtbar
             lists_false: Kurse mit diesem Fach in Kurslisten nicht sichtbar
 
+    rooms:
+        label: Räume
+        empty: Keine Räume vorhanden.
+        show_reservations: Raum-Belegplan anzeigen
+        add:
+            label: Neuer Raum
+            success: Raum erfolgreich angelegt
+        edit:
+            label: Raum bearbeiten
+            success: Raum erfolgreich aktualisiert
+        remove:
+            label: Raum löschen
+            confirm: 'Soll der Raum "%name%" wirklich gelöscht werden?'
+            success: Raum erfolgreich gelöscht
+
+        tags:
+            label: Raum-Tags
+            empty: Keine Raum-Tags vorhanden.
+            add:
+                label: Neuer Raum-Tag
+                success: Raum-Tag erfolgreich angelegt
+            edit:
+                label: Raum-Tag bearbeiten
+                success: Raum-Tag erfolgreich aktualisiert
+            remove:
+                label: Raum-Tag löschen
+                confirm: 'Soll der Raum-Tag "%name%" wirklich gelöscht werden?'
+                success: Raum-Tag erfolgreich gelöscht
+
+
 versions:
     label: Versionen
     restore:
@@ -822,7 +925,7 @@ versions:
         confirm: 'Soll die Version vom %date% wirklich wiederhergestellt werden?'
         success: Version erfolgreich wiederherstellt
     show:
-        label: "Version %version%"
+        label: 'Version %version%"'
         button: anzeigen
         info: "Es wird Version %version% vom %date% des Wiki-Artikels angezeigt."
 
@@ -842,17 +945,22 @@ profile:
 
     notifications:
         label: Benachrichtigungen
+        select_elements: Elemente auswählen
         success: Benachrichtigungseinstellungen erfolgreich aktualisiert
-        not_allowed: Leider können Benachrichtungs-E-Mails nicht angeboten werden.
+        not_allowed: Es sind keine Benachrichtigungsmöglichkeiten freigeschaltet.
         substitutions:
             label: Neuer Vertretungsplan
-            help: Wenn diese Option aktiv ist, wird eine E-Mail versendet, sobald ein neuer Vertretungsplan bereitgestellt wurde.
+            help: Wenn diese Option aktiv ist, wird eine Benachrichtigung versendet, sobald ein neuer Vertretungsplan bereitgestellt wurde.
         exams:
             label: Neuer Klausurplan
-            help: Wenn diese Option aktiv ist, wird eine E-Mail versendet, sobald ein neuer Klausurplan bereitgestellt wurde.
+            help: Wenn diese Option aktiv ist, wird eine Benachrichtigung versendet, sobald ein neuer Klausurplan bereitgestellt wurde.
         messages:
             label: Neue Mitteilung
-            help: Wenn diese Option aktiv ist, wird eine E-Mail versendet, sobald eine neue Mitteilung erstellt wurde.
+            help: Wenn diese Option aktiv ist, wird eine Benachrichtigung versendet, sobald eine neue Mitteilung erstellt wurde.
+        email:
+            label_short: E-Mail Benachrichtigungen
+            label: E-Mail Benachrichtigungen aktiviert
+            help: Wenn diese Option aktiv ist, werden Benachrichtigungen per E-Mail versendet.
 
     apps:
         label: Verbundene Apps
@@ -880,3 +988,32 @@ remove:
 
 api:
     doc: API-Dokumentation
+
+webpush:
+    label: Push Benachrichtigungen
+    configure: Push Benachrichtigungen einrichten
+    info: Über WebPush können Push Benachrichtigungen über den Browser empfangen werden.
+    settings: Elemente auswählen, über die benachrichtigt wird
+    caution:
+        experimental: Dieses Feature ist experimentell. Möglicherweise funktioniert es nicht wie erwartet.
+        browser: Dieses Feature funktioniert nur in Google Chrome, Mozilla Firefox und Microsoft Edge.
+        running: Dieses Feature funktioniert nur, wenn der Browser im Hintergrund laufen darf.
+    state:
+        enabled: aktiviert
+        disabled: nicht aktiviert
+        not_supported: nicht unterstützt
+        not_granted: nicht erlaubt
+    enable:
+        label: aktivieren
+        success: Erfolgreich aktiviert.
+        loading: Push Benachrichtigung wird aktiviert - bitte warten...
+    disable:
+        label: deaktivieren
+        success: Erfolgreich deaktiviert.
+        loading: Push Benachrichtigung wird deaktiviert - bitte warten...
+    not_granted:
+        message: Push Benachrichtigungen wurden im Browser deaktiviert. Bitte Berechtigungen prüfen.
+
+system:
+    label: System
+

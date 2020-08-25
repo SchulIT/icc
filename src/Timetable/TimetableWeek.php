@@ -2,13 +2,12 @@
 
 namespace App\Timetable;
 
+use App\Entity\TimetableWeek as TimetableWeekEntity;
+
 class TimetableWeek {
 
-    /** @var string */
-    private $weekType;
-
-    /** @var int */
-    public $weekMod;
+    /** @var TimetableWeekEntity */
+    private $week;
 
     /**
      * Maximum of lesson number of all days in a week
@@ -19,23 +18,31 @@ class TimetableWeek {
     /** @var TimetableDay[] */
     public $days = [ ];
 
-    public function __construct(string $weekType, int $weekMod) {
-        $this->weekType = $weekType;
-        $this->weekMod = $weekMod;
+    /**
+     * @var bool
+     */
+    public $isCurrentOrUpcoming = false;
+
+    public function __construct(TimetableWeekEntity $week) {
+        $this->week = $week;
     }
 
     /**
      * @return string
      */
-    public function getWeekType(): string {
-        return $this->weekType;
+    public function getWeekName(): string {
+        return $this->week->getDisplayName();
     }
 
     /**
      * @return int
      */
     public function getWeekMod(): int {
-        return $this->weekMod;
+        return $this->week->getWeekMod();
+    }
+
+    public function getWeek(): TimetableWeekEntity {
+        return $this->week;
     }
 
     /**
@@ -86,5 +93,13 @@ class TimetableWeek {
         }
 
         return true;
+    }
+
+    public function setCurrentOrUpcoming(): void {
+        $this->isCurrentOrUpcoming = true;
+    }
+
+    public function isCurrentOrUpcoming(): bool {
+        return $this->isCurrentOrUpcoming;
     }
 }

@@ -26,7 +26,6 @@ class TimetableWeek {
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * @Assert\NotNull()
      * @var string
      */
     private $displayName;
@@ -88,5 +87,9 @@ class TimetableWeek {
     public function setWeekMod($weekMod): TimetableWeek {
         $this->weekMod = $weekMod;
         return $this;
+    }
+
+    public function __toString() {
+        return $this->displayName;
     }
 }

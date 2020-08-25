@@ -108,6 +108,30 @@ easy_admin:
 
         Tuition:
             class: App\Entity\Tuition
+            form:
+                fields:
+                    - externalId
+                    - name
+                    - displayName
+                    - subject
+                    - teacher
+                    - additionalTeachers
+                    - studyGroup
+
+        TimetableLesson:
+            class: App\Entity\TimetableLesson
+            form:
+                fields:
+                    - externalId
+                    - period
+                    - week
+                    - day
+                    - lesson
+                    - isDoubleLesson
+                    - tuition
+                    - room
+                    - subject
+                    - location
 
         User:
             class: App\Entity\User
@@ -132,3 +156,18 @@ easy_admin:
                     - { property: userType, type_options: { translation_domain: enums } }
                     - teacher
                     - students
+        OAuthClientInfo:
+            class: App\Entity\OAuthClientInfo
+            form:
+                fields:
+                    - name
+                    - description
+                    - client
+
+        FreeTimespan:
+            class: App\Entity\FreeTimespan
+            form:
+                fields:
+                    - { property: date, type: date, type_options: { widget: 'single_text' }}
+                    - start
+                    - end

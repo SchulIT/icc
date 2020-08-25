@@ -1,5 +1,8 @@
 # To get started with security, check out the documentation:
 # https://symfony.com/doc/current/security.html
+parameters:
+    app.cron_password: '%env(resolve:CRON_PASSWORD)%'
+
 security:
 
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
@@ -7,13 +10,21 @@ security:
         database:
             entity:
                 class: App:User
-                property: username
+                property: idpId
+        cron:
+            id: App\Security\CronUserProvider
+
+    encoders:
+        Symfony\Component\Security\Core\User\User: 'auto'
 
     access_control:
         - { path: ^/admin/ea/, roles: ROLE_SUPER_ADMIN }
-        - { path: ^/admin/(messages|exams), roles: ROLE_USER }
-        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin/(messages|exams|documents), roles: ROLE_USER }
+        - { path: ^/admin$, roles: ROLE_USER }
+        - { path: ^/admin/, roles: ROLE_ADMIN }
         - { path: ^/api/import, roles: ROLE_IMPORT }
+        - { path: ^/authorize, roles: IS_AUTHENTICATED_REMEMBERED }
+        - { path: ^/cron, roles: ROLE_CRON }
 
     role_hierarchy:
         # Administrator
@@ -49,27 +60,54 @@ security:
         # Role which enables users to create exams (and manage their created exams)
         ROLE_EXAMS_CREATOR: ROLE_USER
 
+        # Cronjob user
+        ROLE_CRON: ROLE_USER
+
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        cron:
+            pattern: ^/cron
+            provider: cron
+            stateless: true
+            http_basic:
+                realm: Cronjob
+
         import:
             pattern: ^/api/import
+            provider: database
             guard:
                 authenticators:
                     - App\Security\ImportUserAuthenticator
             stateless: true
 
+        api_token:
+            pattern: ^/oauth2/token$
+            security: false
+
+        api:
+            pattern: ^/api
+            security: true
+            stateless: true
+            oauth2: true
+            provider: database
+
         ics:
             pattern: ^/(appointments|timetable|exams)/ics/download(?!$)
             stateless: true
             device: true
+            provider: database
 
         login:
             anonymous: ~
             pattern: ^/saml/(login|discovery)$
+
+        logout:
+            anonymous: ~
+            pattern: ^/logout/success
 
         auth:
             anonymous: ~
@@ -77,16 +115,18 @@ security:
 
         secured:
             pattern: ^/
+            provider: database
             light_saml_sp:
                 provider: database
                 user_creator: App\Security\User\UserCreator
                 login_path: /saml/login
                 check_path: /saml/login_check
                 attribute_mapper: App\Security\User\AttributeMapper
-                token_factory: SchoolIT\CommonBundle\Security\Factory\SamlSpTokenFactory
+                token_factory: SchulIT\CommonBundle\Security\Factory\SamlSpTokenFactory
                 failure_path: /auth/error
             logout:
                 path: /logout
+                target: /logout/success
             switch_user: true
 
         main:

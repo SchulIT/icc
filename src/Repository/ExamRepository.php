@@ -9,10 +9,11 @@ use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ExamRepository extends AbstractTransactionalRepository implements ExamRepositoryInterface {
 
-    private function getDefaultQueryBuilder(\DateTime $today = null, bool $onlyToday = false): QueryBuilder {
+    private function getDefaultQueryBuilder(\DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
 
         $qb
@@ -35,6 +36,16 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             } else {
                 $qb->where('e.date > :today');
             }
+        }
+
+        if($onlyPlanned === true) {
+            $qb->andWhere(
+                $qb->expr()->andX(
+                    $qb->expr()->isNotNull('e.date'),
+                    $qb->expr()->isNotNull('e.lessonStart'),
+                    $qb->expr()->isNotNull('e.lessonEnd')
+                )
+            );
         }
 
         return $qb;
@@ -67,8 +78,8 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByTuitions(array $tuitions, ?\DateTime $today = null) {
-        $qb = $this->getDefaultQueryBuilder($today);
+    public function findAllByTuitions(array $tuitions, ?\DateTime $today = null, bool $onlyPlanned = true) {
+        $qb = $this->getDefaultQueryBuilder($today, false, $onlyPlanned);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
@@ -86,8 +97,8 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null) {
-        $qb = $this->getDefaultQueryBuilder($today);
+    public function findAllByStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
@@ -103,11 +114,30 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         return $qb->getQuery()->getResult();
     }
 
+    public function findAllDatesByStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null, bool $onlyPlanned = true) {
+        $qb = $this->getDefaultQueryBuilder($today, false, $onlyPlanned)
+            ->select(['e.date', 'COUNT(DISTINCT e.id) AS count'])
+            ->groupBy('e.date');
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.tuitions', 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sInner')
+            ->where('sInner.id = :studyGroup');
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->setParameter('studyGroup', $studyGroup->getId());
+
+        return $qb->getQuery()->getScalarResult();
+    }
+
     /**
      * @inheritDoc
      */
-    public function findAllByTeacher(Teacher $teacher, ?\DateTime $today = null, bool $onlyToday = false) {
-        $qb = $this->getDefaultQueryBuilder($today, $onlyToday);
+    public function findAllByTeacher(Teacher $teacher, ?\DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
@@ -133,8 +163,37 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByStudents(array $students, ?\DateTime $today = null, bool $onlyToday = false) {
-        $qb = $this->getDefaultQueryBuilder($today, $onlyToday);
+    public function findAllDatesByTeacher(Teacher $teacher, ?DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned)
+            ->select(['e.date', 'COUNT(DISTINCT e.id) AS count'])
+            ->groupBy('e.date');
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.supervisions', 'sInner')
+            ->leftJoin('eInner.tuitions', 'tInner')
+            ->leftJoin('tInner.additionalTeachers', 'teacherInner')
+            ->andWhere(
+                $qb->expr()->orX(
+                    'teacherInner.id = :teacher',
+                    'sInner.teacher = :teacher',
+                    'tInner.teacher = :teacher'
+                )
+            );
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->setParameter('teacher', $teacher->getId());
+
+        return $qb->getQuery()->getScalarResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByStudents(array $students, ?\DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned);
 
         $studentIds = array_map(function(Student $student) {
             return $student->getId();
@@ -158,8 +217,35 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByGrade(Grade $grade, ?\DateTime $today = null, bool $onlyToday = false) {
-        $qb = $this->getDefaultQueryBuilder($today, $onlyToday);
+    public function findAllDatesByStudents(array $students, ?DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned)
+            ->select(['e.date', 'COUNT(DISTINCT e.id) AS count'])
+            ->groupBy('e.date');
+
+        $studentIds = array_map(function(Student $student) {
+            return $student->getId();
+        }, $students);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.students', 'sInner')
+            ->where(
+                $qb->expr()->in('sInner.id', ':studentIds')
+            );
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->setParameter('studentIds', $studentIds);
+
+        return $qb->getQuery()->getScalarResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByGrade(Grade $grade, ?\DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
@@ -179,6 +265,29 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
+    public function findAllDatesByGrade(Grade $grade, ?DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
+        $qb = $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned)
+            ->select(['e.date', 'COUNT(DISTINCT e.id) AS count'])
+            ->groupBy('e.date');
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.tuitions', 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.grades', 'gInner')
+            ->where('gInner.id = :grade');
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->setParameter('grade', $grade->getId());
+
+        return $qb->getQuery()->getScalarResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAllByDateAndLesson(\DateTime $today, int $lesson): array {
         $qb = $this->getDefaultQueryBuilder($today, true);
 
@@ -190,13 +299,23 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     }
 
     /**
-     * @param \DateTime|null $today
-     * @return Exam[]
+     * @inheritDoc
      */
-    public function findAll(?\DateTime $today = null) {
-        return $this->getDefaultQueryBuilder($today)
+    public function findAll(?\DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
+        return $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllDates(?\DateTime $today = null, bool $onlyPlanned = true) {
+        return $this->getDefaultQueryBuilder($today, false, $onlyPlanned)
+            ->select(['e.date', 'COUNT(DISTINCT e.id) AS count'])
+            ->groupBy('e.date')
+            ->getQuery()
+            ->getScalarResult();
     }
 
     /**
@@ -226,4 +345,52 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $this->flushIfNotInTransaction();
     }
 
+
+    /**
+     * @inheritDoc
+     */
+    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, ?Teacher $teacher = null, bool $onlyPlanned = true): Paginator {
+        $qb = $this->getDefaultQueryBuilder(null, false, $onlyPlanned);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('eInner.id')
+            ->from(Exam::class, 'eInner')
+            ->leftJoin('eInner.tuitions', 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.grades', 'gInner');
+
+        if($grade !== null) {
+            $qbInner->where('gInner.id = :grade');
+            $qb->setParameter('grade', $grade->getId());
+        }
+
+        if($teacher !== null) {
+             $qbInner
+                 ->leftJoin('tInner.additionalTeachers', 'atInner')
+                 ->andWhere(
+                 $qb->expr()->orX(
+                     'tInner.teacher = :teacher',
+                     'atInner.id = :teacher'
+                 )
+             );
+             $qb->setParameter('teacher', $teacher->getId());
+        }
+
+        $qb
+            ->andWhere($qb->expr()->in('e.id', $qbInner->getDQL()))
+            ->orderBy('e.date', 'asc');
+
+        if(!is_numeric($page) || $page < 1) {
+            $page = 1;
+        }
+
+        $offset = ($page - 1) * $itemsPerPage;
+
+        $paginator = new Paginator($qb);
+        $paginator->getQuery()
+            ->setMaxResults($itemsPerPage)
+            ->setFirstResult($offset);
+
+        return $paginator;
+    }
 }

@@ -8,7 +8,7 @@ use App\Grouping\AppointmentExpirationGroup;
 use App\Grouping\AppointmentExpirationStrategy;
 use App\Grouping\Grouper;
 use PHPUnit\Framework\TestCase;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AppointmentExpirationStrategyTest extends TestCase {

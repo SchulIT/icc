@@ -7,11 +7,27 @@ import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 import deLocale from '@fullcalendar/core/locales/de';
+import Choices from "choices.js";
 let bsn = require('bootstrap.native');
+
 
 require('@fullcalendar/core/locales-all');
 
 document.addEventListener('DOMContentLoaded', function () {
+    let options = {
+        itemSelectText: '',
+        shouldSort: false,
+        shouldSortItems: false,
+        removeItemButton: true
+    };
+
+    let studentChoice = document.getElementById('student') !== null ? new Choices(document.getElementById('student'), options) : null;
+    let studyGroupChoice = document.getElementById('study_group') !== null ? new Choices(document.getElementById('study_group'), options) : null;
+    let teacherChoice = document.getElementById('teacher') !== null ? new Choices(document.getElementById('teacher'), options) : null;
+    let categoriesChoice = document.getElementById('categories') !== null ? new Choices(document.getElementById('categories'), options) : null;
+    let examGradesChoice = document.getElementById('exam_grades') !== null ? new Choices(document.getElementById('exam_grades'), options) : null;
+
+    let suppressFilterChangedEvent = false;
     let appEl = document.getElementById('appointments');
     let lastQuery = { };
     let popovers = { };
@@ -30,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
         },
+        weekNumbers: true,
         themeSystem: 'bootstrap',
         locales: [ deLocale ],
         locale: 'de',
@@ -82,32 +99,66 @@ document.addEventListener('DOMContentLoaded', function () {
             if(popovers[eventId] !== null) {
                 popovers[eventId].hide();
             }
+        },
+        loading: function(isLoading) {
+            if(isLoading) {
+                document.getElementById('loading-indicator')?.classList.remove('hide');
+            } else {
+                document.getElementById('loading-indicator')?.classList.add('hide');
+            }
+
+            [studentChoice, studyGroupChoice, teacherChoice, categoriesChoice, examGradesChoice ].forEach(function(choices) {
+                if(choices === null) {
+                    return;
+                }
+
+                if(isLoading) {
+                    choices.disable();
+                } else {
+                    choices.enable();
+                }
+            });
         }
     });
 
-    calendar.render();
+    [studentChoice, studyGroupChoice, teacherChoice, categoriesChoice, examGradesChoice ].forEach(function(choices) {
+        if(choices === null) {
+            return;
+        }
 
-    let studentIdEl = document.getElementById('student');
-    let studyGroupIdEl = document.getElementById('study_group');
-    let teacherIdEl = document.getElementById('teacher');
-    let categoryIdsEl = document.getElementById('categories');
-    let examGradeIdsEl = document.getElementById('exam_grades');
-
-    [studentIdEl, studyGroupIdEl, teacherIdEl, categoryIdsEl, examGradeIdsEl ].forEach(function(el) {
-        el.addEventListener('change', function(el) {
-            loadEvents();
+        choices.passedElement.element.addEventListener('change', function(el) {
+            if(suppressFilterChangedEvent === false) {
+                loadEvents(choices);
+            }
         });
     });
 
-    function loadEvents() {
+    function loadEvents(initiator) {
         let query = { };
 
-        [studentIdEl, studyGroupIdEl, teacherIdEl, categoryIdsEl, examGradeIdsEl ].forEach(function(el) {
-            if(el.multiple !== null && el.multiple !== false) {
-                query[el.name] = Array.from(el.selectedOptions).map(x => x.value);
-            } else {
-                query[el.name] = el.value === "" ? null : el.value;
+        // Ensure that filters are not combined
+        suppressFilterChangedEvent = true; // suppress any other changed events
+
+        if(initiator === studentChoice) {
+            studyGroupChoice?.setChoiceByValue('');
+            teacherChoice?.setChoiceByValue('');
+        } else if(initiator === studyGroupChoice) {
+            studentChoice?.setChoiceByValue('');
+            teacherChoice?.setChoiceByValue('');
+        } else if(initiator === teacherChoice) {
+            studentChoice?.setChoiceByValue('');
+            studyGroupChoice?.setChoiceByValue('');
+        }
+
+        suppressFilterChangedEvent = false;
+
+        // Serialize the filter data
+        [studentChoice, studyGroupChoice, teacherChoice, categoriesChoice, examGradesChoice ].forEach(function(el) {
+            if(el === null) {
+                return;
             }
+
+            query[el.passedElement.element.name] = el.getValue(true);
         });
 
         let eventSource = calendar.getEventSourceById('json');
@@ -115,5 +166,11 @@ document.addEventListener('DOMContentLoaded', function () {
         eventSource.refetch();
     }
 
-    loadEvents();
+    calendar.render();
+
+    // Insert loading indicator
+    let heading = calendarEl.querySelector('.fc-center h2');
+    heading.innerHTML = heading.innerHTML + " <i class=\"fas fa-spinner fa-pulse hide\" id=\"loading-indicator\"></i>";
+
+    loadEvents(null);
 });

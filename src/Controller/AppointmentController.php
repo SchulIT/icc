@@ -6,8 +6,8 @@ use App\Converter\StudyGroupsGradeStringConverter;
 use App\Converter\TeacherStringConverter;
 use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
-use App\Entity\DeviceToken;
-use App\Entity\DeviceTokenType;
+use App\Entity\IcsAccessToken;
+use App\Entity\IcsAccessTokenType;
 use App\Entity\Exam;
 use App\Entity\Grade;
 use App\Entity\MessageScope;
@@ -16,10 +16,11 @@ use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Export\AppointmentIcsExporter;
-use App\Form\DeviceTokenType as DeviceTokenTypeForm;
+use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
-use App\Security\Devices\DeviceManager;
+use App\Repository\ImportDateTypeRepositoryInterface;
+use App\Security\IcsAccessToken\IcsAccessTokenManager;
 use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
 use App\Settings\AppointmentsSettings;
@@ -46,14 +47,15 @@ class AppointmentController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="appointments")
      */
-    public function index(AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter, GradesFilter $gradesFilter) {
+    public function index(AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter,
+                          TeacherFilter $teacherFilter, GradesFilter $gradesFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository) {
         /** @var User $user */
         $user = $this->getUser();
 
         $categoryFilterView = $categoryFilter->handle([ ]);
         $studentFilterView = $studentFilter->handle(null, $user);
         $studyGroupView = $studyGroupFilter->handle(null, $user);
-        $teacherFilterView = $teacherFilter->handle(null, $user, $studentFilterView->getCurrentStudent() === null && $studyGroupView->getCurrentStudyGroup() === null);
+        $teacherFilterView = $teacherFilter->handle(null, $user, false);
         $gradesFilterView = $gradesFilter->handle([], $user);
 
         return $this->renderWithMessages('appointments/index.html.twig', [
@@ -61,7 +63,8 @@ class AppointmentController extends AbstractControllerWithMessages {
             'studentFilter' => $studentFilterView,
             'studyGroupFilter' => $studyGroupView,
             'teacherFilter' => $teacherFilterView,
-            'examGradesFilter' => $gradesFilterView
+            'examGradesFilter' => $gradesFilterView,
+            'last_import' => $importDateTypeRepository->findOneByEntityClass(Appointment::class)
         ]);
     }
 
@@ -119,16 +122,25 @@ class AppointmentController extends AbstractControllerWithMessages {
                 continue;
             }
 
-            $view = [
-                [
-                    'label' => $translator->trans('label.start'),
-                    'content' => $appointment->getStart()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
-                ],
-                [
-                    'label' => $translator->trans('label.end'),
-                    'content' => $appointment->getEnd()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
-                ]
-            ];
+            if($appointment->isAllDay() && $appointment->getDuration()->d === 1) {
+                $view = [
+                    [
+                        'label' => $translator->trans('label.date'),
+                        'content' => $appointment->getStart()->format($translator->trans('date.format'))
+                    ]
+                ];
+            } else {
+                $view = [
+                    [
+                        'label' => $translator->trans('label.start'),
+                        'content' => $appointment->getStart()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
+                    ],
+                    [
+                        'label' => $translator->trans('label.end'),
+                        'content' => $appointment->getRealEnd()->format($translator->trans($appointment->isAllDay() ? 'date.format' : 'date.with_time'))
+                    ]
+                ];
+            }
 
             if(!empty($appointment->getLocation())) {
                 $view[] = [
@@ -215,11 +227,6 @@ class AppointmentController extends AbstractControllerWithMessages {
                             $teachers[] = $teacherStringConverter->convert($teacher);
                         }
 
-                        /** @var Teacher $teacher */
-                        foreach($tuition->getAdditionalTeachers() as $teacher) {
-                            $teachers[] = $teacherStringConverter->convert($teacher);
-                        }
-
                         $grades = array_unique($grades);
                         $teachers = array_unique($teachers);
                     }
@@ -234,10 +241,12 @@ class AppointmentController extends AbstractControllerWithMessages {
                         'content' => implode(', ', $grades)
                     ];
 
-                    $view[] = [
-                        'label' => $translator->trans('label.room'),
-                        'content' => implode(', ', $exam->getRooms())
-                    ];
+                    if(count($exam->getRooms()) > 0) {
+                        $view[] = [
+                            'label' => $translator->trans('label.room'),
+                            'content' => $exam->getRooms()[0]
+                        ];
+                    }
 
                     $view[] = [
                         'label' => $translator->trans('plans.exams.time'),
@@ -272,19 +281,19 @@ class AppointmentController extends AbstractControllerWithMessages {
     /**
      * @Route("/export", name="appointments_export")
      */
-    public function export(Request $request, DeviceManager $manager) {
+    public function export(Request $request, IcsAccessTokenManager $manager) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $deviceToken = (new DeviceToken())
-            ->setType(DeviceTokenType::Calendar())
+        $deviceToken = (new IcsAccessToken())
+            ->setType(IcsAccessTokenType::Calendar())
             ->setUser($user);
 
         $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $deviceToken = $manager->persistDeviceToken($deviceToken);
+            $deviceToken = $manager->persistToken($deviceToken);
         }
 
         return $this->renderWithMessages('appointments/export.html.twig', [

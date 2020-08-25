@@ -19,7 +19,7 @@
                 <div class="card">
                     <div class="card-header">
                         <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
-                            {% set previousDate = selectedDate|previous_date %}
+                            {% set previousDate = selectedDate|previous_date(settings.skipWeekends) %}
                             <li class="nav-item" data-resize="show">
                                 <a class="nav-link" href="{{ path('dashboard', currentFilter|merge({ date: previousDate|date('Y-m-d') })) }}">
                                     <i class="fa fa-chevron-left"></i>
@@ -34,7 +34,7 @@
                                 </li>
                             {% endfor %}
 
-                            {% set nextDate = selectedDate|next_date %}
+                            {% set nextDate = selectedDate|next_date(settings.skipWeekends) %}
                             <li class="nav-item" data-resize="show">
                                 <a class="nav-link" href="{{ path('dashboard', currentFilter|merge({ date: nextDate|date('Y-m-d') })) }}">
                                     <i class="fa fa-chevron-right"></i>
@@ -66,7 +66,18 @@
                         {% endif %}
 
                         <nav class="nav nav-pills nav-justified mb-3 mx-n1 mt-n2">
-                            <a href="#infotexts" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                            {% if view.substitutionMentions|length > 0 %}
+                                <a href="#mentions" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
+                                    <div class="align-self-center text-center w-100">
+                                        {{ 'dashboard.substitution_mentions'|trans }}
+
+                                        <span class="badge badge-light badge-pill">
+                                            {{ view.substitutionMentions|length }}
+                                        </span>
+                                    </div>
+                                </a>
+                            {% endif %}
+                            <a href="#infotexts" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
                                 <div class="align-self-center text-center w-100">
                                     {{ 'dashboard.nav.infotexts'|trans({'%count%': view.infotexts|length}) }}
                                     <span class="badge badge-light badge-pill">
@@ -74,30 +85,8 @@
                                     </span>
                                 </div>
                             </a>
-                            {% if is_granted('view-absences') %}
-                                <a href="#absences" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
-                                    <div class="align-self-center text-center w-100">
-                                        {{ 'dashboard.absences'|trans() }}
-
-                                        <span class="badge badge-light badge-pill">
-                                            {{ view.absentTeachers|length + view.absentStudyGroups|length}}
-                                        </span>
-                                    </div>
-                                </a>
-                            {% endif %}
-                            {% if view.messages|length > 0 %}
-                                <a href="#messages" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
-                                    <div class="align-self-center text-center w-100">
-                                        {{ 'messages.overview.label'|trans }}
-
-                                        <span class="badge badge-light badge-pill">
-                                            {{ view.messages|length }}
-                                        </span>
-                                    </div>
-                                </a>
-                            {% endif %}
                             {% if view.exams|length > 0 %}
-                                <a href="#exams" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                                <a href="#exams" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
                                     <div class="align-self-center text-center w-100">
                                         {{ 'label.exams'|trans }}
 
@@ -107,13 +96,31 @@
                                     </div>
                                 </a>
                             {% endif %}
-                            {% if view.substitutionMentions|length > 0 %}
-                                <a href="#mentions" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex">
+                            <a href="#messages" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
+                                <div class="align-self-center text-center w-100">
+                                    {{ 'messages.overview.label'|trans }}
+
+                                    <span class="badge badge-light badge-pill">
+                                        {{ view.messages|length }}
+                                    </span>
+                                </div>
+                            </a>
+                            <a href="#appointments" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
+                                <div class="align-self-center text-center w-100">
+                                    {{ 'dashboard.appointments'|trans }}
+
+                                    <span class="badge badge-light badge-pill">
+                                        {{ view.appointments|length }}
+                                    </span>
+                                </div>
+                            </a>
+                            {% if is_granted('view-absences') %}
+                                <a href="#absences" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
                                     <div class="align-self-center text-center w-100">
-                                        {{ 'dashboard.substitution_mentions'|trans }}
+                                        {{ 'dashboard.absences'|trans() }}
 
                                         <span class="badge badge-light badge-pill">
-                                            {{ view.substitutionMentions|length }}
+                                            {{ view.absentTeachers|length + view.absentStudyGroups|length}}
                                         </span>
                                     </div>
                                 </a>
@@ -150,6 +157,8 @@
                                         {{ dashboard.exam(item, lessonNumber, startTimes[lessonNumber], lesson.warning, endTimes[lessonNumber]) }}
                                     {% elseif type == 'lesson' %}
                                         {{ dashboard.lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, gradesWithCourseNames) }}
+                                    {% elseif type == 'free_lesson' %}
+                                        {{ dashboard.free_lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
                                     {% elseif type == 'supervision' %}
                                         {{ dashboard.supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, supervisionLabels) }}
                                     {% elseif type == 'substitution' %}
@@ -158,15 +167,11 @@
                                         {{ dashboard.appointment(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
                                     {% elseif type == 'exam_supervision' %}
                                         {{ dashboard.exam_supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                                    {% elseif type == 'reservation' %}
+                                        {{ dashboard.reservation(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber]) }}
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}
-                        {% endfor %}
-
-                        {# Exams #}
-                        <a id="exams"></a>
-                        {% for exam in view.exams %}
-                            {{ dashboard.exam(exam, null, null, null) }}
                         {% endfor %}
 
                         {# Mentions #}
@@ -175,15 +180,27 @@
                             {{ dashboard.substitution(mention, null, null, null) }}
                         {% endfor %}
 
-                        {# Priority Messages #}
+                        {# Daily infos #}
+                        <a id="infotexts"></a>
+                        {% include "_includes/infotexts.html.twig" with { infotexts: view.infotexts } only %}
+
+                        {# Exams #}
+                        <a id="exams"></a>
+                        {% for exam in view.exams %}
+                            {{ dashboard.exam(exam, null, null, null) }}
+                        {% endfor %}
+
+                        {# Messages #}
                         <a id="messages"></a>
                         {% for message in view.messages %}
                             {% include "_includes/message.html.twig" with { message: message } only %}
                         {% endfor %}
 
-                        {# Daily infos #}
-                        <a id="infotexts"></a>
-                        {% include "_includes/infotexts.html.twig" with { infotexts: view.infotexts } only %}
+                        {# Appointments #}
+                        <a id="appointments"></a>
+                        {% for appointment in view.appointments %}
+                            {{ dashboard.appointment(appointment) }}
+                        {% endfor %}
 
                         {# Absences #}
                         <a id="absences"></a>
@@ -199,7 +216,7 @@
                         {% set dateParam = selectedDate|date('Y-m-d') %}
 
                         {% if teacherFilter.teachers|length > 0 %}
-                            {% include "_filter/teacher.html.twig" with { params: {} } %}
+                            {% include "_filter/teacher.html.twig" with { params: { date: dateParam } } %}
                         {% endif %}
 
                         {% if studentFilter.studentGradeGroups|length > 0 %}
@@ -229,11 +246,9 @@
 
                 <div class="card">
                     <form method="post" action="{{ path('dashboard', currentFilter) }}">
-                        <div class="card-header">
-                            {{ 'dashboard.settings.label'|trans }}
-                        </div>
-
                         <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-users-cog"></i> {{ 'dashboard.settings.label'|trans }}</h5>
+
                             {% if canIncludeGradeMessages %}
                             <div class="form-group">
                                 <div class="custom-control custom-checkbox">
@@ -261,6 +276,19 @@
                             </button>
                         </div>
                     </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'label.last_import'|trans }}</h5>
+                        <p>
+                            {% if last_import is not null %}
+                                {{ last_import.updatedAt|format_datetime }}
+                            {% else %}
+                                {{ 'label.never'|trans }}
+                            {% endif %}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

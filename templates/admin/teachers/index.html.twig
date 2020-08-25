@@ -22,50 +22,52 @@
                     </div>
                 {% else %}
                     <div class="card">
-                        <table class="table table-striped table-bordered table-hover">
-                            <colgroup>
-                                <col class="column-md">
-                                <col>
-                                <col>
-                                <col class="column-md">
-                                <col class="column-lg">
-                                <col class="column-md">
-                            </colgroup>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover card-table">
+                                <colgroup>
+                                    <col class="column-md">
+                                    <col>
+                                    <col>
+                                    <col class="column-md">
+                                    <col class="column-lg">
+                                    <col class="column-md">
+                                </colgroup>
 
-                            <thead>
-                            <tr>
-                                <th>{{ 'label.acronym'|trans }}</th>
-                                <th>{{ 'label.firstname'|trans }}</th>
-                                <th>{{ 'label.lastname'|trans }}</th>
-                                <th>{{ 'label.title'|trans }}</th>
-                                <th>{{ 'label.tags'|trans }}</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-                            {% for teacher in teachers %}
+                                <thead>
                                 <tr>
-                                    <td class="align-middle">{{ teacher.acronym }}</td>
-                                    <td class="align-middle">{{ teacher.firstname}}</td>
-                                    <td class="align-middle">{{ teacher.lastname }}</td>
-                                    <td class="align-middle">{{ teacher.title }}</td>
-                                    <td class="align-middle">
-                                        {% for tag in teacher.tags %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="{{ path('edit_teacher', { uuid: teacher.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-
-                                        <a href="{{ path('remove_teacher', { uuid: teacher.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
-                                            <i class="fa fa-trash"></i>
-                                        </a>
-                                    </td>
+                                    <th>{{ 'label.acronym'|trans }}</th>
+                                    <th>{{ 'label.firstname'|trans }}</th>
+                                    <th>{{ 'label.lastname'|trans }}</th>
+                                    <th>{{ 'label.title'|trans }}</th>
+                                    <th>{{ 'label.tags'|trans }}</th>
+                                    <th></th>
                                 </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+
+                                <tbody>
+                                {% for teacher in teachers %}
+                                    <tr>
+                                        <td class="align-middle">{{ teacher.acronym }}</td>
+                                        <td class="align-middle">{{ teacher.firstname}}</td>
+                                        <td class="align-middle">{{ teacher.lastname }}</td>
+                                        <td class="align-middle">{{ teacher.title }}</td>
+                                        <td class="align-middle">
+                                            {% for tag in teacher.tags %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="{{ path('edit_teacher', { uuid: teacher.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+
+                                            <a href="{{ path('remove_teacher', { uuid: teacher.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 {% endif %}
             </div>

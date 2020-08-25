@@ -1,41 +1,64 @@
 {% if lesson != null %}
-
     {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
     {%- set showCourseName = false -%}
-    {%- for grade in lesson.tuition.studyGroup.grades -%}
+    {%- set grades = lesson.grades -%}
+    {%- for grade in grades -%}
         {% if grade.id in gradesWithCourseNames -%}
             {% set showCourseName = true -%}
         {% endif -%}
     {%- endfor -%}
+    {%- set subject = lesson.subject -%}
+    {%- if lesson.tuition is not null -%}
+        {%- set subject = lesson.tuition.subject -%}
+    {%- endif -%}
+    {%- set tuition = lesson.tuition -%}
+    {%- set room = lesson.location -%}
+    {%- if lesson.room is not null -%}
+        {%- set room = lesson.room.name -%}
+    {%- endif -%}
     <strong>
-        <a href="{{ path('list_tuition', { uuid: lesson.tuition.uuid }) }}" title="{{ lesson.tuition.subject.name }}">
-            {%- if showCourseName -%}
-                {{ lesson.tuition.studyGroup.name }}
-            {%- else -%}
-                {%- if lesson.tuition.subject.replaceSubjectAbbreviation -%}
-                    {{ lesson.tuition.subject.name }}
+        {% set link = null %}
+        {% if tuition is not null and is_granted('view', tuition) %}
+            {% set link = path('list_tuition', { uuid: tuition.uuid }) %}
+        {% endif %}
+        <a {% if link is not empty %}href="{{ link }}"{% endif%} title="{{ subject.name }}">
+            {% if tuition is not null %}
+                {% if tuition.displayName is not empty -%}
+                    {{ tuition.displayName }}
+                {%- elseif showCourseName -%}
+                    {{ tuition.studyGroup.name }}
                 {%- else -%}
-                    {{ lesson.tuition.subject.abbreviation }}
+                    {%- if tuition.subject.replaceSubjectAbbreviation -%}
+                        {{ tuition.subject.name }}
+                    {%- else -%}
+                        {{ tuition.subject.abbreviation }}
+                    {%- endif -%}
                 {%- endif -%}
-            {%- endif -%}
+            {% elseif subject is not null %}
+                {%- if subject.replaceSubjectAbbreviation -%}
+                    {{ subject.name }}
+                {%- else -%}
+                    {{ subject.abbreviation }}
+                {%- endif -%}
+            {% endif %}
         </a>
     </strong>
 
     {% if roomFilter.currentRoom != null %}
-        ({% for g in lesson.tuition.studyGroup.grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %})
-    {% elseif not lesson.room is null %}
-        ({{ lesson.room.name }})
+        ({% for g in grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+    {% elseif not room is null %}
+        ({{ room }})
     {% endif %}
 
     {% if student is not null and lesson.tuition is not null and memberships[lesson.tuition.studyGroup.id] is defined %}
         [{{ memberships[lesson.tuition.studyGroup.id] }}]
     {% endif %}
-    {% if teacherFilter.currentTeacher == null %}
+    {% if teachersFilter.currentTeachers|length != 1 %}
         <br>
-        {{ lesson.tuition.teacher|teacher }}
+        {{ lesson.teachers|teachers }}
     {% endif %}
-    {% if teacherFilter.currentTeacher != null or subjectFilter.currentSubjects|length > 0 %}
+    {% if teachersFilter.currentTeachers|length > 0 or subjectFilter.currentSubjects|length > 0 %}
         <br>
-        {% for g in lesson.tuition.studyGroup.grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+        {% for g in grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %}
     {% endif %}
 {% endif %}

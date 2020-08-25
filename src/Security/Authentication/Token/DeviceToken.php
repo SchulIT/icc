@@ -3,7 +3,7 @@
 namespace App\Security\Authentication\Token;
 
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
-use App\Entity\DeviceToken as DeviceTokenEntity;
+use App\Entity\IcsAccessToken as DeviceTokenEntity;
 
 class DeviceToken extends AbstractToken {
 

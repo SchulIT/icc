@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
- * @UniqueEntity(fields={"internalId"})
+ * @UniqueEntity(fields={"externalId"})
  */
 class Student {
 
@@ -22,23 +22,21 @@ class Student {
     /**
      * @ORM\Column(type="string", unique=true)
      * @Assert\NotNull()
-     * @var string
+     * @var string|null
      */
     private $externalId;
 
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * @Assert\NotNull()
-     * @var string
+     * @var string|null
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * @Assert\NotNull()
-     * @var string
+     * @var string|null
      */
     private $lastname;
 
@@ -71,7 +69,8 @@ class Student {
     /**
      * @ORM\ManyToOne(targetEntity="Grade", inversedBy="students")
      * @ORM\JoinColumn(onDelete="SET NULL")
-     * @var Grade
+     * @Assert\NotNull()
+     * @var Grade|null
      */
     private $grade;
 
@@ -83,7 +82,7 @@ class Student {
 
     /**
      * @ORM\ManyToMany(targetEntity="PrivacyCategory")
-     * @ORM\JoinTable(name="student_privacy",
+     * @ORM\JoinTable(name="student_approved_privacy_categories",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
@@ -94,70 +93,71 @@ class Student {
     public function __construct() {
         $this->uuid = Uuid::uuid4();
 
+        $this->gender = Gender::X();
         $this->studyGroupMemberships = new ArrayCollection();
         $this->approvedPrivacyCategories = new ArrayCollection();
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getExternalId(): string {
+    public function getExternalId(): ?string {
         return $this->externalId;
     }
 
     /**
-     * @param string $externalId
+     * @param string|null $externalId
      * @return Student
      */
-    public function setExternalId(string $externalId): Student {
+    public function setExternalId(?string $externalId): Student {
         $this->externalId = $externalId;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFirstname(): string {
+    public function getFirstname(): ?string {
         return $this->firstname;
     }
 
     /**
-     * @param string $firstname
+     * @param string|null $firstname
      * @return Student
      */
-    public function setFirstname(string $firstname): Student {
+    public function setFirstname(?string $firstname): Student {
         $this->firstname = $firstname;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLastname(): string {
+    public function getLastname(): ?string {
         return $this->lastname;
     }
 
     /**
-     * @param string $lastname
+     * @param string|null $lastname
      * @return Student
      */
-    public function setLastname(string $lastname): Student {
+    public function setLastname(?string $lastname): Student {
         $this->lastname = $lastname;
         return $this;
     }
 
     /**
-     * @return Gender
+     * @return Gender|null
      */
-    public function getGender(): Gender {
+    public function getGender(): ?Gender {
         return $this->gender;
     }
 
     /**
-     * @param Gender $gender
+     * @param Gender|null $gender
      * @return Student
      */
-    public function setGender(Gender $gender): Student {
+    public function setGender(?Gender $gender): Student {
         $this->gender = $gender;
         return $this;
     }

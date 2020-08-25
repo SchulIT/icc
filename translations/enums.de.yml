@@ -3,12 +3,15 @@ label:
   scope: Bereich
   priority: Priorität
 
+help:
+  priority: 'Mitteilungen der Prioritäten "Wichtig" und "Notfall" werden stets über allen anderen Mitteilungen angezeigt. Die Priorität "Wichtig" hebt die Mitteilung gelb hervor. Mitteilungen der Priorität "Notfall" werden rot hervorgehoben und können nicht ausgeblendet werden.'
+
 gender:
   male: männlich
   female: weiblich
   x: divers
 
-device_token_type:
+ics_access_token_type:
   calendar: Kalender-Synchronisation
   exams: Klausurplan-Synchronisation
   timetable: Stundenplan-Synchronisation

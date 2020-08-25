@@ -1,0 +1,35 @@
+{% if isChoice is not defined %}
+    {% set isChoice = true %}
+{% endif %}
+{% if canSwitch is not defined %}
+    {% set canSwitch = false %}
+{% endif %}
+{% set isMultiple = canSwitch and teachersFilter.currentTeachers|length > 1 %}
+
+<form role="form" method="get" class="form hidden-print">
+    {% include "_filter/_params.html.twig" %}
+
+    <div class="form-group {{ class|default('') }}">
+        <label for="teachers">
+            {% if canSwitch %}
+                {{ 'label.teacher'|trans }}:
+            {% else %}
+                {{ 'label.teachers_simple'|trans }}:
+            {% endif %}
+        </label>
+        <select name="teachers[]" id="teachers" {% if isMultiple %}multiple="multiple"{% endif%} class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="{{ isChoice ? 'true' : 'false' }}">
+            <option value="">{{ 'label.select.teacher'|trans }}</option>
+            {% for t in teachersFilter.teachers %}
+                <option value="{{ t.uuid }}" {% if t in teachersFilter.currentTeachers %}selected="selected"{% endif %}>{{ t|teacher(true) }}</option>
+            {% endfor %}
+        </select>
+
+        {% if canSwitch %}
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="toggle-multiple-teacher" data-toggle="multiple-choice" data-target="#teachers" {% if isMultiple %}checked disabled{% endif %}>
+                <label class="custom-control-label" for="toggle-multiple-teacher">{{ 'label.toggle_multiple'|trans }}</label>
+            </div>
+
+        {% endif %}
+    </div>
+</form>

@@ -8,7 +8,7 @@ use App\Entity\TimetableWeek;
 use App\Entity\Tuition;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 
 class TimetableFixtures extends Fixture implements DependentFixtureInterface {

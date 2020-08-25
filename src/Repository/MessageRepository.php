@@ -2,11 +2,13 @@
 
 namespace App\Repository;
 
+use App\Entity\Grade;
 use App\Entity\Message;
 use App\Entity\MessageFile;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroup;
 use App\Entity\UserType;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
 class MessageRepository extends AbstractRepository implements MessageRepositoryInterface {
@@ -121,6 +123,32 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findAllByGrade(Grade $grade) {
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qbStudyGroups = $this->em->createQueryBuilder()
+            ->select('sgInnerInner.id')
+            ->from(StudyGroup::class, 'sgInnerInner')
+            ->leftJoin('sgInnerInner.grades', 'gradesInnerInner')
+            ->where('gradesInnerInner.id = :grade');
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('mInner.id')
+            ->from(Message::class, 'mInner')
+            ->leftJoin('mInner.studyGroups', 'sgInner')
+            ->andWhere($qb->expr()->in('sgInner.id', $qbStudyGroups->getDQL()));
+
+        $qb->setParameter('grade', $grade->getId());
+
+        $qb
+            ->where($qb->expr()->in('m.id', $qbInner->getDQL()));
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param Message $message
      */
     public function persist(Message $message): void {
@@ -160,4 +188,23 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
         $this->em->flush();
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function findAllNotificationNotSent(DateTime $dateTime): array {
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qb->where(
+            $qb->expr()->andX(
+                $qb->expr()->orX(
+                    'm.isEmailNotificationSent = false',
+                    'm.isPushNotificationSent = false'
+                ),
+                'm.startDate <= :date'
+            )
+        )
+            ->setParameter('date', $dateTime);
+
+        return $qb->getQuery()->getResult();
+    }
 }

@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class TimetableLessonData {
 
+
     /**
      * @Serializer\Type("string")
      * @Assert\NotBlank()
@@ -16,7 +17,6 @@ class TimetableLessonData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotNull()
      * @var string
      */
     private $tuition;
@@ -53,10 +53,29 @@ class TimetableLessonData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */
     private $room;
+
+    /**
+     * @Serializer\Type("array<string>")
+     * @var string[]
+     */
+    private $teachers = [ ];
+
+    /**
+     * @Serializer\Type("array<string>")
+     * @var string[]
+     */
+    private $grades = [ ];
+
+
+    /**
+     * @Serializer\Type("string")
+     * @Assert\NotBlank(allowNull=true)
+     * @var string|null
+     */
+    private $subject;
 
     /**
      * @return string|null
@@ -167,6 +186,54 @@ class TimetableLessonData {
      */
     public function setRoom(?string $room): TimetableLessonData {
         $this->room = $room;
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTeachers(): array {
+        return $this->teachers;
+    }
+
+    /**
+     * @param string[] $teachers
+     * @return TimetableLessonData
+     */
+    public function setTeachers(array $teachers): TimetableLessonData {
+        $this->teachers = $teachers;
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getGrades(): array {
+        return $this->grades;
+    }
+
+    /**
+     * @param string[] $grades
+     * @return TimetableLessonData
+     */
+    public function setGrades(array $grades): TimetableLessonData {
+        $this->grades = $grades;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSubject(): ?string {
+        return $this->subject;
+    }
+
+    /**
+     * @param string|null $subject
+     * @return TimetableLessonData
+     */
+    public function setSubject(?string $subject): TimetableLessonData {
+        $this->subject = $subject;
         return $this;
     }
 }

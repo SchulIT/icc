@@ -42,4 +42,11 @@ class InfotextsImportStrategy implements ReplaceImportStrategyInterface {
     public function getData($data): array {
         return $data->getInfotexts();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Infotext::class;
+    }
 }

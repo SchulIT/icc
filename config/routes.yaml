@@ -13,10 +13,19 @@ common:
 logout:
     path: /logout
 
+logout_success:
+    path: /logout/success
+    defaults: { _controller: SchulIT\CommonBundle\Controller\LogoutController::logout }
+
 app.swagger_ui.default:
     path: /docs/api/app
     methods: GET
     defaults: { _controller: nelmio_api_doc.controller.swagger_ui, area: default }
+
+app.swagger_ui.default.json:
+    path: /docs/api/app.json
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger, area: default }
 
 app.swagger_ui.import:
     path: /docs/api/import
@@ -37,3 +46,7 @@ easy_admin_bundle:
     resource: '@EasyAdminBundle/Controller/EasyAdminController.php'
     prefix: /admin/ea
     type: annotation
+
+bentools_webpush:
+    resource: '@WebPushBundle/Resources/config/routing.xml'
+    prefix: /webpush

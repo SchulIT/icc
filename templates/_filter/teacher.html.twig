@@ -1,9 +1,13 @@
+{% if isChoice is not defined %}
+    {% set isChoice = true %}
+{% endif %}
+
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
     <div class="form-group {{ class|default('') }}">
         <label for="teacher">{{ 'label.teacher'|trans }}:</label>
-        <select name="teacher" id="teacher" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="true">
+        <select name="teacher" id="teacher" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="{{ isChoice ? 'true' : 'false' }}">
             <option value="" placeholder>{{ 'label.select.teacher'|trans }}</option>
             {% for t in teacherFilter.teachers %}
                 <option value="{{ t.uuid }}" {% if teacherFilter.currentTeacher != null and teacherFilter.currentTeacher.acronym == t.acronym %}selected="selected"{% endif %}>{{ t|teacher(true) }}</option>

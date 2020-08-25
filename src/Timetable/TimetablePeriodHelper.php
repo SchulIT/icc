@@ -7,7 +7,7 @@ use App\Entity\UserType;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Security\Voter\TimetablePeriodVoter;
 use DateTime;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class TimetablePeriodHelper {
@@ -23,9 +23,8 @@ class TimetablePeriodHelper {
     }
 
     /**
-     * Returns all periods a given user type is allowed to view.
+     * Returns all periods a given user is allowed to view.
      *
-     * @param UserType $userType
      * @return TimetablePeriod[]
      */
     public function getPeriods(): array {

@@ -3,7 +3,7 @@
 namespace App\Grouping;
 
 use App\Entity\Message;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 
 class MessageExpirationStrategy implements GroupingStrategyInterface {
 
@@ -18,7 +18,7 @@ class MessageExpirationStrategy implements GroupingStrategyInterface {
      * @return bool
      */
     public function computeKey($object) {
-        return $this->dateHelper
+        return !$this->dateHelper
             ->isBetween($this->dateHelper->getNow(), $object->getStartDate(), $object->getExpireDate());
     }
 

@@ -8,8 +8,8 @@ use App\Repository\SubjectRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\SubjectAbbreviationStrategy;
-use SchoolIT\CommonBundle\Form\ConfirmType;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Form\ConfirmType;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 

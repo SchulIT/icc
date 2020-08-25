@@ -1,0 +1,11 @@
+{% if lesson != null %}
+    <strong>
+        {{ lesson.subject }}
+    </strong>
+
+    {% if teachersFilter.currentTeachers|length > 1 %}
+        {%- for teacher in lesson.teachers -%}
+            {{ teacher.getAcronym() }}{%- if not loop.last -%}, {%- endif -%}
+        {%- endfor -%}
+    {% endif %}
+{% endif %}

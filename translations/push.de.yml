@@ -1,0 +1,16 @@
+message:
+  create:
+    title: '[Mitteilung] %title%'
+    content: '%author% hat eine Mitteilung im ICC hinterlegt.'
+  update:
+    title: '[Mitteilung aktualisiert] %title%'
+    content: '%author% hat die Mitteilung auf dem ICC aktualisiert.'
+
+exam:
+  title: Neuer Klausurplan verfügbar
+  content: Es wurde ein neuer Klausurplan bereitgestellt.
+
+substitutions:
+  title: Neuer Vertretungsplan verfügbar
+  content: Es wurde ein neuer Vertretungsplan bereitgestellt.
+

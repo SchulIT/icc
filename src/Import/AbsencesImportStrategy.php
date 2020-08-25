@@ -72,4 +72,11 @@ class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
     public function getData($data): array {
         return $data->getAbsences();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Absence::class;
+    }
 }

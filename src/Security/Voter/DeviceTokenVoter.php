@@ -2,7 +2,7 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\DeviceToken;
+use App\Entity\IcsAccessToken;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -15,12 +15,12 @@ class DeviceTokenVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject) {
-        return $attribute === static::Remove && $subject instanceof DeviceToken;
+        return $attribute === static::Remove && $subject instanceof IcsAccessToken;
     }
 
     /**
      * @param string $attribute
-     * @param DeviceToken $subject
+     * @param IcsAccessToken $subject
      * @param TokenInterface $token
      * @return bool|void
      */

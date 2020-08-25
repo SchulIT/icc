@@ -2,6 +2,7 @@
 
 namespace App\EventSubscriber;
 
+use App\Import\ImportException;
 use App\Request\ValidationFailedException;
 use App\Response\ErrorResponse;
 use App\Response\Violation;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
 class ApiExceptionSubscriber implements EventSubscriberInterface {
 
@@ -35,8 +37,11 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
 
         $throwable = $event->getThrowable();
 
+        if($throwable instanceof AuthenticationCredentialsNotFoundException) {
+            return;
+        }
+
         $code = Response::HTTP_INTERNAL_SERVER_ERROR;
-        $message = new ErrorResponse('An unknown error occured.');
 
         $this->logger->error('An uncaught exception was thrown.', [
             'exception' => $throwable
@@ -45,7 +50,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
         // Case 1: general HttpException (Authorization/Authentication) or BadRequest
         if($throwable instanceof HttpException) {
             $code = $throwable->getStatusCode();
-            $message = null;
+            $message = new ErrorResponse($throwable->getMessage(), get_class($throwable));
         } else if($throwable instanceof ValidationFailedException) { // Case 2: validation failed
             $code = Response::HTTP_BAD_REQUEST;
 
@@ -55,8 +60,18 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
             }
 
             $message = new ViolationList($violations);
+        } else if($throwable instanceof ImportException) {
+            $code = Response::HTTP_BAD_REQUEST;
+
+            $message = new ErrorResponse(
+                $throwable->getMessage(),
+                get_class($throwable)
+            );
         } else { // Case 3: General error
-            $message = new ErrorResponse($throwable->getMessage(), get_class($throwable));
+            $message = new ErrorResponse(
+                'An unknown error occured.',
+                get_class($throwable)
+            );
         }
 
         $validStatusCodes = array_keys(Response::$statusTexts);
@@ -65,8 +80,11 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
         }
 
         $response = new Response(
-            $message !== null ? $this->serializer->serialize($message, 'json') : null,
-            $code
+            $this->serializer->serialize($message, 'json'),
+            $code,
+            [
+                'Content-Type' => 'application/json'
+            ]
         );
 
         $event->setResponse($response);
@@ -77,7 +95,9 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
      */
     public static function getSubscribedEvents() {
         return [
-            KernelEvents::EXCEPTION => 'onKernelException'
+            KernelEvents::EXCEPTION => [
+                [ 'onKernelException', 10 ]
+            ]
         ];
     }
 }

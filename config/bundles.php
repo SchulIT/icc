@@ -12,9 +12,8 @@ return [
     Symfony\Bundle\MonologBundle\MonologBundle::class => ['all' => true],
     Symfony\Bundle\DebugBundle\DebugBundle::class => ['dev' => true, 'test' => true],
     Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true],
-    Symfony\Bundle\WebServerBundle\WebServerBundle::class => ['dev' => true],
     FrostieDE\ComposerDependencyListBundle\ComposerDependencyListBundle::class => ['all' => true],
-    SchoolIT\CommonBundle\CommonBundle::class => ['all' => true],
+    SchulIT\CommonBundle\CommonBundle::class => ['all' => true],
     LightSaml\SymfonyBridgeBundle\LightSamlSymfonyBridgeBundle::class => ['all' => true],
     LightSaml\SpBundle\LightSamlSpBundle::class => ['all' => true],
     Knp\Bundle\MenuBundle\KnpMenuBundle::class => ['all' => true],
@@ -28,4 +27,7 @@ return [
     Fervo\EnumBundle\FervoEnumBundle::class => ['all' => true],
     Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle::class => ['all' => true],
     EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle::class => ['all' => true],
+    Trikoder\Bundle\OAuth2Bundle\TrikoderOAuth2Bundle::class => ['all' => true],
+    BenTools\WebPushBundle\WebPushBundle::class => ['all' => true],
+    Shapecode\Bundle\CronBundle\ShapecodeCronBundle::class => ['all' => true],
 ];

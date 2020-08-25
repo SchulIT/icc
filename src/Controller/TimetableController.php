@@ -2,35 +2,41 @@
 
 namespace App\Controller;
 
-use App\Entity\DeviceToken;
-use App\Entity\DeviceTokenType;
+use App\Entity\IcsAccessToken;
+use App\Entity\IcsAccessTokenType;
 use App\Entity\MessageScope;
-use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
+use App\Entity\Subject;
+use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
+use App\Entity\TimetableSupervision;
 use App\Entity\User;
 use App\Export\TimetableIcsExporter;
-use App\Form\DeviceTokenType as DeviceTokenTypeForm;
+use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
 use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
+use App\Repository\SubjectRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
-use App\Security\Devices\DeviceManager;
+use App\Security\IcsAccessToken\IcsAccessTokenManager;
+use App\Security\Voter\TimetablePeriodVoter;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
 use App\Timetable\TimetableFilter;
 use App\Timetable\TimetableHelper;
+use App\Utils\ArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\RoomFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\SubjectsFilter;
-use App\View\Filter\TeacherFilter;
-use SchoolIT\CommonBundle\Helper\DateHelper;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use App\View\Filter\TeachersFilter;
+use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -58,19 +64,24 @@ class TimetableController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="timetable")
      */
-    public function index(StudentFilter $studentFilter, TeacherFilter $teacherFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
+    public function index(StudentFilter $studentFilter, TeachersFilter $teachersFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableWeekRepositoryInterface $weekRepository, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
-                          TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, Request $request) {
+                          TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository,
+                          SubjectRepositoryInterface $subjectRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
-        $roomFilterView = $roomFilter->handle($request->query->get('room', null));
-        $subjectFilterView = $subjectFilter->handle($request->query->get('subjects', [ ]));
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
+        $roomFilterView = $roomFilter->handle($request->query->get('room', null), $user);
+        $subjectFilterView = $subjectFilter->handle($request->query->get('subjects', [ ]), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user, $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
+        $teachersFilterView = $teachersFilter->handle($request->query->get('teachers', []), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
 
         $periods = $periodRepository->findAll();
+        $periods = array_filter($periods, function(TimetablePeriod $period) {
+            return $this->isGranted(TimetablePeriodVoter::View, $period);
+        });
+
         $this->sorter->sort($periods, TimetablePeriodStrategy::class);
 
         $currentPeriod = $this->getCurrentPeriod($periods);
@@ -104,10 +115,14 @@ class TimetableController extends AbstractControllerWithMessages {
                         }
                     }
                 }
-            } else if ($teacherFilterView->getCurrentTeacher() !== null) {
-                $lessons = $lessonRepository->findAllByPeriodAndTeacher($currentPeriod, $teacherFilterView->getCurrentTeacher());
-                $lessons = $timetableFilter->filterTeacherLessons($lessons);
-                $supervisions = $supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacherFilterView->getCurrentTeacher());
+            } else if (count($teachersFilterView->getCurrentTeachers()) > 0) {
+                $lessons = [ ];
+                $supervisions = [ ];
+
+                foreach($teachersFilterView->getCurrentTeachers() as $teacher) {
+                    $lessons = array_merge($lessons, $timetableFilter->filterTeacherLessons($lessonRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher)));
+                    $supervisions = array_merge($supervisions, $supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher));
+                }
             } else if ($gradeFilterView->getCurrentGrade() !== null) {
                 $lessons = $lessonRepository->findAllByPeriodAndGrade($currentPeriod, $gradeFilterView->getCurrentGrade());
                 $lessons = $timetableFilter->filterGradeLessons($lessons);
@@ -172,10 +187,17 @@ class TimetableController extends AbstractControllerWithMessages {
             }
         }
 
+        $subjects = ArrayUtils::createArrayWithKeys(
+            $subjectRepository->findAll(),
+            function (Subject $subject) {
+                return $subject->getAbbreviation();
+            }
+        );
+
         return $this->renderWithMessages($template, [
             'timetable' => $timetable,
             'studentFilter' => $studentFilterView,
-            'teacherFilter' => $teacherFilterView,
+            'teachersFilter' => $teachersFilterView,
             'gradeFilter' => $gradeFilterView,
             'roomFilter'=> $roomFilterView,
             'subjectFilter' => $subjectFilterView,
@@ -188,26 +210,31 @@ class TimetableController extends AbstractControllerWithMessages {
             'gradesWithCourseNames' => $this->timetableSettings->getGradeIdsWithCourseNames(),
             'memberships' => $membershipsTypes,
             'query' => $request->query->all(),
-            'supervisionLabels' => $supervisionLabels
+            'supervisionLabels' => $supervisionLabels,
+            'supervisionSubject' => $this->timetableSettings->getSupervisionLabel(),
+            'supervisionColor' => $this->timetableSettings->getSupervisionColor(),
+            'last_import_lessons' => $importDateTypeRepository->findOneByEntityClass(TimetableLesson::class),
+            'last_import_supervisions' => $importDateTypeRepository->findOneByEntityClass(TimetableSupervision::class),
+            'subjects' => $subjects
         ]);
     }
 
     /**
      * @Route("/export", name="timetable_export")
      */
-    public function export(Request $request, DeviceManager $manager) {
+    public function export(Request $request, IcsAccessTokenManager $manager) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $deviceToken = (new DeviceToken())
-            ->setType(DeviceTokenType::Calendar())
+        $deviceToken = (new IcsAccessToken())
+            ->setType(IcsAccessTokenType::Calendar())
             ->setUser($user);
 
         $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $deviceToken = $manager->persistDeviceToken($deviceToken);
+            $deviceToken = $manager->persistToken($deviceToken);
         }
 
         return $this->renderWithMessages('timetable/export.html.twig', [
@@ -236,6 +263,10 @@ class TimetableController extends AbstractControllerWithMessages {
             if($this->dateHelper->isBetween($this->dateHelper->getToday(), $period->getStart(), $period->getEnd())) {
                 return $period;
             }
+        }
+
+        if(count($periods) > 0) {
+            return $periods[count($periods) - 1];
         }
 
         return null;

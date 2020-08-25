@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Validator\PeriodNotOverlaps;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -38,7 +39,7 @@ class TimetablePeriod {
      * @ORM\Column(type="datetime")
      * @Assert\NotNull()
      * @Assert\Date()
-     * @var \DateTime
+     * @var DateTime
      */
     private $start;
 
@@ -46,7 +47,7 @@ class TimetablePeriod {
      * @ORM\Column(type="datetime")
      * @Assert\NotNull()
      * @Assert\Date()
-     * @var \DateTime
+     * @var DateTime
      */
     private $end;
 
@@ -113,33 +114,33 @@ class TimetablePeriod {
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getStart(): ?\DateTime {
+    public function getStart(): ?DateTime {
         return $this->start;
     }
 
     /**
-     * @param \DateTime|null $start
+     * @param DateTime|null $start
      * @return TimetablePeriod
      */
-    public function setStart(?\DateTime $start): TimetablePeriod {
+    public function setStart(?DateTime $start): TimetablePeriod {
         $this->start = $start;
         return $this;
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getEnd(): ?\DateTime {
+    public function getEnd(): ?DateTime {
         return $this->end;
     }
 
     /**
-     * @param \DateTime|null $end
+     * @param DateTime|null $end
      * @return TimetablePeriod
      */
-    public function setEnd(?\DateTime $end): TimetablePeriod {
+    public function setEnd(?DateTime $end): TimetablePeriod {
         $this->end = $end;
         return $this;
     }
@@ -171,5 +172,9 @@ class TimetablePeriod {
      */
     public function getSupervisions(): Collection {
         return $this->supervisions;
+    }
+
+    public function __toString() {
+        return $this->name;
     }
 }

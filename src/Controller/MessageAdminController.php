@@ -19,6 +19,7 @@ use App\Message\MessageFileUploadViewHelper;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\MessageVoter;
+use App\Sorting\MessageExpirationGroupStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentGradeGroupStrategy;
 use App\Sorting\StudentStrategy;
@@ -26,10 +27,13 @@ use App\Sorting\StudentStudyGroupGroupStrategy;
 use App\Sorting\TeacherStrategy;
 use App\Sorting\UserLastnameFirstnameStrategy;
 use App\Sorting\UserUserTypeGroupStrategy;
+use App\View\Filter\GradeFilter;
+use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\Common\Collections\ArrayCollection;
-use SchoolIT\CommonBundle\Form\ConfirmType;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Form\ConfirmType;
+use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -63,34 +67,45 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("", name="admin_messages")
      */
-    public function index(UserTypeFilter $userTypeFilter, Request $request) {
+    public function index(UserTypeFilter $userTypeFilter, GradeFilter $gradeFilter, Request $request) {
         $this->denyAccessUnlessGranted('ROLE_MESSAGE_CREATOR');
+
+        /** @var User $user */
+        $user = $this->getUser();
 
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null));
         $userTypeFilterView->setHandleNull(true);
 
-        if($userTypeFilterView->getCurrentType() === null) {
-            $messages = $this->repository->findAll();
-        } else {
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
+
+        if($userTypeFilterView->getCurrentType() !== null) {
             $messages = $this->repository->findAllByUserType($userTypeFilterView->getCurrentType());
+        } else if($gradeFilterView->getCurrentGrade() !== null) {
+            $messages = $this->repository->findAllByGrade($gradeFilterView->getCurrentGrade());
+        } else {
+            $messages = $this->repository->findAll();
         }
 
         /** @var MessageExpirationGroup[] $groups */
         $groups = $this->grouper->group($messages, MessageExpirationStrategy::class);
+        $this->sorter->sort($groups, MessageExpirationGroupStrategy::class);
 
         return $this->render('admin/messages/index.html.twig', [
             'groups' => $groups,
-            'userTypeFilter' => $userTypeFilterView
+            'userTypeFilter' => $userTypeFilterView,
+            'gradeFilter' => $gradeFilterView
         ]);
     }
 
     /**
      * @Route("/add", name="add_message")
      */
-    public function add(Request $request) {
+    public function add(Request $request, DateHelper $dateHelper) {
         $this->denyAccessUnlessGranted(MessageVoter::New);
 
-        $message = new Message();
+        $message = (new Message())
+            ->setStartDate($dateHelper->getToday())
+            ->setExpireDate($dateHelper->getToday()->modify('+7 days'));
         $form = $this->createForm(MessageType::class, $message);
         $form->handleRequest($request);
 
@@ -142,7 +157,7 @@ class MessageAdminController extends AbstractController {
                 $eventDispatcher->dispatch(new MessageUpdatedEvent($message));
             }
 
-            $this->addFlash('success', 'admin.messages.edit.succes');
+            $this->addFlash('success', 'admin.messages.edit.success');
             return $this->redirectToReferer(['view' => 'show_message'], 'admin_messages', [ 'uuid' => $message->getUuid() ]);
         }
 

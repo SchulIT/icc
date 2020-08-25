@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use DateTimeInterface;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -28,7 +28,7 @@ class Substitution {
     /**
      * @ORM\Column(type="date")
      * @Assert\NotNull()
-     * @var DateTimeInterface
+     * @var DateTime
      */
     private $date;
 
@@ -73,10 +73,9 @@ class Substitution {
 
     /**
      * @ORM\ManyToMany(targetEntity="Teacher")
-     * @ORM\JoinTable(
-     *     name="substitution_teachers",
-     *     joinColumns={@ORM\JoinColumn(name="substitution", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="teacher", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="substitution_teachers",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Teacher>
      */
@@ -84,10 +83,9 @@ class Substitution {
 
     /**
      * @ORM\ManyToMany(targetEntity="Teacher")
-     * @ORM\JoinTable(
-     *     name="substitution_replacmentteachers",
-     *     joinColumns={@ORM\JoinColumn(name="substitution", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="teacher", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="substitution_replacement_teachers",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Teacher>
      */
@@ -113,10 +111,9 @@ class Substitution {
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(
-     *     name="substitution_studygroups",
-     *     joinColumns={@ORM\JoinColumn(name="substitution", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="grade", referencedColumnName="id", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="substitution_studygroups",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var ArrayCollection<StudyGroup>
      */
@@ -124,10 +121,9 @@ class Substitution {
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(
-     *     name="substitution_replacementstudygroups",
-     *     joinColumns={@ORM\JoinColumn(name="substitution", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="grade", referencedColumnName="id", onDelete="CASCADE")}
+     * @ORM\JoinTable(name="substitution_replacement_studygroups",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var ArrayCollection<StudyGroup>
      */
@@ -159,17 +155,17 @@ class Substitution {
     }
 
     /**
-     * @return DateTimeInterface |null
+     * @return DateTime|null
      */
-    public function getDate(): ?DateTimeInterface  {
+    public function getDate(): ?DateTime  {
         return $this->date;
     }
 
     /**
-     * @param DateTimeInterface|null $date
+     * @param DateTime|null $date
      * @return Substitution
      */
-    public function setDate(?DateTimeInterface $date): Substitution {
+    public function setDate(?DateTime $date): Substitution {
         $this->date = $date;
         return $this;
     }
@@ -378,4 +374,37 @@ class Substitution {
         return $this->replacementStudyGroups;
     }
 
+    public function clone() {
+        $clone = new self();
+
+        $clone->setDate($this->getDate());
+        $clone->setType($this->getType());
+        $clone->setExternalId($this->getExternalId());
+        $clone->setSubject($this->getSubject());
+        $clone->setReplacementSubject($this->getSubject());
+        $clone->setRoom($this->getRoom());
+        $clone->setReplacementRoom($this->getReplacementRoom());
+        $clone->setLessonStart($this->getLessonStart());
+        $clone->setLessonEnd($this->getLessonEnd());
+        $clone->setStartsBefore($this->startsBefore());
+        $clone->setRemark($this->getRemark());
+
+        foreach($this->getTeachers() as $teacher) {
+            $clone->addTeacher($teacher);
+        }
+
+        foreach($this->getReplacementTeachers() as $teacher) {
+            $clone->addReplacementTeacher($teacher);
+        }
+
+        foreach($this->getStudyGroups() as $studyGroup) {
+            $clone->addStudyGroup($studyGroup);
+        }
+
+        foreach($this->getReplacementStudyGroups() as $studyGroup) {
+            $clone->addReplacementStudyGroup($studyGroup);
+        }
+
+        return $clone;
+    }
 }

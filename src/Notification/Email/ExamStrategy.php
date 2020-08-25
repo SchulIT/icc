@@ -2,6 +2,8 @@
 
 namespace App\Notification\Email;
 
+use App\Entity\User;
+use App\Event\ExamImportEvent;
 use App\Repository\UserRepositoryInterface;
 use App\Settings\ExamSettings;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,7 +38,11 @@ class ExamStrategy implements EmailStrategyInterface {
      * @inheritDoc
      */
     public function getRecipients($objective): array {
-        return $this->userRepository->findAllByNotifyExams();
+        return array_filter(
+            $this->userRepository->findAllByNotifyExams(),
+            function(User $user) {
+                return $user->getEmail() !== null;
+            });
     }
 
     /**
@@ -58,5 +64,12 @@ class ExamStrategy implements EmailStrategyInterface {
      */
     public function getTemplate(): string {
         return 'email/exam.html.twig';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports($objective): bool {
+        return $objective instanceof ExamImportEvent;
     }
 }

@@ -34,19 +34,19 @@ class StudyGroupMembershipImportStrategy implements ReplaceImportStrategyInterfa
 
     /**
      * @param StudyGroupMembershipData $data
-     * @throws ImportException
+     * @throws EntityIgnoredException
      */
     public function persist($data): void {
         $studyGroup = $this->studyGroupRepository->findOneByExternalId($data->getStudyGroup());
 
         if($studyGroup === null) {
-            throw new ImportException(sprintf('Study group with ID "%s" was not found.', $data->getStudyGroup()));
+            throw new EntityIgnoredException($data, sprintf('Study group with ID "%s" was not found.', $data->getStudyGroup()));
         }
 
         $student = $this->studentRepository->findOneByExternalId($data->getStudent());
 
         if($student === null) {
-            throw new ImportException(sprintf('Student with ID "%s" was not found.', $data->getStudent()));
+            throw new EntityIgnoredException($data, sprintf('Student with ID "%s" was not found.', $data->getStudent()));
         }
 
         $membership = (new StudyGroupMembership())
@@ -63,5 +63,12 @@ class StudyGroupMembershipImportStrategy implements ReplaceImportStrategyInterfa
      */
     public function getData($data): array {
         return $data->getMemberships();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return StudyGroupMembership::class;
     }
 }

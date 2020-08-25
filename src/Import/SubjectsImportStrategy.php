@@ -23,7 +23,7 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
      */
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
-            $this->repository->findAll(),
+            $this->repository->findAll(true),
             function(Subject $subject) {
                 return $subject->getExternalId();
             }
@@ -97,5 +97,12 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
      */
     public function getData($data): array {
         return $data->getSubjects();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Subject::class;
     }
 }

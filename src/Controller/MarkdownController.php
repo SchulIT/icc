@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Markdown\Markdown;
 use EasySlugger\SluggerInterface;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

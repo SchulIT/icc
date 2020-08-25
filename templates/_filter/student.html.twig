@@ -1,14 +1,17 @@
+{% if isChoice is not defined %}
+    {% set isChoice = true %}
+{% endif %}
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
     <div class="form-group {{ class|default('') }}">
         <label for="student">{{ 'label.student'|trans }}:</label>
-        <select name="student" id="student" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="true">
+        <select name="student" id="student" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="{{ isChoice ? 'true' : 'false' }}">
             <option value="" placeholder>{{ 'label.select.student'|trans }}</option>
             {% for group in studentFilter.studentGradeGroups %}
                 <optgroup label="{{ group.grade.name }}">
                     {% for s in group.students %}
-                        <option value="{{ s.uuid }}"{% if studentFilter.currentStudent != null and studentFilter.currentStudent.id == s.id %}selected="selected"{% endif %}>{{ s|student }}</option>
+                        <option value="{{ s.uuid }}"{% if studentFilter.currentStudent != null and studentFilter.currentStudent.id == s.id %}selected="selected"{% endif %}>{{ s|student }} [{{ s.grade.name }}]</option>
                     {% endfor %}
                 </optgroup>
             {% endfor %}

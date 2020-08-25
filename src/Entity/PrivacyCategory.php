@@ -86,4 +86,8 @@ class PrivacyCategory {
         $this->description = $description;
         return $this;
     }
+
+    public function __toString() {
+        return $this->getLabel();
+    }
 }

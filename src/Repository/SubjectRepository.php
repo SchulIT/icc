@@ -59,11 +59,20 @@ class SubjectRepository extends AbstractTransactionalRepository implements Subje
     }
 
     /**
+     * @param bool $onlyExternal
      * @return Subject[]
      */
-    public function findAll() {
-        return $this->em->getRepository(Subject::class)
+    public function findAll(bool $onlyExternal = false) {
+        $subjects = $this->em->getRepository(Subject::class)
             ->findAll();
+
+        if($onlyExternal === true) {
+            $subjects = array_filter($subjects, function(Subject $subject) {
+                return $subject->getExternalId() !== null;
+            });
+        }
+
+        return $subjects;
     }
 
     /**

@@ -46,6 +46,9 @@ class MessageConfirmationHelper {
             ->select(['c', 'm'])
             ->from(MessageConfirmation::class, 'c')
             ->leftJoin('c.message', 'm')
+            ->leftJoin('c.user', 'u')
+            ->where('u.id = :user')
+            ->setParameter('user', $user->getId())
             ->getQuery()
             ->getResult();
 
@@ -55,5 +58,7 @@ class MessageConfirmationHelper {
         foreach($confirmations as $confirmation) {
             $this->cache[$key][] = $confirmation->getMessage()->getId();
         }
+
+        dump($this->cache);
     }
 }

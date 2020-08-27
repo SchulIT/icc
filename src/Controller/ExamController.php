@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Exam;
 use App\Entity\IcsAccessToken;
 use App\Entity\IcsAccessTokenType;
-use App\Entity\Exam;
 use App\Entity\MessageScope;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
@@ -29,6 +29,7 @@ use App\Sorting\ExamDateLessonStrategy as ExamDateSortingStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\Sorting\StudentStudyGroupGroupStrategy;
+use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
@@ -170,6 +171,10 @@ class ExamController extends AbstractControllerWithMessages {
     }
 
     private function isVisibleForGrade(User $user, ExamSettings $examSettings) {
+        if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent()]) === false) {
+            return true;
+        }
+
         $visibleGradeIds = $examSettings->getVisibleGradeIds();
         $gradeIds = [ ];
 

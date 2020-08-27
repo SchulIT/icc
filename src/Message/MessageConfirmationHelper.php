@@ -58,7 +58,5 @@ class MessageConfirmationHelper {
         foreach($confirmations as $confirmation) {
             $this->cache[$key][] = $confirmation->getMessage()->getId();
         }
-
-        dump($this->cache);
     }
 }

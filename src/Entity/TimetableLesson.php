@@ -10,6 +10,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @ORM\Table(uniqueConstraints={
+ *  @ORM\UniqueConstraint(columns={"external_id", "period_id"})
+ * })
  */
 class TimetableLesson {
 
@@ -17,7 +20,7 @@ class TimetableLesson {
     use UuidTrait;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string")
      * @var string|null
      */
     private $externalId;

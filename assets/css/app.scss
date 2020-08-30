@@ -271,6 +271,10 @@ $enable-gradients: true;
   display: none;
 }
 
+.dataTable-container {
+  border:none !important;
+}
+
 .table-bordered.dataTable-table {
   border-collapse: collapse;
 }

@@ -9,7 +9,7 @@
         <div class="d-flex align-items-center flex-wrap {% if not is_dismissed(message) %}mb-2{% endif %}">
             <h5 class="card-title mr-auto mb-0 mr-2"><a href="{{ path('show_message', { uuid: message.uuid }) }}">{{ message.title }}</a></h5>
 
-            <span class="text-secondary d-none d-lg-block">
+            <span class="text-secondary d-none d-lg-block mr-2">
                 {{ 'message.expires'|trans({'%date%': message.expireDate|format_date}) }}
             </span>
 

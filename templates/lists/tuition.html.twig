@@ -1,6 +1,6 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ tuition.name }} ({{ tuition.subject.name }}){% endblock %}
+{% block title %}{% if tuition.displayName is not empty %}{{ tuition.displayName }}{% else %}{{ tuition.name }}{% endif %} ({{ tuition.subject.name }}){% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -20,7 +20,11 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">
-                            {{ tuition.name }} ({{ tuition.subject.name }})
+                            {% if tuition.displayName is not empty %}
+                                {{ tuition.displayName }}
+                            {% else %}
+                                {{ tuition.name }}
+                            {% endif %} ({{ tuition.subject.name }})
                         </h5>
 
                         <ul class="list-unstyled m-0">

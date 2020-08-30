@@ -75,7 +75,13 @@
                             <tbody>
                             {% for tuition in tuitions %}
                                 <tr>
-                                    <td>{{ tuition.name }}</td>
+                                    <td>
+                                        {% if tuition.displayName is not empty %}
+                                            {{ tuition.displayName }}
+                                        {% else %}
+                                            {{ tuition.name }}
+                                        {% endif %}
+                                    </td>
                                     <td>{{ tuition.subject.name }}</td>
                                     {% if teacherFilter.currentTeacher == null %}
                                     <td>

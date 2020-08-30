@@ -81,7 +81,9 @@ document.addEventListener('DOMContentLoaded', function() {
             itemSelectText: '',
             shouldSort: false,
             shouldSortItems: false,
-            removeItemButton: removeItemButton
+            removeItemButton: removeItemButton,
+            searchResultLimit: 10,
+            searchFields: ['label']
         });
 
         if(selected !== undefined) {

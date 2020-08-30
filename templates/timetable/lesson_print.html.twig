@@ -17,11 +17,13 @@
             {%- set room = lesson.room.name -%}
         {%- endif -%}
         <strong>
-            {% if tuition is not null %}
-                {% if lesson.tuition.displayName is not empty -%}
-                    {{ lesson.tuition.displayName }}
+            {%- if tuition is not null -%}
+                {% if tuition.displayName is not empty -%}
+                    {{ tuition.displayName }}
                 {%- elseif showCourseName -%}
-                    {{ lesson.tuition.studyGroup.name }}
+                    {{ tuition.studyGroup.name }}
+                {%- else -%}
+                    {{ tuition.subject.abbreviation }}
                 {%- endif -%}
             {%- elseif subject is not null -%}
                 {{ subject.abbreviation }}
@@ -29,7 +31,7 @@
         </strong>
 
         {% if teachersFilter.currentTeachers|length > 0 %}
-            {% for g in lesson.tuition.studyGroup.grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+            {% for g in lesson.grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %}
         {% endif %}
         {% if teachersFilter.currentTeachers|length != 1 %}
             {%- for teacher in lesson.teachers -%}

@@ -3,6 +3,7 @@ require('../css/app.scss');
 require('emojione');
 import Choices from "choices.js";
 import { v4 as uuidv4 } from 'uuid';
+import { DataTable } from "simple-datatables";
 
 let bsCustomFileInput = require('bs-custom-file-input');
 let ClipboardJS = require('clipboard');
@@ -30,6 +31,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 icon.classList.add('fa-copy');
             }, 5000);
         }
+    });
+
+    document.querySelectorAll('table[data-table]').forEach(function(el) {
+        el.datatable = new DataTable(el, {
+            searchable: false,
+            fixedHeight: false,
+            paging: false,
+            truncatePager: false
+        });
     });
 
     document.querySelectorAll('a[data-trigger=scroll]').forEach(function(el) {

@@ -24,6 +24,13 @@ class TuitionData {
 
     /**
      * @Serializer\Type("string")
+     * @Assert\NotBlank(allowNull=true)
+     * @var string|null
+     */
+    private $displayName;
+
+    /**
+     * @Serializer\Type("string")
      * @Assert\NotBlank()
      * @var string|null
      */
@@ -79,6 +86,22 @@ class TuitionData {
      */
     public function setName(?string $name): TuitionData {
         $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDisplayName(): ?string {
+        return $this->displayName;
+    }
+
+    /**
+     * @param string|null $displayName
+     * @return TuitionData
+     */
+    public function setDisplayName(?string $displayName): TuitionData {
+        $this->displayName = $displayName;
         return $this;
     }
 

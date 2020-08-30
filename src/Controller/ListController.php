@@ -161,9 +161,12 @@ class ListController extends AbstractControllerWithMessages {
         $memberships = [ ];
 
         if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
-            $students = $studyGroupFilterView->getCurrentStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
-                return $membership->getStudent();
-            })->toArray();
+            /** @var StudyGroupMembership $membership */
+            foreach($studyGroupFilterView->getCurrentStudyGroup()->getMemberships() as $membership) {
+                $students[] = $membership->getStudent();
+                $memberships[$membership->getStudent()->getId()] = $membership->getType();
+            }
+
             $this->sorter->sort($students, StudentStrategy::class);
         } else if($studentFilterView->getCurrentStudent() !== null) {
             $studyGroups = [ ];

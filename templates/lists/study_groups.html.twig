@@ -61,6 +61,7 @@
                                         <col class="column-lg">
                                         <col class="column-lg">
                                         <col class="column-md">
+                                        <col class="column-md">
                                         <col>
                                     </colgroup>
 
@@ -68,6 +69,7 @@
                                     <tr>
                                         <th>{{ 'label.lastname'|trans }}</th>
                                         <th>{{ 'label.firstname'|trans }}</th>
+                                        <th>{{ 'lists.tuitions.type'|trans }}</th>
                                         <th>{{ 'label.grade'|trans }}</th>
                                         <th>{{ 'label.email'|trans }}</th>
                                     </tr>
@@ -79,6 +81,7 @@
                                             <td>{{ student.lastname }}</td>
                                             <td>{{ student.firstname }}</td>
                                             <td>{{ student.grade.name }}</td>
+                                            <td>{{ memberships[student.id] ?? null }}</td>
                                             <td>
                                                 {% if student.email is not empty %}
                                                     <i class="fa fa-envelope"></i>

@@ -51,8 +51,8 @@ class SetupCommand extends Command {
         $types = UserType::values();
         $existingTypes = ArrayUtils::createArrayWithKeys(
             $this->userTypeEntityRepository->findAll(),
-            function(UserType $userType) {
-                return $userType->getValue();
+            function(UserTypeEntity $userType) {
+                return $userType->getUserType()->getValue();
             });
 
         foreach($types as $type) {

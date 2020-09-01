@@ -240,7 +240,7 @@ class DashboardViewCollapseHelper {
         $distinctRooms = array_unique($rooms);
         $distinctLocations = array_unique($locations);
 
-        if(count($distinctRooms) === 0 && $distinctLocations === 0) {
+        if(count($distinctRooms) === 0 && count($distinctLocations) === 0) {
             return true;
         }
 

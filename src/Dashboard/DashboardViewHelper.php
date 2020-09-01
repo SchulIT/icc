@@ -18,12 +18,11 @@ use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
 use App\Entity\TimetableSupervision;
 use App\Entity\Tuition;
-use App\Entity\TuitionTimetableLesson;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Grouping\AbsentStudentGroup;
-use App\Grouping\Grouper;
 use App\Grouping\AbsentStudentStrategy as AbstentStudentGroupStrategy;
+use App\Grouping\Grouper;
 use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
@@ -44,7 +43,6 @@ use App\Security\Voter\RoomReservationVoter;
 use App\Security\Voter\SubstitutionVoter;
 use App\Security\Voter\TimetablePeriodVoter;
 use App\Settings\DashboardSettings;
-use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Sorting\AbsentStudentStrategy;
 use App\Sorting\AbsentStudyGroupStrategy;
@@ -456,7 +454,7 @@ class DashboardViewHelper {
      * @return AbsentStudentGroup[]
      */
     private function computeAbsentStudents(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime) {
-        if(!$lessonEntity instanceof TuitionTimetableLesson) {
+        if($lessonEntity->getTuition() === null) {
             return [];
         }
 
@@ -486,7 +484,7 @@ class DashboardViewHelper {
     }
 
     private function computeExamStudents(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime) {
-        if(!$lessonEntity instanceof TuitionTimetableLesson) {
+        if($lessonEntity->getTuition() === null) {
             return [];
         }
 

@@ -7,12 +7,11 @@ use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
 use App\Entity\TimetableWeek;
 use App\Entity\Tuition;
-use App\Entity\TuitionTimetableLesson;
 use PHPUnit\Framework\TestCase;
 
 class TimetableLessonTest extends TestCase {
     public function testGettersSetters() {
-        $lesson = new TuitionTimetableLesson();
+        $lesson = new TimetableLesson();
 
         $this->assertNull($lesson->getId());
 

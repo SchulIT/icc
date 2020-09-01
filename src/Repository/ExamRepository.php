@@ -349,8 +349,8 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, ?Teacher $teacher = null, bool $onlyPlanned = true): Paginator {
-        $qb = $this->getDefaultQueryBuilder(null, false, $onlyPlanned);
+    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, ?Teacher $teacher = null, ?Student $student = null, ?StudyGroup $studyGroup = null, bool $onlyPlanned = true, ?DateTime $today = null): Paginator {
+        $qb = $this->getDefaultQueryBuilder($today, false, $onlyPlanned);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
@@ -374,6 +374,19 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
                  )
              );
              $qb->setParameter('teacher', $teacher->getId());
+        }
+
+        if($student !== null) {
+            $qbInner
+                ->leftJoin('eInner.students', 'sInner')
+                ->andWhere('sInner.id = :student');
+            $qb->setParameter('student', $student->getId());
+        }
+
+        if($studyGroup !== null) {
+            $qbInner
+                ->andWhere('sgInner.id = :studygroup');
+            $qb->setParameter('studygroup', $studyGroup->getId());
         }
 
         $qb

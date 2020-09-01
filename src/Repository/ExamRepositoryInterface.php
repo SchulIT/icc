@@ -147,8 +147,11 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
      * @param int $page
      * @param Grade|null $grade
      * @param Teacher|null $teacher
+     * @param Student|null $student
+     * @param StudyGroup|null $studyGroup
+     * @param DateTime|null $today
      * @param bool $onlyPlanned If set to true, only planned exams are returned
      * @return Paginator
      */
-    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, ?Teacher $teacher = null, bool $onlyPlanned = true): Paginator;
+    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, ?Teacher $teacher = null, ?Student $student = null, ?StudyGroup $studyGroup = null, bool $onlyPlanned = true, ?DateTime $today = null): Paginator;
 }

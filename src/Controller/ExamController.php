@@ -12,6 +12,7 @@ use App\Entity\UserType;
 use App\Export\ExamIcsExporter;
 use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
 use App\Grouping\ExamWeekGroup;
+use App\Grouping\ExamWeekStrategy;
 use App\Grouping\Grouper;
 use App\Grouping\WeekOfYear;
 use App\Message\DismissedMessagesHelper;
@@ -22,6 +23,7 @@ use App\Security\IcsAccessToken\IcsAccessTokenManager;
 use App\Security\Voter\ExamVoter;
 use App\Settings\ExamSettings;
 use App\Sorting\ExamDateLessonStrategy as ExamDateSortingStrategy;
+use App\Sorting\ExamWeekGroupStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\Utils\EnumArrayUtils;
@@ -40,6 +42,8 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/exams")
  */
 class ExamController extends AbstractControllerWithMessages {
+
+    private static $ItemsPerPage = 25;
 
     private $grouper;
     private $sorter;
@@ -62,92 +66,57 @@ class ExamController extends AbstractControllerWithMessages {
                           ExamRepositoryInterface $examRepository, ExamSettings $examSettings, Request $request, DateHelper $dateHelper) {
         /** @var User $user */
         $user = $this->getUser();
-        $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
         $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user, $studyGroupFilterView->getCurrentStudyGroup() === null && $gradeFilterView->getCurrentGrade() === null);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $studyGroupFilterView->getCurrentStudyGroup() === null && $gradeFilterView->getCurrentGrade() === null);
+        $includePastExams = $request->query->getBoolean('past', false);
 
         $isVisible = $examSettings->isVisibileFor($user->getUserType()) && $this->isVisibleForGrade($user, $examSettings);
         $isVisibleAdmin = false;
 
-        $week = $request->query->has('week') ? $request->query->getInt('week') : null;
-        $year = $request->query->has('year') ? $request->query->getInt('year') : null;
-
         $groups = [ ];
-        $currentGroup = null;
         $exams = [ ];
+
+        $page = $request->query->getInt('page', 1);
 
         if($isVisible === true || $this->isGranted('ROLE_EXAMS_CREATOR') || $this->isGranted('ROLE_EXAMS_ADMIN')) {
             if($isVisible === false) {
                 $isVisibleAdmin = $this->isGranted('ROLE_EXAMS_CREATOR') || $this->isGranted('ROLE_EXAMS_ADMIN');
             }
 
+            $threshold = $includePastExams ? null : $this->dateHelper->getToday();
+
             if ($studentFilterView->getCurrentStudent() !== null) {
-                $groups = $this->computeGroups($examRepository->findAllDatesByStudents([$studentFilterView->getCurrentStudent()]));
-                $currentGroup = $this->getCurrentGroup($groups, $year, $week, $dateHelper);
-
-                $exams = $this->getExams($currentGroup, function (DateTime $dateTime) use ($studentFilterView, $examRepository) {
-                    return $examRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $dateTime, true);
-                });
+                $paginator = $examRepository->getPaginator(static::$ItemsPerPage, $page, null, null, $studentFilterView->getCurrentStudent(), null, true, $threshold);
+            } else if ($studyGroupFilterView->getCurrentStudyGroup() !== null) {
+                $paginator = $examRepository->getPaginator(static::$ItemsPerPage, $page, null, null, null, $studyGroupFilterView->getCurrentStudyGroup(), true, $threshold);
+            } else if ($gradeFilterView->getCurrentGrade() !== null) {
+                $paginator = $examRepository->getPaginator(static::$ItemsPerPage, $page, $gradeFilterView->getCurrentGrade(), null, null, null, true, $threshold);
+            } else if ($teacherFilterView->getCurrentTeacher() !== null) {
+                $paginator = $examRepository->getPaginator(static::$ItemsPerPage, $page, null, $teacherFilterView->getCurrentTeacher(), null, null, true, $threshold);
             } else {
-                if ($studyGroupFilterView->getCurrentStudyGroup() !== null) {
-                    $groups = $this->computeGroups($examRepository->findAllDatesByStudyGroup($studyGroupFilterView->getCurrentStudyGroup()));
-                    $currentGroup = $this->getCurrentGroup($groups, $year, $week, $dateHelper);
+                $paginator = $examRepository->getPaginator(static::$ItemsPerPage, $page, null, null, null, null, true, $threshold);
+            }
 
-                    $exams = $this->getExams($currentGroup, function (DateTime $dateTime) use ($studyGroupFilterView, $examRepository) {
-                        return $examRepository->findAllByStudyGroup($studyGroupFilterView->getCurrentStudyGroup(), $dateTime, true,);
-                    });
-                } else {
-                    if ($gradeFilterView->getCurrentGrade() !== null) {
-                        $groups = $this->computeGroups($examRepository->findAllDatesByGrade($gradeFilterView->getCurrentGrade()));
-                        $currentGroup = $this->getCurrentGroup($groups, $year, $week, $dateHelper);
-
-                        $exams = $this->getExams($currentGroup, function (DateTime $dateTime) use ($gradeFilterView, $examRepository) {
-                            return $examRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $dateTime, true);
-                        });
-                    } else {
-                        if ($isStudentOrParent === false) {
-                            if ($teacherFilterView->getCurrentTeacher() !== null) {
-                                $groups = $this->computeGroups($examRepository->findAllDatesByTeacher($teacherFilterView->getCurrentTeacher()));
-                                $currentGroup = $this->getCurrentGroup($groups, $year, $week, $dateHelper);
-
-                                $exams = $this->getExams($currentGroup, function (DateTime $dateTime) use ($teacherFilterView, $examRepository) {
-                                    return $examRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $dateTime, true);
-                                });
-                            } else {
-                                $groups = $this->computeGroups($examRepository->findAllDates());
-                                $currentGroup = $this->getCurrentGroup($groups, $year, $week, $dateHelper);
-
-                                $exams = $this->getExams($currentGroup, function (DateTime $dateTime) use ($examRepository) {
-                                    return $examRepository->findAll($dateTime, true);
-                                });
-                            }
-                        }
-                    }
+            /** @var Exam $exam */
+            foreach($paginator->getIterator() as $exam) {
+                if($this->isGranted(ExamVoter::Show, $exam)) {
+                    $exams[] = $exam;
                 }
             }
-
-            $exams = array_filter($exams, function (Exam $exam) {
-                return $this->isGranted(ExamVoter::Show, $exam);
-            });
         }
 
-        $previousGroup = null;
-        $nextGroup = null;
+        $pages = 1;
 
-        /** @var ExamWeekGroup $group */
-        for($idx = 0; $idx < count($groups); $idx++) {
-            $group = $groups[$idx];
-
-            if($group === $currentGroup) {
-                $previousGroup = $examWeekGroups[$idx - 1] ?? null;
-                $nextGroup = $examWeekGroups[$idx + 1] ?? null;
-            }
+        if($paginator->count() > 0) {
+            $pages = ceil((float)$paginator->count() / static::$ItemsPerPage);
         }
 
-        $this->sorter->sort($exams, ExamDateSortingStrategy::class);
+        $groups = $this->grouper->group($exams, ExamWeekStrategy::class);
+        $this->sorter->sort($groups, ExamWeekGroupStrategy::class);
+        $this->sorter->sortGroupItems($exams, ExamDateSortingStrategy::class);
 
         return $this->renderWithMessages('exams/index.html.twig', [
             'examWeekGroups' => $groups,
@@ -157,10 +126,9 @@ class ExamController extends AbstractControllerWithMessages {
             'studyGroupFilter' => $studyGroupFilterView,
             'isVisible' => $isVisible,
             'isVisibleAdmin' => $isVisibleAdmin,
-            'exams' => $exams,
-            'currentGroup' => $currentGroup,
-            'nextGroup' => $nextGroup,
-            'previousGroup' => $previousGroup,
+            'includePastExams' => $includePastExams,
+            'pages' => $pages,
+            'page' => $page,
             'last_import' => $this->importDateTypeRepository->findOneByEntityClass(Exam::class)
         ]);
     }

@@ -38,7 +38,9 @@
                 {% endfor %}
 
                 {% if exam.rooms is not empty %}
-                    <i class="fa fa-door-open"></i> {{ exam.rooms|first }}
+                    <span>
+                        <i class="fa fa-door-open"></i> {{ exam.rooms|first }}
+                    </span>
                 {% endif %}
             </div>
 

@@ -7,16 +7,12 @@ use App\Entity\IcsAccessToken;
 use App\Entity\IcsAccessTokenType;
 use App\Entity\MessageScope;
 use App\Entity\Student;
-use App\Entity\StudyGroup;
-use App\Entity\StudyGroupMembership;
-use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Export\ExamIcsExporter;
 use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
 use App\Grouping\ExamWeekGroup;
 use App\Grouping\Grouper;
-use App\Grouping\StudentStudyGroupGroup;
 use App\Grouping\WeekOfYear;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
@@ -28,7 +24,6 @@ use App\Settings\ExamSettings;
 use App\Sorting\ExamDateLessonStrategy as ExamDateSortingStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
-use App\Sorting\StudentStudyGroupGroupStrategy;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
@@ -304,44 +299,13 @@ class ExamController extends AbstractControllerWithMessages {
 
         $studyGroups = [ ];
         /** @var Student[] $students */
-        $students = $exam->getStudents();
+        $students = $exam->getStudents()->toArray();
 
-        $studentsWithoutStudyGroup = [ ];
-
-        /** @var StudyGroup[] $studyGroups */
-        $studyGroups = $exam->getTuitions()
-            ->map(function(Tuition $tuition) {
-                return $tuition->getStudyGroup();
-            })->toArray();
-
-        $groups = [ ];
-
-        foreach($studyGroups as $studyGroup) {
-            $groups[$studyGroup->getId()] = new StudentStudyGroupGroup($studyGroup);
-        }
-
-        foreach($students as $student) {
-            /** @var StudyGroupMembership $membership */
-            foreach($student->getStudyGroupMemberships() as $membership) {
-                $id = $membership->getStudyGroup()->getId();
-                if(isset($groups[$id])) {
-                    $groups[$id]->addItem($student);
-                    continue 2;
-                }
-            }
-
-            $studentsWithoutStudyGroup[] = $student;
-        }
-
-        $this->sorter->sort($groups, StudentStudyGroupGroupStrategy::class);
-        $this->sorter->sortGroupItems($groups, StudentStrategy::class);
-
-        $this->sorter->sort($studentsWithoutStudyGroup, StudentStrategy::class);
+        $this->sorter->sort($students, StudentStrategy::class);
 
         return $this->renderWithMessages('exams/details.html.twig', [
             'exam' => $exam,
-            'groups' => $groups,
-            'studentsWithoutStudyGroup' => $studentsWithoutStudyGroup,
+            'students' => $students,
             'studyGroups' => $studyGroups,
             'last_import' => $this->importDateTypeRepository->findOneByEntityClass(Exam::class)
         ]);

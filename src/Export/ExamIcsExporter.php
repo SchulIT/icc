@@ -14,7 +14,9 @@ use App\Repository\ExamRepositoryInterface;
 use App\Security\Voter\ExamVoter;
 use App\Settings\ExamSettings;
 use App\Timetable\TimetableTimeHelper;
+use i;
 use Jsvrcek\ICS\Model\CalendarEvent;
+use Jsvrcek\ICS\Model\Description\Location;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -113,13 +115,23 @@ class ExamIcsExporter {
             '%tuitions%' => $this->getTuitionsAsString($exam->getTuitions()->toArray())
         ]);
 
-        return (new CalendarEvent())
+        $event = (new CalendarEvent())
             ->setUid(sprintf('exam-%d', $exam->getId()))
             ->setSummary($description)
             ->setDescription($description)
             ->setStart($start)
-            ->setEnd($end)
-            ->setLocations($exam->getRooms());
+            ->setEnd($end);
+
+        if(count($exam->getRooms()) > 0) {
+            $rooms = $exam->getRooms();
+
+            $event->setLocations([
+                (new Location())
+                ->setName($rooms[0])
+            ]);
+        }
+
+        return $event;
     }
 
     private function makeIcsItemSupervision(Exam $exam, int $lesson): CalendarEvent {

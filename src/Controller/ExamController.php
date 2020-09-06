@@ -80,6 +80,7 @@ class ExamController extends AbstractControllerWithMessages {
         $exams = [ ];
 
         $page = $request->query->getInt('page', 1);
+        $pages = 1;
 
         if($isVisible === true || $this->isGranted('ROLE_EXAMS_CREATOR') || $this->isGranted('ROLE_EXAMS_ADMIN')) {
             if($isVisible === false) {
@@ -87,6 +88,7 @@ class ExamController extends AbstractControllerWithMessages {
             }
 
             $threshold = $includePastExams ? null : $this->dateHelper->getToday();
+            $paginator = null;
 
             if ($studentFilterView->getCurrentStudent() !== null) {
                 $paginator = $examRepository->getPaginator(static::$ItemsPerPage, $page, null, null, $studentFilterView->getCurrentStudent(), null, true, $threshold);
@@ -100,18 +102,18 @@ class ExamController extends AbstractControllerWithMessages {
                 $paginator = $examRepository->getPaginator(static::$ItemsPerPage, $page, null, null, null, null, true, $threshold);
             }
 
-            /** @var Exam $exam */
-            foreach($paginator->getIterator() as $exam) {
-                if($this->isGranted(ExamVoter::Show, $exam)) {
-                    $exams[] = $exam;
+            if($paginator !== null) {
+                /** @var Exam $exam */
+                foreach ($paginator->getIterator() as $exam) {
+                    if ($this->isGranted(ExamVoter::Show, $exam)) {
+                        $exams[] = $exam;
+                    }
+                }
+
+                if($paginator->count() > 0) {
+                    $pages = ceil((float)$paginator->count() / static::$ItemsPerPage);
                 }
             }
-        }
-
-        $pages = 1;
-
-        if($paginator->count() > 0) {
-            $pages = ceil((float)$paginator->count() / static::$ItemsPerPage);
         }
 
         $groups = $this->grouper->group($exams, ExamWeekStrategy::class);

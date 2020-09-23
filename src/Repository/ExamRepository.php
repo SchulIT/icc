@@ -365,12 +365,14 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         }
 
         if($teacher !== null) {
-             $qbInner
+            $qbInner
+                 ->leftJoin('eInner.supervisions', 'sInner')
                  ->leftJoin('tInner.additionalTeachers', 'atInner')
                  ->andWhere(
                  $qb->expr()->orX(
                      'tInner.teacher = :teacher',
-                     'atInner.id = :teacher'
+                     'atInner.id = :teacher',
+                     'sInner.teacher = :teacher',
                  )
              );
              $qb->setParameter('teacher', $teacher->getId());

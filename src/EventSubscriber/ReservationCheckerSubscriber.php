@@ -7,6 +7,7 @@ use App\Entity\Substitution;
 use App\Event\SubstitutionImportEvent;
 use App\Repository\RoomReservationRepositoryInterface;
 use DateTime;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Swift_Mailer;
 use Swift_Message;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -26,8 +27,10 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
     private $mailer;
     private $twig;
     private $translator;
+    private $dateHelper;
 
-    public function __construct($appName, string $sender, ValidatorInterface $validator, RoomReservationRepositoryInterface $reservationRepository, Swift_Mailer $mailer, Environment $twig, TranslatorInterface $translator) {
+    public function __construct($appName, string $sender, ValidatorInterface $validator, RoomReservationRepositoryInterface $reservationRepository, Swift_Mailer $mailer,
+                                Environment $twig, TranslatorInterface $translator, DateHelper $dateHelper) {
         $this->appName = $appName;
         $this->sender = $sender;
 
@@ -37,6 +40,8 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
         $this->mailer = $mailer;
         $this->twig = $twig;
         $this->translator = $translator;
+
+        $this->dateHelper = $dateHelper;
     }
 
     public function onSubstitutionImportEvent(SubstitutionImportEvent $event): void {
@@ -62,14 +67,18 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
             return;
         }
 
+        $today = $this->dateHelper->getToday();
+
         while($start <= $end) {
             $reservations = $this->reservationRepository->findAllByDate($start);
 
             foreach($reservations as $reservation) {
-                $violations = $this->validator->validate($reservation);
+                if($reservation->getDate() >= $today) {
+                    $violations = $this->validator->validate($reservation);
 
-                if(count($violations) > 0) {
-                    $this->sendViolationsEmail($reservation, $violations);
+                    if (count($violations) > 0) {
+                        $this->sendViolationsEmail($reservation, $violations);
+                    }
                 }
             }
 

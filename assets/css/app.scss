@@ -278,3 +278,10 @@ $enable-gradients: true;
 .table-bordered.dataTable-table {
   border-collapse: collapse;
 }
+
+.sticky-sidebar {
+  position: -webkit-sticky;
+  position: sticky;
+  align-self: flex-start;
+  top: 1rem;
+}

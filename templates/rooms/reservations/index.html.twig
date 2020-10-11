@@ -107,7 +107,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="list-group list-group-flush">
                         <a href="{{ path('add_room_reservation') }}" class="list-group-item list-group-item-action">
@@ -152,6 +152,12 @@
 
                         <p>{{ 'plans.rooms.reservations.help'|trans }}</p>
                     </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
                 </div>
             </div>
         </div>

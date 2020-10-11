@@ -140,6 +140,7 @@ actions:
     upload: hochladen
     pick: auswählen
     view: anzeigen
+    top: nach oben
 
 clipboard:
     copy: In die Zwischenablage kopieren

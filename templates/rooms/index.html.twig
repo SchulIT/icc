@@ -12,7 +12,7 @@
 {% block content %}
     <div class="container-fluid px-0">
         <div class="row">
-            <div class="col-md-3 order-md-2">
+            <div class="col-md-3 order-md-2 sticky-sidebar">
                 {% if is_granted('ROLE_ADMIN') %}
                     <div class="card">
                         <div class="list-group list-group-flush">
@@ -113,6 +113,12 @@
                             {% endif %}
                         </p>
                     </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
                 </div>
             </div>
 

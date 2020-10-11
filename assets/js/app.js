@@ -44,15 +44,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('a[data-trigger=scroll]').forEach(function(el) {
         el.addEventListener('click', function(event) {
-            let target = document.querySelector(el.getAttribute('href'));
+            let offset = 0;
 
-            if(target !== null) {
-                event.preventDefault();
-                window.scrollTo({
-                    top: target.offsetTop,
-                    behavior: 'smooth'
-                });
+            try {
+                let target = document.querySelector(el.getAttribute('href'));
+                offset = target.offsetTop;
+            } catch (e) {
+                offset = 0;
             }
+
+            event.preventDefault();
+            window.scrollTo({
+                top: offset,
+                behavior: 'smooth'
+            });
         });
     });
 

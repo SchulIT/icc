@@ -70,8 +70,8 @@
 
                             {% for tag in tags %}
                                 <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">
+                                    <div class="input-group-prepend {% if not tag.hasValue() %}flex-fill{% endif %}">
+                                        <div class="input-group-text {% if not tag.hasValue() %}w-100{% endif %}">
                                             <div class="custom-control custom-checkbox">
                                                 <input class="mr-1 custom-control-input" type="checkbox" id="check-tag-{{ tag.uuid }}" name="tag-{{ tag.uuid }}" value="✓" {% if query.hasTag(tag) %} checked{% endif %}>
                                                 <label for="check-tag-{{ tag.uuid }}" class="custom-control-label">

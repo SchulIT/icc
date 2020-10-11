@@ -191,7 +191,7 @@
         {% if item.absentStudentGroups|length > 0 %}
             <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#absences-{{ item.lesson.lesson }}">
                 <span class="mr-auto align-self-center">
-                    <strong>{{ 'dashboard.absent_students'|trans }} <span class="badge badge-warning">{{ item.absentStudentsCount }} / {{ lesson.tuition.studyGroup.memberships|length }}</span></strong>
+                    <strong>{{ 'dashboard.absent_students'|trans }} <span class="badge badge-warning">{{ item.absentStudentsCount }} / {{ item.lesson.tuition.studyGroup.memberships|length }}</span></strong>
                 </span>
                 <i class="fa indicator align-self-center fa-chevron-down"></i>
             </div>

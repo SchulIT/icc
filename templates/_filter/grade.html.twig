@@ -6,7 +6,15 @@
         <select name="grade" id="grade" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="true">
             <option value="" placeholder>{{ 'label.select.grade'|trans }}</option>
             {% for g in gradeFilter.grades %}
-                <option value="{{ g.uuid }}" {% if gradeFilter.currentGrade != null and gradeFilter.currentGrade.uuid == g.uuid %}selected="selected"{% endif %}>{{ g.getName() }}</option>
+                <option value="{{ g.uuid }}" {% if gradeFilter.currentGrade != null and gradeFilter.currentGrade.uuid == g.uuid %}selected="selected"{% endif %}>
+                    {{ g.getName() }}
+
+                    (
+                    {%- for t in g.teachers|sort_gradeteachers -%}
+                        {{ t.teacher.acronym }}{% if not loop.last %}, {% endif %}
+                    {%- endfor -%}
+                    )
+                </option>
             {% endfor %}
         </select>
     </div>

@@ -29,6 +29,8 @@
                             {{ 'plans.exams.title'|trans({'%for%' : studentFilter.currentStudent|student}) }} ({{ studentFilter.currentStudent.grade.name }})
                         {% elseif gradeFilter.currentGrade is not null %}
                             {{ 'plans.exams.title_grades'|trans({'%for%' : gradeFilter.currentGrade.name}) }}
+
+                            {% include "_includes/grade_teachers.html.twig" with { grade: gradeFilter.currentGrade } %}
                         {% else %}
                             {{ 'plans.exams.label'|trans }}
                         {% endif %}

@@ -4,4 +4,4 @@ parameters:
         teacher: Teacher
         intern: Intern
         student: Student
-        secretary: Staff
+        staff: Staff

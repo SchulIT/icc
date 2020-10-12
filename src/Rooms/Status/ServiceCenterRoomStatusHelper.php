@@ -30,7 +30,7 @@ class ServiceCenterRoomStatusHelper implements StatusHelperInterface {
             return;
         }
 
-        $response = $this->client->get('/api/status');
+        $response = $this->client->request('GET','/api/status');
 
         if($response->getStatusCode() !== 200) {
             $this->logger->error(sprintf('Failed to retrieve room status from ServiceCenter - status code: %d', $response->getStatusCode()));

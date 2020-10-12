@@ -23,7 +23,7 @@ class GradeTeacherStrategy implements SortingStrategyInterface {
         $typeB = $objectB->getType()->equals(GradeTeacherType::Primary()) ? 1 : 0;
 
         if($typeA === $typeB) {
-            return $this->compare($objectA->getTeacher(), $objectB->getTeacher());
+            return $this->teacherStrategy->compare($objectA->getTeacher(), $objectB->getTeacher());
         }
 
         return $typeB - $typeA;

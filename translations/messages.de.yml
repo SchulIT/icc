@@ -119,6 +119,9 @@ label:
     supervisions: Aufsichten
     toggle_multiple: Mehrfachauswahl aktivieren
     not_available: N/A
+    reservation_enabled:
+        label: Reservierung erlaubt
+        help: Wenn diese Option deaktiviert ist, kann der Raum nicht gebucht werden. Bereits getätigte Reservierungen bleiben aktiv.
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

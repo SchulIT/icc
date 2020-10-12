@@ -60,6 +60,10 @@ class RoomReservationController extends AbstractController {
             $sorter->sort($rooms, RoomNameStrategy::class);
         }
 
+        $rooms = array_filter($rooms, function(Room $room) {
+            return $room->isReservationEnabled();
+        });
+
         $overview = $availabilityHelper->getAvailabilities($date, $rooms);
 
         $status = [ ];

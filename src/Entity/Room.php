@@ -50,6 +50,12 @@ class Room {
      */
     private $tags;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $isReservationEnabled = true;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->tags = new ArrayCollection();
@@ -152,5 +158,21 @@ class Room {
         foreach($this->getTags() as $tag) {
             $tag->setRoom($this);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReservationEnabled(): bool {
+        return $this->isReservationEnabled;
+    }
+
+    /**
+     * @param bool $isReservationEnabled
+     * @return Room
+     */
+    public function setIsReservationEnabled(bool $isReservationEnabled): Room {
+        $this->isReservationEnabled = $isReservationEnabled;
+        return $this;
     }
 }

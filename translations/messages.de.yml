@@ -1018,3 +1018,6 @@ webpush:
 system:
     label: System
 
+servicecenter:
+    problem: Anzahl der Probleme in diesem Raum
+    maintenance: Anzahl der Wartungsarbeiten in diesem Raum

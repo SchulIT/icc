@@ -149,6 +149,18 @@
                                 </a>
                             </div>
 
+                            {% if status[room.id] is defined and status[room.id] is not null %}
+                            <div class="float-right ml-2">
+                                {% set roomStatus = status[room.id] %}
+                                {% for badge in roomStatus.badges %}
+                                    <a href="{{ roomStatus.link }}" target="_blank" class="btn btn-sm btn-outline-{% if badge.counter > 0 %}danger{% else %}success{% endif %}" title="{{ badge.label|trans }}">
+                                        {%- if badge.icon is not null -%}<i class="{{ badge.icon }}"></i>{%- endif -%}
+                                        <span class="badge badge-pill">{{ badge.counter }}</span>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
                             <h5 class="card-title">
                                 {{ room.name }}
 

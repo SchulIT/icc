@@ -1,4 +1,16 @@
 {
+    "eightpoints/guzzle-bundle": {
+        "version": "7.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "7.0",
+            "ref": "7babb21a3928e44e485391907e3abc346804e0d2"
+        },
+        "files": [
+            "./config/packages/eight_points_guzzle.yaml"
+        ]
+    },
     "frostiede/enum-bundle": {
         "version": "3.0.0"
     },

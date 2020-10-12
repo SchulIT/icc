@@ -11,6 +11,7 @@ use App\Grouping\RoomReservationWeekStrategy;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\RoomReservationRepositoryInterface;
 use App\Rooms\Reservation\RoomAvailabilityHelper;
+use App\Rooms\Status\StatusHelperInterface;
 use App\Security\Voter\RoomReservationVoter;
 use App\Settings\TimetableSettings;
 use App\Sorting\RoomNameStrategy;
@@ -49,7 +50,7 @@ class RoomReservationController extends AbstractController {
      * @Route("", name="room_reservations")
      */
     public function index(DateHelper $dateHelper, RoomRepositoryInterface $roomRepository, RoomsFilter $roomsFilter,
-                          RoomAvailabilityHelper $availabilityHelper, Sorter $sorter, Request $request) {
+                          RoomAvailabilityHelper $availabilityHelper, Sorter $sorter, Request $request, StatusHelperInterface $statusHelper) {
         $date = $this->getDateFromRequest($request, $dateHelper);
         $roomsFilterView = $roomsFilter->handle($request->query->get('rooms', []));
         $rooms = $roomsFilterView->getCurrentRooms();
@@ -61,11 +62,18 @@ class RoomReservationController extends AbstractController {
 
         $overview = $availabilityHelper->getAvailabilities($date, $rooms);
 
+        $status = [ ];
+
+        foreach($rooms as $room) {
+            $status[$room->getId()] = $statusHelper->getStatus($room->getExternalId());
+        }
+
         return $this->render('rooms/reservations/index.html.twig', [
             'roomsFilter' => $roomsFilterView,
             'rooms' => $rooms,
             'date' => $date,
             'overview' => $overview,
+            'status' => $status,
             'days' => $dateHelper->getListOfNextDays(7, $date)
         ]);
     }

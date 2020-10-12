@@ -144,6 +144,10 @@ services:
         arguments:
             - !tagged app.sorting_strategy
 
+    App\Rooms\Status\ServiceCenterRoomStatusHelper:
+        arguments:
+            $isEnabled: '%env(bool:ROOM_STATUS)%'
+
     # CONTROLLER
     App\Controller\MarkdownController:
         bind:

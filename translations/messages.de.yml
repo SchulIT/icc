@@ -566,7 +566,7 @@ admin:
             planning:
                 label: Planung
                 number_of_exams_week:
-                    label: Klausuren pro Woche
+                    label: Klausuren pro Woche (%grade%)
                     help: Maximale Anzahl an Klausuren pro Wochen. Diese Beschränkung gilt nicht für Benutzer der Rolle ROLE_EXAMS_CREATOR und ROLE_EXAMS_ADMIN.
                 number_of_exams_day:
                     label: Klausuren pro Tag

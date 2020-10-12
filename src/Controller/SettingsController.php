@@ -16,6 +16,8 @@ use App\Settings\ExamSettings;
 use App\Settings\NotificationSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
+use App\Sorting\GradeNameStrategy;
+use App\Sorting\Sorter;
 use App\Utils\ArrayUtils;
 use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -202,7 +204,8 @@ class SettingsController extends AbstractController {
     /**
      * @Route("/exams", name="admin_settings_exams")
      */
-    public function exams(Request $request, ExamSettings $examSettings, EnumStringConverter $enumStringConverter, GradeRepositoryInterface $gradeRepository) {
+    public function exams(Request $request, ExamSettings $examSettings, EnumStringConverter $enumStringConverter,
+                          GradeRepositoryInterface $gradeRepository, Sorter $sorter) {
         $builder = $this->createFormBuilder();
         $builder
             ->add('visibility', ChoiceType::class, [
@@ -260,12 +263,6 @@ class SettingsController extends AbstractController {
                 'required' => false,
                 'data' => $examSettings->getNotificationReplyToAddress()
             ])
-            ->add('number_of_exams_week', IntegerType::class, [
-                'label' => 'admin.settings.exams.planning.number_of_exams_week.label',
-                'help' => 'admin.settings.exams.planning.number_of_exams_week.help',
-                'required' => true,
-                'data' => $examSettings->getMaximumNumberOfExamsPerWeek()
-            ])
             ->add('number_of_exams_day', IntegerType::class, [
                 'label' => 'admin.settings.exams.planning.number_of_exams_day.label',
                 'help' => 'admin.settings.exams.planning.number_of_exams_day.help',
@@ -287,6 +284,21 @@ class SettingsController extends AbstractController {
                 ],
                 'data' => $examSettings->getVisibleGradeIds()
             ]);
+
+        $grades = $gradeRepository->findAll();
+        $sorter->sort($grades, GradeNameStrategy::class);
+
+        foreach($grades as $grade) {
+            $builder->add(sprintf('number_of_exams_week_%d', $grade->getId()), IntegerType::class, [
+                'label' => 'admin.settings.exams.planning.number_of_exams_week.label',
+                'label_translation_parameters' => [
+                    '%grade%' => $grade->getName()
+                ],
+                'help' => 'admin.settings.exams.planning.number_of_exams_week.help',
+                'required' => true,
+                'data' => $examSettings->getMaximumNumberOfExamsPerWeek($grade)
+            ]);
+        }
 
         $form = $builder->getForm();
         $form->handleRequest($request);
@@ -311,9 +323,6 @@ class SettingsController extends AbstractController {
                 'notifications_replyaddress' => function(?string $address) use($examSettings) {
                     $examSettings->setNotificationReplyToAddress($address);
                 },
-                'number_of_exams_week' => function(int $number) use ($examSettings) {
-                    $examSettings->setMaximumNumberOfExamsPerWeek($number);
-                },
                 'number_of_exams_day' => function(int $number) use ($examSettings) {
                     $examSettings->setMaximumNumberOfExamsPerDay($number);
                 },
@@ -321,6 +330,12 @@ class SettingsController extends AbstractController {
                     $examSettings->setVisibleGradeIds($visibleGrades ?? [ ]);
                 }
             ];
+
+            foreach($grades as $grade) {
+                $map[sprintf('number_of_exams_week_%d', $grade->getId())] = function(int $number) use($grade, $examSettings) {
+                    $examSettings->setMaximumNumberOfExamsPerWeek($grade, $number);
+                };
+            }
 
             foreach($map as $formKey => $callable) {
                 $value = $form->get($formKey)->getData();
@@ -333,7 +348,8 @@ class SettingsController extends AbstractController {
         }
 
         return $this->render('admin/settings/exams.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'grades' => $grades
         ]);
     }
 

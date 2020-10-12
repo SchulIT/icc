@@ -56,10 +56,10 @@ class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
                 }
             }
 
-            if($numberOfExams > $this->examSettings->getMaximumNumberOfExamsPerWeek()) {
+            if($numberOfExams > $this->examSettings->getMaximumNumberOfExamsPerWeek($student->getGrade())) {
                 $this->context
                     ->buildViolation($constraint->message)
-                    ->setParameter('{{ maxNumber }}', (string)$this->examSettings->getMaximumNumberOfExamsPerWeek())
+                    ->setParameter('{{ maxNumber }}', (string)$this->examSettings->getMaximumNumberOfExamsPerWeek($student->getGrade()))
                     ->setParameter('{{ number }}', (string)$numberOfExams)
                     ->addViolation();
             }

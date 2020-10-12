@@ -70,7 +70,7 @@ class ExamController extends AbstractControllerWithMessages {
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
         $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user, $studyGroupFilterView->getCurrentStudyGroup() === null && $gradeFilterView->getCurrentGrade() === null);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $studyGroupFilterView->getCurrentStudyGroup() === null && $gradeFilterView->getCurrentGrade() === null);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, false);
         $includePastExams = $request->query->getBoolean('past', false);
 
         $isVisible = $examSettings->isVisibileFor($user->getUserType()) && $this->isVisibleForGrade($user, $examSettings);

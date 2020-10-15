@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Exam;
 use App\Entity\Grade;
+use App\Entity\Room;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
@@ -288,12 +289,35 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
+    public function findAllByDate(DateTime $today): array {
+        $qb = $this->getDefaultQueryBuilder($today, true);
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAllByDateAndLesson(\DateTime $today, int $lesson): array {
         $qb = $this->getDefaultQueryBuilder($today, true);
 
         $qb
             ->andWhere('e.lessonStart <= :lesson AND e.lessonEnd >= :lesson')
             ->setParameter('lesson', $lesson);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByRoomAndDateAndLesson(Room $room, DateTime $today, int $lesson): array {
+        $qb = $this->getDefaultQueryBuilder($today, true);
+
+        $qb
+            ->andWhere('e.lessonStart <= :lesson AND e.lessonEnd >= :lesson')
+            ->setParameter('lesson', $lesson)
+            ->andWhere('e.room = :room')
+            ->setParameter('room', $room->getId());
 
         return $qb->getQuery()->getResult();
     }

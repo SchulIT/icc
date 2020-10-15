@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Validator\NoReservationCollision;
 use App\Validator\NotTooManyExamsPerDay;
 use App\Validator\NotTooManyExamsPerWeek;
 use DateTime;
@@ -15,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity()
  * @NotTooManyExamsPerWeek()
  * @NotTooManyExamsPerDay()
+ * @NoReservationCollision()
  */
 class Exam {
 
@@ -90,10 +92,11 @@ class Exam {
     private $supervisions;
 
     /**
-     * @ORM\Column(type="json")
-     * @var string[]
+     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @var Room|null
      */
-    private $rooms = [ ];
+    private $room;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -252,18 +255,18 @@ class Exam {
     }
 
     /**
-     * @return string[]
+     * @return Room|null
      */
-    public function getRooms(): array {
-        return $this->rooms;
+    public function getRoom(): ?Room {
+        return $this->room;
     }
 
     /**
-     * @param string[] $rooms
+     * @param Room|null $room
      * @return Exam
      */
-    public function setRooms(array $rooms): Exam {
-        $this->rooms = $rooms;
+    public function setRoom(?Room $room): Exam {
+        $this->room = $room;
         return $this;
     }
 }

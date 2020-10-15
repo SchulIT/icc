@@ -92,14 +92,16 @@ class Substitution {
     private $replacementTeachers;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
-     * @var string|null
+     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @var Room|null
      */
     private $room = null;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
-     * @var string|null
+     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @var Room|null
      */
     private $replacementRoom = null;
 
@@ -297,33 +299,33 @@ class Substitution {
     }
 
     /**
-     * @return string|null
+     * @return Room|null
      */
-    public function getRoom(): ?string {
+    public function getRoom(): ?Room {
         return $this->room;
     }
 
     /**
-     * @param string|null $room
+     * @param Room|null $room
      * @return Substitution
      */
-    public function setRoom(?string $room): Substitution {
+    public function setRoom(?Room $room): Substitution {
         $this->room = $room;
         return $this;
     }
 
     /**
-     * @return string|null
+     * @return Room|null
      */
-    public function getReplacementRoom(): ?string {
+    public function getReplacementRoom(): ?Room {
         return $this->replacementRoom;
     }
 
     /**
-     * @param string|null $replacementRoom
+     * @param Room|null $replacementRoom
      * @return Substitution
      */
-    public function setReplacementRoom(?string $replacementRoom): Substitution {
+    public function setReplacementRoom(?Room $replacementRoom): Substitution {
         $this->replacementRoom = $replacementRoom;
         return $this;
     }

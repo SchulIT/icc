@@ -1,0 +1,30 @@
+{% extends "email/main.html.twig" %}
+
+{% block title %}{{ 'reservation.title'|trans({}, 'email') }}{% endblock %}
+
+{% block button_content %}{{ 'reservation.link'|trans({}, 'email') }}{% endblock %}
+{% block button_url%}{{ url('edit_exam', { uuid: exam.uuid }) }}{% endblock %}
+
+{% block preview %}{{ 'reservation.content_exam'|trans({
+    '%room%': reservation.room.name,
+    '%date%': reservation.date|format_date,
+    '%lesson%': 'label.substitution_lessons'|trans({'%start%': reservation.lessonStart, '%end%': reservation.lessonEnd, '%count%': (reservation.lessonEnd - reservation.lessonStart)})
+}, 'email') }}{% endblock %}
+
+{% block content %}
+    <p>
+        {{ 'reservation.content'|trans({
+            '%room%': reservation.room.name,
+            '%date%': reservation.date|format_date,
+            '%lesson%': 'label.substitution_lessons'|trans({'%start%': reservation.lessonStart, '%end%': reservation.lessonEnd, '%count%': (reservation.lessonEnd - reservation.lessonStart)})
+        }, 'email') }}
+    </p>
+
+    <ul>
+        {% for error in validation_errors(reservation)|default([]) %}
+            <li>{{ error.message|trans(error.parameters, 'validators') }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block additional %}{% endblock %}

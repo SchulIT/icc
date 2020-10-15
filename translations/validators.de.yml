@@ -5,4 +5,5 @@
 "This room reservation collides with an existing reservation by {{ teacher }} in lesson {{ lessonNumber }}.": "Diese Raum-Reservierung kollidiert mit einer bestehenden Reservierung von {{ teacher }} in der {{ lessonNumber }}. Stunde."
 "This room reservation collides with an existing timetable lesson {{ tuition }} ({{ teacher }}) in lesson {{ lessonNumber }}.": "Diese Raum-Reservierung kollidiert mit bestehendem Unterricht {{ tuition }} von {{ teacher }} in der {{ lessonNumber }}. Stunde."
 "This room reservation collides with an existing substitution in lesson {{ lessonNumber }}.": "Diese Raum-Reservierung kollidiert mit einer Vertretung in der {{ lessonNumber }}. Stunde."
+"This room reservation collides with an existing exam in lesson {{ lessonNumber }}.": "Diese Raum-Reservierung kollidiert mit einer Klausur in der {{ lessonNumber }}. Stunde."
 "This value must not be in the past.": "Dieses Datum darf nicht in der Vergangenheit liegen."

@@ -2,6 +2,7 @@
 
 namespace App\Rooms\Reservation;
 
+use App\Entity\Exam;
 use App\Entity\RoomReservation;
 use App\Entity\Substitution;
 use App\Entity\TimetableLesson;
@@ -14,12 +15,15 @@ class RoomAvailability {
 
     private $substitution;
 
+    private $exams = [ ];
+
     private $isTimetableLessonCancelled = false;
 
-    public function __construct(?RoomReservation $reservation, ?TimetableLesson $timetableLesson, ?Substitution $substitution) {
+    public function __construct(?RoomReservation $reservation, ?TimetableLesson $timetableLesson, ?Substitution $substitution, array $exams) {
         $this->reservation = $reservation;
         $this->timetableLesson = $timetableLesson;
         $this->substitution = $substitution;
+        $this->exams = $exams;
     }
 
     /**
@@ -43,6 +47,13 @@ class RoomAvailability {
         return $this->substitution;
     }
 
+    /**
+     * @return Exam[]
+     */
+    public function getExams(): array {
+        return $this->exams;
+    }
+
     public function setTimetableLessonCancelled(): void {
         $this->isTimetableLessonCancelled = true;
     }
@@ -54,6 +65,7 @@ class RoomAvailability {
     public function isAvailable(): bool {
         return $this->reservation === null
             && $this->substitution === null
+            && count($this->exams) === 0
             && ($this->timetableLesson === null || $this->isTimetableLessonCancelled());
     }
 }

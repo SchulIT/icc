@@ -9,6 +9,7 @@ use App\Entity\Tuition;
 use App\Event\ExamImportEvent;
 use App\Event\SubstitutionImportEvent;
 use App\Repository\ExamRepositoryInterface;
+use App\Repository\RoomRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
@@ -25,14 +26,16 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
     private $tuitionRepository;
     private $studentRepository;
     private $teacherRepository;
+    private $roomRepository;
     private $dispatcher;
 
     public function __construct(ExamRepositoryInterface $examRepository, TuitionRepositoryInterface $tuitionRepository,
-                                StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository, EventDispatcherInterface $eventDispatcher) {
+                                StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository, EventDispatcherInterface $eventDispatcher, RoomRepositoryInterface $roomRepository) {
         $this->examRepository = $examRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->studentRepository = $studentRepository;
         $this->teacherRepository = $teacherRepository;
+        $this->roomRepository = $roomRepository;
         $this->dispatcher = $eventDispatcher;
     }
 
@@ -89,7 +92,24 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
         $entity->setDescription($data->getDescription());
         $entity->setLessonStart($data->getLessonStart());
         $entity->setLessonEnd($data->getLessonEnd());
-        $entity->setRooms($data->getRooms());
+
+        /*
+         * for compatibility reasons only!
+         */
+        $rooms = $data->getRooms();
+        $room = array_shift($rooms);
+
+        if(!empty($room)) {
+            $roomEntity = $this->roomRepository->findOneByExternalId($room);
+
+            if($roomEntity === null) {
+                throw new ImportException(sprintf('Room "%s" on substitution ID "%s" was not found.', $room, $data->getId()));
+            }
+
+            $entity->setRoom($roomEntity);
+        } else {
+            $entity->setRoom(null);
+        }
 
         $supervisions = $data->getSupervisions();
 

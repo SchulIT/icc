@@ -122,12 +122,10 @@ class ExamIcsExporter {
             ->setStart($start)
             ->setEnd($end);
 
-        if(count($exam->getRooms()) > 0) {
-            $rooms = $exam->getRooms();
-
+        if($exam->getRoom() !== null) {
             $event->setLocations([
                 (new Location())
-                ->setName($rooms[0])
+                    ->setName($exam->getRoom()->getName())
             ]);
         }
 
@@ -141,13 +139,22 @@ class ExamIcsExporter {
             '%tuitions%' => $this->getTuitionsAsString($exam->getTuitions()->toArray())
         ]);
 
-        return (new CalendarEvent())
+        $event = (new CalendarEvent())
             ->setUid(sprintf('exam-%d-supervision-%d', $exam->getId(), $lesson))
             ->setSummary($description)
             ->setDescription($description)
             ->setStart($start)
-            ->setEnd($end)
-            ->setLocations($exam->getRooms());
+            ->setEnd($end);
+
+
+        if($exam->getRoom() !== null) {
+            $event->setLocations([
+                (new Location())
+                    ->setName($exam->getRoom()->getName())
+            ]);
+        }
+
+        return $event;
     }
 
     private function isExamTeacher(Exam $exam, ?Teacher $teacher): bool {

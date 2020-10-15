@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Exam;
 use App\Entity\ExamSupervision;
 use App\Entity\Grade;
+use App\Entity\Room;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Teacher;
 use App\Repository\TuitionRepositoryInterface;
@@ -41,6 +42,7 @@ class ExamFixtures extends Fixture implements DependentFixtureInterface {
             ]);
 
         $tuitions = $this->tuitionRepository->findAllByGrades([$grade]);
+        $rooms = $manager->getRepository(Room::class)->findAll();
 
         $teachers = $manager->getRepository(Teacher::class)
             ->findAll();
@@ -65,7 +67,7 @@ class ExamFixtures extends Fixture implements DependentFixtureInterface {
                     ->setLessonStart($start)
                     ->setLessonEnd($start + $duration - 1)
                     ->setDescription($this->generator->text(20))
-                    ->setRooms(array_fill(0, $duration, $room));
+                    ->setRoom($this->generator->randomElement($rooms));
 
                 $manager->persist($exam);
 
@@ -113,7 +115,8 @@ class ExamFixtures extends Fixture implements DependentFixtureInterface {
      */
     public function getDependencies() {
         return [
-            TuitionFixtures::class
+            TuitionFixtures::class,
+            RoomFixtures::class
         ];
     }
 }

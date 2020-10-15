@@ -175,4 +175,8 @@ class Room {
         $this->isReservationEnabled = $isReservationEnabled;
         return $this;
     }
+
+    public function __toString() {
+        return $this->getName();
+    }
 }

@@ -31,5 +31,6 @@ message:
 reservation:
   title: Konflikt bei Raum-Reservierung
   content: 'bei der Raumreservierung für %room% am %date% (%lesson%) ist es zu einem Konflikt gekommen.'
+  content_exam: 'bei der Raumreservierung für eine Klausur in %room% am %date% (%lesson%) ist es zu einem Konflikt gekommen.'
   link: Reservierung anzeigen
 

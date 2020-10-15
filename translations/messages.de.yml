@@ -123,6 +123,7 @@ label:
     reservation_enabled:
         label: Reservierung erlaubt
         help: Wenn diese Option deaktiviert ist, kann der Raum nicht gebucht werden. Bereits getätigte Reservierungen bleiben aktiv.
+    room_reservation_hint: Wenn ein Raum angegeben ist, wird dieser im Raumbelegplan automatisch geblockt. Bitte nur angeben, wenn Klausurraum und Unterrichtsraum verschieden sind.
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

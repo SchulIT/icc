@@ -67,8 +67,8 @@
                     </span>
                     {% endfor %}
 
-                    {% if exam.rooms is not empty %}
-                        <i class="fa fa-door-open"></i> {{ exam.rooms|first }}
+                    {% if item.exam.room is not null %}
+                        <i class="fa fa-door-open"></i> {{ item.exam.room.name }}
                     {% endif %}
                 </div>
 
@@ -100,8 +100,8 @@
                             <span class="mx-1"></span>
                         {% endfor %}
 
-                        {% if item.exam.rooms is not null and item.exam.rooms|length > 0 %}
-                            <i class="fa fa-door-open"></i> {{ item.exam.rooms|first }}
+                        {% if item.exam.room is not null %}
+                            <i class="fa fa-door-open"></i> {{ item.exam.room.name }}
                         {% endif %}
                     </span>
 
@@ -299,9 +299,9 @@
                         <span class="mx-1"></span>
                     </span>
 
-                    {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
+                    {% if substitution.room is not null or substitution.replacementRoom is not null %}
                         <span>
-                            <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
+                            <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room ? substitution.room.name : null, substitution.replacementRoom ? substitution.replacementRoom : null) }}
                         </span>
                     {% endif %}
                 </div>

@@ -3,6 +3,7 @@
 namespace App\Validator;
 
 use App\Converter\TeacherStringConverter;
+use App\Entity\Exam;
 use App\Entity\RoomReservation;
 use App\Rooms\Reservation\RoomAvailabilityHelper;
 use Symfony\Component\Validator\Constraint;
@@ -27,7 +28,7 @@ class NoReservationCollisionValidator extends ConstraintValidator {
             throw new UnexpectedTypeException($constraint, NoReservationCollision::class);
         }
 
-        if(!$value instanceof RoomReservation) {
+        if(!$value instanceof RoomReservation && !$value instanceof Exam) {
             throw new UnexpectedTypeException($value, RoomReservation::class);
         }
 
@@ -84,6 +85,21 @@ class NoReservationCollisionValidator extends ConstraintValidator {
                     ->setParameter('{{ teacher }}', $this->teacherConverter->convert($existingReservation->getTeacher()))
                     ->setParameter('{{ lessonNumber }}', (string)$lessonNumber)
                     ->addViolation();
+            }
+
+            $exams = $availability->getExams();
+
+            if(count($exams) > 0) {
+                foreach($exams as $collidingExam) {
+                    if($value instanceof Exam && $value->getId() === $collidingExam->getId()) {
+                        continue;
+                    }
+
+                    $this->context
+                        ->buildViolation($constraint->messageExam)
+                        ->setParameter('{{ lessonNumber }}', (string)$lessonNumber)
+                        ->addViolation();
+                }
             }
         }
     }

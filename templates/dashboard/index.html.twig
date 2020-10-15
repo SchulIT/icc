@@ -219,6 +219,10 @@
                             {% include "_filter/teacher.html.twig" with { params: { date: dateParam } } %}
                         {% endif %}
 
+                        {% if roomFilter.rooms|length > 0 %}
+                            {% include "_filter/room.html.twig" with { params: { date: dateParam } } %}
+                        {% endif %}
+
                         {% if studentFilter.studentGradeGroups|length > 0 %}
                             {% include "_filter/student.html.twig" with { params: { user_type: userTypeParam, date: dateParam } } %}
                         {% endif %}

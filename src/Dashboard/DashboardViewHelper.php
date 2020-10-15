@@ -9,6 +9,7 @@ use App\Entity\FreeTimespan;
 use App\Entity\GradeTeacher;
 use App\Entity\Message;
 use App\Entity\MessageScope;
+use App\Entity\Room;
 use App\Entity\RoomReservation;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
@@ -112,6 +113,25 @@ class DashboardViewHelper {
         $this->dashboardSettings = $dashboardSettings;
         $this->authorizationChecker = $authorizationChecker;
         $this->validator = $validator;
+    }
+
+    public function createViewForRoom(Room $room, DateTime $dateTime): DashboardView {
+        $view = new DashboardView($dateTime);
+
+        $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
+        $numberOfWeeks = count($this->timetableWeekRepository->findAll());
+
+        if($currentPeriod !== null) {
+            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndRoom($currentPeriod, $room), $dateTime, $view, true, $numberOfWeeks);
+            $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
+        }
+
+        $this->addSubstitutions($this->substitutionRepository->findAllForRooms([ $room ], $dateTime), $view);
+        $this->addExams($exams = $this->examRepository->findAllByRoomAndDate($room, $dateTime), $view, null);
+        $this->addRoomReservations($this->roomReservationRepository->findAllByRoomAndDate($room, $dateTime), $view);
+        $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
+
+        return $view;
     }
 
     public function createViewForTeacher(Teacher $teacher, DateTime $dateTime, bool $includeGradeMessages = false): DashboardView {

@@ -45,6 +45,17 @@ class RoomReservationRepository extends AbstractRepository implements RoomReserv
             ]);
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function findAllByRoomAndDate(Room $room, DateTime $dateTime): array {
+        return $this->em->getRepository(RoomReservation::class)
+            ->findBy([
+                'date' => $dateTime,
+                'room' => $room
+            ]);
+    }
+
     public function persist(RoomReservation $reservation): void {
         $this->em->persist($reservation);
         $this->em->flush();
@@ -54,7 +65,6 @@ class RoomReservationRepository extends AbstractRepository implements RoomReserv
         $this->em->remove($reservation);
         $this->em->flush();
     }
-
 
     /**
      * @inheritDoc

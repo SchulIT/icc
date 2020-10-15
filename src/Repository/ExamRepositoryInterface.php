@@ -121,6 +121,13 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
     /**
      * @param Room $room
      * @param DateTime $today
+     * @return Exam[]
+     */
+    public function findAllByRoomAndDate(Room $room, DateTime $today): array;
+
+    /**
+     * @param Room $room
+     * @param DateTime $today
      * @param int $lesson
      * @return Exam[]
      */

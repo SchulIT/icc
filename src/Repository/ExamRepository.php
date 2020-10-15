@@ -310,6 +310,19 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
+    public function findAllByRoomAndDate(Room $room, DateTime $today): array {
+        $qb = $this->getDefaultQueryBuilder($today, true);
+
+        $qb
+            ->andWhere('e.room = :room')
+            ->setParameter('room', $room->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAllByRoomAndDateAndLesson(Room $room, DateTime $today, int $lesson): array {
         $qb = $this->getDefaultQueryBuilder($today, true);
 

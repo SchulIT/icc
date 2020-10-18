@@ -161,9 +161,9 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
                 ->setSender($this->sender, $this->appName)
                 ->setBody($content, 'text/html')
                 ->setTo([$recipient->getEmail()]);
-        }
 
-        $this->mailer->send($message);
+            $this->mailer->send($message);
+        }
     }
 
     /**

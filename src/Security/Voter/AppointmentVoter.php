@@ -80,7 +80,7 @@ class AppointmentVoter extends Voter {
             return false;
         }
 
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $token->getUser();
 
         if($user === null) {

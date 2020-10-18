@@ -109,7 +109,7 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
             ->leftJoin('sInner.teachers', 'tInner')
             ->leftJoin('sInner.replacementTeachers', 'rtInner');
 
-        $regExp = '(^|\s|\.|,|;|:|\()(' . $teacher->getAcronym() . ')($|\s|\.|,|;|:|\))';
+        $regExp = '(^|\s|\.|,|;|\:|\()(' . $teacher->getAcronym() . ')($|\s|\.|,|;|\:|\))';
 
         $qbInner->where(
             $qbInner->expr()->orX(

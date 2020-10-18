@@ -38,6 +38,16 @@
                         <a href="{{ path('appointments_export') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-download"></i> {{ 'plans.appointments.export.label'|trans }}
                         </a>
+
+                        {% if is_granted('ROLE_APPOINTMENT_CREATOR') %}
+                            <a href="{{ path('add_appointment') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-plus"></i> {{ 'admin.appointments.add.label'|trans }}
+                            </a>
+
+                            <a href="{{ path('admin_appointments') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-cogs"></i> {{ 'admin.appointments.label'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
 

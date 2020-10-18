@@ -65,11 +65,16 @@ document.addEventListener('DOMContentLoaded', function () {
             let title = event.title;
             let content = event.extendedProps.content;
             let view = event.extendedProps.view;
+            let confirmation_status = event.extendedProps.confirmation_status;
 
             let template = '<div class="popover" role="tooltip">' +
                 '<div class="arrow"></div>' +
                 '<h3 class="popover-header">' + title + ' <span class="badge" style="background: ' + event.backgroundColor + '; color: ' + event.textColor + '">' + event.extendedProps.category + '</span></h3>' +
                 '<div class="popover-body">';
+
+            if(confirmation_status !== null) {
+                template += '<span class="badge badge-danger"><i class="fa fa-information-circle"></i> ' + confirmation_status + '</span>';
+            }
 
             if(content !== null) {
                 template += '<p>' + content + '</p>';

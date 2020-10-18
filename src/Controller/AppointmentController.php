@@ -183,7 +183,8 @@ class AppointmentController extends AbstractControllerWithMessages {
                 'extendedProps' => [
                     'category'=> $appointment->getCategory()->getName(),
                     'content' => $appointment->getContent(),
-                    'view' => $view
+                    'view' => $view,
+                    'confirmation_status' => $appointment->isConfirmed() === false ? $translator->trans('label.not_confirmed') : null
                 ]
             ];
         }

@@ -68,15 +68,30 @@ class AppointmentVoter extends Voter {
     }
 
     private function canCreate(TokenInterface $token) {
-        return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']);
+        return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENT_CREATOR']);
     }
 
     private function canEdit(Appointment $appointment, TokenInterface $token) {
-        return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']);
+        if($this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']) === true) {
+            return true;
+        }
+
+        if($appointment->getCreatedBy() === null) {
+            return false;
+        }
+
+        /** @var User $user */
+        $user = $token->getUser();
+
+        if($user === null) {
+            return false;
+        }
+
+        return $appointment->getCreatedBy()->getId() === $user->getId();
     }
 
     private function canRemove(Appointment $appointment, TokenInterface $token) {
-        return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']);
+        return $this->canEdit($appointment, $token);
     }
 
     private function canView(Appointment $appointment, TokenInterface $token) {
@@ -100,6 +115,11 @@ class AppointmentVoter extends Voter {
         if($isStudentOrParent !== true) {
             // Everyone but students and parents may pass
             return true;
+        }
+
+        // Check confirmation status (students and parents must not see non-confirmed appointments)
+        if($appointment->isConfirmed() === false) {
+            return false;
         }
 
         // Check visibility (students and parents only)

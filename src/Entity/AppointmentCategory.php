@@ -40,6 +40,14 @@ class AppointmentCategory {
      */
     private $color = null;
 
+    /**
+     * Determines whether non-admin users can add appointments in this category
+     *
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $usersCanCreateAppointments = false;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
     }
@@ -89,6 +97,22 @@ class AppointmentCategory {
      */
     public function setColor(?string $color): AppointmentCategory {
         $this->color = $color;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUsersCanCreateAppointments(): bool {
+        return $this->usersCanCreateAppointments;
+    }
+
+    /**
+     * @param bool $usersCanCreateAppointments
+     * @return AppointmentCategory
+     */
+    public function setUsersCanCreateAppointments(bool $usersCanCreateAppointments): AppointmentCategory {
+        $this->usersCanCreateAppointments = $usersCanCreateAppointments;
         return $this;
     }
 }

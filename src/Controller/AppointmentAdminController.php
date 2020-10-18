@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
+use App\Entity\User;
 use App\Form\AppointmentType;
 use App\Grouping\AppointmentDateStrategy as AppointmentGroupingStrategy;
 use App\Grouping\Grouper;
@@ -22,7 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/admin/appointments")
- * @Security("is_granted('ROLE_APPOINTMENTS_ADMIN')")
+ * @Security("is_granted('ROLE_APPOINTMENT_CREATOR')")
  */
 class AppointmentAdminController extends AbstractController {
 
@@ -48,8 +49,10 @@ class AppointmentAdminController extends AbstractController {
         $categoryFilterView = $categoryFilter->handle($request->query->get('category', null));
         $categories = $categoryFilterView->getCurrentCategory() === null ? [ ] : [$categoryFilterView->getCurrentCategory()];
         $page = $request->query->getInt('page');
+        /** @var User|null $createdBy */
+        $createdBy = $this->isGranted('ROLE_APPOINTMENTS_ADMIN') ? null : $this->getUser();
 
-        $paginator = $this->repository->getPaginator(static::NumberOfAppointments, $page, $categories, $q);
+        $paginator = $this->repository->getPaginator(static::NumberOfAppointments, $page, $categories, $q, $createdBy);
         $pages = 1;
 
         if($paginator->count() > 0) {
@@ -79,7 +82,13 @@ class AppointmentAdminController extends AbstractController {
      * @Route("/add", name="add_appointment")
      */
     public function add(Request $request) {
-        $appointment = new Appointment();
+        $appointment = (new Appointment())
+            ->setIsConfirmed(false);
+
+        if($this->isGranted('ROLE_APPOINTMENTS_ADMIN')) {
+            $appointment->setIsConfirmed(true);
+        }
+
         $form = $this->createForm(AppointmentType::class, $appointment);
         $form->handleRequest($request);
 
@@ -139,4 +148,6 @@ class AppointmentAdminController extends AbstractController {
             'appointment' => $appointment
         ]);
     }
+
+
 }

@@ -8,6 +8,7 @@ use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
+use App\Entity\User;
 use App\Entity\UserType;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -256,7 +257,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->getQuery()->getResult();
     }
 
-    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null): Paginator {
+    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null, ?User $createdBy = null): Paginator {
         $qbIds = $this->em->createQueryBuilder();
         $params = [ ];
 
@@ -284,6 +285,11 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
                 );
 
             $params['query'] = '%' . $q . '%';
+        }
+
+        if($createdBy !== null) {
+            $qbIds->andWhere('aInner.createdBy = :user');
+            $params['user'] = $createdBy;
         }
 
         $qb = $this->getAppointments($qbIds->getDQL(), $params, null);

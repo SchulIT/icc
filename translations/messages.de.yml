@@ -104,6 +104,7 @@ label:
     type: Art
     remark: Anmerkung
     confirmed: bestätigt
+    not_confirmed: nicht bestätigt
     version: Version
     user: Benutzer
     filesize: Größe
@@ -124,6 +125,10 @@ label:
         label: Reservierung erlaubt
         help: Wenn diese Option deaktiviert ist, kann der Raum nicht gebucht werden. Bereits getätigte Reservierungen bleiben aktiv.
     room_reservation_hint: Wenn ein Raum angegeben ist, wird dieser im Raumbelegplan automatisch geblockt. Bitte nur angeben, wenn Klausurraum und Unterrichtsraum verschieden sind.
+    end_hint: 'Bei ganztätigen Terminen muss als Enddatum der Tag nach dem letzten Tag angegeben werden. Beispiel: Ist der Termin ganztätig und an einem Tag, ist das Startdatum der Tag, an dem der Termin stattfindet und das Ende der Tag darauf (beides jeweils um 0:00). Bei einem mehrtätigen Termin (Mo-Mi) wird der Do als Ende angegeben (beides jeweils um 0:00).'
+    users_can_create_appointments:
+        label: Benutzer können Termine erstellen
+        help: Wenn diese Option aktiv ist, können Nicht-Administratoren Termine in dieser Kategorie anlegen. Anderenfalls wird die Kategorie nicht als Option angezeigt und ist somit nicht auswählbar.
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -724,6 +729,8 @@ admin:
         add:
             label: Termin erstellen
             success: Termin erfolgreich erstellt
+            confirmation_info: 'Die hier erstellten Termine erhalten zunächst den Status "nicht bestätigt" und sind nicht für Lernende und Eltern sichtbar. Andere Lehrkräfte sehen den Termin als "nicht bestätigt". Erst nach Bestätigung durch einen Verantwortlichen ist der Termin auch für Lernende und Eltern sichtbar.'
+            workflow_info: Das Erstellen eines Termines entbindet nicht von einer Antragsstellung.
         edit:
             label: Termin bearbeiten
             success: Termin erfolgreich aktualisiert
@@ -1026,3 +1033,6 @@ system:
 servicecenter:
     problem: Anzahl der Probleme in diesem Raum
     maintenance: Anzahl der Wartungsarbeiten in diesem Raum
+
+important: Wichtig
+caution: Achtung

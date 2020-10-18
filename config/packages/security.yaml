@@ -19,7 +19,7 @@ security:
 
     access_control:
         - { path: ^/admin/ea/, roles: ROLE_SUPER_ADMIN }
-        - { path: ^/admin/(messages|exams|documents), roles: ROLE_USER }
+        - { path: ^/admin/(messages|exams|documents|appointments), roles: ROLE_USER }
         - { path: ^/admin$, roles: ROLE_USER }
         - { path: ^/admin/, roles: ROLE_ADMIN }
         - { path: ^/api/import, roles: ROLE_IMPORT }
@@ -46,7 +46,7 @@ security:
         ROLE_DOCUMENTS_ADMIN: ROLE_USER
 
         # Role which enables all administrative operations for appointments
-        ROLE_APPOINTMENTS_ADMIN: ROLE_USER
+        ROLE_APPOINTMENTS_ADMIN: [ ROLE_APPOINTMENT_CREATOR, ROLE_USER ]
 
         # Role for any read-only user
         ROLE_KIOSK: ROLE_USER

@@ -79,7 +79,8 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
      * @param int $page
      * @param array $categories
      * @param string|null $q
+     * @param User|null $createdBy
      * @return Paginator
      */
-    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null): Paginator;
+    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null, ?User $createdBy = null): Paginator;
 }

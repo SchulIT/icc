@@ -256,7 +256,7 @@ class Builder {
                 ->setExtra('icon', 'fas fa-pen');
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_APPOINTMENTS_ADMIN')) {
+        if($this->authorizationChecker->isGranted('ROLE_APPOINTMENT_CREATOR')) {
             $menu->addChild('admin.appointments.label', [
                 'route' => 'admin_appointments'
             ])

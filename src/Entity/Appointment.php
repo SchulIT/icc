@@ -7,9 +7,7 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -127,7 +125,7 @@ class Appointment {
      * @ORM\JoinColumn(nullable=true)
      * @var null|User
      *
-     * Note: we cannot use the @Gedmo\Blameable() listener here as it would break when importing appointments
+     * Note: we cannot use the Blameable() listener here as it would break when importing appointments
      * from API
      */
     private $createdBy = null;

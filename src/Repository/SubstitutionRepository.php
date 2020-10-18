@@ -109,12 +109,13 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
             ->leftJoin('sInner.teachers', 'tInner')
             ->leftJoin('sInner.replacementTeachers', 'rtInner');
 
+        $regExp = '(^|\s|\.|,|;|:|\()(' . $teacher->getAcronym() . ')($|\s|\.|,|;|:|\))';
+
         $qbInner->where(
             $qbInner->expr()->orX(
                 'tInner.id = :id',
                 'rtInner.id = :id',
-                'sInner.remark LIKE :acronymQuery',
-                'sInner.remark LIKE :nameQuery'
+                'REGEXP(sInner.remark, :regexp) = true'
             )
         );
 
@@ -123,8 +124,7 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
             $qb->expr()->in('s.id', $qbInner->getDQL())
         );
         $qb->setParameter('id', $teacher->getId());
-        $qb->setParameter('acronymQuery', '%' . $teacher->getAcronym() . '%');
-        $qb->setParameter('nameQuery', '%' . $teacher->getLastname() . '%');
+        $qb->setParameter('regexp', $regExp);
 
         return $qb->getQuery()->getResult();
     }

@@ -42,10 +42,6 @@ class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendAct
      * @return array
      */
     public function getRecipients($objective): array {
-        if($objective->getMessage()->isEmailNotificationSent() || $objective->getMessage()->getStartDate() > $this->dateHelper->getToday()) {
-            return [ ];
-        }
-
         return $this->recipientResolver->resolveRecipients($objective->getMessage());
     }
 
@@ -86,6 +82,8 @@ class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendAct
      * @inheritDoc
      */
     public function supports($objective): bool {
-        return $objective instanceof MessageCreatedEvent;
+        return $objective instanceof MessageCreatedEvent
+            && $objective->getMessage()->isEmailNotificationSent() === false
+            && $objective->getMessage()->getStartDate() <= $this->dateHelper->getToday();
     }
 }

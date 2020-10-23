@@ -129,6 +129,7 @@ label:
     users_can_create_appointments:
         label: Benutzer können Termine erstellen
         help: Wenn diese Option aktiv ist, können Nicht-Administratoren Termine in dieser Kategorie anlegen. Anderenfalls wird die Kategorie nicht als Option angezeigt und ist somit nicht auswählbar.
+    all: alle
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -725,6 +726,7 @@ admin:
         overview:
             label: Terminübersicht
             empty: Aktuell gibt es keine Termine.
+            not_confirmed: '{1} Aktuell gibt es einen zu bestätigenden Termin.|]1,Inf[ Aktuell gibt es %count% zu bestätigende Termine.'
 
         add:
             label: Termin erstellen

@@ -52,11 +52,13 @@ class AppointmentAdminController extends AbstractController {
         $q = $request->query->get('q', null);
         $categoryFilterView = $categoryFilter->handle($request->query->get('category', null));
         $categories = $categoryFilterView->getCurrentCategory() === null ? [ ] : [$categoryFilterView->getCurrentCategory()];
+        $onlyConfirmed = $request->query->get('confirmed') === '✓' ? true : ($request->query->get('confirmed') === '×' ? false : null);
+
         $page = $request->query->getInt('page');
         /** @var User|null $createdBy */
         $createdBy = $this->isGranted('ROLE_APPOINTMENTS_ADMIN') ? null : $this->getUser();
 
-        $paginator = $this->repository->getPaginator(static::NumberOfAppointments, $page, $categories, $q, $createdBy);
+        $paginator = $this->repository->getPaginator(static::NumberOfAppointments, $page, $categories, $q, $createdBy, $onlyConfirmed ?? null);
         $pages = 1;
 
         if($paginator->count() > 0) {
@@ -78,7 +80,9 @@ class AppointmentAdminController extends AbstractController {
             'pages' => $pages,
             'page' => $page,
             'categoryFilter' => $categoryFilterView,
-            'q' => $q
+            'q' => $q,
+            'confirmed' => $onlyConfirmed,
+            'notConfirmedCount' => $this->repository->countNotConfirmed()
         ]);
     }
 

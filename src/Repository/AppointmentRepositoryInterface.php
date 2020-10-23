@@ -65,6 +65,11 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function findAllStartEnd(DateTime $start, DateTime $end, array $categories = [ ]): array;
 
     /**
+     * @return int
+     */
+    public function countNotConfirmed(): int;
+
+    /**
      * @param Appointment $appointment
      */
     public function persist(Appointment $appointment): void;
@@ -82,5 +87,5 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
      * @param User|null $createdBy
      * @return Paginator
      */
-    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null, ?User $createdBy = null): Paginator;
+    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null, ?User $createdBy = null, ?bool $confirmed = null): Paginator;
 }

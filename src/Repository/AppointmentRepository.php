@@ -257,7 +257,19 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->getQuery()->getResult();
     }
 
-    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null, ?User $createdBy = null): Paginator {
+    /**
+     * @inheritDoc
+     */
+    public function countNotConfirmed(): int {
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(a.id)')
+            ->from(Appointment::class, 'a')
+            ->where('a.isConfirmed = false')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null, ?User $createdBy = null, ?bool $confirmed = null): Paginator {
         $qbIds = $this->em->createQueryBuilder();
         $params = [ ];
 
@@ -290,6 +302,11 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
         if($createdBy !== null) {
             $qbIds->andWhere('aInner.createdBy = :user');
             $params['user'] = $createdBy;
+        }
+
+        if($confirmed !== null) {
+            $qbIds->andWhere('aInner.isConfirmed = :confirmed');
+            $params['confirmed'] = $confirmed;
         }
 
         $qb = $this->getAppointments($qbIds->getDQL(), $params, null);

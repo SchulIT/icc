@@ -14,12 +14,20 @@
 
     {% set currentFilter = {
         q: q,
-        categoryId: categoryFilter.currentCategory != null ? categoryFilter.currentCategory.uuid : null }
+        category: categoryFilter.currentCategory != null ? categoryFilter.currentCategory.uuid : null,
+        confirmed: confirmed }
     %}
 
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9">
+                {% if notConfirmedCount > 0 and is_granted('ROLE_APPOINTMENTS_ADMIN') %}
+                <div class="bs-callout bs-callout-info">
+                    <h4>{{ 'info.label'|trans }}</h4>
+                    <p>{{ 'admin.appointments.overview.not_confirmed'|trans({ '%count%': notConfirmedCount }) }}</p>
+                </div>
+                {% endif %}
+
                 {% if groups|length == 0 %}
                     <div class="bs-callout bs-callout-info">
                         <h4>{{ 'info.label'|trans }}</h4>
@@ -161,7 +169,27 @@
                             </div>
                         </form>
 
-                        {% include "_filter/query.html.twig" with { class: 'mb-0', params: currentFilter, route: 'admin_appointments' } %}
+                        {% include "_filter/query.html.twig" with { params: currentFilter, route: 'admin_appointments' } %}
+
+                        <form role="form" method="get" class="form hidden-print">
+                            {% include "_filter/_params.html.twig" with { params: currentFilter } %}
+
+                            <div class="form-group mb-0">
+                                <div class="btn-group" role="group" aria-label="Ansicht" data-original-title="Ansicht">
+                                    <button name="confirmed" value="" class="btn btn-outline-secondary {% if confirmed is null %}active{% endif %}">
+                                        {{ 'label.all'|trans }}
+                                    </button>
+
+                                    <button name="confirmed" value="✓" class="btn btn-outline-secondary {% if confirmed %}active{% endif %}">
+                                        {{ 'label.confirmed'|trans }}
+                                    </button>
+
+                                    <button name="confirmed" value="×" class="btn btn-outline-secondary {% if confirmed is same as(false) %}active{% endif %}">
+                                        {{ 'label.not_confirmed'|trans }}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
 
                     <div class="card-footer">

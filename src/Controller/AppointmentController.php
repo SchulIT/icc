@@ -183,7 +183,7 @@ class AppointmentController extends AbstractControllerWithMessages {
             $json[] = [
                 'uuid' => $appointment->getUuid(),
                 'allDay' => $appointment->isAllDay(),
-                'title' => $appointment->getTitle(),
+                'title' => ($appointment->isConfirmed() === false ? '(✗) ' : '') . $appointment->getTitle(),
                 'textColor' => $colorUtils->getForeground($appointment->getCategory()->getColor()),
                 'backgroundColor' => $appointment->getCategory()->getColor(),
                 'start' => $appointment->getStart()->format($appointment->isAllDay() ? 'Y-m-d' : 'Y-m-d H:i'),

@@ -12,7 +12,7 @@
         "antishov/doctrine-extensions-bundle": "^1.4",
         "beberlei/doctrineextensions": "^1.2",
         "bentools/webpush-bundle": "0.6.*",
-        "doctrine/doctrine-bundle": "2.0",
+        "doctrine/doctrine-bundle": "^2.0",
         "doctrine/doctrine-migrations-bundle": "^3.0.0",
         "easycorp/easyadmin-bundle": "^2.3",
         "eightpoints/guzzle-bundle": "^8.2",

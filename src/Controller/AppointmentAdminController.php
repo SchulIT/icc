@@ -52,7 +52,7 @@ class AppointmentAdminController extends AbstractController {
         $q = $request->query->get('q', null);
         $categoryFilterView = $categoryFilter->handle($request->query->get('category', null));
         $categories = $categoryFilterView->getCurrentCategory() === null ? [ ] : [$categoryFilterView->getCurrentCategory()];
-        $onlyConfirmed = $request->query->get('confirmed') === '✓' ? true : ($request->query->get('confirmed') === '×' ? false : null);
+        $onlyConfirmed = $request->query->get('confirmed') === '✓' ? true : ($request->query->get('confirmed') === '✗' ? false : null);
 
         $page = $request->query->getInt('page');
         /** @var User|null $createdBy */

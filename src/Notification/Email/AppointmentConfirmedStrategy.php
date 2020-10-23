@@ -55,7 +55,7 @@ class AppointmentConfirmedStrategy implements EmailStrategyInterface {
 
     /**
      * @param AppointmentConfirmedEvent $objective
-     * @return $this|string
+     * @return string
      */
     public function getSender($objective): string {
         return $this->converter->convert($objective->getConfirmedBy(), false);

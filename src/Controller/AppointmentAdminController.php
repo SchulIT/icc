@@ -11,6 +11,7 @@ use App\Form\AppointmentType;
 use App\Grouping\AppointmentDateStrategy as AppointmentGroupingStrategy;
 use App\Grouping\Grouper;
 use App\Repository\AppointmentRepositoryInterface;
+use App\Security\Voter\AppointmentVoter;
 use App\Sorting\AppointmentDateGroupStrategy;
 use App\Sorting\Sorter;
 use App\View\Filter\AppointmentCategoriesFilter;
@@ -111,6 +112,8 @@ class AppointmentAdminController extends AbstractController {
      * @Route("/{uuid}/edit", name="edit_appointment")
      */
     public function edit(Appointment $appointment, Request $request) {
+        $this->denyAccessUnlessGranted(AppointmentVoter::Edit, $appointment);
+
         $form = $this->createForm(AppointmentType::class, $appointment);
         $form->handleRequest($request);
 
@@ -131,6 +134,8 @@ class AppointmentAdminController extends AbstractController {
      * @Route("/{uuid}/remove", name="remove_appointment")
      */
     public function remove(Appointment $appointment, Request $request, TranslatorInterface $translator) {
+        $this->denyAccessUnlessGranted(AppointmentVoter::Remove, $appointment);
+
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => $translator->trans('admin.appointments.remove.confirm', [
                 '%name%' => $appointment->getTitle()

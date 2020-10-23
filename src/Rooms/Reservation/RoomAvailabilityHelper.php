@@ -147,8 +147,6 @@ class RoomAvailabilityHelper {
         $substitutions = $this->substitutionRepository->findAllForRooms($rooms, $date);
         $exams = $this->examRepository->findAllByDate($date);
 
-        dump($exams);
-
         $overview = new RoomAvailabilityOverview($this->timetableSettings->getMaxLessons());
 
         foreach($rooms as $room) {

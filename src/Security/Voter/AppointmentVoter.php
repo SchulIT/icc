@@ -21,6 +21,7 @@ class AppointmentVoter extends Voter {
     const Edit = 'edit';
     const Remove = 'remove';
     const View = 'view';
+    const Confirm = 'confirm';
 
     private $settings;
     private $dateHelper;
@@ -39,7 +40,8 @@ class AppointmentVoter extends Voter {
         $attributes = [
             static::Edit,
             static::Remove,
-            static::View
+            static::View,
+            static::Confirm
         ];
 
         return $attribute === static::New ||
@@ -60,6 +62,9 @@ class AppointmentVoter extends Voter {
             case static::Remove:
                 return $this->canRemove($subject, $token);
 
+            case static::Confirm:
+                return $this->canConfirm($token);
+
             case static::View:
                 return $this->canView($subject, $token);
         }
@@ -69,6 +74,10 @@ class AppointmentVoter extends Voter {
 
     private function canCreate(TokenInterface $token) {
         return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENT_CREATOR']);
+    }
+
+    private function canConfirm(TokenInterface $token) {
+        return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']);
     }
 
     private function canEdit(Appointment $appointment, TokenInterface $token) {

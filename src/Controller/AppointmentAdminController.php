@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Converter\UserStringConverter;
 use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
 use App\Entity\User;
+use App\Event\AppointmentConfirmedEvent;
 use App\Form\AppointmentType;
 use App\Grouping\AppointmentDateStrategy as AppointmentGroupingStrategy;
 use App\Grouping\Grouper;
@@ -19,6 +21,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Sorting\AppointmentDateStrategy as AppointmentSortingStrategy;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -149,5 +152,42 @@ class AppointmentAdminController extends AbstractController {
         ]);
     }
 
+    /**
+     * @Route("/{uuid}/confirm", name="confirm_appointment")
+     */
+    public function confirm(Appointment $appointment, Request $request, UserStringConverter $converter, EventDispatcherInterface $eventDispatcher) {
+        $this->denyAccessUnlessGranted('ROLE_APPOINTMENTS_ADMIN');
 
+        if($appointment->getCreatedBy() === null) {
+            return $this->redirectToRoute('admin_appointments');
+        }
+
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'admin.appointments.confirm.confirm',
+            'message_parameters' => [
+                '%name%' => $appointment->getTitle(),
+                '%user%' => $converter->convert($appointment->getCreatedBy())
+            ]
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $appointment->setIsConfirmed(true);
+            $this->repository->persist($appointment);
+
+            /** @var User $user */
+            $user = $this->getUser();
+
+            $eventDispatcher->dispatch(new AppointmentConfirmedEvent($appointment, $user));
+
+            $this->addFlash('success', 'admin.appointments.confirm.success');
+
+            return $this->redirectToRoute('admin_appointments');
+        }
+
+        return $this->render('admin/appointments/confirm.html.twig', [
+            'appointment' => $appointment,
+            'form' => $form->createView()
+        ]);
+    }
 }

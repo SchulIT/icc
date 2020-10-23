@@ -739,6 +739,12 @@ admin:
             success: Termin erfolgreich gelöscht
             confirm: 'Soll der Termin "%name%" wirklich gelöscht werden?'
 
+        confirm:
+            label: Termin bestätigen
+            confirm: 'Soll der Termin "%name%" (erstellt von %user%) wirklich bestätigt werden?'
+            info: Diese Aktion kann nicht rückgängig gemacht werden. Der Ersteller des Termin erhält eine Bestätigungs-E-Mail.
+            success: Termin erfolgreich bestätigt
+
         categories:
             label: Termin-Kategorien
             overview:

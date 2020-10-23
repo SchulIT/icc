@@ -1,0 +1,38 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.appointments.confirm.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_appointments') }}">{{ 'admin.appointments.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ appointment.title }}</li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-header">{{ 'actions.confirm'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_widget(form.group_general.confirm) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-check"></i> {{ 'actions.confirm'|trans }}
+        </button>
+
+        <a href="{{ path('admin_appointments')}}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}
+

@@ -1,0 +1,16 @@
+{% extends "email/main.html.twig" %}
+
+{% block title %}{{ 'appointment.title'|trans({}, 'email') }}{% endblock %}
+
+{% block button_content %}{{ 'appointment.link'|trans({}, 'email') }}{% endblock %}
+{% block button_url%}{{ url('appointments') }}{% endblock %}
+
+{% block preview %}{{ 'appointment.content'|trans({ '%name%': objective.appointment.title, '%user%': objective.confirmedBy|user}, 'email') }}{% endblock %}
+
+{% block content %}
+    <p>
+        {{ 'appointment.content'|trans({ '%name%': objective.appointment.title, '%user%': objective.confirmedBy|user}, 'email') }}
+    </p>
+{% endblock %}
+
+{% block additional %}{% endblock %}

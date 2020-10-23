@@ -2,6 +2,7 @@
 
 namespace App\Notification;
 
+use App\Event\AppointmentConfirmedEvent;
 use App\Event\ExamImportEvent;
 use App\Event\MessageCreatedEvent;
 use App\Event\MessageUpdatedEvent;
@@ -56,7 +57,8 @@ class NotificationService implements EventSubscriberInterface {
             MessageCreatedEvent::class => 'sendNotifications',
             MessageUpdatedEvent::class => 'sendNotifications',
             ExamImportEvent::class => 'sendNotifications',
-            SubstitutionImportEvent::class => 'sendNotifications'
+            SubstitutionImportEvent::class => 'sendNotifications',
+            AppointmentConfirmedEvent::class => 'sendNotifications'
         ];
     }
 }

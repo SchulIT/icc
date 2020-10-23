@@ -34,3 +34,7 @@ reservation:
   content_exam: 'bei der Raumreservierung für eine Klausur in %room% am %date% (%lesson%) ist es zu einem Konflikt gekommen.'
   link: Reservierung anzeigen
 
+appointment:
+  title: Termin bestätigt
+  content: 'der Termin %name% wurde von %user% bestätigt und ist nun im ICC für die festgelegten Zielgruppen sichtbar.'
+  link: Terminplan anzeigen

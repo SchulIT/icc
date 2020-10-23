@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Converter\StudyGroupsGradeStringConverter;
 use App\Converter\TeacherStringConverter;
+use App\Converter\UserStringConverter;
 use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
 use App\Entity\IcsAccessToken;
@@ -75,7 +76,7 @@ class AppointmentController extends AbstractControllerWithMessages {
                              StudyGroupsGradeStringConverter $studyGroupsGradeStringConverter, TeacherStringConverter $teacherStringConverter,
                              AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter,
                              TeacherFilter $teacherFilter, GradesFilter $gradesFilter, ExamRepositoryInterface $examRepository,
-                             AppointmentsSettings $appointmentsSettings, TimetableTimeHelper $timetableTimeHelper, Request $request) {
+                             AppointmentsSettings $appointmentsSettings, TimetableTimeHelper $timetableTimeHelper, UserStringConverter $userStringConverter, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
         $isStudent = $user->getUserType()->equals(UserType::Student());
@@ -169,6 +170,13 @@ class AppointmentController extends AbstractControllerWithMessages {
                 $view[] = [
                     'label' => $translator->trans('label.external_organizers'),
                     'content' => $appointment->getExternalOrganizers()
+                ];
+            }
+
+            if($appointment->getCreatedBy() !== null) {
+                $view[] = [
+                    'label' => $translator->trans('label.created_by'),
+                    'content' => $userStringConverter->convert($appointment->getCreatedBy(), false)
                 ];
             }
 

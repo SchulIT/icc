@@ -25,6 +25,9 @@
                 <div class="bs-callout bs-callout-info">
                     <h4>{{ 'info.label'|trans }}</h4>
                     <p>{{ 'admin.appointments.overview.not_confirmed'|trans({ '%count%': notConfirmedCount }) }}</p>
+                    <a href="{{ path('admin_appointments', { confirmed: '×'}) }}" class="btn btn-primary btn-sm">
+                        {{ 'action.show'|trans }}
+                    </a>
                 </div>
                 {% endif %}
 

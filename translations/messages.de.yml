@@ -130,6 +130,7 @@ label:
         label: Benutzer können Termine erstellen
         help: Wenn diese Option aktiv ist, können Nicht-Administratoren Termine in dieser Kategorie anlegen. Anderenfalls wird die Kategorie nicht als Option angezeigt und ist somit nicht auswählbar.
     all: alle
+    created_by: Erstellt von
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

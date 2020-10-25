@@ -427,7 +427,7 @@ class Substitution {
         $clone->setType($this->getType());
         $clone->setExternalId($this->getExternalId());
         $clone->setSubject($this->getSubject());
-        $clone->setReplacementSubject($this->getSubject());
+        $clone->setReplacementSubject($this->getReplacementSubject());
         $clone->setRoom($this->getRoom());
         $clone->setRoomName($this->getRoomName());
         $clone->setReplacementRoom($this->getReplacementRoom());

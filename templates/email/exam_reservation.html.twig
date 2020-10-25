@@ -21,7 +21,7 @@
     </p>
 
     <ul>
-        {% for error in validation_errors(reservation)|default([]) %}
+        {% for error in validation_errors(exam)|default([]) %}
             <li>{{ error.message|trans(error.parameters, 'validators') }}</li>
         {% endfor %}
     </ul>

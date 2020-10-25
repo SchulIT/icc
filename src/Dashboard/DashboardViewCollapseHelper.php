@@ -299,7 +299,8 @@ class DashboardViewCollapseHelper {
                 if($substitution->getType() === $mergedSubstitution->getType()
                     && $substitution->getSubject() === $mergedSubstitution->getSubject()
                     && $substitution->getRemark() === $mergedSubstitution->getRemark()
-                    && $substitution->getRoom() === $mergedSubstitution->getRoom()) {
+                    && $substitution->getRoom() === $mergedSubstitution->getRoom()
+                    && $substitution->getRoomName() === $mergedSubstitution->getRoomName()) {
 
                     // merge study groups
                     foreach($substitution->getStudyGroups() as $studyGroup) {

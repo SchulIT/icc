@@ -24,7 +24,6 @@ class TimetablePeriodData {
     /**
      * @Serializer\Type("datetime")
      * @Assert\NotNull()
-     * @Assert\Date()
      * @var \DateTime
      */
     private $start;
@@ -32,7 +31,6 @@ class TimetablePeriodData {
     /**
      * @Serializer\Type("datetime")
      * @Assert\NotNull()
-     * @Assert\Date()
      * @Assert\GreaterThan(propertyPath="start")
      * @var \DateTime
      */

@@ -59,6 +59,9 @@ class DashboardViewCollapseHelper {
         // Merge supervisions
         $this->mergeExamSupervisions($lesson);
 
+        // Add exams because they may not cause any troubles
+        $this->addExamsToView($lesson, $view);
+
         // Store all items
         $originalItems = $lesson->getItems();
 
@@ -282,6 +285,19 @@ class DashboardViewCollapseHelper {
         }
 
         return $view;
+    }
+
+    private function addExamsToView(DashboardLesson $lesson, DashboardView $view) {
+        $items = $lesson->getItems();
+        $lesson->clearItems();
+
+        foreach($items as $item) {
+            if($item instanceof ExamViewItem) {
+                $view->addExam($item);
+            } else {
+                $lesson->addItem($item);
+            }
+        }
     }
 
     /**

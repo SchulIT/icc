@@ -6,17 +6,17 @@
 {% block button_url%}{{ url('edit_exam', { uuid: exam.uuid }) }}{% endblock %}
 
 {% block preview %}{{ 'reservation.content_exam'|trans({
-    '%room%': reservation.room.name,
-    '%date%': reservation.date|format_date,
-    '%lesson%': 'label.substitution_lessons'|trans({'%start%': reservation.lessonStart, '%end%': reservation.lessonEnd, '%count%': (reservation.lessonEnd - reservation.lessonStart)})
+    '%room%': exam.room.name,
+    '%date%': exam.date|format_date,
+    '%lesson%': 'label.substitution_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)})
 }, 'email') }}{% endblock %}
 
 {% block content %}
     <p>
         {{ 'reservation.content'|trans({
-            '%room%': reservation.room.name,
-            '%date%': reservation.date|format_date,
-            '%lesson%': 'label.substitution_lessons'|trans({'%start%': reservation.lessonStart, '%end%': reservation.lessonEnd, '%count%': (reservation.lessonEnd - reservation.lessonStart)})
+            '%room%': exam.room.name,
+            '%date%': exam.date|format_date,
+            '%lesson%': 'label.substitution_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)})
         }, 'email') }}
     </p>
 

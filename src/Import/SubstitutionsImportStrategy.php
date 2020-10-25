@@ -127,7 +127,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
         }
 
         if(!empty($data->getReplacementRoom())) {
-            $room = $this->roomRepository->findOneByExternalId($data->getRoom());
+            $room = $this->roomRepository->findOneByExternalId($data->getReplacementRoom());
 
             if($room === null) {
                 $entity->setReplacementRoomName($data->getReplacementRoom());

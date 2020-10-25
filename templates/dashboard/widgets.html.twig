@@ -88,9 +88,9 @@
 
             <span class="align-self-center badge badge-warning my-1 mr-3">{{ 'dashboard.exam_supervision'|trans|upper }}</span>
 
-            <div class="card-body pl-0 my-n1">
+            <div class="card-body pl-0 my-n2 d-flex align-items-center flex-column">
                 {% for exam in item.exams %}
-                    <div class="d-block d-flex my-1">
+                    <div class="d-block d-flex my-1 w-100">
                         <span class="mr-auto align-self-center">
                             <span class="d-flex flex-wrap align-self-center mb-1">
                                 {% for tuition in exam.tuitions %}

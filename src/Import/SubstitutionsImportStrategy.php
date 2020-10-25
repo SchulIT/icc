@@ -118,7 +118,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
             $room = $this->roomRepository->findOneByExternalId($data->getRoom());
 
             if($room === null) {
-                throw new ImportException(sprintf('Room "%s" on substitution ID "%s" was not found.', $data->getRoom(), $data->getId()));
+                $entity->setRoomName($data->getRoom());
             }
 
             $entity->setRoom($room);
@@ -130,7 +130,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
             $room = $this->roomRepository->findOneByExternalId($data->getRoom());
 
             if($room === null) {
-                throw new ImportException(sprintf('Replacement room "%s" on substitution ID "%s" was not found.', $data->getRoom(), $data->getId()));
+                $entity->setReplacementRoomName($data->getReplacementRoom());
             }
 
             $entity->setReplacementRoom($room);

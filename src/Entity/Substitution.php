@@ -99,11 +99,23 @@ class Substitution {
     private $room = null;
 
     /**
+     * @ORM\Column(type="string", nullable=true, options={"comment": "Plain room name in case room resolve is not possible when importing substitutions."})
+     * @var string|null
+     */
+    private $roomName = null;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Room")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @var Room|null
      */
     private $replacementRoom = null;
+
+    /**
+     * @ORM\Column(type="string", nullable=true, options={"comment": "Plain room name in case room resolve is not possible when importing substitutions."})
+     * @var string|null
+     */
+    private $replacementRoomName = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -333,6 +345,38 @@ class Substitution {
     /**
      * @return string|null
      */
+    public function getRoomName(): ?string {
+        return $this->roomName;
+    }
+
+    /**
+     * @param string|null $roomName
+     * @return Substitution
+     */
+    public function setRoomName(?string $roomName): Substitution {
+        $this->roomName = $roomName;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getReplacementRoomName(): ?string {
+        return $this->replacementRoomName;
+    }
+
+    /**
+     * @param string|null $replacementRoomName
+     * @return Substitution
+     */
+    public function setReplacementRoomName(?string $replacementRoomName): Substitution {
+        $this->replacementRoomName = $replacementRoomName;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
     public function getRemark(): ?string {
         return $this->remark;
     }
@@ -385,7 +429,9 @@ class Substitution {
         $clone->setSubject($this->getSubject());
         $clone->setReplacementSubject($this->getSubject());
         $clone->setRoom($this->getRoom());
+        $clone->setRoomName($this->getRoomName());
         $clone->setReplacementRoom($this->getReplacementRoom());
+        $clone->setReplacementRoomName($this->getReplacementRoomName());
         $clone->setLessonStart($this->getLessonStart());
         $clone->setLessonEnd($this->getLessonEnd());
         $clone->setStartsBefore($this->startsBefore());

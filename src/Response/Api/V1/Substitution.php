@@ -364,8 +364,8 @@ class Substitution {
             ->setReplacementTeachers(array_map(function(TeacherEntity $teacherEntity) {
                 return Teacher::fromEntity($teacherEntity);
             }, $substitutionEntity->getTeachers()->toArray()))
-            ->setRoom($substitutionEntity->getRoom() !== null ? $substitutionEntity->getRoom()->getName() : null)
-            ->setReplacementRoom($substitutionEntity->getReplacementRoom() !== null ? $substitutionEntity->getReplacementRoom()->getName() : null)
+            ->setRoom($substitutionEntity->getRoom() !== null ? $substitutionEntity->getRoom()->getName() : $substitutionEntity->getRoomName())
+            ->setReplacementRoom($substitutionEntity->getReplacementRoom() !== null ? $substitutionEntity->getReplacementRoom()->getName() : $substitutionEntity->getReplacementRoomName())
             ->setRemark($substitutionEntity->getRemark())
             ->setStudyGroups(array_map(function(StudyGroupEntity $studyGroupEntity) {
                 return StudyGroup::fromEntity($studyGroupEntity);

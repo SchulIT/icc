@@ -50,26 +50,29 @@
 
             <div class="card-body align-self-center d-flex align-items-sm-center pl-0">
                 <div class="mr-auto align-self-center d-flex flex-wrap">
-                    {% for tuition in exam.tuitions %}
-                        <span class="d-flex flex-wrap align-self-center mb-1">
-                        <span>
-                            <span class="badge badge-primary">{{ tuition.name|upper }}</span>
-                            <span class="mx-1"></span>
-                        </span>
-                        <span>
-                            <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-                            <span class="mx-1"></span>
-                        </span>
-                        <span>
-                            <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
-                            <span class="mx-1"></span>
-                        </span>
-                    </span>
-                    {% endfor %}
+                    <span class="d-flex flex-wrap align-self-center mb-1">
+                        {% for tuition in exam.tuitions %}
 
-                    {% if item.exam.room is not null %}
-                        <i class="fa fa-door-open"></i> {{ item.exam.room.name }}
-                    {% endif %}
+                            <span>
+                                <span class="badge badge-primary">{{ tuition.name|upper }}</span>
+                                <span class="mx-1"></span>
+                            </span>
+                            <span>
+                                <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                <span class="mx-1"></span>
+                            </span>
+                            <span>
+                                <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                <span class="mx-1"></span>
+                            </span>
+                        {% endfor %}
+
+                        {% if item.exam.room is not null %}
+                            <span>
+                                <i class="fa fa-door-open"></i> {{ item.exam.room.name }}
+                            </span>
+                        {% endif %}
+                    </span>
                 </div>
 
                 <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">
@@ -429,6 +432,7 @@
 
                 <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
                     <span>{{ reservation.room.name }}</span>
+                    <span class="mx-1"></span>
                     <span class="text-muted">{{ reservation.room.description }}</span>
                 </div>
             </div>

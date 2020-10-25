@@ -92,8 +92,8 @@
                 {% for exam in item.exams %}
                     <div class="d-block d-flex my-1">
                         <span class="mr-auto align-self-center">
-                            {% for tuition in exam.tuitions %}
-                                <span class="d-flex flex-wrap align-self-center mb-1">
+                            <span class="d-flex flex-wrap align-self-center mb-1">
+                                {% for tuition in exam.tuitions %}
                                     <span>
                                         <span class="badge badge-primary">{{ tuition.name|upper }}</span>
                                         <span class="mx-1"></span>
@@ -106,15 +106,15 @@
                                         <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
                                         <span class="mx-1"></span>
                                     </span>
-                                </span>
-                            {% endfor %}
+                                {% endfor %}
 
-                            {% if exam.room is not null %}
-                                <span>
-                                    <i class="fa fa-door-open"></i> {{ exam.room.name }}
-                                    <span class="mx-1"></span>
-                                </span>
-                            {% endif %}
+                                {% if exam.room is not null %}
+                                    <span>
+                                        <i class="fa fa-door-open"></i> {{ exam.room.name }}
+                                        <span class="mx-1"></span>
+                                    </span>
+                                {% endif %}
+                            </span>
                         </span>
 
                         <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">{{ 'label.details'|trans }}</a>

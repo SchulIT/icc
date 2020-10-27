@@ -276,7 +276,7 @@
 
 {% macro substitution(item, lesson, start, end, hasWarning) %}
     {% set substitution = item.substitution %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %}{% if item.isFreeLesson %}text-black-50{% endif %}">
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %} {% if item.isFreeLesson %}text-black-50{% endif %}">
         <div class="d-flex">
             {% if not substitution.startsBefore %}
                 {% if lesson is null %}

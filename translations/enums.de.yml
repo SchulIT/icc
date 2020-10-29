@@ -1,7 +1,10 @@
+select: bitte auswählen
+
 label:
   gender: Geschlecht
   scope: Bereich
   priority: Priorität
+  reason: Grund
 
 help:
   priority: 'Mitteilungen der Prioritäten "Wichtig" und "Notfall" werden stets über allen anderen Mitteilungen angezeigt. Die Priorität "Wichtig" hebt die Mitteilung gelb hervor. Mitteilungen der Priorität "Notfall" werden rot hervorgehoben und können nicht ausgeblendet werden.'
@@ -46,3 +49,7 @@ absence_reason:
 study_group_type:
   grade: Klasse
   course: Kurs
+
+sick_reason:
+  quarantine: Quarantäne
+  sick: Erkrankung

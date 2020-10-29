@@ -45,6 +45,7 @@ label:
         subject: Fach auswählen
         category: Kategorie auswählen
         usertype: Benutzertyp auswählen
+        reason: Grund auswählen
     search:
         student: Lernenden suchen
     scope: Bereich
@@ -630,6 +631,16 @@ admin:
                 label: Wochenenden überspringen
                 help: Gibt an, ob Wochenendtage auf der Übersicht übersprungen werden sollen.
 
+        sick_notes:
+            label: Krankmeldungen
+            enabled: aktiviert
+            recipient:
+                label: Empfänger
+                help: E-Mail-Adresse, an die die Krankmeldung versendet wird
+            privacy_url:
+                label: Datenschutz-URL
+                help: Link zur Datenschutzrichtlinie, die der Krankmeldung zugrunde liegt. Dieser Link wird bei der Krankmeldung angezeigt.
+
         appointments:
             label: Terminplan
             time_window: Zeitfenster
@@ -1048,3 +1059,21 @@ servicecenter:
 
 important: Wichtig
 caution: Achtung
+
+sick_note:
+    label: Krankmeldung
+    info: Hier besteht die Möglichkeit, eine Krankheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.
+    privacy:
+        info: Die hier erhobenen Daten werden entsprechend der aktuellen Datenschutzrichtlinie der Schule gespeichert und verarbeitet.
+        link: Datenschutzrichtlinie anzeigen
+    message: Mitteilung
+    attachments:
+        label: Anhänge
+        info: 'Hier können bis zu drei Dokumente (bspw. Attest, Meldung vom Gesundheitsamt,… ) angehangen werden. Gültige Dateitypen: PDF, PNG, JPG. Maximale Größe pro Datei: 5 MB'
+    absent_until: Abwesend voraussichtlich bis
+    phone: Telefonnummer
+    contact:
+        label: Kontaktinformationen
+        info: Es besteht die Möglichkeit, eine Telefonnummer oder E-Mail-Adresse zu hinterlegen, die für Rückfragen genutzt werden kann. Bei Angabe einer E-Mail-Adresse wird eine Kopie der Krankmeldung an diese Adresse versendet.
+    send: absenden
+    success: Die Krankmeldung wurde erfolgreich an die Schule übermittelt. Falls eine E-Mail Adresse angegeben wurde, wird eine Kopie der Krankmeldung versendet. Der Versand der E-Mail dauert einige Minuten.

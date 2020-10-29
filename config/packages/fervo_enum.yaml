@@ -31,3 +31,7 @@ fervo_enum:
         App\Dashboard\AbsenceReason:
             doctrine_type: absence_reason
             form_type: absence_reason
+
+        App\SickNote\SickNoteReason:
+            doctrine_type: sick_reason
+            form_type: sick_reason

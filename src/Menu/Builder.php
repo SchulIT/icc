@@ -12,8 +12,10 @@ use App\Security\Voter\ExamVoter;
 use App\Security\Voter\ListsVoter;
 use App\Security\Voter\RoomReservationVoter;
 use App\Security\Voter\RoomVoter;
+use App\Security\Voter\SickNoteVoter;
 use App\Security\Voter\WikiVoter;
 use App\Settings\NotificationSettings;
+use App\Settings\SickNoteSettings;
 use App\Utils\EnumArrayUtils;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
@@ -38,13 +40,15 @@ class Builder {
     private $translator;
     private $darkModeManager;
     private $notificationSettings;
+    private $sickNoteSettings;
 
     private $idpProfileUrl;
 
     public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authorizationChecker,
                                 WikiArticleRepositoryInterface $wikiRepository, MessageRepositoryInterface $messageRepository,
                                 TokenStorageInterface $tokenStorage, DateHelper $dateHelper, UserStringConverter $userConverter,
-                                TranslatorInterface $translator, DarkModeManagerInterface $darkModeManager, NotificationSettings $notificationSettings, string $idpProfileUrl) {
+                                TranslatorInterface $translator, DarkModeManagerInterface $darkModeManager,
+                                NotificationSettings $notificationSettings, SickNoteSettings $sickNoteSettings, string $idpProfileUrl) {
         $this->factory = $factory;
         $this->authorizationChecker = $authorizationChecker;
         $this->wikiRepository = $wikiRepository;
@@ -56,6 +60,7 @@ class Builder {
         $this->darkModeManager = $darkModeManager;
         $this->idpProfileUrl = $idpProfileUrl;
         $this->notificationSettings = $notificationSettings;
+        $this->sickNoteSettings = $sickNoteSettings;
     }
 
     private function plansMenu(ItemInterface $menu): ItemInterface {
@@ -379,6 +384,10 @@ class Builder {
             $menu->addChild('admin.settings.appointments.label', [
                 'route' => 'admin_settings_appointments'
             ]);
+
+            $menu->addChild('admin.settings.sick_notes.label', [
+                'route' => 'admin_settings_sick_notes'
+            ]);
         }
 
         return $root;
@@ -426,6 +435,13 @@ class Builder {
             ->setExtra('icon', 'far fa-file-alt');
 
         $this->wikiMenu($menu);
+
+        if($this->sickNoteSettings->isEnabled() === true && $this->authorizationChecker->isGranted(SickNoteVoter::New)) {
+            $menu->addChild('sick_note.label', [
+                'route' => 'sick_note'
+            ])
+                ->setExtra('icon', 'fas fa-clinic-medical');
+        }
 
         return $menu;
     }

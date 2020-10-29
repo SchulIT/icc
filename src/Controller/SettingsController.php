@@ -14,6 +14,7 @@ use App\Settings\AppointmentsSettings;
 use App\Settings\DashboardSettings;
 use App\Settings\ExamSettings;
 use App\Settings\NotificationSettings;
+use App\Settings\SickNoteSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Sorting\GradeNameStrategy;
@@ -197,6 +198,64 @@ class SettingsController extends AbstractController {
         }
 
         return $this->render('admin/settings/notifications.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/sick_notes", name="admin_settings_sick_notes")
+     */
+    public function sickNotes(Request $request, SickNoteSettings $sickNoteSettings) {
+        $builder = $this->createFormBuilder();
+        $builder
+            ->add('enabled', CheckboxType::class, [
+                'required' => false,
+                'data' => $sickNoteSettings->isEnabled(),
+                'label' => 'admin.settings.sick_notes.enabled',
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
+            ])
+            ->add('recipient', EmailType::class, [
+                'required' => false,
+                'data' => $sickNoteSettings->getRecipient(),
+                'label' => 'admin.settings.sick_notes.recipient.label',
+                'help' => 'admin.settings.sick_notes.recipient.help'
+            ])
+            ->add('privacy_url', TextType::class, [
+                'required' => true,
+                'data' => $sickNoteSettings->getPrivacyUrl(),
+                'label' => 'admin.settings.sick_notes.privacy_url.label',
+                'help' => 'admin.settings.sick_notes.privacy_url.help'
+            ]);
+
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $map = [
+                'enabled' => function($enabled) use ($sickNoteSettings) {
+                    $sickNoteSettings->setEnabled($enabled);
+                },
+                'recipient' => function($recipient) use ($sickNoteSettings) {
+                    $sickNoteSettings->setRecipient($recipient);
+                },
+                'privacy_url' => function($url) use ($sickNoteSettings) {
+                    $sickNoteSettings->setPrivacyUrl($url);
+                },
+            ];
+
+            foreach($map as $formKey => $callable) {
+                $value = $form->get($formKey)->getData();
+                $callable($value);
+            }
+
+            $this->addFlash('success', 'admin.settings.success');
+
+            return $this->redirectToRoute('admin_settings_sick_notes');
+        }
+
+        return $this->render('admin/settings/sick_notes.html.twig', [
             'form' => $form->createView()
         ]);
     }

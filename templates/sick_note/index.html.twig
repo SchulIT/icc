@@ -1,0 +1,69 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'sick_note.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
+            <p>{{ 'sick_note.info'|trans }}</p>
+            <p>{{ 'sick_note.privacy.info'|trans }}</p>
+
+            {% if settings.privacyUrl is not null %}
+            <a href="{{ settings.privacyUrl }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                <i class="fa fa-external-link-alt"></i> {{ 'sick_note.privacy.link'|trans }}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+        <div class="card-body">
+            {{ form_row(form.student) }}
+            {{ form_row(form.reason)}}
+            {{ form_row(form.until) }}
+            {{ form_row(form.message) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'sick_note.contact.label'|trans }}</div>
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                {{ 'sick_note.contact.info'|trans }}
+            </div>
+
+            {{ form_row(form.phone) }}
+            {{ form_row(form.email) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'sick_note.attachments.label'|trans }}</div>
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                {{ 'sick_note.attachments.info'|trans }}
+            </div>
+
+            {{ form_row(form.attachments) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-envelope"></i> {{ 'sick_note.send'|trans }}
+        </button>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

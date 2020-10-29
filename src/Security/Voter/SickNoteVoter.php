@@ -25,7 +25,7 @@ class SickNoteVoter extends Voter {
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
         $user = $token->getUser();
 
-        if($user === null || !$user instanceof User) {
+        if(!$user instanceof User) {
             return false;
         }
 

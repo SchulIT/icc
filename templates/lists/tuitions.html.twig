@@ -128,6 +128,20 @@
             </div>
             <div class="col-md-3 sticky-sidebar">
             {% endif %}
+                {% if teacherMailAddresses is not null and teacherMailAddresses|length > 0 %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action" data-clipboard-text="{% for address in teacherMailAddresses %}{{ address }}{% if not loop.last %};{% endif %}{% endfor %}">
+                                <i class="fa fa-copy"></i> {{ 'lists.tuitions.student_teachers_export.copy'|trans }}
+                            </a>
+
+                            <a href="mailto:{% for address in teacherMailAddresses %}{{ address }}{% if not loop.last %};{% endif %}{% endfor %}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-envelope"></i> {{ 'lists.tuitions.student_teachers_export.mail'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
                 <div class="card">
                     <div class="card-body pb-1">
                         {% include "_filter/grade.html.twig" %}

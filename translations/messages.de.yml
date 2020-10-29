@@ -358,6 +358,9 @@ lists:
             csv: Liste exportieren
             copy: E-Mail Adressen kopieren
             mail: E-Mail an alle Lernenden verfassen
+        student_teachers_export:
+            copy: E-Mail Adressen der Fachlehrkräfte kopieren
+            mail: E-Mail an Fachlehrkräfte verfassen
 
     study_groups:
         label: Lerngruppen

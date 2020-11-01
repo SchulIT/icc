@@ -77,6 +77,8 @@ class SickNoteSender {
         if(!empty($note->getEmail())) {
             $message->addBcc($note->getEmail());
             $message->setReplyTo($note->getEmail());
+        } else {
+            $message->setReplyTo($this->settings->getRecipient());
         }
 
         foreach($note->getAttachments() as $attachment) {

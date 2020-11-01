@@ -234,3 +234,9 @@ services:
     App\Notification\WebPush\UserSubscriptionManager:
         tags:
             - { name: bentools_webpush.subscription_manager, user_class: 'App\Entity\User' }
+
+    # SICKNOTES
+    App\SickNote\SickNoteSender:
+        arguments:
+            $appName: '%env(APP_NAME)%'
+            $sender: '%env(MAILER_FROM)%'

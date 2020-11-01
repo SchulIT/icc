@@ -93,7 +93,7 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
             $exams = $this->examRepository->findAllByDate($start);
 
             foreach($exams as $exam) {
-                if(empty($exam->getExternalId())) {
+                if(!empty($exam->getExternalId())) {
                     continue; // Disable check for external exams
                 }
 

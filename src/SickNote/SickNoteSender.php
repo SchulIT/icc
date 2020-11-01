@@ -65,7 +65,7 @@ class SickNoteSender {
                 '%student%' => $this->converter->convert($note->getStudent()),
                 '%grade%' => $note->getStudent()->getGrade()->getName()
             ], 'email'))
-            ->setBody($body)
+            ->setBody($body, 'text/html')
             ->setCc($cc)
             ->setFrom([$this->sender], $this->appName)
             ->setSender($this->sender, $this->appName);
@@ -80,7 +80,12 @@ class SickNoteSender {
         }
 
         foreach($note->getAttachments() as $attachment) {
-            $message->attach(Swift_Attachment::fromPath($attachment->getRealPath())->setFilename($attachment->getClientOriginalName()));
+            $message->attach(
+                new Swift_Attachment(
+                    file_get_contents($attachment->getRealPath()),
+                    $attachment->getClientOriginalName()
+                )
+            );
         }
 
         $this->mailer->send($message);

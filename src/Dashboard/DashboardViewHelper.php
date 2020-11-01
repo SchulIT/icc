@@ -51,6 +51,7 @@ use App\Sorting\AbsentTeacherStrategy;
 use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
 use App\Timetable\TimetablePeriodHelper;
+use App\Timetable\TimetableTimeHelper;
 use App\Timetable\TimetableWeekHelper;
 use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
@@ -78,6 +79,7 @@ class DashboardViewHelper {
     private $timetablePeriodHelper;
     private $timetableSettings;
     private $timetableWeekHelper;
+    private $timetableTimeHelper;
     private $sorter;
     private $grouper;
     private $dashboardSettings;
@@ -89,7 +91,7 @@ class DashboardViewHelper {
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
                                 MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                                 StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, RoomReservationRepositoryInterface $reservationRepository, FreeTimespanRepositoryInterface $freeTimespanRepository,
-                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, Sorter $sorter, Grouper $grouper,
+                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, TimetableTimeHelper $timetableTimeHelper, Sorter $sorter, Grouper $grouper,
                                 TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
                                 ValidatorInterface $validator) {
         $this->substitutionRepository = $substitutionRepository;
@@ -108,6 +110,7 @@ class DashboardViewHelper {
         $this->timetablePeriodHelper = $timetablePeriodHelper;
         $this->timetableSettings = $timetableSettings;
         $this->timetableWeekHelper = $weekHelper;
+        $this->timetableTimeHelper = $timetableTimeHelper;
         $this->sorter = $sorter;
         $this->grouper = $grouper;
         $this->dashboardSettings = $dashboardSettings;
@@ -492,7 +495,8 @@ class DashboardViewHelper {
                 array_map(function(Student $student) {
                     return new AbsentStudent($student, AbsenceReason::Other());
                 }, $this->absenceRepository->findAllStudentsByDateAndLesson($dateTime, $lessonStudents, $lesson)),
-                $this->computeExamStudents($lessonEntity, $lesson, $dateTime)
+                $this->computeExamStudents($lessonEntity, $lesson, $dateTime),
+                $this->computeAbsentStudentsFromAppointments($lessonEntity, $lesson, $dateTime)
             )
         );
 
@@ -539,4 +543,37 @@ class DashboardViewHelper {
         return $absentStudents;
     }
 
+    private function computeAbsentStudentsFromAppointments(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime) {
+        if($lessonEntity->getTuition() === null) {
+            return [];
+        }
+
+        $absentStudents = [ ];
+
+        $lessonStudents = $lessonEntity
+            ->getTuition()
+            ->getStudyGroup()
+            ->getMemberships()
+            ->map(function (StudyGroupMembership $membership) {
+                return $membership->getStudent();
+            })
+            ->toArray();
+
+        foreach($lessonStudents as $student) {
+            $appointments = $this->appointmentRepository->findAllForStudentsAndTime(
+                [ $student ],
+                $this->timetableTimeHelper->getLessonStartDateTime($dateTime, $lesson),
+                $this->timetableTimeHelper->getLessonEndDateTime($dateTime, $lesson)
+            );
+
+            if(count($appointments) > 0) {
+                $appointment = array_shift($appointments);
+
+                $absentStudents[] = new AbsentAppointmentStudent($student, $appointment);
+            }
+        }
+
+
+        return $absentStudents;
+    }
 }

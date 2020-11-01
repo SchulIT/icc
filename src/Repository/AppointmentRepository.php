@@ -144,6 +144,38 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findAllForStudentsAndTime(array $students, DateTime $start, DateTime $end): array {
+        $qbStudyGroups = $this->em->createQueryBuilder();
+
+        $qbStudyGroups
+            ->select('sgInner.id')
+            ->from(StudyGroup::class, 'sgInner')
+            ->leftJoin('sgInner.memberships', 'sgMemberInner')
+            ->where('sgMemberInner.student IN (:studentIds)');
+
+        $qbAppointments = $this->em->createQueryBuilder()
+            ->select('aInner.id')
+            ->from(Appointment::class, 'aInner')
+            ->leftJoin('aInner.studyGroups', 'aSgInner')
+            ->where(
+                $qbStudyGroups->expr()->in('aSgInner.id', $qbStudyGroups->getDQL())
+            );
+
+        $studentIds = array_map(function(Student $student) {
+            return $student->getId();
+        }, $students);
+
+        return $this->getAppointments($qbAppointments, ['studentIds' => $studentIds ], null)
+                ->andWhere('a.start <= :end')
+                ->andWhere('a.end >= :start')
+                ->setParameter('start', $start)
+                ->setParameter('end', $end)
+                ->getQuery()->getResult();
+    }
+
+    /**
      * @param Teacher $teacher
      * @param DateTime|null $today
      * @return Appointment[]

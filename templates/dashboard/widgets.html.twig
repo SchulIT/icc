@@ -182,6 +182,7 @@
                         </span>
 
                         <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
+                            {% if lesson.grades|length > 0 %}
                             <span>
                                 <i class="fa fa-users"></i>
                                 {% if showCourseName and lesson.tuition is not null %}
@@ -192,10 +193,13 @@
                                 {% endif %}
                                 <span class="mx-1"></span>
                             </span>
+                            {% endif %}
+                            {% if lesson.room is not null or lesson.location is not null %}
                             <span>
                                 <i class="fa fa-door-open"></i> {% if lesson.room is not null%}{{ lesson.room.name }}{% elseif lesson.location is not empty %}{{ lesson.location }}{% else %}{{ 'label.not_available'|trans }}{% endif %}
                                 <span class="mx-1"></span>
                             </span>
+                            {% endif %}
 
                             <span>
                                 <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}

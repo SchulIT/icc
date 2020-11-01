@@ -448,11 +448,15 @@ class Builder {
                 ->setAttribute('title', $this->translator->trans('services.label'));
 
             foreach($token->getAttribute('services') as $service) {
-                $menu->addChild($service->name, [
+                $item = $menu->addChild($service->name, [
                     'uri' => $service->url
                 ])
                     ->setAttribute('title', $service->description)
                     ->setLinkAttribute('target', '_blank');
+
+                if(isset($service->icon) && !empty($service->icon)) {
+                    $item->setExtra('icon', $service->icon);
+                }
             }
         }
 

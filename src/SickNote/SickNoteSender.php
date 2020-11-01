@@ -16,6 +16,9 @@ use Twig\Environment;
 
 class SickNoteSender {
 
+    private $sender;
+    private $appName;
+
     private $converter;
     private $twig;
     private $mailer;
@@ -24,8 +27,10 @@ class SickNoteSender {
     private $userConverter;
     private $settings;
 
-    public function __construct(StudentStringConverter $converter, Environment $twig, Swift_Mailer $mailer, TranslatorInterface $translator,
+    public function __construct(string $sender, string $appName, StudentStringConverter $converter, Environment $twig, Swift_Mailer $mailer, TranslatorInterface $translator,
                                 DateHelper $dateHelper, UserStringConverter $userConverter, SickNoteSettings $settings) {
+        $this->sender = $sender;
+        $this->appName = $appName;
         $this->converter = $converter;
         $this->twig = $twig;
         $this->mailer = $mailer;
@@ -61,7 +66,9 @@ class SickNoteSender {
                 '%grade%' => $note->getStudent()->getGrade()->getName()
             ], 'email'))
             ->setBody($body)
-            ->setCc($cc);
+            ->setCc($cc)
+            ->setFrom([$this->sender], $this->appName)
+            ->setSender($this->sender, $this->appName);
 
         if(!empty($this->settings->getRecipient())) {
             $message->setTo($this->settings->getRecipient());

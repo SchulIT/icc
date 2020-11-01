@@ -215,18 +215,18 @@
             </div>
             <div class="card-footer collapse border-top-0" id="absences-{{ item.lesson.lesson }}">
                 {% for group in item.absentStudentGroups %}
-                    <div class="d-flex">
+                    <div class="d-flex flex-wrap flex-md-nowrap">
                         <div class="align-self-baseline flex-shrink-0 mr-1">
                             {% if group.isExam %}
                                 <i class="fa fa-edit"></i> {% for tuition in group.objective.tuitions %}{{ tuition.name }} ({{ tuition.teachers|teachers }}){% if not loop.last %}, {% endif %}{% endfor %}:
                             {% elseif group.isAppointment %}
-
+                                <i class="fa fa-calendar-alt"></i> {{ group.objective.title }} {% if group.objective.organizers|length > 0 %}({% for organizer in group.objective.organizers %}{{ organizer|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}){% endif %}
                             {% else %}
 
                             {% endif %}
                         </div>
                         <div class="align-self-baseline w-100">
-                            {% for absentStudent in group.students %}{{ absentStudent.student|student }}{% if not loop.last %}, {% endif %}{% endfor %}
+                            {% for absentStudent in group.students %}{{ absentStudent.student|student }}{% if not loop.last %} – {% endif %}{% endfor %}
                         </div>
                     </div>
                 {% endfor %}

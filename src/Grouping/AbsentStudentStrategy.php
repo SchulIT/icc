@@ -2,6 +2,7 @@
 
 namespace App\Grouping;
 
+use App\Dashboard\AbsentAppointmentStudent;
 use App\Dashboard\AbsentExamStudent;
 use App\Dashboard\AbsentStudent;
 use App\Entity\Appointment;
@@ -16,6 +17,10 @@ class AbsentStudentStrategy implements GroupingStrategyInterface {
     public function computeKey($object) {
         if($object instanceof AbsentExamStudent) {
             return $object->getExam();
+        }
+
+        if($object instanceof AbsentAppointmentStudent) {
+            return $object->getAppointment();
         }
 
         return null;

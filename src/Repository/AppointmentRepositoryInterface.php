@@ -42,6 +42,14 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function findAllForStudents(array $students, ?DateTime $today = null): array;
 
     /**
+     * @param Student[] $students
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return Appointment[]
+     */
+    public function findAllForStudentsAndTime(array $students, DateTime $start, DateTime $end): array;
+
+    /**
      * @param Teacher $teacher
      * @param DateTime|null $today
      * @return Appointment[]

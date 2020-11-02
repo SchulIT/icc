@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * @CronJob("* *\/0 * * *")
+ * @CronJob("@daily")
  */
 class RemoveExpiredSickNotesCommand extends Command {
 

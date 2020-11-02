@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  * @ORM\Table(name="room_roomtags")
  */
 class RoomTagInfo {

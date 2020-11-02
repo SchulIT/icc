@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use DateTime;
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  * @Vich\Uploadable()
  */
 class MessageFileUpload {

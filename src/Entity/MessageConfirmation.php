@@ -3,11 +3,13 @@
 namespace App\Entity;
 
 use DateTime;
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  */
 class MessageConfirmation {
 

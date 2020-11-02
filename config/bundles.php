@@ -31,4 +31,5 @@ return [
     BenTools\WebPushBundle\WebPushBundle::class => ['all' => true],
     Shapecode\Bundle\CronBundle\ShapecodeCronBundle::class => ['all' => true],
     EightPoints\Bundle\GuzzleBundle\EightPointsGuzzleBundle::class => ['all' => true],
+    DH\DoctrineAuditBundle\DHDoctrineAuditBundle::class => ['all' => true],
 ];

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Validator\Color;
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -10,6 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  * @UniqueEntity(fields={"externalId"})
  */
 class AppointmentCategory {

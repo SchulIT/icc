@@ -1077,3 +1077,6 @@ sick_note:
         info: Es besteht die Möglichkeit, eine Telefonnummer oder E-Mail-Adresse zu hinterlegen, die für Rückfragen genutzt werden kann. Bei Angabe einer E-Mail-Adresse wird eine Kopie der Krankmeldung an diese Adresse versendet.
     send: absenden
     success: Die Krankmeldung wurde erfolgreich an die Schule übermittelt. Falls eine E-Mail Adresse angegeben wurde, wird eine Kopie der Krankmeldung versendet. Der Versand der E-Mail dauert einige Minuten.
+
+audit:
+    label: Audit-Log

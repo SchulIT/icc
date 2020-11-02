@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8009090b4556d51d470e7f7a75edc7c2",
+    "content-hash": "d5b0295c03a5ae2778093c0d65e4f5ab",
     "packages": [
         {
             "name": "acelaya/doctrine-enum-type",
@@ -484,6 +484,77 @@
             ],
             "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
             "time": "2020-08-25T05:50:16+00:00"
+        },
+        {
+            "name": "damienharper/auditor-bundle",
+            "version": "3.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DamienHarper/auditor-bundle.git",
+                "reference": "22ed050debd8cd3635d0932d1575c4919da645f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DamienHarper/auditor-bundle/zipball/22ed050debd8cd3635d0932d1575c4919da645f8",
+                "reference": "22ed050debd8cd3635d0932d1575c4919da645f8",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/annotations": "^1.8",
+                "doctrine/doctrine-bundle": "^1.9|^2.0",
+                "doctrine/orm": "^2.7",
+                "php": ">=7.1",
+                "symfony/event-dispatcher": "^3.4|^4.0|^5.0",
+                "symfony/lock": "^3.4|^4.0|^5.0",
+                "symfony/security-bundle": "^3.4|^4.0|^5.0",
+                "symfony/translation": "^3.4|^4.0|^5.0",
+                "symfony/twig-bundle": "^3.4|^4.0|^5.0"
+            },
+            "conflict": {
+                "doctrine/persistence": "<1.3"
+            },
+            "require-dev": {
+                "doctrine/doctrine-migrations-bundle": "^1.3|^2.0",
+                "friendsofphp/php-cs-fixer": "^2.15",
+                "gedmo/doctrine-extensions": "^2.4",
+                "matthiasnoback/symfony-dependency-injection-test": "^3.1|^4.0",
+                "phpstan/phpstan": "^0.12",
+                "phpstan/phpstan-doctrine": "^0.12",
+                "phpstan/phpstan-strict-rules": "^0.12",
+                "phpstan/phpstan-symfony": "^0.12",
+                "phpunit/phpunit": "^7.0|^8.0",
+                "symfony/var-dumper": "^4.2|^5.0",
+                "twig/extensions": "^1.5"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DH\\DoctrineAuditBundle\\": "src/DoctrineAuditBundle"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Damien Harper",
+                    "email": "damien.harper@gmail.com"
+                }
+            ],
+            "description": "Doctrine audits logs made easy.",
+            "keywords": [
+                "Audit",
+                "audit-log",
+                "audit-trail",
+                "doctrine"
+            ],
+            "time": "2020-04-27T13:59:32+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -2287,6 +2358,7 @@
                 "faker",
                 "fixtures"
             ],
+            "abandoned": true,
             "time": "2019-12-12T13:22:17+00:00"
         },
         {
@@ -7298,6 +7370,66 @@
                 "localization"
             ],
             "time": "2020-09-27T03:36:23+00:00"
+        },
+        {
+            "name": "symfony/lock",
+            "version": "v4.4.16",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/lock.git",
+                "reference": "160e5989a2d275190f4d904ae893c018e36b18f3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/lock/zipball/160e5989a2d275190f4d904ae893c018e36b18f3",
+                "reference": "160e5989a2d275190f4d904ae893c018e36b18f3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.3",
+                "psr/log": "~1.0"
+            },
+            "conflict": {
+                "doctrine/dbal": "<2.5"
+            },
+            "require-dev": {
+                "doctrine/dbal": "^2.5|^3.0",
+                "predis/predis": "~1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Lock\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jérémy Derussé",
+                    "email": "jeremy@derusse.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Lock Component",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "cas",
+                "flock",
+                "locking",
+                "mutex",
+                "redlock",
+                "semaphore"
+            ],
+            "time": "2020-10-24T11:50:19+00:00"
         },
         {
             "name": "symfony/mime",

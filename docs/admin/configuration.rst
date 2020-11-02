@@ -94,6 +94,12 @@ NOTIFICATIONS_ENABLED
 Legt fest, ob das ICC grundsätzlich Benachrichtigungen versendet oder nicht. Einzelne Benachrichtigungsarten können später über das
 Web-Interface festgelegt werden. Sollte standardmäßig ``true`` sein und dient dazu, Benachrichtigungen global zu deaktivieren (``false``).
 
+AUDIT_ENABLED
+#############
+
+Legt fest, ob das Audit-Logging aktiv (``true``) oder nicht aktiv (``false``) ist. Ist es aktiv wird jede Datenbankaktion (Anlegen, Bearbeiten und Löschen
+von Mitteilungen, Vertretungen etc.) in der Datenbank gespeichert und ist einem Benutzer zuzuordnen.
+
 DATABASE_URL
 ############
 

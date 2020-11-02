@@ -1,0 +1,7 @@
+dh_doctrine_audit:
+  enabled: '%env(bool:AUDIT_ENABLED)%'
+  table_prefix: ''
+  table_suffix: '_audit'
+  ignored_columns:
+    - createdAt
+    - updatedAt

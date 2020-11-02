@@ -340,6 +340,12 @@ class Builder {
             ])
                 ->setLinkAttribute('target', '_blank')
                 ->setExtra('icon', 'fas fa-tools');
+
+            $menu->addChild('audit.label', [
+                'uri' => '/admin/audit'
+            ])
+                ->setLinkAttribute('target', '_blank')
+                ->setExtra('icon', 'far fa-eye');
         }
 
         return $root;

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Validator\Color;
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
@@ -12,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  * @UniqueEntity(fields={"abbreviation"})
  */
 class Subject {

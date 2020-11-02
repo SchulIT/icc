@@ -569,7 +569,9 @@ class DashboardViewHelper {
             if(count($appointments) > 0) {
                 $appointment = array_shift($appointments);
 
-                $absentStudents[] = new AbsentAppointmentStudent($student, $appointment);
+                if($appointment->isMarkStudentsAbsent()) {
+                    $absentStudents[] = new AbsentAppointmentStudent($student, $appointment);
+                }
             }
         }
 

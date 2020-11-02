@@ -131,7 +131,7 @@ class TimetableCalenderExportHelper {
 
         $start = clone $start;
 
-        while($start <= $end) {
+        while($start < $end) {
             $dates[] = $start;
             $start = (clone $start)->modify('+1 day');
         }

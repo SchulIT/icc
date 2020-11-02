@@ -16,7 +16,7 @@ class SickNoteVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject) {
-        return static::New;
+        return $attribute === static::New;
     }
 
     /**

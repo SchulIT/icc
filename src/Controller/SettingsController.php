@@ -28,6 +28,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\HttpFoundation\Request;
@@ -222,11 +223,26 @@ class SettingsController extends AbstractController {
                 'label' => 'admin.settings.sick_notes.recipient.label',
                 'help' => 'admin.settings.sick_notes.recipient.help'
             ])
+            ->add('introduction_text', TextareaType::class, [
+                'required' => false,
+                'data' => $sickNoteSettings->getIntroductionText(),
+                'label' => 'admin.settings.sick_notes.introduction_text.label',
+                'help' => 'admin.settings.sick_notes.introduction_text.help'
+            ])
             ->add('privacy_url', TextType::class, [
                 'required' => true,
                 'data' => $sickNoteSettings->getPrivacyUrl(),
                 'label' => 'admin.settings.sick_notes.privacy_url.label',
                 'help' => 'admin.settings.sick_notes.privacy_url.help'
+            ])
+            ->add('retention_days', IntegerType::class, [
+                'required' => true,
+                'data' => $sickNoteSettings->getRetentionDays(),
+                'label' => 'admin.settings.sick_notes.retention_days.label',
+                'help' => 'admin.settings.sick_notes.retention_days.help',
+                'constraints' => [
+                    new GreaterThanOrEqual(0)
+                ]
             ]);
 
         $form = $builder->getForm();
@@ -243,6 +259,12 @@ class SettingsController extends AbstractController {
                 'privacy_url' => function($url) use ($sickNoteSettings) {
                     $sickNoteSettings->setPrivacyUrl($url);
                 },
+                'retention_days' => function($days) use ($sickNoteSettings) {
+                    $sickNoteSettings->setRetentionDays($days);
+                },
+                'introduction_text' => function($text) use ($sickNoteSettings) {
+                    $sickNoteSettings->setIntroductionText($text);
+                }
             ];
 
             foreach($map as $formKey => $callable) {

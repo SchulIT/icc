@@ -640,6 +640,12 @@ admin:
             privacy_url:
                 label: Datenschutz-URL
                 help: Link zur Datenschutzrichtlinie, die der Krankmeldung zugrunde liegt. Dieser Link wird bei der Krankmeldung angezeigt.
+            retention_days:
+                label: Aufbewahrung
+                help: Anzahl der Tage, die eine Krankmeldung online im System notiert bleibt. Sie ist dann für die Person sichtbar, die die Krankmeldung eingetragen hat. Dabei wird nur der Benutzer, der betroffende Lernende, die Dauer und der Zeitpunkt erfasst. Anhänge oder die Mitteilung wird nicht gespeichert. Der Wert 0 bedeutet, dass Krankmeldungen dauerhaft aufbewahrt werden.
+            introduction_text:
+                label: Hinweistext
+                help: Der Hinweistext wird oberhalb der Krankmeldungsseite über der Information zum Datenschutz angezeigt.
 
         appointments:
             label: Terminplan
@@ -1077,6 +1083,12 @@ sick_note:
         info: Es besteht die Möglichkeit, eine Telefonnummer oder E-Mail-Adresse zu hinterlegen, die für Rückfragen genutzt werden kann. Bei Angabe einer E-Mail-Adresse wird eine Kopie der Krankmeldung an diese Adresse versendet.
     send: absenden
     success: Die Krankmeldung wurde erfolgreich an die Schule übermittelt. Falls eine E-Mail Adresse angegeben wurde, wird eine Kopie der Krankmeldung versendet. Der Versand der E-Mail dauert einige Minuten.
+    history:
+        label: Bisherige Krankmeldungen
+        empty: Keine Krankmeldungen eingereicht.
+        info: Hier sind eingesendete Krankmeldungen in zusammengefasster Form (Schüler, voraussichtliches Ende und Zeitpunkt der Meldung) einsehbar.
+        retention: '{1} Krankmeldungen werden einen Tag nach dem voraussichtlichen Ende automatisch gelöscht.|]1,Inf[ Krankmeldungen werden einen Tag nach dem voraussichtlichen Ende automatisch gelöscht.'
+        note: '%student% bis zum %date%'
 
 audit:
     label: Audit-Log

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Form\SickNoteType;
+use App\Repository\SickNoteRepositoryInterface;
 use App\Security\Voter\SickNoteVoter;
 use App\Settings\SickNoteSettings;
 use App\SickNote\SickNote;
@@ -18,7 +19,7 @@ class SickNoteController extends AbstractController {
     /**
      * @Route("/sick_note", name="sick_note")
      */
-    public function add(Request $request, SickNoteSender $sender, SickNoteSettings $settings) {
+    public function add(Request $request, SickNoteSender $sender, SickNoteSettings $settings, SickNoteRepositoryInterface $repository) {
         $this->denyAccessUnlessGranted(SickNoteVoter::New);
 
         if($settings->isEnabled() !== true) {
@@ -48,7 +49,8 @@ class SickNoteController extends AbstractController {
 
         return $this->render('sick_note/index.html.twig', [
             'form' => $form->createView(),
-            'settings' => $settings
+            'settings' => $settings,
+            'sick_notes' => $repository->findByUser($user)
         ]);
     }
 }

@@ -6,6 +6,7 @@ use App\Converter\StudentStringConverter;
 use App\Converter\UserStringConverter;
 use App\Entity\GradeTeacher;
 use App\Entity\User;
+use App\Repository\SickNoteRepositoryInterface;
 use App\Settings\SickNoteSettings;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Swift_Attachment;
@@ -13,6 +14,7 @@ use Swift_Mailer;
 use Swift_Message;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
+use App\Entity\SickNote as SickNoteEntity;
 
 class SickNoteSender {
 
@@ -26,9 +28,10 @@ class SickNoteSender {
     private $dateHelper;
     private $userConverter;
     private $settings;
+    private $repository;
 
     public function __construct(string $sender, string $appName, StudentStringConverter $converter, Environment $twig, Swift_Mailer $mailer, TranslatorInterface $translator,
-                                DateHelper $dateHelper, UserStringConverter $userConverter, SickNoteSettings $settings) {
+                                DateHelper $dateHelper, UserStringConverter $userConverter, SickNoteSettings $settings, SickNoteRepositoryInterface $repository) {
         $this->sender = $sender;
         $this->appName = $appName;
         $this->converter = $converter;
@@ -38,9 +41,20 @@ class SickNoteSender {
         $this->dateHelper = $dateHelper;
         $this->userConverter = $userConverter;
         $this->settings = $settings;
+        $this->repository = $repository;
+    }
+
+    private function persistInDatabase(SickNote $note): void {
+        $entity = (new SickNoteEntity())
+            ->setStudent($note->getStudent())
+            ->setUntil($note->getUntil());
+
+        $this->repository->persist($entity);
     }
 
     public function sendSickNote(SickNote $note, User $sender) {
+        $this->persistInDatabase($note);
+
         $cc = [ ];
         $teachers = [ ];
 

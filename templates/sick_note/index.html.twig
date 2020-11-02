@@ -10,60 +10,104 @@
 {% endblock %}
 
 {% block content %}
-    {{ form_start(form) }}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {{ form_start(form) }}
 
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
-            <p>{{ 'sick_note.info'|trans }}</p>
-            <p>{{ 'sick_note.privacy.info'|trans }}</p>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
 
-            {% if settings.privacyUrl is not null %}
-            <a href="{{ settings.privacyUrl }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                <i class="fa fa-external-link-alt"></i> {{ 'sick_note.privacy.link'|trans }}
-            </a>
-            {% endif %}
-        </div>
-    </div>
+                        {{ settings.introductionText|markdown }}
 
-    <div class="card">
-        <div class="card-header">{{ 'label.general'|trans }}</div>
-        <div class="card-body">
-            {{ form_row(form.student) }}
-            {{ form_row(form.reason)}}
-            {{ form_row(form.until) }}
-            {{ form_row(form.message) }}
-        </div>
-    </div>
+                        <p>{{ 'sick_note.privacy.info'|trans }}</p>
 
-    <div class="card">
-        <div class="card-header">{{ 'sick_note.contact.label'|trans }}</div>
-        <div class="card-body">
-            <div class="bs-callout bs-callout-info">
-                {{ 'sick_note.contact.info'|trans }}
+                        {% if settings.privacyUrl is not null %}
+                            <a href="{{ settings.privacyUrl }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fa fa-external-link-alt"></i> {{ 'sick_note.privacy.link'|trans }}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">{{ 'label.general'|trans }}</div>
+                    <div class="card-body">
+                        {{ form_row(form.student) }}
+                        {{ form_row(form.reason)}}
+                        {{ form_row(form.until) }}
+                        {{ form_row(form.message) }}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">{{ 'sick_note.contact.label'|trans }}</div>
+                    <div class="card-body">
+                        <div class="bs-callout bs-callout-info">
+                            {{ 'sick_note.contact.info'|trans }}
+                        </div>
+
+                        {{ form_row(form.phone) }}
+                        {{ form_row(form.email) }}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">{{ 'sick_note.attachments.label'|trans }}</div>
+                    <div class="card-body">
+                        <div class="bs-callout bs-callout-info">
+                            {{ 'sick_note.attachments.info'|trans }}
+                        </div>
+
+                        {{ form_row(form.attachments) }}
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fa fa-envelope"></i> {{ 'sick_note.send'|trans }}
+                    </button>
+                </div>
+
+                {{ form_end(form) }}
             </div>
 
-            {{ form_row(form.phone) }}
-            {{ form_row(form.email) }}
-        </div>
-    </div>
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-header">
+                        {{ 'sick_note.history.label'|trans }}
+                    </div>
 
-    <div class="card">
-        <div class="card-header">{{ 'sick_note.attachments.label'|trans }}</div>
-        <div class="card-body">
-            <div class="bs-callout bs-callout-info">
-                {{ 'sick_note.attachments.info'|trans }}
+                    <div class="card-body">
+                        <p>{{ 'sick_note.history.info'|trans }}</p>
+
+                        {% if settings.retentionDays > 0 %}
+                            <p>{{ 'sick_note.history.retention'|trans({'%count%': settings.retentionDays }) }}</p>
+                        {% endif %}
+                    </div>
+
+                        <ul class="list-group list-group-flush">
+                            {% if sick_notes|length == 0 %}
+                                <li class="list-group-item">
+                                    {{ 'sick_note.history.empty'|trans }}
+                                </li>
+                            {% endif %}
+
+                            {% for note in sick_notes %}
+                                <li class="list-group-item">
+                                    <div>
+                                        {{ 'sick_note.history.note'|trans({ '%student%': note.student|student, '%date%': note.until|format_date }) }}
+                                    </div>
+                                    <small class="text-secondary">
+                                        <i class="fa fa-calendar-alt"></i> {{ note.createdAt|format_datetime }}
+                                    </small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                </div>
             </div>
-
-            {{ form_row(form.attachments) }}
         </div>
     </div>
 
-    <div class="buttons">
-        <button type="submit" class="btn btn-primary btn-sm">
-            <i class="fa fa-envelope"></i> {{ 'sick_note.send'|trans }}
-        </button>
-    </div>
-
-    {{ form_end(form) }}
 {% endblock %}

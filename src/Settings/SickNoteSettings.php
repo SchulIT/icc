@@ -27,4 +27,20 @@ class SickNoteSettings extends AbstractSettings {
     public function setPrivacyUrl(?string $url): void {
         $this->setValue('sick_note.privacy_url', $url);
     }
+
+    public function getIntroductionText(): ?string {
+        return $this->getValue('sick_note.introduction_text');
+    }
+
+    public function setIntroductionText(?string $text): void {
+        $this->setValue('sick_note.introduction_text', $text);
+    }
+
+    public function getRetentionDays(): int {
+        return $this->getValue('sick_note.retention_days', 0);
+    }
+
+    public function setRetentionDays(int $days): void {
+        $this->setValue('sick_note.retention_days', $days);
+    }
 }

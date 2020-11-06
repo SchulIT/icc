@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Converter\StudentStringConverter;
 use App\Entity\Student;
 use App\Sorting\Sorter;
+use App\Sorting\StudentStrategy;
 use FervoEnumBundle\Generated\Form\SickNoteReasonType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Form\AbstractType;
@@ -20,11 +21,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class SickNoteType extends AbstractType {
 
     private $studentConverter;
+    private $studentStrategy;
     private $sorter;
     private $dateHelper;
 
-    public function __construct(StudentStringConverter $converter, Sorter $sorter, DateHelper $dateHelper) {
+    public function __construct(StudentStringConverter $converter, StudentStrategy $strategy, Sorter $sorter, DateHelper $dateHelper) {
         $this->studentConverter = $converter;
+        $this->studentStrategy = $strategy;
         $this->sorter = $sorter;
         $this->dateHelper = $dateHelper;
     }
@@ -35,15 +38,17 @@ class SickNoteType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
-            ->add('student', ChoiceType::class, [
+            ->add('student', SortableChoiceType::class, [
                 'choices' => $options['students'],
                 'choice_label' => function(Student $student) {
-                    return $this->studentConverter->convert($student);
+                    return $this->studentConverter->convert($student, true);
                 },
                 'placeholder' => 'label.select.student',
                 'attr' => [
+                    'data-choice' => 'true',
                     'class' => 'custom-select'
                 ],
+                'sort_by' => $this->studentStrategy,
                 'label' => 'label.student'
             ])
             ->add('reason', SickNoteReasonType::class, [

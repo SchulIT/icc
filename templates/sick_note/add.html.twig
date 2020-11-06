@@ -22,7 +22,9 @@
                     <div class="card-body">
                         <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
 
-                        {{ settings.introductionText|markdown }}
+                        {% if settings.introductionText is not null %}
+                            {{ settings.introductionText|markdown }}
+                        {% endif %}
 
                         <p>{{ 'sick_notes.add.privacy.info'|trans }}</p>
 

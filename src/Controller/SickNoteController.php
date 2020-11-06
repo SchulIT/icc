@@ -65,7 +65,7 @@ class SickNoteController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $sender->sendSickNote($note, $user);
 
-            $this->addFlash('success', 'sick_note.success');
+            $this->addFlash('success', 'sick_notes.add.success');
             return $this->redirectToRoute('sick_note');
         }
 

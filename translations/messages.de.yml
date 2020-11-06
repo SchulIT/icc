@@ -1070,6 +1070,7 @@ sick_notes:
     label: Krankmeldungen
     empty: Es liegen keine Krankmeldungen vor.
     created_at: krankgemeldet am
+    until_short: 'vsl. bis %date%'
     add:
         label: Neue Krankmeldung
         info: Hier besteht die Möglichkeit, eine Krankheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.

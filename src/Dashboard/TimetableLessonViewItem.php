@@ -41,9 +41,15 @@ class TimetableLessonViewItem extends AbstractViewItem {
 
     public function getAbsentStudentsCount(): int {
         $count = 0;
+        $studentIds = [ ];
 
         foreach($this->absentStudentGroups as $group) {
-            $count += count($group->getStudents());
+            foreach($group->getStudents() as $student) {
+                if(!in_array($student->getStudent()->getId(), $studentIds)) {
+                    $count++;
+                    $studentIds[] = $student->getStudent()->getId();
+                }
+            }
         }
 
         return $count;

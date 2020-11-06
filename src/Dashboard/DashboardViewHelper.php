@@ -11,6 +11,7 @@ use App\Entity\Message;
 use App\Entity\MessageScope;
 use App\Entity\Room;
 use App\Entity\RoomReservation;
+use App\Entity\SickNote;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Substitution;
@@ -31,6 +32,7 @@ use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\RoomReservationRepositoryInterface;
+use App\Repository\SickNoteRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
@@ -74,6 +76,7 @@ class DashboardViewHelper {
     private $appointmentRepository;
     private $roomReservationRepository;
     private $freeTimespanRepository;
+    private $sickNoteRepository;
 
     private $studyGroupHelper;
     private $timetablePeriodHelper;
@@ -90,7 +93,8 @@ class DashboardViewHelper {
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
                                 MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, RoomReservationRepositoryInterface $reservationRepository, FreeTimespanRepositoryInterface $freeTimespanRepository,
+                                StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, RoomReservationRepositoryInterface $reservationRepository,
+                                FreeTimespanRepositoryInterface $freeTimespanRepository, SickNoteRepositoryInterface $sickNoteRepository,
                                 StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, TimetableTimeHelper $timetableTimeHelper, Sorter $sorter, Grouper $grouper,
                                 TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
                                 ValidatorInterface $validator) {
@@ -106,6 +110,7 @@ class DashboardViewHelper {
         $this->appointmentRepository = $appointmentRepository;
         $this->roomReservationRepository = $reservationRepository;
         $this->freeTimespanRepository = $freeTimespanRepository;
+        $this->sickNoteRepository = $sickNoteRepository;
         $this->studyGroupHelper = $studyGroupHelper;
         $this->timetablePeriodHelper = $timetablePeriodHelper;
         $this->timetableSettings = $timetableSettings;
@@ -496,7 +501,8 @@ class DashboardViewHelper {
                     return new AbsentStudent($student, AbsenceReason::Other());
                 }, $this->absenceRepository->findAllStudentsByDateAndLesson($dateTime, $lessonStudents, $lesson)),
                 $this->computeExamStudents($lessonEntity, $lesson, $dateTime),
-                $this->computeAbsentStudentsFromAppointments($lessonEntity, $lesson, $dateTime)
+                $this->computeAbsentStudentsFromAppointments($lessonEntity, $lesson, $dateTime),
+                $this->computeSickStudents($lessonEntity, $lesson, $dateTime)
             )
         );
 
@@ -575,7 +581,34 @@ class DashboardViewHelper {
             }
         }
 
-
         return $absentStudents;
+    }
+
+    private function computeSickStudents(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime) {
+        if($lessonEntity->getTuition() === null) {
+            return [];
+        }
+
+        $lessonStudents = $lessonEntity
+            ->getTuition()
+            ->getStudyGroup()
+            ->getMemberships()
+            ->map(function (StudyGroupMembership $membership) {
+                return $membership->getStudent();
+            })
+            ->toArray();
+
+        $sickNotes = $this->sickNoteRepository->findByStudents($lessonStudents);
+        $start = $this->timetableTimeHelper->getLessonStartDateTime($dateTime, $lesson);
+        $end = $this->timetableTimeHelper->getLessonEndDateTime($dateTime, $lesson);
+
+        $sickNotes = array_filter($sickNotes, function(SickNote $note) use($start, $end) {
+            return $note->getCreatedAt() < $start
+                && $note->getUntil() > $end;
+        });
+
+        return array_map(function(SickNote $note) {
+            return new AbsentSickStudent($note->getStudent(), $note);
+        }, $sickNotes);
     }
 }

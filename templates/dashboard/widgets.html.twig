@@ -220,6 +220,7 @@
             <div class="card-footer collapse border-top-0" id="absences-{{ item.lesson.lesson }}">
                 {% for group in item.absentStudentGroups %}
                     <div class="d-flex flex-wrap flex-md-nowrap">
+                        {% if group.isExam or group.isAppointment %}
                         <div class="align-self-baseline flex-shrink-0 mr-1">
                             {% if group.isExam %}
                                 <i class="fa fa-edit"></i> {% for tuition in group.objective.tuitions %}{{ tuition.name }} ({{ tuition.teachers|teachers }}){% if not loop.last %}, {% endif %}{% endfor %}:
@@ -229,8 +230,11 @@
 
                             {% endif %}
                         </div>
+                        {% endif %}
                         <div class="align-self-baseline w-100">
-                            {% for absentStudent in group.students %}{{ absentStudent.student|student }}{% if not loop.last %} – {% endif %}{% endfor %}
+                            {% for absentStudent in group.students %}
+                                {% if absentStudent.reason == 'sick' %}<i class="fas fa-clinic-medical"></i>{% endif %}
+                                {{ absentStudent.student|student }} {% if absentStudent.reason == 'sick' %}({{ 'sick_notes.until_short'|trans({'%date%': absentStudent.sickNote.until|format_date}) }}){% endif %}{% if not loop.last %} – {% endif %}{% endfor %}
                         </div>
                     </div>
                 {% endfor %}

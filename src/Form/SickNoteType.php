@@ -55,22 +55,22 @@ class SickNoteType extends AbstractType {
             ])
             ->add('until', DateType::class, [
                 'widget' => 'single_text',
-                'label' => 'sick_note.absent_until'
+                'label' => 'sick_notes.add.absent_until'
             ])
             ->add('message', TextareaType::class, [
-                'label' => 'sick_note.message',
+                'label' => 'sick_notes.add.message',
                 'attr' => [
                     'rows' => 5
                 ]
             ])
             ->add('attachments', FileType::class, [
                 'multiple' => true,
-                'label' => 'sick_note.attachments.label',
+                'label' => 'sick_notes.add.attachments.label',
                 'required' => false
             ])
             ->add('phone', TextType::class, [
                 'required' => false,
-                'label' => 'sick_note.phone'
+                'label' => 'sick_notes.add.phone'
             ])
             ->add('email', EmailType::class, [
                 'required' => false,

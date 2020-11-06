@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Grade;
 use App\Entity\SickNote;
+use App\Entity\Student;
 use App\Entity\User;
 use DateTime;
 
@@ -40,5 +42,51 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
             ->setParameter('threshold', $threshold)
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findByStudents(array $students): array {
+        $ids = array_map(function(Student $student) {
+            return $student->getId();
+        }, $students);
+
+        $qb = $this->em->createQueryBuilder()
+            ->select('sn', 's')
+            ->from(SickNote::class, 'sn')
+            ->leftJoin('sn.student', 's');
+
+        $qb->where($qb->expr()->in('s.id', ':students'))
+            ->setParameter('students', $ids);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findByGrade(Grade $grade): array {
+        $qb = $this->em->createQueryBuilder()
+            ->select('sn', 's')
+            ->from(SickNote::class, 'sn')
+            ->leftJoin('sn.student', 's')
+            ->leftJoin('s.grade', 'g')
+            ->where('g.id = :grade')
+            ->setParameter('grade', $grade->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAll(): array {
+        $qb = $this->em->createQueryBuilder()
+            ->select('sn', 's')
+            ->from(SickNote::class, 'sn')
+            ->leftJoin('sn.student', 's');
+
+        return $qb->getQuery()->getResult();
     }
 }

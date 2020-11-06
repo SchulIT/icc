@@ -1,0 +1,106 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'sick_notes.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if groups|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <h4>{{ 'info.label'|trans }}</h4>
+
+                        <p>{{ 'sick_notes.empty'|trans }}</p>
+                    </div>
+                {% else %}
+                    {% for group in groups %}
+                        <div class="card">
+                            <div class="card-header">
+                                {% if teacherFilter.currentTeacher is not null %}
+                                    {% set tuition = group.tuition %}
+
+                                    {% if tuition.displayName is not empty %}
+                                        {{ tuition.displayName }}
+                                    {% else %}
+                                        {{ tuition.name }}
+                                    {% endif %} ({{ tuition.subject.name }})
+
+                                    {% for grade in tuition.studyGroup.grades %}<span class="badge badge-primary">{{ grade.name }}</span>{% endfor %}
+                                {% else %}
+                                    {{ group.grade.name }}
+                                {% endif %}
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered card-table border-top-0" data-table="true">
+                                    <colgroup>
+                                        <col>
+                                        <col>
+                                        <col class="column-lg">
+                                        <col class="column-lg">
+                                        <col class="column-md">
+                                    </colgroup>
+
+                                    <thead>
+                                    <tr>
+                                        <th>{{ 'label.lastname'|trans }}</th>
+                                        <th>{{ 'label.firstname'|trans }}</th>
+                                        <th data-sortable="false">{{ 'sick_notes.add.absent_until'|trans }}</th>
+                                        <th data-sortable="false">{{ 'sick_notes.created_at'|trans }}</th>
+                                        <th>{{ 'label.grade'|trans }}</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    {% for note in group.sickNotes %}
+                                        <tr>
+                                            <td>{{ note.student.lastname }}</td>
+                                            <td>{{ note.student.firstname }}</td>
+                                            <td>{{ note.until|format_date }}</td>
+                                            <td>{{ note.createdAt|format_datetime }}</td>
+                                            <td>{{ note.student.grade.name }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                    </div>
+                    <div class="col-md-3 sticky-sidebar">
+
+                        <div class="card">
+                            <div class="list-group list-group-flush">
+                                {% if is_granted('new-sicknote') %}
+                                    <a href="{{ path('sick_note') }}" class="list-group-item list-group-item-action">
+                                        <i class="fa fa-plus"></i> {{ 'sick_notes.add.label'|trans }}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                <div class="card">
+                    <div class="card-body pb-1">
+                        {% include "_filter/teacher.html.twig" %}
+
+                        {% include "_filter/grade.html.twig" %}
+                    </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

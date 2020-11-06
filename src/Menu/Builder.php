@@ -442,11 +442,18 @@ class Builder {
 
         $this->wikiMenu($menu);
 
-        if($this->sickNoteSettings->isEnabled() === true && $this->authorizationChecker->isGranted(SickNoteVoter::New)) {
-            $menu->addChild('sick_note.label', [
-                'route' => 'sick_note'
-            ])
-                ->setExtra('icon', 'fas fa-clinic-medical');
+        if($this->sickNoteSettings->isEnabled() === true) {
+            if($this->authorizationChecker->isGranted(SickNoteVoter::View)) {
+                $menu->addChild('sick_notes.label', [
+                    'route' => 'sick_notes'
+                ])
+                    ->setExtra('icon', 'fas fa-clinic-medical');
+            } else if($this->authorizationChecker->isGranted(SickNoteVoter::New)) {
+                $menu->addChild('sick_notes.add.label', [
+                    'route' => 'sick_note'
+                ])
+                    ->setExtra('icon', 'fas fa-clinic-medical');
+            }
         }
 
         return $menu;

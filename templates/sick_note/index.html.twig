@@ -45,6 +45,7 @@
                                         <col>
                                         <col class="column-lg">
                                         <col class="column-lg">
+                                        <col class="column-lg">
                                         <col class="column-md">
                                     </colgroup>
 
@@ -54,6 +55,7 @@
                                         <th>{{ 'label.firstname'|trans }}</th>
                                         <th data-sortable="false">{{ 'sick_notes.add.absent_until'|trans }}</th>
                                         <th data-sortable="false">{{ 'sick_notes.created_at'|trans }}</th>
+                                        <th data-sortable="false">{{ 'sick_notes.created_by'|trans }}</th>
                                         <th>{{ 'label.grade'|trans }}</th>
                                     </tr>
                                     </thead>
@@ -65,6 +67,7 @@
                                             <td>{{ note.student.firstname }}</td>
                                             <td>{{ note.until|format_date }}</td>
                                             <td>{{ note.createdAt|format_datetime }}</td>
+                                            <td>{{ note.createdBy|user(false) }}</td>
                                             <td>{{ note.student.grade.name }}</td>
                                         </tr>
                                     {% endfor %}

@@ -1070,6 +1070,7 @@ sick_notes:
     label: Krankmeldungen
     empty: Es liegen keine Krankmeldungen vor.
     created_at: krankgemeldet am
+    created_by: krankgemeldet von
     until_short: 'vsl. bis %date%'
     add:
         label: Neue Krankmeldung
@@ -1092,7 +1093,7 @@ sick_notes:
         label: Bisherige Krankmeldungen
         empty: Keine Krankmeldungen eingereicht.
         info: Hier sind eingesendete Krankmeldungen in zusammengefasster Form (Schüler, voraussichtliches Ende und Zeitpunkt der Meldung) einsehbar.
-        retention: '{1} Krankmeldungen werden einen Tag nach dem voraussichtlichen Ende automatisch gelöscht.|]1,Inf[ Krankmeldungen werden einen Tag nach dem voraussichtlichen Ende automatisch gelöscht.'
+        retention: '{1} Krankmeldungen werden einen Tag nach dem voraussichtlichen Ende automatisch gelöscht.|[1,Inf[ Krankmeldungen werden %count% Tage nach dem voraussichtlichen Ende automatisch gelöscht.'
         note: '%student% bis zum %date%'
 
 audit:

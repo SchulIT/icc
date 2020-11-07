@@ -26,7 +26,12 @@
                             {{ settings.introductionText|markdown }}
                         {% endif %}
 
-                        <p>{{ 'sick_notes.add.privacy.info'|trans }}</p>
+                        <p>
+                            {{ 'sick_notes.add.privacy.info'|trans }}
+                            {% if settings.retentionDays > 0 %}
+                                {{ 'sick_notes.history.retention'|trans({'%count%': settings.retentionDays }) }}
+                            {% endif %}
+                        </p>
 
                         {% if settings.privacyUrl is not null %}
                             <a href="{{ settings.privacyUrl }}" target="_blank" class="btn btn-outline-primary btn-sm">
@@ -86,10 +91,6 @@
 
                     <div class="card-body">
                         <p>{{ 'sick_notes.history.info'|trans }}</p>
-
-                        {% if settings.retentionDays > 0 %}
-                            <p>{{ 'sick_notes.history.retention'|trans({'%count%': settings.retentionDays }) }}</p>
-                        {% endif %}
                     </div>
 
                         <ul class="list-group list-group-flush">

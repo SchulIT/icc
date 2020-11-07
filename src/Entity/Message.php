@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Validator\StudyGroupsNotEmpty;
 use App\Validator\SubsetOf;
 use DateTime;
 use DH\DoctrineAuditBundle\Annotation\Auditable;
@@ -57,6 +58,7 @@ class Message {
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
+     * @StudyGroupsNotEmpty(propertyPath="visibilities")
      * @var Collection<StudyGroup>
      */
     private $studyGroups;

@@ -162,7 +162,7 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
      */
     public function findAllForRooms(array $rooms, ?DateTime $date): array {
         $roomIds = array_filter(array_map(function(Room $room) {
-            return $room->getExternalId();
+            return $room->getId();
         }, $rooms), function($input) {
             return !empty($input);
         });

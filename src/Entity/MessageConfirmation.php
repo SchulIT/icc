@@ -9,7 +9,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity()
- * @Auditable()
  */
 class MessageConfirmation {
 

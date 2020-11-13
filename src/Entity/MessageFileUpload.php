@@ -10,7 +10,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity()
- * @Auditable()
  * @Vich\Uploadable()
  */
 class MessageFileUpload {

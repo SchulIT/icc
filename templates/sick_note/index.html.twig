@@ -32,7 +32,7 @@
                                         {{ tuition.name }}
                                     {% endif %} ({{ tuition.subject.name }})
 
-                                    {% for grade in tuition.studyGroup.grades %}<span class="badge badge-primary">{{ grade.name }}</span>{% endfor %}
+                                    {% for grade in tuition.studyGroup.grades %}<span class="badge badge-primary">{{ grade.name }}</span> {% endfor %}
                                 {% else %}
                                     {{ group.grade.name }}
                                 {% endif %}
@@ -48,7 +48,7 @@
                                         <col class="column-lg">
                                         <col class="column-md">
                                     </colgroup>
-
+                                    
                                     <thead>
                                     <tr>
                                         <th>{{ 'label.lastname'|trans }}</th>
@@ -77,18 +77,17 @@
                         </div>
                     {% endfor %}
                 {% endif %}
+            </div>
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% if is_granted('new-sicknote') %}
+                            <a href="{{ path('sick_note') }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-plus"></i> {{ 'sick_notes.add.label'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
-                    <div class="col-md-3 sticky-sidebar">
-
-                        <div class="card">
-                            <div class="list-group list-group-flush">
-                                {% if is_granted('new-sicknote') %}
-                                    <a href="{{ path('sick_note') }}" class="list-group-item list-group-item-action">
-                                        <i class="fa fa-plus"></i> {{ 'sick_notes.add.label'|trans }}
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </div>
+                </div>
 
                 <div class="card">
                     <div class="card-body pb-1">

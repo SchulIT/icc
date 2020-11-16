@@ -88,7 +88,7 @@
                                     {% if teacherFilter.currentTeacher == null %}
                                     <td>
                                         {% if tuition.teacher is not null %}
-                                            <a href="{{ path('list_tuitions', { teacher: tuition.teacher.acronym }) }}">{{ tuition.teacher|teacher }}</a>
+                                            <a href="{{ path('list_tuitions', { teacher: tuition.teacher.uuid.toString }) }}">{{ tuition.teacher|teacher }}</a>
                                         {% else %}
                                             <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
                                         {% endif %}

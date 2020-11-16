@@ -34,6 +34,7 @@ use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -243,6 +244,12 @@ class SettingsController extends AbstractController {
                 'constraints' => [
                     new GreaterThanOrEqual(0)
                 ]
+            ])
+            ->add('ordered_by_help', TextType::class, [
+                'required' => false,
+                'data' => $sickNoteSettings->getOrderedByHelp(),
+                'label' => 'admin.settings.sick_notes.ordered_by.label',
+                'help' => 'admin.settings.sick_notes.ordered_by.help'
             ]);
 
         $form = $builder->getForm();
@@ -264,6 +271,9 @@ class SettingsController extends AbstractController {
                 },
                 'introduction_text' => function($text) use ($sickNoteSettings) {
                     $sickNoteSettings->setIntroductionText($text);
+                },
+                'ordered_by_help' => function($text) use ($sickNoteSettings) {
+                    $sickNoteSettings->setOrderedByHelp($text);
                 }
             ];
 

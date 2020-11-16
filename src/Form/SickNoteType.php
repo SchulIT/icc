@@ -4,6 +4,9 @@ namespace App\Form;
 
 use App\Converter\StudentStringConverter;
 use App\Entity\Student;
+use App\Settings\SickNoteSettings;
+use App\SickNote\SickNote;
+use App\SickNote\SickNoteReason;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use FervoEnumBundle\Generated\Form\SickNoteReasonType;
@@ -16,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SickNoteType extends AbstractType {
@@ -24,16 +28,28 @@ class SickNoteType extends AbstractType {
     private $studentStrategy;
     private $sorter;
     private $dateHelper;
+    private $settings;
 
-    public function __construct(StudentStringConverter $converter, StudentStrategy $strategy, Sorter $sorter, DateHelper $dateHelper) {
+    public function __construct(StudentStringConverter $converter, StudentStrategy $strategy, Sorter $sorter, DateHelper $dateHelper, SickNoteSettings  $settings) {
         $this->studentConverter = $converter;
         $this->studentStrategy = $strategy;
         $this->sorter = $sorter;
         $this->dateHelper = $dateHelper;
+        $this->settings = $settings;
     }
 
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setRequired('students');
+        $resolver->setDefault('validation_groups', function(FormInterface $form) {
+            /** @var SickNote $note */
+            $note = $form->getData();
+
+            if($note->getReason()->equals(SickNoteReason::Quarantine())) {
+                return ['Default', 'quarantine'];
+            }
+
+            return ['Default'];
+        });
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -57,6 +73,10 @@ class SickNoteType extends AbstractType {
                     'class' => 'radio-custom'
                 ],
                 'label' => 'label.reason'
+            ])
+            ->add('orderedBy', TextType::class, [
+                'label' => 'label.ordered_by',
+                'help' => $this->settings->getOrderedByHelp()
             ])
             ->add('until', DateType::class, [
                 'widget' => 'single_text',

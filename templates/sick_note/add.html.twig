@@ -46,6 +46,7 @@
                     <div class="card-body">
                         {{ form_row(form.student) }}
                         {{ form_row(form.reason)}}
+                        {{ form_row(form.orderedBy) }}
                         {{ form_row(form.until) }}
                         {{ form_row(form.message) }}
                     </div>
@@ -116,4 +117,38 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script>
+        function showOrHideOrderedBy() {
+            let currentSelection = null;
+            let element = document.getElementById('sick_note_orderedBy');
+            let parent = element.closest('.form-group');
+
+            document.querySelectorAll('input[name="sick_note[reason]"]').forEach(function(el) {
+                if(el.checked) {
+                    currentSelection = el.value;
+                }
+            });
+
+            if(currentSelection === 'quarantine') {
+                parent.querySelector('input').required = true;
+                parent.classList.remove('hide');
+            } else {
+                parent.querySelector('input').required = false;
+                parent.classList.add('hide');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('input[name="sick_note[reason]"]').forEach(function(el) {
+                el.addEventListener('change', showOrHideOrderedBy);
+            });
+
+            showOrHideOrderedBy();
+        });
+    </script>
 {% endblock %}

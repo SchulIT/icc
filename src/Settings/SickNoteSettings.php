@@ -2,6 +2,8 @@
 
 namespace App\Settings;
 
+use App\Markdown\Processor\HeadingAnchorProcessor;
+
 class SickNoteSettings extends AbstractSettings {
 
     public function isEnabled(): bool {
@@ -42,5 +44,13 @@ class SickNoteSettings extends AbstractSettings {
 
     public function setRetentionDays(int $days): void {
         $this->setValue('sick_note.retention_days', $days);
+    }
+
+    public function getOrderedByHelp(): ?string {
+        return $this->getValue('sick_note.ordered_by.help');
+    }
+
+    public function setOrderedByHelp(?string $help): void {
+        $this->setValue('sick_note.ordered_by.help', $help);
     }
 }

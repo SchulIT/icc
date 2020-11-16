@@ -21,6 +21,12 @@ class SickNote {
     private $reason = null;
 
     /**
+     * @Assert\NotBlank(groups={"quarantine"})
+     * @var string|null
+     */
+    private $orderedBy = null;
+
+    /**
      * @Assert\NotNull()
      * @Assert\GreaterThanOrEqual("today")
      * @var DateTime|null
@@ -82,6 +88,22 @@ class SickNote {
      */
     public function setReason(?SickNoteReason $reason): SickNote {
         $this->reason = $reason;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getOrderedBy(): ?string {
+        return $this->orderedBy;
+    }
+
+    /**
+     * @param string|null $orderedBy
+     * @return SickNote
+     */
+    public function setOrderedBy(?string $orderedBy): SickNote {
+        $this->orderedBy = $orderedBy;
         return $this;
     }
 

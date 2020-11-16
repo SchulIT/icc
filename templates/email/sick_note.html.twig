@@ -34,6 +34,9 @@
         <li>{{ 'sick_note.grade'|trans({'%grade%': note.student.grade.name }, 'email') }}</li>
         <li>{{ 'sick_note.teachers'|trans({'%teachers%': teachers|teachers }, 'email') }}</li>
         <li>{{ 'sick_note.reason'|trans({'%reason%': note.reason|enum }, 'email') }}</li>
+        {% if note.orderedBy is not empty %}
+            <li>{{ 'sick_note.ordered_by'|trans({'%ordered_by%': note.orderedBy }, 'email') }}</li>
+        {% endif %}
         <li>{{ 'sick_note.until'|trans({'%date%': note.until|format_date }, 'email') }}</li>
         <li>{{ 'sick_note.phone'|trans({'%phone%': note.phone }, 'email') }}</li>
         <li>{{ 'sick_note.email'|trans({'%email%': note.email }, 'email') }}</li>

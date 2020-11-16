@@ -52,6 +52,7 @@ sick_note:
   grade: "Klasse/Jgst.: %grade%"
   teachers: "Klassenleitung: %teachers%"
   reason: "Grund: %reason%"
+  ordered_by: "Angeordnet von: %ordered_by%"
   until: "Abwesend bis voraussichtlich: %date%"
   message: Mitteilung
   phone: "Telefonnummer: %phone%"

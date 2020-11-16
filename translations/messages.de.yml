@@ -132,6 +132,7 @@ label:
         help: Wenn diese Option aktiv ist, können Nicht-Administratoren Termine in dieser Kategorie anlegen. Anderenfalls wird die Kategorie nicht als Option angezeigt und ist somit nicht auswählbar.
     all: alle
     created_by: Erstellt von
+    ordered_by: Angeordnet von
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -646,6 +647,9 @@ admin:
             introduction_text:
                 label: Hinweistext
                 help: Der Hinweistext wird oberhalb der Krankmeldungsseite über der Information zum Datenschutz angezeigt.
+            ordered_by:
+                label: Angeordnet von
+                help: 'Dieser Hilfetext wird unterhalb des Feldes "Angeordnet von" angezeigt.'
 
         appointments:
             label: Terminplan

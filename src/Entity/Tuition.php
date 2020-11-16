@@ -194,6 +194,10 @@ class Tuition {
      * @return Teacher[]
      */
     public function getTeachers() {
+        if($this->getTeacher() === null) {
+            return $this->getAdditionalTeachers()->toArray();
+        }
+
         return array_merge(
             [ $this->getTeacher() ],
             $this->getAdditionalTeachers()->toArray()

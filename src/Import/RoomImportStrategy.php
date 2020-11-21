@@ -32,7 +32,7 @@ class RoomImportStrategy implements ImportStrategyInterface {
      */
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
-            $this->roomRepository->findAll(),
+            $this->roomRepository->findAllExternal(),
             function (Room $room) {
                 return $room->getExternalId();
             });

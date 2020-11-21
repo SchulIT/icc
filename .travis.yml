@@ -22,8 +22,12 @@ jobs:
   include:
     - stage: test
       script:
+        - nvm install 10
         - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist --no-interaction
+        - yarn install
+        - yarn encore dev
         - php bin/console cache:clear --env=dev
+        - if [ ! -f saml/sp.crt ]; then php bin/console app:create-certificate --type saml -c DE -s Nordrhein-Westfalen -l Aachen -o SchulIT --organizationalUnitName="SchulIT IT" --commonName=schulit.de --emailAddress=admin@schulit.de; fi
         - vendor/bin/phpstan analyze ./src --level 5 --memory-limit 1G
         - vendor/bin/phpunit --coverage-clover clover.xml
       after_script:

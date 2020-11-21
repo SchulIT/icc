@@ -72,7 +72,7 @@ class SickNoteController extends AbstractController {
         return $this->render('sick_note/add.html.twig', [
             'form' => $form->createView(),
             'settings' => $settings,
-            'sick_notes' => $repository->findByUser($user)
+            'sick_notes' => $repository->findByStudents($user->getStudents()->toArray())
         ]);
     }
 

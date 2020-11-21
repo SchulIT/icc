@@ -69,7 +69,7 @@ class TeacherData {
     private $subjects = [ ];
 
     /**
-     * List of external IDs of tags which are added to the user.
+     * List of external IDs of tags which are added to the user. Note: tags are not synchronized but only added if not present. You have to remove them by hand using the UI.
      *
      * @Serializer\Type("array<string>")
      * @var string[]

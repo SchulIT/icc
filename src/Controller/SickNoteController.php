@@ -25,6 +25,8 @@ use App\Timetable\TimetableTimeHelper;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\TeacherFilter;
+use DateTime;
+use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -97,6 +99,22 @@ class SickNoteController extends AbstractController {
 
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $gradeFilterView->getCurrentGrade() === null);
+        $selectedDate = $dateHelper->getToday();
+
+        try {
+            if($request->query->has('date')) {
+                if(empty($request->query->get('date'))) {
+                    $selectedDate = null;
+                } else {
+                    $selectedDate = new DateTime($request->query->get('date', null));
+                    $selectedDate->setTime(0, 0, 0);
+                }
+            }
+        } catch (Exception $e) {
+            $selectedDate = null;
+        }
+
+        dump($selectedDate);
 
         $groups = [ ];
 
@@ -108,7 +126,7 @@ class SickNoteController extends AbstractController {
                     return $membership->getStudent();
                 })->toArray();
 
-                $sickNotes = $sickNoteRepository->findByStudents($students);
+                $sickNotes = $sickNoteRepository->findByStudents($students, $selectedDate);
 
                 if(count($sickNotes) > 0) {
                     $group = new SickNoteTuitionGroup($tuition);
@@ -124,7 +142,7 @@ class SickNoteController extends AbstractController {
             $sorter->sort($groups, SickNoteTuitionGroupStrategy::class);
 
         } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $sickNotes = $sickNoteRepository->findByGrade($gradeFilterView->getCurrentGrade());
+            $sickNotes = $sickNoteRepository->findByGrade($gradeFilterView->getCurrentGrade(), $selectedDate);
 
             if(count($sickNotes) > 0) {
                 $group = new SickNoteGradeGroup($gradeFilterView->getCurrentGrade());
@@ -136,7 +154,7 @@ class SickNoteController extends AbstractController {
                 $groups[] = $group;
             }
         } else {
-            $sickNotes = $sickNoteRepository->findAll();
+            $sickNotes = $sickNoteRepository->findAll($selectedDate);
             $groups = $grouper->group($sickNotes, SickNoteGradeStrategy::class);
         }
 
@@ -146,7 +164,8 @@ class SickNoteController extends AbstractController {
             'today' => $dateHelper->getToday(),
             'groups' => $groups,
             'gradeFilter' => $gradeFilterView,
-            'teacherFilter' => $teacherFilterView
+            'teacherFilter' => $teacherFilterView,
+            'selectedDate' => $selectedDate
         ]);
     }
 }

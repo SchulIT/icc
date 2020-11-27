@@ -92,10 +92,33 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-body pb-1">
-                        {% include "_filter/teacher.html.twig" %}
+                    <div class="card-body">
+                        {% set currentFilter = {
+                            teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null,
+                            grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null
+                        } %}
+                        {% set dateParam = selectedDate ? selectedDate|date('Y-m-d') : null %}
 
-                        {% include "_filter/grade.html.twig" %}
+                        {% include "_filter/teacher.html.twig" with { params: { date: dateParam } } %}
+
+                        {% include "_filter/grade.html.twig" with { params: { date: dateParam } } %}
+
+                        <form role="form" method="get" class="form hidden-print">
+                            {% include "_filter/_params.html.twig" with { params: currentFilter } %}
+
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('sick_notes') }}" class="btn btn-primary btn-sm">
+                            {{ 'filter.reset'|trans }}
+                        </a>
                     </div>
                 </div>
 

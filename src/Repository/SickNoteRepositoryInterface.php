@@ -27,14 +27,16 @@ interface SickNoteRepositoryInterface {
 
     /**
      * @param Grade $grade
+     * @param DateTime|null $date
      * @return SickNote[]
      */
-    public function findByGrade(Grade $grade): array;
+    public function findByGrade(Grade $grade, ?DateTime $date = null): array;
 
     /**
+     * @param DateTime|null $date
      * @return SickNote[]
      */
-    public function findAll(): array;
+    public function findAll(?DateTime $date = null): array;
 
     /**
      * @param DateTime $threshold

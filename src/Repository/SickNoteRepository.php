@@ -7,6 +7,7 @@ use App\Entity\SickNote;
 use App\Entity\Student;
 use App\Entity\User;
 use DateTime;
+use Doctrine\ORM\QueryBuilder;
 
 class SickNoteRepository extends AbstractRepository implements SickNoteRepositoryInterface {
 
@@ -83,6 +84,8 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
             );
             $qb->setParameter('date', $date);
             $qb->setParameter('lesson', $lesson);
+        } if($date !== null) {
+            $this->applyDate($qb, $date);
         }
 
         return $qb->getQuery()->getResult();
@@ -91,7 +94,7 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
     /**
      * @inheritDoc
      */
-    public function findByGrade(Grade $grade): array {
+    public function findByGrade(Grade $grade, ?DateTime $date = null): array {
         $qb = $this->em->createQueryBuilder()
             ->select('sn', 's')
             ->from(SickNote::class, 'sn')
@@ -100,18 +103,32 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
             ->where('g.id = :grade')
             ->setParameter('grade', $grade->getId());
 
+        if($date !== null) {
+            $this->applyDate($qb, $date);
+        }
+
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @inheritDoc
      */
-    public function findAll(): array {
+    public function findAll(?DateTime $date = null): array {
         $qb = $this->em->createQueryBuilder()
             ->select('sn', 's')
             ->from(SickNote::class, 'sn')
             ->leftJoin('sn.student', 's');
 
+        if($date !== null) {
+            $this->applyDate($qb, $date);
+        }
+
         return $qb->getQuery()->getResult();
+    }
+
+    private function applyDate(QueryBuilder $qb, DateTime $date) {
+        $qb->andWhere('sn.from.date <= :date');
+        $qb->andWhere('sn.until.date >= :date');
+        $qb->setParameter('date', $date);
     }
 }

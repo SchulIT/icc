@@ -26,6 +26,10 @@ class SickNoteStrategy implements SortingStrategyInterface {
             return $cmpStudents;
         }
 
-        return $this->dateStrategy->compare($objectA->getUntil(), $objectB->getUntil());
+        if($objectA->getUntil()->getDate() == $objectB->getUntil()->getDate()) {
+            return $objectB->getUntil()->getLesson() - $objectA->getUntil()->getLesson();
+        }
+
+        return $this->dateStrategy->compare($objectA->getUntil()->getDate(), $objectB->getUntil()->getDate());
     }
 }

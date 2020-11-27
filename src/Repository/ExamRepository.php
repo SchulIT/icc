@@ -35,7 +35,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             if($onlyToday === true) {
                 $qb->where('e.date = :today');
             } else {
-                $qb->where('e.date > :today');
+                $qb->where('e.date >= :today');
             }
         }
 

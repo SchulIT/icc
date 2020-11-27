@@ -7,6 +7,7 @@ use App\Entity\AppointmentCategory;
 use App\Entity\Grade;
 use App\Entity\UserType;
 use App\Form\ColorType;
+use App\Form\MarkdownType;
 use App\Menu\Builder;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Repository\GradeRepositoryInterface;
@@ -224,7 +225,7 @@ class SettingsController extends AbstractController {
                 'label' => 'admin.settings.sick_notes.recipient.label',
                 'help' => 'admin.settings.sick_notes.recipient.help'
             ])
-            ->add('introduction_text', TextareaType::class, [
+            ->add('introduction_text', MarkdownType::class, [
                 'required' => false,
                 'data' => $sickNoteSettings->getIntroductionText(),
                 'label' => 'admin.settings.sick_notes.introduction_text.label',

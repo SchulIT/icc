@@ -2,6 +2,10 @@
 
 {% block title %}{{ 'admin.settings.sick_notes.label'|trans }}{% endblock %}
 
+{% block post_javascript %}
+    <script src="{{ asset('build/editor.js') }}"></script>
+{% endblock %}
+
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>

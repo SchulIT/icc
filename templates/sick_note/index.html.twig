@@ -53,6 +53,7 @@
                                     <tr>
                                         <th>{{ 'label.lastname'|trans }}</th>
                                         <th>{{ 'label.firstname'|trans }}</th>
+                                        <th data-sortable="false">{{ 'sick_notes.add.absent_from'|trans }}</th>
                                         <th data-sortable="false">{{ 'sick_notes.add.absent_until'|trans }}</th>
                                         <th data-sortable="false">{{ 'sick_notes.created_at'|trans }}</th>
                                         <th data-sortable="false">{{ 'sick_notes.created_by'|trans }}</th>
@@ -65,7 +66,8 @@
                                         <tr>
                                             <td>{{ note.student.lastname }}</td>
                                             <td>{{ note.student.firstname }}</td>
-                                            <td>{{ note.until|format_date }}</td>
+                                            <td>{{ note.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': note.from.lesson, '%count%': 0}) }})</td>
+                                            <td>{{ note.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': note.until.lesson, '%count%': 0}) }})</td>
                                             <td>{{ note.createdAt|format_datetime }}</td>
                                             <td>{{ note.createdBy|user(false) }}</td>
                                             <td>{{ note.student.grade.name }}</td>

@@ -250,6 +250,15 @@ class SettingsController extends AbstractController {
                 'data' => $sickNoteSettings->getOrderedByHelp(),
                 'label' => 'admin.settings.sick_notes.ordered_by.label',
                 'help' => 'admin.settings.sick_notes.ordered_by.help'
+            ])
+            ->add('next_day_threshold', TimeType::class, [
+                'label' => 'admin.settings.dashboard.next_day_threshold.label',
+                'help' => 'admin.settings.dashboard.next_day_threshold.help',
+                'data' => $sickNoteSettings->getNextDayThresholdTime(),
+                'required' => false,
+                'input' => 'string',
+                'input_format' => 'H:i',
+                'widget' => 'single_text'
             ]);
 
         $form = $builder->getForm();
@@ -274,7 +283,10 @@ class SettingsController extends AbstractController {
                 },
                 'ordered_by_help' => function($text) use ($sickNoteSettings) {
                     $sickNoteSettings->setOrderedByHelp($text);
-                }
+                },
+                'next_day_threshold' => function($threshold) use ($sickNoteSettings) {
+                    $sickNoteSettings->setNextDayThresholdTime($threshold);
+                },
             ];
 
             foreach($map as $formKey => $callable) {

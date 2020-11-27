@@ -15,11 +15,13 @@ use App\Repository\StudentRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Security\Voter\SickNoteVoter;
 use App\Settings\SickNoteSettings;
+use App\Settings\TimetableSettings;
 use App\SickNote\SickNote;
 use App\SickNote\SickNoteSender;
 use App\Sorting\SickNoteStrategy;
 use App\Sorting\SickNoteTuitionGroupStrategy;
 use App\Sorting\Sorter;
+use App\Timetable\TimetableTimeHelper;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\TeacherFilter;
@@ -30,11 +32,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class SickNoteController extends AbstractController {
 
+    use DateTimeHelperTrait;
+
     /**
      * @Route("/sick_note", name="sick_note")
      */
     public function add(Request $request, SickNoteSender $sender, SickNoteSettings $settings,
-                        SickNoteRepositoryInterface $repository, StudentRepositoryInterface $studentRepository) {
+                        SickNoteRepositoryInterface $repository, StudentRepositoryInterface $studentRepository,
+                        TimetableTimeHelper $timeHelper, TimetableSettings $timetableSettings, DateHelper $dateHelper) {
         $this->denyAccessUnlessGranted(SickNoteVoter::New);
 
         if($settings->isEnabled() !== true) {
@@ -57,6 +62,9 @@ class SickNoteController extends AbstractController {
         }
 
         $note = new SickNote();
+        $note->setFrom($timeHelper->getLessonDateForDateTime($this->getTodayOrNextDay($dateHelper, $settings->getNextDayThresholdTime())));
+        $note->getUntil()->setLesson($timetableSettings->getMaxLessons());
+
         $form = $this->createForm(SickNoteType::class, $note, [
             'students' => $students
         ]);

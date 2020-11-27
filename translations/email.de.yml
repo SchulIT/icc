@@ -53,7 +53,8 @@ sick_note:
   teachers: "Klassenleitung: %teachers%"
   reason: "Grund: %reason%"
   ordered_by: "Angeordnet von: %ordered_by%"
-  until: "Abwesend bis voraussichtlich: %date%"
+  from: "Abwesend von: %date% (%lesson%. Stunde)"
+  until: "Abwesend bis voraussichtlich: %date% (%lesson%. Stunde)"
   message: Mitteilung
   phone: "Telefonnummer: %phone%"
   email: "E-Mail-Adresse: %email%"

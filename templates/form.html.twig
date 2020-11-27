@@ -122,3 +122,20 @@
         </div>
     </div>
 {%- endblock -%}
+
+{%- block date_lesson_widget -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' input-group')|trim}) -%}
+    <div {{ block('widget_container_attributes') }}>
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+        </div>
+
+        {{- form_widget(form.date, { datetime: true, hide_input_group: true } ) -}}
+
+        <div class="input-group-prepend">
+            <span class="input-group-text border-left-0"><i class="fa fa-clock"></i></span>
+        </div>
+
+        {{- form_widget(form.lesson) -}}
+    </div>
+{%- endblock -%}

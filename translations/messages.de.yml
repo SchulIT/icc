@@ -1075,7 +1075,7 @@ sick_notes:
     empty: Es liegen keine Krankmeldungen vor.
     created_at: krankgemeldet am
     created_by: krankgemeldet von
-    until_short: 'vsl. bis %date%'
+    until_short: 'vsl. bis %date% (%lesson%. Stunde)'
     add:
         label: Neue Krankmeldung
         info: Hier besteht die Möglichkeit, eine Krankheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.
@@ -1086,6 +1086,7 @@ sick_notes:
         attachments:
             label: Anhänge
             info: 'Hier können bis zu drei Dokumente (bspw. Attest, Meldung vom Gesundheitsamt,… ) angehangen werden. Gültige Dateitypen: PDF, PNG, JPG. Maximale Größe pro Datei: 5 MB'
+        absent_from: Abwesend ab
         absent_until: Abwesend voraussichtlich bis
         phone: Telefonnummer
         contact:

@@ -2,8 +2,10 @@
 
 namespace App\SickNote;
 
+use App\Entity\DateLesson;
 use App\Entity\Student;
-use DateTime;
+use App\Validator\DateLessonGreaterThan;
+use App\Validator\DateLessonNotInPast;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -27,11 +29,34 @@ class SickNote {
     private $orderedBy = null;
 
     /**
-     * @Assert\NotNull()
-     * @Assert\GreaterThanOrEqual("today")
-     * @var DateTime|null
+     * @DateLessonNotInPast()
+     * @var DateLesson
      */
-    private $until = null;
+    private $from;
+
+    /**
+     * @param DateLesson $from
+     * @return SickNote
+     */
+    public function setFrom(DateLesson $from): SickNote {
+        $this->from = $from;
+        return $this;
+    }
+
+    /**
+     * @param DateLesson $until
+     * @return SickNote
+     */
+    public function setUntil(DateLesson $until): SickNote {
+        $this->until = $until;
+        return $this;
+    }
+
+    /**
+     * @DateLessonGreaterThan(propertyPath="from")
+     * @var DateLesson
+     */
+    private $until;
 
     /**
      * @Assert\NotBlank()
@@ -58,6 +83,11 @@ class SickNote {
      * @var string|null
      */
     private $phone = null;
+
+    public function __construct() {
+        $this->from = new DateLesson();
+        $this->until = new DateLesson();
+    }
 
     /**
      * @return Student|null
@@ -108,19 +138,18 @@ class SickNote {
     }
 
     /**
-     * @return DateTime|null
+     * @return DateLesson
      */
-    public function getUntil(): ?DateTime {
-        return $this->until;
+    public function getFrom(): DateLesson {
+        return $this->from;
     }
 
+
     /**
-     * @param DateTime|null $until
-     * @return SickNote
+     * @return DateLesson
      */
-    public function setUntil(?DateTime $until): SickNote {
-        $this->until = $until;
-        return $this;
+    public function getUntil(): DateLesson {
+        return $this->until;
     }
 
     /**

@@ -47,6 +47,7 @@
                         {{ form_row(form.student) }}
                         {{ form_row(form.reason)}}
                         {{ form_row(form.orderedBy) }}
+                        {{ form_row(form.from) }}
                         {{ form_row(form.until) }}
                         {{ form_row(form.message) }}
                     </div>
@@ -104,10 +105,15 @@
                             {% for note in sick_notes %}
                                 <li class="list-group-item">
                                     <div>
-                                        {{ 'sick_notes.history.note'|trans({ '%student%': note.student|student, '%date%': note.until|format_date }) }}
+                                        <p class="mb-1">
+                                            <i class="fa fa-user"></i> {{ note.student|student }}
+                                        </p>
+                                        <i class="fa fa-calendar-alt"></i> {{ note.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': note.from.lesson, '%count%': 0}) }})
+                                        -
+                                        {{ note.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': note.until.lesson, '%count%': 0}) }})
                                     </div>
                                     <small class="text-secondary">
-                                        <i class="fa fa-calendar-alt"></i> {{ note.createdAt|format_datetime }}
+                                        <i class="fa fa-clock" title="{{ 'sick_notes.created_at'|trans }}"></i> {{ note.createdAt|format_datetime }}
                                     </small>
                                 </li>
                             {% endfor %}

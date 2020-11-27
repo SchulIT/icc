@@ -598,14 +598,7 @@ class DashboardViewHelper {
             })
             ->toArray();
 
-        $sickNotes = $this->sickNoteRepository->findByStudents($lessonStudents);
-        $start = $this->timetableTimeHelper->getLessonStartDateTime($dateTime, $lesson);
-        $end = $this->timetableTimeHelper->getLessonEndDateTime($dateTime, $lesson);
-
-        $sickNotes = array_filter($sickNotes, function(SickNote $note) use($start, $end) {
-            return $note->getCreatedAt() < $start
-                && $note->getUntil() > $end;
-        });
+        $sickNotes = $this->sickNoteRepository->findByStudents($lessonStudents, $dateTime, $lesson);
 
         return array_map(function(SickNote $note) {
             return new AbsentSickStudent($note->getStudent(), $note);

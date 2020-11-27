@@ -234,7 +234,7 @@
                         <div class="align-self-baseline w-100">
                             {% for absentStudent in group.students %}
                                 {% if absentStudent.reason == 'sick' %}<i class="fas fa-clinic-medical"></i>{% endif %}
-                                {{ absentStudent.student|student }} {% if absentStudent.reason == 'sick' %}({{ 'sick_notes.until_short'|trans({'%date%': absentStudent.sickNote.until|format_date}) }}){% endif %}{% if not loop.last %} – {% endif %}{% endfor %}
+                                {{ absentStudent.student|student }} {% if absentStudent.reason == 'sick' %}({{ 'sick_notes.until_short'|trans({'%date%': absentStudent.sickNote.until.date|format_date, '%lesson%': absentStudent.sickNote.until.lesson }) }}){% endif %}{% if not loop.last %} – {% endif %}{% endfor %}
                         </div>
                     </div>
                 {% endfor %}

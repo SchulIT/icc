@@ -37,7 +37,8 @@
         {% if note.orderedBy is not empty %}
             <li>{{ 'sick_note.ordered_by'|trans({'%ordered_by%': note.orderedBy }, 'email') }}</li>
         {% endif %}
-        <li>{{ 'sick_note.until'|trans({'%date%': note.until|format_date }, 'email') }}</li>
+        <li>{{ 'sick_note.from'|trans({'%date%': note.from.date|format_date, '%lesson%': note.from.lesson }, 'email') }}</li>
+        <li>{{ 'sick_note.until'|trans({'%date%': note.until.date|format_date, '%lesson%': note.until.lesson }, 'email') }}</li>
         <li>{{ 'sick_note.phone'|trans({'%phone%': note.phone }, 'email') }}</li>
         <li>{{ 'sick_note.email'|trans({'%email%': note.email }, 'email') }}</li>
         <li>{{ 'sick_note.created_by'|trans({'%user%': app.user|user }, 'email') }}</li>

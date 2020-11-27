@@ -196,6 +196,12 @@ services:
     Doctrine\Persistence\ManagerRegistry:
         alias: 'doctrine'
 
+    Doctrine\Migrations\Version\DbalMigrationFactory: ~
+    App\Migrations\Factory\MigrationFactoryDecorator:
+        decorates: Doctrine\Migrations\Version\DbalMigrationFactory
+        arguments:
+            $migrationFactory: '@App\Migrations\Factory\MigrationFactoryDecorator.inner'
+
     # DARK MODE:
     SchulIT\CommonBundle\DarkMode\DarkModeManagerInterface:
         class: App\DarkMode\DarkModeManager

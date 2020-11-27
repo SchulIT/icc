@@ -8,6 +8,7 @@ use App\Entity\GradeTeacher;
 use App\Entity\User;
 use App\Repository\SickNoteRepositoryInterface;
 use App\Settings\SickNoteSettings;
+use App\Timetable\TimetableTimeHelper;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Swift_Attachment;
 use Swift_Mailer;
@@ -29,9 +30,10 @@ class SickNoteSender {
     private $userConverter;
     private $settings;
     private $repository;
+    private $timeHelper;
 
     public function __construct(string $sender, string $appName, StudentStringConverter $converter, Environment $twig, Swift_Mailer $mailer, TranslatorInterface $translator,
-                                DateHelper $dateHelper, UserStringConverter $userConverter, SickNoteSettings $settings, SickNoteRepositoryInterface $repository) {
+                                DateHelper $dateHelper, UserStringConverter $userConverter, SickNoteSettings $settings, SickNoteRepositoryInterface $repository, TimetableTimeHelper  $timeHelper) {
         $this->sender = $sender;
         $this->appName = $appName;
         $this->converter = $converter;
@@ -42,13 +44,14 @@ class SickNoteSender {
         $this->userConverter = $userConverter;
         $this->settings = $settings;
         $this->repository = $repository;
+        $this->timeHelper = $timeHelper;
     }
 
     private function persistInDatabase(SickNote $note): void {
         $entity = (new SickNoteEntity())
             ->setStudent($note->getStudent())
+            ->setFrom($note->getFrom())
             ->setUntil($note->getUntil());
-
         $this->repository->persist($entity);
     }
 

@@ -78,8 +78,10 @@ class SickNoteType extends AbstractType {
                 'label' => 'label.ordered_by',
                 'help' => $this->settings->getOrderedByHelp()
             ])
-            ->add('until', DateType::class, [
-                'widget' => 'single_text',
+            ->add('from', DateLessonType::class, [
+                'label' => 'sick_notes.add.absent_from'
+            ])
+            ->add('until', DateLessonType::class, [
                 'label' => 'sick_notes.add.absent_until'
             ])
             ->add('message', TextareaType::class, [

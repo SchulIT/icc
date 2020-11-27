@@ -19,9 +19,11 @@ interface SickNoteRepositoryInterface {
      * Returns all sick notes for the given students
      *
      * @param Student[] $students
+     * @param DateTime|null $date
+     * @param int|null $lesson
      * @return SickNote[]
      */
-    public function findByStudents(array $students): array;
+    public function findByStudents(array $students, ?DateTime $date = null, ?int $lesson = null): array;
 
     /**
      * @param Grade $grade

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Validator\DateLessonGreaterThan;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -23,8 +24,15 @@ class SickNote {
     private $student;
 
     /**
-     * @ORM\Column(type="datetime")
-     * @var DateTime
+     * @ORM\Embedded(class="DateLesson")
+     * @var DateLesson
+     */
+    private $from;
+
+    /**
+     * @ORM\Embedded(class="DateLesson")
+     * @DateLessonGreaterThan(propertyPath="from")
+     * @var DateLesson
      */
     private $until;
 
@@ -64,17 +72,33 @@ class SickNote {
     }
 
     /**
-     * @return DateTime
+     * @return DateLesson
      */
-    public function getUntil(): DateTime {
+    public function getFrom(): DateLesson {
+        return $this->from;
+    }
+
+    /**
+     * @param DateLesson $from
+     * @return SickNote
+     */
+    public function setFrom(DateLesson $from): SickNote {
+        $this->from = $from;
+        return $this;
+    }
+
+    /**
+     * @return DateLesson
+     */
+    public function getUntil(): DateLesson {
         return $this->until;
     }
 
     /**
-     * @param DateTime $until
+     * @param DateLesson $until
      * @return SickNote
      */
-    public function setUntil(DateTime $until): SickNote {
+    public function setUntil(DateLesson $until): SickNote {
         $this->until = $until;
         return $this;
     }

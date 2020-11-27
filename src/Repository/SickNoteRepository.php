@@ -47,7 +47,7 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
     /**
      * @inheritDoc
      */
-    public function findByStudents(array $students): array {
+    public function findByStudents(array $students, ?DateTime $date = null, ?int $lesson = null): array {
         $ids = array_map(function(Student $student) {
             return $student->getId();
         }, $students);
@@ -59,6 +59,31 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
 
         $qb->where($qb->expr()->in('s.id', ':students'))
             ->setParameter('students', $ids);
+
+        if($date != null && $lesson != null) {
+            $qb->andWhere(
+                // start
+                $qb->expr()->orX(
+                    'sn.from.date < :date',
+                    $qb->expr()->andX(
+                        'sn.from.date = :date',
+                        'sn.from.lesson <= :lesson'
+                    )
+                )
+            );
+            $qb->andWhere(
+                // end
+                $qb->expr()->orX(
+                    'sn.until.date > :date',
+                    $qb->expr()->andX(
+                        'sn.until.date = :date',
+                        'sn.until.lesson >= :lesson'
+                    )
+                )
+            );
+            $qb->setParameter('date', $date);
+            $qb->setParameter('lesson', $lesson);
+        }
 
         return $qb->getQuery()->getResult();
     }

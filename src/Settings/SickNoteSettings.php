@@ -53,4 +53,12 @@ class SickNoteSettings extends AbstractSettings {
     public function setOrderedByHelp(?string $help): void {
         $this->setValue('sick_note.ordered_by.help', $help);
     }
+
+    public function getNextDayThresholdTime(): ?string {
+        return $this->getValue('sick_note.next_day.threshold', null);
+    }
+
+    public function setNextDayThresholdTime(?string $time): void {
+        $this->setValue('sick_note.next_day.threshold', $time);
+    }
 }

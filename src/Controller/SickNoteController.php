@@ -114,8 +114,6 @@ class SickNoteController extends AbstractController {
             $selectedDate = null;
         }
 
-        dump($selectedDate);
-
         $groups = [ ];
 
         if($teacherFilterView->getCurrentTeacher() !== null) {

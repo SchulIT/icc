@@ -18,6 +18,7 @@ use App\Settings\SickNoteSettings;
 use App\Settings\TimetableSettings;
 use App\SickNote\SickNote;
 use App\SickNote\SickNoteSender;
+use App\Sorting\SickNoteGradeGroupStrategy;
 use App\Sorting\SickNoteStrategy;
 use App\Sorting\SickNoteTuitionGroupStrategy;
 use App\Sorting\Sorter;
@@ -151,9 +152,12 @@ class SickNoteController extends AbstractController {
 
                 $groups[] = $group;
             }
+
+            $sorter->sort($groups, SickNoteGradeGroupStrategy::class);
         } else {
             $sickNotes = $sickNoteRepository->findAll($selectedDate);
             $groups = $grouper->group($sickNotes, SickNoteGradeStrategy::class);
+            $sorter->sort($groups, SickNoteGradeGroupStrategy::class);
         }
 
         $sorter->sortGroupItems($groups, SickNoteStrategy::class);

@@ -111,6 +111,13 @@
                                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 </div>
                                 <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
+                                {% if selectedDate is not null %}
+                                <div class="input-group-append">
+                                    <a href="{{ path('sick_notes', currentFilter|merge({date: '✗' })) }}" class="btn btn-outline-primary" title="{{ 'filter.reset_date'|trans }}">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                                {% endif %}
                             </div>
                         </form>
                     </div>

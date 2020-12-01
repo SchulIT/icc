@@ -138,6 +138,7 @@ markdown:
     link_broken: Dieser Verweis ist defekt.
 
 filter:
+    reset_date: Datum zurücksetzen
     reset: zurücksetzen
 
 progress:

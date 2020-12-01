@@ -29,7 +29,7 @@ class SickNote {
     private $orderedBy = null;
 
     /**
-     * @DateLessonNotInPast()
+     * @DateLessonNotInPast(exceptions={"ROLE_SICK_NOTE_CREATOR"})
      * @var DateLesson
      */
     private $from;

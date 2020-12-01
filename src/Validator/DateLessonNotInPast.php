@@ -9,4 +9,7 @@ use Symfony\Component\Validator\Constraint;
  */
 class DateLessonNotInPast extends Constraint {
     public $message = 'This value must not be in the past.';
+
+    /** @var array Specifies roles to which this constraint is not applied */
+    public $exceptions = [ ];
 }

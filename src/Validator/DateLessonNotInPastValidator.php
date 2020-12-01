@@ -35,9 +35,13 @@ class DateLessonNotInPastValidator extends ConstraintValidator {
             throw new UnexpectedTypeException($constraint, DateLessonNotInPast::class);
         }
 
-        /*if($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_CREATOR')) {
-            return;
-        }*/
+        $exceptions = $constraint->exceptions;
+
+        foreach($exceptions as $role) {
+            if($this->authorizationChecker->isGranted($role)) {
+                return;
+            }
+        }
 
         $today = $this->dateHelper->getToday();
 

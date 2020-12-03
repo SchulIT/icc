@@ -6,6 +6,8 @@ use App\Csv\CsvHelper;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Repository\TuitionRepositoryInterface;
+use App\Sorting\Sorter;
+use App\Sorting\StudentGroupMembershipStrategy;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -14,11 +16,14 @@ class TuitionCsvExporter {
     private $tuitionRepository;
     private $csvHelper;
     private $translator;
+    private $sorter;
 
-    public function __construct(TuitionRepositoryInterface $tuitionRepository, CsvHelper $csvHelper, TranslatorInterface $translator) {
+
+    public function __construct(TuitionRepositoryInterface $tuitionRepository, CsvHelper $csvHelper, TranslatorInterface $translator, Sorter $sorter) {
         $this->tuitionRepository = $tuitionRepository;
         $this->csvHelper = $csvHelper;
         $this->translator = $translator;
+        $this->sorter = $sorter;
     }
 
     /**
@@ -42,9 +47,12 @@ class TuitionCsvExporter {
             $this->translator->trans('label.type')
         ];
 
+        $memberships = $tuition->getStudyGroup()->getMemberships()->toArray();
+        $this->sorter->sort($memberships, StudentGroupMembershipStrategy::class);
+
         // Rows
         /** @var StudyGroupMembership $membership */
-        foreach($tuition->getStudyGroup()->getMemberships() as $membership) {
+        foreach($memberships as $membership) {
             $rows[] = [
                 $membership->getStudent()->getLastname(),
                 $membership->getStudent()->getFirstname(),

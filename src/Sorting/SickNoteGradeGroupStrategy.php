@@ -15,7 +15,7 @@ class SickNoteGradeGroupStrategy implements SortingStrategyInterface {
     /**
      * @param SickNoteGradeGroup $objectA
      * @param SickNoteGradeGroup $objectB
-     * @return $this|int
+     * @return int
      */
     public function compare($objectA, $objectB): int {
         return $this->gradeStrategy->compare($objectA->getGrade(), $objectB->getGrade());

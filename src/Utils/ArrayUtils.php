@@ -46,7 +46,7 @@ class ArrayUtils {
         foreach($items as $item) {
             $keys = $keyFunc($item);
 
-            if(!is_array($keys)) {
+            if(!is_iterable($keys)) {
                 $keys = [ $keys ];
             }
 

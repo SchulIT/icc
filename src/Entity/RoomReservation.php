@@ -5,12 +5,14 @@ namespace App\Entity;
 use App\Validator\DateIsNotInPast;
 use App\Validator\NoReservationCollision;
 use DateTime;
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  * @NoReservationCollision(groups={"Default", "collision"})
  */
 class RoomReservation {

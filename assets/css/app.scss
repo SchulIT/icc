@@ -44,6 +44,9 @@ $enable-gradients: true;
 // Import dropzone
 @import '../../node_modules/dropzone/dist/dropzone';
 
+// Import datatables
+@import '../../node_modules/simple-datatables/dist/style.css';
+
 // Import SCSS from overrides
 @import "overrides/*.scss";
 
@@ -260,4 +263,29 @@ $enable-gradients: true;
 .link-hover:hover {
   background: $nav-pills-link-active-bg;
   color: $nav-pills-link-active-color;
+}
+
+// Data table fixes
+.dataTable-top,
+.dataTable-bottom {
+  display: none;
+}
+
+.dataTable-container {
+  border:none !important;
+}
+
+.table-bordered.dataTable-table {
+  border-collapse: collapse;
+}
+
+.sticky-sidebar {
+  position: -webkit-sticky;
+  position: sticky;
+  align-self: flex-start;
+  top: 1rem;
+}
+
+.choices {
+  margin-bottom: 0;
 }

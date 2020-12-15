@@ -7,22 +7,28 @@ use App\Entity\AppointmentCategory;
 use App\Entity\Teacher;
 use App\Sorting\AppointmentCategoryStrategy;
 use App\Sorting\TeacherStrategy;
+use Doctrine\ORM\EntityRepository;
 use SchulIT\CommonBundle\Form\FieldsetType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AppointmentType extends AbstractType {
     private $teacherConverter;
     private $teacherStrategy;
     private $appointmentCategoryStrategy;
+    private $authorizationChecker;
 
-    public function __construct(TeacherStringConverter $teacherConverter, TeacherStrategy $teacherStrategy, AppointmentCategoryStrategy $appointmentCategoryStrategy) {
+    public function __construct(TeacherStringConverter $teacherConverter, TeacherStrategy $teacherStrategy, AppointmentCategoryStrategy $appointmentCategoryStrategy, AuthorizationCheckerInterface $authorizationChecker) {
         $this->teacherConverter = $teacherConverter;
         $this->teacherStrategy = $teacherStrategy;
         $this->appointmentCategoryStrategy = $appointmentCategoryStrategy;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -47,6 +53,15 @@ class AppointmentType extends AbstractType {
                             'required' => true,
                             'class' => AppointmentCategory::class,
                             'sort_by' => $this->appointmentCategoryStrategy,
+                            'query_builder' => function(EntityRepository $repository) {
+                                $qb = $repository->createQueryBuilder('c');
+
+                                if($this->authorizationChecker->isGranted('ROLE_APPOINTMENTS_ADMIN') !== true) {
+                                    $qb->where('c.usersCanCreateAppointments = true');
+                                }
+
+                                return $qb;
+                            },
                             'choice_label' => function(AppointmentCategory $appointmentCategory) {
                                 return $appointmentCategory->getName();
                             },
@@ -62,7 +77,8 @@ class AppointmentType extends AbstractType {
                         ->add('end', DateTimeType::class, [
                             'label' => 'label.end',
                             'date_widget' => 'single_text',
-                            'time_widget' => 'single_text'
+                            'time_widget' => 'single_text',
+                            'help' => 'label.end_hint'
                         ])
                         ->add('location', TextType::class, [
                             'label' => 'label.location',

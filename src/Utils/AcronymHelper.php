@@ -25,10 +25,10 @@ class AcronymHelper {
         $teachers = $this->getListOfTeachers();
 
         foreach($teachers as $teacher) {
-            $regExp = '~(^|\s|\.|,|;|:|\()(' . $teacher->getAcronym() . ')($|\s|\.|,|;|:|\))~';
+            $regExp = '~\b' . $teacher->getAcronym() . '\b~';
 
             $content = preg_replace_callback($regExp, function($matches) use ($teacher) {
-                return $matches[1] . $this->teacherConverter->convert($teacher) . $matches[3];
+                return $this->teacherConverter->convert($teacher);
             }, $content);
         }
 

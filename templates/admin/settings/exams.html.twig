@@ -28,8 +28,11 @@
         <div class="card-header">{{ 'admin.settings.exams.planning.label'|trans }}</div>
 
         <div class="card-body">
-            {{ form_row(form.number_of_exams_week) }}
             {{ form_row(form.number_of_exams_day) }}
+
+            {% for grade in grades %}
+                {{ form_row(form['number_of_exams_week_' ~ grade.id ]) }}
+            {% endfor %}
         </div>
     </div>
 

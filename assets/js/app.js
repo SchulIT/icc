@@ -3,6 +3,7 @@ require('../css/app.scss');
 require('emojione');
 import Choices from "choices.js";
 import { v4 as uuidv4 } from 'uuid';
+import { DataTable } from "simple-datatables";
 
 let bsCustomFileInput = require('bs-custom-file-input');
 let ClipboardJS = require('clipboard');
@@ -32,17 +33,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    document.querySelectorAll('table[data-table]').forEach(function(el) {
+        el.datatable = new DataTable(el, {
+            searchable: false,
+            fixedHeight: false,
+            paging: false,
+            truncatePager: false
+        });
+    });
+
     document.querySelectorAll('a[data-trigger=scroll]').forEach(function(el) {
         el.addEventListener('click', function(event) {
-            let target = document.querySelector(el.getAttribute('href'));
+            let offset = 0;
 
-            if(target !== null) {
-                event.preventDefault();
-                window.scrollTo({
-                    top: target.offsetTop,
-                    behavior: 'smooth'
-                });
+            try {
+                let target = document.querySelector(el.getAttribute('href'));
+                offset = target.offsetTop;
+            } catch (e) {
+                offset = 0;
             }
+
+            event.preventDefault();
+            window.scrollTo({
+                top: offset,
+                behavior: 'smooth'
+            });
         });
     });
 
@@ -81,7 +96,9 @@ document.addEventListener('DOMContentLoaded', function() {
             itemSelectText: '',
             shouldSort: false,
             shouldSortItems: false,
-            removeItemButton: removeItemButton
+            removeItemButton: removeItemButton,
+            searchResultLimit: 10,
+            searchFields: ['label']
         });
 
         if(selected !== undefined) {

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

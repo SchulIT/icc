@@ -12,7 +12,7 @@
 {% block content %}
     <div class="container-fluid px-0">
         <div class="row">
-            <div class="col-md-3 order-md-2">
+            <div class="col-md-3 order-md-2 sticky-sidebar">
                 {% if is_granted('ROLE_ADMIN') %}
                     <div class="card">
                         <div class="list-group list-group-flush">
@@ -70,8 +70,8 @@
 
                             {% for tag in tags %}
                                 <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">
+                                    <div class="input-group-prepend {% if not tag.hasValue() %}flex-fill{% endif %}">
+                                        <div class="input-group-text {% if not tag.hasValue() %}w-100{% endif %}">
                                             <div class="custom-control custom-checkbox">
                                                 <input class="mr-1 custom-control-input" type="checkbox" id="check-tag-{{ tag.uuid }}" name="tag-{{ tag.uuid }}" value="✓" {% if query.hasTag(tag) %} checked{% endif %}>
                                                 <label for="check-tag-{{ tag.uuid }}" class="custom-control-label">
@@ -114,6 +114,12 @@
                         </p>
                     </div>
                 </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
+                </div>
             </div>
 
             <div class="col-md-9 order-md-1">
@@ -142,6 +148,18 @@
                                     <i class="fa fa-door-closed"></i>
                                 </a>
                             </div>
+
+                            {% if status[room.id] is defined and status[room.id] is not null %}
+                            <div class="float-right ml-2">
+                                {% set roomStatus = status[room.id] %}
+                                {% for badge in roomStatus.badges %}
+                                    <a href="{{ roomStatus.link }}" target="_blank" class="btn btn-sm btn-outline-{% if badge.counter > 0 %}danger{% else %}success{% endif %}" title="{{ badge.label|trans }}">
+                                        {%- if badge.icon is not null -%}<i class="{{ badge.icon }}"></i>{%- endif -%}
+                                        <span class="badge badge-pill">{{ badge.counter }}</span>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
 
                             <h5 class="card-title">
                                 {{ room.name }}

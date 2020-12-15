@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Exam;
 use App\Entity\Grade;
+use App\Entity\Room;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
@@ -105,11 +106,32 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllDatesByGrade(Grade $grade, ?\DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true);
 
     /**
+     * @param DateTime $doday
+     * @return Exam[]
+     */
+    public function findAllByDate(DateTime $doday): array;
+
+    /**
      * @param \DateTime $today
      * @param int $lesson
      * @return Exam[]
      */
     public function findAllByDateAndLesson(\DateTime $today, int $lesson): array;
+
+    /**
+     * @param Room $room
+     * @param DateTime $today
+     * @return Exam[]
+     */
+    public function findAllByRoomAndDate(Room $room, DateTime $today): array;
+
+    /**
+     * @param Room $room
+     * @param DateTime $today
+     * @param int $lesson
+     * @return Exam[]
+     */
+    public function findAllByRoomAndDateAndLesson(Room $room, DateTime $today, int $lesson): array;
 
     /**
      * @param \DateTime|null $today If set, only exams on $today or later are returned
@@ -147,8 +169,11 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
      * @param int $page
      * @param Grade|null $grade
      * @param Teacher|null $teacher
+     * @param Student|null $student
+     * @param StudyGroup|null $studyGroup
+     * @param DateTime|null $today
      * @param bool $onlyPlanned If set to true, only planned exams are returned
      * @return Paginator
      */
-    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, ?Teacher $teacher = null, bool $onlyPlanned = true): Paginator;
+    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, ?Teacher $teacher = null, ?Student $student = null, ?StudyGroup $studyGroup = null, bool $onlyPlanned = true, ?DateTime $today = null): Paginator;
 }

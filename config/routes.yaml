@@ -50,3 +50,8 @@ easy_admin_bundle:
 bentools_webpush:
     resource: '@WebPushBundle/Resources/config/routing.xml'
     prefix: /webpush
+
+dh_doctrine_audit:
+    resource: "@DHDoctrineAuditBundle/Controller/"
+    type: annotation
+    prefix: /admin

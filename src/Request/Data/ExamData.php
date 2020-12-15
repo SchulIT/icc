@@ -19,7 +19,6 @@ class ExamData {
 
     /**
      * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     * @Assert\Date()
      * @Assert\NotNull()
      * @var \DateTime
      */

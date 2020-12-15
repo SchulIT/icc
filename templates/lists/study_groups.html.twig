@@ -56,10 +56,11 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-striped table-hover table-bordered card-table">
+                                <table class="table table-striped table-hover table-bordered card-table border-top-0" data-table="true">
                                     <colgroup>
                                         <col class="column-lg">
                                         <col class="column-lg">
+                                        <col class="column-md">
                                         <col class="column-md">
                                         <col>
                                     </colgroup>
@@ -69,6 +70,7 @@
                                         <th>{{ 'label.lastname'|trans }}</th>
                                         <th>{{ 'label.firstname'|trans }}</th>
                                         <th>{{ 'label.grade'|trans }}</th>
+                                        <th>{{ 'lists.tuitions.type'|trans }}</th>
                                         <th>{{ 'label.email'|trans }}</th>
                                     </tr>
                                     </thead>
@@ -79,6 +81,7 @@
                                             <td>{{ student.lastname }}</td>
                                             <td>{{ student.firstname }}</td>
                                             <td>{{ student.grade.name }}</td>
+                                            <td>{{ memberships[student.id] ?? null }}</td>
                                             <td>
                                                 {% if student.email is not empty %}
                                                     <i class="fa fa-envelope"></i>
@@ -152,7 +155,7 @@
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered card-table">
+                            <table class="table table-striped table-bordered card-table border-top-0" data-table="true">
                                 <colgroup>
                                     <col>
                                     <col class="column-md">
@@ -184,7 +187,7 @@
 
             {% if studyGroupFilter.currentStudyGroup != null or studentFilter.currentStudent is not null %}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 sticky-sidebar">
             {% endif %}
                 {% if studyGroupFilter.currentStudyGroup != null and students|length > 0 %}
                     <div class="card">
@@ -223,6 +226,12 @@
                             {% endif %}
                         </p>
                     </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
                 </div>
             </div>
         </div>

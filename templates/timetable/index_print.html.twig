@@ -59,7 +59,7 @@
                                 {% for day in week.days %}
                                     {% set lessons = day.getTimetableLesson(i) %}
                                     <td>
-                                        {% for supervision in lessons.supervisions %}
+                                        {% for supervision in lessons.beforeSupervisions %}
                                             {% include 'timetable/supervision.html.twig' %}
                                         {% endfor %}
                                     </td>
@@ -86,12 +86,7 @@
                                 {% if not lessons.isCollapsed %}
                                     <td{% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %}{% if day.isCurrentDay %} class="current" {% endif %}>
                                         {% for lesson in lessons.lessons %}
-                                            {% if lesson is instanceof('App\\Entity\\TuitionTimetableLesson') %}
-                                                {% include 'timetable/lesson_print.html.twig' %}
-                                            {% elseif lesson is instanceof('App\\Entity\\FreestyleTimetableLesson') %}
-                                                {% include 'timetable/freestyle_lesson_print.html.twig' %}
-                                            {% endif %}
-
+                                            {% include 'timetable/lesson_print.html.twig' with { student: studentFilter.currentStudent, memberships: memberships }%}
                                             {% if not loop.last %}<hr>{% endif %}
                                         {% endfor %}
                                     </td>

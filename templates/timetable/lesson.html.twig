@@ -21,8 +21,8 @@
         {% if tuition is not null and is_granted('view', tuition) %}
             {% set link = path('list_tuition', { uuid: tuition.uuid }) %}
         {% endif %}
-        <a {% if link is not empty %}href="{{ link }}"{% endif%} title="{{ subject.name }}">
-            {% if tuition is not null %}
+        <a {% if link is not empty %}href="{{ link }}"{% endif%} {% if subject is not null %}title="{{ subject.name }}"{% endif %}>
+            {%- if tuition is not null -%}
                 {% if tuition.displayName is not empty -%}
                     {{ tuition.displayName }}
                 {%- elseif showCourseName -%}
@@ -34,13 +34,13 @@
                         {{ tuition.subject.abbreviation }}
                     {%- endif -%}
                 {%- endif -%}
-            {% elseif subject is not null %}
+            {%- elseif subject is not null -%}
                 {%- if subject.replaceSubjectAbbreviation -%}
                     {{ subject.name }}
                 {%- else -%}
                     {{ subject.abbreviation }}
                 {%- endif -%}
-            {% endif %}
+            {%- endif -%}
         </a>
     </strong>
 

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  * @UniqueEntity(fields={"externalId"})
  */
 class Tuition {
@@ -192,6 +194,10 @@ class Tuition {
      * @return Teacher[]
      */
     public function getTeachers() {
+        if($this->getTeacher() === null) {
+            return $this->getAdditionalTeachers()->toArray();
+        }
+
         return array_merge(
             [ $this->getTeacher() ],
             $this->getAdditionalTeachers()->toArray()

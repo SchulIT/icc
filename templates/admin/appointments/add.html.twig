@@ -17,6 +17,20 @@
 
 {% block content %}
 
+    {% if not is_granted('ROLE_APPOINTMENTS_ADMIN') %}
+        <div class="bs-callout bs-callout-warning">
+            <h4>{{ 'important'|trans }}</h4>
+
+            <p>{{ 'admin.appointments.add.confirmation_info'|trans }}</p>
+        </div>
+
+        <div class="bs-callout bs-callout-danger">
+            <h4>{{ 'caution'|trans }}</h4>
+
+            <p>{{ 'admin.appointments.add.workflow_info'|trans }}</p>
+        </div>
+    {% endif %}
+
     {{ form_start(form) }}
     {{ form_widget(form) }}
 

@@ -56,6 +56,12 @@ class DashboardViewCollapseHelper {
     }
 
     private function collapseLesson(DashboardLesson $lesson, DashboardView $view, ?Teacher $teacher): void {
+        // Merge supervisions
+        $this->mergeExamSupervisions($lesson);
+
+        // Add exams because they may not cause any troubles
+        $this->addExamsToView($lesson, $view);
+
         // Store all items
         $originalItems = $lesson->getItems();
 
@@ -240,7 +246,7 @@ class DashboardViewCollapseHelper {
         $distinctRooms = array_unique($rooms);
         $distinctLocations = array_unique($locations);
 
-        if(count($distinctRooms) === 0 && $distinctLocations === 0) {
+        if(count($distinctRooms) === 0 && count($distinctLocations) === 0) {
             return true;
         }
 
@@ -281,6 +287,67 @@ class DashboardViewCollapseHelper {
         return $view;
     }
 
+    private function addExamsToView(DashboardLesson $lesson, DashboardView $view) {
+        $items = $lesson->getItems();
+        $lesson->clearItems();
+
+        foreach($items as $item) {
+            if($item instanceof ExamViewItem) {
+                $view->addExam($item);
+            } else {
+                $lesson->addItem($item);
+            }
+        }
+    }
+
+    /**
+     * @param DashboardLesson $lesson
+     */
+    private function mergeExamSupervisions(DashboardLesson $lesson): void {
+        $items = $lesson->getItems();
+        $supervisions = [ ];
+
+        $lesson->clearItems();
+
+        foreach($items as $item) {
+            if($item instanceof ExamSupervisionViewItem) {
+                $supervisions[] = $item;
+            } else {
+                $lesson->addItem($item);
+            }
+        }
+
+        /** @var ExamSupervisionViewItem[] $merged */
+        $merged = [ ];
+
+        foreach($supervisions as $supervision) {
+            $firstExam = $supervision->getFirst();
+
+            if($firstExam === null) {
+                continue;
+            }
+
+            $isMerged = false;
+
+            foreach($merged as $mergedSupervisionItem) {
+                $firstMergedExam = $mergedSupervisionItem->getFirst();
+
+                if($firstMergedExam !== null && $firstExam->getRoom() === $firstMergedExam->getRoom()) {
+                    $isMerged = true;
+                    $mergedSupervisionItem->addExam($firstExam);
+                }
+            }
+
+            if($isMerged === false) {
+                $merged[] = $supervision;
+            }
+        }
+
+        foreach($merged as $item) {
+            $lesson->addItem($item);
+        }
+    }
+
     /**
      * @param SubstitutionViewItem[] $substitutions
      * @return SubstitutionViewItem[]
@@ -299,7 +366,8 @@ class DashboardViewCollapseHelper {
                 if($substitution->getType() === $mergedSubstitution->getType()
                     && $substitution->getSubject() === $mergedSubstitution->getSubject()
                     && $substitution->getRemark() === $mergedSubstitution->getRemark()
-                    && $substitution->getRoom() === $mergedSubstitution->getRoom()) {
+                    && $substitution->getRoom() === $mergedSubstitution->getRoom()
+                    && $substitution->getRoomName() === $mergedSubstitution->getRoomName()) {
 
                     // merge study groups
                     foreach($substitution->getStudyGroups() as $studyGroup) {

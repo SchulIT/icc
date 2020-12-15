@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  * @UniqueEntity(fields={"key"})
  */
 class Setting {

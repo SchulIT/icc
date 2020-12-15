@@ -28,7 +28,9 @@ class AcronymHelperTest extends TestCase {
 
         $acronymHelper = new AcronymHelper(new TeacherStringConverter(), $repository);
         $this->assertEquals('Mr. Doe hands exercises to Mrs. Mueller', $acronymHelper->replaceAcronyms('DOE hands exercises to MUE'));
-
+        $this->assertEquals('Mr. Doe hands exercises to Mrs. Mueller.', $acronymHelper->replaceAcronyms('DOE hands exercises to MUE.'));
+        $this->assertEquals('Mr. Doe: exercises to Mrs. Mueller', $acronymHelper->replaceAcronyms('DOE: exercises to MUE'));
+        $this->assertEquals('DOEexercises to Mrs. Mueller', $acronymHelper->replaceAcronyms('DOEexercises to MUE'));
     }
 }
 

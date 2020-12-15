@@ -31,6 +31,7 @@ use App\Sorting\StudentStudyGroupGroupStrategy;
 use App\Sorting\TeacherStrategy;
 use App\Sorting\UserLastnameFirstnameStrategy;
 use App\Sorting\UserUserTypeGroupStrategy;
+use App\Utils\EnumArrayUtils;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -70,7 +71,7 @@ class MessageController extends AbstractController {
 
         $archive = $request->query->get('archive', false) === '✓';
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
-        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user);
+        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]));
 
         $studyGroups = [ ];
         if($userTypeFilterView->getCurrentType()->equals(UserType::Student()) || $userTypeFilterView->getCurrentType()->equals(UserType::Parent())) {
@@ -88,6 +89,10 @@ class MessageController extends AbstractController {
             $studyGroups,
             $archive
         );
+
+        $messages = array_filter($messages, function(Message $message) {
+            return $this->isGranted(MessageVoter::View, $message);
+        });
 
         $this->sorter->sort($messages, MessageStrategy::class);
 

@@ -144,6 +144,10 @@ services:
         arguments:
             - !tagged app.sorting_strategy
 
+    App\Rooms\Status\ServiceCenterRoomStatusHelper:
+        arguments:
+            $isEnabled: '%env(bool:ROOM_STATUS)%'
+
     # CONTROLLER
     App\Controller\MarkdownController:
         bind:
@@ -192,6 +196,12 @@ services:
     Doctrine\Persistence\ManagerRegistry:
         alias: 'doctrine'
 
+    Doctrine\Migrations\Version\DbalMigrationFactory: ~
+    App\Migrations\Factory\MigrationFactoryDecorator:
+        decorates: Doctrine\Migrations\Version\DbalMigrationFactory
+        arguments:
+            $migrationFactory: '@App\Migrations\Factory\MigrationFactoryDecorator.inner'
+
     # DARK MODE:
     SchulIT\CommonBundle\DarkMode\DarkModeManagerInterface:
         class: App\DarkMode\DarkModeManager
@@ -230,3 +240,9 @@ services:
     App\Notification\WebPush\UserSubscriptionManager:
         tags:
             - { name: bentools_webpush.subscription_manager, user_class: 'App\Entity\User' }
+
+    # SICKNOTES
+    App\SickNote\SickNoteSender:
+        arguments:
+            $appName: '%env(APP_NAME)%'
+            $sender: '%env(MAILER_FROM)%'

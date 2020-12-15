@@ -171,3 +171,6 @@ easy_admin:
                     - { property: date, type: date, type_options: { widget: 'single_text' }}
                     - start
                     - end
+
+        SickNote:
+            class: App\Entity\SickNote

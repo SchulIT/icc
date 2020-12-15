@@ -12,8 +12,10 @@ use App\Security\Voter\ExamVoter;
 use App\Security\Voter\ListsVoter;
 use App\Security\Voter\RoomReservationVoter;
 use App\Security\Voter\RoomVoter;
+use App\Security\Voter\SickNoteVoter;
 use App\Security\Voter\WikiVoter;
 use App\Settings\NotificationSettings;
+use App\Settings\SickNoteSettings;
 use App\Utils\EnumArrayUtils;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
@@ -38,13 +40,15 @@ class Builder {
     private $translator;
     private $darkModeManager;
     private $notificationSettings;
+    private $sickNoteSettings;
 
     private $idpProfileUrl;
 
     public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authorizationChecker,
                                 WikiArticleRepositoryInterface $wikiRepository, MessageRepositoryInterface $messageRepository,
                                 TokenStorageInterface $tokenStorage, DateHelper $dateHelper, UserStringConverter $userConverter,
-                                TranslatorInterface $translator, DarkModeManagerInterface $darkModeManager, NotificationSettings $notificationSettings, string $idpProfileUrl) {
+                                TranslatorInterface $translator, DarkModeManagerInterface $darkModeManager,
+                                NotificationSettings $notificationSettings, SickNoteSettings $sickNoteSettings, string $idpProfileUrl) {
         $this->factory = $factory;
         $this->authorizationChecker = $authorizationChecker;
         $this->wikiRepository = $wikiRepository;
@@ -56,6 +60,7 @@ class Builder {
         $this->darkModeManager = $darkModeManager;
         $this->idpProfileUrl = $idpProfileUrl;
         $this->notificationSettings = $notificationSettings;
+        $this->sickNoteSettings = $sickNoteSettings;
     }
 
     private function plansMenu(ItemInterface $menu): ItemInterface {
@@ -256,7 +261,7 @@ class Builder {
                 ->setExtra('icon', 'fas fa-pen');
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_APPOINTMENTS_ADMIN')) {
+        if($this->authorizationChecker->isGranted('ROLE_APPOINTMENT_CREATOR')) {
             $menu->addChild('admin.appointments.label', [
                 'route' => 'admin_appointments'
             ])
@@ -335,6 +340,12 @@ class Builder {
             ])
                 ->setLinkAttribute('target', '_blank')
                 ->setExtra('icon', 'fas fa-tools');
+
+            $menu->addChild('audit.label', [
+                'uri' => '/admin/audit'
+            ])
+                ->setLinkAttribute('target', '_blank')
+                ->setExtra('icon', 'far fa-eye');
         }
 
         return $root;
@@ -378,6 +389,10 @@ class Builder {
 
             $menu->addChild('admin.settings.appointments.label', [
                 'route' => 'admin_settings_appointments'
+            ]);
+
+            $menu->addChild('admin.settings.sick_notes.label', [
+                'route' => 'admin_settings_sick_notes'
             ]);
         }
 
@@ -427,6 +442,20 @@ class Builder {
 
         $this->wikiMenu($menu);
 
+        if($this->sickNoteSettings->isEnabled() === true) {
+            if($this->authorizationChecker->isGranted(SickNoteVoter::View)) {
+                $menu->addChild('sick_notes.label', [
+                    'route' => 'sick_notes'
+                ])
+                    ->setExtra('icon', 'fas fa-clinic-medical');
+            } else if($this->authorizationChecker->isGranted(SickNoteVoter::New)) {
+                $menu->addChild('sick_notes.add.label', [
+                    'route' => 'sick_note'
+                ])
+                    ->setExtra('icon', 'fas fa-clinic-medical');
+            }
+        }
+
         return $menu;
     }
 
@@ -448,11 +477,15 @@ class Builder {
                 ->setAttribute('title', $this->translator->trans('services.label'));
 
             foreach($token->getAttribute('services') as $service) {
-                $menu->addChild($service->name, [
+                $item = $menu->addChild($service->name, [
                     'uri' => $service->url
                 ])
                     ->setAttribute('title', $service->description)
                     ->setLinkAttribute('target', '_blank');
+
+                if(isset($service->icon) && !empty($service->icon)) {
+                    $item->setExtra('icon', $service->icon);
+                }
             }
         }
 

@@ -70,7 +70,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-3 sticky-sidebar">
                 {% if article is not null and (is_granted('edit', article) or is_granted('remove', article)) %}
                 <div class="card">
                     <div class="list-group list-group-flush">
@@ -154,6 +154,12 @@
                             </div>
                         </form>
                     </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
                 </div>
             </div>
         </div>

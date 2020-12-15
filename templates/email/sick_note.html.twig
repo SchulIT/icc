@@ -1,0 +1,76 @@
+{% extends "email/main.html.twig" %}
+
+{% block title %}
+    {% if is_quarantine %}
+        {{ 'sick_note.quarantine.title'|trans({ '%student%': note.student|student, '%grade%': note.student.grade.name}, 'email') }}
+    {% else %}
+        {{ 'sick_note.sick.title'|trans({ '%student%': note.student|student, '%grade%': note.student.grade.name}, 'email') }}
+    {% endif %}
+{% endblock %}
+
+{% block button %}{% endblock %}
+
+{% block preview %}
+    {% if is_quarantine %}
+        {{ 'sick_note.quarantine.content'|trans({ '%student%': note.student|student, '%grade%': note.student.grade.name}, 'email') }}
+    {% else %}
+        {{ 'sick_note.sick.content'|trans({ '%student%': note.student|student, '%grade%': note.student.grade.name}, 'email') }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <p>
+        {% if is_quarantine %}
+            {{ 'sick_note.quarantine.content'|trans({ '%student%': note.student|student, '%grade%': note.student.grade.name}, 'email') }}
+        {% else %}
+            {{ 'sick_note.sick.content'|trans({ '%student%': note.student|student, '%grade%': note.student.grade.name}, 'email') }}
+        {% endif %}
+    </p>
+
+    <h5>{{ 'label.general'|trans }}</h5>
+
+    <ul>
+        <li>{{ 'sick_note.student'|trans({'%student%': note.student|student }, 'email') }}</li>
+        <li>{{ 'sick_note.grade'|trans({'%grade%': note.student.grade.name }, 'email') }}</li>
+        <li>{{ 'sick_note.teachers'|trans({'%teachers%': teachers|teachers }, 'email') }}</li>
+        <li>{{ 'sick_note.reason'|trans({'%reason%': note.reason|enum }, 'email') }}</li>
+        {% if note.orderedBy is not empty %}
+            <li>{{ 'sick_note.ordered_by'|trans({'%ordered_by%': note.orderedBy }, 'email') }}</li>
+        {% endif %}
+        <li>{{ 'sick_note.from'|trans({'%date%': note.from.date|format_date, '%lesson%': note.from.lesson }, 'email') }}</li>
+        <li>{{ 'sick_note.until'|trans({'%date%': note.until.date|format_date, '%lesson%': note.until.lesson }, 'email') }}</li>
+        <li>{{ 'sick_note.phone'|trans({'%phone%': note.phone }, 'email') }}</li>
+        <li>{{ 'sick_note.email'|trans({'%email%': note.email }, 'email') }}</li>
+        <li>{{ 'sick_note.created_by'|trans({'%user%': app.user|user }, 'email') }}</li>
+        <li>{{ 'sick_note.created_at'|trans({'%date%': now|format_datetime }, 'email') }}</li>
+    </ul>
+
+    <h5>{{ 'sick_note.message'|trans({}, 'email') }}</h5>
+
+    <p>{{ note.message|nl2br }}</p>
+
+    <h5>{{ 'sick_note.attachments'|trans({'%count%': note.attachments|length }, 'email') }}</h5>
+
+    {% if note.attachments|length > 0 %}
+        <ul>
+            {% for attachment in note.attachments %}
+                <li>{{ attachment.clientOriginalName }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
+
+{% block additional %}{% endblock %}
+
+{% block notifications %}{% endblock %}
+
+{% block footer_message %}
+    {% if note.email is not empty %}
+        {{ 'sick_note.reply.email'|trans({'%email%': note.email }, 'email') }}
+    {% else %}
+        {{ 'sick_note.reply.no_email'|trans({}, 'email') }}
+    {% endif %}
+{% endblock %}
+
+{% block greeting %}{% endblock %}
+{% block farewell %}{% endblock %}

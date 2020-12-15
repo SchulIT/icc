@@ -40,6 +40,13 @@ abstract class AbstractExamConstraintValidator extends ConstraintValidator {
         $this->initialized = true;
     }
 
+    protected function findAllByStudent(Student $student): array {
+        $this->initializeCache();
+
+        return $this->examCache[$student->getId()] ?? [ ];
+    }
+
+
     /**
      * @param Student[] $students
      * @return Exam[]

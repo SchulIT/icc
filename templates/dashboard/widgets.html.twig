@@ -50,26 +50,29 @@
 
             <div class="card-body align-self-center d-flex align-items-sm-center pl-0">
                 <div class="mr-auto align-self-center d-flex flex-wrap">
-                    {% for tuition in exam.tuitions %}
-                        <span class="d-flex flex-wrap align-self-center mb-1">
-                        <span>
-                            <span class="badge badge-primary">{{ tuition.name|upper }}</span>
-                            <span class="mx-1"></span>
-                        </span>
-                        <span>
-                            <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-                            <span class="mx-1"></span>
-                        </span>
-                        <span>
-                            <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
-                            <span class="mx-1"></span>
-                        </span>
-                    </span>
-                    {% endfor %}
+                    <span class="d-flex flex-wrap align-self-center mb-1">
+                        {% for tuition in exam.tuitions %}
 
-                    {% if exam.rooms is not empty %}
-                        <i class="fa fa-door-open"></i> {{ exam.rooms|first }}
-                    {% endif %}
+                            <span>
+                                <span class="badge badge-primary">{{ tuition.name|upper }}</span>
+                                <span class="mx-1"></span>
+                            </span>
+                            <span>
+                                <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                <span class="mx-1"></span>
+                            </span>
+                            <span>
+                                <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                <span class="mx-1"></span>
+                            </span>
+                        {% endfor %}
+
+                        {% if item.exam.room is not null %}
+                            <span>
+                                <i class="fa fa-door-open"></i> {{ item.exam.room.name }}
+                            </span>
+                        {% endif %}
+                    </span>
                 </div>
 
                 <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">
@@ -86,26 +89,41 @@
             {{ _self.show_lesson(lesson, start, end) }}
             {{ _self.show_warning(hasWarning) }}
 
-            <div class="align-self-center d-flex flex-wrap">
-                <span class="align-self-center badge badge-warning my-1">{{ 'dashboard.exam_supervision'|trans|upper }}</span>
+            <div class="align-self-center d-flex flex-wrap w-100">
+                <span class="align-self-center badge badge-warning my-1 mr-3">{{ 'dashboard.exam_supervision'|trans|upper }}</span>
 
-                <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
-                    <span class="mr-auto align-self-center">
-                        {% for tuition in item.exam.tuitions %}
-                            {{ tuition.name }}
-                            <span class="mx-1"></span>
-                            <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-                            <span class="mx-1"></span>
-                            <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
-                            <span class="mx-1"></span>
-                        {% endfor %}
+                <div class="card-body pl-0 py-0 d-flex align-self-center align-items-center flex-column">
+                    {% for exam in item.exams %}
+                        <div class="d-block d-flex my-1 w-100">
+                            <span class="mr-auto align-self-center">
+                                <span class="d-flex flex-wrap align-self-center mb-1">
+                                    {% for tuition in exam.tuitions %}
+                                        <span>
+                                            <span class="badge badge-primary">{{ tuition.name|upper }}</span>
+                                            <span class="mx-1"></span>
+                                        </span>
+                                        <span>
+                                            <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                            <span class="mx-1"></span>
+                                        </span>
+                                        <span>
+                                            <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                            <span class="mx-1"></span>
+                                        </span>
+                                    {% endfor %}
 
-                        {% if item.exam.rooms is not null and item.exam.rooms|length > 0 %}
-                            <i class="fa fa-door-open"></i> {{ item.exam.rooms|first }}
-                        {% endif %}
-                    </span>
+                                    {% if exam.room is not null %}
+                                        <span>
+                                            <i class="fa fa-door-open"></i> {{ exam.room.name }}
+                                            <span class="mx-1"></span>
+                                        </span>
+                                    {% endif %}
+                                </span>
+                            </span>
 
-                    <a href="{{ path('show_exam', { uuid: item.exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">{{ 'label.details'|trans }}</a>
+                            <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">{{ 'label.details'|trans }}</a>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -164,6 +182,7 @@
                         </span>
 
                         <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
+                            {% if lesson.grades|length > 0 %}
                             <span>
                                 <i class="fa fa-users"></i>
                                 {% if showCourseName and lesson.tuition is not null %}
@@ -174,10 +193,13 @@
                                 {% endif %}
                                 <span class="mx-1"></span>
                             </span>
+                            {% endif %}
+                            {% if lesson.room is not null or lesson.location is not null %}
                             <span>
                                 <i class="fa fa-door-open"></i> {% if lesson.room is not null%}{{ lesson.room.name }}{% elseif lesson.location is not empty %}{{ lesson.location }}{% else %}{{ 'label.not_available'|trans }}{% endif %}
                                 <span class="mx-1"></span>
                             </span>
+                            {% endif %}
 
                             <span>
                                 <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
@@ -191,24 +213,28 @@
         {% if item.absentStudentGroups|length > 0 %}
             <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#absences-{{ item.lesson.lesson }}">
                 <span class="mr-auto align-self-center">
-                    <strong>{{ 'dashboard.absent_students'|trans }} <span class="badge badge-warning">{{ item.absentStudentsCount }} / {{ lesson.tuition.studyGroup.memberships|length }}</span></strong>
+                    <strong>{{ 'dashboard.absent_students'|trans }} <span class="badge badge-warning">{{ item.absentStudentsCount }} / {{ item.lesson.tuition.studyGroup.memberships|length }}</span></strong>
                 </span>
                 <i class="fa indicator align-self-center fa-chevron-down"></i>
             </div>
             <div class="card-footer collapse border-top-0" id="absences-{{ item.lesson.lesson }}">
                 {% for group in item.absentStudentGroups %}
-                    <div class="d-flex">
+                    <div class="d-flex flex-wrap flex-md-nowrap">
+                        {% if group.isExam or group.isAppointment %}
                         <div class="align-self-baseline flex-shrink-0 mr-1">
                             {% if group.isExam %}
                                 <i class="fa fa-edit"></i> {% for tuition in group.objective.tuitions %}{{ tuition.name }} ({{ tuition.teachers|teachers }}){% if not loop.last %}, {% endif %}{% endfor %}:
                             {% elseif group.isAppointment %}
-
+                                <i class="fa fa-calendar-alt"></i> {{ group.objective.title }} {% if group.objective.organizers|length > 0 %}({% for organizer in group.objective.organizers %}{{ organizer|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}){% endif %}
                             {% else %}
 
                             {% endif %}
                         </div>
+                        {% endif %}
                         <div class="align-self-baseline w-100">
-                            {% for absentStudent in group.students %}{{ absentStudent.student|student }}{% if not loop.last %}, {% endif %}{% endfor %}
+                            {% for absentStudent in group.students %}
+                                {% if absentStudent.reason == 'sick' %}<i class="fas fa-clinic-medical"></i>{% endif %}
+                                {{ absentStudent.student|student }} {% if absentStudent.reason == 'sick' %}({{ 'sick_notes.until_short'|trans({'%date%': absentStudent.sickNote.until.date|format_date, '%lesson%': absentStudent.sickNote.until.lesson }) }}){% endif %}{% if not loop.last %} – {% endif %}{% endfor %}
                         </div>
                     </div>
                 {% endfor %}
@@ -258,7 +284,7 @@
 
 {% macro substitution(item, lesson, start, end, hasWarning) %}
     {% set substitution = item.substitution %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% elseif not item.isFreeLesson %}border-warning{% else %}text-black-50{% endif %}">
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %} {% if item.isFreeLesson %}text-black-50{% endif %}">
         <div class="d-flex">
             {% if not substitution.startsBefore %}
                 {% if lesson is null %}
@@ -299,9 +325,9 @@
                         <span class="mx-1"></span>
                     </span>
 
-                    {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
+                    {% if substitution.room is not null or substitution.replacementRoom is not null or substitution.roomName is not null or substitution.replacementRoomName is not null %}
                         <span>
-                            <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
+                            <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room ? substitution.room.name : substitution.roomName, substitution.replacementRoom ? substitution.replacementRoom : substitution.replacementRoomName) }}
                         </span>
                     {% endif %}
                 </div>
@@ -416,6 +442,7 @@
 
                 <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
                     <span>{{ reservation.room.name }}</span>
+                    <span class="mx-1"></span>
                     <span class="text-muted">{{ reservation.room.description }}</span>
                 </div>
             </div>

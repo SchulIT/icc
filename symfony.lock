@@ -1,4 +1,22 @@
 {
+    "damienharper/auditor-bundle": {
+        "version": "3.4.1"
+    },
+    "doctrine/sql-formatter": {
+        "version": "1.1.1"
+    },
+    "eightpoints/guzzle-bundle": {
+        "version": "7.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "7.0",
+            "ref": "7babb21a3928e44e485391907e3abc346804e0d2"
+        },
+        "files": [
+            "./config/packages/eight_points_guzzle.yaml"
+        ]
+    },
     "frostiede/enum-bundle": {
         "version": "3.0.0"
     },
@@ -22,5 +40,23 @@
     },
     "symfony/deprecation-contracts": {
         "version": "v2.1.2"
+    },
+    "symfony/http-client-contracts": {
+        "version": "v2.3.1"
+    },
+    "symfony/lock": {
+        "version": "v4.4.16"
+    },
+    "symfony/security-core": {
+        "version": "v4.4.15"
+    },
+    "symfony/security-csrf": {
+        "version": "v4.4.15"
+    },
+    "symfony/security-guard": {
+        "version": "v4.4.15"
+    },
+    "symfony/security-http": {
+        "version": "v4.4.15"
     }
 }

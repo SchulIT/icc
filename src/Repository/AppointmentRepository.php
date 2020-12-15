@@ -8,6 +8,7 @@ use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
+use App\Entity\User;
 use App\Entity\UserType;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -143,6 +144,38 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findAllForStudentsAndTime(array $students, DateTime $start, DateTime $end): array {
+        $qbStudyGroups = $this->em->createQueryBuilder();
+
+        $qbStudyGroups
+            ->select('sgInner.id')
+            ->from(StudyGroup::class, 'sgInner')
+            ->leftJoin('sgInner.memberships', 'sgMemberInner')
+            ->where('sgMemberInner.student IN (:studentIds)');
+
+        $qbAppointments = $this->em->createQueryBuilder()
+            ->select('aInner.id')
+            ->from(Appointment::class, 'aInner')
+            ->leftJoin('aInner.studyGroups', 'aSgInner')
+            ->where(
+                $qbStudyGroups->expr()->in('aSgInner.id', $qbStudyGroups->getDQL())
+            );
+
+        $studentIds = array_map(function(Student $student) {
+            return $student->getId();
+        }, $students);
+
+        return $this->getAppointments($qbAppointments, ['studentIds' => $studentIds ], null)
+                ->andWhere('a.start <= :end')
+                ->andWhere('a.end >= :start')
+                ->setParameter('start', $start)
+                ->setParameter('end', $end)
+                ->getQuery()->getResult();
+    }
+
+    /**
      * @param Teacher $teacher
      * @param DateTime|null $today
      * @return Appointment[]
@@ -256,7 +289,19 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->getQuery()->getResult();
     }
 
-    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null): Paginator {
+    /**
+     * @inheritDoc
+     */
+    public function countNotConfirmed(): int {
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(a.id)')
+            ->from(Appointment::class, 'a')
+            ->where('a.isConfirmed = false')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null, ?User $createdBy = null, ?bool $confirmed = null): Paginator {
         $qbIds = $this->em->createQueryBuilder();
         $params = [ ];
 
@@ -284,6 +329,16 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
                 );
 
             $params['query'] = '%' . $q . '%';
+        }
+
+        if($createdBy !== null) {
+            $qbIds->andWhere('aInner.createdBy = :user');
+            $params['user'] = $createdBy;
+        }
+
+        if($confirmed !== null) {
+            $qbIds->andWhere('aInner.isConfirmed = :confirmed');
+            $params['confirmed'] = $confirmed;
         }
 
         $qb = $this->getAppointments($qbIds->getDQL(), $params, null);

@@ -1,6 +1,7 @@
 services:
     Faker\Factory: ~
     Faker\Generator:
+        public: true
         factory: 'Faker\Factory:create'
         arguments: ['de_DE']
         calls:

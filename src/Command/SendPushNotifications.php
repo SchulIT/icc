@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Event\MessageCreatedEvent;
 use App\Notification\NotificationService;
 use App\Repository\MessageRepositoryInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
@@ -43,7 +44,7 @@ class SendPushNotifications extends Command {
             $message = $messages[0];
             $style->section(sprintf('Send notifications for message "%s"', $message->getTitle()));
 
-            $this->notificationService->sendNotifications($message);
+            $this->notificationService->sendNotifications(new MessageCreatedEvent($message));
             $style->success(sprintf('Done (%d still queued for sending notifications)', count($messages) - 1));
         } else {
             $style->success('No messages found with unsent notifications.');

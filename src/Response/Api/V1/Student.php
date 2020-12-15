@@ -119,6 +119,13 @@ class Student {
     /**
      * @return string
      */
+    public function getGenderString(): string {
+        return $this->gender->getValue();
+    }
+
+    /**
+     * @return string
+     */
     public function getEmail(): string {
         return $this->email;
     }

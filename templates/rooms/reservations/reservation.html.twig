@@ -89,6 +89,35 @@
         </div>
     {% endif %}
 
+    {% if availability.exams is not empty %}
+        {% for exam in availability.exams %}
+            <div class="d-block">
+                <div class="mr-auto align-self-center d-flex flex-wrap">
+                    <span class="badge badge-primary align-self-center mb-1 mr-1">
+                        {{ 'label.exam'|trans|upper }}
+                    </span>
+
+                    {% for tuition in exam.tuitions %}
+                        <span class="d-flex flex-wrap align-self-center mb-1">
+                            <span>
+                                <span>{{ tuition.name|upper }}</span>
+                                <span class="mx-1"></span>
+                            </span>
+                            <span>
+                                <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                <span class="mx-1"></span>
+                            </span>
+                            <span>
+                                <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                <span class="mx-1"></span>
+                            </span>
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
     {% if availability.reservation is not null %}
         <div class="d-block">
             {% set reservation = availability.reservation %}

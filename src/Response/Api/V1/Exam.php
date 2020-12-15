@@ -200,7 +200,7 @@ class Exam {
             ->setDate($exam->getDate())
             ->setLessonStart($exam->getLessonStart())
             ->setLessonEnd($exam->getLessonEnd())
-            ->setRooms($exam->getRooms())
+            ->setRooms($exam->getRoom() !== null ? [ $exam->getRoom()->getName() ] : [ ]) // for compatibility reasons only
             ->setSupervisions(array_map(function(ExamSupervisionEntity $supervisionEntity) {
                 return ExamSupervision::fromEntity($supervisionEntity);
             }, $supervisions))

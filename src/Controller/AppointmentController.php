@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Converter\StudyGroupsGradeStringConverter;
 use App\Converter\TeacherStringConverter;
+use App\Converter\UserStringConverter;
 use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
 use App\Entity\IcsAccessToken;
@@ -75,7 +76,7 @@ class AppointmentController extends AbstractControllerWithMessages {
                              StudyGroupsGradeStringConverter $studyGroupsGradeStringConverter, TeacherStringConverter $teacherStringConverter,
                              AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter,
                              TeacherFilter $teacherFilter, GradesFilter $gradesFilter, ExamRepositoryInterface $examRepository,
-                             AppointmentsSettings $appointmentsSettings, TimetableTimeHelper $timetableTimeHelper, Request $request) {
+                             AppointmentsSettings $appointmentsSettings, TimetableTimeHelper $timetableTimeHelper, UserStringConverter $userStringConverter, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
         $isStudent = $user->getUserType()->equals(UserType::Student());
@@ -172,10 +173,17 @@ class AppointmentController extends AbstractControllerWithMessages {
                 ];
             }
 
+            if($appointment->getCreatedBy() !== null) {
+                $view[] = [
+                    'label' => $translator->trans('label.created_by'),
+                    'content' => $userStringConverter->convert($appointment->getCreatedBy(), false)
+                ];
+            }
+
             $json[] = [
                 'uuid' => $appointment->getUuid(),
                 'allDay' => $appointment->isAllDay(),
-                'title' => $appointment->getTitle(),
+                'title' => ($appointment->isConfirmed() === false ? '(✗) ' : '') . $appointment->getTitle(),
                 'textColor' => $colorUtils->getForeground($appointment->getCategory()->getColor()),
                 'backgroundColor' => $appointment->getCategory()->getColor(),
                 'start' => $appointment->getStart()->format($appointment->isAllDay() ? 'Y-m-d' : 'Y-m-d H:i'),
@@ -183,7 +191,8 @@ class AppointmentController extends AbstractControllerWithMessages {
                 'extendedProps' => [
                     'category'=> $appointment->getCategory()->getName(),
                     'content' => $appointment->getContent(),
-                    'view' => $view
+                    'view' => $view,
+                    'confirmation_status' => $appointment->isConfirmed() === false ? $translator->trans('label.not_confirmed') : null
                 ]
             ];
         }
@@ -241,10 +250,10 @@ class AppointmentController extends AbstractControllerWithMessages {
                         'content' => implode(', ', $grades)
                     ];
 
-                    if(count($exam->getRooms()) > 0) {
+                    if($exam->getRoom() !== null) {
                         $view[] = [
                             'label' => $translator->trans('label.room'),
-                            'content' => $exam->getRooms()[0]
+                            'content' => $exam->getRoom()->getName()
                         ];
                     }
 

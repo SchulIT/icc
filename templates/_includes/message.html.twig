@@ -6,14 +6,14 @@
 
 <div class="card {% if mustConfirm or mustUpload %}border-warning{% endif %} {% if message.priority == 'emergency' %}message-danger{% elseif message.priority == 'important' %}message-warning{% endif %}">
     <div class="card-body">
-        <div class="d-flex align-items-center {% if not is_dismissed(message) %}mb-2{% endif %}">
-            <h5 class="card-title mr-auto mb-0"><a href="{{ path('show_message', { uuid: message.uuid }) }}">{{ message.title }}</a></h5>
+        <div class="d-flex align-items-center flex-wrap {% if not is_dismissed(message) %}mb-2{% endif %}">
+            <h5 class="card-title mr-auto mb-0 mr-2"><a href="{{ path('show_message', { uuid: message.uuid }) }}">{{ message.title }}</a></h5>
 
-            <span class="text-secondary d-none d-lg-block">
+            <span class="text-secondary d-none d-lg-block mr-2">
                 {{ 'message.expires'|trans({'%date%': message.expireDate|format_date}) }}
             </span>
 
-            <div class="ml-2 flex-shrink-0">
+            <div class="flex-shrink-0">
 
                 <button data-toggle="popover" data-popover-title="{{ 'label.details'|trans }}" data-popover-container="#message-{{ message.uuid }}-info" class="btn btn-outline-secondary btn-sm">
                     <i class="fa fa-info-circle"></i>

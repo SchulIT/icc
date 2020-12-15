@@ -27,10 +27,20 @@ ROLE_DOCUMENTS_ADMIN
 
 Nutzer mit dieser Rolle dürfen Dokumente verwalten.
 
+ROLE_APPOINTMENT_CREATOR
+########################
+
+Nutzer mit dieser Rolle dürfen Termine eintragen. Diese besitzen zunächst den Status "nicht bestätigt" und werden für
+Lernende und Eltern nicht angezeigt. Andere Benutzer (u.a. Lehrkräfte) sehen unbestätigte Termine mit einem entsprechenden
+Hinweis. Nutzer mit dieser Rolle können nur ihre eigenen Termine bearbeiten und löschen.
+
+Benutzer mit der Rolle ``ROLE_APPOINTMENTS_ADMIN`` können Termine bestätigen.
+
 ROLE_APPOINTMENTS_ADMIN
 #######################
 
-Nutzer mit dieser Rolle dürfen Termine verwalten.
+Nutzer mit dieser Rolle dürfen alle Termine verwalten und Termine bestätigen. Durch diese Nutzer erstellte Termine besitzen
+automatisch den Status "bestätigt".
 
 ROLE_WIKI_ADMIN
 ###############

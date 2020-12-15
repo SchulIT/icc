@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Validator\Color;
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -10,6 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  * @UniqueEntity(fields={"externalId"})
  */
 class AppointmentCategory {
@@ -39,6 +41,14 @@ class AppointmentCategory {
      * @var string|null
      */
     private $color = null;
+
+    /**
+     * Determines whether non-admin users can add appointments in this category
+     *
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $usersCanCreateAppointments = false;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -89,6 +99,22 @@ class AppointmentCategory {
      */
     public function setColor(?string $color): AppointmentCategory {
         $this->color = $color;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUsersCanCreateAppointments(): bool {
+        return $this->usersCanCreateAppointments;
+    }
+
+    /**
+     * @param bool $usersCanCreateAppointments
+     * @return AppointmentCategory
+     */
+    public function setUsersCanCreateAppointments(bool $usersCanCreateAppointments): AppointmentCategory {
+        $this->usersCanCreateAppointments = $usersCanCreateAppointments;
         return $this;
     }
 }

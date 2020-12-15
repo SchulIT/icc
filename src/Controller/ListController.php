@@ -81,6 +81,7 @@ class ListController extends AbstractControllerWithMessages {
 
         $tuitions = [ ];
         $memberships = [ ];
+        $teacherMailAddresses = [ ];
 
         if($studentFilterView->getCurrentStudent() !== null) {
             $tuitions = $tuitionRepository->findAllByStudents([$studentFilterView->getCurrentStudent()]);
@@ -93,6 +94,16 @@ class ListController extends AbstractControllerWithMessages {
 
                 $memberships[$tuition->getExternalId()] = $membership->getType();
             }
+
+            foreach($tuitions as $tuition) {
+                foreach($tuition->getTeachers() as $teacher) {
+                    if($teacher->getEmail() !== null) {
+                        $teacherMailAddresses[] = $teacher->getEmail();
+                    }
+                }
+            }
+
+            $teacherMailAddresses = array_unique($teacherMailAddresses);
         } else if($gradeFilterView->getCurrentGrade() !== null) {
             $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()]);
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
@@ -107,6 +118,7 @@ class ListController extends AbstractControllerWithMessages {
             'teacherFilter' => $teacherFilterView,
             'tuitions' => $tuitions,
             'memberships' => $memberships,
+            'teacherMailAddresses' => $teacherMailAddresses,
             'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Tuition::class)
         ]);
     }
@@ -161,9 +173,12 @@ class ListController extends AbstractControllerWithMessages {
         $memberships = [ ];
 
         if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
-            $students = $studyGroupFilterView->getCurrentStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
-                return $membership->getStudent();
-            })->toArray();
+            /** @var StudyGroupMembership $membership */
+            foreach($studyGroupFilterView->getCurrentStudyGroup()->getMemberships() as $membership) {
+                $students[] = $membership->getStudent();
+                $memberships[$membership->getStudent()->getId()] = $membership->getType();
+            }
+
             $this->sorter->sort($students, StudentStrategy::class);
         } else if($studentFilterView->getCurrentStudent() !== null) {
             $studyGroups = [ ];

@@ -43,6 +43,13 @@ interface RoomReservationRepositoryInterface {
      */
     public function findAllByDate(DateTime $date): array;
 
+    /**
+     * @param Room $room
+     * @param DateTime $dateTime
+     * @return RoomReservation[]
+     */
+    public function findAllByRoomAndDate(Room $room, DateTime $dateTime): array;
+
     public function persist(RoomReservation $reservation): void;
 
     public function remove(RoomReservation $reservation): void;

@@ -289,6 +289,7 @@
         </table>
         <!-- Email Body : END -->
 
+        {% block notifications %}
         <!-- Email Footer : BEGIN -->
         <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
             <tr>
@@ -300,6 +301,7 @@
             </tr>
         </table>
         <!-- Email Footer : END -->
+        {% endblock %}
 
         <!--[if mso]>
         </td>
@@ -322,7 +324,9 @@
                         <tr>
                             <td style="padding: 20px; text-align: left; font-family: sans-serif; line-height: 20px;">
                                 <p style="margin: 0;">
-                                    {{ 'footer'|trans({}, 'email') }}
+                                    {% block footer_message %}
+                                        {{ 'footer'|trans({}, 'email') }}
+                                    {% endblock %}
                                 </p>
                             </td>
                         </tr>

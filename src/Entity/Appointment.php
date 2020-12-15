@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use DateInterval;
 use DateTime;
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  */
 class Appointment {
 
@@ -113,6 +115,22 @@ class Appointment {
      * @var ArrayCollection<UserTypeEntity>
      */
     private $visibilities;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default": true})
+     * @var bool
+     */
+    private $isConfirmed = true;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(nullable=true)
+     * @var null|User
+     *
+     * Note: we cannot use the Blameable() listener here as it would break when importing appointments
+     * from API
+     */
+    private $createdBy = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -325,6 +343,38 @@ class Appointment {
      */
     public function getVisibilities(): Collection {
         return $this->visibilities;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isConfirmed(): bool {
+        return $this->isConfirmed;
+    }
+
+    /**
+     * @param bool $isConfirmed
+     * @return Appointment
+     */
+    public function setIsConfirmed(bool $isConfirmed): Appointment {
+        $this->isConfirmed = $isConfirmed;
+        return $this;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getCreatedBy(): ?User {
+        return $this->createdBy;
+    }
+
+    /**
+     * @param User|null $createdBy
+     * @return Appointment
+     */
+    public function setCreatedBy(?User $createdBy): Appointment {
+        $this->createdBy = $createdBy;
+        return $this;
     }
 
     public function getRealEnd(): DateTime {

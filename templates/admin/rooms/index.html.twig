@@ -36,6 +36,7 @@
                                 <th>{{ 'label.name'|trans }}</th>
                                 <th>{{ 'label.description'|trans }}</th>
                                 <th>{{ 'label.capacity'|trans }}</th>
+                                <th>{{ 'label.reservation_enabled.label'|trans }}</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -46,6 +47,13 @@
                                     <td>{{ room.name }}</td>
                                     <td>{{ room.description }}</td>
                                     <td>{{ room.capacity }}</td>
+                                    <td>
+                                        {% if room.reservationEnabled %}
+                                            <i class="fa fa-check"></i>
+                                        {% else %}
+                                            <i class="fa fa-times"></i>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         {% if is_granted('edit', room) %}
                                             <a href="{{ path('edit_room', { uuid: room.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.rooms.edit.label'|trans }}">

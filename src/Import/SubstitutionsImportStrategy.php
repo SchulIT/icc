@@ -6,6 +6,7 @@ use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
 use App\Event\SubstitutionImportEvent;
+use App\Repository\RoomRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
@@ -21,13 +22,15 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
     private $substitutionRepository;
     private $teacherRepository;
     private $studyGroupRepository;
+    private $roomRepository;
     private $dispatcher;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, TeacherRepositoryInterface $teacherRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository, EventDispatcherInterface $eventDispatcher) {
+                                StudyGroupRepositoryInterface $studyGroupRepository, RoomRepositoryInterface $roomRepository, EventDispatcherInterface $eventDispatcher) {
         $this->substitutionRepository = $substitutionRepository;
         $this->teacherRepository = $teacherRepository;
         $this->studyGroupRepository = $studyGroupRepository;
+        $this->roomRepository = $roomRepository;
         $this->dispatcher = $eventDispatcher;
     }
 
@@ -107,11 +110,33 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
         $entity->setLessonEnd($data->getLessonEnd());
         $entity->setSubject($data->getSubject());
         $entity->setReplacementSubject($data->getReplacementSubject());
-        $entity->setRoom($data->getRoom());
-        $entity->setReplacementRoom($data->getReplacementRoom());
         $entity->setRemark($data->getRemark());
         $entity->setType($data->getType());
         $entity->setStartsBefore($data->startsBefore());
+
+        if(!empty($data->getRoom())) {
+            $room = $this->roomRepository->findOneByExternalId($data->getRoom());
+
+            if($room === null) {
+                $entity->setRoomName($data->getRoom());
+            }
+
+            $entity->setRoom($room);
+        } else {
+            $entity->setRoom(null);
+        }
+
+        if(!empty($data->getReplacementRoom())) {
+            $room = $this->roomRepository->findOneByExternalId($data->getReplacementRoom());
+
+            if($room === null) {
+                $entity->setReplacementRoomName($data->getReplacementRoom());
+            }
+
+            $entity->setReplacementRoom($room);
+        } else {
+            $entity->setReplacementRoom(null);
+        }
 
         $studyGroups = $this->studyGroupRepository->findAllByExternalId($data->getStudyGroups());
 

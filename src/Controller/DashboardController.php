@@ -14,6 +14,7 @@ use App\Settings\DashboardSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\EnumArrayUtils;
+use App\View\Filter\RoomFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Filter\UserTypeFilter;
@@ -41,7 +42,7 @@ class DashboardController extends AbstractController {
     /**
      * @Route("/dashboard", name="dashboard")
      */
-    public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter,
+    public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter, RoomFilter $roomFilter,
                               DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper,
                               DateHelper $dateHelper, DashboardSettings $settings, TimetableSettings $timetableSettings,
                               UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
@@ -83,6 +84,7 @@ class DashboardController extends AbstractController {
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null);
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]), UserType::Student(), [ UserType::Student(), UserType::Parent() ]);
+        $roomFilterView = $roomFilter->handle($request->query->get('room', null), $user);
 
         $includeGradeMessages = $user->getData(static::IncludeGradeMessagesKey, false);
 
@@ -98,6 +100,8 @@ class DashboardController extends AbstractController {
             }
 
             $view = $dashboardViewHelper->createViewForTeacher($teacherFilterView->getCurrentTeacher(), $selectedDate, $includeGradeMessages);
+        } else if($roomFilterView->getCurrentRoom() !== null) {
+            $view = $dashboardViewHelper->createViewForRoom($roomFilterView->getCurrentRoom(), $selectedDate);
         } else {
             $view = $dashboardViewHelper->createViewForUser($user, $selectedDate);
         }
@@ -125,6 +129,7 @@ class DashboardController extends AbstractController {
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
             'userTypeFilter' => $userTypeFilterView,
+            'roomFilter' => $roomFilterView,
             'view' => $view,
             'days' => $days,
             'selectedDate' => $selectedDate,

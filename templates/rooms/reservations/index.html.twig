@@ -76,16 +76,30 @@
                                 {% for room in rooms %}
                                     <tr>
                                         <td class="align-middle">
-                                            {{ room.name }}
+                                            <div class="d-flex align-items-center">
+                                                <span class="mr-1">
+                                                    {{ room.name }}
+                                                </span>
 
-                                            <span class="text-muted">{{ room.description }}</span>
+                                                <span class="text-muted mr-2">{{ room.description }}</span>
+
+                                                {% if status[room.id] is defined and status[room.id] is not null %}
+                                                    {% set roomStatus = status[room.id] %}
+                                                    {% for badge in roomStatus.badges %}
+                                                        <a href="{{ roomStatus.link }}" target="_blank" class="mr-2 btn btn-sm btn-outline-{% if badge.counter > 0 %}danger{% else %}success{% endif %}" title="{{ badge.label|trans }}">
+                                                            {%- if badge.icon is not null -%}<i class="{{ badge.icon }}"></i>{%- endif -%}
+                                                            <span class="badge badge-pill">{{ badge.counter }}</span>
+                                                        </a>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </div>
                                         </td>
                                         {% if overview.maxLessons > 0 %}
                                             {% for lesson in 1..overview.maxLessons %}
                                                 {% set availability = overview.availability(room, lesson) %}
                                                 {% set isAvailable = availability ? availability.isAvailable : false %}
 
-                                                <td data-toggle="xhr-popover" data-popover-title="{{ 'plans.rooms.reservations.info'|trans }}" data-popover-url="{{ path('reservation_xhr', { room: room.uuid.toString, date: date|date('Y-m-d'), lessonNumber: lesson }) }}" class="{% if isAvailable %}table-success{% elseif availability is not null and availability.reservation is not null %}bg-warning{% else %}bg-danger{% endif %} text-center align-middle p-0">
+                                                <td data-toggle="xhr-popover" data-popover-title="{{ 'plans.rooms.reservations.info'|trans }}" data-popover-url="{{ path('reservation_xhr', { room: room.uuid.toString, date: date|date('Y-m-d'), lessonNumber: lesson }) }}" class="{% if isAvailable %}table-success{% else %}bg-danger{% endif %} text-center align-middle p-0">
                                                     {% if isAvailable %}
                                                         <a href="{{ path('add_room_reservation', { room: room.uuid.toString, date: date|date('Y-m-d'), lessonStart: lesson }) }}" class="w-100 h-100 py-3 d-block">
                                                             <i class="fa fa-check"></i>
@@ -107,7 +121,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="list-group list-group-flush">
                         <a href="{{ path('add_room_reservation') }}" class="list-group-item list-group-item-action">
@@ -152,6 +166,12 @@
 
                         <p>{{ 'plans.rooms.reservations.help'|trans }}</p>
                     </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
                 </div>
             </div>
         </div>

@@ -103,7 +103,7 @@ class GradeFilterTest extends TestCase {
 
     public function testDefaultFilterStudent() {
         $filter = new GradeFilter($this->createSorter(), $this->createRepository());
-        $view = $filter->handle(null, $this->createStudentEF());
+        $view = $filter->handle(null, $this->createStudentEF(), true);
 
         $this->assertNotNull($view->getCurrentGrade());
         $this->assertEquals('cbd7de3d-fd46-457e-93d3-dc94acd82ae4', $view->getCurrentGrade()->getUuid()->toString());

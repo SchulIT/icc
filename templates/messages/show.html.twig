@@ -11,12 +11,34 @@
 {% endblock %}
 
 {% block content %}
+{% set missingUploads = missing_uploads(message) %}
+
+{% set mustConfirm = message.mustConfirm and is_granted('confirm', message) and not is_confirmed(message) %}
+{% set mustUpload = message.uploadsEnabled and is_granted('upload', message) and missingUploads|length > 0 %}
+{% set userDownloads = message_downloads(message) %}
+
 <div class="container-fluid px-0">
     <div class="row">
         <div class="col-md-9">
-            <div class="card">
+            <div class="card {% if mustConfirm %}border-warning{% endif %}">
                 <div class="card-body">
-                    <h5 class="card-title">{{ message.title }}</h5>
+                    <div class="d-flex align-items-center flex-wrap {% if not is_dismissed(message) %}mb-2{% endif %}">
+                        <h5 class="card-title mr-auto mb-0 mr-2">{{ message.title }}</h5>
+
+                        <div class="flex-shrink-0">
+                            {% if message.mustConfirm and is_granted('confirm', message) %}
+                                {% if not is_confirmed(message) and is_granted('confirm', message) %}
+                                    <a href="{{ path('confirm_message', { uuid: message.uuid }) }}" class="btn btn-warning btn-sm" title="{{ 'actions.confirm'|trans }}">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                {% else %}
+                                    <button type="button" class="btn btn-success btn-sm" title="{{ 'messages.confirm.confirmed'|trans }}">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
 
                     {{ message.content|markdown }}
                 </div>
@@ -99,7 +121,7 @@
             {% endif %}
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3 sticky-sidebar">
             {% if is_granted('edit', message) or is_granted('remove', message) %}
             <div class="card">
                 <div class="list-group list-group-flush">
@@ -158,28 +180,33 @@
                     {% endif %}
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<div id="confirm-upload" class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ 'messages.uploads.confirm.title'|trans }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>{{ 'messages.uploads.confirm.message'|trans }}</p>
-                <div class="modal-content">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
-                <button type="button" class="btn btn-primary confirm">{{ 'messages.uploads.confirm.button'|trans }}</button>
+            <div class="w-100">
+                <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                    <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                </a>
             </div>
         </div>
     </div>
 </div>
 
+    <div id="confirm-upload" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ 'messages.uploads.confirm.title'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ 'messages.uploads.confirm.message'|trans }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
+                    <button type="button" class="btn btn-primary confirm">{{ 'messages.uploads.confirm.button'|trans }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -93,7 +93,7 @@ class TeachersImportStrategy implements ImportStrategyInterface {
             }
         );
 
-        CollectionUtils::synchronize($entity->getTags(), $this->createTagCollection($data->getTags()), function(TeacherTag $tag) {
+        CollectionUtils::add($entity->getTags(), $this->createTagCollection($data->getTags()), function(TeacherTag $tag) {
             return $tag->getExternalId();
         });
     }

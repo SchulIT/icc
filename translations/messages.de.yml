@@ -40,15 +40,18 @@ label:
         teacher: Lehrkraft auswählen
         study_group: Lerngruppe auswählen
         room: Raum auswählen
+        rooms: Räume auswählen
         subjects: Fächer auswählen
         subject: Fach auswählen
         category: Kategorie auswählen
         usertype: Benutzertyp auswählen
+        reason: Grund auswählen
     search:
         student: Lernenden suchen
     scope: Bereich
     author: Autor
     visibility: Sichtbar für
+    absence_visibility: Absenzen sichtbar für
     message:
         subject: Betreff
         start: Start-Datum
@@ -74,6 +77,8 @@ label:
     title: Titel
     messages_files:
         label: Personalisierte Dateien
+        badge_upload: (Benutzer laden personalisierte Dateien hoch)
+        badge_download: (Benutzer laden personalisierte Dateien herunter)
         info_downloads: Es ist möglich, dass für jeden Benutzer personalisierte Dateien zum Download angeboten werden.
         enable_downloads: Benutzer können personalisierte Dateien herunterladen
         info_uploads: Darüber hinaus ist es möglich, dass Benutzer personalisierte Dateien einsenden können.
@@ -100,6 +105,7 @@ label:
     type: Art
     remark: Anmerkung
     confirmed: bestätigt
+    not_confirmed: nicht bestätigt
     version: Version
     user: Benutzer
     filesize: Größe
@@ -125,11 +131,23 @@ label:
     background_color: Hintergrundfarbe
     number_of_rows: Anzahl Zeilen
     font_family: Schriftart
+    reservation_enabled:
+        label: Reservierung erlaubt
+        help: Wenn diese Option deaktiviert ist, kann der Raum nicht gebucht werden. Bereits getätigte Reservierungen bleiben aktiv.
+    room_reservation_hint: Wenn ein Raum angegeben ist, wird dieser im Raumbelegplan automatisch geblockt. Bitte nur angeben, wenn Klausurraum und Unterrichtsraum verschieden sind.
+    end_hint: 'Bei ganztätigen Terminen muss als Enddatum der Tag nach dem letzten Tag angegeben werden. Beispiel: Ist der Termin ganztätig und an einem Tag, ist das Startdatum der Tag, an dem der Termin stattfindet und das Ende der Tag darauf (beides jeweils um 0:00). Bei einem mehrtätigen Termin (Mo-Mi) wird der Do als Ende angegeben (beides jeweils um 0:00).'
+    users_can_create_appointments:
+        label: Benutzer können Termine erstellen
+        help: Wenn diese Option aktiv ist, können Nicht-Administratoren Termine in dieser Kategorie anlegen. Anderenfalls wird die Kategorie nicht als Option angezeigt und ist somit nicht auswählbar.
+    all: alle
+    created_by: Erstellt von
+    ordered_by: Angeordnet von
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
 
 filter:
+    reset_date: Datum zurücksetzen
     reset: zurücksetzen
 
 progress:
@@ -145,6 +163,8 @@ actions:
     create: erzeugen
     upload: hochladen
     pick: auswählen
+    view: anzeigen
+    top: nach oben
 
 clipboard:
     copy: In die Zwischenablage kopieren
@@ -166,7 +186,7 @@ exams:
         title: Klausurplan
         description: "Klausurplan für %user%"
         supervision_description: "Klausuraufsicht %tuitions%"
-        exam_description: "Klausur %tuition%"
+        exam_description: "Klausur %tuitions%"
         tuition: "%name% (%grades%)"
 
 dashboard:
@@ -186,6 +206,7 @@ dashboard:
     exam: Klausur
     empty: Für diesen Tag sind keine Daten hinterlegt.
     free_hour: Freistunde
+    free_lesson: Unterrichtsfrei
     absences: Absenzen
     nav:
         infotexts: '{0} Tagestexte|{1} Tagestext|]1,Inf[ Tagestexte'
@@ -205,7 +226,7 @@ plans:
         tuitions: "{0} Kurse|{1} Kurs|]1,Inf[ Kurse"
         time: Zeitraum
         supervisions: Aufsicht
-        show_all: Alte Klausuren anzeigen
+        include_past: Alte Klausuren anzeigen
         not_visible: Aktuell ist der Klausurplan nicht freigeschaltet.
         visible_admin: "Aktuell ist der Klausurplan aufgrund einer Rolle sichtbar, obwohl er für den Benutzertyp %type% nicht freigeschaltet ist."
         not_planned: Nicht geplant
@@ -314,7 +335,7 @@ plans:
             help: Zum Erstellen einer Reservierung entweder auf ein grünes Feld klicken oder die obige Schaltfläche nutzen.
             info: Informationen
             available: Der Raum ist nicht belegt und kann reserviert werden.
-            not_available: Der Raumbelegplan kann nicht angezeigt werden, da es dem ausgewählten Datum keine Periode oder Woche zugeordnet werden kann.
+            not_available: Der Raumbelegplan kann nicht angezeigt werden, da dem ausgewählten Datum keine Periode oder Woche zugeordnet werden kann.
             reservation: Reservierung
             add:
                 label: Neue Reservierung
@@ -349,6 +370,9 @@ lists:
             csv: Liste exportieren
             copy: E-Mail Adressen kopieren
             mail: E-Mail an alle Lernenden verfassen
+        student_teachers_export:
+            copy: E-Mail Adressen der Fachlehrkräfte kopieren
+            mail: E-Mail an Fachlehrkräfte verfassen
 
     study_groups:
         label: Lerngruppen
@@ -454,7 +478,7 @@ message:
     dismissed_info: '{1} %count% Mitteilung wird ausgeblendet.|]1,Inf[ %count% Mitteilungen werden ausgeblendet.'
     dismissed_action: '{1} Mitteilung einblenden|]1,Inf[ %count% Mitteilungen einblenden'
     must_confirm: Diese Mitteilung muss bestätigt werden.
-
+    expires: 'läuft ab: %date%'
     confirmations:
         label: Bestätigungen
 
@@ -543,6 +567,9 @@ admin:
 
         exams:
             label: Klausurplan
+            visible_grades:
+                label: Klassen
+                help: Nur Lernende dieser Klassen können den Klausurplan einsehen.
             window:
                 label: Vorausblick für Lernende
                 help: Anzahl der Tage, die Lernende in die Zukunft blicken können (0 bedeutet unbegrenzte Anzahl an Tagen).
@@ -562,11 +589,11 @@ admin:
             planning:
                 label: Planung
                 number_of_exams_week:
-                    label: Klausuren pro Woche
+                    label: Klausuren pro Woche (%grade%)
                     help: Maximale Anzahl an Klausuren pro Wochen. Diese Beschränkung gilt nicht für Benutzer der Rolle ROLE_EXAMS_CREATOR und ROLE_EXAMS_ADMIN.
                 number_of_exams_day:
                     label: Klausuren pro Tag
-                    help: Maximale Anzahl an Klausuren pro Tg. Diese Beschränkung gilt auch für Benutzer mit Rolle ROLE_EXAMS_CREATOR oder ROLE_EXAMS_ADMIN.
+                    help: Maximale Anzahl an Klausuren pro Tag. Diese Beschränkung gilt auch für Benutzer mit Rolle ROLE_EXAMS_CREATOR oder ROLE_EXAMS_ADMIN.
 
         timetable:
             label: Stundenplan
@@ -608,6 +635,31 @@ admin:
             free_lesson_types:
                 label: Vertretungsarten Freistunden
                 help: Kommaseparierte Liste von Vertretungsarten, bei denen eine Vertretung als Freistunde angezeigt wird.
+            next_day_threshold:
+                label: Nächster Tag ab
+                help: Ab dieser Uhrzeit wird der nächste Tag automatisch ausgewählt. Ist dieser Wert nicht gesetzt, so wird stets der aktuelle Tag automatisch ausgewählt.
+            skip_weekends:
+                label: Wochenenden überspringen
+                help: Gibt an, ob Wochenendtage auf der Übersicht übersprungen werden sollen.
+
+        sick_notes:
+            label: Krankmeldungen
+            enabled: aktiviert
+            recipient:
+                label: Empfänger
+                help: E-Mail-Adresse, an die die Krankmeldung versendet wird
+            privacy_url:
+                label: Datenschutz-URL
+                help: Link zur Datenschutzrichtlinie, die der Krankmeldung zugrunde liegt. Dieser Link wird bei der Krankmeldung angezeigt.
+            retention_days:
+                label: Aufbewahrung
+                help: Anzahl der Tage, die eine Krankmeldung online im System notiert bleibt. Sie ist dann für die Person sichtbar, die die Krankmeldung eingetragen hat. Dabei wird nur der Benutzer, der betroffende Lernende, die Dauer und der Zeitpunkt erfasst. Anhänge oder die Mitteilung wird nicht gespeichert. Der Wert 0 bedeutet, dass Krankmeldungen dauerhaft aufbewahrt werden.
+            introduction_text:
+                label: Hinweistext
+                help: Der Hinweistext wird oberhalb der Krankmeldungsseite über der Information zum Datenschutz angezeigt.
+            ordered_by:
+                label: Angeordnet von
+                help: 'Dieser Hilfetext wird unterhalb des Feldes "Angeordnet von" angezeigt.'
 
         appointments:
             label: Terminplan
@@ -709,10 +761,13 @@ admin:
         overview:
             label: Terminübersicht
             empty: Aktuell gibt es keine Termine.
+            not_confirmed: '{1} Aktuell gibt es einen zu bestätigenden Termin.|]1,Inf[ Aktuell gibt es %count% zu bestätigende Termine.'
 
         add:
             label: Termin erstellen
             success: Termin erfolgreich erstellt
+            confirmation_info: 'Die hier erstellten Termine erhalten zunächst den Status "nicht bestätigt" und sind nicht für Lernende und Eltern sichtbar. Andere Lehrkräfte sehen den Termin als "nicht bestätigt". Erst nach Bestätigung durch einen Verantwortlichen ist der Termin auch für Lernende und Eltern sichtbar.'
+            workflow_info: Das Erstellen eines Termines entbindet nicht von einer Antragsstellung.
         edit:
             label: Termin bearbeiten
             success: Termin erfolgreich aktualisiert
@@ -720,6 +775,12 @@ admin:
             label: Termin löschen
             success: Termin erfolgreich gelöscht
             confirm: 'Soll der Termin "%name%" wirklich gelöscht werden?'
+
+        confirm:
+            label: Termin bestätigen
+            confirm: 'Soll der Termin "%name%" (erstellt von %user%) wirklich bestätigt werden?'
+            info: Diese Aktion kann nicht rückgängig gemacht werden. Der Ersteller des Termin erhält eine Bestätigungs-E-Mail.
+            success: Termin erfolgreich bestätigt
 
         categories:
             label: Termin-Kategorien
@@ -822,7 +883,7 @@ admin:
         label: Klausuren
         week: 'KW %week%'
         add:
-            label: Neue Klasur
+            label: Neue Klausur
             success: Klausur erfolgreich angelegt
         edit:
             label: Klausur bearbeiten
@@ -832,6 +893,13 @@ admin:
             success: Klausurschreiber aktualisiert
             info: Lernende werden individuell einer Klausur zugeordnet. Diese können nach dem Erstellen der Klausur ausgewählt werden.
             add_all: Alle Lernenden der ausgewählten Unterrichte als Klausurschreiber zuordnen
+        tuition_teachers_can_edit:
+            label: Lehrkräfte können Klausur bearbeiten
+            help: Wenn diese Option ausgewählt ist, können Lehrkräfte der ausgewählten Unterrichte die Klausurdetails (Datum, Stunde, Raum, Beschreibung) bearbeiten.
+        unplan:
+            label: Klausurplanung rückgängig machen
+            confirm: 'Soll die Klausurplanung am %date% (%lessons%) wirklich rückgängig werden?'
+            success: Klausurplanung erfolgreich rückgängig gemacht
         remove:
             label: Klausur löschen
             confirm: 'Soll die Klausur am %date% (%lessons%) wirklich gelöscht werden?'
@@ -946,6 +1014,7 @@ profile:
 
     notifications:
         label: Benachrichtigungen
+        select_elements: Elemente auswählen
         success: Benachrichtigungseinstellungen erfolgreich aktualisiert
         not_allowed: Es sind keine Benachrichtigungsmöglichkeiten freigeschaltet.
         substitutions:
@@ -958,6 +1027,7 @@ profile:
             label: Neue Mitteilung
             help: Wenn diese Option aktiv ist, wird eine Benachrichtigung versendet, sobald eine neue Mitteilung erstellt wurde.
         email:
+            label_short: E-Mail Benachrichtigungen
             label: E-Mail Benachrichtigungen aktiviert
             help: Wenn diese Option aktiv ist, werden Benachrichtigungen per E-Mail versendet.
 
@@ -1033,3 +1103,45 @@ cron:
 
 display:
     last_update: Letzte Aktualisierung
+
+
+servicecenter:
+    problem: Anzahl der Probleme in diesem Raum
+    maintenance: Anzahl der Wartungsarbeiten in diesem Raum
+
+important: Wichtig
+caution: Achtung
+
+sick_notes:
+    label: Krankmeldungen
+    empty: Es liegen keine Krankmeldungen vor.
+    created_at: krankgemeldet am
+    created_by: krankgemeldet von
+    until_short: 'vsl. bis %date% (%lesson%. Stunde)'
+    add:
+        label: Neue Krankmeldung
+        info: Hier besteht die Möglichkeit, eine Krankheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.
+        privacy:
+            info: Die hier erhobenen Daten werden entsprechend der aktuellen Datenschutzrichtlinie der Schule gespeichert und verarbeitet.
+            link: Datenschutzrichtlinie anzeigen
+        message: Mitteilung
+        attachments:
+            label: Anhänge
+            info: 'Hier können bis zu drei Dokumente (bspw. Attest, Meldung vom Gesundheitsamt,… ) angehangen werden. Gültige Dateitypen: PDF, PNG, JPG. Maximale Größe pro Datei: 5 MB'
+        absent_from: Abwesend ab
+        absent_until: Abwesend voraussichtlich bis
+        phone: Telefonnummer
+        contact:
+            label: Kontaktinformationen
+            info: Es besteht die Möglichkeit, eine Telefonnummer oder E-Mail-Adresse zu hinterlegen, die für Rückfragen genutzt werden kann. Bei Angabe einer E-Mail-Adresse wird eine Kopie der Krankmeldung an diese Adresse versendet.
+        send: absenden
+        success: Die Krankmeldung wurde erfolgreich an die Schule übermittelt. Falls eine E-Mail Adresse angegeben wurde, wird eine Kopie der Krankmeldung versendet. Der Versand der E-Mail dauert einige Minuten.
+    history:
+        label: Bisherige Krankmeldungen
+        empty: Keine Krankmeldungen eingereicht.
+        info: Hier sind eingesendete Krankmeldungen in zusammengefasster Form (Schüler, voraussichtliches Ende und Zeitpunkt der Meldung) einsehbar.
+        retention: '{1} Krankmeldungen werden einen Tag nach dem voraussichtlichen Ende automatisch gelöscht.|[1,Inf[ Krankmeldungen werden %count% Tage nach dem voraussichtlichen Ende automatisch gelöscht.'
+        note: '%student% bis zum %date%'
+
+audit:
+    label: Audit-Log

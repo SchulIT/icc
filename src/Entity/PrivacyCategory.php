@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use App\Validator\NullOrNotBlank;
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  */
 class PrivacyCategory {
 
@@ -85,5 +87,9 @@ class PrivacyCategory {
     public function setDescription(?string $description): PrivacyCategory {
         $this->description = $description;
         return $this;
+    }
+
+    public function __toString() {
+        return $this->getLabel();
     }
 }

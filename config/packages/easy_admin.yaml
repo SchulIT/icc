@@ -118,8 +118,8 @@ easy_admin:
                     - additionalTeachers
                     - studyGroup
 
-        TuitionTimetableLesson:
-            class: App\Entity\TuitionTimetableLesson
+        TimetableLesson:
+            class: App\Entity\TimetableLesson
             form:
                 fields:
                     - externalId
@@ -130,20 +130,8 @@ easy_admin:
                     - isDoubleLesson
                     - tuition
                     - room
-
-
-        FreestyleTimetableLesson:
-            class: App\Entity\FreestyleTimetableLesson
-            form:
-                fields:
-                    - externalId
-                    - period
-                    - week
-                    - day
-                    - lesson
-                    - isDoubleLesson
-                    - teachers
                     - subject
+                    - location
 
         User:
             class: App\Entity\User
@@ -175,3 +163,14 @@ easy_admin:
                     - name
                     - description
                     - client
+
+        FreeTimespan:
+            class: App\Entity\FreeTimespan
+            form:
+                fields:
+                    - { property: date, type: date, type_options: { widget: 'single_text' }}
+                    - start
+                    - end
+
+        SickNote:
+            class: App\Entity\SickNote

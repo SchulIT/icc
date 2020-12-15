@@ -34,12 +34,12 @@ class TeachersImportStrategyTest extends WebTestCase {
             ->get('doctrine')
             ->getManager();
 
-        $this->em->persist(
-            (new TeacherTag())
-                ->setExternalId('tag1')
-                ->setName('Tag 1')
-                ->setColor('#000000')
-        );
+        $tag1 = (new TeacherTag())
+            ->setExternalId('tag1')
+            ->setName('Tag 1')
+            ->setColor('#000000');
+
+        $this->em->persist($tag1);
 
         $this->em->persist(
             (new TeacherTag())
@@ -56,14 +56,14 @@ class TeachersImportStrategyTest extends WebTestCase {
                 ->setLastname('Lastname')
                 ->setGender(Gender::Female())
         );
-        $this->em->persist(
-            (new Teacher())
-                ->setExternalId('AC')
-                ->setAcronym('AC')
-                ->setFirstname('Firstname')
-                ->setLastname('Lastname')
-                ->setGender(Gender::Male())
-        );
+        $teacher = (new Teacher())
+            ->setExternalId('AC')
+            ->setAcronym('AC')
+            ->setFirstname('Firstname')
+            ->setLastname('Lastname')
+            ->setGender(Gender::Male());
+        $teacher->addTag($tag1);
+        $this->em->persist($teacher);
         $this->em->flush();
     }
 
@@ -109,5 +109,31 @@ class TeachersImportStrategyTest extends WebTestCase {
         $removedTeachers = $result->getRemoved();
         $this->assertEquals(1, count($removedTeachers));
         $this->assertEquals('AC', $removedTeachers[0]->getAcronym());
+    }
+
+    public function testImportDoesNotRemoveTags() {
+        $teachersData = [
+            (new TeacherData())
+                ->setId('AC')
+                ->setAcronym('AC')
+                ->setFirstname('John')
+                ->setLastname('Doe')
+                ->setGender('male')
+                ->setTags(['tag2']),
+        ];
+
+        $repository = new TeacherRepository($this->em);
+        $subjectRepository = new SubjectRepository($this->em);
+        $tagRepository = new TeacherTagRepository($this->em);
+        $dateTimeRepository = new ImportDateTypeRepository($this->em);
+        $importer = new Importer($this->validator, $dateTimeRepository, new NullLogger());
+        $strategy = new TeachersImportStrategy($repository, $subjectRepository, $tagRepository);
+        $result = $importer->import((new TeachersData())->setTeachers($teachersData), $strategy);
+
+        /** @var Teacher[] $updatedTeachers */
+        $updatedTeachers = $result->getUpdated();
+        $this->assertEquals(1, count($updatedTeachers));
+        $this->assertEquals('AC', $updatedTeachers[0]->getAcronym());
+        $this->assertEquals(2, $updatedTeachers[0]->getTags()->count());
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use DateTime;
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  * @UniqueEntity(fields={"externalId"})
  */
 class Substitution {
@@ -92,16 +94,30 @@ class Substitution {
     private $replacementTeachers;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
-     * @var string|null
+     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @var Room|null
      */
     private $room = null;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string", nullable=true, options={"comment": "Plain room name in case room resolve is not possible when importing substitutions."})
      * @var string|null
      */
+    private $roomName = null;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @var Room|null
+     */
     private $replacementRoom = null;
+
+    /**
+     * @ORM\Column(type="string", nullable=true, options={"comment": "Plain room name in case room resolve is not possible when importing substitutions."})
+     * @var string|null
+     */
+    private $replacementRoomName = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -297,34 +313,66 @@ class Substitution {
     }
 
     /**
-     * @return string|null
+     * @return Room|null
      */
-    public function getRoom(): ?string {
+    public function getRoom(): ?Room {
         return $this->room;
     }
 
     /**
-     * @param string|null $room
+     * @param Room|null $room
      * @return Substitution
      */
-    public function setRoom(?string $room): Substitution {
+    public function setRoom(?Room $room): Substitution {
         $this->room = $room;
+        return $this;
+    }
+
+    /**
+     * @return Room|null
+     */
+    public function getReplacementRoom(): ?Room {
+        return $this->replacementRoom;
+    }
+
+    /**
+     * @param Room|null $replacementRoom
+     * @return Substitution
+     */
+    public function setReplacementRoom(?Room $replacementRoom): Substitution {
+        $this->replacementRoom = $replacementRoom;
         return $this;
     }
 
     /**
      * @return string|null
      */
-    public function getReplacementRoom(): ?string {
-        return $this->replacementRoom;
+    public function getRoomName(): ?string {
+        return $this->roomName;
     }
 
     /**
-     * @param string|null $replacementRoom
+     * @param string|null $roomName
      * @return Substitution
      */
-    public function setReplacementRoom(?string $replacementRoom): Substitution {
-        $this->replacementRoom = $replacementRoom;
+    public function setRoomName(?string $roomName): Substitution {
+        $this->roomName = $roomName;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getReplacementRoomName(): ?string {
+        return $this->replacementRoomName;
+    }
+
+    /**
+     * @param string|null $replacementRoomName
+     * @return Substitution
+     */
+    public function setReplacementRoomName(?string $replacementRoomName): Substitution {
+        $this->replacementRoomName = $replacementRoomName;
         return $this;
     }
 
@@ -374,4 +422,39 @@ class Substitution {
         return $this->replacementStudyGroups;
     }
 
+    public function clone() {
+        $clone = new self();
+
+        $clone->setDate($this->getDate());
+        $clone->setType($this->getType());
+        $clone->setExternalId($this->getExternalId());
+        $clone->setSubject($this->getSubject());
+        $clone->setReplacementSubject($this->getReplacementSubject());
+        $clone->setRoom($this->getRoom());
+        $clone->setRoomName($this->getRoomName());
+        $clone->setReplacementRoom($this->getReplacementRoom());
+        $clone->setReplacementRoomName($this->getReplacementRoomName());
+        $clone->setLessonStart($this->getLessonStart());
+        $clone->setLessonEnd($this->getLessonEnd());
+        $clone->setStartsBefore($this->startsBefore());
+        $clone->setRemark($this->getRemark());
+
+        foreach($this->getTeachers() as $teacher) {
+            $clone->addTeacher($teacher);
+        }
+
+        foreach($this->getReplacementTeachers() as $teacher) {
+            $clone->addReplacementTeacher($teacher);
+        }
+
+        foreach($this->getStudyGroups() as $studyGroup) {
+            $clone->addStudyGroup($studyGroup);
+        }
+
+        foreach($this->getReplacementStudyGroups() as $studyGroup) {
+            $clone->addReplacementStudyGroup($studyGroup);
+        }
+
+        return $clone;
+    }
 }

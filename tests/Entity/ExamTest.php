@@ -4,6 +4,7 @@ namespace App\Tests\Entity;
 
 use App\Entity\Exam;
 use App\Entity\ExamSupervision;
+use App\Entity\Room;
 use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
@@ -34,8 +35,9 @@ class ExamTest extends TestCase {
         $exam->setDescription(null);
         $this->assertNull($exam->getDescription());
 
-        $exam->setRooms(['room1', 'room2', 'room3']);
-        $this->assertEquals(['room1', 'room2', 'room3'], $exam->getRooms());
+        $room = new Room();
+        $exam->setRoom($room);
+        $this->assertEquals($room, $exam->getRoom());
 
         $tuition = new Tuition();
         $exam->addTuition($tuition);

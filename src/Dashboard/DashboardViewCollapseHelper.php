@@ -5,6 +5,7 @@ namespace App\Dashboard;
 use App\Entity\Teacher;
 use App\Settings\DashboardSettings;
 use App\Utils\ArrayUtils;
+use InvalidArgumentException;
 
 /**
  * Applies an algorithm in order to reduce the amount of items of one lesson to one.
@@ -55,6 +56,12 @@ class DashboardViewCollapseHelper {
     }
 
     private function collapseLesson(DashboardLesson $lesson, DashboardView $view, ?Teacher $teacher): void {
+        // Merge supervisions
+        $this->mergeExamSupervisions($lesson);
+
+        // Add exams because they may not cause any troubles
+        $this->addExamsToView($lesson, $view);
+
         // Store all items
         $originalItems = $lesson->getItems();
 
@@ -65,13 +72,24 @@ class DashboardViewCollapseHelper {
         /** @var TimetableLessonViewItem[] $timetableLessons */
         $timetableLessons = ArrayUtils::filterByType($originalItems, TimetableLessonViewItem::class);
         $timetableCount = count($timetableLessons);
+        $freeTimetableLessons = ArrayUtils::filterByType($originalItems, FreeLessonView::class);
+        $mergeTimetableLessons = false;
 
         if($timetableCount === 1 && $timetableLessons[0]->getLesson() !== null) {
-            $lesson->addItem($timetableLessons[0]);
+            if(count($freeTimetableLessons) > 0) {
+                $lesson->addItem($freeTimetableLessons[0]);
+            } else {
+                $lesson->addItem($timetableLessons[0]);
+            }
         } else if($timetableCount > 1) {
-            $lesson->setWarning();
-            $lesson->replaceItems($originalItems);
-            return;
+            if($this->canMergeTimetableLessons($timetableLessons)) {
+                $mergeTimetableLessons = true;
+                $lesson->addItem($this->mergeTimetableLessons($timetableLessons));
+            } else {
+                $lesson->setWarning();
+                $lesson->replaceItems($originalItems);
+                return;
+            }
         }
 
         // STEP 2: SUPERVISIONS
@@ -104,24 +122,41 @@ class DashboardViewCollapseHelper {
         }
 
         // Further classication
-        $additionalSubstitutions = array_filter($substitutions, [ $this, 'isAdditionalSubstitution']);
-        $removableSubstitutions = array_filter($substitutions, [ $this, 'isRemovableSubstitution']);
-        $defaultSubstitutions = array_filter($substitutions, [ $this, 'isDefault' ]);
+        /** @var SubstitutionViewItem[] $additionalSubstitutions */
+        $additionalSubstitutions = array_values(array_filter($substitutions, [ $this, 'isAdditionalSubstitution']));
+        /** @var SubstitutionViewItem[] $removableSubstitutions */
+        $removableSubstitutions = array_values(array_filter($substitutions, function(SubstitutionViewItem $viewItem) use ($teacher) {
+            return $this->isRemovableSubstitution($viewItem, $teacher);
+        }));
+        /** @var SubstitutionViewItem[] $defaultSubstitutions */
+        $defaultSubstitutions = array_values(array_filter($substitutions, function(SubstitutionViewItem $viewItem) use ($teacher) {
+            return $this->isDefault($viewItem, $teacher);
+        }));
 
-        if(count($removableSubstitutions) > 1 || count($defaultSubstitutions) > 1) {
+        $defaultSubstitutionsCount = $this->countDefaultSubstitutions($defaultSubstitutions);
+
+        if(count($removableSubstitutions) > 1 || $defaultSubstitutionsCount > 1) {
             $lesson->setWarning();
             $lesson->replaceItems($originalItems);
             return;
         }
 
         foreach($removableSubstitutions as $substitution) {
-            $lesson->clearItems();
+            if($mergeTimetableLessons === false) {
+                $lesson->clearItems();
+            }
             $lesson->addItem($substitution);
         }
 
-        foreach($defaultSubstitutions as $substitution) {
-            $lesson->clearItems();
-            $lesson->addItem($substitution);
+        if($defaultSubstitutionsCount > 0) {
+            if($mergeTimetableLessons === false) {
+                $lesson->clearItems();
+            }
+            $mergedDefaultSubstitutions = $this->mergeSubstitutions($defaultSubstitutions);
+
+            foreach ($mergedDefaultSubstitutions as $substitution) {
+                $lesson->addItem($substitution);
+            }
         }
 
         // Add Non-Replacing substitutions
@@ -142,7 +177,7 @@ class DashboardViewCollapseHelper {
             $collision = false;
 
             foreach($lesson->getItems() as $item) {
-                if(!($item instanceof SubstitutionViewItem) || $this->isDefault($item)) {
+                if(!($item instanceof SubstitutionViewItem) || $this->isDefault($item, $teacher)) {
                     $collision = true;
                 }
             }
@@ -177,7 +212,8 @@ class DashboardViewCollapseHelper {
             SubstitutionViewItem::class,
             SupervisionViewItem::class,
             TimetableLessonViewItem::class,
-            ExamSupervisionViewItem::class
+            ExamSupervisionViewItem::class,
+            FreeLessonView::class
         ];
 
         foreach($originalItems as $originalItem) {
@@ -187,8 +223,225 @@ class DashboardViewCollapseHelper {
         }
     }
 
-    private function isRemovableSubstitution(SubstitutionViewItem $viewItem) {
-        return in_array($viewItem->getSubstitution()->getType(), $this->settings->getRemovableSubstitutionTypes());
+    /**
+     * @param TimetableLessonViewItem[] $lessonViews
+     * @return boolean
+     */
+    private function canMergeTimetableLessons(array $lessonViews) {
+        $rooms = [ ];
+        $locations = [ ];
+
+        foreach($lessonViews as $view) {
+            $lesson = $view->getLesson();
+
+            if($lesson->getRoom() !== null) {
+                $rooms[] = $lesson->getRoom()->getId();
+            }
+
+            if($lesson->getLocation() !== null) {
+                $locations[] = $lesson->getLocation();
+            }
+        }
+
+        $distinctRooms = array_unique($rooms);
+        $distinctLocations = array_unique($locations);
+
+        if(count($distinctRooms) === 0 && count($distinctLocations) === 0) {
+            return true;
+        }
+
+        if(count($distinctRooms) === 1 && count($distinctLocations) === 0) {
+            return true;
+        }
+
+        if(count($distinctRooms) === 0 && count($distinctLocations) === 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param TimetableLessonViewItem[] $lessonViews
+     * @return TimetableLessonViewItem
+     */
+    private function mergeTimetableLessons(array $lessonViews) {
+        if(count($lessonViews) === 0) {
+            throw new InvalidArgumentException('$lessonView must at least contain one element.');
+        }
+
+        $absentGroups = [ ];
+
+        foreach($lessonViews as $lessonView) {
+            $absentGroups = array_merge($lessonView->getAbsentStudentGroups());
+        }
+
+        $firstView = array_shift($lessonViews);
+
+        $view = new TimetableLessonViewItem($firstView->getLesson(), $absentGroups);
+
+        foreach($lessonViews as $lessonView) {
+            $view->addAdditionalLesson($lessonView->getLesson());
+        }
+
+        return $view;
+    }
+
+    private function addExamsToView(DashboardLesson $lesson, DashboardView $view) {
+        $items = $lesson->getItems();
+        $lesson->clearItems();
+
+        foreach($items as $item) {
+            if($item instanceof ExamViewItem) {
+                $view->addExam($item);
+            } else {
+                $lesson->addItem($item);
+            }
+        }
+    }
+
+    /**
+     * @param DashboardLesson $lesson
+     */
+    private function mergeExamSupervisions(DashboardLesson $lesson): void {
+        $items = $lesson->getItems();
+        $supervisions = [ ];
+
+        $lesson->clearItems();
+
+        foreach($items as $item) {
+            if($item instanceof ExamSupervisionViewItem) {
+                $supervisions[] = $item;
+            } else {
+                $lesson->addItem($item);
+            }
+        }
+
+        /** @var ExamSupervisionViewItem[] $merged */
+        $merged = [ ];
+
+        foreach($supervisions as $supervision) {
+            $firstExam = $supervision->getFirst();
+
+            if($firstExam === null) {
+                continue;
+            }
+
+            $isMerged = false;
+
+            foreach($merged as $mergedSupervisionItem) {
+                $firstMergedExam = $mergedSupervisionItem->getFirst();
+
+                if($firstMergedExam !== null && $firstExam->getRoom() === $firstMergedExam->getRoom()) {
+                    $isMerged = true;
+                    $mergedSupervisionItem->addExam($firstExam);
+                }
+            }
+
+            if($isMerged === false) {
+                $merged[] = $supervision;
+            }
+        }
+
+        foreach($merged as $item) {
+            $lesson->addItem($item);
+        }
+    }
+
+    /**
+     * @param SubstitutionViewItem[] $substitutions
+     * @return SubstitutionViewItem[]
+     */
+    private function mergeSubstitutions(array $substitutions) {
+        /** @var SubstitutionViewItem[] $merged */
+        $merged = [ ];
+
+        foreach($substitutions as $substitutionViewItem) {
+            $substitution = $substitutionViewItem->getSubstitution();
+            $isMerged = false;
+
+            foreach($merged as $mergedViewItem) {
+                $mergedSubstitution = $mergedViewItem->getSubstitution();
+
+                if($substitution->getType() === $mergedSubstitution->getType()
+                    && $substitution->getSubject() === $mergedSubstitution->getSubject()
+                    && $substitution->getRemark() === $mergedSubstitution->getRemark()
+                    && $substitution->getRoom() === $mergedSubstitution->getRoom()
+                    && $substitution->getRoomName() === $mergedSubstitution->getRoomName()) {
+
+                    // merge study groups
+                    foreach($substitution->getStudyGroups() as $studyGroup) {
+                        if($mergedSubstitution->getStudyGroups()->contains($studyGroup) === false) {
+                            $mergedSubstitution->addStudyGroup($studyGroup);
+                        }
+                    }
+
+                    foreach ($substitution->getReplacementStudyGroups() as $studyGroup) {
+                        if($mergedSubstitution->getReplacementStudyGroups()->contains($studyGroup) === false) {
+                            $mergedSubstitution->addReplacementStudyGroup($studyGroup);
+                        }
+                    }
+
+                    // merge teachers
+                    foreach($substitution->getTeachers() as $teacher) {
+                        if($mergedSubstitution->getTeachers()->contains($teacher) === false) {
+                            $mergedSubstitution->addTeacher($teacher);
+                        }
+                    }
+                    foreach($substitution->getReplacementTeachers() as $teacher) {
+                        if($mergedSubstitution->getReplacementTeachers()->contains($teacher) === false) {
+                            $mergedSubstitution->addReplacementTeacher($teacher);
+                        }
+                    }
+
+                    $isMerged = true;
+                }
+            }
+
+            if($isMerged === false) {
+                $clonedSubstitution = $substitution->clone(); // Somehow, clone $substitution does not work (when renameing clone() to __clone())
+                $item = new SubstitutionViewItem($clonedSubstitution, false);
+                $merged[] = $item;
+            }
+        }
+
+        return $merged;
+    }
+
+    /**
+     * @param SubstitutionViewItem[] $defaultSubstitutions
+     * @return int
+     */
+    private function countDefaultSubstitutions(array $defaultSubstitutions) {
+        $count = count($defaultSubstitutions);
+
+        for($i = 0; $i < count($defaultSubstitutions); $i++) {
+            for($j = $i + 1; $j < count($defaultSubstitutions); $j++) {
+                $leftSubstitution = $defaultSubstitutions[$i]->getSubstitution();
+                $rightSubstitution = $defaultSubstitutions[$j]->getSubstitution();
+
+                // If subject and room are same: remove count by 1
+                if($leftSubstitution->getSubject() === $rightSubstitution->getSubject() && $leftSubstitution->getRoom() === $rightSubstitution->getRoom()) {
+                    $count--;
+                }
+            }
+        }
+
+        return $count;
+    }
+
+    private function isRemovableSubstitution(SubstitutionViewItem $viewItem, ?Teacher $teacher) {
+        if(in_array($viewItem->getSubstitution()->getType(), $this->settings->getRemovableSubstitutionTypes())) {
+            return true;
+        }
+
+        $substitution = $viewItem->getSubstitution();
+
+        if($teacher !== null) {
+            return $substitution->getTeachers()->contains($teacher) && $substitution->getReplacementTeachers()->contains($teacher) === false;
+        }
+
+        return false;
     }
 
     private function isAdditionalSubstitution(SubstitutionViewItem $viewItem) {
@@ -213,7 +466,7 @@ class DashboardViewCollapseHelper {
         return true;
     }
 
-    private function isDefault(SubstitutionViewItem $viewItem) {
-        return $this->isRemovableSubstitution($viewItem) === false && $this->isAdditionalSubstitution($viewItem) === false;
+    private function isDefault(SubstitutionViewItem $viewItem, ?Teacher $teacher) {
+        return $this->isRemovableSubstitution($viewItem, $teacher) === false && $this->isAdditionalSubstitution($viewItem) === false;
     }
 }

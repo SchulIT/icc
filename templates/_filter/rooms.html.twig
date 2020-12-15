@@ -4,7 +4,7 @@
     <div class="form-group {{ class|default('') }}">
         <label for="rooms">{{ 'label.rooms'|trans }}:</label>
         <select name="rooms[]" id="rooms" multiple="multiple" class="form-control" data-trigger="submit" data-choice="true">
-            <option value="">{{ 'label.select.subjects'|trans }}</option>
+            <option value="">{{ 'label.select.rooms'|trans }}</option>
             {% for r in roomsFilter.rooms %}
                 <option value="{{ r.uuid }}" {% if r in roomsFilter.currentRooms %}selected="selected"{% endif %}>{{ r.name }}</option>
             {% endfor %}

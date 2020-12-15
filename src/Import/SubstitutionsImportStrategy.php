@@ -5,6 +5,8 @@ namespace App\Import;
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
+use App\Event\SubstitutionImportEvent;
+use App\Repository\RoomRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
@@ -13,18 +15,23 @@ use App\Request\Data\SubstitutionData;
 use App\Request\Data\SubstitutionsData;
 use App\Utils\CollectionUtils;
 use App\Utils\ArrayUtils;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class SubstitutionsImportStrategy implements ImportStrategyInterface {
+class SubstitutionsImportStrategy implements ImportStrategyInterface, PostActionStrategyInterface {
 
     private $substitutionRepository;
     private $teacherRepository;
     private $studyGroupRepository;
+    private $roomRepository;
+    private $dispatcher;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, TeacherRepositoryInterface $teacherRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository) {
+                                StudyGroupRepositoryInterface $studyGroupRepository, RoomRepositoryInterface $roomRepository, EventDispatcherInterface $eventDispatcher) {
         $this->substitutionRepository = $substitutionRepository;
         $this->teacherRepository = $teacherRepository;
         $this->studyGroupRepository = $studyGroupRepository;
+        $this->roomRepository = $roomRepository;
+        $this->dispatcher = $eventDispatcher;
     }
 
     /**
@@ -103,11 +110,33 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
         $entity->setLessonEnd($data->getLessonEnd());
         $entity->setSubject($data->getSubject());
         $entity->setReplacementSubject($data->getReplacementSubject());
-        $entity->setRoom($data->getRoom());
-        $entity->setReplacementRoom($data->getReplacementRoom());
         $entity->setRemark($data->getRemark());
         $entity->setType($data->getType());
         $entity->setStartsBefore($data->startsBefore());
+
+        if(!empty($data->getRoom())) {
+            $room = $this->roomRepository->findOneByExternalId($data->getRoom());
+
+            if($room === null) {
+                $entity->setRoomName($data->getRoom());
+            }
+
+            $entity->setRoom($room);
+        } else {
+            $entity->setRoom(null);
+        }
+
+        if(!empty($data->getReplacementRoom())) {
+            $room = $this->roomRepository->findOneByExternalId($data->getReplacementRoom());
+
+            if($room === null) {
+                $entity->setReplacementRoomName($data->getReplacementRoom());
+            }
+
+            $entity->setReplacementRoom($room);
+        } else {
+            $entity->setReplacementRoom(null);
+        }
 
         $studyGroups = $this->studyGroupRepository->findAllByExternalId($data->getStudyGroups());
 
@@ -208,5 +237,9 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface {
      */
     public function getEntityClassName(): string {
         return Substitution::class;
+    }
+
+    public function onFinished(ImportResult $result) {
+        $this->dispatcher->dispatch(new SubstitutionImportEvent($result->getAdded(), $result->getUpdated(), $result->getRemoved()));
     }
 }

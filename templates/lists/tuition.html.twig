@@ -1,6 +1,6 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ tuition.name }} ({{ tuition.subject.name }}){% endblock %}
+{% block title %}{% if tuition.displayName is not empty %}{{ tuition.displayName }}{% else %}{{ tuition.name }}{% endif %} ({{ tuition.subject.name }}){% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -20,7 +20,11 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">
-                            {{ tuition.name }} ({{ tuition.subject.name }})
+                            {% if tuition.displayName is not empty %}
+                                {{ tuition.displayName }}
+                            {% else %}
+                                {{ tuition.name }}
+                            {% endif %} ({{ tuition.subject.name }})
                         </h5>
 
                         <ul class="list-unstyled m-0">
@@ -35,7 +39,7 @@
                     <div class="card-header">{{ 'label.students_simple'|trans }} <span class="badge badge-primary badge-pill">{{ memberships|length }}</span> </div>
 
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover table-bordered card-table">
+                        <table class="table table-striped table-hover table-bordered card-table border-top-0" data-table="true">
                             <thead>
                             <tr>
                                 <th>{{ 'label.lastname'|trans }}</th>
@@ -107,7 +111,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="list-group list-group-flush">
                         <a href="{{ path('export_tuition', { uuid: tuition.uuid }) }}" class="list-group-item list-group-item-action">
@@ -135,6 +139,12 @@
                             {% endif %}
                         </p>
                     </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
                 </div>
             </div>
         </div>

@@ -42,6 +42,14 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function findAllForStudents(array $students, ?DateTime $today = null): array;
 
     /**
+     * @param Student[] $students
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return Appointment[]
+     */
+    public function findAllForStudentsAndTime(array $students, DateTime $start, DateTime $end): array;
+
+    /**
      * @param Teacher $teacher
      * @param DateTime|null $today
      * @return Appointment[]
@@ -55,6 +63,19 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
      * @return Appointment[]
      */
     public function findAll(array $categories = [ ], ?string $q = null, ?DateTime $today = null);
+
+    /**
+     * @param DateTime $start
+     * @param DateTime $end
+     * @param AppointmentCategory[] $categories
+     * @return Appointment[]
+     */
+    public function findAllStartEnd(DateTime $start, DateTime $end, array $categories = [ ]): array;
+
+    /**
+     * @return int
+     */
+    public function countNotConfirmed(): int;
 
     /**
      * @param Appointment $appointment
@@ -71,7 +92,8 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
      * @param int $page
      * @param array $categories
      * @param string|null $q
+     * @param User|null $createdBy
      * @return Paginator
      */
-    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null): Paginator;
+    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null, ?User $createdBy = null, ?bool $confirmed = null): Paginator;
 }

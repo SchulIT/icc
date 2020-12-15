@@ -3,11 +3,13 @@
 namespace App\Form;
 
 use App\Entity\Grade;
+use App\Entity\Room;
 use App\Entity\Tuition;
+use App\Sorting\RoomNameStrategy;
 use App\Sorting\StringStrategy;
 use App\Sorting\TuitionStrategy;
 use Doctrine\ORM\EntityRepository;
-use SchoolIT\CommonBundle\Form\FieldsetType;
+use SchulIT\CommonBundle\Form\FieldsetType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -22,12 +24,14 @@ class ExamType extends AbstractType {
 
     private $tuitionStrategy;
     private $stringStrategy;
+    private $roomStrategy;
 
     private $authorizationChecker;
 
-    public function __construct(TuitionStrategy $tuitionStrategy, StringStrategy $stringStrategy, AuthorizationCheckerInterface $authorizationChecker) {
+    public function __construct(TuitionStrategy $tuitionStrategy, StringStrategy $stringStrategy, RoomNameStrategy $roomStrategy, AuthorizationCheckerInterface $authorizationChecker) {
         $this->tuitionStrategy = $tuitionStrategy;
         $this->stringStrategy = $stringStrategy;
+        $this->roomStrategy = $roomStrategy;
         $this->authorizationChecker = $authorizationChecker;
     }
 
@@ -47,15 +51,40 @@ class ExamType extends AbstractType {
                         ->add('lessonEnd', IntegerType::class, [
                             'label' => 'label.end'
                         ])
-                        ->add('room', TextType::class, [
+                        ->add('room', SortableEntityType::class, [
                             'label' => 'label.room',
-                            'property_path' => 'rooms[0]',
-                            'required' => false
+                            'attr' => [
+                                'size' => 10,
+                                'data-choice' => 'true'
+                            ],
+                            'class' => Room::class,
+                            'query_builder' => function(EntityRepository $repository) {
+                                return $repository->createQueryBuilder('r')
+                                    ->where('r.isReservationEnabled = true');
+                            },
+                            'choice_label' => function(Room $room) {
+                                return $room->getName();
+                            },
+                            'sort_by' => $this->roomStrategy,
+                            'required' => false,
+                            'placeholder' => 'label.select.room',
+                            'help' => 'label.room_reservation_hint'
                         ])
                         ->add('description', TextareaType::class, [
                             'label' => 'label.description',
                             'required' => false
                         ]);
+
+                    if($this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR')) {
+                        $builder->add('tuitionTeachersCanEditExam', CheckboxType::class, [
+                            'label' => 'admin.exams.tuition_teachers_can_edit.label',
+                            'help' => 'admin.exams.tuition_teachers_can_edit.help',
+                            'required' => false,
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
+                        ]);
+                    }
                 }
             ])
             ->add('group_tuitions', FieldsetType::class, [
@@ -67,9 +96,14 @@ class ExamType extends AbstractType {
                                 'size' => 10,
                                 'disabled' => $this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR') !== true
                             ],
+                            'label' => 'label.tuitions',
                             'multiple' => true,
                             'class' => Tuition::class,
                             'choice_label' => function(Tuition $tuition) {
+                                if($tuition->getName() === $tuition->getStudyGroup()->getName()) {
+                                    return sprintf('%s - %s', $tuition->getName(), $tuition->getSubject()->getName());
+                                }
+
                                 return sprintf('%s - %s - %s', $tuition->getName(), $tuition->getStudyGroup()->getName(), $tuition->getSubject()->getName());
                             },
                             'group_by' => function(Tuition $tuition) {

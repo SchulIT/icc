@@ -10,7 +10,7 @@ security:
         database:
             entity:
                 class: App:User
-                property: username
+                property: idpId
         cron:
             id: App\Security\CronUserProvider
 
@@ -19,14 +19,17 @@ security:
 
     access_control:
         - { path: ^/admin/ea/, roles: ROLE_SUPER_ADMIN }
-        - { path: ^/admin/(messages|exams), roles: ROLE_USER }
-        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin/audit/, roles: ROLE_SUPER_ADMIN }
+        - { path: ^/admin/(messages|exams|documents|appointments), roles: ROLE_USER }
+        - { path: ^/admin$, roles: ROLE_USER }
+        - { path: ^/admin/, roles: ROLE_ADMIN }
         - { path: ^/api/import, roles: ROLE_IMPORT }
         - { path: ^/authorize, roles: IS_AUTHENTICATED_REMEMBERED }
+        - { path: ^/cron, roles: ROLE_CRON }
 
     role_hierarchy:
         # Administrator
-        ROLE_ADMIN: [ ROLE_USER, ROLE_WIKI_ADMIN, ROLE_DOCUMENTS_ADMIN, ROLE_MESSAGE_ADMIN, ROLE_APPOINTMENTS_ADMIN, ROLE_EXAMS_ADMIN ]
+        ROLE_ADMIN: [ ROLE_USER, ROLE_WIKI_ADMIN, ROLE_DOCUMENTS_ADMIN, ROLE_MESSAGE_ADMIN, ROLE_APPOINTMENTS_ADMIN, ROLE_EXAMS_ADMIN, ROLE_SICK_NOTE_VIEWER, ROLE_SICK_NOTE_CREATOR ]
 
         # Administrator which is allowed to switch user
         ROLE_SUPER_ADMIN: [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
@@ -44,7 +47,7 @@ security:
         ROLE_DOCUMENTS_ADMIN: ROLE_USER
 
         # Role which enables all administrative operations for appointments
-        ROLE_APPOINTMENTS_ADMIN: ROLE_USER
+        ROLE_APPOINTMENTS_ADMIN: [ ROLE_APPOINTMENT_CREATOR, ROLE_USER ]
 
         # Role for any read-only user
         ROLE_KIOSK: ROLE_USER
@@ -57,6 +60,12 @@ security:
 
         # Role which enables users to create exams (and manage their created exams)
         ROLE_EXAMS_CREATOR: ROLE_USER
+
+        # Role which enabled users to create sick notes for every student
+        ROLE_SICK_NOTE_CREATOR: ROLE_USER
+
+        # Role which enables users to see sick notes
+        ROLE_SICK_NOTE_VIEWER: SICK_NOTE_VIEWER
 
         # Cronjob user
         ROLE_CRON: ROLE_USER
@@ -120,7 +129,7 @@ security:
                 login_path: /saml/login
                 check_path: /saml/login_check
                 attribute_mapper: App\Security\User\AttributeMapper
-                token_factory: SchoolIT\CommonBundle\Security\Factory\SamlSpTokenFactory
+                token_factory: SchulIT\CommonBundle\Security\Factory\SamlSpTokenFactory
                 failure_path: /auth/error
             logout:
                 path: /logout

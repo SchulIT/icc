@@ -32,12 +32,22 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="list-group list-group-flush">
                         <a href="{{ path('appointments_export') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-download"></i> {{ 'plans.appointments.export.label'|trans }}
                         </a>
+
+                        {% if is_granted('ROLE_APPOINTMENT_CREATOR') %}
+                            <a href="{{ path('add_appointment') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-plus"></i> {{ 'admin.appointments.add.label'|trans }}
+                            </a>
+
+                            <a href="{{ path('admin_appointments') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-cogs"></i> {{ 'admin.appointments.label'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -107,6 +117,12 @@
                             {% endif %}
                         </p>
                     </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
                 </div>
             </div>
         </div>

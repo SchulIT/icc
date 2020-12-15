@@ -74,7 +74,7 @@
     {{- block('choice_widget') -}}
 
     {% if multiple %}
-    <div class="mt-n3">
+    <div class="mt-2">
         <button type="button" class="btn btn-secondary btn-sm" data-select-values="{{ form.vars.grades|join(',') }}" data-target="#{{ id }}" data-toggle="select-values">
             <i class="far fa-check-square" aria-hidden="true"></i> {{ 'forms.select.all_grades'|trans }}
         </button>
@@ -120,5 +120,22 @@
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content"></div>
         </div>
+    </div>
+{%- endblock -%}
+
+{%- block date_lesson_widget -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' input-group')|trim}) -%}
+    <div {{ block('widget_container_attributes') }}>
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+        </div>
+
+        {{- form_widget(form.date, { datetime: true, hide_input_group: true } ) -}}
+
+        <div class="input-group-prepend">
+            <span class="input-group-text border-left-0"><i class="fa fa-clock"></i></span>
+        </div>
+
+        {{- form_widget(form.lesson) -}}
     </div>
 {%- endblock -%}

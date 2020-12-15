@@ -5,15 +5,15 @@ namespace App\Controller;
 use App\Entity\Room;
 use App\Form\RoomType;
 use App\Repository\RoomRepositoryInterface;
-use SchoolIT\CommonBundle\Form\ConfirmType;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Form\ConfirmType;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/admin/rooms")
- * @Security("is_granted('ROLE_APPOINTMENTS_ADMIN')")
+ * @Security("is_granted('ROLE_ADMIN')")
  */
 class RoomAdminController extends AbstractController {
 

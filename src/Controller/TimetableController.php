@@ -23,6 +23,7 @@ use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
 use App\Security\IcsAccessToken\IcsAccessTokenManager;
+use App\Security\Voter\TimetablePeriodVoter;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetablePeriodStrategy;
@@ -34,8 +35,8 @@ use App\View\Filter\RoomFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\SubjectsFilter;
 use App\View\Filter\TeachersFilter;
-use SchoolIT\CommonBundle\Helper\DateHelper;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -70,13 +71,17 @@ class TimetableController extends AbstractControllerWithMessages {
         /** @var User $user */
         $user = $this->getUser();
 
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
         $roomFilterView = $roomFilter->handle($request->query->get('room', null), $user);
         $subjectFilterView = $subjectFilter->handle($request->query->get('subjects', [ ]), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user, $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
         $teachersFilterView = $teachersFilter->handle($request->query->get('teachers', []), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
 
         $periods = $periodRepository->findAll();
+        $periods = array_filter($periods, function(TimetablePeriod $period) {
+            return $this->isGranted(TimetablePeriodVoter::View, $period);
+        });
+
         $this->sorter->sort($periods, TimetablePeriodStrategy::class);
 
         $currentPeriod = $this->getCurrentPeriod($periods);

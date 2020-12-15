@@ -2,8 +2,10 @@
 
 namespace App\Entity;
 
+use App\Validator\StudyGroupsNotEmpty;
 use App\Validator\SubsetOf;
 use DateTime;
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  */
 class Message {
 
@@ -55,6 +58,7 @@ class Message {
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
+     * @StudyGroupsNotEmpty(propertyPath="visibilities")
      * @var Collection<StudyGroup>
      */
     private $studyGroups;

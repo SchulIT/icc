@@ -4,7 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Substitution;
 use App\Settings\SubstitutionSettings;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 

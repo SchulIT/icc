@@ -11,6 +11,7 @@ use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
+use App\Settings\DashboardSettings;
 use App\Settings\SubstitutionSettings;
 use App\Sorting\AbsentStudyGroupStrategy;
 use App\Sorting\AbsentTeacherStrategy;
@@ -21,7 +22,7 @@ use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Parameter\GroupByParameter;
 use App\View\Parameter\ViewParameter;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -36,18 +37,19 @@ class SubstitutionController extends AbstractControllerWithMessages {
      */
     public function index(SubstitutionRepositoryInterface $substitutionRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                           StudentFilter $studentFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, GroupByParameter $groupByParameter, ViewParameter $viewParameter,
-                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, SubstitutionSettings $substitutionSettings, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
+                          Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, DashboardSettings $dashboardSettings, SubstitutionSettings $substitutionSettings,
+                          ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
-        $days = $this->getListOfNextDays($dateHelper, $substitutionSettings->getNumberOfAheadDaysForSubstitutions(), $substitutionSettings->skipWeekends());
+        $days = $this->getListOfNextDays($dateHelper, $substitutionSettings->getNumberOfAheadDaysForSubstitutions(), $substitutionSettings->skipWeekends(), $this->getTodayOrNextDay($dateHelper, $dashboardSettings->getNextDayThresholdTime()));
         $date = $request->query->get('date', null);
         $selectedDate = $this->getCurrentDate($days, $date);
 
         $groupBy = $request->query->get('group_by', null);
         $view = $request->query->get('view', null);
 
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user, $gradeFilterView->getCurrentGrade() === null);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, false);
 
         /** @var Substitution[] $substitutions */

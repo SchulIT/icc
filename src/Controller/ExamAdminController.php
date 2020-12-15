@@ -21,8 +21,8 @@ use App\Utils\CollectionUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
-use SchoolIT\CommonBundle\Form\ConfirmType;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Form\ConfirmType;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -46,7 +46,7 @@ class ExamAdminController extends AbstractController {
     /**
      * @Route("", name="admin_exams")
      */
-    public function index(GradeFilter $gradeFilter, Grouper $grouper, ExamRepositoryInterface $examRepository, Sorter $sorter, Request $request) {
+    public function index(GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Grouper $grouper, ExamRepositoryInterface $examRepository, Sorter $sorter, Request $request) {
         $this->denyAccessUnlessGranted(ExamVoter::Manage);
 
         $page = $request->query->getInt('page');
@@ -54,8 +54,9 @@ class ExamAdminController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $gradeFilterView->getCurrentGrade() === null);
 
-        $paginator = $this->repository->getPaginator(static::NumberOfExams, $page, $gradeFilterView->getCurrentGrade());
+        $paginator = $this->repository->getPaginator(static::NumberOfExams, $page, $gradeFilterView->getCurrentGrade(), $teacherFilterView->getCurrentTeacher(), null, null, false);
         $pages = 1;
 
         if($paginator->count() > 0) {
@@ -77,6 +78,7 @@ class ExamAdminController extends AbstractController {
         return $this->render('admin/exams/index.html.twig', [
             'groups' => $groups,
             'gradeFilter' => $gradeFilterView,
+            'teacherFilter' => $teacherFilterView,
             'page' => $page,
             'pages' => $pages
         ]);
@@ -158,6 +160,42 @@ class ExamAdminController extends AbstractController {
         }
 
         return $this->render('admin/exams/edit.html.twig', [
+            'form' => $form->createView(),
+            'exam' => $exam
+        ]);
+    }
+
+    /**
+     * @Route("/{uuid}/unplan", name="unplan_exam")
+     */
+    public function unplan(Exam $exam, Request $request, TranslatorInterface $translator) {
+        $this->denyAccessUnlessGranted(ExamVoter::Unplan, $exam);
+
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'admin.exams.unplan.confirm',
+            'message_parameters' => [
+                '%date%' => $exam->getDate()->format($translator->trans('date.format')),
+                '%lessons%' => $translator->trans('label.exam_lessons', [
+                    '%start%' => $exam->getLessonStart(),
+                    '%end%' => $exam->getLessonEnd(),
+                    '%count%' => $exam->getLessonEnd() - $exam->getLessonStart() + 1
+                ])
+            ]
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $exam->setDate(null);
+            $exam->setLessonStart(0);
+            $exam->setLessonEnd(0);
+
+            $this->repository->persist($exam);
+
+            $this->addFlash('success', 'admin.exams.unplan.success');
+            return $this->redirectToRoute('admin_exams');
+        }
+
+        return $this->render('admin/exams/unplan.html.twig', [
             'form' => $form->createView(),
             'exam' => $exam
         ]);

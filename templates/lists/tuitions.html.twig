@@ -35,11 +35,13 @@
                             {{ 'lists.tuitions.heading.teacher'|trans({'%teacher%': teacherFilter.currentTeacher|teacher }) }}
                         {% elseif gradeFilter.currentGrade != null %}
                             {{ 'lists.tuitions.heading.grade'|trans({'%grade%': gradeFilter.currentGrade.name }) }}
+
+                            {% include "_includes/grade_teachers.html.twig" with { grade: gradeFilter.currentGrade } %}
                         {% endif %}
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered card-table">
+                        <table class="table table-striped table-bordered card-table border-top-0" data-table="true">
                             <colgroup>
                                 <col class="column-md">
                                 <col>
@@ -68,19 +70,25 @@
                                 {% else %}
                                 <th>{{ 'lists.tuitions.type'|trans }}</th>
                                 {% endif %}
-                                <th></th>
+                                <th data-sortable="false"></th>
                             </tr>
                             </thead>
 
                             <tbody>
                             {% for tuition in tuitions %}
                                 <tr>
-                                    <td>{{ tuition.name }}</td>
+                                    <td>
+                                        {% if tuition.displayName is not empty %}
+                                            {{ tuition.displayName }}
+                                        {% else %}
+                                            {{ tuition.name }}
+                                        {% endif %}
+                                    </td>
                                     <td>{{ tuition.subject.name }}</td>
                                     {% if teacherFilter.currentTeacher == null %}
                                     <td>
                                         {% if tuition.teacher is not null %}
-                                            <a href="{{ path('list_tuitions', { teacher: tuition.teacher.acronym }) }}">{{ tuition.teacher|teacher }}</a>
+                                            <a href="{{ path('list_tuitions', { teacher: tuition.teacher.uuid.toString }) }}">{{ tuition.teacher|teacher }}</a>
                                         {% else %}
                                             <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
                                         {% endif %}
@@ -118,8 +126,22 @@
             {% if studentFilter.currentStudent == null and gradeFilter.currentGrade == null and teacherFilter.currentTeacher == null %}
             {% else %}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 sticky-sidebar">
             {% endif %}
+                {% if teacherMailAddresses is not null and teacherMailAddresses|length > 0 %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action" data-clipboard-text="{% for address in teacherMailAddresses %}{{ address }}{% if not loop.last %};{% endif %}{% endfor %}">
+                                <i class="fa fa-copy"></i> {{ 'lists.tuitions.student_teachers_export.copy'|trans }}
+                            </a>
+
+                            <a href="mailto:{% for address in teacherMailAddresses %}{{ address }}{% if not loop.last %};{% endif %}{% endfor %}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-envelope"></i> {{ 'lists.tuitions.student_teachers_export.mail'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
                 <div class="card">
                     <div class="card-body pb-1">
                         {% include "_filter/grade.html.twig" %}
@@ -145,6 +167,12 @@
                             {% endif %}
                         </p>
                     </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
                 </div>
             </div>
         </div>

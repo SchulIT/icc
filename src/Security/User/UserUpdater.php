@@ -4,7 +4,7 @@ namespace App\Security\User;
 
 use App\Entity\User;
 use App\Repository\UserRepositoryInterface;
-use SchoolIT\CommonBundle\Security\AuthenticationEvent;
+use SchulIT\CommonBundle\Security\AuthenticationEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class UserUpdater implements EventSubscriberInterface {

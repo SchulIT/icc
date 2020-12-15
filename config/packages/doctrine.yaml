@@ -37,3 +37,4 @@ doctrine:
         dql:
             string_functions:
                 match: DoctrineExtensions\Query\Mysql\MatchAgainst
+                regexp: DoctrineExtensions\Query\Mysql\Regexp

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -15,6 +16,7 @@ use Trikoder\Bundle\OAuth2Bundle\Model\Client;
  * we should use this instead of an additional class.
  *
  * @ORM\Entity()
+ * @Auditable()
  */
 class OAuthClientInfo {
     use IdTrait;

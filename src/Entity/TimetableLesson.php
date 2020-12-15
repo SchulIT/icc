@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,20 +11,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
- * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="`type`", type="string")
- * @ORM\DiscriminatorMap({
- *      "tuition" = "TuitionTimetableLesson",
- *      "freestyle" = "FreestyleTimetableLesson"
+ * @Auditable()
+ * @ORM\Table(uniqueConstraints={
+ *  @ORM\UniqueConstraint(columns={"external_id", "period_id"})
  * })
  */
-abstract class TimetableLesson {
+class TimetableLesson {
 
     use IdTrait;
     use UuidTrait;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string")
      * @var string|null
      */
     private $externalId;
@@ -65,6 +64,33 @@ abstract class TimetableLesson {
     private $isDoubleLesson = false;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Tuition")
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=true, onDelete="SET NULL")
+     * @var Tuition|null
+     */
+    private $tuition;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @var Room|null
+     */
+    private $room;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string|null
+     */
+    private $location;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Subject")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @var Subject|null
+     */
+    private $subject;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Teacher")
      * @ORM\JoinTable(name="timetable_lesson_teachers",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
@@ -74,9 +100,20 @@ abstract class TimetableLesson {
      */
     private $teachers;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Grade")
+     * @ORM\JoinTable(name="timetable_lesson_grades",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @var Collection<Grade>
+     */
+    private $grades;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->teachers = new ArrayCollection();
+        $this->grades = new ArrayCollection();
     }
 
     /**
@@ -176,6 +213,70 @@ abstract class TimetableLesson {
     }
 
     /**
+     * @return Tuition|null
+     */
+    public function getTuition(): ?Tuition {
+        return $this->tuition;
+    }
+
+    /**
+     * @param Tuition|null $tuition
+     * @return TimetableLesson
+     */
+    public function setTuition(?Tuition $tuition): TimetableLesson {
+        $this->tuition = $tuition;
+        return $this;
+    }
+
+    /**
+     * @return Room|null
+     */
+    public function getRoom(): ?Room {
+        return $this->room;
+    }
+
+    /**
+     * @param Room|null $room
+     * @return TimetableLesson
+     */
+    public function setRoom(?Room $room): TimetableLesson {
+        $this->room = $room;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLocation(): ?string {
+        return $this->location;
+    }
+
+    /**
+     * @param string|null $location
+     * @return TimetableLesson
+     */
+    public function setLocation(?string $location): TimetableLesson {
+        $this->location = $location;
+        return $this;
+    }
+
+    /**
+     * @return Subject|null
+     */
+    public function getSubject(): ?Subject {
+        return $this->subject;
+    }
+
+    /**
+     * @param Subject|null $subject
+     * @return TimetableLesson
+     */
+    public function setSubject(?Subject $subject): TimetableLesson {
+        $this->subject = $subject;
+        return $this;
+    }
+
+    /**
      * @param Teacher $teacher
      */
     public function addTeacher(Teacher $teacher): void {
@@ -194,5 +295,26 @@ abstract class TimetableLesson {
      */
     public function getTeachers(): Collection {
         return $this->teachers;
+    }
+
+    /**
+     * @param Grade $grade
+     */
+    public function addGrade(Grade $grade): void {
+        $this->grades->add($grade);
+    }
+
+    /**
+     * @param Grade $grade
+     */
+    public function removeGrade(Grade $grade): void {
+        $this->grades->removeElement($grade);
+    }
+
+    /**
+     * @return Collection<Grade>
+     */
+    public function getGrades(): Collection {
+        return $this->grades;
     }
 }

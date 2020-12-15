@@ -16,11 +16,8 @@
     <div class="card">
         <div class="card-header">{{ 'plans.exam.students'|trans }} <span class="badge badge-primary badge-pill">{{ exam.students|length }}</span></div>
 
-        {% for group in groups %}
-        <div class="card-header">{{ group.studyGroup.name }} <span class="badge badge-primary badge-pill">{{ group.students|length }}</span> </div>
-
         <div class="table-responsive">
-            <table class="table table-striped table-hover card-table {% if not loop.last or studentsWithoutStudyGroup|length > 0 %}border-bottom{% endif %}">
+            <table class="table table-striped table-hover table-bordered card-table">
                 <colgroup>
                     <col class="column-lg">
                     <col>
@@ -33,7 +30,7 @@
                 </thead>
 
                 <tbody>
-                    {% for student in group.students %}
+                    {% for student in students %}
                         <tr>
                             <td>{{ student.lastname }}</td>
                             <td>{{ student.firstname }}</td>
@@ -42,35 +39,6 @@
                 </tbody>
             </table>
         </div>
-        {% endfor %}
-
-        {% if studentsWithoutStudyGroup|length > 0 %}
-            <div class="card-header bg-warning">{{ 'plans.exams.not_available'|trans }} <span class="badge badge-primary badge-pill">{{ studentsWithoutStudyGroup|length }}</span></div>
-
-            <div class="table-responsive">
-                <table class="table table-striped table-hover card-table">
-                    <colgroup>
-                        <col class="column-lg">
-                        <col>
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th>{{ 'label.lastname'|trans }}</th>
-                        <th>{{ 'label.firstname'|trans }}</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    {% for student in studentsWithoutStudyGroup %}
-                        <tr>
-                            <td>{{ student.lastname }}</td>
-                            <td>{{ student.firstname }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% endif %}
     </div>
 
     <div class="buttons">

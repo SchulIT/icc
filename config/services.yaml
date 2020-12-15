@@ -60,7 +60,7 @@ services:
     LightSaml\SpBundle\Security\User\UsernameMapperInterface:
         alias: lightsaml_sp.username_mapper.simple
 
-    SchoolIT\CommonBundle\Command\CreateCertificateCommand:
+    SchulIT\CommonBundle\Command\CreateCertificateCommand:
         arguments:
             $types:
                 saml:
@@ -70,7 +70,7 @@ services:
                     keyFile: '%kernel.project_dir%/oauth/oauth.key'
                     certFile: '%kernel.project_dir%/oauth/oauth.pub'
 
-    SchoolIT\CommonBundle\EventSubscriber\SamlExceptionSubscriber:
+    SchulIT\CommonBundle\EventSubscriber\SamlExceptionSubscriber:
         arguments:
             $retryRoute: 'lightsaml_sp.login'
             $loggedInRoute: 'dashboard'
@@ -107,9 +107,6 @@ services:
         arguments:
             $typesMap: '%types_map%'
 
-    security.user_checker:
-        alias: App\Security\UserChecker
-
     App\Security\CronUserProvider:
         arguments:
             $username: 'cron'
@@ -128,7 +125,7 @@ services:
             - { name: knp_menu.menu_builder, method: systemMenu, alias: systemMenu }
             - { name: knp_menu.menu_builder, method: notificationsMenu, alias: notificationsMenu }
 
-    SchoolIT\CommonBundle\Menu\Voter:
+    SchulIT\CommonBundle\Menu\Voter:
         tags:
             - { name: knp_menu.voter }
 
@@ -146,6 +143,10 @@ services:
     App\Sorting\Sorter:
         arguments:
             - !tagged app.sorting_strategy
+
+    App\Rooms\Status\ServiceCenterRoomStatusHelper:
+        arguments:
+            $isEnabled: '%env(bool:ROOM_STATUS)%'
 
     # CONTROLLER
     App\Controller\MarkdownController:
@@ -195,8 +196,14 @@ services:
     Doctrine\Persistence\ManagerRegistry:
         alias: 'doctrine'
 
+    Doctrine\Migrations\Version\DbalMigrationFactory: ~
+    App\Migrations\Factory\MigrationFactoryDecorator:
+        decorates: Doctrine\Migrations\Version\DbalMigrationFactory
+        arguments:
+            $migrationFactory: '@App\Migrations\Factory\MigrationFactoryDecorator.inner'
+
     # DARK MODE:
-    SchoolIT\CommonBundle\DarkMode\DarkModeManagerInterface:
+    SchulIT\CommonBundle\DarkMode\DarkModeManagerInterface:
         class: App\DarkMode\DarkModeManager
 
     # NOTIFICATIONS
@@ -223,11 +230,19 @@ services:
             $sender: '%env(MAILER_FROM)%'
 
     # COMMANDS
-    App\Command\SendMailsTask:
+    SchulIT\CommonBundle\Command\SendMailsCommand:
         arguments:
             $messageLimit: '%env(int:MAILER_LIMIT)%'
+        tags:
+            - { name: shapecode_cron.cron_job, expression: '*\/2 * * * *' }
 
     # WEBPUSH
     App\Notification\WebPush\UserSubscriptionManager:
         tags:
             - { name: bentools_webpush.subscription_manager, user_class: 'App\Entity\User' }
+
+    # SICKNOTES
+    App\SickNote\SickNoteSender:
+        arguments:
+            $appName: '%env(APP_NAME)%'
+            $sender: '%env(MAILER_FROM)%'

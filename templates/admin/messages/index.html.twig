@@ -53,6 +53,12 @@
                                         <td class="align-middle">{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only %}</td>
                                         <td class="align-middle">{% include "_includes/study_groups.html.twig" with { studyGroups: message.studyGroups, id: message.uuid } only %}</td>
                                         <td class="align-middle">
+                                            {% if is_granted('view', message) %}
+                                                <a href="{{ path('show_message', { uuid: message.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.view'|trans }}">
+                                                    <i class="fas fa-envelope-open-text"></i>
+                                                </a>
+                                            {% endif %}
+
                                             {% if is_granted('edit', message) %}
                                                 <a href="{{ path('edit_message', { uuid: message.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}"><i class="fa fa-edit"></i></a>
 

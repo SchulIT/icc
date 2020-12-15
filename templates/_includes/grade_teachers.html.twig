@@ -1,0 +1,6 @@
+<small class="text-muted">
+    ({%- for t in grade.teachers|sort_gradeteachers %}
+    {{- t.teacher|teacher(false) -}}
+    {% if not loop.last %}, {% endif -%}
+    {%- endfor -%})
+</small>

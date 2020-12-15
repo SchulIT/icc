@@ -2,9 +2,10 @@
 
 namespace App\Command;
 
+use App\Event\MessageCreatedEvent;
 use App\Notification\NotificationService;
 use App\Repository\MessageRepositoryInterface;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Shapecode\Bundle\CronBundle\Annotation\CronJob;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -43,8 +44,10 @@ class SendPushNotifications extends Command {
             $message = $messages[0];
             $style->section(sprintf('Send notifications for message "%s"', $message->getTitle()));
 
-            $this->notificationService->sendNotifications($message);
+            $this->notificationService->sendNotifications(new MessageCreatedEvent($message));
             $style->success(sprintf('Done (%d still queued for sending notifications)', count($messages) - 1));
+        } else {
+            $style->success('No messages found with unsent notifications.');
         }
 
         return 0;

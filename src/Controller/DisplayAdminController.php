@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Entity\Display;
 use App\Form\DisplayType;
 use App\Repository\DisplayRepositoryInterface;
-use SchoolIT\CommonBundle\Form\ConfirmType;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Form\ConfirmType;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 

@@ -4,7 +4,18 @@
 {% elseif teachersFilter.currentTeachers|length > 0 %}
     {% set name = teachersFilter.currentTeachers|teachers %}
 {% elseif roomFilter.currentRoom != null %}{% set name = roomFilter.currentRoom.name %}
-{% elseif gradeFilter.currentGrade != null %}{% set name = gradeFilter.currentGrade.name %}
+{% elseif gradeFilter.currentGrade != null %}
+    {% set name = gradeFilter.currentGrade.name %}
+    {#
+    {% set name = name ~ ' (' %}
+    {% for t in gradeFilter.currentGrade.teachers|sort_gradeteachers %}
+        {% set name = name ~ t.teacher|teacher(false) %}
+        {% if not loop.last %}
+            {% set name = name ~ ', ' %}
+        {% endif %}
+    {% endfor %}
+    {% set name = name ~ ')' %}
+    #}
 {% elseif subjectFilter.currentSubjects|length > 0%}
     {% set names = [] %}
     {% for s in subjectFilter.currentSubjects %}
@@ -14,3 +25,7 @@
 {% endif %}
 
 {{ 'plans.timetable.title'|trans({'%name%': name }) }}
+
+{% if gradeFilter.currentGrade != null %}
+    {% include "_includes/grade_teachers.html.twig" with { grade: gradeFilter.currentGrade } %}
+{% endif %}

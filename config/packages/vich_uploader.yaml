@@ -7,6 +7,7 @@ vich_uploader:
             upload_destination: messages
             directory_namer: App\Filesystem\MessageFilesystem
             namer: Vich\UploaderBundle\Naming\UniqidNamer
+            delete_on_update: false
         wiki:
             upload_destination: wiki
         documents:

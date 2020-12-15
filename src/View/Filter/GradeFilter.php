@@ -7,8 +7,12 @@ use App\Sorting\GradeNameStrategy;
 
 class GradeFilter extends AbstractGradeFilter {
 
-    public function handle(?string $gradeUuid, User $user) {
+    public function handle(?string $gradeUuid, User $user, bool $setDefaultGrade = false) {
         $grades = $this->getGrades($user, $defaultGrade);
+
+        if($setDefaultGrade === false) {
+            $defaultGrade = null;
+        }
 
         $grade = $gradeUuid !== null ?
             $grades[$gradeUuid] ?? $defaultGrade : $defaultGrade;

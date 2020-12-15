@@ -11,7 +11,7 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Security\User\UserMapper;
 use LightSaml\ClaimTypes;
 use PHPUnit\Framework\TestCase;
-use SchoolIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
+use SchulIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
 
 class UserMapperTest extends TestCase {
 
@@ -91,7 +91,6 @@ class UserMapperTest extends TestCase {
 
         $mapper->mapUser($user, $data);
 
-        $this->assertEquals('1f1248d4-8742-4b89-a0c4-1f345ce5664a', $user->getIdpId()->toString());
         $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
@@ -122,7 +121,6 @@ class UserMapperTest extends TestCase {
 
         $mapper->mapUser($user, $data);
 
-        $this->assertEquals('1f1248d4-8742-4b89-a0c4-1f345ce5664a', $user->getIdpId()->toString());
         $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
@@ -152,7 +150,6 @@ class UserMapperTest extends TestCase {
 
         $mapper->mapUser($user, $data);
 
-        $this->assertEquals('1f1248d4-8742-4b89-a0c4-1f345ce5664a', $user->getIdpId()->toString());
         $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
@@ -183,7 +180,6 @@ class UserMapperTest extends TestCase {
 
         $mapper->mapUser($user, $data);
 
-        $this->assertEquals('1f1248d4-8742-4b89-a0c4-1f345ce5664a', $user->getIdpId()->toString());
         $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
@@ -213,7 +209,6 @@ class UserMapperTest extends TestCase {
 
         $mapper->mapUser($user, $data);
 
-        $this->assertEquals('1f1248d4-8742-4b89-a0c4-1f345ce5664a', $user->getIdpId()->toString());
         $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
@@ -244,7 +239,6 @@ class UserMapperTest extends TestCase {
 
         $mapper->mapUser($user, $data);
 
-        $this->assertEquals('1f1248d4-8742-4b89-a0c4-1f345ce5664a', $user->getIdpId()->toString());
         $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());

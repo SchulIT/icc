@@ -95,8 +95,8 @@ class AppExtension extends AbstractExtension {
         return $this->studentConverter->convert($student);
     }
 
-    public function user(User $user) {
-        return $this->userConverter->convert($user);
+    public function user(User $user, bool $includeUsername = true) {
+        return $this->userConverter->convert($user, $includeUsername);
     }
 
     public function studyGroup(StudyGroup $group, bool $short = false) {

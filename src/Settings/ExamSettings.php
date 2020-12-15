@@ -2,6 +2,7 @@
 
 namespace App\Settings;
 
+use App\Entity\Grade;
 use App\Entity\UserType;
 
 class ExamSettings extends AbstractSettings {
@@ -78,12 +79,12 @@ class ExamSettings extends AbstractSettings {
         $this->setValue('exams.notifications.sender', $sender);
     }
 
-    public function getMaximumNumberOfExamsPerWeek(): int {
-        return (int)$this->getValue('exams.max_per_week', 2);
+    public function getMaximumNumberOfExamsPerWeek(Grade $grade): int {
+        return (int)$this->getValue(sprintf('exams.max_per_week.%d', $grade->getId()), 2);
     }
 
-    public function setMaximumNumberOfExamsPerWeek(int $number): void {
-        $this->setValue('exams.max_per_week', $number);
+    public function setMaximumNumberOfExamsPerWeek(Grade $grade, int $number): void {
+        $this->setValue(sprintf('exams.max_per_week.%d', $grade->getId()), $number);
     }
 
     public function getMaximumNumberOfExamsPerDay(): int {
@@ -92,5 +93,19 @@ class ExamSettings extends AbstractSettings {
 
     public function setMaximumNumberOfExamsPerDay(int $number): void {
         $this->setValue('exams.max_per_day', $number);
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getVisibleGradeIds(): array {
+        return $this->getValue('exams.visible_for', [ ]);
+    }
+
+    /**
+     * @param int[] $ids
+     */
+    public function setVisibleGradeIds(array $ids): void {
+        $this->setValue('exams.visible_for', $ids);
     }
 }

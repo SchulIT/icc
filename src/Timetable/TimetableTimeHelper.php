@@ -2,6 +2,7 @@
 
 namespace App\Timetable;
 
+use App\Entity\DateLesson;
 use App\Settings\TimetableSettings;
 use DateInterval;
 use DateTime;
@@ -32,6 +33,10 @@ class TimetableTimeHelper {
 
     public function getLessonStartDateTime(DateTime $date, int $lesson, bool $isBefore = false): DateTime {
         if($isBefore === true) {
+            if($lesson === 1) {
+                return $this->getDateTime($date, $this->timetableSettings->getStart(0));
+            }
+
             return $this->getDateTime($date, $this->timetableSettings->getEnd($lesson - 1));
         }
 
@@ -44,5 +49,21 @@ class TimetableTimeHelper {
         }
 
         return $this->getDateTime($date, $this->timetableSettings->getEnd($lesson));
+    }
+
+    public function getLessonDateForDateTime(DateTime $dateTime): DateLesson {
+        $dateLesson = new DateLesson();
+        $dateLesson->setLesson(1);
+        $date = clone $dateTime;
+        $date->setTime(0, 0, 0);
+        $dateLesson->setDate($date);
+
+        for($lesson = $this->timetableSettings->getMaxLessons(); $lesson >= 1; $lesson--) {
+            if($this->getLessonStartDateTime($date, $lesson, false) > $dateTime) {
+                $dateLesson->setLesson($lesson);
+            }
+        }
+
+        return $dateLesson;
     }
 }

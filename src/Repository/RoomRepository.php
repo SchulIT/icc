@@ -67,6 +67,16 @@ class RoomRepository extends AbstractTransactionalRepository implements RoomRepo
             ->getResult();
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function findAllExternal(): array {
+        return $this->getDefaultQueryBuilder()
+            ->andWhere('r.externalId IS NOT NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function persist(Room $room): void {
         $this->em->persist($room);
         $this->flushIfNotInTransaction();
@@ -150,4 +160,6 @@ class RoomRepository extends AbstractTransactionalRepository implements RoomRepo
 
         return $qb->getQuery()->getResult();
     }
+
+
 }

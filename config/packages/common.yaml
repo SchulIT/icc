@@ -9,9 +9,14 @@ common:
         project_url: "%project_url%"
         logo: "%env(APP_LOGO)%"
         small_logo: "%env(APP_SMALLLOGO)%"
+        logo_link: 'dashboard'
     locales: "%locales%"
     menu: mainMenu
-    templates:
-        mail: '_mail/index.html.twig'
-        logs: '_logs/index.html.twig'
-        clear_logs: '_logs/clear.html.twig'
+#    templates:
+#        mail: '_mail/index.html.twig'
+#        logs: '_logs/index.html.twig'
+#        clear_logs: '_logs/clear.html.twig'
+#        cron:
+#            index: '_cron/index.html.twig'
+#            result: '_cron/result.html.twig'
+#            show: '_cron/show.html.twig'

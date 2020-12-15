@@ -10,6 +10,9 @@ class TimetableLessonViewItem extends AbstractViewItem {
     /** @var TimetableLesson|null */
     private $lesson;
 
+    /** @var TimetableLesson[] */
+    private $additionalLessons = [ ];
+
     /** @var AbsentStudentGroup[] */
     private $absentStudentGroups = [ ];
 
@@ -38,12 +41,33 @@ class TimetableLessonViewItem extends AbstractViewItem {
 
     public function getAbsentStudentsCount(): int {
         $count = 0;
+        $studentIds = [ ];
 
         foreach($this->absentStudentGroups as $group) {
-            $count += count($group->getStudents());
+            foreach($group->getStudents() as $student) {
+                if(!in_array($student->getStudent()->getId(), $studentIds)) {
+                    $count++;
+                    $studentIds[] = $student->getStudent()->getId();
+                }
+            }
         }
 
         return $count;
+    }
+
+    public function addAdditionalLesson(TimetableLesson $timetableLesson): void {
+        $this->additionalLessons[] = $timetableLesson;
+    }
+
+    /**
+     * @return TimetableLesson[]
+     */
+    public function getAdditionalLessons(): array {
+        return $this->additionalLessons;
+    }
+
+    public function isMerged(): bool {
+        return count($this->additionalLessons) > 0;
     }
 
     public function getBlockName(): string {

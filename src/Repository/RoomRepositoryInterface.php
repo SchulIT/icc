@@ -36,6 +36,13 @@ interface RoomRepositoryInterface extends TransactionalRepositoryInterface {
      */
     public function findAll(): array;
 
+    /**
+     * Like findAll() but only returns rooms which were imported (externalId != null)
+     *
+     * @return Room[]
+     */
+    public function findAllExternal(): array;
+
     public function persist(Room $room): void;
 
     public function remove(Room $room): void;

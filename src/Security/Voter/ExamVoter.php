@@ -3,11 +3,12 @@
 namespace App\Security\Voter;
 
 use App\Entity\Exam;
+use App\Entity\Student;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Settings\ExamSettings;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -21,6 +22,7 @@ class ExamVoter extends Voter {
     public const Manage = 'manage-exams';
     public const Add = 'new-exam';
     public const Edit = 'edit';
+    public const Unplan = 'unplan';
     public const Remove = 'remove';
 
     private $dateHelper;
@@ -42,7 +44,8 @@ class ExamVoter extends Voter {
             static::Supervisions,
             static::Show,
             static::Edit,
-            static::Remove
+            static::Remove,
+            static::Unplan
         ];
 
         return in_array($attribute , [ static::Add, static::Manage ]) || ($subject instanceof Exam && in_array($attribute, $attributes));
@@ -66,6 +69,7 @@ class ExamVoter extends Voter {
                 return $this->canAdd($token);
 
             case static::Edit:
+            case static::Unplan:
                 return $this->canEdit($subject, $token);
 
             case static::Remove:
@@ -109,6 +113,15 @@ class ExamVoter extends Voter {
 
         if($exam->getExternalId() !== null) {
             // Non-Admins cannot edit external exams
+            return false;
+        }
+
+        if($this->accessDecisionManager->decide($token, ['ROLE_EXAMS_CREATOR'])) {
+            return true;
+        }
+
+        if($exam->isTuitionTeachersCanEditExam() !== true) {
+            // Non-Admins cannot edit this exam
             return false;
         }
 
@@ -180,6 +193,22 @@ class ExamVoter extends Voter {
 
         if($this->examSettings->isVisibileFor($userType) === false) {
             return false;
+        }
+
+        $user = $token->getUser();
+
+        if($user instanceof User && $this->isStudentOrParent($token)) {
+            $visibleGradeIds = $this->examSettings->getVisibleGradeIds();
+            $gradeIds = [ ];
+
+            /** @var Student $student */
+            foreach($user->getStudents() as $student) {
+                $gradeIds[] = $student->getGrade()->getId();
+            }
+
+            if(count(array_intersect($visibleGradeIds, $gradeIds)) === 0) {
+                return false;
+            }
         }
 
         if($this->isStudentOrParent($token) && $exam->getDate() === null) {

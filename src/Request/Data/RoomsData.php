@@ -23,4 +23,13 @@ class RoomsData {
     public function getRooms() {
         return $this->rooms;
     }
+
+    /**
+     * @param RoomData[] $rooms
+     * @return RoomsData
+     */
+    public function setRooms(array $rooms): RoomsData {
+        $this->rooms = $rooms;
+        return $this;
+    }
 }

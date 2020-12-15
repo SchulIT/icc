@@ -10,7 +10,7 @@ use App\Entity\User;
 use App\Entity\UserType;
 use App\Settings\AppointmentsSettings;
 use App\Utils\EnumArrayUtils;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -21,6 +21,7 @@ class AppointmentVoter extends Voter {
     const Edit = 'edit';
     const Remove = 'remove';
     const View = 'view';
+    const Confirm = 'confirm';
 
     private $settings;
     private $dateHelper;
@@ -39,7 +40,8 @@ class AppointmentVoter extends Voter {
         $attributes = [
             static::Edit,
             static::Remove,
-            static::View
+            static::View,
+            static::Confirm
         ];
 
         return $attribute === static::New ||
@@ -60,6 +62,9 @@ class AppointmentVoter extends Voter {
             case static::Remove:
                 return $this->canRemove($subject, $token);
 
+            case static::Confirm:
+                return $this->canConfirm($token);
+
             case static::View:
                 return $this->canView($subject, $token);
         }
@@ -68,15 +73,34 @@ class AppointmentVoter extends Voter {
     }
 
     private function canCreate(TokenInterface $token) {
+        return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENT_CREATOR']);
+    }
+
+    private function canConfirm(TokenInterface $token) {
         return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']);
     }
 
     private function canEdit(Appointment $appointment, TokenInterface $token) {
-        return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']);
+        if($this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']) === true) {
+            return true;
+        }
+
+        if($appointment->getCreatedBy() === null) {
+            return false;
+        }
+
+        /** @var User|null $user */
+        $user = $token->getUser();
+
+        if($user === null) {
+            return false;
+        }
+
+        return $appointment->getCreatedBy()->getId() === $user->getId();
     }
 
     private function canRemove(Appointment $appointment, TokenInterface $token) {
-        return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']);
+        return $this->canEdit($appointment, $token);
     }
 
     private function canView(Appointment $appointment, TokenInterface $token) {
@@ -100,6 +124,11 @@ class AppointmentVoter extends Voter {
         if($isStudentOrParent !== true) {
             // Everyone but students and parents may pass
             return true;
+        }
+
+        // Check confirmation status (students and parents must not see non-confirmed appointments)
+        if($appointment->isConfirmed() === false) {
+            return false;
         }
 
         // Check visibility (students and parents only)

@@ -1,3 +1,5 @@
+select: bitte auswählen
+
 label:
   gender: Geschlecht
   scope: Bereich
@@ -5,6 +7,7 @@ label:
   substitutions: Vertretungsplan
   appointments_target: Termin-Zielgruppe
   empty: Keine
+  reason: Grund
 
 help:
   priority: 'Mitteilungen der Prioritäten "Wichtig" und "Notfall" werden stets über allen anderen Mitteilungen angezeigt. Die Priorität "Wichtig" hebt die Mitteilung gelb hervor. Mitteilungen der Priorität "Notfall" werden rot hervorgehoben und können nicht ausgeblendet werden.'
@@ -53,3 +56,8 @@ study_group_type:
 display_target_user_type:
   students: Lernende
   teachers: Lehrkräfte
+
+sick_reason:
+  quarantine: Quarantäne
+  sick: Erkrankung
+

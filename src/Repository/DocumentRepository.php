@@ -13,9 +13,8 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
 
     private function createDefaultQueryBuilder(): QueryBuilder {
         $qb = $this->em->createQueryBuilder()
-            ->select(['d', 'att', 'a', 'c', 'sg', 'v'])
+            ->select(['d', 'a', 'c', 'sg', 'v'])
             ->from(Document::class, 'd')
-            ->leftJoin('d.attachments', 'att')
             ->leftJoin('d.authors', 'a')
             ->leftJoin('d.category', 'c')
             ->leftJoin('d.studyGroups', 'sg')
@@ -110,7 +109,12 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
         }
 
         if($q !== null) {
-            $qbInner->andWhere('MATCH (d.content) AGAINST(:q) > 0');
+            $qbInner->andWhere(
+                $qb->expr()->orX(
+                    'MATCH (dInner.title) AGAINST(:q) > 0',
+                    'MATCH (dInner.content) AGAINST(:q) > 0'
+                )
+            );
             $qb->setParameter('q', $q);
         }
 

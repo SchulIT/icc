@@ -7,7 +7,7 @@ use App\Entity\UserWebPushSubscription;
 
 interface UserWebPushSubscriptionRepositoryInterface {
 
-    public function findAllForMessage(Message $message): array;
+    public function findAllForUsers(array $users): array;
 
     public function findAllForExam(): array;
 

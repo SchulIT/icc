@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
 class ApiExceptionSubscriber implements EventSubscriberInterface {
 
@@ -35,6 +36,10 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
         }
 
         $throwable = $event->getThrowable();
+
+        if($throwable instanceof AuthenticationCredentialsNotFoundException) {
+            return;
+        }
 
         $code = Response::HTTP_INTERNAL_SERVER_ERROR;
 

@@ -44,7 +44,7 @@ class SubstitutionStrategy implements EmailStrategyInterface {
      * @return string
      */
     public function getSender($objective): string {
-        return $this->settings->getNotificationReplyToAddress();
+        return $this->settings->getNotificationSender();
     }
 
     /**

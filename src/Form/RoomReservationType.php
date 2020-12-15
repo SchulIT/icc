@@ -7,6 +7,7 @@ use App\Entity\Room;
 use App\Entity\Teacher;
 use App\Sorting\RoomNameStrategy;
 use App\Sorting\TeacherStrategy;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -33,6 +34,10 @@ class RoomReservationType extends AbstractType {
                     'data-choice' => 'true'
                 ],
                 'class' => Room::class,
+                'query_builder' => function(EntityRepository $repository) {
+                    return $repository->createQueryBuilder('r')
+                        ->where('r.isReservationEnabled = true');
+                },
                 'choice_label' => function(Room $room) {
                     return $room->getName();
                 },

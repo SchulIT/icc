@@ -24,8 +24,7 @@ class AbsenceData {
 
     /**
      * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     * @Assert\NotBlank()
-     * @Assert\Date()
+     * @Assert\NotNull()
      * @var \DateTime
      */
     private $date;

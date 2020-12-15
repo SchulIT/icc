@@ -9,15 +9,25 @@
     </ol>
 {% endblock %}
 
-{% macro replacement(original, replacement) %}
-    {% if original is not empty and replacement is not empty %}<s>{{ original }}</s> ⟶ {% elseif original is not empty %}{{ original }}{% endif %}{% if replacement is not empty %}{{ replacement }}{% endif %}
+{% macro replacement(original, replacement) -%}
+    {%- if original is same as (replacement) -%}{{ original }}
+    {%- else -%}
+        {% if original is not empty and replacement is not empty -%}
+            <s>{{ original }}</s>
+        {%- elseif original is not empty -%}
+            {{ original }}
+        {% endif %}
+        {%- if replacement is not empty %}
+            ⟶ {{ replacement }}
+        {%- endif -%}
+    {%- endif -%}
 {% endmacro %}
 
 {% block content %}
     {% set currentFilter = {
         date: selectedDate ? selectedDate.format('Y-m-d') : null,
         student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null,
-        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString() : null,
         teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null
     } %}
 
@@ -74,7 +84,7 @@
 
                             {% if view == 'table' %}
                                 <div class="table-responsive">
-                                    <table class="table table-striped table-bordered table-hover card-table">
+                                    <table class="table table-striped table-bordered table-hover">
                                         <colgroup>
                                             <col class="column-md">
                                             <col class="column-lg">
@@ -126,19 +136,19 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="card-body">
                         {% if teacherFilter.teachers|length > 0 %}
-                            {% include "_filter/teacher.html.twig" %}
+                            {% include "_filter/teacher.html.twig" with { params: { date: selectedDate ? selectedDate.format('Y-m-d') : null } } %}
                         {% endif %}
 
                         {% if studentFilter.studentGradeGroups|length > 0 %}
-                            {% include "_filter/student.html.twig" %}
+                            {% include "_filter/student.html.twig" with { params: { date: selectedDate ? selectedDate.format('Y-m-d') : null } } %}
                         {% endif %}
 
                         {% if gradeFilter.grades|length > 0 %}
-                            {% include "_filter/grade.html.twig" %}
+                            {% include "_filter/grade.html.twig" with { params: { date: selectedDate ? selectedDate.format('Y-m-d') : null } } %}
                         {% endif %}
 
                         <div class="form-group">
@@ -184,6 +194,12 @@
                             {% endif %}
                         </p>
                     </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
                 </div>
             </div>
         </div>

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  * @UniqueEntity(fields={"externalId"})
  */
 class Tuition {
@@ -20,14 +22,14 @@ class Tuition {
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @var string
+     * @var string|null
      */
     private $externalId;
 
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * @var string
+     * @var string|null
      */
     private $name;
 
@@ -42,14 +44,15 @@ class Tuition {
     /**
      * @ORM\ManyToOne(targetEntity="Subject")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Subject
+     * @Assert\NotNull()
+     * @var Subject|null
      */
     private $subject;
 
     /**
      * @ORM\ManyToOne(targetEntity="Teacher")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Teacher
+     * @var Teacher|null
      */
     private $teacher;
 
@@ -66,7 +69,8 @@ class Tuition {
     /**
      * @ORM\ManyToOne(targetEntity="StudyGroup", inversedBy="tuitions")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var StudyGroup
+     * @Assert\NotNull()
+     * @var StudyGroup|null
      */
     private $studyGroup;
 
@@ -76,33 +80,33 @@ class Tuition {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getExternalId(): string {
+    public function getExternalId(): ?string {
         return $this->externalId;
     }
 
     /**
-     * @param string $externalId
+     * @param string|null $externalId
      * @return Tuition
      */
-    public function setExternalId(string $externalId): Tuition {
+    public function setExternalId(?string $externalId): Tuition {
         $this->externalId = $externalId;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getName(): string {
+    public function getName(): ?string {
         return $this->name;
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      * @return Tuition
      */
-    public function setName(string $name): Tuition {
+    public function setName(?string $name): Tuition {
         $this->name = $name;
         return $this;
     }
@@ -124,17 +128,17 @@ class Tuition {
     }
 
     /**
-     * @return Subject
+     * @return Subject|null
      */
-    public function getSubject(): Subject {
+    public function getSubject(): ?Subject {
         return $this->subject;
     }
 
     /**
-     * @param Subject $subject
+     * @param Subject|null $subject
      * @return Tuition
      */
-    public function setSubject(Subject $subject): Tuition {
+    public function setSubject(?Subject $subject): Tuition {
         $this->subject = $subject;
         return $this;
     }
@@ -171,17 +175,17 @@ class Tuition {
     }
 
     /**
-     * @return StudyGroup
+     * @return StudyGroup|null
      */
-    public function getStudyGroup(): StudyGroup {
+    public function getStudyGroup(): ?StudyGroup {
         return $this->studyGroup;
     }
 
     /**
-     * @param StudyGroup $studyGroup
+     * @param StudyGroup|null $studyGroup
      * @return Tuition
      */
-    public function setStudyGroup(StudyGroup $studyGroup): Tuition {
+    public function setStudyGroup(?StudyGroup $studyGroup): Tuition {
         $this->studyGroup = $studyGroup;
         return $this;
     }
@@ -190,6 +194,10 @@ class Tuition {
      * @return Teacher[]
      */
     public function getTeachers() {
+        if($this->getTeacher() === null) {
+            return $this->getAdditionalTeachers()->toArray();
+        }
+
         return array_merge(
             [ $this->getTeacher() ],
             $this->getAdditionalTeachers()->toArray()

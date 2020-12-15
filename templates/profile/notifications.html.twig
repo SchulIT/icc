@@ -10,22 +10,39 @@
     {% if is_allowed %}
 
         {% if push_allowed %}
-            <div class="bs-callout bs-callout-info">
-                <h4>{{ 'webpush.label'|trans }}</h4>
 
-                <div class="alert alert-danger">
-                    <i class="fa fa-exclamation-triangle"></i> {{ 'webpush.caution.experimental'|trans }}
-                </div>
-
-                <p>{{ 'webpush.info'|trans }}</p>
-                <a href="#" data-toggle="webpush_modal" class="btn btn-primary btn-sm">
-                    <i class="far fa-bell"></i> {{ 'webpush.configure'|trans }}
-                </a>
-            </div>
         {% endif %}
 
         {{ form_start(form) }}
-        {{ form_widget(form) }}
+
+        {% for child in form %}
+            {% if loop.first %}
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        {{ 'profile.notifications.select_elements'|trans }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(child) }}
+                        {{ form_help(child) }}
+                    </div>
+                </div>
+            {% else %}
+                {{ form_row(child) }}
+            {% endif %}
+        {% endfor %}
+
+        <div class="form-group row">
+            <div class="col-sm-2">{{ 'webpush.label'|trans }}</div>
+            <div class="col-sm-10">
+                <a href="#" data-toggle="webpush_modal" class="btn btn-primary btn-sm">
+                    <i class="far fa-bell"></i> {{ 'webpush.configure'|trans }}
+                </a>
+
+                <small id="notifications_isMessageNotificationsEnabled_help" class="form-text text-muted">
+                    {{ 'webpush.info'|trans }}
+                </small>
+            </div>
+        </div>
 
         <div class="buttons">
             <button type="submit" class="btn btn-primary btn-sm">

@@ -168,10 +168,10 @@
                                                             {% set subject = null %}
 
                                                             {% if lessons.lessons|length == 1 %}
-                                                                {% if lessons.lessons[0] is instanceof('App\\Entity\\TuitionTimetableLesson') %}
-                                                                    {% set subject = lessons.lessons[0].tuition.subject %}
-                                                                {% elseif lessons.lessons[0] is instanceof('App\\Entity\\FreestyleTimetableLesson') %}
-                                                                    {% set subject = subjects[lessons.lessons[0].subject] ?? null %}
+                                                                {% if (lessons.lessons|first).tuition is not null %}
+                                                                    {% set subject = (lessons.lessons|first).tuition.subject %}
+                                                                {% else %}
+                                                                    {% set subject = (lessons.lessons|first).subject ?? null %}
                                                                 {% endif %}
                                                             {% endif %}
 
@@ -182,11 +182,7 @@
 
                                                             <td class="align-middle {% if day.isCurrentDay or day.isUpcomingDay %}current{% endif %} {% if day.isFree %}text-secondary{% endif %}" {% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
                                                                 {% for lesson in lessons.lessons %}
-                                                                    {% if lesson is instanceof('App\\Entity\\TuitionTimetableLesson') %}
-                                                                        {% include 'timetable/lesson.html.twig' with { student: studentFilter.currentStudent, memberships: memberships, subject: subject }%}
-                                                                    {% elseif lesson is instanceof('App\\Entity\\FreestyleTimetableLesson') %}
-                                                                        {% include 'timetable/freestyle_lesson.html.twig' with { subject: subject } %}
-                                                                    {% endif %}
+                                                                    {% include 'timetable/lesson.html.twig' with { student: studentFilter.currentStudent, memberships: memberships, subject: subject }%}
                                                                     {% if not loop.last %}<hr>{% endif %}
                                                                 {% endfor %}
                                                             </td>
@@ -218,7 +214,7 @@
         {% endif %}
         </div>
 
-            <div class="col-md-3">
+            <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="list-group list-group-flush">
                         {% if timetable is not null %}
@@ -249,11 +245,11 @@
                             {% include "_filter/grade.html.twig" with { params: params } %}
                         {% endif %}
 
-                        {% if subjectFilter.subjects|length > 0 %}
+                        {% if roomFilter.rooms|length > 0 %}
                             {% include "_filter/room.html.twig" with { params: params } %}
                         {% endif %}
 
-                        {% if roomFilter.rooms|length > 0 %}
+                        {% if subjectFilter.subjects|length > 0 %}
                             {% include "_filter/subjects.html.twig" with { params: params } %}
                         {% endif %}
                     </div>
@@ -286,6 +282,12 @@
                             {% endif %}
                         </p>
                     </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
                 </div>
             </div>
         </div>

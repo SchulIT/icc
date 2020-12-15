@@ -3,6 +3,7 @@
 namespace App\Validator;
 
 use App\Entity\Exam;
+use App\Entity\Student;
 use App\Repository\ExamRepositoryInterface;
 use App\Settings\ExamSettings;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -33,11 +34,6 @@ class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
             throw new UnexpectedTypeException($constraint, NotTooManyExamsPerWeek::class);
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR')) {
-            // Users with ROLE_EXAMS_CREATOR can override those rules
-            return true;
-        }
-
         if($value->getDate() === null || $value->getTuitions()->count() === 0) {
             // Planned exams are fine
             return true;
@@ -45,25 +41,28 @@ class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
 
         $examWeek = $value->getDate()->format('W');
 
-        $exams = $this->findAllByTuitions($value->getTuitions()->toArray());
-        $numberOfExams = 1;
+        /** @var Student $student */
+        foreach($value->getStudents() as $student) {
+            $numberOfExams = 1;
+            $exams = $this->findAllByStudent($student);
 
-        foreach($exams as $existingExam) {
-            if($existingExam->getId() === $value->getId() || $existingExam->getDate() === null) {
-                continue;
+            foreach($exams as $existingExam) {
+                if($existingExam->getId() === $value->getId() || $existingExam->getDate() === null) {
+                    continue;
+                }
+
+                if($existingExam->getDate()->format('W') === $examWeek) {
+                    $numberOfExams++;
+                }
             }
 
-            if($existingExam->getDate()->format('W') === $examWeek) {
-                $numberOfExams++;
+            if($numberOfExams > $this->examSettings->getMaximumNumberOfExamsPerWeek($student->getGrade())) {
+                $this->context
+                    ->buildViolation($constraint->message)
+                    ->setParameter('{{ maxNumber }}', (string)$this->examSettings->getMaximumNumberOfExamsPerWeek($student->getGrade()))
+                    ->setParameter('{{ number }}', (string)$numberOfExams)
+                    ->addViolation();
             }
-        }
-
-        if($numberOfExams > $this->examSettings->getMaximumNumberOfExamsPerWeek()) {
-            $this->context
-                ->buildViolation($constraint->message)
-                ->setParameter('{{ maxNumber }}', (string)$this->examSettings->getMaximumNumberOfExamsPerWeek())
-                ->setParameter('{{ number }}', (string)$numberOfExams)
-                ->addViolation();
         }
     }
 }

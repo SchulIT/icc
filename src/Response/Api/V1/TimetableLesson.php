@@ -2,10 +2,8 @@
 
 namespace App\Response\Api\V1;
 
-use App\Entity\FreestyleTimetableLesson;
 use App\Entity\Teacher as TeacherEntity;
 use App\Entity\TimetableLesson as TimetableLessonEntity;
-use App\Entity\TuitionTimetableLesson;
 use JMS\Serializer\Annotation as Serializer;
 
 class TimetableLesson {
@@ -205,14 +203,14 @@ class TimetableLesson {
             ->setDay($entity->getDay())
             ->setIsDoubleLesson($entity->isDoubleLesson());
 
-        if($entity instanceof TuitionTimetableLesson) {
+        if($entity->getTuition()) {
             $lesson
                 ->setTuition(Tuition::fromEntity($entity->getTuition()))
                 ->setRoom(Room::fromEntity($entity->getRoom()));
 
             $lesson->setSubject($lesson->getTuition()->getSubject()->getAbbreviation());
             $lesson->setTeachers($lesson->getTuition()->getTeachers());
-        } elseif($entity instanceof FreestyleTimetableLesson) {
+        } else {
             $lesson->setTeachers(array_map(function(TeacherEntity $entity) {
                 return Teacher::fromEntity($entity);
             }, $entity->getTeachers()->toArray()))

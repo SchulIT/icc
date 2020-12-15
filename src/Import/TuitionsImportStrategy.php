@@ -152,6 +152,7 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
         $entity->setSubject($subject);
         $entity->setStudyGroup($studyGroup);
         $entity->setName($data->getName());
+        $entity->setDisplayName($data->getDisplayName());
 
         CollectionUtils::synchronize(
             $entity->getAdditionalTeachers(),

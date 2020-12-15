@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\EventSubscriber;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class ApiExceptionSubscriberTest extends WebTestCase {
     private const InvalidJson = <<<JSON
@@ -58,5 +59,17 @@ JSON;
 
         $this->assertEquals(JSON_ERROR_NONE, json_last_error());
         $this->assertObjectHasAttribute('violations', $jsonResponse);
+    }
+
+    public function testMissingAuthorizationHeaderSendsUnauthorizedOnApiRequests() {
+        $client = static::createClient();
+
+        $client->request('GET', '/api/v1/substitutions', [], [], [
+            'HTTP_ACCEPT' => 'application/json'
+        ]);
+
+        $response = $client->getResponse();
+
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 }

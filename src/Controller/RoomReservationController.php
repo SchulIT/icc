@@ -11,8 +11,10 @@ use App\Grouping\RoomReservationWeekStrategy;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\RoomReservationRepositoryInterface;
 use App\Rooms\Reservation\RoomAvailabilityHelper;
+use App\Rooms\Status\StatusHelperInterface;
 use App\Security\Voter\RoomReservationVoter;
 use App\Settings\TimetableSettings;
+use App\Sorting\RoomNameStrategy;
 use App\Sorting\RoomReservationDateStrategy;
 use App\Sorting\RoomReservationWeekGroupStrategy;
 use App\Sorting\Sorter;
@@ -22,9 +24,9 @@ use App\View\Filter\RoomsFilter;
 use App\View\Filter\TeacherFilter;
 use DateTime;
 use Exception;
-use SchoolIT\CommonBundle\Form\ConfirmType;
-use SchoolIT\CommonBundle\Helper\DateHelper;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Form\ConfirmType;
+use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -48,22 +50,34 @@ class RoomReservationController extends AbstractController {
      * @Route("", name="room_reservations")
      */
     public function index(DateHelper $dateHelper, RoomRepositoryInterface $roomRepository, RoomsFilter $roomsFilter,
-                          RoomAvailabilityHelper $availabilityHelper, TimetableSettings $timetableSettings, Request $request) {
+                          RoomAvailabilityHelper $availabilityHelper, Sorter $sorter, Request $request, StatusHelperInterface $statusHelper) {
         $date = $this->getDateFromRequest($request, $dateHelper);
         $roomsFilterView = $roomsFilter->handle($request->query->get('rooms', []));
         $rooms = $roomsFilterView->getCurrentRooms();
 
         if(count($rooms) === 0) {
             $rooms = $roomRepository->findAll();
+            $sorter->sort($rooms, RoomNameStrategy::class);
         }
 
+        $rooms = array_filter($rooms, function(Room $room) {
+            return $room->isReservationEnabled();
+        });
+
         $overview = $availabilityHelper->getAvailabilities($date, $rooms);
+
+        $status = [ ];
+
+        foreach($rooms as $room) {
+            $status[$room->getId()] = $statusHelper->getStatus($room->getExternalId());
+        }
 
         return $this->render('rooms/reservations/index.html.twig', [
             'roomsFilter' => $roomsFilterView,
             'rooms' => $rooms,
             'date' => $date,
             'overview' => $overview,
+            'status' => $status,
             'days' => $dateHelper->getListOfNextDays(7, $date)
         ]);
     }
@@ -95,7 +109,7 @@ class RoomReservationController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
 
-        $roomsFilterView = $roomFilter->handle($request->query->get('room', null));
+        $roomsFilterView = $roomFilter->handle($request->query->get('room', null), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, !$request->query->has('teacher'));
         $room = $roomsFilterView->getCurrentRoom();
         $all = $request->query->get('all', null) === '✓';

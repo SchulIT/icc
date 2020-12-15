@@ -46,8 +46,14 @@ class IcsHelper {
             return array_slice($events, $startIndex, static::$batchSize);
         });
 
+        // Fixes empty status field
+        foreach($events as $event) {
+            $event->setStatus('CONFIRMED');
+        }
+
         $export = new CalendarExport(new CalendarStream(), new Formatter());
         $export->addCalendar($calendar);
+        $export->setDateTimeFormat('utc');
 
         $export->getStreamObject()->setDoImmediateOutput(true);
         return $export->getStream();

@@ -10,11 +10,12 @@ use App\Repository\MessageRepositoryInterface;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\RoomTagRepositoryInterface;
 use App\Rooms\RoomQueryBuilder;
+use App\Rooms\Status\StatusHelperInterface;
 use App\Security\Voter\RoomVoter;
 use App\Sorting\RoomNameStrategy;
 use App\Sorting\Sorter;
-use SchoolIT\CommonBundle\Helper\DateHelper;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -33,7 +34,7 @@ class RoomController extends AbstractControllerWithMessages {
      * @Route("/rooms", name="rooms")
      */
     public function index(Request $request, RoomQueryBuilder $queryBuilder, RoomRepositoryInterface $roomRepository,
-                          RoomTagRepositoryInterface $roomTagRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository) {
+                          RoomTagRepositoryInterface $roomTagRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository, StatusHelperInterface $statusHelper) {
         $this->denyAccessUnlessGranted(RoomVoter::View);
 
         $query = $queryBuilder->buildFromRequest($request);
@@ -46,10 +47,17 @@ class RoomController extends AbstractControllerWithMessages {
 
         $this->sorter->sort($rooms, RoomNameStrategy::class);
 
+        $status = [ ];
+
+        foreach($rooms as $room) {
+            $status[$room->getId()] = $statusHelper->getStatus($room->getExternalId());
+        }
+
         return $this->renderWithMessages('rooms/index.html.twig', [
             'rooms' => $rooms,
             'query' => $query,
             'tags' => $roomTagRepository->findAll(),
+            'status' => $status,
             'last_import' => $importDateTypeRepository->findOneByEntityClass(Room::class)
         ]);
     }

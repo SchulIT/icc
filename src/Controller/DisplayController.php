@@ -17,7 +17,7 @@ use App\Sorting\SubstitutionStrategy;
 use App\Sorting\SubstitutionTeacherGroupStrategy;
 use App\Timetable\TimetableWeekHelper;
 use FervoEnumBundle\Generated\Form\DisplayTargetUserTypeType;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**

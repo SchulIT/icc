@@ -2,11 +2,13 @@
 
 namespace App\Rooms\Reservation;
 
+use App\Entity\Exam;
 use App\Entity\Room;
 use App\Entity\RoomReservation;
 use App\Entity\Substitution;
 use App\Entity\TimetableLesson;
 use App\Entity\TuitionTimetableLesson;
+use App\Repository\ExamRepositoryInterface;
 use App\Repository\RoomReservationRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
@@ -22,19 +24,21 @@ class RoomAvailabilityHelper {
     private $timetableRepository;
     private $timetableSettings;
     private $substitutionRepository;
+    private $examRepository;
     private $dashboardSettings;
     private $weekHelper;
     private $periodHelper;
 
     public function __construct(RoomReservationRepositoryInterface $reservationRepository, TimetableLessonRepositoryInterface $timetableRepository,
                                 TimetableSettings $timetableSettings, TimetableWeekHelper $weekHelper, TimetablePeriodHelper $periodHelper,
-                                SubstitutionRepositoryInterface $substitutionRepository, DashboardSettings $dashboardSettings) {
+                                SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository, DashboardSettings $dashboardSettings) {
         $this->reservationRepository = $reservationRepository;
         $this->timetableRepository = $timetableRepository;
         $this->timetableSettings = $timetableSettings;
         $this->weekHelper = $weekHelper;
         $this->periodHelper = $periodHelper;
         $this->substitutionRepository = $substitutionRepository;
+        $this->examRepository = $examRepository;
         $this->dashboardSettings = $dashboardSettings;
     }
 
@@ -59,7 +63,7 @@ class RoomAvailabilityHelper {
                 continue;
             }
 
-            if($substitution->getReplacementRoom() !== null && $substitution->getReplacementRoom() === $room->getExternalId()) {
+            if($substitution->getReplacementRoom() !== null && $substitution->getReplacementRoom() === $room) {
                 return $substitution;
             }
         }
@@ -114,7 +118,9 @@ class RoomAvailabilityHelper {
         $substitutions = $this->substitutionRepository->findAllForRooms([$room], $date);
         $conflictingSubstitution = $this->getConflictingSubstitution($substitutions, $room, $lessonNumber);
 
-        $availability = new RoomAvailability($reservation, $lesson, $conflictingSubstitution);
+        $conflictingExams = $this->examRepository->findAllByRoomAndDateAndLesson($room, $date, $lessonNumber);
+
+        $availability = new RoomAvailability($reservation, $lesson, $conflictingSubstitution, $conflictingExams);
 
         if($this->isTimetableLessonCancelled($substitutions, $room, $lessonNumber)) {
             $availability->setTimetableLessonCancelled();
@@ -139,12 +145,13 @@ class RoomAvailabilityHelper {
         $lessons = $this->timetableRepository->findAllByPeriodAndWeek($period, $week);
         $reservations = $this->reservationRepository->findAllByDate($date);
         $substitutions = $this->substitutionRepository->findAllForRooms($rooms, $date);
+        $exams = $this->examRepository->findAllByDate($date);
 
         $overview = new RoomAvailabilityOverview($this->timetableSettings->getMaxLessons());
 
         foreach($rooms as $room) {
             $roomLessons = array_filter($lessons, function(TimetableLesson $lesson) use($room, $date) {
-                return $lesson instanceof TuitionTimetableLesson
+                return $lesson instanceof TimetableLesson
                     && $lesson->getRoom() !== null && $lesson->getRoom()->getId() === $room->getId()
                     && $lesson->getDay() === (int)$date->format('w');
             });
@@ -152,8 +159,8 @@ class RoomAvailabilityHelper {
                 return $reservation->getRoom()->getId() === $room->getId();
             });
             $roomSubstitutions = array_filter($substitutions, function(Substitution $substitution) use ($room) {
-                return ($substitution->getRoom() !== null && $substitution->getRoom() === $room->getExternalId())
-                    || ($substitution->getReplacementRoom() !== null && $substitution->getReplacementRoom() === $room->getExternalId());
+                return ($substitution->getRoom() !== null && $substitution->getRoom() === $room)
+                    || ($substitution->getReplacementRoom() !== null && $substitution->getReplacementRoom() === $room);
             });
 
             for($lessonNumber = 1; $lessonNumber <= $this->timetableSettings->getMaxLessons(); $lessonNumber++) {
@@ -167,7 +174,12 @@ class RoomAvailabilityHelper {
                 });
                 $substitution = $this->getConflictingSubstitution($roomSubstitutions, $room, $lessonNumber);
 
-                $availability = new RoomAvailability($reservation, $lesson, $substitution);
+                $collidingExams = array_filter($exams, function(Exam $exam) use($lessonNumber, $room) {
+                    return $exam->getRoom() != null && $exam->getRoom()->getId() === $room->getId()
+                        && $exam->getLessonStart() <= $lessonNumber && $lessonNumber <= $exam->getLessonEnd();
+                });
+
+                $availability = new RoomAvailability($reservation, $lesson, $substitution, $collidingExams);
 
                 if($this->isTimetableLessonCancelled($roomSubstitutions, $room, $lessonNumber)) {
                     $availability->setTimetableLessonCancelled();

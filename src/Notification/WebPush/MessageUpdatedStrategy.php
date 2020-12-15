@@ -5,8 +5,9 @@ namespace App\Notification\WebPush;
 use App\Converter\UserStringConverter;
 use App\Entity\UserWebPushSubscription;
 use App\Event\MessageUpdatedEvent;
+use App\Message\MessageRecipientResolver;
 use App\Repository\UserWebPushSubscriptionRepositoryInterface;
-use SchoolIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MessageUpdatedStrategy implements PushNotificationStrategyInterface {
@@ -15,13 +16,15 @@ class MessageUpdatedStrategy implements PushNotificationStrategyInterface {
     private $translator;
     private $userConverter;
     private $dateHelper;
+    private $recipientResolver;
 
     public function __construct(UserWebPushSubscriptionRepositoryInterface $subscriptionRepository, TranslatorInterface $translator,
-                                UserStringConverter $userConverter, DateHelper $dateHelper) {
+                                MessageRecipientResolver $recipientResolver, UserStringConverter $userConverter, DateHelper $dateHelper) {
         $this->subscriptionRepository = $subscriptionRepository;
         $this->translator = $translator;
         $this->userConverter = $userConverter;
         $this->dateHelper = $dateHelper;
+        $this->recipientResolver = $recipientResolver;
     }
 
     /**
@@ -33,7 +36,9 @@ class MessageUpdatedStrategy implements PushNotificationStrategyInterface {
             return [ ];
         }
 
-        return $this->subscriptionRepository->findAllForMessage($objective->getMessage());
+        return $this->subscriptionRepository->findAllForUsers(
+            $this->recipientResolver->resolveRecipients($objective->getMessage())
+        );
     }
 
     /**
@@ -69,5 +74,12 @@ class MessageUpdatedStrategy implements PushNotificationStrategyInterface {
      */
     public function supports($objective): bool {
         return $objective instanceof MessageUpdatedEvent;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isEnabled(): bool {
+        return true;
     }
 }

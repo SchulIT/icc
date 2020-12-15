@@ -32,15 +32,17 @@ use App\Security\Voter\ListsVoter;
 use App\Sorting\Sorter;
 use App\Sorting\StudentGroupMembershipStrategy;
 use App\Sorting\StudentStrategy;
+use App\Sorting\StudyGroupStrategy;
 use App\Sorting\TeacherFirstCharacterGroupStrategy;
 use App\Sorting\TeacherStrategy;
+use App\Sorting\TuitionStrategy;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\SubjectFilter;
 use App\View\Filter\TeacherFilter;
-use SchoolIT\CommonBundle\Helper\DateHelper;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -79,6 +81,7 @@ class ListController extends AbstractControllerWithMessages {
 
         $tuitions = [ ];
         $memberships = [ ];
+        $teacherMailAddresses = [ ];
 
         if($studentFilterView->getCurrentStudent() !== null) {
             $tuitions = $tuitionRepository->findAllByStudents([$studentFilterView->getCurrentStudent()]);
@@ -91,11 +94,23 @@ class ListController extends AbstractControllerWithMessages {
 
                 $memberships[$tuition->getExternalId()] = $membership->getType();
             }
+
+            foreach($tuitions as $tuition) {
+                foreach($tuition->getTeachers() as $teacher) {
+                    if($teacher->getEmail() !== null) {
+                        $teacherMailAddresses[] = $teacher->getEmail();
+                    }
+                }
+            }
+
+            $teacherMailAddresses = array_unique($teacherMailAddresses);
         } else if($gradeFilterView->getCurrentGrade() !== null) {
             $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()]);
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher());
         }
+
+        $this->sorter->sort($tuitions, TuitionStrategy::class);
 
         return $this->renderWithMessages('lists/tuitions.html.twig', [
             'gradeFilter' => $gradeFilterView,
@@ -103,6 +118,7 @@ class ListController extends AbstractControllerWithMessages {
             'teacherFilter' => $teacherFilterView,
             'tuitions' => $tuitions,
             'memberships' => $memberships,
+            'teacherMailAddresses' => $teacherMailAddresses,
             'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Tuition::class)
         ]);
     }
@@ -117,7 +133,7 @@ class ListController extends AbstractControllerWithMessages {
         $memberships = $tuition->getStudyGroup()->getMemberships()->toArray();
         $this->sorter->sort($memberships, StudentGroupMembershipStrategy::class);
 
-        $exams = $examRepository->findAllByTuitions([$tuition]);
+        $exams = $examRepository->findAllByTuitions([$tuition], null, true);
 
         $exams = array_filter($exams, function(Exam $exam) {
             return $this->isGranted(ExamVoter::Show, $exam);
@@ -143,23 +159,39 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/study_groups", name="list_studygroups")
      */
-    public function studyGroups(StudyGroupFilter $studyGroupFilter, Request $request) {
+    public function studyGroups(StudyGroupFilter $studyGroupFilter, StudentFilter $studentFilter, Request $request) {
         $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);
 
         /** @var User $user */
         $user = $this->getUser();
 
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
 
         $students = [ ];
+        $studyGroups = [ ];
+        $memberships = [ ];
 
         if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
-            $students = $studyGroupFilterView->getCurrentStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
-                return $membership->getStudent();
-            })->toArray();
-        }
+            /** @var StudyGroupMembership $membership */
+            foreach($studyGroupFilterView->getCurrentStudyGroup()->getMemberships() as $membership) {
+                $students[] = $membership->getStudent();
+                $memberships[$membership->getStudent()->getId()] = $membership->getType();
+            }
 
-        $this->sorter->sort($students, StudentStrategy::class);
+            $this->sorter->sort($students, StudentStrategy::class);
+        } else if($studentFilterView->getCurrentStudent() !== null) {
+            $studyGroups = [ ];
+            $memberships = [ ];
+
+            /** @var StudyGroupMembership $membership */
+            foreach($studentFilterView->getCurrentStudent()->getStudyGroupMemberships() as $membership) {
+                $studyGroups[] = $membership->getStudyGroup();
+                $memberships[$membership->getStudyGroup()->getId()] = $membership->getType();
+            }
+
+            $this->sorter->sort($studyGroups, StudyGroupStrategy::class);
+        }
 
         $grade = null;
         $gradeTeachers = [ ];
@@ -168,6 +200,11 @@ class ListController extends AbstractControllerWithMessages {
         if($studyGroupFilterView->getCurrentStudyGroup() !== null && $studyGroupFilterView->getCurrentStudyGroup()->getType()->equals(StudyGroupType::Grade())) {
             /** @var Grade $grade */
             $grade = $studyGroupFilterView->getCurrentStudyGroup()->getGrades()->first();
+        } else if($studentFilterView->getCurrentStudent() !== null) {
+            $grade = $studentFilterView->getCurrentStudent()->getGrade();
+        }
+
+        if($grade !== null) {
             $gradeTeachers = array_map(function(GradeTeacher $gradeTeacher) {
                 return $gradeTeacher->getTeacher();
             }, array_filter($grade->getTeachers()->toArray(), function(GradeTeacher $gradeTeacher){
@@ -185,6 +222,9 @@ class ListController extends AbstractControllerWithMessages {
 
         return $this->renderWithMessages('lists/study_groups.html.twig', [
             'studyGroupFilter' => $studyGroupFilterView,
+            'studentFilter' => $studentFilterView,
+            'study_groups' => $studyGroups,
+            'memberships' => $memberships,
             'students' => $students,
             'grade' => $grade,
             'gradeTeachers' => $gradeTeachers,

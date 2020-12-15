@@ -14,7 +14,9 @@ use App\Repository\ExamRepositoryInterface;
 use App\Security\Voter\ExamVoter;
 use App\Settings\ExamSettings;
 use App\Timetable\TimetableTimeHelper;
+use i;
 use Jsvrcek\ICS\Model\CalendarEvent;
+use Jsvrcek\ICS\Model\Description\Location;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -51,16 +53,16 @@ class ExamIcsExporter {
      * @return CalendarEvent[]
      */
     private function getIcsItems(User $user) {
-        if($this->examSettings->isVisibileFor($user->getUserType())) {
+        if($this->examSettings->isVisibileFor($user->getUserType()) === false) {
             return [ ];
         }
 
         $exams = [ ];
 
         if($user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent())) {
-            $exams = $this->examRepository->findAllByStudents($user->getStudents()->toArray());
+            $exams = $this->examRepository->findAllByStudents($user->getStudents()->toArray(), null, false, true);
         } else if($user->getUserType()->equals(UserType::Teacher())) {
-            $exams = $this->examRepository->findAllByTeacher($user->getTeacher());
+            $exams = $this->examRepository->findAllByTeacher($user->getTeacher(), null, false, true);
         }
 
         $exams = array_filter($exams, function(Exam $exam) {
@@ -70,7 +72,7 @@ class ExamIcsExporter {
         $items = [ ];
 
         foreach($exams as $exam) {
-            $items += $this->makeIcsItems($exam, $user);
+            $items = array_merge($items, $this->makeIcsItems($exam, $user));
         }
 
         return $items;
@@ -113,13 +115,21 @@ class ExamIcsExporter {
             '%tuitions%' => $this->getTuitionsAsString($exam->getTuitions()->toArray())
         ]);
 
-        return (new CalendarEvent())
+        $event = (new CalendarEvent())
             ->setUid(sprintf('exam-%d', $exam->getId()))
             ->setSummary($description)
             ->setDescription($description)
             ->setStart($start)
-            ->setEnd($end)
-            ->setLocations($exam->getRooms());
+            ->setEnd($end);
+
+        if($exam->getRoom() !== null) {
+            $event->setLocations([
+                (new Location())
+                    ->setName($exam->getRoom()->getName())
+            ]);
+        }
+
+        return $event;
     }
 
     private function makeIcsItemSupervision(Exam $exam, int $lesson): CalendarEvent {
@@ -129,13 +139,22 @@ class ExamIcsExporter {
             '%tuitions%' => $this->getTuitionsAsString($exam->getTuitions()->toArray())
         ]);
 
-        return (new CalendarEvent())
+        $event = (new CalendarEvent())
             ->setUid(sprintf('exam-%d-supervision-%d', $exam->getId(), $lesson))
             ->setSummary($description)
             ->setDescription($description)
             ->setStart($start)
-            ->setEnd($end)
-            ->setLocations($exam->getRooms());
+            ->setEnd($end);
+
+
+        if($exam->getRoom() !== null) {
+            $event->setLocations([
+                (new Location())
+                    ->setName($exam->getRoom()->getName())
+            ]);
+        }
+
+        return $event;
     }
 
     private function isExamTeacher(Exam $exam, ?Teacher $teacher): bool {

@@ -48,14 +48,42 @@
         </div>
     </div>
 
-    {{ form_row(form.group_confirmations) }}
+    <div class="card mb-3 {% if not form.group_confirmations.vars.valid %}border-danger{% endif %}">
+        <div class="card-header {% if not form.group_confirmations.vars.valid %}bg-danger text-white{% endif%} pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#container-confirmations">
+            <span class="mr-auto align-self-center">{{ 'admin.messages.confirmations.label'|trans }}</span>
 
-    {{ form_row(form.group_download) }}
+            <i class="fa fa-chevron-{% if not form.group_confirmations.vars.valid %}up{% else %}down{% endif%} indicator align-self-center"></i>
+        </div>
+
+        <div class="card-body {% if form.group_confirmations.vars.valid %}collapse{% endif%}" id="container-confirmations">
+            {% for child in form.group_confirmations %}
+                {{ form_row(child) }}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card mb-3 {% if not form.group_download.vars.valid %}border-danger{% endif %}">
+        <div class="card-header {% if not form.group_download.vars.valid %}bg-danger text-white{% endif%} pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#container-downloads">
+            <span class="mr-auto align-self-center">{{ 'label.messages_files.label'|trans }} <span class="text-secondary">{{ 'label.messages_files.badge_download'|trans }}</span></span>
+
+            <i class="fa fa-chevron-{% if not form.group_download.vars.valid %}up{% else %}down{% endif%} indicator align-self-center"></i>
+        </div>
+
+        <div class="card-body {% if form.group_download.vars.valid %}collapse{% endif%}" id="container-downloads">
+            {% for child in form.group_download %}
+                {{ form_row(child) }}
+            {% endfor %}
+        </div>
+    </div>
 
     <div class="card mb-3">
-        <div class="card-header">{{ 'label.messages_files.label'|trans }}</div>
+        <div class="card-header {% if not form.group_upload.vars.valid %}bg-danger text-white{% endif%} pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#container-uploads">
+            <span class="mr-auto align-self-center">{{ 'label.messages_files.label'|trans }} <span class="text-secondary">{{ 'label.messages_files.badge_upload'|trans }}</span> </span>
 
-        <div class="card-body">
+            <i class="fa fa-chevron-{% if not form.group_upload.vars.valid %}up{% else %}down{% endif%} indicator align-self-center"></i>
+        </div>
+
+        <div class="card-body {% if form.group_upload.vars.valid %}collapse{% endif%}" id="container-uploads">
             {{ form_row(form.group_upload.isUploadsEnabled) }}
             {{ form_row(form.group_upload.uploadEnabledUserTypes) }}
             {{ form_row(form.group_upload.uploadEnabledStudyGroups) }}

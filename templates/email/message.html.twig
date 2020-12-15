@@ -1,9 +1,33 @@
-{{ 'greeting'|trans({'%name%': recipient }, 'email') }}
+{% extends "email/main.html.twig" %}
 
-{{ 'message.create.content'|trans({'%title%': objective.title, '%link%': url('show_message', { uuid: objective.uuid })}, 'email') }}
+{% block title %}{{ 'message.create.title'|trans({ '%title%': objective.message.title }, 'email') }}{% endblock %}
 
-{{ 'farewell'|trans({}, 'email') }}
-{{ sender }}
+{% block button_content %}{{ 'message.create.link'|trans({}, 'email') }}{% endblock %}
+{% block button_url%}{{ url('show_message', { uuid: objective.message.uuid }) }}{% endblock %}
 
----
-{{ 'footer'|trans({'%link%': url('profile_notifications')}, 'email') }}
+{% block preview %}{{ 'message.create.content'|trans({ '%title%': objective.message.title }, 'email')|raw }}{% endblock %}
+
+{% block content %}
+    <p>
+        {{ 'message.create.content'|trans({ '%title%': objective.message.title }, 'email')|raw }}
+    </p>
+
+    {% if objective.message.mustConfirm %}
+        <p>{{ 'message.must_confirm'|trans({}, 'email') }}</p>
+    {% endif %}
+    {% if objective.message.attachments|length > 0 %}
+        <p>{{ 'message.attachments'|trans({}, 'email') }}</p>
+    {% endif %}
+    {% if objective.message.isDownloadsEnabled %}
+        <p>{{ 'message.has_downloads'|trans({}, 'email') }}</p>
+    {% endif %}
+    {% if objective.message.isUploadsEnabled %}
+        <p>{{ 'message.has_uploads'|trans({}, 'email') }}</p>
+    {% endif %}
+{% endblock %}
+
+{% block additional_content %}
+    <h2>{{ objective.message.title }}</h2>
+
+    {{ objective.message.content|markdown }}
+{% endblock %}

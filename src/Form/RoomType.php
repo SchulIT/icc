@@ -3,8 +3,9 @@
 namespace App\Form;
 
 use App\Repository\RoomTagRepositoryInterface;
-use SchoolIT\CommonBundle\Form\FieldsetType;
+use SchulIT\CommonBundle\Form\FieldsetType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -33,6 +34,14 @@ class RoomType extends AbstractType {
                         ->add('capacity', IntegerType::class, [
                             'label' => 'label.capacity',
                             'required' => false
+                        ])
+                        ->add('isReservationEnabled', CheckboxType::class, [
+                            'label' => 'label.reservation_enabled.label',
+                            'help' => 'label.reservation_enabled.help',
+                            'required' => false,
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
                         ]);
                 }
             ])

@@ -31,12 +31,13 @@ use App\Sorting\StudentStudyGroupGroupStrategy;
 use App\Sorting\TeacherStrategy;
 use App\Sorting\UserLastnameFirstnameStrategy;
 use App\Sorting\UserUserTypeGroupStrategy;
+use App\Utils\EnumArrayUtils;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\ORM\EntityManagerInterface;
-use SchoolIT\CommonBundle\Form\ConfirmType;
-use SchoolIT\CommonBundle\Helper\DateHelper;
-use SchoolIT\CommonBundle\Utils\RefererHelper;
+use SchulIT\CommonBundle\Form\ConfirmType;
+use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -70,7 +71,7 @@ class MessageController extends AbstractController {
 
         $archive = $request->query->get('archive', false) === '✓';
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
-        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user);
+        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]));
 
         $studyGroups = [ ];
         if($userTypeFilterView->getCurrentType()->equals(UserType::Student()) || $userTypeFilterView->getCurrentType()->equals(UserType::Parent())) {
@@ -89,6 +90,10 @@ class MessageController extends AbstractController {
             $archive
         );
 
+        $messages = array_filter($messages, function(Message $message) {
+            return $this->isGranted(MessageVoter::View, $message);
+        });
+
         $this->sorter->sort($messages, MessageStrategy::class);
 
         return $this->render('messages/index.html.twig', [
@@ -105,6 +110,8 @@ class MessageController extends AbstractController {
     public function show(Message $message, MessageRepositoryInterface $messageRepository, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem, Request $request) {
         // Requery message for better performance
         $message = $messageRepository->findOneById($message->getId());
+
+        $this->denyAccessUnlessGranted(MessageVoter::View, $message);
 
         /** @var User $user */
         $user = $this->getUser();

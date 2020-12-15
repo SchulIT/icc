@@ -7,6 +7,7 @@ use App\Entity\AppointmentCategory;
 use App\Entity\Grade;
 use App\Entity\UserType;
 use App\Form\ColorType;
+use App\Form\MarkdownType;
 use App\Menu\Builder;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Repository\GradeRepositoryInterface;
@@ -14,8 +15,11 @@ use App\Settings\AppointmentsSettings;
 use App\Settings\DashboardSettings;
 use App\Settings\ExamSettings;
 use App\Settings\NotificationSettings;
+use App\Settings\SickNoteSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
+use App\Sorting\GradeNameStrategy;
+use App\Sorting\Sorter;
 use App\Utils\ArrayUtils;
 use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -25,11 +29,13 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -73,6 +79,24 @@ class SettingsController extends AbstractController {
                 'help' => 'admin.settings.dashboard.free_lesson_types.help',
                 'data' => implode(',', $dashboardSettings->getFreeLessonSubstitutionTypes()),
                 'required' => false
+            ])
+            ->add('next_day_threshold', TimeType::class, [
+                'label' => 'admin.settings.dashboard.next_day_threshold.label',
+                'help' => 'admin.settings.dashboard.next_day_threshold.help',
+                'data' => $dashboardSettings->getNextDayThresholdTime(),
+                'required' => false,
+                'input' => 'string',
+                'input_format' => 'H:i',
+                'widget' => 'single_text'
+            ])
+            ->add('skip_weekends', CheckboxType::class, [
+                'label' => 'admin.settings.dashboard.skip_weekends.label',
+                'help' => 'admin.settings.dashboard.skip_weekends.help',
+                'required' => false,
+                'data' => $dashboardSettings->skipWeekends(),
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ]);
 
         $form = $builder->getForm();
@@ -88,6 +112,12 @@ class SettingsController extends AbstractController {
                 },
                 'free_lesson_types' => function($types) use ($dashboardSettings) {
                     $dashboardSettings->setFreeLessonSubstitutionTypes(explode(',', $types));
+                },
+                'next_day_threshold' => function($threshold) use ($dashboardSettings) {
+                    $dashboardSettings->setNextDayThresholdTime($threshold);
+                },
+                'skip_weekends' => function($skipWeekends) use ($dashboardSettings) {
+                    $dashboardSettings->setSkipWeekends($skipWeekends);
                 }
             ];
 
@@ -176,9 +206,110 @@ class SettingsController extends AbstractController {
     }
 
     /**
+     * @Route("/sick_notes", name="admin_settings_sick_notes")
+     */
+    public function sickNotes(Request $request, SickNoteSettings $sickNoteSettings) {
+        $builder = $this->createFormBuilder();
+        $builder
+            ->add('enabled', CheckboxType::class, [
+                'required' => false,
+                'data' => $sickNoteSettings->isEnabled(),
+                'label' => 'admin.settings.sick_notes.enabled',
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
+            ])
+            ->add('recipient', EmailType::class, [
+                'required' => false,
+                'data' => $sickNoteSettings->getRecipient(),
+                'label' => 'admin.settings.sick_notes.recipient.label',
+                'help' => 'admin.settings.sick_notes.recipient.help'
+            ])
+            ->add('introduction_text', MarkdownType::class, [
+                'required' => false,
+                'data' => $sickNoteSettings->getIntroductionText(),
+                'label' => 'admin.settings.sick_notes.introduction_text.label',
+                'help' => 'admin.settings.sick_notes.introduction_text.help'
+            ])
+            ->add('privacy_url', TextType::class, [
+                'required' => true,
+                'data' => $sickNoteSettings->getPrivacyUrl(),
+                'label' => 'admin.settings.sick_notes.privacy_url.label',
+                'help' => 'admin.settings.sick_notes.privacy_url.help'
+            ])
+            ->add('retention_days', IntegerType::class, [
+                'required' => true,
+                'data' => $sickNoteSettings->getRetentionDays(),
+                'label' => 'admin.settings.sick_notes.retention_days.label',
+                'help' => 'admin.settings.sick_notes.retention_days.help',
+                'constraints' => [
+                    new GreaterThanOrEqual(0)
+                ]
+            ])
+            ->add('ordered_by_help', TextType::class, [
+                'required' => false,
+                'data' => $sickNoteSettings->getOrderedByHelp(),
+                'label' => 'admin.settings.sick_notes.ordered_by.label',
+                'help' => 'admin.settings.sick_notes.ordered_by.help'
+            ])
+            ->add('next_day_threshold', TimeType::class, [
+                'label' => 'admin.settings.dashboard.next_day_threshold.label',
+                'help' => 'admin.settings.dashboard.next_day_threshold.help',
+                'data' => $sickNoteSettings->getNextDayThresholdTime(),
+                'required' => false,
+                'input' => 'string',
+                'input_format' => 'H:i',
+                'widget' => 'single_text'
+            ]);
+
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $map = [
+                'enabled' => function($enabled) use ($sickNoteSettings) {
+                    $sickNoteSettings->setEnabled($enabled);
+                },
+                'recipient' => function($recipient) use ($sickNoteSettings) {
+                    $sickNoteSettings->setRecipient($recipient);
+                },
+                'privacy_url' => function($url) use ($sickNoteSettings) {
+                    $sickNoteSettings->setPrivacyUrl($url);
+                },
+                'retention_days' => function($days) use ($sickNoteSettings) {
+                    $sickNoteSettings->setRetentionDays($days);
+                },
+                'introduction_text' => function($text) use ($sickNoteSettings) {
+                    $sickNoteSettings->setIntroductionText($text);
+                },
+                'ordered_by_help' => function($text) use ($sickNoteSettings) {
+                    $sickNoteSettings->setOrderedByHelp($text);
+                },
+                'next_day_threshold' => function($threshold) use ($sickNoteSettings) {
+                    $sickNoteSettings->setNextDayThresholdTime($threshold);
+                },
+            ];
+
+            foreach($map as $formKey => $callable) {
+                $value = $form->get($formKey)->getData();
+                $callable($value);
+            }
+
+            $this->addFlash('success', 'admin.settings.success');
+
+            return $this->redirectToRoute('admin_settings_sick_notes');
+        }
+
+        return $this->render('admin/settings/sick_notes.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
      * @Route("/exams", name="admin_settings_exams")
      */
-    public function exams(Request $request, ExamSettings $examSettings, EnumStringConverter $enumStringConverter) {
+    public function exams(Request $request, ExamSettings $examSettings, EnumStringConverter $enumStringConverter,
+                          GradeRepositoryInterface $gradeRepository, Sorter $sorter) {
         $builder = $this->createFormBuilder();
         $builder
             ->add('visibility', ChoiceType::class, [
@@ -236,18 +367,42 @@ class SettingsController extends AbstractController {
                 'required' => false,
                 'data' => $examSettings->getNotificationReplyToAddress()
             ])
-            ->add('number_of_exams_week', IntegerType::class, [
-                'label' => 'admin.settings.exams.planning.number_of_exams_week.label',
-                'help' => 'admin.settings.exams.planning.number_of_exams_week.help',
-                'required' => true,
-                'data' => $examSettings->getMaximumNumberOfExamsPerWeek()
-            ])
             ->add('number_of_exams_day', IntegerType::class, [
                 'label' => 'admin.settings.exams.planning.number_of_exams_day.label',
                 'help' => 'admin.settings.exams.planning.number_of_exams_day.help',
                 'required' => true,
                 'data' => $examSettings->getMaximumNumberOfExamsPerDay()
+            ])
+            ->add('visible_grades', ChoiceType::class, [
+                'label' => 'admin.settings.exams.visible_grades.label',
+                'help' => 'admin.settings.exams.visible_grades.help',
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
+                    return $grade->getName();
+                }, function (Grade $grade) {
+                    return $grade->getId();
+                }),
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => [
+                    'size' => 10
+                ],
+                'data' => $examSettings->getVisibleGradeIds()
             ]);
+
+        $grades = $gradeRepository->findAll();
+        $sorter->sort($grades, GradeNameStrategy::class);
+
+        foreach($grades as $grade) {
+            $builder->add(sprintf('number_of_exams_week_%d', $grade->getId()), IntegerType::class, [
+                'label' => 'admin.settings.exams.planning.number_of_exams_week.label',
+                'label_translation_parameters' => [
+                    '%grade%' => $grade->getName()
+                ],
+                'help' => 'admin.settings.exams.planning.number_of_exams_week.help',
+                'required' => true,
+                'data' => $examSettings->getMaximumNumberOfExamsPerWeek($grade)
+            ]);
+        }
 
         $form = $builder->getForm();
         $form->handleRequest($request);
@@ -272,13 +427,19 @@ class SettingsController extends AbstractController {
                 'notifications_replyaddress' => function(?string $address) use($examSettings) {
                     $examSettings->setNotificationReplyToAddress($address);
                 },
-                'number_of_exams_week' => function(int $number) use ($examSettings) {
-                    $examSettings->setMaximumNumberOfExamsPerWeek($number);
-                },
                 'number_of_exams_day' => function(int $number) use ($examSettings) {
                     $examSettings->setMaximumNumberOfExamsPerDay($number);
+                },
+                'visible_grades' => function(?array $visibleGrades) use($examSettings) {
+                    $examSettings->setVisibleGradeIds($visibleGrades ?? [ ]);
                 }
             ];
+
+            foreach($grades as $grade) {
+                $map[sprintf('number_of_exams_week_%d', $grade->getId())] = function(int $number) use($grade, $examSettings) {
+                    $examSettings->setMaximumNumberOfExamsPerWeek($grade, $number);
+                };
+            }
 
             foreach($map as $formKey => $callable) {
                 $value = $form->get($formKey)->getData();
@@ -291,7 +452,8 @@ class SettingsController extends AbstractController {
         }
 
         return $this->render('admin/settings/exams.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'grades' => $grades
         ]);
     }
 
@@ -497,7 +659,7 @@ class SettingsController extends AbstractController {
                 },
                 'expanded' => true,
                 'multiple' => true,
-                'label' => 'label.visibility',
+                'label' => 'label.absence_visibility',
                 'data' => $substitutionSettings->getAbsenceVisibility(),
                 'label_attr' => [
                     'class' => 'checkbox-custom'

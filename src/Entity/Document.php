@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Validator\StudyGroupsNotEmpty;
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  * @ORM\Table(
  *     indexes={
  *          @ORM\Index(columns={"title"}, flags={"fulltext"}),
@@ -56,6 +59,7 @@ class Document {
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
+     * @StudyGroupsNotEmpty(propertyPath="visibilities")
      * @var Collection<StudyGroup>
      */
     private $studyGroups;

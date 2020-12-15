@@ -101,6 +101,12 @@
                                             </a>
                                         {% endif %}
 
+                                        {% if is_granted('unplan', exam) and exam.date is not null %}
+                                            <a href="{{ path('unplan_exam', { uuid: exam.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.exams.unplan.label'|trans }}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        {% endif %}
+
                                         {% if is_granted('remove', exam) %}
                                             <a href="{{ path('remove_exam', { uuid: exam.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.exams.remove.label'|trans }}">
                                                 <i class="fa fa-trash"></i>
@@ -116,7 +122,10 @@
                 {% endfor %}
 
                 {% include '@Common/includes/pagination.html.twig' with {
-                    currentFilters: { grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null },
+                    currentFilters: {
+                        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
+                        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null
+                    },
                     currentPage: page,
                     paginationPath: 'admin_exams',
                     lastPage: pages,
@@ -141,7 +150,11 @@
                 <div class="card">
                     <div class="card-body">
                         {% if gradeFilter.grades|length > 0 %}
-                            {% include "_filter/grade.html.twig" with { class: 'mb-0'} %}
+                            {% include "_filter/grade.html.twig" %}
+                        {% endif %}
+
+                        {% if teacherFilter.teachers|length > 0 %}
+                            {% include "_filter/teacher.html.twig" with { class: 'mb-0'} %}
                         {% endif %}
                     </div>
 

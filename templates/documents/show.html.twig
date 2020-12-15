@@ -24,11 +24,13 @@
 
                     {% if document.attachments|length > 0 %}
                         <div class="card-footer">
+                            <ul class="nav nav-pills card-header-pills">
                             {% for attachment in document.attachments %}
-                                <span class="mr-2">
-                                    <a href="{{ path('download_document_attachment', { uuid: attachment.uuid }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
-                                </span>
+                                <li class="nav-item">
+                                    <a class="nav-link link-hover" href="{{ path('download_document_attachment', { uuid: attachment.uuid }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
+                                </li>
                             {% endfor %}
+                            </ul>
                         </div>
                     {% endif %}
                 </div>

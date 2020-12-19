@@ -10,11 +10,11 @@
     <link rel="stylesheet" href="{{ asset('build/display.css') }}">
 </head>
 
-<body class="d-flex flex-column p-5" {% if display.backgroundColor is not empty %}style="background-color: {{ display.backgroundColor }}"{% endif %}>
+<body class="d-flex flex-column p-3" {% if display.backgroundColor is not empty %}style="background-color: {{ display.backgroundColor }}"{% endif %}>
 
     <div class="top d-flex align-items-center">
         <div class="flex-grow-1">
-            <h1 class="m-0">Guten Morgen!</h1>
+            <h3 class="m-0">Guten Morgen!</h3>
         </div>
 
         <div>
@@ -42,19 +42,19 @@
 
     <div class="content d-flex flex-grow-1 my-4 mx-n2" style="font-size: 70% !important;">
         <div class="flex-even px-2">
+            <div class="list-group">
             {% set counter = 0 %}
             {% for group in groups %}
+            {#
                 {% if group.teacher is defined %}
-                    <h3>{{ group.teacher.acronym }}</h3>
-                {% elseif group.grade is defined %}
-                    <h3>{{ group.grade.name }}</h3>
-                {% endif %}
-
-            <div class="list-group">
+                    <h5 class="my-1">{{ group.teacher.acronym }}</h5>
+                {% elseif group.grade is defined and group.grade is not null %}
+                    <h5 class="my-1">{{ group.grade.name }}</h5>
+                {% endif %}#}
 
                 {% for substitution in group.substitutions %}
                     <div class="list-group-item p-0">
-                        {% include "_includes/substitution.html.twig" with { substitution: substitution, onlyAcronym: true, onlyContent: true } %}
+                        {% include "_includes/substitution.html.twig" with { substitution: substitution, onlyAcronym: true, onlyContent: true, prefix: (group.grade is defined and group.grade is not null ? group.grade.name : null) } %}
                     </div>
                     {% set counter = counter + 1 %}
 
@@ -70,12 +70,13 @@
                 {% endif %}
             {% endif %}
 
-            <div class="list-group">
+            {#<div class="list-group">#}
 
                     {% endif %}
                 {% endfor %}
-            </div>
+            {#</div>#}
             {% endfor %}
+        </div>
         </div>
 
         <div class="flex-even px-2">

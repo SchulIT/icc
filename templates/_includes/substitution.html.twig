@@ -20,7 +20,12 @@
     <div class="card-body p-0">
 {% endif %}
         <div class="d-flex">
-            <div class="align-self-center text-center p-3 substitution-lesson {% if substitution.startsBefore %}text-small{% endif%} text-black-50">
+            {% if prefix is defined %}
+            <div class="align-self-center text-center p-2 substitution-lesson">
+                <strong>{{ prefix }}</strong>
+            </div>
+            {% endif %}
+            <div class="align-self-center text-center p-2 substitution-lesson {% if substitution.startsBefore %}text-small{% endif%} text-black-50">
                 {% if substitution.startsBefore %}
                     {{ substitution.lessonStart|before_lesson }}
                 {% else %}

@@ -11,13 +11,13 @@ $enable-gradients: true;
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/brands';
 
 // Import SchoolIT design
-@import '../../vendor/schoolit/common-bundle/Resources/assets/css/variables.scss';
-@import '../../vendor/schoolit/common-bundle/Resources/assets/css/layout.scss';
-@import '../../vendor/schoolit/common-bundle/Resources/assets/css/additions.scss';
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/layout.scss';
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/additions.scss';
 
 html,
 body {
-  font-size: 110% !important;
+  font-size: 100% !important;
 }
 
 .color-rect {
@@ -31,17 +31,18 @@ body {
 
 .substitution-lesson {
   /*@include font-size(1.75rem);*/
-  @extend .p-3;
+  @extend .p-2;
   font-weight: bold;
 
-  width: 90px;
+  width: 50px;
+  min-width: 50px;
   hyphens: auto;
   -ms-hyphens: auto;
   -webkit-hyphens: auto;
 
-  &.text-small {
+  /*&.text-small {
     font-size: 0.9rem;
-  }
+  }*/
 
   .exam-date {
     @include font-size(0.8rem);

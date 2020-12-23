@@ -16,6 +16,7 @@ label:
     students_simple: Lernende
     exam: Klausur
     exams: Klausuren
+    exam_supervision: Klausuraufsicht
     grade: Klasse
     grades: Klassen
     study_group: Lerngruppe

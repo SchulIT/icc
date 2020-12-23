@@ -44,7 +44,8 @@ body {
   margin-bottom: -3px;
 }
 
-.substitution-lesson {
+.substitution-lesson,
+.exam-lesson {
   /*@include font-size(1.75rem);*/
   @extend .p-2;
   font-weight: bold;
@@ -82,7 +83,8 @@ body {
   }
 }
 
-.substitution {
+.substitution,
+.exam {
   .mx-1 {
     @extend .mx-2;
   }

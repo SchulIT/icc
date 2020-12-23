@@ -65,6 +65,13 @@
                     {% if substitution.room is not null or substitution.replacementRoom is not null or substitution.roomName is not null or substitution.replacementRoomName is not null %}
                         <span>
                             <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room ? substitution.room.name : substitution.roomName, substitution.replacementRoom ? substitution.replacementRoom : substitution.replacementRoomName) }}
+                            <span class="mx-1"></span>
+                        </span>
+                    {% endif %}
+
+                    {% if onlyContent and substitution.remark is not empty %}
+                        <span>
+                            <i class="fa fa-info-circle"></i> {{ substitution.remark }}
                         </span>
                     {% endif %}
                 </div>

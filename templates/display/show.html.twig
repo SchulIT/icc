@@ -22,19 +22,22 @@
                     <div class="list-group h-100 w-100 overflow-hidden" data-scroll="true" data-intervall="15">
 
                     {% for group in groups %}
-                        {% for substitution in group.substitutions %}
-                            <div class="list-group-item p-0 substitution">
+                        {% for item in group.items %}
                                 {% if loop.first %}
-                                    {% if group.grade is defined %}
-                                        {% set prefix = group.grade is not null ? group.grade.name : null %}
-                                    {% elseif group.teacher is defined %}
-                                        {% set prefix = group.teacher is not null ? group.teacher.acronym : null %}
-                                    {% endif %}
+                                    {% set prefix = group.header %}
                                 {% else %}
                                     {% set prefix = ' ' %}
                                 {% endif %}
-                                {% include "_includes/substitution.html.twig" with { substitution: substitution, onlyAcronym: true, onlyContent: true, prefix: prefix } %}
-                            </div>
+
+                                {% if item.name == 'substitution' %}
+                                    <div class="list-group-item p-0 substitution">
+                                        {% include "_includes/substitution.html.twig" with { substitution: item.substitution, onlyAcronym: true, onlyContent: true, prefix: prefix } %}
+                                    </div>
+                                {% elseif item.name == 'exam' %}
+                                    {% include "display/_exam.html.twig" with { exam: item.exam, onlyAcronym: true, onlyContent: true, hideDetails: true, prefix: prefix } %}
+                                {% elseif item.name == 'exam_supervision' %}
+                                    {% include "display/_exam_supervision.html.twig" with { exam: item.exam, lesson: item.lesson, prefix: prefix } %}
+                                {% endif %}
                         {% endfor %}
                     {% endfor %}
                     </div>

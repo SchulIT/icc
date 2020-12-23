@@ -25,7 +25,11 @@
                         {% for substitution in group.substitutions %}
                             <div class="list-group-item p-0 substitution">
                                 {% if loop.first %}
-                                    {% set prefix = (group.grade is defined and group.grade is not null ? group.grade.name : null) %}
+                                    {% if group.grade is defined %}
+                                        {% set prefix = group.grade is not null ? group.grade.name : null %}
+                                    {% elseif group.teacher is defined %}
+                                        {% set prefix = group.teacher is not null ? group.teacher.acronym : null %}
+                                    {% endif %}
                                 {% else %}
                                     {% set prefix = ' ' %}
                                 {% endif %}

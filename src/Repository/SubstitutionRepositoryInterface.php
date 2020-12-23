@@ -28,10 +28,11 @@ interface SubstitutionRepositoryInterface extends TransactionalRepositoryInterfa
     public function findAll();
 
     /**
-     * @param \DateTime $date
+     * @param DateTime $date
+     * @param bool $excludeNonStudentSubstitutions Whether or not to exclude all substitution without study groups assigned
      * @return Substitution[]
      */
-    public function findAllByDate(\DateTime $date);
+    public function findAllByDate(DateTime $date, bool $excludeNonStudentSubstitutions = false);
 
     public function countAllByDate(DateTime $date): int;
 

@@ -1103,7 +1103,7 @@ cron:
 
 display:
     last_update: Letzte Aktualisierung
-
+    empty: Heute gibt es keine Vertretungen.
 
 servicecenter:
     problem: Anzahl der Probleme in diesem Raum

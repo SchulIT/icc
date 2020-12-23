@@ -13,21 +13,28 @@
 <body class="d-flex flex-column p-3 h-100">
     <div class="container-fluid h-100 flex-fill overflow-hidden">
         <div class="row h-100">
-            <div class="col-8 h-100">
-                <div class="list-group h-100 overflow-hidden" data-scroll="true" data-intervall="15">
-                {% for group in groups %}
-                    {% for substitution in group.substitutions %}
-                        <div class="list-group-item p-0 substitution">
-                            {% if loop.first %}
-                                {% set prefix = (group.grade is defined and group.grade is not null ? group.grade.name : null) %}
-                            {% else %}
-                                {% set prefix = ' ' %}
-                            {% endif %}
-                            {% include "_includes/substitution.html.twig" with { substitution: substitution, onlyAcronym: true, onlyContent: true, prefix: prefix } %}
-                        </div>
+            <div class="col-8 h-100 d-flex">
+                {% if groups is empty %}
+                    <div class="d-flex align-self-center text-center">
+                        <p class="display-4 mb-0">{{ 'display.empty'|trans }}</p>
+                    </div>
+                {% else %}
+                    <div class="list-group h-100 w-100 overflow-hidden" data-scroll="true" data-intervall="15">
+
+                    {% for group in groups %}
+                        {% for substitution in group.substitutions %}
+                            <div class="list-group-item p-0 substitution">
+                                {% if loop.first %}
+                                    {% set prefix = (group.grade is defined and group.grade is not null ? group.grade.name : null) %}
+                                {% else %}
+                                    {% set prefix = ' ' %}
+                                {% endif %}
+                                {% include "_includes/substitution.html.twig" with { substitution: substitution, onlyAcronym: true, onlyContent: true, prefix: prefix } %}
+                            </div>
+                        {% endfor %}
                     {% endfor %}
-                {% endfor %}
-                </div>
+                    </div>
+                {% endif %}
             </div>
 
             <div class="col-4 d-flex flex-column sidebar h-100">
@@ -64,7 +71,7 @@
                     </div>
                 </div>
                 <div class="flex-fill overflow-hidden" data-scroll="true" data-intervall="15">
-                {% if display.showInfotexts %}
+                {% if display.showInfotexts and infotexts|length > 0 %}
                     <div class="card">
                         <div class="card-body p-3">
                             {% for infotext in infotexts %}

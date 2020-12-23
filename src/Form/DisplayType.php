@@ -22,6 +22,10 @@ class DisplayType extends AbstractType {
                     'class' => 'radio-custom'
                 ]
             ])
+            ->add('refreshTime', IntegerType::class, [
+                'label' => 'label.refresh_time',
+                'help' => 'label.help_seconds'
+            ])
             ->add('showDate', CheckboxType::class, [
                 'label' => 'label.show.date',
                 'required' => false,

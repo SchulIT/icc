@@ -29,6 +29,8 @@ class Display {
     private $targetUserType;
 
     /**
+     * @ORM\Column(type="integer")
+     * @Assert\GreaterThan(0)
      * @var int
      */
     private $refreshTime = 20;

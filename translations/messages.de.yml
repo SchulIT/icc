@@ -144,6 +144,8 @@ label:
     all: alle
     created_by: Erstellt von
     ordered_by: Angeordnet von
+    refresh_time: Aktualisierungsintervall
+    help_seconds: Dieser Wert wird in Sekunden angegeben.
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

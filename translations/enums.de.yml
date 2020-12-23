@@ -4,8 +4,7 @@ label:
   gender: Geschlecht
   scope: Bereich
   priority: Priorität
-  substitutions: Vertretungsplan
-  appointments_target: Termin-Zielgruppe
+  usertype: Zielgruppe
   empty: Keine
   reason: Grund
 

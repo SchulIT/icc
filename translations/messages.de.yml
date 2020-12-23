@@ -128,6 +128,7 @@ label:
         time: Zeit anzeigen
         abesences: Absenzen anzeigen
         infotexts: Tagestexte anzeigen
+        exams: Klausuren anzeigen
     background_color: Hintergrundfarbe
     number_of_rows: Anzahl Zeilen
     font_family: Schriftart

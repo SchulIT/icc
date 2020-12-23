@@ -36,13 +36,15 @@ class DisplayController extends AbstractController {
         $appointments = [ ];
         $currentWeek = $weekHelper->getTimetableWeek($today);
 
-        $substitutions = $substitutionRepository->findAllByDate($today);
-        if($display->getSubstitutionsTarget()->equals(DisplayTargetUserType::Students())) {
+
+        if($display->getTargetUserType()->equals(DisplayTargetUserType::Students())) {
+            $substitutions = $substitutionRepository->findAllByDate($today, true);
             $substitutionGroups = $grouper->group($substitutions, SubstitutionGradeStrategy::class);
             $sorter->sort($substitutionGroups, SubstitutionGradeGroupStrategy::class);
 
             $appointments = $appointmentRepository->findAllForAllStudents($today);
-        } else if($display->getSubstitutionsTarget()->equals(DisplayTargetUserType::Teachers())) {
+        } else if($display->getTargetUserType()->equals(DisplayTargetUserType::Teachers())) {
+            $substitutions = $substitutionRepository->findAllByDate($today, false);
             $substitutionGroups = $grouper->group($substitutions, SubstitutionTeacherStrategy::class);
             $sorter->sort($substitutionGroups, SubstitutionTeacherGroupStrategy::class);
 

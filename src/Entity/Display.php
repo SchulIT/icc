@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Validator\Color;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -27,28 +26,7 @@ class Display {
      * @Assert\NotNull()
      * @var DisplayTargetUserType|null
      */
-    private $substitutionsTarget;
-
-    /**
-     * @ORM\Column(type="text", length=7, nullable=true)
-     * @Assert\NotBlank(allowNull=true)
-     * @Color()
-     * @var string|null
-     */
-    private $backgroundColor = null;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    private $maxNumberOfRows = 20;
-
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
-     */
-    private $fontFamily = null;
+    private $targetUserType;
 
     /**
      * @var int
@@ -86,10 +64,10 @@ class Display {
     private $showAbsences = true;
 
     /**
-     * @ORM\Column(type="display_target_user_type", nullable=true)
-     * @var DisplayTargetUserType|null
+     * @ORM\Column(type="boolean")
+     * @var bool
      */
-    private $appointmentsTarget = null;
+    private $showExams = true;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -108,70 +86,6 @@ class Display {
      */
     public function setName(?string $name): Display {
         $this->name = $name;
-        return $this;
-    }
-
-    /**
-     * @return DisplayTargetUserType|null
-     */
-    public function getSubstitutionsTarget(): ?DisplayTargetUserType {
-        return $this->substitutionsTarget;
-    }
-
-    /**
-     * @param DisplayTargetUserType|null $substitutionsTarget
-     * @return Display
-     */
-    public function setSubstitutionsTarget(?DisplayTargetUserType $substitutionsTarget): Display {
-        $this->substitutionsTarget = $substitutionsTarget;
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getBackgroundColor(): ?string {
-        return $this->backgroundColor;
-    }
-
-    /**
-     * @param string|null $backgroundColor
-     * @return Display
-     */
-    public function setBackgroundColor(?string $backgroundColor): Display {
-        $this->backgroundColor = $backgroundColor;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaxNumberOfRows(): int {
-        return $this->maxNumberOfRows;
-    }
-
-    /**
-     * @param int $maxNumberOfRows
-     * @return Display
-     */
-    public function setMaxNumberOfRows(int $maxNumberOfRows): Display {
-        $this->maxNumberOfRows = $maxNumberOfRows;
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getFontFamily(): ?string {
-        return $this->fontFamily;
-    }
-
-    /**
-     * @param string|null $fontFamily
-     * @return Display
-     */
-    public function setFontFamily(?string $fontFamily): Display {
-        $this->fontFamily = $fontFamily;
         return $this;
     }
 
@@ -274,16 +188,33 @@ class Display {
     /**
      * @return DisplayTargetUserType|null
      */
-    public function getAppointmentsTarget(): ?DisplayTargetUserType {
-        return $this->appointmentsTarget;
+    public function getTargetUserType(): ?DisplayTargetUserType {
+        return $this->targetUserType;
     }
 
     /**
-     * @param DisplayTargetUserType|null $appointmentsTarget
+     * @param DisplayTargetUserType|null $targetUserType
      * @return Display
      */
-    public function setAppointmentsTarget(?DisplayTargetUserType $appointmentsTarget): Display {
-        $this->appointmentsTarget = $appointmentsTarget;
+    public function setTargetUserType(?DisplayTargetUserType $targetUserType): Display {
+        $this->targetUserType = $targetUserType;
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isShowExams(): bool {
+        return $this->showExams;
+    }
+
+    /**
+     * @param bool $showExams
+     * @return Display
+     */
+    public function setShowExams(bool $showExams): Display {
+        $this->showExams = $showExams;
+        return $this;
+    }
+
 }

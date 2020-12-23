@@ -15,44 +15,54 @@ class DisplayType extends AbstractType {
             ->add('name', TextType::class, [
                 'label' => 'label.name'
             ])
-            ->add('substitutionsTarget', DisplayTargetUserTypeType::class, [
-                'label' => 'label.substitutions'
-            ])
-            ->add('backgroundColor', ColorType::class, [
-                'required' => false,
-                'label' => 'label.background_color'
-            ])
-            ->add('maxNumberOfRows', IntegerType::class, [
-                'label' => 'label.number_of_rows'
-            ])
-            ->add('fontFamily', TextType::class, [
-                'required' => false,
-                'label' => 'label.font_family'
+            ->add('targetUserType', DisplayTargetUserTypeType::class, [
+                'label' => 'label.usertype',
+                'expanded' => true,
+                'label_attr' => [
+                    'class' => 'radio-custom'
+                ]
             ])
             ->add('showDate', CheckboxType::class, [
                 'label' => 'label.show.date',
-                'required' => false
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ])
             ->add('showTime', CheckboxType::class, [
                 'label' => 'label.show.time',
-                'required' => false
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ])
             ->add('showInfotexts', CheckboxType::class, [
                 'label' => 'label.show.infotexts',
-                'required' => false
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ])
             ->add('showAbsences', CheckboxType::class, [
                 'label' => 'label.show.abesences',
-                'required' => false
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ])
             ->add('showWeek', CheckboxType::class, [
                 'label' => 'label.show.week',
-                'required' => false
-            ])
-            ->add('appointmentsTarget', DisplayTargetUserTypeType::class, [
                 'required' => false,
-                'placeholder' => 'label.empty',
-                'label' => 'label.appointments_target'
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
+            ])
+            ->add('showExams', CheckboxType::class, [
+                'label' => 'label.show.exams',
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ]);
     }
 }

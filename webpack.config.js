@@ -26,7 +26,12 @@ Encore
     .enableSassLoader(function(options) {
         options.importer = GlobImporter();
     })
-    .enablePostCssLoader()
+    .enablePostCssLoader((options) => {
+        // Fix compilation errors: "Module build failed: Error: No PostCSS Config found" - even though the file exists!
+        options.config = {
+            path: 'postcss.config.js'
+        }
+    })
 
     .addLoader(
         {

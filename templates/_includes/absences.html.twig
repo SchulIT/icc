@@ -1,6 +1,6 @@
 {% if absentTeachers|length > 0 or absentStudyGroups|length > 0 %}
-<div class="card">
-    <div class="card-body">
+<div class="card {{ classes|default('') }}">
+    <div class="card-body {{ bodyClasses|default('') }}">
         <div class="d-flex align-items-baseline mb-2">
             <span class="mr-1"><i class="fa fa-graduation-cap"></i> {{ 'plans.substitutions.absence.teacher'|trans }}:</span>
             <span>

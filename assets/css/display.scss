@@ -1,6 +1,9 @@
 $enable-shadows: true;
 $enable-gradients: true;
 
+// Import SCSS from custom
+@import "custom/*.scss";
+
 // Import Bootstrap
 @import '../../node_modules/bootstrap/scss/bootstrap';
 
@@ -14,10 +17,22 @@ $enable-gradients: true;
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/layout.scss';
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/additions.scss';
+@import '../../node_modules/bootstrap-darkmode/darktheme';
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/dark/variables.scss';
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/dark/layout';
+
+// Import SCSS from overrides
+@import "overrides/*.scss";
 
 html,
 body {
-  font-size: 100% !important;
+  font-size: 0.9rem;
+  height: 100vh;
+  min-height: auto !important;
+}
+
+body {
+  min-height: auto !important;
 }
 
 .color-rect {
@@ -50,14 +65,25 @@ body {
 }
 
 
-.bottom {
-  .logo {
-    img {
-      max-height: 80px;
-    }
+.top {
+  font-size: 1.2rem;
+  img.logo {
+    max-height: 70px;
   }
 }
 
-.flex-even {
-  flex: 1;
+.info {
+  font-size: 0.9rem;
+}
+
+.sidebar {
+  .card:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.substitution {
+  .mx-1 {
+    @extend .mx-2;
+  }
 }

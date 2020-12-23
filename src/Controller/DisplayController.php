@@ -11,6 +11,7 @@ use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
+use App\Sorting\AppointmentStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\SubstitutionGradeGroupStrategy;
 use App\Sorting\SubstitutionStrategy;
@@ -39,12 +40,23 @@ class DisplayController extends AbstractController {
         if($display->getSubstitutionsTarget()->equals(DisplayTargetUserType::Students())) {
             $substitutionGroups = $grouper->group($substitutions, SubstitutionGradeStrategy::class);
             $sorter->sort($substitutionGroups, SubstitutionGradeGroupStrategy::class);
+
+            $appointments = $appointmentRepository->findAllForAllStudents($today);
         } else if($display->getSubstitutionsTarget()->equals(DisplayTargetUserType::Teachers())) {
             $substitutionGroups = $grouper->group($substitutions, SubstitutionTeacherStrategy::class);
             $sorter->sort($substitutionGroups, SubstitutionTeacherGroupStrategy::class);
+
+            $appointments = $appointmentRepository->findAll([], null, $today);
         }
 
         $sorter->sortGroupItems($substitutionGroups, SubstitutionStrategy::class);
+        $sorter->sort($appointments, AppointmentStrategy::class);
+
+        $totalNumberOfSubstitutions = 0;
+
+        foreach($substitutionGroups as $group) {
+            $totalNumberOfSubstitutions += count($group->getSubstitutions());
+        }
 
         return $this->render('display/show.html.twig', [
             'display' => $display,
@@ -52,7 +64,9 @@ class DisplayController extends AbstractController {
             'infotexts' => $infotextRepository->findAllByDate($today),
             'absent_studygroups' => $absenceRepository->findAllStudyGroups($today),
             'absent_teachers' => $absenceRepository->findAllTeachers($today),
-            'groups' => $substitutionGroups
+            'groups' => $substitutionGroups,
+            'appointments' => $appointments,
+            'total_substitutions' => $totalNumberOfSubstitutions
         ]);
     }
 }

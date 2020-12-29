@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Validator\Color;
 use DH\DoctrineAuditBundle\Annotation\Auditable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -39,8 +41,20 @@ class TeacherTag {
      */
     private $color;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
+     * @ORM\JoinTable(name="teacher_tag_visibilities",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @var ArrayCollection<UserTypeEntity>
+     */
+    private $visibilities;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
+
+        $this->visibilities = new ArrayCollection();
     }
 
     /**
@@ -89,5 +103,17 @@ class TeacherTag {
     public function setColor($color) {
         $this->color = $color;
         return $this;
+    }
+
+    public function addVisibility(UserTypeEntity $userType): void {
+        $this->visibilities->add($userType);
+    }
+
+    public function removeVisibility(UserTypeEntity $userType): void {
+        $this->visibilities->removeElement($userType);
+    }
+
+    public function getVisibilities(): Collection {
+        return $this->visibilities;
     }
 }

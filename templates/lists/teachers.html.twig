@@ -38,7 +38,9 @@
                                                 {{ teacher|teacher }}
 
                                                 {% for tag in teacher.tags %}
-                                                    <span class="badge" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
+                                                    {% if is_granted('view', tag) %}
+                                                        <span class="badge" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
+                                                    {% endif %}
                                                 {% endfor %}
                                             </td>
                                             <td>

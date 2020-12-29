@@ -99,7 +99,7 @@
                         } %}
                         {% set dateParam = selectedDate ? selectedDate|date('Y-m-d') : null %}
 
-                        {% include "_filter/teacher.html.twig" with { params: { date: dateParam } } %}
+                        {% include "_filter/teacher.html.twig" with { params: { date: dateParam }, allowClear: true, path: 'sick_notes' } %}
 
                         {% include "_filter/grade.html.twig" with { params: { date: dateParam } } %}
 

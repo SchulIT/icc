@@ -171,10 +171,6 @@ class MessageVoter extends Voter {
             return false;
         }
 
-        if($message->getPriority()->equals(MessagePriority::Emergency())) {
-            return false;
-        }
-
         if($message->mustConfirm() === false || $this->canConfirm($message, $token) === false) {
             return true;
         }

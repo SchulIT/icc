@@ -111,6 +111,15 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
             $entity->setRoom(null);
         }
 
+        // Remove all supervisions which are outside the exam lesson bounds
+        $remove = $entity->getSupervisions()->filter(function(ExamSupervision $supervision) use($entity) {
+            return $supervision->getLesson() < $entity->getLessonStart() || $supervision->getLesson() > $entity->getLessonEnd();
+        });
+
+        foreach($remove as $item) {
+            $entity->removeSupervision($item);
+        }
+
         $supervisions = $data->getSupervisions();
 
         for($lesson = $data->getLessonStart(), $idx = 0; $lesson <= $data->getLessonEnd(); $lesson++, $idx++) {

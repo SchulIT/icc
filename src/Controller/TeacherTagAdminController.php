@@ -70,7 +70,8 @@ class TeacherTagAdminController extends AbstractController {
         }
 
         return $this->render('admin/teachers/tags/edit.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'tag' => $tag
         ]);
     }
 

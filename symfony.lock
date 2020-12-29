@@ -20,6 +20,9 @@
     "frostiede/enum-bundle": {
         "version": "3.0.0"
     },
+    "lcobucci/clock": {
+        "version": "2.0.0"
+    },
     "league/mime-type-detection": {
         "version": "1.4.0"
     },
@@ -28,6 +31,9 @@
     },
     "php": {
         "version": "7.4"
+    },
+    "phpstan/phpdoc-parser": {
+        "version": "0.4.10"
     },
     "psr/event-dispatcher": {
         "version": "1.0.0"
@@ -46,6 +52,9 @@
     },
     "symfony/lock": {
         "version": "v4.4.16"
+    },
+    "symfony/proxy-manager-bridge": {
+        "version": "v4.4.18"
     },
     "symfony/security-core": {
         "version": "v4.4.15"

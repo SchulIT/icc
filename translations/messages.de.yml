@@ -134,6 +134,9 @@ label:
     created_by: Erstellt von
     ordered_by: Angeordnet von
     resource: Ressource
+    icon:
+        label: Icon
+        help: Hier kann eine Font Awesome Icon Klasse eingetragen werden. Dabei handelt es sich um die CSS-Klasse, bspw. fas fa-door-open.
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

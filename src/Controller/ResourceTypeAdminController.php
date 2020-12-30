@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\ResourceType;
-use App\Entity\RoomTag;
+use App\Form\ResourceTypeType;
 use App\Form\RoomTagType;
 use App\Repository\ResourceTypeRepositoryInterface;
 use App\Security\Voter\ResourceTypeVoter;
@@ -48,7 +48,7 @@ class ResourceTypeAdminController extends AbstractController {
         $this->denyAccessUnlessGranted(ResourceTypeVoter::New);
 
         $tag = new ResourceType();
-        $form = $this->createForm(RoomTagType::class, $tag);
+        $form = $this->createForm(ResourceTypeType::class, $tag);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
@@ -69,7 +69,7 @@ class ResourceTypeAdminController extends AbstractController {
     public function edit(ResourceType $type, Request $request) {
         $this->denyAccessUnlessGranted(ResourceTypeVoter::Edit, $type);
 
-        $form = $this->createForm(RoomTagType::class, $type);
+        $form = $this->createForm(ResourceTypeType::class, $type);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {

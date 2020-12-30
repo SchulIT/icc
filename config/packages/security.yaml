@@ -11,6 +11,10 @@ security:
             entity:
                 class: App:User
                 property: idpId
+        oauth2:
+            entity:
+                class: App:User
+                property: username
         cron:
             id: App\Security\CronUserProvider
 
@@ -100,7 +104,7 @@ security:
             security: true
             stateless: true
             oauth2: true
-            provider: database
+            provider: oauth2
 
         ics:
             pattern: ^/(appointments|timetable|exams)/ics/download(?!$)

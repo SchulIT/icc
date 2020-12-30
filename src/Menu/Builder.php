@@ -299,7 +299,7 @@ class Builder {
             $menu->addChild('admin.displays.label', [
                 'route' => 'admin_displays'
             ])
-                ->setAttribute('icon', 'fas fa-tv');
+                ->setExtra('icon', 'fas fa-tv');
 
             $menu->addChild('api.doc', [
                 'uri' => '/docs/api/import'

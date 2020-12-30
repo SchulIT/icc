@@ -20,6 +20,11 @@
             <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
                 {% for tuition in exam.tuitions %}
                     <span>
+                        {{ tuition.name }}
+                        <span class="mx-1"></span>
+                    </span>
+
+                    <span>
                         <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
                         <span class="mx-1"></span>
                     </span>

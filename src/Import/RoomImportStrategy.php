@@ -3,6 +3,7 @@
 namespace App\Import;
 
 use App\Entity\Room;
+use App\Repository\ResourceTypeRepositoryInterface;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\GradesData;
@@ -13,9 +14,11 @@ use App\Utils\ArrayUtils;
 class RoomImportStrategy implements ImportStrategyInterface {
 
     private $roomRepository;
+    private $resourceTypeRepository;
 
-    public function __construct(RoomRepositoryInterface $roomRepository) {
+    public function __construct(RoomRepositoryInterface $roomRepository, ResourceTypeRepositoryInterface $resourceTypeRepository) {
         $this->roomRepository = $roomRepository;
+        $this->resourceTypeRepository = $resourceTypeRepository;
     }
 
     /**
@@ -77,6 +80,7 @@ class RoomImportStrategy implements ImportStrategyInterface {
         $entity->setName($data->getName());
         $entity->setDescription($data->getDescription());
         $entity->setCapacity($data->getCapacity());
+        $entity->setType($this->resourceTypeRepository->findRoomType());
     }
 
     /**

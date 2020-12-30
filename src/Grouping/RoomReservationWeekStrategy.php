@@ -2,12 +2,12 @@
 
 namespace App\Grouping;
 
-use App\Entity\RoomReservation;
+use App\Entity\ResourceReservation;
 
 class RoomReservationWeekStrategy implements GroupingStrategyInterface {
 
     /**
-     * @param RoomReservation $object
+     * @param ResourceReservation $object
      * @return WeekOfYear|null
      */
     public function computeKey($object) {

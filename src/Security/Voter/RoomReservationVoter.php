@@ -2,7 +2,7 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\RoomReservation;
+use App\Entity\ResourceReservation;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Utils\EnumArrayUtils;
@@ -37,7 +37,7 @@ class RoomReservationVoter extends Voter {
         ];
 
         return in_array($attribute, $staticAttributes)
-            || ($subject instanceof RoomReservation && in_array($attribute, $attributes));
+            || ($subject instanceof ResourceReservation && in_array($attribute, $attributes));
     }
 
     /**
@@ -80,7 +80,7 @@ class RoomReservationVoter extends Voter {
         return $this->canView($token);
     }
 
-    private function canEdit(RoomReservation $reservation, TokenInterface $token) {
+    private function canEdit(ResourceReservation $reservation, TokenInterface $token) {
         if($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) === true) {
             return true;
         }
@@ -98,7 +98,7 @@ class RoomReservationVoter extends Voter {
         return false;
     }
 
-    private function canRemove(RoomReservation $reservation, TokenInterface $token) {
+    private function canRemove(ResourceReservation $reservation, TokenInterface $token) {
         return $this->canEdit($reservation, $token);
     }
 }

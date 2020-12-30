@@ -9,13 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class RoomRepository extends AbstractTransactionalRepository implements RoomRepositoryInterface {
 
-    private $roomTagRepository;
 
-    public function __construct(EntityManagerInterface $em, RoomTagRepositoryInterface $roomTagRepository) {
-        parent::__construct($em);
-
-        $this->roomTagRepository = $roomTagRepository;
-    }
 
     private function getDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
@@ -89,77 +83,7 @@ class RoomRepository extends AbstractTransactionalRepository implements RoomRepo
     }
 
 
-    /**
-     * @inheritDoc
-     */
-    public function findAllByQuery(RoomQuery $query): array {
-        $qb = $this->getDefaultQueryBuilder();
 
-
-        /**
-         * Step 1: select room IDs
-         */
-        $qbInner = $this->em->createQueryBuilder();
-        $qbInner->select('rInner.id')
-            ->from(Room::class, 'rInner')
-            ->leftJoin('rInner.tags', 'tiInner')
-            ->leftJoin('tiInner.tag', 'tInner')
-            ->groupBy('rInner.name');
-
-        if($query->hasSeats()) {
-            $qbInner->andWhere('rInner.capacity >= :capacity');
-            $qb->setParameter('capacity', $query->getSeatsValueOrDefault());
-        }
-
-        if($query->hasName()) {
-            $qbInner->andWhere(
-                $qbInner->expr()->orX(
-                    'rInner.name LIKE :q',
-                    'rInner.description LIKE :q'
-                )
-            );
-            $qb->setParameter('q', '%' . $query->getName() . '%');
-        }
-
-        $tagIds = [ ];
-
-        foreach($this->roomTagRepository->findAll() as $tag) {
-            if($query->hasTag($tag)) {
-                if($tag->hasValue()) {
-                    $tagIds[] = $tag->getId();
-                    $qbInner
-                        ->andWhere(
-                            $qbInner->expr()->orX(
-                                'tInner.id != :tag' . $tag->getId() . 'id',
-                                'tiInner.value >= :tag' . $tag->getId() . 'value'
-                            )
-                        );
-
-                    $qb->setParameter('tag' . $tag->getId() . 'id', $tag->getId())
-                        ->setParameter('tag' . $tag->getId() . 'value', $query->getValueOrDefault($tag));
-                } else if(!$tag->hasValue()) {
-                    $tagIds[] = $tag->getId();
-                }
-            }
-        }
-
-        if(count($tagIds) > 0) {
-            $qbInner
-                ->andWhere(
-                    $qbInner->expr()->in('tInner.id', ':tags')
-                )
-                ->having('COUNT(tInner.id) = :tagCount');
-
-            $qb->setParameter('tags', $tagIds)
-                ->setParameter('tagCount', count($tagIds));
-        }
-
-        $qb->where(
-            $qb->expr()->in('r.id', $qbInner->getDQL())
-        );
-
-        return $qb->getQuery()->getResult();
-    }
 
 
 }

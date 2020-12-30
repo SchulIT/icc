@@ -133,6 +133,7 @@ label:
     all: alle
     created_by: Erstellt von
     ordered_by: Angeordnet von
+    resource: Ressource
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -309,42 +310,42 @@ plans:
             study_groups: "{1}Lerngruppe: %name%|]1,Inf[Lerngruppen: %name%"
             all: alle
             organizers: "{1}Organisator: %name%|]1,Inf[Organisatoren: %name%"
-    rooms:
-        label: Räume
-        filter:
-            label: Raum suchen
-            name:
-                label: Name
-                help: "Hier kann ein Suchbegriff eingegeben werden"
-            seats:
-                help: "Hier kann die minimale Anzahl an Sitzplätzen eingegeben werden"
-        seats: Sitzplätze
-        timetable: Stundenplan anzeigen
 
-        reservations:
-            label: Raumbelegplan
-            help: Zum Erstellen einer Reservierung entweder auf ein grünes Feld klicken oder die obige Schaltfläche nutzen.
-            info: Informationen
-            available: Der Raum ist nicht belegt und kann reserviert werden.
-            not_available: Der Raumbelegplan kann nicht angezeigt werden, da dem ausgewählten Datum keine Periode oder Woche zugeordnet werden kann.
-            reservation: Reservierung
-            add:
-                label: Neue Reservierung
-                success: Raum-Reservierung erfolgreich angelegt
-            edit:
-                label: Reservierung bearbeiten
-                success: Raum-Reservierung erfolgreich aktualisiert
-            remove:
-                label: Reservierung löschen
-                success: Raum-Reservierung erfolgreich gelöscht
-                confirm: 'Soll die Raum-Reservierung für %room% am %date% (%lessons%) wirklich gelöscht werden?'
-                info: Nach dem Löschen der Reservierung kann der Raum von anderen Lehrkräften reserviert werden. Er steht dann für den eigenen Unterricht nicht mehr zur Verfügung.
-            collision:
-                label: 'Die Reservierung kollidiert mit folgenden Einträgen:'
-            list:
-                label: Alle Reservierungen
-                empty: Keine Reservierungen für den aktuellen Filter gefunden.
-                all: vergangene Reservierungen anzeigen
+resources:
+    label: Ressourcen
+    filter:
+        label: Raum filtern
+        name:
+            label: Name
+            help: "Hier kann ein Suchbegriff eingegeben werden"
+        seats:
+            help: "Hier kann die minimale Anzahl an Sitzplätzen eingegeben werden"
+    seats: Sitzplätze
+
+    reservations:
+        label: Ressourcen
+        help: Zum Erstellen einer Reservierung entweder auf ein grünes Feld klicken oder die obige Schaltfläche nutzen.
+        info: Informationen
+        available: Der Raum ist nicht belegt und kann reserviert werden.
+        not_available: Der Raumbelegplan kann nicht angezeigt werden, da dem ausgewählten Datum keine Periode oder Woche zugeordnet werden kann.
+        reservation: Reservierung
+        add:
+            label: Neue Reservierung
+            success: Raum-Reservierung erfolgreich angelegt
+        edit:
+            label: Reservierung bearbeiten
+            success: Raum-Reservierung erfolgreich aktualisiert
+        remove:
+            label: Reservierung löschen
+            success: Raum-Reservierung erfolgreich gelöscht
+            confirm: 'Soll die Raum-Reservierung für %room% am %date% (%lessons%) wirklich gelöscht werden?'
+            info: Nach dem Löschen der Reservierung kann der Raum von anderen Lehrkräften reserviert werden. Er steht dann für den eigenen Unterricht nicht mehr zur Verfügung.
+        collision:
+            label: 'Die Reservierung kollidiert mit folgenden Einträgen:'
+        list:
+            label: Alle Reservierungen
+            empty: Keine Reservierungen für den aktuellen Filter gefunden.
+            all: vergangene Reservierungen anzeigen
 
 lists:
     label: Listen
@@ -934,20 +935,37 @@ admin:
             lists: Kurse mit diesem Fach in Kurslisten sichtbar
             lists_false: Kurse mit diesem Fach in Kurslisten nicht sichtbar
 
-    rooms:
-        label: Räume
-        empty: Keine Räume vorhanden.
+    resources:
+        label: Ressourcen
+        empty: Keine Ressourcen vorhanden.
         show_reservations: Raum-Belegplan anzeigen
         add:
-            label: Neuer Raum
-            success: Raum erfolgreich angelegt
+            label: Neue Ressource
+            label_room: Neuer Raum
+            success: Ressource erfolgreich angelegt
         edit:
-            label: Raum bearbeiten
-            success: Raum erfolgreich aktualisiert
+            label: Ressource bearbeiten
+            success: Ressource erfolgreich aktualisiert
         remove:
-            label: Raum löschen
-            confirm: 'Soll der Raum "%name%" wirklich gelöscht werden?'
-            success: Raum erfolgreich gelöscht
+            label: Ressource löschen
+            confirm: 'Soll die Ressource "%name%" wirklich gelöscht werden?'
+            success: Ressource erfolgreich gelöscht
+
+        types:
+            label: Ressourcen-Typen
+            add:
+                label: Neuer Ressourcen-Typ
+                success: Ressourcen-Typ erfolgreich angelegt
+            edit:
+                label: Ressourcen-Typ bearbeiten
+                success: Ressourcen-Typ erfolgreich aktualisiert
+            remove:
+                label: Ressourcen-Typ löschen
+                confirm: 'Soll der Ressourcen-Typ "%name%" wirklich gelöscht werden?'
+                success: Ressourcen-Typ erfolgreich gelöscht
+                error:
+                    rooms: 'Der Ressourcen-Typ "Raum" kann nicht gelöscht werden, da er vom System benötigt wird.'
+                    in_use: Der Ressourcen-Typ kann nicht gelöscht, da er verwendet wird.
 
         tags:
             label: Raum-Tags

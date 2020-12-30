@@ -1,0 +1,287 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'resources.reservations.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        {% set currentFilter = {
+                            date: date|date('Y-m-d'),
+                            start: lesson_start,
+                            end: lesson_end
+                        }|merge(serialized_query) %}
+
+                        <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
+                            {% set previousDate = date|previous_date %}
+                            <li class="nav-item" data-resize="show">
+                                <a class="nav-link" href="{{ path('resource_reservations', currentFilter|merge({ date: previousDate|date('Y-m-d') })) }}">
+                                    <i class="fa fa-chevron-left"></i>
+                                </a>
+                            </li>
+
+                            {% for day in days %}
+                                <li class="nav-item" {% if date == day%}data-resize="prevent"{% endif%}>
+                                    <a class="nav-link{% if date == day %} active{% endif %}" href="{{ path('resource_reservations', currentFilter|merge({ date: day|date('Y-m-d') })) }}">
+                                        <i class="fa fa-calendar"></i> {{ day.format('w')|weekday(true) }}., {{ day.format('date.format_short'|trans) }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+
+                            {% set nextDate = date|next_date %}
+                            <li class="nav-item" data-resize="show">
+                                <a class="nav-link" href="{{ path('resource_reservations', currentFilter|merge({ date: nextDate|date('Y-m-d') })) }}">
+                                    <i class="fa fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {% if overview is null %}
+                    <div class="card-body">
+                        {{ 'resources.reservations.not_available'|trans }}
+                    </div>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover card-table">
+                                <colgroup>
+                                    <col class="column-sm">
+                                    <col>
+                                    {% if overview.maxLessons > 0 %}
+                                        {% for lesson in 1..overview.maxLessons %}
+                                        <col class="column-sm">
+                                        {% endfor %}
+                                    {% endif %}
+                                </colgroup>
+
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>{{ 'label.room'|trans }}</th>
+                                    {% if overview.maxLessons > 0 %}
+                                        {% for lesson in 1..overview.maxLessons %}
+                                            <th class="text-center">{{ lesson }}.</th>
+                                        {% endfor %}
+                                    {% endif %}
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {% for resource in resources %}
+                                    <tr>
+                                        <td class="align-middle">
+                                            {% if resource.type.icon is not empty %}
+                                                <i class="{{ resource.type.icon }}" title="{{ resource.type.name }}"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <span class="mr-1 flex-fill">
+                                                    <strong>{{ resource.name }}</strong>
+
+                                                    {% if resource.capacity is defined and resource.capacity is not null%}
+                                                        <span class="badge badge-primary">
+                                                            <i class="fas fa-chair"></i> {{ resource.capacity }}
+                                                        </span>
+                                                    {% endif %}
+
+                                                    <span class="text-muted mr-2">{{ resource.description }}</span>
+                                                </span>
+
+                                                {% if status[resource.id] is defined and status[resource.id] is not null %}
+                                                    {% set roomStatus = status[resource.id] %}
+                                                    {% for badge in roomStatus.badges %}
+                                                        <a href="{{ roomStatus.link }}" target="_blank" class="mr-2 btn btn-sm btn-outline-{% if badge.counter > 0 %}danger{% else %}success{% endif %}" title="{{ badge.label|trans }}">
+                                                            {%- if badge.icon is not null -%}<i class="{{ badge.icon }}"></i>{%- endif -%}
+                                                            <span class="badge badge-pill">{{ badge.counter }}</span>
+                                                        </a>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </div>
+
+                                            {% if resource.tags is defined %}
+                                            <p>
+                                                {% for tagInfo in resource.tags %}
+                                                    <span class="badge badge-secondary">
+                                                        <i class="fa fa-check"></i> {{ tagInfo.tag.name }}{% if tagInfo.tag.hasValue %}: {{ tagInfo.value() }}{% endif %}
+                                                    </span>
+                                                {% endfor %}
+                                            </p>
+                                            {% endif %}
+                                        </td>
+                                        {% if overview.maxLessons > 0 %}
+                                            {% for lesson in 1..overview.maxLessons %}
+                                                {% set availability = overview.availability(resource, lesson) %}
+                                                {% set isAvailable = availability ? availability.isAvailable : false %}
+
+                                                <td data-toggle="xhr-popover" data-popover-title="{{ 'resources.reservations.info'|trans }}" data-popover-url="{{ path('reservation_xhr', { resource: resource.uuid.toString, date: date|date('Y-m-d'), lessonNumber: lesson }) }}" class="{% if isAvailable %}table-success{% else %}bg-danger{% endif %} text-center align-middle p-0">
+                                                    {% if isAvailable %}
+                                                        <a href="{{ path('add_room_reservation', { resource: resource.uuid.toString, date: date|date('Y-m-d'), lessonStart: lesson }) }}" class="w-100 h-100 py-3 d-block">
+                                                            <i class="fa fa-check"></i>
+                                                        </a>
+                                                    {% elseif availability is not null and availability.reservation is not null and availability.substitution is not null %}
+                                                        <i class="fa fa-exclamation-triangle"></i>
+                                                    {% else %}
+                                                        <i class="fa fa-times"></i>
+                                                    {% endif %}
+                                                </td>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('add_room_reservation') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus"></i> {{ 'resources.reservations.add.label'|trans }}
+                        </a>
+                        <a href="{{ path('list_reservations') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-door-closed"></i> {{ 'resources.reservations.list.label'|trans }}
+                        </a>
+
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        {% set dateParam = date|date('Y-m-d') %}
+
+                        <form role="form" method="get" class="form hidden-print mb-3">
+                            {% include "_filter/_params.html.twig" with { params: currentFilter|merge({date: null}) } %}
+
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
+                            </div>
+                        </form>
+
+                        <form role="form" method="get" class="form hidden-print">
+                            {% include "_filter/_params.html.twig" with { params: currentFilter } %}
+
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-clock"></i></span>
+                                </div>
+                                <input class="form-control" type="number" name="start" data-trigger="submit" value="{{ lesson_start }}" placeholder="{{ 'label.start'|trans }}">
+                                <input class="form-control" type="number" name="end" data-trigger="submit" value="{{ lesson_end }}" placeholder="{{ 'label.end'|trans }}">
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('resource_reservations') }}" class="btn btn-primary btn-sm">
+                            {{ 'filter.reset'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'resources.filter.label'|trans }}</h5>
+
+                        <form method="get" role="form">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="mr-1 custom-control-input" value="✓" type="checkbox" id="check-seats" name="seats" {% if query.hasSeats() %} checked{% endif %}>
+                                            <label for="check-seats" class="custom-control-label">
+                                                {{ 'resources.seats'|trans }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input type="number" min="0" name="seats-value" class="form-control input-sm" value="{{ query.getSeatsValueOrDefault() }}" data-enable="#check-seats">
+
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <i class="fa fa-info-circle" title="{{ 'resources.filter.seats.help'|trans }}" data-toggle="tooltip"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% for tag in tags %}
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend {% if not tag.hasValue() %}flex-fill{% endif %}">
+                                        <div class="input-group-text {% if not tag.hasValue() %}w-100{% endif %}">
+                                            <div class="custom-control custom-checkbox">
+                                                <input class="mr-1 custom-control-input" type="checkbox" id="check-tag-{{ tag.uuid }}" name="tag-{{ tag.uuid }}" value="✓" {% if query.hasTag(tag) %} checked{% endif %}>
+                                                <label for="check-tag-{{ tag.uuid }}" class="custom-control-label">
+                                                    {{ tag.name }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% if tag.hasValue() %}
+                                        <input type="number" min="0" name="tag-{{ tag.uuid }}-value" class="form-control input-sm" value="{{ query.getValueOrDefault(tag) }}" data-enable="#check-tag-{{ tag.uuid }}">
+                                    {% endif %}
+
+                                    {% if not tag.description is empty %}
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-info-circle" title="{{ tag.description }}" data-toggle="tooltip"></i>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+
+                            <button type="submit" name="submit" value="" class="btn btn-primary btn-sm">
+                                <i class="fa fa-search"></i> {{ 'actions.search'|trans }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fa fa-info-circle"></i> {{ 'info.label'|trans }}
+                        </h5>
+
+                        <p>{{ 'resources.reservations.help'|trans }}</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'label.last_import'|trans }}</h5>
+                        <p>
+                            {% if last_import is not null %}
+                                {{ last_import.updatedAt|format_datetime }}
+                            {% else %}
+                                {{ 'label.never'|trans }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

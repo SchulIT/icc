@@ -10,7 +10,7 @@ use App\Entity\GradeTeacher;
 use App\Entity\Message;
 use App\Entity\MessageScope;
 use App\Entity\Room;
-use App\Entity\RoomReservation;
+use App\Entity\ResourceReservation;
 use App\Entity\SickNote;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
@@ -31,7 +31,7 @@ use App\Repository\ExamRepositoryInterface;
 use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
-use App\Repository\RoomReservationRepositoryInterface;
+use App\Repository\ResourceReservationRepositoryInterface;
 use App\Repository\SickNoteRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
@@ -93,7 +93,7 @@ class DashboardViewHelper {
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
                                 MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, RoomReservationRepositoryInterface $reservationRepository,
+                                StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, ResourceReservationRepositoryInterface $reservationRepository,
                                 FreeTimespanRepositoryInterface $freeTimespanRepository, SickNoteRepositoryInterface $sickNoteRepository,
                                 StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, TimetableTimeHelper $timetableTimeHelper, Sorter $sorter, Grouper $grouper,
                                 TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
@@ -136,7 +136,7 @@ class DashboardViewHelper {
 
         $this->addSubstitutions($this->substitutionRepository->findAllForRooms([ $room ], $dateTime), $view);
         $this->addExams($exams = $this->examRepository->findAllByRoomAndDate($room, $dateTime), $view, null);
-        $this->addRoomReservations($this->roomReservationRepository->findAllByRoomAndDate($room, $dateTime), $view);
+        $this->addRoomReservations($this->roomReservationRepository->findAllByResourceAndDate($room, $dateTime), $view);
         $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
 
         return $view;
@@ -444,7 +444,7 @@ class DashboardViewHelper {
     }
 
     /**
-     * @param RoomReservation[] $reservations
+     * @param ResourceReservation[] $reservations
      * @param DashboardView $view
      */
     private function addRoomReservations(array $reservations, DashboardView $view): void {

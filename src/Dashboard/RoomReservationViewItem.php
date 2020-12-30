@@ -2,7 +2,7 @@
 
 namespace App\Dashboard;
 
-use App\Entity\RoomReservation;
+use App\Entity\ResourceReservation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class RoomReservationViewItem extends AbstractViewItem {
@@ -11,15 +11,15 @@ class RoomReservationViewItem extends AbstractViewItem {
 
     private $violations;
 
-    public function __construct(RoomReservation $reservation, ConstraintViolationListInterface $violations) {
+    public function __construct(ResourceReservation $reservation, ConstraintViolationListInterface $violations) {
         $this->reservation = $reservation;
         $this->violations = $violations;
     }
 
     /**
-     * @return RoomReservation
+     * @return ResourceReservation
      */
-    public function getReservation(): RoomReservation {
+    public function getReservation(): ResourceReservation {
         return $this->reservation;
     }
 

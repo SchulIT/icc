@@ -4,8 +4,8 @@ namespace App\Validator;
 
 use App\Converter\TeacherStringConverter;
 use App\Entity\Exam;
-use App\Entity\RoomReservation;
-use App\Rooms\Reservation\RoomAvailabilityHelper;
+use App\Entity\ResourceReservation;
+use App\Rooms\Reservation\ResourceAvailabilityHelper;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -15,7 +15,7 @@ class NoReservationCollisionValidator extends ConstraintValidator {
     private $availabilityHelper;
     private $teacherConverter;
 
-    public function __construct(RoomAvailabilityHelper $availabilityHelper, TeacherStringConverter $teacherConverter) {
+    public function __construct(ResourceAvailabilityHelper $availabilityHelper, TeacherStringConverter $teacherConverter) {
         $this->availabilityHelper = $availabilityHelper;
         $this->teacherConverter = $teacherConverter;
     }
@@ -28,11 +28,11 @@ class NoReservationCollisionValidator extends ConstraintValidator {
             throw new UnexpectedTypeException($constraint, NoReservationCollision::class);
         }
 
-        if(!$value instanceof RoomReservation && !$value instanceof Exam) {
-            throw new UnexpectedTypeException($value, RoomReservation::class);
+        if(!$value instanceof ResourceReservation && !$value instanceof Exam) {
+            throw new UnexpectedTypeException($value, ResourceReservation::class);
         }
 
-        $room = $value->getRoom();
+        $room = $value->getResource();
         $date = $value->getDate();
         $lessonStart = $value->getLessonStart();
         $lessonEnd = $value->getLessonEnd();

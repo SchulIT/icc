@@ -2,14 +2,14 @@
 
 namespace App\Grouping;
 
-use App\Entity\RoomReservation;
+use App\Entity\ResourceReservation;
 
 class RoomReservationWeekGroup implements GroupInterface, SortableGroupInterface {
 
     /** @var WeekOfYear */
     private $week;
 
-    /** @var RoomReservation[] */
+    /** @var ResourceReservation[] */
     private $reservations;
 
     public function __construct(WeekOfYear $week) {

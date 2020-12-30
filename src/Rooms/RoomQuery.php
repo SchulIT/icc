@@ -5,21 +5,7 @@ namespace App\Rooms;
 use App\Entity\RoomTag;
 
 class RoomQuery {
-    private $name = null;
-
     private $conditions = [ ];
-
-    public function hasName() {
-        return !empty($this->name);
-    }
-
-    public function setName($name) {
-        $this->name = $name;
-    }
-
-    public function getName() {
-        return $this->name;
-    }
 
     public function hasConditions() {
         return count($this->conditions) > 0;

@@ -16,6 +16,7 @@ label:
     students_simple: Lernende
     exam: Klausur
     exams: Klausuren
+    exam_supervision: Klausuraufsicht
     grade: Klasse
     grades: Klassen
     study_group: Lerngruppe
@@ -122,6 +123,16 @@ label:
     supervisions: Aufsichten
     toggle_multiple: Mehrfachauswahl aktivieren
     not_available: N/A
+    show:
+        week: Woche anzeigen
+        date: Datum anzeigen
+        time: Zeit anzeigen
+        abesences: Absenzen anzeigen
+        infotexts: Tagestexte anzeigen
+        exams: Klausuren anzeigen
+    background_color: Hintergrundfarbe
+    number_of_rows: Anzahl Zeilen
+    font_family: Schriftart
     reservation_enabled:
         label: Reservierung erlaubt
         help: Wenn diese Option deaktiviert ist, kann der Raum nicht gebucht werden. Bereits getätigte Reservierungen bleiben aktiv.
@@ -133,6 +144,11 @@ label:
     all: alle
     created_by: Erstellt von
     ordered_by: Angeordnet von
+    refresh_time: Aktualisierungsintervall
+    help_seconds: Dieser Wert wird in Sekunden angegeben.
+    ip_addresses:
+        label: IP-Adressen
+        help: IP-Adressen können sowohl als IPv4 als auch IPv6 angegeben werden. Die CIDR-Notiation wird unterstützt. Mehere IP-Adressen mit Komma trennen.
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -963,6 +979,23 @@ admin:
                 confirm: 'Soll der Raum-Tag "%name%" wirklich gelöscht werden?'
                 success: Raum-Tag erfolgreich gelöscht
 
+    displays:
+        label: Public Displays
+        empty: Aktuell sind keine Public Displays im System.
+        settings:
+            label: Einstellungen
+            important: Die URLs der Displays sind nicht durch ein Passwort o.ä. geschützt. Jeder mit der URL kann auf das Display zugreifen. Sofern die Schule eine feste IP-Adresse besitzt, lässt sich diese hier eintragen, sodass der Zugriff nur von dieser IP-Adresse erlaubt ist.
+            success: Einstellungen erfolgreich aktualisiert
+        add:
+            label: Neues Display
+            success: Display erfolgreich angelegt
+        edit:
+            label: Display bearbeiten
+            success: Display erfolgreich aktualisiert
+        remove:
+            label: Display löschen
+            confirm: 'Soll das Display "%name%" wirklich gelöscht werden?'
+            success: Display erfolgreich gelöscht
 
 versions:
     label: Versionen
@@ -1063,6 +1096,25 @@ webpush:
 
 system:
     label: System
+
+cron:
+    label: Cronjobs
+    command: Befehl
+    overview:
+        last_run: Letzte Ausführung
+        next_run: Nächste Ausführung
+        last_result: Letzter Statuscode
+    show:
+        label: Cronjob-Details
+    results:
+        label: Ergebnisse
+        result: Statuscode
+        show:
+            label: Ausgabe ansehen
+
+display:
+    last_update: Letzte Aktualisierung
+    empty: Heute gibt es keine Vertretungen.
 
 servicecenter:
     problem: Anzahl der Probleme in diesem Raum

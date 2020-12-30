@@ -1,0 +1,91 @@
+$enable-shadows: true;
+$enable-gradients: true;
+
+// Import SCSS from custom
+@import "custom/*.scss";
+
+// Import Bootstrap
+@import '../../node_modules/bootstrap/scss/bootstrap';
+
+// Import FontAwesome
+@import '../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome';
+@import '../../node_modules/@fortawesome/fontawesome-free/scss/solid';
+@import '../../node_modules/@fortawesome/fontawesome-free/scss/regular';
+@import '../../node_modules/@fortawesome/fontawesome-free/scss/brands';
+
+// Import SchoolIT design
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/layout.scss';
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/additions.scss';
+@import '../../node_modules/bootstrap-darkmode/darktheme';
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/dark/variables.scss';
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/dark/layout';
+
+// Import SCSS from overrides
+@import "overrides/*.scss";
+
+html,
+body {
+  font-size: 0.9rem;
+  height: 100vh;
+  min-height: auto !important;
+}
+
+body {
+  min-height: auto !important;
+}
+
+.color-rect {
+  vertical-align: baseline;
+  border-radius: .25em;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  margin-bottom: -3px;
+}
+
+.substitution-lesson,
+.exam-lesson {
+  /*@include font-size(1.75rem);*/
+  @extend .p-2;
+  font-weight: bold;
+
+  width: 50px;
+  min-width: 50px;
+  hyphens: auto;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+
+  /*&.text-small {
+    font-size: 0.9rem;
+  }*/
+
+  .exam-date {
+    @include font-size(0.8rem);
+  }
+}
+
+
+.top {
+  font-size: 1.2rem;
+  img.logo {
+    max-height: 70px;
+  }
+}
+
+.info {
+  font-size: 0.9rem;
+}
+
+.sidebar {
+  .card:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.substitution,
+.exam {
+  .mx-1 {
+    @extend .mx-2;
+  }
+}

@@ -1,0 +1,108 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.subjects.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% macro show_boolean(value, true_tooltip, false_tooltip) %}
+    {% if value %}
+        <i class="fa fa-check" title="{{ true_tooltip|trans }}"></i>
+    {% else %}
+        <i class="fa fa-times" title="{{ false_tooltip|trans }}"></i>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if displays|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <h4>{{ 'info.label'|trans }}</h4>
+
+                        <p>{{ 'admin.displays.empty'|trans }}</p>
+                    </div>
+                {% else %}
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover card-table">
+                                <colgroup>
+                                    <col>
+                                    <col class="column-lg">
+                                </colgroup>
+
+                                <thead>
+                                <tr>
+                                    <th>{{ 'label.name'|trans }}</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {% for display in displays %}
+                                    <tr>
+                                        <td>
+                                            {{ display.name }}
+
+                                            <span class="badge badge-secondary">
+                                                {{ url('show_display', { uuid: display.uuid }) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('show_display', { uuid: display.uuid }) }}" class="btn btn-primary btn-sm" target="_blank">
+                                                <i class="fa fa-play"></i>
+                                            </a>
+
+                                            <a href="{{ path('edit_display', { uuid: display.uuid })}}" class="btn btn-primary btn-sm" title="{{ 'admin.displays.edit.label'|trans }}">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+
+                                            <a href="{{ path('remove_display', { uuid: display.uuid })}}" class="btn btn-danger btn-sm" title="{{ 'admin.displays.remove.label'|trans }}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('add_display') }}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-plus"></i> {{ 'admin.displays.add.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'admin.displays.settings.label'|trans }}</h5>
+
+                        <p>{{ 'admin.displays.settings.important'|trans }}</p>
+
+                        {{ form_start(form) }}
+                        {% form_theme form 'bootstrap_4_layout.html.twig' %}
+                        {{ form_widget(form) }}
+
+                        <button class="btn btn-primary btn-sm" type="submit">
+                            {{ 'action.save'|trans }}
+                        </button>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

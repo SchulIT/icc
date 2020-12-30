@@ -4,6 +4,8 @@ label:
   gender: Geschlecht
   scope: Bereich
   priority: Priorität
+  usertype: Zielgruppe
+  empty: Keine
   reason: Grund
 
 help:
@@ -50,6 +52,11 @@ study_group_type:
   grade: Klasse
   course: Kurs
 
+display_target_user_type:
+  students: Lernende
+  teachers: Lehrkräfte
+
 sick_reason:
   quarantine: Quarantäne
   sick: Erkrankung
+

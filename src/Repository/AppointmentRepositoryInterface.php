@@ -42,6 +42,15 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function findAllForStudents(array $students, ?DateTime $today = null): array;
 
     /**
+     * Finds all appointments for the given day (or all appointments) which
+     * have a visibility set to students.
+     *
+     * @param DateTime|null $today
+     * @return array
+     */
+    public function findAllForAllStudents(?DateTime $today = null): array;
+
+    /**
      * @param Student[] $students
      * @param DateTime $start
      * @param DateTime $end

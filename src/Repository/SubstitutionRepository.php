@@ -44,13 +44,35 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
     }
 
     /**
-     * @param \DateTime $date
+     * @param DateTime $date
      * @return Substitution[]
      */
-    public function findAllByDate(\DateTime $date) {
-        return $this->getDefaultQueryBuilder($date)
-            ->getQuery()
-            ->getResult();
+    public function findAllByDate(DateTime $date, bool $excludeNonStudentSubstitutions = false) {
+        if($excludeNonStudentSubstitutions === false) {
+            return $this->getDefaultQueryBuilder($date)
+                ->getQuery()
+                ->getResult();
+        }
+
+        $qbInner = $this->em->createQueryBuilder();
+        $qbInner->select('sInner.id')
+            ->from(Substitution::class, 'sInner')
+            ->leftJoin('sInner.studyGroups', 'sgInner')
+            ->leftJoin('sInner.replacementStudyGroups', 'rsgInner');
+
+        $qbInner->where(
+            $qbInner->expr()->andX(
+                $qbInner->expr()->isNull('sgInner.id'),
+                $qbInner->expr()->isNull('rsgInner.id')
+            )
+        );
+
+        $qb = $this->getDefaultQueryBuilder($date);
+        $qb->andWhere(
+            $qb->expr()->notIn('s.id', $qbInner->getDQL())
+        );
+
+        return $qb->getQuery()->getResult();
     }
 
     /**

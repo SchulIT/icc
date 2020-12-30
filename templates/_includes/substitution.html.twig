@@ -11,12 +11,21 @@
         {%- endif -%}
     {%- endif -%}
 {% endmacro %}
+{% set onlyAcronym = onlyAcronym|default(false) %}
+{% set onlyContent = onlyContent|default(false) %}
 
 {% set duration = substitution.lessonEnd - substitution.lessonStart %}
+{% if not onlyContent %}
 <div class="card">
     <div class="card-body p-0">
+{% endif %}
         <div class="d-flex">
-            <div class="align-self-center text-center p-3 substitution-lesson {% if substitution.startsBefore %}text-small{% endif%} text-black-50">
+            {% if prefix is defined %}
+            <div class="align-self-center text-center p-2 substitution-lesson">
+                <strong>{{ prefix }}</strong>
+            </div>
+            {% endif %}
+            <div class="align-self-center text-center p-2 substitution-lesson {% if substitution.startsBefore %}text-small{% endif%} text-black-50">
                 {% if substitution.startsBefore %}
                     {{ substitution.lessonStart|before_lesson }}
                 {% else %}
@@ -49,18 +58,26 @@
                     {% endif %}
 
                     <span>
-                        <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
+                        <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers(true, onlyAcronym), substitution.replacementTeachers|teachers(true, onlyAcronym)) }}
                         <span class="mx-1"></span>
                     </span>
 
                     {% if substitution.room is not null or substitution.replacementRoom is not null or substitution.roomName is not null or substitution.replacementRoomName is not null %}
                         <span>
                             <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room ? substitution.room.name : substitution.roomName, substitution.replacementRoom ? substitution.replacementRoom : substitution.replacementRoomName) }}
+                            <span class="mx-1"></span>
+                        </span>
+                    {% endif %}
+
+                    {% if onlyContent and substitution.remark is not empty %}
+                        <span>
+                            <i class="fa fa-info-circle"></i> {{ substitution.remark }}
                         </span>
                     {% endif %}
                 </div>
             </div>
         </div>
+{% if not onlyContent %}
     </div>
 
     {% if substitution.remark %}
@@ -69,3 +86,4 @@
         </div>
     {% endif %}
 </div>
+{% endif %}

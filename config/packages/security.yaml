@@ -120,6 +120,10 @@ security:
             anonymous: ~
             pattern: ^/auth
 
+        display:
+            anonymous: ~
+            pattern: ^/display/
+
         secured:
             pattern: ^/
             provider: database

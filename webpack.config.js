@@ -15,6 +15,7 @@ Encore
     .addEntry('appointments', './assets/js/appointments.js')
     .addEntry('message-downloads', './assets/js/message-downloads.js')
     .addEntry('zipper', './assets/js/zipper.js')
+    .addEntry('display', './assets/js/display.js')
     .addStyleEntry('simple', './vendor/schulit/common-bundle/Resources/assets/css/simple.scss')
     .addStyleEntry('signin', './vendor/schulit/common-bundle/Resources/assets/css/signin.scss')
 
@@ -25,7 +26,12 @@ Encore
     .enableSassLoader(function(options) {
         options.importer = GlobImporter();
     })
-    .enablePostCssLoader()
+    .enablePostCssLoader((options) => {
+        // Fix compilation errors: "Module build failed: Error: No PostCSS Config found" - even though the file exists!
+        options.config = {
+            path: 'postcss.config.js'
+        }
+    })
 
     .addLoader(
         {

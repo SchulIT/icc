@@ -176,6 +176,24 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findAllForAllStudents(?DateTime $today = null): array {
+        $qbStudyGroups = $this->em->createQueryBuilder();
+
+        $qbAppointments = $this->em->createQueryBuilder()
+            ->select('aInner.id')
+            ->from(Appointment::class, 'aInner')
+            ->leftJoin('aInner.visibilities', 'vInner')
+            ->where(
+                'vInner.userType = :type'
+            );
+
+        return $this->getAppointments($qbAppointments, ['type' => UserType::Student() ], $today)
+            ->getQuery()->getResult();
+    }
+
+    /**
      * @param Teacher $teacher
      * @param DateTime|null $today
      * @return Appointment[]
@@ -372,4 +390,6 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
         $this->em->remove($appointment);
         $this->flushIfNotInTransaction();
     }
+
+
 }

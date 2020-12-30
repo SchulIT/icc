@@ -6,6 +6,7 @@ namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -25,8 +26,10 @@ final class Version20201229194545 extends AbstractMigration
     }
 
     public function postUp(Schema $schema): void {
-        $stmt = $this->connection->prepare('INSERT INTO resource_type (name) VALUES (?)');
-        $stmt->bindValue(1, "Raum", "string");
+        $stmt = $this->connection->prepare('INSERT INTO resource_type (name, icon, uuid) VALUES (?, ?, ?)');
+        $stmt->bindValue(1, 'Raum', 'string');
+        $stmt->bindValue(2, 'fas fa-door-open', 'string');
+        $stmt->bindValue(3, Uuid::uuid4()->toString(), 'string');
         $stmt->execute();
 
         $typeId = $this->connection->lastInsertId();

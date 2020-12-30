@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity()
  * @Auditable()
  */
-class Room extends Resource {
+class Room extends ResourceEntity {
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)

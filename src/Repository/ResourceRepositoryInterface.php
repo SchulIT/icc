@@ -2,16 +2,16 @@
 
 namespace App\Repository;
 
-use App\Entity\Resource;
+use App\Entity\ResourceEntity;
 use App\Entity\Room;
 use App\Rooms\RoomQuery;
 
 interface ResourceRepositoryInterface {
 
-    public function findOneByUuid(string $uuid): ?Resource;
+    public function findOneByUuid(string $uuid): ?ResourceEntity;
 
     /**
-     * @return Resource[]
+     * @return ResourceEntity[]
      */
     public function findAllNonRooms(): array;
 
@@ -22,11 +22,11 @@ interface ResourceRepositoryInterface {
     public function findAllByQuery(RoomQuery $query): array;
 
     /**
-     * @return Resource[]
+     * @return ResourceEntity[]
      */
     public function findAll(): array;
 
-    public function persist(Resource $resource): void;
+    public function persist(ResourceEntity $resource): void;
 
-    public function remove(Resource $resource): void;
+    public function remove(ResourceEntity $resource): void;
 }

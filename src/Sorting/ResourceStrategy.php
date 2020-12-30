@@ -2,7 +2,7 @@
 
 namespace App\Sorting;
 
-use App\Entity\Resource;
+use App\Entity\ResourceEntity;
 
 class ResourceStrategy implements SortingStrategyInterface {
 
@@ -13,8 +13,8 @@ class ResourceStrategy implements SortingStrategyInterface {
     }
 
     /**
-     * @param Resource $objectA
-     * @param Resource $objectB
+     * @param ResourceEntity $objectA
+     * @param ResourceEntity $objectB
      * @return int
      */
     public function compare($objectA, $objectB): int {

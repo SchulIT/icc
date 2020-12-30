@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Resource;
+use App\Entity\ResourceEntity;
 use App\Entity\ResourceReservation;
 use App\Entity\Teacher;
 use DateTime;
@@ -17,7 +17,7 @@ class ResourceReservationRepository extends AbstractRepository implements Resour
             ->findAll();
     }
 
-    public function findOneByDateAndResourceAndLesson(DateTime $dateTime, Resource $resource, int $lessonNumber): ?ResourceReservation {
+    public function findOneByDateAndResourceAndLesson(DateTime $dateTime, ResourceEntity $resource, int $lessonNumber): ?ResourceReservation {
         $qb = $this->em->createQueryBuilder()
             ->select(['r', 'rt', 'rr'])
             ->from(ResourceReservation::class, 'r')
@@ -48,7 +48,7 @@ class ResourceReservationRepository extends AbstractRepository implements Resour
     /**
      * @inheritDoc
      */
-    public function findAllByResourceAndDate(Resource $resource, DateTime $dateTime): array {
+    public function findAllByResourceAndDate(ResourceEntity $resource, DateTime $dateTime): array {
         return $this->em->getRepository(ResourceReservation::class)
             ->findBy([
                 'date' => $dateTime,
@@ -69,7 +69,7 @@ class ResourceReservationRepository extends AbstractRepository implements Resour
     /**
      * @inheritDoc
      */
-    public function findAllByRoomAndTeacher(?Resource $resource, ?Teacher $teacher, ?DateTime $from): array {
+    public function findAllByRoomAndTeacher(?ResourceEntity $resource, ?Teacher $teacher, ?DateTime $from): array {
         $qb = $this->em->createQueryBuilder()
             ->select('r')
             ->from(ResourceReservation::class, 'r')

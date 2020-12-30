@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Resource;
+use App\Entity\ResourceEntity;
 use App\Entity\ResourceReservation;
 use App\Entity\Room;
 use App\Entity\User;
@@ -70,7 +70,7 @@ class ResourceReservationController extends AbstractController {
 
         $sorter->sort($resources, ResourceStrategy::class);
 
-        $resources = array_filter($resources, function(Resource $room) {
+        $resources = array_filter($resources, function(ResourceEntity $room) {
             return $room->isReservationEnabled();
         });
 
@@ -78,7 +78,7 @@ class ResourceReservationController extends AbstractController {
 
         if($lessonStart !== null && $lessonEnd !== null) {
             if($lessonStart < $lessonEnd) {
-                $resources = array_filter($resources, function (Resource $resource) use ($overview, $lessonStart, $lessonEnd) {
+                $resources = array_filter($resources, function (ResourceEntity $resource) use ($overview, $lessonStart, $lessonEnd) {
                     for ($lesson = $lessonStart; $lesson <= $lessonEnd; $lesson++) {
                         $availability = $overview->getAvailability($resource, $lessonEnd);
 
@@ -182,7 +182,7 @@ class ResourceReservationController extends AbstractController {
         return $date;
     }
 
-    private function getResourceFromRequest(Request $request, ResourceRepositoryInterface $repository): ?Resource {
+    private function getResourceFromRequest(Request $request, ResourceRepositoryInterface $repository): ?ResourceEntity {
         $uuid = $request->query->get('resource', null);
 
         if(empty($uuid)) {

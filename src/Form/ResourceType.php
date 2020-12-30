@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Resource;
+use App\Entity\ResourceEntity;
 use App\Entity\ResourceType as ResourceTypeEntity;
 use App\Entity\Room;
 use App\Exception\UnexpectedTypeException;
@@ -71,7 +71,7 @@ class ResourceType extends AbstractType {
                                 ]);
                         }
                     ]);
-            } else if($data instanceof Resource) {
+            } else if($data instanceof ResourceEntity) {
                 $form
                     ->add('group_general', FieldsetType::class, [
                         'legend' => 'label.general',
@@ -111,7 +111,7 @@ class ResourceType extends AbstractType {
                         }
                     ]);
             } else {
-                throw new UnexpectedTypeException($data, Resource::class);
+                throw new UnexpectedTypeException($data, ResourceEntity::class);
             }
         });
     }

@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Resource;
+use App\Entity\ResourceEntity;
 use App\Entity\Room;
 use App\Rooms\RoomQuery;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,8 +17,8 @@ class ResourceRepository extends AbstractRepository implements ResourceRepositor
         $this->roomTagRepository = $roomTagRepository;
     }
 
-    public function findOneByUuid(string $uuid): ?Resource {
-        return $this->em->getRepository(Resource::class)
+    public function findOneByUuid(string $uuid): ?ResourceEntity {
+        return $this->em->getRepository(ResourceEntity::class)
             ->findOneBy([
                 'uuid' => $uuid
             ]);
@@ -30,7 +30,7 @@ class ResourceRepository extends AbstractRepository implements ResourceRepositor
     public function findAllNonRooms(): array {
         $qb = $this->em->createQueryBuilder()
             ->select('r')
-            ->from(Resource::class, 'r')
+            ->from(ResourceEntity::class, 'r')
             ->where('r NOT INSTANCE OF :roomClass')
             ->setParameter('roomClass', $this->em->getClassMetadata(Room::class));
 
@@ -43,7 +43,7 @@ class ResourceRepository extends AbstractRepository implements ResourceRepositor
     public function findAllByQuery(RoomQuery $query): array {
         $qb = $this->em->createQueryBuilder()
             ->select('r')
-            ->from(Resource::class, 'r');
+            ->from(ResourceEntity::class, 'r');
 
 
         /**
@@ -109,16 +109,16 @@ class ResourceRepository extends AbstractRepository implements ResourceRepositor
      * @inheritDoc
      */
     public function findAll(): array {
-        return $this->em->getRepository(Resource::class)
+        return $this->em->getRepository(ResourceEntity::class)
             ->findAll();
     }
 
-    public function persist(Resource $resource): void {
+    public function persist(ResourceEntity $resource): void {
         $this->em->persist($resource);
         $this->em->flush();
     }
 
-    public function remove(Resource $resource): void {
+    public function remove(ResourceEntity $resource): void {
         $this->em->remove($resource);
         $this->em->flush();
     }

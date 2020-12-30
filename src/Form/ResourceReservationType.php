@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Converter\TeacherStringConverter;
-use App\Entity\Resource;
+use App\Entity\ResourceEntity;
 use App\Entity\Room;
 use App\Entity\Teacher;
 use App\Sorting\ResourceStrategy;
@@ -34,12 +34,12 @@ class ResourceReservationType extends AbstractType {
                     'size' => 10,
                     'data-choice' => 'true'
                 ],
-                'class' => Resource::class,
+                'class' => ResourceEntity::class,
                 'query_builder' => function(EntityRepository $repository) {
                     return $repository->createQueryBuilder('r')
                         ->where('r.isReservationEnabled = true');
                 },
-                'choice_label' => function(Resource $resource) {
+                'choice_label' => function(ResourceEntity $resource) {
                     return sprintf('%s [%s]', $resource->getName(), $resource->getType()->getName());
                 },
                 'sort_by' => $this->strategy

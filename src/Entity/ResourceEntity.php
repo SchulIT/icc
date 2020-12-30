@@ -10,15 +10,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
+ * @ORM\Table(name="resource")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="class", type="string")
  * @ORM\DiscriminatorMap({
- *      "resource"="Resource",
+ *      "resource"="ResourceEntity",
  *      "room"="Room"
  * })
  * @UniqueEntity(fields={"name"})
  */
-class Resource {
+class ResourceEntity {
 
     use IdTrait;
     use UuidTrait;
@@ -63,9 +64,9 @@ class Resource {
 
     /**
      * @param string|null $name
-     * @return Resource $this
+     * @return ResourceEntity $this
      */
-    public function setName(?string $name): Resource {
+    public function setName(?string $name): ResourceEntity {
         $this->name = $name;
         return $this;
     }
@@ -79,9 +80,9 @@ class Resource {
 
     /**
      * @param string|null $description
-     * @return Resource $this
+     * @return ResourceEntity $this
      */
-    public function setDescription(?string $description): Resource {
+    public function setDescription(?string $description): ResourceEntity {
         $this->description = $description;
         return $this;
     }
@@ -95,9 +96,9 @@ class Resource {
 
     /**
      * @param bool $isReservationEnabled
-     * @return Resource
+     * @return ResourceEntity
      */
-    public function setIsReservationEnabled(bool $isReservationEnabled): Resource {
+    public function setIsReservationEnabled(bool $isReservationEnabled): ResourceEntity {
         $this->isReservationEnabled = $isReservationEnabled;
         return $this;
     }
@@ -111,9 +112,9 @@ class Resource {
 
     /**
      * @param ResourceType|null $type
-     * @return Resource
+     * @return ResourceEntity
      */
-    public function setType(?ResourceType $type): Resource {
+    public function setType(?ResourceType $type): ResourceEntity {
         $this->type = $type;
         return $this;
     }

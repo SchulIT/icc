@@ -31,8 +31,8 @@ class ResourceType {
     private $icon;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Resource", mappedBy="type", fetch="EXTRA_LAZY")
-     * @var Collection<Resource>
+     * @ORM\OneToMany(targetEntity="ResourceEntity", mappedBy="type", fetch="EXTRA_LAZY")
+     * @var Collection<ResourceEntity>
      */
     private $resources;
 

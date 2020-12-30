@@ -21,10 +21,10 @@ class ResourceReservation {
     use UuidTrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Resource")
+     * @ORM\ManyToOne(targetEntity="ResourceEntity")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
-     * @var Resource
+     * @var ResourceEntity
      */
     private $resource;
 
@@ -63,17 +63,17 @@ class ResourceReservation {
     }
 
     /**
-     * @return Resource|null
+     * @return ResourceEntity|null
      */
-    public function getResource(): ?Resource {
+    public function getResource(): ?ResourceEntity {
         return $this->resource;
     }
 
     /**
-     * @param Resource|null $resource
+     * @param ResourceEntity|null $resource
      * @return ResourceReservation
      */
-    public function setResource(?Resource $resource): ResourceReservation {
+    public function setResource(?ResourceEntity $resource): ResourceReservation {
         $this->resource = $resource;
         return $this;
     }

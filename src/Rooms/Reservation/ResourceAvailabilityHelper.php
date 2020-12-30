@@ -3,7 +3,7 @@
 namespace App\Rooms\Reservation;
 
 use App\Entity\Exam;
-use App\Entity\Resource;
+use App\Entity\ResourceEntity;
 use App\Entity\Room;
 use App\Entity\ResourceReservation;
 use App\Entity\Substitution;
@@ -104,7 +104,7 @@ class ResourceAvailabilityHelper {
         return $isCancelled ?? false;
     }
 
-    public function getAvailability(Resource $resource, DateTime $date, int $lessonNumber): ?ResourceAvailability {
+    public function getAvailability(ResourceEntity $resource, DateTime $date, int $lessonNumber): ?ResourceAvailability {
         $week = $this->weekHelper->getTimetableWeek($date);
         $period = $this->periodHelper->getPeriod($date);
 
@@ -136,7 +136,7 @@ class ResourceAvailabilityHelper {
 
     /**
      * @param DateTime $date
-     * @param Resource[] $resources
+     * @param ResourceEntity[] $resources
      * @return ResourceAvailabilityOverview|null
      */
     public function getAvailabilities(DateTime $date, array $resources): ?ResourceAvailabilityOverview {
@@ -148,7 +148,7 @@ class ResourceAvailabilityHelper {
         }
 
         /** @var Room[] $rooms */
-        $rooms = array_filter($resources, function(Resource $resource) {
+        $rooms = array_filter($resources, function(ResourceEntity $resource) {
             return $resource instanceof Room;
         });
 

@@ -2,7 +2,7 @@
 
 namespace App\Rooms\Reservation;
 
-use App\Entity\Resource;
+use App\Entity\ResourceEntity;
 
 class ResourceAvailabilityOverview {
     private $maxLessons;
@@ -20,7 +20,7 @@ class ResourceAvailabilityOverview {
         return $this->maxLessons;
     }
 
-    public function addAvailability(Resource $resource, int $lessonNumber, ResourceAvailability $availability) {
+    public function addAvailability(ResourceEntity $resource, int $lessonNumber, ResourceAvailability $availability) {
         if(!isset($this->resources[$resource->getId()])) {
             $this->resources[$resource->getId()] = [ ];
         }
@@ -28,7 +28,7 @@ class ResourceAvailabilityOverview {
         $this->resources[$resource->getId()][$lessonNumber] = $availability;
     }
 
-    public function getAvailability(Resource $resource, int $lessonNumber): ?ResourceAvailability {
+    public function getAvailability(ResourceEntity $resource, int $lessonNumber): ?ResourceAvailability {
         return $this->resources[$resource->getId()][$lessonNumber] ?? null;
     }
 }

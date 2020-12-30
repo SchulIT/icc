@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Resource;
+use App\Entity\ResourceEntity;
 use App\Entity\Room;
 use App\Form\ResourceType;
 use App\Repository\ResourceRepositoryInterface;
@@ -46,7 +46,7 @@ class ResourceAdminController extends AbstractController {
      * @Route("/add", name="add_resource")
      */
     public function add(Request $request, ResourceTypeRepositoryInterface $typeRepository) {
-        $resource = new Resource();
+        $resource = new ResourceEntity();
 
         if($request->query->get('type') === 'room') {
             $resource = new Room();

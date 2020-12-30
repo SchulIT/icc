@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Resource;
+use App\Entity\ResourceEntity;
 use App\Entity\Room;
 use App\Entity\ResourceReservation;
 use App\Entity\Teacher;
@@ -16,12 +16,12 @@ interface ResourceReservationRepositoryInterface {
     public function findAll(): array;
 
     /**
-     * @param Resource|null $resource
+     * @param ResourceEntity|null $resource
      * @param Teacher|null $teacher
      * @param DateTime|null $from
      * @return ResourceReservation[]
      */
-    public function findAllByRoomAndTeacher(?Resource $resource, ?Teacher $teacher, ?DateTime $from): array;
+    public function findAllByRoomAndTeacher(?ResourceEntity $resource, ?Teacher $teacher, ?DateTime $from): array;
 
     /**
      * @param Teacher $teacher
@@ -32,11 +32,11 @@ interface ResourceReservationRepositoryInterface {
 
     /**
      * @param DateTime $dateTime
-     * @param Resource $resource
+     * @param ResourceEntity $resource
      * @param int $lessonNumber
      * @return ResourceReservation|null
      */
-    public function findOneByDateAndResourceAndLesson(DateTime $dateTime, Resource $resource, int $lessonNumber): ?ResourceReservation;
+    public function findOneByDateAndResourceAndLesson(DateTime $dateTime, ResourceEntity $resource, int $lessonNumber): ?ResourceReservation;
 
     /**
      * @param DateTime $date
@@ -45,11 +45,11 @@ interface ResourceReservationRepositoryInterface {
     public function findAllByDate(DateTime $date): array;
 
     /**
-     * @param Resource $resource
+     * @param ResourceEntity $resource
      * @param DateTime $dateTime
      * @return ResourceReservation[]
      */
-    public function findAllByResourceAndDate(Resource $resource, DateTime $dateTime): array;
+    public function findAllByResourceAndDate(ResourceEntity $resource, DateTime $dateTime): array;
 
     public function persist(ResourceReservation $reservation): void;
 

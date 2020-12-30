@@ -4,6 +4,7 @@ namespace App\Display;
 
 use App\Entity\ExamSupervision;
 use App\Entity\Grade;
+use App\Entity\Teacher;
 use App\Entity\Tuition;
 use App\Grouping\Grouper;
 use App\Grouping\SubstitutionGradeGroup;
@@ -100,7 +101,6 @@ class DisplayHelper {
         foreach($exams as $exam) {
             /** @var Tuition $tuition */
             foreach($exam->getTuitions() as $tuition) {
-                /** @var Grade $grade */
                 foreach($tuition->getTeachers() as $teacher) {
                     $key = $teacher->getId();
 

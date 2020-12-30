@@ -33,7 +33,13 @@ class Display {
      * @Assert\GreaterThan(0)
      * @var int
      */
-    private $refreshTime = 20;
+    private $refreshTime = 600;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @var int
+     */
+    private $scrollTime = 20;
 
     /**
      * @ORM\Column(type="boolean")
@@ -104,6 +110,22 @@ class Display {
      */
     public function setRefreshTime(int $refreshTime): Display {
         $this->refreshTime = $refreshTime;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getScrollTime(): int {
+        return $this->scrollTime;
+    }
+
+    /**
+     * @param int $scrollTime
+     * @return Display
+     */
+    public function setScrollTime(int $scrollTime): Display {
+        $this->scrollTime = $scrollTime;
         return $this;
     }
 

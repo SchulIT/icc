@@ -16,23 +16,35 @@ class RoomQueryBuilder {
         $this->roomRepository = $roomRepository;
     }
 
+    public function serialize(RoomQuery $query): array {
+        $data = [ ];
+
+        if($query->hasSeats()) {
+            $data['seats'] = $query->getSeatsValueOrDefault();
+        }
+
+        foreach($this->roomTagRepository->findAll() as $tag) {
+            $paramName = sprintf('tag-%s', $tag->getUuid());
+
+            if($query->hasTag($tag)) {
+                $data[$paramName] = '✓';
+
+                if($tag->hasValue()) {
+                    $valueParam = sprintf('tag-%s-value', $tag->getUuid());
+                    $data[$valueParam] = $query->getValueOrDefault($tag);
+                }
+            }
+        }
+
+        return $data;
+    }
+
     /**
      * @param Request $request
      * @return RoomQuery
      */
     public function buildFromRequest(Request $request) {
         $query = new RoomQuery();
-
-        /**
-         * Name
-         */
-        if($request->query->get('name', false) !== false) {
-            $value = $request->query->get('name-value', null);
-
-            if(!empty($value)) {
-                $query->setName($value);
-            }
-        }
 
         /**
          * Seats

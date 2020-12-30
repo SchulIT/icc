@@ -3,12 +3,12 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Exam;
-use App\Entity\RoomReservation;
+use App\Entity\ResourceReservation;
 use App\Entity\Substitution;
 use App\Entity\Tuition;
 use App\Event\SubstitutionImportEvent;
 use App\Repository\ExamRepositoryInterface;
-use App\Repository\RoomReservationRepositoryInterface;
+use App\Repository\ResourceReservationRepositoryInterface;
 use App\Validator\NoReservationCollision;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
@@ -36,7 +36,7 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
     private $translator;
     private $dateHelper;
 
-    public function __construct($appName, string $sender, ValidatorInterface $validator, RoomReservationRepositoryInterface $reservationRepository,
+    public function __construct($appName, string $sender, ValidatorInterface $validator, ResourceReservationRepositoryInterface $reservationRepository,
                                 ExamRepositoryInterface $examRepository, Swift_Mailer $mailer, Environment $twig, TranslatorInterface $translator, DateHelper $dateHelper) {
         $this->appName = $appName;
         $this->sender = $sender;
@@ -117,7 +117,7 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
         }
     }
 
-    private function sendViolationsEmail(RoomReservation $reservation, ConstraintViolationListInterface $violationList): void {
+    private function sendViolationsEmail(ResourceReservation $reservation, ConstraintViolationListInterface $violationList): void {
         $content = $this->twig->render('email/reservation.html.twig', [
             'reservation' => $reservation,
             'validation_errors' => $violationList

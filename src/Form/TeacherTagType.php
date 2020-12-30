@@ -17,6 +17,15 @@ class TeacherTagType extends AbstractType {
             ])
             ->add('color', ColorType::class, [
                 'label' => 'label.color'
+            ])
+            ->add('visibilities', UserTypeEntityType::class, [
+                'label' => 'label.visibility',
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ]);
     }
 }

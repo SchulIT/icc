@@ -2,7 +2,7 @@
 
 namespace App\Sorting;
 
-use App\Entity\RoomReservation;
+use App\Entity\ResourceReservation;
 
 class RoomReservationDateStrategy implements SortingStrategyInterface {
 
@@ -13,8 +13,8 @@ class RoomReservationDateStrategy implements SortingStrategyInterface {
     }
 
     /**
-     * @param RoomReservation $objectA
-     * @param RoomReservation $objectB
+     * @param ResourceReservation $objectA
+     * @param ResourceReservation $objectB
      * @return int
      */
     public function compare($objectA, $objectB): int {

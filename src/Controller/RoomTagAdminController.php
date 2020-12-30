@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/admin/rooms/tags")
+ * @Route("/admin/resources/tags")
  * @Security("is_granted('ROLE_APPOINTMENTS_ADMIN')")
  */
 class RoomTagAdminController extends AbstractController {
@@ -29,7 +29,7 @@ class RoomTagAdminController extends AbstractController {
      * @Route("", name="admin_room_tags")
      */
     public function index() {
-        return $this->render('admin/rooms/tags/index.html.twig', [
+        return $this->render('admin/resources/tags/index.html.twig', [
             'tags' => $this->repository->findAll()
         ]);
     }
@@ -44,12 +44,12 @@ class RoomTagAdminController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             $this->repository->persist($tag);
-            $this->addFlash('success', 'admin.rooms.tags.add.success');
+            $this->addFlash('success', 'admin.resources.tags.add.success');
 
             return $this->redirectToRoute('admin_room_tags');
         }
 
-        return $this->render('admin/rooms/tags/add.html.twig', [
+        return $this->render('admin/resources/tags/add.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -63,12 +63,12 @@ class RoomTagAdminController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             $this->repository->persist($tag);
-            $this->addFlash('success', 'admin.rooms.tags.add.success');
+            $this->addFlash('success', 'admin.resources.tags.add.success');
 
             return $this->redirectToRoute('admin_room_tags');
         }
 
-        return $this->render('admin/rooms/tags/edit.html.twig', [
+        return $this->render('admin/resources/tags/edit.html.twig', [
             'form' => $form->createView(),
             'tag' => $tag
         ]);
@@ -79,7 +79,7 @@ class RoomTagAdminController extends AbstractController {
      */
     public function remove(RoomTag $tag, Request $request) {
         $form = $this->createForm(ConfirmType::class, null, [
-            'message' => 'admin.rooms.tags.remove.confirm',
+            'message' => 'admin.resources.tags.remove.confirm',
             'message_parameters' => [
                 '%name%' => $tag->getName()
             ]
@@ -88,12 +88,12 @@ class RoomTagAdminController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             $this->repository->remove($tag);
-            $this->addFlash('success', 'admin.rooms.tags.remove.success');
+            $this->addFlash('success', 'admin.resources.tags.remove.success');
 
             return $this->redirectToRoute('admin_room_tags');
         }
 
-        return $this->render('admin/rooms/tags/remove.html.twig', [
+        return $this->render('admin/resources/tags/remove.html.twig', [
             'form' => $form->createView(),
             'tag' => $tag
         ]);

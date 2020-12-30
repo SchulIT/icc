@@ -1,17 +1,31 @@
 {% if isChoice is not defined %}
     {% set isChoice = true %}
 {% endif %}
+{% if allowClear is not defined %}
+    {% set allowClear = false %}
+{% endif %}
 
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
     <div class="form-group {{ class|default('') }}">
         <label for="teacher">{{ 'label.teacher'|trans }}:</label>
-        <select name="teacher" id="teacher" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="{{ isChoice ? 'true' : 'false' }}">
-            <option value="" placeholder>{{ 'label.select.teacher'|trans }}</option>
-            {% for t in teacherFilter.teachers %}
-                <option value="{{ t.uuid }}" {% if teacherFilter.currentTeacher != null and teacherFilter.currentTeacher.acronym == t.acronym %}selected="selected"{% endif %}>{{ t|teacher(true) }}</option>
-            {% endfor %}
-        </select>
+
+        <div class="input-group">
+            <select name="teacher" id="teacher" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="{{ isChoice ? 'true' : 'false' }}">
+                <option value="" placeholder>{{ 'label.select.teacher'|trans }}</option>
+                {% for t in teacherFilter.teachers %}
+                    <option value="{{ t.uuid }}" {% if teacherFilter.currentTeacher != null and teacherFilter.currentTeacher.acronym == t.acronym %}selected="selected"{% endif %}>{{ t|teacher(true) }}</option>
+                {% endfor %}
+            </select>
+            {% if allowClear %}
+                <div class="input-group-append">
+                    <a href="{{ path(path, currentFilter|merge({teacher: '✗' })) }}" class="btn btn-outline-primary" title="{{ 'filter.reset'|trans }}">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
     </div>
 </form>

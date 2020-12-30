@@ -99,7 +99,7 @@ class SickNoteController extends AbstractController {
         $user = $this->getUser();
 
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $gradeFilterView->getCurrentGrade() === null);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $request->query->get('teacher') !== '✗' && $gradeFilterView->getCurrentGrade() === null);
         $selectedDate = $dateHelper->getToday();
 
         try {

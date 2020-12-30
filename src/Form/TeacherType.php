@@ -51,7 +51,10 @@ class TeacherType extends AbstractType {
                         ->orderBy('t.name', 'asc');
                 },
                 'multiple' => true,
-                'expanded' => true
+                'expanded' => true,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ]);
     }
 }

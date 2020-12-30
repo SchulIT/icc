@@ -90,18 +90,11 @@ class Builder {
         ])
             ->setExtra('icon', 'far fa-calendar');
 
-        if($this->authorizationChecker->isGranted(RoomVoter::View)) {
-            $plans->addChild('plans.rooms.label', [
-                'route' => 'rooms'
-            ])
-                ->setExtra('icon', 'fas fa-door-open');
-        }
-
         if($this->authorizationChecker->isGranted(RoomReservationVoter::View)) {
-            $plans->addChild('plans.rooms.reservations.label', [
-                'route' => 'room_reservations'
+            $plans->addChild('resources.reservations.label', [
+                'route' => 'resource_reservations'
             ])
-                ->setExtra('icon', 'fas fa-door-closed');
+                ->setExtra('icon', 'fas fa-laptop-house');
         }
 
         return $plans;
@@ -276,10 +269,10 @@ class Builder {
         }
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            $menu->addChild('admin.rooms.label', [
-                'route' => 'admin_rooms'
+            $menu->addChild('admin.resources.label', [
+                'route' => 'admin_resources'
             ])
-                ->setExtra('icon', 'fas fa-door-open');
+                ->setExtra('icon', 'fas fa-laptop-house');
 
             $menu->addChild('admin.timetable.label', [
                 'route' => 'admin_timetable'

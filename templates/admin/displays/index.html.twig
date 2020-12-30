@@ -84,6 +84,24 @@
                         </a>
                     </div>
                 </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'admin.displays.settings.label'|trans }}</h5>
+
+                        <p>{{ 'admin.displays.settings.important'|trans }}</p>
+
+                        {{ form_start(form) }}
+                        {% form_theme form 'bootstrap_4_layout.html.twig' %}
+                        {{ form_widget(form) }}
+
+                        <button class="btn btn-primary btn-sm" type="submit">
+                            {{ 'action.save'|trans }}
+                        </button>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -146,6 +146,9 @@ label:
     ordered_by: Angeordnet von
     refresh_time: Aktualisierungsintervall
     help_seconds: Dieser Wert wird in Sekunden angegeben.
+    ip_addresses:
+        label: IP-Adressen
+        help: IP-Adressen können sowohl als IPv4 als auch IPv6 angegeben werden. Die CIDR-Notiation wird unterstützt. Mehere IP-Adressen mit Komma trennen.
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -979,6 +982,10 @@ admin:
     displays:
         label: Public Displays
         empty: Aktuell sind keine Public Displays im System.
+        settings:
+            label: Einstellungen
+            important: Die URLs der Displays sind nicht durch ein Passwort o.ä. geschützt. Jeder mit der URL kann auf das Display zugreifen. Sofern die Schule eine feste IP-Adresse besitzt, lässt sich diese hier eintragen, sodass der Zugriff nur von dieser IP-Adresse erlaubt ist.
+            success: Einstellungen erfolgreich aktualisiert
         add:
             label: Neues Display
             success: Display erfolgreich angelegt

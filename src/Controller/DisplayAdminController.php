@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Display;
 use App\Form\DisplayType;
 use App\Repository\DisplayRepositoryInterface;
+use App\Settings\DisplaySettings;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -26,9 +28,29 @@ class DisplayAdminController extends AbstractController {
     /**
      * @Route("", name="admin_displays")
      */
-    public function index() {
+    public function index(Request $request, DisplaySettings $settings) {
+        $form = $this->createFormBuilder()
+            ->add('allowedIps', TextType::class, [
+                'required' => false,
+                'mapped' => false,
+                'label' => 'label.ip_addresses.label',
+                'help' => 'label.ip_addresses.help',
+                'data' => $settings->getAllowedIpAddresses()
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $settings->setAllowedIpAddresses($form->get('allowedIps')->getData());
+            $this->addFlash('success', 'admin.displays.settings.success');
+
+            return $this->redirectToRoute('admin_displays');
+        }
+
         return $this->render('admin/displays/index.html.twig', [
-            'displays' => $this->repository->findAll()
+            'displays' => $this->repository->findAll(),
+            'form' => $form->createView()
         ]);
     }
 

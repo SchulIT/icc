@@ -20,7 +20,7 @@
                         <p class="display-4 mb-0">{{ 'display.empty'|trans }}</p>
                     </div>
                 {% else %}
-                    <div class="list-group h-100 w-100 overflow-hidden" data-scroll="true" data-intervall="15">
+                    <div class="list-group h-100 w-100 overflow-hidden" data-scroll="true" data-interval="15">
 
                     {% for group in groups %}
                         {% for item in group.items %}
@@ -78,7 +78,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex-fill overflow-hidden" data-scroll="true" data-intervall="15">
+                <div class="flex-fill overflow-hidden" data-scroll="true" data-interval="15">
                 {% if display.showInfotexts and infotexts|length > 0 %}
                     <div class="card">
                         <div class="card-body p-3">

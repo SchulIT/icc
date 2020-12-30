@@ -101,7 +101,7 @@ class ResourceReservationRepository extends AbstractRepository implements Resour
         $qb = $this->em->createQueryBuilder()
             ->select('r')
             ->from(ResourceReservation::class, 'r')
-            ->leftJoin('r.room', 'rr')
+            ->leftJoin('r.resource', 'rr')
             ->leftJoin('r.teacher', 'rt')
             ->andWhere('rt.id = :teacher')
             ->setParameter('teacher', $teacher->getId());

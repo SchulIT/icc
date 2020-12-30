@@ -17,7 +17,9 @@ class LogRepository extends AbstractRepository implements LogRepositoryInterface
      * @inheritDoc
      */
     public function getLogEntries($entity): array {
-        return $this->getRepository()->getLogEntries($entity);
+        /** @var LogEntry[] $entries */
+        $entries = $this->getRepository()->getLogEntries($entity);
+        return $entries;
     }
 
     /**

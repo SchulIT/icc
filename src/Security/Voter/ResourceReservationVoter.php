@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class RoomReservationVoter extends Voter {
+class ResourceReservationVoter extends Voter {
 
     public const New = 'new-reservation';
     public const View = 'view-reservations';

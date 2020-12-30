@@ -42,7 +42,7 @@ use App\Security\Voter\AbsenceVoter;
 use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
-use App\Security\Voter\RoomReservationVoter;
+use App\Security\Voter\ResourceReservationVoter;
 use App\Security\Voter\SubstitutionVoter;
 use App\Security\Voter\TimetablePeriodVoter;
 use App\Settings\DashboardSettings;
@@ -449,7 +449,7 @@ class DashboardViewHelper {
      */
     private function addRoomReservations(array $reservations, DashboardView $view): void {
         foreach($reservations as $reservation) {
-            if($this->authorizationChecker->isGranted(RoomReservationVoter::View)) {
+            if($this->authorizationChecker->isGranted(ResourceReservationVoter::View)) {
                 $violations = $this->validator->validate($reservation, null, ['collision']);
 
                 for($lessonNumber = $reservation->getLessonStart(); $lessonNumber <= $reservation->getLessonEnd(); $lessonNumber++) {

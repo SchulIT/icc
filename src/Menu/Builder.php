@@ -10,7 +10,7 @@ use App\Repository\MessageRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\ListsVoter;
-use App\Security\Voter\RoomReservationVoter;
+use App\Security\Voter\ResourceReservationVoter;
 use App\Security\Voter\RoomVoter;
 use App\Security\Voter\SickNoteVoter;
 use App\Security\Voter\WikiVoter;
@@ -90,7 +90,7 @@ class Builder {
         ])
             ->setExtra('icon', 'far fa-calendar');
 
-        if($this->authorizationChecker->isGranted(RoomReservationVoter::View)) {
+        if($this->authorizationChecker->isGranted(ResourceReservationVoter::View)) {
             $plans->addChild('resources.reservations.label', [
                 'route' => 'resource_reservations'
             ])

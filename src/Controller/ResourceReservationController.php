@@ -16,7 +16,7 @@ use App\Repository\RoomTagRepositoryInterface;
 use App\Rooms\Reservation\ResourceAvailabilityHelper;
 use App\Rooms\RoomQueryBuilder;
 use App\Rooms\Status\StatusHelperInterface;
-use App\Security\Voter\RoomReservationVoter;
+use App\Security\Voter\ResourceReservationVoter;
 use App\Settings\TimetableSettings;
 use App\Sorting\ResourceStrategy;
 use App\Sorting\RoomReservationDateStrategy;
@@ -196,7 +196,7 @@ class ResourceReservationController extends AbstractController {
      * @Route("/add", name="add_room_reservation")
      */
     public function add(DateHelper $dateHelper, ResourceRepositoryInterface $resourceRepository, Request $request) {
-        $this->denyAccessUnlessGranted(RoomReservationVoter::New);
+        $this->denyAccessUnlessGranted(ResourceReservationVoter::New);
 
         $date = $this->getDateFromRequest($request, $dateHelper);
         $room = $this->getResourceFromRequest($request, $resourceRepository);
@@ -235,7 +235,7 @@ class ResourceReservationController extends AbstractController {
      * @Route("/{uuid}/edit", name="edit_room_reservation")
      */
     public function edit(ResourceReservation $reservation, Request $request) {
-        $this->denyAccessUnlessGranted(RoomReservationVoter::Edit, $reservation);
+        $this->denyAccessUnlessGranted(ResourceReservationVoter::Edit, $reservation);
 
         $form = $this->createForm(ResourceReservationType::class, $reservation);
         $form->handleRequest($request);
@@ -257,7 +257,7 @@ class ResourceReservationController extends AbstractController {
      * @Route("/{uuid}/remove", name="remove_room_reservation")
      */
     public function remove(ResourceReservation $reservation, TranslatorInterface $translator, Request $request) {
-        $this->denyAccessUnlessGranted(RoomReservationVoter::Remove, $reservation);
+        $this->denyAccessUnlessGranted(ResourceReservationVoter::Remove, $reservation);
 
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'resources.reservations.remove.confirm',

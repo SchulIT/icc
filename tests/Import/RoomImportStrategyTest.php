@@ -2,10 +2,13 @@
 
 namespace App\Tests\Import;
 
+use App\Entity\ResourceType;
 use App\Entity\Room;
 use App\Import\Importer;
 use App\Import\RoomImportStrategy;
 use App\Repository\ImportDateTypeRepository;
+use App\Repository\ResourceTypeRepository;
+use App\Repository\ResourceTypeRepositoryInterface;
 use App\Repository\RoomRepository;
 use App\Repository\RoomTagRepository;
 use App\Request\Data\RoomData;
@@ -63,11 +66,15 @@ class RoomImportStrategyTest extends WebTestCase {
                     ->setDescription('Raum 3 Beschreibung'),
             ]);
 
-        $tagRepository = new RoomTagRepository($this->em);
-        $repository = new RoomRepository($this->em, $tagRepository);
+        $type = (new ResourceType())
+            ->setName('room');
+        $typeRepository = new ResourceTypeRepository($this->em);
+        $typeRepository->persist($type);
+
+        $repository = new RoomRepository($this->em);
         $dateTimeRepository = new ImportDateTypeRepository($this->em);
         $importer = new Importer($this->validator, $dateTimeRepository, new NullLogger());
-        $strategy = new RoomImportStrategy($repository);
+        $strategy = new RoomImportStrategy($repository, $typeRepository);
         $result = $importer->import($data, $strategy);
 
         /** @var Room[] $addedRooms */

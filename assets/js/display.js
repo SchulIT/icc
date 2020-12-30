@@ -17,17 +17,17 @@ setInterval(function() {
 
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('[data-scroll=true]').forEach(function(el) {
-        let height = el.offsetHeight;
-        let maxHeight = el.scrollHeight;
-
-        if(el.hasAttribute('data-intervall') !== true) {
-            console.error('You must specify data-intervall (in seconds)');
+        if(el.hasAttribute('data-interval') !== true) {
+            console.error('You must specify data-interval (in seconds)');
             return;
         }
 
-        let intervall = parseInt(el.getAttribute('data-intervall'));
+        let interval = parseInt(el.getAttribute('data-interval'));
 
         setInterval(function() {
+            let height = el.offsetHeight;
+            let maxHeight = el.scrollHeight;
+
             let currentScrollTop = el.scrollTop;
             let newScrollTop = currentScrollTop + height;
 
@@ -39,6 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 top: newScrollTop,
                 behavior: 'smooth'
             });
-        }, intervall*1000);
+        }, interval*1000);
     });
 });

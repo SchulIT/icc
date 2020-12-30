@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\ResourceType;
+use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -41,6 +42,8 @@ class ResourceTypeVoter extends Voter {
             case static::Remove:
                 return $this->canRemove($subject, $token);
         }
+
+        throw new LogicException('This code should not be reached.');
     }
 
     private function canCreate(TokenInterface $token): bool {

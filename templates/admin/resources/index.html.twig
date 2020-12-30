@@ -14,7 +14,7 @@
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9">
-                {% if rooms|length == 0 %}
+                {% if resources|length == 0 %}
                 <div class="bs-callout bs-callout-info">
                     <h4>{{ 'info.label'|trans }}</h4>
 
@@ -44,35 +44,35 @@
                             </thead>
 
                             <tbody>
-                            {% for room in rooms %}
+                            {% for resource in resources %}
                                 <tr>
                                     <td>
-                                        {% if room.type.icon is not empty %}
-                                            <i class="{{ room.type.icon }}" title="{{ room.type.name }}"></i>
+                                        {% if resource.type.icon is not empty %}
+                                            <i class="{{ resource.type.icon }}" title="{{ resource.type.name }}"></i>
                                         {% endif %}
                                     </td>
-                                    <td>{{ room.name }}</td>
-                                    <td>{{ room.description }}</td>
+                                    <td>{{ resource.name }}</td>
+                                    <td>{{ resource.description }}</td>
                                     <td>
-                                        {% if room.capacity is defined %}
-                                            {{ room.capacity }}
+                                        {% if resource.capacity is defined %}
+                                            {{ resource.capacity }}
                                         {% endif %}
                                     </td>
                                     <td>
-                                        {% if room.reservationEnabled %}
+                                        {% if resource.reservationEnabled %}
                                             <i class="fa fa-check"></i>
                                         {% else %}
                                             <i class="fa fa-times"></i>
                                         {% endif %}
                                     </td>
                                     <td>
-                                        {% if is_granted('edit', room) %}
-                                            <a href="{{ path('edit_resource', { uuid: room.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.resources.edit.label'|trans }}">
+                                        {% if is_granted('edit', resource) %}
+                                            <a href="{{ path('edit_resource', { uuid: resource.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'admin.resources.edit.label'|trans }}">
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                         {% endif %}
-                                        {% if is_granted('remove', room) %}
-                                            <a href="{{ path('remove_resource', { uuid: room.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.resources.remove.label'|trans }}">
+                                        {% if is_granted('remove', resource) %}
+                                            <a href="{{ path('remove_resource', { uuid: resource.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'admin.resources.remove.label'|trans }}">
                                                 <i class="fa fa-trash"></i>
                                             </a>
                                         {% endif %}
@@ -93,7 +93,7 @@
                             <i class="fa fa-plus"></i> {{ 'admin.resources.add.label'|trans }}
                         </a>
 
-                        <a href="{{ path('add_resource', { type: 'room' }) }}" class="list-group-item list-group-item-action">
+                        <a href="{{ path('add_resource', { type: 'resource' }) }}" class="list-group-item list-group-item-action">
                             <i class="fa fa-plus"></i> {{ 'admin.resources.add.label_room'|trans }}
                         </a>
 

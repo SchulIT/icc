@@ -8,6 +8,8 @@ use App\Form\ResourceType;
 use App\Repository\ResourceRepositoryInterface;
 use App\Repository\ResourceTypeRepositoryInterface;
 use App\Repository\RoomRepositoryInterface;
+use App\Sorting\ResourceStrategy;
+use App\Sorting\Sorter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -31,9 +33,12 @@ class ResourceAdminController extends AbstractController {
     /**
      * @Route("", name="admin_resources")
      */
-    public function index() {
+    public function index(Sorter $sorter) {
+        $resources = $this->repository->findAll();
+        $sorter->sort($resources, ResourceStrategy::class);
+
         return $this->render('admin/resources/index.html.twig', [
-            'rooms' => $this->repository->findAll()
+            'resources' => $resources
         ]);
     }
 

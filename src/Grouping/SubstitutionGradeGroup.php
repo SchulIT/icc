@@ -5,7 +5,7 @@ namespace App\Grouping;
 use App\Entity\Grade;
 use App\Entity\Substitution;
 
-class SubstitutionGradeGroup implements GroupInterface {
+class SubstitutionGradeGroup implements GroupInterface, SortableGroupInterface {
 
     /** @var Grade|null */
     private $grade;
@@ -43,5 +43,9 @@ class SubstitutionGradeGroup implements GroupInterface {
      */
     public function addItem($item) {
         $this->substitutions[] = $item;
+    }
+
+    public function &getItems(): array {
+        return $this->substitutions;
     }
 }

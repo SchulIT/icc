@@ -9,19 +9,7 @@
     </ol>
 {% endblock %}
 
-{% macro replacement(original, replacement) -%}
-    {%- if original is same as (replacement) -%}{{ original }}
-    {%- else -%}
-        {% if original is not empty and replacement is not empty -%}
-            <s>{{ original }}</s>
-        {%- elseif original is not empty -%}
-            {{ original }}
-        {% endif %}
-        {%- if replacement is not empty %}
-            ⟶ {{ replacement }}
-        {%- endif -%}
-    {%- endif -%}
-{% endmacro %}
+{% import "_macros/replacement.html.twig" as _macro %}
 
 {% block content %}
     {% set currentFilter = {
@@ -116,10 +104,10 @@
                                                             {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
                                                         {% endif %}
                                                     </td>
-                                                    <td class="align-middle">{{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}</td>
-                                                    <td class="align-middle">{{ _self.replacement(substitution.room, substitution.replacementRoom) }}</td>
-                                                    <td class="align-middle">{{ _self.replacement(substitution.subject, substitution.replacementSubject) }}</td>
-                                                    <td class="align-middle">{{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}</td>
+                                                    <td class="align-middle">{{ _macro.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}</td>
+                                                    <td class="align-middle">{{ _macro.replacement(substitution.room, substitution.replacementRoom) }}</td>
+                                                    <td class="align-middle">{{ _macro.replacement(substitution.subject, substitution.replacementSubject) }}</td>
+                                                    <td class="align-middle">{{ _macro.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}</td>
                                                     <td class="align-middle">{{ substitution.type }}</td>
                                                     <td class="align-middle">{{ substitution.remark }}</td>
                                                 </tr>

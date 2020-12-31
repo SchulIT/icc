@@ -1,6 +1,4 @@
-{% macro replacement(original, replacement) %}
-    {% if original is not empty and replacement is not empty %}<s>{{ original }}</s> ⟶ {% elseif original is not empty %}{{ original }}{% endif %}{% if replacement is not empty %}{{ replacement }}{% endif %}
-{% endmacro %}
+{% import "_macros/replacement.html.twig" as _macro %}
 
 {% if availability is null %}
     {{ 'resources.reservations.not_available'|trans }}
@@ -71,20 +69,20 @@
             <span class="mx-1"></span>
 
             {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
-                {{ _self.replacement(substitution.subject, substitution.replacementSubject) }}
+                {{ _macro.replacement(substitution.subject, substitution.replacementSubject) }}
                 <span class="mx-1"></span>
             {% endif %}
 
             {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
-                <i class="fa fa-users"></i> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
+                <i class="fa fa-users"></i> {{ _macro.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
                 <span class="mx-1"></span>
             {% endif %}
 
-            <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
+            <i class="fa fa-graduation-cap"></i> {{ _macro.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
             <span class="mx-1"></span>
 
             {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
-                <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room, substitution.replacementRoom) }}
+                <i class="fa fa-door-open"></i> {{ _macro.replacement(substitution.room, substitution.replacementRoom) }}
             {% endif %}
         </div>
     {% endif %}

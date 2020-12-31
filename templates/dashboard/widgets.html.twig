@@ -1,16 +1,4 @@
-{% macro replacement(original, replacement) -%}
-    {%- if original is same as (replacement) -%}{{ original }}
-    {%- else -%}
-        {% if original is not empty and replacement is not empty -%}
-            <s>{{ original }}</s>
-        {%- elseif original is not empty -%}
-            {{ original }}
-        {% endif %}
-        {%- if replacement is not empty %}
-            ⟶ {{ replacement }}
-        {%- endif -%}
-    {%- endif -%}
-{% endmacro %}
+{% import "_macros/replacement.html.twig" as _macro %}
 
 {% macro show_lesson(lesson, start, end, warning) %}
     <div class="align-self-center text-center p-3 dashboard-lesson text-black-50">
@@ -308,26 +296,26 @@
                 <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
                     {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
                         <span>
-                            {{ _self.replacement(substitution.subject, substitution.replacementSubject) }}
+                            {{ _macro.replacement(substitution.subject, substitution.replacementSubject) }}
                             <span class="mx-1"></span>
                         </span>
                     {% endif %}
 
                     {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
                         <span>
-                            <i class="fa fa-users"></i> {{ _self.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
+                            <i class="fa fa-users"></i> {{ _macro.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
                             <span class="mx-1"></span>
                         </span>
                     {% endif %}
 
                     <span>
-                        <i class="fa fa-graduation-cap"></i> {{ _self.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
+                        <i class="fa fa-graduation-cap"></i> {{ _macro.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
                         <span class="mx-1"></span>
                     </span>
 
                     {% if substitution.room is not null or substitution.replacementRoom is not null or substitution.roomName is not null or substitution.replacementRoomName is not null %}
                         <span>
-                            <i class="fa fa-door-open"></i> {{ _self.replacement(substitution.room ? substitution.room.name : substitution.roomName, substitution.replacementRoom ? substitution.replacementRoom : substitution.replacementRoomName) }}
+                            <i class="fa fa-door-open"></i> {{ _macro.replacement(substitution.room ? substitution.room.name : substitution.roomName, substitution.replacementRoom ? substitution.replacementRoom : substitution.replacementRoomName) }}
                         </span>
                     {% endif %}
                 </div>

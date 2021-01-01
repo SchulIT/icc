@@ -18,11 +18,10 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $qb = $this->em->createQueryBuilder();
 
         $qb
-            ->select(['e', 's', 'es', 't', 'sg', 'g', 'at', 'tt', 'st'])
+            ->select(['e', 's', 't', 'sg', 'g', 'at', 'tt', 'st'])
             ->from(Exam::class, 'e')
             ->leftJoin('e.supervisions', 's')
             ->leftJoin('s.teacher', 'st')
-            ->leftJoin('e.students', 'es')
             ->leftJoin('e.tuitions', 't')
             ->leftJoin('t.teacher', 'tt')
             ->leftJoin('t.additionalTeachers', 'at')

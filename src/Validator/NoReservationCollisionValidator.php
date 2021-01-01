@@ -32,7 +32,7 @@ class NoReservationCollisionValidator extends ConstraintValidator {
             throw new UnexpectedTypeException($value, ResourceReservation::class);
         }
 
-        $room = $value->getResource();
+        $room = $value instanceof Exam ? $value->getRoom() : $value->getResource();
         $date = $value->getDate();
         $lessonStart = $value->getLessonStart();
         $lessonEnd = $value->getLessonEnd();

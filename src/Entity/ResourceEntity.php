@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Validator\NullOrNotBlank;
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -18,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      "room"="Room"
  * })
  * @UniqueEntity(fields={"name"})
+ * @Auditable()
  */
 class ResourceEntity {
 

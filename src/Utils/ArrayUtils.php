@@ -6,13 +6,13 @@ use Closure;
 
 class ArrayUtils {
 
-    public static function apply(array &$items, \Closure $closure): void {
+    public static function apply(iterable &$items, \Closure $closure): void {
         foreach($items as $item) {
             $closure($item);
         }
     }
 
-    public static function first(array $items, Closure $predicate) {
+    public static function first(iterable $items, Closure $predicate) {
         foreach($items as $item) {
             if($predicate($item) === true) {
                 return $item;
@@ -40,7 +40,7 @@ class ArrayUtils {
         return $array;
     }
 
-    public static function createArrayWithKeys(array $items, \Closure $keyFunc, bool $multiValue = false): array {
+    public static function createArrayWithKeys(iterable $items, \Closure $keyFunc, bool $multiValue = false): array {
         $array = [ ];
 
         foreach($items as $item) {
@@ -66,7 +66,7 @@ class ArrayUtils {
         return $array;
     }
 
-    public static function createArrayWithKeysAndValues(array $items, \Closure $keyFunc, \Closure $valueFunc): array {
+    public static function createArrayWithKeysAndValues(iterable $items, \Closure $keyFunc, \Closure $valueFunc): array {
         $array = [ ];
 
         foreach($items as $item) {
@@ -76,7 +76,7 @@ class ArrayUtils {
         return $array;
     }
 
-    public static function findAllWithKeys(array $items, array $keys): array {
+    public static function findAllWithKeys(iterable $items, array $keys): array {
         $result = [ ];
 
         foreach($items as $key => $item) {
@@ -95,7 +95,7 @@ class ArrayUtils {
      * @param string $type
      * @return array
      */
-    public static function filterByType(array $items, string $type): array {
+    public static function filterByType(iterable $items, string $type): array {
         $result = [ ];
 
         foreach($items as $item) {
@@ -107,7 +107,7 @@ class ArrayUtils {
         return $result;
     }
 
-    public static function unique(array $items) {
+    public static function unique(iterable $items) {
         $result = [ ];
 
         foreach($items as $item) {

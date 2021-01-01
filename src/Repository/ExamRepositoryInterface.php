@@ -27,6 +27,12 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
     public function findOneByExternalId(string $externalId): ?Exam;
 
     /**
+     * @param int[] $ids
+     * @return Exam[]
+     */
+    public function findAllByIds(array $ids): array;
+
+    /**
      * @param Tuition[] $tuitions
      * @param \DateTime|null $today If set, only exams on $today or later are returned
      * @param bool $onlyPlanned If set to true, only planned exams are returned

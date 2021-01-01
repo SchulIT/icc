@@ -28,6 +28,12 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function findOneByExternalId(string $externalId): ?Appointment;
 
     /**
+     * @param int[] $ids
+     * @return Appointment[]
+     */
+    public function findAllByIds(array $ids): array;
+
+    /**
      * @param StudyGroup $studyGroup
      * @param DateTime|null $today
      * @return Appointment[]

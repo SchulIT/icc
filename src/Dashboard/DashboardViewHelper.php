@@ -2,6 +2,7 @@
 
 namespace App\Dashboard;
 
+use App\Dashboard\Absence\AbsenceResolver;
 use App\Entity\Appointment;
 use App\Entity\Exam;
 use App\Entity\ExamSupervision;
@@ -76,7 +77,6 @@ class DashboardViewHelper {
     private $appointmentRepository;
     private $roomReservationRepository;
     private $freeTimespanRepository;
-    private $sickNoteRepository;
 
     private $studyGroupHelper;
     private $timetablePeriodHelper;
@@ -90,14 +90,16 @@ class DashboardViewHelper {
     private $authorizationChecker;
     private $validator;
 
+    private $absenceResolver;
+
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
                                 MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                                 StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, ResourceReservationRepositoryInterface $reservationRepository,
-                                FreeTimespanRepositoryInterface $freeTimespanRepository, SickNoteRepositoryInterface $sickNoteRepository,
+                                FreeTimespanRepositoryInterface $freeTimespanRepository,
                                 StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, TimetableTimeHelper $timetableTimeHelper, Sorter $sorter, Grouper $grouper,
                                 TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
-                                ValidatorInterface $validator) {
+                                ValidatorInterface $validator, AbsenceResolver $absenceResolver) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->timetableRepository = $timetableRepository;
@@ -110,7 +112,6 @@ class DashboardViewHelper {
         $this->appointmentRepository = $appointmentRepository;
         $this->roomReservationRepository = $reservationRepository;
         $this->freeTimespanRepository = $freeTimespanRepository;
-        $this->sickNoteRepository = $sickNoteRepository;
         $this->studyGroupHelper = $studyGroupHelper;
         $this->timetablePeriodHelper = $timetablePeriodHelper;
         $this->timetableSettings = $timetableSettings;
@@ -121,6 +122,7 @@ class DashboardViewHelper {
         $this->dashboardSettings = $dashboardSettings;
         $this->authorizationChecker = $authorizationChecker;
         $this->validator = $validator;
+        $this->absenceResolver = $absenceResolver;
     }
 
     public function createViewForRoom(Room $room, DateTime $dateTime): DashboardView {
@@ -481,7 +483,7 @@ class DashboardViewHelper {
      * @param DateTime $dateTime
      * @return AbsentStudentGroup[]
      */
-    private function computeAbsentStudents(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime) {
+    private function computeAbsentStudents(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime): array {
         if($lessonEntity->getTuition() === null) {
             return [];
         }
@@ -495,16 +497,7 @@ class DashboardViewHelper {
             })
             ->toArray();
 
-        $absentStudents = ArrayUtils::unique(
-            array_merge(
-                array_map(function(Student $student) {
-                    return new AbsentStudent($student, AbsenceReason::Other());
-                }, $this->absenceRepository->findAllStudentsByDateAndLesson($dateTime, $lessonStudents, $lesson)),
-                $this->computeExamStudents($lessonEntity, $lesson, $dateTime),
-                $this->computeAbsentStudentsFromAppointments($lessonEntity, $lesson, $dateTime),
-                $this->computeSickStudents($lessonEntity, $lesson, $dateTime)
-            )
-        );
+        $absentStudents = $this->absenceResolver->resolve($dateTime, $lesson, $lessonStudents);
 
         /** @var AbsentStudentGroup[] $groups */
         $groups = $this->grouper->group($absentStudents, AbstentStudentGroupStrategy::class);
@@ -513,95 +506,4 @@ class DashboardViewHelper {
         return $groups;
     }
 
-    private function computeExamStudents(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime) {
-        if($lessonEntity->getTuition() === null) {
-            return [];
-        }
-
-        $lessonStudents = $lessonEntity
-            ->getTuition()
-            ->getStudyGroup()
-            ->getMemberships()
-            ->map(function (StudyGroupMembership $membership) {
-                return $membership->getStudent();
-            });
-
-        $exams = $this->examRepository->findAllByDateAndLesson($dateTime, $lesson);
-        $absentStudents = [ ];
-
-        foreach($exams as $exam) {
-            foreach ($exam->getStudents() as $examStudent) {
-                foreach ($lessonStudents as $lessonStudent) {
-                    if ($examStudent->getId() === $lessonStudent->getId()) {
-                        $absentStudents[] = new AbsentExamStudent($lessonStudent, $exam);
-                    }
-                }
-            }
-        }
-
-        $absentStudents = array_filter($absentStudents, function(AbsentExamStudent $absentStudent) use($lessonEntity) {
-            $tuitionIds = $absentStudent->getExam()->getTuitions()->map(function(Tuition $tuition) {
-                return $tuition->getId();
-            })->toArray();
-            return !in_array($lessonEntity->getTuition()->getId(), $tuitionIds);
-        });
-
-        return $absentStudents;
-    }
-
-    private function computeAbsentStudentsFromAppointments(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime) {
-        if($lessonEntity->getTuition() === null) {
-            return [];
-        }
-
-        $absentStudents = [ ];
-
-        $lessonStudents = $lessonEntity
-            ->getTuition()
-            ->getStudyGroup()
-            ->getMemberships()
-            ->map(function (StudyGroupMembership $membership) {
-                return $membership->getStudent();
-            })
-            ->toArray();
-
-        foreach($lessonStudents as $student) {
-            $appointments = $this->appointmentRepository->findAllForStudentsAndTime(
-                [ $student ],
-                $this->timetableTimeHelper->getLessonStartDateTime($dateTime, $lesson),
-                $this->timetableTimeHelper->getLessonEndDateTime($dateTime, $lesson)
-            );
-
-            if(count($appointments) > 0) {
-                $appointment = array_shift($appointments);
-
-                if($appointment->isMarkStudentsAbsent()) {
-                    $absentStudents[] = new AbsentAppointmentStudent($student, $appointment);
-                }
-            }
-        }
-
-        return $absentStudents;
-    }
-
-    private function computeSickStudents(TimetableLesson $lessonEntity, int $lesson, DateTime $dateTime) {
-        if($lessonEntity->getTuition() === null) {
-            return [];
-        }
-
-        $lessonStudents = $lessonEntity
-            ->getTuition()
-            ->getStudyGroup()
-            ->getMemberships()
-            ->map(function (StudyGroupMembership $membership) {
-                return $membership->getStudent();
-            })
-            ->toArray();
-
-        $sickNotes = $this->sickNoteRepository->findByStudents($lessonStudents, $dateTime, $lesson);
-
-        return array_map(function(SickNote $note) {
-            return new AbsentSickStudent($note->getStudent(), $note);
-        }, $sickNotes);
-    }
 }

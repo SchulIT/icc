@@ -23,6 +23,8 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     _instanceof:
+        App\Dashboard\Absence\AbsenceResolveStrategyInterface:
+            tags: [ 'app.absence_resolver' ]
         App\Grouping\GroupingStrategyInterface:
             tags: [ 'app.grouping_strategy' ]
         App\Sorting\SortingStrategyInterface:
@@ -130,11 +132,18 @@ services:
             - { name: knp_menu.voter }
 
     # SERVICES
+    App\Dashboard\Absence\:
+        resource: '../src/Dashboard/Absence/*Strategy.php'
+
     App\Sorting\:
         resource: '../src/Sorting/*Strategy.php'
 
     App\Grouping\:
         resource: '../src/Grouping/*Strategy.php'
+
+    App\Dashboard\Absence\AbsenceResolver:
+        arguments:
+            - !tagged app.absence_resolver
 
     App\Grouping\Grouper:
         arguments:

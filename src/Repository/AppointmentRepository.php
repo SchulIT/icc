@@ -104,6 +104,15 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
     /**
      * @inheritDoc
      */
+    public function findAllByIds(array $ids): array {
+        return $this->getAppointments(':ids', [ 'ids' => $ids ], null)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAllForStudyGroup(StudyGroup $studyGroup, ?DateTime $today = null): array {
         $qbAppointments = $this->em->createQueryBuilder()
             ->select('aInner.id')
@@ -390,6 +399,4 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
         $this->em->remove($appointment);
         $this->flushIfNotInTransaction();
     }
-
-
 }

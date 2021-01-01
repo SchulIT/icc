@@ -79,6 +79,17 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
+    public function findAllByIds(array $ids): array {
+        return $this->getDefaultQueryBuilder()
+            ->andWhere('e.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAllByTuitions(array $tuitions, ?\DateTime $today = null, bool $onlyPlanned = true) {
         $qb = $this->getDefaultQueryBuilder($today, false, $onlyPlanned);
 
@@ -445,4 +456,5 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
 
         return $paginator;
     }
+
 }

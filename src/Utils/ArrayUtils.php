@@ -118,4 +118,14 @@ class ArrayUtils {
 
         return $result;
     }
+
+    public static function iterableToArray(iterable $items) {
+        $array = [ ];
+
+        foreach($items as $item) {
+            $array[] = $item;
+        }
+
+        return $array;
+    }
 }

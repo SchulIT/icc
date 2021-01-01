@@ -39,7 +39,7 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
     public function removeExpired(DateTime $threshold): int {
         return $this->em->createQueryBuilder()
             ->delete(SickNote::class, 's')
-            ->where('s.until < :threshold')
+            ->where('s.until.date < :threshold')
             ->setParameter('threshold', $threshold)
             ->getQuery()
             ->execute();

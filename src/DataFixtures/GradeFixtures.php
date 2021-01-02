@@ -29,7 +29,7 @@ class GradeFixtures extends Fixture implements DependentFixtureInterface {
         $suffixCount = count($suffix);
 
         // Sek I
-        for($i = 5; $i <= 10; $i++) {
+        for($i = 5; $i < 10; $i++) {
             for($j = 0; $j < $suffixCount; $j++) {
                 $name = sprintf('%d%s', $i, $suffix[$j]);
                 $id = str_pad($name, 3, '0', STR_PAD_LEFT);

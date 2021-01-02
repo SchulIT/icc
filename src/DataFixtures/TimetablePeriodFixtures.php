@@ -3,11 +3,13 @@
 namespace App\DataFixtures;
 
 use App\Entity\TimetablePeriod;
+use App\Entity\UserTypeEntity;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 
-class TimetablePeriodFixtures extends Fixture {
+class TimetablePeriodFixtures extends Fixture implements DependentFixtureInterface {
 
     private $generator;
 
@@ -29,7 +31,23 @@ class TimetablePeriodFixtures extends Fixture {
                 $this->generator->dateTimeBetween('now', '+90 days')
             );
 
+        $userTypes = $manager->getRepository(UserTypeEntity::class)
+            ->findAll();
+
+        foreach($userTypes as $type) {
+            $period->addVisibility($type);
+        }
+
         $manager->persist($period);
         $manager->flush();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDependencies() {
+        return [
+            UserTypeFixtures::class
+        ];
     }
 }

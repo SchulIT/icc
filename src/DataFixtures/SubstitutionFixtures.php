@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Room;
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
@@ -25,7 +26,7 @@ class SubstitutionFixtures extends Fixture implements DependentFixtureInterface 
 
     public function load(ObjectManager $manager) {
         $subjects = [ 'M', 'D', 'E', 'IF', 'MU', 'F0', 'PH' ];
-        $rooms = $this->roomGenerator->getRooms();
+        $rooms = $manager->getRepository(Room::class)->findAll();
         $types = [ 'Raumvertretung', 'Entfall', 'Vertretung', null ];
         $studyGroups = $manager->getRepository(StudyGroup::class)->findAll();
         $teachers = $manager->getRepository(Teacher::class)->findAll();
@@ -115,7 +116,8 @@ class SubstitutionFixtures extends Fixture implements DependentFixtureInterface 
     public function getDependencies() {
         return [
             StudyGroupFixtures::class,
-            TeacherFixtures::class
+            TeacherFixtures::class,
+            RoomFixtures::class
         ];
     }
 }

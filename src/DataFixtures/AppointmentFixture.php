@@ -26,7 +26,9 @@ class AppointmentFixture extends Fixture implements DependentFixtureInterface {
     public function getDependencies() {
         return [
             AppointmentCategoryFixtures::class,
-            StudyGroupFixtures::class
+            StudyGroupFixtures::class,
+            TeacherFixtures::class,
+            UserTypeFixtures::class
         ];
     }
 

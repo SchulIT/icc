@@ -4,16 +4,16 @@ namespace App\Settings;
 
 class TimetableSettings extends AbstractSettings {
 
-    private const MaxLessonsKey = 'max_lessons';
-    private const DescriptionBeforeKey = 'lesson.%d.before_label';
-    private const StartKey = 'lesson.%d.start';
-    private const EndKey = 'lesson.%d.end';
-    private const CollapsibleKey = 'lesson.%d.collapsable';
-    private const SupervisionLabelKey = 'supervision.label';
-    private const SupervisionColorKey = 'supervision.color';
-    private const CategoriesKey = 'no_lessons_categories';
-    private const GradesWithCourseNames = 'course_names';
-    private const GradesWithMembershipTypes = 'membership_types';
+    public const MaxLessonsKey = 'max_lessons';
+    public const DescriptionBeforeKey = 'lesson.%d.before_label';
+    public const StartKey = 'lesson.%d.start';
+    public const EndKey = 'lesson.%d.end';
+    public const CollapsibleKey = 'lesson.%d.collapsable';
+    public const SupervisionLabelKey = 'supervision.label';
+    public const SupervisionColorKey = 'supervision.color';
+    public const CategoriesKey = 'no_lessons_categories';
+    public const GradesWithCourseNames = 'course_names';
+    public const GradesWithMembershipTypes = 'membership_types';
 
     public function __construct(SettingsManager $manager) {
         parent::__construct($manager);

@@ -6,7 +6,7 @@
 {% block button_url%}{{ url('edit_room_reservation', { uuid: reservation.uuid }) }}{% endblock %}
 
 {% block preview %}{{ 'reservation.content'|trans({
-    '%room%': reservation.room.name,
+    '%room%': reservation.resource.name,
     '%date%': reservation.date|format_date,
     '%lesson%': 'label.substitution_lessons'|trans({'%start%': reservation.lessonStart, '%end%': reservation.lessonEnd, '%count%': (reservation.lessonEnd - reservation.lessonStart)})
 }, 'email') }}{% endblock %}
@@ -14,7 +14,7 @@
 {% block content %}
     <p>
         {{ 'reservation.content'|trans({
-            '%room%': reservation.room.name,
+            '%room%': reservation.resource.name,
             '%date%': reservation.date|format_date,
             '%lesson%': 'label.substitution_lessons'|trans({'%start%': reservation.lessonStart, '%end%': reservation.lessonEnd, '%count%': (reservation.lessonEnd - reservation.lessonStart)})
         }, 'email') }}

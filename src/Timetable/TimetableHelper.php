@@ -7,6 +7,7 @@ use App\Entity\TimetableSupervision;
 use App\Entity\TimetableWeek as TimetableWeekEntity;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
+use App\Repository\FreeTimespanRepositoryInterface;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TimetableWeekStrategy;
@@ -24,14 +25,17 @@ class TimetableHelper {
     private $settings;
     private $appointmentRepository;
     private $appointmentCategoryRepository;
+    private $freeTimespanRepository;
 
     public function __construct(Sorter $sorter, DateHelper $dateHelper, TimetableSettings $settingsManager,
-                                AppointmentRepositoryInterface $appointmentRepository, AppointmentCategoryRepositoryInterface $appointmentCategoryRepository) {
+                                AppointmentRepositoryInterface $appointmentRepository, FreeTimespanRepositoryInterface $freeTimespanRepository,
+                                AppointmentCategoryRepositoryInterface $appointmentCategoryRepository) {
         $this->sorter = $sorter;
         $this->dateHelper = $dateHelper;
         $this->settings = $settingsManager;
         $this->appointmentRepository = $appointmentRepository;
         $this->appointmentCategoryRepository = $appointmentCategoryRepository;
+        $this->freeTimespanRepository = $freeTimespanRepository;
     }
 
     /**
@@ -110,6 +114,12 @@ class TimetableHelper {
                 $freeDays[] = $date;
 
                 $date = (clone $date)->modify('+1 day');
+            }
+        }
+
+        foreach($this->freeTimespanRepository->findAll() as $timespan) {
+            if($timespan->getStart() === 1 && $timespan->getEnd() === $this->settings->getMaxLessons()) {
+                $freeDays[] = $timespan->getDate();
             }
         }
 

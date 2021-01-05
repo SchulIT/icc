@@ -24,7 +24,7 @@ class AbsenceResolver {
      * @param DateTime $dateTime
      * @param int $lesson
      * @param Student[] $students
-     * @param string[] FQCN of excluded strategies
+     * @param string[] $excludedResolvers FQCN of excluded strategies
      * @return AbsentStudent[]
      */
     public function resolve(DateTime $dateTime, int $lesson, iterable $students, array $excludedResolvers = [ ]): array {

@@ -500,7 +500,7 @@ class DashboardViewHelper {
      * @param Student[] $students
      * @param int $lesson
      * @param DateTime $dateTime
-     * @param string[] FQCN of excluded strategies
+     * @param string[] $excludedResolvers FQCN of excluded strategies
      * @return AbsentStudentGroup[]
      */
     private function computeAbsentStudents(array $students, int $lesson, DateTime $dateTime, array $excludedResolvers = [ ]): array {

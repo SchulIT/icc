@@ -24,12 +24,16 @@ class AbsenceResolver {
      * @param DateTime $dateTime
      * @param int $lesson
      * @param Student[] $students
+     * @param string[] FQCN of excluded strategies
      * @return AbsentStudent[]
      */
-    public function resolve(DateTime $dateTime, int $lesson, iterable $students): array {
+    public function resolve(DateTime $dateTime, int $lesson, iterable $students, array $excludedResolvers = [ ]): array {
         $absent = [ ];
 
         foreach($this->strategies as $strategy) {
+            if(in_array(get_class($strategy), $excludedResolvers)) {
+                continue;
+            }
             $absent = array_merge($absent, $strategy->resolveAbsentStudents($dateTime, $lesson, $students));
         }
 

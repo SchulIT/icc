@@ -400,7 +400,7 @@ class DashboardViewCollapseHelper {
 
             if($isMerged === false) {
                 $clonedSubstitution = $substitution->clone(); // Somehow, clone $substitution does not work (when renameing clone() to __clone())
-                $item = new SubstitutionViewItem($clonedSubstitution, false);
+                $item = new SubstitutionViewItem($clonedSubstitution, false, $substitutionViewItem->getStudents(), $substitutionViewItem->getAbsentStudentGroups());
                 $merged[] = $item;
             }
         }

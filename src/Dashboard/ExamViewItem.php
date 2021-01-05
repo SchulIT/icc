@@ -4,11 +4,13 @@ namespace App\Dashboard;
 
 use App\Entity\Exam;
 
-class ExamViewItem extends AbstractViewItem {
+class ExamViewItem extends AbsenceAwareViewItem {
 
     private $exam;
 
-    public function __construct(Exam $exam) {
+    public function __construct(Exam $exam, array $absentStudentGroups) {
+        parent::__construct($absentStudentGroups);
+
         $this->exam = $exam;
     }
 

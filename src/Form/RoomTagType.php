@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use SchulIT\CommonBundle\Form\FontAwesomeIconPicker;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -23,6 +24,10 @@ class RoomTagType extends AbstractType {
                 'label_attr' => [
                     'class' => 'checkbox-custom'
                 ]
+            ])
+            ->add('icons', FontAwesomeIconPicker::class, [
+                'label' => 'label.icon.label',
+                'required' => false
             ]);
     }
 }

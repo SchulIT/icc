@@ -34,6 +34,11 @@ reservation:
   content_exam: 'bei der Raumreservierung für eine Klausur in %room% am %date% (%lesson%) ist es zu einem Konflikt gekommen.'
   link: Reservierung anzeigen
 
+reservation_removed:
+  title: Reservierung gelöscht
+  content: 'beim Import des Stundenplans wurde die Reservierung für %resource% am %date% (%lesson%) entfernt, da diese nun durch den Vertretungsplan abgedeckt ist.'
+  link: Vertretungsplan anzeigen
+
 appointment:
   title: Termin bestätigt
   content: 'der Termin %name% wurde von %user% bestätigt und ist nun im ICC für die festgelegten Zielgruppen sichtbar.'

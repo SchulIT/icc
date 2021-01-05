@@ -5,10 +5,12 @@ namespace App\EventSubscriber;
 use App\Entity\Exam;
 use App\Entity\ResourceReservation;
 use App\Entity\Substitution;
+use App\Entity\Teacher;
 use App\Entity\Tuition;
 use App\Event\SubstitutionImportEvent;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\ResourceReservationRepositoryInterface;
+use App\Rooms\Reservation\ResourceAvailabilityHelper;
 use App\Validator\NoReservationCollision;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
@@ -36,8 +38,11 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
     private $translator;
     private $dateHelper;
 
+    private $availabilityHelper;
+
     public function __construct($appName, string $sender, ValidatorInterface $validator, ResourceReservationRepositoryInterface $reservationRepository,
-                                ExamRepositoryInterface $examRepository, Swift_Mailer $mailer, Environment $twig, TranslatorInterface $translator, DateHelper $dateHelper) {
+                                ExamRepositoryInterface $examRepository, Swift_Mailer $mailer, Environment $twig, TranslatorInterface $translator,
+                                DateHelper $dateHelper, ResourceAvailabilityHelper $availabilityHelper) {
         $this->appName = $appName;
         $this->sender = $sender;
 
@@ -50,6 +55,7 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
         $this->translator = $translator;
 
         $this->dateHelper = $dateHelper;
+        $this->availabilityHelper = $availabilityHelper;
     }
 
     public function onSubstitutionImportEvent(SubstitutionImportEvent $event): void {
@@ -84,7 +90,7 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
                 if($reservation->getDate() >= $today) {
                     $violations = $this->validator->validate($reservation);
 
-                    if (count($violations) > 0) {
+                    if (count($violations) > 0 && $this->handleViolation($reservation) === false) {
                         $this->sendViolationsEmail($reservation, $violations);
                     }
                 }
@@ -115,6 +121,60 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
 
             $start->modify('+1 day');
         }
+    }
+
+    private function handleViolation(ResourceReservation $reservation): bool {
+        $conflictingSubstitutions = 0;
+
+        for($lesson = $reservation->getLessonStart(); $lesson <= $reservation->getLessonEnd(); $lesson++) {
+            $availability = $this->availabilityHelper->getAvailability($reservation->getResource(), $reservation->getDate(), $lesson);
+
+            if($availability === null) {
+                continue;
+            }
+
+            if(($availability->getTimetableLesson() !== null && !$availability->isTimetableLessonCancelled()) || count($availability->getExams()) > 0) {
+                return false;
+            }
+
+            $substitution = $availability->getSubstitution();
+            if($substitution !== null) {
+                $teachers = $substitution->getTeachers()->map(function (Teacher $teacher) {
+                    return $teacher->getId();
+                })->toArray();
+                $replacementTeachers = $substitution->getReplacementTeachers()->map(function (Teacher $teacher) {
+                    return $teacher->getId();
+                })->toArray();
+
+                if (!(count($replacementTeachers) > 0 && in_array($reservation->getTeacher()->getId(), $replacementTeachers) || count($replacementTeachers) === 0 && in_array($reservation->getTeacher()->getId(), $teachers))) {
+                    $conflictingSubstitutions++;
+                }
+            }
+        }
+
+        if($conflictingSubstitutions === 0) {
+            $this->sendReservationRemovedEmail($reservation);
+            $this->reservationRepository->remove($reservation);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private function sendReservationRemovedEmail(ResourceReservation $reservation): void {
+        $content = $this->twig->render('email/reservation_removed.html.twig', [
+            'reservation' => $reservation
+        ]);
+
+        $message = (new Swift_Message())
+            ->setSubject($this->translator->trans('reservation_removed.title', [],'email'))
+            ->setFrom([$this->sender], $this->appName)
+            ->setSender($this->sender, $this->appName)
+            ->setBody($content, 'text/html')
+            ->setTo([ $reservation->getTeacher()->getEmail() ]);
+
+        $this->mailer->send($message);
     }
 
     private function sendViolationsEmail(ResourceReservation $reservation, ConstraintViolationListInterface $violationList): void {

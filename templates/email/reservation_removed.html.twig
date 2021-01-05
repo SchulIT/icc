@@ -1,0 +1,24 @@
+{% extends "email/main.html.twig" %}
+
+{% block title %}{{ 'reservation_removed.title'|trans({}, 'email') }}{% endblock %}
+
+{% block button_content %}{{ 'reservation_removed.link'|trans({}, 'email') }}{% endblock %}
+{% block button_url%}{{ url('substitutions') }}{% endblock %}
+
+{% block preview %}{{ 'reservation_removed.content'|trans({
+    '%room%': reservation.resource.name,
+    '%date%': reservation.date|format_date,
+    '%lesson%': 'label.substitution_lessons'|trans({'%start%': reservation.lessonStart, '%end%': reservation.lessonEnd, '%count%': (reservation.lessonEnd - reservation.lessonStart)})
+}, 'email') }}{% endblock %}
+
+{% block content %}
+    <p>
+        {{ 'reservation_removed.content'|trans({
+            '%room%': reservation.resource.name,
+            '%date%': reservation.date|format_date,
+            '%lesson%': 'label.substitution_lessons'|trans({'%start%': reservation.lessonStart, '%end%': reservation.lessonEnd, '%count%': (reservation.lessonEnd - reservation.lessonStart)})
+        }, 'email') }}
+    </p>
+{% endblock %}
+
+{% block additional %}{% endblock %}

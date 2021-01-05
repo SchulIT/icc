@@ -51,8 +51,8 @@
                                 {% for reservation in group.reservations %}
                                     <tr>
                                         <td>
-                                            {{ reservation.room.name }}
-                                            <span class="text-muted">{{ reservation.room.description }}</span>
+                                            {{ reservation.resource.name }}
+                                            <span class="text-muted">{{ reservation.resource.description }}</span>
 
                                             {% for error in validation_errors(reservation)|default([]) %}
                                                 <i class="fa fa-exclamation-triangle" title="{{ error.message|trans(error.parameters, 'validators') }}"></i>

@@ -12,11 +12,13 @@
             {%- set lesson = availability.timetableLesson -%}
             {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
             {%- set showCourseName = false -%}
-            {%- for grade in lesson.tuition.studyGroup.grades -%}
-                {% if grade.id in gradesWithCourseNames -%}
-                    {% set showCourseName = true -%}
-                {% endif -%}
-            {%- endfor -%}
+            {% if lesson.tuition is not null %}
+                {%- for grade in lesson.tuition.studyGroup.grades -%}
+                    {% if grade.id in gradesWithCourseNames -%}
+                        {% set showCourseName = true -%}
+                    {% endif -%}
+                {%- endfor -%}
+            {% endif %}
 
             {% if availability.timetableLessonCancelled %}
             <s>

@@ -94,7 +94,13 @@ class ListController extends AbstractControllerWithMessages {
 
                 $memberships[$tuition->getExternalId()] = $membership->getType();
             }
+        } else if($gradeFilterView->getCurrentGrade() !== null) {
+            $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()]);
+        } else if($teacherFilterView->getCurrentTeacher() !== null) {
+            $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher());
+        }
 
+        if($studentFilterView->getCurrentStudent() !== null || $gradeFilterView->getCurrentGrade() !== null) {
             foreach($tuitions as $tuition) {
                 foreach($tuition->getTeachers() as $teacher) {
                     if($teacher->getEmail() !== null) {
@@ -104,10 +110,6 @@ class ListController extends AbstractControllerWithMessages {
             }
 
             $teacherMailAddresses = array_unique($teacherMailAddresses);
-        } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()]);
-        } else if($teacherFilterView->getCurrentTeacher() !== null) {
-            $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher());
         }
 
         $this->sorter->sort($tuitions, TuitionStrategy::class);

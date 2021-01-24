@@ -147,7 +147,7 @@ class Builder {
             ->setExtra('menu-container', '#submenu');
 
         foreach($this->wikiRepository->findAll() as $article) {
-            if($this->authorizationChecker->isGranted(WikiVoter::View, $article)) {
+            if($article->isOnline() && $this->authorizationChecker->isGranted(WikiVoter::View, $article)) {
                 $item = $wiki->addChild(sprintf('wiki.%s', $article->getUuid()), [
                     'label' => $article->getTitle(),
                     'route' => 'show_wiki_article',

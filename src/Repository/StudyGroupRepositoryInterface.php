@@ -28,6 +28,12 @@ interface StudyGroupRepositoryInterface extends TransactionalRepositoryInterface
     public function findOneByExternalId(string $externalId): ?StudyGroup;
 
     /**
+     * @param Grade $grade
+     * @return StudyGroup|null
+     */
+    public function findOneByGrade(Grade $grade): ?StudyGroup;
+
+    /**
      * @param string[] $externalIds
      * @return StudyGroup[]
      */

@@ -44,6 +44,26 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
     /**
      * @inheritDoc
      */
+    public function findOneByGrade(Grade $grade): ?StudyGroup {
+        $qb = $this->em->createQueryBuilder();
+
+        $qb
+            ->select('sg')
+            ->from(StudyGroup::class, 'sg')
+            ->leftJoin('sg.grades', 'g')
+            ->where('sg.type = :type')
+            ->andWhere('g.id = :grade')
+            ->setParameter('grade', $grade->getId())
+            ->setParameter('type', StudyGroupType::Grade())
+            ->setMaxResults(1)
+            ->setFirstResult(0);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAllByExternalId(array $externalIds): array {
         $qb = $this->em->createQueryBuilder();
 
@@ -141,5 +161,4 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
         $this->em->remove($studyGroup);
         $this->flushIfNotInTransaction();
     }
-
 }

@@ -294,13 +294,21 @@
                                     <i class="fas fa-envelope" title="{{ 'label.email'|trans }}"></i> <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>
                                 </p>
                             {% endif %}
+                            {% if teacher.grades|length > 0 %}
                             <p>
                                 <i class="fas fa-chalkboard-teacher" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>
                                 {% for gradeTeacher in teacher.grades|sort_gradeteachers %}
-                                    {{ gradeTeacher.grade.name }}{% if gradeTeacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}
+                                    {% set studyGroup = get_study_group_by_grade(gradeTeacher.grade) %}
+                                    {%- if studyGroup is not null -%}
+                                        <a href="{{ path('list_studygroups', { study_group: studyGroup.uuid.toString }) }}">{{ gradeTeacher.grade.name }}</a>
+                                    {%- else -%}
+                                        {{ gradeTeacher.grade.name }}
+                                    {%- endif -%}
+                                    {% if gradeTeacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}
                                     {%- if not loop.last -%}, {% endif -%}
                                 {% endfor %}
                             </p>
+                            {% endif %}
                             <p>
                                 <i class="fas fa-graduation-cap" title="{{ 'label.subjects'|trans }}"></i>
                                 {% for subject in teacher.subjects %}

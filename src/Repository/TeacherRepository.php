@@ -142,7 +142,7 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
             $qb->setParameter('subject', $subject->getAbbreviation());
         }
 
-        if($tag !== null) {
+        if($tag !== null && $tag->getId() !== null) {
             $qbInner
                 ->andWhere('tagsInner.id = :tag');
             $qb->setParameter('tag', $tag->getId());

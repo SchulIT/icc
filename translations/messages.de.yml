@@ -407,6 +407,9 @@ lists:
         substitute:
             short: (stv.)
             long: stellvertretend
+        tags:
+            grade_teachers: Klassenleitungen
+            substitute_grade_teachers: stv. Klassenleitungen
 
     privacy:
         label: Datenschutz

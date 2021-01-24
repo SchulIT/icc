@@ -13,6 +13,7 @@ use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use App\Entity\StudyGroupType;
 use App\Entity\Teacher;
+use App\Entity\TeacherTag;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Export\StudyGroupCsvExporter;
@@ -270,6 +271,10 @@ class ListController extends AbstractControllerWithMessages {
 
         $teachers = $teacherRepository->findAllBySubjectAndTag($subjectFilterView->getCurrentSubject(), $tagFilterView->getCurrentTag());
 
+        if($tagFilterView->getCurrentTag() !== null && $tagFilterView->getCurrentTag()->getId() === null) {
+            $teachers = $this->filterImplicitTeacherTag($teachers, $tagFilterView->getCurrentTag());
+        }
+
         $groups = $this->grouper->group($teachers, TeacherFirstCharacterStrategy::class);
         $this->sorter->sort($groups, TeacherFirstCharacterGroupStrategy::class);
         $this->sorter->sortGroupItems($groups, TeacherStrategy::class);
@@ -280,6 +285,28 @@ class ListController extends AbstractControllerWithMessages {
             'tagFilter' => $tagFilterView,
             'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Teacher::class)
         ]);
+    }
+
+    /**
+     * @param Teacher[] $teachers
+     * @param TeacherTag $tag
+     * @return Teacher[]
+     */
+    private function filterImplicitTeacherTag(array $teachers, TeacherTag $tag): array {
+        return array_filter($teachers, function(Teacher $teacher) use ($tag) {
+            /** @var GradeTeacher $gradeTeacher */
+            foreach($teacher->getGrades() as $gradeTeacher) {
+                if($gradeTeacher->getType()->equals(GradeTeacherType::Primary()) && $tag->getUuid()->toString() === TeacherTag::GradeTeacherTagUuid) {
+                    return true;
+                }
+
+                if($gradeTeacher->getType()->equals(GradeTeacherType::Substitute()) && $tag->getUuid()->toString() === TeacherTag::SubstituteGradeTeacherTagUuid) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
     }
 
     /**

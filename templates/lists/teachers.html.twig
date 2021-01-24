@@ -111,7 +111,7 @@
                                 <select name="tag" id="tag" class="form-control" data-trigger="submit" data-choice="true">
                                     <option value="" placeholder>{{ 'label.select.tag'|trans }}</option>
                                     {% for t in tagFilter.tags %}
-                                        <option value="{{ t.uuid }}" {% if tagFilter.currentTag is not null and t.id == tagFilter.currentTag.id %}selected="selected"{% endif %}>{{ t.name }}</option>
+                                        <option value="{{ t.uuid }}" {% if tagFilter.currentTag is not null and t.uuid.toString == tagFilter.currentTag.uuid.toString %}selected="selected"{% endif %}>{{ t.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>

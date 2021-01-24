@@ -18,6 +18,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class TeacherTag {
 
+    public const GradeTeacherTagUuid = '89274ce2-3f85-48c8-890e-1aea0e08d21d';
+    public const SubstituteGradeTeacherTagUuid = '8660bfe4-6edf-44b5-99f6-5810b948c0ae';
+
     use IdTrait;
     use UuidTrait;
 
@@ -115,5 +118,19 @@ class TeacherTag {
 
     public function getVisibilities(): Collection {
         return $this->visibilities;
+    }
+
+    public static function getGradeTeacherTag(): self {
+        $tag = new static();
+        $tag->uuid = Uuid::fromString(static::GradeTeacherTagUuid);
+
+        return $tag;
+    }
+
+    public static function getSubstituteGradeTeacherTag(): self {
+        $tag = new static();
+        $tag->uuid = Uuid::fromString(static::SubstituteGradeTeacherTagUuid);
+
+        return $tag;
     }
 }

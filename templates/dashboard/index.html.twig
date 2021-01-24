@@ -248,6 +248,98 @@
                     </div>
                 </div>
 
+                {% if studentFilter.currentStudent %}
+                    {% set student = studentFilter.currentStudent %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="far fa-address-card"></i> {{ student|student }} ({{ student.grade.name }})</h5>
+
+                            {% if student.email is not empty %}
+                                <p>
+                                    <i class="fas fa-envelope" title="{{ 'label.email'|trans }}"></i> <a href="mailto:{{ student.email }}">{{ student.email }}</a>
+                                </p>
+                            {% endif %}
+                            <p>
+                                <i class="fas fa-chalkboard-teacher" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>
+                                {% for teacher in student.grade.teachers|sort_gradeteachers %}
+                                    <a href="mailto:{{ teacher.teacher.email }}">{{ teacher.teacher|teacher }}</a>{% if teacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}
+                                    {%- if not loop.last -%}, {% endif -%}
+                                {% endfor %}
+                            </p>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a href="{{ path('timetable', { student: student.uuid.toString }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-clock"></i> {{ 'plans.timetable.label'|trans }}
+                            </a>
+                            <a href="{{ path('exams', { student: student.uuid.toString }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-edit"></i> {{ 'plans.exams.label'|trans }}
+                            </a>
+                            {% if is_granted('tuitions') %}
+                                <a href="{{ path('list_tuitions', { student: student.uuid.toString }) }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-chalkboard-teacher"></i> {{ 'label.tuitions'|trans }}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if teacherFilter.currentTeacher %}
+                    {% set teacher = teacherFilter.currentTeacher %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="far fa-address-card"></i> {{ teacher.firstname }} {{ teacher.lastname }}</h5>
+
+                            {% if teacher.email is not empty %}
+                                <p>
+                                    <i class="fas fa-envelope" title="{{ 'label.email'|trans }}"></i> <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>
+                                </p>
+                            {% endif %}
+                            <p>
+                                <i class="fas fa-chalkboard-teacher" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>
+                                {% for gradeTeacher in teacher.grades|sort_gradeteachers %}
+                                    {{ gradeTeacher.grade.name }}{% if gradeTeacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}
+                                    {%- if not loop.last -%}, {% endif -%}
+                                {% endfor %}
+                            </p>
+                            <p>
+                                <i class="fas fa-graduation-cap" title="{{ 'label.subjects'|trans }}"></i>
+                                {% for subject in teacher.subjects %}
+                                    {{ subject.name }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+
+                            {% set showTags = false %}
+                            {% for tag in teacher.tags %}
+                                {% if is_granted('view', tag) %}
+                                    {% if showTags == false %}
+                                        <p>
+                                            <i class="fa fa-tags"></i>
+
+                                        {% set showTags = true %}
+                                    {% endif %}
+                                    {{ tag.name }}{% if not loop.last %}, {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if showTags == true %}
+                                        </p>
+                            {% endif %}
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a href="{{ path('timetable', { teacher: teacher.uuid.toString }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-clock"></i> {{ 'plans.timetable.label'|trans }}
+                            </a>
+                            <a href="{{ path('exams', { teacher: teacher.uuid.toString }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-edit"></i> {{ 'plans.exams.label'|trans }}
+                            </a>
+                            {% if is_granted('tuitions') %}
+                                <a href="{{ path('list_tuitions', { teacher: teacher.uuid.toString }) }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-chalkboard-teacher"></i> {{ 'label.tuitions'|trans }}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
                 <div class="card">
                     <form method="post" action="{{ path('dashboard', currentFilter) }}">
                         <div class="card-body">

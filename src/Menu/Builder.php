@@ -305,7 +305,8 @@ class Builder {
 
             $menu->addChild('api.doc', [
                 'uri' => '/docs/api/import'
-            ]);
+            ])
+                ->setExtra('icon', 'fas fa-code');
         }
 
         return $root;

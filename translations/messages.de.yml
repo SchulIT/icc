@@ -47,6 +47,7 @@ label:
         category: Kategorie auswählen
         usertype: Benutzertyp auswählen
         reason: Grund auswählen
+        tag: Tag auswählen
     search:
         student: Lernenden suchen
     scope: Bereich
@@ -153,6 +154,7 @@ label:
     icon:
         label: Icon
         help: Hier kann eine Font Awesome Icon Klasse eingetragen werden. Dabei handelt es sich um die CSS-Klasse, bspw. fas fa-door-open.
+    tag: Tag
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

@@ -41,6 +41,7 @@ use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\SubjectFilter;
 use App\View\Filter\TeacherFilter;
+use App\View\Filter\TeacherTagFilter;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -247,17 +248,13 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/teachers", name="list_teachers")
      */
-    public function teachers(SubjectFilter $subjectFilter, TeacherRepositoryInterface $teacherRepository, Request $request) {
+    public function teachers(SubjectFilter $subjectFilter, TeacherTagFilter $tagFilter, TeacherRepositoryInterface $teacherRepository, Request $request) {
         $this->denyAccessUnlessGranted(ListsVoter::Teachers);
 
         $subjectFilterView = $subjectFilter->handle($request->query->get('subject', null));
-        $teachers = [ ];
+        $tagFilterView = $tagFilter->handle($request->query->get('tag', null));
 
-        if($subjectFilterView->getCurrentSubject() !== null) {
-            $teachers = $teacherRepository->findAllBySubject($subjectFilterView->getCurrentSubject());
-        } else {
-            $teachers = $teacherRepository->findAll();
-        }
+        $teachers = $teacherRepository->findAllBySubjectAndTag($subjectFilterView->getCurrentSubject(), $tagFilterView->getCurrentTag());
 
         $groups = $this->grouper->group($teachers, TeacherFirstCharacterStrategy::class);
         $this->sorter->sort($groups, TeacherFirstCharacterGroupStrategy::class);
@@ -266,6 +263,7 @@ class ListController extends AbstractControllerWithMessages {
         return $this->renderWithMessages('lists/teachers.html.twig', [
             'groups' => $groups,
             'subjectFilter' => $subjectFilterView,
+            'tagFilter' => $tagFilterView,
             'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Teacher::class)
         ]);
     }

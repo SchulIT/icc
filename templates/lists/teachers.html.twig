@@ -86,7 +86,21 @@
             <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="card-body pb-1">
-                        {% include "_filter/subject.html.twig" %}
+                        {% include "_filter/subject.html.twig" with { params: { tag: tagFilter.currentTag ? tagFilter.currentTag.uuid : null }} %}
+
+                        <form role="form" method="get" class="form hidden-print">
+                            {% include "_filter/_params.html.twig" with { params: { subject: subjectFilter.currentSubject ? subjectFilter.currentSubject.uuid : null } } %}
+
+                            <div class="form-group {{ class|default('') }}">
+                                <label for="tag">{{ 'label.tag'|trans }}:</label>
+                                <select name="tag" id="tag" class="form-control" data-trigger="submit" data-choice="true">
+                                    <option value="" placeholder>{{ 'label.select.tag'|trans }}</option>
+                                    {% for t in tagFilter.tags %}
+                                        <option value="{{ t.uuid }}" {% if tagFilter.currentTag is not null and t.id == tagFilter.currentTag.id %}selected="selected"{% endif %}>{{ t.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
                     </div>
 
                     <div class="card-footer">

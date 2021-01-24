@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Subject;
 use App\Entity\Teacher;
+use App\Entity\TeacherTag;
 use Doctrine\ORM\QueryBuilder;
 
 class TeacherRepository extends AbstractTransactionalRepository implements TeacherRepositoryInterface {
@@ -126,16 +127,26 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
     /**
      * @inheritDoc
      */
-    public function findAllBySubject(Subject $subject): array {
+    public function findAllBySubjectAndTag(?Subject $subject, ?TeacherTag $tag): array {
         $qb = $this->createDefaultQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('tInner.id')
             ->from(Teacher::class, 'tInner')
             ->leftJoin('tInner.subjects', 'sInner')
-            ->where('sInner.abbreviation = :subject');
-        $qb
-            ->setParameter('subject', $subject->getAbbreviation());
+            ->leftJoin('tInner.tags', 'tagsInner');
+
+        if($subject !== null) {
+            $qbInner
+                ->andWhere('sInner.abbreviation = :subject');
+            $qb->setParameter('subject', $subject->getAbbreviation());
+        }
+
+        if($tag !== null) {
+            $qbInner
+                ->andWhere('tagsInner.id = :tag');
+            $qb->setParameter('tag', $tag->getId());
+        }
 
         $qb->where($qb->expr()->in('t.id', $qbInner->getDQL()));
 

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Subject;
 use App\Entity\Teacher;
+use App\Entity\TeacherTag;
 
 interface TeacherRepositoryInterface extends TransactionalRepositoryInterface {
 
@@ -44,10 +45,11 @@ interface TeacherRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllByExternalId(array $externalIds): array;
 
     /**
-     * @param Subject $subject
+     * @param Subject|null $subject
+     * @param TeacherTag|null $tag
      * @return Teacher[]
      */
-    public function findAllBySubject(Subject $subject): array;
+    public function findAllBySubjectAndTag(?Subject $subject, ?TeacherTag $tag): array;
 
     /**
      * @return Teacher[]

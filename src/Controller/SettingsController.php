@@ -49,11 +49,7 @@ class SettingsController extends AbstractController {
      * @Route("", name="admin_settings")
      */
     public function index(Builder $menuBuilder) {
-        $settingsMenu = $menuBuilder->settingsMenu([]);
-
-        return $this->render('admin/settings/index.html.twig', [
-            'menu' => $settingsMenu->getChildren()
-        ]);
+        return $this->redirectToRoute('admin_settings_dashboard');
     }
 
     /**

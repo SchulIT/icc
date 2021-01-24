@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/settings/_settings.html.twig" %}
 
 {% block title %}{{ 'admin.settings.exams.label'|trans }}{% endblock %}
 
@@ -10,47 +10,31 @@
     </ol>
 {% endblock %}
 
-{% block content %}
-    {{ form_start(form) }}
+{% block settings_card_body %}
+    <div class="card-header">{{ 'label.general'|trans }}</div>
 
-    <div class="card">
-        <div class="card-header">{{ 'label.general'|trans }}</div>
-
-        <div class="card-body">
-            {{ form_row(form.visibility) }}
-            {{ form_row(form.visible_grades) }}
-            {{ form_row(form.window) }}
-            {{ form_row(form.window_supervisions) }}
-        </div>
+    <div class="card-body">
+        {{ form_row(form.visibility) }}
+        {{ form_row(form.visible_grades) }}
+        {{ form_row(form.window) }}
+        {{ form_row(form.window_supervisions) }}
     </div>
 
-    <div class="card">
-        <div class="card-header">{{ 'admin.settings.exams.planning.label'|trans }}</div>
+    <div class="card-header border-top">{{ 'admin.settings.exams.planning.label'|trans }}</div>
 
-        <div class="card-body">
-            {{ form_row(form.number_of_exams_day) }}
+    <div class="card-body">
+        {{ form_row(form.number_of_exams_day) }}
 
-            {% for grade in grades %}
-                {{ form_row(form['number_of_exams_week_' ~ grade.id ]) }}
-            {% endfor %}
-        </div>
+        {% for grade in grades %}
+            {{ form_row(form['number_of_exams_week_' ~ grade.id ]) }}
+        {% endfor %}
     </div>
 
-    <div class="card">
-        <div class="card-header">{{ 'profile.notifications.label'|trans }}</div>
+    <div class="card-header border-top">{{ 'profile.notifications.label'|trans }}</div>
 
-        <div class="card-body">
-            {{ form_row(form.notifications_enabled) }}
-            {{ form_row(form.notifications_sender) }}
-            {{ form_row(form.notifications_replyaddress) }}
-        </div>
+    <div class="card-body">
+        {{ form_row(form.notifications_enabled) }}
+        {{ form_row(form.notifications_sender) }}
+        {{ form_row(form.notifications_replyaddress) }}
     </div>
-
-    <div class="buttons">
-        <button type="submit" class="btn btn-primary btn-sm">
-            <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
-        </button>
-    </div>
-
-    {{ form_end(form) }}
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/settings/_settings.html.twig" %}
 
 {% block title %}{{ 'admin.settings.dashboard.label'|trans }}{% endblock %}
 
@@ -10,26 +10,14 @@
     </ol>
 {% endblock %}
 
-{% block content %}
-    {{ form_start(form) }}
+{% block settings_card_body %}
+    <div class="card-header">{{ 'plans.substitutions.label'|trans }}</div>
 
-    <div class="card">
-        <div class="card-header">{{ 'plans.substitutions.label'|trans }}</div>
-
-        <div class="card-body">
-            {{ form_row(form.removable_types) }}
-            {{ form_row(form.additional_types) }}
-            {{ form_row(form.free_lesson_types) }}
-            {{ form_row(form.next_day_threshold) }}
-            {{ form_row(form.skip_weekends) }}
-        </div>
+    <div class="card-body">
+        {{ form_row(form.removable_types) }}
+        {{ form_row(form.additional_types) }}
+        {{ form_row(form.free_lesson_types) }}
+        {{ form_row(form.next_day_threshold) }}
+        {{ form_row(form.skip_weekends) }}
     </div>
-
-    <div class="buttons">
-        <button type="submit" class="btn btn-primary btn-sm">
-            <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
-        </button>
-    </div>
-
-    {{ form_end(form) }}
 {% endblock %}

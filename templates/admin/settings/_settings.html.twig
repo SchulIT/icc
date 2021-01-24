@@ -1,0 +1,43 @@
+{% extends "main.html.twig" %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'admin.settings.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {% block form_start %}
+        {% if form is defined %}
+            {{ form_start(form) }}
+        {% endif %}
+    {% endblock %}
+
+    <div class="card">
+        <div class="card-header">
+            {{ knp_menu_render('settingsMenu', {'currentClass': 'active', 'template': 'admin/settings/_menu.html.twig' }) }}
+        </div>
+
+        {% block settings_card_body %}
+            <div class="card-body">
+                {% block settings_content %}{% endblock %}
+            </div>
+        {% endblock %}
+
+        {% block settings_card_footer %}
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+                </button>
+            </div>
+        {% endblock %}
+    </div>
+
+    {% block settings_footer %}{% endblock %}
+
+    {% block form_end %}
+        {% if form is defined %}
+            {{ form_end(form) }}
+        {% endif %}{% endblock %}
+{% endblock %}

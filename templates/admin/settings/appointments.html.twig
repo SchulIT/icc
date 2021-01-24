@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/settings/_settings.html.twig" %}
 
 {% block title %}{{ 'admin.settings.appointments.label'|trans }}{% endblock %}
 
@@ -14,33 +14,19 @@
     </ol>
 {% endblock %}
 
-{% block content %}
-    {{ form_start(form) }}
+{% block settings_card_body %}
+    <div class="card-header">{{ 'admin.settings.appointments.time_window'|trans }}</div>
 
-    <div class="card">
-        <div class="card-header">{{ 'admin.settings.appointments.time_window'|trans }}</div>
-
-        <div class="card-body">
-            {% for name, type in userTypes %}
-                {{ form_row(form['start_' ~ name]) }}
-                {{ form_row(form['end_' ~ name]) }}
-            {% endfor %}
-        </div>
+    <div class="card-body">
+        {% for name, type in userTypes %}
+            {{ form_row(form['start_' ~ name]) }}
+            {{ form_row(form['end_' ~ name]) }}
+        {% endfor %}
     </div>
 
-    <div class="card">
-        <div class="card-header">{{ 'admin.settings.appointments.exams'|trans }}</div>
+    <div class="card-header border-top">{{ 'admin.settings.appointments.exams'|trans }}</div>
 
-        <div class="card-body">
-            {{ form_row(form.exam_color) }}
-        </div>
+    <div class="card-body">
+        {{ form_row(form.exam_color) }}
     </div>
-
-    <div class="buttons">
-        <button type="submit" class="btn btn-primary btn-sm">
-            <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
-        </button>
-    </div>
-
-    {{ form_end(form) }}
 {% endblock %}

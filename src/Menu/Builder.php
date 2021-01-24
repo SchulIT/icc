@@ -233,6 +233,15 @@ class Builder {
             ->setExtra('menu-container', '#submenu')
             ->setExtra('pull-right', true);
 
+        $settingsMenu = $this->servicesMenu();
+
+        if($settingsMenu->count() > 0) {
+            $menu->addChild('admin.settings.label', [
+                'route' => 'admin_settings'
+            ])
+                ->setExtra('icon', 'fas fa-wrench');
+        }
+
         if($this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN')) {
             $menu->addChild('admin.documents.label', [
                 'route' => 'admin_documents'

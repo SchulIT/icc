@@ -38,6 +38,13 @@ class WikiArticle {
     private $title;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(allowNull=true)
+     * @var string|null
+     */
+    private $icon;
+
+    /**
      * @ORM\Column(type="boolean")
      * @var bool
      */
@@ -139,6 +146,22 @@ class WikiArticle {
      */
     public function setTitle(?string $title): WikiArticle {
         $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getIcon(): ?string {
+        return $this->icon;
+    }
+
+    /**
+     * @param string|null $icon
+     * @return WikiArticle
+     */
+    public function setIcon(?string $icon): WikiArticle {
+        $this->icon = $icon;
         return $this;
     }
 

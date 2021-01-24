@@ -148,14 +148,14 @@ class Builder {
 
         foreach($this->wikiRepository->findAll() as $article) {
             if($this->authorizationChecker->isGranted(WikiVoter::View, $article)) {
-                $wiki->addChild(sprintf('wiki.%s', $article->getUuid()), [
+                $item = $wiki->addChild(sprintf('wiki.%s', $article->getUuid()), [
                     'label' => $article->getTitle(),
                     'route' => 'show_wiki_article',
                     'routeParameters' => [
                         'uuid' => (string)$article->getUuid(),
                     ]
                 ])
-                    ->setExtra('icon', 'far fa-file');
+                    ->setExtra('icon', !empty($article->getIcon()) ? $article->getIcon() : 'far fa-file');
             }
         }
 

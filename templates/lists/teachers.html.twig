@@ -102,6 +102,7 @@
                     <div class="card-body pb-1">
                         {% include "_filter/subject.html.twig" with { params: { tag: tagFilter.currentTag ? tagFilter.currentTag.uuid : null }} %}
 
+                        {% if tagFilter.isEnabled %}
                         <form role="form" method="get" class="form hidden-print">
                             {% include "_filter/_params.html.twig" with { params: { subject: subjectFilter.currentSubject ? subjectFilter.currentSubject.uuid : null } } %}
 
@@ -115,6 +116,7 @@
                                 </select>
                             </div>
                         </form>
+                        {% endif %}
                     </div>
 
                     <div class="card-footer">

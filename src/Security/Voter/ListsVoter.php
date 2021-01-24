@@ -16,6 +16,7 @@ class ListsVoter extends Voter {
     public const Tuitions = 'tuitions';
     public const StudyGroups = 'studygroups';
     public const Privacy = 'privacy';
+    public const ExportTeachers = 'export-teachers';
 
     private $accessDecisionManager;
 
@@ -32,7 +33,8 @@ class ListsVoter extends Voter {
             static::Students,
             static::Tuitions,
             static::StudyGroups,
-            static::Privacy
+            static::Privacy,
+            static::ExportTeachers
         ];
 
         return in_array($attribute, $attributes)
@@ -51,6 +53,7 @@ class ListsVoter extends Voter {
             case static::StudyGroups:
             case static::Tuitions:
             case static::Privacy:
+            case static::ExportTeachers:
                 return $this->canViewLists($token);
         }
 

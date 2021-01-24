@@ -401,6 +401,9 @@ lists:
     teachers:
         label: Lehrkräfte
         empty: Es wurden keine Lehrkräfte gefunden.
+        export:
+            copy: E-Mail Adressen kopieren
+            mail: E-Mail an alle Lehrkräfte verfassen
         substitute:
             short: (stv.)
             long: stellvertretend

@@ -162,7 +162,8 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/study_groups", name="list_studygroups")
      */
-    public function studyGroups(StudyGroupFilter $studyGroupFilter, StudentFilter $studentFilter, Request $request) {
+    public function studyGroups(StudyGroupFilter $studyGroupFilter, StudentFilter $studentFilter,
+                                TuitionRepositoryInterface $tuitionRepository, Request $request, Sorter $sorter) {
         $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);
 
         /** @var User $user */
@@ -223,6 +224,18 @@ class ListController extends AbstractControllerWithMessages {
             );
         }
 
+        $tuitions = [ ];
+
+        if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
+            if($studyGroupFilterView->getCurrentStudyGroup()->getType()->equals(StudyGroupType::Grade())) {
+                $tuitions = $tuitionRepository->findAllByGrades($studyGroupFilterView->getCurrentStudyGroup()->getGrades()->toArray());
+            } else {
+                $tuitions = $studyGroupFilterView->getCurrentStudyGroup()->getTuitions()->toArray();
+            }
+        }
+
+        $sorter->sort($tuitions, TuitionStrategy::class);
+
         return $this->renderWithMessages('lists/study_groups.html.twig', [
             'studyGroupFilter' => $studyGroupFilterView,
             'studentFilter' => $studentFilterView,
@@ -232,6 +245,7 @@ class ListController extends AbstractControllerWithMessages {
             'grade' => $grade,
             'gradeTeachers' => $gradeTeachers,
             'substitutionalGradeTeachers' => $substitutionalGradeTeachers,
+            'tuitions' => $tuitions,
             'last_import' => $this->importDateTimeRepository->findOneByEntityClass(StudyGroup::class)
         ]);
     }

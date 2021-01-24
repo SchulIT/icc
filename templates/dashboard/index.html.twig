@@ -304,7 +304,9 @@
                             <p>
                                 <i class="fas fa-graduation-cap" title="{{ 'label.subjects'|trans }}"></i>
                                 {% for subject in teacher.subjects %}
-                                    {{ subject.name }}{% if not loop.last %}, {% endif %}
+                                    <a href="{{ path('list_teachers', { subject: subject.uuid.toString }) }}">
+                                        {{- subject.name -}}
+                                    </a>{%- if not loop.last %}, {% endif %}
                                 {% endfor %}
                             </p>
 
@@ -317,7 +319,7 @@
 
                                         {% set showTags = true %}
                                     {% endif %}
-                                    {{ tag.name }}{% if not loop.last %}, {% endif %}
+                                            <a href="{{ path('list_teachers', { tag: tag.uuid.toString }) }}">{{ tag.name }}</a>{% if not loop.last %}, {% endif %}
                                 {% endif %}
                             {% endfor %}
                             {% if showTags == true %}

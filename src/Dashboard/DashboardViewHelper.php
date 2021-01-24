@@ -245,14 +245,18 @@ class DashboardViewHelper {
                 continue;
             }
 
-            $lessonStudents = $lesson
-                ->getTuition()
-                ->getStudyGroup()
-                ->getMemberships()
-                ->map(function(StudyGroupMembership $membership) {
-                    return $membership->getStudent();
-                })
-                ->toArray();
+            $lessonStudents = [ ];
+
+            if($lesson->getTuition() !== null) {
+                $lessonStudents = $lesson
+                    ->getTuition()
+                    ->getStudyGroup()
+                    ->getMemberships()
+                    ->map(function (StudyGroupMembership $membership) {
+                        return $membership->getStudent();
+                    })
+                    ->toArray();
+            }
 
             $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lessonStudents, $lesson->getLesson(), $dateTime) : [ ];
 

@@ -221,8 +221,9 @@ dashboard:
     free_hour: Freistunde
     free_lesson: Unterrichtsfrei
     absences: Absenzen
-    nav:
-        infotexts: '{0} Tagestexte|{1} Tagestext|]1,Inf[ Tagestexte'
+    infotexts: Tagestexte
+    daily_info: Informationen zum Tag
+    agenda: Agenda
     settings:
         label: Einstellungen
         show_times: Uhrzeiten der Unterrichtsstunden anzeigen
@@ -497,7 +498,7 @@ message:
     dismissed_info: '{1} %count% Mitteilung wird ausgeblendet.|]1,Inf[ %count% Mitteilungen werden ausgeblendet.'
     dismissed_action: '{1} Mitteilung einblenden|]1,Inf[ %count% Mitteilungen einblenden'
     must_confirm: Diese Mitteilung muss bestätigt werden.
-    expires: 'läuft ab: %date%'
+    expires: Ablaufdatum
     confirmations:
         label: Bestätigungen
 

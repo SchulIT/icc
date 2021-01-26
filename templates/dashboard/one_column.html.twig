@@ -1,0 +1,20 @@
+{% extends "dashboard/index.html.twig" %}
+
+{% block dashboard %}
+    <div class="container-fluid px-0">
+        {{ block('priority_messages') }}
+
+        {{ block('agenda') }}
+        {{ block('mentions') }}
+        {{ block('daily_info') }}
+        {{ block('exams') }}
+
+        {% if view.messages|length > 0 %}
+            <div class="spacer">
+                <span><i class="fas fa-envelope-open-text"></i> {{ 'messages.overview.label'|trans }}</span>
+            </div>
+        {% endif %}
+        {{ block('messages') }}
+        {{ block('appointments') }}
+    </div>
+{% endblock %}

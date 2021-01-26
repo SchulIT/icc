@@ -1,0 +1,33 @@
+{% extends "dashboard/index.html.twig" %}
+
+{% block dashboard %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="d-block d-lg-none d-xl-none">
+                    {{ block('priority_messages') }}
+                </div>
+
+                {{ block('agenda') }}
+                {{ block('mentions') }}
+                {{ block('daily_info') }}
+                {{ block('exams') }}
+            </div>
+
+            <div class="col-lg-6">
+                {% if view.priorityMessages|length > 0 or view.messages|length > 0 %}
+                <div class="spacer">
+                    <span><i class="fas fa-envelope-open-text"></i> {{ 'messages.overview.label'|trans }}</span>
+                </div>
+                {% endif %}
+                {# Priority Messages #}
+                <div class="d-none d-lg-block d-xl-block">
+                    {{ block('priority_messages') }}
+                </div>
+
+                {{ block('messages') }}
+                {{ block('appointments') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

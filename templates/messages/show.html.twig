@@ -171,6 +171,10 @@
                     </p>
 
                     <p>
+                        <span class="text-muted">{{ 'message.expires'|trans }}</span> {{ message.expireDate|format_date }}
+                    </p>
+
+                    <p>
                         <span class="text-muted">{{ 'label.lastchange'|trans }}</span> {{ message.updatedAt|format_datetime }}
                     </p>
 

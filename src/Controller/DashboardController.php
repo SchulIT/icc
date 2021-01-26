@@ -125,7 +125,13 @@ class DashboardController extends AbstractController {
             $supervisionLabels[$i] = $timetableSettings->getDescriptionBeforeLesson($i);
         }
 
-        return $this->render('dashboard/index.html.twig', [
+        $template = 'dashboard/one_column.html.twig';
+
+        if(count($view->getLessons()) > 0) {
+            $template = 'dashboard/two_columns.html.twig';
+        }
+
+        return $this->render($template, [
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
             'userTypeFilter' => $userTypeFilterView,

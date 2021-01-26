@@ -6,36 +6,14 @@
 
 <div class="card {% if mustConfirm or mustUpload %}border-warning{% endif %} {% if message.priority == 'emergency' %}message-danger{% elseif message.priority == 'important' %}message-warning{% endif %}">
     <div class="card-body">
-        <div class="d-flex align-items-center flex-wrap {% if not is_dismissed(message) %}mb-2{% endif %}">
-            <h5 class="card-title mr-auto mb-0 mr-2"><a href="{{ path('show_message', { uuid: message.uuid }) }}">{{ message.title }}</a></h5>
-
-            <span class="text-secondary d-none d-lg-block mr-2">
-                {{ 'message.expires'|trans({'%date%': message.expireDate|format_date}) }}
-            </span>
+        <div class="d-flex align-items-top flex-nowrap {% if not is_dismissed(message) %}mb-2{% endif %}">
+            <h5 class="card-title mr-auto mb-0 mr-2">
+                <a href="{{ path('show_message', { uuid: message.uuid }) }}">
+                    {{ message.title }}
+                </a>
+            </h5>
 
             <div class="flex-shrink-0">
-
-                <button data-toggle="popover" data-popover-title="{{ 'label.details'|trans }}" data-popover-container="#message-{{ message.uuid }}-info" class="btn btn-outline-secondary btn-sm">
-                    <i class="fa fa-info-circle"></i>
-                </button>
-
-                <div class="d-none" id="message-{{ message.uuid }}-info">
-                    <p class="m-0 mb-1">
-                        <span class="text-muted">{{ 'label.lastchange'|trans }}</span> {{ message.updatedAt|format_datetime }}
-                    </p>
-
-                    <p class="m-0 mb-1">
-                        <span class="text-muted">{{ 'label.visibility'|trans }}</span>
-                        {% for visibility in message.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
-                    </p>
-
-                    {% if message.studyGroups|length > 0 %}
-                        <p class="m-0 mb-1">
-                            <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': message.studyGroups|length }) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, id: message.uuid } only  %}
-                        </p>
-                    {% endif %}
-                </div>
-
                 {% if is_dismissed(message) and (message.attachments|length > 0 or userDownloads|length > 0) %}
                     <div class="dropdown d-inline">
                         <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
@@ -74,6 +52,31 @@
                         </a>
                     </div>
                 {% endif %}
+
+                <button data-toggle="popover" data-popover-title="{{ 'label.details'|trans }}" data-popover-container="#message-{{ message.uuid }}-info" class="btn btn-outline-secondary btn-sm">
+                    <i class="fa fa-info-circle"></i>
+                </button>
+
+                <div class="d-none" id="message-{{ message.uuid }}-info">
+                    <p class="m-0 mb-1">
+                        <span class="text-muted">{{ 'message.expires'|trans }}</span> {{ message.expireDate|format_date }}
+                    </p>
+
+                    <p class="m-0 mb-1">
+                        <span class="text-muted">{{ 'label.lastchange'|trans }}</span> {{ message.updatedAt|format_datetime }}
+                    </p>
+
+                    <p class="m-0 mb-1">
+                        <span class="text-muted">{{ 'label.visibility'|trans }}</span>
+                        {% for visibility in message.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    </p>
+
+                    {% if message.studyGroups|length > 0 %}
+                        <p class="m-0 mb-1">
+                            <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': message.studyGroups|length }) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, id: message.uuid } only  %}
+                        </p>
+                    {% endif %}
+                </div>
 
                 {% if is_granted('edit', message) or is_granted('remove', message) %}
                     <div class="btn-group" role="group">

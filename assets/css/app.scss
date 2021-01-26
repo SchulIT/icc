@@ -293,3 +293,24 @@ $enable-gradients: true;
 .text-larger {
   font-size: 1.2rem;
 }
+
+.spacer {
+  display: flex;
+  margin-bottom: $spacer;
+
+  &:before,
+  &:after {
+    content: "";
+    border-bottom: 1px solid $card-border-color;
+    flex: 1 1;
+    margin:auto;
+  }
+
+  &:before {
+    margin-right: $spacer;
+  }
+
+  &:after {
+    margin-left: $spacer;
+  }
+}

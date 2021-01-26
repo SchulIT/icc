@@ -9,6 +9,184 @@
     </ol>
 {% endblock %}
 
+{% block icons %}
+    {% set totalMessages = view.priorityMessages|length + view.messages|length %}
+    {% set dismissed = 0 %}
+    {% for message in view.messages|merge(view.priorityMessages) %}
+        {% if is_dismissed(message) %}
+            {% set dismissed = dismissed + 1 %}
+        {% endif %}
+    {% endfor %}
+
+    {% if view.substitutionMentions|length > 0
+        or view.infotexts|length > 0
+        or view.exams|length > 0
+        or view.appointments|length > 0
+        or (is_granted('view-absences') and (view.absentTeachers|length > 0 or view.absentStudyGroups|length > 0))
+        or (totalMessages > 0 and (totalMessages - dismissed) > 0)
+    %}
+    <ul class="nav nav-pills card-header-pills">
+        {% if view.substitutionMentions|length > 0 %}
+            <li class="nav-item">
+                <a href="#mentions" class="nav-link" data-trigger="scroll" title="{{ 'dashboard.substitution_mentions'|trans }}">
+                    <i class="fas fa-quote-left"></i> {{ view.substitutionMentions|length }}
+                </a>
+            </li>
+        {% endif %}
+
+        {% if view.infotexts|length > 0 %}
+            <li class="nav-item">
+                <a href="#infotexts" class="nav-link" data-trigger="scroll" title="{{ 'dashboard.infotexts'|trans }}">
+                    <i class="fas fa-info-circle"></i> {{ view.infotexts|length }}
+                </a>
+            </li>
+        {% endif %}
+
+        {% if view.exams|length > 0 %}
+            <li class="nav-item">
+                <a href="#exams" class="nav-link" data-trigger="scroll" title="{{ 'label.exams'|trans }}">
+                    <i class="fas fa-edit"></i> {{ view.exams|length }}
+                </a>
+            </li>
+        {% endif %}
+
+        {% if totalMessages > 0 and (totalMessages - dismissed) > 0 %}
+            <li class="nav-item">
+                <a href="#messages" class="nav-link" data-trigger="scroll" title="{{ 'messages.overview.label'|trans }}">
+
+                    <i class="fas fa-envelope-open-text"></i> {{ totalMessages - dismissed }} / {{ totalMessages }}
+                </a>
+            </li>
+        {% endif %}
+        {% if view.appointments|length > 0 %}
+            <li class="nav-item">
+                <a href="#appointments" class="nav-link" data-trigger="scroll" title="{{ 'dashboard.appointments'|trans }}">
+                    <i class="far fa-calendar"></i> {{ view.appointments|length }}
+                </a>
+            </li>
+        {% endif %}
+        {% if is_granted('view-absences') and (view.absentTeachers|length > 0 or view.absentStudyGroups|length > 0) %}
+            <li class="nav-item">
+                <a href="#absences" class="nav-link" data-trigger="scroll" title="{{ 'dashboard.absences'|trans() }}">
+                    <i class="fas fa-users-slash"></i> {{ view.absentTeachers|length + view.absentStudyGroups|length}}
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+    {% endif %}
+{% endblock %}
+
+{% block priority_messages %}
+    {% for message in view.priorityMessages %}
+        {% include "_includes/message.html.twig" with { message: message } only %}
+    {% endfor %}
+{% endblock %}
+
+{% block agenda %}
+    {% if view.lessons|length > 0 %}
+        <div class="spacer">
+            <span><i class="fas fa-clock"></i> {{ 'dashboard.agenda'|trans }}</span>
+        </div>
+        {% for lessonNumber in view.lessonNumbers %}
+            {% set lesson = view.lesson(lessonNumber, true) %}
+
+            {% if lesson is not null %}
+                {% for item in lesson.items %}
+                    {% set type = item.blockName %}
+
+                    {% if type == 'supervision' %}
+                        {{ dashboard.supervision(item, lessonNumber, null, null, lesson.warning, supervisionLabels) }}
+                    {% elseif type == 'substitution' %}
+                        {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            {% set lesson = view.lesson(lessonNumber, false) %}
+            {% if lesson is not null %}
+                {% for item in lesson.items %}
+                    {% set type = item.blockName %}
+
+                    {% if type == 'exam' %}
+                        {{ dashboard.exam(item, lessonNumber, startTimes[lessonNumber], lesson.warning, endTimes[lessonNumber]) }}
+                    {% elseif type == 'lesson' %}
+                        {{ dashboard.lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, gradesWithCourseNames) }}
+                    {% elseif type == 'free_lesson' %}
+                        {{ dashboard.free_lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                    {% elseif type == 'supervision' %}
+                        {{ dashboard.supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, supervisionLabels) }}
+                    {% elseif type == 'substitution' %}
+                        {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                    {% elseif type == 'appointment' %}
+                        {{ dashboard.appointment(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                    {% elseif type == 'exam_supervision' %}
+                        {{ dashboard.exam_supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                    {% elseif type == 'reservation' %}
+                        {{ dashboard.reservation(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber]) }}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block mentions %}
+    {% if view.substitutionMentions|length > 0 %}
+        <div class="spacer">
+            <span><a id="mentions"></a><i class="fas fa-quote-left"></i> {{ 'dashboard.substitution_mentions'|trans }}</span>
+        </div>
+
+        {% for mention in view.substitutionMentions %}
+            {{ dashboard.substitution(mention, null, null, null, false, true) }}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block daily_info %}
+    {% if view.infotexts|length > 0 or view.absentStudyGroups|length > 0 or view.absentTeachers|length > 0 %}
+        <div class="spacer">
+            <span><a id="absences"></a><a id="infotexts"></a><i class="fas fa-info-circle"></i> {{ 'dashboard.daily_info'|trans }}</span>
+        </div>
+
+        {# Infotexts #}
+        {% include "_includes/infotexts.html.twig" with { infotexts: view.infotexts } only %}
+
+        {# Absences #}
+        {% include "_includes/absences.html.twig" with {absentTeachers: view.absentTeachers, absentStudyGroups: view.absentStudyGroups} only %}
+    {% endif %}
+{% endblock %}
+
+{% block exams %}
+    {% if view.exams|length > 0 %}
+        <div class="spacer">
+            <span><a id="exams"></a><i class="fas fa-edit"></i> {{ 'label.exams'|trans }}</span>
+        </div>
+
+        {% for exam in view.exams %}
+            {{ dashboard.exam(exam, null, null, null) }}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block appointments %}
+    {% if view.appointments|length > 0 %}
+        <div class="spacer">
+            <span><a id="appointments"></a><i class="fas fa-calendar"></i> {{ 'dashboard.appointments'|trans }}</span>
+        </div>
+
+        {% for appointment in view.appointments %}
+            {{ dashboard.appointment(appointment) }}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block messages %}
+    <a id="messages"></a>
+    {% for message in view.messages %}
+        {% include "_includes/message.html.twig" with { message: message } only %}
+    {% endfor %}
+{% endblock %}
+
 {% block content %}
 
     {% set currentFilter = { student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null, user_type: userTypeFilter.currentType ?  userTypeFilter.currentType.value : null } %}
@@ -17,8 +195,9 @@
         <div class="row">
             <div class="col-md-9">
                 <div class="card">
-                    <div class="card-header">
-                        <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
+                    {% set rendered_icons = block('icons') %}
+                    <div class="card-header d-flex align-items-center border-bottom-0">
+                        <ul class="nav nav-pills card-header-pills flex-fill" data-trigger="resize-hide">
                             {% set previousDate = selectedDate|previous_date(settings.skipWeekends) %}
                             <li class="nav-item" data-resize="show">
                                 <a class="nav-link" href="{{ path('dashboard', currentFilter|merge({ date: previousDate|date('Y-m-d') })) }}">
@@ -41,172 +220,41 @@
                                 </a>
                             </li>
                         </ul>
-                    </div>
 
-                    <div class="card-body">
-                        {% if view.empty %}
-                            <div class="bs-callout bs-callout-info">
-                                <h4>{{ 'info.label'|trans }}</h4>
-
-                                <p>{{ 'dashboard.empty'|trans }}</p>
-                            </div>
-                        {% endif %}
-
-                        {% set collisions = view.numberOfCollisions %}
-                        {% if collisions > 0 %}
-                        <div class="alert alert-danger border-danger d-flex">
-                            <span class="align-self-center mr-2">
-                                <i class="fa fa-exclamation-triangle"></i>
-                            </span>
-
-                            <span class="align-self-center">
-                                {{ 'dashboard.collision.label'|trans({'%count%': collisions}) }} {{ 'dashboard.collision.hint'|trans }}
-                            </span>
+                        <div class="d-none d-lg-block d-xl-block">
+                            {{ rendered_icons|raw }}
                         </div>
-                        {% endif %}
-
-                        <nav class="nav nav-pills nav-justified mb-3 mx-n1 mt-n2">
-                            {% if view.substitutionMentions|length > 0 %}
-                                <a href="#mentions" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
-                                    <div class="align-self-center text-center w-100">
-                                        {{ 'dashboard.substitution_mentions'|trans }}
-
-                                        <span class="badge badge-light badge-pill">
-                                            {{ view.substitutionMentions|length }}
-                                        </span>
-                                    </div>
-                                </a>
-                            {% endif %}
-                            <a href="#infotexts" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
-                                <div class="align-self-center text-center w-100">
-                                    {{ 'dashboard.nav.infotexts'|trans({'%count%': view.infotexts|length}) }}
-                                    <span class="badge badge-light badge-pill">
-                                        {{ view.infotexts|length }}
-                                    </span>
-                                </div>
-                            </a>
-                            {% if view.exams|length > 0 %}
-                                <a href="#exams" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
-                                    <div class="align-self-center text-center w-100">
-                                        {{ 'label.exams'|trans }}
-
-                                        <span class="badge badge-light badge-pill">
-                                            {{ view.exams|length }}
-                                        </span>
-                                    </div>
-                                </a>
-                            {% endif %}
-                            <a href="#messages" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
-                                <div class="align-self-center text-center w-100">
-                                    {{ 'messages.overview.label'|trans }}
-
-                                    <span class="badge badge-light badge-pill">
-                                        {{ view.messages|length }}
-                                    </span>
-                                </div>
-                            </a>
-                            <a href="#appointments" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
-                                <div class="align-self-center text-center w-100">
-                                    {{ 'dashboard.appointments'|trans }}
-
-                                    <span class="badge badge-light badge-pill">
-                                        {{ view.appointments|length }}
-                                    </span>
-                                </div>
-                            </a>
-                            {% if is_granted('view-absences') %}
-                                <a href="#absences" class="nav-item nav-link bg-primary text-white mx-1 mt-2 d-flex" data-trigger="scroll">
-                                    <div class="align-self-center text-center w-100">
-                                        {{ 'dashboard.absences'|trans() }}
-
-                                        <span class="badge badge-light badge-pill">
-                                            {{ view.absentTeachers|length + view.absentStudyGroups|length}}
-                                        </span>
-                                    </div>
-                                </a>
-                            {% endif %}
-                        </nav>
-
-                        {# Priority Messages #}
-                        {% for message in view.priorityMessages %}
-                            {% include "_includes/message.html.twig" with { message: message } only %}
-                        {% endfor %}
-
-                        {# Loop lessons #}
-                        {% for lessonNumber in view.lessonNumbers %}
-                            {% set lesson = view.lesson(lessonNumber, true) %}
-
-                            {% if lesson is not null %}
-                                {% for item in lesson.items %}
-                                    {% set type = item.blockName %}
-
-                                    {% if type == 'supervision' %}
-                                        {{ dashboard.supervision(item, lessonNumber, null, null, lesson.warning, supervisionLabels) }}
-                                    {% elseif type == 'substitution' %}
-                                        {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-
-                            {% set lesson = view.lesson(lessonNumber, false) %}
-                            {% if lesson is not null %}
-                                {% for item in lesson.items %}
-                                    {% set type = item.blockName %}
-
-                                    {% if type == 'exam' %}
-                                        {{ dashboard.exam(item, lessonNumber, startTimes[lessonNumber], lesson.warning, endTimes[lessonNumber]) }}
-                                    {% elseif type == 'lesson' %}
-                                        {{ dashboard.lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, gradesWithCourseNames) }}
-                                    {% elseif type == 'free_lesson' %}
-                                        {{ dashboard.free_lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
-                                    {% elseif type == 'supervision' %}
-                                        {{ dashboard.supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, supervisionLabels) }}
-                                    {% elseif type == 'substitution' %}
-                                        {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
-                                    {% elseif type == 'appointment' %}
-                                        {{ dashboard.appointment(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
-                                    {% elseif type == 'exam_supervision' %}
-                                        {{ dashboard.exam_supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
-                                    {% elseif type == 'reservation' %}
-                                        {{ dashboard.reservation(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber]) }}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                        {% endfor %}
-
-                        {# Mentions #}
-                        <a id="mentions"></a>
-                        {% for mention in view.substitutionMentions %}
-                            {{ dashboard.substitution(mention, null, null, null) }}
-                        {% endfor %}
-
-                        {# Daily infos #}
-                        <a id="infotexts"></a>
-                        {% include "_includes/infotexts.html.twig" with { infotexts: view.infotexts } only %}
-
-                        {# Exams #}
-                        <a id="exams"></a>
-                        {% for exam in view.exams %}
-                            {{ dashboard.exam(exam, null, null, null) }}
-                        {% endfor %}
-
-                        {# Messages #}
-                        <a id="messages"></a>
-                        {% for message in view.messages %}
-                            {% include "_includes/message.html.twig" with { message: message } only %}
-                        {% endfor %}
-
-                        {# Appointments #}
-                        <a id="appointments"></a>
-                        {% for appointment in view.appointments %}
-                            {{ dashboard.appointment(appointment) }}
-                        {% endfor %}
-
-                        {# Absences #}
-                        <a id="absences"></a>
-                        {% include "_includes/absences.html.twig" with {absentTeachers: view.absentTeachers, absentStudyGroups: view.absentStudyGroups} only %}
                     </div>
+
+                    {% if rendered_icons|trim is not empty %}
+                    <div class="card-header d-block d-lg-none d-xl-none border-bottom-0">
+                        {{ rendered_icons|raw }}
+                    </div>
+                    {% endif %}
                 </div>
+
+                {% if view.empty %}
+                    <div class="bs-callout bs-callout-info">
+                        <h4>{{ 'info.label'|trans }}</h4>
+
+                        <p>{{ 'dashboard.empty'|trans }}</p>
+                    </div>
+                {% endif %}
+
+                {% set collisions = view.numberOfCollisions %}
+                {% if collisions > 0 %}
+                    <div class="alert alert-danger border-danger d-flex">
+                        <span class="align-self-center mr-2">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </span>
+
+                        <span class="align-self-center">
+                            {{ 'dashboard.collision.label'|trans({'%count%': collisions}) }} {{ 'dashboard.collision.hint'|trans }}
+                        </span>
+                    </div>
+                {% endif %}
+
+                {% block dashboard %}{% endblock %}
             </div>
             <div class="col-md-3 sticky-sidebar">
                 <div class="card">

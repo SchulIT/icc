@@ -27,8 +27,14 @@
                     <div class="card-columns">
                         {% for group in categories %}
                             <div class="card">
-                                <div class="card-header">
-                                    <i class="far fa-folder"></i> {{ group.category.name }} <span class="badge badge-primary badge-pill">{{ group.documents|length }}</span>
+                                <div class="card-header d-flex">
+                                    <div class="flex-fill">
+                                        <i class="far fa-folder"></i> {{ group.category.name }}
+                                    </div>
+
+                                    <div class="flex-shrink-0">
+                                        <i class="far fa-copy"></i> {{ group.documents|length }}
+                                    </div>
                                 </div>
 
                                 <div class="list-group list-group-flush">

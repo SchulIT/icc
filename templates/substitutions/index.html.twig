@@ -25,7 +25,7 @@
                 {% include "_messages.html.twig" %}
 
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header border-bottom-0">
                         <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
                             {% set previousDate = selectedDate|previous_date %}
                             {% set canNavigatePrevious = is_in_datetime_array(previousDate, days) %}
@@ -52,77 +52,12 @@
                             </li>
                         </ul>
                     </div>
-
-                    <div class="card-body">
-                        {% include "_includes/infotexts.html.twig" with { infotexts: infotexts} only %}
-                        {% include "_includes/absences.html.twig" with { absentTeachers: absentTeachers, absentStudyGroups: absentStudyGroups } only %}
-
-                        {% if groups|length == 0 %}
-                            <div class="bs-callout bs-callout-info">
-                                <h4>{{ 'info.label'|trans }}</h4>
-                                <p>{{ 'plans.substitutions.empty'|trans }}</p>
-                            </div>
-                        {% endif %}
-
-                        {% for group in groups %}
-                            <h5 class="card-title">
-                                {% if group.grade is defined %}{{ group.grade.name|default('plans.substitutions.no_grade'|trans) }}{% endif %}
-                                {% if group.teacher is defined %}{{ group.teacher.acronym }} ({{ group.teacher|teacher(false) }}){% endif %}
-                            </h5>
-
-                            {% if view == 'table' %}
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-bordered table-hover">
-                                        <colgroup>
-                                            <col class="column-md">
-                                            <col class="column-lg">
-                                            <col class="column-md">
-                                            <col class="column-md">
-                                            <col class="column-lg">
-                                            <col class="column-md">
-                                            <col>
-                                        </colgroup>
-                                        <thead>
-                                        <tr>
-                                            <th>{{ 'label.lesson'|trans }}</th>
-                                            <th>{{ 'label.study_group'|trans }}</th>
-                                            <th>{{ 'label.room'|trans }}</th>
-                                            <th>{{ 'label.subject'|trans }}</th>
-                                            <th>{{ 'label.teacher'|trans }}</th>
-                                            <th>{{ 'label.type'|trans }}</th>
-                                            <th>{{ 'label.remark'|trans }}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for substitution in group.substitutions %}
-                                                {% set duration = substitution.lessonEnd - substitution.lessonStart %}
-                                                <tr>
-                                                    <td class="align-middle">
-                                                        {% if substitution.startsBefore %}
-                                                            {{ substitution.lessonStart|before_lesson }}
-                                                        {% else %}
-                                                            {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td class="align-middle">{{ _macro.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}</td>
-                                                    <td class="align-middle">{{ _macro.replacement(substitution.room, substitution.replacementRoom) }}</td>
-                                                    <td class="align-middle">{{ _macro.replacement(substitution.subject, substitution.replacementSubject) }}</td>
-                                                    <td class="align-middle">{{ _macro.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}</td>
-                                                    <td class="align-middle">{{ substitution.type }}</td>
-                                                    <td class="align-middle">{{ substitution.remark }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            {% else %}
-                                {% for substitution in group.substitutions %}
-                                    {% include "_includes/substitution.html.twig" with { substitution: substitution } only %}
-                                {% endfor %}
-                            {% endif %}
-                        {% endfor %}
-                    </div>
                 </div>
+
+                {% include "_includes/infotexts.html.twig" with { infotexts: infotexts} only %}
+                {% include "_includes/absences.html.twig" with { absentTeachers: absentTeachers, absentStudyGroups: absentStudyGroups } only %}
+
+                {% block substitutions %}{% endblock %}
             </div>
             <div class="col-md-3 sticky-sidebar">
                 <div class="card">

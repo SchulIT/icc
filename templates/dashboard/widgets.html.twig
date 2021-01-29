@@ -276,7 +276,7 @@
     </div>
 {% endmacro %}
 
-{% macro substitution(item, lesson, start, end, hasWarning, isMention) %}
+{% macro substitution(item, lesson, start, end, hasWarning) %}
     {% import "_macros/replacement.html.twig" as _macro %}
 
     {% set substitution = item.substitution %}
@@ -332,10 +332,6 @@
 
         {% if substitution.remark %}
             <div class="card-footer">
-                {% if isMention %}
-                    <i class="fas fa-quote-left"></i>
-                {% endif %}
-
                 {{ substitution.remark }}
             </div>
         {% endif %}

@@ -1,0 +1,23 @@
+{% extends "substitutions/index.html.twig" %}
+
+{% block substitutions %}
+    {% if groups|length == 0 %}
+        <div class="bs-callout bs-callout-info">
+            <h4>{{ 'info.label'|trans }}</h4>
+            <p>{{ 'plans.substitutions.empty'|trans }}</p>
+        </div>
+    {% endif %}
+
+    {% for group in groups %}
+        <div class="spacer">
+            <span>
+                {% if group.grade is defined %}{{ group.grade.name|default('plans.substitutions.no_grade'|trans) }}{% endif %}
+                {% if group.teacher is defined %}{{ group.teacher.acronym }} ({{ group.teacher|teacher(false) }}){% endif %}
+            </span>
+        </div>
+
+        {% for substitution in group.substitutions %}
+            {% include "_includes/substitution.html.twig" with { substitution: substitution } only %}
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

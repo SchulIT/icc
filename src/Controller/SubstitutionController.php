@@ -108,7 +108,13 @@ class SubstitutionController extends AbstractControllerWithMessages {
             $sorter->sort($absentStudyGroups, AbsentStudyGroupStrategy::class);
         }
 
-        return $this->renderWithMessages('substitutions/index.html.twig', [
+        $template = 'substitutions/list.html.twig';
+
+        if($view === 'table') {
+            $template = 'substitutions/table.html.twig';
+        }
+
+        return $this->renderWithMessages($template, [
             'infotexts' => $infotextRepository->findAllByDate($selectedDate),
             'groups' => $groups,
             'days' => $days,

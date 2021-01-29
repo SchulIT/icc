@@ -28,16 +28,29 @@
                     </div>
                 {% else %}
                 <div class="card">
-                    <div class="card-header">
-                        {% if studentFilter.currentStudent != null %}
-                            {{ 'lists.tuitions.heading.student'|trans({'%student%': studentFilter.currentStudent|student }) }} <span class="badge badge-secondary">{{ studentFilter.currentStudent.grade.name }}</span>
-                        {% elseif teacherFilter.currentTeacher != null %}
-                            {{ 'lists.tuitions.heading.teacher'|trans({'%teacher%': teacherFilter.currentTeacher|teacher }) }}
-                        {% elseif gradeFilter.currentGrade != null %}
-                            {{ 'lists.tuitions.heading.grade'|trans({'%grade%': gradeFilter.currentGrade.name }) }}
+                    <div class="card-header d-flex align-items-center">
+                        <div class="flex-fill">
+                            {% if studentFilter.currentStudent != null %}
+                                {{ 'lists.tuitions.heading.student'|trans({'%student%': studentFilter.currentStudent|student }) }}
+                            {% elseif teacherFilter.currentTeacher != null %}
+                                {{ 'lists.tuitions.heading.teacher'|trans({'%teacher%': teacherFilter.currentTeacher|teacher }) }}
+                            {% elseif gradeFilter.currentGrade != null %}
+                                {{ 'lists.tuitions.heading.grade'|trans({'%grade%': gradeFilter.currentGrade.name }) }}
+                            {% endif %}
+                        </div>
 
-                            {% include "_includes/grade_teachers.html.twig" with { grade: gradeFilter.currentGrade } %}
-                        {% endif %}
+                        <div class="flex-shrink-0">
+                            {% if studentFilter.currentStudent != null %}
+                                <i class="fa fa-users"></i> {{ studentFilter.currentStudent.grade.name }}
+                            {% endif %}
+
+                            {% if gradeFilter.currentGrade is not null %}
+                                <i class="fa fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i> {% include "_includes/grade_teachers.html.twig" with { grade: gradeFilter.currentGrade } %}
+                            {% endif %}
+
+                            <i class="fa fa-chalkboard-teacher"></i> {{ tuitions|length }}
+                        </div>
+
                     </div>
 
                     <div class="table-responsive">

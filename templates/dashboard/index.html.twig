@@ -259,6 +259,8 @@
             <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-filter"></i> </h5>
+
                         {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.uuid %}
                         {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
                         {% set dateParam = selectedDate|date('Y-m-d') %}
@@ -308,7 +310,7 @@
                                 </p>
                             {% endif %}
                             <p>
-                                <i class="fas fa-chalkboard-teacher" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>
+                                <i class="fas fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>
                                 {% for teacher in student.grade.teachers|sort_gradeteachers %}
                                     <a href="mailto:{{ teacher.teacher.email }}">{{ teacher.teacher|teacher }}</a>{% if teacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}
                                     {%- if not loop.last -%}, {% endif -%}

@@ -28,7 +28,7 @@
                         </h5>
 
                         <ul class="list-unstyled m-0">
-                            <li>{{ 'label.study_group'|trans }}: {{ tuition.studyGroup.name }} ({{ 'label.students'|trans({'%count%': tuition.studyGroup.memberships|length }) }})</li>
+                            <li>{{ 'label.study_group'|trans }}: {{ tuition.studyGroup.name }}</li>
                             <li>{{ 'label.grade'|trans }}: {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
                             <li>{{ 'label.teacher'|trans }}: {{ tuition.teacher|teacher }}{% if tuition.additionalTeachers|length > 0 %}, {% for teacher in tuition.additionalTeachers %}{{ teacher|teacher }},{% endfor %}{% endif %}</li>
                         </ul>
@@ -36,7 +36,13 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-header">{{ 'label.students_simple'|trans }} <span class="badge badge-primary badge-pill">{{ memberships|length }}</span> </div>
+                    <div class="card-header d-flex align-items-center">
+                        <div class="flex-fill">{{ 'label.students_simple'|trans }}</div>
+
+                        <div class="flex-shrink-0">
+                            <i class="fa fa-users"></i> {{ memberships|length }}
+                        </div>
+                    </div>
 
                     <div class="table-responsive">
                         <table class="table table-striped table-hover table-bordered card-table border-top-0" data-table="true">
@@ -73,7 +79,10 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-header">{{ 'label.exams'|trans }} {% if exams|length > 0 %}<span class="badge badge-primary badge-pill">{{ exams|length }}</span>{% endif %}</div>
+                    <div class="card-header d-flex align-items-center">
+                        <div class="flex-fill">{{ 'label.exams'|trans }}</div>
+                        <div><i class="fa fa-edit"></i> {{ exams|length }}</div>
+                    </div>
 
                     {% if exams|length == 0 %}
                         <div class="card-body">

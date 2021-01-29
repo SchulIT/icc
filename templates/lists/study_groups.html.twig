@@ -21,22 +21,6 @@
                 {% include "_messages.html.twig" %}
 
                 {% if studyGroupFilter.currentStudyGroup != null %}
-                    {% if studyGroupFilter.currentStudyGroup.type.value == "grade" %}
-                        {% set grade = studyGroupFilter.currentStudyGroup.grades[0] %}
-
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ grade.name }}</h5>
-
-                                <ul class="list-unstyled m-0">
-                                    <li>{{ 'lists.study_groups.grade_teacher'|trans }}: {% for teacher in gradeTeachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
-                                    <li>{{ 'lists.study_groups.grade_teacher_substitutional'|trans }}: {% for teacher in substitutionalGradeTeachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
-                                    <li>{{ 'lists.study_groups.num_students'|trans }}: {{ students|length }}</li>
-                                </ul>
-                            </div>
-                        </div>
-                    {% endif %}
-
                     {% if students|length == 0 %}
                         <div class="bs-callout bs-callout-info">
                             <h4>{{ 'info.label'|trans }}</h4>
@@ -45,14 +29,27 @@
                         </div>
                     {% elseif students|length > 0 %}
                         <div class="card">
-                            <div class="card-header">
-                                {{ studyGroupFilter.currentStudyGroup.name }}
-                                <span class="badge badge-primary badge-pill">{{ studyGroupFilter.currentStudyGroup.memberships|length }}</span>
+                            <div class="card-header d-flex">
+                                <div class="flex-fill">
+                                    {{ studyGroupFilter.currentStudyGroup.name }}
+                                </div>
 
-                                {% for grade in studyGroupFilter.currentStudyGroup.grades %}
-                                    <span class="badge badge-secondary">{{ grade.name }}</span>
-                                {% endfor %}
+                                <div class="flex-shrink-0">
+                                    <i class="fa fa-users"></i>
+                                    {% for grade in studyGroupFilter.currentStudyGroup.grades %}
+                                        {{ grade.name }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
 
+                                    {% if studyGroupFilter.currentStudyGroup != null and studyGroupFilter.currentStudyGroup.type.value == "grade" %}
+                                        {% set grade = studyGroupFilter.currentStudyGroup.grades[0] %}
+
+                                        {% if grade is not null %}
+                                            <i class="fa fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i> {% include "_includes/grade_teachers.html.twig" with { grade: grade } %}
+                                        {% endif %}
+                                    {% endif %}
+
+                                    <i class="fas fa-user-friends"></i> {{ studyGroupFilter.currentStudyGroup.memberships|length }}
+                                </div>
                             </div>
 
                             <div class="table-responsive">
@@ -98,7 +95,15 @@
                         </div>
 
                         <div class="card">
-                            <div class="card-header">{{ 'lists.tuitions.label'|trans }}</div>
+                            <div class="card-header d-flex align-items-center">
+                                <div class="flex-fill">
+                                    {{ 'lists.tuitions.label'|trans }}
+                                </div>
+
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-chalkboard-teacher"></i> {{ tuitions|length }}
+                                </div>
+                            </div>
 
                             <table class="table table-striped table-hover table-bordered">
                                 <colgroup>
@@ -139,19 +144,24 @@
                     {% endif %}
                 {% elseif studentFilter.currentStudent is not null %}
                     <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ studentFilter.currentStudent|student }} <span class="badge badge-primary">{{ studentFilter.currentStudent.grade.name }}</span> </h5>
+                        <div class="card-header d-flex">
+                            <div class="flex-fill">
+                                {{ studentFilter.currentStudent|student }}
+                            </div>
 
-                            <ul class="list-unstyled m-0">
-                                <li>{{ 'lists.study_groups.grade_teacher'|trans }}: {% for teacher in gradeTeachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
-                                <li>{{ 'lists.study_groups.grade_teacher_substitutional'|trans }}: {% for teacher in substitutionalGradeTeachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
-                            </ul>
-                        </div>
-                    </div>
+                            <div class="flex-shrink-0">
+                                <div class="flex-shrink-0">
+                                    <i class="fa fa-users"></i> {{ studentFilter.currentStudent.grade.name }}
 
-                    <div class="card">
-                        <div class="card-header">
-                            {{ 'label.study_groups_simple'|trans }}
+                                    {% set grade = studentFilter.currentStudent.grade %}
+
+                                    {% if grade is not null %}
+                                        <i class="fa fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i> {% include "_includes/grade_teachers.html.twig" with { grade: grade } %}
+                                    {% endif %}
+
+                                    <i class="fas fa-user-friends"></i> {{ study_groups|length }}
+                                </div>
+                            </div>
                         </div>
 
                         <div class="table-responsive">

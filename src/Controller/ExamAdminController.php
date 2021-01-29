@@ -210,7 +210,7 @@ class ExamAdminController extends AbstractController {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.exams.remove.confirm',
             'message_parameters' => [
-                '%date%' => $exam->getDate()->format($translator->trans('date.format')),
+                '%date%' => $exam->getDate() !== null ? $exam->getDate()->format($translator->trans('date.format')) : 'N/A',
                 '%lessons%' => $translator->trans('label.exam_lessons', [
                     '%start%' => $exam->getLessonStart(),
                     '%end%' => $exam->getLessonEnd(),

@@ -4,7 +4,7 @@ namespace App\Grouping;
 
 use App\Entity\Message;
 
-class MessageExpirationGroup implements GroupInterface {
+class MessageExpirationGroup implements GroupInterface, SortableGroupInterface {
     /**
      * @var bool
      */
@@ -45,5 +45,9 @@ class MessageExpirationGroup implements GroupInterface {
      */
     public function addItem($item) {
         $this->messages[] = $item;
+    }
+
+    public function &getItems(): array {
+        return $this->messages;
     }
 }

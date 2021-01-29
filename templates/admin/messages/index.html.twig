@@ -34,6 +34,7 @@
                                     <col>
                                     <col class="column-320">
                                     <col class="column-320">
+                                    <col class="column-320">
                                     <col class="column-lg">
                                 </colgroup>
 
@@ -41,6 +42,7 @@
                                 <tr>
                                     <th>{{ 'label.title'|trans }}</th>
                                     <th>{{ 'label.visibility'|trans }}</th>
+                                    <th>{{ 'message.expires'|trans }}</th>
                                     <th>{{ 'label.study_groups'|trans({'%count%': 0}) }}</th>
                                     <th></th>
                                 </tr>
@@ -51,6 +53,9 @@
                                     <tr>
                                         <td class="align-middle">{{ message.title }}</td>
                                         <td class="align-middle">{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only %}</td>
+                                        <td class="align-middle">
+                                            {{ message.expireDate|format_date }}
+                                        </td>
                                         <td class="align-middle">{% include "_includes/study_groups.html.twig" with { studyGroups: message.studyGroups, id: message.uuid } only %}</td>
                                         <td class="align-middle">
                                             {% if is_granted('view', message) %}

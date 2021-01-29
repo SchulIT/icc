@@ -1,4 +1,4 @@
 {%- for t in grade.teachers|sort_gradeteachers %}
-{{- t.teacher|teacher(false) -}}
+{{- t.teacher|teacher(false) -}}{%- if t.type == 'substitute' %} <span class="text-muted" title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{%- endif -%}
 {% if not loop.last %}, {% endif -%}
 {%- endfor -%}

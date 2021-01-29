@@ -18,8 +18,7 @@ class MessageExpirationStrategy implements GroupingStrategyInterface {
      * @return bool
      */
     public function computeKey($object) {
-        return !$this->dateHelper
-            ->isBetween($this->dateHelper->getNow(), $object->getStartDate(), $object->getExpireDate());
+        return $object->getExpireDate() < $this->dateHelper->getNow();
     }
 
     /**

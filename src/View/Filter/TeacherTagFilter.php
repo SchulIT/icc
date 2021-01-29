@@ -41,7 +41,6 @@ class TeacherTagFilter {
                 return $tag->getUuid()->toString();
             }
         );
-        dump($tags);
 
         $tag = $tagUuid !== null ?
             $tags[$tagUuid] ?? null : null;

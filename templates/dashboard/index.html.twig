@@ -259,8 +259,6 @@
             <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-filter"></i> </h5>
-
                         {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.uuid %}
                         {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
                         {% set dateParam = selectedDate|date('Y-m-d') %}

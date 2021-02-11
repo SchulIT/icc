@@ -26,9 +26,6 @@ class DashboardController extends AbstractController {
 
     use DateTimeHelperTrait;
 
-    private const DaysInFuture = 5;
-    private const DaysInPast = 0;
-
     private const ShowTimesKey = 'dashboard.show_times';
     private const IncludeGradeMessagesKey = 'dashboard.include_grade_messages';
 
@@ -79,7 +76,7 @@ class DashboardController extends AbstractController {
             }
         }
 
-        $days = $this->getListOfSurroundingDays($selectedDate, static::DaysInFuture, static::DaysInPast, $settings->skipWeekends());
+        $days = $this->getListOfSurroundingDays($selectedDate, $settings->getNumberFutureDays(), $settings->getNumberPastDays(), $settings->skipWeekends());
 
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null);

@@ -93,6 +93,24 @@ class SettingsController extends AbstractController {
                 'label_attr' => [
                     'class' => 'checkbox-custom'
                 ]
+            ])
+            ->add('past_days', IntegerType::class, [
+                'label' => 'admin.settings.dashboard.past_days.label',
+                'help' => 'admin.settings.dashboard.past_days.label',
+                'required' => true,
+                'data' => $dashboardSettings->getNumberPastDays(),
+                'constraints' => [
+                    new GreaterThanOrEqual(0)
+                ]
+            ])
+            ->add('future_days', IntegerType::class, [
+                'label' => 'admin.settings.dashboard.future_days.label',
+                'help' => 'admin.settings.dashboard.future_days.label',
+                'required' => true,
+                'data' => $dashboardSettings->getNumberFutureDays(),
+                'constraints' => [
+                    new GreaterThanOrEqual(0)
+                ]
             ]);
 
         $form = $builder->getForm();
@@ -114,6 +132,12 @@ class SettingsController extends AbstractController {
                 },
                 'skip_weekends' => function($skipWeekends) use ($dashboardSettings) {
                     $dashboardSettings->setSkipWeekends($skipWeekends);
+                },
+                'past_days' => function($days) use ($dashboardSettings) {
+                    $dashboardSettings->setNumberPastDays($days);
+                },
+                'future_days' => function($days) use ($dashboardSettings) {
+                    $dashboardSettings->setNumberFutureDays($days);
                 }
             ];
 

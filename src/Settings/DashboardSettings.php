@@ -48,4 +48,22 @@ class DashboardSettings extends AbstractSettings {
     public function setSkipWeekends(bool $skipWeekends): void {
         $this->setValue('dashboard.skip_weekends', $skipWeekends);
     }
+
+    public function getNumberPastDays(): int {
+        return $this->getValue('dashboard.days.past', 0);
+    }
+
+    public function setNumberPastDays(int $pastDays): void {
+        $this->setValue('dashboard.days.past', $pastDays);
+    }
+
+    public function getNumberFutureDays(): int {
+        return $this->getValue('dashboard.days.future', 5);
+    }
+
+    public function setNumberFutureDays(int $futureDays): void {
+        $this->setValue('dashboard.days.future', $futureDays);
+    }
+
+
 }

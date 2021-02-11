@@ -661,6 +661,12 @@ admin:
             skip_weekends:
                 label: Wochenenden überspringen
                 help: Gibt an, ob Wochenendtage auf der Übersicht übersprungen werden sollen.
+            past_days:
+                label: Anzahl vergangene Tage
+                help: Gibt die Anzahl der vergangenen Tage an, die auf der Übersicht oben in der Leiste angezeigt werden.
+            future_days:
+                label: Anzahl der zukünftigen Tage
+                help: Gibt die Anzahl der zukünftigen Tage an, die auf der Übersicht oben in der Leiste angezeigt werden.
 
         sick_notes:
             label: Krankmeldungen

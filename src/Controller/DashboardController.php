@@ -127,7 +127,7 @@ class DashboardController extends AbstractController {
 
         $template = 'dashboard/one_column.html.twig';
 
-        if(count($view->getLessons()) > 0 && (count($view->getAppointments()) > 0 || count($view->getMessages()) > 0)) {
+        if(count($view->getLessons()) > 0 && (count($view->getAppointments()) > 0 || count($view->getMessages()) > 0 || count($view->getPriorityMessages()) > 0)) {
             $template = 'dashboard/two_columns.html.twig';
         }
 

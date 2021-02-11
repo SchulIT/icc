@@ -195,6 +195,7 @@ class TimetableController extends AbstractControllerWithMessages {
         );
 
         return $this->renderWithMessages($template, [
+            'compact' => count($teachersFilterView->getCurrentTeachers()) > 1,
             'timetable' => $timetable,
             'studentFilter' => $studentFilterView,
             'teachersFilter' => $teachersFilterView,

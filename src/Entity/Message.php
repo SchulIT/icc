@@ -65,6 +65,7 @@ class Message {
 
     /**
      * @ORM\OneToMany(targetEntity="MessageAttachment", mappedBy="message", cascade={"persist"})
+     * @ORM\OrderBy({"filename"="asc"})
      * @var ArrayCollection<MessageAttachment>
      */
     private $attachments;

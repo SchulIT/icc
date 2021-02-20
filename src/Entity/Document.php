@@ -66,6 +66,7 @@ class Document {
 
     /**
      * @ORM\OneToMany(targetEntity="DocumentAttachment", mappedBy="document", cascade={"persist"})
+     * @ORM\OrderBy({"filename"="asc"})
      * @var Collection<DocumentAttachment>
      */
     private $attachments;

@@ -229,6 +229,15 @@
                         <a href="{{ path('timetable_export') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-download"></i> {{ 'plans.timetable.export.label'|trans }}
                         </a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin_settings_timetable') }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-wrench"></i> {{ 'admin.settings.label'|trans }}
+                            </a>
+
+                            <a href="{{ path('admin_timetable') }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-cogs"></i> {{ 'admin.label'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
 

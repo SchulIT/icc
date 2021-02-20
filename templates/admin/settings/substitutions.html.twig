@@ -10,20 +10,24 @@
     </ol>
 {% endblock %}
 
-{% block settings_card_body %}
-    <div class="card-header">{{ 'label.general'|trans }}</div>
+{% block settings_content %}
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
 
-    <div class="card-body">
-        {{ form_row(form.ahead_days) }}
-        {{ form_row(form.skip_weekends) }}
-        {{ form_row(form.absence_visibility) }}
+        <div class="card-body">
+            {{ form_row(form.ahead_days) }}
+            {{ form_row(form.skip_weekends) }}
+            {{ form_row(form.absence_visibility) }}
+        </div>
     </div>
 
-    <div class="card-header border-top">{{ 'profile.notifications.label'|trans }}</div>
+    <div class="card">
+        <div class="card-header">{{ 'profile.notifications.label'|trans }}</div>
 
-    <div class="card-body">
-        {{ form_row(form.notifications_enabled) }}
-        {{ form_row(form.notifications_sender) }}
-        {{ form_row(form.notifications_replyaddress) }}
+        <div class="card-body">
+            {{ form_row(form.notifications_enabled) }}
+            {{ form_row(form.notifications_sender) }}
+            {{ form_row(form.notifications_replyaddress) }}
+        </div>
     </div>
 {% endblock %}

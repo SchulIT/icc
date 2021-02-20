@@ -43,7 +43,15 @@
                             <a href="{{ path('add_appointment') }}" class="list-group-item list-group-item-action">
                                 <i class="fas fa-plus"></i> {{ 'admin.appointments.add.label'|trans }}
                             </a>
+                        {% endif %}
 
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin_settings_appointments') }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-wrench"></i> {{ 'admin.settings.label'|trans }}
+                            </a>
+                        {% endif %}
+
+                        {% if is_granted('ROLE_APPOINTMENT_CREATOR') %}
                             <a href="{{ path('admin_appointments') }}" class="list-group-item list-group-item-action">
                                 <i class="fas fa-cogs"></i> {{ 'admin.appointments.label'|trans }}
                             </a>

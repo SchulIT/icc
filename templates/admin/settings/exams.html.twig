@@ -10,31 +10,37 @@
     </ol>
 {% endblock %}
 
-{% block settings_card_body %}
-    <div class="card-header">{{ 'label.general'|trans }}</div>
+{% block settings_content %}
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
 
-    <div class="card-body">
-        {{ form_row(form.visibility) }}
-        {{ form_row(form.visible_grades) }}
-        {{ form_row(form.window) }}
-        {{ form_row(form.window_supervisions) }}
+        <div class="card-body">
+            {{ form_row(form.visibility) }}
+            {{ form_row(form.visible_grades) }}
+            {{ form_row(form.window) }}
+            {{ form_row(form.window_supervisions) }}
+        </div>
     </div>
 
-    <div class="card-header border-top">{{ 'admin.settings.exams.planning.label'|trans }}</div>
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.exams.planning.label'|trans }}</div>
 
-    <div class="card-body">
-        {{ form_row(form.number_of_exams_day) }}
+        <div class="card-body">
+            {{ form_row(form.number_of_exams_day) }}
 
-        {% for grade in grades %}
-            {{ form_row(form['number_of_exams_week_' ~ grade.id ]) }}
-        {% endfor %}
+            {% for grade in grades %}
+                {{ form_row(form['number_of_exams_week_' ~ grade.id ]) }}
+            {% endfor %}
+        </div>
     </div>
 
-    <div class="card-header border-top">{{ 'profile.notifications.label'|trans }}</div>
+    <div class="card">
+        <div class="card-header">{{ 'profile.notifications.label'|trans }}</div>
 
-    <div class="card-body">
-        {{ form_row(form.notifications_enabled) }}
-        {{ form_row(form.notifications_sender) }}
-        {{ form_row(form.notifications_replyaddress) }}
+        <div class="card-body">
+            {{ form_row(form.notifications_enabled) }}
+            {{ form_row(form.notifications_sender) }}
+            {{ form_row(form.notifications_replyaddress) }}
+        </div>
     </div>
 {% endblock %}

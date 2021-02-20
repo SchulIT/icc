@@ -71,7 +71,7 @@
             </div>
 
             <div class="col-md-3 sticky-sidebar">
-                {% if article is not null and (is_granted('edit', article) or is_granted('remove', article)) %}
+                {% if article is not null and (is_granted('ROLE_WIKI_ADMIN') or is_granted('edit', article) or is_granted('remove', article)) %}
                 <div class="card">
                     <div class="list-group list-group-flush">
                         {% if article is not null %}
@@ -87,6 +87,11 @@
                             {% if is_granted('remove', article) %}
                                 <a href="{{ path('remove_wiki_article', { uuid: article.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action list-group-item-danger">
                                     <i class="fa fa-trash"></i> {{ 'admin.wiki.remove.label'|trans }}
+                                </a>
+                            {% endif %}
+                            {% if is_granted('ROLE_WIKI_ADMIN') %}
+                                <a href="{{ path('admin_wiki') }}" class="list-group-item list-group-item-action">
+                                    <i class="fa fa-cogs"></i> {{ 'admin.label'|trans }}
                                 </a>
                             {% endif %}
                         {% endif %}

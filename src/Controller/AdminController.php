@@ -10,7 +10,6 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/admin")
  */
 class AdminController extends AbstractController {
-
     /**
      * @Route("", name="admin")
      */

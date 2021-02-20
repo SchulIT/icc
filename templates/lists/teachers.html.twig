@@ -84,7 +84,7 @@
                 {% endif %}
             </div>
             <div class="col-md-3 sticky-sidebar">
-                {% if is_granted('export-teachers') %}
+                {% if is_granted('export-teachers') or is_granted('ROLE_ADMIN') %}
                 <div class="card">
                     <div class="list-group list-group-flush">
                         <a href="#" class="list-group-item list-group-item-action" data-clipboard-text="{% for group in groups %}{% for teacher in group.teachers %}{% if teacher.email is not empty %}{{ teacher.email }};{% endif %}{% endfor %}{% endfor %}">
@@ -94,6 +94,12 @@
                         <a href="mailto:{% for group in groups %}{% for teacher in group.teachers %}{% if teacher.email is not empty %}{{ teacher.email }};{% endif %}{% endfor %}{% endfor %}" class="list-group-item list-group-item-action">
                             <i class="fa fa-envelope"></i> {{ 'lists.teachers.export.mail'|trans }}
                         </a>
+
+                        {% if is_granted('ROLE_WIKI_ADMIN') %}
+                            <a href="{{ path('admin_teachers') }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-cogs"></i> {{ 'admin.label'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
                 {% endif %}

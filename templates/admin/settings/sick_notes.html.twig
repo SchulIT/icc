@@ -14,16 +14,18 @@
     </ol>
 {% endblock %}
 
-{% block settings_card_body %}
-    <div class="card-header">{{ 'label.general'|trans }}</div>
+{% block settings_content %}
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
 
-    <div class="card-body">
-        {{ form_row(form.enabled) }}
-        {{ form_row(form.recipient) }}
-        {{ form_row(form.introduction_text) }}
-        {{ form_row(form.privacy_url) }}
-        {{ form_row(form.retention_days) }}
-        {{ form_row(form.ordered_by_help) }}
-        {{ form_row(form.next_day_threshold) }}
+        <div class="card-body">
+            {{ form_row(form.enabled) }}
+            {{ form_row(form.recipient) }}
+            {{ form_row(form.introduction_text) }}
+            {{ form_row(form.privacy_url) }}
+            {{ form_row(form.retention_days) }}
+            {{ form_row(form.ordered_by_help) }}
+            {{ form_row(form.next_day_threshold) }}
+        </div>
     </div>
 {% endblock %}

@@ -14,19 +14,23 @@
     </ol>
 {% endblock %}
 
-{% block settings_card_body %}
-    <div class="card-header">{{ 'admin.settings.appointments.time_window'|trans }}</div>
+{% block settings_content %}
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.appointments.time_window'|trans }}</div>
 
-    <div class="card-body">
-        {% for name, type in userTypes %}
-            {{ form_row(form['start_' ~ name]) }}
-            {{ form_row(form['end_' ~ name]) }}
-        {% endfor %}
+        <div class="card-body">
+            {% for name, type in userTypes %}
+                {{ form_row(form['start_' ~ name]) }}
+                {{ form_row(form['end_' ~ name]) }}
+            {% endfor %}
+        </div>
     </div>
 
-    <div class="card-header border-top">{{ 'admin.settings.appointments.exams'|trans }}</div>
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.appointments.exams'|trans }}</div>
 
-    <div class="card-body">
-        {{ form_row(form.exam_color) }}
+        <div class="card-body">
+            {{ form_row(form.exam_color) }}
+        </div>
     </div>
 {% endblock %}

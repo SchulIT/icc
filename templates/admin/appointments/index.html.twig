@@ -12,6 +12,8 @@
 
 {% block content %}
 
+    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+
     {% set currentFilter = {
         q: q,
         category: categoryFilter.currentCategory != null ? categoryFilter.currentCategory.uuid : null,

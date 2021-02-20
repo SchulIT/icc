@@ -10,16 +10,18 @@
     </ol>
 {% endblock %}
 
-{% block settings_card_body %}
-    <div class="card-header">{{ 'plans.substitutions.label'|trans }}</div>
+{% block settings_content %}
+    <div class="card">
+        <div class="card-header">{{ 'plans.substitutions.label'|trans }}</div>
 
-    <div class="card-body">
-        {{ form_row(form.removable_types) }}
-        {{ form_row(form.additional_types) }}
-        {{ form_row(form.free_lesson_types) }}
-        {{ form_row(form.next_day_threshold) }}
-        {{ form_row(form.skip_weekends) }}
-        {{ form_row(form.past_days) }}
-        {{ form_row(form.future_days) }}
+        <div class="card-body">
+            {{ form_row(form.removable_types) }}
+            {{ form_row(form.additional_types) }}
+            {{ form_row(form.free_lesson_types) }}
+            {{ form_row(form.next_day_threshold) }}
+            {{ form_row(form.skip_weekends) }}
+            {{ form_row(form.past_days) }}
+            {{ form_row(form.future_days) }}
+        </div>
     </div>
 {% endblock %}

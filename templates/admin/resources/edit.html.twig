@@ -12,6 +12,8 @@
 {% endblock %}
 
 {% block content %}
+    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+
     {{ form_start(form) }}
     {{ form_row(form.group_general) }}
 

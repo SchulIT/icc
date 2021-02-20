@@ -16,6 +16,8 @@
 {% endblock %}
 
 {% block content %}
+    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+
 
     {% if not is_granted('ROLE_APPOINTMENTS_ADMIN') %}
         <div class="bs-callout bs-callout-warning">

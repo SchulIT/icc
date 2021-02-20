@@ -10,17 +10,18 @@
     </ol>
 {% endblock %}
 
-{% block settings_card_body %}
+{% block settings_content %}
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
 
-    <div class="card-header">{{ 'label.general'|trans }}</div>
+        <div class="card-body">
+            <div class="alert alert-danger">
+                <i class="fa fa-exclamation-triangle"></i> {{ 'webpush.caution.experimental'|trans }}
+            </div>
 
-    <div class="card-body">
-        <div class="alert alert-danger">
-            <i class="fa fa-exclamation-triangle"></i> {{ 'webpush.caution.experimental'|trans }}
+            {{ form_row(form.push_enabled) }}
+            {{ form_row(form.email_enabled) }}
         </div>
-
-        {{ form_row(form.push_enabled) }}
-        {{ form_row(form.email_enabled) }}
     </div>
 
 {% endblock %}

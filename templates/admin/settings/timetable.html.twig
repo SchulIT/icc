@@ -14,42 +14,48 @@
     </ol>
 {% endblock %}
 
-{% block settings_card_body %}
-    <div class="card-header">{{ 'label.general'|trans }}</div>
+{% block settings_content %}
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
 
-    <div class="card-body">
-        {{ form_row(form.lessons) }}
-        {{ form_row(form.categories) }}
-        {{ form_row(form.grades_course_names) }}
-        {{ form_row(form.grades_membership_types) }}
+        <div class="card-body">
+            {{ form_row(form.lessons) }}
+            {{ form_row(form.categories) }}
+            {{ form_row(form.grades_course_names) }}
+            {{ form_row(form.grades_membership_types) }}
+        </div>
     </div>
 
-    <div class="card-header border-top">{{ 'admin.settings.timetable.lesson.legend'|trans }}</div>
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.timetable.lesson.legend'|trans }}</div>
 
-    <div class="card-body">
-    {% for i in 1..maxLessons %}
-        {% if maxLessons > 0 %}
-            {{ form_row(form['lesson_' ~ i ~ '_start']) }}
-            {{ form_row(form['lesson_' ~ i ~ '_end']) }}
-
-            {% if i > 1 %}
-                {{ form_row(form['lesson_' ~ i ~ '_collapsible']) }}
-            {% endif %}
-        {% endif %}
-    {% endfor %}
-    </div>
-
-    <div class="card-header border-top">{{ 'admin.settings.timetable.supervision.legend'|trans }}</div>
-
-    <div class="card-body">
-        {{ form_row(form.supervision_label) }}
-        {{ form_row(form.supervision_color) }}
-        {{ form_row(form.supervision_begin) }}
-
+        <div class="card-body">
         {% for i in 1..maxLessons %}
-            {% if maxLessons > 0  %}
-                {{ form_row(form['supervision_label_before_' ~ i]) }}
+            {% if maxLessons > 0 %}
+                {{ form_row(form['lesson_' ~ i ~ '_start']) }}
+                {{ form_row(form['lesson_' ~ i ~ '_end']) }}
+
+                {% if i > 1 %}
+                    {{ form_row(form['lesson_' ~ i ~ '_collapsible']) }}
+                {% endif %}
             {% endif %}
         {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.timetable.supervision.legend'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_row(form.supervision_label) }}
+            {{ form_row(form.supervision_color) }}
+            {{ form_row(form.supervision_begin) }}
+
+            {% for i in 1..maxLessons %}
+                {% if maxLessons > 0  %}
+                    {{ form_row(form['supervision_label_before_' ~ i]) }}
+                {% endif %}
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

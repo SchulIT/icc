@@ -218,6 +218,82 @@ class Builder {
         return $menu;
     }
 
+    public function dataMenu(array $options = []): ItemInterface {
+        $root = $this->factory->createItem('root');
+
+        if($this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN')) {
+            $root->addChild('admin.documents.label', [
+                'route' => 'admin_documents'
+            ])
+                ->setExtra('icon', 'far fa-file-alt');
+        }
+
+        if($this->authorizationChecker->isGranted('ROLE_MESSAGE_CREATOR')) {
+            $root->addChild('admin.messages.label', [
+                'route' => 'admin_messages'
+            ])
+                ->setExtra('icon', 'fas fa-envelope-open-text');
+        }
+
+        if($this->authorizationChecker->isGranted(ExamVoter::Manage)) {
+            $root->addChild('admin.exams.label', [
+                'route' => 'admin_exams'
+            ])
+                ->setExtra('icon', 'fas fa-pen');
+        }
+
+        if($this->authorizationChecker->isGranted('ROLE_APPOINTMENT_CREATOR')) {
+            $root->addChild('admin.appointments.label', [
+                'route' => 'admin_appointments'
+            ])
+                ->setExtra('icon', 'far fa-calendar');
+        }
+
+        if($this->authorizationChecker->isGranted('ROLE_WIKI_ADMIN')) {
+            $root->addChild('admin.wiki.label', [
+                'route' => 'admin_wiki'
+            ])
+                ->setExtra('icon', 'fab fa-wikipedia-w');
+        }
+
+        if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $root->addChild('admin.resources.label', [
+                'route' => 'admin_resources'
+            ])
+                ->setExtra('icon', 'fas fa-laptop-house');
+
+            $root->addChild('admin.timetable.label', [
+                'route' => 'admin_timetable'
+            ])
+                ->setExtra('icon', 'far fa-clock');
+
+            $root->addChild('admin.teachers.label', [
+                'route' => 'admin_teachers'
+            ])
+                ->setExtra('icon', 'fas fa-sort-alpha-down');
+        }
+
+        $root->addChild('admin.subjects.label', [
+            'route' => 'admin_subjects'
+        ])
+            ->setExtra('icon', 'fas fa-graduation-cap');
+
+        $root->addChild('admin.displays.label', [
+            'route' => 'admin_displays'
+        ])
+            ->setExtra('icon', 'fas fa-tv');
+
+        if($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
+            $root->addChild('admin.ea.label', [
+                'uri' => '/admin/ea'
+            ])
+                ->setLinkAttribute('target', '_blank')
+                ->setExtra('icon', 'fas fa-tools');
+        }
+
+        return $root;
+    }
+
     public function adminMenu(array $options): ItemInterface {
         $root = $this->factory->createItem('root')
             ->setChildrenAttributes([
@@ -242,72 +318,22 @@ class Builder {
                 ->setExtra('icon', 'fas fa-wrench');
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN')) {
-            $menu->addChild('admin.documents.label', [
-                'route' => 'admin_documents'
+        $dataMenu = $this->dataMenu();
+
+        if($dataMenu->count() > 0) {
+            $firstKey = array_key_first($dataMenu->getChildren());
+            $first = $dataMenu->getChildren()[$firstKey];
+
+            $menu->addChild('admin.label', [
+                'uri' => $first->getUri()
             ])
-                ->setExtra('icon', 'far fa-file-alt');
+                ->setExtra('icon', 'fas fa-school');
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_MESSAGE_CREATOR')) {
-            $menu->addChild('admin.messages.label', [
-                'route' => 'admin_messages'
-            ])
-                ->setExtra('icon', 'fas fa-envelope-open-text');
-        }
-
-        if($this->authorizationChecker->isGranted(ExamVoter::Manage)) {
-            $menu->addChild('admin.exams.label', [
-                'route' => 'admin_exams'
-            ])
-                ->setExtra('icon', 'fas fa-pen');
-        }
-
-        if($this->authorizationChecker->isGranted('ROLE_APPOINTMENT_CREATOR')) {
-            $menu->addChild('admin.appointments.label', [
-                'route' => 'admin_appointments'
-            ])
-                ->setExtra('icon', 'far fa-calendar');
-        }
-
-        if($this->authorizationChecker->isGranted('ROLE_WIKI_ADMIN')) {
-            $menu->addChild('admin.wiki.label', [
-                'route' => 'admin_wiki'
-            ])
-                ->setExtra('icon', 'fab fa-wikipedia-w');
-        }
-
-        if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            $menu->addChild('admin.resources.label', [
-                'route' => 'admin_resources'
-            ])
-                ->setExtra('icon', 'fas fa-laptop-house');
-
-            $menu->addChild('admin.timetable.label', [
-                'route' => 'admin_timetable'
-            ])
-                ->setExtra('icon', 'far fa-clock');
-
-            $menu->addChild('admin.subjects.label', [
-                'route' => 'admin_subjects'
-            ])
-                ->setExtra('icon', 'fas fa-graduation-cap');
-
-            $menu->addChild('admin.teachers.label', [
-                'route' => 'admin_teachers'
-            ])
-                ->setExtra('icon', 'fas fa-sort-alpha-down');
-
-            $menu->addChild('admin.displays.label', [
-                'route' => 'admin_displays'
-            ])
-                ->setExtra('icon', 'fas fa-tv');
-
-            $menu->addChild('api.doc', [
-                'uri' => '/docs/api/import'
-            ])
-                ->setExtra('icon', 'fas fa-code');
-        }
+        $menu->addChild('api.doc', [
+            'uri' => '/docs/api/import'
+        ])
+            ->setExtra('icon', 'fas fa-code');
 
         return $root;
     }
@@ -342,12 +368,6 @@ class Builder {
                 'route' => 'admin_mails'
             ])
                 ->setExtra('icon', 'far fa-envelope');
-
-            $menu->addChild('admin.ea.label', [
-                'uri' => '/admin/ea'
-            ])
-                ->setLinkAttribute('target', '_blank')
-                ->setExtra('icon', 'fas fa-tools');
 
             $menu->addChild('audit.label', [
                 'uri' => '/admin/audit'

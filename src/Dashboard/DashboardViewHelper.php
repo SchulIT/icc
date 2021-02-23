@@ -232,13 +232,13 @@ class DashboardViewHelper {
      * @param bool $computeAbsences
      * @param int $numberOfWeeks
      */
-    private function addTimetableLessons(iterable $lessons, DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences, int $numberOfWeeks): void {
+    private function addTimetableLessons(iterable $lessons, DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences): void {
         foreach($lessons as $lesson) {
             if($this->authorizationChecker->isGranted(TimetablePeriodVoter::View, $lesson->getPeriod()) !== true) {
                 continue;
             }
 
-            $isWeek = (int)$dateTime->format('W') % $numberOfWeeks === $lesson->getWeek()->getWeekMod();
+            $isWeek = in_array((int)$dateTime->format('W'), $lesson->getWeek()->getWeeksAsIntArray());
             $isDay = (int)$dateTime->format('N') === $lesson->getDay();
 
             if($isWeek === false || $isDay === false) {

@@ -22,10 +22,10 @@ class TimetableWeekHelper {
             return null;
         }
 
-        $mod = (int)$dateTime->format('W') % $count;
+        $weekNumber = (int)$dateTime->format('W');
 
         foreach($all as $week) {
-            if($week->getWeekMod() === $mod) {
+            if(in_array($weekNumber, $week->getWeeksAsIntArray())) {
                 return $week;
             }
         }
@@ -34,9 +34,6 @@ class TimetableWeekHelper {
     }
 
     public function isTimetableWeek(DateTime $dateTime, TimetableWeekEntity $week): bool {
-        $all = $this->timetableWeekRepository->findAll();
-        $count = count($all);
-
-        return (int)$dateTime->format('W') % $count === $week->getWeekMod();
+        return in_array((int)$dateTime->format('W'), $week->getWeeksAsIntArray());
     }
 }

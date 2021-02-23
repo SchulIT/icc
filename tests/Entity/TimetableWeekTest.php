@@ -16,8 +16,5 @@ class TimetableWeekTest extends TestCase {
 
         $week->setDisplayName('display-name');
         $this->assertEquals('display-name', $week->getDisplayName());
-
-        $week->setWeekMod(1);
-        $this->assertEquals(1, $week->getWeekMod());
     }
 }

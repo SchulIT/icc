@@ -155,6 +155,7 @@ label:
         label: Icon
         help: Hier kann eine Font Awesome Icon Klasse eingetragen werden. Dabei handelt es sich um die CSS-Klasse, bspw. fas fa-door-open.
     tag: Tag
+    weeks: Wochen
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

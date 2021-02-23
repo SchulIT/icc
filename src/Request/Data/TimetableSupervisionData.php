@@ -15,11 +15,11 @@ class TimetableSupervisionData {
     private $id;
 
     /**
-     * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
+     * @Serializer\Type("array<integer>")
+     * @Assert\Count(min="1")
+     * @var int[]
      */
-    private $week;
+    private $weeks;
 
     /**
      * @Serializer\Type("int")
@@ -73,18 +73,18 @@ class TimetableSupervisionData {
     }
 
     /**
-     * @return string|null
+     * @return int[]|null
      */
-    public function getWeek(): ?string {
-        return $this->week;
+    public function getWeeks(): ?array {
+        return $this->weeks;
     }
 
     /**
-     * @param string|null $week
+     * @param int[]|null $weeks
      * @return TimetableSupervisionData
      */
-    public function setWeek(?string $week): TimetableSupervisionData {
-        $this->week = $week;
+    public function setWeeks(?array $weeks): TimetableSupervisionData {
+        $this->weeks = $weeks;
         return $this;
     }
 

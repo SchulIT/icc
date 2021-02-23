@@ -101,7 +101,7 @@
                                 <thead>
                                 <tr>
                                     <th>{{ 'label.name'|trans }} </th>
-                                    <th>{{ 'label.week_mod.label'|trans }}</th>
+                                    <th>{{ 'label.weeks'|trans }}</th>
                                     <th> </th>
                                 </tr>
                                 </thead>
@@ -113,7 +113,9 @@
                                             {{ week.displayName }} <span class="badge badge-secondary">{{ week.key }}</span>
                                         </td>
                                         <td class="align-middle">
-                                            {{ week.weekMod }}
+                                            {% for calendarWeek in week.weeks %}
+                                                {{ calendarWeek.number }}{% if not loop.last %}, {% endif %}
+                                            {% endfor %}
                                         </td>
                                         <td class="align-middle">
                                             <a href="{{ path('admin_edit_timetable_week', { uuid: week.uuid }) }}" class="btn btn-primary btn-sm">

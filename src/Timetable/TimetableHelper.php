@@ -301,7 +301,7 @@ class TimetableHelper {
         $weekNumber = (int)$today->format('W');
         $dayNumber = (int)$today->format('w');
 
-        return $weekNumber % $numberWeeks === $week->getWeekMod()
+        return in_array($weekNumber, $week->getWeeksAsIntArray())
             && $dayNumber === $day;
     }
 
@@ -325,7 +325,7 @@ class TimetableHelper {
         $weekNumber = (int)$today->format('W');
         $dayNumber = (int)$today->format('w');
 
-        return $weekNumber % $numberWeeks === $week->getWeekMod()
+        return in_array($weekNumber, $week->getWeeksAsIntArray())
             && $dayNumber === $day;
     }
 
@@ -344,7 +344,7 @@ class TimetableHelper {
             $weekNumber = (int)$freeDay->format('W');
             $dayNumber = (int)$freeDay->format('w');
 
-            if(($currentWeekNumber === $weekNumber || $currentWeekNumber + 1 === $weekNumber) && $weekNumber % $numberWeeks === $week->getWeekMod() && $dayNumber === $day) {
+            if(($currentWeekNumber === $weekNumber || $currentWeekNumber + 1 === $weekNumber) && in_array($weekNumber, $week->getWeeksAsIntArray()) && $dayNumber === $day) {
                 return true;
             }
         }

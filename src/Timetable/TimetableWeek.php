@@ -35,17 +35,6 @@ class TimetableWeek {
     }
 
     /**
-     * @return int
-     */
-    public function getWeekMod(): int {
-        return $this->week->getWeekMod();
-    }
-
-    public function getWeek(): TimetableWeekEntity {
-        return $this->week;
-    }
-
-    /**
      * @param int $maxLessons
      * @return TimetableWeek
      */

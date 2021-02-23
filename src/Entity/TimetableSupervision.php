@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use DH\DoctrineAuditBundle\Annotation\Auditable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -31,12 +33,14 @@ class TimetableSupervision {
     private $period;
 
     /**
-     * @ORM\ManyToOne(targetEntity="TimetableWeek")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Assert\NotNull()
-     * @var TimetableWeek
+     * @ORM\ManyToMany(targetEntity="Week")
+     * @ORM\JoinTable(
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @var Collection<Week>
      */
-    private $week;
+    private $weeks;
 
     /**
      * @ORM\Column(type="integer")
@@ -75,6 +79,7 @@ class TimetableSupervision {
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
+        $this->weeks = new ArrayCollection();
     }
 
     /**
@@ -109,20 +114,22 @@ class TimetableSupervision {
         return $this;
     }
 
-    /**
-     * @return TimetableWeek
-     */
-    public function getWeek(): TimetableWeek {
-        return $this->week;
+    public function addWeek(Week $week): void {
+        $this->weeks->add($week);
     }
 
-    /**
-     * @param TimetableWeek $week
-     * @return TimetableSupervision
-     */
-    public function setWeek(TimetableWeek $week): TimetableSupervision {
-        $this->week = $week;
-        return $this;
+    public function removeWeek(Week $week): void {
+        $this->weeks->removeElement($week);
+    }
+
+    public function getWeeks(): Collection {
+        return $this->weeks;
+    }
+
+    public function getWeeksAsIntArray(): array {
+        return $this->weeks->map(function(Week $week) {
+            return $week->getNumber();
+        })->toArray();
     }
 
     /**

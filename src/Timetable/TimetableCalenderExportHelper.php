@@ -73,15 +73,15 @@ class TimetableCalenderExportHelper {
      * @param TimetableSupervision[] $supervisions
      * @return TimetableCalendarDayView
      */
-    private function createCalendarDayView(DateTime $day, int $numberOfWeeks, array $lessons, array $supervisions) {
+    private function createCalendarDayView(DateTime $day, array $lessons, array $supervisions) {
         $weekNumber = (int)$day->format('W');
         $dayNumber = (int)$day->format('N');
 
-        $dayLessons = array_filter($lessons, function(TimetableLessonEntity $lesson) use ($numberOfWeeks, $weekNumber, $dayNumber) {
-            return $lesson->getDay() === $dayNumber && $weekNumber % $numberOfWeeks === $lesson->getWeek()->getWeekMod();
+        $dayLessons = array_filter($lessons, function(TimetableLessonEntity $lesson) use ($weekNumber, $dayNumber) {
+            return $lesson->getDay() === $dayNumber && in_array($weekNumber, $lesson->getWeek()->getWeeksAsIntArray());
         });
-        $daySupervisions = array_filter($supervisions, function(TimetableSupervision $supervision) use ($numberOfWeeks, $weekNumber, $dayNumber) {
-            return $supervision->getDay() === $dayNumber && $weekNumber % $numberOfWeeks === $supervision->getWeek()->getWeekMod();
+        $daySupervisions = array_filter($supervisions, function(TimetableSupervision $supervision) use ($weekNumber, $dayNumber) {
+            return $supervision->getDay() === $dayNumber && in_array($weekNumber, $supervision->getWeeksAsIntArray());
         });
 
         return new TimetableCalendarDayView($day, $dayLessons, $daySupervisions);

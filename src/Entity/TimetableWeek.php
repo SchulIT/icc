@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use DH\DoctrineAuditBundle\Annotation\Auditable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -33,14 +35,18 @@ class TimetableWeek {
     private $displayName;
 
     /**
-     * @ORM\Column(type="integer")
-     * @Assert\GreaterThanOrEqual(0)
-     * @var int
+     * @ORM\ManyToMany(targetEntity="Week")
+     * @ORM\JoinTable(
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @var Collection<Week>
      */
-    private $weekMod;
+    private $weeks;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
+        $this->weeks = new ArrayCollection();
     }
 
     /**
@@ -75,20 +81,22 @@ class TimetableWeek {
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getWeekMod() {
-        return $this->weekMod;
+    public function addWeek(Week $week): void {
+        $this->weeks->add($week);
     }
 
-    /**
-     * @param int $weekMod
-     * @return TimetableWeek
-     */
-    public function setWeekMod($weekMod): TimetableWeek {
-        $this->weekMod = $weekMod;
-        return $this;
+    public function removeWeek(Week $week): void {
+        $this->weeks->removeElement($week);
+    }
+
+    public function getWeeks(): Collection {
+        return $this->weeks;
+    }
+
+    public function getWeeksAsIntArray(): array {
+        return $this->weeks->map(function(Week $week) {
+            return $week->getNumber();
+        })->toArray();
     }
 
     public function __toString() {

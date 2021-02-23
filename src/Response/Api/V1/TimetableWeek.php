@@ -19,9 +19,9 @@ class TimetableWeek {
     /**
      * @Serializer\SerializedName("week_mod")
      * @Serializer\Type("int")
-     * @var int
+     * @var int[]
      */
-    private $weekMod;
+    private $weeks = [ ];
 
     /**
      * @return string
@@ -40,18 +40,18 @@ class TimetableWeek {
     }
 
     /**
-     * @return int
+     * @return int[]
      */
-    public function getWeekMod(): int {
-        return $this->weekMod;
+    public function getWeeks(): array {
+        return $this->weeks;
     }
 
     /**
-     * @param int $weekMod
+     * @param int[] $weeks
      * @return TimetableWeek
      */
-    public function setWeekMod(int $weekMod): TimetableWeek {
-        $this->weekMod = $weekMod;
+    public function setWeeks(array $weeks): TimetableWeek {
+        $this->weeks = $weeks;
         return $this;
     }
 
@@ -59,6 +59,6 @@ class TimetableWeek {
         return (new self())
             ->setUuid($entity->getUuid())
             ->setName($entity->getDisplayName())
-            ->setWeekMod($entity->getWeekMod());
+            ->setWeeks($entity->getWeeksAsIntArray());
     }
 }

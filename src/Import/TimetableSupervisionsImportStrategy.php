@@ -3,14 +3,16 @@
 namespace App\Import;
 
 use App\Entity\TimetableSupervision;
+use App\Entity\Week;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
-use App\Repository\TimetableWeekRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
+use App\Repository\WeekRepositoryInterface;
 use App\Request\Data\TimetableSupervisionData;
 use App\Request\Data\TimetableSupervisionsData;
 use App\Utils\ArrayUtils;
+use App\Utils\CollectionUtils;
 
 class TimetableSupervisionsImportStrategy implements ImportStrategyInterface {
 
@@ -19,12 +21,30 @@ class TimetableSupervisionsImportStrategy implements ImportStrategyInterface {
     private $weekRepository;
     private $teacherRepository;
 
+    private $isInitialized = false;
+    private $weeksCache = [ ];
+
     public function __construct(TimetableSupervisionRepositoryInterface $supervisionRepository, TimetablePeriodRepositoryInterface $periodRepository,
-                                TimetableWeekRepositoryInterface $weekRepository, TeacherRepositoryInterface $teacherRepository) {
+                                WeekRepositoryInterface $weekRepository, TeacherRepositoryInterface $teacherRepository) {
         $this->supervisionRepository = $supervisionRepository;
         $this->periodRepository = $periodRepository;
         $this->weekRepository = $weekRepository;
         $this->teacherRepository = $teacherRepository;
+    }
+
+    private function initialize() {
+        if($this->isInitialized === true) {
+            return;
+        }
+
+        $this->weeksCache = ArrayUtils::createArrayWithKeys(
+            $this->weekRepository->findAll(),
+            function(Week $week) {
+                return $week->getNumber();
+            }
+        );
+
+        $this->isInitialized = true;
     }
 
     /**
@@ -85,6 +105,8 @@ class TimetableSupervisionsImportStrategy implements ImportStrategyInterface {
      * @throws ImportException
      */
     public function updateEntity($entity, $data, $requestData): void {
+        $this->initialize();
+
         $period = $this->periodRepository->findOneByExternalId($requestData->getPeriod());
 
         if($period === null) {
@@ -103,8 +125,16 @@ class TimetableSupervisionsImportStrategy implements ImportStrategyInterface {
             throw new ImportException(sprintf('Teacher with ID "%s" on timetable supervision ID "%s" was not found.', $data->getTeacher(), $data->getId()));
         }
 
+        $weeks = ArrayUtils::findAllWithKeys($this->weeksCache, $data->getWeeks());
+        CollectionUtils::synchronize(
+            $entity->getWeeks(),
+            $weeks,
+            function(Week $week) {
+                return $week->getNumber();
+            }
+        );
+
         $entity->setPeriod($period);
-        $entity->setWeek($week);
         $entity->setTeacher($teacher);
         $entity->setDay($data->getDay());
         $entity->setLesson($data->getLesson());

@@ -202,6 +202,11 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
     }
 
     public function onFinished(ImportResult $result) {
-        $this->dispatcher->dispatch(new ExamImportEvent($result->getAdded(), $result->getUpdated(), $result->getRemoved()));
+        /** @var ExamsData $request */
+        $request = $result->getRequest();
+
+        if($request->isSuppressNotifications() === false) {
+            $this->dispatcher->dispatch(new ExamImportEvent($result->getAdded(), $result->getUpdated(), $result->getRemoved()));
+        }
     }
 }

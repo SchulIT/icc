@@ -94,7 +94,7 @@ class Importer {
 
             $repository->commit();
 
-            $result = new ImportResult($addedEntities, $updatedEntities, $removedEntities, $ignoredEntities);
+            $result = new ImportResult($addedEntities, $updatedEntities, $removedEntities, $ignoredEntities, $data);
 
             if($strategy instanceof PostActionStrategyInterface) {
                 $strategy->onFinished($result);

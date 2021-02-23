@@ -16,11 +16,15 @@ class ImportResult {
     /** @var array */
     private $ignored;
 
-    public function __construct(array $added, array $updated, array $removed, array $ignored) {
+    /** @var object */
+    private $request;
+
+    public function __construct(array $added, array $updated, array $removed, array $ignored, object $request) {
         $this->added = $added;
         $this->updated = $updated;
         $this->removed = $removed;
         $this->ignored = $ignored;
+        $this->request = $request;
     }
 
     /**
@@ -49,5 +53,12 @@ class ImportResult {
      */
     public function getIgnored(): array {
         return $this->ignored;
+    }
+
+    /**
+     * @return object
+     */
+    public function getRequest(): object {
+        return $this->request;
     }
 }

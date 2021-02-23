@@ -8,6 +8,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SubstitutionsData {
 
+    use SuppressNotificationTrait;
+
     /**
      * @Serializer\Type("array<App\Request\Data\SubstitutionData>")
      * @Assert\Valid()

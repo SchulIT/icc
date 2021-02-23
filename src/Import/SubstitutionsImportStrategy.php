@@ -5,12 +5,14 @@ namespace App\Import;
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
+use App\Event\ExamImportEvent;
 use App\Event\SubstitutionImportEvent;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
+use App\Request\Data\ExamsData;
 use App\Request\Data\SubstitutionData;
 use App\Request\Data\SubstitutionsData;
 use App\Utils\CollectionUtils;
@@ -240,6 +242,11 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
     }
 
     public function onFinished(ImportResult $result) {
-        $this->dispatcher->dispatch(new SubstitutionImportEvent($result->getAdded(), $result->getUpdated(), $result->getRemoved()));
+        /** @var SubstitutionsData $request */
+        $request = $result->getRequest();
+
+        if($request->isSuppressNotifications() === false) {
+            $this->dispatcher->dispatch(new SubstitutionImportEvent($result->getAdded(), $result->getUpdated(), $result->getRemoved()));
+        }
     }
 }

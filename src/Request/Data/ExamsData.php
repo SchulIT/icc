@@ -8,6 +8,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class ExamsData {
 
+    use SuppressNotificationTrait;
+
     /**
      * @Serializer\Type("array<App\Request\Data\ExamData>")
      * @Assert\Valid()

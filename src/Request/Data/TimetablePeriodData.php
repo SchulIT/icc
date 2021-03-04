@@ -22,14 +22,14 @@ class TimetablePeriodData {
     private $name;
 
     /**
-     * @Serializer\Type("datetime")
+     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      * @Assert\NotNull()
      * @var \DateTime
      */
     private $start;
 
     /**
-     * @Serializer\Type("datetime")
+     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      * @Assert\NotNull()
      * @Assert\GreaterThan(propertyPath="start")
      * @var \DateTime

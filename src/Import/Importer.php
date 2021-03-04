@@ -83,12 +83,14 @@ class Importer {
             }
 
             // REMOVE ENTITIES
-            foreach ($currentEntities as $entity) {
-                $id = $strategy->getEntityId($entity);
+            if(!$strategy instanceof NonRemovalImportStrategyInterface || $strategy->preventRemoval($data) === false) {
+                foreach ($currentEntities as $entity) {
+                    $id = $strategy->getEntityId($entity);
 
-                if (!in_array($id, $updatedEntitiesIds)) {
-                    $removedEntities[] = $entity;
-                    $strategy->remove($entity);
+                    if (!in_array($id, $updatedEntitiesIds)) {
+                        $removedEntities[] = $entity;
+                        $strategy->remove($entity);
+                    }
                 }
             }
 
@@ -146,7 +148,7 @@ class Importer {
 
             $repository->commit();
 
-            return new ImportResult($addedEntities, [], [], $ignoredEntities);
+            return new ImportResult($addedEntities, [], [], $ignoredEntities, $data);
         } catch (Throwable $e) {
             throw new ImportException($e->getMessage(), $e->getCode(), $e);
         }

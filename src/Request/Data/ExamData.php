@@ -49,10 +49,10 @@ class ExamData {
     private $description;
 
     /**
-     * List of external tuition IDs which are related to this exam.
+     * List of external tuition which are related to this exam.
      *
-     * @Serializer\Type("array<string>")
-     * @var string[]
+     * @Serializer\Type("array<App\Request\Data\ExamData>")
+     * @var ExamData[]
      */
     private $tuitions;
 
@@ -161,14 +161,14 @@ class ExamData {
     }
 
     /**
-     * @return string[]
+     * @return ExamTuition[]
      */
     public function getTuitions(): array {
         return $this->tuitions;
     }
 
     /**
-     * @param string[] $tuitions
+     * @param ExamTuition[] $tuitions
      * @return ExamData
      */
     public function setTuitions(array $tuitions): ExamData {

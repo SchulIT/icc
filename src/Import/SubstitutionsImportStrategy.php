@@ -5,18 +5,17 @@ namespace App\Import;
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
-use App\Event\ExamImportEvent;
 use App\Event\SubstitutionImportEvent;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\ExamsData;
+use App\Repository\TuitionRepositoryInterface;
 use App\Request\Data\SubstitutionData;
 use App\Request\Data\SubstitutionsData;
-use App\Utils\CollectionUtils;
 use App\Utils\ArrayUtils;
+use App\Utils\CollectionUtils;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class SubstitutionsImportStrategy implements ImportStrategyInterface, PostActionStrategyInterface {
@@ -24,14 +23,17 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
     private $substitutionRepository;
     private $teacherRepository;
     private $studyGroupRepository;
+    private $tuitionRepository;
     private $roomRepository;
     private $dispatcher;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, TeacherRepositoryInterface $teacherRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository, RoomRepositoryInterface $roomRepository, EventDispatcherInterface $eventDispatcher) {
+                                StudyGroupRepositoryInterface $studyGroupRepository, TuitionRepositoryInterface $tuitionRepository, RoomRepositoryInterface $roomRepository,
+                                EventDispatcherInterface $eventDispatcher) {
         $this->substitutionRepository = $substitutionRepository;
         $this->teacherRepository = $teacherRepository;
         $this->studyGroupRepository = $studyGroupRepository;
+        $this->tuitionRepository = $tuitionRepository;
         $this->roomRepository = $roomRepository;
         $this->dispatcher = $eventDispatcher;
     }
@@ -112,15 +114,15 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
         $entity->setLessonEnd($data->getLessonEnd());
         $entity->setSubject($data->getSubject());
         $entity->setReplacementSubject($data->getReplacementSubject());
-        $entity->setRemark($data->getRemark());
+        $entity->setRemark($data->getText());
         $entity->setType($data->getType());
         $entity->setStartsBefore($data->startsBefore());
 
-        if(!empty($data->getRoom())) {
-            $room = $this->roomRepository->findOneByExternalId($data->getRoom());
+        if(!empty($data->getRooms())) {
+            $room = $this->roomRepository->findOneByExternalId($data->getRooms());
 
             if($room === null) {
-                $entity->setRoomName($data->getRoom());
+                $entity->setRoomName($data->getRooms());
             }
 
             $entity->setRoom($room);
@@ -128,11 +130,11 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
             $entity->setRoom(null);
         }
 
-        if(!empty($data->getReplacementRoom())) {
-            $room = $this->roomRepository->findOneByExternalId($data->getReplacementRoom());
+        if(!empty($data->getReplacementRooms())) {
+            $room = $this->roomRepository->findOneByExternalId($data->getReplacementRooms());
 
             if($room === null) {
-                $entity->setReplacementRoomName($data->getReplacementRoom());
+                $entity->setReplacementRoomName($data->getReplacementRooms());
             }
 
             $entity->setReplacementRoom($room);
@@ -140,11 +142,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
             $entity->setReplacementRoom(null);
         }
 
-        $studyGroups = $this->studyGroupRepository->findAllByExternalId($data->getStudyGroups());
-
-        if(count($studyGroups) !== count($data->getStudyGroups())) {
-            $this->throwMissingStudyGroup($data->getStudyGroups(), $studyGroups, $data->getId());
-        }
+        $studyGroups = $this->resolveStudyGroup($data->getSubject(), $data->getGrades(), $data->getTeachers(), $data->getId());
 
         CollectionUtils::synchronize(
             $entity->getStudyGroups(),
@@ -154,11 +152,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
             }
         );
 
-        $replacementStudyGroups = $this->studyGroupRepository->findAllByExternalId($data->getReplacementStudyGroups());
-
-        if(count($replacementStudyGroups) !== count($data->getReplacementStudyGroups())) {
-            $this->throwMissingStudyGroup($data->getStudyGroups(), $replacementStudyGroups, $data->getId());
-        }
+        $replacementStudyGroups = $this->resolveStudyGroup($data->getReplacementSubject(), $data->getReplacementGrades(), $data->getReplacementTeachers(), $data->getId());
 
         CollectionUtils::synchronize(
             $entity->getReplacementStudyGroups(),
@@ -167,6 +161,40 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
                 return $studyGroup->getId();
             }
         );
+    }
+
+    /**
+     * @param string|null $subject
+     * @param string[] $grades
+     * @param string[] $teachers
+     * @param string $id
+     * @return StudyGroup[]
+     * @throws ImportException
+     */
+    private function resolveStudyGroup(?string $subject, array $grades, array $teachers, string $id): array {
+        $result = [ ];
+
+        if(empty($subject)) {
+            foreach($grades as $grade) {
+                $studyGroup = $this->studyGroupRepository->findOneByGradeName($grade);
+
+                if($studyGroup === null) {
+                    throw new ImportException(sprintf('Study group for grade "%s" on substitution ID "%s" was not found.', $grade, $id));
+                }
+
+                $result[] = $studyGroup;
+            }
+        } else if(count($grades) > 0 && count($teachers) > 0) {
+            $tuitions = $this->tuitionRepository->findAllByGradeTeacherAndSubjectOrCourse($grades, $teachers, $subject);
+
+            if(count($tuitions) === 1 && $tuitions[0]->getStudyGroup() !== null) {
+                $result[] = $tuitions[0]->getStudyGroup();
+            } else {
+                return [ ];
+            }
+        }
+
+        return $result;
     }
 
     /**

@@ -15,6 +15,9 @@ class TimetableSupervisionData {
     private $id;
 
     /**
+     * Calendar week (1-53) this supervision takes place.
+     * Note: weeks <1 or >53 are ignored without any warning.
+     *
      * @Serializer\Type("array<integer>")
      * @Assert\Count(min="1")
      * @var int[]

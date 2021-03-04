@@ -156,9 +156,23 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
             }
         );
 
+        $tuitions = [ ];
+
+        foreach($data->getTuitions() as $tuitionData) {
+            $resolvedTuitions = $this->tuitionRepository->findAllByGradeTeacherAndSubjectOrCourse($tuitionData->getGrades(), $tuitionData->getTeachers(), $tuitionData->getSubjectOrCourse());
+
+            if(count($resolvedTuitions) === 0) {
+                throw new ImportException(sprintf('Tuition for (%s; %s; %s) on exam ID "%s" was not found.', implode(',', $tuitionData->getGrades()), implode(',', $tuitionData->getTeachers()), $tuitionData->getSubjectOrCourse(), $data->getId()));
+            } else if(count($resolvedTuitions) === 1) {
+                $tuitions[] = array_shift($resolvedTuitions);
+            } else {
+                throw new ImportException(sprintf('Tuition for (%s; %s; %s) on exam ID "%s" is ambigious.', implode(',', $tuitionData->getGrades()), implode(',', $tuitionData->getTeachers()), $tuitionData->getSubjectOrCourse(), $data->getId()));
+            }
+        }
+
         CollectionUtils::synchronize(
             $entity->getTuitions(),
-            $this->tuitionRepository->findAllByExternalId($data->getTuitions()),
+            $tuitions,
             function(Tuition $tuition) {
                 return $tuition->getId();
             }

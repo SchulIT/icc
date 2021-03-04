@@ -226,7 +226,7 @@ class TimetableHelper {
         });
 
         $supervision = array_filter($supervision, function(TimetableSupervision $entry) use ($week) {
-            return $entry->getWeek()->getId() === $week->getId();
+            return count(array_intersect($week->getWeeksAsIntArray(), $entry->getWeeksAsIntArray())) > 0;
         });
 
         for($i = 1; $i <= 5; $i++) {

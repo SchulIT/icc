@@ -9,7 +9,7 @@ use App\Request\Data\TimetablePeriodData;
 use App\Request\Data\TimetablePeriodsData;
 use App\Utils\ArrayUtils;
 
-class TimetablePeriodsImportStrategy implements ImportStrategyInterface {
+class TimetablePeriodsImportStrategy implements ImportStrategyInterface, NonRemovalImportStrategyInterface {
 
     private $repository;
 
@@ -107,5 +107,12 @@ class TimetablePeriodsImportStrategy implements ImportStrategyInterface {
      */
     public function getEntityClassName(): string {
         return TimetablePeriod::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function preventRemoval($data): bool {
+        return true;
     }
 }

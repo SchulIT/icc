@@ -47,18 +47,24 @@ class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
 
             if($teacher !== null) {
                 $absence->setTeacher($teacher);
+            } else {
+                return;
             }
         } else if($data->getType() === 'study_group') {
             $studyGroup = $this->studyGroupRepository->findOneByExternalId($data->getObjective());
 
             if($studyGroup !== null) {
                 $absence->setStudyGroup($studyGroup);
+            } else {
+                return;
             }
         } else if($data->getType() === 'room') {
             $room = $this->roomRepository->findOneByExternalId($data->getObjective());
 
             if($room !== null) {
                 $absence->setRoom($room);
+            } else {
+                return;
             }
         }
 

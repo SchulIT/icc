@@ -157,6 +157,51 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
+    public function findAllByGradeTeacherAndSubjectOrCourse(array $grades, array $teachers, string $subjectOrCourse): array {
+        $qb = $this->getDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(Tuition::class, 'tInner')
+            ->leftJoin('tInner.teacher', 'ttInner')
+            ->leftJoin('tInner.additionalTeachers', 'tatInner')
+            ->leftJoin('tInner.subject', 'sInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.grades', 'gInner')
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->orX(
+                        $qb->expr()->in('ttInner.acronym', ':teachers'),
+                        $qb->expr()->in('tatInner.acronym', ':teachers')
+                    ),
+                    $qb->expr()->orX(
+                        'sInner.abbreviation = :subject',
+                        'sgInner.name = :subject'
+                    )
+                )
+            );
+
+        $qb->where($qb->expr()->in('t.id', $qbInner->getDQL()))
+            ->setParameter('teachers', $teachers)
+            ->setParameter('subject', $subjectOrCourse);
+
+        $tuitions = [ ];
+        $result = $qb->getQuery()->getResult();
+
+        /** @var Tuition $tuition */
+        foreach($result as $tuition) {
+            $tuitionGrades = $tuition->getStudyGroup()->getGrades()->map(function(Grade $grade) { return $grade->getName(); })->toArray();
+            if(count(array_intersect($tuitionGrades, $grades)) > 0) {
+                $tuitions[] = $tuition;
+            }
+        }
+
+        return $tuitions;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAll() {
         return $this->getDefaultQueryBuilder()
             ->getQuery()
@@ -178,6 +223,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         $this->em->remove($tuition);
         $this->flushIfNotInTransaction();
     }
+
 
 
 }

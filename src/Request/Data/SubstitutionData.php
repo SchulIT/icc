@@ -77,37 +77,35 @@ class SubstitutionData {
     private $replacementTeachers;
 
     /**
-     * @Serializer\Type("string")
-     * @NullOrNotBlank()
-     * @var string|null
+     * @Serializer\Type("array<string>")
+     * @var string[]
      */
-    private $room;
-
-    /**
-     * @Serializer\Type("string")
-     * @NullOrNotBlank()
-     * @var string|null
-     */
-    private $replacementRoom;
-
-    /**
-     * @Serializer\Type("string")
-     * @NullOrNotBlank()
-     * @var string|null
-     */
-    private $remark;
+    private $rooms;
 
     /**
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $studyGroups;
+    private $replacementRooms;
+
+    /**
+     * @Serializer\Type("string")
+     * @NullOrNotBlank()
+     * @var string|null
+     */
+    private $text;
 
     /**
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $replacementStudyGroups;
+    private $grades;
+
+    /**
+     * @Serializer\Type("array<string>")
+     * @var string[]
+     */
+    private $replacementGrades;
 
     /**
      * @return string|null
@@ -270,82 +268,82 @@ class SubstitutionData {
     }
 
     /**
-     * @return string|null
+     * @return string[]
      */
-    public function getRoom(): ?string {
-        return $this->room;
+    public function getRooms(): array {
+        return $this->rooms;
     }
 
     /**
-     * @param string|null $room
+     * @param string[] $rooms
      * @return SubstitutionData
      */
-    public function setRoom(?string $room): SubstitutionData {
-        $this->room = $room;
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getReplacementRoom(): ?string {
-        return $this->replacementRoom;
-    }
-
-    /**
-     * @param string|null $replacementRoom
-     * @return SubstitutionData
-     */
-    public function setReplacementRoom(?string $replacementRoom): SubstitutionData {
-        $this->replacementRoom = $replacementRoom;
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getRemark(): ?string {
-        return $this->remark;
-    }
-
-    /**
-     * @param string|null $remark
-     * @return SubstitutionData
-     */
-    public function setRemark(?string $remark): SubstitutionData {
-        $this->remark = $remark;
+    public function setRooms(array $rooms): SubstitutionData {
+        $this->rooms = $rooms;
         return $this;
     }
 
     /**
      * @return string[]
      */
-    public function getStudyGroups(): array {
-        return $this->studyGroups;
+    public function getReplacementRooms(): array {
+        return $this->replacementRooms;
     }
 
     /**
-     * @param string[] $studyGroups
+     * @param string[] $replacementRooms
      * @return SubstitutionData
      */
-    public function setStudyGroups(array $studyGroups): SubstitutionData {
-        $this->studyGroups = $studyGroups;
+    public function setReplacementRooms(array $replacementRooms): SubstitutionData {
+        $this->replacementRooms = $replacementRooms;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getText(): ?string {
+        return $this->text;
+    }
+
+    /**
+     * @param string|null $text
+     * @return SubstitutionData
+     */
+    public function setText(?string $text): SubstitutionData {
+        $this->text = $text;
         return $this;
     }
 
     /**
      * @return string[]
      */
-    public function getReplacementStudyGroups(): array {
-        return $this->replacementStudyGroups;
+    public function getGrades(): array {
+        return $this->grades;
     }
 
     /**
-     * @param string[] $replacementStudyGroups
+     * @param string[] $grades
      * @return SubstitutionData
      */
-    public function setReplacementStudyGroups(array $replacementStudyGroups): SubstitutionData {
-        $this->replacementStudyGroups = $replacementStudyGroups;
+    public function setGrades(array $grades): SubstitutionData {
+        $this->grades = $grades;
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getReplacementGrades(): array {
+        return $this->replacementGrades;
+    }
+
+    /**
+     * @param string[] $replacementGrades
+     * @return SubstitutionData
+     */
+    public function setReplacementGrades(array $replacementGrades): SubstitutionData {
+        $this->replacementGrades = $replacementGrades;
         return $this;
     }
 }

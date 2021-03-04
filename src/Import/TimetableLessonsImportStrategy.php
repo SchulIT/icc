@@ -108,14 +108,22 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
             throw new ImportException(sprintf('Period "%s" on timetable lesson ID "%s" was not found.', $requestData->getPeriod(), $data->getId()));
         }
 
-        if($data->getTuition() !== null) {
-            $tuition = $this->tuitionRepository->findOneByExternalId($data->getTuition());
+        if(!empty($data->getSubject()) && count($data->getGrades()) > 0 && count($data->getTeachers()) > 0) {
+            $tuitions = $this->tuitionRepository->findAllByGradeTeacherAndSubjectOrCourse($data->getGrades(), $data->getTeachers(), $data->getSubject());
 
-            if ($tuition === null) {
-                throw new ImportException(sprintf('Tuition "%s" on timetable lesson ID "%s" was not found.', $data->getTuition(), $data->getId()));
+            if (count($tuitions) === 0) {
+                $entity->setTuition(null);
+            } else {
+                if (count($tuitions) === 1) {
+                    $entity->setTuition(array_shift($tuitions));
+                } else {
+                    return; // TODO!!!
+
+                    throw new ImportException(sprintf('Tuition for (%s; %s; %s) on timetable lesson ID "%s" is ambigious.', implode(',', $data->getGrades()), implode(',', $data->getTeachers()), $data->getSubject(), $data->getId()));
+                }
             }
-
-            $entity->setTuition($tuition);
+        } else {
+            $entity->setTuition(null);
         }
 
         if(!empty($data->getRoom())) {
@@ -132,10 +140,6 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
         if($data->getSubject() !== null) {
             $subject = $this->subjectRepository->findOneByAbbreviation($data->getSubject());
             $entity->setSubject($subject);
-        }
-
-        if($entity->getTuition() === null && $entity->getSubject() === null) {
-            throw new ImportException(sprintf('Subject "%s" on timetable lesson ID "%s" was not found.', $data->getSubject(), $data->getId()));
         }
 
         CollectionUtils::synchronize(

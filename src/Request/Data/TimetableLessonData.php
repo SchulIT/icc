@@ -17,12 +17,6 @@ class TimetableLessonData {
 
     /**
      * @Serializer\Type("string")
-     * @var string
-     */
-    private $tuition;
-
-    /**
-     * @Serializer\Type("string")
      * @Assert\NotNull()
      * @var string
      */
@@ -90,22 +84,6 @@ class TimetableLessonData {
      */
     public function setId(?string $id): TimetableLessonData {
         $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getTuition(): ?string {
-        return $this->tuition;
-    }
-
-    /**
-     * @param string|null $tuition
-     * @return TimetableLessonData
-     */
-    public function setTuition(?string $tuition): TimetableLessonData {
-        $this->tuition = $tuition;
         return $this;
     }
 

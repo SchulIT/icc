@@ -25,7 +25,7 @@ class MessageRecipientResolver {
         $users = array_filter(
             $this->userRepository->findAllByNotifyMessages($message),
             function(User $user) {
-                return $user->getEmail() !== null;
+                return $user->getEmail() !== null && $user->isEmailNotificationsEnabled();
             });
 
         $userTypes = $message->getVisibilities()->map(function (UserTypeEntity $entity) {

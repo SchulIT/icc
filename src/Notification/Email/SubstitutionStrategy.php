@@ -35,7 +35,7 @@ class SubstitutionStrategy implements EmailStrategyInterface {
         return array_filter(
             $this->userRepository->findAllByNotifySubstitutions(),
             function(User $user) {
-                return $user->getEmail() !== null;
+                return $user->getEmail() !== null && $user->isEmailNotificationsEnabled();
             });
     }
 

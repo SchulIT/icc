@@ -121,14 +121,14 @@ class TeacherTag {
     }
 
     public static function getGradeTeacherTag(): self {
-        $tag = new static();
+        $tag = new self();
         $tag->uuid = Uuid::fromString(static::GradeTeacherTagUuid);
 
         return $tag;
     }
 
     public static function getSubstituteGradeTeacherTag(): self {
-        $tag = new static();
+        $tag = new self();
         $tag->uuid = Uuid::fromString(static::SubstituteGradeTeacherTagUuid);
 
         return $tag;

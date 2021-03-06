@@ -146,7 +146,7 @@ class Importer {
 
             $repository->commit();
 
-            return new ImportResult($addedEntities, [], [], $ignoredEntities);
+            return new ImportResult($addedEntities, [], [], $ignoredEntities, $data);
         } catch (Throwable $e) {
             throw new ImportException($e->getMessage(), $e->getCode(), $e);
         }

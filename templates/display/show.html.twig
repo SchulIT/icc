@@ -101,6 +101,7 @@
                     } only %}
                 {% endif %}
 
+                {% if appointments|length > 0 %}
                 <div class="card">
                     <div class="card-body p-3 overflow-hidden">
                         {% for appointment in appointments %}
@@ -121,6 +122,7 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% endif %}
                 </div>
             </div>
             </div>

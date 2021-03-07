@@ -273,15 +273,17 @@ class Builder {
                 ->setExtra('icon', 'fas fa-sort-alpha-down');
         }
 
-        $root->addChild('admin.subjects.label', [
-            'route' => 'admin_subjects'
-        ])
-            ->setExtra('icon', 'fas fa-graduation-cap');
+        if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $root->addChild('admin.subjects.label', [
+                'route' => 'admin_subjects'
+            ])
+                ->setExtra('icon', 'fas fa-graduation-cap');
 
-        $root->addChild('admin.displays.label', [
-            'route' => 'admin_displays'
-        ])
-            ->setExtra('icon', 'fas fa-tv');
+            $root->addChild('admin.displays.label', [
+                'route' => 'admin_displays'
+            ])
+                ->setExtra('icon', 'fas fa-tv');
+        }
 
         if($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
             $root->addChild('admin.ea.label', [
@@ -330,10 +332,12 @@ class Builder {
                 ->setExtra('icon', 'fas fa-school');
         }
 
-        $menu->addChild('api.doc', [
-            'uri' => '/docs/api/import'
-        ])
-            ->setExtra('icon', 'fas fa-code');
+        if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $menu->addChild('api.doc', [
+                'uri' => '/docs/api/import'
+            ])
+                ->setExtra('icon', 'fas fa-code');
+        }
 
         return $root;
     }

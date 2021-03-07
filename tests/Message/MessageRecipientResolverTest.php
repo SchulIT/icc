@@ -32,7 +32,8 @@ class MessageRecipientResolverTest extends TestCase {
 
         $this->teacherUser = (new User())
             ->setEmail('teacher@test.org')
-            ->setUserType(UserType::Teacher());
+            ->setUserType(UserType::Teacher())
+            ->setIsEmailNotificationsEnabled(true);
 
         $reflectionClass = new ReflectionClass(StudyGroup::class);
         $property = $reflectionClass->getProperty('id');
@@ -52,7 +53,8 @@ class MessageRecipientResolverTest extends TestCase {
 
         $this->studentUser = (new User())
             ->setEmail('student@test.org')
-            ->setUserType(UserType::Student());
+            ->setUserType(UserType::Student())
+            ->setIsEmailNotificationsEnabled(true);
 
         $this->student = (new Student());
         $this->student->getStudyGroupMemberships()->add(

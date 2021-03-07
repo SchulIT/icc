@@ -41,7 +41,7 @@ class ExamStrategy implements EmailStrategyInterface {
         return array_filter(
             $this->userRepository->findAllByNotifyExams(),
             function(User $user) {
-                return $user->getEmail() !== null;
+                return $user->getEmail() !== null && $user->isEmailNotificationsEnabled();
             });
     }
 

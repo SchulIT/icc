@@ -119,7 +119,7 @@ class ArrayUtils {
         return $result;
     }
 
-    public static function iterableToArray(iterable $items) {
+    public static function iterableToArray(iterable $items): array {
         $array = [ ];
 
         foreach($items as $item) {
@@ -127,5 +127,16 @@ class ArrayUtils {
         }
 
         return $array;
+    }
+
+    public static function areEqual(iterable $iterableA, iterable $iterableB) {
+        $arrayA = static::iterableToArray($iterableA);
+        $arrayB = static::iterableToArray($iterableB);
+
+        if(count($arrayA) != count($arrayB)) {
+            return false;
+        }
+
+        return count(array_intersect($arrayA, $arrayB)) === count($arrayA);
     }
 }

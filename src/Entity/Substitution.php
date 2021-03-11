@@ -7,6 +7,7 @@ use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use EasyCorp\Bundle\EasyAdminBundle\EventListener\RequestPostInitializeListener;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -94,24 +95,32 @@ class Substitution {
     private $replacementTeachers;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Room")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     * @var Room|null
+     * @ORM\ManyToMany(targetEntity="Room")
+     * @ORM\JoinTable(name="substitution_rooms",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @ORM\OrderBy({"name"="asc"})
+     * @var Collection<Room>
      */
-    private $room = null;
+    private $rooms;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Room")
+     * @ORM\JoinTable(name="substitution_replacement_rooms",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @ORM\OrderBy({"name"="asc"})
+     * @var Collection<Room>
+     */
+    private $replacementRooms;
 
     /**
      * @ORM\Column(type="string", nullable=true, options={"comment": "Plain room name in case room resolve is not possible when importing substitutions."})
      * @var string|null
      */
     private $roomName = null;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Room")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     * @var Room|null
-     */
-    private $replacementRoom = null;
 
     /**
      * @ORM\Column(type="string", nullable=true, options={"comment": "Plain room name in case room resolve is not possible when importing substitutions."})
@@ -150,6 +159,8 @@ class Substitution {
 
         $this->teachers = new ArrayCollection();
         $this->replacementTeachers = new ArrayCollection();
+        $this->rooms = new ArrayCollection();
+        $this->replacementRooms = new ArrayCollection();
         $this->studyGroups = new ArrayCollection();
         $this->replacementStudyGroups = new ArrayCollection();
     }
@@ -312,36 +323,51 @@ class Substitution {
         $this->replacementTeachers->removeElement($teacher);
     }
 
+    public function addRoom(Room $room): void {
+        $this->rooms->add($room);
+    }
+
+    public function removeRoom(Room $room): void {
+        $this->rooms->removeElement($room);
+    }
+
+    public function getRooms(): Collection {
+        return $this->rooms;
+    }
+
+    public function addReplacementRoom(Room $room): void {
+        $this->replacementRooms->add($room);
+    }
+
+    public function removeReplacementRoom(Room $room): void {
+        $this->replacementRooms->removeElement($room);
+    }
+
+    public function getReplacementRooms(): Collection {
+        return $this->replacementRooms;
+    }
+
+
     /**
-     * @return Room|null
+     * @return string|
      */
-    public function getRoom(): ?Room {
-        return $this->room;
+    public function getRoomsAsString(): ?string {
+        if($this->getRooms()->count() > 0) {
+            return implode(', ', $this->getRooms()->map(function(Room $room) { return $room->getName(); })->toArray());
+        }
+
+        return $this->getRoomName();
     }
 
     /**
-     * @param Room|null $room
-     * @return Substitution
+     * @return string|null
      */
-    public function setRoom(?Room $room): Substitution {
-        $this->room = $room;
-        return $this;
-    }
+    public function getReplacementRoomsAsString(): ?string {
+        if($this->getReplacementRooms()->count() > 0) {
+            return implode(', ', $this->getReplacementRooms()->map(function(Room $room) { return $room->getName(); })->toArray());
+        }
 
-    /**
-     * @return Room|null
-     */
-    public function getReplacementRoom(): ?Room {
-        return $this->replacementRoom;
-    }
-
-    /**
-     * @param Room|null $replacementRoom
-     * @return Substitution
-     */
-    public function setReplacementRoom(?Room $replacementRoom): Substitution {
-        $this->replacementRoom = $replacementRoom;
-        return $this;
+        return $this->getReplacementRoomName();
     }
 
     /**
@@ -430,9 +456,7 @@ class Substitution {
         $clone->setExternalId($this->getExternalId());
         $clone->setSubject($this->getSubject());
         $clone->setReplacementSubject($this->getReplacementSubject());
-        $clone->setRoom($this->getRoom());
         $clone->setRoomName($this->getRoomName());
-        $clone->setReplacementRoom($this->getReplacementRoom());
         $clone->setReplacementRoomName($this->getReplacementRoomName());
         $clone->setLessonStart($this->getLessonStart());
         $clone->setLessonEnd($this->getLessonEnd());
@@ -453,6 +477,14 @@ class Substitution {
 
         foreach($this->getReplacementStudyGroups() as $studyGroup) {
             $clone->addReplacementStudyGroup($studyGroup);
+        }
+
+        foreach($this->getRooms() as $room) {
+            $clone->addRoom($room);
+        }
+
+        foreach($this->getReplacementRooms() as $room) {
+            $clone->addReplacementRoom($room);
         }
 
         return $clone;

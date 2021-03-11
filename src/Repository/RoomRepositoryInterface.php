@@ -26,6 +26,12 @@ interface RoomRepositoryInterface extends TransactionalRepositoryInterface {
     public function findOneByExternalId(string $externalId): ?Room;
 
     /**
+     * @param string[] $externalIds
+     * @return Room[]
+     */
+    public function findAllByExternalIds(array $externalIds): array;
+
+    /**
      * @return Room[]
      */
     public function findAll(): array;

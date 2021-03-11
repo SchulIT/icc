@@ -2,6 +2,7 @@
 
 namespace App\Import;
 
+use App\Entity\Room;
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
@@ -118,28 +119,32 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
         $entity->setType($data->getType());
         $entity->setStartsBefore($data->startsBefore());
 
-        if(!empty($data->getRooms())) {
-            $room = $this->roomRepository->findOneByExternalId($data->getRooms());
-
-            if($room === null) {
-                $entity->setRoomName($data->getRooms());
-            }
-
-            $entity->setRoom($room);
+        $rooms = $this->roomRepository->findAllByExternalIds($data->getRooms());
+        if(count($rooms) > 0) {
+            CollectionUtils::synchronize(
+                $entity->getRooms(),
+                $rooms,
+                function(Room $room) {
+                    return $room->getId();
+                }
+            );
+            $entity->setRoomName(null);
         } else {
-            $entity->setRoom(null);
+            $entity->setRoomName(implode(', ', $data->getRooms()));
         }
 
-        if(!empty($data->getReplacementRooms())) {
-            $room = $this->roomRepository->findOneByExternalId($data->getReplacementRooms());
-
-            if($room === null) {
-                $entity->setReplacementRoomName($data->getReplacementRooms());
-            }
-
-            $entity->setReplacementRoom($room);
+        $replacementRooms = $this->roomRepository->findAllByExternalIds($data->getReplacementRooms());
+        if(count($replacementRooms) > 0) {
+            CollectionUtils::synchronize(
+                $entity->getReplacementRooms(),
+                $replacementRooms,
+                function(Room $room) {
+                    return $room->getId();
+                }
+            );
+            $entity->setReplacementRoomName(null);
         } else {
-            $entity->setReplacementRoom(null);
+            $entity->setReplacementRoomName(implode(', ', $data->getRooms()));
         }
 
         $studyGroups = $this->resolveStudyGroup($data->getSubject(), $data->getGrades(), $data->getTeachers(), $data->getId());

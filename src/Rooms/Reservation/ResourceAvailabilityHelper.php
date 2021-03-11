@@ -86,15 +86,21 @@ class ResourceAvailabilityHelper {
             }
 
             // Case 1: there is a substitution away from the room (potentially making the room available)
-            if($substitution->getRoom() === $room->getExternalId()
-                && $substitution->getReplacementRoom() !== null
-                && $substitution->getReplacementRoom() !== $room->getExternalId()
+            $rooms = $substitution->getRooms()->map(function(Room $room) {
+                return $room->getId();
+            });
+            $replacementRooms = $substitution->getReplacementRooms()->map(function(Room $room) {
+                return $room->getId();
+            });
+
+            if($rooms->contains($room->getId())
+                && $replacementRooms->contains($room->getId()) === false
                 && $isCancelled === null ) { // Only cancel substitution if not previously being set to false
                 $isCancelled = true;
             }
 
             // Case 2: there is a cancellation
-            if($substitution->getRoom() === $room->getExternalId()
+            if($rooms->contains($room->getId())
                 && in_array($substitution->getType(), $this->dashboardSettings->getFreeLessonSubstitutionTypes())
                 && $isCancelled === null) { // Only cancel substitution if not previously being set to false
                 $isCancelled = true;
@@ -169,8 +175,8 @@ class ResourceAvailabilityHelper {
                 return $reservation->getResource()->getId() === $resource->getId();
             });
             $roomSubstitutions = array_filter($substitutions, function(Substitution $substitution) use ($resource) {
-                return ($substitution->getRoom() !== null && $substitution->getRoom() === $resource)
-                    || ($substitution->getReplacementRoom() !== null && $substitution->getReplacementRoom() === $resource);
+                return ($substitution->getRooms()->contains($resource)
+                    || ($substitution->getReplacementRooms()->contains($resource)));
             });
 
             for($lessonNumber = 1; $lessonNumber <= $this->timetableSettings->getMaxLessons(); $lessonNumber++) {

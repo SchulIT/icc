@@ -366,7 +366,7 @@ class DashboardViewCollapseHelper {
                 if($substitution->getType() === $mergedSubstitution->getType()
                     && $substitution->getSubject() === $mergedSubstitution->getSubject()
                     && $substitution->getRemark() === $mergedSubstitution->getRemark()
-                    && $substitution->getRoom() === $mergedSubstitution->getRoom()
+                    && ArrayUtils::areEqual($substitution->getRooms(), $mergedSubstitution->getRooms())
                     && $substitution->getRoomName() === $mergedSubstitution->getRoomName()) {
 
                     // merge study groups
@@ -421,7 +421,7 @@ class DashboardViewCollapseHelper {
                 $rightSubstitution = $defaultSubstitutions[$j]->getSubstitution();
 
                 // If subject and room are same: remove count by 1
-                if($leftSubstitution->getSubject() === $rightSubstitution->getSubject() && $leftSubstitution->getRoom() === $rightSubstitution->getRoom()) {
+                if($leftSubstitution->getSubject() === $rightSubstitution->getSubject() && ArrayUtils::areEqual($leftSubstitution->getRooms(), $rightSubstitution->getRooms())) {
                     $count--;
                 }
             }

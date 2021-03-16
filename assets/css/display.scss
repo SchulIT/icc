@@ -21,6 +21,10 @@ $enable-gradients: true;
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/dark/variables.scss';
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/dark/layout';
 
+// Import Bootstrap 4 Card Tables
+@import '../../node_modules/bootstrap4-card-tables/src/bootstrap4-card-tables';
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/nested-card-tables.scss';
+
 // Import SCSS from overrides
 @import "overrides/*.scss";
 

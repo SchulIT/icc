@@ -5,14 +5,17 @@ namespace App\Controller;
 use App\Display\DisplayHelper;
 use App\Entity\Display;
 use App\Entity\DisplayTargetUserType;
+use App\Entity\Substitution;
 use App\Grouping\Grouper;
 use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
+use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Sorting\AppointmentStrategy;
 use App\Sorting\Sorter;
 use App\Timetable\TimetableWeekHelper;
+use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -26,7 +29,7 @@ class DisplayController extends AbstractController {
      */
     public function show(Display $display, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                          SubstitutionRepositoryInterface $substitutionRepository, AppointmentRepositoryInterface $appointmentRepository,
-                         TimetableWeekHelper $weekHelper, DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper) {
+                         TimetableWeekHelper $weekHelper, DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper, ImportDateTypeRepositoryInterface  $importDateTymeRepository) {
         $today = $dateHelper->getToday();
         $appointments = [ ];
         $currentWeek = $weekHelper->getTimetableWeek($today);
@@ -44,7 +47,13 @@ class DisplayController extends AbstractController {
 
         $sorter->sort($appointments, AppointmentStrategy::class);
 
-        return $this->render('display/show.html.twig', [
+        $itemsCount = 0;
+
+        foreach($groups as $group) {
+            $itemsCount += count($group->getItems());
+        }
+
+        return $this->render('display/two_column_bottom.html.twig', [
             'display' => $display,
             'week' => $currentWeek,
             'infotexts' => $infotextRepository->findAllByDate($today),
@@ -52,6 +61,9 @@ class DisplayController extends AbstractController {
             'absent_teachers' => $absenceRepository->findAllTeachers($today),
             'groups' => $groups,
             'appointments' => $appointments,
+            'count' => $itemsCount,
+            'last_update' => $importDateTymeRepository->findOneByEntityClass(Substitution::class),
+            'day' => $today
         ]);
     }
 }

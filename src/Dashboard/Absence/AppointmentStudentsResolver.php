@@ -45,6 +45,7 @@ class AppointmentStudentsResolver implements AbsenceResolveStrategyInterface {
             ->where('a.start <= :end')
             ->andWhere('a.end >= :start')
             ->andWhere('s.id IN (:students)')
+            ->andWhere('a.markStudentsAbsent = true')
             ->setParameter('start', $this->timeHelper->getLessonStartDateTime($dateTime, $lesson))
             ->setParameter('end', $this->timeHelper->getLessonEndDateTime($dateTime, $lesson))
             ->setParameter('students', array_keys($students))

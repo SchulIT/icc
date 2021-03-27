@@ -23,17 +23,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         let interval = parseInt(el.getAttribute('data-interval'));
+        let lastScrollTop = 0;
 
         setInterval(function() {
             let height = el.offsetHeight;
             let maxHeight = el.scrollHeight;
 
             let currentScrollTop = el.scrollTop;
-            let newScrollTop = currentScrollTop + height;
+            let newScrollTop = currentScrollTop + height - 100;
 
-            if(newScrollTop >= maxHeight) {
+            if(newScrollTop === lastScrollTop) {
                 newScrollTop = 0;
             }
+
+            if(newScrollTop >= maxHeight - 100) {
+                newScrollTop = 0;
+            }
+
+            lastScrollTop = newScrollTop;
 
             el.scrollTo({
                 top: newScrollTop,

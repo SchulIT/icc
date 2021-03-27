@@ -51,7 +51,7 @@ class ExamData {
     /**
      * List of external tuition which are related to this exam.
      *
-     * @Serializer\Type("array<App\Request\Data\ExamData>")
+     * @Serializer\Type("array<App\Request\Data\ExamTuition>")
      * @var ExamData[]
      */
     private $tuitions;

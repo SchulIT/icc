@@ -1,0 +1,44 @@
+{% extends "admin/settings/_settings.html.twig" %}
+
+{% block title %}{{ 'admin.settings.import.label'|trans }}{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'admin.settings.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'admin.settings.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block settings_content %}
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.import.exam_rules.label'|trans }}</div>
+
+        <div class="card-body">
+            <p>
+                {{ 'admin.settings.import.exam_rules.help'|trans }}
+            </p>
+
+            <div class="rules" data-collection="rules" data-prototype="{{ form_widget(form.rules.vars.prototype)|e('html_attr') }}">
+                {% for rule in form.rules %}
+                    {{ form_widget(rule) }}
+                {% endfor %}
+            </div>
+
+            {{ form_errors(form.rules) }}
+            {{ form_help(form.rules) }}
+
+            <!-- {{ form_end(form.rules) }} -->
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="rules">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
+        </div>
+    </div>
+{% endblock %}

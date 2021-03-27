@@ -2,7 +2,9 @@ let bsCustomFileInput = require('bs-custom-file-input');
 
 document.addEventListener('DOMContentLoaded', function() {
     function deleteOption() {
-        this.closest('.form-group').remove();
+        console.log(this);
+        let selector = this.getAttribute('data-selector') ?? '.form-group';
+        this.closest(selector).remove();
     }
 
     function htmlToElement(html) {
@@ -53,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     document.querySelectorAll('div[data-collection]').forEach(function(el) {
-        el.addEventListener('click', deleteOption);
+        //el.addEventListener('click', deleteOption);
 
         // count the current form inputs we have (e.g. 2), use that as the new
         // index when inserting a new item (e.g. 2)

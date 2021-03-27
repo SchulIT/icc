@@ -399,6 +399,10 @@ class Builder {
             ->setAttribute('title', $this->translator->trans('admin.settings.label'));
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $menu->addChild('admin.settings.general.label', [
+                'route' => 'admin_settings_general'
+            ]);
+
             $menu->addChild('admin.settings.dashboard.label', [
                 'route' => 'admin_settings_dashboard'
             ]);
@@ -425,6 +429,10 @@ class Builder {
 
             $menu->addChild('admin.settings.sick_notes.label', [
                 'route' => 'admin_settings_sick_notes'
+            ]);
+
+            $menu->addChild('admin.settings.import.label', [
+                'route' => 'admin_settings_import'
             ]);
         }
 

@@ -30,6 +30,13 @@ class Student {
     private $externalId;
 
     /**
+     * @ORM\Column(type="string", unique=true)
+     * @Assert\NotNull()
+     * @var string
+     */
+    private $uniqueIdentifier = null;
+
+    /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
      * @var string|null
@@ -114,6 +121,22 @@ class Student {
      */
     public function setExternalId(?string $externalId): Student {
         $this->externalId = $externalId;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUniqueIdentifier(): string {
+        return $this->uniqueIdentifier;
+    }
+
+    /**
+     * @param string $uniqueIdentifier
+     * @return Student
+     */
+    public function setUniqueIdentifier(string $uniqueIdentifier): Student {
+        $this->uniqueIdentifier = $uniqueIdentifier;
         return $this;
     }
 

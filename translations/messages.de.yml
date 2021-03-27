@@ -156,6 +156,17 @@ label:
         help: Hier kann eine Font Awesome Icon Klasse eingetragen werden. Dabei handelt es sich um die CSS-Klasse, bspw. fas fa-door-open.
     tag: Tag
     weeks: Wochen
+    school_year: Schuljahr
+    section:
+        label: Abschnitt
+        help: Das Schuljahr kann mit Abschnitten unterteilt werden. In der Regel bilden die beiden Halbjahre jeweils einen Abschnitt. Erstes Halbjahr = 1, zweites Halbjahr = 2.
+    section_name:
+        label: Bezeichnung für Abschnitte
+        help: bspw. Halbjahr, Semester, Abschnitt, ...
+    sections: Abschnitt(e)
+    course_types: Kursart(en)
+    comma_separated: Mehrere Elemente können mit Komma separiert werden.
+
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -564,6 +575,15 @@ admin:
     settings:
         label: Einstellungen
         success: Einstellungen erfolgreich aktualisiert
+
+        general:
+            label: Allgemein
+
+        import:
+            label: Import
+            exam_rules:
+                label: Regeln für Klausurschreibende
+                help: Mit diesen Regeln wird festgelegt, welche Lernende automatisch einer Klausur zugeordnet werden, wenn diese nicht beim Import angegeben werden.
 
         substitutions:
             label: Vertretungsplan

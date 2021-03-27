@@ -59,7 +59,7 @@ class ExamData {
     /**
      * List of external student IDs which attend this exam.
      *
-     * @Serializer\Type("array<int>")
+     * @Serializer\Type("array<string>")
      * @var string[]
      */
     private $students;

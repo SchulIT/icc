@@ -7,6 +7,7 @@ use App\Entity\AppointmentCategory;
 use App\Entity\Grade;
 use App\Entity\UserType;
 use App\Form\ColorType;
+use App\Form\ExamStudentRuleType;
 use App\Form\MarkdownType;
 use App\Menu\Builder;
 use App\Repository\AppointmentCategoryRepositoryInterface;
@@ -14,6 +15,8 @@ use App\Repository\GradeRepositoryInterface;
 use App\Settings\AppointmentsSettings;
 use App\Settings\DashboardSettings;
 use App\Settings\ExamSettings;
+use App\Settings\GeneralSettings;
+use App\Settings\ImportSettings;
 use App\Settings\NotificationSettings;
 use App\Settings\SickNoteSettings;
 use App\Settings\SubstitutionSettings;
@@ -22,10 +25,12 @@ use App\Sorting\GradeNameStrategy;
 use App\Sorting\Sorter;
 use App\Utils\ArrayUtils;
 use DateTime;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -48,8 +53,66 @@ class SettingsController extends AbstractController {
     /**
      * @Route("", name="admin_settings")
      */
-    public function index(Builder $menuBuilder) {
-        return $this->redirectToRoute('admin_settings_dashboard');
+    public function index() {
+        return $this->redirectToRoute('admin_settings_general');
+    }
+
+    /**
+     * @Route("/general", name="admin_settings_general")
+     */
+    public function general(Request $request, GeneralSettings $settings, DateHelper $dateHelper) {
+        $currentYear = (int)$dateHelper->getToday()->format('Y');
+        $choices = [ ];
+        for($year = $currentYear - 1; $year <= $currentYear + 1; $year++) {
+            $choices[sprintf('%d/%d', $year, $year+1)] = $year;
+        }
+
+        $builder = $this->createFormBuilder();
+        $builder
+            ->add('school_year', ChoiceType::class, [
+                'label' => 'label.school_year',
+                'choices' => $choices,
+                'data' => $settings->getSchoolYear()
+            ])
+            ->add('section', IntegerType::class, [
+                'label' => 'label.section.label',
+                'help' => 'label.section.help',
+                'data' => $settings->getSection()
+            ])
+            ->add('section_name', TextType::class, [
+                'label' => 'label.section_name.label',
+                'help' => 'label.section_name.help',
+                'data' => $settings->getSectionName()
+            ]);
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $map = [
+                'school_year' => function($year) use ($settings) {
+                    $settings->setSchoolYear($year);
+                },
+                'section' => function($section) use ($settings) {
+                    $settings->setSection($section);
+                },
+                'section_name' => function($name) use ($settings) {
+                    $settings->setSectionName($name);
+                }
+            ];
+
+            foreach($map as $formKey => $callable) {
+                $value = $form->get($formKey)->getData();
+                $callable($value);
+            }
+
+            $this->addFlash('success', 'admin.settings.success');
+
+            return $this->redirectToRoute('admin_settings_general');
+        }
+
+        return $this->render('admin/settings/general.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 
     /**
@@ -820,4 +883,46 @@ class SettingsController extends AbstractController {
             'userTypes' => $userTypes
         ]);
     }
+
+    /**
+     * @Route("/import", name="admin_settings_import")
+     */
+    public function import(Request $request, ImportSettings $settings) {
+        $builder = $this->createFormBuilder();
+        $builder
+            ->add('rules', CollectionType::class, [
+                'entry_type' => ExamStudentRuleType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'help' => 'label.comma_separated',
+                'data' => $settings->getExamRules()
+            ]);
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            dump($form->getData());
+
+            $map = [
+                'rules' => function(array $rules) use($settings) {
+                    $settings->setExamRules($rules);
+                }
+            ];
+
+            foreach($map as $formKey => $callable) {
+                $value = $form->get($formKey)->getData();
+                $callable($value);
+            }
+
+            $this->addFlash('success', 'admin.settings.success');
+
+            return $this->redirectToRoute('admin_settings_import');
+        }
+
+        return $this->render('admin/settings/import.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
 }

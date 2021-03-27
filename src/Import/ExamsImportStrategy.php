@@ -5,6 +5,7 @@ namespace App\Import;
 use App\Entity\Exam;
 use App\Entity\ExamSupervision;
 use App\Entity\Student;
+use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Event\ExamImportEvent;
 use App\Event\SubstitutionImportEvent;
@@ -16,26 +17,37 @@ use App\Repository\TransactionalRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Request\Data\ExamData;
 use App\Request\Data\ExamsData;
+use App\Settings\GeneralSettings;
+use App\Settings\ImportSettings;
 use App\Utils\CollectionUtils;
 use App\Utils\ArrayUtils;
+use DateTime;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategyInterface {
+class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategyInterface, InitializeStrategyInterface {
 
     private $examRepository;
     private $tuitionRepository;
     private $studentRepository;
     private $teacherRepository;
     private $roomRepository;
+    private $generalSettings;
+    private $importSettings;
     private $dispatcher;
 
+    private $rules = [ ];
+
     public function __construct(ExamRepositoryInterface $examRepository, TuitionRepositoryInterface $tuitionRepository,
-                                StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository, EventDispatcherInterface $eventDispatcher, RoomRepositoryInterface $roomRepository) {
+                                StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository,
+                                EventDispatcherInterface $eventDispatcher, RoomRepositoryInterface $roomRepository,
+                                GeneralSettings $generalSettings, ImportSettings $importSettings) {
         $this->examRepository = $examRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->studentRepository = $studentRepository;
         $this->teacherRepository = $teacherRepository;
         $this->roomRepository = $roomRepository;
+        $this->generalSettings = $generalSettings;
+        $this->importSettings = $importSettings;
         $this->dispatcher = $eventDispatcher;
     }
 
@@ -148,9 +160,15 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
             }
         }
 
+        if(count($data->getStudents()) > 0) {
+            $students = $this->studentRepository->findAllByExternalId($data->getStudents());
+        } else {
+            $students = $this->resolveStudentsFromRules($entity);
+        }
+
         CollectionUtils::synchronize(
             $entity->getStudents(),
-            $this->studentRepository->findAllByExternalId($data->getStudents()),
+            $students,
             function(Student $student) {
                 return $student->getId();
             }
@@ -177,6 +195,28 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
                 return $tuition->getId();
             }
         );
+    }
+
+    /**
+     * @param Exam $exam
+     * @return Student[]
+     */
+    private function resolveStudentsFromRules(Exam $exam): array {
+        $students = [ ];
+
+        /** @var Tuition $tuition */
+        foreach($exam->getTuitions() as $tuition) {
+            /** @var StudyGroupMembership $membership */
+            foreach($tuition->getStudyGroup()->getMemberships() as $membership) {
+                $student = $membership->getStudent();
+                $grade = $student->getGrade()->getName();
+                if(array_key_exists($grade, $this->rules) && in_array($membership->getType(), $this->rules[$grade])) {
+                    $students[] = $student;
+                }
+            }
+        }
+
+        return $students;
     }
 
     /**
@@ -221,6 +261,24 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
 
         if($request->isSuppressNotifications() === false) {
             $this->dispatcher->dispatch(new ExamImportEvent($result->getAdded(), $result->getUpdated(), $result->getRemoved()));
+        }
+    }
+
+    public function initialize(): void {
+        $currentSection = $this->generalSettings->getSection();
+
+        foreach($this->importSettings->getExamRules() as $rule) {
+            $grades = array_map('trim', explode(',', $rule['grades']));
+            $sections = array_map('trim', explode(',', $rule['sections']));
+            $types = array_map('trim',  explode(',', $rule['types']));
+
+            foreach($sections as $section) {
+                if($section == $currentSection) {
+                    foreach($grades as $grade) {
+                        $this->rules[$grade] = $types;
+                    }
+                }
+            }
         }
     }
 }

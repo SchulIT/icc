@@ -190,10 +190,12 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
         });
 
         $qb = $this->getDefaultQueryBuilder($date);
-        $qb->andWhere(
+        $qb->leftJoin('s.replacementRooms', 'r')
+            ->leftJoin('s.rooms', 'rr')
+            ->andWhere(
             $qb->expr()->orX(
-                $qb->expr()->in('s.room', ':roomIds'),
-                $qb->expr()->in('s.replacementRoom', ':roomIds')
+                $qb->expr()->in('r.id', ':roomIds'),
+                $qb->expr()->in('rr.id', ':roomIds')
             )
         );
         $qb->setParameter('roomIds', $roomIds);

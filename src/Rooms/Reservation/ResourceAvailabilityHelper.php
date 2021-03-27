@@ -63,7 +63,7 @@ class ResourceAvailabilityHelper {
                 continue;
             }
 
-            if($substitution->getReplacementRoom() !== null && $substitution->getReplacementRoom() === $room) {
+            if($substitution->getReplacementRooms()->count() > 0 && $substitution->getReplacementRooms()->contains($room)) {
                 return $substitution;
             }
         }

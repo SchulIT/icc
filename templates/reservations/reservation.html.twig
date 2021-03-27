@@ -83,8 +83,11 @@
             <i class="fa fa-graduation-cap"></i> {{ _macro.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
             <span class="mx-1"></span>
 
-            {% if substitution.room is not empty or substitution.replacementRoom is not empty %}
-                <i class="fa fa-door-open"></i> {{ _macro.replacement(substitution.room, substitution.replacementRoom) }}
+            {% if substitution.roomsAsString is not null or substitution.replacementRoomsAsString is not null %}
+                <span>
+                    <i class="fa fa-door-open"></i> {{ _macro.replacement(substitution.roomsAsString, substitution.replacementRoomsAsString) }}
+                    <span class="mx-1"></span>
+                </span>
             {% endif %}
         </div>
     {% endif %}

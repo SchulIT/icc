@@ -54,7 +54,7 @@ easy_admin:
                     - { property: gender, template: 'admin/ea/enum.html.twig' }
                     - email
                     - status
-                    - isFullAged
+                    - birthday
                     - approvedPrivacyCategories
             form:
                 fields:
@@ -64,7 +64,7 @@ easy_admin:
                     - { property: gender, type_options: { translation_domain: enums } }
                     - email
                     - status
-                    - isFullAged
+                    - { property: birthday, type_options: { widget: 'single_text' } }
                     - grade
                     - approvedPrivacyCategories
 

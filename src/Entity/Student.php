@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Validator\NullOrNotBlank;
+use DateTime;
 use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -63,10 +64,10 @@ class Student {
     private $status;
 
     /**
-     * @ORM\Column(type="boolean")
-     * @var bool
+     * @ORM\Column(type="date")
+     * @var DateTime
      */
-    private $isFullAged = false;
+    private $birthday;
 
     /**
      * @ORM\ManyToOne(targetEntity="Grade", inversedBy="students")
@@ -197,19 +198,28 @@ class Student {
     }
 
     /**
-     * @return bool
+     * @return DateTime
      */
-    public function isFullAged(): bool {
-        return $this->isFullAged;
+    public function getBirthday(): DateTime {
+        return $this->birthday;
     }
 
     /**
-     * @param bool $isFullAged
+     * @param DateTime $birthday
      * @return Student
      */
-    public function setIsFullAged(bool $isFullAged): Student {
-        $this->isFullAged = $isFullAged;
+    public function setBirthday(DateTime $birthday): Student {
+        $this->birthday = $birthday;
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFullAged(DateTime $today): bool {
+        $diff = date_diff($this->getBirthday(), $today);
+        $age = $diff->y;
+        return $age >= 18;
     }
 
     /**

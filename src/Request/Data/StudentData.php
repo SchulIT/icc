@@ -4,6 +4,7 @@ namespace App\Request\Data;
 
 use App\Entity\Gender;
 use App\Validator\NullOrNotBlank;
+use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -54,10 +55,11 @@ class StudentData {
     private $status;
 
     /**
-     * @Serializer\Type("boolean")
-     * @var bool
+     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
+     * @Assert\NotNull()
+     * @var DateTime
      */
-    private $isFullAged;
+    private $birthday;
 
     /**
      * @Serializer\Type("string")
@@ -185,18 +187,18 @@ class StudentData {
     }
 
     /**
-     * @return bool
+     * @return DateTime|null
      */
-    public function isFullAged(): bool {
-        return $this->isFullAged;
+    public function getBirthday(): ?DateTime {
+        return $this->birthday;
     }
 
     /**
-     * @param bool $isFullAged
+     * @param DateTime|null $birthday
      * @return StudentData
      */
-    public function setIsFullAged(bool $isFullAged): StudentData {
-        $this->isFullAged = $isFullAged;
+    public function setBirthday(?DateTime $birthday): StudentData {
+        $this->birthday = $birthday;
         return $this;
     }
 

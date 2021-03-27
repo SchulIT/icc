@@ -23,12 +23,6 @@ class StudentTest extends TestCase {
         $student->setExternalId('external-id');
         $this->assertEquals('external-id', $student->getExternalId());
 
-        $student->setIsFullAged(true);
-        $this->assertTrue($student->isFullAged());
-
-        $student->setIsFullAged(false);
-        $this->assertFalse($student->isFullAged());
-
         $student->setStatus('active');
         $this->assertEquals('active', $student->getStatus());
         $student->setStatus(null);

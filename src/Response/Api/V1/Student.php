@@ -198,7 +198,6 @@ class Student {
             ->setEmail($studentEntity->getEmail())
             ->setGrade(Grade::fromEntity($studentEntity->getGrade()))
             ->setGender($studentEntity->getGender())
-            ->setIsFullAged($studentEntity->isFullAged())
             ->setStatus($studentEntity->getStatus())
             ->setUuid($studentEntity->getUuid());
     }

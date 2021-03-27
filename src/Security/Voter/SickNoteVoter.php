@@ -6,6 +6,7 @@ use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
 use LogicException;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -15,9 +16,11 @@ class SickNoteVoter extends Voter {
     public const New = 'new-sicknote';
     public const View = 'view-sicknotes';
 
+    private $dateHelper;
     private $accessDicisionManager;
 
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
+    public function __construct(DateHelper $dateHelper, AccessDecisionManagerInterface $accessDecisionManager) {
+        $this->dateHelper = $dateHelper;
         $this->accessDicisionManager = $accessDecisionManager;
     }
 
@@ -68,7 +71,7 @@ class SickNoteVoter extends Voter {
 
         /** @var Student $student */
         foreach($user->getStudents() as $student) {
-            if ($student->isFullAged() === true) {
+            if ($student->isFullAged($this->dateHelper->getToday()) === true) {
                 return true;
             }
         }

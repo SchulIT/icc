@@ -16,8 +16,8 @@
 
     {% set currentFilter = {
         q: q,
-        category: categoryFilter.currentCategory != null ? categoryFilter.currentCategory.uuid : null,
-        confirmed: confirmed ? '✓' : (not confirmed ? '✗' : null )}
+        category: categoryFilter.currentCategory != null ? categoryFilter.currentCategory.uuid.toString : null,
+        confirmed: confirmed is null ? null : (not confirmed ? '✗' : '✓' )}
     %}
 
     <div class="container-fluid px-0">
@@ -179,7 +179,7 @@
                         {% include "_filter/query.html.twig" with { params: currentFilter, route: 'admin_appointments' } %}
 
                         <form role="form" method="get" class="form hidden-print">
-                            {% include "_filter/_params.html.twig" with { params: currentFilter } %}
+                            {% include "_filter/_params.html.twig" with { params: currentFilter|merge({confirmed: null}) } %}
 
                             <div class="form-group mb-0">
                                 <div class="btn-group" role="group" aria-label="Ansicht" data-original-title="Ansicht">

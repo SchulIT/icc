@@ -30,10 +30,14 @@ class GroupByParameter {
         $this->em = $em;
     }
 
-    public function getGroupingStrategyClassName(?string $grouping, User $user, string $sectionKey): string {
+    public function canGroup(User $user): bool {
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
-        if($isStudentOrParent) {
+        return $isStudentOrParent === false;
+    }
+
+    public function getGroupingStrategyClassName(?string $grouping, User $user, string $sectionKey): string {
+        if($this->canGroup($user) !== true) {
             return $this->groupMap[static::Grades];
         }
 

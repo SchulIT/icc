@@ -125,6 +125,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
             'teacherFilter' => $teacherFilterView,
             'view' => $viewType,
             'groupBy' => $groupByParameter->getGroupingStrategyKey($groupingClass),
+            'canGroup' => $groupByParameter->canGroup($user),
             'absentTeachers' => $absentTeachers,
             'absentStudyGroups' => $absentStudyGroups,
             'counts' => $counts,

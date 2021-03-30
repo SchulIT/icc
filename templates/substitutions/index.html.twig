@@ -71,7 +71,7 @@
                 {% endif %}
 
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body mb-n3">
                         {% if teacherFilter.teachers|length > 0 %}
                             {% include "_filter/teacher.html.twig" with { params: { date: selectedDate ? selectedDate.format('Y-m-d') : null } } %}
                         {% endif %}
@@ -96,7 +96,8 @@
                             </div>
                         </div>
 
-                        <div class="form-group mb-0">
+                        {% if canGroup %}
+                        <div class="form-group">
                             <div class="btn-group" role="group" aria-label="{{ 'plans.substitutions.group_by.label'|trans }}" title="{{ 'plans.substitutions.group_by.label'|trans }}">
                                 <a href="{{ path('substitutions', currentFilter|merge({'group_by': 'teachers'})) }}" class="btn btn-outline-secondary {% if groupBy == 'teachers' %}active{% endif %}">
                                     <i class="fa fa-table"></i> {{ 'plans.substitutions.group_by.teachers'|trans }}
@@ -107,6 +108,7 @@
                                 </a>
                             </div>
                         </div>
+                        {% endif %}
                     </div>
 
                     {% if contains_active_filters([teacherFilter, studentFilter, gradeFilter]) %}

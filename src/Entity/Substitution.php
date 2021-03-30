@@ -349,7 +349,7 @@ class Substitution {
 
 
     /**
-     * @return string|
+     * @return string|null
      */
     public function getRoomsAsString(): ?string {
         if($this->getRooms()->count() > 0) {

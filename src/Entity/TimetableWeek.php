@@ -35,11 +35,7 @@ class TimetableWeek {
     private $displayName;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Week")
-     * @ORM\JoinTable(
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
+     * @ORM\OneToMany(targetEntity="Week", mappedBy="timetableWeek", cascade={"persist", "remove", "refresh"})
      * @var Collection<Week>
      */
     private $weeks;
@@ -82,10 +78,12 @@ class TimetableWeek {
     }
 
     public function addWeek(Week $week): void {
+        $week->setTimetableWeek($this);
         $this->weeks->add($week);
     }
 
     public function removeWeek(Week $week): void {
+        $week->setTimetableWeek(null);
         $this->weeks->removeElement($week);
     }
 

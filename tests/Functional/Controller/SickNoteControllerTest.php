@@ -8,6 +8,7 @@ use App\Entity\Setting;
 use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
+use DateTime;
 use Faker\Generator;
 use Ramsey\Uuid\Uuid;
 
@@ -43,22 +44,24 @@ class SickNoteControllerTest extends AbstractControllerTest {
         $this->em->persist($grade);
 
         $this->fullAgedStudent = (new Student())
+            ->setUniqueIdentifier(md5(uniqid()))
             ->setFirstname($faker->firstName)
             ->setLastname($faker->lastName)
             ->setExternalId('TEST1')
             ->setEmail($faker->email)
             ->setGender(Gender::X())
             ->setGrade($grade)
-            ->setIsFullAged(true);
+            ->setBirthday(new DateTime('1990-01-01'));
 
         $this->nonFullAgedStudent = (new Student())
+            ->setUniqueIdentifier(md5(uniqid()))
             ->setFirstname($faker->firstName)
             ->setLastname($faker->lastName)
             ->setExternalId('TEST2')
             ->setEmail($faker->email)
             ->setGender(Gender::X())
             ->setGrade($grade)
-            ->setIsFullAged(false);
+            ->setBirthday((new DateTime())->modify('-10 year'));
 
         $this->parent = (new User())
             ->setUserType(UserType::Parent())

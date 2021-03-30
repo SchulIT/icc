@@ -28,5 +28,6 @@ class WeekType extends EntityType {
             return $repository->createQueryBuilder('w')
                 ->orderBy('w.number', 'asc');
         });
+        $resolver->setDefault('by_reference', false);
     }
 }

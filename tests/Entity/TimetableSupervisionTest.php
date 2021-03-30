@@ -31,10 +31,6 @@ class TimetableSupervisionTest extends TestCase {
         $supervision->setLocation('location');
         $this->assertEquals('location', $supervision->getLocation());
 
-        $week = new TimetableWeek();
-        $supervision->setWeek($week);
-        $this->assertEquals($week, $supervision->getWeek());
-
         $supervision->setIsBefore(true);
         $this->assertTrue($supervision->isBefore());
 

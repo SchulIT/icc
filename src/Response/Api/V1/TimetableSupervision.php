@@ -151,7 +151,7 @@ class TimetableSupervision {
         return (new self())
             ->setUuid($entity->getUuid())
             ->setDay($entity->getDay())
-            ->setWeek(TimetableWeek::fromEntity($entity->getWeek()))
+            ->setWeek($entity->getWeeks()->first())
             ->setLesson($entity->getLesson())
             ->setIsBefore($entity->isBefore())
             ->setLocation($entity->getLocation())

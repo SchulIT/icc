@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\TimetableWeek;
+use App\Entity\Week;
 use App\Form\TimetableWeekType;
 use App\Repository\TimetableWeekRepositoryInterface;
+use App\Repository\WeekRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -68,7 +70,7 @@ class TimetableWeekAdminController extends AbstractController {
     /**
      * @Route("/add/default", name="add_default_timetable_weeks")
      */
-    public function addDefaultWeeks(TranslatorInterface $translator) {
+    public function addDefaultWeeks(TranslatorInterface $translator, WeekRepositoryInterface $weekRepository) {
         $weeks = $this->repository->findAll();
 
         if(count($weeks) > 0) {
@@ -76,11 +78,20 @@ class TimetableWeekAdminController extends AbstractController {
             return $this->redirectToRoute('admin_timetable');
         }
 
+        $allWeeks = $weekRepository->findAll();
+
         for($weekMod = 0; $weekMod <= 1; $weekMod++) {
+            $weeks = array_filter($allWeeks, function(Week $week) use ($weekMod) {
+                return $week->getNumber() % 2 == $weekMod;
+            });
+
             $week = (new TimetableWeek())
-                ->setWeekMod($weekMod)
                 ->setDisplayName($translator->trans(sprintf('admin.timetable.weeks.add_default.weeks.%d.label', $weekMod)))
                 ->setKey($translator->trans(sprintf('admin.timetable.weeks.add_default.weeks.%d.key', $weekMod)));
+
+            foreach($weeks as $w) {
+                $week->addWeek($w);
+            }
 
             $this->repository->persist($week);
         }

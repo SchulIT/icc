@@ -22,9 +22,11 @@ use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
 use App\Entity\TimetableSupervision;
+use App\Entity\TimetableWeek;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Entity\Week;
 use App\Grouping\AbsentStudentGroup;
 use App\Grouping\AbsentStudentStrategy as AbstentStudentGroupStrategy;
 use App\Grouping\Grouper;
@@ -131,10 +133,9 @@ class DashboardViewHelper {
         $view = new DashboardView($dateTime);
 
         $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
-        $numberOfWeeks = count($this->timetableWeekRepository->findAll());
 
         if($currentPeriod !== null) {
-            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndRoom($currentPeriod, $room), $dateTime, $view, true, $numberOfWeeks);
+            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndRoom($currentPeriod, $room), $dateTime, $view, true);
             $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
         }
 
@@ -150,10 +151,9 @@ class DashboardViewHelper {
         $view = new DashboardView($dateTime);
 
         $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
-        $numberOfWeeks = count($this->timetableWeekRepository->findAll());
 
         if($currentPeriod !== null) {
-            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher), $dateTime, $view, true, $numberOfWeeks);
+            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher), $dateTime, $view, true);
             $this->addSupervisions($this->supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher), $view);
             $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
         }
@@ -198,10 +198,9 @@ class DashboardViewHelper {
         $studyGroups = $this->studyGroupHelper->getStudyGroups([$student])->toArray();
 
         $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
-        $numberOfWeeks = count($this->timetableWeekRepository->findAll());
 
         if($currentPeriod !== null) {
-            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndStudent($currentPeriod, $student), $dateTime, $view, false, $numberOfWeeks);
+            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndStudent($currentPeriod, $student), $dateTime, $view, false);
             $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
         }
 
@@ -230,7 +229,6 @@ class DashboardViewHelper {
      * @param DateTime $dateTime
      * @param DashboardView $dashboardView
      * @param bool $computeAbsences
-     * @param int $numberOfWeeks
      */
     private function addTimetableLessons(iterable $lessons, DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences): void {
         foreach($lessons as $lesson) {
@@ -311,11 +309,14 @@ class DashboardViewHelper {
                 continue;
             }
 
-            if($supervision->getDay() === $dayOfWeek && $this->timetableWeekHelper->isTimetableWeek($dashboardView->getDateTime(), $supervision->getWeek())) {
-                if ($supervision->isBefore()) {
-                    $dashboardView->addItemBefore($supervision->getLesson(), new SupervisionViewItem($supervision));
-                } else {
-                    $dashboardView->addItem($supervision->getLesson(), new SupervisionViewItem($supervision));
+            /** @var Week $week */
+            foreach($supervision->getWeeks() as $week) {
+                if($supervision->getDay() === $dayOfWeek && $this->timetableWeekHelper->isTimetableWeek($dashboardView->getDateTime(), $week->getTimetableWeek())) {
+                    if ($supervision->isBefore()) {
+                        $dashboardView->addItemBefore($supervision->getLesson(), new SupervisionViewItem($supervision));
+                    } else {
+                        $dashboardView->addItem($supervision->getLesson(), new SupervisionViewItem($supervision));
+                    }
                 }
             }
         }

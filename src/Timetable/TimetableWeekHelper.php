@@ -33,7 +33,11 @@ class TimetableWeekHelper {
         return null;
     }
 
-    public function isTimetableWeek(DateTime $dateTime, TimetableWeekEntity $week): bool {
+    public function isTimetableWeek(DateTime $dateTime, ?TimetableWeekEntity $week): bool {
+        if($week === null) {
+            return false;
+        }
+
         return in_array((int)$dateTime->format('W'), $week->getWeeksAsIntArray());
     }
 }

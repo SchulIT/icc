@@ -11,6 +11,7 @@ use App\Repository\PrivacyCategoryRepository;
 use App\Repository\StudentRepository;
 use App\Request\Data\StudentData;
 use App\Request\Data\StudentsData;
+use DateTime;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -42,7 +43,7 @@ class StudentsImportStrategyTest extends WebTestCase {
                 ->setFirstname('John')
                 ->setLastname('Doe')
                 ->setGrade('EF')
-                ->setIsFullAged(false)
+                ->setBirthday((new DateTime())->modify('-10 year'))
                 ->setStatus(1)
                 ->setGender('male'),
             (new StudentData())
@@ -50,7 +51,7 @@ class StudentsImportStrategyTest extends WebTestCase {
                 ->setFirstname('Sally')
                 ->setLastname('Housecoat')
                 ->setGrade('Q2')
-                ->setIsFullAged(true)
+                ->setBirthday((new DateTime())->modify('-20 year'))
                 ->setStatus(1)
                 ->setGender('female'),
         ];

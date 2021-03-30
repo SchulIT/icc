@@ -6,6 +6,7 @@ use App\Entity\Gender;
 use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\StudentStatus;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class GradeTest extends WebTestCase {
@@ -29,9 +30,11 @@ class GradeTest extends WebTestCase {
             ->setName('grade');
 
         $student = (new Student())
+            ->setUniqueIdentifier(md5(uniqid()))
             ->setGender(Gender::X())
             ->setGrade($grade)
             ->setStatus('active')
+            ->setBirthday((new DateTime())->modify('-10 year'))
             ->setLastname('lastname')
             ->setFirstname('firstname')
             ->setExternalId('external-id');

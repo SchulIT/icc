@@ -46,7 +46,6 @@ class TimetableCalenderExportHelper {
      */
     public function getLessonsTimeline(TimetablePeriod $period, array $lessons, array $supervisions): array {
         $views = [ ];
-        $numberOfWeeks = count($this->timetableWeekRepository->findAll());
 
         $currentDay = clone $period->getStart();
         $freeDays = $this->computeFreeDays($period->getStart(), $period->getEnd());
@@ -58,7 +57,7 @@ class TimetableCalenderExportHelper {
                 continue;
             }
 
-            $views[] = $this->createCalendarDayView($currentDay, $numberOfWeeks, $lessons, $supervisions);
+            $views[] = $this->createCalendarDayView($currentDay, $lessons, $supervisions);
 
             $currentDay = (clone $currentDay)->modify('+1 day');
         }
@@ -68,7 +67,6 @@ class TimetableCalenderExportHelper {
 
     /**
      * @param DateTime $day
-     * @param int $numberOfWeeks
      * @param TimetableLessonEntity[] $lessons
      * @param TimetableSupervision[] $supervisions
      * @return TimetableCalendarDayView

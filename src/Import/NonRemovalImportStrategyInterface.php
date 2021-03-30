@@ -7,7 +7,7 @@ namespace App\Import;
  */
 interface NonRemovalImportStrategyInterface {
     /**
-     * @param $data
+     * @param object $data
      * @return bool
      */
     public function preventRemoval($data): bool;

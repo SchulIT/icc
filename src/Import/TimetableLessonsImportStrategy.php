@@ -117,9 +117,7 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
                 if (count($tuitions) === 1) {
                     $entity->setTuition(array_shift($tuitions));
                 } else {
-                    return; // TODO!!!
-
-                    throw new ImportException(sprintf('Tuition for (%s; %s; %s) on timetable lesson ID "%s" is ambigious.', implode(',', $data->getGrades()), implode(',', $data->getTeachers()), $data->getSubject(), $data->getId()));
+                    $entity->setTuition(null);
                 }
             }
         } else {

@@ -2,12 +2,10 @@
 
 namespace App\Dashboard;
 
-use phpDocumentor\Reflection\Types\This;
-
 class DashboardLesson {
 
     /** @var bool */
-    private $isCurrent = true;
+    private $isCurrent = false;
 
     /** @var int */
     private $lessonNumber;

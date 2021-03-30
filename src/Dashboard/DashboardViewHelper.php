@@ -311,7 +311,7 @@ class DashboardViewHelper {
 
             /** @var Week $week */
             foreach($supervision->getWeeks() as $week) {
-                if($supervision->getDay() === $dayOfWeek && $this->timetableWeekHelper->isTimetableWeek($dashboardView->getDateTime(), $week->getTimetableWeek())) {
+                if($supervision->getDay() === $dayOfWeek && $week->getNumber() === (int)$dashboardView->getDateTime()->format('W')) {
                     if ($supervision->isBefore()) {
                         $dashboardView->addItemBefore($supervision->getLesson(), new SupervisionViewItem($supervision));
                     } else {

@@ -45,20 +45,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('a[data-trigger=scroll]').forEach(function(el) {
         el.addEventListener('click', function(event) {
-            let offset = 0;
+            event.preventDefault();
 
             try {
                 let target = document.querySelector(el.getAttribute('href'));
-                offset = target.offsetTop;
-            } catch (e) {
-                offset = 0;
+                if (target !== null) {
+                    target.scrollIntoView({behavior: 'smooth'});
+                }
+            } catch {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             }
-
-            event.preventDefault();
-            window.scrollTo({
-                top: offset,
-                behavior: 'smooth'
-            });
         });
     });
 

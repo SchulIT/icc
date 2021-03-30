@@ -110,17 +110,17 @@
                     {% if type == 'exam' %}
                         {{ dashboard.exam(item, lessonNumber, startTimes[lessonNumber], lesson.warning, endTimes[lessonNumber]) }}
                     {% elseif type == 'lesson' %}
-                        {{ dashboard.lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, gradesWithCourseNames) }}
+                        {{ dashboard.lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent, gradesWithCourseNames) }}
                     {% elseif type == 'free_lesson' %}
-                        {{ dashboard.free_lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                        {{ dashboard.free_lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
                     {% elseif type == 'supervision' %}
-                        {{ dashboard.supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, supervisionLabels) }}
+                        {{ dashboard.supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent, supervisionLabels) }}
                     {% elseif type == 'substitution' %}
-                        {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                        {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
                     {% elseif type == 'appointment' %}
-                        {{ dashboard.appointment(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                        {{ dashboard.appointment(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
                     {% elseif type == 'exam_supervision' %}
-                        {{ dashboard.exam_supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
+                        {{ dashboard.exam_supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
                     {% elseif type == 'reservation' %}
                         {{ dashboard.reservation(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber]) }}
                     {% endif %}

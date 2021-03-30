@@ -64,6 +64,7 @@ use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
 use App\Utils\StudyGroupHelper;
 use DateTime;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -93,6 +94,7 @@ class DashboardViewHelper {
 
     private $authorizationChecker;
     private $validator;
+    private $dateHelper;
 
     private $absenceResolver;
 
@@ -103,7 +105,7 @@ class DashboardViewHelper {
                                 FreeTimespanRepositoryInterface $freeTimespanRepository,
                                 StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, TimetableTimeHelper $timetableTimeHelper, Sorter $sorter, Grouper $grouper,
                                 TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
-                                ValidatorInterface $validator, AbsenceResolver $absenceResolver) {
+                                ValidatorInterface $validator, DateHelper $dateHelper, AbsenceResolver $absenceResolver) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->timetableRepository = $timetableRepository;
@@ -126,6 +128,7 @@ class DashboardViewHelper {
         $this->dashboardSettings = $dashboardSettings;
         $this->authorizationChecker = $authorizationChecker;
         $this->validator = $validator;
+        $this->dateHelper = $dateHelper;
         $this->absenceResolver = $absenceResolver;
     }
 
@@ -143,6 +146,7 @@ class DashboardViewHelper {
         $this->addExams($exams = $this->examRepository->findAllByRoomAndDate($room, $dateTime), $view, null, true);
         $this->addRoomReservations($this->roomReservationRepository->findAllByResourceAndDate($room, $dateTime), $view);
         $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
+        $this->setCurrentLesson($view);
 
         return $view;
     }
@@ -184,6 +188,7 @@ class DashboardViewHelper {
         $this->addAppointments($this->appointmentRepository->findAllForTeacher($teacher, $dateTime), $view);
         $this->addRoomReservations($this->roomReservationRepository->findAllByTeacherAndDate($teacher, $dateTime), $view);
         $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
+        $this->setCurrentLesson($view);
 
         return $view;
     }
@@ -212,6 +217,7 @@ class DashboardViewHelper {
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
         $this->addAppointments($this->appointmentRepository->findAllForStudents([$student], $dateTime), $view);
         $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
+        $this->setCurrentLesson($view);
 
         return $view;
     }
@@ -220,9 +226,23 @@ class DashboardViewHelper {
         $view = new DashboardView($dateTime);
 
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $user->getUserType(), $dateTime), $view);
+        $this->setCurrentLesson($view);
 
         return $view;
     }
+
+    private function setCurrentLesson(DashboardView $dashboardView): void {
+        foreach($dashboardView->getLessons() as $lesson) {
+            $startTime = $this->timetableTimeHelper->getLessonStartDateTime($dashboardView->getDateTime(), $lesson->getLessonNumber());
+            $endTime = $this->timetableTimeHelper->getLessonEndDateTime($dashboardView->getDateTime(), $lesson->getLessonNumber());
+            $now = $this->dateHelper->getNow();
+
+            if($startTime <= $now && $now <= $endTime) {
+                $lesson->setIsCurrent(true);
+            }
+        }
+    }
+
 
     /**
      * @param TimetableLesson[] $lessons

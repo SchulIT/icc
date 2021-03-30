@@ -5,6 +5,10 @@ namespace App\Dashboard;
 use phpDocumentor\Reflection\Types\This;
 
 class DashboardLesson {
+
+    /** @var bool */
+    private $isCurrent = true;
+
     /** @var int */
     private $lessonNumber;
 
@@ -24,6 +28,22 @@ class DashboardLesson {
 
     public function isBefore(): bool {
         return $this->isBefore;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCurrent(): bool {
+        return $this->isCurrent;
+    }
+
+    /**
+     * @param bool $isCurrent
+     * @return DashboardLesson
+     */
+    public function setIsCurrent(bool $isCurrent): DashboardLesson {
+        $this->isCurrent = $isCurrent;
+        return $this;
     }
 
     public function getLessonNumber(): int {

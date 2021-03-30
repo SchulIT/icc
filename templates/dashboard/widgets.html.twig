@@ -104,8 +104,8 @@
     </div>
 {% endmacro %}
 
-{% macro exam_supervision(item, lesson, start, end, hasWarning) %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %}">
+{% macro exam_supervision(item, lesson, start, end, hasWarning, isCurrent) %}
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %} {% if isCurrent %}border-right-3{% endif %}">
         <div class="d-flex">
             {{ _self.show_lesson(lesson, start, end) }}
             {{ _self.show_warning(hasWarning) }}
@@ -151,8 +151,8 @@
     </div>
 {% endmacro %}
 
-{% macro lesson(item, lesson, start, end, hasWarning, gradesWithCourseNames) %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% elseif item.lesson is not null %}border-primary{% endif %}">
+{% macro lesson(item, lesson, start, end, hasWarning, isCurrent, gradesWithCourseNames) %}
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% elseif item.lesson is not null %}border-primary{% endif %} {% if isCurrent %}border-right-3{% endif %}">
         <div class="d-flex">
             {{ _self.show_lesson(lesson, start, end) }}
             {{ _self.show_warning(hasWarning) }}
@@ -237,8 +237,8 @@
     </div>
 {% endmacro %}
 
-{% macro free_lesson(item, lesson, start, end, hasWarning) %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %}">
+{% macro free_lesson(item, lesson, start, end, hasWarning, isCurrent) %}
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %} {% if isCurrent %}border-right-3{% endif %}">
         <div class="d-flex">
             {{ _self.show_lesson(lesson, start, end) }}
             {{ _self.show_warning(hasWarning) }}
@@ -248,8 +248,8 @@
     </div>
 {% endmacro %}
 
-{% macro supervision(item, lesson, start, end, hasWarning, supervisionLabels) %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-primary{% endif %}">
+{% macro supervision(item, lesson, start, end, hasWarning, isCurrent, supervisionLabels) %}
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-primary{% endif %} {% if isCurrent %}border-right-3{% endif %}">
         <div class="d-flex">
             {% if not item.supervision.isBefore %}
                 {{ _self.show_lesson(lesson, start, end) }}
@@ -276,11 +276,11 @@
     </div>
 {% endmacro %}
 
-{% macro substitution(item, lesson, start, end, hasWarning) %}
+{% macro substitution(item, lesson, start, end, hasWarning, isCurrent) %}
     {% import "_macros/replacement.html.twig" as _macro %}
 
     {% set substitution = item.substitution %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %} {% if item.isFreeLesson %}text-black-50{% endif %}">
+    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %} {% if item.isFreeLesson %}text-black-50{% endif %} {% if isCurrent %}border-right-3{% endif %}">
         <div class="d-flex">
             {% if not substitution.startsBefore %}
                 {% if lesson is null %}

@@ -17,6 +17,13 @@ class ResourceRepository extends AbstractRepository implements ResourceRepositor
         $this->roomTagRepository = $roomTagRepository;
     }
 
+    public function findOneByName(string $name): ?ResourceEntity {
+        return $this->em->getRepository(ResourceEntity::class)
+            ->findOneBy([
+                'name' => $name
+            ]);
+    }
+
     public function findOneByUuid(string $uuid): ?ResourceEntity {
         return $this->em->getRepository(ResourceEntity::class)
             ->findOneBy([

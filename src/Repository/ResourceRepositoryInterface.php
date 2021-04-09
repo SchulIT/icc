@@ -8,6 +8,8 @@ use App\Rooms\RoomQuery;
 
 interface ResourceRepositoryInterface {
 
+    public function findOneByName(string $name): ?ResourceEntity;
+
     public function findOneByUuid(string $uuid): ?ResourceEntity;
 
     /**

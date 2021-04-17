@@ -902,8 +902,6 @@ class SettingsController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            dump($form->getData());
-
             $map = [
                 'rules' => function(array $rules) use($settings) {
                     $settings->setExamRules($rules);

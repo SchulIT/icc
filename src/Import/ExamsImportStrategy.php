@@ -211,12 +211,12 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
                 $student = $membership->getStudent();
                 $grade = $student->getGrade()->getName();
                 if(array_key_exists($grade, $this->rules) && in_array($membership->getType(), $this->rules[$grade])) {
-                    $students[] = $student;
+                    $students[$student->getId()] = $student;
                 }
             }
         }
 
-        return $students;
+        return array_values($students);
     }
 
     /**

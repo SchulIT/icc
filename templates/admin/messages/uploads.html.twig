@@ -236,6 +236,14 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action" data-toggle="table-show-all" data-container="#explorer">
+                            <i class="fas fa-chevron-down"></i> {{ 'actions.show_all'|trans }}
+                        </a>
+
+                        <a href="#" class="list-group-item list-group-item-action" data-toggle="table-collapse-all" data-container="#explorer">
+                            <i class="fas fa-chevron-up"></i> {{ 'actions.collapse_all'|trans }}
+                        </a>
+
                         <a href="#" class="list-group-item list-group-item-action" data-action="zip" data-files="#explorer" data-progress="#zip-progress">
                             <i class="far fa-file-archive"></i> {{ 'messages.uploads.download.label'|trans }}
                         </a>

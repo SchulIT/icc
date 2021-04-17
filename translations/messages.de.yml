@@ -190,6 +190,8 @@ actions:
     pick: auswählen
     view: anzeigen
     top: nach oben
+    collapse_all: Alles einklappen
+    show_all: Alles ausklappen
 
 clipboard:
     copy: In die Zwischenablage kopieren

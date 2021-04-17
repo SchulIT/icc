@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Message;
+use App\Entity\MessageFile;
 use App\Entity\User;
 use App\Event\MessageUpdatedEvent;
+use App\Filesystem\FileNotFoundException;
 use App\Filesystem\MessageFilesystem;
 use App\Form\MessageType;
 use App\Grouping\Grouper;
@@ -16,6 +18,7 @@ use App\Grouping\UserUserTypeStrategy;
 use App\Message\MessageDownloadView;
 use App\Message\MessageDownloadViewHelper;
 use App\Message\MessageFileUploadViewHelper;
+use App\Repository\MessageFileUploadRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\MessageVoter;
@@ -395,15 +398,23 @@ class MessageAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{uuid}/uploads/download", name="download_message_upload")
+     * @Route("/{message}/uploads/download/{file}/{user}", name="download_message_upload")
+     * @ParamConverter("message", class="App\Entity\Message", options={"uuid" = "message"})
+     * @ParamConverter("file", class="App\Entity\MessageFile", options={"uuid" = "file"})
+     * @ParamConverter("user", class="App\Entity\User", options={"uuid" = "user"})
      */
-    public function downloadUploads(Message $message, MessageFilesystem $filesystem, Request $request) {
-        $path = $request->query->get('path', null);
+    public function downloadUploads(Message $message, MessageFile $file, User $user,
+                                    MessageFilesystem $filesystem, MessageFileUploadRepositoryInterface $fileUploadRepository) {
+        $fileUpload = $fileUploadRepository->findOneByFileAndUser($file, $user);
 
-        if($path === null) {
+        if($fileUpload === null) {
             throw new NotFoundHttpException();
         }
 
-        return $filesystem->getMessageUploadedFileDownloadResponse($message, $path);
+        try {
+            return $filesystem->getMessageUploadedUserFileDownloadResponse($fileUpload, $user);
+        } catch (FileNotFoundException $e) {
+            throw new NotFoundHttpException();
+        }
     }
 }

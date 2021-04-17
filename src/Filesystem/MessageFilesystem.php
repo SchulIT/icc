@@ -301,11 +301,4 @@ class MessageFilesystem implements DirectoryNamerInterface {
         $path = sprintf('%s/%s', $this->getMessageUploadsDirectory($fileUpload, $user), $fileUpload->getPath());
         return $this->getDownloadResponse($path, $fileUpload->getFilename());
     }
-
-    public function getMessageUploadedFileDownloadResponse(Message $message, string $path): Response {
-        $path = sprintf('%s/%s', $this->getMessageUploadsDirectory($message, null), $path);
-        $filename = pathinfo($path, PATHINFO_BASENAME);
-
-        return $this->getDownloadResponse($path, $filename);
-    }
 }

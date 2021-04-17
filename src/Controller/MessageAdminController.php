@@ -204,6 +204,8 @@ class MessageAdminController extends AbstractController {
      * @Route("/{uuid}/downloads", name="message_downloads_admin")
      */
     public function downloads(Message $message, MessageDownloadViewHelper $messageDownloadViewHelper) {
+        $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
+
         /** @var MessageDownloadView $view */
         $view = $messageDownloadViewHelper->createView($message);
 
@@ -251,6 +253,7 @@ class MessageAdminController extends AbstractController {
      * @ParamConverter("user", class="App\Entity\User", options={"uuid" = "user"})
      */
     public function downloadDownload(Message $message, User $user, string $filename, MessageFilesystem $messageFilesystem) {
+        $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
         return $messageFilesystem->getMessageUserFileDownloadResponse($message, $user, $filename);
     }
 
@@ -260,6 +263,8 @@ class MessageAdminController extends AbstractController {
      * @ParamConverter("user", class="App\Entity\User", options={"uuid" = "user"})
      */
     public function removeDownload(Message $message, User $user, string $filename, MessageFilesystem $messageFilesystem, Request $request) {
+        $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
+
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'messages.downloads.remove.confirm',
             'message_parameters' => [
@@ -292,6 +297,8 @@ class MessageAdminController extends AbstractController {
      * @ParamConverter("user", class="App\Entity\User", options={"uuid" = "user"})
      */
     public function uploadDownload(Message $message, User $user, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository) {
+        $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
+
         if($this->isCsrfTokenValid(static::CsrfTokenId, $request->request->get(static::CsrfTokenName)) !== true) {
             return new JsonResponse(
                 [
@@ -322,6 +329,8 @@ class MessageAdminController extends AbstractController {
      * @Route("/{uuid}/downloads/upload", name="upload_message_downloads")
      */
     public function uploadDownloads(Message $message, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository) {
+        $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
+
         if($this->isCsrfTokenValid(static::CsrfTokenId, $request->request->get(static::CsrfTokenName)) !== true) {
             return new JsonResponse(
                 [
@@ -374,6 +383,8 @@ class MessageAdminController extends AbstractController {
      * @Route("/{uuid}/uploads", name="message_uploads_admin")
      */
     public function uploads(Message $message, MessageFileUploadViewHelper $messageFileUploadViewHelper) {
+        $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
+
         $view = $messageFileUploadViewHelper->createView($message);
 
         $teachers = $view->getTeachers();
@@ -405,6 +416,8 @@ class MessageAdminController extends AbstractController {
      */
     public function downloadUploads(Message $message, MessageFile $file, User $user,
                                     MessageFilesystem $filesystem, MessageFileUploadRepositoryInterface $fileUploadRepository) {
+        $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
+
         $fileUpload = $fileUploadRepository->findOneByFileAndUser($file, $user);
 
         if($fileUpload === null) {

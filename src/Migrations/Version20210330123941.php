@@ -21,7 +21,9 @@ final class Version20210330123941 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('DROP TABLE timetable_week_week');
+        $this->addSql('SET FOREIGN_KEY_CHECKS=0;');
         $this->addSql('ALTER TABLE student CHANGE unique_identifier unique_identifier VARCHAR(255) NOT NULL');
+        $this->addSql('SET FOREIGN_KEY_CHECKS=1;');
         $this->addSql('ALTER TABLE week ADD timetable_week_id INT UNSIGNED DEFAULT NULL');
         $this->addSql('ALTER TABLE week ADD CONSTRAINT FK_5B5A69C0490F7151 FOREIGN KEY (timetable_week_id) REFERENCES timetable_week (id) ON DELETE SET NULL');
         $this->addSql('CREATE INDEX IDX_5B5A69C0490F7151 ON week (timetable_week_id)');

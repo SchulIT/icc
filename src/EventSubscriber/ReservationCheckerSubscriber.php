@@ -164,7 +164,8 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
 
     private function sendReservationRemovedEmail(ResourceReservation $reservation): void {
         $content = $this->twig->render('email/reservation_removed.html.twig', [
-            'reservation' => $reservation
+            'reservation' => $reservation,
+            'sender' => ''
         ]);
 
         $message = (new Swift_Message())
@@ -180,7 +181,8 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
     private function sendViolationsEmail(ResourceReservation $reservation, ConstraintViolationListInterface $violationList): void {
         $content = $this->twig->render('email/reservation.html.twig', [
             'reservation' => $reservation,
-            'validation_errors' => $violationList
+            'validation_errors' => $violationList,
+            'sender' => ''
         ]);
 
         $message = (new Swift_Message())
@@ -200,7 +202,8 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
     private function sendExamViolationsEmail(Exam $exam, array $violationList): void {
         $content = $this->twig->render('email/exam_reservation.html.twig', [
             'exam' => $exam,
-            'validation_errors' => $violationList
+            'validation_errors' => $violationList,
+            'sender' => ''
         ]);
 
         $recipients = [ ];

@@ -55,7 +55,7 @@
         </tr>
 
         {% for file in view.userUploads(user, message.files) %}
-            {% set downloadUrl = path('download_message_upload', { message: message.uuid, user: user.uuid, file: file.uuid }) %}
+            {% set downloadUrl = path('download_message_upload', { message: message.uuid, user: user.uuid, file: file.messageFile.uuid }) %}
             {% if file.uploaded %}
                 <tr class="collapse file-{{ user.uuid }}" data-zip="file" data-zip-filename="{{ user.username }}/{{ file.filename|e }}" data-zip-url="{{ downloadUrl }}">
                     <td class="align-middle">{{ file.messageFile.label }}</td>

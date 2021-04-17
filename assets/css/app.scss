@@ -1,5 +1,4 @@
-$enable-shadows: true;
-$enable-gradients: true;
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
 
 // Import SCSS from custom
 @import "custom/*.scss";
@@ -14,7 +13,6 @@ $enable-gradients: true;
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/brands';
 
 // Import SchulIT design
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/layout.scss';
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/additions.scss';
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/div-tables.scss';

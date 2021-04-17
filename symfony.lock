@@ -2,6 +2,9 @@
     "damienharper/auditor-bundle": {
         "version": "3.4.1"
     },
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
+    },
     "doctrine/sql-formatter": {
         "version": "1.1.1"
     },
@@ -16,6 +19,9 @@
         "files": [
             "./config/packages/eight_points_guzzle.yaml"
         ]
+    },
+    "friendsofphp/proxy-manager-lts": {
+        "version": "v1.0.3"
     },
     "frostiede/enum-bundle": {
         "version": "3.0.0"

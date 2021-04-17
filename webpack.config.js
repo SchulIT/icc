@@ -24,14 +24,9 @@ Encore
     .enableSourceMaps(!Encore.isProduction())
 
     .enableSassLoader(function(options) {
-        options.importer = GlobImporter();
+        options.sassOptions.importer = GlobImporter();
     })
-    .enablePostCssLoader((options) => {
-        // Fix compilation errors: "Module build failed: Error: No PostCSS Config found" - even though the file exists!
-        options.config = {
-            path: 'postcss.config.js'
-        }
-    })
+    .enablePostCssLoader()
 
     .addLoader(
         {

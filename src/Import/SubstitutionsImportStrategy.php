@@ -120,31 +120,33 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
         $entity->setStartsBefore($data->startsBefore());
 
         $rooms = $this->roomRepository->findAllByExternalIds($data->getRooms());
-        if(count($rooms) > 0) {
-            CollectionUtils::synchronize(
-                $entity->getRooms(),
-                $rooms,
-                function(Room $room) {
-                    return $room->getId();
-                }
-            );
+        CollectionUtils::synchronize(
+            $entity->getRooms(),
+            $rooms,
+            function(Room $room) {
+                return $room->getId();
+            }
+        );
+
+        if(count($rooms) > 0 || count($data->getRooms()) === 0) {
             $entity->setRoomName(null);
         } else {
             $entity->setRoomName(implode(', ', $data->getRooms()));
         }
 
         $replacementRooms = $this->roomRepository->findAllByExternalIds($data->getReplacementRooms());
-        if(count($replacementRooms) > 0) {
-            CollectionUtils::synchronize(
-                $entity->getReplacementRooms(),
-                $replacementRooms,
-                function(Room $room) {
-                    return $room->getId();
-                }
-            );
+        CollectionUtils::synchronize(
+            $entity->getReplacementRooms(),
+            $replacementRooms,
+            function(Room $room) {
+                return $room->getId();
+            }
+        );
+
+        if(count($replacementRooms) > 0 || count($data->getReplacementRooms()) === 0) {
             $entity->setReplacementRoomName(null);
         } else {
-            $entity->setReplacementRoomName(implode(', ', $data->getRooms()));
+            $entity->setReplacementRoomName(implode(', ', $data->getReplacementRooms()));
         }
 
         $studyGroups = $this->resolveStudyGroup($data->getSubject(), $data->getGrades(), $data->getTeachers(), $data->getId());

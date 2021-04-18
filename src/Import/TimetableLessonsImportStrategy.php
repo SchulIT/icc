@@ -18,6 +18,7 @@ use App\Request\Data\TimetableLessonData;
 use App\Request\Data\TimetableLessonsData;
 use App\Utils\ArrayUtils;
 use App\Utils\CollectionUtils;
+use Psr\Log\LoggerInterface;
 
 class TimetableLessonsImportStrategy implements ImportStrategyInterface {
 
@@ -30,10 +31,12 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
     private $subjectRepository;
     private $gradeRepository;
 
+    private $logger;
+
     public function __construct(TimetableLessonRepositoryInterface $timetableRepository, TimetablePeriodRepositoryInterface $periodRepository,
                                 TimetableWeekRepositoryInterface $weekRepository, TuitionRepositoryInterface $tuitionRepository,
                                 RoomRepositoryInterface $roomRepository, TeacherRepositoryInterface $teacherRepository,
-                                SubjectRepositoryInterface $substitutionRepository, GradeRepositoryInterface $gradeRepository) {
+                                SubjectRepositoryInterface $substitutionRepository, GradeRepositoryInterface $gradeRepository, LoggerInterface $logger) {
         $this->timetableRepository = $timetableRepository;
         $this->periodRepository = $periodRepository;
         $this->weekRepository = $weekRepository;
@@ -42,6 +45,7 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
         $this->teacherRepository = $teacherRepository;
         $this->subjectRepository = $substitutionRepository;
         $this->gradeRepository = $gradeRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -138,6 +142,15 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
         if($data->getSubject() !== null) {
             $subject = $this->subjectRepository->findOneByAbbreviation($data->getSubject());
             $entity->setSubject($subject);
+        }
+
+        if($entity->getTuition() === null && $entity->getSubject() === null) {
+            $this->logger->info(sprintf(
+                'Cannot resolve timetable lesson for subject "%s", teachers "%s" and grades "%s"',
+                $data->getSubject(),
+                implode(',', $data->getTeachers()),
+                implode(',', $data->getGrades())
+            ));
         }
 
         CollectionUtils::synchronize(

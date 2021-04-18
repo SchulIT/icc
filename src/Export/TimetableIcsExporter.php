@@ -122,7 +122,7 @@ class TimetableIcsExporter {
             return sprintf('%s - %s', $subject, $grades);
         }
 
-        return $lesson->getSubject();
+        return $lesson->getSubject() ?? 'N/A';
     }
 
     private function getGradesAsString(array $grades): string {

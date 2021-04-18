@@ -1,11 +1,15 @@
 {% if _messages is defined %}
     {% for message in _messages %}
-        {% include "_includes/message.html.twig" with { message: message } %}
+        {% if is_granted('view', message) %}
+            {% include "_includes/message.html.twig" with { message: message } %}
+        {% endif %}
     {% endfor %}
 {% endif %}
 
 {% if _dismissed_messages is defined %}
     {% for message in _dismissed_messages %}
-        {% include "_includes/message.html.twig" with { message: message } %}
+        {% if is_granted('view', message) %}
+            {% include "_includes/message.html.twig" with { message: message } %}
+        {% endif %}
     {% endfor %}
 {% endif %}

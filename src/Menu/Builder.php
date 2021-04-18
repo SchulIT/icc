@@ -313,7 +313,7 @@ class Builder {
 
         $settingsMenu = $this->settingsMenu();
 
-        if($settingsMenu->count() > 0) {
+        if($settingsMenu->offsetExists('settings') && count($settingsMenu['settings']->getChildren()) > 0) {
             $menu->addChild('admin.settings.label', [
                 'route' => 'admin_settings'
             ])

@@ -311,7 +311,7 @@ class Builder {
             ->setExtra('menu-container', '#submenu')
             ->setExtra('pull-right', true);
 
-        $settingsMenu = $this->servicesMenu();
+        $settingsMenu = $this->settingsMenu();
 
         if($settingsMenu->count() > 0) {
             $menu->addChild('admin.settings.label', [
@@ -383,7 +383,7 @@ class Builder {
         return $root;
     }
 
-    public function settingsMenu(array $options): ItemInterface {
+    public function settingsMenu(array $options = [ ]): ItemInterface {
         $root = $this->factory->createItem('root')
             ->setChildrenAttributes([
                 'class' => 'navbar-nav float-lg-right'

@@ -306,9 +306,6 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
             $start = $matches[2];
             $end = $matches[3];
 
-            dump($start);
-            dump($end);
-
             if(mb_strlen($start) > 0 && mb_strlen($end) > 0) {
                 return array_filter($students, function(Student $student) use ($start, $end) {
                     return strnatcasecmp($start, $student->getLastname()) <= 0

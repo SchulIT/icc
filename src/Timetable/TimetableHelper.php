@@ -222,7 +222,7 @@ class TimetableHelper {
         $timetableWeek = new TimetableWeek($week);
 
         $lessons = array_filter($lessons, function(TimetableLessonEntity $lesson) use ($week) {
-            return $lesson->getWeek()->getId() === $week->getId();
+            return $lesson->getWeek() === null || $lesson->getWeek()->getId() === $week->getId();
         });
 
         $supervision = array_filter($supervision, function(TimetableSupervision $entry) use ($week) {

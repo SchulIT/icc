@@ -154,6 +154,39 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         return $qb->getQuery()->getResult();
     }
 
+    public function findAllByGradeAndSubjectOrCourseWithoutTeacher(array $grades, string $subjectOrCourse): array {
+        $qb = $this->getDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(Tuition::class, 'tInner')
+            ->leftJoin('tInner.subject', 'sInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.grades', 'gInner')
+            ->where(
+                $qb->expr()->orX(
+                    'sInner.abbreviation = :subject',
+                    'sgInner.name = :subject'
+                )
+            );
+
+        $qb->where($qb->expr()->in('t.id', $qbInner->getDQL()))
+            ->setParameter('subject', $subjectOrCourse);
+
+        $tuitions = [ ];
+        $result = $qb->getQuery()->getResult();
+
+        /** @var Tuition $tuition */
+        foreach($result as $tuition) {
+            $tuitionGrades = $tuition->getStudyGroup()->getGrades()->map(function(Grade $grade) { return $grade->getName(); })->toArray();
+            if(count(array_intersect($tuitionGrades, $grades)) > 0) {
+                $tuitions[] = $tuition;
+            }
+        }
+
+        return $tuitions;
+    }
+
     /**
      * @inheritDoc
      */

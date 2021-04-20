@@ -54,6 +54,13 @@ interface TuitionRepositoryInterface extends TransactionalRepositoryInterface {
 
     /**
      * @param string[] $grades
+     * @param string $subjectOrCourse
+     * @return Tuition[]
+     */
+    public function findAllByGradeAndSubjectOrCourseWithoutTeacher(array $grades, string $subjectOrCourse): array;
+
+    /**
+     * @param string[] $grades
      * @param string[] $teachers
      * @param string $subjectOrCourse
      * @return Tuition[]

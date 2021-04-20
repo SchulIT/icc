@@ -9,6 +9,7 @@ trait SuppressNotificationTrait {
     /**
      * If this flag is set to true, no notifications are send after a successful import
      * @Serializer\Type("boolean")
+     * @Serializer\SerializedName("suppress_notifications")
      */
     private $suppressNotifications = false;
 

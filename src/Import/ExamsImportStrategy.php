@@ -166,8 +166,6 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
             $students = $this->resolveStudentsFromRules($entity);
         }
 
-        $students = $this->getStudentsPartIfGiven($students, $data);
-
         CollectionUtils::synchronize(
             $entity->getStudents(),
             $students,
@@ -286,34 +284,5 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
                 }
             }
         }
-    }
-
-    /**
-     * Returns the parts of the students which are set as part given in the exam texts.
-     * It detects "SuS:START-END" and returns only students with lastnames between START and END.
-     * @param Student[] $students
-     * @param ExamData $data
-     * @return Student[]
-     */
-    private function getStudentsPartIfGiven(array $students, ExamData $data) {
-        $regExp = '~(.*|^)SuS:(\w+)-(\w+)(.*|$)~u';
-
-        if($data->getDescription() === null) {
-            return $students;
-        }
-
-        if(preg_match($regExp, $data->getDescription(), $matches)) {
-            $start = $matches[2];
-            $end = $matches[3];
-
-            if(mb_strlen($start) > 0 && mb_strlen($end) > 0) {
-                return array_filter($students, function(Student $student) use ($start, $end) {
-                    return strnatcasecmp($start, $student->getLastname()) <= 0
-                        && strnatcasecmp($student->getLastname(), $end) <= 0;
-                });
-            }
-        }
-
-        return $students;
     }
 }

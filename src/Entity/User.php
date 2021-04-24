@@ -400,4 +400,8 @@ class User implements UserInterface, \Serializable {
     public function unserialize($serialized) {
         list($this->id, $this->username) = unserialize($serialized);
     }
+
+    public function __toString() {
+        return sprintf('%s, %s (%s)', $this->getLastname(), $this->getFirstname(), $this->getUsername());
+    }
 }

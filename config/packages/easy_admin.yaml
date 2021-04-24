@@ -98,8 +98,8 @@ easy_admin:
                     - type
                     - subject
                     - replacementSubject
-                    - room
-                    - replacementRoom
+                    - rooms
+                    - replacementRooms
                     - remark
                     - teachers
                     - replacementTeachers

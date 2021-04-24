@@ -81,4 +81,8 @@ class ResourceType {
     public function getResources() {
         return $this->resources;
     }
+
+    public function __toString() {
+        return $this->getName();
+    }
 }

@@ -46,7 +46,7 @@
                     {% endif %}
 
                     <span>
-                        <i class="fa fa-graduation-cap"></i> {{ _macro.replacement(substitution.teachers|teachers(true, onlyAcronym), substitution.replacementTeachers|teachers(true, onlyAcronym)) }}
+                        <i class="fa fa-graduation-cap"></i> {{ _macro.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
                         <span class="mx-1"></span>
                     </span>
 

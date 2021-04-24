@@ -78,10 +78,10 @@ class DashboardController extends AbstractController {
 
         $days = $this->getListOfSurroundingDays($selectedDate, $settings->getNumberFutureDays(), $settings->getNumberPastDays(), $settings->skipWeekends());
 
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null);
-        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]), UserType::Student(), [ UserType::Student(), UserType::Parent() ]);
         $roomFilterView = $roomFilter->handle($request->query->get('room', null), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $roomFilterView->getCurrentRoom() === null);
+        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]), UserType::Student(), [ UserType::Student(), UserType::Parent() ]);
 
         $includeGradeMessages = $user->getData(static::IncludeGradeMessagesKey, false);
 

@@ -30,6 +30,8 @@ class DisplayController extends AbstractController {
     public function show(Display $display, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                          SubstitutionRepositoryInterface $substitutionRepository, AppointmentRepositoryInterface $appointmentRepository,
                          TimetableWeekHelper $weekHelper, DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper, ImportDateTypeRepositoryInterface  $importDateTymeRepository) {
+        $dateHelper->setToday(new DateTime('2021-04-23'));
+
         $today = $dateHelper->getToday();
         $appointments = [ ];
         $currentWeek = $weekHelper->getTimetableWeek($today);
@@ -63,7 +65,8 @@ class DisplayController extends AbstractController {
             'appointments' => $appointments,
             'count' => $itemsCount,
             'last_update' => $importDateTymeRepository->findOneByEntityClass(Substitution::class),
-            'day' => $today
+            'day' => $today,
+            'is_teachersview' => $display->getTargetUserType()->equals(DisplayTargetUserType::Teachers())
         ]);
     }
 }

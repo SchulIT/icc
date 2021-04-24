@@ -93,3 +93,20 @@ body {
     @extend .mx-2;
   }
 }
+
+
+.table-sticky-header {
+  border-collapse: separate;
+  border-spacing: 0;
+
+  th {
+    position: sticky;
+    top: 0;
+    background: white;
+  }
+
+  td, th {
+    border-left: none;
+    border-top: none;
+  }
+}

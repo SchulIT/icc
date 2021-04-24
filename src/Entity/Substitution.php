@@ -448,6 +448,35 @@ class Substitution {
         return $this->replacementStudyGroups;
     }
 
+    /**
+     * @return Grade[]
+     */
+    public function getGrades(): array {
+        $grades = [ ];
+
+        /** @var StudyGroup $studyGroup */
+        foreach($this->getStudyGroups() as $studyGroup) {
+            /** @var Grade $grade */
+            foreach($studyGroup->getGrades() as $grade) {
+                if(!in_array($grade, $grades)) {
+                    $grades[] = $grade;
+                }
+            }
+        }
+
+        /** @var StudyGroup $studyGroup */
+        foreach($this->getReplacementStudyGroups() as $studyGroup) {
+            /** @var Grade $grade */
+            foreach($studyGroup->getGrades() as $grade) {
+                if(!in_array($grade, $grades)) {
+                    $grades[] = $grade;
+                }
+            }
+        }
+
+        return $grades;
+    }
+
     public function clone() {
         $clone = new self();
 

@@ -81,7 +81,7 @@ class ResourceAdminController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $room->ensureAllTagsHaveRoomAssociated();
             $this->repository->persist($room);
-            $this->addFlash('success', 'admin.rooms.edit.success');
+            $this->addFlash('success', 'admin.resources.edit.success');
 
             return $this->redirectToRoute('admin_resources');
         }
@@ -96,7 +96,7 @@ class ResourceAdminController extends AbstractController {
      */
     public function remove(Room $room, Request $request) {
         $form = $this->createForm(ConfirmType::class, null, [
-            'message' => 'admin.rooms.remove.confirm',
+            'message' => 'admin.resources.remove.confirm',
             'message_parameters' => [
                 '%name%' => $room->getName()
             ]
@@ -105,7 +105,7 @@ class ResourceAdminController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             $this->repository->remove($room);
-            $this->addFlash('success', 'admin.rooms.remove.success');
+            $this->addFlash('success', 'admin.resources.remove.success');
 
             return $this->redirectToRoute('admin_resources');
         }

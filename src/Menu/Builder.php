@@ -283,6 +283,11 @@ class Builder {
                 'route' => 'admin_displays'
             ])
                 ->setExtra('icon', 'fas fa-tv');
+
+            $root->addChild('admin.apps.label', [
+                'route' => 'admin_apps'
+            ])
+                ->setExtra('icon', 'fas fa-mobile-alt');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {

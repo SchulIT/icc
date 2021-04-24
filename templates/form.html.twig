@@ -153,3 +153,15 @@
         </div>
     </div>
 {%- endblock -%}
+
+{% block redirect_uri_widget  %}
+    <div class="input-group mb-2">
+        {{ form_widget(form) }}
+
+        <div class="input-group-append">
+            <button type="button" class="btn btn-danger btn-sm btn-delete float-right" data-selector=".input-group">
+                <i class="fa fa-trash"></i>
+            </button>
+        </div>
+    </div>
+{% endblock %}

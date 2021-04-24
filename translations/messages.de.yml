@@ -166,7 +166,7 @@ label:
     sections: Abschnitt(e)
     course_types: Kursart(en)
     comma_separated: Mehrere Elemente können mit Komma separiert werden.
-
+    active: aktiviert
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -1055,6 +1055,24 @@ admin:
             label: Display löschen
             confirm: 'Soll das Display "%name%" wirklich gelöscht werden?'
             success: Display erfolgreich gelöscht
+
+    apps:
+        label: Apps
+        empty: Aktuell sind keine Apps vorhanden.
+        add:
+            label: Neue App
+            success: App erfolgreich angelegt
+        edit:
+            label: App bearbeiten
+            success: App erfolgreich aktualisiert
+            info:
+                label: OAuth2-Informationen
+            redirect_uri:
+                label: Weiterleitungs-URLs
+        remove:
+            label: App löschen
+            confirm: 'Soll die App "%name%" wirklich gelöscht werden?'
+            success: App erfolgreich gelöscht
 
 versions:
     label: Versionen

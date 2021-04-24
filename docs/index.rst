@@ -28,6 +28,7 @@ zu Workflows.
    configure/exams.rst
    configure/appointments.rst
    configure/notifications.rst
+   configure/apps.rst
 
 .. toctree::
    :caption: Datenimport

@@ -1,0 +1,15 @@
+grants:
+  _help: Gibt die Authentifizierungsmöglichkeiten an.
+  authorization_code: Authorization Code
+  client_credentials: Client Credentials
+  implicit: Implicit
+  password: Password
+  refresh_token: Refresh Token
+
+scopes:
+  _help: Gibt die Bereiche an, aus denen die App Informationen aus dem ICC abrufen kann.
+  exams: Klausuren
+  substitutions: Vertretungen
+  messages: Mitteilungen
+  timetable: Stundenplan
+  appointments: Termine

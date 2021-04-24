@@ -139,4 +139,18 @@ class ArrayUtils {
 
         return count(array_intersect($arrayA, $arrayB)) === count($arrayA);
     }
+
+    /**
+     * @param iterable $items
+     * @return string[]
+     */
+    public static function toString(iterable $items): array {
+        $result = [ ];
+
+        foreach($items as $item) {
+            $result[] = (string)$item;
+        }
+
+        return $result;
+    }
 }

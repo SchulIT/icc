@@ -193,7 +193,7 @@
                                                             {% set foreground = foreground(background) %}
                                                         {% endif %}
 
-                                                        <td class="align-middle {% if day.isCurrentDay or day.isUpcomingDay %}current{% endif %} {% if day.isFree %}text-secondary{% endif %}" {% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
+                                                        <td class="align-middle {% if day.isCurrentDay or day.isUpcomingDay %}current{% endif %} {% if day.isFree %}text-secondary{% endif %}{% if lessons.includeNextLesson and i+1 == week.maxLessons %} border-bottom-0{% endif %}" {% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %} {% if background != null %}style="background: {{ background }}; color: {{ foreground }}"{% endif %}>
                                                             {% for lesson in lessons.lessons %}
                                                                 {% if compact|default(false) == true %}
                                                                     {% include 'timetable/lesson_print.html.twig' with { student: studentFilter.currentStudent, memberships: memberships, subject: subject }%}

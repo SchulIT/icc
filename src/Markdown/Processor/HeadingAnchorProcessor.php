@@ -3,9 +3,11 @@
 namespace App\Markdown\Processor;
 
 use App\Markdown\Element\AnchorLink;
+use App\Markdown\Element\Icon;
 use EasySlugger\SluggerInterface;
 use League\CommonMark\Block\Element\Heading;
 use League\CommonMark\Event\DocumentParsedEvent;
+use League\CommonMark\Inline\Element\HtmlInline;
 
 class HeadingAnchorProcessor {
 
@@ -36,6 +38,9 @@ class HeadingAnchorProcessor {
             $slug = $this->slugger->slugify($heading);
 
             $linkChild = new AnchorLink($slug);
+            $linkChild->appendChild(new Icon('far fa-bookmark'));
+
+            $node->prependChild(new HtmlInline(' '));
             $node->prependChild($linkChild);
         }
     }

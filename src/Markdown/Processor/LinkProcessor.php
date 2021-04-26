@@ -44,6 +44,8 @@ class LinkProcessor {
 
             $url = $node->getUrl();
 
+            $node->data['attributes']['class'] = 'btn btn-outline-primary btn-sm';
+
             if(substr($url, 0, 7) === 'mailto:') {
                 $this->prependIcon($node, 'far fa-envelope');
             } else if(substr($url, 0, 9)  === 'document:') {
@@ -90,8 +92,8 @@ class LinkProcessor {
 
     private function prependIcon(Link $node, string $class): Icon {
         $icon = new Icon($class);
-        $node->insertBefore($icon);
-        $node->insertBefore(new HtmlInline(' '));
+        $node->prependChild(new HtmlInline(' '));
+        $node->prependChild($icon);
 
         return $icon;
     }

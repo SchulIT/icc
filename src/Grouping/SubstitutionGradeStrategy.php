@@ -23,6 +23,11 @@ class SubstitutionGradeStrategy implements GroupingStrategyInterface {
             }
         }
 
+        /** @var Grade $grade */
+        foreach($object->getReplacementGrades() as $grade) {
+            $grades[$grade->getId()] = $grade;
+        }
+
         if(count($grades) === 0) {
             return null;
         }

@@ -309,9 +309,17 @@
                         </span>
                     {% endif %}
 
-                    {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
+                    {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 or substitution.replacementGrades|length > 0 %}
                         <span>
                             <i class="fa fa-users"></i> {{ _macro.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
+                            {% if substitution.replacementGrades|length > 0 %}
+                                {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
+                                    ⟶
+                                {% endif %}
+                                {% for grade in substitution.replacementGrades %}
+                                    {{ grade.name }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            {% endif %}
                             <span class="mx-1"></span>
                         </span>
                     {% endif %}

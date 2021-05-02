@@ -5,8 +5,10 @@ namespace App\Repository;
 use App\Entity\Grade;
 use App\Entity\Room;
 use App\Entity\StudyGroup;
+use App\Entity\StudyGroupType;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
+use App\Utils\ArrayUtils;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
@@ -99,24 +101,47 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
             return $studyGroup->getId();
         }, $studyGroups);
 
+        /** @var StudyGroup|null $gradeStudyGroup */
+        $gradeStudyGroup = ArrayUtils::first($studyGroups, function(StudyGroup $studyGroup) {
+            return $studyGroup->getType()->equals(StudyGroupType::Grade());
+        });
+        /** @var Grade|null $grade */
+        $grade = $gradeStudyGroup != null ? $gradeStudyGroup->getGrades()->first() : null;
+        $gradeId = $grade !== null ? $grade->getId() : null;
+
         $qbInner = $this->em->createQueryBuilder();
         $qbInner->select('sInner.id')
             ->from(Substitution::class, 'sInner')
             ->leftJoin('sInner.studyGroups', 'sgInner')
-            ->leftJoin('sInner.replacementStudyGroups', 'rsgInner');
+            ->leftJoin('sInner.replacementStudyGroups', 'rsgInner')
+            ->leftJoin('sInner.replacementGrades', 'rgInner');
 
-        $qbInner->where(
-            $qbInner->expr()->orX(
-                $qbInner->expr()->in('sgInner.id', ':ids'),
-                $qbInner->expr()->in('rsgInner.id', ':ids')
-            )
-        );
+        if($gradeId !== null) {
+            $qbInner->where(
+                $qbInner->expr()->orX(
+                    $qbInner->expr()->in('sgInner.id', ':ids'),
+                    $qbInner->expr()->in('rsgInner.id', ':ids'),
+                    $qbInner->expr()->eq('rgInner.id', ':gradeId')
+                )
+            );
+        } else {
+            $qbInner->where(
+                $qbInner->expr()->orX(
+                    $qbInner->expr()->in('sgInner.id', ':ids'),
+                    $qbInner->expr()->in('rsgInner.id', ':ids')
+                )
+            );
+        }
 
         $qb = $this->getDefaultQueryBuilder($date);
         $qb->andWhere(
             $qb->expr()->in('s.id', $qbInner->getDQL())
         );
         $qb->setParameter('ids', $ids);
+
+        if($gradeId !== null) {
+            $qb->setParameter('gradeId', $gradeId);
+        }
 
         return $qb->getQuery()->getResult();
     }
@@ -161,12 +186,14 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
             ->leftJoin('sInner.studyGroups', 'sgInner')
             ->leftJoin('sInner.replacementStudyGroups', 'rsgInner')
             ->leftJoin('sgInner.grades', 'sggInner')
-            ->leftJoin('rsgInner.grades', 'rsggInner');
+            ->leftJoin('rsgInner.grades', 'rsggInner')
+            ->leftJoin('sInner.replacementGrades', 'rgInner');
 
         $qbInner->where(
             $qbInner->expr()->orX(
                 $qbInner->expr()->eq('sggInner.id', ':id'),
-                $qbInner->expr()->eq('rsggInner.id', ':id')
+                $qbInner->expr()->eq('rsggInner.id', ':id'),
+                $qbInner->expr()->eq('rgInner.id', ':id')
             )
         );
 
@@ -206,12 +233,13 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
     private function getDefaultQueryBuilder(\DateTime $date = null): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
 
-        $qb->select(['s', 't', 'rt', 'sg', 'rsg'])
+        $qb->select(['s', 't', 'rt', 'sg', 'rsg', 'rg'])
             ->from(Substitution::class, 's')
             ->leftJoin('s.teachers', 't')
             ->leftJoin('s.replacementTeachers', 'rt')
             ->leftJoin('s.studyGroups', 'sg')
             ->leftJoin('s.replacementStudyGroups', 'rsg')
+            ->leftJoin('s.replacementGrades', 'rg')
             ->orderBy('s.date', 'asc')
             ->orderBy('s.lessonStart', 'asc');
 

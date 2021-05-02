@@ -2,11 +2,13 @@
 
 namespace App\Import;
 
+use App\Entity\Grade;
 use App\Entity\Room;
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
 use App\Event\SubstitutionImportEvent;
+use App\Repository\GradeRepositoryInterface;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
@@ -26,16 +28,18 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
     private $studyGroupRepository;
     private $tuitionRepository;
     private $roomRepository;
+    private $gradeRepository;
     private $dispatcher;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, TeacherRepositoryInterface $teacherRepository,
                                 StudyGroupRepositoryInterface $studyGroupRepository, TuitionRepositoryInterface $tuitionRepository, RoomRepositoryInterface $roomRepository,
-                                EventDispatcherInterface $eventDispatcher) {
+                                GradeRepositoryInterface $gradeRepository, EventDispatcherInterface $eventDispatcher) {
         $this->substitutionRepository = $substitutionRepository;
         $this->teacherRepository = $teacherRepository;
         $this->studyGroupRepository = $studyGroupRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->roomRepository = $roomRepository;
+        $this->gradeRepository = $gradeRepository;
         $this->dispatcher = $eventDispatcher;
     }
 
@@ -168,6 +172,34 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
                 return $studyGroup->getId();
             }
         );
+
+        $replacementGrades = $this->gradeRepository->findAllByExternalId($data->getReplacementGrades());
+
+        if(count($replacementGrades) != count($data->getReplacementGrades())) {
+            $this->throwMissingGrade($data->getReplacementGrades(), $replacementGrades, $data->getId());
+        }
+
+        $replacementStudyGroupGrades = [ ];
+        /** @var StudyGroup $studyGroup */
+        foreach($entity->getReplacementStudyGroups() as $studyGroup) {
+            foreach($studyGroup->getGrades() as $grade) {
+                if(!in_array($grade, $replacementStudyGroupGrades)) {
+                    $replacementStudyGroupGrades[] = $grade;
+                }
+            }
+        }
+
+        if(count($replacementGrades) !== count($replacementStudyGroupGrades)) {
+            CollectionUtils::synchronize(
+                $entity->getReplacementGrades(),
+                $replacementGrades,
+                function(Grade $grade) {
+                    return $grade->getId();
+                }
+            );
+        } else {
+            $entity->getReplacementGrades()->clear();
+        }
     }
 
     /**
@@ -257,6 +289,24 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
         foreach($teachers as $teacher) {
             if(!in_array($teacher, $foundTeacherExternalIds)) {
                 throw new ImportException(sprintf('Teacher "%s" on substitution ID "%s" was not found.', $teacher, $substitutionId));
+            }
+        }
+    }
+
+    /**
+     * @param string[]$grades
+     * @param Grade[] $foundGrades
+     * @param string $substitutionId
+     * @throws ImportException
+     */
+    private function throwMissingGrade(array $grades, array $foundGrades, string $substitutionId) {
+        $foundGradeExternalIds = array_map(function(Grade $grade) {
+            return $grade->getExternalId();
+        }, $foundGrades);
+
+        foreach($grades as $grade) {
+            if(!in_array($grade, $foundGradeExternalIds)) {
+                throw new ImportException(sprintf('Grade "%s" on substitution ID "%s" was not found.', $grade, $substitutionId));
             }
         }
     }

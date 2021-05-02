@@ -8,6 +8,7 @@ use App\Entity\Appointment;
 use App\Entity\Exam;
 use App\Entity\ExamSupervision;
 use App\Entity\FreeTimespan;
+use App\Entity\Grade;
 use App\Entity\GradeTeacher;
 use App\Entity\Message;
 use App\Entity\MessageScope;
@@ -210,7 +211,7 @@ class DashboardViewHelper {
         }
 
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $userType, $dateTime, $studyGroups), $view);
-        $this->addSubstitutions($this->substitutionRepository->findAllForStudyGroups($studyGroups, $dateTime), $view, false);
+        $this->addSubstitutions($this->filterSubstitutionsByGrade($this->substitutionRepository->findAllForStudyGroups($studyGroups, $dateTime), $student->getGrade()), $view, false);
         $this->addExams($exams = $this->examRepository->findAllByStudents([$student], $dateTime, true), $view, null, false);
         $this->addInfotexts($dateTime, $view);
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
@@ -365,7 +366,6 @@ class DashboardViewHelper {
                     continue;
                 }
             }
-
             $studyGroups = $substitution->getReplacementStudyGroups()->count() > 0 ? $substitution->getReplacementStudyGroups() : $substitution->getStudyGroups();
             $students = $this->getStudents($studyGroups);
 
@@ -555,4 +555,22 @@ class DashboardViewHelper {
         return $students;
     }
 
+    /**
+     * Filters the given substitutions for only those which are applied to the given grade.
+     *
+     * @param Substitution[] $substitutions
+     * @param Grade $grade
+     * @return Substitution[]
+     */
+    private function filterSubstitutionsByGrade(array $substitutions, Grade $grade) {
+        $result = [ ];
+
+        foreach($substitutions as $substitution) {
+            if($substitution->getReplacementGrades()->count() === 0 || $substitution->getReplacementGrades()->contains($grade)) {
+                $result[] = $substitution;
+            }
+        }
+
+        return $result;
+    }
 }

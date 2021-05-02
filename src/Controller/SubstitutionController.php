@@ -42,6 +42,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
                           ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
+        $dateHelper->setToday(new DateTime('2021-04-26'));
         $days = $this->getListOfNextDays($dateHelper, $substitutionSettings->getNumberOfAheadDaysForSubstitutions(), $substitutionSettings->skipWeekends(), $this->getTodayOrNextDay($dateHelper, $dashboardSettings->getNextDayThresholdTime()));
         $date = $request->query->get('date', null);
         $selectedDate = $this->getCurrentDate($days, $date);

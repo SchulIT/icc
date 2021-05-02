@@ -51,7 +51,18 @@
                                     {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
                                 {% endif %}
                             </td>
-                            <td class="align-middle">{{ _macro.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}</td>
+                            <td class="align-middle">
+                                {{ _macro.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
+
+                                {% if substitution.replacementGrades|length > 0 %}
+                                    {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
+                                    ⟶
+                                    {% endif %}
+                                    {% for grade in substitution.replacementGrades %}
+                                        {{ grade.name }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
                             <td class="align-middle">{{ _macro.replacement(substitution.roomsAsString, substitution.replacementRoomsAsString) }}</td>
                             <td class="align-middle">{{ _macro.replacement(substitution.subject, substitution.replacementSubject) }}</td>
                             <td class="align-middle">{{ _macro.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}</td>

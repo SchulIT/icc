@@ -154,6 +154,16 @@ class Substitution {
      */
     private $replacementStudyGroups;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Grade")
+     * @ORM\JoinTable(name="substitution_replacement_grades",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @var ArrayCollection<Grade>
+     */
+    private $replacementGrades;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
 
@@ -163,6 +173,7 @@ class Substitution {
         $this->replacementRooms = new ArrayCollection();
         $this->studyGroups = new ArrayCollection();
         $this->replacementStudyGroups = new ArrayCollection();
+        $this->replacementGrades = new ArrayCollection();
     }
 
     /**
@@ -448,11 +459,27 @@ class Substitution {
         return $this->replacementStudyGroups;
     }
 
+    public function addReplacementGrade(Grade $grade): void {
+        $this->replacementGrades->add($grade);
+    }
+
+    public function removeReplacementGrade(Grade $grade): void {
+        $this->replacementGrades->removeElement($grade);
+    }
+
+    public function getReplacementGrades(): Collection {
+        return $this->replacementGrades;
+    }
+
     /**
      * @return Grade[]
      */
     public function getGrades(): array {
         $grades = [ ];
+
+        if($this->getReplacementGrades()->count() > 0) {
+            return $this->getReplacementGrades()->toArray();
+        }
 
         /** @var StudyGroup $studyGroup */
         foreach($this->getStudyGroups() as $studyGroup) {
@@ -514,6 +541,10 @@ class Substitution {
 
         foreach($this->getReplacementRooms() as $room) {
             $clone->addReplacementRoom($room);
+        }
+
+        foreach($this->getReplacementGrades() as $grade) {
+            $clone->addReplacementGrade($grade);
         }
 
         return $clone;

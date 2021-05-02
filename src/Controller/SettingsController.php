@@ -547,6 +547,25 @@ class SettingsController extends AbstractController {
                               AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, TranslatorInterface $translator) {
         $builder = $this->createFormBuilder();
         $builder
+            ->add('days', ChoiceType::class, [
+                'label' => 'admin.settings.timetable.days.label',
+                'help' => 'admin.settings.timetable.days.help',
+                'data' => $timetableSettings->getDays(),
+                'choices' => [
+                    'date.days.0' => 0,
+                    'date.days.1' => 1,
+                    'date.days.2' => 2,
+                    'date.days.3' => 3,
+                    'date.days.4' => 4,
+                    'date.days.5' => 5,
+                    'date.days.6' => 6
+                ],
+                'expanded' => true,
+                'multiple' => true,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
+            ])
             ->add('lessons', IntegerType::class, [
                 'label' => 'admin.settings.timetable.max_lessons.label',
                 'help' => 'admin.settings.timetable.max_lessons.help',

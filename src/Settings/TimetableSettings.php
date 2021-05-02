@@ -5,6 +5,7 @@ namespace App\Settings;
 class TimetableSettings extends AbstractSettings {
 
     public const MaxLessonsKey = 'max_lessons';
+    public const Days = 'days';
     public const DescriptionBeforeKey = 'lesson.%d.before_label';
     public const StartKey = 'lesson.%d.start';
     public const EndKey = 'lesson.%d.end';
@@ -154,5 +155,13 @@ class TimetableSettings extends AbstractSettings {
 
     public function setMaxLessons(int $maxLessons): void {
         $this->setValue(static::MaxLessonsKey, $maxLessons);
+    }
+
+    public function getDays(): array {
+        return $this->getValue(static::Days, [1,2,3,4,5]);
+    }
+
+    public function setDays(array $days): void {
+        $this->setValue(static::Days, $days);
     }
 }

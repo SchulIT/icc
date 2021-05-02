@@ -640,6 +640,9 @@ admin:
 
         timetable:
             label: Stundenplan
+            days:
+                label: Unterrichtstage
+                help: Gibt an, an welchen Tagen Unterricht stattfindet.
             max_lessons:
                 label: Anzahl der Unterrichtsstunden
                 help: Gibt die maximale Anzahl an Unterrichtsstunden für einen Wochentag an (wird genutzt, um die Zeiten für die Schulstunden festzulegen)

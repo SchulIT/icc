@@ -260,8 +260,14 @@ class TimetableController extends AbstractControllerWithMessages {
      * @return TimetablePeriod|null
      */
     private function getCurrentPeriod(array $periods): ?TimetablePeriod {
+        $today = $this->dateHelper->getToday();
+
+        while(count($this->timetableSettings->getDays()) > 0 && !in_array((int)$today->format('w'), $this->timetableSettings->getDays())) {
+            $today->modify('+1 day');
+        }
+
         foreach($periods as $period) {
-            if($this->dateHelper->isBetween($this->dateHelper->getToday(), $period->getStart(), $period->getEnd())) {
+            if($this->dateHelper->isBetween($today, $period->getStart(), $period->getEnd())) {
                 return $period;
             }
         }

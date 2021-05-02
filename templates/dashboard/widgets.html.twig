@@ -329,7 +329,7 @@
                         <span class="mx-1"></span>
                     </span>
 
-                    {% if substitution.roomsAsString is not null or substitution.replacementRoomsAsString is not null %}
+                    {% if substitution.roomsAsString is not empty or substitution.replacementRoomsAsString is not empty %}
                         <span>
                             <i class="fa fa-door-open"></i> {{ _macro.replacement(substitution.roomsAsString, substitution.replacementRoomsAsString) }}
                             <span class="mx-1"></span>

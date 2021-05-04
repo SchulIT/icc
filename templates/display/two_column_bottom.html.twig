@@ -131,30 +131,29 @@
                                 </td>
                             </tr>
                         {% elseif item.name == 'exam_supervision' %}
-                            {% set exam = item.exam %}
                             <tr class="{% if isLastGroup %}border-bottom{% endif %}">
                                 <td class="align-middle">
-                                    {{ 'label.substitution_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
+                                    {{ 'label.substitution_lessons'|trans({'%start%': item.lesson, '%end%': item.lesson, '%count%': 0 }) }}
                                 </td>
                                 <td class="align-middle {% if loop.first %}font-weight-bold{% endif %}">
                                     {{ group.header }}
                                 </td>
                                     <td class="align-middle" {% if is_teachersview %}colspan="2"{% endif %}>
-                                        {% for tuition in exam.tuitions %}
+                                        {% for tuition in item.exam.tuitions %}
                                             {{ tuition.name }} ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
                                             {%- if not loop.last %}, {% endif %}
                                         {% endfor %}
                                     </td>
                                 <td class="align-middle">
-                                    {% if exam.room is not null %}
-                                        {{ exam.room }}
+                                    {% if item.exam.room is not null %}
+                                        {{ item.exam.room }}
                                     {% endif %}
                                 </td>
                                 <td class="align-middle">
                                     <i class="fa fa-eye"></i> {{ 'dashboard.exam_supervision'|trans }}
                                 </td>
                                 <td class="align-middle">
-                                    {{ exam.description }}
+                                    {{ item. exam.description }}
                                 </td>
                             </tr>
                         {% endif %}

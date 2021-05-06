@@ -94,4 +94,11 @@ interface UserRepositoryInterface {
      * @param User $user
      */
     public function remove(User $user): void;
+
+    /**
+     * Removes orphaned users.
+     *
+     * @return int Number of users removed from the system.
+     */
+    public function removeOrphaned(): int;
 }

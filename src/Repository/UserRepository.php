@@ -7,6 +7,7 @@ use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
+use function Doctrine\ORM\QueryBuilder;
 
 class UserRepository extends AbstractRepository implements UserRepositoryInterface {
 
@@ -230,5 +231,29 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
             ->setParameter('types', $typeNames)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function removeOrphaned(): int {
+        $qbOrphaned = $this->em->createQueryBuilder()
+            ->select('u.id')
+            ->from(User::class, 'u')
+            ->leftJoin('u.students', 's')
+            ->leftJoin('u.teacher', 't')
+            ->where('u.userType IN (:types)')
+            ->andWhere('t.id IS NULL')
+            ->andWhere('s.id IS NULL');
+
+        $qb = $this->em->createQueryBuilder();
+
+        return (int)$qb->delete(User::class, 'user')
+            ->where(
+                $qb->expr()->in('user.id', $qbOrphaned->getDQL())
+            )
+            ->setParameter('types', [ UserType::Teacher()->getValue(), UserType::Student()->getValue(), UserType::Parent()->getValue() ])
+            ->getQuery()
+            ->execute();
     }
 }

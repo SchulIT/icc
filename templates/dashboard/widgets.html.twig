@@ -357,8 +357,8 @@
             </div>
 
             <div class="align-self-center d-flex flex-wrap">
-                <span class="align-self-center badge badge-light mr-3 my-1">
-                    {{ appointment.title|upper }}
+                <span class="align-self-center badge mr-3 my-1" style="background: {{ appointment.category.color }}; color: {{ foreground(appointment.category.color) }}">
+                    {{ appointment.category.name|upper }}
                 </span>
 
                 <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
@@ -407,8 +407,9 @@
                         </span>
                     {% endif %}
 
-                    <span class="d-md-inline d-block">
-                        <span class="color-rect" style="background: {{ appointment.category.color }}"></span> {{ appointment.category.name }}
+                    <span>
+                        {{ appointment.title }}
+                        <span class="mx-1"></span>
                     </span>
                 </div>
             </div>

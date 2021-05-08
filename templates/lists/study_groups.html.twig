@@ -102,41 +102,43 @@
                                 </div>
                             </div>
 
-                            <table class="table table-striped table-hover table-bordered">
-                                <colgroup>
-                                    <col class="column-lg">
-                                    <col class="column-lg">
-                                    <col>
-                                    <col class="column-md">
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th>{{ 'label.name'|trans }}</th>
-                                    <th>{{ 'label.subject'|trans }}</th>
-                                    <th>{{ 'label.teacher'|trans }}</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                {% for tuition in tuitions %}
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover table-bordered card-table">
+                                    <colgroup>
+                                        <col class="column-lg">
+                                        <col class="column-lg">
+                                        <col>
+                                        <col class="column-md">
+                                    </colgroup>
+                                    <thead>
                                     <tr>
-                                        <td>{{ tuition.name }}</td>
-                                        <td>{{ tuition.subject.name }}</td>
-                                        <td>
-                                            {% if tuition.teacher is null %}
-                                                <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
-                                            {% else %}
-                                                {{ tuition.teacher|teacher }}
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <a href="{{ path('list_tuition', { uuid: tuition.uuid }) }}">{{ 'label.details'|trans }}</a>
-                                        </td>
+                                        <th>{{ 'label.name'|trans }}</th>
+                                        <th>{{ 'label.subject'|trans }}</th>
+                                        <th>{{ 'label.teacher'|trans }}</th>
+                                        <th></th>
                                     </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                                    </thead>
+
+                                    <tbody>
+                                    {% for tuition in tuitions %}
+                                        <tr>
+                                            <td>{{ tuition.name }}</td>
+                                            <td>{{ tuition.subject.name }}</td>
+                                            <td>
+                                                {% if tuition.teacher is null %}
+                                                    <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
+                                                {% else %}
+                                                    {{ tuition.teacher|teacher }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{{ path('list_tuition', { uuid: tuition.uuid }) }}">{{ 'label.details'|trans }}</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     {% endif %}
                 {% elseif studentFilter.currentStudent is not null %}

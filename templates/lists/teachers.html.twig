@@ -35,16 +35,23 @@
                                         <tr{% if loop.first %} id="{{ group.key }}"{% endif %}>
                                             <td><strong>{{ teacher.acronym }}</strong></td>
                                             <td>
-                                                {{ teacher|teacher }}
+                                                <div>
+                                                    {{ teacher|teacher }}
+                                                </div>
+                                                <div>
+                                                    <i class="fa fa-envelope"></i> <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>
+                                                </div>
 
-                                                {% for tag in teacher.tags %}
-                                                    {% if is_granted('view', tag) %}
-                                                        <span class="badge" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
-                                                    {% endif %}
-                                                {% endfor %}
+                                                <div>
+                                                    {% for tag in teacher.tags %}
+                                                        {% if is_granted('view', tag) %}
+                                                            <span class="badge" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
                                             </td>
                                             <td>
-                                                <i class="fa fa-envelope"></i> <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>
+
                                             </td>
                                             <td>
                                                 {% for gradeTeacher in teacher.grades %}
@@ -52,21 +59,9 @@
                                                 {% endfor %}
                                             </td>
                                             <td>
-                                                {% if teacher.getSubjects().count() > 0 %}
-                                                    {{ teacher.subjects[0].name }}
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                {% if teacher.subjects.count() > 1 %}
-                                                    {{ teacher.subjects[1].name }}
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                {% if teacher.subjects|length > 2 %}
                                                     {% for subject in teacher.subjects %}
-                                                        {% if loop.index0 > 1 %}{{ subject.getName() }}{% if not loop.last %}, {% endif %}{% endif %}
+                                                        {{ subject.getName() }}{% if not loop.last %}, {% endif %}
                                                     {% endfor %}
-                                                {% endif %}
                                             </td>
                                         </tr>
                                     {% endfor %}

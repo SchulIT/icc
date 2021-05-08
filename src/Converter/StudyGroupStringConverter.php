@@ -17,9 +17,7 @@ class StudyGroupStringConverter {
     }
 
     public function convert(StudyGroup $group, bool $short = false, bool $includeGrades = false): string {
-        if($short === true) {
-            return $group->getName();
-        }
+        $name = $group->getName();
 
         $type = $this->translator->trans('studygroup.type.grade');
 
@@ -27,10 +25,12 @@ class StudyGroupStringConverter {
             $type = $this->translator->trans('studygroup.type.course');
         }
 
-        $name = $this->translator->trans('studygroup.name', [
-            '%name%' => $group->getName(),
-            '%type%' => $type
-        ]);
+        if($short === false) {
+            $name = $this->translator->trans('studygroup.name', [
+                '%name%' => $name,
+                '%type%' => $type
+            ]);
+        }
 
         if($includeGrades === true && $group->getType()->equals(StudyGroupType::Grade()) === false) {
             return sprintf('%s (%s)', $name, $this->gradeConverter->convert($group->getGrades()->toArray()));

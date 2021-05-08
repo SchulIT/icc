@@ -62,7 +62,7 @@
                                 <col class="column-lg">
                                 {% endif %}
                                 {% if studentFilter.currentStudent == null %}
-                                <col class="column-md">
+                                <col class="column-lg">
                                 <col class="column-md">
                                 {% else %}
                                 <col class="column-md">
@@ -110,7 +110,7 @@
                                     {% if studentFilter.currentStudent == null %}
                                         <td>
                                             {% if tuition.studyGroup is not null %}
-                                                <a href="{{ path('list_studygroups', { study_group: tuition.studyGroup.uuid.toString() }) }}">{{ tuition.studyGroup.name }}</a>
+                                                <a href="{{ path('list_studygroups', { study_group: tuition.studyGroup.uuid.toString() }) }}">{{ tuition.studyGroup|studygroup(true, true) }}</a>
                                             {% else %}
                                                 <span class="badge badge-secondary">{{ 'label.none'|trans }}</span>
                                             {% endif %}

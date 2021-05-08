@@ -45,9 +45,7 @@
                                 {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
                                     ⟶
                                 {% endif %}
-                                {% for grade in substitution.replacementGrades %}
-                                    {{ grade.name }}{% if not loop.last %}, {% endif %}
-                                {% endfor %}
+                                {{ substitution.replacementGrades|grades }}
                             {% endif %}
 
                             <span class="mx-1"></span>

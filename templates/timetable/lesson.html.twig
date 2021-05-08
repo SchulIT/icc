@@ -45,7 +45,7 @@
     </strong>
 
     {% if roomFilter.currentRoom != null %}
-        ({% for g in grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+        ({{ grades|grades }})
     {% elseif not room is null %}
         ({{ room }})
     {% endif %}
@@ -59,6 +59,6 @@
     {% endif %}
     {% if teachersFilter.currentTeachers|length > 0 or subjectFilter.currentSubjects|length > 0 %}
         <br>
-        {% for g in grades %}{{ g.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+        {{ grades|grades }}
     {% endif %}
 {% endif %}

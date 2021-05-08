@@ -58,9 +58,7 @@
                                     {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
                                     ⟶
                                     {% endif %}
-                                    {% for grade in substitution.replacementGrades %}
-                                        {{ grade.name }}{% if not loop.last %}, {% endif %}
-                                    {% endfor %}
+                                    {{ substitution.replacementGrades|grades }}
                                 {% endif %}
                             </td>
                             <td class="align-middle">{{ _macro.replacement(substitution.roomsAsString, substitution.replacementRoomsAsString) }}</td>

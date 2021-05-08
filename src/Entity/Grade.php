@@ -46,6 +46,12 @@ class Grade {
      */
     private $teachers;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $allowCollapse = true;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
 
@@ -109,6 +115,22 @@ class Grade {
 
     public function getTeachers(): Collection {
         return $this->teachers;
+    }
+
+    /**
+     * @return bool
+     */
+    public function allowCollapse(): bool {
+        return $this->allowCollapse;
+    }
+
+    /**
+     * @param bool $allowCollapse
+     * @return Grade
+     */
+    public function setAllowCollapse(bool $allowCollapse): Grade {
+        $this->allowCollapse = $allowCollapse;
+        return $this;
     }
 
     public function __toString() {

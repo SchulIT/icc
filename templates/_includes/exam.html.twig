@@ -27,7 +27,7 @@
                             <span class="mx-1"></span>
                         </span>
                         <span>
-                            <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                            <i class="fa fa-users"></i> {{ tuition.studyGroup.grades|grades }}
                             <span class="mx-1"></span>
                         </span>
                         <span>

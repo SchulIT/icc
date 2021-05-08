@@ -13,12 +13,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudyGroupsGradeStringConverter {
 
+    private $gradeConverter;
     private $translator;
     private $sorter;
 
-    public function __construct(TranslatorInterface $translator, Sorter $sorter) {
+    public function __construct(TranslatorInterface $translator, Sorter $sorter, GradesCollapsedArrayConverter $gradeConverter) {
         $this->translator = $translator;
         $this->sorter = $sorter;
+        $this->gradeConverter = $gradeConverter;
     }
 
     /**
@@ -34,17 +36,31 @@ class StudyGroupsGradeStringConverter {
             $this->sorter->sort($studyGroups, StudyGroupStrategy::class);
         }
 
-        return implode(', ', array_map(function(StudyGroup $studyGroup) {
-            if($studyGroup->getType()->equals(StudyGroupType::Grade())) {
-                return $studyGroup->getName();
-            }
+        $output = [ ];
 
+        // First: Grades
+        $grades = array_filter($studyGroups, function(StudyGroup $group) {
+            return $group->getType()->equals(StudyGroupType::Grade());
+        });
+
+        $output = $this->gradeConverter->convert(
+            array_map(function(StudyGroup $group) {
+                return $group->getGrades()->first();
+            }, $grades)
+        );
+
+        // Second: Individual groups
+        $studyGroups = array_filter($studyGroups, function (StudyGroup $group) {
+            return $group->getType()->equals(StudyGroupType::Grade()) === false;
+        });
+
+        $output += array_map(function(StudyGroup $studyGroup) {
             return $this->translator->trans('studygroup.string', [
                 '%name%' => $studyGroup->getName(),
-                '%grade%' => implode(', ', $studyGroup->getGrades()->map(function(Grade $grade) {
-                    return $grade->getName();
-                })->toArray())
+                '%grade%' => implode(', ', $this->gradeConverter->convert($studyGroup->getGrades()->toArray()))
             ]);
-        }, $studyGroups));
+        }, $studyGroups);
+
+        return implode(', ', $output);
     }
 }

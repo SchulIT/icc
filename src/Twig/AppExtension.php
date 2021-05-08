@@ -4,12 +4,14 @@ namespace App\Twig;
 
 use App\Converter\EnumStringConverter;
 use App\Converter\FilesizeStringConverter;
+use App\Converter\GradesStringConverter;
 use App\Converter\StudentStringConverter;
 use App\Converter\StudyGroupsGradeStringConverter;
 use App\Converter\StudyGroupStringConverter;
 use App\Converter\TeacherStringConverter;
 use App\Converter\TimestampDateTimeConverter;
 use App\Converter\UserStringConverter;
+use App\Entity\Grade;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
@@ -32,11 +34,13 @@ class AppExtension extends AbstractExtension {
     private $filesizeConverter;
     private $timestampConverter;
     private $enumStringConverter;
+    private $gradeStringConverter;
 
     public function __construct(TeacherStringConverter $teacherConverter, StudentStringConverter $studentConverter,
                                 UserStringConverter $userConverter, StudyGroupStringConverter $studyGroupConverter,
                                 StudyGroupsGradeStringConverter $studyGroupsConverter, FilesizeStringConverter $filesizeConverter,
-                                TimestampDateTimeConverter $timestampConverter, EnumStringConverter $enumStringConverter) {
+                                TimestampDateTimeConverter $timestampConverter, EnumStringConverter $enumStringConverter,
+                                GradesStringConverter $gradeStringConverter) {
         $this->teacherConverter = $teacherConverter;
         $this->studentConverter = $studentConverter;
         $this->userConverter = $userConverter;
@@ -45,6 +49,7 @@ class AppExtension extends AbstractExtension {
         $this->filesizeConverter = $filesizeConverter;
         $this->timestampConverter = $timestampConverter;
         $this->enumStringConverter = $enumStringConverter;
+        $this->gradeStringConverter = $gradeStringConverter;
     }
 
     public function getFilters() {
@@ -57,7 +62,8 @@ class AppExtension extends AbstractExtension {
             new TwigFilter('studygroups', [ $this, 'studyGroups' ]),
             new TwigFilter('filesize', [ $this, 'filesize' ]),
             new TwigFilter('todatetime', [ $this, 'toDateTime' ]),
-            new TwigFilter('enum', [ $this, 'enum'])
+            new TwigFilter('enum', [ $this, 'enum']),
+            new TwigFilter('grades', [ $this, 'grades' ])
         ];
     }
 
@@ -127,5 +133,13 @@ class AppExtension extends AbstractExtension {
     public function isInstanceOf($object, string $className): bool {
         $reflectionClass = new ReflectionClass($className);
         return $reflectionClass->isInstance($object);
+    }
+
+    /**
+     * @param Grade[] $grades
+     * @return string
+     */
+    public function grades(iterable $grades): string {
+        return $this->gradeStringConverter->convert($grades);
     }
 }

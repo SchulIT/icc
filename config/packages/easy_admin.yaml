@@ -39,6 +39,7 @@ easy_admin:
                 fields:
                     - { property: externalId, required: false }
                     - name
+                    - allowCollapse
                     - students
 
         Room:

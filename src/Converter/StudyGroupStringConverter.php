@@ -2,17 +2,18 @@
 
 namespace App\Converter;
 
-use App\Entity\Grade;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupType;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudyGroupStringConverter {
 
+    private $gradeConverter;
     private $translator;
 
-    public function __construct(TranslatorInterface $translator) {
+    public function __construct(TranslatorInterface $translator, GradesStringConverter $gradeConverter) {
         $this->translator = $translator;
+        $this->gradeConverter = $gradeConverter;
     }
 
     public function convert(StudyGroup $group, bool $short = false, bool $includeGrades = false): string {
@@ -32,11 +33,7 @@ class StudyGroupStringConverter {
         ]);
 
         if($includeGrades === true && $group->getType()->equals(StudyGroupType::Grade()) === false) {
-            $grades = $group->getGrades()->map(function(Grade $grade) {
-                return $grade->getName();
-            })->toArray();
-
-            return sprintf('%s (%s)', $name, implode(', ', $grades));
+            return sprintf('%s (%s)', $name, $this->gradeConverter->convert($group->getGrades()->toArray()));
         }
 
         return $name;

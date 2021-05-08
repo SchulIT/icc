@@ -208,9 +208,9 @@
                                 <i class="fa fa-users"></i>
                                 {% if showCourseName and lesson.tuition is not null %}
                                     {{ lesson.tuition.studyGroup.name }}
-                                    ({% for grade in grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                                    ({{ lesson.grades|grades }})
                                 {% else %}
-                                    {% for grade in grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                    {{ lesson.grades|grades }}
                                 {% endif %}
                                 <span class="mx-1"></span>
                             </span>

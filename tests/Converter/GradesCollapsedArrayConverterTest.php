@@ -6,7 +6,7 @@ use App\Entity\Grade;
 use App\Converter\GradesCollapsedArrayConverter;
 use PHPUnit\Framework\TestCase;
 
-class GradeUtilsTest extends TestCase {
+class GradesCollapsedArrayConverterTest extends TestCase {
     public function testCollapseWithPreceedingZeros() {
         $converter = new GradesCollapsedArrayConverter();
 

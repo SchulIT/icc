@@ -17,7 +17,7 @@
         {% endif %}
 
         {% if absentStudyGroups|length > 0 %}
-        <div class="d-flex align-items-baseline">
+        <div class="d-flex align-items-baseline flex-wrap">
             <span class="mr-1"><i class="fa fa-users"></i> {{ 'plans.substitutions.absence.study_groups'|trans }}:</span>
             <span>
                 {% for absence in absentStudyGroups -%}

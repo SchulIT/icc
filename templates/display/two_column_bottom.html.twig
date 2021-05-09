@@ -20,10 +20,12 @@
             {% set last = groups|last %}
 
             <span class="flex-fill font-weight-bold ">
-                {{ first.header }} - {{ last.header }}
+                {% for group in groups %}
+                    {{ group.header }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
             </span>
 
-            <span>
+            <span class="flex-shrink-0">
                 <i class="fa fa-calendar-alt"></i> {{ day|format_date }}
             </span>
         </div>

@@ -2,7 +2,7 @@
 <div class="card {{ classes|default('') }}">
     <div class="card-body {{ bodyClasses|default('') }}">
         {% if absentTeachers|length > 0 %}
-        <div class="d-flex align-items-baseline {% if absentStudyGroups|length > 0 %}mb-2{% endif %}">
+        <div class="d-flex align-items-baseline flex-wrap {% if absentStudyGroups|length > 0 %}mb-2{% endif %}">
             <span class="mr-1"><i class="fa fa-graduation-cap"></i> {{ 'plans.substitutions.absence.teacher'|trans }}:</span>
             <span>
                 {% for absence in absentTeachers -%}

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Tests\Utils;
+namespace App\Tests\Converter;
 
 use App\Entity\Grade;
-use App\Utils\GradeUtils;
+use App\Converter\GradesCollapsedArrayConverter;
 use PHPUnit\Framework\TestCase;
 
 class GradeUtilsTest extends TestCase {
     public function testCollapseWithPreceedingZeros() {
-        $utils = new GradeUtils();
+        $converter = new GradesCollapsedArrayConverter();
 
         $grades = [
             (new Grade())->setName('05A'),
@@ -18,12 +18,12 @@ class GradeUtilsTest extends TestCase {
             (new Grade())->setName('EF')
         ];
 
-        $collapsed = $utils->collapseGradeNames($grades);
+        $collapsed = $converter->convert($grades);
         $this->assertEquals(['05AB', '06BC', 'EF'], $collapsed);
     }
 
     public function testCollapseWithoutPreceedingZeros() {
-        $utils = new GradeUtils();
+        $converter = new GradesCollapsedArrayConverter();
 
         $grades = [
             (new Grade())->setName('5A'),
@@ -33,7 +33,7 @@ class GradeUtilsTest extends TestCase {
             (new Grade())->setName('EF')
         ];
 
-        $collapsed = $utils->collapseGradeNames($grades);
+        $collapsed = $converter->convert($grades);
         $this->assertEquals(['5AB', '6BC', 'EF'], $collapsed);
     }
 }

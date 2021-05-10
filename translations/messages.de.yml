@@ -145,8 +145,12 @@ label:
     all: alle
     created_by: Erstellt von
     ordered_by: Angeordnet von
-    refresh_time: Aktualisierungsintervall
-    help_seconds: Dieser Wert wird in Sekunden angegeben.
+    refresh_time:
+        label: Aktualisierungsintervall
+        help: Gibt die Zeit an, nach der die Seite automatisch neu geladen werden soll. Dieser Wert wird in Sekunden angegeben.
+    scroll_time:
+        label: Scrollintervall
+        help: Gibt die Zeit an, nach der automatisch gescrollt werden soll. Dieser Wert wird in Sekunden angegeben.
     ip_addresses:
         label: IP-Adressen
         help: IP-Adressen können sowohl als IPv4 als auch IPv6 angegeben werden. Die CIDR-Notiation wird unterstützt. Mehere IP-Adressen mit Komma trennen.

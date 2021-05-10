@@ -23,8 +23,12 @@ class DisplayType extends AbstractType {
                 ]
             ])
             ->add('refreshTime', IntegerType::class, [
-                'label' => 'label.refresh_time',
-                'help' => 'label.help_seconds'
+                'label' => 'label.refresh_time.label',
+                'help' => 'label.refresh_time.help'
+            ])
+            ->add('scrollTime', IntegerType::class, [
+                'label' => 'label.scroll_time.label',
+                'help' => 'label.scroll_time.help'
             ])
             ->add('showDate', CheckboxType::class, [
                 'label' => 'label.show.date',

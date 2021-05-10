@@ -39,6 +39,7 @@ class Display {
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\GreaterThan(0)
      * @var int
      */
     private $scrollTime = 20;

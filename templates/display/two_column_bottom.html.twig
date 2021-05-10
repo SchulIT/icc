@@ -14,6 +14,7 @@
 {% import "_macros/replacement.html.twig" as _macro %}
 
 {% macro show(groups, display, day, is_teachersview) %}
+    {% set id = random() %}
     <div class="card h-100">
         <div class="card-header d-flex">
             {% set first = groups|first %}
@@ -25,12 +26,17 @@
                 {% endfor %}
             </span>
 
-            <span class="flex-shrink-0">
+            <span class="flex-shrink-0 mx-2">
                 <i class="fa fa-calendar-alt"></i> {{ day|format_date }}
             </span>
+
+            <div class="flex-shrink-0">
+                <div class="spinner-border spinner-border-sm" role="status"></div>
+                <span id="scroll-time-{{ id }}">{{ display.scrollTime }}</span>
+            </div>
         </div>
 
-        <div class="h-100 overflow-hidden" data-scroll="true" data-interval="{{ display.scrollTime }}">
+        <div class="h-100 overflow-hidden" data-scroll="true" data-interval="{{ display.scrollTime }}" data-spinner="#scroll-time-{{ id }}">
             <table class="table table-striped table-bordered table-sticky-header card-table">
                 <colgroup>
                     <col>

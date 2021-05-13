@@ -173,16 +173,19 @@ services:
         arguments:
             $baseUrl: '%env(APP_URL)%'
 
+    League\CommonMark\Extension\CommonMarkCoreExtension: ~
+
     League\CommonMark\EnvironmentInterface:
         class: League\CommonMark\Environment
-        factory: [ 'League\CommonMark\Environment', createCommonMarkEnvironment ]
-        calls:
-            - [ addExtension, [ "@App\\Markdown\\MarkdownExtension" ]]
-
-    League\CommonMark\CommonMarkConverter:
-        class: League\CommonMark\CommonMarkConverter
         arguments:
             $config: "%commonmark.config%"
+        calls:
+            - [ addExtension, [ "@League\\CommonMark\\Extension\\CommonMarkCoreExtension" ]]
+            - [ addExtension, [ "@App\\Markdown\\MarkdownExtension" ]]
+
+    League\CommonMark\MarkdownConverterInterface:
+        class: League\CommonMark\MarkdownConverter
+        arguments:
             $environment: "@League\\CommonMark\\EnvironmentInterface"
 
     EasySlugger\SluggerInterface:

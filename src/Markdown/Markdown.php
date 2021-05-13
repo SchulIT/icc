@@ -3,7 +3,7 @@
 namespace App\Markdown;
 
 use Emojione\Client;
-use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\MarkdownConverterInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class Markdown {
@@ -11,7 +11,7 @@ class Markdown {
     private $emojiConverter;
     private $cache;
 
-    public function __construct(CommonMarkConverter $converter, Client $client, AdapterInterface $cache) {
+    public function __construct(MarkdownConverterInterface $converter, Client $client, AdapterInterface $cache) {
         $this->converter = $converter;
         $this->emojiConverter = $client;
         $this->cache = $cache;

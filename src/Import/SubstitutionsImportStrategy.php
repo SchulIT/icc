@@ -163,8 +163,12 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
             }
         );
 
-        $replacementStudyGroups = $this->resolveStudyGroup($data->getReplacementSubject(), $data->getReplacementGrades(), $data->getReplacementTeachers(), $data->getId());
-
+        if($data->getSubject() === $data->getReplacementSubject() && $data->getGrades() == $data->getReplacementGrades()) {
+            $replacementStudyGroups = $studyGroups;
+        } else {
+            $replacementStudyGroups = $this->resolveStudyGroup($data->getReplacementSubject(), $data->getReplacementGrades(), $data->getReplacementTeachers(), $data->getId());
+        }
+        
         CollectionUtils::synchronize(
             $entity->getReplacementStudyGroups(),
             $replacementStudyGroups,

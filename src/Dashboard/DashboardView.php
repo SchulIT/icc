@@ -167,6 +167,10 @@ class DashboardView {
         return $this->exams;
     }
 
+    public function clearExams(): void {
+        $this->exams = [ ];
+    }
+
     public function addSubstitutonMention(SubstitutionViewItem $substitution): void {
         if(!in_array($substitution, $this->substitutionMentions)) {
             $this->substitutionMentions[] = $substitution;
@@ -178,6 +182,10 @@ class DashboardView {
      */
     public function getSubstitutionMentions(): array {
         return $this->substitutionMentions;
+    }
+
+    public function clearSubstitutionMentions(): void {
+        $this->substitutionMentions = [ ];
     }
 
     public function getNumberOfCollisions(): int {

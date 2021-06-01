@@ -137,7 +137,7 @@
         </div>
 
         {% for mention in view.substitutionMentions %}
-            {{ dashboard.substitution(mention, null, null, null, false, true) }}
+            {{ dashboard.substitution(mention, null, null, null, false, false) }}
         {% endfor %}
     {% endif %}
 {% endblock %}

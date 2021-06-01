@@ -1,5 +1,5 @@
-{% macro show_lesson(lesson, start, end, warning) %}
-    <div class="align-self-center text-center p-3 dashboard-lesson text-black-50">
+{% macro show_lesson(lesson, start, end, warning, large) %}
+    <div class="align-self-center text-center p-3 dashboard-lesson {% if large|default(false) %}dashboard-lesson-large{% endif%} text-black-50">
         {% if start is not empty %}
             <div class="d-block lesson-time">
                 {{ start }}
@@ -61,10 +61,12 @@
     {% set exam = item.exam %}
     <div class="card">
         <div class="d-flex">
-            {% if lesson is  null %}
+            {% if lesson is null %}
                 {% set lesson = 'label.substitution_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) %}
+                {{ _self.show_lesson(lesson, start, end, false, exam.lessonEnd > exam.lessonStart) }}
+            {% else %}
+                {{ _self.show_lesson(lesson, start, end) }}
             {% endif %}
-            {{ _self.show_lesson(lesson, start, end) }}
             {{ _self.show_warning(hasWarning) }}
 
             <div class="card-body align-self-center d-flex align-items-sm-center pl-0">

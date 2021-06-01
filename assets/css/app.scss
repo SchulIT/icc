@@ -180,6 +180,10 @@
   }
 }
 
+.dashboard-lesson-large {
+  min-width: 80px;
+}
+
 .exam-lesson {
   @include font-size(1.75rem);
   @extend .p-3;

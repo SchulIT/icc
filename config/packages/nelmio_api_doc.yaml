@@ -1,3 +1,9 @@
+services:
+    # see https://github.com/nelmio/NelmioApiDocBundle/issues/1807#issuecomment-853913181
+    nelmio_api_doc.generator_locator:
+        alias: "nelmio_api_doc.generator.default"
+        public: "true"
+
 nelmio_api_doc:
     documentation:
         info:

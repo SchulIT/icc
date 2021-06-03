@@ -384,6 +384,10 @@ class User implements UserInterface, \Serializable {
      */
     public function eraseCredentials() { }
 
+    public function getUserIdentifier(): string {
+        return $this->getUsername();
+    }
+
     /**
      * @inheritDoc
      */

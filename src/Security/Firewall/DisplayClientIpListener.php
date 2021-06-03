@@ -18,7 +18,7 @@ class DisplayClientIpListener implements EventSubscriberInterface {
     }
 
     public function onKernelRequest(RequestEvent $event) {
-        if($event->isMasterRequest() !== true) {
+        if($event->isMainRequest() !== true) {
             return;
         }
 

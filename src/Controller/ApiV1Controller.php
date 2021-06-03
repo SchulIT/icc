@@ -52,7 +52,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -84,8 +84,8 @@ class ApiV1Controller extends AbstractController {
      * Get the profile of the current user.
      *
      * @Route("/profile", methods={"GET"})
-     * @SWG\Get()
-     * @SWG\Response(
+     * @OA\Get()
+     * @OA\Response(
      *     response="200",
      *     description="Returns the user object of the user which logged in.",
      *     @Model(type=User::class)
@@ -105,13 +105,13 @@ class ApiV1Controller extends AbstractController {
      * @Route("/exams", methods={"GET"})
      * @IsGranted("ROLE_OAUTH2_EXAMS")
      *
-     * @SWG\Get()
-     * @SWG\Response(
+     * @OA\Get()
+     * @OA\Response(
      *     response="200",
      *     description="Returns a list of exams.",
      *     @Model(type=ExamList::class)
      * )
-     * @SWG\Tag(name="exams")
+     * @OA\Tag(name="exams")
      */
     public function exams(ExamRepositoryInterface $examRepository) {
         /** @var UserEntity $user */
@@ -149,13 +149,13 @@ class ApiV1Controller extends AbstractController {
      * @Route("/messages", methods={"GET"})
      * @IsGranted("ROLE_OAUTH2_MESSAGES")
      *
-     * @SWG\Get()
-     * @SWG\Response(
+     * @OA\Get()
+     * @OA\Response(
      *     response="200",
      *     description="Returns a list of messages.",
      *     @Model(type=MessageList::class)
      * )
-     * @SWG\Tag(name="messages")
+     * @OA\Tag(name="messages")
      */
     public function messages(MessageRepositoryInterface $messageRepository, DateHelper $dateHelper) {
         /** @var UserEntity $user */
@@ -178,26 +178,25 @@ class ApiV1Controller extends AbstractController {
      * @Route("/messages/{uuid}/confirm", methods={"POST"})
      * @IsGranted("ROLE_OAUTH2_MESSAGES")
      *
-     * @SWG\Post()
-     * @SWG\Response(
+     * @OA\Post()
+     * @OA\Response(
      *     response="204",
      *     description="Message was successfully confirmed."
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response="403",
      *     description="User is not allowed to confirm the message."
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response="404",
      *     description="The message was not found."
      * )
-     * @SWG\Parameter(
+     * @OA\Parameter(
      *     name="uuid",
      *     in="path",
-     *     type="string",
      *     description="UUID of the message."
      * )
-     * @SWG\Tag(name="messages")
+     * @OA\Tag(name="messages")
      */
     public function confirmMessage(MessageEntity $message, EntityManagerInterface $entityManager) {
         $this->denyAccessUnlessGranted(MessageVoter::Confirm, $message);
@@ -228,26 +227,25 @@ class ApiV1Controller extends AbstractController {
      * @Route("/messages/attachments/{uuid}", methods={"GET"})
      * @IsGranted("ROLE_OAUTH2_MESSAGES")
      *
-     * @SWG\Get()
-     * @SWG\Response(
+     * @OA\Get()
+     * @OA\Response(
      *     response="200",
      *     description="Attachment contents."
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response="403",
      *     description="User is not allowed to download the attachment."
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response="404",
      *     description="The attachment was not found."
      * )
-     * @SWG\Parameter(
+     * @OA\Parameter(
      *     name="uuid",
      *     in="path",
-     *     type="string",
      *     description="UUID of the attachment."
      * )
-     * @SWG\Tag(name="messages")
+     * @OA\Tag(name="messages")
      */
     public function downloadAttachment(MessageAttachment $messageAttachment, MessageFilesystem $messageFilesystem) {
         $this->denyAccessUnlessGranted(MessageVoter::View, $messageAttachment->getMessage());
@@ -265,13 +263,13 @@ class ApiV1Controller extends AbstractController {
      * @Route("/substitutions", methods={"GET"})
      * @IsGranted("ROLE_OAUTH2_SUBSTITUTIONS")
      *
-     * @SWG\Get()
-     * @SWG\Response(
+     * @OA\Get()
+     * @OA\Response(
      *     response="200",
      *     description="Returns a list of substitutions.",
      *     @Model(type=SubstitutionList::class)
      * )
-     * @SWG\Tag(name="substitutions")
+     * @OA\Tag(name="substitutions")
      */
     public function substitutions(SubstitutionRepositoryInterface $substitutionRepository, DateHelper $dateHelper, Request $request) {
         /** @var UserEntity $user */
@@ -308,12 +306,12 @@ class ApiV1Controller extends AbstractController {
      * @Route("/timetable/periods", methods={"GET"})
      * @IsGranted("ROLE_OAUTH2_TIMETABLE")
      *
-     * @SWG\Get()
-     * @SWG\Response(
+     * @OA\Get()
+     * @OA\Response(
      *     response="200",
      *     description="Returns a list of timetable periods."
      * )
-     * @SWG\Tag(name="timetable")
+     * @OA\Tag(name="timetable")
      */
     public function timetablePeriods(TimetablePeriodRepositoryInterface $periodRepository, Request $request) {
         $periods = array_filter(
@@ -340,26 +338,24 @@ class ApiV1Controller extends AbstractController {
      * @Route("/timetable/{uuid}", methods={"GET"})
      * @IsGranted("ROLE_OAUTH2_TIMETABLE")
      *
-     * @SWG\Get()
-     * @SWG\Parameter(
+     * @OA\Get()
+     * @OA\Parameter(
      *     in="path",
      *     name="uuid",
-     *     type="string",
      *     description="UUID of the timetable period."
      * )
-     * @SWG\Parameter(
+     * @OA\Parameter(
      *     in="query",
      *     name="student",
-     *     type="string",
      *     description="UUID of the student which the timetable should be returned for",
      *     required=false
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response="200",
      *     description="Returns a list of timetable lessons and supervisions.",
      *     @Model(type=Timetable::class)
      * )
-     * @SWG\Tag(name="timetable")
+     * @OA\Tag(name="timetable")
      */
     public function timetable(TimetablePeriodEntity $period, TimetableLessonRepositoryInterface $lessonRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, Request $request) {
         /** @var UserEntity $user */
@@ -410,20 +406,19 @@ class ApiV1Controller extends AbstractController {
      * @Route("/appointments", methods={"GET"})
      * @IsGranted("ROLE_OAUTH2_APPOINTMENTS")
      *
-     * @SWG\Get()
-     * @SWG\Parameter(
+     * @OA\Get()
+     * @OA\Parameter(
      *     in="query",
      *     name="student",
-     *     type="string",
      *     description="UUID of the student which the appointments should be returned for",
      *     required=false
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response="200",
      *     description="Returns a list of appointments.",
      *     @Model(type=AppointmentList::class)
      * )
-     * @SWG\Tag(name="appointments")
+     * @OA\Tag(name="appointments")
      */
     public function appointments(AppointmentRepositoryInterface $appointmentRepository, Request $request) {
         /** @var UserEntity $user */

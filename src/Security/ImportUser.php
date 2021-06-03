@@ -34,6 +34,10 @@ class ImportUser implements UserInterface {
         return 'import-user';
     }
 
+    public function getUserIdentifier(): string {
+        return $this->getUsername();
+    }
+
     /**
      * @inheritDoc
      */

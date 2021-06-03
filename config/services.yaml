@@ -168,11 +168,6 @@ services:
             $wikiFilesystem: '@oneup_flysystem.wiki_filesystem'
 
     # MARKDOWN
-    Emojione\Client:
-        factory: ['@App\Markdown\EmojiClientFactory', createEmojiClient]
-        arguments:
-            $baseUrl: '%env(APP_URL)%'
-
     League\CommonMark\Extension\CommonMarkCoreExtension: ~
 
     League\CommonMark\EnvironmentInterface:

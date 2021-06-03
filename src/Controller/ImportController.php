@@ -51,7 +51,7 @@ use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -88,18 +88,18 @@ class ImportController extends AbstractController {
      * Imports appointments. Note: you first must create appointment categories from the web interface.
      *
      * @Route("/appointments", methods={"POST"}, name="import_appointments")
-     * @SWG\Post(operationId="import_appointments")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_appointments")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=AppointmentsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -115,18 +115,18 @@ class ImportController extends AbstractController {
      * Imports appointment categories.
      *
      * @Route("/appointments/categories", methods={"POST"})
-     * @SWG\Post(operationId="import_appointment_categories")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_appointment_categories")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=AppointmentCategoriesData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -142,18 +142,18 @@ class ImportController extends AbstractController {
      * Imports exams.
      *
      * @Route("/exams", methods={"POST"})
-     * @SWG\Post(operationId="import_exams")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_exams")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=ExamsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -169,18 +169,18 @@ class ImportController extends AbstractController {
      * Imports grades.
      *
      * @Route("/grades", methods={"POST"})
-     * @SWG\Post(operationId="import_grades")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_grades")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=GradesData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -196,18 +196,18 @@ class ImportController extends AbstractController {
      * Imports grade teachers.
      *
      * @Route("/grades/teachers", methods={"POST"})
-     * @SWG\Post(operationId="import_grade_teachers")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_grade_teachers")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=GradeTeachersData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -223,18 +223,18 @@ class ImportController extends AbstractController {
      * Imports students.
      *
      * @Route("/students", methods={"POST"})
-     * @SWG\Post(operationId="import_students")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_students")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=StudentsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -250,18 +250,18 @@ class ImportController extends AbstractController {
      * Imports study groups.
      *
      * @Route("/studygroups", methods={"POST"})
-     * @SWG\Post(operationId="import_studygroups")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_studygroups")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=StudyGroupsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -277,18 +277,18 @@ class ImportController extends AbstractController {
      * Imports study group memberships.
      *
      * @Route("/studygroups/memberships", methods={"POST"})
-     * @SWG\Post(operationId="import_studygroups_memberships")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_studygroups_memberships")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=StudyGroupMembershipsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -304,18 +304,18 @@ class ImportController extends AbstractController {
      * Imports subjects.
      *
      * @Route("/subjects", methods={"POST"})
-     * @SWG\Post(operationId="import_subjects")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_subjects")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=SubjectsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -331,18 +331,18 @@ class ImportController extends AbstractController {
      * Imports study groups.
      *
      * @Route("/substitutions", methods={"POST"})
-     * @SWG\Post(operationId="import_substitutions")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_substitutions")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=SubstitutionsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -358,18 +358,18 @@ class ImportController extends AbstractController {
      * Imports teachers.
      *
      * @Route("/teachers", methods={"POST"})
-     * @SWG\Post(operationId="import_teachers")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_teachers")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=TeachersData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -385,18 +385,18 @@ class ImportController extends AbstractController {
      * Imports timetable lessons. Note: you must import periods first.
      *
      * @Route("/timetable/lessons", methods={"POST"})
-     * @SWG\Post(operationId="import_timetable_lessons")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_timetable_lessons")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=TimetableLessonsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -412,18 +412,18 @@ class ImportController extends AbstractController {
      * Imports timetable periods.
      *
      * @Route("/timetable/periods", methods={"POST"})
-     * @SWG\Post(operationId="import_timetable_periods")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_timetable_periods")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=TimetablePeriodsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -439,18 +439,18 @@ class ImportController extends AbstractController {
      * Imports timetable supervisions. Note: you must import periods first.
      *
      * @Route("/timetable/supervisions", methods={"POST"})
-     * @SWG\Post(operationId="import_timetable_supervisions")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_timetable_supervisions")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=TimetableSupervisionsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -466,18 +466,18 @@ class ImportController extends AbstractController {
      * Imports tuitions.
      *
      * @Route("/tuitions", methods={"POST"})
-     * @SWG\Post(operationId="import_tuitions")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_tuitions")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=TuitionsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -493,18 +493,18 @@ class ImportController extends AbstractController {
      * Imports infotexts.
      *
      * @Route("/infotexts", methods={"POST"})
-     * @SWG\Post(operationId="import_infotexts")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_infotexts")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=InfotextsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -520,18 +520,18 @@ class ImportController extends AbstractController {
      * Imports absences.
      *
      * @Route("/absences", methods={"POST"})
-     * @SWG\Post(operationId="import_absences")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_absences")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=AbsencesData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -547,18 +547,18 @@ class ImportController extends AbstractController {
      * Imports privacy categories.
      *
      * @Route("/privacy/categories", methods={"POST"})
-     * @SWG\Post(operationId="import_privacy_categories")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_privacy_categories")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=PrivacyCategoriesData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -574,18 +574,18 @@ class ImportController extends AbstractController {
      * Imports rooms.
      *
      * @Route("/rooms", methods={"POST"})
-     * @SWG\Post(operationId="import_rooms")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_rooms")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=RoomsData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)
@@ -601,18 +601,18 @@ class ImportController extends AbstractController {
      * Imports rooms.
      *
      * @Route("/free_lessons", methods={"POST"})
-     * @SWG\Post(operationId="import_lessons")
-     * @SWG\Parameter(
+     * @OA\Post(operationId="import_lessons")
+     * @OA\Parameter(
      *     name="payload",
      *     in="body",
      *     @Model(type=FreeLessonTimespansData::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Import was successful",
      *     @Model(type=ImportResponse::class)
      * )
-     * @SWG\Response(
+     * @OA\Response(
      *     response=400,
      *     description="Import was not successful",
      *     @Model(type=ErrorResponse::class)

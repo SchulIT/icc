@@ -242,6 +242,60 @@ class Message {
      */
     private $priority;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $isPollEnabled = false;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $allowPollRevote = true;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\GreaterThanOrEqual(1)
+     * @var int
+     */
+    private $pollNumChoices = 1;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
+     * @ORM\JoinTable(name="message_poll_usertypes",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @SubsetOf(propertyPath="visibilities")
+     * @var Collection<UserTypeEntity>
+     */
+    private $pollUserTypes;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="StudyGroup")
+     * @ORM\JoinTable(name="message_poll_studygroups",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @ORM\OrderBy({"name" = "ASC"})
+     * @SubsetOf(propertyPath="studyGroups")
+     * @var Collection<StudyGroup>
+     */
+    private $pollStudyGroups;
+
+    /**
+     * @ORM\OneToMany(targetEntity="MessagePollChoice", mappedBy="message", cascade={"persist"}, orphanRemoval=true)
+     * @var Collection<MessagePollChoice>
+     */
+    private $pollChoices;
+
+    /**
+     * @ORM\OneToMany(targetEntity="MessagePollVote", mappedBy="message")
+     * @var Collection<MessagePollVote>
+     */
+    private $pollVotes;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
 
@@ -256,6 +310,10 @@ class Message {
         $this->uploadEnabledUserTypes = new ArrayCollection();
         $this->downloadEnabledStudyGroups = new ArrayCollection();
         $this->downloadEnabledUserTypes = new ArrayCollection();
+        $this->pollStudyGroups = new ArrayCollection();
+        $this->pollUserTypes = new ArrayCollection();
+        $this->pollChoices = new ArrayCollection();
+        $this->pollVotes = new ArrayCollection();
 
         $this->scope = MessageScope::Messages();
         $this->priority = MessagePriority::Normal();
@@ -583,6 +641,92 @@ class Message {
     public function setPriority(MessagePriority $priority): Message {
         $this->priority = $priority;
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPollEnabled(): bool {
+        return $this->isPollEnabled;
+    }
+
+    /**
+     * @param bool $isPollEnabled
+     * @return Message
+     */
+    public function setIsPollEnabled(bool $isPollEnabled): Message {
+        $this->isPollEnabled = $isPollEnabled;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAllowPollRevote(): bool {
+        return $this->allowPollRevote;
+    }
+
+    /**
+     * @param bool $allowPollRevote
+     * @return Message
+     */
+    public function setAllowPollRevote(bool $allowPollRevote): Message {
+        $this->allowPollRevote = $allowPollRevote;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPollNumChoices(): int {
+        return $this->pollNumChoices;
+    }
+
+    /**
+     * @param int $pollNumChoices
+     * @return Message
+     */
+    public function setPollNumChoices(int $pollNumChoices): Message {
+        $this->pollNumChoices = $pollNumChoices;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getPollUserTypes(): Collection {
+        return $this->pollUserTypes;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getPollStudyGroups(): Collection {
+        return $this->pollStudyGroups;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getPollChoices(): Collection {
+        return $this->pollChoices;
+    }
+
+    public function addPollChoice(MessagePollChoice $choice): void {
+        $choice->setMessage($this);
+        $this->pollChoices->add($choice);
+    }
+
+    public function removePollChoice(MessagePollChoice $choice): void {
+        $this->pollChoices->removeElement($choice);
+    }
+
+    public function addPollVote(MessagePollVote $vote): void {
+        $this->pollVotes->add($vote);
+    }
+
+    public function getPollVotes(): Collection {
+        return $this->pollVotes;
     }
 
     /**

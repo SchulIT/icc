@@ -13,12 +13,14 @@ use App\Entity\User;
 use App\Entity\UserType;
 use App\Filesystem\FileNotFoundException;
 use App\Filesystem\MessageFilesystem;
+use App\Form\MessagePollVoteType;
 use App\Form\MessageUploadType;
 use App\Grouping\Grouper;
 use App\Grouping\StudentGradeStrategy;
 use App\Grouping\StudentStudyGroupStrategy;
 use App\Grouping\UserUserTypeStrategy;
 use App\Message\MessageConfirmationViewHelper;
+use App\Message\PollVoteHelper;
 use App\Repository\MessageFileUploadRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
@@ -107,7 +109,9 @@ class MessageController extends AbstractController {
     /**
      * @Route("/{uuid}", name="show_message")
      */
-    public function show(Message $message, MessageRepositoryInterface $messageRepository, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem, Request $request) {
+    public function show(Message $message, MessageRepositoryInterface $messageRepository,
+                         MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem,
+                         PollVoteHelper $voteHelper, Request $request, DateHelper $dateHelper) {
         // Requery message for better performance
         $message = $messageRepository->findOneById($message->getId());
 
@@ -153,12 +157,32 @@ class MessageController extends AbstractController {
             return $upload->isUploaded() === false;
         });
 
+        $vote = $voteHelper->getPollVote($message, $this->getUser());
+        $rankedChoices = $voteHelper->getRankedChoices($vote);
+        $allowVote = $dateHelper->getToday() < $message->getExpireDate();
+        $voteForm = $this->createForm(MessagePollVoteType::class, $rankedChoices, [
+            'choices' => $message->getPollChoices(),
+            'num_choices' => $message->getPollNumChoices(),
+            'allow_vote' => $allowVote
+        ]);
+        $voteForm->handleRequest($request);
+
+        if($voteForm->isSubmitted() && $voteForm->isValid() && $allowVote) {
+            $voteHelper->persistVote($message, $user, $voteForm->getData());
+            return $this->redirectToRoute('show_message', [
+                'uuid' => $message->getUuid()
+            ]);
+        }
+
         return $this->render('messages/show.html.twig', [
             'message' => $message,
             'downloads' => $messageFilesystem->getUserDownloads($message, $user),
             'uploads' => $uploads,
             'missing' => $missing,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'voteForm' => $voteForm !== null ? $voteForm->createView() : null,
+            'vote' => $vote,
+            'allow_vote' => $allowVote
         ]);
     }
 

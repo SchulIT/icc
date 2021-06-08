@@ -125,6 +125,71 @@
                     </div>
                 </div>
             {% endif %}
+
+            {% if message.pollEnabled and is_granted('poll', message) %}
+                {% set showInfo = false %}
+                {% for choice in message.pollChoices %}
+                    {% if choice.description is not empty %}
+                        {% set showInfo = true %}
+                    {% endif %}
+                {% endfor %}
+
+                <div class="card">
+                    {{ form_start(voteForm) }}
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="far fa-check-square"></i>
+                            {{ 'messages.poll.my'|trans }}
+                        </h5>
+
+                        {% if not allow_vote %}
+                            <div class="alert alert-info">
+                                <i class="fa fa-info-circle"></i>  {{ 'messages.poll.expired'|trans }}
+                            </div>
+                        {% endif %}
+
+                        {% if vote is not null and not vote.completed %}
+                            <div class="alert alert-danger">
+                                {{ 'messages.poll.incomplete'|trans }}
+                            </div>
+                        {% endif %}
+
+                        {% if vote is not null and vote.createdAt is not null %}
+                            <div class="alert alert-success">
+                                <i class="fa fa-check-circle"></i> {{ 'messages.poll.submitted_at.time'|trans({'%datetime%': vote.createdAt|format_datetime }) }}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-danger">
+                                {{ 'messages.poll.submitted_at.never'|trans }}
+                            </div>
+                        {% endif %}
+
+                        {{ form_widget(voteForm) }}
+
+                        <button type="submit" class="btn btn-primary btn-sm {% if not allow_vote %}disabled{% endif %}">
+                            <i class="fas fa-save"></i> {{ 'messages.poll.submit'|trans }}
+                        </button>
+                    </div>
+
+                    {{ form_end(voteForm) }}
+
+                    {% if showInfo %}
+                        <div class="list-group list-group-flush">
+                            {% for choice in message.pollChoices %}
+                                <div class="list-group-item flush-last-p">
+                                    <h5 class="mb-1">{{ choice.label }}</h5>
+
+                                    {% if choice.description is not null %}
+                                        {{ choice.description|markdown }}
+                                    {% else %}
+                                        <p>{{ 'messages.poll.choice_description'|trans }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="col-md-3 sticky-sidebar">

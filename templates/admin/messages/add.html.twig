@@ -107,6 +107,36 @@
         </div>
     </div>
 
+    <div class="card mb-3">
+        <div class="card-header {% if not form.group_poll.vars.valid %}bg-danger text-white{% endif%} pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#container-poll">
+            <span class="mr-auto align-self-center">{{ 'label.messages_poll.label'|trans }} <span class="text-secondary">{{ 'label.messages_poll.badge'|trans }}</span> </span>
+
+            <i class="fa fa-chevron-{% if not form.group_poll.vars.valid %}up{% else %}down{% endif%} indicator align-self-center"></i>
+        </div>
+
+        <div class="card-body {% if form.group_poll.vars.valid %}collapse{% endif%}" id="container-poll">
+            {{ form_row(form.group_poll.isPollEnabled) }}
+            {{ form_row(form.group_poll.allowPollRevote) }}
+            {{ form_row(form.group_poll.pollUserTypes) }}
+            {{ form_row(form.group_poll.pollStudyGroups) }}
+            {{ form_row(form.group_poll.pollNumChoices) }}
+
+            <div class="poll-choices" data-collection="poll-choices" data-prototype="{{ form_row(form.group_poll.pollChoices.vars.prototype)|e('html_attr') }}">
+                {% for choice in form.group_poll.pollChoices %}
+                    {{ form_row(choice) }}
+                {% endfor %}
+            </div>
+
+            {{ form_errors(form.group_poll.pollChoices) }}
+
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="poll-choices">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
+
+            <!-- {{ form_end(form.group_poll) }} -->
+        </div>
+    </div>
+
     <div class="buttons">
         <button type="submit" class="btn btn-primary btn-sm">
             <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}

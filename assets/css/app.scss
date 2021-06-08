@@ -316,3 +316,9 @@
 .border-right-3 {
   border-right-width: 3px;
 }
+
+.flush-last-p {
+  p:last-child {
+    margin-bottom: 0;
+  }
+}

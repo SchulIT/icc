@@ -28,6 +28,7 @@ class MessageVoter extends Voter {
     const Download = 'download';
     const Upload = 'upload';
     const Priority = 'message-priority';
+    const Poll = 'poll';
 
     private $accessDecisionManager;
     private $confirmationHelper;
@@ -48,7 +49,8 @@ class MessageVoter extends Voter {
             static::Confirm,
             static::Dismiss,
             static::Download,
-            static::Upload
+            static::Upload,
+            static::Poll
         ];
 
         return in_array($attribute, [ static::New, static::Priority]) || (in_array($attribute, $attributes) && $subject instanceof Message);
@@ -85,6 +87,9 @@ class MessageVoter extends Voter {
 
             case static::Priority:
                 return $this->canSetPriority($token);
+
+            case static::Poll:
+                return $this->canVote($subject, $token);
         }
 
         throw new \LogicException('This code should not be reached.');
@@ -162,6 +167,20 @@ class MessageVoter extends Voter {
                 $token,
                 $this->getUserTypes($message->getConfirmationRequiredUserTypes()),
                 $message->getConfirmationRequiredStudyGroups()->toArray(),
+                true
+            );
+    }
+
+    private function canVote(Message $message, TokenInterface $token) {
+        if($this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
+            return false;
+        }
+
+        return $message->isPollEnabled()
+            && $this->isMemberOfTypeAndStudyGroup(
+                $token,
+                $this->getUserTypes($message->getPollUserTypes()),
+                $message->getPollStudyGroups()->toArray(),
                 true
             );
     }

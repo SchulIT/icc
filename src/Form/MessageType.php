@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\MessageScope;
 use App\Security\Voter\MessageScopeVoter;
 use App\Utils\ArrayUtils;
+use Doctrine\ORM\EntityRepository;
 use FervoEnumBundle\Generated\Form\MessagePriorityType;
 use FervoEnumBundle\Generated\Form\MessageScopeType;
 use SchulIT\CommonBundle\Form\FieldsetType;
@@ -13,6 +14,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -217,6 +219,62 @@ class MessageType extends AbstractType {
                                 'label' => 'label.file'
                             ],
                             'entry_type' => MessageFileType::class,
+                            'allow_add' => true,
+                            'allow_delete' => true,
+                            'by_reference' => false
+                        ]);
+                }
+            ])
+            ->add('group_poll', FieldsetType::class, [
+                'legend' => 'label.messages_poll.label',
+                'fields' => function(FormBuilderInterface $builder) {
+                    $builder
+                        ->add('isPollEnabled', CheckboxType::class, [
+                            'required' => false,
+                            'label' => 'label.messages_poll.enabled',
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
+                        ])
+                        ->add('allowPollRevote', CheckboxType::class, [
+                            'required' => false,
+                            'label' => 'label.messages_poll.allow_revote.label',
+                            'help' => 'label.messages_poll.allow_revote.help',
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
+                        ])
+                        ->add('pollUserTypes', UserTypeEntityType::class, [
+                            'label' => 'label.usertypes',
+                            'multiple' => true,
+                            'expanded' => true,
+                            'required' => false,
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ],
+                            'query_builder' => function(EntityRepository $repository) {
+                                return $repository->createQueryBuilder('v')
+                                    ->where("v.userType IN ('student', 'teacher')")
+                                    ->orderBy('v.userType', 'asc');
+                            }
+                        ])
+                        ->add('pollStudyGroups', StudyGroupType::class, [
+                            'label' => 'label.study_groups_simple',
+                            'multiple' => true,
+                            'attr' => [
+                                'size' => 10
+                            ],
+                            'required' => false
+                        ])
+                        ->add('pollNumChoices', IntegerType::class, [
+                            'label' => 'label.messages_poll.num_choices.label',
+                            'help' => 'label.messages_poll.num_choices.help'
+                        ])
+                        ->add('pollChoices', CollectionType::class, [
+                            'entry_options' => [
+                                'label' => 'label.messages_poll.choices'
+                            ],
+                            'entry_type' => MessagePollChoiceType::class,
                             'allow_add' => true,
                             'allow_delete' => true,
                             'by_reference' => false

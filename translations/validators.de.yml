@@ -9,3 +9,4 @@
 "This value must not be in the past.": "Dieses Datum darf nicht in der Vergangenheit liegen."
 "This collection must not be empty.": "Diese Auswahl darf nicht leer sein."
 "This room cannot be created as a resource with the same name ({{ name }}) already exists.": "Dieser Raum kann nicht erstellt werden, da es bereits eine Resource mit demselben Namen ({{ name }}) gibt."
+"At least one choice is selected more than once.": "Mindestens ein Element wurde doppelt ausgewählt."

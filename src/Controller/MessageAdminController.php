@@ -15,6 +15,7 @@ use App\Grouping\MessageExpirationStrategy;
 use App\Grouping\StudentGradeStrategy;
 use App\Grouping\StudentStudyGroupStrategy;
 use App\Grouping\UserUserTypeStrategy;
+use App\Message\MessageConfirmationViewHelper;
 use App\Message\MessageDownloadView;
 use App\Message\MessageDownloadViewHelper;
 use App\Message\MessageFileUploadViewHelper;
@@ -197,6 +198,34 @@ class MessageAdminController extends AbstractController {
         return $this->render('admin/messages/remove.html.twig', [
             'form' => $form->createView(),
             'message' => $message
+        ]);
+    }
+
+    /**
+     * @Route("/{uuid}/confirmations", name="message_confirmations")
+     */
+    public function confirmations(Message $message, MessageConfirmationViewHelper $confirmationViewHelper, Grouper $grouper) {
+        $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
+        $view = $confirmationViewHelper->createView($message);
+
+        $teachers = $view->getTeachers();
+        $this->sorter->sort($teachers, TeacherStrategy::class);
+
+        $students = $view->getStudents();
+        $gradeGroups = $grouper->group($students, StudentGradeStrategy::class);
+        $this->sorter->sort($gradeGroups, StudentGradeGroupStrategy::class);
+        $this->sorter->sortGroupItems($gradeGroups, StudentStrategy::class);
+
+        $userGroups = $grouper->group($view->getUsers(), UserUserTypeStrategy::class);
+        $this->sorter->sort($userGroups, UserUserTypeGroupStrategy::class);
+        $this->sorter->sortGroupItems($userGroups, UserLastnameFirstnameStrategy::class);
+
+        return $this->render('messages/confirmations.html.twig', [
+            'message' => $message,
+            'teachers' => $teachers,
+            'userGroups' => $userGroups,
+            'grades' => $gradeGroups,
+            'view' => $view
         ]);
     }
 

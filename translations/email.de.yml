@@ -21,7 +21,7 @@ message:
     link: Mitteilung anzeigen
   update:
     title: "Mitteilung aktualisiert: %title%"
-    content: 'es wurde eine neue Mitteilung <strong>%title%</strong> wurde aktualisiert. Eine Kopie der Nachricht ist unten angehangen.'
+    content: 'es wurde eine neue Mitteilung <strong>%title%</strong> aktualisiert. Eine Kopie der Nachricht ist unten angehangen.'
     link: Mitteilung anzeigen
   attachments: Diese Mitteilung hat Anhänge. Diese werden nur auf dem ICC angezeigt.
   must_confirm: Diese Mitteilung muss bestätigt werden.

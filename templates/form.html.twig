@@ -154,6 +154,16 @@
     </div>
 {%- endblock -%}
 
+{% block message_poll_choice_widget %}
+    <div class="input-group mb-2">
+        {{ form_widget(form) }}
+
+        <button type="button" class="btn btn-danger btn-sm btn-delete float-right" data-selector=".input-group">
+            <i class="fa fa-trash"></i>
+        </button>
+    </div>
+{% endblock %}
+
 {% block redirect_uri_widget  %}
     <div class="input-group mb-2">
         {{ form_widget(form) }}
@@ -165,3 +175,4 @@
         </div>
     </div>
 {% endblock %}
+

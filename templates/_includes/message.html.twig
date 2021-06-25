@@ -3,6 +3,7 @@
 {% set mustConfirm = message.mustConfirm and is_granted('confirm', message) and not is_confirmed(message) %}
 {% set mustUpload = message.uploadsEnabled and is_granted('upload', message) and missingUploads|length > 0 %}
 {% set userDownloads = message_downloads(message) %}
+{% set hasPoll = message.pollEnabled and is_granted('poll', message) %}
 
 <div class="card {% if mustConfirm or mustUpload %}border-warning{% endif %} {% if message.priority == 'emergency' %}message-danger{% elseif message.priority == 'important' %}message-warning{% endif %}">
     <div class="card-body">
@@ -49,6 +50,14 @@
                     <div class="btn-group" role="group">
                         <a href="{{ path('show_message', { uuid: message.uuid }) }}" class="btn {% if missingUploads|length > 0 %}btn-warning{% else %}btn-success{% endif %} btn-sm" title="{{ 'messages.uploads.info'|trans }}">
                             <i class="fa fa-upload"></i>
+                        </a>
+                    </div>
+                {% endif %}
+
+                {% if hasPoll %}
+                    <div class="btn-group" role="group">
+                        <a href="{{ path('show_message', { uuid: message.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.poll.info'|trans }}">
+                            <i class="fas fa-poll"></i>
                         </a>
                     </div>
                 {% endif %}

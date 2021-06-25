@@ -89,6 +89,26 @@ label:
         file_extension: Erlaubte Dateiendungen, separiert mit Komma
         upload_description: Zusätzliche Hinweise
         files: Dateien
+    messages_poll:
+        label: Wahlmöglichkeit
+        badge: (Benutzer haben die Möglichkeit, an einer Wahl teilzunehmen)
+        enabled: Benutzer haben die Möglichkeit, an einer Wahl teilzunehmen
+        num_choices:
+            label: Anzahl der Wahlmöglichkeiten
+            help: Gibt an, wie viele Wahlmöglichkeiten der Benutzer hat
+        choices: Auswahlmöglichkeit
+        allow_revote:
+            label: Wahl nachträglich änderbar
+            help: Gibt an, ob der Benutzer nach dem Abschicken der Stimme die Möglichkeit besitzt, die Stimme zu ändern.
+        choice:
+            label: Bezeichnung
+            minimum:
+                label: Mindestanzahl (Teilnehmer)
+                help: Dieser Wert wird bei der späteren Zuteilung verwendet, um eine Mindestzahl zu garantieren. Der Wert 0 bedeutet, dass es keine Mindestanzahl gibt.
+            maximum:
+                label: Maximalanzahl (Teilnehmer)
+                help: Dieser Wert wird bei der späteren Zuteilung verwendet, um eine Maximalanzahl zu garantieren. Der Wert 0 bedeutet, dass es keine Maximalanzahl gibt.
+
     organizers: Organisatoren
     external_organizers: Externe Organisatoren
     location: Ort
@@ -503,6 +523,27 @@ messages:
             confirm: 'Soll die Datei "%filename%" wirklich gelöscht werden?'
             success: Datei erfolgreich gelöscht
 
+    poll:
+        info: Diese Mitteilung enthält eine Wahlmöglichkeit.
+        label: Wahlmöglichkeit
+        my: Meine Wahl
+        choice: '%rank%. Wahl'
+        choice_description: Für diese Auswahlmöglichkeit gibt es keine Beschreibung.
+        submit: speichern
+        incomplete: Die Wahl ist leider unvollständig. Bitte erneut wählen.
+        expired: Die Wahl ist bereits abgelaufen.
+        submitted_at:
+            never: Es wurde noch keine Wahl abgegeben.
+            time: 'Die Auswahl wurde um %datetime% gespeichert.'
+        result:
+            label: Ergebnis
+            export:
+                label: Ergebnis exportieren
+            progress:
+                students: Lernende
+                teachers: Lehrkräfte
+
+
 documents:
     label: Dokumente
     empty: Aktuell wurden keine Dokumente hinterlegt.
@@ -804,6 +845,9 @@ admin:
             update:
                 button: speichern & Aktualisierung mitteilen
                 help: Speichert die Mitteilung ab und sendet Benachrichtigungen an alle Empfänger
+            poll:
+                info: Das Hinzufügen oder Löschen von Auswahlmöglichkeiten setzt alle bisher abgegebenen Wahlen zurück.
+                success: Alle bisherigen Wahlen wurden gelöscht.
         remove:
             label: Mitteilung löschen
             confirm: 'Soll die Mitteilung "%name%" wirklich gelöscht werden?'
@@ -811,6 +855,12 @@ admin:
         confirmations:
             label: Bestätigungen anzeigen
             num: 'Die Mitteilung wurde %num% mal bestätigt.'
+        poll:
+            remove:
+                label: Wahlergebnisse löschen
+                confirm: Sollen wirklich alle Wahlergebnisse gelöscht werden?
+            label: Wahlergebnisse anzeigen
+            num: '{0} %count% Personen haben gewählt.|{1} %count% Person hat gewählt.|]1,Inf[ Personen haben gewählt.'
 
     appointments:
         label: Termine
@@ -1240,3 +1290,6 @@ sick_notes:
 
 audit:
     label: Audit-Log
+
+choice:
+    choose: bitte auswählen

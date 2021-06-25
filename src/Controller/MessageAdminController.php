@@ -6,6 +6,7 @@ use App\Entity\Message;
 use App\Entity\MessageFile;
 use App\Entity\User;
 use App\Event\MessageUpdatedEvent;
+use App\Export\PollResultCsvExporter;
 use App\Filesystem\FileNotFoundException;
 use App\Filesystem\MessageFilesystem;
 use App\Form\MessageType;
@@ -19,6 +20,7 @@ use App\Message\MessageConfirmationViewHelper;
 use App\Message\MessageDownloadView;
 use App\Message\MessageDownloadViewHelper;
 use App\Message\MessageFileUploadViewHelper;
+use App\Message\PollResultViewHelper;
 use App\Repository\MessageFileUploadRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
@@ -459,4 +461,38 @@ class MessageAdminController extends AbstractController {
             throw new NotFoundHttpException();
         }
     }
+
+    /**
+     * @Route("/{uuid}/poll", name="poll_result")
+     */
+    public function pollResult(Message $message, PollResultViewHelper $resultViewHelper) {
+        $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
+        $view = $resultViewHelper->createView($message);
+
+        $teachers = $view->getTeachers();
+        $this->sorter->sort($teachers, TeacherStrategy::class);
+
+        $students = $view->getStudents();
+        $gradeGroups = $this->grouper->group($students, StudentGradeStrategy::class);
+        $this->sorter->sort($gradeGroups, StudentGradeGroupStrategy::class);
+        $this->sorter->sortGroupItems($gradeGroups, StudentStrategy::class);
+
+        return $this->render('admin/messages/poll_result.html.twig', [
+            'view' => $view,
+            'grades' => $gradeGroups,
+            'teachers' => $teachers,
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * @Route("/{uuid}/poll/export", name="export_poll_result")
+     */
+    public function exportPollResult(Message $message, PollResultCsvExporter $exporter) {
+        $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
+
+        return $exporter->getCsvResponse($message);
+    }
+
+
 }

@@ -84,18 +84,6 @@
                             {% include "_filter/grade.html.twig" with { params: { date: selectedDate ? selectedDate.format('Y-m-d') : null } } %}
                         {% endif %}
 
-                        <div class="form-group">
-                            <div class="btn-group" role="group" aria-label="{{ 'plans.substitutions.view.label'|trans }}" title="{{ 'plans.substitutions.view.label'|trans }}">
-                                <a href="{{ path('substitutions', currentFilter|merge({'view': 'table'})) }}" class="btn btn-outline-secondary {% if view == 'table' %}active{% endif %}">
-                                    <i class="fa fa-table"></i> {{ 'plans.substitutions.view.table'|trans }}
-                                </a>
-
-                                <a href="{{ path('substitutions', currentFilter|merge({'view': 'card'})) }}" class="btn btn-outline-secondary {% if view == 'card' %}active{% endif %}">
-                                    <i class="fa fa-list"></i> {{ 'plans.substitutions.view.card'|trans }}
-                                </a>
-                            </div>
-                        </div>
-
                         {% if canGroup %}
                         <div class="form-group">
                             <div class="btn-group" role="group" aria-label="{{ 'plans.substitutions.group_by.label'|trans }}" title="{{ 'plans.substitutions.group_by.label'|trans }}">

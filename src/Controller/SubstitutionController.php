@@ -47,7 +47,6 @@ class SubstitutionController extends AbstractControllerWithMessages {
         $selectedDate = $this->getCurrentDate($days, $date);
 
         $groupBy = $request->query->get('group_by', null);
-        $view = $request->query->get('view', null);
 
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user, $gradeFilterView->getCurrentGrade() === null);
@@ -96,8 +95,6 @@ class SubstitutionController extends AbstractControllerWithMessages {
         $sorter->sort($groups, $sortingClass);
         $sorter->sortGroupItems($groups, SubstitutionStrategy::class);
 
-        $viewType = $viewParameter->getViewType($view, $user, static::SectionKey);
-
         $absentTeachers = [ ];
         $absentStudyGroups = [ ];
 
@@ -109,13 +106,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
             $sorter->sort($absentStudyGroups, AbsentStudyGroupStrategy::class);
         }
 
-        $template = 'substitutions/list.html.twig';
-
-        if($view === 'table') {
-            $template = 'substitutions/table.html.twig';
-        }
-
-        return $this->renderWithMessages($template, [
+        return $this->renderWithMessages('substitutions/table.html.twig', [
             'infotexts' => $infotextRepository->findAllByDate($selectedDate),
             'groups' => $groups,
             'days' => $days,
@@ -123,7 +114,6 @@ class SubstitutionController extends AbstractControllerWithMessages {
             'studentFilter' => $studentFilterView,
             'gradeFilter' => $gradeFilterView,
             'teacherFilter' => $teacherFilterView,
-            'view' => $viewType,
             'groupBy' => $groupByParameter->getGroupingStrategyKey($groupingClass),
             'canGroup' => $groupByParameter->canGroup($user),
             'absentTeachers' => $absentTeachers,

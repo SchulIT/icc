@@ -169,6 +169,28 @@
   background: mix(#fff, $warning, 90);
 }
 
+[data-theme=dark] {
+  .message-danger {
+    .card-title,
+    .card-title a {
+      color: black !important;
+    }
+
+    @extend .message-danger;
+    color: black;
+  }
+
+  .message-warning {
+    .card-title,
+    .card-title a {
+      color: black !important;
+    }
+
+    @extend .message-warning;
+    color: black;
+  }
+}
+
 .dashboard-lesson {
   @include font-size(1.75rem);
   @extend .p-3;

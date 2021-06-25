@@ -45,15 +45,14 @@
                             <div class="card-header">{{ ('date.months.' ~ group.month)|trans }} {{ group.year }} <span class="badge badge-pill badge-primary">{{ group.appointments|length }}</span> </div>
 
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover card-table">
+                                <table class="table table-striped table-hover card-table">
                                     <colgroup>
                                         <col>
-                                        <col class="column-lg">
-                                        <col class="column-lg">
-                                        <col class="column-lg">
-                                        <col class="column-lg">
                                         <col class="column-md">
                                         <col class="column-md">
+                                        <col class="column-lg">
+                                        <col class="column-md">
+                                        <col class="column-sm">
                                     </colgroup>
 
                                     <thead>
@@ -62,7 +61,6 @@
                                         <th>{{ 'label.start'|trans }}</th>
                                         <th>{{ 'label.end'|trans }}</th>
                                         <th>{{ 'label.study_groups'|trans({'%count%': 0}) }}</th>
-                                        <th>{{ 'label.organizers'|trans }}</th>
                                         <th>{{ 'label.confirmed'|trans }}</th>
                                         <th> </th>
                                     </tr>
@@ -99,9 +97,6 @@
                                                 {% include '_includes/study_groups.html.twig' with { studyGroups: appointment.studyGroups, id: appointment.uuid } only %}
                                             </td>
                                             <td class="align-middle">
-                                                {% for organizer in appointment.organizers %}{{ organizer|teacher }}{% if not loop.last or appointment.externalOrganizers is not null %}, {% endif %}{% endfor %}{{ appointment.externalOrganizers }}
-                                            </td>
-                                            <td class="align-middle">
                                                 {% if appointment.confirmed %}
                                                     <i class="fa fa-check"></i>
                                                 {% else %}
@@ -109,21 +104,29 @@
                                                 {% endif %}
                                             </td>
                                             <td class="align-middle">
-                                                {% if is_granted('edit', appointment) %}
-                                                    <a href="{{ path('edit_appointment', { uuid: appointment.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                {% endif %}
-                                                {% if not appointment.confirmed and is_granted('confirm', appointment) %}
-                                                    <a href="{{ path('confirm_appointment', { uuid: appointment.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.confirm'|trans }}">
-                                                        <i class="fa fa-check"></i>
-                                                    </a>
-                                                {% endif %}
-                                                {% if is_granted('remove', appointment) %}
-                                                    <a href="{{ path('remove_appointment', { uuid: appointment.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
-                                                {% endif %}
+                                                <div class="dropdown d-inline">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="dropdown">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        {% if is_granted('edit', appointment) %}
+                                                            <a href="{{ path('edit_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item">
+                                                                <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                                            </a>
+                                                        {% endif %}
+                                                        {% if not appointment.confirmed and is_granted('confirm', appointment) %}
+                                                            <a href="{{ path('confirm_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item">
+                                                                <i class="fa fa-check"></i> {{ 'actions.confirm'|trans }}
+                                                            </a>
+                                                        {% endif %}
+                                                        {% if is_granted('remove', appointment) %}
+                                                            <a href="{{ path('remove_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item text-danger">
+                                                                <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                                            </a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                     {% endfor %}

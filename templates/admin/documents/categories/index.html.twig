@@ -26,11 +26,11 @@
                 {% else %}
                     <div class="card">
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover card-table">
+                            <table class="table table-striped table-hover card-table">
                                 <colgroup>
                                     <col>
                                     <col class="column-lg">
-                                    <col class="column-md">
+                                    <col class="column-sm">
                                 </colgroup>
 
                                 <thead>
@@ -51,13 +51,21 @@
                                             {{ category.documents.count }}
                                         </td>
                                         <td class="align-middle">
-                                            <a href="{{ path('admin_edit_document_category', { uuid: category.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
+                                            <div class="dropdown d-inline">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="dropdown">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
 
-                                            <a href="{{ path('admin_remove_document_category', { uuid: category.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a href="{{ path('admin_edit_document_category', { uuid: category.uuid }) }}" class="dropdown-item">
+                                                        <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                                    </a>
+
+                                                    <a href="{{ path('admin_remove_document_category', { uuid: category.uuid }) }}" class="dropdown-item text-danger">
+                                                        <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 {% endfor %}

@@ -62,63 +62,57 @@
                     </div>
                 {% endif %}
 
-                <button data-toggle="popover" data-popover-title="{{ 'label.details'|trans }}" data-popover-container="#message-{{ message.uuid }}-info" class="btn btn-outline-secondary btn-sm">
-                    <i class="fa fa-info-circle"></i>
-                </button>
+                <div class="dropdown d-inline">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
 
-                <div class="d-none" id="message-{{ message.uuid }}-info">
-                    <p class="m-0 mb-1">
-                        <span class="text-muted">{{ 'message.expires'|trans }}</span> {{ message.expireDate|format_date }}
-                    </p>
-
-                    <p class="m-0 mb-1">
-                        <span class="text-muted">{{ 'label.lastchange'|trans }}</span> {{ message.updatedAt|format_datetime }}
-                    </p>
-
-                    <p class="m-0 mb-1">
-                        <span class="text-muted">{{ 'label.visibility'|trans }}</span>
-                        {% for visibility in message.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
-                    </p>
-
-                    {% if message.studyGroups|length > 0 %}
-                        <p class="m-0 mb-1">
-                            <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': message.studyGroups|length }) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: message.studyGroups, id: message.uuid } only  %}
-                        </p>
-                    {% endif %}
-                </div>
-
-                {% if is_granted('edit', message) or is_granted('remove', message) %}
-                    <div class="btn-group" role="group">
-                        {% if is_granted('edit', message) %}
-                            <a href="{{ path('edit_message', { uuid: message.uuid, ref: 'view' }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
-                                <i class="fa fa-edit"></i>
-                            </a>
-
-                            {% if message.mustConfirm %}
-                                <a href="{{ path('message_confirmations', { uuid: message.uuid })}}" class="btn btn-primary btn-sm" title="{{ 'admin.messages.confirmations.label'|trans }}">
-                                    <i class="fas fa-tasks"></i>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        {% set showDivider = false %}
+                        {% if is_granted('dismiss', message) %}
+                            {% set showDivider = true %}
+                            {% if is_dismissed(message) %}
+                                <a href="{{ path('reenable_message', { uuid: message.uuid }) }}" class="dropdown-item">
+                                    <i class="fas fa-eye"></i> {{ 'message.reenable'|trans }}
+                                </a>
+                            {% else %}
+                                <a href="{{ path('dismiss_message', { uuid: message.uuid }) }}" class="dropdown-item">
+                                    <i class="fas fa-eye-slash"></i> {{ 'message.dismiss'|trans }}
                                 </a>
                             {% endif %}
                         {% endif %}
-                        {% if is_granted('remove', message) %}
-                            <a href="{{ path('remove_message', { uuid: message.uuid })}}" class="btn btn-danger btn-sm" title="{{ 'actions.remove'|trans }}">
-                                <i class="fa fa-trash"></i>
+
+                        {% if is_granted('edit', message) and message.mustConfirm %}
+                            {% set showDivider = true %}
+                            <a href="{{ path('message_confirmations', { uuid: message.uuid })}}" class="dropdown-item">
+                                <i class="fas fa-tasks"></i> {{ 'admin.messages.confirmations.label'|trans }}
                             </a>
                         {% endif %}
-                    </div>
-                {% endif %}
 
-                {% if is_granted('dismiss', message) %}
-                    {% if is_dismissed(message) %}
-                        <a href="{{ path('reenable_message', { uuid: message.uuid }) }}" class="btn btn-secondary btn-sm" title="{{ 'message.reenable'|trans }}">
-                            <span aria-hidden="true"><i class="fas fa-eye"></i></span>
-                        </a>
-                    {% else %}
-                        <a href="{{ path('dismiss_message', { uuid: message.uuid }) }}" class="btn btn-secondary btn-sm" title="{{ 'message.dismiss'|trans }}">
-                            <span aria-hidden="true"><i class="fas fa-eye-slash"></i></span>
-                        </a>
-                    {% endif %}
-                {% endif %}
+                        {% if is_granted('edit', message) and message.pollEnabled %}
+                            {% set showDivider = true %}
+                            <a href="{{ path('poll_result', { uuid: message.uuid })}}" class="dropdown-item">
+                                <i class="fas fa-poll"></i> {{ 'messages.poll.result.label'|trans }}
+                            </a>
+                        {% endif %}
+
+                        {% if is_granted('edit', message) or is_granted('remove', message) %}
+                            <div class="dropdown-divider"></div>
+
+                            {% if is_granted('edit', message) %}
+                                <a href="{{ path('edit_message', { uuid: message.uuid, ref: 'view' }) }}" class="dropdown-item">
+                                    <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                </a>
+                            {% endif %}
+
+                            {% if is_granted('remove', message) %}
+                                <a href="{{ path('remove_message', { uuid: message.uuid })}}" class="dropdown-item text-danger">
+                                    <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
             </div>
 
         </div>

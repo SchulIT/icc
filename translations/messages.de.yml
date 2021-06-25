@@ -216,6 +216,7 @@ actions:
     top: nach oben
     collapse_all: Alles einklappen
     show_all: Alles ausklappen
+    play: abspielen
 
 clipboard:
     copy: In die Zwischenablage kopieren

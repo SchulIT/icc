@@ -4,6 +4,8 @@ namespace App\Dashboard;
 
 use App\Entity\Teacher;
 use App\Settings\DashboardSettings;
+use App\Sorting\Sorter;
+use App\Sorting\SubstitutionViewItemStrategy;
 use App\Utils\ArrayUtils;
 use InvalidArgumentException;
 
@@ -25,6 +27,36 @@ class DashboardViewCollapseHelper {
 
         // Post-validation
         $this->validateTimetableSupervisionsAndExamSupervisions($view);
+
+        // Sort mentions and exams
+        $this->sortMentions($view);
+        $this->sortExams($view);
+    }
+
+    private function sortMentions(DashboardView $view): void {
+        $mentions = $view->getSubstitutionMentions();
+        $view->clearSubstitutionMentions();
+
+        usort($mentions, function(SubstitutionViewItem $viewItemA, SubstitutionViewItem $viewItemB) {
+            return $viewItemA->getSubstitution()->getLessonStart() - $viewItemB->getSubstitution()->getLessonEnd();
+        });
+
+        foreach($mentions as $mention) {
+            $view->addSubstitutonMention($mention);
+        }
+    }
+
+    private function sortExams(DashboardView $view): void {
+        $exams = $view->getExams();
+        $view->clearExams();
+
+        usort($exams, function(ExamViewItem $examA, ExamViewItem $examB) {
+            return $examA->getExam()->getLessonStart() - $examB->getExam()->getLessonStart();
+        });
+
+        foreach($exams as $exam) {
+            $view->addExam($exam);
+        }
     }
 
     private function validateTimetableSupervisionsAndExamSupervisions(DashboardView $view) {
@@ -114,6 +146,10 @@ class DashboardViewCollapseHelper {
         $substitutionMentions = [ ];
 
         foreach($originalSubstitutions as $substitution) {
+            if($teacher !== null && $this->isMentionedInSubstitution($substitution, $teacher) === true) {
+                $substitutionMentions[] = $substitution;
+            }
+
             if ($teacher === null || $this->onlyMentionedInSubstitution($substitution, $teacher) === false) {
                 $substitutions[] = $substitution;
             } else {
@@ -464,6 +500,10 @@ class DashboardViewCollapseHelper {
         }
 
         return true;
+    }
+
+    private function isMentionedInSubstitution(SubstitutionViewItem $viewItem, Teacher $teacher): bool {
+        return !empty($viewItem->getSubstitution()->getRemark()) && preg_match('~\W*' . $teacher->getAcronym() . '\W*~', $viewItem->getSubstitution()->getRemark());
     }
 
     private function isDefault(SubstitutionViewItem $viewItem, ?Teacher $teacher) {

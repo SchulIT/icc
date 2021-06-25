@@ -313,31 +313,5 @@ class MessageController extends AbstractController {
 
         return $this->redirectToRequestReferer('messages');
     }
-
-    /**
-     * @Route("/{uuid}/confirmations", name="message_confirmations")
-     */
-    public function confirmations(Message $message, MessageConfirmationViewHelper $confirmationViewHelper, Grouper $grouper) {
-        $view = $confirmationViewHelper->createView($message);
-
-        $teachers = $view->getTeachers();
-        $this->sorter->sort($teachers, TeacherStrategy::class);
-
-        $students = $view->getStudents();
-        $gradeGroups = $grouper->group($students, StudentGradeStrategy::class);
-        $this->sorter->sort($gradeGroups, StudentGradeGroupStrategy::class);
-        $this->sorter->sortGroupItems($gradeGroups, StudentStrategy::class);
-
-        $userGroups = $grouper->group($view->getUsers(), UserUserTypeStrategy::class);
-        $this->sorter->sort($userGroups, UserUserTypeGroupStrategy::class);
-        $this->sorter->sortGroupItems($userGroups, UserLastnameFirstnameStrategy::class);
-
-        return $this->render('messages/confirmations.html.twig', [
-            'message' => $message,
-            'teachers' => $teachers,
-            'userGroups' => $userGroups,
-            'grades' => $gradeGroups,
-            'view' => $view
-        ]);
-    }
+    
 }

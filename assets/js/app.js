@@ -1,6 +1,5 @@
 require('../css/app.scss');
 
-require('emojione');
 import Choices from "choices.js";
 import { v4 as uuidv4 } from 'uuid';
 import { DataTable } from "simple-datatables";

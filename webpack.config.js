@@ -36,18 +36,6 @@ Encore
             }
         }
     )
-    .addPlugin(
-        new CopyPlugin([
-            {
-                from: 'vendor/emojione/emojione/assets/png',
-                to: 'emoji/png'
-            },
-            {
-                from: 'vendor/emojione/emojione/assets/svg',
-                to: 'emoji/svg'
-            }
-        ])
-    )
 ;
 
 module.exports = Encore.getWebpackConfig();

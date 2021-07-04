@@ -2,13 +2,14 @@
 
 namespace App\View\Filter;
 
+use App\Entity\Section;
 use App\Entity\User;
 use App\Sorting\GradeNameStrategy;
 
 class GradesFilter extends AbstractGradeFilter {
     
-    public function handle(array $gradeUuids, User $user) {
-        $grades = $this->getGrades($user, $defaultGrade);
+    public function handle(array $gradeUuids, ?Section $section, User $user) {
+        $grades = $this->getGrades($user, $section, $defaultGrade);
         $selectedGrades = [ ];
 
         foreach($grades as $grade) {

@@ -2,10 +2,12 @@
 
 namespace App\Import;
 
+use App\Entity\Section;
 use App\Entity\StudyGroup;
 use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
+use App\Repository\SectionRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubjectRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
@@ -22,6 +24,7 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
     private $subjectRepository;
     private $teacherRepository;
     private $studyGroupRepository;
+    private $sectionRepository;
 
     private $isInitialized = false;
 
@@ -30,16 +33,27 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
     private $studyGroupCache = [ ];
 
     public function __construct(TuitionRepositoryInterface $tuitionRepository, SubjectRepositoryInterface $subjectRepository,
-                                TeacherRepositoryInterface $teacherRepository, StudyGroupRepositoryInterface $studyGroupRepository) {
+                                TeacherRepositoryInterface $teacherRepository, StudyGroupRepositoryInterface $studyGroupRepository, SectionRepositoryInterface $sectionRepository) {
         $this->tuitionRepository = $tuitionRepository;
         $this->subjectRepository = $subjectRepository;
         $this->teacherRepository = $teacherRepository;
         $this->studyGroupRepository = $studyGroupRepository;
+        $this->sectionRepository = $sectionRepository;
     }
 
-    private function initialize() {
+    /**
+     * @param TuitionsData $requestData
+     * @throws SectionNotFoundException
+     */
+    private function initialize(TuitionsData $requestData) {
         if($this->isInitialized === true) {
             return;
+        }
+
+        $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+
+        if($section === null) {
+            throw new SectionNotFoundException($requestData->getSection(), $requestData->getYear());
         }
 
         $this->subjectCache = ArrayUtils::createArrayWithKeys(
@@ -50,14 +64,14 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
         );
 
         $this->teacherCache = ArrayUtils::createArrayWithKeys(
-            $this->teacherRepository->findAll(),
+            $this->teacherRepository->findAllBySection($section),
             function(Teacher $teacher) {
                 return $teacher->getExternalId();
             }
         );
 
         $this->studyGroupCache = ArrayUtils::createArrayWithKeys(
-            $this->studyGroupRepository->findAll(),
+            $this->studyGroupRepository->findAllBySection($section),
             function(StudyGroup $studyGroup) {
                 return $studyGroup->getExternalId();
             }
@@ -69,10 +83,17 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
     /**
      * @param TuitionsData $requestData
      * @return array<string, Tuition>
+     * @throws SectionNotFoundException
      */
     public function getExistingEntities($requestData): array {
+        $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+
+        if($section === null) {
+            throw new SectionNotFoundException($requestData->getSection(), $requestData->getYear());
+        }
+
         return ArrayUtils::createArrayWithKeys(
-            $this->tuitionRepository->findAll(),
+            $this->tuitionRepository->findAllBySection($section),
             function(Tuition $tuition) {
                 return $tuition->getExternalId();
             }
@@ -117,13 +138,21 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
      * @throws ImportException
      */
     public function updateEntity($entity, $data, $requestData): void {
-        $this->initialize();
+        $this->initialize($requestData);
 
         $subject = $this->subjectCache[$data->getSubject()] ?? null;
 
         if($subject === null) {
             throw new ImportException(sprintf('Subject "%s" was not found on tuition with ID "%s"', $data->getSubject(), $data->getId()));
         }
+
+        $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+
+        if($section === null) {
+            throw new SectionNotFoundException($requestData->getSection(), $requestData->getYear());
+        }
+
+        $entity->setSection($section);
 
         if($data->getTeacher() === null) {
             $entity->setTeacher(null);
@@ -173,8 +202,9 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
     /**
      * @param Tuition $entity
      */
-    public function remove($entity): void {
+    public function remove($entity, $requestData): bool {
         $this->tuitionRepository->remove($entity);
+        return true;
     }
 
     /**

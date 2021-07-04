@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 
 interface GradeRepositoryInterface extends TransactionalRepositoryInterface {
 

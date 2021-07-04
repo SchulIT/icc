@@ -92,6 +92,16 @@ class Teacher {
      */
     private $tags;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Section")
+     * @ORM\JoinTable(name="teacher_sections",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @var Collection<Section>
+     */
+    private $sections;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->setGender(Gender::X());
@@ -99,6 +109,7 @@ class Teacher {
         $this->subjects = new ArrayCollection();
         $this->grades = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->sections = new ArrayCollection();
     }
 
     /**
@@ -248,6 +259,21 @@ class Teacher {
      */
     public function getTags(): Collection {
         return $this->tags;
+    }
+
+    public function addSection(Section $section): void {
+        $this->sections->add($section);
+    }
+
+    public function removeSection(Section $section): void {
+        $this->sections->removeElement($section);
+    }
+
+    /**
+     * @return Collection<Section>
+     */
+    public function getSections(): Collection {
+        return $this->sections;
     }
 
     public function __toString() {

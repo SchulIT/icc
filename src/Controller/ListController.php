@@ -28,6 +28,7 @@ use App\Repository\PrivacyCategoryRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
+use App\Section\SectionResolver;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\ListsVoter;
 use App\Sorting\Sorter;
@@ -38,6 +39,7 @@ use App\Sorting\TeacherFirstCharacterGroupStrategy;
 use App\Sorting\TeacherStrategy;
 use App\Sorting\TuitionStrategy;
 use App\View\Filter\GradeFilter;
+use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\SubjectFilter;
@@ -71,22 +73,23 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/tuitions", name="list_tuitions")
      */
-    public function tuitions(GradeFilter $gradeFilter, StudentFilter $studentFilter, TeacherFilter $teacherFilter, TuitionRepositoryInterface $tuitionRepository, Request $request) {
+    public function tuitions(SectionFilter $sectionFilter, GradeFilter $gradeFilter, StudentFilter $studentFilter, TeacherFilter $teacherFilter, TuitionRepositoryInterface $tuitionRepository, Request $request) {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
 
         /** @var User $user */
         $user = $this->getUser();
 
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $gradeFilterView->getCurrentGrade() === null && $studentFilterView->getCurrentStudent() === null);
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $studentFilterView->getCurrentStudent() === null);
 
         $tuitions = [ ];
         $memberships = [ ];
         $teacherMailAddresses = [ ];
 
-        if($studentFilterView->getCurrentStudent() !== null) {
-            $tuitions = $tuitionRepository->findAllByStudents([$studentFilterView->getCurrentStudent()]);
+        if($studentFilterView->getCurrentStudent() !== null && $sectionFilterView->getCurrentSection() !== null) {
+            $tuitions = $tuitionRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $sectionFilterView->getCurrentSection());
 
             foreach($tuitions as $tuition) {
                 /** @var StudyGroupMembership|null $membership */
@@ -98,8 +101,8 @@ class ListController extends AbstractControllerWithMessages {
             }
         } else if($gradeFilterView->getCurrentGrade() !== null) {
             $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()]);
-        } else if($teacherFilterView->getCurrentTeacher() !== null) {
-            $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher());
+        } else if($teacherFilterView->getCurrentTeacher() !== null && $sectionFilterView->getCurrentSection() !== null) {
+            $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
         }
 
         if($studentFilterView->getCurrentStudent() !== null || $gradeFilterView->getCurrentGrade() !== null) {
@@ -114,9 +117,14 @@ class ListController extends AbstractControllerWithMessages {
             $teacherMailAddresses = array_unique($teacherMailAddresses);
         }
 
+        $tuitions = array_filter($tuitions, function(Tuition $tuition) use ($sectionFilterView) {
+            return $tuition->getSection() === $sectionFilterView->getCurrentSection();
+        });
+
         $this->sorter->sort($tuitions, TuitionStrategy::class);
 
         return $this->renderWithMessages('lists/tuitions.html.twig', [
+            'sectionFilter' => $sectionFilterView,
             'gradeFilter' => $gradeFilterView,
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
@@ -163,15 +171,16 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/study_groups", name="list_studygroups")
      */
-    public function studyGroups(StudyGroupFilter $studyGroupFilter, StudentFilter $studentFilter,
+    public function studyGroups(SectionFilter $sectionFilter, StudyGroupFilter $studyGroupFilter, StudentFilter $studentFilter,
                                 TuitionRepositoryInterface $tuitionRepository, Request $request, Sorter $sorter) {
         $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);
 
         /** @var User $user */
         $user = $this->getUser();
 
-        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $sectionFilterView->getCurrentSection(), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user);
 
         $students = [ ];
         $studyGroups = [ ];
@@ -198,6 +207,10 @@ class ListController extends AbstractControllerWithMessages {
             $this->sorter->sort($studyGroups, StudyGroupStrategy::class);
         }
 
+        $studyGroups = array_filter($studyGroups, function(StudyGroup $studyGroup) use ($sectionFilterView) {
+            return $studyGroup->getSection() === $sectionFilterView->getCurrentSection();
+        });
+
         $grade = null;
         $gradeTeachers = [ ];
         $substitutionalGradeTeachers = [ ];
@@ -205,8 +218,8 @@ class ListController extends AbstractControllerWithMessages {
         if($studyGroupFilterView->getCurrentStudyGroup() !== null && $studyGroupFilterView->getCurrentStudyGroup()->getType()->equals(StudyGroupType::Grade())) {
             /** @var Grade $grade */
             $grade = $studyGroupFilterView->getCurrentStudyGroup()->getGrades()->first();
-        } else if($studentFilterView->getCurrentStudent() !== null) {
-            $grade = $studentFilterView->getCurrentStudent()->getGrade();
+        } else if($studentFilterView->getCurrentStudent() !== null && $sectionFilterView->getCurrentSection() !== null) {
+            $grade = $studentFilterView->getCurrentStudent()->getGrade($sectionFilterView->getCurrentSection());
         }
 
         if($grade !== null) {
@@ -235,9 +248,14 @@ class ListController extends AbstractControllerWithMessages {
             }
         }
 
+        $tuitions = array_filter($tuitions, function(Tuition $tuition) use ($sectionFilterView) {
+            return $tuition->getSection() === $sectionFilterView->getCurrentSection();
+        });
+
         $sorter->sort($tuitions, TuitionStrategy::class);
 
         return $this->renderWithMessages('lists/study_groups.html.twig', [
+            'sectionFilter' => $sectionFilterView,
             'studyGroupFilter' => $studyGroupFilterView,
             'studentFilter' => $studentFilterView,
             'study_groups' => $studyGroups,
@@ -312,14 +330,14 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/privacy", name="list_privacy")
      */
-    public function privacy(StudyGroupFilter $studyGroupFilter, Request $request, StudentRepositoryInterface $studentRepository, PrivacyCategoryRepositoryInterface $privacyCategoryRepository) {
+    public function privacy(SectionResolver $sectionResolver, StudyGroupFilter $studyGroupFilter, Request $request, StudentRepositoryInterface $studentRepository, PrivacyCategoryRepositoryInterface $privacyCategoryRepository) {
         $this->denyAccessUnlessGranted(ListsVoter::Privacy);
 
         /** @var User $user */
         $user = $this->getUser();
 
         $q = $request->query->get('q', null);
-        $studygroupView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
+        $studygroupView = $studyGroupFilter->handle($request->query->get('study_group', null), $sectionResolver->getCurrentSection(), $user);
 
         $students = [ ];
 
@@ -335,6 +353,7 @@ class ListController extends AbstractControllerWithMessages {
             'students' => $students,
             'categories' => $privacyCategoryRepository->findAll(),
             'q' => $q,
+            'section' => $sectionResolver->getCurrentSection(),
             'studyGroupFilter' => $studygroupView,
             'isStart' => $request->query->has('q') === false && $request->query->has('study_group') === false,
             'last_import_categories' => $this->importDateTimeRepository->findOneByEntityClass(PrivacyCategory::class),

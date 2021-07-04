@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\Subject;
 use App\Entity\Teacher;
@@ -18,59 +19,66 @@ interface TuitionRepositoryInterface extends TransactionalRepositoryInterface {
 
     /**
      * @param string $externalId
+     * @param Section $section
      * @return Tuition|null
      */
-    public function findOneByExternalId(string $externalId): ?Tuition;
+    public function findOneByExternalId(string $externalId, Section $section): ?Tuition;
 
     /**
      * @param string[] $externalIds
+     * @param Section $section
      * @return Tuition[]
      */
-    public function findAllByExternalId(array $externalIds): array;
+    public function findAllByExternalId(array $externalIds, Section $section): array;
 
     /**
      * @param Teacher $teacher
+     * @param Section $section
      * @return Tuition[]
      */
-    public function findAllByTeacher(Teacher $teacher);
+    public function findAllByTeacher(Teacher $teacher, Section $section): array;
 
     /**
      * @param Student[] $students
+     * @param Section $section
      * @return Tuition[]
      */
-    public function findAllByStudents(array $students);
+    public function findAllByStudents(array $students, Section $section): array;
 
     /**
      * @param Grade[] $grades
      * @return Tuition[]
      */
-    public function findAllByGrades(array $grades);
+    public function findAllByGrades(array $grades): array;
 
     /**
      * @param Subject[] $subjects
      * @return Tuition[]
      */
-    public function findAllBySubjects(array $subjects);
+    public function findAllBySubjects(array $subjects): array;
 
     /**
      * @param string[] $grades
      * @param string $subjectOrCourse
+     * @param Section $section
      * @return Tuition[]
      */
-    public function findAllByGradeAndSubjectOrCourseWithoutTeacher(array $grades, string $subjectOrCourse): array;
+    public function findAllByGradeAndSubjectOrCourseWithoutTeacher(array $grades, string $subjectOrCourse, Section $section): array;
 
     /**
      * @param string[] $grades
      * @param string[] $teachers
      * @param string $subjectOrCourse
+     * @param Section $section
      * @return Tuition[]
      */
-    public function findAllByGradeTeacherAndSubjectOrCourse(array $grades, array $teachers, string $subjectOrCourse): array;
+    public function findAllByGradeTeacherAndSubjectOrCourse(array $grades, array $teachers, string $subjectOrCourse, Section $section): array;
 
     /**
+     * @param Section $section
      * @return Tuition[]
      */
-    public function findAll();
+    public function findAllBySection(Section $section): array;
 
     /**
      * @param Tuition $tuition

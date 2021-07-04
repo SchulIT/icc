@@ -113,7 +113,7 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
         }
 
         if(!empty($data->getSubject()) && count($data->getGrades()) > 0 && count($data->getTeachers()) > 0) {
-            $tuitions = $this->tuitionRepository->findAllByGradeTeacherAndSubjectOrCourse($data->getGrades(), $data->getTeachers(), $data->getSubject());
+            $tuitions = $this->tuitionRepository->findAllByGradeTeacherAndSubjectOrCourse($data->getGrades(), $data->getTeachers(), $data->getSubject(), $period->getSection());
 
             if (count($tuitions) === 0) {
                 $entity->setTuition(null);
@@ -192,8 +192,9 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
     /**
      * @inheritDoc
      */
-    public function remove($entity): void {
+    public function remove($entity, $requestData): bool {
         $this->timetableRepository->remove($entity);
+        return true;
     }
 
     /**

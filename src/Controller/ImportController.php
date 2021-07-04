@@ -7,6 +7,7 @@ use App\Import\AppointmentCategoriesImportStrategy;
 use App\Import\AppointmentsImportStrategy;
 use App\Import\ExamsImportStrategy;
 use App\Import\FreeTimespanImportStrategy;
+use App\Import\GradeMembershipImportStrategy;
 use App\Import\GradesImportStrategy;
 use App\Import\GradeTeachersImportStrategy;
 use App\Import\Importer;
@@ -30,6 +31,7 @@ use App\Request\Data\AppointmentCategoriesData;
 use App\Request\Data\AppointmentsData;
 use App\Request\Data\ExamsData;
 use App\Request\Data\FreeLessonTimespansData;
+use App\Request\Data\GradeMembershipsData;
 use App\Request\Data\GradesData;
 use App\Request\Data\GradeTeachersData;
 use App\Request\Data\InfotextsData;
@@ -216,6 +218,33 @@ class ImportController extends AbstractController {
      */
     public function gradeTeachers(GradeTeachersData $gradeTeachersData, GradeTeachersImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($gradeTeachersData, $strategy);
+        return $this->fromResult($result);
+    }
+
+    /**
+     * Imports grade memberships.
+     *
+     * @Route("/grades/memberships", methods={"POST"})
+     * @OA\Post(operationId="import_grade_memberships")
+     * @OA\Parameter(
+     *     name="payload",
+     *     in="body",
+     *     @Model(type=GradeMembershipsData::class)
+     * )
+     * @OA\Response(
+     *     response=200,
+     *     description="Import was successful",
+     *     @Model(type=ImportResponse::class)
+     * )
+     * @OA\Response(
+     *     response=400,
+     *     description="Import was not successful",
+     *     @Model(type=ErrorResponse::class)
+     * )
+     * @throws ImportException
+     */
+    public function gradeMemberships(GradeMembershipsData $membershipsData, GradeMembershipImportStrategy $strategy): Response {
+        $result = $this->importer->replaceImport($membershipsData, $strategy);
         return $this->fromResult($result);
     }
 

@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
         removeItemButton: true
     };
 
+    let sectionChoice = document.getElementById('section') !== null ? new Choices(document.getElementById('section'), { }) : null;
     let studentChoice = document.getElementById('student') !== null ? new Choices(document.getElementById('student'), options) : null;
     let studyGroupChoice = document.getElementById('study_group') !== null ? new Choices(document.getElementById('study_group'), options) : null;
     let teacherChoice = document.getElementById('teacher') !== null ? new Choices(document.getElementById('teacher'), options) : null;
@@ -126,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    [studentChoice, studyGroupChoice, teacherChoice, categoriesChoice, examGradesChoice ].forEach(function(choices) {
+    [ studentChoice, studyGroupChoice, teacherChoice, categoriesChoice, examGradesChoice ].forEach(function(choices) {
         if(choices === null) {
             return;
         }
@@ -139,7 +140,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function loadEvents(initiator) {
-        let query = { };
+        let query = {
+            section: sectionChoice.getValue(true)
+        };
 
         // Ensure that filters are not combined
         suppressFilterChangedEvent = true; // suppress any other changed events

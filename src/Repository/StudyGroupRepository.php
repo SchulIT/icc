@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupType;
@@ -34,27 +35,38 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
      * @param string $externalId
      * @return StudyGroup|null
      */
-    public function findOneByExternalId(string $externalId): ?StudyGroup {
-        return $this->em->getRepository(StudyGroup::class)
-            ->findOneBy([
-                'externalId' => $externalId
-            ]);
+    public function findOneByExternalId(string $externalId, Section $section): ?StudyGroup {
+        return $this->em
+            ->createQueryBuilder()
+            ->select('sg')
+            ->from(StudyGroup::class, 'sg')
+            ->leftJoin('sg.section', 's')
+            ->where('sg.externalId = :id')
+            ->andWhere('s.id = :section')
+            ->setParameter('id', $externalId)
+            ->setParameter('section', $section->getId())
+            ->setCacheable(true)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**
      * @inheritDoc
      */
-    public function findOneByGrade(Grade $grade): ?StudyGroup {
+    public function findOneByGrade(Grade $grade, Section $section): ?StudyGroup {
         $qb = $this->em->createQueryBuilder();
 
         $qb
             ->select('sg')
             ->from(StudyGroup::class, 'sg')
             ->leftJoin('sg.grades', 'g')
+            ->leftJoin('sg.section', 's')
             ->where('sg.type = :type')
             ->andWhere('g.id = :grade')
+            ->andWhere('s.id = :section')
             ->setParameter('grade', $grade->getId())
             ->setParameter('type', StudyGroupType::Grade())
+            ->setParameter('section', $section->getId())
             ->setMaxResults(1)
             ->setFirstResult(0);
 
@@ -64,17 +76,20 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
     /**
      * @inheritDoc
      */
-    public function findOneByGradeName(string $name): ?StudyGroup {
+    public function findOneByGradeName(string $name, Section $section): ?StudyGroup {
         $qb = $this->em->createQueryBuilder();
 
         $qb
             ->select('sg')
             ->from(StudyGroup::class, 'sg')
             ->leftJoin('sg.grades', 'g')
+            ->leftJoin('sg.section', 's')
             ->where('sg.type = :type')
             ->andWhere('g.name = :name')
+            ->andWhere('s.id = :section')
             ->setParameter('name', $name)
             ->setParameter('type', StudyGroupType::Grade())
+            ->setParameter('section', $section->getId())
             ->setMaxResults(1)
             ->setFirstResult(0);
 
@@ -84,14 +99,17 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
     /**
      * @inheritDoc
      */
-    public function findAllByExternalId(array $externalIds): array {
+    public function findAllByExternalId(array $externalIds, Section $section): array {
         $qb = $this->em->createQueryBuilder();
 
         $qb
             ->select('s')
             ->from(StudyGroup::class, 's')
+            ->leftJoin('s.section', 'sec')
             ->where($qb->expr()->in('s.externalId', ':externalIds'))
-            ->setParameter('externalIds', $externalIds);
+            ->andWhere('sec.id = :section')
+            ->setParameter('externalIds', $externalIds)
+            ->setParameter('section', $section->getId());
 
         return $qb->getQuery()->getResult();
     }
@@ -101,14 +119,16 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
      * @param StudyGroupType|null $type
      * @return StudyGroup[]
      */
-    public function findAllByGrades(Grade $grade, ?StudyGroupType $type = null) {
+    public function findAllByGrades(Grade $grade, Section $section, ?StudyGroupType $type = null) {
         $qb = $this->em->createQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('sgInner.id')
             ->from(StudyGroup::class, 'sgInner')
             ->leftJoin('sgInner.grades', 'gInner')
-            ->where('gInner.id = :grade');
+            ->leftJoin('sgInner.section', 'sInner')
+            ->where('gInner.id = :grade')
+            ->andWhere('sInner.id = :section');
 
         if($type !== null) {
             $qbInner
@@ -124,7 +144,8 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
             ->where(
                 $qb->expr()->in('sg.id', $qbInner->getDQL())
             )
-            ->setParameter('grade', $grade->getId());
+            ->setParameter('grade', $grade->getId())
+            ->setParameter('section', $section->getId());
 
         return $qb->getQuery()->getResult();
     }
@@ -133,14 +154,19 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
      * @param Student $student
      * @return StudyGroup[]
      */
-    public function findAllByStudent(Student $student) {
+    public function findAllByStudent(Student $student, ?Section $section) {
         $qb = $this->em->createQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('sgInner.id')
             ->from(StudyGroup::class, 'sgInner')
             ->leftJoin('sgInner.students', 's')
-            ->where('sgInner.id = :student');
+            ->leftJoin('sgInner.section', 'sInner')
+            ->where('s.id = :student');
+
+        if($section !== null) {
+            $qbInner->andWhere('sInner.id = :section');
+        }
 
         $qb
             ->select(['sg', 'g'])
@@ -150,6 +176,10 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
                 $qb->expr()->in('sg.id', $qbInner->getDQL())
             )
             ->setParameter('student', $student->getId());
+
+        if($section !== null) {
+            $qb->setParameter('section', $section->getId());
+        }
 
         return $qb->getQuery()->getResult();
     }
@@ -162,6 +192,21 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
             ->select(['sg', 'g'])
             ->from(StudyGroup::class, 'sg')
             ->leftJoin('sg.grades', 'g');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllBySection(Section $section) {
+        $qb = $this->em->createQueryBuilder()
+            ->select(['sg', 'g'])
+            ->from(StudyGroup::class, 'sg')
+            ->leftJoin('sg.grades', 'g')
+            ->leftJoin('sg.section', 'sec')
+            ->where('sec.id = :section')
+            ->setParameter('section', $section->getId());
 
         return $qb->getQuery()->getResult();
     }
@@ -181,6 +226,4 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
         $this->em->remove($studyGroup);
         $this->flushIfNotInTransaction();
     }
-
-
 }

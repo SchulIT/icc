@@ -289,6 +289,14 @@
                                 <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
                             </div>
                         </form>
+
+                        <div class="mt-3 mb-0">
+                            {% if section is not null %}
+                                <i class="fas fa-sliders-h"></i> {{ section.displayName }}
+                            {% else %}
+                                <i class="fas fa-sliders-h"></i> {{ 'label.not_available'|trans }}
+                            {% endif %}
+                        </div>
                     </div>
 
                     <div class="card-footer">
@@ -300,20 +308,29 @@
                     {% set student = studentFilter.currentStudent %}
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title"><i class="far fa-address-card"></i> {{ student|student }} ({{ student.grade.name }})</h5>
+                            {% set grade = student.grade(sectionFilter.selectedSection) %}
+                            <h5 class="card-title">
+                                <i class="far fa-address-card"></i> {{ student|student }}
+
+                                {% if grade is not null %}
+                                    ({{ grade.name }})
+                                {% endif %}
+                            </h5>
 
                             {% if student.email is not empty %}
                                 <p>
                                     <i class="fas fa-envelope" title="{{ 'label.email'|trans }}"></i> <a href="mailto:{{ student.email }}">{{ student.email }}</a>
                                 </p>
                             {% endif %}
+                            {% if grade is not null %}
                             <p>
                                 <i class="fas fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>
-                                {% for teacher in student.grade.teachers|sort_gradeteachers %}
+                                {% for teacher in grade.teachers|sort_gradeteachers %}
                                     <a href="mailto:{{ teacher.teacher.email }}">{{ teacher.teacher|teacher }}</a>{% if teacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}
                                     {%- if not loop.last -%}, {% endif -%}
                                 {% endfor %}
                             </p>
+                            {% endif %}
                         </div>
                         <div class="list-group list-group-flush">
                             <a href="{{ path('timetable', { student: student.uuid.toString }) }}" class="list-group-item list-group-item-action">

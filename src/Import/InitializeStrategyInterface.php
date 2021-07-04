@@ -3,5 +3,9 @@
 namespace App\Import;
 
 interface InitializeStrategyInterface {
-    public function initialize(): void;
+
+    /**
+     * @param object $requestData
+     */
+    public function initialize($requestData): void;
 }

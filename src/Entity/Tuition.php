@@ -13,15 +13,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  * @Auditable()
- * @UniqueEntity(fields={"externalId"})
+ * @UniqueEntity(fields={"section", "externalId"})
  */
 class Tuition {
 
     use IdTrait;
     use UuidTrait;
+    use SectionAwareTrait;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string")
      * @var string|null
      */
     private $externalId;

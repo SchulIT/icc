@@ -80,8 +80,9 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
     /**
      * @param Subject $entity
      */
-    public function remove($entity): void {
+    public function remove($entity, $requestData): bool {
         $this->repository->remove($entity);
+        return true;
     }
 
     /**

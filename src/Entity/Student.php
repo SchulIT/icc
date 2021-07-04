@@ -77,12 +77,10 @@ class Student {
     private $birthday;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Grade", inversedBy="students")
-     * @ORM\JoinColumn(onDelete="SET NULL")
-     * @Assert\NotNull()
-     * @var Grade|null
+     * @ORM\OneToMany(targetEntity="GradeMembership", mappedBy="student")
+     * @var Collection<GradeMembership>
      */
-    private $grade;
+    private $gradeMemberships;
 
     /**
      * @ORM\OneToMany(targetEntity="StudyGroupMembership", mappedBy="student")
@@ -100,12 +98,23 @@ class Student {
      */
     private $approvedPrivacyCategories;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Section")
+     * @ORM\JoinTable(name="student_sections",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @var Collection<Section>
+     */
+    private $sections;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
 
         $this->gender = Gender::X();
         $this->studyGroupMemberships = new ArrayCollection();
         $this->approvedPrivacyCategories = new ArrayCollection();
+        $this->sections = new ArrayCollection();
     }
 
     /**
@@ -237,6 +246,7 @@ class Student {
     }
 
     /**
+     * @param DateTime $today
      * @return bool
      */
     public function isFullAged(DateTime $today): bool {
@@ -246,18 +256,41 @@ class Student {
     }
 
     /**
+     * @param Section|null $section
      * @return Grade|null
      */
-    public function getGrade(): ?Grade {
-        return $this->grade;
+    public function getGrade(?Section $section): ?Grade {
+        /** @var GradeMembership $membership */
+        foreach($this->getGradeMemberships() as $membership) {
+            if($membership->getSection() === $section) {
+                return $membership->getGrade();
+            }
+        }
+
+        return null;
+    }
+
+    public function addGradeMembership(GradeMembership $grade): void {
+        $this->gradeMemberships->add($grade);
+    }
+
+    public function removeGradeMembership(GradeMembership $grade): void {
+        $this->gradeMemberships->removeElement($grade);
+    }
+
+    /**
+     * @return Collection<GradeMembership>
+     */
+    public function getGradeMemberships(): Collection {
+        return $this->gradeMemberships;
     }
 
     /**
      * @param Grade|null $grade
      * @return Student
+     * @deprecated
      */
     public function setGrade(?Grade $grade): Student {
-        $this->grade = $grade;
         return $this;
     }
 
@@ -275,7 +308,22 @@ class Student {
         return $this->approvedPrivacyCategories;
     }
 
+    public function addSection(Section $section): void {
+        $this->sections->add($section);
+    }
+
+    public function removeSection(Section $section): void {
+        $this->sections->removeElement($section);
+    }
+
+    /**
+     * @return Collection<Section>
+     */
+    public function getSections(): Collection {
+        return $this->sections;
+    }
+
     public function __toString() {
-        return sprintf('%s: %s, %s', $this->getGrade(), $this->getLastname(), $this->getFirstname());
+        return sprintf('%s, %s', $this->getLastname(), $this->getFirstname());
     }
 }

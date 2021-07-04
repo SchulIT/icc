@@ -221,6 +221,13 @@ class Builder {
     public function dataMenu(array $options = []): ItemInterface {
         $root = $this->factory->createItem('root');
 
+        if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $root->addChild('admin.sections.label', [
+                'route' => 'admin_sections'
+            ])
+                ->setExtra('icon', 'fas fa-sliders-h');
+        }
+
         if($this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN')) {
             $root->addChild('admin.documents.label', [
                 'route' => 'admin_documents'

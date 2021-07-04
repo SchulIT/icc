@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Section;
 use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TeacherTag;
@@ -16,6 +17,7 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
             ->leftJoin('t.subjects', 's')
             ->leftJoin('t.grades', 'g')
             ->leftJoin('t.tags', 'tt')
+            ->leftJoin('t.sections', 'sec')
             ->orderBy('t.acronym', 'asc');
 
         return $qb;
@@ -111,6 +113,17 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
     /**
      * @inheritDoc
      */
+    public function findAllBySection(Section $section): array {
+        return $this->createDefaultQueryBuilder()
+            ->andWhere('sec.id = :section')
+            ->setParameter('section', $section->getId())
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function persist(Teacher $teacher): void {
         $this->em->persist($teacher);
         $this->flushIfNotInTransaction();
@@ -152,5 +165,4 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
 
         return $qb->getQuery()->getResult();
     }
-
 }

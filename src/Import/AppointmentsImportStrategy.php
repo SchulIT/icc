@@ -3,19 +3,18 @@
 namespace App\Import;
 
 use App\Entity\Appointment;
-use App\Entity\AppointmentVisibility;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\UserTypeEntity;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
-use App\Repository\AppointmentVisibilityRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Repository\UserTypeEntityRepositoryInterface;
 use App\Request\Data\AppointmentData;
 use App\Request\Data\AppointmentsData;
+use App\Section\SectionResolver;
 use App\Utils\ArrayUtils;
 use App\Utils\CollectionUtils;
 
@@ -26,6 +25,7 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
     private $userTypeEntityRepository;
     private $studentGroupRepository;
     private $teacherRepository;
+    private $sectionResolver;
 
     private $isInitialized = false;
 
@@ -36,12 +36,13 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
 
     public function __construct(AppointmentRepositoryInterface $appointmentRepository, AppointmentCategoryRepositoryInterface $appointmentCategoryRepository,
                                 UserTypeEntityRepositoryInterface $userTypeEntityRepository, StudyGroupRepositoryInterface $studentRepository,
-                                TeacherRepositoryInterface $teacherRepository) {
+                                TeacherRepositoryInterface $teacherRepository, SectionResolver $sectionResolver) {
         $this->appointmentRepository = $appointmentRepository;
         $this->appointmentCategoryRepository = $appointmentCategoryRepository;
         $this->userTypeEntityRepository = $userTypeEntityRepository;
         $this->studentGroupRepository = $studentRepository;
         $this->teacherRepository = $teacherRepository;
+        $this->sectionResolver = $sectionResolver;
     }
 
     private function initializeIfNecessary() {
@@ -102,6 +103,7 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
      * @param AppointmentData $data
      * @param AppointmentsData $requestData
      * @throws ImportException
+     * @throws SectionNotResolvableException
      */
     public function updateEntity($entity, $data, $requestData): void {
         $this->initializeIfNecessary();
@@ -121,9 +123,15 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
 
         $entity->setCategory($category);
 
+        $section = $this->sectionResolver->getSectionForDate($entity->getStart());
+
+        if($section === null) {
+            throw new SectionNotResolvableException($entity->getStart());
+        }
+
         CollectionUtils::synchronize(
             $entity->getStudyGroups(),
-            $this->studentGroupRepository->findAllByExternalId($data->getStudyGroups()),
+            $this->studentGroupRepository->findAllByExternalId($data->getStudyGroups(), $section),
             function (StudyGroup $group) {
                 return $group->getId();
             }
@@ -158,8 +166,9 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
     /**
      * @inheritDoc
      */
-    public function remove($entity): void {
+    public function remove($entity, $requestData): bool {
         $this->appointmentRepository->remove($entity);
+        return true;
     }
 
     /**

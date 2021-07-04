@@ -3,9 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
-use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
 class StudentRepository extends AbstractTransactionalRepository implements StudentRepositoryInterface {
@@ -13,18 +13,20 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
     private function getDefaultQueryBuilder(bool $simple = false): QueryBuilder {
         if($simple === true) {
             return $this->em->createQueryBuilder()
-                ->select(['s', 'g'])
+                ->select(['s', 'gm', 'sec'])
                 ->from(Student::class, 's')
-                ->leftJoin('s.grade', 'g');
+                ->leftJoin('s.gradeMemberships', 'gm')
+                ->leftJoin('s.sections', 'sec');
         }
 
         return $this->em->createQueryBuilder()
-            ->select(['s', 'g', 'sgm', 'sg', 'sgg'])
+            ->select(['s', 'gm', 'sgm', 'sg', 'sgg', 'sec'])
             ->from(Student::class, 's')
-            ->leftJoin('s.grade', 'g')
+            ->leftJoin('s.gradeMemberships', 'gm')
             ->leftJoin('s.studyGroupMemberships', 'sgm')
             ->leftJoin('sgm.studyGroup', 'sg')
-            ->leftJoin('sg.grades', 'sgg');
+            ->leftJoin('sg.grades', 'sgg')
+            ->leftJoin('s.sections', 'sec');
     }
 
     /**
@@ -66,10 +68,12 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
     /**
      * @inheritDoc
      */
-    public function findAllByGrade(Grade $grade): array {
+    public function findAllByGrade(Grade $grade, Section $section): array {
         return $this->getDefaultQueryBuilder(true)
-            ->andWhere('g.id = :gradeId')
-            ->setParameter('gradeId', $grade->getId())
+            ->andWhere('gm.grade = :grade')
+            ->andWhere('gm.section = :section')
+            ->setParameter('grade', $grade->getId())
+            ->setParameter('section', $section->getId())
             ->getQuery()
             ->getResult();
     }
@@ -102,6 +106,17 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
      */
     public function findAll() {
         return $this->getDefaultQueryBuilder(true)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllBySection(Section $section): array {
+        return $this->getDefaultQueryBuilder(true)
+            ->andWhere('sec.id = :section')
+            ->setParameter('section', $section->getId())
             ->getQuery()
             ->getResult();
     }
@@ -170,4 +185,6 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
 
         return $qb;
     }
+
+
 }

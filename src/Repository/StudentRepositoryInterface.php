@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Sorting\StudentGroupMembershipStrategy;
@@ -37,9 +38,10 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
 
     /**
      * @param Grade $grade
+     * @param Section $section
      * @return Student[]
      */
-    public function findAllByGrade(Grade $grade): array;
+    public function findAllByGrade(Grade $grade, Section $section): array;
 
     /**
      * @param string $query
@@ -63,6 +65,12 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Student[]
      */
     public function findAll();
+
+    /**
+     * @param Section $section
+     * @return Student[]
+     */
+    public function findAllBySection(Section $section): array;
 
     /**
      * @param Student $student

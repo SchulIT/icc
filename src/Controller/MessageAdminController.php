@@ -24,6 +24,7 @@ use App\Message\PollResultViewHelper;
 use App\Repository\MessageFileUploadRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
+use App\Section\SectionResolver;
 use App\Security\Voter\MessageVoter;
 use App\Sorting\MessageExpirationGroupStrategy;
 use App\Sorting\MessageStrategy;
@@ -84,7 +85,7 @@ class MessageAdminController extends AbstractController {
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null));
         $userTypeFilterView->setHandleNull(true);
 
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), null, $user);
 
         if($userTypeFilterView->getCurrentType() !== null) {
             $messages = $this->repository->findAllByUserType($userTypeFilterView->getCurrentType());
@@ -206,15 +207,17 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/{uuid}/confirmations", name="message_confirmations")
      */
-    public function confirmations(Message $message, MessageConfirmationViewHelper $confirmationViewHelper, Grouper $grouper) {
+    public function confirmations(Message $message, MessageConfirmationViewHelper $confirmationViewHelper, Grouper $grouper, SectionResolver $sectionResolver) {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
         $view = $confirmationViewHelper->createView($message);
+
+        $section = $sectionResolver->getCurrentSection();
 
         $teachers = $view->getTeachers();
         $this->sorter->sort($teachers, TeacherStrategy::class);
 
         $students = $view->getStudents();
-        $gradeGroups = $grouper->group($students, StudentGradeStrategy::class);
+        $gradeGroups = $grouper->group($students, StudentGradeStrategy::class, [ 'section' => $section ]);
         $this->sorter->sort($gradeGroups, StudentGradeGroupStrategy::class);
         $this->sorter->sortGroupItems($gradeGroups, StudentStrategy::class);
 
@@ -234,17 +237,19 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/{uuid}/downloads", name="message_downloads_admin")
      */
-    public function downloads(Message $message, MessageDownloadViewHelper $messageDownloadViewHelper) {
+    public function downloads(Message $message, MessageDownloadViewHelper $messageDownloadViewHelper, SectionResolver $sectionResolver) {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         /** @var MessageDownloadView $view */
         $view = $messageDownloadViewHelper->createView($message);
 
+        $section = $sectionResolver->getCurrentSection();
+
         $teachers = $view->getTeachers();
         $this->sorter->sort($teachers, TeacherStrategy::class);
 
         $students = $view->getStudents();
-        $gradeGroups = $this->grouper->group($students, StudentGradeStrategy::class);
+        $gradeGroups = $this->grouper->group($students, StudentGradeStrategy::class, [ 'section' => $section ]);
         $this->sorter->sort($gradeGroups, StudentGradeGroupStrategy::class);
         $this->sorter->sortGroupItems($gradeGroups, StudentStrategy::class);
 
@@ -413,16 +418,18 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/{uuid}/uploads", name="message_uploads_admin")
      */
-    public function uploads(Message $message, MessageFileUploadViewHelper $messageFileUploadViewHelper) {
+    public function uploads(Message $message, MessageFileUploadViewHelper $messageFileUploadViewHelper, SectionResolver $sectionResolver) {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         $view = $messageFileUploadViewHelper->createView($message);
+
+        $section = $sectionResolver->getCurrentSection();
 
         $teachers = $view->getTeachers();
         $this->sorter->sort($teachers, TeacherStrategy::class);
 
         $students = $view->getStudents();
-        $gradeGroups = $this->grouper->group($students, StudentGradeStrategy::class);
+        $gradeGroups = $this->grouper->group($students, StudentGradeStrategy::class, [ 'section' => $section ]);
         $this->sorter->sort($gradeGroups, StudentGradeGroupStrategy::class);
         $this->sorter->sortGroupItems($gradeGroups, StudentStrategy::class);
 
@@ -465,15 +472,17 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/{uuid}/poll", name="poll_result")
      */
-    public function pollResult(Message $message, PollResultViewHelper $resultViewHelper) {
+    public function pollResult(Message $message, PollResultViewHelper $resultViewHelper, SectionResolver $sectionResolver) {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
         $view = $resultViewHelper->createView($message);
+
+        $section = $sectionResolver->getCurrentSection();
 
         $teachers = $view->getTeachers();
         $this->sorter->sort($teachers, TeacherStrategy::class);
 
         $students = $view->getStudents();
-        $gradeGroups = $this->grouper->group($students, StudentGradeStrategy::class);
+        $gradeGroups = $this->grouper->group($students, StudentGradeStrategy::class, [ 'section' => $section ]);
         $this->sorter->sort($gradeGroups, StudentGradeGroupStrategy::class);
         $this->sorter->sortGroupItems($gradeGroups, StudentStrategy::class);
 

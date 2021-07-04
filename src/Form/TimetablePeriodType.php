@@ -2,6 +2,8 @@
 
 namespace App\Form;
 
+use App\Entity\Section;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -24,6 +26,13 @@ class TimetablePeriodType extends AbstractType {
             ->add('end', DateType::class, [
                 'label' => 'label.end',
                 'widget' => 'single_text'
+            ])
+            ->add('section', EntityType::class, [
+                'label' => 'label.section',
+                'class' => Section::class,
+                'choice_label' => function(Section $section) {
+                    return $section->getDisplayName();
+                }
             ])
             ->add('visibilities', UserTypeEntityType::class, [
                 'label' => 'label.visibility',

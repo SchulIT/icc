@@ -11,6 +11,7 @@ use App\Filesystem\FileNotFoundException;
 use App\Grouping\DocumentCategoryStrategy as DocumentCategoryGroupingStrategy;
 use App\Grouping\Grouper;
 use App\Repository\DocumentRepositoryInterface;
+use App\Section\SectionResolver;
 use App\Security\Voter\DocumentVoter;
 use App\Sorting\DocumentCategoryGroupStrategy;
 use App\Sorting\DocumentNameStrategy;
@@ -40,12 +41,13 @@ class DocumentsController extends AbstractController {
     /**
      * @Route("", name="documents")
      */
-    public function index(DocumentRepositoryInterface $documentRepository, StudyGroupFilter $studyGroupFilter, UserTypeFilter $userTypeFilter, Request $request) {
+    public function index(DocumentRepositoryInterface $documentRepository, StudyGroupFilter $studyGroupFilter, UserTypeFilter $userTypeFilter,
+                          SectionResolver $sectionResolver, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
         $q = $request->query->get('q', null);
-        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user, true);
+        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $sectionResolver->getCurrentSection(), $user, true);
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent()), $user->getUserType());
 
         $documents = $documentRepository->findAllFor($userTypeFilterView->getCurrentType(), $studyGroupFilterView->getCurrentStudyGroup(), $q);

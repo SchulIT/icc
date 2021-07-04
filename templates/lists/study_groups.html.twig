@@ -44,7 +44,7 @@
                                         {% set grade = studyGroupFilter.currentStudyGroup.grades[0] %}
 
                                         {% if grade is not null %}
-                                            <i class="fa fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i> {% include "_includes/grade_teachers.html.twig" with { grade: grade } %}
+                                            <i class="fa fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i> {% include "_includes/grade_teachers.html.twig" with { grade: grade, section: sectionFilter.currentSection } %}
                                         {% endif %}
                                     {% endif %}
 
@@ -75,7 +75,14 @@
                                         <tr>
                                             <td>{{ student.lastname }}</td>
                                             <td>{{ student.firstname }}</td>
-                                            <td>{{ student.grade.name }}</td>
+                                            {% set grade = student.grade(sectionFilter.currentSection) %}
+                                            <td>
+                                                {% if grade is not null %}
+                                                    {{ grade.name }}
+                                                {% else %}
+                                                    {{ 'label.not_available'|trans }}
+                                                {% endif %}
+                                            </td>
                                             <td>
                                                 {% if student.email is not empty %}
                                                     <i class="fa fa-envelope"></i>
@@ -150,12 +157,10 @@
 
                             <div class="flex-shrink-0">
                                 <div class="flex-shrink-0">
-                                    <i class="fa fa-users"></i> {{ studentFilter.currentStudent.grade.name }}
-
-                                    {% set grade = studentFilter.currentStudent.grade %}
-
+                                    {% set grade = studentFilter.currentStudent.grade(sectionFilter.currentSection) %}
                                     {% if grade is not null %}
-                                        <i class="fa fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i> {% include "_includes/grade_teachers.html.twig" with { grade: grade } %}
+                                        <i class="fa fa-users"></i> {{ grade.name }}
+                                        <i class="fa fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i> {% include "_includes/grade_teachers.html.twig" with { grade: grade, section: sectionFilter.currentSection } %}
                                     {% endif %}
 
                                     <i class="fas fa-user-friends"></i> {{ study_groups|length }}
@@ -181,7 +186,7 @@
                                 {% for studygroup in study_groups %}
                                     <tr>
                                         <td>
-                                            <a href="{{ path('list_studygroups', { study_group: studygroup.uuid.toString }) }}">
+                                            <a href="{{ path('list_studygroups', { study_group: studygroup.uuid.toString, section: sectionFilter.currentSection.uuid.toString }) }}">
                                                 {{ studygroup.name }}
                                             </a>
                                         </td>
@@ -218,9 +223,12 @@
 
                 <div class="card d-print-none">
                     <div class="card-body pb-1">
-                        {% include "_filter/study_group.html.twig" %}
+                        {% include "_filter/section.html.twig" %}
+                        {% set params = { section: sectionFilter.currentSection != null ? sectionFilter.currentSection.uuid.toString() : null } %}
 
-                        {% include "_filter/student.html.twig" %}
+                        {% include "_filter/study_group.html.twig" with { params: params } %}
+
+                        {% include "_filter/student.html.twig" with { params: params } %}
                     </div>
                 </div>
 

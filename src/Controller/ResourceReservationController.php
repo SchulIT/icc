@@ -16,6 +16,7 @@ use App\Repository\RoomTagRepositoryInterface;
 use App\Rooms\Reservation\ResourceAvailabilityHelper;
 use App\Rooms\RoomQueryBuilder;
 use App\Rooms\Status\StatusHelperInterface;
+use App\Section\SectionResolver;
 use App\Security\Voter\ResourceReservationVoter;
 use App\Settings\TimetableSettings;
 use App\Sorting\ResourceStrategy;
@@ -140,12 +141,13 @@ class ResourceReservationController extends AbstractController {
      * @Route("/list", name="list_reservations")
      */
     public function list(RoomFilter $roomFilter, TeacherFilter $teacherFilter, DateHelper $dateHelper,
-                          Sorter $sorter, Grouper $grouper, Request $request) {
+                          Sorter $sorter, Grouper $grouper, Request $request, SectionResolver $sectionResolver) {
         /** @var User $user */
         $user = $this->getUser();
 
+        $section = $sectionResolver->getCurrentSection();
         $roomsFilterView = $roomFilter->handle($request->query->get('room', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, !$request->query->has('teacher'));
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $section, $user, !$request->query->has('teacher'));
         $room = $roomsFilterView->getCurrentRoom();
         $all = $request->query->get('all', null) === '✓';
 

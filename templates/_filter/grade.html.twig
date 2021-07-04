@@ -9,11 +9,13 @@
                 <option value="{{ g.uuid }}" {% if gradeFilter.currentGrade != null and gradeFilter.currentGrade.uuid == g.uuid %}selected="selected"{% endif %}>
                     {{ g.getName() }}
 
-                    (
+                    {% set teachers = [] %}
                     {%- for t in g.teachers|sort_gradeteachers -%}
-                        {{ t.teacher.acronym }}{% if not loop.last %}, {% endif %}
+                        {%- if sectionFilter is defined and sectionFilter.currentSection == t.section -%}
+                            {% set teachers = teachers|merge([t.teacher.acronym]) %}
+                        {%- endif -%}
                     {%- endfor -%}
-                    )
+                    {% if teachers|length > 0 %}({{ teachers|join(', ') }}){% endif %}
                 </option>
             {% endfor %}
         </select>

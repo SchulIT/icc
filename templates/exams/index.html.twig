@@ -16,6 +16,7 @@
 
                 {% include "_messages.html.twig" %}
                 {% set currentFilter = {
+                    section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
                     student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null,
                     teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null,
                     grade : gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
@@ -102,20 +103,23 @@
                 {% if contains_active_filters([teacherFilter, studentFilter, gradeFilter, studyGroupFilter]) %}
                 <div class="card">
                     <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+                        {% set params = { section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null } %}
+
                         {% if teacherFilter.teachers|length > 0 %}
-                            {% include "_filter/teacher.html.twig" %}
+                            {% include "_filter/teacher.html.twig" with { params: params } %}
                         {% endif %}
 
                         {% if studentFilter.studentGradeGroups|length > 0 %}
-                            {% include "_filter/student.html.twig" %}
+                            {% include "_filter/student.html.twig" with { params: params } %}
                         {% endif %}
 
                         {% if gradeFilter.grades|length > 0 %}
-                            {% include "_filter/grade.html.twig" %}
+                            {% include "_filter/grade.html.twig" with { params: params } %}
                         {% endif %}
 
                         {% if studyGroupFilter.studyGroupGroups|length > 0 %}
-                            {% include "_filter/study_group.html.twig" %}
+                            {% include "_filter/study_group.html.twig" with { params: params } %}
                         {% endif %}
 
                         <form role="form" method="get" class="form">

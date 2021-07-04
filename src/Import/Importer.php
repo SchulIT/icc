@@ -50,7 +50,7 @@ class Importer {
 
         try {
             if($strategy instanceof InitializeStrategyInterface) {
-                $strategy->initialize();
+                $strategy->initialize($data);
             }
 
             $repository = $strategy->getRepository();
@@ -88,8 +88,11 @@ class Importer {
                     $id = $strategy->getEntityId($entity);
 
                     if (!in_array($id, $updatedEntitiesIds)) {
-                        $removedEntities[] = $entity;
-                        $strategy->remove($entity);
+                        if($strategy->remove($entity, $data) === true) {
+                            $removedEntities[] = $entity;
+                        } else {
+                            $updatedEntities[] = $entity;
+                        }
                     }
                 }
             }
@@ -124,13 +127,13 @@ class Importer {
 
         try {
             if($strategy instanceof InitializeStrategyInterface) {
-                $strategy->initialize();
+                $strategy->initialize($data);
             }
 
             $repository = $strategy->getRepository();
             $repository->beginTransaction();
 
-            $strategy->removeAll();
+            $strategy->removeAll($data);
 
             $addedEntities = [];
             $ignoredEntities = [];
@@ -139,7 +142,7 @@ class Importer {
 
             foreach ($entities as $object) {
                 try {
-                    $strategy->persist($object);
+                    $strategy->persist($object, $data);
                     $addedEntities[] = $object;
                 } catch (EntityIgnoredException $e) {
                     $ignoredEntities[] = $e->getEntity();

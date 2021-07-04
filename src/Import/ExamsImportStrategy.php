@@ -4,11 +4,11 @@ namespace App\Import;
 
 use App\Entity\Exam;
 use App\Entity\ExamSupervision;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Event\ExamImportEvent;
-use App\Event\SubstitutionImportEvent;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
@@ -17,11 +17,11 @@ use App\Repository\TransactionalRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Request\Data\ExamData;
 use App\Request\Data\ExamsData;
+use App\Section\SectionResolver;
 use App\Settings\GeneralSettings;
 use App\Settings\ImportSettings;
-use App\Utils\CollectionUtils;
 use App\Utils\ArrayUtils;
-use DateTime;
+use App\Utils\CollectionUtils;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategyInterface, InitializeStrategyInterface {
@@ -31,24 +31,24 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
     private $studentRepository;
     private $teacherRepository;
     private $roomRepository;
-    private $generalSettings;
     private $importSettings;
     private $dispatcher;
+    private $sectionResolver;
 
     private $rules = [ ];
 
     public function __construct(ExamRepositoryInterface $examRepository, TuitionRepositoryInterface $tuitionRepository,
                                 StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository,
                                 EventDispatcherInterface $eventDispatcher, RoomRepositoryInterface $roomRepository,
-                                GeneralSettings $generalSettings, ImportSettings $importSettings) {
+                                ImportSettings $importSettings, SectionResolver $sectionResolver) {
         $this->examRepository = $examRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->studentRepository = $studentRepository;
         $this->teacherRepository = $teacherRepository;
         $this->roomRepository = $roomRepository;
-        $this->generalSettings = $generalSettings;
         $this->importSettings = $importSettings;
         $this->dispatcher = $eventDispatcher;
+        $this->sectionResolver = $sectionResolver;
     }
 
     /**
@@ -98,12 +98,20 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
      * @param Exam $entity
      * @param ExamsData $requestData
      * @param ExamData $data
+     * @throws ImportException
+     * @throws SectionNotResolvableException
      */
     public function updateEntity($entity, $data, $requestData): void {
         $entity->setDate($data->getDate());
         $entity->setDescription($data->getDescription());
         $entity->setLessonStart($data->getLessonStart());
         $entity->setLessonEnd($data->getLessonEnd());
+
+        $section = $this->sectionResolver->getSectionForDate($entity->getDate());
+
+        if($section === null) {
+            throw new SectionNotResolvableException($entity->getDate());
+        }
 
         /*
          * for compatibility reasons only!
@@ -163,7 +171,7 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
         if(count($data->getStudents()) > 0) {
             $students = $this->studentRepository->findAllByExternalId($data->getStudents());
         } else {
-            $students = $this->resolveStudentsFromRules($entity);
+            $students = $this->resolveStudentsFromRules($entity, $section);
         }
 
         CollectionUtils::synchronize(
@@ -177,10 +185,10 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
         $tuitions = [ ];
 
         foreach($data->getTuitions() as $tuitionData) {
-            $resolvedTuitions = $this->tuitionRepository->findAllByGradeAndSubjectOrCourseWithoutTeacher($tuitionData->getGrades(), $tuitionData->getSubjectOrCourse());
+            $resolvedTuitions = $this->tuitionRepository->findAllByGradeAndSubjectOrCourseWithoutTeacher($tuitionData->getGrades(), $tuitionData->getSubjectOrCourse(), $section);
 
             if(count($resolvedTuitions) > 1) {
-                $resolvedTuitions = $this->tuitionRepository->findAllByGradeTeacherAndSubjectOrCourse($tuitionData->getGrades(), $tuitionData->getTeachers(), $tuitionData->getSubjectOrCourse());
+                $resolvedTuitions = $this->tuitionRepository->findAllByGradeTeacherAndSubjectOrCourse($tuitionData->getGrades(), $tuitionData->getTeachers(), $tuitionData->getSubjectOrCourse(), $section);
             }
 
             if(count($resolvedTuitions) === 0) {
@@ -205,7 +213,7 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
      * @param Exam $exam
      * @return Student[]
      */
-    private function resolveStudentsFromRules(Exam $exam): array {
+    private function resolveStudentsFromRules(Exam $exam, Section $section): array {
         $students = [ ];
 
         /** @var Tuition $tuition */
@@ -213,8 +221,9 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
             /** @var StudyGroupMembership $membership */
             foreach($tuition->getStudyGroup()->getMemberships() as $membership) {
                 $student = $membership->getStudent();
-                $grade = $student->getGrade()->getName();
-                if(array_key_exists($grade, $this->rules) && in_array($membership->getType(), $this->rules[$grade])) {
+                $grade = $student->getGrade($section);
+
+                if($grade !== null && array_key_exists($grade->getName(), $this->rules) && in_array($membership->getType(), $this->rules[$grade->getName()])) {
                     $students[$student->getId()] = $student;
                 }
             }
@@ -233,8 +242,9 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
     /**
      * @param Exam $entity
      */
-    public function remove($entity): void {
+    public function remove($entity, $requestData): bool {
         $this->examRepository->remove($entity);
+        return true;
     }
 
     /**
@@ -268,8 +278,8 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
         }
     }
 
-    public function initialize(): void {
-        $currentSection = $this->generalSettings->getSection();
+    public function initialize($requestData): void {
+        $currentSection = $this->sectionResolver->getCurrentSection();
 
         foreach($this->importSettings->getExamRules() as $rule) {
             $grades = array_map('trim', explode(',', $rule['grades']));
@@ -277,7 +287,7 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
             $types = array_map('trim',  explode(',', $rule['types']));
 
             foreach($sections as $section) {
-                if($section == $currentSection) {
+                if($section == $currentSection->getNumber()) {
                     foreach($grades as $grade) {
                         $this->rules[$grade] = $types;
                     }

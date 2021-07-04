@@ -61,6 +61,8 @@
 
                 <div class="card">
                     <div class="card-body">
+                        {% include "_filter/section.html.twig" with { isChoice: false } %}
+
                         {% if studentFilter.studentGradeGroups|length > 0 %}
                             {% include "_filter/student.html.twig" with { trigger: 'none', isChoice: false } %}
                         {% endif %}

@@ -22,6 +22,7 @@ class TimetablePeriod {
 
     use IdTrait;
     use UuidTrait;
+    use SectionAwareTrait;
 
     /**
      * @ORM\Column(type="string", unique=true)
@@ -40,7 +41,6 @@ class TimetablePeriod {
     /**
      * @ORM\Column(type="datetime")
      * @Assert\NotNull()
-     * @Assert\Date()
      * @var DateTime
      */
     private $start;
@@ -48,7 +48,6 @@ class TimetablePeriod {
     /**
      * @ORM\Column(type="datetime")
      * @Assert\NotNull()
-     * @Assert\Date()
      * @var DateTime
      */
     private $end;

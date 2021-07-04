@@ -220,8 +220,8 @@
                     </div>
                 {% endfor %}
             {% endif %}
-        </div>
             {% endif %}
+            </div>
 
             <div class="col-md-3 sticky-sidebar">
                 <div class="card">
@@ -250,6 +250,8 @@
                 <div class="card">
                     <div class="card-body pb-1">
                         {% set params = { period: currentPeriod ? currentPeriod.uuid.toString : null } %}
+
+                        {% include "_filter/section.html.twig" %}
 
                         {% if teachersFilter.teachers|length > 0 %}
                             {% include "_filter/teachers.html.twig" with { canSwitch: true, params: params } %}

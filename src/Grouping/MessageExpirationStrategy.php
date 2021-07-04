@@ -17,7 +17,7 @@ class MessageExpirationStrategy implements GroupingStrategyInterface {
      * @param Message $object
      * @return bool
      */
-    public function computeKey($object) {
+    public function computeKey($object, array $options = [ ]) {
         return $object->getExpireDate() < $this->dateHelper->getNow();
     }
 
@@ -26,7 +26,7 @@ class MessageExpirationStrategy implements GroupingStrategyInterface {
      * @param bool $keyB
      * @return bool
      */
-    public function areEqualKeys($keyA, $keyB): bool {
+    public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA === $keyB;
     }
 
@@ -34,7 +34,7 @@ class MessageExpirationStrategy implements GroupingStrategyInterface {
      * @param bool $key
      * @return GroupInterface
      */
-    public function createGroup($key): GroupInterface {
+    public function createGroup($key, array $options = [ ]): GroupInterface {
         return new MessageExpirationGroup($key);
     }
 }

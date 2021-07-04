@@ -51,8 +51,8 @@ class GradeTest extends WebTestCase {
                 'id' => $grade->getId()
             ]);
 
-        $this->assertEquals(1, $grade->getStudents()->count());
-        $this->assertEquals($student->getId(), $grade->getStudents()->first()->getId());
+        $this->assertEquals(1, $grade->getMemberships()->count());
+        $this->assertEquals($student->getId(), $grade->getMemberships()->first()->getId());
     }
 
 }

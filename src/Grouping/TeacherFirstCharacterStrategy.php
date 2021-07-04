@@ -10,7 +10,7 @@ class TeacherFirstCharacterStrategy implements GroupingStrategyInterface {
      * @param Teacher $object
      * @return string
      */
-    public function computeKey($object) {
+    public function computeKey($object, array $options = [ ]) {
         return ucfirst(substr($object->getAcronym(), 0, 1));
     }
 
@@ -19,7 +19,7 @@ class TeacherFirstCharacterStrategy implements GroupingStrategyInterface {
      * @param string $keyB
      * @return bool
      */
-    public function areEqualKeys($keyA, $keyB): bool {
+    public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA === $keyB;
     }
 
@@ -27,7 +27,7 @@ class TeacherFirstCharacterStrategy implements GroupingStrategyInterface {
      * @param string $key
      * @return GroupInterface
      */
-    public function createGroup($key): GroupInterface {
+    public function createGroup($key, array $options = [ ]): GroupInterface {
         return new TeacherFirstCharacterGroup($key);
     }
 }

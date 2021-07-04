@@ -4,11 +4,13 @@ namespace App\Controller;
 
 use App\Dashboard\DashboardViewHelper;
 use App\Dashboard\DashboardViewCollapseHelper;
+use App\Entity\Section;
 use App\Entity\Substitution;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
+use App\Repository\SectionRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Settings\DashboardSettings;
 use App\Settings\SubstitutionSettings;
@@ -18,6 +20,7 @@ use App\View\Filter\RoomFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Filter\UserTypeFilter;
+use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -41,7 +44,7 @@ class DashboardController extends AbstractController {
      */
     public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter, RoomFilter $roomFilter,
                               DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper,
-                              DateHelper $dateHelper, DashboardSettings $settings, TimetableSettings $timetableSettings,
+                              DateHelper $dateHelper, DashboardSettings $settings, TimetableSettings $timetableSettings, SectionRepositoryInterface $sectionRepository,
                               UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
@@ -76,11 +79,14 @@ class DashboardController extends AbstractController {
             }
         }
 
+        $dateHasSection = true;
+        $section = $this->getSectionForDate($selectedDate, $sectionRepository, $dateHasSection);
+
         $days = $this->getListOfSurroundingDays($selectedDate, $settings->getNumberFutureDays(), $settings->getNumberPastDays(), $settings->skipWeekends());
 
         $roomFilterView = $roomFilter->handle($request->query->get('room', null), $user);
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $roomFilterView->getCurrentRoom() === null);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $section, $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $section, $user, $studentFilterView->getCurrentStudent() === null && $roomFilterView->getCurrentRoom() === null);
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]), UserType::Student(), [ UserType::Student(), UserType::Parent() ]);
 
         $includeGradeMessages = $user->getData(static::IncludeGradeMessagesKey, false);
@@ -144,8 +150,28 @@ class DashboardController extends AbstractController {
             'includeGradeMessages' => $user->getData(static::IncludeGradeMessagesKey, false),
             'canIncludeGradeMessages' => $user->getTeacher() !== null,
             'last_import' => $importDateTypeRepository->findOneByEntityClass(Substitution::class),
-            'settings' => $settings
+            'settings' => $settings,
+            'section' => $section,
+            'dateHasSection' => $dateHasSection
         ]);
+    }
+
+    private function getSectionForDate(DateTime $dateTime, SectionRepositoryInterface $sectionRepository, bool &$dateHasSection): ?Section {
+        $dateHasSection = true;
+        $section = $sectionRepository->findOneByDate($dateTime);
+
+        if($section === null) {
+            $dateHasSection = false;
+            $sections = $sectionRepository->findAll();
+
+            if(count($sections) === 0) {
+                return null;
+            } else {
+                return $sections[count($sections) - 1];
+            }
+        }
+
+        return $section;
     }
 
     /**

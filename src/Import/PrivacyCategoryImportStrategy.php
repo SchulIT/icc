@@ -88,8 +88,9 @@ class PrivacyCategoryImportStrategy implements ImportStrategyInterface {
     /**
      * @inheritDoc
      */
-    public function remove($entity): void {
+    public function remove($entity, $requestData): bool {
         $this->repository->remove($entity);
+        return true;
     }
 
     /**

@@ -13,6 +13,7 @@ use App\Grouping\SickNoteTuitionGroup;
 use App\Repository\SickNoteRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
+use App\Section\SectionResolver;
 use App\Security\Voter\SickNoteVoter;
 use App\Settings\SickNoteSettings;
 use App\Settings\TimetableSettings;
@@ -25,6 +26,7 @@ use App\Sorting\Sorter;
 use App\Timetable\TimetableTimeHelper;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
+use App\View\Filter\SectionFilter;
 use App\View\Filter\TeacherFilter;
 use DateTime;
 use Exception;
@@ -90,7 +92,7 @@ class SickNoteController extends AbstractController {
     /**
      * @Route("/sick_notes", name="sick_notes")
      */
-    public function index(GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Request $request,
+    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Request $request,
                           SickNoteRepositoryInterface $sickNoteRepository, TuitionRepositoryInterface $tuitionRepository,
                           DateHelper $dateHelper, Sorter $sorter, Grouper $grouper) {
         $this->denyAccessUnlessGranted(SickNoteVoter::View);
@@ -98,8 +100,9 @@ class SickNoteController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
 
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $request->query->get('teacher') !== '✗' && $gradeFilterView->getCurrentGrade() === null);
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $request->query->get('teacher') !== '✗' && $gradeFilterView->getCurrentGrade() === null);
         $selectedDate = $dateHelper->getToday();
 
         try {
@@ -117,8 +120,8 @@ class SickNoteController extends AbstractController {
 
         $groups = [ ];
 
-        if($teacherFilterView->getCurrentTeacher() !== null) {
-            $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher());
+        if($teacherFilterView->getCurrentTeacher() !== null && $sectionFilterView->getCurrentSection() !== null) {
+            $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
 
             foreach($tuitions as $tuition) {
                 $students = $tuition->getStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
@@ -156,7 +159,7 @@ class SickNoteController extends AbstractController {
             $sorter->sort($groups, SickNoteGradeGroupStrategy::class);
         } else {
             $sickNotes = $sickNoteRepository->findAll($selectedDate);
-            $groups = $grouper->group($sickNotes, SickNoteGradeStrategy::class);
+            $groups = $grouper->group($sickNotes, SickNoteGradeStrategy::class, [ 'section' => $sectionFilterView->getCurrentSection() ]);
             $sorter->sort($groups, SickNoteGradeGroupStrategy::class);
         }
 
@@ -165,6 +168,7 @@ class SickNoteController extends AbstractController {
         return $this->render('sick_note/index.html.twig', [
             'today' => $dateHelper->getToday(),
             'groups' => $groups,
+            'sectionFilter' => $sectionFilterView,
             'gradeFilter' => $gradeFilterView,
             'teacherFilter' => $teacherFilterView,
             'selectedDate' => $selectedDate

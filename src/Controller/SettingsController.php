@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Converter\EnumStringConverter;
 use App\Entity\AppointmentCategory;
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\UserType;
 use App\Form\ColorType;
 use App\Form\ExamStudentRuleType;
@@ -12,6 +13,7 @@ use App\Form\MarkdownType;
 use App\Menu\Builder;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Repository\GradeRepositoryInterface;
+use App\Repository\SectionRepositoryInterface;
 use App\Settings\AppointmentsSettings;
 use App\Settings\DashboardSettings;
 use App\Settings\ExamSettings;
@@ -60,7 +62,7 @@ class SettingsController extends AbstractController {
     /**
      * @Route("/general", name="admin_settings_general")
      */
-    public function general(Request $request, GeneralSettings $settings, DateHelper $dateHelper) {
+    public function general(Request $request, GeneralSettings $settings, DateHelper $dateHelper, SectionRepositoryInterface $sectionRepository) {
         $currentYear = (int)$dateHelper->getToday()->format('Y');
         $choices = [ ];
         for($year = $currentYear - 1; $year <= $currentYear + 1; $year++) {
@@ -69,34 +71,27 @@ class SettingsController extends AbstractController {
 
         $builder = $this->createFormBuilder();
         $builder
-            ->add('school_year', ChoiceType::class, [
-                'label' => 'label.school_year',
-                'choices' => $choices,
-                'data' => $settings->getSchoolYear()
-            ])
-            ->add('section', IntegerType::class, [
-                'label' => 'label.section.label',
-                'help' => 'label.section.help',
-                'data' => $settings->getSection()
-            ])
-            ->add('section_name', TextType::class, [
-                'label' => 'label.section_name.label',
-                'help' => 'label.section_name.help',
-                'data' => $settings->getSectionName()
+            ->add('current_section', ChoiceType::class,  [
+                'choices' => ArrayUtils::createArrayWithKeysAndValues(
+                    $sectionRepository->findAll(),
+                    function(Section $section) {
+                        return $section->getDisplayName();
+                    },
+                    function(Section $section) {
+                        return $section->getId();
+                    }
+                ),
+                'data' => $settings->getCurrentSectionId(),
+                'label' => 'admin.settings.general.current_section.label',
+                'help' => 'admin.settings.general.current_section.help'
             ]);
         $form = $builder->getForm();
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
             $map = [
-                'school_year' => function($year) use ($settings) {
-                    $settings->setSchoolYear($year);
-                },
-                'section' => function($section) use ($settings) {
-                    $settings->setSection($section);
-                },
-                'section_name' => function($name) use ($settings) {
-                    $settings->setSectionName($name);
+                'current_section' => function($sectionId) use ($settings) {
+                    $settings->setCurrentSectionId($sectionId);
                 }
             ];
 

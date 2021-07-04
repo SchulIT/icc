@@ -41,11 +41,11 @@
 
                         <div class="flex-shrink-0">
                             {% if studentFilter.currentStudent != null %}
-                                <i class="fa fa-users"></i> {{ studentFilter.currentStudent.grade.name }}
+                                <i class="fa fa-users"></i> {{ studentFilter.currentStudent.grade(sectionFilter.currentSection).name }}
                             {% endif %}
 
                             {% if gradeFilter.currentGrade is not null %}
-                                <i class="fa fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i> {% include "_includes/grade_teachers.html.twig" with { grade: gradeFilter.currentGrade } %}
+                                <i class="fa fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i> {% include "_includes/grade_teachers.html.twig" with { grade: gradeFilter.currentGrade, section: sectionFilter.currentSection } %}
                             {% endif %}
 
                             <i class="fa fa-chalkboard-teacher"></i> {{ tuitions|length }}
@@ -157,11 +157,19 @@
 
                 <div class="card">
                     <div class="card-body pb-1">
-                        {% include "_filter/grade.html.twig" %}
+                        {% set params = {
+                            grade: gradeFilter.currentGrade != null ? gradeFilter.currentGrade.uuid.toString : null,
+                            teacher: teacherFilter.currentTeacher != null ? teacherFilter.currentTeacher.uuid.toString : null,
+                            student: studentFilter.currentStudent != null ? studentFilter.currentStudent.uuid.toString : null
+                        } %}
+                        {% include "_filter/section.html.twig" with { params: params } %}
 
-                        {% include "_filter/teacher.html.twig" %}
+                        {% set params = { section: sectionFilter.currentSection != null ? sectionFilter.currentSection.uuid.toString() : null } %}
+                        {% include "_filter/grade.html.twig" with { params: params } %}
 
-                        {% include "_filter/student.html.twig" %}
+                        {% include "_filter/teacher.html.twig" with { params: params } %}
+
+                        {% include "_filter/student.html.twig" with { params: params } %}
                     </div>
 
                     <div class="card-footer">

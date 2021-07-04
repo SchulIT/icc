@@ -4,6 +4,7 @@ namespace App\Import;
 
 use App\Entity\Grade;
 use App\Repository\GradeRepositoryInterface;
+use App\Repository\SectionRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\GradeData;
 use App\Request\Data\GradesData;
@@ -12,16 +13,25 @@ use App\Utils\ArrayUtils;
 class GradesImportStrategy implements ImportStrategyInterface {
 
     private $repository;
+    private $sectionRepository;
 
-    public function __construct(GradeRepositoryInterface $repository) {
+    public function __construct(GradeRepositoryInterface $repository, SectionRepositoryInterface $sectionRepository) {
         $this->repository = $repository;
+        $this->sectionRepository = $sectionRepository;
     }
 
     /**
      * @param GradesData $requestData
      * @return array<string, Grade>
+     * @throws SectionNotFoundException
      */
     public function getExistingEntities($requestData): array {
+        /*$section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+
+        if($section === null) {
+            throw new SectionNotFoundException($requestData->getSection(), $requestData->getYear());
+        }*/
+
         return ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(),
             function (Grade $grade) {
@@ -77,10 +87,14 @@ class GradesImportStrategy implements ImportStrategyInterface {
     }
 
     /**
-     * @inheritDoc
+     * @param Grade $entity
+     * @param GradesData $requestData
+     * @return bool
      */
-    public function remove($entity): void {
-        $this->repository->remove($entity);
+    public function remove($entity, $requestData): bool {
+        //$this->repository->remove($entity);
+        // never remove grades
+        return false;
     }
 
     /**

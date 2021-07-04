@@ -10,7 +10,7 @@ class ExamWeekStrategy implements GroupingStrategyInterface {
      * @param Exam $object
      * @return WeekOfYear|null
      */
-    public function computeKey($object) {
+    public function computeKey($object, array $options = [ ]) {
         if($object->getDate() === null) {
             return null;
         }
@@ -26,7 +26,7 @@ class ExamWeekStrategy implements GroupingStrategyInterface {
      * @param WeekOfYear|null $keyB
      * @return bool
      */
-    public function areEqualKeys($keyA, $keyB): bool {
+    public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         if($keyA === null && $keyB === null) {
             return true;
         } else if($keyA === null || $keyB === null) {
@@ -41,7 +41,7 @@ class ExamWeekStrategy implements GroupingStrategyInterface {
      * @param WeekOfYear $key
      * @return GroupInterface
      */
-    public function createGroup($key): GroupInterface {
+    public function createGroup($key, array $options = [ ]): GroupInterface {
         return new ExamWeekGroup($key);
     }
 }

@@ -77,8 +77,10 @@ interface ImportStrategyInterface {
      * Removes an entity from the database
      *
      * @param mixed $entity
+     * @param mixed $requestData
+     * @return bool Whether or not the item was really removed (true) or just updated (false)
      */
-    public function remove($entity): void;
+    public function remove($entity, $requestData): bool;
 
     /**
      * Returns the repository used for import

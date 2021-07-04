@@ -20,14 +20,14 @@ class InfotextsImportStrategy implements ReplaceImportStrategyInterface {
         return $this->repository;
     }
 
-    public function removeAll(): void {
+    public function removeAll($requestData): void {
         $this->repository->removeAll();
     }
 
     /**
      * @param InfotextData $data
      */
-    public function persist($data): void {
+    public function persist($data, $requestData): void {
         $infotext = (new Infotext())
             ->setContent($data->getContent())
             ->setDate($data->getDate());

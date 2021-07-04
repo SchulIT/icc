@@ -6,6 +6,7 @@ use App\Entity\Gender;
 use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TeacherTag;
+use App\Repository\SectionRepositoryInterface;
 use App\Repository\SubjectRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TeacherTagRepositoryInterface;
@@ -21,11 +22,14 @@ class TeachersImportStrategy implements ImportStrategyInterface {
     private $teacherRepository;
     private $subjectRepository;
     private $teacherTagRepository;
+    private $sectionRepository;
 
-    public function __construct(TeacherRepositoryInterface $teacherRepository, SubjectRepositoryInterface $subjectRepository, TeacherTagRepositoryInterface $teacherTagRepository) {
+    public function __construct(TeacherRepositoryInterface $teacherRepository, SubjectRepositoryInterface $subjectRepository,
+                                TeacherTagRepositoryInterface $teacherTagRepository, SectionRepositoryInterface $sectionRepository) {
         $this->teacherRepository = $teacherRepository;
         $this->subjectRepository = $subjectRepository;
         $this->teacherTagRepository = $teacherTagRepository;
+        $this->sectionRepository = $sectionRepository;
     }
 
     /**
@@ -76,6 +80,7 @@ class TeachersImportStrategy implements ImportStrategyInterface {
      * @param Teacher $entity
      * @param TeacherData $data
      * @param TeachersData $requestData
+     * @throws SectionNotFoundException
      */
     public function updateEntity($entity, $data, $requestData): void {
         $entity->setAcronym($data->getAcronym());
@@ -84,6 +89,16 @@ class TeachersImportStrategy implements ImportStrategyInterface {
         $entity->setFirstname($data->getFirstname());
         $entity->setLastname($data->getLastname());
         $entity->setEmail($data->getEmail());
+
+        $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+
+        if($section === null) {
+            throw new SectionNotFoundException($requestData->getSection(), $requestData->getYear());
+        }
+
+        if($entity->getSections()->contains($section) === false) {
+            $entity->addSection($section);
+        }
 
         CollectionUtils::synchronize(
             $entity->getSubjects(),
@@ -109,9 +124,20 @@ class TeachersImportStrategy implements ImportStrategyInterface {
     /**
      * @param Teacher $entity
      */
-    public function remove($entity): void {
-        $this->teacherRepository
-            ->remove($entity);
+    public function remove($entity, $requestData): bool {
+        $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+
+        if($section !== null && $entity->getSections()->contains($section)) {
+            $entity->removeSection($section);
+            $this->teacherRepository->persist($entity);
+
+            if($entity->getSections()->count() === 0) {
+                $this->teacherRepository->remove($entity);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

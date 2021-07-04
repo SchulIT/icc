@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Section;
 use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TeacherTag;
@@ -55,6 +56,12 @@ interface TeacherRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Teacher[]
      */
     public function findAll();
+
+    /**
+     * @param Section $section
+     * @return Teacher[]
+     */
+    public function findAllBySection(Section $section): array;
 
     /**
      * @param Teacher $teacher

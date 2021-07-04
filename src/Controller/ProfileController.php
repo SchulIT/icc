@@ -12,6 +12,7 @@ use App\Notification\Email\EmailNotificationService;
 use App\Repository\DeviceTokenRepositoryInterface;
 use App\Repository\OAuthClientInfoRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
+use App\Section\SectionResolver;
 use App\Security\OAuth2\AppManager;
 use App\Security\Voter\AccessTokenVoter;
 use App\Security\Voter\DeviceTokenVoter;
@@ -146,9 +147,9 @@ class ProfileController extends AbstractController {
      * @Route("/switch", name="switch_user")
      * @Security("is_granted('ROLE_ALLOWED_TO_SWITCH')")
      */
-    public function switchUser(Grouper $grouper, Sorter $sorter, UserRepositoryInterface $userRepository) {
+    public function switchUser(Grouper $grouper, Sorter $sorter, UserRepositoryInterface $userRepository, SectionResolver $sectionResolver) {
         $users = $userRepository->findAll();
-        $groups = $grouper->group($users, UserTypeAndGradeStrategy::class);
+        $groups = $grouper->group($users, UserTypeAndGradeStrategy::class, ['section' => $sectionResolver->getCurrentSection()]);
         $sorter->sort($groups, StringGroupStrategy::class);
         $sorter->sortGroupItems($groups, UserUsernameStrategy::class);
 

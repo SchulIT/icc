@@ -15,32 +15,22 @@ use App\Filesystem\FileNotFoundException;
 use App\Filesystem\MessageFilesystem;
 use App\Form\MessagePollVoteType;
 use App\Form\MessageUploadType;
-use App\Grouping\Grouper;
-use App\Grouping\StudentGradeStrategy;
-use App\Grouping\StudentStudyGroupStrategy;
-use App\Grouping\UserUserTypeStrategy;
-use App\Message\MessageConfirmationViewHelper;
 use App\Message\PollVoteHelper;
 use App\Repository\MessageFileUploadRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
+use App\Section\SectionResolver;
 use App\Security\Voter\MessageVoter;
 use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
-use App\Sorting\StudentGradeGroupStrategy;
-use App\Sorting\StudentStrategy;
-use App\Sorting\StudentStudyGroupGroupStrategy;
-use App\Sorting\TeacherStrategy;
-use App\Sorting\UserLastnameFirstnameStrategy;
-use App\Sorting\UserUserTypeGroupStrategy;
 use App\Utils\EnumArrayUtils;
+use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\ORM\EntityManagerInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -67,12 +57,13 @@ class MessageController extends AbstractController {
     /**
      * @Route("", name="messages")
      */
-    public function index(MessageRepositoryInterface $messageRepository, StudentFilter $studentFilter, UserTypeFilter $userTypeFilter, Request $request) {
+    public function index(MessageRepositoryInterface $messageRepository, StudentFilter $studentFilter, UserTypeFilter $userTypeFilter,
+                          SectionResolver $sectionResolver, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
         $archive = $request->query->get('archive', false) === '✓';
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionResolver->getCurrentSection(), $user);
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]));
 
         $studyGroups = [ ];

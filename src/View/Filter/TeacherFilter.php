@@ -2,6 +2,7 @@
 
 namespace App\View\Filter;
 
+use App\Entity\Section;
 use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
@@ -23,13 +24,13 @@ class TeacherFilter {
         $this->teacherRepository = $teacherRepository;
     }
 
-    public function handle(?string $uuid, User $user, bool $setDefaultTeacher): TeacherFilterView {
+    public function handle(?string $uuid, ?Section $section, User $user, bool $setDefaultTeacher): TeacherFilterView {
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
         $teachers = [ ];
 
-        if($isStudentOrParent !== true) {
-            $teachers = $this->teacherRepository->findAll();
+        if($isStudentOrParent !== true && $section !== null) {
+            $teachers = $this->teacherRepository->findAllBySection($section);
         }
 
         $teachers = ArrayUtils::createArrayWithKeys(

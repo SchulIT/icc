@@ -7,6 +7,7 @@ use App\Entity\Student;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Section\SectionResolver;
 use App\Settings\ExamSettings;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -28,11 +29,14 @@ class ExamVoter extends Voter {
     private $dateHelper;
     private $examSettings;
     private $accessDecisionManager;
+    private $sectionResoler;
 
-    public function __construct(DateHelper $dateHelper, ExamSettings $examSettings, AccessDecisionManagerInterface $accessDecisionManager) {
+    public function __construct(DateHelper $dateHelper, ExamSettings $examSettings,
+                                AccessDecisionManagerInterface $accessDecisionManager, SectionResolver $sectionResolver) {
         $this->dateHelper = $dateHelper;
         $this->examSettings = $examSettings;
         $this->accessDecisionManager = $accessDecisionManager;
+        $this->sectionResoler = $sectionResolver;
     }
 
     /**
@@ -196,6 +200,7 @@ class ExamVoter extends Voter {
         }
 
         $user = $token->getUser();
+        $section = $this->sectionResoler->getSectionForDate($exam->getDate());
 
         if($user instanceof User && $this->isStudentOrParent($token)) {
             $visibleGradeIds = $this->examSettings->getVisibleGradeIds();
@@ -203,7 +208,11 @@ class ExamVoter extends Voter {
 
             /** @var Student $student */
             foreach($user->getStudents() as $student) {
-                $gradeIds[] = $student->getGrade()->getId();
+                $grade = $student->getGrade($section);
+
+                if($grade !== null) {
+                    $gradeIds[] = $grade->getId();
+                }
             }
 
             if(count(array_intersect($visibleGradeIds, $gradeIds)) === 0) {

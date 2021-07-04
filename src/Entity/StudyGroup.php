@@ -11,15 +11,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @ORM\Table(uniqueConstraints={
+ *      @ORM\UniqueConstraint(fields={"section", "externalId"})
+ * })
  * @Auditable()
  */
 class StudyGroup {
 
     use IdTrait;
     use UuidTrait;
+    use SectionAwareTrait;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string")
      * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */

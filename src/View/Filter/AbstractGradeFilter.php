@@ -3,6 +3,7 @@
 namespace App\View\Filter;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
@@ -22,16 +23,21 @@ abstract class AbstractGradeFilter {
 
     /**
      * @param User $user
+     * @param Section|null $section
      * @param Grade|null $defaultGrade
      * @return Grade[]
      */
-    protected function getGrades(User $user, &$defaultGrade): array {
+    protected function getGrades(User $user, ?Section $section, &$defaultGrade): array {
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
         $defaultGrade = null;
 
         if($isStudentOrParent) {
-            $grades = $user->getStudents()->map(function(Student $student) {
-                return $student->getGrade();
+            if($section === null) {
+                return [ ];
+            }
+
+            $grades = $user->getStudents()->map(function(Student $student) use($section) {
+                return $student->getGrade($section);
             })->toArray();
             $defaultGrade = $grades[0] ?? null;
         } else {

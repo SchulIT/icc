@@ -10,6 +10,7 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\AbsenceData;
 use App\Request\Data\AbsencesData;
+use App\Section\SectionResolver;
 
 class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
 
@@ -17,26 +18,30 @@ class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
     private $teacherRepository;
     private $studyGroupRepository;
     private $roomRepository;
+    private $sectionResolver;
 
-    public function __construct(AbsenceRepositoryInterface $repository, TeacherRepositoryInterface $teacherRepository, StudyGroupRepositoryInterface $studyGroupRepository, RoomRepositoryInterface $roomRepository) {
+    public function __construct(AbsenceRepositoryInterface $repository, TeacherRepositoryInterface $teacherRepository,
+                                StudyGroupRepositoryInterface $studyGroupRepository, RoomRepositoryInterface $roomRepository, SectionResolver $sectionResolver) {
         $this->repository = $repository;
         $this->teacherRepository = $teacherRepository;
         $this->studyGroupRepository = $studyGroupRepository;
         $this->roomRepository = $roomRepository;
+        $this->sectionResolver = $sectionResolver;
     }
 
     public function getRepository(): TransactionalRepositoryInterface {
         return $this->repository;
     }
 
-    public function removeAll(): void {
+    public function removeAll($requestData): void {
         $this->repository->removeAll();
     }
 
     /**
      * @param AbsenceData $data
+     * @throws SectionNotResolvableException
      */
-    public function persist($data): void {
+    public function persist($data, $requestData): void {
         $absence = (new Absence())
             ->setDate($data->getDate())
             ->setLessonStart($data->getLessonStart())
@@ -51,7 +56,13 @@ class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
                 return;
             }
         } else if($data->getType() === 'study_group') {
-            $studyGroup = $this->studyGroupRepository->findOneByExternalId($data->getObjective());
+            $section = $this->sectionResolver->getSectionForDate($absence->getDate());
+
+            if($section === null) {
+                throw new SectionNotResolvableException($absence->getDate());
+            }
+
+            $studyGroup = $this->studyGroupRepository->findOneByExternalId($data->getObjective(), $section);
 
             if($studyGroup !== null) {
                 $absence->setStudyGroup($studyGroup);

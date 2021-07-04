@@ -6,6 +6,7 @@ use App\Entity\Exam;
 use App\Entity\IcsAccessToken;
 use App\Entity\IcsAccessTokenType;
 use App\Entity\MessageScope;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
@@ -28,6 +29,7 @@ use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
+use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\TeacherFilter;
@@ -62,18 +64,19 @@ class ExamController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="exams")
      */
-    public function index(TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter, StudyGroupFilter $studyGroupFilter,
+    public function index(SectionFilter $sectionFilter, TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter, StudyGroupFilter $studyGroupFilter,
                           ExamRepositoryInterface $examRepository, ExamSettings $examSettings, Request $request, DateHelper $dateHelper) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
-        $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $user, $studyGroupFilterView->getCurrentStudyGroup() === null && $gradeFilterView->getCurrentGrade() === null);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, false);
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $sectionFilterView->getCurrentSection(), $user);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
+        $studentFilterView = $studentsFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user, $studyGroupFilterView->getCurrentStudyGroup() === null && $gradeFilterView->getCurrentGrade() === null);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, false);
         $includePastExams = $request->query->getBoolean('past', false);
 
-        $isVisible = $examSettings->isVisibileFor($user->getUserType()) && $this->isVisibleForGrade($user, $examSettings);
+        $isVisible = $examSettings->isVisibileFor($user->getUserType()) && $this->isVisibleForGrade($user, $examSettings, $sectionFilterView->getCurrentSection());
         $isVisibleAdmin = false;
 
         $groups = [ ];
@@ -122,6 +125,7 @@ class ExamController extends AbstractControllerWithMessages {
 
         return $this->renderWithMessages('exams/index.html.twig', [
             'examWeekGroups' => $groups,
+            'sectionFilter' => $sectionFilterView,
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
             'gradeFilter' => $gradeFilterView,
@@ -135,7 +139,7 @@ class ExamController extends AbstractControllerWithMessages {
         ]);
     }
 
-    private function isVisibleForGrade(User $user, ExamSettings $examSettings) {
+    private function isVisibleForGrade(User $user, ExamSettings $examSettings, Section $section) {
         if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent()]) === false) {
             return true;
         }
@@ -145,7 +149,11 @@ class ExamController extends AbstractControllerWithMessages {
 
         /** @var Student $student */
         foreach($user->getStudents() as $student) {
-            $gradeIds[] = $student->getGrade()->getId();
+            $grade = $student->getGrade($section);
+
+            if($grade !== null) {
+                $gradeIds[] = $grade->getId();
+            }
         }
 
         return count(array_intersect($visibleGradeIds, $gradeIds)) > 0;

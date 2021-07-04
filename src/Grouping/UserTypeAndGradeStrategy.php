@@ -3,12 +3,13 @@
 namespace App\Grouping;
 
 use App\Converter\EnumStringConverter;
-use App\Converter\UserTypeStringConverter;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserTypeAndGradeStrategy implements GroupingStrategyInterface {
+class UserTypeAndGradeStrategy implements GroupingStrategyInterface, OptionsAwareGroupInterface {
 
     private $enumStringConverter;
 
@@ -20,14 +21,14 @@ class UserTypeAndGradeStrategy implements GroupingStrategyInterface {
      * @param User $object
      * @return string[]|string|null
      */
-    public function computeKey($object) {
+    public function computeKey($object, array $options = [ ]) {
         if($object->getUserType()->equals(UserType::Student()) || $object->getUserType()->equals(UserType::Parent())) {
             if($object->getStudents()->count() === 0) {
                 return null;
             }
 
-            return $object->getStudents()->map(function(Student $student) {
-                return $student->getGrade();
+            return $object->getStudents()->map(function(Student $student) use($options) {
+                return $student->getGrade($options['section']);
             })->toArray();
         }
 
@@ -39,7 +40,7 @@ class UserTypeAndGradeStrategy implements GroupingStrategyInterface {
      * @param string $keyB
      * @return bool
      */
-    public function areEqualKeys($keyA, $keyB): bool {
+    public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA === $keyB;
     }
 
@@ -47,7 +48,12 @@ class UserTypeAndGradeStrategy implements GroupingStrategyInterface {
      * @param string|null $key
      * @return GroupInterface
      */
-    public function createGroup($key): GroupInterface {
+    public function createGroup($key, array $options = [ ]): GroupInterface {
         return new StringGroup($key);
+    }
+
+    public function configureOptions(OptionsResolver $resolver) {
+        $resolver->setRequired('section');
+        $resolver->setAllowedTypes('section', Section::class);
     }
 }

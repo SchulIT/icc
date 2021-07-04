@@ -19,6 +19,7 @@ use App\Sorting\ExamWeekGroupStrategy;
 use App\Sorting\Sorter;
 use App\Utils\CollectionUtils;
 use App\View\Filter\GradeFilter;
+use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use SchulIT\CommonBundle\Form\ConfirmType;
@@ -46,15 +47,16 @@ class ExamAdminController extends AbstractController {
     /**
      * @Route("", name="admin_exams")
      */
-    public function index(GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Grouper $grouper, ExamRepositoryInterface $examRepository, Sorter $sorter, Request $request) {
+    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Grouper $grouper, ExamRepositoryInterface $examRepository, Sorter $sorter, Request $request) {
         $this->denyAccessUnlessGranted(ExamVoter::Manage);
 
         $page = $request->query->getInt('page');
 
         /** @var User $user */
         $user = $this->getUser();
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $gradeFilterView->getCurrentGrade() === null);
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null);
 
         $paginator = $this->repository->getPaginator(static::NumberOfExams, $page, $gradeFilterView->getCurrentGrade(), $teacherFilterView->getCurrentTeacher(), null, null, false);
         $pages = 1;
@@ -77,6 +79,7 @@ class ExamAdminController extends AbstractController {
 
         return $this->render('admin/exams/index.html.twig', [
             'groups' => $groups,
+            'sectionFilter' => $sectionFilterView,
             'gradeFilter' => $gradeFilterView,
             'teacherFilter' => $teacherFilterView,
             'page' => $page,

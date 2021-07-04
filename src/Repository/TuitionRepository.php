@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\Subject;
 use App\Entity\Teacher;
@@ -20,7 +21,8 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
             ->leftJoin('t.studyGroup', 'sg')
             ->leftJoin('sg.memberships', 'sgs')
             ->leftJoin('sgs.student', 'sgss')
-            ->leftJoin('t.subject', 's');
+            ->leftJoin('t.subject', 's')
+            ->leftJoin('t.section', 'sec');
     }
 
     /**
@@ -37,8 +39,11 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
-    public function findOneByExternalId(string $externalId): ?Tuition {
-        return $this->getDefaultQueryBuilder()
+    public function findOneByExternalId(string $externalId, Section $section): ?Tuition {
+        return $this->filterSection(
+                $this->getDefaultQueryBuilder(),
+                $section
+            )
             ->where('t.externalId = :externalId')
             ->setParameter('externalId', $externalId)
             ->getQuery()
@@ -48,8 +53,9 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
-    public function findAllByExternalId(array $externalIds): array {
+    public function findAllByExternalId(array $externalIds, Section $section): array {
         $qb = $this->getDefaultQueryBuilder();
+        $qb = $this->filterSection($qb, $section);
         $qb
             ->where($qb->expr()->in('t.externalId', ':externalIds'))
             ->setParameter('externalIds', $externalIds);
@@ -60,8 +66,9 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
-    public function findAllByTeacher(Teacher $teacher) {
+    public function findAllByTeacher(Teacher $teacher, Section $section): array {
         $qb = $this->em->createQueryBuilder();
+        $qb = $this->filterSection($qb, $section);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('tInner.id')
@@ -84,12 +91,13 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
-    public function findAllByStudents(array $students) {
+    public function findAllByStudents(array $students, Section $section): array {
         $studentIds = array_map(function (Student $student) {
             return $student->getId();
         }, $students);
 
         $qb = $this->em->createQueryBuilder();
+        $qb = $this->filterSection($qb, $section);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('tInner.id')
@@ -108,7 +116,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
-    public function findAllByGrades(array $grades) {
+    public function findAllByGrades(array $grades): array {
         $gradeIds = array_map(function (Grade $grade) {
             return $grade->getId();
         }, $grades);
@@ -132,7 +140,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
-    public function findAllBySubjects(array $subjects) {
+    public function findAllBySubjects(array $subjects): array {
         $subjectIds = array_map(function(Subject $subject) {
             return $subject->getId();
         }, $subjects);
@@ -154,8 +162,9 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         return $qb->getQuery()->getResult();
     }
 
-    public function findAllByGradeAndSubjectOrCourseWithoutTeacher(array $grades, string $subjectOrCourse): array {
+    public function findAllByGradeAndSubjectOrCourseWithoutTeacher(array $grades, string $subjectOrCourse, Section $section): array {
         $qb = $this->getDefaultQueryBuilder();
+        $qb = $this->filterSection($qb, $section);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('tInner.id')
@@ -190,8 +199,9 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
-    public function findAllByGradeTeacherAndSubjectOrCourse(array $grades, array $teachers, string $subjectOrCourse): array {
+    public function findAllByGradeTeacherAndSubjectOrCourse(array $grades, array $teachers, string $subjectOrCourse, Section $section): array {
         $qb = $this->getDefaultQueryBuilder();
+        $qb = $this->filterSection($qb, $section);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('tInner.id')
@@ -244,6 +254,24 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
+    public function findAllBySection(Section $section): array {
+        return $this->filterSection(
+                $this->getDefaultQueryBuilder(),
+                $section
+            )
+            ->getQuery()
+            ->getResult();
+    }
+
+    private function filterSection(QueryBuilder $builder, Section $section): QueryBuilder {
+        return $builder
+            ->andWhere('sec.id = :section')
+            ->setParameter('section', $section->getId());
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function persist(Tuition $tuition): void {
         $this->em->persist($tuition);
         $this->flushIfNotInTransaction();
@@ -256,7 +284,4 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         $this->em->remove($tuition);
         $this->flushIfNotInTransaction();
     }
-
-
-
 }

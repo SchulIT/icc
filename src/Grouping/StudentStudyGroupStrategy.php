@@ -12,7 +12,7 @@ class StudentStudyGroupStrategy implements GroupingStrategyInterface {
      * @param Student $object
      * @return StudyGroup[]
      */
-    public function computeKey($object) {
+    public function computeKey($object, array $options = [ ]) {
         return $object->getStudyGroupMemberships()
             ->map(function(StudyGroupMembership $membership) {
                 return $membership->getStudyGroup();
@@ -25,7 +25,7 @@ class StudentStudyGroupStrategy implements GroupingStrategyInterface {
      * @param StudyGroup $keyB
      * @return bool
      */
-    public function areEqualKeys($keyA, $keyB): bool {
+    public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA->getId() === $keyB->getId();
     }
 
@@ -33,7 +33,7 @@ class StudentStudyGroupStrategy implements GroupingStrategyInterface {
      * @param StudyGroup $key
      * @return StudentStudyGroupGroup
      */
-    public function createGroup($key): GroupInterface {
+    public function createGroup($key, array $options = [ ]): GroupInterface {
         return new StudentStudyGroupGroup($key);
     }
 }

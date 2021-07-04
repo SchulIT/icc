@@ -32,6 +32,7 @@ use App\Timetable\TimetableHelper;
 use App\Utils\ArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\RoomFilter;
+use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\SubjectsFilter;
 use App\View\Filter\TeachersFilter;
@@ -67,15 +68,16 @@ class TimetableController extends AbstractControllerWithMessages {
     public function index(StudentFilter $studentFilter, TeachersFilter $teachersFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableWeekRepositoryInterface $weekRepository, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
                           TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository,
-                          SubjectRepositoryInterface $subjectRepository, Request $request) {
+                          SubjectRepositoryInterface $subjectRepository, SectionFilter $sectionFilter, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section', null));
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
         $roomFilterView = $roomFilter->handle($request->query->get('room', null), $user);
         $subjectFilterView = $subjectFilter->handle($request->query->get('subjects', [ ]), $user);
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user, $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
-        $teachersFilterView = $teachersFilter->handle($request->query->get('teachers', []), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
+        $teachersFilterView = $teachersFilter->handle($request->query->get('teachers', []), $sectionFilterView->getCurrentSection(), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
 
         $periods = $periodRepository->findAll();
         $periods = array_filter($periods, function(TimetablePeriod $period) {
@@ -202,6 +204,7 @@ class TimetableController extends AbstractControllerWithMessages {
             'gradeFilter' => $gradeFilterView,
             'roomFilter'=> $roomFilterView,
             'subjectFilter' => $subjectFilterView,
+            'sectionFilter' => $sectionFilterView,
             'periods' => $periods,
             'currentPeriod' => $currentPeriod,
             'nextPeriod' => $nextPeriod,

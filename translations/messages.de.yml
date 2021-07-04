@@ -48,6 +48,7 @@ label:
         usertype: Benutzertyp auswählen
         reason: Grund auswählen
         tag: Tag auswählen
+        section: Abschnitt auswählen
     search:
         student: Lernenden suchen
     scope: Bereich
@@ -180,17 +181,13 @@ label:
         help: Hier kann eine Font Awesome Icon Klasse eingetragen werden. Dabei handelt es sich um die CSS-Klasse, bspw. fas fa-door-open.
     tag: Tag
     weeks: Wochen
-    school_year: Schuljahr
-    section:
-        label: Abschnitt
-        help: Das Schuljahr kann mit Abschnitten unterteilt werden. In der Regel bilden die beiden Halbjahre jeweils einen Abschnitt. Erstes Halbjahr = 1, zweites Halbjahr = 2.
-    section_name:
-        label: Bezeichnung für Abschnitte
-        help: bspw. Halbjahr, Semester, Abschnitt, ...
+    section: Abschnitt
     sections: Abschnitt(e)
     course_types: Kursart(en)
     comma_separated: Mehrere Elemente können mit Komma separiert werden.
     active: aktiviert
+    year: Jahr
+    number: Nummer
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -626,6 +623,9 @@ admin:
 
         general:
             label: Allgemein
+            current_section:
+                label: Aktueller Abschnitt
+                help: Gibt den aktuellen Abschnitt im Schuljahr an.
 
         import:
             label: Import
@@ -1131,6 +1131,20 @@ admin:
             label: App löschen
             confirm: 'Soll die App "%name%" wirklich gelöscht werden?'
             success: App erfolgreich gelöscht
+
+    sections:
+        label: Abschnitte
+        empty: Aktuell sind keine Abschnitte im System.
+        add:
+            label: Neuer Abschnitt
+            success: Abschnitt erfolgreich angelegt
+        edit:
+            label: Abschnitt bearbeiten
+            success: Abschnitt erfolgreich aktualisiert
+        remove:
+            label: Abschnitt löschen
+            confirm: "Soll der Abschnitt %name% wirklich gelöscht werden?"
+            success: Abschnitt erfolgreich gelöscht
 
 versions:
     label: Versionen

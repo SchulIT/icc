@@ -44,6 +44,7 @@ use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
+use App\Section\SectionResolver;
 use App\Security\Voter\AbsenceVoter;
 use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
@@ -98,6 +99,7 @@ class DashboardViewHelper {
     private $dateHelper;
 
     private $absenceResolver;
+    private $sectionResolver;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
                                 TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
@@ -106,7 +108,7 @@ class DashboardViewHelper {
                                 FreeTimespanRepositoryInterface $freeTimespanRepository,
                                 StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, TimetableTimeHelper $timetableTimeHelper, Sorter $sorter, Grouper $grouper,
                                 TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
-                                ValidatorInterface $validator, DateHelper $dateHelper, AbsenceResolver $absenceResolver) {
+                                ValidatorInterface $validator, DateHelper $dateHelper, AbsenceResolver $absenceResolver, SectionResolver $sectionResolver) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->timetableRepository = $timetableRepository;
@@ -131,6 +133,7 @@ class DashboardViewHelper {
         $this->validator = $validator;
         $this->dateHelper = $dateHelper;
         $this->absenceResolver = $absenceResolver;
+        $this->sectionResolver = $sectionResolver;
     }
 
     public function createViewForRoom(Room $room, DateTime $dateTime): DashboardView {
@@ -165,10 +168,12 @@ class DashboardViewHelper {
 
         $messages = [ ];
 
-        if($includeGradeMessages === true) {
+        $section = $this->sectionResolver->getSectionForDate($dateTime);
+
+        if($includeGradeMessages === true && $section !== null) {
             /** @var GradeTeacher $gradeTeacher */
             foreach($teacher->getGrades() as $gradeTeacher) {
-                $studyGroups = $this->studyGroupRepository->findAllByGrades($gradeTeacher->getGrade());
+                $studyGroups = $this->studyGroupRepository->findAllByGrades($gradeTeacher->getGrade(), $section);
                 $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages(), UserType::Student(), $dateTime, $studyGroups));
             }
         }
@@ -210,8 +215,10 @@ class DashboardViewHelper {
             $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
         }
 
+        $section = $this->sectionResolver->getSectionForDate($dateTime);
+
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $userType, $dateTime, $studyGroups), $view);
-        $this->addSubstitutions($this->filterSubstitutionsByGrade($this->substitutionRepository->findAllForStudyGroups($studyGroups, $dateTime), $student->getGrade()), $view, false);
+        $this->addSubstitutions($this->filterSubstitutionsByGrade($this->substitutionRepository->findAllForStudyGroups($studyGroups, $dateTime), $student->getGrade($section)), $view, false);
         $this->addExams($exams = $this->examRepository->findAllByStudents([$student], $dateTime, true), $view, null, false);
         $this->addInfotexts($dateTime, $view);
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
@@ -559,10 +566,10 @@ class DashboardViewHelper {
      * Filters the given substitutions for only those which are applied to the given grade.
      *
      * @param Substitution[] $substitutions
-     * @param Grade $grade
+     * @param Grade|null $grade
      * @return Substitution[]
      */
-    private function filterSubstitutionsByGrade(array $substitutions, Grade $grade) {
+    private function filterSubstitutionsByGrade(array $substitutions, ?Grade $grade) {
         $result = [ ];
 
         foreach($substitutions as $substitution) {

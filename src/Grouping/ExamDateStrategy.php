@@ -10,7 +10,7 @@ class ExamDateStrategy implements GroupingStrategyInterface {
      * @param Exam $exam
      * @return \DateTime
      */
-    public function computeKey($exam) {
+    public function computeKey($exam, array $options = [ ]) {
         return $exam->getDate();
     }
 
@@ -19,7 +19,7 @@ class ExamDateStrategy implements GroupingStrategyInterface {
      * @param \DateTime $keyB
      * @return bool
      */
-    public function areEqualKeys($keyA, $keyB): bool {
+    public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA == $keyB;
     }
 
@@ -27,7 +27,7 @@ class ExamDateStrategy implements GroupingStrategyInterface {
      * @param \DateTime $key
      * @return GroupInterface
      */
-    public function createGroup($key): GroupInterface {
+    public function createGroup($key, array $options = [ ]): GroupInterface {
         return new ExamDateGroup($key);
     }
 }

@@ -10,6 +10,7 @@ use App\Grouping\Grouper;
 use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
+use App\Repository\SectionRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Settings\DashboardSettings;
 use App\Settings\SubstitutionSettings;
@@ -18,6 +19,8 @@ use App\Sorting\AbsentTeacherStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\SubstitutionStrategy;
 use App\View\Filter\GradeFilter;
+use App\View\Filter\SectionFilter;
+use App\View\Filter\SectionFilterView;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Parameter\GroupByParameter;
@@ -39,7 +42,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
     public function index(SubstitutionRepositoryInterface $substitutionRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                           StudentFilter $studentFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, GroupByParameter $groupByParameter, ViewParameter $viewParameter,
                           Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, DashboardSettings $dashboardSettings, SubstitutionSettings $substitutionSettings,
-                          ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
+                          ImportDateTypeRepositoryInterface $importDateTypeRepository, SectionRepositoryInterface $sectionRepository, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
         $days = $this->getListOfNextDays($dateHelper, $substitutionSettings->getNumberOfAheadDaysForSubstitutions(), $substitutionSettings->skipWeekends(), $this->getTodayOrNextDay($dateHelper, $dashboardSettings->getNextDayThresholdTime()));
@@ -48,9 +51,10 @@ class SubstitutionController extends AbstractControllerWithMessages {
 
         $groupBy = $request->query->get('group_by', null);
 
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $user);
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user, $gradeFilterView->getCurrentGrade() === null);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, false);
+        $section = $sectionRepository->findOneByDate($selectedDate);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $section, $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $section, $user, $gradeFilterView->getCurrentGrade() === null);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $section, $user, false);
 
         /** @var Substitution[] $substitutions */
         $substitutions = [ ];

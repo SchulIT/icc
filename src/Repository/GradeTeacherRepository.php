@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Grade;
 use App\Entity\GradeTeacher;
+use App\Entity\Section;
 
 class GradeTeacherRepository extends AbstractTransactionalRepository implements GradeTeacherRepositoryInterface {
 
@@ -19,12 +21,23 @@ class GradeTeacherRepository extends AbstractTransactionalRepository implements 
         $this->flushIfNotInTransaction();
     }
 
-    public function removeAll(): void {
-        $this->em->createQueryBuilder()
+    public function removeAll(Section $section): void {
+        $qb = $this->em->createQueryBuilder()
             ->delete()
-            ->from(GradeTeacher::class, 'g')
-            ->getQuery()
-            ->execute();
+            ->from(GradeTeacher::class, 'g');
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('gInner.id')
+            ->from(GradeTeacher::class, 'gInner')
+            ->leftJoin('gInner.section', 'sInner')
+            ->where('sInner.id = :section');
+
+        $qb->where(
+            $qb->expr()->in('g.id', $qbInner->getDQL())
+        )
+            ->setParameter('section', $section->getId());
+
+        $qb->getQuery()->execute();
     }
 
 

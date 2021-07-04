@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 
 class GradeRepository extends AbstractTransactionalRepository implements GradeRepositoryInterface {
 
@@ -88,4 +89,15 @@ class GradeRepository extends AbstractTransactionalRepository implements GradeRe
         $this->flushIfNotInTransaction();
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function findAllBySection(Section $section): array {
+        return $this->em->getRepository(Grade::class)
+            ->findBy([
+                'section' => $section
+            ], [
+                'name' => 'asc'
+            ]);
+    }
 }

@@ -1,0 +1,18 @@
+{% if isChoice is not defined %}
+    {% set isChoice = true %}
+{% endif %}
+<form role="form" method="get" class="form hidden-print">
+    {% include "_filter/_params.html.twig" %}
+
+    <div class="form-group {{ class|default('') }}">
+        <label for="section" class="control-label">{{ 'label.section'|trans }}:</label>
+        <select name="section" id="section" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="{{ isChoice ? 'true' : 'false' }}">
+            <option value="" placeholder>{{ 'label.select.section'|trans }}</option>
+            {% for s in sectionFilter.sections %}
+                <option value="{{ s.uuid }}" {% if sectionFilter.currentSection != null and s.uuid == sectionFilter.currentSection.uuid %}selected="selected"{% endif %}>
+                    {{ s.displayName }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+</form>

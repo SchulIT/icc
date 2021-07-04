@@ -53,10 +53,12 @@ class TuitionCsvExporter {
         // Rows
         /** @var StudyGroupMembership $membership */
         foreach($memberships as $membership) {
+            $grade = $membership->getStudent()->getGrade($tuition->getSection());
+
             $rows[] = [
                 $membership->getStudent()->getLastname(),
                 $membership->getStudent()->getFirstname(),
-                $membership->getStudent()->getGrade()->getName(),
+                $grade !== null ? $grade->getName() : null,
                 $membership->getStudent()->getEmail(),
                 $membership->getType()
             ];

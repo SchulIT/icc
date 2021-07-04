@@ -3,6 +3,7 @@
 namespace App\Grouping;
 
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Grouper {
 
@@ -21,20 +22,27 @@ class Grouper {
     /**
      * @param array $items
      * @param string $strategyService
+     * @param array $options
      * @return GroupInterface[]
      */
-    public function group(array $items, string $strategyService) {
+    public function group(array $items, string $strategyService, array $options = [ ]) {
         $strategy = $this->strategies[$strategyService] ?? null;
 
         if($strategy === null) {
             throw new ServiceNotFoundException($strategyService);
         }
 
+        if($strategy instanceof OptionsAwareGroupInterface) {
+            $resolver = new OptionsResolver();
+            $strategy->configureOptions($resolver);
+            $options = $resolver->resolve($options);
+        }
+
         /** @var GroupInterface[] $groups */
         $groups = [ ];
 
         foreach($items as $item) {
-            $keys = $strategy->computeKey($item);
+            $keys = $strategy->computeKey($item, $options);
 
             if(!is_array($keys)) {
                 $keys = [ $keys ];
@@ -44,13 +52,13 @@ class Grouper {
                 $group = null;
 
                 foreach($groups as $g) {
-                    if($strategy->areEqualKeys($g->getKey(), $key)) {
+                    if($strategy->areEqualKeys($g->getKey(), $key, $options)) {
                         $group = $g;
                     }
                 }
 
                 if($group === null) {
-                    $group = $strategy->createGroup($key);
+                    $group = $strategy->createGroup($key, $options);
                     $groups[] = $group;
                 }
 

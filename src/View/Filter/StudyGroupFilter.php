@@ -2,6 +2,7 @@
 
 namespace App\View\Filter;
 
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
@@ -29,7 +30,7 @@ class StudyGroupFilter {
         $this->studyGroupRepository = $studyGroupRepository;
     }
 
-    public function handle(?string $studyGroupUuid, User $user, bool $onlyGrades = false) {
+    public function handle(?string $studyGroupUuid, ?Section $section, User $user, bool $onlyGrades = false) {
         $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
 
         $studyGroups = [ ];
@@ -47,8 +48,16 @@ class StudyGroupFilter {
                     })->toArray()
                 );
             }
+
+            $studyGroups = array_filter($studyGroups, function(StudyGroup $studyGroup) use ($section) {
+                if($section === null) {
+                    return false;
+                }
+
+                return $studyGroup->getSection() === $section;
+            });
         } else {
-            $studyGroups = $this->studyGroupRepository->findAll();
+            $studyGroups = $this->studyGroupRepository->findAllBySection($section);
         }
 
         if($onlyGrades === true) {

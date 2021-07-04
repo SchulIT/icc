@@ -31,6 +31,7 @@ use App\Utils\ArrayUtils;
 use App\Utils\ColorUtils;
 use App\View\Filter\AppointmentCategoriesFilter;
 use App\View\Filter\GradesFilter;
+use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\TeacherFilter;
@@ -48,18 +49,20 @@ class AppointmentController extends AbstractControllerWithMessages {
     /**
      * @Route("", name="appointments")
      */
-    public function index(AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter,
-                          TeacherFilter $teacherFilter, GradesFilter $gradesFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository) {
+    public function index(SectionFilter $sectionFilter, AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter,
+                          TeacherFilter $teacherFilter, GradesFilter $gradesFilter, Request $request, ImportDateTypeRepositoryInterface $importDateTypeRepository) {
         /** @var User $user */
         $user = $this->getUser();
 
         $categoryFilterView = $categoryFilter->handle([ ]);
-        $studentFilterView = $studentFilter->handle(null, $user);
-        $studyGroupView = $studyGroupFilter->handle(null, $user);
-        $teacherFilterView = $teacherFilter->handle(null, $user, false);
-        $gradesFilterView = $gradesFilter->handle([], $user);
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $studentFilterView = $studentFilter->handle(null, $sectionFilterView->getCurrentSection(), $user);
+        $studyGroupView = $studyGroupFilter->handle(null, $sectionFilterView->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle(null, $sectionFilterView->getCurrentSection(), $user, false);
+        $gradesFilterView = $gradesFilter->handle([], $sectionFilterView->getCurrentSection(), $user);
 
         return $this->renderWithMessages('appointments/index.html.twig', [
+            'sectionFilter' => $sectionFilterView,
             'categoryFilter' => $categoryFilterView,
             'studentFilter' => $studentFilterView,
             'studyGroupFilter' => $studyGroupView,
@@ -74,7 +77,7 @@ class AppointmentController extends AbstractControllerWithMessages {
      */
     public function indexXhr(AppointmentRepositoryInterface $appointmentRepository, ColorUtils $colorUtils, TranslatorInterface $translator,
                              StudyGroupsGradeStringConverter $studyGroupsGradeStringConverter, TeacherStringConverter $teacherStringConverter,
-                             AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter,
+                             AppointmentCategoriesFilter $categoryFilter, SectionFilter $sectionFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter,
                              TeacherFilter $teacherFilter, GradesFilter $gradesFilter, ExamRepositoryInterface $examRepository,
                              AppointmentsSettings $appointmentsSettings, TimetableTimeHelper $timetableTimeHelper, UserStringConverter $userStringConverter, Request $request) {
         /** @var User $user */
@@ -82,12 +85,13 @@ class AppointmentController extends AbstractControllerWithMessages {
         $isStudent = $user->getUserType()->equals(UserType::Student());
         $isParent = $user->getUserType()->equals(UserType::Parent());
 
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $showAll = $request->query->getBoolean('all', false);
         $categoryFilterView = $categoryFilter->handle(explode(',', $request->query->get('categories', '')));
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $user);
-        $studyGroupView = $studyGroupFilter->handle($request->query->get('study_group', null), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $user, $studentFilterView->getCurrentStudent() === null && $studyGroupView->getCurrentStudyGroup() === null);
-        $examGradesFilterView = $gradesFilter->handle(explode(',', $request->query->get('exam_grades', '')), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user);
+        $studyGroupView = $studyGroupFilter->handle($request->query->get('study_group', null), $sectionFilterView->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $studentFilterView->getCurrentStudent() === null && $studyGroupView->getCurrentStudyGroup() === null);
+        $examGradesFilterView = $gradesFilter->handle(explode(',', $request->query->get('exam_grades', '')), $sectionFilterView->getCurrentSection(), $user);
 
         $appointments = [ ];
         $today = null;

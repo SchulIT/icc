@@ -7,6 +7,7 @@ use App\Entity\Message;
 use App\Entity\Tuition;
 use App\Message\PollResultView;
 use App\Message\PollResultViewHelper;
+use App\Section\SectionResolver;
 use App\Sorting\Sorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -16,13 +17,15 @@ class PollResultCsvExporter {
     private $csvHelper;
     private $translator;
     private $sorter;
+    private $sectionResolver;
 
-
-    public function __construct(PollResultViewHelper $resultViewHelper, CsvHelper $csvHelper, TranslatorInterface $translator, Sorter $sorter) {
+    public function __construct(PollResultViewHelper $resultViewHelper, CsvHelper $csvHelper, TranslatorInterface $translator,
+                                Sorter $sorter, SectionResolver $sectionResolver) {
         $this->viewHelper = $resultViewHelper;
         $this->csvHelper = $csvHelper;
         $this->translator = $translator;
         $this->sorter = $sorter;
+        $this->sectionResolver = $sectionResolver;
     }
 
     public function getRows(Message $message): array {
@@ -42,12 +45,15 @@ class PollResultCsvExporter {
 
         $rows[] = $header;
 
+        $section = $this->sectionResolver->getCurrentSection();
         foreach($view->getStudents() as $student) {
+            $grade = $student->getGrade($section);
+
             $row = [
                 $student->getExternalId(),
                 $student->getFirstname(),
                 $student->getLastname(),
-                $student->getGrade() !== null ? $student->getGrade()->getName() : null,
+                $grade !== null ? $grade->getName() : null,
                 $student->getEmail()
             ];
 

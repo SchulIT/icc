@@ -4,9 +4,11 @@ namespace App\SickNote;
 
 use App\Converter\StudentStringConverter;
 use App\Converter\UserStringConverter;
+use App\Entity\Grade;
 use App\Entity\GradeTeacher;
 use App\Entity\User;
 use App\Repository\SickNoteRepositoryInterface;
+use App\Section\SectionResolver;
 use App\Settings\SickNoteSettings;
 use App\Timetable\TimetableTimeHelper;
 use SchulIT\CommonBundle\Helper\DateHelper;
@@ -30,10 +32,10 @@ class SickNoteSender {
     private $userConverter;
     private $settings;
     private $repository;
-    private $timeHelper;
+    private $sectionResolver;
 
     public function __construct(string $sender, string $appName, StudentStringConverter $converter, Environment $twig, Swift_Mailer $mailer, TranslatorInterface $translator,
-                                DateHelper $dateHelper, UserStringConverter $userConverter, SickNoteSettings $settings, SickNoteRepositoryInterface $repository, TimetableTimeHelper  $timeHelper) {
+                                DateHelper $dateHelper, UserStringConverter $userConverter, SickNoteSettings $settings, SickNoteRepositoryInterface $repository, SectionResolver $sectionResolver) {
         $this->sender = $sender;
         $this->appName = $appName;
         $this->converter = $converter;
@@ -44,7 +46,7 @@ class SickNoteSender {
         $this->userConverter = $userConverter;
         $this->settings = $settings;
         $this->repository = $repository;
-        $this->timeHelper = $timeHelper;
+        $this->sectionResolver = $sectionResolver;
     }
 
     private function persistInDatabase(SickNote $note): void {
@@ -61,10 +63,18 @@ class SickNoteSender {
         $cc = [ ];
         $teachers = [ ];
 
-        /** @var GradeTeacher $teacher */
-        foreach($note->getStudent()->getGrade()->getTeachers() as $teacher) {
-            $teachers[] = $teacher->getTeacher();
-            $cc[] = $teacher->getTeacher()->getEmail();
+        $section = $this->sectionResolver->getCurrentSection();
+
+        /** @var Grade|null $grade */
+        $grade = $note->getStudent()->getGrade($section);
+        if($grade !== null && $section !== null) {
+            /** @var GradeTeacher $teacher */
+            foreach ($grade->getTeachers() as $teacher) {
+                if($teacher->getSection() === $section) {
+                    $teachers[] = $teacher->getTeacher();
+                    $cc[] = $teacher->getTeacher()->getEmail();
+                }
+            }
         }
 
         $isQuarantine = $note->getReason()->equals(SickNoteReason::Quarantine());
@@ -80,7 +90,7 @@ class SickNoteSender {
         $message = (new Swift_Message())
             ->setSubject($this->translator->trans($isQuarantine ? 'sick_note.quarantine.title' : 'sick_note.sick.title', [
                 '%student%' => $this->converter->convert($note->getStudent()),
-                '%grade%' => $note->getStudent()->getGrade()->getName()
+                '%grade%' => $grade !== null ? $grade->getName() : null
             ], 'email'))
             ->setBody($body, 'text/html')
             ->setCc($cc)

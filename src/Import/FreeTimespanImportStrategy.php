@@ -35,14 +35,14 @@ class FreeTimespanImportStrategy implements ReplaceImportStrategyInterface {
         return $this->repository;
     }
 
-    public function removeAll(): void {
+    public function removeAll($requestData): void {
         $this->repository->removeAll();;
     }
 
     /**
      * @param FreeLessonTimespanData $data
      */
-    public function persist($data): void {
+    public function persist($data, $requestData): void {
         $freeTimespan = (new FreeTimespan())
             ->setStart($data->getStart())
             ->setEnd($data->getEnd())

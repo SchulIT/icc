@@ -14,7 +14,7 @@ class AbsentStudentStrategy implements GroupingStrategyInterface {
      * @param AbsentStudent $object
      * @return Appointment|Exam|null
      */
-    public function computeKey($object) {
+    public function computeKey($object, array $options = [ ]) {
         if($object instanceof AbsentExamStudent) {
             return $object->getExam();
         }
@@ -31,7 +31,7 @@ class AbsentStudentStrategy implements GroupingStrategyInterface {
      * @param Appointment|Exam|null $keyB
      * @return bool
      */
-    public function areEqualKeys($keyA, $keyB): bool {
+    public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA === $keyB;
     }
 
@@ -39,7 +39,7 @@ class AbsentStudentStrategy implements GroupingStrategyInterface {
      * @param AbsentStudent $key
      * @return GroupInterface
      */
-    public function createGroup($key): GroupInterface {
+    public function createGroup($key, array $options = [ ]): GroupInterface {
         return new AbsentStudentGroup($key);
     }
 }

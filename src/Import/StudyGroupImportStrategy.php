@@ -6,6 +6,7 @@ use App\Entity\Grade;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupType;
 use App\Repository\GradeRepositoryInterface;
+use App\Repository\SectionRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\StudyGroupData;
@@ -17,19 +18,28 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
 
     private $studyGroupRepository;
     private $gradeRepository;
+    private $sectionRepository;
 
-    public function __construct(StudyGroupRepositoryInterface $studyGroupRepository, GradeRepositoryInterface $gradeRepository) {
+    public function __construct(StudyGroupRepositoryInterface $studyGroupRepository, GradeRepositoryInterface $gradeRepository, SectionRepositoryInterface $sectionRepository) {
         $this->studyGroupRepository = $studyGroupRepository;
         $this->gradeRepository = $gradeRepository;
+        $this->sectionRepository = $sectionRepository;
     }
 
     /**
      * @param StudyGroupsData $requestData
      * @return array<string, StudyGroup>
+     * @throws SectionNotFoundException
      */
     public function getExistingEntities($requestData): array {
+        $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+
+        if($section === null) {
+            throw new SectionNotFoundException($requestData->getSection(), $requestData->getYear());
+        }
+
         return ArrayUtils::createArrayWithKeys(
-            $this->studyGroupRepository->findAll(),
+            $this->studyGroupRepository->findAllBySection($section),
             function(StudyGroup $studyGroup) {
                 return $studyGroup->getExternalId();
             }
@@ -77,6 +87,9 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
         $entity->setName($data->getName());
         $entity->setType(new StudyGroupType($data->getType()));
 
+        $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+        $entity->setSection($section);
+
         $grades = $this->gradeRepository->findAllByExternalId($data->getGrades());
 
         if(count($grades) !== count($data->getGrades())) {
@@ -101,9 +114,11 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param StudyGroup $entity
+     * @param StudyGroupsData $requestData
      */
-    public function remove($entity): void {
+    public function remove($entity, $requestData): bool {
         $this->studyGroupRepository->remove($entity);
+        return true;
     }
 
     /**

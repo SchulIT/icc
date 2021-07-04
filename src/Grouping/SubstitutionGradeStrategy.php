@@ -12,7 +12,7 @@ class SubstitutionGradeStrategy implements GroupingStrategyInterface {
      * @param Substitution $object
      * @return Grade[]|null
      */
-    public function computeKey($object) {
+    public function computeKey($object, array $options = [ ]) {
         /** @var StudyGroup[] $groups */
         $groups = array_merge($object->getStudyGroups()->toArray(), $object->getReplacementStudyGroups()->toArray());
         $grades = [ ];
@@ -40,7 +40,7 @@ class SubstitutionGradeStrategy implements GroupingStrategyInterface {
      * @param Grade|null $keyB
      * @return bool
      */
-    public function areEqualKeys($keyA, $keyB): bool {
+    public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         if($keyA === null && $keyB === null) {
             return true;
         } else if($keyA === null || $keyB === null) {
@@ -54,7 +54,7 @@ class SubstitutionGradeStrategy implements GroupingStrategyInterface {
      * @param Grade|null $key
      * @return GroupInterface
      */
-    public function createGroup($key): GroupInterface {
+    public function createGroup($key, array $options = [ ]): GroupInterface {
         return new SubstitutionGradeGroup($key);
     }
 }

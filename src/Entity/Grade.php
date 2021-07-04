@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Utils\CollectionUtils;
 use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,7 +19,7 @@ class Grade {
     use UuidTrait;
 
     /**
-     * @ORM\Column(type="string", unique=true, nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */
@@ -35,10 +34,10 @@ class Grade {
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="Student", mappedBy="grade")
-     * @var ArrayCollection<Student>
+     * @ORM\OneToMany(targetEntity="GradeMembership", mappedBy="grade")
+     * @var ArrayCollection<GradeMembership>
      */
-    private $students;
+    private $memberships;
 
     /**
      * @ORM\OneToMany(targetEntity="GradeTeacher", mappedBy="grade", cascade={"persist"})
@@ -55,7 +54,7 @@ class Grade {
     public function __construct() {
         $this->uuid = Uuid::uuid4();
 
-        $this->students = new ArrayCollection();
+        $this->memberships = new ArrayCollection();
         $this->teachers = new ArrayCollection();
     }
 
@@ -99,10 +98,10 @@ class Grade {
     }
 
     /**
-     * @return Collection<Student>
+     * @return Collection<GradeMembership>
      */
-    public function getStudents(): Collection {
-        return $this->students;
+    public function getMemberships(): Collection {
+        return $this->memberships;
     }
 
     public function addTeacher(GradeTeacher $teacher) {

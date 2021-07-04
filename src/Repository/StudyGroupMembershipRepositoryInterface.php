@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Section;
 use App\Entity\StudyGroupMembership;
 
 interface StudyGroupMembershipRepositoryInterface extends TransactionalRepositoryInterface {
@@ -13,5 +14,5 @@ interface StudyGroupMembershipRepositoryInterface extends TransactionalRepositor
 
     public function persist(StudyGroupMembership $membership): void;
 
-    public function removeAll(): void;
+    public function removeAll(Section $section): void;
 }

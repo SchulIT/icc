@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupType;
@@ -25,43 +26,48 @@ interface StudyGroupRepositoryInterface extends TransactionalRepositoryInterface
      * @param string $externalId
      * @return StudyGroup|null
      */
-    public function findOneByExternalId(string $externalId): ?StudyGroup;
+    public function findOneByExternalId(string $externalId, Section $section): ?StudyGroup;
 
     /**
      * @param Grade $grade
      * @return StudyGroup|null
      */
-    public function findOneByGrade(Grade $grade): ?StudyGroup;
+    public function findOneByGrade(Grade $grade, Section $section): ?StudyGroup;
 
     /**
      * @param string $name
      * @return StudyGroup|null
      */
-    public function findOneByGradeName(string $name): ?StudyGroup;
+    public function findOneByGradeName(string $name, Section $section): ?StudyGroup;
 
     /**
      * @param string[] $externalIds
      * @return StudyGroup[]
      */
-    public function findAllByExternalId(array $externalIds): array;
+    public function findAllByExternalId(array $externalIds, Section $section): array;
 
     /**
      * @param Grade $grade
      * @param StudyGroupType|null $type
      * @return StudyGroup[]
      */
-    public function findAllByGrades(Grade $grade, ?StudyGroupType $type = null);
+    public function findAllByGrades(Grade $grade, Section $section, ?StudyGroupType $type = null);
 
     /**
      * @param Student $student
      * @return StudyGroup[]
      */
-    public function findAllByStudent(Student $student);
+    public function findAllByStudent(Student $student, ?Section $section);
 
     /**
      * @return StudyGroup[]
      */
     public function findAll();
+
+    /**
+     * @return StudyGroup[]
+     */
+    public function findAllBySection(Section $section);
 
     /**
      * @param StudyGroup $studyGroup

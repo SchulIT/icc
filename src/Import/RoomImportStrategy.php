@@ -93,8 +93,9 @@ class RoomImportStrategy implements ImportStrategyInterface {
     /**
      * @inheritDoc
      */
-    public function remove($entity): void {
+    public function remove($entity, $requestData): bool {
         $this->roomRepository->remove($entity);
+        return true;
     }
 
     /**

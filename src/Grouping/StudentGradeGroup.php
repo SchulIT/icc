@@ -16,14 +16,14 @@ class StudentGradeGroup implements GroupInterface, SortableGroupInterface {
      */
     private $students = [ ];
 
-    public function __construct(Grade $grade) {
+    public function __construct(?Grade $grade) {
         $this->grade = $grade;
     }
 
     /**
-     * @return Grade
+     * @return Grade|null
      */
-    public function getGrade(): Grade {
+    public function getGrade(): ?Grade {
         return $this->grade;
     }
 
@@ -35,7 +35,7 @@ class StudentGradeGroup implements GroupInterface, SortableGroupInterface {
     }
 
     /**
-     * @return Grade
+     * @return Grade|null
      */
     public function getKey() {
         return $this->grade;

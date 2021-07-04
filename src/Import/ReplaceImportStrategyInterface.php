@@ -24,11 +24,15 @@ interface ReplaceImportStrategyInterface {
 
     public function getRepository(): TransactionalRepositoryInterface;
 
-    public function removeAll(): void;
+    /**
+     * @param object $data The data object of the request body.
+     */
+    public function removeAll($data): void;
 
     /**
      * @param object $data
+     * @param object $requestData
      * @throws EntityIgnoredException
      */
-    public function persist($data): void;
+    public function persist($data, $requestData): void;
 }

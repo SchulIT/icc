@@ -7,11 +7,17 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
+ * @ORM\Table(uniqueConstraints={
+ *      @ORM\UniqueConstraint(fields={"section", "grade", "teacher"})
+ * })
+ * @Auditable()
  */
 class GradeTeacher {
 
+    use IdTrait;
+    use SectionAwareTrait;
+
     /**
-     * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="Teacher", inversedBy="grades")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Teacher
@@ -19,7 +25,6 @@ class GradeTeacher {
     private $teacher;
 
     /**
-     * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="Grade", inversedBy="teachers")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Grade

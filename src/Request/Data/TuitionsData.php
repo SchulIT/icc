@@ -9,6 +9,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 class TuitionsData {
 
     /**
+     * @Serializer\Type("int")
+     * @var int
+     */
+    private $year;
+
+    /**
+     * @Serializer\Type("int")
+     * @var int
+     */
+    private $section;
+
+    /**
      * @Serializer\Type("array<App\Request\Data\TuitionData>")
      * @Assert\Valid()
      * @UniqueId(propertyPath="id")
@@ -32,4 +44,35 @@ class TuitionsData {
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getYear(): int {
+        return $this->year;
+    }
+
+    /**
+     * @param int $year
+     * @return TuitionsData
+     */
+    public function setYear(int $year): TuitionsData {
+        $this->year = $year;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSection(): int {
+        return $this->section;
+    }
+
+    /**
+     * @param int $section
+     * @return TuitionsData
+     */
+    public function setSection(int $section): TuitionsData {
+        $this->section = $section;
+        return $this;
+    }
 }

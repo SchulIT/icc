@@ -7,11 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  */
 class StudyGroupMembership {
 
+    use IdTrait;
+
     /**
-     * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="StudyGroup", inversedBy="memberships")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @var StudyGroup
@@ -19,7 +21,6 @@ class StudyGroupMembership {
     private $studyGroup;
 
     /**
-     * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="Student", inversedBy="studyGroupMemberships")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Student

@@ -12,7 +12,7 @@ class StudyGroupGradeStrategy implements GroupingStrategyInterface {
      * @param StudyGroup $object
      * @return Grade[]
      */
-    public function computeKey($object) {
+    public function computeKey($object, array $options = [ ]) {
         return $object->getGrades()->toArray();
     }
 
@@ -21,7 +21,7 @@ class StudyGroupGradeStrategy implements GroupingStrategyInterface {
      * @param Grade $keyB
      * @return bool
      */
-    public function areEqualKeys($keyA, $keyB): bool {
+    public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA->getId() === $keyB->getId();
     }
 
@@ -29,7 +29,7 @@ class StudyGroupGradeStrategy implements GroupingStrategyInterface {
      * @param Grade $key
      * @return GroupInterface
      */
-    public function createGroup($key): GroupInterface {
+    public function createGroup($key, array $options = [ ]): GroupInterface {
         return new StudyGroupGradeGroup($key);
     }
 }

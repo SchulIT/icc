@@ -8,6 +8,7 @@ use App\Entity\PrivacyCategory;
 use App\Entity\Student;
 use App\Repository\GradeRepositoryInterface;
 use App\Repository\PrivacyCategoryRepositoryInterface;
+use App\Repository\SectionRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\StudentData;
@@ -20,17 +21,20 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
     private $studentRepository;
     private $gradeRepository;
     private $privacyCategoryRepository;
+    private $sectionRepository;
 
     private $gradesCache = [ ];
     private $privacyCategoriesCache = [ ];
 
-    public function __construct(StudentRepositoryInterface $studentRepository, GradeRepositoryInterface $gradeRepository, PrivacyCategoryRepositoryInterface $privacyCategoryRepository) {
+    public function __construct(StudentRepositoryInterface $studentRepository, GradeRepositoryInterface $gradeRepository,
+                                PrivacyCategoryRepositoryInterface $privacyCategoryRepository, SectionRepositoryInterface $sectionRepository) {
         $this->studentRepository = $studentRepository;
         $this->gradeRepository = $gradeRepository;
         $this->privacyCategoryRepository = $privacyCategoryRepository;
+        $this->sectionRepository = $sectionRepository;
     }
 
-    public function initialize(): void {
+    public function initialize($requestData): void {
         $this->gradesCache = ArrayUtils::createArrayWithKeys(
             $this->gradeRepository->findAll(),
             function(Grade $grade) {
@@ -97,6 +101,12 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
      * @throws ImportException
      */
     public function updateEntity($entity, $data, $requestData): void {
+        $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+
+        if($section === null) {
+            throw new SectionNotFoundException($requestData->getSection(), $requestData->getYear());
+        }
+
         $entity->setFirstname($data->getFirstname());
         $entity->setLastname($data->getLastname());
         $entity->setGender(new Gender($data->getGender()));
@@ -105,16 +115,8 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
         $entity->setEmail($data->getEmail());
         $entity->setUniqueIdentifier(sprintf('%s_%s_%s', $entity->getLastname(), $entity->getFirstname(), $entity->getBirthday()->format('Ymd')));
 
-        if($data->getGrade() !== null) {
-            $grade = $this->gradesCache[$data->getGrade()] ?? null;
-
-            if($grade === null) {
-                throw new ImportException(sprintf('Grade "%s" does not exist (Student ID: "%s", Lastname: "%s")', $data->getGrade(), $data->getId(), $data->getLastname()));
-            }
-
-            $entity->setGrade($grade);
-        } else {
-            $entity->setGrade(null);
+        if($entity->getSections()->contains($section) === false) {
+            $entity->addSection($section);
         }
 
         $approvedPrivacyCategories = ArrayUtils::findAllWithKeys(
@@ -139,10 +141,23 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
     }
 
     /**
-     * @inheritDoc
+     * @param Student $entity
+     * @param StudentsData $requestData
      */
-    public function remove($entity): void {
-        $this->studentRepository->remove($entity);
+    public function remove($entity, $requestData): bool {
+        $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+
+        if($section !== null && $entity->getSections()->contains($section)) {
+            $entity->removeSection($section);
+            $this->studentRepository->persist($entity);
+
+            if($entity->getSections()->count() === 0) {
+                $this->studentRepository->remove($entity);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -4,12 +4,14 @@ namespace App\Import;
 
 use App\Entity\Grade;
 use App\Entity\Room;
+use App\Entity\Section;
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
 use App\Event\SubstitutionImportEvent;
 use App\Repository\GradeRepositoryInterface;
 use App\Repository\RoomRepositoryInterface;
+use App\Repository\SectionRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
@@ -29,17 +31,19 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
     private $tuitionRepository;
     private $roomRepository;
     private $gradeRepository;
+    private $sectionRepository;
     private $dispatcher;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, TeacherRepositoryInterface $teacherRepository,
                                 StudyGroupRepositoryInterface $studyGroupRepository, TuitionRepositoryInterface $tuitionRepository, RoomRepositoryInterface $roomRepository,
-                                GradeRepositoryInterface $gradeRepository, EventDispatcherInterface $eventDispatcher) {
+                                GradeRepositoryInterface $gradeRepository, SectionRepositoryInterface $sectionRepository, EventDispatcherInterface $eventDispatcher) {
         $this->substitutionRepository = $substitutionRepository;
         $this->teacherRepository = $teacherRepository;
         $this->studyGroupRepository = $studyGroupRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->roomRepository = $roomRepository;
         $this->gradeRepository = $gradeRepository;
+        $this->sectionRepository = $sectionRepository;
         $this->dispatcher = $eventDispatcher;
     }
 
@@ -92,6 +96,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
      * @param SubstitutionData $data
      * @param SubstitutionsData $requestData
      * @throws ImportException
+     * @throws SectionNotResolvableException
      */
     public function updateEntity($entity, $data, $requestData): void {
         $teacherIdSelector = function(Teacher $teacher) {
@@ -110,6 +115,12 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
 
         if(count($replacementTeachers) !== count($data->getReplacementTeachers())) {
             $this->throwMissingTeacher($data->getReplacementTeachers(), $replacementTeachers, $data->getId());
+        }
+
+        $section = $this->sectionRepository->findOneByDate($data->getDate());
+
+        if($section === null) {
+            throw new SectionNotResolvableException($data->getDate());
         }
 
         CollectionUtils::synchronize($entity->getReplacementTeachers(), $replacementTeachers, $teacherIdSelector);
@@ -153,7 +164,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
             $entity->setReplacementRoomName(implode(', ', $data->getReplacementRooms()));
         }
 
-        $studyGroups = $this->resolveStudyGroup($data->getSubject(), $data->getGrades(), $data->getTeachers(), $data->getId());
+        $studyGroups = $this->resolveStudyGroup($section, $data->getSubject(), $data->getGrades(), $data->getTeachers(), $data->getId());
 
         CollectionUtils::synchronize(
             $entity->getStudyGroups(),
@@ -166,7 +177,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
         if($data->getSubject() === $data->getReplacementSubject() && $data->getGrades() == $data->getReplacementGrades()) {
             $replacementStudyGroups = $studyGroups;
         } else {
-            $replacementStudyGroups = $this->resolveStudyGroup($data->getReplacementSubject(), $data->getReplacementGrades(), $data->getReplacementTeachers(), $data->getId());
+            $replacementStudyGroups = $this->resolveStudyGroup($section, $data->getReplacementSubject(), $data->getReplacementGrades(), $data->getReplacementTeachers(), $data->getId());
         }
         
         CollectionUtils::synchronize(
@@ -214,12 +225,12 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
      * @return StudyGroup[]
      * @throws ImportException
      */
-    private function resolveStudyGroup(?string $subject, array $grades, array $teachers, string $id): array {
+    private function resolveStudyGroup(Section $section, ?string $subject, array $grades, array $teachers, string $id): array {
         $result = [ ];
 
         if(empty($subject)) {
             foreach($grades as $grade) {
-                $studyGroup = $this->studyGroupRepository->findOneByGradeName($grade);
+                $studyGroup = $this->studyGroupRepository->findOneByGradeName($grade, $section);
 
                 if($studyGroup === null) {
                     throw new ImportException(sprintf('Study group for grade "%s" on substitution ID "%s" was not found.', $grade, $id));
@@ -228,7 +239,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
                 $result[] = $studyGroup;
             }
         } else if(count($grades) > 0 && count($teachers) > 0) {
-            $tuitions = $this->tuitionRepository->findAllByGradeTeacherAndSubjectOrCourse($grades, $teachers, $subject);
+            $tuitions = $this->tuitionRepository->findAllByGradeTeacherAndSubjectOrCourse($grades, $teachers, $subject, $section);
 
             if(count($tuitions) === 1 && $tuitions[0]->getStudyGroup() !== null) {
                 $result[] = $tuitions[0]->getStudyGroup();
@@ -250,8 +261,9 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
     /**
      * @param Substitution $entity
      */
-    public function remove($entity): void {
+    public function remove($entity, $requestData): bool {
         $this->substitutionRepository->remove($entity);
+        return true;
     }
 
     /**

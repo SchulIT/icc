@@ -17,7 +17,7 @@ class AppointmentExpirationStrategy implements GroupingStrategyInterface {
      * @param Appointment $appointment
      * @return bool
      */
-    public function computeKey($appointment) {
+    public function computeKey($appointment, array $options = [ ]) {
         $today = $this->dateHelper->getToday();
         $now = $this->dateHelper->getNow();
 
@@ -35,7 +35,7 @@ class AppointmentExpirationStrategy implements GroupingStrategyInterface {
      * @param bool $keyB
      * @return bool
      */
-    public function areEqualKeys($keyA, $keyB): bool {
+    public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA === $keyB;
     }
 
@@ -43,7 +43,7 @@ class AppointmentExpirationStrategy implements GroupingStrategyInterface {
      * @param bool $key
      * @return GroupInterface
      */
-    public function createGroup($key): GroupInterface {
+    public function createGroup($key, array $options = [ ]): GroupInterface {
         return new AppointmentExpirationGroup($key);
     }
 }

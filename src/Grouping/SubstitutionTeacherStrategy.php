@@ -35,7 +35,7 @@ class SubstitutionTeacherStrategy implements GroupingStrategyInterface {
      * @param Substitution $object
      * @return Teacher[]
      */
-    public function computeKey($object) {
+    public function computeKey($object, array $options = [ ]) {
         $this->loadTeachers();
 
         /** @var Teacher[] $teachers */
@@ -75,7 +75,7 @@ class SubstitutionTeacherStrategy implements GroupingStrategyInterface {
      * @param Teacher|null $keyB
      * @return bool
      */
-    public function areEqualKeys($keyA, $keyB): bool {
+    public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         if($keyA === null && $keyB === null) {
             return true;
         }
@@ -87,7 +87,7 @@ class SubstitutionTeacherStrategy implements GroupingStrategyInterface {
      * @param Teacher $key
      * @return GroupInterface
      */
-    public function createGroup($key): GroupInterface {
+    public function createGroup($key, array $options = [ ]): GroupInterface {
         return new SubstitutionTeacherGroup($key);
     }
 }

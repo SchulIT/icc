@@ -131,6 +131,7 @@
 
                 {% include '@Common/includes/pagination.html.twig' with {
                     currentFilters: {
+                        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
                         grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
                         teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null
                     },
@@ -157,6 +158,8 @@
 
                 <div class="card">
                     <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+
                         {% if gradeFilter.grades|length > 0 %}
                             {% include "_filter/grade.html.twig" %}
                         {% endif %}

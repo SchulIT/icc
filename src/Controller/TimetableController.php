@@ -80,8 +80,8 @@ class TimetableController extends AbstractControllerWithMessages {
         $teachersFilterView = $teachersFilter->handle($request->query->get('teachers', []), $sectionFilterView->getCurrentSection(), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
 
         $periods = $periodRepository->findAll();
-        $periods = array_filter($periods, function(TimetablePeriod $period) {
-            return $this->isGranted(TimetablePeriodVoter::View, $period);
+        $periods = array_filter($periods, function(TimetablePeriod $period) use ($sectionFilterView) {
+            return $this->isGranted(TimetablePeriodVoter::View, $period) && $period->getSection() === $sectionFilterView->getCurrentSection();
         });
 
         $this->sorter->sort($periods, TimetablePeriodStrategy::class);

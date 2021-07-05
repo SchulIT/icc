@@ -304,11 +304,11 @@
                     </div>
                 </div>
 
-                {% if studentFilter.currentStudent %}
+                {% if studentFilter.currentStudent and section != null %}
                     {% set student = studentFilter.currentStudent %}
                     <div class="card">
                         <div class="card-body">
-                            {% set grade = student.grade(sectionFilter.selectedSection) %}
+                            {% set grade = student.grade(section) %}
                             <h5 class="card-title">
                                 <i class="far fa-address-card"></i> {{ student|student }}
 
@@ -348,7 +348,7 @@
                     </div>
                 {% endif %}
 
-                {% if teacherFilter.currentTeacher %}
+                {% if teacherFilter.currentTeacher and section != null %}
                     {% set teacher = teacherFilter.currentTeacher %}
                     <div class="card">
                         <div class="card-body">

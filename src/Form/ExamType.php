@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Grade;
 use App\Entity\Room;
 use App\Entity\Tuition;
+use App\Section\SectionResolver;
 use App\Sorting\RoomNameStrategy;
 use App\Sorting\StringStrategy;
 use App\Sorting\TuitionStrategy;
@@ -25,13 +26,16 @@ class ExamType extends AbstractType {
     private $tuitionStrategy;
     private $stringStrategy;
     private $roomStrategy;
+    private $sectionResolver;
 
     private $authorizationChecker;
 
-    public function __construct(TuitionStrategy $tuitionStrategy, StringStrategy $stringStrategy, RoomNameStrategy $roomStrategy, AuthorizationCheckerInterface $authorizationChecker) {
+    public function __construct(TuitionStrategy $tuitionStrategy, StringStrategy $stringStrategy, RoomNameStrategy $roomStrategy,
+                                SectionResolver $sectionResolver,AuthorizationCheckerInterface $authorizationChecker) {
         $this->tuitionStrategy = $tuitionStrategy;
         $this->stringStrategy = $stringStrategy;
         $this->roomStrategy = $roomStrategy;
+        $this->sectionResolver = $sectionResolver;
         $this->authorizationChecker = $authorizationChecker;
     }
 
@@ -99,6 +103,20 @@ class ExamType extends AbstractType {
                             'label' => 'label.tuitions',
                             'multiple' => true,
                             'class' => Tuition::class,
+                            'query_builder' => function(EntityRepository $repository) {
+                                $section = $this->sectionResolver->getCurrentSection();
+
+                                $qb = $repository
+                                    ->createQueryBuilder('t');
+
+                                if($section !== null) {
+                                    $qb->leftJoin('t.section', 's')
+                                        ->where('s.id = :section')
+                                        ->setParameter('section', $section->getId());
+                                }
+
+                                return $qb;
+                            },
                             'choice_label' => function(Tuition $tuition) {
                                 if($tuition->getName() === $tuition->getStudyGroup()->getName()) {
                                     return sprintf('%s - %s', $tuition->getName(), $tuition->getSubject()->getName());

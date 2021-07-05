@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Validator\DateInActiveSection;
 use App\Validator\NoReservationCollision;
 use App\Validator\NotTooManyExamsPerDay;
 use App\Validator\NotTooManyExamsPerWeek;
@@ -35,6 +36,7 @@ class Exam {
     /**
      * @ORM\Column(type="date", nullable=true)
      * @Assert\NotNull()
+     * @DateInActiveSection()
      * @var DateTime|null
      */
     private $date;

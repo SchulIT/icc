@@ -84,6 +84,12 @@
         </button>
     </div>
     {% endif %}
+
+    {% if form.vars.section is defined and form.vars.section is not null %}
+        <i class="fas fa-sliders-h"></i> {{ section.displayName }}
+    {% else %}
+        <i class="fas fa-sliders-h"></i> {{ 'label.not_available'|trans }}
+    {% endif %}
 {%- endblock -%}
 
 {%- block message_file_widget -%}

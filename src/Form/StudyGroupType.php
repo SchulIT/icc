@@ -6,6 +6,7 @@ use App\Converter\EnumStringConverter;
 use App\Converter\StudyGroupStringConverter;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupType as StudyGroupEntityType;
+use App\Section\SectionResolver;
 use App\Sorting\StringStrategy;
 use App\Sorting\StudyGroupStrategy;
 use Doctrine\ORM\EntityRepository;
@@ -21,15 +22,18 @@ class StudyGroupType extends SortableEntityType {
     private $stringStrategy;
     private $studyGroupStrategy;
     private $enumStringConverter;
+    private $sectionResolver;
 
     public function __construct(ManagerRegistry $registry, StudyGroupStringConverter $studyGroupConverter,
-                                StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy, EnumStringConverter $enumStringConverter) {
+                                StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy,
+                                EnumStringConverter $enumStringConverter, SectionResolver $sectionResolver) {
         parent::__construct($registry);
 
         $this->stringStrategy = $stringStrategy;
         $this->studyGroupConverter = $studyGroupConverter;
         $this->studyGroupStrategy = $studyGroupStrategy;
         $this->enumStringConverter = $enumStringConverter;
+        $this->sectionResolver = $sectionResolver;
     }
 
     public function configureOptions(OptionsResolver $resolver) {
@@ -38,10 +42,20 @@ class StudyGroupType extends SortableEntityType {
         $resolver
             ->setDefault('class', StudyGroup::class)
             ->setDefault('query_builder', function(EntityRepository $repository) {
-                return $repository->createQueryBuilder('sg')
+                $section = $this->sectionResolver->getCurrentSection();
+
+                $qb = $repository->createQueryBuilder('sg')
                     ->select(['sg', 'g'])
                     ->orderBy('sg.name', 'asc')
                     ->leftJoin('sg.grades', 'g');
+
+                if($section !== null) {
+                    $qb->leftJoin('sg.section', 's')
+                        ->where('s.id = :section')
+                        ->setParameter('section', $section->getId());
+                }
+
+                return $qb;
             })
             ->setDefault('group_by', function(StudyGroup $group) {
                 return $this->enumStringConverter->convert($group->getType());
@@ -79,7 +93,7 @@ class StudyGroupType extends SortableEntityType {
         }
 
         $view->vars['grades'] = $gradeIds;
-
+        $view->vars['section'] = $this->sectionResolver->getCurrentSection();
     }
 
     public function getBlockPrefix()

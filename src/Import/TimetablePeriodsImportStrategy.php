@@ -3,6 +3,7 @@
 namespace App\Import;
 
 use App\Entity\TimetablePeriod;
+use App\Repository\SectionRepositoryInterface;
 use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\TimetablePeriodData;
@@ -12,9 +13,11 @@ use App\Utils\ArrayUtils;
 class TimetablePeriodsImportStrategy implements ImportStrategyInterface, NonRemovalImportStrategyInterface {
 
     private $repository;
+    private $sectionRepository;
 
-    public function __construct(TimetablePeriodRepositoryInterface $repository) {
+    public function __construct(TimetablePeriodRepositoryInterface $repository, SectionRepositoryInterface $sectionRepository) {
         $this->repository = $repository;
+        $this->sectionRepository = $sectionRepository;
     }
 
     /**
@@ -64,11 +67,29 @@ class TimetablePeriodsImportStrategy implements ImportStrategyInterface, NonRemo
      * @param TimetablePeriod $entity
      * @param TimetablePeriodData $data
      * @param TimetablePeriodsData $requestData
+     * @throws SectionNotResolvableException
+     * @throws ImportException
      */
     public function updateEntity($entity, $data, $requestData): void {
         $entity->setName($data->getName());
         $entity->setStart($data->getStart());
         $entity->setEnd($data->getEnd());
+
+        $startSection = $this->sectionRepository->findOneByDate($entity->getStart());
+        if($startSection === null) {
+            throw new SectionNotResolvableException($entity->getStart());
+        }
+
+        $endSection = $this->sectionRepository->findOneByDate($entity->getEnd());
+        if($endSection === null) {
+            throw new SectionNotResolvableException($entity->getEnd());
+        }
+
+        if($startSection !== $endSection) {
+            throw new ImportException('Timetable period is part of two sections which is not allowed.');
+        }
+
+        $entity->setSection($startSection);
 
         // Todo: Validate that periods do not overlap
     }

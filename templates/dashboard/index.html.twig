@@ -362,10 +362,10 @@
                             {% if teacher.grades|length > 0 %}
                             <p>
                                 <i class="fas fa-chalkboard-teacher" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>
-                                {% for gradeTeacher in teacher.grades|sort_gradeteachers %}
-                                    {% set studyGroup = get_study_group_by_grade(gradeTeacher.grade) %}
+                                {% for gradeTeacher in teacher.grades|only_section(section)|sort_gradeteachers %}
+                                    {% set studyGroup = get_study_group_by_grade(gradeTeacher.grade, section) %}
                                     {%- if studyGroup is not null -%}
-                                        <a href="{{ path('list_studygroups', { study_group: studyGroup.uuid.toString }) }}">{{ gradeTeacher.grade.name }}</a>
+                                        <a href="{{ path('list_studygroups', { study_group: studyGroup.uuid.toString, section: section.uuid.toString }) }}">{{ gradeTeacher.grade.name }}</a>
                                     {%- else -%}
                                         {{ gradeTeacher.grade.name }}
                                     {%- endif -%}

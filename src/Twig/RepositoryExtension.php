@@ -3,6 +3,7 @@
 namespace App\Twig;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\StudyGroup;
 use App\Repository\StudyGroupRepositoryInterface;
 use Twig\Extension\AbstractExtension;
@@ -24,9 +25,10 @@ class RepositoryExtension extends AbstractExtension {
 
     /**
      * @param Grade $grade
+     * @param Section $section
      * @return StudyGroup|null
      */
-    public function getStudyGroupByGrade(Grade $grade): ?StudyGroup {
-        return $this->studyGroupRepository->findOneByGrade($grade);
+    public function getStudyGroupByGrade(Grade $grade, Section $section): ?StudyGroup {
+        return $this->studyGroupRepository->findOneByGrade($grade, $section);
     }
 }

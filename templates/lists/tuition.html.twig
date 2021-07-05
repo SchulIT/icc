@@ -62,7 +62,15 @@
                                 <tr>
                                     <td>{{ membership.student.lastname }}</td>
                                     <td>{{ membership.student.firstname }}</td>
-                                    <td>{{ membership.student.grade.name }}</td>
+                                    <td>
+                                        {% set grade = membership.student.grade(tuition.section) %}
+
+                                        {% if grade is not null %}
+                                            {{ grade.name }}
+                                        {% else %}
+                                            {{ 'label.not_available'|trans }}
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         {% if membership.student.email is not empty %}
                                             <i class="fa fa-envelope"></i>

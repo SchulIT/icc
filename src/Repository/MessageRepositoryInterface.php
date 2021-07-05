@@ -10,6 +10,7 @@ use App\Entity\StudyGroup;
 use App\Entity\User;
 use App\Entity\UserType;
 use DateTime;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 interface MessageRepositoryInterface {
 
@@ -38,6 +39,18 @@ interface MessageRepositoryInterface {
      * @return int
      */
     public function countBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [ ], bool $archive = false): int;
+
+    /**
+     * @param int $itemsPerPage
+     * @param int $page
+     * @param MessageScope $scope
+     * @param UserType $userType
+     * @param DateTime|null $today
+     * @param array $studyGroups
+     * @param bool $archive
+     * @return mixed
+     */
+    public function getPaginator(int $itemsPerPage, int &$page, MessageScope $scope, UserType $userType, ?DateTime $today = null, array $studyGroups = [ ], bool $archive = false): Paginator;
 
     /**
      * @param UserType $userType

@@ -10,6 +10,7 @@ use App\Entity\StudyGroup;
 use App\Entity\UserType;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class MessageRepository extends AbstractRepository implements MessageRepositoryInterface {
 
@@ -206,5 +207,25 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
             ->setParameter('date', $dateTime);
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPaginator(int $itemsPerPage, int &$page, MessageScope $scope, UserType $userType, ?DateTime $today = null, array $studyGroups = [], bool $archive = false): Paginator {
+        $qb = $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups, $archive)
+            ->orderBy('m.expireDate', 'desc');
+
+        if(!is_numeric($page) || $page < 1) {
+            $page = 1;
+        }
+
+        $offset = ($page - 1) * $itemsPerPage;
+        $paginator = new Paginator($qb);
+        $paginator->getQuery()
+            ->setMaxResults($itemsPerPage)
+            ->setFirstResult($offset);
+
+        return $paginator;
     }
 }

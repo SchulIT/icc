@@ -10,19 +10,77 @@
 {% endblock %}
 
 {% block content %}
+    {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.uuid %}
+    {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
 <div class="container-fluid px-0">
     <div class="row">
         <div class="col-md-9">
-        {% if messages|length == 0 %}
+        {% if groups|length == 0 %}
             <div class="bs-callout bs-callout-info">
                 <h4>{{ 'info.label'|trans }}</h4>
 
                 <p>{{ 'messages.overview.empty'|trans }}</p>
             </div>
         {% else %}
-            {% for message in messages %}
-                {% include "_includes/message.html.twig" %}
+            {% for group in groups %}
+                <div class="card">
+                    <div class="card-header">{{ 'admin.exams.week'|trans({'%week%': group.week.weekNumber}) }}</div>
+                    <div class="list-group list-group-flush">
+                        {% for message in group.messages %}
+                            {% set missingUploads = missing_uploads(message) %}
+
+                            {% set mustConfirm = message.mustConfirm and is_granted('confirm', message) and not is_confirmed(message) %}
+                            {% set mustUpload = message.uploadsEnabled and is_granted('upload', message) and missingUploads|length > 0 %}
+                            {% set userDownloads = message_downloads(message) %}
+                            {% set hasPoll = message.pollEnabled and is_granted('poll', message) %}
+
+                            <a class="d-flex align-items-center list-group-item list-group-item-action {% if message.priority == 'emergency' %}list-group-item-danger{% elseif message.priority == 'important' %}list-group-item-warning{% endif %}" href="{{ path('show_message', { uuid: message.uuid }) }}">
+                                <div class="flex-fill">
+                                    {{ message.title }}
+                                </div>
+
+                                <div class="flex-shrink-0">
+                                    {% if (message.attachments|length > 0 or userDownloads|length > 0) %}
+                                        <button class="btn btn-outline-secondary btn-sm" type="button">
+                                            <i class="fa fa-download"></i>
+                                        </button>
+                                    {% endif %}
+
+                                    {% if not is_confirmed(message) and is_granted('confirm', message) %}
+                                        <button class="btn btn-warning btn-sm" title="{{ 'actions.confirm'|trans }}">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    {% endif %}
+
+                                    {% if message.uploadsEnabled and is_granted('upload', message) %}
+                                        <button class="btn {% if missingUploads|length > 0 %}btn-warning{% else %}btn-success{% endif %} btn-sm" title="{{ 'messages.uploads.info'|trans }}">
+                                            <i class="fa fa-upload"></i>
+                                        </button>
+                                    {% endif %}
+
+                                    {% if hasPoll %}
+                                        <button class="btn btn-primary btn-sm" title="{{ 'messages.poll.info'|trans }}">
+                                            <i class="fas fa-poll"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
             {% endfor %}
+
+            {% include '@Common/includes/pagination.html.twig' with {
+                currentFilters: {
+                    user_type: userTypeParam,
+                    student: studentParam,
+                    archive: archive ? '✓' : null
+                },
+                currentPage: page,
+                paginationPath: 'messages',
+                lastPage: pages,
+                showAlwaysFirstAndLast: true
+            } only %}
         {% endif %}
         </div>
         <div class="col-md-3 sticky-sidebar">
@@ -46,15 +104,12 @@
 
             <div class="card">
                 <div class="card-body">
-                    {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.uuid %}
-                    {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
-
                     {% if studentFilter.studentGradeGroups|length > 0 %}
                         {% include "_filter/student.html.twig" with { params: { archive: archive, user_type: userTypeParam } } %}
                     {% endif %}
 
                     {% if userTypeFilter.types|length > 0 %}
-                        {% include "_filter/user_type.html.twig" with { params: { archive: archive, student: studentParam } } %}
+                        {% include "_filter/user_type.html.twig" with { params: { archive: archive ? '✓' : null, student: studentParam } } %}
                     {% endif %}
 
                     <form role="form" method="get" class="form hidden-print">

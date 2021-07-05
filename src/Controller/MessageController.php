@@ -15,6 +15,8 @@ use App\Filesystem\FileNotFoundException;
 use App\Filesystem\MessageFilesystem;
 use App\Form\MessagePollVoteType;
 use App\Form\MessageUploadType;
+use App\Grouping\Grouper;
+use App\Grouping\MessageWeekStrategy;
 use App\Message\PollVoteHelper;
 use App\Repository\MessageFileUploadRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
@@ -22,6 +24,8 @@ use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolver;
 use App\Security\Voter\MessageVoter;
 use App\Sorting\MessageStrategy;
+use App\Sorting\MessageWeekGroupStrategy;
+use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\SectionFilter;
@@ -39,6 +43,8 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/messages")
  */
 class MessageController extends AbstractController {
+
+    private const MessagesPerPage = 25;
 
     private $sorter;
     private $dateHelper;
@@ -58,7 +64,7 @@ class MessageController extends AbstractController {
      * @Route("", name="messages")
      */
     public function index(MessageRepositoryInterface $messageRepository, StudentFilter $studentFilter, UserTypeFilter $userTypeFilter,
-                          SectionResolver $sectionResolver, Request $request) {
+                          SectionResolver $sectionResolver, Request $request, Grouper $grouper) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -75,7 +81,11 @@ class MessageController extends AbstractController {
             }
         }
 
-        $messages = $messageRepository->findBy(
+        $page = $request->query->getInt('page', 1);
+
+        $paginator = $messageRepository->getPaginator(
+            static::MessagesPerPage,
+            $page,
             MessageScope::Messages(),
             $userTypeFilterView->getCurrentType(),
             $this->dateHelper->getToday(),
@@ -83,17 +93,29 @@ class MessageController extends AbstractController {
             $archive
         );
 
+        $messages = [ ];
+
+        foreach($paginator as $message) {
+            $messages[] = $message;
+        }
+
         $messages = array_filter($messages, function(Message $message) {
             return $this->isGranted(MessageVoter::View, $message);
         });
 
-        $this->sorter->sort($messages, MessageStrategy::class);
+        $pages = ceil((double)$paginator->count() / static::MessagesPerPage);
+
+        $groups = $grouper->group($messages, MessageWeekStrategy::class);
+        $this->sorter->sort($groups, MessageWeekGroupStrategy::class, SortDirection::Descending());
+        $this->sorter->sortGroupItems($groups, MessageStrategy::class);
 
         return $this->render('messages/index.html.twig', [
             'studentFilter' => $studentFilterView,
             'userTypeFilter' => $userTypeFilterView,
-            'messages' => $messages,
-            'archive' => $archive
+            'groups' => $groups,
+            'archive' => $archive,
+            'page' => $page,
+            'pages' => $pages
         ]);
     }
 

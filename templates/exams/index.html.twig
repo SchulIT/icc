@@ -107,7 +107,7 @@
                         {% set params = { section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null } %}
 
                         {% if teacherFilter.teachers|length > 0 %}
-                            {% include "_filter/teacher.html.twig" with { params: params } %}
+                            {% include "_filter/teacher.html.twig" with { params: params, allowClear: true, path: 'exams', currentFilter: params } %}
                         {% endif %}
 
                         {% if studentFilter.studentGradeGroups|length > 0 %}

@@ -174,7 +174,7 @@ label:
         help: Gibt die Zeit an, nach der automatisch gescrollt werden soll. Dieser Wert wird in Sekunden angegeben.
     ip_addresses:
         label: IP-Adressen
-        help: IP-Adressen können sowohl als IPv4 als auch IPv6 angegeben werden. Die CIDR-Notiation wird unterstützt. Mehere IP-Adressen mit Komma trennen.
+        help: IP-Adressen können sowohl als IPv4 als auch IPv6 angegeben werden. Die CIDR-Notation wird unterstützt. Mehrere IP-Adressen mit Komma trennen.
     resource: Ressource
     icon:
         label: Icon
@@ -647,10 +647,10 @@ admin:
                     help: Wenn diese Option aktiviert ist, werden Benachrichtigungen versendet, sobald ein neuer Vertretungsplan verfügbar ist.
                 sender:
                     label: Absender
-                    help: Dieser Name wird als Absender bei E-Mail Benachrichtungen angezeigt. E-Mails werden mit diesem Namen unterschrieben.
+                    help: Dieser Name wird als Absender bei E-Mail Benachrichtigungen angezeigt. E-Mails werden mit diesem Namen unterschrieben.
                 reply_address:
                     label: Antwort-E-Mail Adresse
-                    help: Diese E-Mail Adresse wird bei E-Mail Benachrichtungen in das 'Reply-To'-Feld eingefügt, sodass Antworten auf die Benachrichtungsmail an diese E-Mail Adresse geschickt werden.
+                    help: Diese E-Mail Adresse wird bei E-Mail Benachrichtigungen in das 'Reply-To'-Feld eingefügt, sodass Antworten auf die Benachrichtigungsmail an diese E-Mail Adresse geschickt werden.
             absence_visibility:
                 label: Abwenheiten sichtbar für
 
@@ -671,10 +671,10 @@ admin:
                     help: Wenn diese Option aktiviert ist, werden Benachrichtigungen versendet, sobald ein neuer Klausurplan verfügbar ist.
                 sender:
                     label: Absender
-                    help: Dieser Name wird als Absender bei E-Mail Benachrichtungen angezeigt. E-Mails werden mit diesem Namen unterschrieben.
+                    help: Dieser Name wird als Absender bei E-Mail Benachrichtigungen angezeigt. E-Mails werden mit diesem Namen unterschrieben.
                 reply_address:
                     label: Antwort-E-Mail Adresse
-                    help: Diese E-Mail Adresse wird bei E-Mail Benachrichtungen in das 'Reply-To'-Feld eingefügt, sodass Antworten auf die Benachrichtungsmail an diese E-Mail Adresse geschickt werden.
+                    help: Diese E-Mail Adresse wird bei E-Mail Benachrichtigungen in das 'Reply-To'-Feld eingefügt, sodass Antworten auf die Benachrichtigungsmail an diese E-Mail Adresse geschickt werden.
             planning:
                 label: Planung
                 number_of_exams_week:

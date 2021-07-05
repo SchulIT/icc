@@ -41,6 +41,11 @@ easy_admin:
                     - name
                     - allowCollapse
                     - students
+        GradeTeacher:
+            class: App\Entity\GradeTeacher
+
+        GradeMembership:
+            class: App\Entity\GradeMembership
 
         Room:
             class: App\Entity\Room
@@ -66,7 +71,6 @@ easy_admin:
                     - email
                     - status
                     - { property: birthday, type_options: { widget: 'single_text' } }
-                    - grade
                     - approvedPrivacyCategories
 
         StudyGroup:
@@ -79,6 +83,7 @@ easy_admin:
                     - grades
                     - memberships
                     - tuitions
+                    - section
             form:
                 fields:
                     - { property: externalId, required: false }
@@ -86,6 +91,10 @@ easy_admin:
                     - { property: type, type_options: { translation_domain: enums } }
                     - grades
                     - tuitions
+                    - section
+
+        StudyGroupMembership:
+            class: App\Entity\StudyGroupMembership
 
         Substitution:
             class: App\Entity\Substitution

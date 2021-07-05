@@ -137,4 +137,8 @@ class Section {
         $this->end = $end;
         return $this;
     }
+
+    public function __toString() {
+        return $this->displayName;
+    }
 }

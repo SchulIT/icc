@@ -179,7 +179,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
                 )
             );
 
-        $qb->where($qb->expr()->in('t.id', $qbInner->getDQL()))
+        $qb->andWhere($qb->expr()->in('t.id', $qbInner->getDQL()))
             ->setParameter('subject', $subjectOrCourse);
 
         $tuitions = [ ];
@@ -224,7 +224,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
                 )
             );
 
-        $qb->where($qb->expr()->in('t.id', $qbInner->getDQL()))
+        $qb->andWhere($qb->expr()->in('t.id', $qbInner->getDQL()))
             ->setParameter('teachers', $teachers)
             ->setParameter('subject', $subjectOrCourse);
 

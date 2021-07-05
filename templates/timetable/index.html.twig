@@ -46,6 +46,7 @@
                     {% endif %}
 
                     {% set currentFilter = {
+                        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
                         grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString() : null,
                         student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null,
                         teachers: (urlTeachers is not empty ? urlTeachers : null),
@@ -249,7 +250,7 @@
                 {% if contains_active_filters([teachersFilter, studentFilter, gradeFilter, subjectFilter, roomFilter]) %}
                 <div class="card">
                     <div class="card-body pb-1">
-                        {% set params = { period: currentPeriod ? currentPeriod.uuid.toString : null } %}
+                        {% set params = { period: currentPeriod ? currentPeriod.uuid.toString : null, section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null, } %}
 
                         {% include "_filter/section.html.twig" %}
 

@@ -158,14 +158,18 @@
 
                 <div class="card">
                     <div class="card-body">
-                        {% include "_filter/section.html.twig" %}
+                        {% set section = sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null %}
+                        {% set teacher = teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null %}
+                        {% set grade = gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null %}
+
+                        {% include "_filter/section.html.twig" with { currentFilter: { teacher: teacher, grade: grade } } %}
 
                         {% if gradeFilter.grades|length > 0 %}
-                            {% include "_filter/grade.html.twig" %}
+                            {% include "_filter/grade.html.twig" with { currentFilter: { section: section } } %}
                         {% endif %}
 
                         {% if teacherFilter.teachers|length > 0 %}
-                            {% include "_filter/teacher.html.twig" with { class: 'mb-0'} %}
+                            {% include "_filter/teacher.html.twig" with { currentFilter: { section: section }, class: 'mb-0', allowClear: true, path: 'admin_exams' } %}
                         {% endif %}
                     </div>
 

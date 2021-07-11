@@ -235,6 +235,12 @@
   }
 }
 
+.book-lesson {
+  @include font-size(1.75rem);
+
+  min-width: 55px;
+}
+
 .bg-danger-light {
   background-color: theme-color-level("danger", $alert-bg-level)
 }

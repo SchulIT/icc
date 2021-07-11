@@ -52,7 +52,8 @@ class HelperExtension extends AbstractExtension {
     public function getFilters() {
         return [
             new TwigFilter('previous_date', [ $this, 'getPreviousDate' ]),
-            new TwigFilter('next_date', [ $this, 'getNextDate'])
+            new TwigFilter('next_date', [ $this, 'getNextDate']),
+            new TwigFilter('clone', [ $this, 'cloneObject' ])
         ];
     }
 
@@ -88,6 +89,10 @@ class HelperExtension extends AbstractExtension {
         }
 
         return $next;
+    }
+
+    public function cloneObject(object $object): object {
+        return clone $object;
     }
 
     public function isInDateTimeArray(\DateTime $dateTime, array $dateTimes): bool {

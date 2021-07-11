@@ -55,3 +55,6 @@ dh_doctrine_audit:
     resource: "@DHDoctrineAuditBundle/Controller/"
     type: annotation
     prefix: /admin
+
+_bazinga_jstranslation:
+    resource: "@BazingaJsTranslationBundle/Resources/config/routing/routing.yml"

@@ -16,6 +16,8 @@ Encore
     .addEntry('message-downloads', './assets/js/message-downloads.js')
     .addEntry('zipper', './assets/js/zipper.js')
     .addEntry('display', './assets/js/display.js')
+    .addEntry('book', './assets/js/book.js')
+    .addEntry('entry', './assets/js/entry.js')
     .addStyleEntry('simple', './vendor/schulit/common-bundle/Resources/assets/css/simple.scss')
     .addStyleEntry('signin', './vendor/schulit/common-bundle/Resources/assets/css/signin.scss')
 
@@ -27,6 +29,7 @@ Encore
         options.sassOptions.importer = GlobImporter();
     })
     .enablePostCssLoader()
+    .enableVueLoader()
 
     .addLoader(
         {

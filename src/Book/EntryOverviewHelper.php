@@ -1,0 +1,121 @@
+<?php
+
+namespace App\Book;
+
+use App\Entity\Grade;
+use App\Entity\LessonEntry;
+use App\Entity\TimetableLesson;
+use App\Entity\Tuition;
+use App\Grouping\Grouper;
+use App\Grouping\LessonDayStrategy;
+use App\Repository\LessonEntryRepositoryInterface;
+use App\Repository\TimetableLessonRepositoryInterface;
+use App\Repository\TuitionRepositoryInterface;
+use App\Sorting\LessonDayGroupStrategy;
+use App\Sorting\LessonStrategy;
+use App\Sorting\Sorter;
+use DateTime;
+
+class EntryOverviewHelper {
+    private $lessonRepository;
+    private $tuitionRepository;
+    private $entryRepository;
+
+    private $grouper;
+    private $sorter;
+
+    public function __construct(TimetableLessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository, LessonEntryRepositoryInterface $entryRepository, Grouper $grouper, Sorter $sorter) {
+        $this->lessonRepository = $lessonRepository;
+        $this->tuitionRepository = $tuitionRepository;
+        $this->entryRepository = $entryRepository;
+        $this->grouper = $grouper;
+        $this->sorter = $sorter;
+    }
+
+    public function computeOverviewForTuition(Tuition $tuition, DateTime $start, DateTime $end): EntryOverview {
+        $entries = $this->entryRepository->findAllByTuition($tuition, $start, $end);
+
+        return $this->computeOverview([$tuition], $entries, $start, $end);
+    }
+
+    /**
+     * @param Tuition[] $tuitions
+     * @param LessonEntry[] $entries
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return EntryOverview
+     */
+    private function computeOverview(array $tuitions, array $entries, DateTime $start, DateTime $end): EntryOverview {
+        if($start > $end) {
+            $tmp = $start;
+            $start = $end;
+            $end = $tmp;
+        }
+
+        $lessons = [ ];
+
+        foreach($entries as $entry) {
+            if($entry->getTuition() === null) {
+                // discard entries without tuition
+                continue;
+            }
+
+            for($lessonNumber = $entry->getLessonStart(); $lessonNumber <= $entry->getLessonEnd(); $lessonNumber++) {
+                $key = sprintf('%s-%d-%s', $entry->getDate()->format('Y-m-d'), $lessonNumber, $entry->getTuition()->getUuid()->toString());
+
+                $lessons[$key] = new Lesson(clone $entry->getDate(), $lessonNumber, null, $entry);
+            }
+        }
+
+        $weekNumbers = [ ];
+        $currentWeek = clone $start;
+        while($currentWeek < $end) {
+            $weekNumber = (int)$currentWeek->format('W');
+
+            if(!in_array($weekNumber, $weekNumbers)) {
+                $weekNumbers[] = $weekNumber;
+            }
+
+            $currentWeek = $currentWeek->modify('+7 days');
+        }
+
+        $timetableLessons = $this->lessonRepository->findAllByTuitionsAndWeeks($tuitions, $weekNumbers);
+
+        $current = clone $start;
+        while($current < $end) {
+            $dailyLessons = array_filter($timetableLessons, function(TimetableLesson $lesson) use ($current) {
+                return $lesson->getDay() === (int)$current->format('N')
+                        && in_array((int)$current->format('W'), $lesson->getWeek()->getWeeksAsIntArray())
+                        && $lesson->getPeriod()->getStart() <= $current
+                        && $lesson->getPeriod()->getEnd() >= $current;
+            });
+
+            foreach($dailyLessons as $dailyLesson) {
+                for($lessonNumber = $dailyLesson->getLesson(); $lessonNumber <= $dailyLesson->getLesson() + ($dailyLesson->isDoubleLesson() ? 1 : 0); $lessonNumber++) {
+                    $key = sprintf('%s-%d-%s', $current->format('Y-m-d'), $lessonNumber, $dailyLesson->getTuition()->getUuid()->toString());
+
+                    if (!array_key_exists($key, $lessons)) {
+                        $lessons[$key] = new Lesson(clone $current, $lessonNumber);
+                    }
+
+                    $lessons[$key]->setTimetableLesson($dailyLesson);
+                }
+            }
+
+            $current = $current->modify('+1 day');
+        }
+
+        $groups = $this->grouper->group(array_values($lessons), LessonDayStrategy::class);
+        $this->sorter->sort($groups, LessonDayGroupStrategy::class);
+        $this->sorter->sortGroupItems($groups, LessonStrategy::class);
+
+        return new EntryOverview($start, $end, $groups);
+    }
+
+    public function computeOverviewForGrade(Grade $grade, DateTime $start, DateTime $end): EntryOverview {
+        $entries = $this->entryRepository->findAllByGrade($grade, $start, $end);
+        $tuitions = $this->tuitionRepository->findAllByGrades([$grade]);
+
+        return $this->computeOverview($tuitions, $entries, $start, $end);
+    }
+}

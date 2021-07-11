@@ -162,6 +162,32 @@ class Builder {
         return $wiki;
     }
 
+    private function bookMenu(ItemInterface $menu): ItemInterface {
+        $book = $menu->addChild('book.label', [
+            'route' => 'book'
+        ])
+            ->setExtra('menu', 'book')
+            ->setExtra('icon', 'fas fa-book-open')
+            ->setExtra('menu-container', '#submenu');
+
+        $book->addChild('book.label', [
+            'route' => 'book'
+        ])
+            ->setExtra('icon', 'fas fa-book-open');
+
+        $book->addChild('book.student.label', [
+            'route' => 'book_students'
+        ])
+            ->setExtra('icon', 'fas fa-users');
+
+        $book->addChild('book.excuse_note.label', [
+            'route' => 'excuse_notes'
+        ])
+            ->setExtra('icon', 'fas fa-pen-alt');
+
+        return $book;
+    }
+
     public function userMenu(array $options): ItemInterface {
         $menu = $this->factory->createItem('root')
             ->setChildrenAttributes([
@@ -506,6 +532,10 @@ class Builder {
                 ])
                     ->setExtra('icon', 'fas fa-clinic-medical');
             }
+        }
+
+        if($this->authorizationChecker->isGranted('ROLE_BOOK_VIEWER')) {
+            $this->bookMenu($menu);
         }
 
         return $menu;

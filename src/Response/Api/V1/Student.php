@@ -196,7 +196,7 @@ class Student {
             ->setFirstname($studentEntity->getFirstname())
             ->setLastname($studentEntity->getLastname())
             ->setEmail($studentEntity->getEmail())
-            ->setGrade(Grade::fromEntity($studentEntity->getGrade()))
+            //->setGrade(Grade::fromEntity($studentEntity->getGrade()))
             ->setGender($studentEntity->getGender())
             ->setStatus($studentEntity->getStatus())
             ->setUuid($studentEntity->getUuid());

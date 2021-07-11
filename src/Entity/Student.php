@@ -8,6 +8,7 @@ use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -17,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @Auditable()
  * @UniqueEntity(fields={"externalId"})
  */
-class Student {
+class Student implements JsonSerializable {
 
     use IdTrait;
     use UuidTrait;
@@ -325,5 +326,17 @@ class Student {
 
     public function __toString() {
         return sprintf('%s, %s', $this->getLastname(), $this->getFirstname());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize() {
+        return [
+            'uuid' => $this->getUuid()->toString(),
+            'firstname' => $this->getFirstname(),
+            'lastname' => $this->getLastname(),
+            'email' => $this->getEmail(),
+        ];
     }
 }

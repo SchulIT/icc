@@ -10,16 +10,19 @@ use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
 use App\Entity\TimetableWeek;
+use App\Entity\Tuition;
 use Doctrine\ORM\QueryBuilder;
 
 class TimetableLessonRepository extends AbstractTransactionalRepository implements TimetableLessonRepositoryInterface {
 
     private function getDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
-            ->select(['l', 'p', 't', 'w', 'r', 't'])
+            ->select(['l', 'p', 't', 'w', 'r', 't', 'sg', 'g'])
             ->from(TimetableLesson::class, 'l')
             ->leftJoin('l.period', 'p')
             ->leftJoin('l.tuition', 't')
+            ->leftJoin('t.studyGroup', 'sg')
+            ->leftJoin('sg.grades', 'g')
             ->leftJoin('l.week', 'w')
             ->leftJoin('l.room', 'r')
             ->leftJoin('l.subject', 's');
@@ -279,6 +282,40 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
 
         $qb->setParameter('period', $period->getId())
             ->setParameter('week', $week->getId());
+
+        $qb->where(
+            $qb->expr()->in('l.id', $qbInner->getDQL())
+        );
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByTuitionsAndWeeks(array $tuitions, array $weeks): array {
+        $tuitionIds = array_map(function(Tuition $tuition) {
+            return $tuition->getId();
+        }, $tuitions);
+
+        $qb = $this->getDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('lInner')
+            ->from(TimetableLesson::class, 'lInner')
+            ->leftJoin('lInner.tuition', 'tInner')
+            ->leftJoin('lInner.week', 'wInner')
+            ->leftJoin('wInner.weeks', 'weekInner');
+        $qbInner
+            ->where(
+                $qbInner->expr()->in('tInner.id', ':tuitions')
+            )
+            ->andWhere(
+                $qbInner->expr()->in('weekInner.number', ':weeks')
+            );
+
+        $qb->setParameter('tuitions', $tuitionIds)
+            ->setParameter('weeks', $weeks);
 
         $qb->where(
             $qb->expr()->in('l.id', $qbInner->getDQL())

@@ -49,6 +49,7 @@ label:
         reason: Grund auswählen
         tag: Tag auswählen
         section: Abschnitt auswählen
+        tuition: Unterricht auswählen
     search:
         student: Lernenden suchen
     scope: Bereich
@@ -135,6 +136,7 @@ label:
     files: "{0} %count% Dateien|{1} %count% Datei|]1,Inf[ %count% Dateien"
     priority: Priorität
     description: Beschreibung
+    tuition: Unterricht
     tuitions: Unterricht
     nobody: Niemand
     capacity: Kapazität
@@ -188,6 +190,8 @@ label:
     active: aktiviert
     year: Jahr
     number: Nummer
+    topic: Thema
+    comment: Kommentar
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -1308,3 +1312,47 @@ audit:
 
 choice:
     choose: bitte auswählen
+
+book:
+    label: Unterrichtsbücher
+
+    entry:
+        label: Eintrag
+        missing: Eintrag fehlt
+        add:
+            label: Neuer Eintrag
+            single: Eintrag für Einzelstunde erstellen
+            double: Eintrag für Doppelstunde erstellen
+        cancel:
+            label: Stunde entfällt
+            single: Einzelstunde entfällt
+            double: Doppelstunde entfällt
+            reason: Grund des Entfalls
+        cancel_reason: "Entfall: %reason%"
+
+    comment:
+        label: Kommentar
+        add:
+            label: Neuer Kommentar
+
+
+    subject:
+        timetable: Fach/Kurs laut Stundenplan
+        entry: Fach/Kurs laut Eintrag
+        substitution: Fach/Kurs laut Vertretung
+
+    attendance:
+        label: Anwesenheit
+
+    excuse_note:
+        label: Entschuldigungen
+        add:
+            label: Neue Entschuldigung
+            success: Entschuldigung erfolgreich angelegt
+        edit:
+            label: Entschuldigung bearbeiten
+            success: Entschuldigung erfolgreich aktualisiert
+        remove:
+            label: Entschuldigung löschen
+            success: Entschuldigung erfolgreich gelöscht
+            confirm: 'Soll die Entschuldigung für %lastname%, %firstname (%date%, %start%.-%end%. Stunde) wirklich gelöscht werden?'

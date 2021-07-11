@@ -59,6 +59,7 @@
         "symfony/yaml": "^5.3",
         "trikoder/oauth2-bundle": "^3.1",
         "vich/uploader-bundle": "^1.9",
+        "willdurand/js-translation-bundle": "^4.0",
         "xantios/mimey": "^2.1"
     },
     "require-dev": {

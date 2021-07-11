@@ -1,0 +1,221 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {% set currentFilter = {
+        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
+        tuition: tuitionFilter.currentTuition ? tuitionFilter.currentTuition.uuid.toString : null
+    } %}
+
+    {% set createCsrfToken = csrf_token('lesson_entry_create') %}
+    {% set cancelCsrfToken = csrf_token('lesson_entry_cancel') %}
+
+    <div class="container-fluid px-0" id="app">
+        <div class="row">
+            <div class="col-md-9">
+                {% if overview is null %}
+
+                {% else %}
+                    <div class="card">
+                        <div class="card-header border-bottom-0">
+                            {% set currentWeek = selectedDate ? selectedDate.format('W') : null %}
+
+                            <ul class="nav nav-pills card-header-pills flex-fill" data-trigger="resize-hide">
+                                {% if selectedDate != null %}
+                                <li class="nav-item align-self-center" data-resize="show">
+                                    <a class="nav-link" href="{{ path('book', currentFilter|merge({'date': (selectedDate|clone).modify('-7 days').format('Y-m-d')})) }}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                {% for week, monday in weekStarts %}
+                                    <li class="nav-item" {% if currentWeek == week %}data-resize="prevent"{% endif %}>
+                                        <a class="nav-link {% if currentWeek == week %}active{% endif %}" href="{{ path('book', currentFilter|merge({'date': monday.format('Y-m-d')})) }}">
+                                            <div>
+                                                <i class="fas fa-calendar-alt"></i> {{ 'admin.exams.week'|trans({'%week%': week}) }}
+                                            </div>
+                                            <div class="{% if currentWeek != week %}text-muted{% endif %}">
+                                                {{ monday|format_date }}
+                                            </div>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+
+                                {% if selectedDate != null %}
+                                <li class="nav-item align-self-center" data-resize="show">
+                                    <a class="nav-link" href="{{ path('book', currentFilter|merge({'date': (selectedDate|clone).modify('+7 days').format('Y-m-d')})) }}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    {% for day in overview.days %}
+                        <div class="card">
+                            <div class="card-header">
+                                {{ day.date|format_date }}
+                            </div>
+
+                            <div class="list-group list-group-flush">
+                                {% for lesson in day.lessons %}
+                                    <div class="list-group-item d-flex align-items-center">
+                                        <div class="book-lesson m-0 p-0">{{ lesson.lessonNumber }}</div>
+                                        {% if lesson.entry is null %}
+                                        <div class="badge badge-secondary">
+                                            {% set subject = null %}
+                                            {%- if lesson.timetableLesson is not null -%}
+                                                {% if lesson.timetableLesson.tuition.displayName is not empty %}
+                                                    {% set subject = lesson.timetableLesson.tuition.displayName|upper %}
+                                                {% elseif lesson.timetableLesson.tuition.subject.replaceSubjectAbbreviation %}
+                                                    {% set subject = lesson.timetableLesson.tuition.subject.name|upper %}
+                                                {% else %}
+                                                    {% set subject = lesson.timetableLesson.tuition.subject.abbreviation|upper %}
+                                                {% endif %}
+                                            {%- endif -%}
+
+                                            {{ subject }}
+                                        </div>
+
+                                            <div class="ml-2">
+                                                <i class="fas fa-chalkboard-teacher"></i>
+                                                {{ lesson.timetableLesson.tuition.teacher|teacher }}
+                                            </div>
+
+                                            <div class="ml-2 text-danger flex-fill">
+                                                <i class="fas fa-exclamation-triangle"></i> {{ 'book.entry.missing'|trans }}
+                                            </div>
+
+                                            <div class="ml-2">
+                                                <lesson-create-entry-button tuition-uuid="{{ lesson.timetableLesson.tuition.uuid.toString }}"
+                                                                            :start="{{ lesson.timetableLesson.lesson }}"
+                                                                            :end="{% if lesson.timetableLesson.doubleLesson %}{{ lesson.timetableLesson.lesson+1 }}{% else %}{{ lesson.timetableLesson.lesson }}{% endif %}"
+                                                                            :lesson="{{ lesson.lessonNumber }}"
+                                                                            :date="new Date('{{ day.date.format('Y-m-d') }}')"
+                                                                            csrfname="_token"
+                                                                            csrftoken="{{ createCsrfToken }}"
+                                                                            action="{{ path('add_entry') }}"
+                                                                            teacher="{{ user.user.teacher is not null ? user.user.teacher.acronym : null }}"
+                                                                            tuition-url="{{ path('xhr_tuition', { uuid: lesson.timetableLesson.tuition.uuid}) }}"
+                                                                            students-url="{{ path('xhr_tuition_students', { uuid: lesson.timetableLesson.tuition.uuid}) }}"
+                                                                            teachers-url="{{ path('xhr_teachers') }}"></lesson-create-entry-button>
+                                            </div>
+                                            <div class="ml-2">
+                                                <lesson-cancel-button tuition-uuid="{{ lesson.timetableLesson.tuition.uuid.toString }}"
+                                                                      :start="{{ lesson.timetableLesson.lesson }}"
+                                                                      :end="{% if lesson.timetableLesson.doubleLesson %}{{ lesson.timetableLesson.lesson+1 }}{% else %}{{ lesson.timetableLesson.lesson }}{% endif %}"
+                                                                      :lesson="{{ lesson.lessonNumber }}"
+                                                                      :date="new Date('{{ day.date.format('Y-m-d') }}')"
+                                                                      csrfname="_token"
+                                                                      csrftoken="{{ cancelCsrfToken }}"
+                                                                      action="{{ path('cancel_lesson') }}"
+                                                                      tuition-url="{{ path('xhr_tuition', { uuid: lesson.timetableLesson.tuition.uuid}) }}"></lesson-cancel-button>
+                                            </div>
+                                        {% else %}
+                                            <div class="badge badge-primary">
+                                                {{ lesson.entry.subject.name|upper }}
+
+                                                {% if lesson.entry.replacementSubject is not empty %}
+                                                    ⟶ {{ lesson.entry.replacementSubject|upper }}
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="ml-2">
+                                                <i class="fas fa-chalkboard-teacher"></i>
+                                                {{ lesson.entry.teacher|teacher }}
+
+                                                {% if lesson.entry.replacementTeacher is not null %}
+                                                    ⟶ {{ lesson.entry.replacementTeacher|upper }}
+                                                {% endif %}
+                                            </div>
+
+                                            {% if lesson.entry.isCancelled %}
+                                                <div class="ml-2 text-danger flex-fill">
+                                                    <i class="fas fa-times"></i>
+                                                    {{ 'book.entry.cancel_reason'|trans({ '%reason%': lesson.entry.cancelReason}) }}
+                                                </div>
+                                            {% else %}
+                                                <div class="ml-2 flex-fill">
+                                                    <i class="fas fa-info-circle"></i> {{ lesson.entry.topic }}
+                                                </div>
+                                            {% endif %}
+
+                                            <div class="ml-2">
+                                                <a href="{{ path('show_entry', { uuid: lesson.entry.uuid }) }}" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </div>
+                                        {% endif %}
+
+
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+
+                        {% include "_filter/grade.html.twig" with { params: currentFilter|merge({tuition: null}) } %}
+
+                        {% include "_filter/tuition.html.twig" with { params: currentFilter|merge({grade: null}) } %}
+
+                        <form role="form" method="get" class="form hidden-print">
+                            {% include "_filter/_params.html.twig" with { params: currentFilter } %}
+
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{% if selectedDate != null %}{{ selectedDate.format('Y-m-d') }}{% endif %}">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                {% if ownGrades|length > 0 or ownTuitions|length > 0 %}
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% for grade in ownGrades %}
+                            <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString, grade: grade.uuid.toString }) }}" class="list-group-item list-group-item-action {% if gradeFilter.currentGrade == grade %}active{% endif %}">
+                                <i class="fas fa-users"></i> {{ grade.name }}
+                            </a>
+                        {% endfor %}
+                        {% for tuition in ownTuitions %}
+                            <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString , tuition: tuition.uuid.toString }) }}" class="list-group-item list-group-item-action {% if tuitionFilter.currentTuition == tuition %}active{% endif %}">
+                                <i class="fas fa-chalkboard"></i>
+                                {% if tuition.displayName is not empty %}
+                                    {{ tuition.displayName }}
+                                {% else %}
+                                    {{ tuition.name }}
+                                {% endif %}
+                                ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/book.js') }}"></script>
+{% endblock %}

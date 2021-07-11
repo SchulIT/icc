@@ -10,6 +10,7 @@ use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetablePeriod;
 use App\Entity\TimetableWeek;
+use App\Entity\Tuition;
 use App\View\Filter\SubjectsFilter;
 
 interface TimetableLessonRepositoryInterface extends TransactionalRepositoryInterface {
@@ -77,6 +78,13 @@ interface TimetableLessonRepositoryInterface extends TransactionalRepositoryInte
      * @return TimetableLesson[]
      */
     public function findAllByPeriodAndWeek(TimetablePeriod $period, TimetableWeek $week): array;
+
+    /**
+     * @param Tuition[] $tuitions
+     * @param int[] $weeks
+     * @return TimetableLesson[]
+     */
+    public function findAllByTuitionsAndWeeks(array $tuitions, array $weeks): array;
 
     /**
      * @return TimetableLesson[]

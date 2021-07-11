@@ -1,0 +1,90 @@
+{% extends "main.html.twig" %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/editor.js') }}"></script>
+    <script src="{{ asset('build/entry.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ entry.tuition.subject }} [{{ entry.tuition.name }}]{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('collection') }}">{{ 'collection.label'|trans }}</a></li>
+        <li class="breadcrumb-item">
+            {% for grade in entry.tuition.grades %}
+                <a href="{{ path('collection', { grade: grade.uuid.toString }) }}">{{ grade.name }}</a>{% if not loop.last %}<span class="mr-1">, </span>{% endif %}
+            {% endfor %}
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('collection', { tuition: entry.tuition.uuid.toString}) }}">
+                {{ entry.tuition.subject }} [{{ entry.tuition.name }}]
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            {{ entry.date|format_date }}
+        </li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0" id="app">
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_start(entry_form) }}
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-calendar-alt"></i>
+                        {{ entry.date|format_date }}
+
+                        <i class="fas fa-chalkboard"></i>
+                        {{ entry.tuition.subject }}
+
+                        {% for grade in entry.tuition.grades %}
+                            <span class="badge badge-primary mr-1">
+                                {{ grade.name }}
+                            </span>
+                        {% endfor %}
+
+                        <i class="fa fa-chalkboard-teacher"></i>
+                        {% for teacher in entry.tuition.teachers %}
+                            {{ teacher.acronym }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="card-body">
+                        <div class="d-flex mb-3">
+                            <div class="mr-1 mt-n2 disable-grid">
+                                {{ form_label(entry_form.lessonStart) }}
+                                {{ form_widget(entry_form.lessonStart)}}
+                            </div>
+                            <div class="ml-1 mt-n2 disable-grid">
+                                {{ form_label(entry_form.lessonEnd) }}
+                                {{ form_widget(entry_form.lessonEnd) }}
+                            </div>
+                        </div>
+
+                        {{ form_errors(entry_form.lessonStart) }}
+                        {{ form_errors(entry_form.lessonEnd) }}
+
+                        {{ form_widget(entry_form) }}
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fa fa-save"></i> {{ 'action.save'|trans }}
+                        </button>
+                    </div>
+                </div>
+                {{ form_end(entry_form) }}
+            </div>
+
+            <div class="col-md-6">
+                <students :attendancedata="{{ entry.attendances.toArray|json_encode }}"
+                          :step="1"
+                          csrfname="{{ attendance_form._token.vars.full_name }}"
+                          csrftoken="{{ attendance_form._token.vars.value }}"></students>
+            </div>
+        </div>
+    </div>
+{% endblock %}

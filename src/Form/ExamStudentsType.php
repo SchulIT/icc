@@ -7,7 +7,7 @@ use App\Entity\Exam;
 use App\Entity\Student;
 use App\Entity\Tuition;
 use App\Repository\StudentRepositoryInterface;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Sorting\StringStrategy;
 use App\Sorting\StudentStrategy;
 use Doctrine\ORM\EntityRepository;
@@ -25,7 +25,7 @@ class ExamStudentsType extends AbstractType {
     private $sectionResolver;
 
     public function __construct(StudentStringConverter $studentConverter, StudentStrategy $studentStrategy,
-                                StringStrategy $stringStrategy, StudentRepositoryInterface $studentRepository, SectionResolver $sectionResolver) {
+                                StringStrategy $stringStrategy, StudentRepositoryInterface $studentRepository, SectionResolverInterface $sectionResolver) {
         $this->studentConverter = $studentConverter;
         $this->stringStrategy = $stringStrategy;
         $this->studentStrategy = $studentStrategy;

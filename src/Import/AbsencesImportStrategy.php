@@ -10,7 +10,7 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\AbsenceData;
 use App\Request\Data\AbsencesData;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 
 class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
 
@@ -21,7 +21,7 @@ class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
     private $sectionResolver;
 
     public function __construct(AbsenceRepositoryInterface $repository, TeacherRepositoryInterface $teacherRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository, RoomRepositoryInterface $roomRepository, SectionResolver $sectionResolver) {
+                                StudyGroupRepositoryInterface $studyGroupRepository, RoomRepositoryInterface $roomRepository, SectionResolverInterface $sectionResolver) {
         $this->repository = $repository;
         $this->teacherRepository = $teacherRepository;
         $this->studyGroupRepository = $studyGroupRepository;

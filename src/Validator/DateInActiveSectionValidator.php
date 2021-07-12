@@ -2,7 +2,7 @@
 
 namespace App\Validator;
 
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Validator\Constraint;
@@ -17,7 +17,7 @@ class DateInActiveSectionValidator extends ConstraintValidator {
     private $sectionResolver;
     private $translator;
 
-    public function __construct(DateHelper $dateHelper, SectionResolver $sectionResolver, TranslatorInterface $translator) {
+    public function __construct(DateHelper $dateHelper, SectionResolverInterface $sectionResolver, TranslatorInterface $translator) {
         $this->dateHelper = $dateHelper;
         $this->sectionResolver = $sectionResolver;
         $this->translator = $translator;

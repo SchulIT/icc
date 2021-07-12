@@ -5,7 +5,7 @@ namespace App\Validator;
 use App\Entity\Exam;
 use App\Entity\Student;
 use App\Repository\ExamRepositoryInterface;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Settings\ExamSettings;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraint;
@@ -16,7 +16,7 @@ class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
     private $examSettings;
     private $sectionResolver;
 
-    public function __construct(ExamSettings $examSettings, ExamRepositoryInterface $examRepository, SectionResolver $sectionResolver) {
+    public function __construct(ExamSettings $examSettings, ExamRepositoryInterface $examRepository, SectionResolverInterface $sectionResolver) {
         parent::__construct($examRepository);
 
         $this->examSettings = $examSettings;

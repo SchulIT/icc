@@ -1334,7 +1334,14 @@ book:
         label: Kommentar
         add:
             label: Neuer Kommentar
-
+            success: Kommentar erfolgreich angelegt
+        edit:
+            label: Kommentar bearbeiten
+            success: Kommentar erfolgreich aktualisiert
+        remove:
+            label: Kommentar löschen
+            confirm: "Soll der Kommentar vom %date% wirklich gelöscht werden?"
+            success: Kommentar erfolgreich gelöscht
 
     subject:
         timetable: Fach/Kurs laut Stundenplan

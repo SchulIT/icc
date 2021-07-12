@@ -21,7 +21,7 @@ use App\Message\PollVoteHelper;
 use App\Repository\MessageFileUploadRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Security\Voter\MessageVoter;
 use App\Sorting\MessageStrategy;
 use App\Sorting\MessageWeekGroupStrategy;
@@ -64,7 +64,7 @@ class MessageController extends AbstractController {
      * @Route("", name="messages")
      */
     public function index(MessageRepositoryInterface $messageRepository, StudentFilter $studentFilter, UserTypeFilter $userTypeFilter,
-                          SectionResolver $sectionResolver, Request $request, Grouper $grouper) {
+                          SectionResolverInterface $sectionResolver, Request $request, Grouper $grouper) {
         /** @var User $user */
         $user = $this->getUser();
 

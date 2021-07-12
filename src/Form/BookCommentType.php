@@ -15,6 +15,10 @@ class BookCommentType extends AbstractType {
                 'label' => 'label.date',
                 'widget' => 'single_text'
             ])
+            ->add('teacher', TeacherChoiceType::class, [
+                'label' => 'label.teacher',
+                'placeholder' => 'label.select.teacher'
+            ])
             ->add('text', TextareaType::class, [
                 'label' => 'label.comment'
             ])

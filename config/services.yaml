@@ -254,3 +254,15 @@ services:
         arguments:
             $appName: '%env(APP_NAME)%'
             $sender: '%env(MAILER_FROM)%'
+
+    # SECTION
+    App\Section\SectionResolver: ~
+
+    App\Section\CachedSectionResolver:
+        decorates: App\Section\SectionResolver
+        bind:
+            $sectionResolver: '@.inner'
+            $cache: '@app.cache.memory'
+
+    App\Section\SectionResolverInterface:
+        alias: App\Section\CachedSectionResolver

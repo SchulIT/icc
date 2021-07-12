@@ -17,7 +17,7 @@ use App\Repository\TransactionalRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Request\Data\ExamData;
 use App\Request\Data\ExamsData;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Settings\GeneralSettings;
 use App\Settings\ImportSettings;
 use App\Utils\ArrayUtils;
@@ -40,7 +40,7 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
     public function __construct(ExamRepositoryInterface $examRepository, TuitionRepositoryInterface $tuitionRepository,
                                 StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository,
                                 EventDispatcherInterface $eventDispatcher, RoomRepositoryInterface $roomRepository,
-                                ImportSettings $importSettings, SectionResolver $sectionResolver) {
+                                ImportSettings $importSettings, SectionResolverInterface $sectionResolver) {
         $this->examRepository = $examRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->studentRepository = $studentRepository;

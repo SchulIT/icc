@@ -4,9 +4,10 @@ namespace App\Form;
 
 use App\Converter\StudentStringConverter;
 use App\Entity\Student;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Sorting\StringStrategy;
 use App\Sorting\StudentStrategy;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -18,7 +19,7 @@ class StudentsType extends SortableEntityType {
     private $sectionResolver;
 
     public function __construct(ManagerRegistry $registry, StudentStringConverter $studentConverter, StudentStrategy $studentStrategy,
-                                StringStrategy $stringStrategy, SectionResolver $sectionResolver) {
+                                StringStrategy $stringStrategy, SectionResolverInterface $sectionResolver) {
         parent::__construct($registry);
         $this->studentConverter = $studentConverter;
         $this->stringStrategy = $stringStrategy;
@@ -27,18 +28,35 @@ class StudentsType extends SortableEntityType {
     }
 
     public function configureOptions(OptionsResolver $resolver) {
+        parent::configureOptions($resolver);
+
         $section = $this->sectionResolver->getCurrentSection();
 
         $resolver
             ->setDefaults([
                 'attr' => [
                     'size' => 15,
-                    'choices' => 'true'
+                    'data-choice' => 'true'
                 ],
                 'class' => Student::class,
                 'multiple' => true,
-                'choice_label' => function(Student $student) {
-                    return $this->studentConverter->convert($student);
+                'choice_label' => function(Student $student) use($section) {
+                    return $this->studentConverter->convert($student, true, $section);
+                },
+                'query_builder' => function(EntityRepository $repository) use($section) {
+                    $qb = $repository
+                        ->createQueryBuilder('s')
+                        ->select(['s', 'm', 'g'])
+                        ->leftJoin('s.gradeMemberships', 'm')
+                        ->leftJoin('m.grade', 'g');
+
+                    if($section !== null) {
+                        $qb->leftJoin('s.sections', 'sec')
+                            ->where('sec.id = :section')
+                            ->setParameter('section', $section->getId());
+                    }
+
+                    return $qb;
                 },
                 'group_by' => function(Student $student) use($section) {
                     $grade = $student->getGrade($section);

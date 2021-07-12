@@ -7,7 +7,7 @@ use App\Entity\Student;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Settings\ExamSettings;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -32,7 +32,7 @@ class ExamVoter extends Voter {
     private $sectionResoler;
 
     public function __construct(DateHelper $dateHelper, ExamSettings $examSettings,
-                                AccessDecisionManagerInterface $accessDecisionManager, SectionResolver $sectionResolver) {
+                                AccessDecisionManagerInterface $accessDecisionManager, SectionResolverInterface $sectionResolver) {
         $this->dateHelper = $dateHelper;
         $this->examSettings = $examSettings;
         $this->accessDecisionManager = $accessDecisionManager;

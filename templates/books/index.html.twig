@@ -69,6 +69,45 @@
                             </div>
 
                             <div class="list-group list-group-flush">
+                                {% for comment in overview.comments(day.date) %}
+                                    <div class="list-group-item d-flex align-items-center">
+                                        <div class="book-lesson m-0 p-0">
+                                            <i class="far fa-comment-alt"></i>
+                                        </div>
+
+                                        <div class="ml-2 flex-fill">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <div>
+                                                    <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
+                                                </div>
+
+                                                {% for student in comment.students %}
+                                                    <div class="ml-2">
+                                                        <i class="fas fa-user-graduate"></i> {{ student|student }}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+
+                                            <div>
+                                                {{ comment.text }}
+                                            </div>
+                                        </div>
+
+                                        {% if is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                                        <div class="ml-2">
+                                            <a href="{{ path('edit_book_comment', { uuid: comment.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.comment.edit.label'|trans }}">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                        <div class="ml-2">
+                                            <a href="{{ path('remove_book_student', { uuid: comment.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'book.comment.remove.label'|trans }}">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+
                                 {% for lesson in day.lessons %}
                                     <div class="list-group-item d-flex align-items-center">
                                         <div class="book-lesson m-0 p-0">{{ lesson.lessonNumber }}</div>
@@ -136,7 +175,7 @@
                                                 {{ lesson.entry.teacher|teacher }}
 
                                                 {% if lesson.entry.replacementTeacher is not null %}
-                                                    ⟶ {{ lesson.entry.replacementTeacher|upper }}
+                                                    ⟶ {{ lesson.entry.replacementTeacher|teacher }}
                                                 {% endif %}
                                             </div>
 
@@ -168,6 +207,16 @@
             </div>
 
             <div class="col-md-3 sticky-sidebar">
+                {% if is_granted("ROLE_BOOK_ENTRY_CREATOR") %}
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('add_book_comment') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus"></i> {{ 'book.comment.add.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
                 <div class="card">
                     <div class="card-body">
                         {% include "_filter/section.html.twig" %}

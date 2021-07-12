@@ -14,7 +14,7 @@ use App\Repository\TransactionalRepositoryInterface;
 use App\Repository\UserTypeEntityRepositoryInterface;
 use App\Request\Data\AppointmentData;
 use App\Request\Data\AppointmentsData;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Utils\ArrayUtils;
 use App\Utils\CollectionUtils;
 
@@ -36,7 +36,7 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
 
     public function __construct(AppointmentRepositoryInterface $appointmentRepository, AppointmentCategoryRepositoryInterface $appointmentCategoryRepository,
                                 UserTypeEntityRepositoryInterface $userTypeEntityRepository, StudyGroupRepositoryInterface $studentRepository,
-                                TeacherRepositoryInterface $teacherRepository, SectionResolver $sectionResolver) {
+                                TeacherRepositoryInterface $teacherRepository, SectionResolverInterface $sectionResolver) {
         $this->appointmentRepository = $appointmentRepository;
         $this->appointmentCategoryRepository = $appointmentCategoryRepository;
         $this->userTypeEntityRepository = $userTypeEntityRepository;

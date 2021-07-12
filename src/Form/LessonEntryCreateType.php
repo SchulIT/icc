@@ -40,6 +40,7 @@ class LessonEntryCreateType extends AbstractType {
                 'class' => Teacher::class,
                 'label' => 'label.replacement_teacher',
                 'required' => false,
+                'placeholder' => 'label.select.teacher',
                 'choice_value' => function(?Teacher $teacher) {
                     if($teacher === null) {
                         return null;

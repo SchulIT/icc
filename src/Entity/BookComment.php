@@ -33,6 +33,14 @@ class BookComment {
     private $date;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Teacher")
+     * @ORM\JoinColumn()
+     * @Assert\NotNull()
+     * @var Teacher|null
+     */
+    private $teacher;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Student")
      * @ORM\JoinTable("book_comment_student",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
@@ -90,6 +98,22 @@ class BookComment {
      */
     public function setDate(?DateTime $date): BookComment {
         $this->date = $date;
+        return $this;
+    }
+
+    /**
+     * @return Teacher|null
+     */
+    public function getTeacher(): ?Teacher {
+        return $this->teacher;
+    }
+
+    /**
+     * @param Teacher|null $teacher
+     * @return BookComment
+     */
+    public function setTeacher(?Teacher $teacher): BookComment {
+        $this->teacher = $teacher;
         return $this;
     }
 

@@ -13,7 +13,7 @@ use App\Grouping\SickNoteTuitionGroup;
 use App\Repository\SickNoteRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Security\Voter\SickNoteVoter;
 use App\Settings\SickNoteSettings;
 use App\Settings\TimetableSettings;

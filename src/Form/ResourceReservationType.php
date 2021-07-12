@@ -65,7 +65,6 @@ class ResourceReservationType extends AbstractType {
                     return $this->teacherConverter->convert($teacher);
                 },
                 'sort_by' => $this->teacherStrategy,
-
             ]);
     }
 }

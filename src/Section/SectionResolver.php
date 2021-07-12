@@ -7,7 +7,7 @@ use App\Repository\SectionRepositoryInterface;
 use App\Settings\GeneralSettings;
 use DateTime;
 
-class SectionResolver {
+class SectionResolver implements SectionResolverInterface {
     private $settings;
     private $sectionRepository;
 

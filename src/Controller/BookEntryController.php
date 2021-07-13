@@ -125,6 +125,7 @@ class BookEntryController extends AbstractController {
                 foreach($absentStudents as $absentStudent) {
                     if($attendance->getStudent() == $absentStudent) {
                         $attendance->setType(LessonAttendanceType::Absent);
+                        $attendance->setAbsentLessons($entry->getLessonEnd() - $entry->getLessonStart() + 1);
                     }
                 }
             }
@@ -164,6 +165,5 @@ class BookEntryController extends AbstractController {
             'form' => $form->createView()
         ]);
     }
-
 
 }

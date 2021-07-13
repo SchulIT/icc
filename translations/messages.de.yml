@@ -221,6 +221,7 @@ actions:
     collapse_all: Alles einklappen
     show_all: Alles ausklappen
     play: abspielen
+    apply: übernehmen
 
 clipboard:
     copy: In die Zwischenablage kopieren
@@ -1353,6 +1354,15 @@ book:
 
     attendance:
         label: Anwesenheit
+        all: alle anwesend
+        selected: "%number% ausgewählt"
+        absence_lesson: "{0} %count% Stunden|{1} %count% Stunde|]1,Inf[ %count% Stunden"
+        late_minutes: "%count% min"
+        overview:
+            present: "%number% anwesend"
+            late: "%number% verspätet"
+            absent: "%number% abwesend"
+        possibly_absent: Absenz-Vorschläge
         absence_reason:
             sick: krank gemeldet
             appointment: Veranstaltung

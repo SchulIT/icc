@@ -172,7 +172,47 @@ export default {
       removeItemButton: true
     });
     this.students = new Choices(this.$el.querySelector('#absentStudents'), {
-      removeItemButton: true
+      removeItemButton: true,
+      callbackOnCreateTemplates: function(template) {
+        return {
+          choice: (classNames, data) => {
+            return template(`
+              <div class="${classNames.item} ${classNames.itemChoice} ${data.disabled ? classNames.itemDisabled : classNames.itemSelectable}"
+                   data-select-text="${this.config.itemSelectText}"
+                   data-choice
+                   ${data.disabled ? 'data-choice-disabled aria-disabled="true"' : 'data-choice-selectable'}
+                   data-id="${data.id}"
+                   data-value="${data.value}"
+                   ${data.groupId > 0 ? 'role="treeitem"' : 'role="option"'}>
+                <div>
+                  <div>${data.label}</div>
+                  <div class="text-muted">${data.customProperties.reasons}</div>
+                </div>
+              </div>
+            `)
+          },
+          item: (classNames, data) => {
+            return template(`
+              <div class="${classNames.item} ${data.highlighted ? classNames.highlightedState : classNames.itemSelectable} ${data.placeholder ? classNames.placeholder : ''}"
+                   data-item
+                   data-id="${data.id}"
+                   data-value="${data.value}"
+                   ${data.active ? 'aria-selected="true"' : ''}
+                   ${data.disabled ? 'aria-disabled="true"' : ''}>
+                 <div class="d-flex"
+                      data-id="${data.id}"
+                      data-value="${data.value}">
+                  <div>
+                    <div>${data.label}</div>
+                    <div>${data.customProperties.reasons}</div>
+                  </div>
+                  <button type="button" class="${classNames.button}" aria-label="Remove item: '${data.value}'" data-button="">Remove item</button>
+                </div>
+             </div>
+            `)
+          }
+        }
+      }
     });
   },
   watch: {
@@ -261,26 +301,38 @@ export default {
 
       this.$http.get(this.studentsUrl)
         .then(function(response) {
-          let choices = [ ];
+          let students = { };
 
           response.data.students.forEach(function(student) {
-            choices.push({
-              value: student.uuid,
-              label: student.lastname + ", "+ student.firstname
-            })
+            students[student.uuid] = {
+              uuid: student.uuid,
+              firstname: student.firstname,
+              lastname: student.lastname,
+              reasons: [ ]
+            };
           });
-
-          $this.students.setChoices(choices, 'value', 'label', true);
-
-          let selected = [ ];
 
           response.data.absent.forEach(function(absence) {
-            selected.push(absence.student.uuid);
+            if(absence.student.uuid in students) {
+              students[absence.student.uuid].reasons.push(absence.reason);
+            }
           });
 
-          console.log(selected);
+          let choices = [ ];
 
-          $this.students.setChoiceByValue(selected);
+          for(let uuid in students) {
+            let student = students[uuid];
+            choices.push({
+              value: student.uuid,
+              label: student.lastname + ", " + student.firstname,
+              customProperties: {
+                reasons: student.reasons.map(reason => $this.$trans('book.attendance.absence_reason.' + reason)).join(', ')
+              },
+              selected: student.reasons.length > 0
+            })
+          }
+
+          $this.students.setChoices(choices, 'value', 'label', true);
         }).catch(function(error) {
           console.log(error);
         });

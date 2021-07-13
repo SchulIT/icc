@@ -2,10 +2,10 @@
     <div class="card">
       <div class="card-header d-flex align-items-center">
         <div class="flex-fill">
-          <i class="fas fa-users"></i> Lernende
+          <i class="fas fa-users"></i> {{ $trans('book.attendance.label') }}
           <span class="badge badge-primary"
                 v-if="selectedAttendances.length > 0">
-              {{ selectedAttendances.length }} ausgewählt
+            {{ $trans('book.attendance.selected', { number: selectedAttendances.length })}}
           </span>
         </div>
         <div v-if="selectedAttendances.length > 0">
@@ -36,18 +36,28 @@
                   @click.prevent="absent(selectedAttendances)">
             <i class="fas fa-user-times"></i>
           </button>
+          <div class="btn-group d-inline-flex align-items-center ml-1">
+            <button class="btn btn-outline-danger btn-sm"
+                    @click.prevent="plusLesson(selectedAttendances)">
+              <i class="fa fa-plus"></i>
+            </button>
+            <button class="btn btn-outline-danger btn-sm"
+                    @click.prevent="minusLesson(selectedAttendances)">
+              <i class="fa fa-minus"></i>
+            </button>
+          </div>
         </div>
         <div>
           <button class="btn btn-success btn-sm ml-1"
                   @click.prevent="present(attendances)"
-                  title="alle anwesend">
+                  :title="$trans('book.attendance.all')">
             <i class="fas fa-check-double"></i>
           </button>
 
           <button class="btn btn-primary btn-sm ml-1"
                   :class="{ 'btn-danger': isDirty }"
                   id="attendance_submit"
-                  type="submit" title="Anwesenheit speichern">
+                  type="submit" :title="$trans('actions.save')">
             <i class="fa fa-save"></i>
             <i class="fa fa-exclamation-triangle ml-1" v-if="isDirty"></i>
           </button>
@@ -55,18 +65,34 @@
       </div>
 
       <div class="card-body">
-        <i class="fa fa-check"></i> {{ numPresent }} anwesend
-        <i class="fa fa-clock"></i> {{ numLate }} verspätet
-        <i class="fa fa-times"></i> {{ numAbsent }} abwesend
+        <i class="fa fa-check"></i> {{ $trans('book.attendance.overview.present', { 'number': numPresent })}}
+        <i class="fa fa-clock"></i> {{ $trans('book.attendance.overview.late', { 'number': numLate })}}
+        <i class="fa fa-times"></i> {{ $trans('book.attendance.overview.absent', { 'number': numAbsent })}}
+      </div>
+
+      <div class="card-body border-top" v-if="absences.length > 0">
+        <ul class="list-unstyled mb-0">
+          <li v-for="absence in absences" class="d-flex align-items-start">
+            <div class="flex-fill">
+              <div>
+                {{ absence.lastname }}, {{ absence.firstname }}
+              </div>
+              <span v-for="reason in absence.reasons" class="badge badge-primary">{{ reason }}</span>
+            </div>
+            <button type="button"
+                    @click="applyAbsence(absence)"
+                    class="btn btn-sm btn-outline-primary">{{ $trans('actions.apply')}}</button>
+          </li>
+        </ul>
       </div>
 
       <div class="list-group list-group-flush">
         <div class="list-group-item align-items-center p-0"
              v-for="attendance in attendances"
              :class="{ 'bg-selected': selectedAttendances.indexOf(attendance) >= 0 }">
-          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][type]'" :value="attendance.type">
-          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][lateMinutes]'" :value="attendance.minutes">
-          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][absentLessons]'" :value="attendance.lessons">
+          <input type="hidden" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][type]'" :value="attendance.type">
+          <input type="hidden" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][lateMinutes]'" :value="attendance.minutes">
+          <input type="hidden" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][absentLessons]'" :value="attendance.lessons">
 
           <div class="d-flex">
             <div class="flex-fill p-3 pointer"
@@ -90,7 +116,7 @@
                   <i class="fa fa-minus"></i>
                 </button>
                 <span class="border-top border-bottom border-warning align-self-stretch align-items-center d-flex px-2">
-                  <span>{{ attendance.minutes }} min</span>
+                  <span>{{ $trans('book.attendance.late_minutes', { '%count%': attendance.minutes }) }}</span>
                 </span>
                 <button class="btn btn-outline-warning btn-sm"
                         @click.prevent="plusMinute(attendance)">
@@ -110,7 +136,7 @@
                   <i class="fa fa-minus"></i>
                 </button>
                 <span class="border-top border-bottom border-danger align-self-stretch align-items-center d-flex px-2">
-                  <span>{{ attendance.lessons }} Stunde(n)</span>
+                  <span>{{ $transChoice('book.attendance.absence_lesson', attendance.lessons, {'%count%': attendances.lessons })}}</span>
                 </span>
                 <button class="btn btn-outline-danger btn-sm"
                         @click.prevent="plusLesson(attendance)">
@@ -129,15 +155,18 @@ export default {
   name: 'attendances',
   props: {
     attendancedata: Array,
-    commentsdata: Array,
-    step: Number
+    step: Number,
+    studentsUrl: String,
+    start: Number,
+    end: Number
   },
   data() {
     return {
       isDirty: false,
+      originalAttendances: this.attendancedata.slice(0, this.attendancedata.length),
       attendances: this.attendancedata,
-      comments: this.commentsdata,
-      selectedAttendances: [ ]
+      selectedAttendances: [ ],
+      absences: [ ]
     }
   },
   watch: {
@@ -150,9 +179,50 @@ export default {
   },
   beforeMount() {
     window.addEventListener('beforeunload', this.preventReload);
+    this.attendancedata.sort(function(a, b) {
+      let studentA = a.student.lastname + ", " + a.student.firstname;
+      let studentB = b.student.lastname + ", " + b.student.firstname;
+      return studentA.localeCompare(studentB, 'de', { sensitivity: 'base', numeric: true });
+    });
   },
   beforeUnmount() {
     window.removeEventListener('beforeunload', this.preventReload);
+  },
+  mounted() {
+    let $this = this;
+    this.$http.get(this.studentsUrl)
+        .then(function(response) {
+          let students = { };
+
+          response.data.students.forEach(function(student) {
+            students[student.uuid] = {
+              uuid: student.uuid,
+              firstname: student.firstname,
+              lastname: student.lastname,
+              reasons: [ ]
+            };
+          });
+
+          response.data.absent.forEach(function(absence) {
+            if(absence.student.uuid in students) {
+              students[absence.student.uuid].reasons.push($this.$trans('book.attendance.absence_reason.' + absence.reason));
+            }
+          });
+
+          $this.absences = [ ];
+
+          for(let uuid in students) {
+            let student = students[uuid];
+
+            let attendance = $this.attendancedata.filter(x => x.student.uuid === uuid).map(x => x.type);
+
+            if(student.reasons.length > 0 && attendance.length > 0 && attendance[0] !== 0) {
+              $this.absences.push(student);
+            }
+          }
+        }).catch(function(error) {
+          console.log(error);
+        });
   },
   computed: {
     allPresent() {
@@ -187,9 +257,6 @@ export default {
       });
 
       return count;
-    },
-    commentsByStudent(attendance) {
-      console.log(attendance);
     }
   },
   methods: {
@@ -207,9 +274,20 @@ export default {
     late(attendance) {
       this.setType(attendance, 2);
     },
+    applyAbsence(absence) {
+      let $this = this;
+      this.attendancedata.forEach(function(attendance) {
+        if(attendance.student.uuid === absence.uuid) {
+          $this.absent(attendance);
+          $this.absences.splice($this.absences.indexOf(absence), 1);
+        }
+      });
+    },
     absent(attendance) {
+      let $this = this;
       this.setType(attendance, 0);
       this.apply(attendance, function(attendance) {
+        attendance.lessons = $this.end - $this.start + 1;
         attendance.minutes = 0;
       });
     },
@@ -217,6 +295,7 @@ export default {
       this.setType(attendance, 1);
       this.apply(attendance, function(attendance) {
         attendance.minutes = 0;
+        attendance.lessons = 0;
       });
     },
     setType(attendanceOrAttendances, type) {
@@ -250,8 +329,11 @@ export default {
       this.setType(attendanceOrAttendances, 2);
     },
     plusLesson(attendanceOrAttendances) {
+      let $this = this;
       this.apply(attendanceOrAttendances, function(attendance) {
-        attendance.lessons++;
+        if(attendance.lessons <= ($this.end - $this.start)) {
+          attendance.lessons++;
+        }
       });
     },
     minusLesson(attendanceOrAttendances) {

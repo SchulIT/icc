@@ -87,10 +87,12 @@ class BookXhrController extends AbstractController {
         }
 
         foreach($attendanceRepository->findAbsentByStudents($students, $date) as $attendance) {
-            $absences[] = [
-                'student' => Student::fromEntity($attendance->getStudent()),
-                'reason' => 'absent_before'
-            ];
+            if($attendance->getEntry()->getLessonEnd() < $lesson) {
+                $absences[] = [
+                    'student' => Student::fromEntity($attendance->getStudent()),
+                    'reason' => 'absent_before'
+                ];
+            }
         }
 
         $response = [

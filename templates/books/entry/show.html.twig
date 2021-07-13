@@ -94,7 +94,10 @@
 
             <div class="col-md-6">
                 <students :attendancedata="{{ entry.attendances.toArray|json_encode }}"
-                          :step="1"></students>
+                          students-url="{{ url('xhr_tuition_students', { uuid: entry.tuition.uuid.toString, lesson: entry.lessonStart, date: entry.date.format('Y-m-d') }) }}"
+                          :step="1"
+                          :start="{{ entry.lessonStart }}"
+                          :end="{{ entry.lessonEnd }}"></students>
             </div>
         </div>
 

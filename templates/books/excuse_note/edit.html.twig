@@ -4,7 +4,7 @@
     <script src="{{ asset('build/editor.js') }}"></script>
 {% endblock %}
 
-{% block title %}{{ 'book.excuse_note.add.label'|trans }}{% endblock %}
+{% block title %}{{ 'book.excuse_note.edit.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -27,7 +27,7 @@
 
     <div class="buttons">
         <button type="submit" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus"></i> {{ 'actions.add'|trans }}
+            <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
         </button>
 
         <a href="{{ path('excuse_notes') }}" class="btn btn-secondary btn-sm">

@@ -1,10 +1,6 @@
 {% extends "main.html.twig" %}
 
-{% block post_javascript %}
-    <script src="{{ asset('build/editor.js') }}"></script>
-{% endblock %}
-
-{% block title %}{{ 'book.excuse_note.add.label'|trans }}{% endblock %}
+{% block title %}{{ 'book.excuse_note.remove.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -17,23 +13,24 @@
 {% block content %}
     {{ form_start(form) }}
 
-    <div class="card">
-        <div class="card-header">{{ 'label.general'|trans }}</div>
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">{{ 'remove.header'|trans }}</div>
 
         <div class="card-body">
-            {{ form_widget(form) }}
+            {{ form_widget(form.group_general.confirm) }}
         </div>
     </div>
 
     <div class="buttons">
-        <button type="submit" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus"></i> {{ 'actions.add'|trans }}
+        <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fa fa-trash"></i> {{ 'remove.confirm'|trans }}
         </button>
 
-        <a href="{{ path('excuse_notes') }}" class="btn btn-secondary btn-sm">
-            <i class="fas fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        <a href="javascript:history.back();" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
         </a>
     </div>
 
     {{ form_end(form) }}
 {% endblock %}
+

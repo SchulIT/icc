@@ -50,6 +50,14 @@ class ExcuseNote {
      */
     private $comment;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Teacher")
+     * @ORM\JoinColumn()
+     * @Assert\NotNull()
+     * @var Teacher|null
+     */
+    private $excusedBy;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
     }
@@ -131,6 +139,22 @@ class ExcuseNote {
      */
     public function setComment(?string $comment): ExcuseNote {
         $this->comment = $comment;
+        return $this;
+    }
+
+    /**
+     * @return Teacher|null
+     */
+    public function getExcusedBy(): ?Teacher {
+        return $this->excusedBy;
+    }
+
+    /**
+     * @param Teacher|null $excusedBy
+     * @return ExcuseNote
+     */
+    public function setExcusedBy(?Teacher $excusedBy): ExcuseNote {
+        $this->excusedBy = $excusedBy;
         return $this;
     }
 }

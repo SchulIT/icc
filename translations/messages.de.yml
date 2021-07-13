@@ -195,6 +195,7 @@ label:
     absent_students: Abwesend
     replacement_teacher: Vertretungslehrkraft
     replacement_subject: Vertretungsfach
+    excused_by: Entschuldigt durch
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

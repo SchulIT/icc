@@ -2,11 +2,15 @@
 
 namespace App\Repository;
 
+use App\Entity\Attendance;
+use App\Entity\AttendanceType;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonAttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
+use App\Entity\Tuition;
 use DateTime;
+use Doctrine\ORM\QueryBuilder;
 
 class LessonAttendanceRepository extends AbstractRepository implements LessonAttendanceRepositoryInterface {
 
@@ -66,5 +70,58 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
     public function countLate(LessonEntry $entry): int {
         return $this->countAttendance($entry, LessonAttendanceType::Late);
+    }
+
+    private function getDefaultQueryBuilder(): QueryBuilder {
+        return $this->em->createQueryBuilder()
+            ->select(['a'])
+            ->from(LessonAttendance::class, 'a')
+            ->leftJoin('a.entry', 'e')
+            ->leftJoin('a.student', 's');
+    }
+
+    private function applyTuition(QueryBuilder $queryBuilder, ?Tuition $tuition): QueryBuilder {
+        if($tuition === null) {
+            return $queryBuilder;
+        }
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select(['aInner.id'])
+            ->from(LessonAttendance::class, 'aInner')
+            ->leftJoin('aInner.entry', 'eInner')
+            ->leftJoin('eInner.tuition', 'tInner')
+            ->where('tInner.id = :tuition');
+
+        $queryBuilder
+            ->andWhere(
+                $queryBuilder->expr()->in(
+                    'a.id', $qbInner->getDQL()
+                )
+            )
+            ->setParameter('tuition', $tuition->getId());
+
+        return $queryBuilder;
+    }
+
+    public function findLateByStudent(Student $student, ?Tuition $tuition): array {
+        $qb = $this->getDefaultQueryBuilder()
+            ->where('s.id = :student')
+            ->andWhere('a.type = :type')
+            ->setParameter('student', $student)
+            ->setParameter('type', LessonAttendanceType::Late);
+        $this->applyTuition($qb, $tuition);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAbsentByStudent(Student $student, ?Tuition $tuition): array {
+        $qb = $this->getDefaultQueryBuilder()
+            ->where('s.id = :student')
+            ->andWhere('a.type = :type')
+            ->setParameter('student', $student)
+            ->setParameter('type', LessonAttendanceType::Absent);
+        $this->applyTuition($qb, $tuition);
+
+        return $qb->getQuery()->getResult();
     }
 }

@@ -1,0 +1,136 @@
+{% extends "main.html.twig" %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book_students') }}">{{ 'book.students.label'|trans }}</a></li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('book_students', { grade: student.grade(section).uuid.toString, section: section.uuid }) }}">
+                {{ student.grade(section).name }}
+            </a>
+        </li>
+        <li class="breadcrumb-item">{{ student.lastname }}, {{ student.firstname }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card-deck mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="counter">
+                                <i class="fas fa-comments"></i>
+                                {{ info.comments|length }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card {% if info.lateMinutesCount > 0 %}border-warning{% endif %}">
+                        <div class="card-body">
+                            <div class="counter">
+                                <i class="fas fa-clock"></i>
+                                {{ 'book.attendance.late_minutes'|trans({'%count%': info.lateMinutesCount }) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="counter">
+                                <i class="fas fa-user-times"></i>
+                                {{ info.absentLessonsCount }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card {% if info.notExcusedAbsentLessonsCount > 0 %}bg-danger text-white{% endif %}">
+                        <div class="card-body">
+                            <div class="counter">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ info.notExcusedAbsentLessonsCount }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% for group in groups %}
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-calendar"></i> {{ group.date|format_date }}
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover card-table">
+                                <colgroup>
+                                    <col class="column-sm">
+                                    <col class="column-sm">
+                                    <col class="column-lg">
+                                    <col class="column-lg">
+                                </colgroup>
+                                <tbody>
+                                {% for lesson_attendance in group.attendances %}
+                                    {% set attendance = lesson_attendance.attendance %}
+                                    <tr class="{% if attendance.type == 0 and lesson_attendance.excuses|length == 0 %}table-danger{% endif %}">
+                                        <td>
+                                            {% if attendance.type == 0 %}
+                                                <i class="fas fa-user-times"></i>
+                                            {% elseif attendance.type == 2 %}
+                                                <i class="fas fa-clock"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ lesson_attendance.lesson }}</td>
+
+                                        <td>
+                                            {{ attendance.entry.tuition.subject }}
+                                            {% if attendance.entry.subject is not empty %}
+                                                ⟶ {{ attendance.entry.subject }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% for teacher in attendance.entry.tuition.teachers %}
+                                                {{ teacher.acronym }}{% if not loop.last %}, {% endif %}
+                                            {% endfor %}
+                                            {% if attendance.entry.teacher is not null %}
+                                                ⟶ {{ attendance.entry.teacher.acronym }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if lesson_attendance.excuses|length > 0 %}
+                                                <i class="fas fa-check-circle"></i> {{ 'students.excused'|trans }}
+                                            {% else %}
+                                                <i class="fas fa-exclamation-circle"></i> {{ 'students.not_excused'|trans }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="far fa-id-card"></i> {{ student.lastname }}, {{ student.firstname }}
+                        </h5>
+
+                        <p>
+                            <i class="fas fa-envelope"></i> <a href="mailto:{{ student.email }}">{{ student.email }}</a>
+                        </p>
+
+                        <p>
+                            <i class="fas fa-graduation-cap"></i>
+                            {% include "_includes/grade_teachers.html.twig" with { grade: student.grade(section) } %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

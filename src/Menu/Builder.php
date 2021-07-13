@@ -175,7 +175,7 @@ class Builder {
         ])
             ->setExtra('icon', 'fas fa-book-open');
 
-        $book->addChild('book.student.label', [
+        $book->addChild('book.students.label', [
             'route' => 'book_students'
         ])
             ->setExtra('icon', 'fas fa-users');

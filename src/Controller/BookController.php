@@ -3,12 +3,26 @@
 namespace App\Controller;
 
 use App\Book\EntryOverviewHelper;
+use App\Book\Student\StudentInfoResolver;
+use App\Entity\Grade;
 use App\Entity\GradeTeacher;
 use App\Entity\Section;
+use App\Entity\Student;
+use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Form\LessonEntryCancelType;
+use App\Grouping\Grouper;
+use App\Grouping\LessonAttendanceDateStrategy;
+use App\Repository\SectionRepositoryInterface;
+use App\Repository\StudentRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
+use App\Sorting\LessonAttendanceGroupStrategy;
+use App\Sorting\LessonAttendanceStrategy;
+use App\Sorting\SortDirection;
+use App\Sorting\Sorter;
+use App\Sorting\StudentStrategy;
+use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
@@ -16,6 +30,7 @@ use App\View\Filter\TuitionFilter;
 use DateTime;
 use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -51,14 +66,7 @@ class BookController extends AbstractController {
         return $weekStarts;
     }
 
-    /**
-     * @Route("", name="book")
-     */
-    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter,
-                          TuitionRepositoryInterface $tuitionRepository, DateHelper $dateHelper, Request $request, EntryOverviewHelper $entryOverviewHelper) {
-        /** @var User $user */
-        $user = $this->getUser();
-
+    private function resolveSelectedDate(Request $request, ?Section $currentSection, DateHelper $dateHelper): DateTime {
         $selectedDate = null;
         try {
             if($request->query->has('date')) {
@@ -69,39 +77,83 @@ class BookController extends AbstractController {
             $selectedDate = null;
         }
 
+        if($selectedDate === null && $currentSection !== null) {
+            $selectedDate = $this->getClosestWeekStart($dateHelper->getToday());
+        }
+
+        if($selectedDate !== null && $currentSection !== null && $dateHelper->isBetween($selectedDate, $currentSection->getStart(), $currentSection->getEnd()) !== true) {
+            $selectedDate = $this->getClosestWeekStart($currentSection->getEnd());
+        }
+
+        return $selectedDate;
+    }
+
+    /**
+     * @param Section|null $currentSection
+     * @param User $user
+     * @param TuitionRepositoryInterface $tuitionRepository
+     * @return Tuition[]
+     */
+    private function resolveOwnTuitions(?Section $currentSection, User $user, TuitionRepositoryInterface $tuitionRepository): array {
+        if($currentSection === null) {
+            return [ ];
+        }
+
+        if (EnumArrayUtils::inArray($user->getUserType(), [UserType::Student(), UserType::Parent()])) {
+            return $tuitionRepository->findAllByStudents($user->getStudents()->toArray(), $currentSection);
+        } else if ($user->getUserType()->equals(UserType::Teacher())) {
+            return $tuitionRepository->findAllByTeacher($user->getTeacher(), $currentSection);
+        }
+
+        return [ ];
+    }
+
+    /**
+     * @param Section|null $currentSection
+     * @param User $user
+     * @return Grade[]
+     */
+    private function resolveOwnGrades(?Section $currentSection, User $user): array {
+        if($currentSection === null) {
+            return [ ];
+        }
+
+        if (EnumArrayUtils::inArray($user->getUserType(), [UserType::Student(), UserType::Parent()])) {
+            return ArrayUtils::unique(
+                $user->getStudents()->map(function(Student $student) use($currentSection) {
+                    return $student->getGrade($currentSection);
+                })
+            );
+        } else if ($user->getUserType()->equals(UserType::Teacher())) {
+            return $user->getTeacher()->getGrades()->
+                filter(function(GradeTeacher $gradeTeacher) use ($currentSection) {
+                    return $gradeTeacher->getSection() === $currentSection;
+                })
+                ->map(function(GradeTeacher $gradeTeacher) {
+                    return $gradeTeacher->getGrade();
+                })
+                ->toArray();
+        }
+
+        return [ ];
+    }
+
+    /**
+     * @Route("", name="book")
+     */
+    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter,
+                          TuitionRepositoryInterface $tuitionRepository, DateHelper $dateHelper, Request $request, EntryOverviewHelper $entryOverviewHelper) {
+        /** @var User $user */
+        $user = $this->getUser();
+
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user);
         $tuitionFilterView = $tuitionFilter->handle($request->query->get('tuition'), $sectionFilterView->getCurrentSection(), $user);
 
-        if($selectedDate === null && $sectionFilterView->getCurrentSection() !== null) {
-            $selectedDate = $this->getClosestWeekStart($dateHelper->getToday());
-        }
+        $selectedDate = $this->resolveSelectedDate($request, $sectionFilterView->getCurrentSection(), $dateHelper);
 
-        if($selectedDate !== null && $sectionFilterView->getCurrentSection() !== null && $dateHelper->isBetween($selectedDate, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd()) !== true) {
-            $selectedDate = $this->getClosestWeekStart($sectionFilterView->getCurrentSection()->getEnd());
-        }
-
-        $ownGrades = [ ];
-        $ownTuitions = [ ];
-
-        // Compute own grades/tuition
-        if($sectionFilterView->getCurrentSection() !== null) {
-            if (EnumArrayUtils::inArray($user->getUserType(), [UserType::Student(), UserType::Parent()])) {
-                $ownTuitions = $tuitionRepository->findAllByStudents($user->getStudents()->toArray(), $sectionFilterView->getCurrentSection());
-                $ownGrades = $gradeFilterView->getGrades();
-            } else if ($user->getUserType()->equals(UserType::Teacher())) {
-                $ownTuitions = $tuitionRepository->findAllByTeacher($user->getTeacher(), $sectionFilterView->getCurrentSection());
-
-                $ownGrades = $user->getTeacher()->getGrades()->
-                        filter(function(GradeTeacher $gradeTeacher) use ($sectionFilterView) {
-                            return $gradeTeacher->getSection() === $sectionFilterView->getCurrentSection();
-                        })
-                        ->map(function(GradeTeacher $gradeTeacher) {
-                            return $gradeTeacher->getGrade();
-                        })
-                        ->toArray();
-            }
-        }
+        $ownGrades = $this->resolveOwnGrades($sectionFilterView->getCurrentSection(), $user);
+        $ownTuitions = $this->resolveOwnTuitions($sectionFilterView->getCurrentSection(), $user, $tuitionRepository);
 
         // Lessons / Entries
         $overview = null;
@@ -137,15 +189,65 @@ class BookController extends AbstractController {
     /**
      * @Route("/student", name="book_students")
      */
-    public function students() {
+    public function students(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter,
+                             TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository, StudentInfoResolver $studentInfoResolver,
+                             Sorter $sorter, Request $request) {
+        /** @var User $user */
+        $user = $this->getUser();
 
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user);
+        $tuitionFilterView = $tuitionFilter->handle($request->query->get('tuition'), $sectionFilterView->getCurrentSection(), $user);
+
+        $ownGrades = $this->resolveOwnGrades($sectionFilterView->getCurrentSection(), $user);
+        $ownTuitions = $this->resolveOwnTuitions($sectionFilterView->getCurrentSection(), $user, $tuitionRepository);
+
+        $students = [ ];
+        if($gradeFilterView->getCurrentGrade() !== null && $sectionFilterView->getCurrentSection() !== null) {
+            $students = $studentRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
+        } else if($tuitionFilterView->getCurrentTuition() !== null) {
+            $students = $studentRepository->findAllByStudyGroups([$tuitionFilterView->getCurrentTuition()->getStudyGroup()]);
+        }
+
+        $sorter->sort($students, StudentStrategy::class);
+        $info = [ ];
+
+        foreach($students as $student) {
+            $info[] = $studentInfoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitionFilterView->getCurrentTuition());
+        }
+
+        return $this->render('books/students.html.twig', [
+            'sectionFilter' => $sectionFilterView,
+            'gradeFilter' => $gradeFilterView,
+            'tuitionFilter' => $tuitionFilterView,
+            'ownGrades' => $ownGrades,
+            'ownTuitions' => $ownTuitions,
+            'info' => $info
+        ]);
     }
 
     /**
-     * @Route("/student/{uuid}", name="book_student")
+     * @Route("/student/{section}/{student}", name="book_student")
+     * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
+     * @ParamConverter("student", class="App\Entity\Student", options={"mapping": {"student": "uuid"}})
      */
-    public function student() {
+    public function student(Student $student, Section $section, StudentInfoResolver $infoResolver, Sorter $sorter, Grouper $grouper) {
+        $info = $infoResolver->resolveStudentInfo($student, $section);
+        $groups = $grouper->group(
+            array_merge(
+                $info->getAbsentLessonAttendances(),
+                $info->getLateLessonAttendances()
+            ), LessonAttendanceDateStrategy::class);
 
+        $sorter->sort($groups, LessonAttendanceGroupStrategy::class, SortDirection::Descending());
+        $sorter->sortGroupItems($groups, LessonAttendanceStrategy::class);
+
+        return $this->render('books/student.html.twig', [
+            'student' => $student,
+            'info' => $info,
+            'groups' => $groups,
+            'section' => $section
+        ]);
     }
 
 }

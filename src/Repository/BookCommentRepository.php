@@ -5,11 +5,29 @@ namespace App\Repository;
 use App\Entity\BookComment;
 use App\Entity\Grade;
 use App\Entity\Section;
+use App\Entity\Student;
 use App\Entity\Tuition;
 use DateTime;
-use function Doctrine\ORM\QueryBuilder;
 
 class BookCommentRepository extends AbstractRepository implements BookCommentRepositoryInterface {
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByDateAndStudent(Student $student, DateTime $start, DateTime $end): array {
+        $qb = $this->em->createQueryBuilder()
+            ->select(['c', 's'])
+            ->from(BookComment::class, 'c')
+            ->leftJoin('c.students', 's')
+            ->where('s.id = :student')
+            ->andWhere('c.date >= :start')
+            ->andWhere('c.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->setParameter('student', $student->getId());
+
+        return $qb->getQuery()->getResult();
+    }
 
     public function findAllByDateAndGrade(Grade $grade, Section $section, DateTime $start, DateTime $end): array {
         $qbStudents = $this->em->createQueryBuilder()
@@ -40,7 +58,7 @@ class BookCommentRepository extends AbstractRepository implements BookCommentRep
             ->andWhere('c.date >= :start')
             ->andWhere('c.date <= :end')
             ->setParameter('start', $start)
-            ->setParameter('end', $start)
+            ->setParameter('end', $end)
             ->setParameter('section', $section->getId())
             ->setParameter('grade', $grade->getId());
 
@@ -75,7 +93,7 @@ class BookCommentRepository extends AbstractRepository implements BookCommentRep
             ->andWhere('c.date >= :start')
             ->andWhere('c.date <= :end')
             ->setParameter('start', $start)
-            ->setParameter('end', $start)
+            ->setParameter('end', $end)
             ->setParameter('tuition', $tuition->getId());
 
         return $qb->getQuery()->getResult();
@@ -90,4 +108,6 @@ class BookCommentRepository extends AbstractRepository implements BookCommentRep
         $this->em->remove($comment);
         $this->em->flush();
     }
+
+
 }

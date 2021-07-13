@@ -1,0 +1,141 @@
+{% extends "main.html.twig" %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        {% if gradeFilter.currentGrade != null %}
+            <li class="breadcrumb-item">{{ gradeFilter.currentGrade.name }}</li>
+        {% elseif tuitionFilter.currentTuition != null %}
+            <li class="breadcrumb-item">
+                {% for grade in tuitionFilter.currentTuition.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}:
+                {{ tuitionFilter.currentTuition.subject }} [{{ tuitionFilter.currentTuition.name }}]
+            </li>
+        {% endif %}
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {% set currentFilter = {
+        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
+        tuition: tuitionFilter.currentTuition ? tuitionFilter.currentTuition.uuid.toString : null
+    } %}
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped card-table">
+                            <colgroup>
+                                <col>
+                                <col class="column-md">
+                                <col class="column-md">
+                                <col class="column-md">
+                                <col class="column-md">
+                                <col class="column-sm">
+                            </colgroup>
+
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.student'|trans }}</th>
+                                <th>{{ 'book.students.comments'|trans }}</th>
+                                <th>{{ 'book.students.late'|trans }}</th>
+                                <th>{{ 'book.students.absent'|trans }}</th>
+                                <th>{{ 'book.students.not_excused'|trans }}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for studentInfo in info %}
+                                {% set student = studentInfo.student %}
+                                <tr>
+                                    <td class="align-middle">
+                                        <i class="fas fa-user"></i>
+                                        {% if sectionFilter.currentSection != null %}
+                                            <a href="{{ path('book_student', { student: student.uuid, section: sectionFilter.currentSection.uuid.toString }) }}">
+                                                {{ student.lastname }}, {{ student.firstname }}
+                                            </a>
+                                        {% else %}
+                                            {{ student.lastname }}, {{ student.firstname }}
+                                        {% endif %}
+                                    </td>
+                                    {% set comments = studentInfo.comments|length %}
+                                    <td class="align-middle {% if comments > 0 %}bg-warning{% endif %}">
+                                        <i class="fas fa-comments"></i> {{ comments }}
+                                    </td>
+                                    {% set lateMinutes = studentInfo.lateMinutesCount %}
+                                    <td class="align-middle {% if lateMinutes > 0 %}bg-warning{% endif %}">
+                                        <i class="far fa-clock"></i> {{ 'book.attendance.late_minutes'|trans({'%count%': lateMinutes }) }}
+                                    </td>
+
+                                    <td class="align-middle {% if studentInfo.absentLessonsCount > 0 %}bg-warning{% endif %}">
+                                        <i class="fas fa-user-times"></i> {{ studentInfo.absentLessonsCount }}
+                                    </td>
+
+                                    {% set nonExcusedCount = studentInfo.notExcusedAbsentLessonsCount %}
+                                    <td class="align-middle {% if nonExcusedCount > 0 %}bg-danger text-white{% endif%}">
+                                        <i class="fas fa-exclamation-circle"></i> {{ nonExcusedCount }}
+                                    </td>
+
+                                    <td class="align-middle">
+                                        {% if sectionFilter.currentSection != null %}
+                                        <a href="{{ path('book_student', { student: student.uuid, section: sectionFilter.currentSection.uuid.toString }) }}" class="btn btn-primary btn-sm" title="{{ 'label.details'|trans }}">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+                        {% include "_filter/grade.html.twig" with { params: currentFilter|merge({tuition: null}) } %}
+
+                        {% include "_filter/tuition.html.twig" with { params: currentFilter|merge({grade: null}) } %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('book_students') }}" class="btn btn-primary btn-sm">
+                            {{ 'filter.reset'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                {% if ownGrades|length > 0 or ownTuitions|length > 0 %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            {% for grade in ownGrades %}
+                                <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString, grade: grade.uuid.toString }) }}" class="list-group-item list-group-item-action {% if gradeFilter.currentGrade == grade %}active{% endif %}">
+                                    <i class="fas fa-users"></i> {{ grade.name }}
+                                </a>
+                            {% endfor %}
+                            {% for tuition in ownTuitions %}
+                                <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString , tuition: tuition.uuid.toString }) }}" class="list-group-item list-group-item-action {% if tuitionFilter.currentTuition == tuition %}active{% endif %}">
+                                    <i class="fas fa-chalkboard"></i>
+                                    {% if tuition.displayName is not empty %}
+                                        {{ tuition.displayName }}
+                                    {% else %}
+                                        {{ tuition.name }}
+                                    {% endif %}
+                                    ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

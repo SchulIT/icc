@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
+use App\Entity\Tuition;
 use DateTime;
 
 interface LessonAttendanceRepositoryInterface {
@@ -14,6 +15,11 @@ interface LessonAttendanceRepositoryInterface {
     public function countPresent(LessonEntry $entry): int;
 
     public function countLate(LessonEntry $entry): int;
+
+    public function findLateByStudent(Student $student, ?Tuition $tuition): array;
+
+    public function findAbsentByStudent(Student $student, ?Tuition $tuition): array;
+
 
     /**
      * @param Student[] $students

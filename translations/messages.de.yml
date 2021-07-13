@@ -1352,6 +1352,13 @@ book:
         entry: Fach/Kurs laut Eintrag
         substitution: Fach/Kurs laut Vertretung
 
+    students:
+        label: Lernendenübersicht
+        comments: Kommentare
+        late: Verspätungen
+        absent: Absenzen
+        not_excused: unentschuldigt
+
     attendance:
         label: Anwesenheit
         all: alle anwesend

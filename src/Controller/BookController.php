@@ -26,6 +26,7 @@ use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
+use App\View\Filter\TeacherFilter;
 use App\View\Filter\TuitionFilter;
 use DateTime;
 use Exception;
@@ -141,7 +142,7 @@ class BookController extends AbstractController {
     /**
      * @Route("/overview", name="book")
      */
-    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter,
+    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                           TuitionRepositoryInterface $tuitionRepository, DateHelper $dateHelper, Request $request, EntryOverviewHelper $entryOverviewHelper) {
         /** @var User $user */
         $user = $this->getUser();
@@ -149,6 +150,7 @@ class BookController extends AbstractController {
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user);
         $tuitionFilterView = $tuitionFilter->handle($request->query->get('tuition'), $sectionFilterView->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher'), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $tuitionFilterView->getCurrentTuition() === null);
 
         $selectedDate = $this->resolveSelectedDate($request, $sectionFilterView->getCurrentSection(), $dateHelper);
 
@@ -161,10 +163,10 @@ class BookController extends AbstractController {
         if($selectedDate !== null) {
             if ($gradeFilterView->getCurrentGrade() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForGrade($gradeFilterView->getCurrentGrade(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
-            } else {
-                if ($tuitionFilterView->getCurrentTuition() !== null) {
-                    $overview = $entryOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
-                }
+            } else if ($tuitionFilterView->getCurrentTuition() !== null) {
+                $overview = $entryOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
+            } else if($teacherFilterView->getCurrentTeacher() !== null) {
+                $overview = $entryOverviewHelper->computeOverviewForTeacher($teacherFilterView->getCurrentTeacher(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
             }
         }
 
@@ -178,6 +180,7 @@ class BookController extends AbstractController {
             'sectionFilter' => $sectionFilterView,
             'gradeFilter' => $gradeFilterView,
             'tuitionFilter' => $tuitionFilterView,
+            'teacherFilter' => $teacherFilterView,
             'ownGrades' => $ownGrades,
             'ownTuitions' => $ownTuitions,
             'selectedDate' => $selectedDate,

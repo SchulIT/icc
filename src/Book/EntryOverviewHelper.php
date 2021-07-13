@@ -5,6 +5,7 @@ namespace App\Book;
 use App\Entity\BookComment;
 use App\Entity\Grade;
 use App\Entity\LessonEntry;
+use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
 use App\Grouping\Grouper;
@@ -134,6 +135,24 @@ class EntryOverviewHelper {
         $this->sorter->sortGroupItems($groups, LessonStrategy::class);
 
         return new EntryOverview($start, $end, $groups, $comments);
+    }
+
+    public function computeOverviewForTeacher(Teacher $teacher, DateTime $start, DateTime $end): EntryOverview {
+        $section = $this->sectionResolver->getSectionForDate($start);
+        $entries = [ ];
+        $tuitions = [ ];
+        $comments = [ ];
+
+        if($section !== null) {
+            $tuitions = $this->tuitionRepository->findAllByTeacher($teacher, $section);
+
+            foreach($tuitions as $tuition) {
+                $entries = array_merge($entries, $this->entryRepository->findAllByTuition($tuition, $start, $end));
+                $comments = array_merge($comments, $this->commentRepository->findAllByDateAndTuition($tuition, $start, $end));
+            }
+        }
+
+        return $this->computeOverview($tuitions, $entries, $comments, $start, $end);
     }
 
     public function computeOverviewForGrade(Grade $grade, DateTime $start, DateTime $end): EntryOverview {

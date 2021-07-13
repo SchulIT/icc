@@ -13,7 +13,8 @@
     {% set currentFilter = {
         section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
         grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
-        tuition: tuitionFilter.currentTuition ? tuitionFilter.currentTuition.uuid.toString : null
+        tuition: tuitionFilter.currentTuition ? tuitionFilter.currentTuition.uuid.toString : null,
+        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null
     } %}
 
     {% set createCsrfToken = csrf_token('lesson_entry_create') %}
@@ -245,9 +246,11 @@
                     <div class="card-body">
                         {% include "_filter/section.html.twig" %}
 
-                        {% include "_filter/grade.html.twig" with { params: currentFilter|merge({tuition: null}) } %}
+                        {% include "_filter/teacher.html.twig" with { params: currentFilter|merge({grade: null, tuition: null})} %}
 
-                        {% include "_filter/tuition.html.twig" with { params: currentFilter|merge({grade: null}) } %}
+                        {% include "_filter/grade.html.twig" with { params: currentFilter|merge({tuition: null, teacher: null}) } %}
+
+                        {% include "_filter/tuition.html.twig" with { params: currentFilter|merge({grade: null, teacher: null}) } %}
 
                         <form role="form" method="get" class="form hidden-print">
                             {% include "_filter/_params.html.twig" with { params: currentFilter } %}
@@ -259,6 +262,12 @@
                                 <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{% if selectedDate != null %}{{ selectedDate.format('Y-m-d') }}{% endif %}">
                             </div>
                         </form>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('book') }}" class="btn btn-primary btn-sm">
+                            {{ 'filter.reset'|trans }}
+                        </a>
                     </div>
                 </div>
 

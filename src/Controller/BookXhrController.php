@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Dashboard\Absence\AbsenceResolver;
+use App\Entity\LessonAttendance;
+use App\Entity\LessonEntry;
 use App\Entity\Student as StudentEntity;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
@@ -99,5 +101,22 @@ class BookXhrController extends AbstractController {
         ];
 
         return $this->returnJson($response, $serializer);
+    }
+
+    /**
+     * @Route("/attendances/{uuid}", name="xhr_entry_attendances")
+     */
+    public function attendances(LessonEntry $entry, SerializerInterface $serializer) {
+        $data = [ ];
+
+        /** @var LessonAttendance $attendance */
+        foreach($entry->getAttendances() as $attendance) {
+            $data[] = [
+                'student' => Student::fromEntity($attendance->getStudent()),
+                'type' => $attendance->getType()
+            ];
+        }
+
+        return $this->returnJson($data, $serializer);
     }
 }

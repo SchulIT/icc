@@ -190,6 +190,30 @@
                                                 </div>
                                             {% endif %}
 
+                                            {% if lesson.presentCount > 0 %}
+                                                <div class="ml-2">
+                                                    <button type="button" class="btn btn-outline-success btn-sm">
+                                                        <i class="fas fa-user-check"></i> {{ lesson.presentCount }}
+                                                    </button>
+                                                </div>
+                                            {% endif %}
+
+                                            {% if lesson.lateCount > 0 %}
+                                                <div class="ml-2">
+                                                    <button type="button" class="btn btn-outline-warning btn-sm">
+                                                        <i class="fas fa-user-clock"></i> {{ lesson.lateCount }}
+                                                    </button>
+                                                </div>
+                                            {% endif %}
+
+                                            {% if lesson.absentCount > 0 %}
+                                                <div class="ml-2">
+                                                    <button type="button" class="btn btn-outline-danger btn-sm">
+                                                        <i class="fas fa-user-times"></i> {{ lesson.absentCount }}
+                                                    </button>
+                                                </div>
+                                            {% endif %}
+
                                             <div class="ml-2">
                                                 <a href="{{ path('show_entry', { uuid: lesson.entry.uuid }) }}" class="btn btn-primary btn-sm">
                                                     <i class="fas fa-edit"></i>

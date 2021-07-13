@@ -20,6 +20,15 @@ class Lesson {
     /** @var LessonEntry|null */
     private $entry;
 
+    /** @var int  */
+    private $absentCount = 0;
+
+    /** @var int  */
+    private $lateCount = 0;
+
+    /** @var int  */
+    private $presentCount = 0;
+
     public function __construct(DateTime $date, int $lessonNumber, ?TimetableLesson $lesson = null, ?LessonEntry $entry = null) {
         $this->date = $date;
         $this->lessonNumber = $lessonNumber;
@@ -70,6 +79,54 @@ class Lesson {
      */
     public function setEntry(?LessonEntry $entry): Lesson {
         $this->entry = $entry;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAbsentCount(): int {
+        return $this->absentCount;
+    }
+
+    /**
+     * @param int $absentCount
+     * @return Lesson
+     */
+    public function setAbsentCount(int $absentCount): Lesson {
+        $this->absentCount = $absentCount;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLateCount(): int {
+        return $this->lateCount;
+    }
+
+    /**
+     * @param int $lateCount
+     * @return Lesson
+     */
+    public function setLateCount(int $lateCount): Lesson {
+        $this->lateCount = $lateCount;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPresentCount(): int {
+        return $this->presentCount;
+    }
+
+    /**
+     * @param int $presentCount
+     * @return Lesson
+     */
+    public function setPresentCount(int $presentCount): Lesson {
+        $this->presentCount = $presentCount;
         return $this;
     }
 }

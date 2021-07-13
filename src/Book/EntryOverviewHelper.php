@@ -10,6 +10,7 @@ use App\Entity\Tuition;
 use App\Grouping\Grouper;
 use App\Grouping\LessonDayStrategy;
 use App\Repository\BookCommentRepositoryInterface;
+use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
@@ -24,6 +25,7 @@ class EntryOverviewHelper {
     private $tuitionRepository;
     private $entryRepository;
     private $commentRepository;
+    private $attendanceRepository;
 
     private $sectionResolver;
     private $grouper;
@@ -31,12 +33,14 @@ class EntryOverviewHelper {
 
     public function __construct(TimetableLessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository,
                                 LessonEntryRepositoryInterface $entryRepository, BookCommentRepositoryInterface $commentRepository,
-                                SectionResolverInterface $sectionResolver, Grouper $grouper, Sorter $sorter) {
+                                LessonAttendanceRepositoryInterface $attendanceRepository, SectionResolverInterface $sectionResolver,
+                                Grouper $grouper, Sorter $sorter) {
         $this->lessonRepository = $lessonRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->entryRepository = $entryRepository;
         $this->commentRepository = $commentRepository;
         $this->sectionResolver = $sectionResolver;
+        $this->attendanceRepository = $attendanceRepository;
         $this->grouper = $grouper;
         $this->sorter = $sorter;
     }
@@ -71,10 +75,19 @@ class EntryOverviewHelper {
                 continue;
             }
 
+            $presentCount = $this->attendanceRepository->countPresent($entry);
+            $absentCount = $this->attendanceRepository->countAbsent($entry);
+            $lateCount = $this->attendanceRepository->countLate($entry);
+
             for($lessonNumber = $entry->getLessonStart(); $lessonNumber <= $entry->getLessonEnd(); $lessonNumber++) {
                 $key = sprintf('%s-%d-%s', $entry->getDate()->format('Y-m-d'), $lessonNumber, $entry->getTuition()->getUuid()->toString());
 
-                $lessons[$key] = new Lesson(clone $entry->getDate(), $lessonNumber, null, $entry);
+                $lesson = new Lesson(clone $entry->getDate(), $lessonNumber, null, $entry);
+                $lesson->setAbsentCount($absentCount);
+                $lesson->setPresentCount($presentCount);
+                $lesson->setLateCount($lateCount);
+
+                $lessons[$key] = $lesson;
             }
         }
 

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\LessonAttendance;
 use App\Entity\LessonAttendanceType;
+use App\Entity\LessonEntry;
 use App\Entity\Student;
 use DateTime;
 
@@ -41,4 +42,29 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
     }
 
 
+    private function countAttendance(LessonEntry $entry, int $type): int {
+        return $this->em
+            ->createQueryBuilder()
+            ->select('COUNT(a.id)')
+            ->from(LessonAttendance::class, 'a')
+            ->leftJoin('a.entry', 'e')
+            ->where('e.id = :entry')
+            ->andWhere('a.type = :type')
+            ->setParameter('entry', $entry->getId())
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countAbsent(LessonEntry $entry): int {
+        return $this->countAttendance($entry, LessonAttendanceType::Absent);
+    }
+
+    public function countPresent(LessonEntry $entry): int {
+        return $this->countAttendance($entry, LessonAttendanceType::Present);
+    }
+
+    public function countLate(LessonEntry $entry): int {
+        return $this->countAttendance($entry, LessonAttendanceType::Late);
+    }
 }

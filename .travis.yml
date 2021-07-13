@@ -51,6 +51,7 @@ jobs:
       script:
         - nvm install 10
         - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist --no-interaction --no-dev --no-scripts
+        - php bin/console bazinga:js-translation:dump assets/js/ --merge-domains
         - yarn install
         - yarn encore production
         - rm -rf node_modules

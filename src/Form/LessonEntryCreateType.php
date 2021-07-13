@@ -3,8 +3,11 @@
 namespace App\Form;
 
 use App\Entity\LessonEntry;
+use App\Entity\Student;
+use App\Entity\StudyGroupMembership;
 use App\Entity\Subject;
 use App\Entity\Teacher;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -62,6 +65,32 @@ class LessonEntryCreateType extends AbstractType {
                 'label' => 'label.comment',
                 'required' => false
             ])
+            ->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event) {
+                $form = $event->getForm();
+                $entry = $event->getData();
+
+                if($entry !== null && $entry instanceof LessonEntry) {
+                    $form->add('absentStudents', StudentsType::class, [
+                        'label' => 'label.absent_students',
+                        'required' => false,
+                        'multiple' => true,
+                        'mapped' => false,
+                        'choice_value' => function(Student $student) {
+                            return $student->getUuid()->toString();
+                        },
+                        'query_builder' => function(EntityRepository $repository) use($entry) {
+                            return $repository->createQueryBuilder('s')
+                                ->where('s.id IN (:ids)')
+                                ->setParameter(
+                                    'ids',
+                                    $entry->getTuition()->getStudyGroup()->getMemberships()
+                                        ->map(function(StudyGroupMembership $membership) {
+                                            return $membership->getStudent()->getId();
+                                        }));
+                        }
+                    ]);
+                }
+            })
             ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) {
                 $entry = $event->getData();
 

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
@@ -112,6 +113,7 @@ class LessonEntry {
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
+        $this->attendances = new ArrayCollection();
     }
 
     /**

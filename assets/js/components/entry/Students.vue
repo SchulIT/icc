@@ -1,5 +1,4 @@
 <template>
-  <form method="post">
     <div class="card">
       <div class="card-header d-flex align-items-center">
         <div class="flex-fill">
@@ -25,11 +24,11 @@
           </button>
           <div class="btn-group d-inline-flex align-items-center ml-1">
             <button class="btn btn-outline-warning btn-sm"
-                    @click.prevent="plus(selectedAttendances)">
+                    @click.prevent="plusMinute(selectedAttendances)">
               <i class="fa fa-plus"></i>
             </button>
             <button class="btn btn-outline-warning btn-sm"
-                    @click.prevent="minus(selectedAttendances)">
+                    @click.prevent="minusMinute(selectedAttendances)">
               <i class="fa fa-minus"></i>
             </button>
           </div>
@@ -65,18 +64,14 @@
         <div class="list-group-item align-items-center p-0"
              v-for="attendance in attendances"
              :class="{ 'bg-selected': selectedAttendances.indexOf(attendance) >= 0 }">
-          <input type="hidden" :name="'attendances[attendances][' + attendances.indexOf(attendance) + '][type]'" :value="attendance.type">
-          <input type="hidden" :name="'attendances[attendances][' + attendances.indexOf(attendance) + '][lateMinutes]'" :value="attendance.minutes">
+          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][type]'" :value="attendance.type">
+          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][lateMinutes]'" :value="attendance.minutes">
+          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][absentLessons]'" :value="attendance.lessons">
 
           <div class="d-flex">
             <div class="flex-fill p-3 pointer"
                  @click="select(attendance)">
               <i class="fa fa-user"></i> {{ attendance.student.lastname }}, {{ attendance.student.firstname }}
-            </div>
-            <div class="mr-2 align-self-center">
-              <a href="#" class="btn btn-outline-primary btn-sm">
-                <i class="fas fa-comment"></i>
-              </a>
             </div>
             <div class="align-self-center mr-3">
               <button class="btn btn-outline-success btn-sm ml-1 d-inline-block"
@@ -91,14 +86,14 @@
               <div class="btn-group d-inline-flex align-items-center ml-1"
                    v-if="attendance.type === 2">
                 <button class="btn btn-outline-warning btn-sm"
-                        @click.prevent="minus(attendance)">
+                        @click.prevent="minusMinute(attendance)">
                   <i class="fa fa-minus"></i>
                 </button>
                 <span class="border-top border-bottom border-warning align-self-stretch align-items-center d-flex px-2">
                   <span>{{ attendance.minutes }} min</span>
                 </span>
                 <button class="btn btn-outline-warning btn-sm"
-                        @click.prevent="plus(attendance)">
+                        @click.prevent="plusMinute(attendance)">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
@@ -107,16 +102,26 @@
                      @click.prevent="absent(attendance)">
                 <i class="fas fa-user-times"></i>
               </button>
+
+              <div class="btn-group d-inline-flex align-items-center ml-1"
+                   v-if="attendance.type === 0">
+                <button class="btn btn-outline-danger btn-sm"
+                        @click.prevent="minusLesson(attendance)">
+                  <i class="fa fa-minus"></i>
+                </button>
+                <span class="border-top border-bottom border-danger align-self-stretch align-items-center d-flex px-2">
+                  <span>{{ attendance.lessons }} Stunde(n)</span>
+                </span>
+                <button class="btn btn-outline-danger btn-sm"
+                        @click.prevent="plusLesson(attendance)">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
             </div>
           </div>
-
-
         </div>
       </div>
     </div>
-
-    <input type="hidden" :name="csrfname" :value="csrftoken">
-  </form>
 </template>
 
 <script>
@@ -125,9 +130,7 @@ export default {
   props: {
     attendancedata: Array,
     commentsdata: Array,
-    step: Number,
-    csrftoken: String,
-    csrfname: String
+    step: Number
   },
   data() {
     return {
@@ -230,14 +233,14 @@ export default {
         callback(attendanceOrAttendances);
       }
     },
-    plus(attendanceOrAttendances) {
+    plusMinute(attendanceOrAttendances) {
       let step = this.step;
       this.apply(attendanceOrAttendances, function(attendance) {
         attendance.minutes += step;
       });
       this.setType(attendanceOrAttendances, 2);
     },
-    minus(attendanceOrAttendances) {
+    minusMinute(attendanceOrAttendances) {
       let step = this.step;
       this.apply(attendanceOrAttendances, function(attendance) {
         if(attendance.minutes > 0) {
@@ -245,6 +248,18 @@ export default {
         }
       });
       this.setType(attendanceOrAttendances, 2);
+    },
+    plusLesson(attendanceOrAttendances) {
+      this.apply(attendanceOrAttendances, function(attendance) {
+        attendance.lessons++;
+      });
+    },
+    minusLesson(attendanceOrAttendances) {
+      this.apply(attendanceOrAttendances, function(attendance) {
+        if(attendance.lessons > 0) {
+          attendance.lessons--;
+        }
+      });
     },
     preventReload(event) {
       let isButtonOrChild = event.explicitOriginalTarget instanceof HTMLElement;

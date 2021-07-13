@@ -2,17 +2,20 @@
 
 namespace App\Controller;
 
+use App\Dashboard\Absence\AbsenceResolver;
+use App\Entity\Student as StudentEntity;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
+use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Response\Api\V1\Student;
 use App\Response\Api\V1\Teacher;
+use App\Response\Api\V1\Tuition as TuitionResponse;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Response\Api\V1\Tuition as TuitionResponse;
 
 /**
  * @Route("/book/xhr")
@@ -51,20 +54,50 @@ class BookXhrController extends AbstractController {
     /**
      * @Route("/tuition/{uuid}/students", name="xhr_tuition_students")
      */
-    public function possiblyAbsentStudents(Tuition $tuition, Request $request, SerializerInterface $serializer) {
+    public function possiblyAbsentStudents(Tuition $tuition, Request $request, AbsenceResolver $absenceResolver,
+                                           LessonAttendanceRepositoryInterface $attendanceRepository, SerializerInterface $serializer) {
         $date = $this->getDateFromRequest($request, 'date');
 
         if($date === null) {
             throw new BadRequestHttpException('date must not be null.');
         }
 
+        $lesson = $request->query->getInt('lesson', 0);
+
+        if($lesson <= 0) {
+            throw new BadRequestHttpException('lesson must be greater than 0');
+        }
+
         $students = [ ];
 
         /** @var StudyGroupMembership $membership */
         foreach($tuition->getStudyGroup()->getMemberships() as $membership) {
-            $students[] = Student::fromEntity($membership->getStudent());
+            $students[] = $membership->getStudent();
         }
 
-        return $this->returnJson($students, $serializer);
+        $absences = [ ];
+
+        foreach($absenceResolver->resolve($date, $lesson, $students) as $absentStudent) {
+            $absences[] = [
+                'student' => Student::fromEntity($absentStudent->getStudent()),
+                'reason' => $absentStudent->getReason()->getValue()
+            ];
+        }
+
+        foreach($attendanceRepository->findAbsentByStudents($students, $date) as $attendance) {
+            $absences[] = [
+                'student' => Student::fromEntity($attendance->getStudent()),
+                'reason' => 'absent_before'
+            ];
+        }
+
+        $response = [
+            'students' => array_map(function(StudentEntity $student) {
+                return Student::fromEntity($student);
+            }, $students),
+            'absent' => $absences
+        ];
+
+        return $this->returnJson($response, $serializer);
     }
 }

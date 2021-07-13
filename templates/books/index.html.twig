@@ -147,7 +147,7 @@
                                                                             action="{{ path('add_entry') }}"
                                                                             teacher="{{ user.user.teacher is not null ? user.user.teacher.acronym : null }}"
                                                                             tuition-url="{{ path('xhr_tuition', { uuid: lesson.timetableLesson.tuition.uuid}) }}"
-                                                                            students-url="{{ path('xhr_tuition_students', { uuid: lesson.timetableLesson.tuition.uuid}) }}"
+                                                                            students-url="{{ path('xhr_tuition_students', { uuid: lesson.timetableLesson.tuition.uuid, date: day.date.format('Y-m-d'), lesson: lesson.lessonNumber }) }}"
                                                                             teachers-url="{{ path('xhr_teachers') }}"></lesson-create-entry-button>
                                             </div>
                                             <div class="ml-2">

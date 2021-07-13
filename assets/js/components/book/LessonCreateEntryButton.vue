@@ -87,6 +87,11 @@
                 <label for="replacementTeacher" class="control-label">{{ $trans('label.replacement_teacher') }}</label>
                 <select name="lesson_entry_create[replacementTeacher]" class="form-control" id="replacementTeacher"></select>
               </div>
+
+              <div class="form-group">
+                <label for="absentStudents" class="control-label">{{ $trans('label.absent_students' )}}</label>
+                <select name="lesson_entry_create[absentStudents][]" class="form-control" id="absentStudents" multiple="multiple"></select>
+              </div>
             </div>
 
             <input type="hidden" name="date" :value="date.toJSON()">
@@ -130,6 +135,7 @@ export default {
       isLoadingTuition: false,
       tuition: null,
       choices: null,
+      students: null,
       validation: {
         start: null,
         end: null,
@@ -162,7 +168,12 @@ export default {
       this.dropdown = new Dropdown(dropdownElement, {persist: false});
     }
 
-    this.choices = new Choices(this.$el.querySelector('#replacementTeacher'));
+    this.choices = new Choices(this.$el.querySelector('#replacementTeacher'), {
+      removeItemButton: true
+    });
+    this.students = new Choices(this.$el.querySelector('#absentStudents'), {
+      removeItemButton: true
+    });
   },
   watch: {
     entry: {
@@ -245,6 +256,32 @@ export default {
           $this.choices.setChoices(choices, 'value', 'label', true);
         })
         .catch(function(error) {
+          console.log(error);
+        });
+
+      this.$http.get(this.studentsUrl)
+        .then(function(response) {
+          let choices = [ ];
+
+          response.data.students.forEach(function(student) {
+            choices.push({
+              value: student.uuid,
+              label: student.lastname + ", "+ student.firstname
+            })
+          });
+
+          $this.students.setChoices(choices, 'value', 'label', true);
+
+          let selected = [ ];
+
+          response.data.absent.forEach(function(absence) {
+            selected.push(absence.student.uuid);
+          });
+
+          console.log(selected);
+
+          $this.students.setChoiceByValue(selected);
+        }).catch(function(error) {
           console.log(error);
         });
 

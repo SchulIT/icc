@@ -22,6 +22,7 @@ class LessonAttendanceType extends AbstractType {
                 ]
             ])
             ->add('lateMinutes', IntegerType::class, [])
+            ->add('absentLessons', IntegerType::class, [])
             ->add('comment', TextType::class, []);
     }
 

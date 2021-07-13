@@ -15,46 +15,55 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class LessonEntryType extends AbstractType {
 
     public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setRequired('lesson_start')
-            ->setRequired('lesson_end');
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add('lessonStart', IntegerType::class, [
-                'label' => 'label.lesson_start',
+                'label' => 'label.start',
                 /*'attr' => [
                     'min' => $options['lesson_start'],
                     'max' => $options['lesson_end']
                 ]*/
             ])
             ->add('lessonEnd', IntegerType::class, [
-                'label' => 'label.lesson_end',
+                'label' => 'label.end',
                 /*'attr' => [
                     'min' => $options['lesson_start'],
                     'max' => $options['lesson_end']
                 ]*/
             ])
-            ->add('isSubstitution', CheckboxType::class, [
-                'label' => 'label.substitution',
-                'required' => false,
-                'mapped' => false,
-                'label_attr' => [
-                    'class' => 'checkbox-custom'
-                ]
-            ])
             ->add('subject', TextType::class, [
                 'label' => 'label.subject',
                 'required' => false,
+                'disabled' => true
             ])
-            ->add('teacher', TeacherType::class, [
+            ->add('replacementSubject', TextType::class, [
+                'label' => 'label.replacement_subject',
                 'required' => false
+            ])
+            ->add('teacher', TeacherChoiceType::class, [
+                'required' => false,
+                'disabled' => true
+            ])
+            ->add('replacementTeacher', EntityType::class, [
+                'class' => Teacher::class,
+                'label' => 'label.replacement_teacher',
+                'required' => false,
+                'placeholder' => 'label.select.teacher',
+                'choice_value' => function(?Teacher $teacher) {
+                    if($teacher === null) {
+                        return null;
+                    }
+
+                    return $teacher->getUuid()->toString();
+                }
             ])
             ->add('topic', TextType::class, [
                 'label' => 'label.topic'
             ])
-            ->add('exercises', MarkdownType::class, [
-                'label' => 'label.exercises'
+            ->add('comment', MarkdownType::class, [
+                'label' => 'label.comment'
             ])
             ->add('attendances', CollectionType::class, [
                 'entry_type' => LessonAttendanceType::class

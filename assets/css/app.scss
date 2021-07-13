@@ -354,3 +354,15 @@
     margin-bottom: 0;
   }
 }
+
+.no-columns {
+  .col-sm-2,
+  .col-sm-10 {
+    flex: none;
+    max-width: unset;
+  }
+}
+
+.bg-selected {
+  background: lighten($primary, 80%);
+}

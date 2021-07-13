@@ -192,6 +192,9 @@ label:
     number: Nummer
     topic: Thema
     comment: Kommentar
+    absent_students: Abwesend
+    replacement_teacher: Vertretungslehrkraft
+    replacement_subject: Vertretungsfach
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -1350,6 +1353,11 @@ book:
 
     attendance:
         label: Anwesenheit
+        absence_reason:
+            sick: krank gemeldet
+            appointment: Veranstaltung
+            exam: Klausur
+            absent_before: Absenz in vorheriger Stunde
 
     excuse_note:
         label: Entschuldigungen

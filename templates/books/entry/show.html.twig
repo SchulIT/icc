@@ -10,14 +10,14 @@
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('collection') }}">{{ 'collection.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
         <li class="breadcrumb-item">
-            {% for grade in entry.tuition.grades %}
-                <a href="{{ path('collection', { grade: grade.uuid.toString }) }}">{{ grade.name }}</a>{% if not loop.last %}<span class="mr-1">, </span>{% endif %}
+            {% for grade in entry.tuition.studyGroup.grades %}
+                <a href="{{ path('book', { grade: grade.uuid.toString }) }}">{{ grade.name }}</a>{% if not loop.last %}<span class="mr-1">, </span>{% endif %}
             {% endfor %}
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ path('collection', { tuition: entry.tuition.uuid.toString}) }}">
+            <a href="{{ path('book', { tuition: entry.tuition.uuid.toString}) }}">
                 {{ entry.tuition.subject }} [{{ entry.tuition.name }}]
             </a>
         </li>
@@ -29,9 +29,9 @@
 
 {% block content %}
     <div class="container-fluid px-0" id="app">
+        {{ form_start(form) }}
         <div class="row">
             <div class="col-md-6">
-                {{ form_start(entry_form) }}
                 <div class="card">
                     <div class="card-header">
                         <i class="fas fa-calendar-alt"></i>
@@ -40,34 +40,47 @@
                         <i class="fas fa-chalkboard"></i>
                         {{ entry.tuition.subject }}
 
-                        {% for grade in entry.tuition.grades %}
+                        {% for grade in entry.tuition.studyGroup.grades %}
                             <span class="badge badge-primary mr-1">
                                 {{ grade.name }}
                             </span>
                         {% endfor %}
 
-                        <i class="fa fa-chalkboard-teacher"></i>
+
                         {% for teacher in entry.tuition.teachers %}
-                            {{ teacher.acronym }}{% if not loop.last %}, {% endif %}
+                            <span class="ml-1">
+                                <i class="fa fa-chalkboard-teacher"></i> {{ teacher|teacher }}
+                            </span>
                         {% endfor %}
                     </div>
 
-                    <div class="card-body">
+                    <div class="card-body no-columns">
                         <div class="d-flex mb-3">
-                            <div class="mr-1 mt-n2 disable-grid">
-                                {{ form_label(entry_form.lessonStart) }}
-                                {{ form_widget(entry_form.lessonStart)}}
+                            <div class="mr-1 mt-n2 flex-fill">
+                                <div class="row">
+                                    {{ form_label(form.lessonStart) }}
+                                </div>
+                                {{ form_widget(form.lessonStart)}}
                             </div>
-                            <div class="ml-1 mt-n2 disable-grid">
-                                {{ form_label(entry_form.lessonEnd) }}
-                                {{ form_widget(entry_form.lessonEnd) }}
+                            <div class="ml-1 mt-n2 flex-fill">
+                                <div class="row">
+                                    {{ form_label(form.lessonEnd) }}
+                                </div>
+                                {{ form_widget(form.lessonEnd) }}
                             </div>
                         </div>
 
-                        {{ form_errors(entry_form.lessonStart) }}
-                        {{ form_errors(entry_form.lessonEnd) }}
+                        {{ form_errors(form.lessonStart) }}
+                        {{ form_errors(form.lessonEnd) }}
 
-                        {{ form_widget(entry_form) }}
+                        {{ form_row(form.subject) }}
+                        {{ form_row(form.replacementSubject) }}
+
+                        {{ form_row(form.teacher) }}
+                        {{ form_row(form.replacementTeacher) }}
+
+                        {{ form_row(form.topic) }}
+                        {{ form_row(form.comment) }}
                     </div>
 
                     <div class="card-footer">
@@ -76,15 +89,16 @@
                         </button>
                     </div>
                 </div>
-                {{ form_end(entry_form) }}
+
             </div>
 
             <div class="col-md-6">
                 <students :attendancedata="{{ entry.attendances.toArray|json_encode }}"
-                          :step="1"
-                          csrfname="{{ attendance_form._token.vars.full_name }}"
-                          csrftoken="{{ attendance_form._token.vars.value }}"></students>
+                          :step="1"></students>
             </div>
         </div>
+
+        {% do form.attendances.setRendered %}
+        {{ form_end(form) }}
     </div>
 {% endblock %}

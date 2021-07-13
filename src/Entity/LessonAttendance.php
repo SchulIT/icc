@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Ramsey\Uuid\Uuid;
@@ -9,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Auditable()
  */
 class LessonAttendance implements JsonSerializable {
 
@@ -42,6 +44,13 @@ class LessonAttendance implements JsonSerializable {
      * @var int
      */
     private $lateMinutes = 0;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\GreaterThanOrEqual(0)
+     * @var int
+     */
+    private $absentLessons = 0;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -120,6 +129,22 @@ class LessonAttendance implements JsonSerializable {
     }
 
     /**
+     * @return int|null
+     */
+    public function getAbsentLessons(): ?int {
+        return $this->absentLessons;
+    }
+
+    /**
+     * @param int|null $absentLessons
+     * @return LessonAttendance
+     */
+    public function setAbsentLessons(?int $absentLessons): LessonAttendance {
+        $this->absentLessons = $absentLessons;
+        return $this;
+    }
+
+    /**
      * @return string|null
      */
     public function getComment(): ?string {
@@ -140,7 +165,8 @@ class LessonAttendance implements JsonSerializable {
             'uuid' => $this->getUuid()->toString(),
             'type' => $this->getType(),
             'student' => $this->getStudent(),
-            'minutes' => $this->getLateMinutes()
+            'minutes' => $this->getLateMinutes(),
+            'lessons' => $this->getAbsentLessons()
         ];
     }
 }

@@ -5,6 +5,7 @@
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -21,7 +22,7 @@
                                 <col class="column-md">
                                 <col class="column-sm">
                                 <col class="column-sm">
-                                <col class="column-md">
+                                <col class="column-lg">
                                 <col class="column-sm">
                             </colgroup>
 

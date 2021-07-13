@@ -3,6 +3,7 @@
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('book_students') }}">{{ 'book.students.label'|trans }}</a></li>
         <li class="breadcrumb-item">
             <a href="{{ path('book_students', { grade: student.grade(section).uuid.toString, section: section.uuid }) }}">

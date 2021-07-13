@@ -4,11 +4,12 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book_students') }}">{{ 'book.students.label'|trans }}</a></li>
         {% if gradeFilter.currentGrade != null %}
             <li class="breadcrumb-item">{{ gradeFilter.currentGrade.name }}</li>
         {% elseif tuitionFilter.currentTuition != null %}
             <li class="breadcrumb-item">
-                {% for grade in tuitionFilter.currentTuition.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}:
+                {% for grade in tuitionFilter.currentTuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}:
                 {{ tuitionFilter.currentTuition.subject }} [{{ tuitionFilter.currentTuition.name }}]
             </li>
         {% endif %}
@@ -116,12 +117,12 @@
                     <div class="card">
                         <div class="list-group list-group-flush">
                             {% for grade in ownGrades %}
-                                <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString, grade: grade.uuid.toString }) }}" class="list-group-item list-group-item-action {% if gradeFilter.currentGrade == grade %}active{% endif %}">
+                                <a href="{{ path('book_students', { section: sectionFilter.currentSection.uuid.toString, grade: grade.uuid.toString }) }}" class="list-group-item list-group-item-action {% if gradeFilter.currentGrade == grade %}active{% endif %}">
                                     <i class="fas fa-users"></i> {{ grade.name }}
                                 </a>
                             {% endfor %}
                             {% for tuition in ownTuitions %}
-                                <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString , tuition: tuition.uuid.toString }) }}" class="list-group-item list-group-item-action {% if tuitionFilter.currentTuition == tuition %}active{% endif %}">
+                                <a href="{{ path('book_students', { section: sectionFilter.currentSection.uuid.toString , tuition: tuition.uuid.toString }) }}" class="list-group-item list-group-item-action {% if tuitionFilter.currentTuition == tuition %}active{% endif %}">
                                     <i class="fas fa-chalkboard"></i>
                                     {% if tuition.displayName is not empty %}
                                         {{ tuition.displayName }}

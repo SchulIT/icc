@@ -19,6 +19,7 @@ use App\Section\SectionResolverInterface;
 use App\Sorting\LessonDayGroupStrategy;
 use App\Sorting\LessonStrategy;
 use App\Sorting\Sorter;
+use App\Utils\ArrayUtils;
 use DateTime;
 
 class EntryOverviewHelper {
@@ -150,6 +151,8 @@ class EntryOverviewHelper {
                 $entries = array_merge($entries, $this->entryRepository->findAllByTuition($tuition, $start, $end));
                 $comments = array_merge($comments, $this->commentRepository->findAllByDateAndTuition($tuition, $start, $end));
             }
+
+            $comments = ArrayUtils::unique($comments);
         }
 
         return $this->computeOverview($tuitions, $entries, $comments, $start, $end);

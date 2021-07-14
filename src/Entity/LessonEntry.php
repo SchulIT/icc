@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use App\Validator\LessonEntryMatchesTimetable;
+use App\Validator\NotInTheFuture;
+use App\Validator\UniqueLessonEntry;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,6 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @UniqueLessonEntry(groups={"Default", "cancel"})
+ * @LessonEntryMatchesTimetable(groups={"Default", "cancel"})
  */
 class LessonEntry {
 
@@ -20,6 +25,7 @@ class LessonEntry {
     /**
      * @ORM\Column(type="date")
      * @Assert\NotNull(groups={"Default", "cancel"})
+     * @NotInTheFuture(groups={"Default", "cancel"})
      * @var DateTime|null
      */
     private $date;

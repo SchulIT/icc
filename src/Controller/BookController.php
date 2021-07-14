@@ -140,7 +140,7 @@ class BookController extends AbstractController {
     }
 
     /**
-     * @Route("/overview", name="book")
+     * @Route("/entry", name="book")
      */
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                           TuitionRepositoryInterface $tuitionRepository, DateHelper $dateHelper, Request $request, EntryOverviewHelper $entryOverviewHelper) {

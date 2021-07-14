@@ -28,11 +28,11 @@ class UniqueLessonEntryValidator extends ConstraintValidator {
             throw new UnexpectedTypeException($value, LessonEntry::class);
         }
 
-        if($value->getTuition() === null || $value->getDate() === null) {
+        if($value->getLesson() === null) {
             return;
         }
 
-        $entries = $this->entryRepository->findAllByTuition($value->getTuition(), $value->getDate(), $value->getDate());
+        $entries = $value->getLesson()->getEntries();
         $valueLessons = $this->getLessonsForEntry($value);
 
         foreach($entries as $entry) {

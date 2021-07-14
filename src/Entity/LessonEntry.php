@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Validator\LessonEntryMatchesTimetable;
 use App\Validator\NotInTheFuture;
 use App\Validator\UniqueLessonEntry;
 use DateTime;
@@ -15,7 +14,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  * @UniqueLessonEntry(groups={"Default", "cancel"})
- * @LessonEntryMatchesTimetable(groups={"Default", "cancel"})
  */
 class LessonEntry {
 
@@ -23,23 +21,22 @@ class LessonEntry {
     use UuidTrait;
 
     /**
-     * @ORM\Column(type="date")
-     * @Assert\NotNull(groups={"Default", "cancel"})
-     * @NotInTheFuture(groups={"Default", "cancel"})
-     * @var DateTime|null
+     * @ORM\ManyToOne(targetEntity="Lesson", inversedBy="entries")
+     * @Assert\NotNull()
+     * @var Lesson|null
      */
-    private $date;
+    private $lesson;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\GreaterThanOrEqual(0, groups={"Default", "cancel"})
+     * @Assert\GreaterThanOrEqual(propertyPath="lesson.lessonStart", groups={"Default", "cancel"})
      * @var int
      */
     private $lessonStart = 1;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\GreaterThanOrEqual(0, groups={"Default", "cancel"})
+     * @Assert\LessThanOrEqual(propertyPath="lesson.lessonEnd", groups={"Default", "cancel"})
      * @Assert\GreaterThanOrEqual(propertyPath="lessonStart", groups={"Default", "cancel"})
      * @var int
      */
@@ -123,6 +120,22 @@ class LessonEntry {
     }
 
     /**
+     * @return Lesson|null
+     */
+    public function getLesson(): ?Lesson {
+        return $this->lesson;
+    }
+
+    /**
+     * @param Lesson|null $lesson
+     * @return LessonEntry
+     */
+    public function setLesson(?Lesson $lesson): LessonEntry {
+        $this->lesson = $lesson;
+        return $this;
+    }
+
+    /**
      * @return string|null
      */
     public function getCancelReason(): ?string {
@@ -135,22 +148,6 @@ class LessonEntry {
      */
     public function setCancelReason(?string $cancelReason): LessonEntry {
         $this->cancelReason = $cancelReason;
-        return $this;
-    }
-
-    /**
-     * @return DateTime|null
-     */
-    public function getDate(): ?DateTime {
-        return $this->date;
-    }
-
-    /**
-     * @param DateTime|null $date
-     * @return LessonEntry
-     */
-    public function setDate(?DateTime $date): LessonEntry {
-        $this->date = $date;
         return $this;
     }
 

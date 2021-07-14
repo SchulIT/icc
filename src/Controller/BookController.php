@@ -159,6 +159,7 @@ class BookController extends AbstractController {
 
         // Lessons / Entries
         $overview = null;
+        $overallOverview = null;
 
         if($selectedDate !== null) {
             if ($gradeFilterView->getCurrentGrade() !== null) {
@@ -175,6 +176,8 @@ class BookController extends AbstractController {
         if($sectionFilterView->getCurrentSection() !== null) {
             $weekStarts = $this->listCalendarWeeks($sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
         }
+
+
 
         return $this->render('books/index.html.twig', [
             'sectionFilter' => $sectionFilterView,

@@ -21,8 +21,9 @@ class LessonEntryRepository extends AbstractRepository implements LessonEntryRep
 
     private function applyStartEnd(QueryBuilder $qb, DateTime $start, DateTime $end): QueryBuilder {
         return $qb
-            ->andWhere('e.date >= :start')
-            ->andWhere('e.date <= :end')
+            ->leftJoin('e.lesson', 'l')
+            ->andWhere('l.date >= :start')
+            ->andWhere('l.date <= :end')
             ->setParameter('start', $start)
             ->setParameter('end', $end);
     }

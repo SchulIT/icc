@@ -22,7 +22,7 @@
             </a>
         </li>
         <li class="breadcrumb-item">
-            {{ entry.date|format_date }}
+            {{ entry.lesson.date|format_date }}
         </li>
     </ol>
 {% endblock %}
@@ -37,7 +37,7 @@
                 <div class="card">
                     <div class="card-header">
                         <i class="fas fa-calendar-alt"></i>
-                        {{ entry.date|format_date }}
+                        {{ entry.lesson.date|format_date }}
 
                         <i class="fas fa-chalkboard"></i>
                         {{ entry.tuition.subject }}
@@ -96,7 +96,7 @@
 
             <div class="col-md-6">
                 <students :attendancedata="{{ entry.attendances.toArray|json_encode }}"
-                          students-url="{{ url('xhr_tuition_students', { uuid: entry.tuition.uuid.toString, lesson: entry.lessonStart, date: entry.date.format('Y-m-d') }) }}"
+                          students-url="{{ url('xhr_tuition_students', { uuid: entry.tuition.uuid.toString, lesson: entry.lessonStart, date: entry.lesson.date.format('Y-m-d') }) }}"
                           :step="1"
                           :start="{{ entry.lessonStart }}"
                           :end="{{ entry.lessonEnd }}"></students>

@@ -115,13 +115,13 @@
                                         {% if lesson.entry is null %}
                                         <div class="badge badge-secondary">
                                             {% set subject = null %}
-                                            {%- if lesson.timetableLesson is not null -%}
-                                                {% if lesson.timetableLesson.tuition.displayName is not empty %}
-                                                    {% set subject = lesson.timetableLesson.tuition.displayName|upper %}
-                                                {% elseif lesson.timetableLesson.tuition.subject.replaceSubjectAbbreviation %}
-                                                    {% set subject = lesson.timetableLesson.tuition.subject.name|upper %}
+                                            {%- if lesson.lesson is not null -%}
+                                                {% if lesson.lesson.tuition.displayName is not empty %}
+                                                    {% set subject = lesson.lesson.tuition.displayName|upper %}
+                                                {% elseif lesson.lesson.tuition.subject.replaceSubjectAbbreviation %}
+                                                    {% set subject = lesson.lesson.tuition.subject.name|upper %}
                                                 {% else %}
-                                                    {% set subject = lesson.timetableLesson.tuition.subject.abbreviation|upper %}
+                                                    {% set subject = lesson.lesson.tuition.subject.abbreviation|upper %}
                                                 {% endif %}
                                             {%- endif -%}
 
@@ -130,7 +130,7 @@
 
                                             <div class="ml-2">
                                                 <i class="fas fa-chalkboard-teacher"></i>
-                                                {{ lesson.timetableLesson.tuition.teacher|teacher }}
+                                                {{ lesson.lesson.tuition.teacher|teacher }}
                                             </div>
 
                                             <div class="ml-2 text-danger flex-fill">
@@ -138,29 +138,29 @@
                                             </div>
 
                                             <div class="ml-2">
-                                                <lesson-create-entry-button tuition-uuid="{{ lesson.timetableLesson.tuition.uuid.toString }}"
-                                                                            :start="{{ lesson.timetableLesson.lesson }}"
-                                                                            :end="{% if lesson.timetableLesson.doubleLesson %}{{ lesson.timetableLesson.lesson+1 }}{% else %}{{ lesson.timetableLesson.lesson }}{% endif %}"
+                                                <lesson-create-entry-button tuition-uuid="{{ lesson.lesson.tuition.uuid.toString }}"
+                                                                            :start="{{ lesson.lesson.lessonStart }}"
+                                                                            :end="{{ lesson.lesson.lessonEnd }}"
                                                                             :lesson="{{ lesson.lessonNumber }}"
                                                                             :date="new Date('{{ day.date.format('Y-m-d') }}')"
                                                                             csrfname="_token"
                                                                             csrftoken="{{ createCsrfToken }}"
-                                                                            action="{{ path('add_entry') }}"
+                                                                            action="{{ path('add_entry', { uuid: lesson.lesson.uuid }) }}"
                                                                             teacher="{{ user.user.teacher is not null ? user.user.teacher.acronym : null }}"
-                                                                            tuition-url="{{ path('xhr_tuition', { uuid: lesson.timetableLesson.tuition.uuid}) }}"
-                                                                            students-url="{{ path('xhr_tuition_students', { uuid: lesson.timetableLesson.tuition.uuid, date: day.date.format('Y-m-d'), lesson: lesson.lessonNumber }) }}"
+                                                                            tuition-url="{{ path('xhr_tuition', { uuid: lesson.lesson.tuition.uuid}) }}"
+                                                                            students-url="{{ path('xhr_tuition_students', { uuid: lesson.lesson.tuition.uuid, date: day.date.format('Y-m-d'), lesson: lesson.lessonNumber }) }}"
                                                                             teachers-url="{{ path('xhr_teachers') }}"></lesson-create-entry-button>
                                             </div>
                                             <div class="ml-2">
-                                                <lesson-cancel-button tuition-uuid="{{ lesson.timetableLesson.tuition.uuid.toString }}"
-                                                                      :start="{{ lesson.timetableLesson.lesson }}"
-                                                                      :end="{% if lesson.timetableLesson.doubleLesson %}{{ lesson.timetableLesson.lesson+1 }}{% else %}{{ lesson.timetableLesson.lesson }}{% endif %}"
+                                                <lesson-cancel-button tuition-uuid="{{ lesson.lesson.tuition.uuid.toString }}"
+                                                                      :start="{{ lesson.lesson.lessonStart }}"
+                                                                      :end="{{ lesson.lesson.lessonEnd }}"
                                                                       :lesson="{{ lesson.lessonNumber }}"
                                                                       :date="new Date('{{ day.date.format('Y-m-d') }}')"
                                                                       csrfname="_token"
                                                                       csrftoken="{{ cancelCsrfToken }}"
-                                                                      action="{{ path('cancel_lesson') }}"
-                                                                      tuition-url="{{ path('xhr_tuition', { uuid: lesson.timetableLesson.tuition.uuid}) }}"></lesson-cancel-button>
+                                                                      action="{{ path('cancel_lesson', { uuid: lesson.lesson.uuid }) }}"
+                                                                      tuition-url="{{ path('xhr_tuition', { uuid: lesson.lesson.tuition.uuid}) }}"></lesson-cancel-button>
                                             </div>
                                         {% else %}
                                             <div class="badge badge-primary">
@@ -221,8 +221,6 @@
                                                 </a>
                                             </div>
                                         {% endif %}
-
-
                                     </div>
                                 {% endfor %}
                             </div>

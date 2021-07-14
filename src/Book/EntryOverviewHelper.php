@@ -2,17 +2,19 @@
 
 namespace App\Book;
 
+use App\Book\Lesson\LessonCreator;
 use App\Entity\BookComment;
 use App\Entity\Grade;
 use App\Entity\LessonEntry;
 use App\Entity\Teacher;
-use App\Entity\TimetableLesson;
+use App\Entity\Lesson as LessonEntity;
 use App\Entity\Tuition;
 use App\Grouping\Grouper;
 use App\Grouping\LessonDayStrategy;
 use App\Repository\BookCommentRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
+use App\Repository\LessonRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
@@ -29,18 +31,20 @@ class EntryOverviewHelper {
     private $commentRepository;
     private $attendanceRepository;
 
+    private $lessonCreator;
     private $sectionResolver;
     private $grouper;
     private $sorter;
 
-    public function __construct(TimetableLessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository,
+    public function __construct(LessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository,
                                 LessonEntryRepositoryInterface $entryRepository, BookCommentRepositoryInterface $commentRepository,
-                                LessonAttendanceRepositoryInterface $attendanceRepository, SectionResolverInterface $sectionResolver,
+                                LessonAttendanceRepositoryInterface $attendanceRepository, LessonCreator $lessonCreator, SectionResolverInterface $sectionResolver,
                                 Grouper $grouper, Sorter $sorter) {
         $this->lessonRepository = $lessonRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->entryRepository = $entryRepository;
         $this->commentRepository = $commentRepository;
+        $this->lessonCreator = $lessonCreator;
         $this->sectionResolver = $sectionResolver;
         $this->attendanceRepository = $attendanceRepository;
         $this->grouper = $grouper;
@@ -69,6 +73,8 @@ class EntryOverviewHelper {
             $end = $tmp;
         }
 
+        $this->lessonCreator->createLessons($start, $end);
+
         $lessons = [ ];
 
         foreach($entries as $entry) {
@@ -82,9 +88,9 @@ class EntryOverviewHelper {
             $lateCount = $this->attendanceRepository->countLate($entry);
 
             for($lessonNumber = $entry->getLessonStart(); $lessonNumber <= $entry->getLessonEnd(); $lessonNumber++) {
-                $key = sprintf('%s-%d-%s', $entry->getDate()->format('Y-m-d'), $lessonNumber, $entry->getTuition()->getUuid()->toString());
+                $key = sprintf('%s-%d-%s', $entry->getLesson()->getDate()->format('Y-m-d'), $lessonNumber, $entry->getTuition()->getUuid()->toString());
 
-                $lesson = new Lesson(clone $entry->getDate(), $lessonNumber, null, $entry);
+                $lesson = new Lesson(clone $entry->getLesson()->getDate(), $lessonNumber, null, $entry);
                 $lesson->setAbsentCount($absentCount);
                 $lesson->setPresentCount($presentCount);
                 $lesson->setLateCount($lateCount);
@@ -105,26 +111,23 @@ class EntryOverviewHelper {
             $currentWeek = $currentWeek->modify('+7 days');
         }
 
-        $timetableLessons = $this->lessonRepository->findAllByTuitionsAndWeeks($tuitions, $weekNumbers);
+        $timetableLessons = $this->lessonRepository->findAllByTuitions($tuitions, $start, $end);
 
         $current = clone $start;
         while($current < $end) {
-            $dailyLessons = array_filter($timetableLessons, function(TimetableLesson $lesson) use ($current) {
-                return $lesson->getDay() === (int)$current->format('N')
-                        && in_array((int)$current->format('W'), $lesson->getWeek()->getWeeksAsIntArray())
-                        && $lesson->getPeriod()->getStart() <= $current
-                        && $lesson->getPeriod()->getEnd() >= $current;
+            $dailyLessons = array_filter($timetableLessons, function(LessonEntity $lesson) use ($current) {
+                return $lesson->getDate() == $current;
             });
 
             foreach($dailyLessons as $dailyLesson) {
-                for($lessonNumber = $dailyLesson->getLesson(); $lessonNumber <= $dailyLesson->getLesson() + ($dailyLesson->isDoubleLesson() ? 1 : 0); $lessonNumber++) {
+                for($lessonNumber = $dailyLesson->getLessonStart(); $lessonNumber <= $dailyLesson->getLessonEnd(); $lessonNumber++) {
                     $key = sprintf('%s-%d-%s', $current->format('Y-m-d'), $lessonNumber, $dailyLesson->getTuition()->getUuid()->toString());
 
                     if (!array_key_exists($key, $lessons)) {
                         $lessons[$key] = new Lesson(clone $current, $lessonNumber);
                     }
 
-                    $lessons[$key]->setTimetableLesson($dailyLesson);
+                    $lessons[$key]->setLesson($dailyLesson);
                 }
             }
 

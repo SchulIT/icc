@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Lesson;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonAttendanceType;
 use App\Entity\LessonEntry;
@@ -33,26 +34,16 @@ class BookEntryController extends AbstractController {
     }
 
     /**
-     * @Route("/cancel", name="cancel_lesson")
+     * @Route("/cancel/{uuid}", name="cancel_lesson")
      */
-    public function cancelLesson(Request $request, TuitionRepositoryInterface $tuitionRepository) {
-        if($request->query->has('tuition') === null && $request->request->has('tuition') === null) {
-            return $this->redirectToRequestReferer('book');
-        }
-
-        $tuition = $tuitionRepository->findOneByUuid($request->query->get('tuition', $request->request->get('tuition')));
-
-        if($tuition === null) {
-            throw new NotFoundHttpException();
-        }
-
-        $date = $this->getDateFromRequest($request, 'date');
+    public function cancelLesson(Lesson $lesson, Request $request) {
         $lessonStart = $request->query->getInt('lesson_start');
         $lessonEnd = $request->query->getInt('lesson_end');
+        $tuition = $lesson->getTuition();
 
         $entry = (new LessonEntry())
+            ->setLesson($lesson)
             ->setTuition($tuition)
-            ->setDate($date)
             ->setLessonStart($lessonStart)
             ->setLessonEnd($lessonEnd)
             ->setIsCancelled(true)
@@ -78,32 +69,20 @@ class BookEntryController extends AbstractController {
     }
 
     /**
-     * @Route("/create", name="add_entry")
+     * @Route("/create/{uuid}", name="add_entry")
      */
-    public function create(Request $request, TuitionRepositoryInterface $tuitionRepository) {
-        if($request->query->has('tuition') === null && $request->request->has('tuition') === null) {
-            return $this->redirectToRequestReferer('book');
-        }
-
-        $tuition = $tuitionRepository->findOneByUuid($request->query->get('tuition', $request->request->get('tuition')));
-
-        if($tuition === null) {
-            throw new NotFoundHttpException();
-        }
-
-        $date = $this->getDateFromRequest($request, 'date');
-
+    public function create(Lesson $lesson, Request $request) {
         $entry = (new LessonEntry())
-            ->setTuition($tuition)
-            ->setDate($date)
-            ->setTeacher($tuition->getTeacher())
-            ->setSubject($tuition->getSubject());
+            ->setLesson($lesson)
+            ->setTuition($lesson->getTuition())
+            ->setTeacher($lesson->getTuition()->getTeacher())
+            ->setSubject($lesson->getTuition()->getSubject());
 
         $form = $this->createForm(LessonEntryCreateType::class, $entry);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $students = $tuition->getStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
+            $students = $lesson->getTuition()->getStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
                 return $membership->getStudent();
             });
 

@@ -84,15 +84,15 @@ class StudentInfoResolver {
 
         foreach($attendances as $attendance) {
             for($lesson = $attendance->getEntry()->getLessonStart() + ($attendance->getEntry()->getLessonEnd() - $attendance->getEntry()->getLessonStart() - $attendance->getAbsentLessons() + 1); $lesson <= $attendance->getEntry()->getLessonEnd(); $lesson++) {
-                $key = sprintf('%s-%d', $attendance->getEntry()->getDate()->format('Y-m-d'), $lesson);
+                $key = sprintf('%s-%d', $attendance->getEntry()->getLesson()->getDate()->format('Y-m-d'), $lesson);
 
-                $excuses = new ExcuseCollection($attendance->getEntry()->getDate(), $lesson);
+                $excuses = new ExcuseCollection($attendance->getEntry()->getLesson()->getDate(), $lesson);
 
                 if(isset($excuseCollection[$key])) {
                     $excuses = $excuseCollection[$key];
                 }
 
-                $lessonAttendance[] = new LessonAttendance($attendance->getEntry()->getDate(), $lesson, $attendance, $excuses);
+                $lessonAttendance[] = new LessonAttendance($attendance->getEntry()->getLesson()->getDate(), $lesson, $attendance, $excuses);
             }
         }
 

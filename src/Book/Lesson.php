@@ -3,7 +3,7 @@
 namespace App\Book;
 
 use App\Entity\LessonEntry;
-use App\Entity\TimetableLesson;
+use App\Entity\Lesson as LessonEntity;
 use DateTime;
 
 class Lesson {
@@ -14,8 +14,8 @@ class Lesson {
     /** @var int */
     private $lessonNumber;
 
-    /** @var TimetableLesson|null */
-    private $timetableLesson;
+    /** @var LessonEntity|null */
+    private $lesson;
 
     /** @var LessonEntry|null */
     private $entry;
@@ -29,10 +29,10 @@ class Lesson {
     /** @var int  */
     private $presentCount = 0;
 
-    public function __construct(DateTime $date, int $lessonNumber, ?TimetableLesson $lesson = null, ?LessonEntry $entry = null) {
+    public function __construct(DateTime $date, int $lessonNumber, ?LessonEntity $lesson = null, ?LessonEntry $entry = null) {
         $this->date = $date;
         $this->lessonNumber = $lessonNumber;
-        $this->timetableLesson = $lesson;
+        $this->lesson = $lesson;
         $this->entry = $entry;
     }
 
@@ -51,10 +51,10 @@ class Lesson {
     }
 
     /**
-     * @return TimetableLesson|null
+     * @return LessonEntity|null
      */
-    public function getTimetableLesson(): ?TimetableLesson {
-        return $this->timetableLesson;
+    public function getLesson(): ?LessonEntity {
+        return $this->lesson;
     }
 
     /**
@@ -65,11 +65,11 @@ class Lesson {
     }
 
     /**
-     * @param TimetableLesson|null $timetableLesson
+     * @param LessonEntity|null $lesson
      * @return Lesson
      */
-    public function setTimetableLesson(?TimetableLesson $timetableLesson): Lesson {
-        $this->timetableLesson = $timetableLesson;
+    public function setLesson(?LessonEntity $lesson): Lesson {
+        $this->lesson = $lesson;
         return $this;
     }
 

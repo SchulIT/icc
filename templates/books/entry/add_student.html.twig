@@ -1,0 +1,50 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.entry.add_student.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item">
+            {% for grade in entry.tuition.studyGroup.grades %}
+                <a href="{{ path('book', { grade: grade.uuid.toString }) }}">{{ grade.name }}</a>{% if not loop.last %}<span class="mr-1">, </span>{% endif %}
+            {% endfor %}
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('book', { tuition: entry.tuition.uuid.toString}) }}">
+                {{ entry.tuition.subject }} [{{ entry.tuition.name }}]
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('show_entry', { uuid: entry.uuid.toString }) }}">{{ entry.lesson.date|format_date }}</a>
+        </li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_widget(form) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fas fa-user-plus"></i> {{ 'actions.add'|trans }}
+        </button>
+
+        <a href="{{ path('show_entry', { uuid: entry.uuid.toString }) }}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

@@ -9,10 +9,12 @@ use App\Entity\Student as StudentEntity;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Repository\LessonAttendanceRepositoryInterface;
+use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Response\Api\V1\Student;
 use App\Response\Api\V1\Teacher;
 use App\Response\Api\V1\Tuition as TuitionResponse;
+use App\Section\SectionResolverInterface;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -120,5 +122,19 @@ class BookXhrController extends AbstractController {
         }
 
         return $this->returnJson($data, $serializer);
+    }
+
+    /**
+     * @Route("/students", name="xhr_students")
+     */
+    public function students(StudentRepositoryInterface $studentRepository, SectionResolverInterface $sectionResolver, SerializerInterface $serializer) {
+        $students = [ ];
+        $section = $sectionResolver->getCurrentSection();
+
+        foreach($studentRepository->findAllBySection($section) as $studentEntity) {
+            $students[] = Student::fromEntity($studentEntity, $section);
+        }
+
+        return $this->returnJson($students, $serializer);
     }
 }

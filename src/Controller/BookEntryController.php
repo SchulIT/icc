@@ -8,6 +8,7 @@ use App\Entity\LessonAttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
+use App\Form\LessonEntryAddStudent;
 use App\Form\LessonEntryCancelType;
 use App\Form\LessonEntryCreateType;
 use App\Form\LessonEntryType;
@@ -143,5 +144,36 @@ class BookEntryController extends AbstractController {
         ]);
     }
 
+    /**
+     * @Route("/{uuid}/students/add", name="add_student_to_entry")
+     */
+    public function addStudent(LessonEntry $entry, Request $request) {
+        $form = $this->createForm(LessonEntryAddStudent::class);
+        $form->handleRequest($request);
 
+        if($form->isSubmitted() && $form->isValid()) {
+            /** @var Student $student */
+            $student = $form->get('student')->getData();
+
+            $entry->addAttendance(
+                (new LessonAttendance())
+                    ->setStudent($student)
+                    ->setType(LessonAttendanceType::Present)
+                    ->setEntry($entry)
+            );
+
+            $this->repository->persist($entry);
+
+            $this->addFlash('success', 'book.entry.student.add.success');
+
+            return $this->redirectToRoute('show_entry', [
+                'uuid' => $entry->getUuid()->toString()
+            ]);
+        }
+
+        return $this->render('books/entry/add_student.html.twig', [
+            'form' => $form->createView(),
+            'entry' => $entry
+        ]);
+    }
 }

@@ -261,10 +261,12 @@ class Student implements JsonSerializable {
      * @return Grade|null
      */
     public function getGrade(?Section $section): ?Grade {
-        /** @var GradeMembership $membership */
-        foreach($this->getGradeMemberships() as $membership) {
-            if($membership->getSection() === $section) {
-                return $membership->getGrade();
+        if($section !== null) {
+            /** @var GradeMembership $membership */
+            foreach ($this->getGradeMemberships() as $membership) {
+                if ($membership->getSection()->getId() === $section->getId()) {
+                    return $membership->getGrade();
+                }
             }
         }
 

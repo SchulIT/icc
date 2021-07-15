@@ -86,6 +86,22 @@
         </ul>
       </div>
 
+      <div class="card-footer">
+        <form :action="addStudentUrl" method="post">
+          <input type="hidden" :name="'lesson_entry_add_student[' + addStudentCsrfName + ']'" :value="addStudentCsrfToken">
+
+          <div class="d-flex align-items-stretch">
+            <div class="flex-fill">
+              <select id="add_student" name="lesson_entry_add_student[student]"></select>
+            </div>
+            <button type="submit" class="btn btn-outline-primary btn-sm ml-2">
+              <i class="fas fa-user-plus"></i>
+              {{ $trans('book.entry.add_student.label')}}
+            </button>
+          </div>
+        </form>
+      </div>
+
       <div class="list-group list-group-flush">
         <div class="list-group-item align-items-center p-0"
              v-for="attendance in attendances"
@@ -151,6 +167,8 @@
 </template>
 
 <script>
+import Choices from "choices.js";
+
 export default {
   name: 'attendances',
   props: {
@@ -158,7 +176,11 @@ export default {
     step: Number,
     studentsUrl: String,
     start: Number,
-    end: Number
+    end: Number,
+    listStudentsUrl: String,
+    addStudentUrl: String,
+    addStudentCsrfToken: String,
+    addStudentCsrfName: String
   },
   data() {
     return {
@@ -190,6 +212,8 @@ export default {
   },
   mounted() {
     let $this = this;
+    let studentChoice = new Choices(this.$el.querySelector('#add_student'));
+
     this.$http.get(this.studentsUrl)
         .then(function(response) {
           let students = { };
@@ -223,6 +247,36 @@ export default {
         }).catch(function(error) {
           console.log(error);
         });
+
+    this.$http.get(this.listStudentsUrl)
+      .then(function(response) {
+        console.log(response.data);
+        let choices = [
+            {
+          label: $this.$trans('label.select.student'),
+          value: '',
+          selected: true
+          }
+        ];
+
+        response.data.forEach(function(student) {
+          let gradeAppendix = '';
+
+          if(student.grade !== null) {
+            gradeAppendix = ' [' + student.grade.name + ']';
+          }
+
+          choices.push({
+            label: student.lastname + ', ' + student.firstname + gradeAppendix,
+            value: student.uuid
+          });
+        });
+
+        studentChoice.setChoices(choices, 'value', 'label', true);
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
   },
   computed: {
     allPresent() {

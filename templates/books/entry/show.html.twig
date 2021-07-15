@@ -99,7 +99,12 @@
                           students-url="{{ url('xhr_tuition_students', { uuid: entry.tuition.uuid.toString, lesson: entry.lessonStart, date: entry.lesson.date.format('Y-m-d') }) }}"
                           :step="1"
                           :start="{{ entry.lessonStart }}"
-                          :end="{{ entry.lessonEnd }}"></students>
+                          :end="{{ entry.lessonEnd }}"
+                          list-students-url="{{ url('xhr_students') }}"
+                          add-student-url="{{ url('add_student_to_entry', { uuid: entry.uuid.toString }) }}"
+                          add-student-csrf-token="{{ csrf_token('lesson_entry_add_student') }}"
+                          add-student-csrf-name="_token"
+                ></students>
             </div>
         </div>
 

@@ -2,11 +2,26 @@
 
 namespace App\Repository;
 
+use App\Entity\Grade;
 use App\Entity\Lesson;
+use App\Entity\Teacher;
 use App\Entity\Tuition;
 use DateTime;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 interface LessonRepositoryInterface extends TransactionalRepositoryInterface {
+
+    public function countMissingByTeacher(Teacher $teacher, DateTime $start, DateTime $end): int;
+
+    public function countMissingByGrade(Grade $grade, DateTime $start, DateTime $end): int;
+
+    public function countMissingByTuition(Tuition $tuition, DateTime $start, DateTime $end): int;
+
+    public function getMissingByTeacherPaginator(int $itemsPerPage, int &$page, Teacher $teacher, DateTime $start, DateTime $end): Paginator;
+
+    public function getMissingByGradePaginator(int $itemsPerPage, int &$page, Grade $grade, DateTime $start, DateTime $end): Paginator;
+
+    public function getMissingByTuitionPaginator(int $itemsPerPage, int &$page, Tuition $tuition, DateTime $start, DateTime $end): Paginator;
 
     public function countByDate(DateTime $start, DateTime $end): int;
 

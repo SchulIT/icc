@@ -1377,6 +1377,10 @@ book:
             exam: Klausur
             absent_before: Absenz in vorheriger Stunde
 
+    missing:
+        label: Fehlende Einträge
+
+
     excuse_note:
         label: Entschuldigungen
         add:

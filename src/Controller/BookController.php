@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Book\EntryOverviewHelper;
+use App\Book\Lesson;
 use App\Book\Student\StudentInfoResolver;
 use App\Entity\Grade;
 use App\Entity\GradeTeacher;
@@ -11,14 +12,17 @@ use App\Entity\Student;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
-use App\Form\LessonEntryCancelType;
+use App\Entity\Lesson as LessonEntity;
 use App\Grouping\Grouper;
 use App\Grouping\LessonAttendanceDateStrategy;
-use App\Repository\SectionRepositoryInterface;
+use App\Grouping\LessonDayStrategy;
+use App\Repository\LessonRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Sorting\LessonAttendanceGroupStrategy;
 use App\Sorting\LessonAttendanceStrategy;
+use App\Sorting\LessonDayGroupStrategy;
+use App\Sorting\LessonStrategy;
 use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
@@ -39,6 +43,8 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/book")
  */
 class BookController extends AbstractController {
+
+    private const ItemsPerPage = 25;
 
     private function getClosestWeekStart(DateTime $dateTime): DateTime {
         $dateTime = clone $dateTime;
@@ -177,8 +183,6 @@ class BookController extends AbstractController {
             $weekStarts = $this->listCalendarWeeks($sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
         }
 
-
-
         return $this->render('books/index.html.twig', [
             'sectionFilter' => $sectionFilterView,
             'gradeFilter' => $gradeFilterView,
@@ -193,6 +197,87 @@ class BookController extends AbstractController {
     }
 
     /**
+     * @Route("/missing", name="missing_book_entries")
+     */
+    public function missing(Request $request, SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter,
+                            TuitionFilter $tuitionFilter, LessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository,
+                            DateHelper $dateHelper, Sorter $sorter, Grouper $grouper) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user);
+        $tuitionFilterView = $tuitionFilter->handle($request->query->get('tuition'), $sectionFilterView->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher'), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $tuitionFilterView->getCurrentTuition() === null);
+
+        $ownGrades = $this->resolveOwnGrades($sectionFilterView->getCurrentSection(), $user);
+        $ownTuitions = $this->resolveOwnTuitions($sectionFilterView->getCurrentSection(), $user, $tuitionRepository);
+
+        $section = $sectionFilterView->getCurrentSection();
+        $page = $request->query->getInt('page', 1);
+        $paginator = null;
+
+        if($section !== null) {
+            $start = $section->getStart();
+            $end = $dateHelper->getToday();
+
+            if($gradeFilterView->getCurrentGrade() !== null) {
+                $paginator = $lessonRepository->getMissingByGradePaginator(static::ItemsPerPage, $page, $gradeFilterView->getCurrentGrade(), $start, $end);
+            } elseif($tuitionFilterView->getCurrentTuition() !== null) {
+                $paginator = $lessonRepository->getMissingByTuitionPaginator(static::ItemsPerPage, $page, $tuitionFilterView->getCurrentTuition(), $start, $end);
+            } else if($teacherFilterView->getCurrentTeacher() !== null) {
+                $paginator = $lessonRepository->getMissingByTeacherPaginator(static::ItemsPerPage, $page, $teacherFilterView->getCurrentTeacher(), $start, $end);
+            }
+        }
+
+        $missing = [ ];
+        $pages = 0;
+
+        if($paginator !== null) {
+            $missing = [ ];
+            $pages = ceil((float)$paginator->count() / static::ItemsPerPage);
+
+            /** @var LessonEntity $lessonEntity */
+            foreach($paginator->getIterator() as $lessonEntity) {
+                for($lessonNumber = $lessonEntity->getLessonStart(); $lessonNumber <= $lessonEntity->getLessonEnd(); $lessonNumber++) {
+                    $missing[] = new Lesson(clone $lessonEntity->getDate(), $lessonNumber, $lessonEntity, null);
+                }
+            }
+        }
+
+        $groups = $grouper->group($missing, LessonDayStrategy::class);
+        $sorter->sort($groups, LessonDayGroupStrategy::class, SortDirection::Descending());
+        $sorter->sortGroupItems($groups, LessonStrategy::class);
+
+        $ownGradesMissingCounts = [];
+        $ownTuitionsMissingCounts = [];
+
+        if($section !== null) {
+            foreach ($ownGrades as $ownGrade) {
+                $ownGradesMissingCounts[$ownGrade->getId()] = $lessonRepository->countMissingByGrade($ownGrade, $start, $end);
+            }
+
+            foreach ($ownTuitions as $ownTuition) {
+                $ownTuitionsMissingCounts[$ownTuition->getId()] = $lessonRepository->countMissingByTuition($ownTuition, $start, $end);
+            }
+        }
+
+        return $this->render('books/missing.html.twig', [
+            'sectionFilter' => $sectionFilterView,
+            'gradeFilter' => $gradeFilterView,
+            'tuitionFilter' => $tuitionFilterView,
+            'teacherFilter' => $teacherFilterView,
+            'ownGrades' => $ownGrades,
+            'ownTuitions' => $ownTuitions,
+            'ownGradesMissingCounts' => $ownGradesMissingCounts,
+            'ownTuitionsMissingCounts' => $ownTuitionsMissingCounts,
+            'groups' => $groups,
+            'page' => $page,
+            'pages' => $pages
+        ]);
+    }
+
+    /**
      * @Route("/student", name="book_students")
      */
     public function students(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter,
@@ -202,7 +287,7 @@ class BookController extends AbstractController {
         $user = $this->getUser();
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user, true);
         $tuitionFilterView = $tuitionFilter->handle($request->query->get('tuition'), $sectionFilterView->getCurrentSection(), $user);
 
         $ownGrades = $this->resolveOwnGrades($sectionFilterView->getCurrentSection(), $user);

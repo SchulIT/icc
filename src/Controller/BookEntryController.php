@@ -12,10 +12,8 @@ use App\Form\LessonEntryCancelType;
 use App\Form\LessonEntryCreateType;
 use App\Form\LessonEntryType;
 use App\Repository\LessonEntryRepositoryInterface;
-use App\Repository\TuitionRepositoryInterface;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -144,5 +142,6 @@ class BookEntryController extends AbstractController {
             'form' => $form->createView()
         ]);
     }
+
 
 }

@@ -8,6 +8,9 @@
     "doctrine/sql-formatter": {
         "version": "1.1.1"
     },
+    "dragonmantank/cron-expression": {
+        "version": "v3.1.0"
+    },
     "eightpoints/guzzle-bundle": {
         "version": "7.0",
         "recipe": {
@@ -53,9 +56,6 @@
     "minishlink/web-push": {
         "version": "v6.0.5"
     },
-    "mtdowling/cron-expression": {
-        "version": "v1.2.3"
-    },
     "php": {
         "version": "7.4"
     },
@@ -70,6 +70,9 @@
     },
     "schulit/common-bundle": {
         "version": "dev-master"
+    },
+    "sebastian/type": {
+        "version": "1.1.4"
     },
     "shapecode/cron-bundle": {
         "version": "4.0.2"

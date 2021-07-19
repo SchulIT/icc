@@ -8,6 +8,7 @@ use App\Entity\LessonEntry;
 use App\Entity\Student as StudentEntity;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
+use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
@@ -59,7 +60,8 @@ class BookXhrController extends AbstractController {
      * @Route("/tuition/{uuid}/students", name="xhr_tuition_students")
      */
     public function possiblyAbsentStudents(Tuition $tuition, Request $request, AbsenceResolver $absenceResolver,
-                                           LessonAttendanceRepositoryInterface $attendanceRepository, SerializerInterface $serializer) {
+                                           LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
+                                           SerializerInterface $serializer) {
         $date = $this->getDateFromRequest($request, 'date');
 
         if($date === null) {
@@ -93,6 +95,15 @@ class BookXhrController extends AbstractController {
                 $absences[] = [
                     'student' => Student::fromEntity($attendance->getStudent()),
                     'reason' => 'absent_before'
+                ];
+            }
+        }
+
+        foreach($excuseNoteRepository->findByStudentsAndDate($students, $date) as $note) {
+            if($note->getLessonStart() <= $lesson && $note->getLessonEnd() >= $lesson) {
+                $absences[] = [
+                    'student' => Student::fromEntity($note->getStudent()),
+                    'reason' => 'excuse'
                 ];
             }
         }

@@ -16,6 +16,25 @@ class ExcuseNoteRepository extends AbstractRepository implements ExcuseNoteRepos
             ]);
     }
 
+    public function findByStudentsAndDate(array $students, DateTime $date): array {
+        $studentIds = array_map(function(Student $student) {
+            return $student->getId();
+        }, $students);
+
+        $qb = $this->em->createQueryBuilder();
+        $qb->select(['n', 's'])
+            ->from(ExcuseNote::class, 'n')
+            ->leftJoin('n.student', 's')
+            ->where('n.date = :date')
+            ->andWhere(
+                $qb->expr()->in('s.id', ':ids')
+            )
+            ->setParameter('ids', $studentIds)
+            ->setParameter('date', $date);
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function persist(ExcuseNote $note): void {
         $this->em->persist($note);
         $this->em->flush();

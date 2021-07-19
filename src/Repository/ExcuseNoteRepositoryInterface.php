@@ -10,6 +10,13 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 interface ExcuseNoteRepositoryInterface {
 
     /**
+     * @param Student[] $students
+     * @param DateTime $date
+     * @return ExcuseNote[]
+     */
+    public function findByStudentsAndDate(array $students, DateTime $date): array;
+
+    /**
      * @param int $itemsPerPage
      * @param int $page
      * @param Student|null $student

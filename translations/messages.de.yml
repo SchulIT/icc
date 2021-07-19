@@ -1386,6 +1386,7 @@ book:
             appointment: Veranstaltung
             exam: Klausur
             absent_before: Absenz in vorheriger Stunde
+            excuse: Entschuldigung liegt vor
 
     missing:
         label: Fehlende Einträge

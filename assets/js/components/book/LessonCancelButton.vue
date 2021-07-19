@@ -45,6 +45,16 @@
                 <i class="fas fa-spinner fa-spin" v-if="isLoadingTuition"></i>
 
                 <span class="badge badge-secondary" v-if="tuition !== null">{{ tuition.subject.name.toUpperCase() }}</span>
+
+                <div class="ml-2" v-if="tuition !== null">
+                  {{ tuition.name }}
+                </div>
+
+                <div class="ml-2" v-if="tuition !== null" v-for="grade in tuition.study_group.grades">
+                  <i class="fas fa-users"></i>
+                  {{ grade.name }}
+                </div>
+
                 <div class="ml-2" v-for="teacher in tuition.teachers" v-if="tuition !== null">
                   <i class="fas fa-chalkboard-teacher"></i>
                   {{ teacher.acronym }}

@@ -9,6 +9,18 @@
     </ol>
 {% endblock %}
 
+{% macro subject(tuition) %}
+    {% if tuition.displayName is not empty %}
+        {{ tuition.displayName|upper }}
+    {% elseif show_coursename(tuition.studyGroup.grades) %}
+        {{ tuition.studyGroup.name|upper }}
+    {% elseif tuition.subject.replaceSubjectAbbreviation %}
+        {{ tuition.subject.name|upper }}
+    {% else %}
+        {{ tuition.subject.abbreviation|upper }}
+    {% endif %}
+{% endmacro %}
+
 {% block content %}
     {% set currentFilter = {
         section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
@@ -114,19 +126,15 @@
                                         <div class="book-lesson m-0 p-0">{{ lesson.lessonNumber }}</div>
                                         {% if lesson.entry is null %}
                                         <div class="badge badge-secondary">
-                                            {% set subject = null %}
-                                            {%- if lesson.lesson is not null -%}
-                                                {% if lesson.lesson.tuition.displayName is not empty %}
-                                                    {% set subject = lesson.lesson.tuition.displayName|upper %}
-                                                {% elseif lesson.lesson.tuition.subject.replaceSubjectAbbreviation %}
-                                                    {% set subject = lesson.lesson.tuition.subject.name|upper %}
-                                                {% else %}
-                                                    {% set subject = lesson.lesson.tuition.subject.abbreviation|upper %}
-                                                {% endif %}
-                                            {%- endif -%}
-
-                                            {{ subject }}
+                                            {{ _self.subject(lesson.lesson.tuition) }}
                                         </div>
+
+                                            <div class="ml-2">
+                                                <i class="fas fa-users"></i>
+                                                {% for grade in lesson.lesson.tuition.studyGroup.grades %}
+                                                    {{ grade.name }}{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </div>
 
                                             <div class="ml-2">
                                                 <i class="fas fa-chalkboard-teacher"></i>
@@ -164,11 +172,18 @@
                                             </div>
                                         {% else %}
                                             <div class="badge badge-primary">
-                                                {{ lesson.entry.subject.name|upper }}
+                                                {{ _self.subject(lesson.entry.tuition) }}
 
                                                 {% if lesson.entry.replacementSubject is not empty %}
                                                     ⟶ {{ lesson.entry.replacementSubject|upper }}
                                                 {% endif %}
+                                            </div>
+
+                                            <div class="ml-2">
+                                                <i class="fas fa-users"></i>
+                                                {% for grade in lesson.entry.tuition.studyGroup.grades %}
+                                                    {{ grade.name }}{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
                                             </div>
 
                                             <div class="ml-2">

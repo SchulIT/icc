@@ -1328,6 +1328,10 @@ book:
             label: Neuer Eintrag
             single: Eintrag für Einzelstunde erstellen
             double: Eintrag für Doppelstunde erstellen
+        remove:
+            label: Eintrag löschen
+            confirm: Soll der Eintrag (inkl. Anwesenheiten) wirklich gelöscht werden?
+            success: Eintrag erfolgreich gelöscht
         cancel:
             label: Stunde entfällt
             single: Einzelstunde entfällt

@@ -121,4 +121,12 @@ class Lesson {
     public function getEntries(): Collection {
         return $this->entries;
     }
+
+    public function __toString(): string {
+        if($this->getDate() === null) {
+            return 'N/A';
+        }
+
+        return sprintf('%s - %d.-%d', $this->getDate()->format('Y-m-d'), $this->getLessonStart(), $this->getLessonEnd());
+    }
 }

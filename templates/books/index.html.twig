@@ -220,6 +220,12 @@
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                             </div>
+
+                                            <div class="ml-2">
+                                                <a href="{{ path('remove_entry', { uuid: lesson.entry.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'book.entry.remove.label'|trans }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
                                         {% endif %}
                                     </div>
                                 {% endfor %}

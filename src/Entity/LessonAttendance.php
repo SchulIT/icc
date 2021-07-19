@@ -25,6 +25,7 @@ class LessonAttendance implements JsonSerializable {
 
     /**
      * @ORM\ManyToOne(targetEntity="LessonEntry", inversedBy="attendances")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
      * @var LessonEntry|null
      */
@@ -168,5 +169,9 @@ class LessonAttendance implements JsonSerializable {
             'minutes' => $this->getLateMinutes(),
             'lessons' => $this->getAbsentLessons()
         ];
+    }
+
+    public function __toString(): string {
+        return (string)$this->getStudent();
     }
 }

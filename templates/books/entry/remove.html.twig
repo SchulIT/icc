@@ -1,0 +1,91 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.entry.remove.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item">
+            {% for grade in entry.tuition.studyGroup.grades %}
+                <a href="{{ path('book', { grade: grade.uuid.toString }) }}">{{ grade.name }}</a>{% if not loop.last %}<span class="mr-1">, </span>{% endif %}
+            {% endfor %}
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('book', { tuition: entry.tuition.uuid.toString}) }}">
+                {{ entry.tuition.subject }} [{{ entry.tuition.name }}]
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            {{ entry.lesson.date|format_date }}
+        </li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">{{ 'remove.header'|trans }}</div>
+
+        <div class="card-body">
+            <div class="card">
+                <div class="card-body d-flex align-items-center">
+                    <div class="book-lesson m-0 p-0">
+                        {{ 'label.substitution_lessons'|trans({'%start%': entry.lessonStart, '%end%': entry.lessonEnd, '%count%': entry.lessonEnd - entry.lessonStart}) }}
+                    </div>
+
+                    <div class="ml-2">
+                        <i class="fas fa-calendar-alt"></i> {{ entry.lesson.date|format_date }}
+                    </div>
+
+                    <div class="badge badge-primary ml-2">
+                        {{ entry.subject.name|upper }}
+
+                        {% if entry.replacementSubject is not empty %}
+                            ⟶ {{ entry.replacementSubject|upper }}
+                        {% endif %}
+                    </div>
+
+                    <div class="ml-2">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        {{ entry.teacher|teacher }}
+
+                        {% if entry.replacementTeacher is not null %}
+                            ⟶ {{ entry.replacementTeacher|teacher }}
+                        {% endif %}
+                    </div>
+
+                    {% if entry.isCancelled %}
+                        <div class="ml-2 text-danger flex-fill">
+                            <i class="fas fa-times"></i>
+                            {{ 'book.entry.cancel_reason'|trans({ '%reason%': entry.cancelReason}) }}
+                        </div>
+                    {% else %}
+                        <div class="ml-2 flex-fill">
+                            <i class="fas fa-info-circle"></i> {{ entry.topic }}
+                        </div>
+                    {% endif %}
+
+
+                </div>
+            </div>
+
+            {{ form_widget(form.group_general.confirm) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fa fa-trash"></i> {{ 'remove.confirm'|trans }}
+        </button>
+
+        <a href="javascript:history.back();" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}
+

@@ -13,6 +13,7 @@ use App\Form\LessonEntryCancelType;
 use App\Form\LessonEntryCreateType;
 use App\Form\LessonEntryType;
 use App\Repository\LessonEntryRepositoryInterface;
+use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -172,6 +173,28 @@ class BookEntryController extends AbstractController {
         }
 
         return $this->render('books/entry/add_student.html.twig', [
+            'form' => $form->createView(),
+            'entry' => $entry
+        ]);
+    }
+
+    /**
+     * @Route("/{uuid}/remove", name="remove_entry")
+     */
+    public function remove(LessonEntry $entry, Request $request) {
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'book.entry.remove.confirm'
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($entry);
+            $this->addFlash('success', 'book.entry.remove.success');
+
+            return $this->redirectToRoute('book');
+        }
+
+        return $this->render('books/entry/remove.html.twig', [
             'form' => $form->createView(),
             'entry' => $entry
         ]);

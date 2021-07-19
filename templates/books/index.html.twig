@@ -75,6 +75,30 @@
                         </div>
                     </div>
 
+                    {% if missingExcusesCount > 0 and sectionFilter.currentSection is not null %}
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                <i class="fas fa-user-times"></i>
+                                {{ 'book.not_excused.label'|trans }}
+                                <span class="badge badge-danger">{{ missingExcusesCount }}</span>
+                            </h4>
+                            <p>{{ 'book.not_excused.status'|trans }}</p>
+
+                            <ul class="list-unstyled mb-0">
+                                {% for info in missingExcuses %}
+                                    <li>
+                                        <a href="{{ path('book_student', { section: sectionFilter.currentSection.uuid.toString, student: info.student.uuid.toString }) }}">
+                                            <i class="fas fa-user-graduate"></i> {{ info.student|student }}
+                                            <span class="badge badge-danger">{{ info.notExcusedOrNotSetLessonsCount }}</span>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+
                     {% for day in overview.days %}
                         <div class="card">
                             <div class="card-header">

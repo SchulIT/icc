@@ -16,9 +16,19 @@ interface LessonAttendanceRepositoryInterface {
 
     public function countLate(LessonEntry $entry): int;
 
-    public function findLateByStudent(Student $student, ?Tuition $tuition): array;
+    /**
+     * @param Student $student
+     * @param Tuition[] $tuitions
+     * @return LessonAttendance[]
+     */
+    public function findLateByStudent(Student $student, array $tuitions): array;
 
-    public function findAbsentByStudent(Student $student, ?Tuition $tuition): array;
+    /**
+     * @param Student $student
+     * @param Tuition[] $tuitions
+     * @return LessonAttendance[]
+     */
+    public function findAbsentByStudent(Student $student, array $tuitions): array;
 
 
     /**

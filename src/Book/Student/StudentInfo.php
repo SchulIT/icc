@@ -3,6 +3,7 @@
 namespace App\Book\Student;
 
 use App\Entity\BookComment;
+use App\Entity\LessonAttendanceExcuseStatus;
 use App\Entity\Student;
 
 class StudentInfo {
@@ -75,11 +76,23 @@ class StudentInfo {
         );
     }
 
+    public function getNotExcusedOrNotSetLessonsCount(): int {
+        return array_sum(
+            array_map(
+                function(LessonAttendance $attendance) {
+                    return $attendance->getAttendance()->getExcuseStatus() === LessonAttendanceExcuseStatus::NotSet
+                        && $attendance->getExcuses()->count() === 0 ? 1 : 0;
+                },
+                $this->getAbsentLessonAttendances()
+            )
+        );
+    }
+
     public function getNotExcusedAbsentLessonsCount(): int {
         return array_sum(
             array_map(
                 function(LessonAttendance $attendance) {
-                    return $attendance->getExcuses()->count() === 0 ? 1 : 0;
+                    return $attendance->isExcused() ? 0 : 1;
                 },
                 $this->getAbsentLessonAttendances()
             )

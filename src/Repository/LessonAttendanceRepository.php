@@ -81,8 +81,8 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->leftJoin('a.student', 's');
     }
 
-    private function applyTuition(QueryBuilder $queryBuilder, ?Tuition $tuition): QueryBuilder {
-        if($tuition === null) {
+    private function applyTuition(QueryBuilder $queryBuilder, array $tuitions): QueryBuilder {
+        if(count($tuitions) === 0) {
             return $queryBuilder;
         }
 
@@ -91,7 +91,11 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->from(LessonAttendance::class, 'aInner')
             ->leftJoin('aInner.entry', 'eInner')
             ->leftJoin('eInner.tuition', 'tInner')
-            ->where('tInner.id = :tuition');
+            ->where('tInner.id IN(:tuitions)');
+
+        $ids = array_map(function(Tuition $tuition) {
+            return $tuition->getId();
+        }, $tuitions);
 
         $queryBuilder
             ->andWhere(
@@ -99,29 +103,29 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
                     'a.id', $qbInner->getDQL()
                 )
             )
-            ->setParameter('tuition', $tuition->getId());
+            ->setParameter('tuitions', $ids);
 
         return $queryBuilder;
     }
 
-    public function findLateByStudent(Student $student, ?Tuition $tuition): array {
+    public function findLateByStudent(Student $student, array $tuitions): array {
         $qb = $this->getDefaultQueryBuilder()
             ->where('s.id = :student')
             ->andWhere('a.type = :type')
             ->setParameter('student', $student)
             ->setParameter('type', LessonAttendanceType::Late);
-        $this->applyTuition($qb, $tuition);
+        $this->applyTuition($qb, $tuitions);
 
         return $qb->getQuery()->getResult();
     }
 
-    public function findAbsentByStudent(Student $student, ?Tuition $tuition): array {
+    public function findAbsentByStudent(Student $student, array $tuitions): array {
         $qb = $this->getDefaultQueryBuilder()
             ->where('s.id = :student')
             ->andWhere('a.type = :type')
             ->setParameter('student', $student)
             ->setParameter('type', LessonAttendanceType::Absent);
-        $this->applyTuition($qb, $tuition);
+        $this->applyTuition($qb, $tuitions);
 
         return $qb->getQuery()->getResult();
     }

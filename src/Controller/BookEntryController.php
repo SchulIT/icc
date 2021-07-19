@@ -8,10 +8,12 @@ use App\Entity\LessonAttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
+use App\Form\LessonAttendanceExcuseType;
 use App\Form\LessonEntryAddStudent;
 use App\Form\LessonEntryCancelType;
 use App\Form\LessonEntryCreateType;
 use App\Form\LessonEntryType;
+use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
@@ -119,6 +121,25 @@ class BookEntryController extends AbstractController {
         }
 
         return $this->render('books/create.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/attendance/{uuid}/excuse_status", name="change_lesson_attendance_excuse_status")
+     */
+    public function attendance(LessonAttendance $attendance, Request $request, LessonAttendanceRepositoryInterface $attendanceRepository) {
+        $form = $this->createForm(LessonAttendanceExcuseType::class, $attendance);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $attendanceRepository->persist($attendance);
+            return $this->redirectToRequestReferer('book');
+        }
+
+        return $this->render('books/attendance.html.twig', [
+            'attendance' => $attendance,
+            'entry' => $attendance->getEntry(),
             'form' => $form->createView()
         ]);
     }

@@ -3,6 +3,7 @@
 namespace App\Book\Student;
 
 use App\Entity\LessonAttendance as LessonAttendanceEntity;
+use App\Entity\LessonAttendanceExcuseStatus;
 use DateTime;
 
 class LessonAttendance {
@@ -45,6 +46,22 @@ class LessonAttendance {
      */
     public function getAttendance(): LessonAttendanceEntity {
         return $this->attendance;
+    }
+
+    public function isExcused(): bool {
+        if($this->getExcuses()->count() > 0) {
+            return true;
+        }
+
+        if($this->getAttendance()->getExcuseStatus() === LessonAttendanceExcuseStatus::NotExcused) {
+            return false;
+        }
+
+        if($this->getAttendance()->getExcuseStatus() === LessonAttendanceExcuseStatus::Excused) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

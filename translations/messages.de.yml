@@ -1366,6 +1366,9 @@ book:
         late: Verspätungen
         absent: Absenzen
         not_excused: unentschuldigt
+        excused: entschuldigt
+        not_set: nicht festgelegt (unentschuldigt)
+        excuse_note_exists: Für diese Stunde liegt eine Entschuldigung vor.
 
     attendance:
         label: Anwesenheit
@@ -1387,6 +1390,9 @@ book:
     missing:
         label: Fehlende Einträge
 
+    not_excused:
+        label: Unentschuldigte Fehlstunden
+        status: Für die folgenden Lernenden sind noch unentschuldigte Fehlstunden offen.
 
     excuse_note:
         label: Entschuldigungen

@@ -4,11 +4,15 @@ namespace App\Controller;
 
 use App\Book\EntryOverviewHelper;
 use App\Book\Lesson;
+use App\Book\Student\AbsenceExcuseResolver;
+use App\Book\Student\StudentInfo;
 use App\Book\Student\StudentInfoResolver;
 use App\Entity\Grade;
+use App\Entity\GradeMembership;
 use App\Entity\GradeTeacher;
 use App\Entity\Section;
 use App\Entity\Student;
+use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
@@ -149,7 +153,8 @@ class BookController extends AbstractController {
      * @Route("/entry", name="book")
      */
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
-                          TuitionRepositoryInterface $tuitionRepository, DateHelper $dateHelper, Request $request, EntryOverviewHelper $entryOverviewHelper) {
+                          TuitionRepositoryInterface $tuitionRepository, DateHelper $dateHelper, Request $request,
+                          EntryOverviewHelper $entryOverviewHelper, AbsenceExcuseResolver $absenceExcuseResolver) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -166,16 +171,60 @@ class BookController extends AbstractController {
         // Lessons / Entries
         $overview = null;
         $overallOverview = null;
+        $missingExcuseCount = 0;
+        $info = [ ];
 
         if($selectedDate !== null) {
             if ($gradeFilterView->getCurrentGrade() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForGrade($gradeFilterView->getCurrentGrade(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
+
+                $students = $gradeFilterView->getCurrentGrade()->getMemberships()->filter(function(GradeMembership $membership) use ($sectionFilterView) {
+                    return $membership->getSection()->getId() === $sectionFilterView->getCurrentSection()->getId();
+                })->toArray();
+
+                foreach($students as $student) {
+                    $info[] = $absenceExcuseResolver->resolve($student);
+                }
             } else if ($tuitionFilterView->getCurrentTuition() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
+
+                $students = $tuitionFilterView->getCurrentTuition()->getStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
+                    return $membership->getStudent();
+                });
+
+                foreach($students as $student) {
+                    $info[] = $absenceExcuseResolver->resolve($student, [$tuitionFilterView->getCurrentTuition()]);
+                }
             } else if($teacherFilterView->getCurrentTeacher() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForTeacher($teacherFilterView->getCurrentTeacher(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
+                $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
+
+                // IDs of already handled students
+                $studentIds = [ ];
+
+                foreach($tuitions as $tuition) {
+                    /** @var StudyGroupMembership $membership */
+                    foreach($tuition->getStudyGroup()->getMemberships() as $membership) {
+                        $student = $membership->getStudent();
+
+                        if(in_array($student->getId(), $studentIds)) {
+                            continue;
+                        }
+
+                        $info[] = $absenceExcuseResolver->resolve($student, $tuitions);
+                        $studentIds[] = $student->getId();
+                    }
+                }
             }
         }
+
+        $missingExcuses = array_filter($info, function(StudentInfo $info) {
+            return $info->getNotExcusedOrNotSetLessonsCount() > 0;
+        });
+        $missingExcuseCount = array_sum(
+            array_map(function(StudentInfo $info) {
+                return $info->getNotExcusedOrNotSetLessonsCount();
+            }, $missingExcuses));
 
         $weekStarts = [ ];
 
@@ -192,7 +241,9 @@ class BookController extends AbstractController {
             'ownTuitions' => $ownTuitions,
             'selectedDate' => $selectedDate,
             'overview' => $overview,
-            'weekStarts' => $weekStarts
+            'weekStarts' => $weekStarts,
+            'missingExcuses' => $missingExcuses,
+            'missingExcusesCount' => $missingExcuseCount
         ]);
     }
 

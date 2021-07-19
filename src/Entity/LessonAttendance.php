@@ -60,6 +60,13 @@ class LessonAttendance implements JsonSerializable {
      */
     private $comment = null;
 
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\Choice(choices={0, 1, 2})
+     * @var int
+     */
+    private $excuseStatus = LessonAttendanceExcuseStatus::NotSet;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
     }
@@ -161,13 +168,30 @@ class LessonAttendance implements JsonSerializable {
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getExcuseStatus(): int {
+        return $this->excuseStatus;
+    }
+
+    /**
+     * @param int $excuseStatus
+     * @return LessonAttendance
+     */
+    public function setExcuseStatus(int $excuseStatus): LessonAttendance {
+        $this->excuseStatus = $excuseStatus;
+        return $this;
+    }
+
     public function jsonSerialize() {
         return [
             'uuid' => $this->getUuid()->toString(),
             'type' => $this->getType(),
             'student' => $this->getStudent(),
             'minutes' => $this->getLateMinutes(),
-            'lessons' => $this->getAbsentLessons()
+            'lessons' => $this->getAbsentLessons(),
+            'excuse_status' => $this->getExcuseStatus()
         ];
     }
 

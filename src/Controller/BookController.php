@@ -180,6 +180,8 @@ class BookController extends AbstractController {
 
                 $students = $gradeFilterView->getCurrentGrade()->getMemberships()->filter(function(GradeMembership $membership) use ($sectionFilterView) {
                     return $membership->getSection()->getId() === $sectionFilterView->getCurrentSection()->getId();
+                })->map(function(GradeMembership $membership) {
+                    return $membership->getStudent();
                 })->toArray();
 
                 foreach($students as $student) {

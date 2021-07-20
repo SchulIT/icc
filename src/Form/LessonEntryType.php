@@ -60,7 +60,8 @@ class LessonEntryType extends AbstractType {
                 'label' => 'label.topic'
             ])
             ->add('comment', TextareaType::class, [
-                'label' => 'label.comment'
+                'label' => 'label.comment',
+                'required' => false
             ])
             ->add('attendances', CollectionType::class, [
                 'entry_type' => LessonAttendanceType::class

@@ -68,9 +68,22 @@
                                 <colgroup>
                                     <col class="column-sm">
                                     <col class="column-sm">
+                                    <col class="column-md">
                                     <col class="column-lg">
-                                    <col class="column-lg">
+                                    <col>
+                                    <col class="column-md">
                                 </colgroup>
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th>{{ 'label.tuition'|trans }}</th>
+                                    <th>{{ 'label.subject'|trans }}</th>
+                                    <th>{{ 'label.teacher'|trans }}</th>
+                                    <th>{{ 'label.comment'|trans }}</th>
+                                    <th>{{ 'book.attendance.excuse_status'|trans }}</th>
+                                </tr>
+                                </thead>
                                 <tbody>
                                 {% for lesson_attendance in group.attendances %}
                                     {% set attendance = lesson_attendance.attendance %}
@@ -83,20 +96,21 @@
                                             {% endif %}
                                         </td>
                                         <td>{{ lesson_attendance.lesson }}</td>
-
+                                        <td>{{ attendance.entry.tuition.name }}</td>
                                         <td>
-                                            {{ attendance.entry.tuition.subject }}
-                                            {% if attendance.entry.subject is not empty %}
-                                                ⟶ {{ attendance.entry.subject }}
+                                            {{ attendance.entry.subject }}
+                                            {% if attendance.entry.replacementSubject is not empty %}
+                                                ⟶ {{ attendance.entry.replacementSubject }}
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% for teacher in attendance.entry.tuition.teachers %}
-                                                {{ teacher.acronym }}{% if not loop.last %}, {% endif %}
-                                            {% endfor %}
-                                            {% if attendance.entry.teacher is not null %}
-                                                ⟶ {{ attendance.entry.teacher.acronym }}
+                                            {{ attendance.entry.teacher|teacher }}
+                                            {% if attendance.entry.replacementTeacher is not null %}
+                                                ⟶ {{ attendance.entry.replacementTeacher|teacher }}
                                             {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ attendance.comment }}
                                         </td>
                                         <td>
                                             <form action="{{ path('change_lesson_attendance_excuse_status', { uuid: attendance.uuid.toString }) }}" method="post">

@@ -18,7 +18,7 @@ class LessonAttendenceStrategy implements SortingStrategyInterface {
      * @return int
      */
     public function compare($objectA, $objectB): int {
-        $dateCmp = $this->dateStrategy->compare($objectA->getEntry()->getDate(), $objectB->getEntry()->getDate());
+        $dateCmp = $this->dateStrategy->compare($objectA->getEntry()->getLesson()->getDate(), $objectB->getEntry()->getLesson()->getDate());
 
         if($dateCmp === 0) {
             return $objectA->getEntry()->getLessonStart() - $objectB->getEntry()->getLessonStart();

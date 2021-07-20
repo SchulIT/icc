@@ -1381,6 +1381,8 @@ book:
         selected: "%number% ausgewählt"
         absence_lesson: "{0} %count% Stunden|{1} %count% Stunde|]1,Inf[ %count% Stunden"
         late_minutes: "%count% min"
+        absent_lessons: Anzahl Fehlstunden
+        late: Verspätung
         type:
             present: anwesend
             late: verspätet
@@ -1390,6 +1392,7 @@ book:
             late: "%number% verspätet"
             absent: "%number% abwesend"
         possibly_absent: Absenz-Vorschläge
+        excuse_status: Entschuldigung
         absence_reason:
             sick: krank gemeldet
             appointment: Veranstaltung

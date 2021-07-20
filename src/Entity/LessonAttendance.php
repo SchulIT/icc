@@ -191,7 +191,8 @@ class LessonAttendance implements JsonSerializable {
             'student' => $this->getStudent(),
             'minutes' => $this->getLateMinutes(),
             'lessons' => $this->getAbsentLessons(),
-            'excuse_status' => $this->getExcuseStatus()
+            'excuse_status' => $this->getExcuseStatus(),
+            'comment' => $this->getComment()
         ];
     }
 

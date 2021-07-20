@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\LessonAttendance;
+use App\Entity\LessonAttendanceExcuseStatus;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -20,6 +21,14 @@ class LessonAttendanceType extends AbstractType {
                     'attendance.delayed' => \App\Entity\LessonAttendanceType::Late,
                     'attendance.absent' => \App\Entity\LessonAttendanceType::Absent
                 ]
+            ])
+            ->add('excuseStatus', ChoiceType::class, [
+                'choices' => [
+                    'book.student.not_set' => LessonAttendanceExcuseStatus::NotSet,
+                    'book.student.excused' => LessonAttendanceExcuseStatus::Excused,
+                    'book.student.not_excused' => LessonAttendanceExcuseStatus::NotExcused
+                ],
+                'label' => 'label.status'
             ])
             ->add('lateMinutes', IntegerType::class, [])
             ->add('absentLessons', IntegerType::class, [])

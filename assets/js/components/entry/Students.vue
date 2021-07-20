@@ -112,7 +112,9 @@
         <div class="list-group-item align-items-center p-0"
              v-for="attendance in attendances"
              :class="{ 'bg-selected': selectedAttendances.indexOf(attendance) >= 0 }">
+
           <input type="hidden" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][type]'" :value="attendance.type">
+          <input type="hidden" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][excuseStatus]'" :value="attendance.excuse_status">
           <input type="hidden" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][lateMinutes]'" :value="attendance.minutes">
           <input type="hidden" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][absentLessons]'" :value="attendance.lessons">
 
@@ -122,6 +124,13 @@
               <i class="fa fa-user"></i> {{ attendance.student.lastname }}, {{ attendance.student.firstname }}
             </div>
             <div class="align-self-center text-right mr-3 flex-shrink-1">
+              <button class="btn btn-outline-primary btn-sm ml-1 d-inline-block"
+                      v-if="attendance.type !== 1"
+                      @click.prevent="attendance.showComment !== true ? attendance.showComment = true : attendance.showComment = false"
+                      :title="$trans('label.comment')">
+                <i class="far fa-comment-alt"></i>
+              </button>
+
               <button class="btn btn-outline-success btn-sm ml-1 d-inline-block"
                       @click.prevent="present(attendance)"
                       :title="$trans('book.attendance.type.present')"
@@ -134,6 +143,7 @@
                 <i class="fas fa-user-clock"></i>
               </button>
               <div class="btn-group d-inline-flex align-items-center ml-1"
+                   :title="$trans('book.attendance.late')"
                    v-if="attendance.type === 2">
                 <button class="btn btn-outline-warning btn-sm"
                         @click.prevent="minusMinute(attendance)">
@@ -155,6 +165,7 @@
               </button>
 
               <div class="btn-group d-inline-flex align-items-center ml-1"
+                   :title="$trans('book.attendance.absent_lessons')"
                    v-if="attendance.type === 0">
                 <button class="btn btn-outline-danger btn-sm"
                         @click.prevent="minusLesson(attendance)">
@@ -168,6 +179,64 @@
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
+
+              <div class="btn-group d-inline-flex align-items-center ml-1"
+                   v-if="attendance.type === 0">
+                <button class="btn btn-outline-danger btn-sm"
+                        :title="$trans('book.students.not_set')"
+                        :class="{ active: attendance.excuse_status === 0}"
+                        @click.prevent="setExcuseStatus(attendance, 0)">
+                  <i class="fas fa-question"></i>
+                </button>
+                <button class="btn btn-outline-danger btn-sm"
+                        :title="$trans('book.students.excused')"
+                        :class="{ active: attendance.excuse_status === 1}"
+                        @click.prevent="setExcuseStatus(attendance, 1)">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-outline-danger btn-sm"
+                        :title="$trans('book.students.not_excused')"
+                        :class="{ active: attendance.excuse_status === 2}"
+                        @click.prevent="setExcuseStatus(attendance, 2)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex px-3 pb-3" v-if="attendance.type !== 1 && (attendance.comment !== null || attendance.showComment === true)">
+            <div class="w-100">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
+                </div>
+                <input type="text" v-model="attendance.comment" class="form-control" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][comment]'">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">{{ $trans('book.attendance.comment.label') }}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="attendance_comment" class="control-label">{{ $trans('label.comment') }}</label>
+                <input id="attendance_comment" type="text" v-model="comment" class="form-control">
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $trans('action.cancel') }}</button>
+              <button type="button" class="btn btn-primary btn-submit">{{$trans('action.save')}}</button>
             </div>
           </div>
         </div>
@@ -177,6 +246,7 @@
 
 <script>
 import Choices from "choices.js";
+import { Modal } from 'bootstrap.native';
 
 export default {
   name: 'attendances',
@@ -403,6 +473,11 @@ export default {
         if(attendance.lessons > 0) {
           attendance.lessons--;
         }
+      });
+    },
+    setExcuseStatus(attendanceOrAttendances, status) {
+      this.apply(attendanceOrAttendances, function(attendance) {
+        attendance.excuse_status = status;
       });
     },
     preventReload(event) {

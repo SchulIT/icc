@@ -56,7 +56,6 @@ class BookEntryController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            // TODO: Validate if entry is related to a timetable lesson!?
             $this->repository->persist($entry);
             $this->addFlash('success', 'book.entry.add.success');
 
@@ -111,7 +110,6 @@ class BookEntryController extends AbstractController {
                 }
             }
 
-            // TODO: Validate if entry is related to a timetable lesson!?
             $this->repository->persist($entry);
             $this->addFlash('success', 'book.entry.add.success');
 

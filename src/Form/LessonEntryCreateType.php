@@ -37,7 +37,14 @@ class LessonEntryCreateType extends AbstractType {
             ->add('teacher', EntityType::class, [
                 'class' => Teacher::class,
                 'label' => 'label.teacher',
-                'disabled' => true
+                'disabled' => true,
+                'choice_value' => function(?Teacher $teacher) {
+                    if($teacher === null) {
+                        return null;
+                    }
+
+                    return $teacher->getUuid()->toString();
+                }
             ])
             ->add('replacementTeacher', EntityType::class, [
                 'class' => Teacher::class,

@@ -1328,6 +1328,7 @@ book:
             label: Neuer Eintrag
             single: Eintrag für Einzelstunde erstellen
             double: Eintrag für Doppelstunde erstellen
+            success: Eintrag erfolgreich erstellt
         edit:
             label: Eintrag bearbeiten
             success: Eintrag erfolgreich aktualisiert

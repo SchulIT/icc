@@ -1328,6 +1328,9 @@ book:
             label: Neuer Eintrag
             single: Eintrag für Einzelstunde erstellen
             double: Eintrag für Doppelstunde erstellen
+        edit:
+            label: Eintrag bearbeiten
+            success: Eintrag erfolgreich aktualisiert
         remove:
             label: Eintrag löschen
             confirm: Soll der Eintrag (inkl. Anwesenheiten) wirklich gelöscht werden?
@@ -1372,10 +1375,15 @@ book:
 
     attendance:
         label: Anwesenheit
+        not_possible: Die Anwesenheit kann bei ausgefallen Stunden nicht dokumentiert werden.
         all: alle anwesend
         selected: "%number% ausgewählt"
         absence_lesson: "{0} %count% Stunden|{1} %count% Stunde|]1,Inf[ %count% Stunden"
         late_minutes: "%count% min"
+        type:
+            present: anwesend
+            late: verspätet
+            absent: abwesend
         overview:
             present: "%number% anwesend"
             late: "%number% verspätet"

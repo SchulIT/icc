@@ -148,7 +148,9 @@ class BookEntryController extends AbstractController {
      * @Route("/{uuid}", name="show_entry")
      */
     public function show(LessonEntry $entry, Request $request) {
-        $form = $this->createForm(LessonEntryType::class, $entry, []);
+        $form = $this->createForm(LessonEntryType::class, $entry, [
+            'validation_groups' => [ $entry->isCancelled() ? 'cancel' : 'Default' ]
+        ]);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {

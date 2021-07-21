@@ -101,13 +101,71 @@
 
                     {% for day in overview.days %}
                         <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-calendar-alt"></i>
-                                {{ day.date|format_date }}
-                                <span class="text-muted">{{ day.date.format('N')|weekday }}</span>
+                            <div class="card-header d-flex align-items-center">
+                                <div class="flex-fill">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    {{ day.date|format_date }}
+                                    <span class="text-muted">{{ day.date.format('N')|weekday }}</span>
+                                </div>
+
+                                {% set actions = [] %}
+                                {% set tuitionUrls = [ ] %}
+                                {% for lesson in day.lessons %}
+                                    {% if lesson.entry is null %}
+                                        {% set actions = actions|merge([url('xhr_cancel_lesson', { uuid: lesson.lesson.uuid })]) %}
+                                        {% set tuitionUrls = tuitionUrls|merge([url('xhr_tuition', { uuid: lesson.lesson.tuition.uuid })]) %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if actions|length > 0 %}
+                                <lesson-cancel-bulk-button csrftoken="{{ csrf_token('cancel_lesson') }}"
+                                                           :actions="{{ actions|json_encode }}"
+                                                           :date="new Date('{{ day.date.format('Y-m-d') }}')"
+                                                           :tuition-urls="{{ tuitionUrls|json_encode }}"
+                                                           button="{{ 'book.entry.cancel.all'|trans }}"></lesson-cancel-bulk-button>
+
+                                {% endif %}
                             </div>
 
                             <div class="list-group list-group-flush">
+                                {% if overview.hasLessonsWithinFreeTimespans(day.date) %}
+                                    {% for timespan in overview.freeTimespans(day.date) %}
+                                        <div class="list-group-item d-flex align-items-center">
+                                            <div class="book-lesson m-0 p-0">
+                                                <i class="fas fa-times"></i>
+                                            </div>
+
+                                            <div class="d-flex align-items-center flex-fill">
+                                                <div class="badge badge-secondary">
+                                                    {{ 'book.entry.propose_cancel.label'|trans|upper }}
+                                                </div>
+
+                                                {% set reason = 'book.entry.propose_cancel.message'|trans({
+                                                    '%lessons%': 'label.exam_lessons'|trans({'%start%': timespan.lessonStart, '%end%': timespan.lessonEnd, '%count%': timespan.lessonEnd - timespan.lessonStart}),
+                                                    '%reason%': timespan.reason
+                                                }) %}
+                                                <div class="ml-2 flex-fill">
+                                                    {{ reason }}
+                                                </div>
+
+                                                {% set actions = [] %}
+                                                {% set tuitionUrls = [ ] %}
+                                                {% for lesson in day.lessons %}
+                                                    {% if timespan.lessonStart <= lesson.lesson.lessonStart and lesson.lesson.lessonEnd <= timespan.lessonEnd%}
+                                                        {% set actions = actions|merge([url('xhr_cancel_lesson', { uuid: lesson.lesson.uuid })]) %}
+                                                        {% set tuitionUrls = tuitionUrls|merge([url('xhr_tuition', { uuid: lesson.lesson.tuition.uuid })]) %}
+                                                    {% endif %}
+                                                {% endfor %}
+
+                                                <lesson-cancel-bulk-button csrftoken="{{ csrf_token('cancel_lesson') }}"
+                                                                           :actions="{{ actions|json_encode }}"
+                                                                           :tuition-urls="{{ tuitionUrls|json_encode }}"
+                                                                           :date="new Date('{{ timespan.date.format('Y-m-d') }}')"></lesson-cancel-bulk-button>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+
                                 {% for comment in overview.comments(day.date) %}
                                     <div class="list-group-item d-flex align-items-center">
                                         <div class="book-lesson m-0 p-0">

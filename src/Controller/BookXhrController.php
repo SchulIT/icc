@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dashboard\Absence\AbsenceResolver;
+use App\Entity\Lesson;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonEntry;
 use App\Entity\Student as StudentEntity;
@@ -10,13 +11,20 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
+use App\Repository\LessonEntryRepositoryInterface;
+use App\Repository\LessonRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
+use App\Request\Book\CancelLessonRequest;
+use App\Request\ValidationFailedException;
 use App\Response\Api\V1\Student;
 use App\Response\Api\V1\Teacher;
 use App\Response\Api\V1\Tuition as TuitionResponse;
+use App\Response\ViolationList;
 use App\Section\SectionResolverInterface;
 use JMS\Serializer\SerializerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -147,5 +155,70 @@ class BookXhrController extends AbstractController {
         }
 
         return $this->returnJson($students, $serializer);
+    }
+
+    /**
+     * @Route("/cancel/{uuid}", name="xhr_cancel_lesson", methods={"POST"})
+     * @OA\POST()
+     * @OA\Parameter(
+     *     name="payload",
+     *     in="body",
+     *     @Model(type=CancelLessonRequest::class)
+     * )
+     * @OA\Response(
+     *     response="201",
+     *     description="Lessons are cancelled successfully. Empty content."
+     * )
+     * @OA\Response(
+     *     response="403",
+     *     description="Bad request.",
+     *     @Model(type=ViolationList::class)
+     * )
+     */
+    public function cancelLesson(Lesson $lesson, CancelLessonRequest $request, LessonEntryRepositoryInterface $entryRepository) {
+        $tuition = $lesson->getTuition();
+
+        dump($request);
+
+        if($lesson->getEntries()->count() === 0) {
+            $entry = (new LessonEntry())
+                ->setLesson($lesson)
+                ->setTuition($tuition)
+                ->setLessonStart($lesson->getLessonStart())
+                ->setLessonEnd($lesson->getLessonEnd())
+                ->setIsCancelled(true)
+                ->setTeacher($tuition->getTeacher())
+                ->setSubject($tuition->getSubject())
+                ->setCancelReason($request->getReason());
+
+            $entryRepository->persist($entry);
+        } else {
+            $lessonNumbers = range($lesson->getLessonStart(), $lesson->getLessonEnd());
+
+            /** @var LessonEntry $entry */
+            foreach ($lesson->getEntries() as $entry) {
+                for ($lessonNumber = $entry->getLessonStart(); $lessonNumber <= $entry->getLessonEnd(); $lessonNumber++) {
+                    unset($lessonNumbers[$lessonNumber]);
+                }
+            }
+
+            foreach ($lessonNumbers as $lessonNumber) {
+                $entry = (new LessonEntry())
+                    ->setLesson($lesson)
+                    ->setTuition($tuition)
+                    ->setLessonStart($lessonNumber)
+                    ->setLessonEnd($lessonNumber)
+                    ->setIsCancelled(true)
+                    ->setTeacher($tuition->getTeacher())
+                    ->setSubject($tuition->getSubject())
+                    ->setCancelReason($request->getReason());
+
+                $entryRepository->persist($entry);
+            }
+        }
+
+        return new Response('', Response::HTTP_CREATED, [
+            'Content-Type' => 'application/json'
+        ]);
     }
 }

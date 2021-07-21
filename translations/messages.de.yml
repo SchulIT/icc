@@ -1341,10 +1341,16 @@ book:
             single: Einzelstunde entfällt
             double: Doppelstunde entfällt
             reason: Grund des Entfalls
+            all: Stunden als Entfall markieren
         cancel_reason: "Entfall: %reason%"
         add_student:
             label: Lernenden hinzufügen
             success: Lernenden erfolgreich hinzugefügt
+        propose_cancel:
+            label: Entfall-Vorschlag
+            message: 'Die %lessons% Stunde fällt aus: %reason%'
+            button: Stunden als Entfall markieren
+
 
     comment:
         label: Kommentar

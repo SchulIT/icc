@@ -5,11 +5,13 @@ import VueAxios from "vue-axios";
 import Translations from "./plugins/trans";
 import LessonCancelButton from "./components/book/LessonCancelButton";
 import LessonCreateEntryButton from "./components/book/LessonCreateEntryButton";
+import LessonCancelBulkButton from "./components/book/LessonCancelBulkButton";
 
 const app = createApp({
     components: {
         LessonCancelButton,
-        LessonCreateEntryButton
+        LessonCreateEntryButton,
+        LessonCancelBulkButton
     },
     methods: { },
     data() {

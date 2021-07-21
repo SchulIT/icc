@@ -79,8 +79,11 @@ services:
 
     # JSON
     App\Request\JsonParamConverter:
+        class:
         arguments:
-            $prefix: 'App\Request\Data'
+            $prefixes:
+                - 'App\Request\Data'
+                - 'App\Request\Book'
 
     JMS\Serializer\SerializationContext:
         calls:

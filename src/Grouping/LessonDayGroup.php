@@ -28,6 +28,20 @@ class LessonDayGroup implements GroupInterface, SortableGroupInterface {
         return $this->lessons;
     }
 
+    /**
+     * @param int $lessonNumber
+     * @return Lesson|null
+     */
+    public function getLesson(int $lessonNumber): ?Lesson {
+        foreach($this->lessons as $lesson) {
+            if($lesson->getLessonNumber() === $lessonNumber) {
+                return $lesson;
+            }
+        }
+
+        return null;
+    }
+
     public function getKey() {
         return $this->date;
     }

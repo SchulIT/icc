@@ -16,7 +16,7 @@ class JsonParamConverter implements ParamConverterInterface {
 
     private const ContentType = 'json';
 
-    private $prefix;
+    private $prefixes;
 
     private $serializer;
     private $contextFactory;
@@ -28,8 +28,8 @@ class JsonParamConverter implements ParamConverterInterface {
         'groups' => null
     ];
 
-    public function __construct(string $prefix, SerializerInterface $serializer, ValidatorInterface $validator, DeserializationContextFactoryInterface $contextFactory) {
-        $this->prefix = $prefix;
+    public function __construct(array $prefixes, SerializerInterface $serializer, ValidatorInterface $validator, DeserializationContextFactoryInterface $contextFactory) {
+        $this->prefixes = $prefixes;
 
         $this->serializer = $serializer;
         $this->contextFactory = $contextFactory;
@@ -45,6 +45,8 @@ class JsonParamConverter implements ParamConverterInterface {
      */
     public function apply(Request $request, ParamConverter $configuration) {
         $contentType = $request->getContentType();
+
+        dump($contentType);
 
         if($contentType !== static::ContentType) {
             throw new BadRequestHttpException(sprintf('Request header "Content-Type" must be "application/json", "%s" provided.', $contentType));
@@ -70,6 +72,7 @@ class JsonParamConverter implements ParamConverterInterface {
 
             $request->attributes->set($name, $object);
         } catch (SerializerException $e) {
+            dump($e);
             throw new BadRequestHttpException('Request body does not contain valid JSON.');
         }
 
@@ -82,8 +85,10 @@ class JsonParamConverter implements ParamConverterInterface {
     public function supports(ParamConverter $configuration) {
         $class = $configuration->getClass();
 
-        if(substr($class, 0, strlen($this->prefix)) === $this->prefix) {
-            return true;
+        foreach($this->prefixes as $prefix) {
+            if (substr($class, 0, strlen($prefix)) === $prefix) {
+                return true;
+            }
         }
 
         return false;

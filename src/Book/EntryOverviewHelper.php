@@ -11,13 +11,17 @@ use App\Entity\Lesson as LessonEntity;
 use App\Entity\Tuition;
 use App\Grouping\Grouper;
 use App\Grouping\LessonDayStrategy;
+use App\Repository\AppointmentCategoryRepositoryInterface;
+use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\BookCommentRepositoryInterface;
+use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\LessonRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
+use App\Settings\TimetableSettings;
 use App\Sorting\LessonDayGroupStrategy;
 use App\Sorting\LessonStrategy;
 use App\Sorting\Sorter;
@@ -31,6 +35,11 @@ class EntryOverviewHelper {
     private $commentRepository;
     private $attendanceRepository;
 
+    private $timetableSettings;
+    private $appointmentCategoryRepository;
+    private $appointmentRepository;
+    private $freeTimespanRepository;
+
     private $lessonCreator;
     private $sectionResolver;
     private $grouper;
@@ -39,7 +48,8 @@ class EntryOverviewHelper {
     public function __construct(LessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository,
                                 LessonEntryRepositoryInterface $entryRepository, BookCommentRepositoryInterface $commentRepository,
                                 LessonAttendanceRepositoryInterface $attendanceRepository, LessonCreator $lessonCreator, SectionResolverInterface $sectionResolver,
-                                Grouper $grouper, Sorter $sorter) {
+                                TimetableSettings $timetableSettings, AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, AppointmentRepositoryInterface $appointmentRepository,
+                                FreeTimespanRepositoryInterface $freeTimespanRepository, Grouper $grouper, Sorter $sorter) {
         $this->lessonRepository = $lessonRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->entryRepository = $entryRepository;
@@ -47,6 +57,10 @@ class EntryOverviewHelper {
         $this->lessonCreator = $lessonCreator;
         $this->sectionResolver = $sectionResolver;
         $this->attendanceRepository = $attendanceRepository;
+        $this->timetableSettings = $timetableSettings;
+        $this->appointmentCategoryRepository = $appointmentCategoryRepository;
+        $this->appointmentRepository = $appointmentRepository;
+        $this->freeTimespanRepository = $freeTimespanRepository;
         $this->grouper = $grouper;
         $this->sorter = $sorter;
     }
@@ -138,7 +152,9 @@ class EntryOverviewHelper {
         $this->sorter->sort($groups, LessonDayGroupStrategy::class);
         $this->sorter->sortGroupItems($groups, LessonStrategy::class);
 
-        return new EntryOverview($start, $end, $groups, $comments);
+        $freeTimespans = $this->computeFreeTimespans($start, $end);
+
+        return new EntryOverview($start, $end, $groups, $comments, $freeTimespans);
     }
 
     public function computeOverviewForTeacher(Teacher $teacher, DateTime $start, DateTime $end): EntryOverview {
@@ -173,5 +189,43 @@ class EntryOverviewHelper {
         }
 
         return $this->computeOverview($tuitions, $entries, $comments, $start, $end);
+    }
+
+    /**
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return FreeTimespan[]
+     */
+    private function computeFreeTimespans(DateTime $start, DateTime $end): array {
+        $result = [ ];
+
+        $categories = array_map(function(int $id) {
+            return $this->appointmentCategoryRepository->findOneById($id);
+        }, $this->timetableSettings->getCategoryIds());
+
+        if(count($categories) > 0) {
+            $appointments = $this->appointmentRepository->findAllStartEnd($start, $end, $categories);
+
+            foreach($appointments as $appointment) {
+                $current = clone $appointment->getStart();
+                while($current < $appointment->getEnd()) {
+                    $result[] = new FreeTimespan(clone $current, 1, $this->timetableSettings->getMaxLessons(), $appointment->getTitle());
+                    $current = $current->modify('+1 day');
+                }
+            }
+        }
+
+        $current = clone $start;
+        while($current <= $end) {
+            $freeTimespans = $this->freeTimespanRepository->findAllByDate($current);
+
+            foreach($freeTimespans as $timespan) {
+                $result[] = new FreeTimespan(clone $timespan->getDate(), $timespan->getStart(), $timespan->getEnd(), 'Vertretungsplan');
+            }
+
+            $current = $current->modify('+1 day');
+        }
+
+        return $result;
     }
 }

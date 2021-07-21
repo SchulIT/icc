@@ -2,7 +2,7 @@
 
 namespace App\Sorting;
 
-use App\Grouping\LessonAttendanceGroup;
+use App\Grouping\LessonAttendanceCommentsGroup;
 
 class LessonAttendanceGroupStrategy implements SortingStrategyInterface {
 
@@ -13,8 +13,8 @@ class LessonAttendanceGroupStrategy implements SortingStrategyInterface {
     }
 
     /**
-     * @param LessonAttendanceGroup $objectA
-     * @param LessonAttendanceGroup $objectB
+     * @param LessonAttendanceCommentsGroup $objectA
+     * @param LessonAttendanceCommentsGroup $objectB
      * @return int
      */
     public function compare($objectA, $objectB): int {

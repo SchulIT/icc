@@ -102,7 +102,9 @@
                     {% for day in overview.days %}
                         <div class="card">
                             <div class="card-header">
+                                <i class="fas fa-calendar-alt"></i>
                                 {{ day.date|format_date }}
+                                <span class="text-muted">{{ day.date.format('N')|weekday }}</span>
                             </div>
 
                             <div class="list-group list-group-flush">

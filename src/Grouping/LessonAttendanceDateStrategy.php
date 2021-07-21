@@ -27,9 +27,9 @@ class LessonAttendanceDateStrategy implements GroupingStrategyInterface {
 
     /**
      * @param DateTime $key
-     * @return LessonAttendanceGroup
+     * @return LessonAttendanceCommentsGroup
      */
     public function createGroup($key, array $options = [ ]): GroupInterface {
-        return new LessonAttendanceGroup($key);
+        return new LessonAttendanceCommentsGroup($key);
     }
 }

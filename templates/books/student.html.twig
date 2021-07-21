@@ -60,7 +60,51 @@
                 {% for group in groups %}
                     <div class="card">
                         <div class="card-header">
-                            <i class="fas fa-calendar"></i> {{ group.date|format_date }}
+                            <i class="fas fa-calendar-alt"></i>
+                            {{ group.date|format_date }}
+                            <span class="text-muted">{{ group.date.format('N')|weekday }}</span>
+                        </div>
+
+                        <div class="list-group list-group-flush">
+                        {% for comment in group.comments %}
+
+                            <div class="list-group-item d-flex align-items-center">
+                                <div class="book-lesson m-0 p-0">
+                                    <i class="far fa-comment-alt"></i>
+                                </div>
+
+                                <div class="flex-fill">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <div>
+                                            <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
+                                        </div>
+
+                                        {% for student in comment.students %}
+                                            <div class="ml-2">
+                                                <i class="fas fa-user-graduate"></i> {{ student|student }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div>
+                                        {{ comment.text }}
+                                    </div>
+                                </div>
+
+                                {% if is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                                    <div class="ml-2">
+                                        <a href="{{ path('edit_book_comment', { uuid: comment.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.comment.edit.label'|trans }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                    <div class="ml-2">
+                                        <a href="{{ path('remove_book_student', { uuid: comment.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'book.comment.remove.label'|trans }}">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
                         </div>
 
                         <div class="table-responsive">
@@ -85,6 +129,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+
                                 {% for lesson_attendance in group.attendances %}
                                     {% set attendance = lesson_attendance.attendance %}
                                     <tr class="{% if not lesson_attendance.isExcused %}table-danger{% endif %}">

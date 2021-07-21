@@ -17,7 +17,9 @@ use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Entity\Lesson as LessonEntity;
+use App\Grouping\GenericDateStrategy;
 use App\Grouping\Grouper;
+use App\Grouping\LessonAttendanceCommentsGroup;
 use App\Grouping\LessonAttendanceDateStrategy;
 use App\Grouping\LessonDayStrategy;
 use App\Repository\LessonRepositoryInterface;
@@ -380,8 +382,11 @@ class BookController extends AbstractController {
         $groups = $grouper->group(
             array_merge(
                 $info->getAbsentLessonAttendances(),
-                $info->getLateLessonAttendances()
-            ), LessonAttendanceDateStrategy::class);
+                $info->getLateLessonAttendances(),
+                $info->getComments()
+            ), GenericDateStrategy::class, [
+                'group_class' => LessonAttendanceCommentsGroup::class
+        ]);
 
         $sorter->sort($groups, LessonAttendanceGroupStrategy::class, SortDirection::Descending());
         $sorter->sortGroupItems($groups, LessonAttendanceStrategy::class);

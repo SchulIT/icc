@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Book\EntryOverviewHelper;
+use App\Book\Export\BookExporter;
 use App\Book\Lesson;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\StudentInfo;
@@ -43,6 +44,8 @@ use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -399,4 +402,55 @@ class BookController extends AbstractController {
         ]);
     }
 
+    private function createResponse(string $content, string $contentType, string $filename): Response {
+        $response = new Response($content);
+        $response->headers->set('Content-Type', $contentType . '; charset=UTF-8');
+        $response->headers->set('Content-Disposition', $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, transliterator_transliterate('Latin-ASCII', $filename)));
+
+        return $response;
+    }
+
+    /**
+     * @Route("/{section}/t/{tuition}/export/json", name="book_export_tuition_json")
+     * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
+     * @ParamConverter("tuition", class="App\Entity\Tuition", options={"mapping": {"tuition": "uuid"}})
+     */
+    public function exportTutionJson(Tuition $tuition, Section $section, BookExporter $exporter) {
+        $filename = sprintf('%s-%d-%d.json', $tuition->getName(), $section->getYear(), $section->getNumber());
+        $json = $exporter->exportTuitionJson($tuition, $section);
+        return $this->createResponse($json, 'application/json', $filename);
+    }
+
+    /**
+     * @Route("/{section}/t/{tuition}/export/xml", name="book_export_tuition_xml")
+     * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
+     * @ParamConverter("tuition", class="App\Entity\Tuition", options={"mapping": {"tuition": "uuid"}})
+     */
+    public function exportTuitionXml(Tuition $tuition, Section $section, BookExporter $exporter) {
+        $filename = sprintf('%s-%d-%d.xml', $tuition->getName(), $section->getYear(), $section->getNumber());
+        $xml = $exporter->exportTuitionXml($tuition, $section);
+        return $this->createResponse($xml, 'application/xml', $filename);
+    }
+
+    /**
+     * @Route("/{section}/g/{grade}/export/json", name="book_export_grade_json")
+     * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
+     * @ParamConverter("grade", class="App\Entity\Grade", options={"mapping": {"grade": "uuid"}})
+     */
+    public function exportGradeJson(Grade $grade, Section $section, BookExporter $exporter) {
+        $filename = sprintf('%s-%d-%d.json', $grade->getName(), $section->getYear(), $section->getNumber());
+        $json = $exporter->exportGradeJson($grade, $section);
+        return $this->createResponse($json, 'application/json', $filename);
+    }
+
+    /**
+     * @Route("/{section}/g/{grade}/export/xml", name="book_export_grade_xml")
+     * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
+     * @ParamConverter("grade", class="App\Entity\Grade", options={"mapping": {"grade": "uuid"}})
+     */
+    public function exportGradeXml(Grade $grade, Section $section, BookExporter $exporter) {
+        $filename = sprintf('%s-%d-%d.xml', $grade->getName(), $section->getYear(), $section->getNumber());
+        $xml = $exporter->exportGradeXml($grade, $section);
+        return $this->createResponse($xml, 'application/xml', $filename);
+    }
 }

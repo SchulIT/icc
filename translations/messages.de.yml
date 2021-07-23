@@ -1413,6 +1413,15 @@ book:
         label: Unentschuldigte Fehlstunden
         status: Für die folgenden Lernenden sind noch unentschuldigte Fehlstunden offen.
 
+    export:
+        label: Exportieren
+        json:
+            label: Exportieren (JSON)
+        xml:
+            label: Exportieren (XML)
+        pdf:
+            label: Exportieren (PDF)
+
     excuse_note:
         label: Entschuldigungen
         add:

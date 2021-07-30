@@ -7,6 +7,7 @@ use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Validator\PeriodNotOverlaps;
 use App\Validator\PeriodNotOverlapsValidator;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class PeriodNotOverlapsValidatorTest extends ConstraintValidatorTestCase {
@@ -74,18 +75,14 @@ class PeriodNotOverlapsValidatorTest extends ConstraintValidatorTestCase {
         $assertions->assertRaised();
     }
 
-    /**
-     * @expectedException Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testInvalidConstraint() {
+        $this->expectException(UnexpectedTypeException::class);
         $constraint = new NotBlank();
         $this->validator->validate(new TimetablePeriod(), $constraint);
     }
 
-    /**
-     * @expectedException Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testInvalidValue() {
+        $this->expectException(UnexpectedTypeException::class);
         $constraint = new PeriodNotOverlaps();
         $this->validator->validate(new \stdClass(), $constraint);
     }

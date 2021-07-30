@@ -62,13 +62,6 @@ class StudentData {
     private $birthday;
 
     /**
-     * @Serializer\Type("string")
-     * @NullOrNotBlank()
-     * @var string|null
-     */
-    private $grade;
-
-    /**
      * @Serializer\Type("array<string>")
      * @var string[]
      */
@@ -167,22 +160,6 @@ class StudentData {
      */
     public function setStatus(?string $status): StudentData {
         $this->status = $status;
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getGrade(): ?string {
-        return $this->grade;
-    }
-
-    /**
-     * @param string|null $grade
-     * @return StudentData
-     */
-    public function setGrade(?string $grade): StudentData {
-        $this->grade = $grade;
         return $this;
     }
 

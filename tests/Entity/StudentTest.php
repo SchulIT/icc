@@ -3,9 +3,7 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Gender;
-use App\Entity\Grade;
 use App\Entity\Student;
-use App\Entity\StudentStatus;
 use PHPUnit\Framework\TestCase;
 
 class StudentTest extends TestCase {
@@ -27,10 +25,6 @@ class StudentTest extends TestCase {
         $this->assertEquals('active', $student->getStatus());
         $student->setStatus(null);
         $this->assertNull($student->getStatus());
-
-        $grade = new Grade();
-        $student->setGrade($grade);
-        $this->assertEquals($grade, $student->getGrade());
 
         $gender = Gender::X();
         $student->setGender($gender);

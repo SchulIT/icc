@@ -157,7 +157,7 @@ class SickNoteController extends AbstractController {
             }
 
             $sorter->sort($groups, SickNoteGradeGroupStrategy::class);
-        } else {
+        } else if($sectionFilterView->getCurrentSection() !== null) {
             $sickNotes = $sickNoteRepository->findAll($selectedDate);
             $groups = $grouper->group($sickNotes, SickNoteGradeStrategy::class, [ 'section' => $sectionFilterView->getCurrentSection() ]);
             $sorter->sort($groups, SickNoteGradeGroupStrategy::class);

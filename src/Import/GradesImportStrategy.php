@@ -9,29 +9,21 @@ use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\GradeData;
 use App\Request\Data\GradesData;
 use App\Utils\ArrayUtils;
+use Doctrine\ORM\ORMException;
 
 class GradesImportStrategy implements ImportStrategyInterface {
 
     private $repository;
-    private $sectionRepository;
 
-    public function __construct(GradeRepositoryInterface $repository, SectionRepositoryInterface $sectionRepository) {
+    public function __construct(GradeRepositoryInterface $repository) {
         $this->repository = $repository;
-        $this->sectionRepository = $sectionRepository;
     }
 
     /**
      * @param GradesData $requestData
      * @return array<string, Grade>
-     * @throws SectionNotFoundException
      */
     public function getExistingEntities($requestData): array {
-        /*$section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
-
-        if($section === null) {
-            throw new SectionNotFoundException($requestData->getSection(), $requestData->getYear());
-        }*/
-
         return ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(),
             function (Grade $grade) {
@@ -92,9 +84,13 @@ class GradesImportStrategy implements ImportStrategyInterface {
      * @return bool
      */
     public function remove($entity, $requestData): bool {
-        //$this->repository->remove($entity);
-        // never remove grades
-        return false;
+        try {
+            $this->repository->remove($entity);
+
+            return true;
+        } catch (ORMException $e) {
+            return false;
+        }
     }
 
     /**

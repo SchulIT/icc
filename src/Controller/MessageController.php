@@ -193,7 +193,7 @@ class MessageController extends AbstractController {
             'uploads' => $uploads,
             'missing' => $missing,
             'form' => $form->createView(),
-            'voteForm' => $voteForm !== null ? $voteForm->createView() : null,
+            'voteForm' => $voteForm->createView(),
             'vote' => $vote,
             'allow_vote' => $allowVote
         ]);

@@ -7,6 +7,7 @@ use App\Import\GradesImportStrategy;
 use App\Import\Importer;
 use App\Repository\GradeRepository;
 use App\Repository\ImportDateTypeRepository;
+use App\Repository\SectionRepository;
 use App\Request\Data\GradeData;
 use App\Request\Data\GradesData;
 use Psr\Log\NullLogger;
@@ -20,6 +21,7 @@ class GradeImportStrategyTest extends WebTestCase {
         $em = $kernel->getContainer()->get('doctrine')
             ->getManager();
         $repository = new GradeRepository($em);
+        $sectionRepository = new SectionRepository($em);
 
         $em->persist(
             (new Grade())
@@ -42,7 +44,7 @@ class GradeImportStrategyTest extends WebTestCase {
                 ->setName('Q1')
         ];
 
-        $strategy = new GradesImportStrategy($repository);
+        $strategy = new GradesImportStrategy($repository, $sectionRepository);
         $dateTimeRepository = new ImportDateTypeRepository($kernel->getContainer()->get('doctrine')->getManager());
         $importer = new Importer($kernel->getContainer()->get('validator'), $dateTimeRepository, new NullLogger());
         $result = $importer->import((new GradesData())->setGrades($gradeData), $strategy);

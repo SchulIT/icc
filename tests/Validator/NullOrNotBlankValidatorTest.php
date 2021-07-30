@@ -5,6 +5,7 @@ namespace App\Tests\Validator;
 use App\Validator\NullOrNotBlank;
 use App\Validator\NullOrNotBlankValidator;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class NullOrNotBlankValidatorTest extends ConstraintValidatorTestCase {
@@ -46,10 +47,8 @@ class NullOrNotBlankValidatorTest extends ConstraintValidatorTestCase {
             ->assertRaised();
     }
 
-    /**
-     * @expectedException Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testInvalidConstraint() {
+        $this->expectException(UnexpectedTypeException::class);
         $constraint = new NotBlank();
         $this->validator->validate(null, $constraint);
     }

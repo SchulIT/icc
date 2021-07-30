@@ -3,6 +3,7 @@
 namespace App\Tests\View\Filter;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
@@ -17,6 +18,16 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 class GradeFilterTest extends TestCase {
+
+    /** @var Section */
+    private $section;
+
+    public function setUp(): void {
+        $mock = $this->createMock(Section::class);
+        $mock->method('getId')->willReturn(1);
+
+        $this->section = $mock;
+    }
 
     private function createGrade(UuidInterface $uuid, string $name): Grade {
         $grade = $this->createMock(Grade::class);
@@ -66,6 +77,7 @@ class GradeFilterTest extends TestCase {
 
         $student
             ->method('getGrade')
+            ->with($this->section)
             ->willReturn($this->createGrade(Uuid::fromString('cbd7de3d-fd46-457e-93d3-dc94acd82ae4'), 'EF'));
 
         $user
@@ -81,14 +93,14 @@ class GradeFilterTest extends TestCase {
 
     public function testDefaultFilterTeacher() {
         $filter = new GradeFilter($this->createSorter(), $this->createRepository());
-        $view = $filter->handle(null, $this->createTeacher());
+        $view = $filter->handle(null, null, $this->createTeacher());
 
         $this->assertNull($view->getCurrentGrade());
     }
 
     public function testValidQueryTeacher() {
         $filter = new GradeFilter($this->createSorter(), $this->createRepository());
-        $view = $filter->handle('cbd7de3d-fd46-457e-93d3-dc94acd82ae4', $this->createTeacher());
+        $view = $filter->handle('cbd7de3d-fd46-457e-93d3-dc94acd82ae4', null, $this->createTeacher());
 
         $this->assertNotNull($view->getCurrentGrade());
         $this->assertEquals('cbd7de3d-fd46-457e-93d3-dc94acd82ae4', $view->getCurrentGrade()->getUuid()->toString());
@@ -96,14 +108,14 @@ class GradeFilterTest extends TestCase {
 
     public function testInvalidQueryTeacher() {
         $filter = new GradeFilter($this->createSorter(), $this->createRepository());
-        $view = $filter->handle('a4cef2e4-4a9a-42bb-ac99-55c5c5332ada', $this->createTeacher());
+        $view = $filter->handle('a4cef2e4-4a9a-42bb-ac99-55c5c5332ada', null, $this->createTeacher());
 
         $this->assertNull($view->getCurrentGrade());
     }
 
     public function testDefaultFilterStudent() {
         $filter = new GradeFilter($this->createSorter(), $this->createRepository());
-        $view = $filter->handle(null, $this->createStudentEF(), true);
+        $view = $filter->handle(null, $this->section, $this->createStudentEF(), true);
 
         $this->assertNotNull($view->getCurrentGrade());
         $this->assertEquals('cbd7de3d-fd46-457e-93d3-dc94acd82ae4', $view->getCurrentGrade()->getUuid()->toString());
@@ -111,7 +123,7 @@ class GradeFilterTest extends TestCase {
 
     public function testInvalidFilterStudent() {
         $filter = new GradeFilter($this->createSorter(), $this->createRepository());
-        $view = $filter->handle('cbd7de3d-fd46-457e-93d3-dc94acd82ae4', $this->createStudentEF());
+        $view = $filter->handle('cbd7de3d-fd46-457e-93d3-dc94acd82ae4', $this->section, $this->createStudentEF());
 
         $this->assertNotNull($view->getCurrentGrade());
         $this->assertEquals('cbd7de3d-fd46-457e-93d3-dc94acd82ae4', $view->getCurrentGrade()->getUuid()->toString());

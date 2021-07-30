@@ -78,13 +78,13 @@ class Student implements JsonSerializable {
     private $birthday;
 
     /**
-     * @ORM\OneToMany(targetEntity="GradeMembership", mappedBy="student")
+     * @ORM\OneToMany(targetEntity="GradeMembership", mappedBy="student", cascade={"persist"}, orphanRemoval=true)
      * @var Collection<GradeMembership>
      */
     private $gradeMemberships;
 
     /**
-     * @ORM\OneToMany(targetEntity="StudyGroupMembership", mappedBy="student")
+     * @ORM\OneToMany(targetEntity="StudyGroupMembership", mappedBy="student", cascade={"persist"}, orphanRemoval=true)
      * @var Collection<StudyGroupMembership>
      */
     private $studyGroupMemberships;
@@ -100,7 +100,7 @@ class Student implements JsonSerializable {
     private $approvedPrivacyCategories;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Section")
+     * @ORM\ManyToMany(targetEntity="Section", cascade={"persist"}, orphanRemoval=true)
      * @ORM\JoinTable(name="student_sections",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
@@ -116,6 +116,7 @@ class Student implements JsonSerializable {
         $this->studyGroupMemberships = new ArrayCollection();
         $this->approvedPrivacyCategories = new ArrayCollection();
         $this->sections = new ArrayCollection();
+        $this->gradeMemberships = new ArrayCollection();
     }
 
     /**

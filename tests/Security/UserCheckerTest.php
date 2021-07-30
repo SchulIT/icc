@@ -15,10 +15,7 @@ use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 class UserCheckerTest extends TestCase {
 
     private function getEvent($token) {
-        $mock = $this->createMock(AuthenticationSuccessEvent::class);
-        $mock->method('getAuthenticationToken')->willReturn($token);
-
-        return $mock;
+        return new AuthenticationSuccessEvent($token);
     }
 
     private function getToken(?User $user) {

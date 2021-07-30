@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Import;
 
 use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
+use App\Entity\Section;
 use DateTime;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -41,16 +42,24 @@ JSON;
             ->setColor('#000000')
             ->setExternalId('category-id');
 
+        $section = (new Section())
+            ->setDisplayName('Testabschnitt')
+            ->setYear(2019)
+            ->setNumber(2)
+            ->setStart(new DateTime('2020-02-01'))
+            ->setEnd(new DateTime('2020-07-31'));
+        $doctrine->persist($section);
         $doctrine->persist($category);
         $doctrine->flush();
 
         $client->request('POST', '/api/import/appointments', [], [], [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
-            'HTTP_X_TOKEN' => getenv('IMPORT_PSK')
+            'HTTP_X_TOKEN' => 'TestToken'
         ], static::SimpleAppointmentJson);
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
 
 
         /** @var Appointment|null $appointment */

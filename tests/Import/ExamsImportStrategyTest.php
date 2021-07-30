@@ -5,6 +5,7 @@ namespace App\Tests\Import;
 use App\Entity\Exam;
 use App\Entity\ExamSupervision;
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupType;
@@ -16,6 +17,7 @@ use App\Import\Importer;
 use App\Repository\ExamRepository;
 use App\Repository\ImportDateTypeRepository;
 use App\Repository\RoomRepositoryInterface;
+use App\Repository\SectionRepository;
 use App\Repository\SettingRepository;
 use App\Repository\StudentRepository;
 use App\Repository\TeacherRepository;
@@ -23,6 +25,7 @@ use App\Repository\TuitionRepository;
 use App\Request\Data\ExamData;
 use App\Request\Data\ExamsData;
 use App\Request\Data\ExamTuition;
+use App\Section\SectionResolver;
 use App\Settings\GeneralSettings;
 use App\Settings\ImportSettings;
 use App\Settings\SettingsManager;
@@ -47,11 +50,21 @@ class ExamsImportStrategyTest extends WebTestCase {
             ->getContainer()
             ->get('validator');
 
+        $section = (new Section())
+            ->setYear(2020)
+            ->setNumber(1)
+            ->setDisplayName('Testabschnitt')
+            ->setStart(new DateTime('2020-08-16'))
+            ->setEnd(new DateTime('2021-01-31'));
+
+        $this->em->persist($section);
+
         $teacher1 = (new Teacher())
             ->setExternalId('TEST1')
             ->setAcronym('TEST1')
             ->setFirstname('Test')
             ->setLastname('Lehrer');
+        $teacher1->addSection($section);
         $this->em->persist($teacher1);
 
         $this->em->persist(
@@ -71,7 +84,6 @@ class ExamsImportStrategyTest extends WebTestCase {
                 ->setBirthday((new DateTime())->modify('-10 year'))
         );
 
-
         $grade = (new Grade())
             ->setName('EF')
             ->setExternalId('EF');
@@ -80,6 +92,7 @@ class ExamsImportStrategyTest extends WebTestCase {
         $studyGroup = (new StudyGroup())
             ->setExternalId('TEST')
             ->setName('Testgruppe')
+            ->setSection($section)
             ->setType(StudyGroupType::Course());
         $studyGroup->addGrade($grade);
         $this->em->persist($studyGroup);
@@ -94,6 +107,7 @@ class ExamsImportStrategyTest extends WebTestCase {
             ->setExternalId('TEST')
             ->setName('Testkurs')
             ->setDisplayName('Testkurs')
+            ->setSection($section)
             ->setStudyGroup($studyGroup)
             ->setSubject($subject)
             ->setTeacher($teacher1);
@@ -119,6 +133,7 @@ class ExamsImportStrategyTest extends WebTestCase {
 
     private function getStrategy(): ExamsImportStrategy {
         $settingsManager = new SettingsManager(new SettingRepository($this->em));
+        $sectionResolver = new SectionResolver(new GeneralSettings($settingsManager), new SectionRepository($this->em));
 
         return new ExamsImportStrategy(
             new ExamRepository($this->em),
@@ -127,8 +142,8 @@ class ExamsImportStrategyTest extends WebTestCase {
             new TeacherRepository($this->em),
             $this->getMockBuilder(EventDispatcherInterface::class)->getMock(),
             $this->getMockBuilder(RoomRepositoryInterface::class)->getMock(),
-            new GeneralSettings($settingsManager),
-            new ImportSettings($settingsManager)
+            new ImportSettings($settingsManager),
+            $sectionResolver
         );
     }
 

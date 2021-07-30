@@ -4,8 +4,9 @@ namespace App\Tests\Entity;
 
 use App\Entity\Gender;
 use App\Entity\Grade;
+use App\Entity\GradeMembership;
+use App\Entity\Section;
 use App\Entity\Student;
-use App\Entity\StudentStatus;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -29,16 +30,30 @@ class GradeTest extends WebTestCase {
         $grade = (new Grade())
             ->setName('grade');
 
+        $section = (new Section())
+            ->setYear(2020)
+            ->setNumber(1)
+            ->setDisplayName('Testabschnitt')
+            ->setStart(new DateTime('2020-08-16'))
+            ->setEnd(new DateTime('2021-01-31'));
+
         $student = (new Student())
             ->setUniqueIdentifier(md5(uniqid()))
             ->setGender(Gender::X())
-            ->setGrade($grade)
             ->setStatus('active')
             ->setBirthday((new DateTime())->modify('-10 year'))
             ->setLastname('lastname')
             ->setFirstname('firstname')
             ->setExternalId('external-id');
 
+        $student->addGradeMembership(
+            (new GradeMembership())
+                ->setGrade($grade)
+                ->setStudent($student)
+                ->setSection($section)
+        );
+
+        $em->persist($section);
         $em->persist($grade);
         $em->persist($student);
         $em->flush();

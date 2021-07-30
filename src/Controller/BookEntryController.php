@@ -97,7 +97,7 @@ class BookEntryController extends AbstractController {
                 );
             }
 
-            /** @var Student[] $absentStudent */
+            /** @var Student[] $absentStudents */
             $absentStudents = $form->get('absentStudents')->getData();
 
             /** @var LessonAttendance $attendance */

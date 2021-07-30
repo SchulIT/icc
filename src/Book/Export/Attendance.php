@@ -30,7 +30,7 @@ class Attendance {
     /**
      * @Serializer\Type("boolean")
      * @Serializer\SerializedName("is_excused")
-     * @var string
+     * @var bool
      */
     private $isExcused = false;
 
@@ -90,17 +90,17 @@ class Attendance {
     }
 
     /**
-     * @return string
+     * @return bool
      */
-    public function getIsExcused() {
+    public function isExcused(): bool {
         return $this->isExcused;
     }
 
     /**
-     * @param string $isExcused
+     * @param bool $isExcused
      * @return Attendance
      */
-    public function setIsExcused($isExcused) {
+    public function setIsExcused(bool $isExcused): Attendance {
         $this->isExcused = $isExcused;
         return $this;
     }

@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
@@ -19,7 +20,8 @@ class Lesson {
 
     /**
      * @ORM\Column(type="date")
-     * @var DateTime
+     * @Assert\NotNull()
+     * @var DateTime|null
      */
     private $date;
 
@@ -54,9 +56,9 @@ class Lesson {
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|null
      */
-    public function getDate(): DateTime {
+    public function getDate(): ?DateTime {
         return $this->date;
     }
 

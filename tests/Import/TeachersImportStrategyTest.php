@@ -3,16 +3,19 @@
 namespace App\Tests\Import;
 
 use App\Entity\Gender;
+use App\Entity\Section;
 use App\Entity\Teacher;
 use App\Entity\TeacherTag;
 use App\Import\Importer;
 use App\Import\TeachersImportStrategy;
 use App\Repository\ImportDateTypeRepository;
+use App\Repository\SectionRepository;
 use App\Repository\SubjectRepository;
 use App\Repository\TeacherRepository;
 use App\Repository\TeacherTagRepository;
 use App\Request\Data\TeacherData;
 use App\Request\Data\TeachersData;
+use DateTime;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -34,6 +37,14 @@ class TeachersImportStrategyTest extends WebTestCase {
             ->get('doctrine')
             ->getManager();
 
+        $section = (new Section())
+            ->setYear(2020)
+            ->setNumber(1)
+            ->setDisplayName('Testabschnitt')
+            ->setStart(new DateTime('2020-08-31'))
+            ->setEnd(new DateTime('2021-01-31'));
+        $this->em->persist($section);
+
         $tag1 = (new TeacherTag())
             ->setExternalId('tag1')
             ->setName('Tag 1')
@@ -48,14 +59,15 @@ class TeachersImportStrategyTest extends WebTestCase {
                 ->setColor('#111111')
         );
 
-        $this->em->persist(
-            (new Teacher())
-                ->setExternalId('AB')
-                ->setAcronym('AB')
-                ->setFirstname('Firstname')
-                ->setLastname('Lastname')
-                ->setGender(Gender::Female())
-        );
+        $teacher1 = (new Teacher())
+            ->setExternalId('AB')
+            ->setAcronym('AB')
+            ->setFirstname('Firstname')
+            ->setLastname('Lastname')
+            ->setGender(Gender::Female());
+        $teacher1->addSection($section);
+
+        $this->em->persist($teacher1);
         $teacher = (new Teacher())
             ->setExternalId('AC')
             ->setAcronym('AC')
@@ -63,6 +75,7 @@ class TeachersImportStrategyTest extends WebTestCase {
             ->setLastname('Lastname')
             ->setGender(Gender::Male());
         $teacher->addTag($tag1);
+        $teacher->addSection($section);
         $this->em->persist($teacher);
         $this->em->flush();
     }
@@ -89,9 +102,10 @@ class TeachersImportStrategyTest extends WebTestCase {
         $subjectRepository = new SubjectRepository($this->em);
         $tagRepository = new TeacherTagRepository($this->em);
         $dateTimeRepository = new ImportDateTypeRepository($this->em);
+        $sectionRepository = new SectionRepository($this->em);
         $importer = new Importer($this->validator, $dateTimeRepository, new NullLogger());
-        $strategy = new TeachersImportStrategy($repository, $subjectRepository, $tagRepository);
-        $result = $importer->import((new TeachersData())->setTeachers($teachersData), $strategy);
+        $strategy = new TeachersImportStrategy($repository, $subjectRepository, $tagRepository, $sectionRepository);
+        $result = $importer->import((new TeachersData())->setTeachers($teachersData)->setYear(2020)->setSection(1), $strategy);
 
         /** @var Teacher[] $addedTeachers */
         $addedTeachers = $result->getAdded();
@@ -126,9 +140,10 @@ class TeachersImportStrategyTest extends WebTestCase {
         $subjectRepository = new SubjectRepository($this->em);
         $tagRepository = new TeacherTagRepository($this->em);
         $dateTimeRepository = new ImportDateTypeRepository($this->em);
+        $sectionRepository = new SectionRepository($this->em);
         $importer = new Importer($this->validator, $dateTimeRepository, new NullLogger());
-        $strategy = new TeachersImportStrategy($repository, $subjectRepository, $tagRepository);
-        $result = $importer->import((new TeachersData())->setTeachers($teachersData), $strategy);
+        $strategy = new TeachersImportStrategy($repository, $subjectRepository, $tagRepository, $sectionRepository);
+        $result = $importer->import((new TeachersData())->setTeachers($teachersData)->setYear(2020)->setSection(1), $strategy);
 
         /** @var Teacher[] $updatedTeachers */
         $updatedTeachers = $result->getUpdated();

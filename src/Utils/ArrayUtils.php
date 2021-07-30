@@ -152,7 +152,7 @@ class ArrayUtils {
             static::iterableToArray($iterableA),
             static::iterableToArray($iterableB),
             function($objectA, $objectB) {
-                return $objectA === $objectB;
+                return $objectA === $objectB ? 0 : 1;
             }
         );
     }

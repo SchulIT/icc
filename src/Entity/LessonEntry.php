@@ -2,9 +2,7 @@
 
 namespace App\Entity;
 
-use App\Validator\NotInTheFuture;
 use App\Validator\UniqueLessonEntry;
-use DateTime;
 use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

@@ -4,6 +4,8 @@ namespace App\Tests\Functional\Controller;
 
 use App\Entity\Gender;
 use App\Entity\Grade;
+use App\Entity\GradeMembership;
+use App\Entity\Section;
 use App\Entity\Setting;
 use App\Entity\Student;
 use App\Entity\User;
@@ -30,12 +32,20 @@ class SickNoteControllerTest extends AbstractControllerTest {
 
     private $creatorUser;
 
-    public function setUp() {
+    public function setUp(): void {
         $this->client = static::createClient();
         $this->em = $this->client->getContainer()->get('doctrine')->getManager();
 
         /** @var Generator $faker */
         $faker = $this->client->getContainer()->get(Generator::class);
+
+        $section = (new Section())
+            ->setDisplayName('Testabschnitt')
+            ->setStart((new DateTime())->modify('-30 days'))
+            ->setEnd((new DateTime())->modify('+30 days'))
+            ->setYear(2021)
+            ->setNumber(1);
+        $this->em->persist($section);
 
         $grade = (new Grade())
             ->setName('EF')
@@ -50,8 +60,14 @@ class SickNoteControllerTest extends AbstractControllerTest {
             ->setExternalId('TEST1')
             ->setEmail($faker->email)
             ->setGender(Gender::X())
-            ->setGrade($grade)
             ->setBirthday(new DateTime('1990-01-01'));
+        $this->fullAgedStudent->addSection($section);
+        $this->fullAgedStudent->addGradeMembership(
+            (new GradeMembership())
+                ->setStudent($this->fullAgedStudent)
+                ->setGrade($grade)
+                ->setSection($section)
+        );
 
         $this->nonFullAgedStudent = (new Student())
             ->setUniqueIdentifier(md5(uniqid()))
@@ -60,8 +76,14 @@ class SickNoteControllerTest extends AbstractControllerTest {
             ->setExternalId('TEST2')
             ->setEmail($faker->email)
             ->setGender(Gender::X())
-            ->setGrade($grade)
             ->setBirthday((new DateTime())->modify('-10 year'));
+        $this->nonFullAgedStudent->addSection($section);
+        $this->nonFullAgedStudent->addGradeMembership(
+            (new GradeMembership())
+                ->setStudent($this->nonFullAgedStudent)
+                ->setGrade($grade)
+                ->setSection($section)
+        );
 
         $this->parent = (new User())
             ->setUserType(UserType::Parent())

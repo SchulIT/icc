@@ -9,7 +9,7 @@ class MessageWeekStrategy implements GroupingStrategyInterface {
     /**
      * @param Message $object
      * @param array $options
-     * @return WeekOfYear
+     * @return WeekOfYear|null
      */
     public function computeKey($object, array $options = []) {
         if($object->getExpireDate() === null) {

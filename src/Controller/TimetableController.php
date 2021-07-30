@@ -46,6 +46,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TimetableController extends AbstractControllerWithMessages {
 
+    use RequestTrait;
+
     private $timetableHelper;
     private $timetableSettings;
     private $grouper;
@@ -75,9 +77,9 @@ class TimetableController extends AbstractControllerWithMessages {
         $sectionFilterView = $sectionFilter->handle($request->query->get('section', null));
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
         $roomFilterView = $roomFilter->handle($request->query->get('room', null), $user);
-        $subjectFilterView = $subjectFilter->handle($request->query->get('subjects', [ ]), $user);
+        $subjectFilterView = $subjectFilter->handle($this->getArrayOrNull($request->query->get('subjects')), $user);
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
-        $teachersFilterView = $teachersFilter->handle($request->query->get('teachers', []), $sectionFilterView->getCurrentSection(), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
+        $teachersFilterView = $teachersFilter->handle($this->getArrayOrNull($request->query->get('teachers')), $sectionFilterView->getCurrentSection(), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
 
         $periods = $periodRepository->findAll();
         $periods = array_filter($periods, function(TimetablePeriod $period) use ($sectionFilterView) {

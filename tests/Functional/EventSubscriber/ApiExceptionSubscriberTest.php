@@ -27,7 +27,7 @@ JSON;
         $client->request('POST', '/api/import/appointments', [], [], [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
-            'HTTP_X_TOKEN' => getenv('IMPORT_PSK')
+            'HTTP_X_TOKEN' => 'TestToken'
         ], static::InvalidJson);
 
         $response = $client->getResponse();
@@ -47,7 +47,7 @@ JSON;
         $client->request('POST', '/api/import/appointments', [], [], [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
-            'HTTP_X_TOKEN' => getenv('IMPORT_PSK')
+            'HTTP_X_TOKEN' => 'TestToken'
         ], static::NonValidJson);
 
         $response = $client->getResponse();

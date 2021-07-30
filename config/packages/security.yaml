@@ -120,7 +120,7 @@ security:
 
         login:
             anonymous: ~
-            pattern: ^/saml/(login|discovery)$
+            pattern: ^/saml/(login|discovery|metadata.xml)$
 
         logout:
             anonymous: ~

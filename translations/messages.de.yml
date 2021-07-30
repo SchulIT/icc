@@ -49,6 +49,7 @@ label:
         reason: Grund auswählen
         tag: Tag auswählen
         section: Abschnitt auswählen
+        tuition: Unterricht auswählen
     search:
         student: Lernenden suchen
     scope: Bereich
@@ -135,6 +136,7 @@ label:
     files: "{0} %count% Dateien|{1} %count% Datei|]1,Inf[ %count% Dateien"
     priority: Priorität
     description: Beschreibung
+    tuition: Unterricht
     tuitions: Unterricht
     nobody: Niemand
     capacity: Kapazität
@@ -188,6 +190,12 @@ label:
     active: aktiviert
     year: Jahr
     number: Nummer
+    topic: Thema
+    comment: Kommentar
+    absent_students: Abwesend
+    replacement_teacher: Vertretungslehrkraft
+    replacement_subject: Vertretungsfach
+    excused_by: Entschuldigt durch
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -214,6 +222,7 @@ actions:
     collapse_all: Alles einklappen
     show_all: Alles ausklappen
     play: abspielen
+    apply: übernehmen
 
 clipboard:
     copy: In die Zwischenablage kopieren
@@ -1308,3 +1317,120 @@ audit:
 
 choice:
     choose: bitte auswählen
+
+book:
+    label: Unterrichtsbücher
+
+    entry:
+        label: Eintrag
+        missing: Eintrag fehlt
+        add:
+            label: Neuer Eintrag
+            single: Eintrag für Einzelstunde erstellen
+            double: Eintrag für Doppelstunde erstellen
+            success: Eintrag erfolgreich erstellt
+        edit:
+            label: Eintrag bearbeiten
+            success: Eintrag erfolgreich aktualisiert
+        remove:
+            label: Eintrag löschen
+            confirm: Soll der Eintrag (inkl. Anwesenheiten) wirklich gelöscht werden?
+            success: Eintrag erfolgreich gelöscht
+        cancel:
+            label: Stunde entfällt
+            single: Einzelstunde entfällt
+            double: Doppelstunde entfällt
+            reason: Grund des Entfalls
+            all: Stunden als Entfall markieren
+        cancel_reason: "Entfall: %reason%"
+        add_student:
+            label: Lernenden hinzufügen
+            success: Lernenden erfolgreich hinzugefügt
+        propose_cancel:
+            label: Entfall-Vorschlag
+            message: 'Die %lessons% Stunde fällt aus: %reason%'
+            button: Stunden als Entfall markieren
+
+
+    comment:
+        label: Kommentar
+        add:
+            label: Neuer Kommentar
+            success: Kommentar erfolgreich angelegt
+        edit:
+            label: Kommentar bearbeiten
+            success: Kommentar erfolgreich aktualisiert
+        remove:
+            label: Kommentar löschen
+            confirm: "Soll der Kommentar vom %date% wirklich gelöscht werden?"
+            success: Kommentar erfolgreich gelöscht
+
+    subject:
+        timetable: Fach/Kurs laut Stundenplan
+        entry: Fach/Kurs laut Eintrag
+        substitution: Fach/Kurs laut Vertretung
+
+    students:
+        label: Lernendenübersicht
+        comments: Kommentare
+        late: Verspätungen
+        absent: Absenzen
+        not_excused: unentschuldigt
+        excused: entschuldigt
+        not_set: nicht festgelegt (unentschuldigt)
+        excuse_note_exists: Für diese Stunde liegt eine Entschuldigung vor.
+
+    attendance:
+        label: Anwesenheit
+        not_possible: Die Anwesenheit kann bei ausgefallen Stunden nicht dokumentiert werden.
+        all: alle anwesend
+        selected: "%number% ausgewählt"
+        absence_lesson: "{0} %count% Stunden|{1} %count% Stunde|]1,Inf[ %count% Stunden"
+        late_minutes: "%count% min"
+        absent_lessons: Anzahl Fehlstunden
+        late: Verspätung
+        type:
+            present: anwesend
+            late: verspätet
+            absent: abwesend
+        overview:
+            present: "%number% anwesend"
+            late: "%number% verspätet"
+            absent: "%number% abwesend"
+        possibly_absent: Absenz-Vorschläge
+        excuse_status: Entschuldigung
+        absence_reason:
+            sick: krank gemeldet
+            appointment: Veranstaltung
+            exam: Klausur
+            absent_before: Absenz in vorheriger Stunde
+            excuse: Entschuldigung liegt vor
+
+    missing:
+        label: Fehlende Einträge
+
+    not_excused:
+        label: Unentschuldigte Fehlstunden
+        status: Für die folgenden Lernenden sind noch unentschuldigte Fehlstunden offen.
+
+    export:
+        label: Exportieren
+        json:
+            label: Exportieren (JSON)
+        xml:
+            label: Exportieren (XML)
+        pdf:
+            label: Exportieren (PDF)
+
+    excuse_note:
+        label: Entschuldigungen
+        add:
+            label: Neue Entschuldigung
+            success: Entschuldigung erfolgreich angelegt
+        edit:
+            label: Entschuldigung bearbeiten
+            success: Entschuldigung erfolgreich aktualisiert
+        remove:
+            label: Entschuldigung löschen
+            success: Entschuldigung erfolgreich gelöscht
+            confirm: 'Soll die Entschuldigung für %lastname%, %firstname (%date%, %start%.-%end%. Stunde) wirklich gelöscht werden?'

@@ -8,7 +8,7 @@ use App\Entity\Grade;
 use App\Entity\GradeTeacher;
 use App\Entity\User;
 use App\Repository\SickNoteRepositoryInterface;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Settings\SickNoteSettings;
 use App\Timetable\TimetableTimeHelper;
 use SchulIT\CommonBundle\Helper\DateHelper;
@@ -35,7 +35,7 @@ class SickNoteSender {
     private $sectionResolver;
 
     public function __construct(string $sender, string $appName, StudentStringConverter $converter, Environment $twig, Swift_Mailer $mailer, TranslatorInterface $translator,
-                                DateHelper $dateHelper, UserStringConverter $userConverter, SickNoteSettings $settings, SickNoteRepositoryInterface $repository, SectionResolver $sectionResolver) {
+                                DateHelper $dateHelper, UserStringConverter $userConverter, SickNoteSettings $settings, SickNoteRepositoryInterface $repository, SectionResolverInterface $sectionResolver) {
         $this->sender = $sender;
         $this->appName = $appName;
         $this->converter = $converter;

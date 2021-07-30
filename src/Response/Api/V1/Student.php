@@ -3,6 +3,7 @@
 namespace App\Response\Api\V1;
 
 use App\Entity\Gender;
+use App\Entity\Section;
 use JMS\Serializer\Annotation as Serializer;
 use App\Entity\Student as StudentEntity;
 
@@ -64,7 +65,7 @@ class Student {
      * @Serializer\SerializedName("grade")
      * @Serializer\Type("App\Response\Api\V1\Grade")
      *
-     * @var Grade
+     * @var Grade|null
      */
     private $grade;
 
@@ -172,22 +173,22 @@ class Student {
     }
 
     /**
-     * @return Grade
+     * @return Grade|null
      */
-    public function getGrade(): Grade {
+    public function getGrade(): ?Grade {
         return $this->grade;
     }
 
     /**
-     * @param Grade $grade
+     * @param Grade|null $grade
      * @return Student
      */
-    public function setGrade(Grade $grade): Student {
+    public function setGrade(?Grade $grade): Student {
         $this->grade = $grade;
         return $this;
     }
 
-    public static function fromEntity(?StudentEntity $studentEntity): ?self {
+    public static function fromEntity(?StudentEntity $studentEntity, ?Section $section = null): ?self {
         if($studentEntity === null) {
             return null;
         }
@@ -196,7 +197,7 @@ class Student {
             ->setFirstname($studentEntity->getFirstname())
             ->setLastname($studentEntity->getLastname())
             ->setEmail($studentEntity->getEmail())
-            ->setGrade(Grade::fromEntity($studentEntity->getGrade()))
+            ->setGrade(Grade::fromEntity($studentEntity->getGrade($section)))
             ->setGender($studentEntity->getGender())
             ->setStatus($studentEntity->getStatus())
             ->setUuid($studentEntity->getUuid());

@@ -1,0 +1,136 @@
+{% extends "main.html.twig" %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/editor.js') }}"></script>
+    <script src="{{ asset('build/entry.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ entry.tuition.subject }} [{{ entry.tuition.name }}]{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item">
+            {% for grade in entry.tuition.studyGroup.grades %}
+                <a href="{{ path('book', { grade: grade.uuid.toString }) }}">{{ grade.name }}</a>{% if not loop.last %}<span class="mr-1">, </span>{% endif %}
+            {% endfor %}
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('book', { tuition: entry.tuition.uuid.toString}) }}">
+                {{ entry.tuition.subject }} [{{ entry.tuition.name }}]
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            {{ entry.lesson.date|format_date }}
+        </li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0" id="app">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-calendar-alt"></i>
+                        {{ entry.lesson.date|format_date }}
+
+                        <i class="fas fa-chalkboard"></i>
+                        {{ entry.tuition.subject }}
+
+                        {% for grade in entry.tuition.studyGroup.grades %}
+                            <span class="badge badge-primary mr-1">
+                                {{ grade.name }}
+                            </span>
+                        {% endfor %}
+
+
+                        {% for teacher in entry.tuition.teachers %}
+                            <span class="ml-1">
+                                <i class="fa fa-chalkboard-teacher"></i> {{ teacher|teacher }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="card-body no-columns">
+                        <div class="d-flex mb-3">
+                            <div class="mr-1 mt-n2 flex-fill">
+                                <div class="row">
+                                    {{ form_label(form.lessonStart) }}
+                                </div>
+                                {{ form_widget(form.lessonStart)}}
+                            </div>
+                            <div class="ml-1 mt-n2 flex-fill">
+                                <div class="row">
+                                    {{ form_label(form.lessonEnd) }}
+                                </div>
+                                {{ form_widget(form.lessonEnd) }}
+                            </div>
+                        </div>
+
+                        {{ form_errors(form.lessonStart) }}
+                        {{ form_errors(form.lessonEnd) }}
+
+                        {{ form_row(form.subject) }}
+
+                        {% if form.replacementSubject is defined %}
+                            {{ form_row(form.replacementSubject) }}
+                        {% endif %}
+
+                        {{ form_row(form.teacher) }}
+
+                        {% if form.replacementTeacher is defined %}
+                            {{ form_row(form.replacementTeacher) }}
+                        {% endif %}
+
+                        {% if form.topic is defined %}
+                            {{ form_row(form.topic) }}
+                        {% endif %}
+                        {% if form.comment is defined %}
+                            {{ form_row(form.comment) }}
+                        {% endif %}
+
+                        {% if form.cancelReason is defined %}
+                            {{ form_row(form.cancelReason) }}
+                        {% endif %}
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fa fa-save"></i> {{ 'action.save'|trans }}
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+                {% if form.attendances is defined %}
+                <students :attendancedata="{{ entry.attendances.toArray|json_encode }}"
+                          students-url="{{ url('xhr_tuition_students', { uuid: entry.tuition.uuid.toString, lesson: entry.lessonStart, date: entry.lesson.date.format('Y-m-d') }) }}"
+                          :step="1"
+                          :start="{{ entry.lessonStart }}"
+                          :end="{{ entry.lessonEnd }}"
+                          list-students-url="{{ url('xhr_students') }}"
+                          add-student-url="{{ url('add_student_to_entry', { uuid: entry.uuid.toString }) }}"
+                          add-student-csrf-token="{{ csrf_token('lesson_entry_add_student') }}"
+                          add-student-csrf-name="_token"
+                ></students>
+                    {% do form.attendances.setRendered %}
+                {% else %}
+                    <div class="bs-callout bs-callout-info">
+                        <h4>{{ 'info.label'|trans }}</h4>
+                        <p>{{ 'book.attendance.not_possible'|trans }}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

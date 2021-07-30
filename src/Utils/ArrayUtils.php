@@ -141,6 +141,23 @@ class ArrayUtils {
     }
 
     /**
+     * Like array_intersect but compares using the === operator (and is thus capable of intersecting arrays of objects).
+     *
+     * @param iterable $iterableA
+     * @param iterable $iterableB
+     * @return array
+     */
+    public static function intersect(iterable $iterableA, iterable $iterableB): array {
+        return array_uintersect(
+            static::iterableToArray($iterableA),
+            static::iterableToArray($iterableB),
+            function($objectA, $objectB) {
+                return $objectA === $objectB;
+            }
+        );
+    }
+
+    /**
      * @param iterable $items
      * @return string[]
      */

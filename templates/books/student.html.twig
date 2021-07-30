@@ -1,0 +1,225 @@
+{% extends "main.html.twig" %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book_students') }}">{{ 'book.students.label'|trans }}</a></li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('book_students', { grade: student.grade(section).uuid.toString, section: section.uuid }) }}">
+                {{ student.grade(section).name }}
+            </a>
+        </li>
+        <li class="breadcrumb-item">{{ student.lastname }}, {{ student.firstname }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card-deck mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="counter">
+                                <i class="fas fa-comments"></i>
+                                {{ info.comments|length }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card {% if info.lateMinutesCount > 0 %}border-warning{% endif %}">
+                        <div class="card-body">
+                            <div class="counter">
+                                <i class="fas fa-clock"></i>
+                                {{ 'book.attendance.late_minutes'|trans({'%count%': info.lateMinutesCount }) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="counter">
+                                <i class="fas fa-user-times"></i>
+                                {{ info.absentLessonsCount }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card {% if info.notExcusedAbsentLessonsCount > 0 %}bg-danger text-white{% endif %}">
+                        <div class="card-body">
+                            <div class="counter">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ info.notExcusedAbsentLessonsCount }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% for group in groups %}
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-calendar-alt"></i>
+                            {{ group.date|format_date }}
+                            <span class="text-muted">{{ group.date.format('N')|weekday }}</span>
+                        </div>
+
+                        <div class="list-group list-group-flush">
+                        {% for comment in group.comments %}
+
+                            <div class="list-group-item d-flex align-items-center">
+                                <div class="book-lesson m-0 p-0">
+                                    <i class="far fa-comment-alt"></i>
+                                </div>
+
+                                <div class="flex-fill">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <div>
+                                            <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
+                                        </div>
+
+                                        {% for student in comment.students %}
+                                            <div class="ml-2">
+                                                <i class="fas fa-user-graduate"></i> {{ student|student }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div>
+                                        {{ comment.text }}
+                                    </div>
+                                </div>
+
+                                {% if is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                                    <div class="ml-2">
+                                        <a href="{{ path('edit_book_comment', { uuid: comment.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.comment.edit.label'|trans }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                    <div class="ml-2">
+                                        <a href="{{ path('remove_book_student', { uuid: comment.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'book.comment.remove.label'|trans }}">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover card-table">
+                                <colgroup>
+                                    <col class="column-sm">
+                                    <col class="column-sm">
+                                    <col class="column-md">
+                                    <col class="column-lg">
+                                    <col>
+                                    <col class="column-md">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th>{{ 'label.tuition'|trans }}</th>
+                                    <th>{{ 'label.subject'|trans }}</th>
+                                    <th>{{ 'label.teacher'|trans }}</th>
+                                    <th>{{ 'label.comment'|trans }}</th>
+                                    <th>{{ 'book.attendance.excuse_status'|trans }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for lesson_attendance in group.attendances %}
+                                    {% set attendance = lesson_attendance.attendance %}
+                                    <tr class="{% if not lesson_attendance.isExcused %}table-danger{% endif %}">
+                                        <td>
+                                            {% if attendance.type == 0 %}
+                                                <i class="fas fa-user-times"></i>
+                                            {% elseif attendance.type == 2 %}
+                                                <i class="fas fa-clock"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ lesson_attendance.lesson }}</td>
+                                        <td>{{ attendance.entry.tuition.name }}</td>
+                                        <td>
+                                            {{ attendance.entry.subject }}
+                                            {% if attendance.entry.replacementSubject is not empty %}
+                                                ⟶ {{ attendance.entry.replacementSubject }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ attendance.entry.teacher|teacher }}
+                                            {% if attendance.entry.replacementTeacher is not null %}
+                                                ⟶ {{ attendance.entry.replacementTeacher|teacher }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ attendance.comment }}
+                                        </td>
+                                        <td>
+                                            <form action="{{ path('change_lesson_attendance_excuse_status', { uuid: attendance.uuid.toString }) }}" method="post">
+                                                <input type="hidden" name="lesson_attendance_excuse[_token]" value="{{ csrf_token('lesson_attendance_excuse_status') }}">
+
+                                                <div class="btn-group">
+                                                    <label class="btn btn-outline-secondary" title="{{ 'book.students.not_set'|trans }}">
+                                                        <input type="radio" name="lesson_attendance_excuse[excuseStatus]" value="0" data-trigger="submit" {% if attendance.excuseStatus == 0 and lesson_attendance.isExcused == false %}checked{% endif %}>
+                                                        <i class="fas fa-question"></i>
+                                                    </label>
+
+                                                    <label class="btn btn-outline-secondary" title="{{ 'book.students.excused'|trans }}">
+                                                        <input type="radio" name="lesson_attendance_excuse[excuseStatus]" value="1" data-trigger="submit" {% if lesson_attendance.isExcused %}checked{% endif %}>
+                                                        <i class="fas fa-check"></i>
+                                                    </label>
+
+                                                    <label class="btn btn-outline-secondary" title="{{ 'book.students.not_excused'|trans }}">
+                                                        <input type="radio" name="lesson_attendance_excuse[excuseStatus]" value="2" data-trigger="submit" {% if attendance.excuseStatus == 2 and lesson_attendance.isExcused == false %}checked{% endif %}>
+                                                        <i class="fas fa-times"></i>
+                                                    </label>
+                                                </div>
+                                            </form>
+
+                                            {% if lesson_attendance.excuses|length > 0 %}
+                                                {{ 'book.students.excuse_note_exists'|trans }}
+
+                                                <ul class="list-unstyled mb-0">
+                                                {% for excuse in lesson_attendance.excuses %}
+                                                    <li>
+                                                        <a href="{{ path('edit_excuse', { uuid: excuse.uuid.toString }) }}">
+                                                            <i class="fas fa-pencil-alt"></i> {{ excuse.date|format_date }}
+                                                        </a>
+                                                    </li>
+                                                {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="far fa-id-card"></i> {{ student.lastname }}, {{ student.firstname }}
+                        </h5>
+
+                        <p>
+                            <i class="fas fa-envelope"></i> <a href="mailto:{{ student.email }}">{{ student.email }}</a>
+                        </p>
+
+                        <p>
+                            <i class="fas fa-graduation-cap"></i>
+                            {% include "_includes/grade_teachers.html.twig" with { grade: student.grade(section) } %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

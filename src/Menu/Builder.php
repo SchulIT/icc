@@ -6,12 +6,13 @@ use App\Converter\UserStringConverter;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroupMembership;
 use App\Entity\User;
+use App\Repository\LessonRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
+use App\Section\SectionResolverInterface;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\ListsVoter;
 use App\Security\Voter\ResourceReservationVoter;
-use App\Security\Voter\RoomVoter;
 use App\Security\Voter\SickNoteVoter;
 use App\Security\Voter\WikiVoter;
 use App\Settings\NotificationSettings;
@@ -19,7 +20,6 @@ use App\Settings\SickNoteSettings;
 use App\Utils\EnumArrayUtils;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
-use Knp\Menu\MenuItem;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
 use SchulIT\CommonBundle\DarkMode\DarkModeManagerInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
@@ -33,6 +33,7 @@ class Builder {
 
     private $wikiRepository;
     private $messageRepository;
+    private $lessonRepository;
 
     private $tokenStorage;
     private $dateHelper;
@@ -41,18 +42,20 @@ class Builder {
     private $darkModeManager;
     private $notificationSettings;
     private $sickNoteSettings;
+    private $sectionResolver;
 
     private $idpProfileUrl;
 
     public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authorizationChecker,
-                                WikiArticleRepositoryInterface $wikiRepository, MessageRepositoryInterface $messageRepository,
+                                WikiArticleRepositoryInterface $wikiRepository, MessageRepositoryInterface $messageRepository, LessonRepositoryInterface $lessonRepository,
                                 TokenStorageInterface $tokenStorage, DateHelper $dateHelper, UserStringConverter $userConverter,
                                 TranslatorInterface $translator, DarkModeManagerInterface $darkModeManager,
-                                NotificationSettings $notificationSettings, SickNoteSettings $sickNoteSettings, string $idpProfileUrl) {
+                                NotificationSettings $notificationSettings, SickNoteSettings $sickNoteSettings, SectionResolverInterface $sectionResolver, string $idpProfileUrl) {
         $this->factory = $factory;
         $this->authorizationChecker = $authorizationChecker;
         $this->wikiRepository = $wikiRepository;
         $this->messageRepository = $messageRepository;
+        $this->lessonRepository = $lessonRepository;
         $this->tokenStorage = $tokenStorage;
         $this->dateHelper = $dateHelper;
         $this->userConverter = $userConverter;
@@ -61,6 +64,7 @@ class Builder {
         $this->idpProfileUrl = $idpProfileUrl;
         $this->notificationSettings = $notificationSettings;
         $this->sickNoteSettings = $sickNoteSettings;
+        $this->sectionResolver = $sectionResolver;
     }
 
     private function plansMenu(ItemInterface $menu): ItemInterface {
@@ -160,6 +164,45 @@ class Builder {
         }
 
         return $wiki;
+    }
+
+    private function bookMenu(ItemInterface $menu): ItemInterface {
+        $book = $menu->addChild('book.label', [
+            'route' => 'book'
+        ])
+            ->setExtra('menu', 'book')
+            ->setExtra('icon', 'fas fa-book-open')
+            ->setExtra('menu-container', '#submenu');
+
+        $book->addChild('book.label', [
+            'route' => 'book'
+        ])
+            ->setExtra('icon', 'fas fa-book-open');
+
+        $missing = $book->addChild('book.missing.label', [
+            'route' => 'missing_book_entries'
+        ])
+            ->setExtra('icon', 'fas fa-times');
+
+        $user = $this->tokenStorage->getToken()->getUser();
+        $currentSection = $this->sectionResolver->getCurrentSection();
+
+        if($user !== null && $user instanceof User && $user->getTeacher() !== null && $currentSection !== null) {
+            $count = $this->lessonRepository->countMissingByTeacher($user->getTeacher(), $currentSection->getStart(), $this->dateHelper->getToday());
+            $missing->setExtra('count', $count);
+        }
+
+        $book->addChild('book.students.label', [
+            'route' => 'book_students'
+        ])
+            ->setExtra('icon', 'fas fa-users');
+
+        $book->addChild('book.excuse_note.label', [
+            'route' => 'excuse_notes'
+        ])
+            ->setExtra('icon', 'fas fa-pen-alt');
+
+        return $book;
     }
 
     public function userMenu(array $options): ItemInterface {
@@ -506,6 +549,10 @@ class Builder {
                 ])
                     ->setExtra('icon', 'fas fa-clinic-medical');
             }
+        }
+
+        if($this->authorizationChecker->isGranted('ROLE_BOOK_VIEWER')) {
+            $this->bookMenu($menu);
         }
 
         return $menu;

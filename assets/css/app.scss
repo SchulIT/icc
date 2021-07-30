@@ -235,6 +235,12 @@
   }
 }
 
+.book-lesson {
+  @include font-size(1.75rem);
+
+  min-width: 55px;
+}
+
 .bg-danger-light {
   background-color: theme-color-level("danger", $alert-bg-level)
 }
@@ -347,4 +353,29 @@
   p:last-child {
     margin-bottom: 0;
   }
+}
+
+.no-columns {
+  .col-sm-2,
+  .col-sm-10 {
+    flex: none;
+    max-width: unset;
+  }
+}
+
+.bg-selected {
+  background: lighten($primary, 80%);
+}
+
+.btn-like {
+  display: inline-block;
+  font-family: $btn-font-family;
+  font-weight: $btn-font-weight;
+  color: $body-color;
+  text-align: center;
+  white-space: $btn-white-space;
+  vertical-align: middle;
+  background-color: transparent;
+  border: $btn-border-width solid transparent;
+  @include button-size($btn-padding-y-sm, $btn-padding-x-sm, $btn-font-size-sm, $btn-line-height-sm, $btn-border-radius-sm);
 }

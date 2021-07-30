@@ -16,7 +16,7 @@ use App\Repository\RoomTagRepositoryInterface;
 use App\Rooms\Reservation\ResourceAvailabilityHelper;
 use App\Rooms\RoomQueryBuilder;
 use App\Rooms\Status\StatusHelperInterface;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Security\Voter\ResourceReservationVoter;
 use App\Settings\TimetableSettings;
 use App\Sorting\ResourceStrategy;
@@ -141,7 +141,7 @@ class ResourceReservationController extends AbstractController {
      * @Route("/list", name="list_reservations")
      */
     public function list(RoomFilter $roomFilter, TeacherFilter $teacherFilter, DateHelper $dateHelper,
-                          Sorter $sorter, Grouper $grouper, Request $request, SectionResolver $sectionResolver) {
+                          Sorter $sorter, Grouper $grouper, Request $request, SectionResolverInterface $sectionResolver) {
         /** @var User $user */
         $user = $this->getUser();
 

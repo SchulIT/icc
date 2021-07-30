@@ -1,0 +1,170 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.missing.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {% set currentFilter = {
+        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
+        tuition: tuitionFilter.currentTuition ? tuitionFilter.currentTuition.uuid.toString : null,
+        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null
+    } %}
+
+    {% set createCsrfToken = csrf_token('lesson_entry_create') %}
+    {% set cancelCsrfToken = csrf_token('lesson_entry_cancel') %}
+
+    <div class="container-fluid px-0" id="app">
+        <div class="row">
+            <div class="col-md-9">
+                {% if groups is empty %}
+
+                {% else %}
+                    {% for group in groups %}
+                        <div class="card">
+                            <div class="card-header">
+                                {{ group.date|format_date }}
+                            </div>
+
+                            <div class="list-group list-group-flush">
+                                {% for lesson in group.lessons %}
+                                    <div class="list-group-item d-flex align-items-center">
+                                        <div class="book-lesson m-0 p-0">{{ lesson.lessonNumber }}</div>
+                                        <div class="badge badge-secondary">
+                                            {% set subject = null %}
+                                            {%- if lesson.lesson is not null -%}
+                                                {% if lesson.lesson.tuition.displayName is not empty %}
+                                                    {% set subject = lesson.lesson.tuition.displayName|upper %}
+                                                {% elseif lesson.lesson.tuition.subject.replaceSubjectAbbreviation %}
+                                                    {% set subject = lesson.lesson.tuition.subject.name|upper %}
+                                                {% else %}
+                                                    {% set subject = lesson.lesson.tuition.subject.abbreviation|upper %}
+                                                {% endif %}
+                                            {%- endif -%}
+
+                                            {{ subject }}
+                                        </div>
+
+                                            <div class="ml-2">
+                                                <i class="fas fa-chalkboard-teacher"></i>
+                                                {{ lesson.lesson.tuition.teacher|teacher }}
+                                            </div>
+
+                                            <div class="ml-2 text-danger flex-fill">
+                                                <i class="fas fa-exclamation-triangle"></i> {{ 'book.entry.missing'|trans }}
+                                            </div>
+
+                                            <div class="ml-2">
+                                                <lesson-create-entry-button tuition-uuid="{{ lesson.lesson.tuition.uuid.toString }}"
+                                                                            :start="{{ lesson.lesson.lessonStart }}"
+                                                                            :end="{{ lesson.lesson.lessonEnd }}"
+                                                                            :lesson="{{ lesson.lessonNumber }}"
+                                                                            :date="new Date('{{ group.date.format('Y-m-d') }}')"
+                                                                            csrfname="_token"
+                                                                            csrftoken="{{ createCsrfToken }}"
+                                                                            action="{{ path('add_entry', { uuid: lesson.lesson.uuid }) }}"
+                                                                            teacher="{{ user.user.teacher is not null ? user.user.teacher.acronym : null }}"
+                                                                            tuition-url="{{ path('xhr_tuition', { uuid: lesson.lesson.tuition.uuid}) }}"
+                                                                            students-url="{{ path('xhr_tuition_students', { uuid: lesson.lesson.tuition.uuid, date: group.date.format('Y-m-d'), lesson: lesson.lessonNumber }) }}"
+                                                                            teachers-url="{{ path('xhr_teachers') }}"></lesson-create-entry-button>
+                                            </div>
+                                            <div class="ml-2">
+                                                <lesson-cancel-button tuition-uuid="{{ lesson.lesson.tuition.uuid.toString }}"
+                                                                      :start="{{ lesson.lesson.lessonStart }}"
+                                                                      :end="{{ lesson.lesson.lessonEnd }}"
+                                                                      :lesson="{{ lesson.lessonNumber }}"
+                                                                      :date="new Date('{{ group.date.format('Y-m-d') }}')"
+                                                                      csrfname="_token"
+                                                                      csrftoken="{{ cancelCsrfToken }}"
+                                                                      action="{{ path('cancel_lesson', { uuid: lesson.lesson.uuid }) }}"
+                                                                      tuition-url="{{ path('xhr_tuition', { uuid: lesson.lesson.tuition.uuid}) }}"></lesson-cancel-button>
+                                            </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    {% include '@Common/includes/pagination.html.twig' with {
+                        currentFilters: currentFilter,
+                        currentPage: page,
+                        paginationPath: 'missing_book_entries',
+                        lastPage: pages,
+                        showAlwaysFirstAndLast: true
+                    } only %}
+                {% endif %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                {% if is_granted("ROLE_BOOK_ENTRY_CREATOR") %}
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('add_book_comment') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus"></i> {{ 'book.comment.add.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+
+                        {% include "_filter/teacher.html.twig" with { params: currentFilter|merge({grade: null, tuition: null})} %}
+
+                        {% include "_filter/grade.html.twig" with { params: currentFilter|merge({tuition: null, teacher: null}) } %}
+
+                        {% include "_filter/tuition.html.twig" with { params: currentFilter|merge({grade: null, teacher: null}) } %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('book') }}" class="btn btn-primary btn-sm">
+                            {{ 'filter.reset'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                {% if ownGrades|length > 0 or ownTuitions|length > 0 %}
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% for grade in ownGrades %}
+                            <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString, grade: grade.uuid.toString }) }}" class="list-group-item list-group-item-action {% if gradeFilter.currentGrade == grade %}active{% endif %}">
+                                <i class="fas fa-users"></i> {{ grade.name }}
+                                {% if ownGradesMissingCounts[grade.id] is defined %}
+                                    <span class="badge badge-primary badge-pill">{{ ownGradesMissingCounts[grade.id] }}</span>
+                                {% endif %}
+                            </a>
+                        {% endfor %}
+                        {% for tuition in ownTuitions %}
+                            <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString , tuition: tuition.uuid.toString }) }}" class="list-group-item list-group-item-action {% if tuitionFilter.currentTuition == tuition %}active{% endif %}">
+                                <i class="fas fa-chalkboard"></i>
+                                {% if tuition.displayName is not empty %}
+                                    {{ tuition.displayName }}
+                                {% else %}
+                                    {{ tuition.name }}
+                                {% endif %}
+                                ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+
+                                {% if ownTuitionsMissingCounts[tuition.id] is defined %}
+                                    <span class="badge badge-primary badge-pill">{{ ownTuitionsMissingCounts[tuition.id] }}</span>
+                                {% endif %}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/book.js') }}"></script>
+{% endblock %}

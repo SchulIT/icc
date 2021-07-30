@@ -18,6 +18,12 @@ interface TuitionRepositoryInterface extends TransactionalRepositoryInterface {
     public function findOneById(int $id): ?Tuition;
 
     /**
+     * @param string $uuid
+     * @return Tuition|null
+     */
+    public function findOneByUuid(string $uuid): ?Tuition;
+
+    /**
      * @param string $externalId
      * @param Section $section
      * @return Tuition|null

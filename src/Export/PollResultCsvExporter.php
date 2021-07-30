@@ -7,7 +7,7 @@ use App\Entity\Message;
 use App\Entity\Tuition;
 use App\Message\PollResultView;
 use App\Message\PollResultViewHelper;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Sorting\Sorter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -20,7 +20,7 @@ class PollResultCsvExporter {
     private $sectionResolver;
 
     public function __construct(PollResultViewHelper $resultViewHelper, CsvHelper $csvHelper, TranslatorInterface $translator,
-                                Sorter $sorter, SectionResolver $sectionResolver) {
+                                Sorter $sorter, SectionResolverInterface $sectionResolver) {
         $this->viewHelper = $resultViewHelper;
         $this->csvHelper = $csvHelper;
         $this->translator = $translator;

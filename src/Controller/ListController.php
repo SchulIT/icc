@@ -28,7 +28,7 @@ use App\Repository\PrivacyCategoryRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\ListsVoter;
 use App\Sorting\Sorter;
@@ -330,7 +330,7 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/privacy", name="list_privacy")
      */
-    public function privacy(SectionResolver $sectionResolver, StudyGroupFilter $studyGroupFilter, Request $request, StudentRepositoryInterface $studentRepository, PrivacyCategoryRepositoryInterface $privacyCategoryRepository) {
+    public function privacy(SectionResolverInterface $sectionResolver, StudyGroupFilter $studyGroupFilter, Request $request, StudentRepositoryInterface $studentRepository, PrivacyCategoryRepositoryInterface $privacyCategoryRepository) {
         $this->denyAccessUnlessGranted(ListsVoter::Privacy);
 
         /** @var User $user */

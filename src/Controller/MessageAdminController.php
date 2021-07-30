@@ -24,7 +24,7 @@ use App\Message\PollResultViewHelper;
 use App\Repository\MessageFileUploadRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Security\Voter\MessageVoter;
 use App\Sorting\MessageExpirationGroupStrategy;
 use App\Sorting\MessageStrategy;
@@ -207,7 +207,7 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/{uuid}/confirmations", name="message_confirmations")
      */
-    public function confirmations(Message $message, MessageConfirmationViewHelper $confirmationViewHelper, Grouper $grouper, SectionResolver $sectionResolver) {
+    public function confirmations(Message $message, MessageConfirmationViewHelper $confirmationViewHelper, Grouper $grouper, SectionResolverInterface $sectionResolver) {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
         $view = $confirmationViewHelper->createView($message);
 
@@ -237,7 +237,7 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/{uuid}/downloads", name="message_downloads_admin")
      */
-    public function downloads(Message $message, MessageDownloadViewHelper $messageDownloadViewHelper, SectionResolver $sectionResolver) {
+    public function downloads(Message $message, MessageDownloadViewHelper $messageDownloadViewHelper, SectionResolverInterface $sectionResolver) {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         /** @var MessageDownloadView $view */
@@ -418,7 +418,7 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/{uuid}/uploads", name="message_uploads_admin")
      */
-    public function uploads(Message $message, MessageFileUploadViewHelper $messageFileUploadViewHelper, SectionResolver $sectionResolver) {
+    public function uploads(Message $message, MessageFileUploadViewHelper $messageFileUploadViewHelper, SectionResolverInterface $sectionResolver) {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         $view = $messageFileUploadViewHelper->createView($message);
@@ -472,7 +472,7 @@ class MessageAdminController extends AbstractController {
     /**
      * @Route("/{uuid}/poll", name="poll_result")
      */
-    public function pollResult(Message $message, PollResultViewHelper $resultViewHelper, SectionResolver $sectionResolver) {
+    public function pollResult(Message $message, PollResultViewHelper $resultViewHelper, SectionResolverInterface $sectionResolver) {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
         $view = $resultViewHelper->createView($message);
 

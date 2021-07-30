@@ -4,13 +4,13 @@ namespace App\Converter;
 
 use App\Entity\Section;
 use App\Entity\Student;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 
 class StudentStringConverter {
 
     private $sectionResolver;
 
-    public function __construct(SectionResolver $sectionResolver) {
+    public function __construct(SectionResolverInterface $sectionResolver) {
         $this->sectionResolver = $sectionResolver;
     }
 
@@ -19,7 +19,12 @@ class StudentStringConverter {
             if($section === null) {
                 $section = $this->sectionResolver->getCurrentSection();
             }
-            return sprintf('%s, %s [%s]', $student->getLastname(), $student->getFirstname(), $student->getGrade($section)->getName());
+
+            $grade = $student->getGrade($section);
+
+            if($grade !== null) {
+                return sprintf('%s, %s [%s]', $student->getLastname(), $student->getFirstname(), $student->getGrade($section)->getName());
+            }
         }
 
         return sprintf('%s, %s', $student->getLastname(), $student->getFirstname());

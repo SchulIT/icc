@@ -5,7 +5,7 @@ namespace App\Form;
 use App\Entity\Grade;
 use App\Entity\Room;
 use App\Entity\Tuition;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Sorting\RoomNameStrategy;
 use App\Sorting\StringStrategy;
 use App\Sorting\TuitionStrategy;
@@ -31,7 +31,7 @@ class ExamType extends AbstractType {
     private $authorizationChecker;
 
     public function __construct(TuitionStrategy $tuitionStrategy, StringStrategy $stringStrategy, RoomNameStrategy $roomStrategy,
-                                SectionResolver $sectionResolver,AuthorizationCheckerInterface $authorizationChecker) {
+                                SectionResolverInterface $sectionResolver,AuthorizationCheckerInterface $authorizationChecker) {
         $this->tuitionStrategy = $tuitionStrategy;
         $this->stringStrategy = $stringStrategy;
         $this->roomStrategy = $roomStrategy;

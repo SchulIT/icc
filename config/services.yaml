@@ -79,8 +79,11 @@ services:
 
     # JSON
     App\Request\JsonParamConverter:
+        class:
         arguments:
-            $prefix: 'App\Request\Data'
+            $prefixes:
+                - 'App\Request\Data'
+                - 'App\Request\Book'
 
     JMS\Serializer\SerializationContext:
         calls:
@@ -254,3 +257,15 @@ services:
         arguments:
             $appName: '%env(APP_NAME)%'
             $sender: '%env(MAILER_FROM)%'
+
+    # SECTION
+    App\Section\SectionResolver: ~
+
+    App\Section\CachedSectionResolver:
+        decorates: App\Section\SectionResolver
+        bind:
+            $sectionResolver: '@.inner'
+            $cache: '@app.cache.memory'
+
+    App\Section\SectionResolverInterface:
+        alias: App\Section\CachedSectionResolver

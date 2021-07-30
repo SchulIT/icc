@@ -6,7 +6,7 @@ use App\Converter\EnumStringConverter;
 use App\Converter\StudyGroupStringConverter;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupType as StudyGroupEntityType;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Sorting\StringStrategy;
 use App\Sorting\StudyGroupStrategy;
 use Doctrine\ORM\EntityRepository;
@@ -26,7 +26,7 @@ class StudyGroupType extends SortableEntityType {
 
     public function __construct(ManagerRegistry $registry, StudyGroupStringConverter $studyGroupConverter,
                                 StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy,
-                                EnumStringConverter $enumStringConverter, SectionResolver $sectionResolver) {
+                                EnumStringConverter $enumStringConverter, SectionResolverInterface $sectionResolver) {
         parent::__construct($registry);
 
         $this->stringStrategy = $stringStrategy;

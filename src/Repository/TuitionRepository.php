@@ -12,7 +12,17 @@ use Doctrine\ORM\QueryBuilder;
 
 class TuitionRepository extends AbstractTransactionalRepository implements TuitionRepositoryInterface {
 
-    private function getDefaultQueryBuilder(): QueryBuilder {
+    private function getDefaultQueryBuilder($lazy = false): QueryBuilder {
+        if($lazy === true) {
+            return $this->em->createQueryBuilder()
+                ->select(['t', 'sg', 's', 'sec', 'g'])
+                ->from(Tuition::class, 't')
+                ->leftJoin('t.studyGroup', 'sg')
+                ->leftJoin('sg.grades', 'g')
+                ->leftJoin('t.subject', 's')
+                ->leftJoin('t.section', 'sec');
+        }
+
         return $this->em->createQueryBuilder()
             ->select(['t', 'tt', 'at', 'sg', 's', 'sgs', 'sgss'])
             ->from(Tuition::class, 't')
@@ -32,6 +42,17 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         return $this->getDefaultQueryBuilder()
             ->where('t.id = :id')
             ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findOneByUuid(string $uuid): ?Tuition {
+        return $this->getDefaultQueryBuilder()
+            ->where('t.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -67,7 +88,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
      * @inheritDoc
      */
     public function findAllByTeacher(Teacher $teacher, Section $section): array {
-        $qb = $this->em->createQueryBuilder();
+        $qb = $this->getDefaultQueryBuilder();
         $qb = $this->filterSection($qb, $section);
 
         $qbInner = $this->em->createQueryBuilder()
@@ -81,8 +102,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
                 )
             );
 
-        $qb = $this->getDefaultQueryBuilder()
-            ->where($qb->expr()->in('t.id', $qbInner->getDQL()))
+        $qb->andWhere($qb->expr()->in('t.id', $qbInner->getDQL()))
             ->setParameter('teacher', $teacher->getId());
 
         return $qb->getQuery()->getResult();
@@ -246,7 +266,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
      * @inheritDoc
      */
     public function findAll() {
-        return $this->getDefaultQueryBuilder()
+        return $this->getDefaultQueryBuilder(true)
             ->getQuery()
             ->getResult();
     }
@@ -256,7 +276,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
      */
     public function findAllBySection(Section $section): array {
         return $this->filterSection(
-                $this->getDefaultQueryBuilder(),
+                $this->getDefaultQueryBuilder(true),
                 $section
             )
             ->getQuery()

@@ -1,0 +1,439 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% macro subject(tuition) %}
+    {% if tuition.displayName is not empty %}
+        {{ tuition.displayName|upper }}
+    {% elseif show_coursename(tuition.studyGroup.grades) %}
+        {{ tuition.studyGroup.name|upper }}
+    {% elseif tuition.subject.replaceSubjectAbbreviation %}
+        {{ tuition.subject.name|upper }}
+    {% else %}
+        {{ tuition.subject.abbreviation|upper }}
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    {% set currentFilter = {
+        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
+        tuition: tuitionFilter.currentTuition ? tuitionFilter.currentTuition.uuid.toString : null,
+        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null
+    } %}
+
+    {% set createCsrfToken = csrf_token('lesson_entry_create') %}
+    {% set cancelCsrfToken = csrf_token('lesson_entry_cancel') %}
+
+    <div class="container-fluid px-0" id="app">
+        <div class="row">
+            <div class="col-md-9">
+                {% if overview is null %}
+
+                {% else %}
+                    <div class="card">
+                        <div class="card-header border-bottom-0">
+                            {% set currentWeek = selectedDate ? selectedDate.format('W') : null %}
+
+                            <ul class="nav nav-pills card-header-pills flex-fill" data-trigger="resize-hide">
+                                {% if selectedDate != null %}
+                                <li class="nav-item align-self-center" data-resize="show">
+                                    <a class="nav-link" href="{{ path('book', currentFilter|merge({'date': (selectedDate|clone).modify('-7 days').format('Y-m-d')})) }}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                {% for week, monday in weekStarts %}
+                                    <li class="nav-item" {% if currentWeek == week %}data-resize="prevent"{% endif %}>
+                                        <a class="nav-link {% if currentWeek == week %}active{% endif %}" href="{{ path('book', currentFilter|merge({'date': monday.format('Y-m-d')})) }}">
+                                            <div>
+                                                <i class="fas fa-calendar-alt"></i> {{ 'admin.exams.week'|trans({'%week%': week}) }}
+                                            </div>
+                                            <div class="{% if currentWeek != week %}text-muted{% endif %}">
+                                                {{ monday|format_date }}
+                                            </div>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+
+                                {% if selectedDate != null %}
+                                <li class="nav-item align-self-center" data-resize="show">
+                                    <a class="nav-link" href="{{ path('book', currentFilter|merge({'date': (selectedDate|clone).modify('+7 days').format('Y-m-d')})) }}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    {% if missingExcusesCount > 0 and sectionFilter.currentSection is not null %}
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                <i class="fas fa-user-times"></i>
+                                {{ 'book.not_excused.label'|trans }}
+                                <span class="badge badge-danger">{{ missingExcusesCount }}</span>
+                            </h4>
+                            <p>{{ 'book.not_excused.status'|trans }}</p>
+
+                            <ul class="list-unstyled mb-0">
+                                {% for info in missingExcuses %}
+                                    <li>
+                                        <a href="{{ path('book_student', { section: sectionFilter.currentSection.uuid.toString, student: info.student.uuid.toString }) }}">
+                                            <i class="fas fa-user-graduate"></i> {{ info.student|student }}
+                                            <span class="badge badge-danger">{{ info.notExcusedOrNotSetLessonsCount }}</span>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% for day in overview.days %}
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="flex-fill">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    {{ day.date|format_date }}
+                                    <span class="text-muted">{{ day.date.format('N')|weekday }}</span>
+                                </div>
+
+                                {% set actions = [] %}
+                                {% set tuitionUrls = [ ] %}
+                                {% for lesson in day.lessons %}
+                                    {% if lesson.entry is null %}
+                                        {% set actions = actions|merge([url('xhr_cancel_lesson', { uuid: lesson.lesson.uuid })]) %}
+                                        {% set tuitionUrls = tuitionUrls|merge([url('xhr_tuition', { uuid: lesson.lesson.tuition.uuid })]) %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if actions|length > 0 %}
+                                <lesson-cancel-bulk-button csrftoken="{{ csrf_token('cancel_lesson') }}"
+                                                           :actions="{{ actions|json_encode }}"
+                                                           :date="new Date('{{ day.date.format('Y-m-d') }}')"
+                                                           :tuition-urls="{{ tuitionUrls|json_encode }}"
+                                                           button="{{ 'book.entry.cancel.all'|trans }}"></lesson-cancel-bulk-button>
+
+                                {% endif %}
+                            </div>
+
+                            <div class="list-group list-group-flush">
+                                {% if overview.hasLessonsWithinFreeTimespans(day.date) %}
+                                    {% for timespan in overview.freeTimespans(day.date) %}
+                                        <div class="list-group-item d-flex align-items-center">
+                                            <div class="book-lesson m-0 p-0">
+                                                <i class="fas fa-times"></i>
+                                            </div>
+
+                                            <div class="d-flex align-items-center flex-fill">
+                                                <div class="badge badge-secondary">
+                                                    {{ 'book.entry.propose_cancel.label'|trans|upper }}
+                                                </div>
+
+                                                {% set reason = 'book.entry.propose_cancel.message'|trans({
+                                                    '%lessons%': 'label.exam_lessons'|trans({'%start%': timespan.lessonStart, '%end%': timespan.lessonEnd, '%count%': timespan.lessonEnd - timespan.lessonStart}),
+                                                    '%reason%': timespan.reason
+                                                }) %}
+                                                <div class="ml-2 flex-fill">
+                                                    {{ reason }}
+                                                </div>
+
+                                                {% set actions = [] %}
+                                                {% set tuitionUrls = [ ] %}
+                                                {% for lesson in day.lessons %}
+                                                    {% if timespan.lessonStart <= lesson.lesson.lessonStart and lesson.lesson.lessonEnd <= timespan.lessonEnd%}
+                                                        {% set actions = actions|merge([url('xhr_cancel_lesson', { uuid: lesson.lesson.uuid })]) %}
+                                                        {% set tuitionUrls = tuitionUrls|merge([url('xhr_tuition', { uuid: lesson.lesson.tuition.uuid })]) %}
+                                                    {% endif %}
+                                                {% endfor %}
+
+                                                <lesson-cancel-bulk-button csrftoken="{{ csrf_token('cancel_lesson') }}"
+                                                                           :actions="{{ actions|json_encode }}"
+                                                                           :tuition-urls="{{ tuitionUrls|json_encode }}"
+                                                                           :date="new Date('{{ timespan.date.format('Y-m-d') }}')"></lesson-cancel-bulk-button>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+
+                                {% for comment in overview.comments(day.date) %}
+                                    <div class="list-group-item d-flex align-items-center">
+                                        <div class="book-lesson m-0 p-0">
+                                            <i class="far fa-comment-alt"></i>
+                                        </div>
+
+                                        <div class="flex-fill">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <div>
+                                                    <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
+                                                </div>
+
+                                                {% for student in comment.students %}
+                                                    <div class="ml-2">
+                                                        <i class="fas fa-user-graduate"></i> {{ student|student }}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+
+                                            <div>
+                                                {{ comment.text }}
+                                            </div>
+                                        </div>
+
+                                        {% if is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                                        <div class="ml-2">
+                                            <a href="{{ path('edit_book_comment', { uuid: comment.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.comment.edit.label'|trans }}">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                        <div class="ml-2">
+                                            <a href="{{ path('remove_book_student', { uuid: comment.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'book.comment.remove.label'|trans }}">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+
+                                {% for lesson in day.lessons %}
+                                    <div class="list-group-item d-flex align-items-center">
+                                        <div class="book-lesson m-0 p-0">{{ lesson.lessonNumber }}</div>
+                                        <div class="d-flex align-items-center flex-fill">
+                                        {% if lesson.entry is null %}
+                                            <div class="badge badge-secondary">
+                                                {{ _self.subject(lesson.lesson.tuition) }}
+                                            </div>
+
+                                            <div class="ml-2">
+                                                <i class="fas fa-users"></i>
+                                                {% for grade in lesson.lesson.tuition.studyGroup.grades %}
+                                                    {{ grade.name }}{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </div>
+
+                                            <div class="ml-2">
+                                                <i class="fas fa-chalkboard-teacher"></i>
+                                                {{ lesson.lesson.tuition.teacher|teacher }}
+                                            </div>
+
+                                            <div class="ml-2 text-danger flex-fill">
+                                                <i class="fas fa-exclamation-triangle"></i> {{ 'book.entry.missing'|trans }}
+                                            </div>
+
+                                            <div class="ml-2">
+                                                <lesson-create-entry-button tuition-uuid="{{ lesson.lesson.tuition.uuid.toString }}"
+                                                                            :start="{{ lesson.lesson.lessonStart }}"
+                                                                            :end="{{ lesson.lesson.lessonEnd }}"
+                                                                            :lesson="{{ lesson.lessonNumber }}"
+                                                                            :date="new Date('{{ day.date.format('Y-m-d') }}')"
+                                                                            csrfname="_token"
+                                                                            csrftoken="{{ createCsrfToken }}"
+                                                                            action="{{ path('add_entry', { uuid: lesson.lesson.uuid }) }}"
+                                                                            teacher="{{ user.user.teacher is not null ? user.user.teacher.acronym : null }}"
+                                                                            tuition-url="{{ path('xhr_tuition', { uuid: lesson.lesson.tuition.uuid}) }}"
+                                                                            students-url="{{ path('xhr_tuition_students', { uuid: lesson.lesson.tuition.uuid, date: day.date.format('Y-m-d'), lesson: lesson.lessonNumber }) }}"
+                                                                            teachers-url="{{ path('xhr_teachers') }}"></lesson-create-entry-button>
+                                            </div>
+                                            <div class="ml-2">
+                                                <lesson-cancel-button tuition-uuid="{{ lesson.lesson.tuition.uuid.toString }}"
+                                                                      :start="{{ lesson.lesson.lessonStart }}"
+                                                                      :end="{{ lesson.lesson.lessonEnd }}"
+                                                                      :lesson="{{ lesson.lessonNumber }}"
+                                                                      :date="new Date('{{ day.date.format('Y-m-d') }}')"
+                                                                      csrfname="_token"
+                                                                      csrftoken="{{ cancelCsrfToken }}"
+                                                                      action="{{ path('cancel_lesson', { uuid: lesson.lesson.uuid }) }}"
+                                                                      tuition-url="{{ path('xhr_tuition', { uuid: lesson.lesson.tuition.uuid}) }}"></lesson-cancel-button>
+                                            </div>
+                                        {% else %}
+                                            <div class="flex-fill">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="badge badge-primary">
+                                                        {{ _self.subject(lesson.entry.tuition) }}
+
+                                                        {% if lesson.entry.replacementSubject is not empty %}
+                                                            ⟶ {{ lesson.entry.replacementSubject|upper }}
+                                                        {% endif %}
+                                                    </div>
+
+                                                    <div class="ml-2">
+                                                        <i class="fas fa-users"></i>
+                                                        {% for grade in lesson.entry.tuition.studyGroup.grades %}
+                                                            {{ grade.name }}{% if not loop.last %}, {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+
+                                                    <div class="ml-2">
+                                                        <i class="fas fa-chalkboard-teacher"></i>
+                                                        {{ lesson.entry.teacher|teacher }}
+
+                                                        {% if lesson.entry.replacementTeacher is not null %}
+                                                            ⟶ {{ lesson.entry.replacementTeacher|teacher }}
+                                                        {% endif %}
+                                                    </div>
+
+                                                    {% if lesson.entry.isCancelled %}
+                                                        <div class="ml-2 text-danger flex-fill">
+                                                            <i class="fas fa-times"></i>
+                                                            {{ 'book.entry.cancel_reason'|trans({ '%reason%': lesson.entry.cancelReason}) }}
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="ml-2 flex-fill">
+                                                            <i class="fas fa-info-circle"></i> {{ lesson.entry.topic }}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                {% if lesson.entry.comment is not empty %}
+                                                    <div class="mt-1 d-flex align-items-baseline">
+                                                        <i class="far fa-comment-alt"></i>
+                                                        <p class="mb-0 ml-1">
+                                                            {{ lesson.entry.comment }}
+                                                        </p>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+
+                                            {% if lesson.presentCount > 0 %}
+                                                <div class="ml-2">
+                                                    <span class="border-success text-success btn-like" title="{{ 'book.attendance.type.present'|trans }}">
+                                                        <i class="fas fa-user-check"></i> {{ lesson.presentCount }}
+                                                    </span>
+                                                </div>
+                                            {% endif %}
+
+                                            {% if lesson.lateCount > 0 %}
+                                                <div class="ml-2">
+                                                    <span class="border-warning text-warning btn-like" title="{{ 'book.attendance.type.late'|trans }}">
+                                                        <i class="fas fa-user-clock"></i> {{ lesson.lateCount }}
+                                                    </span>
+                                                </div>
+                                            {% endif %}
+
+                                            {% if lesson.absentCount > 0 %}
+                                                <div class="ml-2">
+                                                    <span class="border-danger text-danger btn-like" title="{{ 'book.attendance.type.absent'|trans }}">
+                                                        <i class="fas fa-user-times"></i> {{ lesson.absentCount }}
+                                                    </span>
+                                                </div>
+                                            {% endif %}
+
+                                            <div class="ml-2">
+                                                <a href="{{ path('show_entry', { uuid: lesson.entry.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.entry.edit.label'|trans }}">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </div>
+
+                                            <div class="ml-2">
+                                                <a href="{{ path('remove_entry', { uuid: lesson.entry.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'book.entry.remove.label'|trans }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                {% if is_granted("ROLE_BOOK_ENTRY_CREATOR") %}
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('add_book_comment') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus"></i> {{ 'book.comment.add.label'|trans }}
+                        </a>
+                        {% if tuitionFilter.currentTuition != null and sectionFilter.currentSection != null %}
+                            <a href="{{ path('book_export_tuition_json', { tuition: tuitionFilter.currentTuition.uuid, section: sectionFilter.currentSection.uuid }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-download"></i> {{ 'book.export.json.label'|trans }}
+                            </a>
+
+                            <a href="{{ path('book_export_tuition_xml', { tuition: tuitionFilter.currentTuition.uuid, section: sectionFilter.currentSection.uuid }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-download"></i> {{ 'book.export.xml.label'|trans }}
+                            </a>
+                        {% endif %}
+
+                        {% if gradeFilter.currentGrade != null and sectionFilter.currentSection != null %}
+                            <a href="{{ path('book_export_grade_json', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-download"></i> {{ 'book.export.json.label'|trans }}
+                            </a>
+
+                            <a href="{{ path('book_export_grade_xml', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-download"></i> {{ 'book.export.xml.label'|trans }}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+
+                        {% include "_filter/teacher.html.twig" with { params: currentFilter|merge({grade: null, tuition: null})} %}
+
+                        {% include "_filter/grade.html.twig" with { params: currentFilter|merge({tuition: null, teacher: null}) } %}
+
+                        {% include "_filter/tuition.html.twig" with { params: currentFilter|merge({grade: null, teacher: null}) } %}
+
+                        <form role="form" method="get" class="form hidden-print">
+                            {% include "_filter/_params.html.twig" with { params: currentFilter } %}
+
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{% if selectedDate != null %}{{ selectedDate.format('Y-m-d') }}{% endif %}">
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('book') }}" class="btn btn-primary btn-sm">
+                            {{ 'filter.reset'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                {% if ownGrades|length > 0 or ownTuitions|length > 0 %}
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% for grade in ownGrades %}
+                            <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString, grade: grade.uuid.toString }) }}" class="list-group-item list-group-item-action {% if gradeFilter.currentGrade == grade %}active{% endif %}">
+                                <i class="fas fa-users"></i> {{ grade.name }}
+                            </a>
+                        {% endfor %}
+                        {% for tuition in ownTuitions %}
+                            <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString , tuition: tuition.uuid.toString }) }}" class="list-group-item list-group-item-action {% if tuitionFilter.currentTuition == tuition %}active{% endif %}">
+                                <i class="fas fa-chalkboard"></i>
+                                {% if tuition.displayName is not empty %}
+                                    {{ tuition.displayName }}
+                                {% else %}
+                                    {{ tuition.name }}
+                                {% endif %}
+                                ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/book.js') }}"></script>
+{% endblock %}

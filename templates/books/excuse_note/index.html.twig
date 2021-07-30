@@ -1,0 +1,108 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.excuse_note.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover card-table">
+                            <colgroup>
+                                <col>
+                                <col class="column-md">
+                                <col class="column-sm">
+                                <col class="column-sm">
+                                <col class="column-lg">
+                                <col class="column-sm">
+                            </colgroup>
+
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.student'|trans }}</th>
+                                <th>{{ 'label.date'|trans }}</th>
+                                <th>{{ 'label.start'|trans }}</th>
+                                <th>{{ 'label.end'|trans }}</th>
+                                <th>{{ 'label.excused_by'|trans }}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for note in notes %}
+                                <tr>
+                                    <td class="align-middle">{{ note.student|student }}</td>
+                                    <td class="align-middle">{{ note.date|format_date }}</td>
+                                    <td class="align-middle">{{ note.lessonStart }}</td>
+                                    <td class="align-middle">{{ note.lessonEnd }}</td>
+                                    <td class="align-middle">{{ note.excusedBy|teacher }}</td>
+                                    <td class="align-middle">
+                                        <div class="dropdown d-inline">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a href="{{ path('edit_excuse', { uuid: note.uuid }) }}" class="dropdown-item">
+                                                    <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
+                                                </a>
+
+                                                <a href="{{ path('remove_excuse', { uuid: note.uuid }) }}" class="dropdown-item text-danger">
+                                                    <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {% include "@Common/includes/pagination.html.twig" with {
+                    currentFilters: {
+                        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
+                        student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null
+                    },
+                    currentPage: page,
+                    paginationPath: 'excuse_notes',
+                    lastPage: pages,
+                    showAlwaysFirstAndLast: true
+                } %}
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('add_excuse') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus"></i> {{ 'book.excuse_note.add.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+
+                        {% include "_filter/student.html.twig" with { params: { section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null} } %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('excuse_notes') }}" class="btn btn-primary btn-sm">
+                            {{ 'filter.reset'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

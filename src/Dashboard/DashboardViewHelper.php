@@ -44,7 +44,7 @@ use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
-use App\Section\SectionResolver;
+use App\Section\SectionResolverInterface;
 use App\Security\Voter\AbsenceVoter;
 use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
@@ -108,7 +108,7 @@ class DashboardViewHelper {
                                 FreeTimespanRepositoryInterface $freeTimespanRepository,
                                 StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, TimetableTimeHelper $timetableTimeHelper, Sorter $sorter, Grouper $grouper,
                                 TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
-                                ValidatorInterface $validator, DateHelper $dateHelper, AbsenceResolver $absenceResolver, SectionResolver $sectionResolver) {
+                                ValidatorInterface $validator, DateHelper $dateHelper, AbsenceResolver $absenceResolver, SectionResolverInterface $sectionResolver) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->timetableRepository = $timetableRepository;

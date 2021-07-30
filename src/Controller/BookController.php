@@ -82,7 +82,7 @@ class BookController extends AbstractController {
         return $weekStarts;
     }
 
-    private function resolveSelectedDate(Request $request, ?Section $currentSection, DateHelper $dateHelper): DateTime {
+    private function resolveSelectedDate(Request $request, ?Section $currentSection, DateHelper $dateHelper): ?DateTime {
         $selectedDate = null;
         try {
             if($request->query->has('date')) {

@@ -6,6 +6,8 @@ use App\Entity\Grade;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
+use App\Entity\User;
+use App\Entity\UserType;
 use Doctrine\ORM\QueryBuilder;
 
 class StudentRepository extends AbstractTransactionalRepository implements StudentRepositoryInterface {
@@ -187,4 +189,25 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
     }
 
 
+    /**
+     * @inheritDoc
+     */
+    public function removeOrphaned(): int {
+        $qbOrphaned = $this->em->createQueryBuilder()
+            ->select('s.id')
+            ->from(Student::class, 's')
+            ->leftJoin('s.sections', 'sec')
+            ->leftJoin('s.gradeMemberships', 'gm')
+            ->where('sec.id IS NULL')
+            ->orWhere('gm.id IS NULL');
+
+        $qb = $this->em->createQueryBuilder();
+
+        return (int)$qb->delete(Student::class, 'student')
+            ->where(
+                $qb->expr()->in('student.id', $qbOrphaned->getDQL())
+            )
+            ->getQuery()
+            ->execute();
+    }
 }

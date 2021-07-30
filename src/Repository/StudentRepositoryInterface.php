@@ -81,4 +81,10 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
      * @param Student $student
      */
     public function remove(Student $student): void;
+
+    /**
+     * Removes all students without any grade membership.
+     * @return int Number of removed students
+     */
+    public function removeOrphaned(): int;
 }

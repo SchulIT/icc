@@ -18,7 +18,7 @@ class SickNote {
 
     /**
      * @ORM\ManyToOne(targetEntity="Student")
-     * @ORM\JoinColumn()
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Student
      */
     private $student;

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Section;
 use App\Form\SectionType;
+use App\Repository\LessonRepository;
 use App\Repository\SectionRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
@@ -75,7 +76,7 @@ class SectionController extends AbstractController {
     /**
      * @Route("/{uuid}/remove", name="remove_section")
      */
-    public function remove(Section $section, Request $request) {
+    public function remove(Section $section, Request $request, LessonRepository $lessonRepository) {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.sections.remove.confirm',
             'message_parameters' => [
@@ -85,7 +86,8 @@ class SectionController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $this->repository->persist($section);
+            $lessonRepository->removeBySection($section);
+            $this->repository->remove($section);
             $this->addFlash('success', 'admin.sections.remove.success');
 
             return $this->redirectToRoute('admin_sections');

@@ -1153,6 +1153,16 @@ admin:
         remove:
             label: Abschnitt löschen
             confirm: "Soll der Abschnitt %name% wirklich gelöscht werden?"
+            caution:
+                header: Achtung
+                message: "Beim Löschen des Abschnittes werden folgende Dinge werden ebenfalls gelöscht:"
+                notice: Es werden lediglich die Zuordnungen der Lernenden/Lehrkräfte zum Abschnitt gelöscht. Lernende und Lehrkräfte, die anschließend keinem Abschnitt zugeordnet werden, werden automatisch innerhalb von 24 Stunden aus dem System entfernt.
+                students: Lernende (siehe Anmerkung)
+                teachers: Lehrkräfte (siehe Anmerkung)
+                tuition: Unterrichte dieses Abschnittes
+                study_groups: Lerngruppen (inkl. Mitgliedschaften) dieses Abschnittes
+                book: Alle Einträge in den Unterrichtsbüchern dieses Abschnittes
+
             success: Abschnitt erfolgreich gelöscht
 
 versions:

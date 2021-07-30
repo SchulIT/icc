@@ -22,6 +22,7 @@ class LessonEntry {
 
     /**
      * @ORM\ManyToOne(targetEntity="Lesson", inversedBy="entries")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
      * @var Lesson|null
      */

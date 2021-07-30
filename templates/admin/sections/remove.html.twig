@@ -20,13 +20,32 @@
         <div class="card-header bg-danger text-white">{{ 'remove.header'|trans }}</div>
 
         <div class="card-body">
+            <div class="bs-callout bs-callout-danger">
+                <h4>{{ 'admin.sections.remove.caution.header'|trans }}</h4>
+
+                <p>{{ 'admin.sections.remove.caution.message'|trans }}</p>
+
+                <ul>
+                    <li>{{ 'admin.sections.remove.caution.students'|trans }}</li>
+                    <li>{{ 'admin.sections.remove.caution.teachers'|trans }}</li>
+                    <li>{{ 'admin.sections.remove.caution.tuition'|trans }}</li>
+                    <li>{{ 'admin.sections.remove.caution.study_groups'|trans }}</li>
+                    <li>{{ 'admin.sections.remove.caution.book'|trans }}</li>
+                </ul>
+
+                <p>
+                    <i class="fas fa-info-circle"></i> {{ 'admin.sections.remove.caution.notice'|trans }}
+                </p>
+            </div>
+
+
             {{ form_widget(form.group_general.confirm) }}
         </div>
     </div>
 
     <div class="buttons">
-        <button type="submit" class="btn btn-primary btn-sm">
-            <i class="fa fa-remove"></i> {{ 'actions.remove'|trans }}
+        <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
         </button>
 
         <a href="javascript:history.back();" class="btn btn-secondary btn-sm">

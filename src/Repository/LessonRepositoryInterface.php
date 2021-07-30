@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Grade;
 use App\Entity\Lesson;
+use App\Entity\Section;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use DateTime;
@@ -42,4 +43,6 @@ interface LessonRepositoryInterface extends TransactionalRepositoryInterface {
     public function persist(Lesson $lesson): void;
 
     public function remove(Lesson $lesson): void;
+
+    public function removeBySection(Section $section): int;
 }

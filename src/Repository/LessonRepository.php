@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Grade;
 use App\Entity\Lesson;
+use App\Entity\Section;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use DateTime;
@@ -241,5 +242,24 @@ class LessonRepository extends AbstractTransactionalRepository implements Lesson
             ->setFirstResult($offset);
 
         return $paginator;
+    }
+
+    public function removeBySection(Section $section): int {
+        $qbOrphaned = $this->em->createQueryBuilder()
+            ->select('l.id')
+            ->from(Lesson::class, 'l')
+            ->leftJoin('l.tuition', 't')
+            ->leftJoin('t.section', 's')
+            ->where('s.id = :section');
+
+        $qb = $this->em->createQueryBuilder();
+
+        return (int)$qb->delete(Lesson::class, 'lesson')
+            ->where(
+                $qb->expr()->in('lesson.id', $qbOrphaned->getDQL())
+            )
+            ->setParameter('section', $section->getId())
+            ->getQuery()
+            ->execute();
     }
 }

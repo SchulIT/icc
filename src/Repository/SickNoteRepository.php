@@ -99,7 +99,8 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
             ->select('sn', 's')
             ->from(SickNote::class, 'sn')
             ->leftJoin('sn.student', 's')
-            ->leftJoin('s.grade', 'g')
+            ->leftJoin('s.gradeMemberships', 'gm')
+            ->leftJoin('gm.grade', 'g')
             ->where('g.id = :grade')
             ->setParameter('grade', $grade->getId());
 

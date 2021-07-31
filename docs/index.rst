@@ -16,6 +16,7 @@ zu Workflows.
    admin/update
    admin/roles
    admin/cronjobs
+   admin/new-school-year
 
 .. toctree::
    :caption: Einrichtung

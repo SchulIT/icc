@@ -1,6 +1,10 @@
 Updates
 =======
 
+.. warning:: Bitte stets auf `GitHub <https://github.com/schulit/icc>`_ die entsprechende Changelog-Datei lesen.
+
+.. danger:: Ein Update auf eine nächsthöhere Version (bspw. von 1.x auf 2.0) ist im laufenden Schuljahr nicht empfohlen. Kleinere Updates (1.1.x -> 1.x) sind auch im laufenden Schuljahr möglich.
+
 Schritt 1: Quelltext aktualisieren
 ----------------------------------
 
@@ -51,3 +55,9 @@ Nun die folgenden Kommandos ausführen, um die Anwendung zu aktualisieren:
     $ php bin/console shapecode:cron:scan
 
 Die Anwendung ist nun aktualisiert.
+
+Schritt 3: neue Rollen implementieren (falls notwendig)
+-------------------------------------------------------
+
+Bei neuen Funktionen kann es sein, dass neue `Rollen <./roles.html>`_ eingeführt werden. Diese müssen im Identity Provider
+entsprechend hinterlegt werden. Siehe `Schritt 4.2 der Installationsanleitung <./install.html>`_.

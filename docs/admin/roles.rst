@@ -62,6 +62,8 @@ ROLE_BOOK_VIEWER
 
 Nutzer mit dieser Rolle haben lesenden Zugriff auf das Klassenbuch.
 
+**Achtung:** Diese Rolle ist noch nicht vollständig implementiert und darf daher nicht verwendet werden.
+
 ROLE_BOOK_ENTRY_CREATOR
 #######################
 

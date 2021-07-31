@@ -47,7 +47,7 @@ class CollectionNotEmptyValidator extends ConstraintValidator {
                 throw new UnexpectedTypeException($userType, UserTypeEntity::class);
             }
 
-            if($userType->getUserType()->equals(UserType::Student()) && count($value) === 0) {
+            if(EnumArrayUtils::inArray($userType->getUserType(), [ UserType::Student(), UserType::Parent()] ) && count($value) === 0) {
                 $this->context
                     ->buildViolation($constraint->message)
                     ->addViolation();

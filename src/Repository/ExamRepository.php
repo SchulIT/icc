@@ -18,7 +18,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $qb = $this->em->createQueryBuilder();
 
         $qb
-            ->select(['e', 's', 't', 'sg', 'g', 'at', 'tt', 'st'])
+            ->select(['e', 's', 't', 'sg', 'g', 'tt', 'st'])
             ->from(Exam::class, 'e')
             ->leftJoin('e.supervisions', 's')
             ->leftJoin('s.teacher', 'st')
@@ -416,13 +416,8 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         if($teacher !== null) {
             $qbInner
                  ->leftJoin('eInner.supervisions', 'sInner')
-                 ->leftJoin('tInner.teachers', 'atInner')
-                 ->andWhere(
-                 $qb->expr()->orX(
-                     'tInner.teacher = :teacher',
-                     'atInner.id = :teacher'
-                 )
-             );
+                 ->leftJoin('tInner.teachers', 'ttInner')
+                 ->andWhere('ttInner.id = :teacher');
              $qb->setParameter('teacher', $teacher->getId());
         }
 

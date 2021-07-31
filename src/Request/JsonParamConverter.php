@@ -70,7 +70,6 @@ class JsonParamConverter implements ParamConverterInterface {
 
             $request->attributes->set($name, $object);
         } catch (SerializerException $e) {
-            dump($e);
             throw new BadRequestHttpException('Request body does not contain valid JSON.');
         }
 

@@ -186,8 +186,6 @@ class BookXhrController extends AbstractController {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
         $tuition = $lesson->getTuition();
 
-        dump($request);
-
         if($lesson->getEntries()->count() === 0) {
             $entry = (new LessonEntry())
                 ->setLesson($lesson)

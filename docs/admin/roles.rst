@@ -57,6 +57,26 @@ ROLE_EXAMS_ADMIN
 
 Diese Rolle beinhaltet die Rolle ``ROLE_EXAMS_CREATOR`` und erlaubt darüber hinaus, alle Klausuren zu bearbeiten und zu löschen.
 
+ROLE_BOOK_VIEWER
+################
+
+Nutzer mit dieser Rolle haben lesenden Zugriff auf das Klassenbuch.
+
+ROLE_BOOK_ENTRY_CREATOR
+#######################
+
+Diese Rolle beinhaltet die Rolle ``ROLE_BOOK_VIEWER`` und erlaubt darüber hinaus, Klassenbucheinträge oder Entschuldigungen einzutragen.
+
+ROLE_SICK_NOTE_VIEWER
+#####################
+
+Nutzer mit dieser Rolle haben lesenden Zugriff auf alle Krankmeldungen.
+
+ROLE_SICK_NOTE_CREATOR
+######################
+
+Diese Rolle erlaubt es, Krankmeldungen für beliebige Lernende zu erstellen.
+
 ROLE_KIOSK
 ##########
 

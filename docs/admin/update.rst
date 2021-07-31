@@ -20,6 +20,7 @@ Anschließend folgende Kommandos ausführen:
 .. code-block:: shell
 
     $ composer install --no-dev --optimize-autoloader --no-scripts
+    $ php bin/console bazinga:js-translation:dump assets/js/ --merge-domains
     $ yarn encore production
 
 Möglichkeit 2: Installation ohne Git

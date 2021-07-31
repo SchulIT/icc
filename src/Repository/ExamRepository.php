@@ -23,8 +23,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->leftJoin('e.supervisions', 's')
             ->leftJoin('s.teacher', 'st')
             ->leftJoin('e.tuitions', 't')
-            ->leftJoin('t.teacher', 'tt')
-            ->leftJoin('t.additionalTeachers', 'at')
+            ->leftJoin('t.teachers', 'tt')
             ->leftJoin('t.studyGroup', 'sg')
             ->leftJoin('sg.grades', 'g');
 
@@ -155,12 +154,11 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->from(Exam::class, 'eInner')
             ->leftJoin('eInner.supervisions', 'sInner')
             ->leftJoin('eInner.tuitions', 'tInner')
-            ->leftJoin('tInner.additionalTeachers', 'teacherInner')
+            ->leftJoin('tInner.teachers', 'teacherInner')
             ->andWhere(
                 $qb->expr()->orX(
                     'teacherInner.id = :teacher',
-                    'sInner.teacher = :teacher',
-                    'tInner.teacher = :teacher'
+                    'sInner.teacher = :teacher'
                 )
             );
 
@@ -184,12 +182,11 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->from(Exam::class, 'eInner')
             ->leftJoin('eInner.supervisions', 'sInner')
             ->leftJoin('eInner.tuitions', 'tInner')
-            ->leftJoin('tInner.additionalTeachers', 'teacherInner')
+            ->leftJoin('tInner.teachers', 'teacherInner')
             ->andWhere(
                 $qb->expr()->orX(
                     'teacherInner.id = :teacher',
                     'sInner.teacher = :teacher',
-                    'tInner.teacher = :teacher'
                 )
             );
 
@@ -419,12 +416,11 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         if($teacher !== null) {
             $qbInner
                  ->leftJoin('eInner.supervisions', 'sInner')
-                 ->leftJoin('tInner.additionalTeachers', 'atInner')
+                 ->leftJoin('tInner.teachers', 'atInner')
                  ->andWhere(
                  $qb->expr()->orX(
                      'tInner.teacher = :teacher',
-                     'atInner.id = :teacher',
-                     'sInner.teacher = :teacher',
+                     'atInner.id = :teacher'
                  )
              );
              $qb->setParameter('teacher', $teacher->getId());

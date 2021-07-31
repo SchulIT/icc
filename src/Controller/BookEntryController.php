@@ -52,7 +52,7 @@ class BookEntryController extends AbstractController {
             ->setLessonStart($lessonStart)
             ->setLessonEnd($lessonEnd)
             ->setIsCancelled(true)
-            ->setTeacher($tuition->getTeacher())
+            ->setTeacher($tuition->getTeachers()->first())
             ->setSubject($tuition->getSubject());
 
         $form = $this->createForm(LessonEntryCancelType::class, $entry);
@@ -81,7 +81,7 @@ class BookEntryController extends AbstractController {
         $entry = (new LessonEntry())
             ->setLesson($lesson)
             ->setTuition($lesson->getTuition())
-            ->setTeacher($lesson->getTuition()->getTeacher())
+            ->setTeacher($lesson->getTuition()->getTeachers()->first())
             ->setSubject($lesson->getTuition()->getSubject());
 
         $form = $this->createForm(LessonEntryCreateType::class, $entry);

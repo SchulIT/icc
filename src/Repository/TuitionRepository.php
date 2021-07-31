@@ -24,10 +24,9 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         }
 
         return $this->em->createQueryBuilder()
-            ->select(['t', 'tt', 'at', 'sg', 's', 'sgs', 'sgss'])
+            ->select(['t', 'tt', 'sg', 's', 'sgs', 'sgss'])
             ->from(Tuition::class, 't')
-            ->leftJoin('t.teacher', 'tt')
-            ->leftJoin('t.additionalTeachers', 'at')
+            ->leftJoin('t.teachers', 'tt')
             ->leftJoin('t.studyGroup', 'sg')
             ->leftJoin('sg.memberships', 'sgs')
             ->leftJoin('sgs.student', 'sgss')
@@ -94,12 +93,9 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         $qbInner = $this->em->createQueryBuilder()
             ->select('tInner.id')
             ->from(Tuition::class, 'tInner')
-            ->leftJoin('tInner.additionalTeachers', 'teacherInner')
+            ->leftJoin('tInner.teachers', 'teacherInner')
             ->where(
-                $qb->expr()->orX(
-                    'teacherInner.id = :teacher',
-                    'tInner.teacher = :teacher'
-                )
+                'teacherInner.id = :teacher'
             );
 
         $qb->andWhere($qb->expr()->in('t.id', $qbInner->getDQL()))
@@ -226,17 +222,13 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         $qbInner = $this->em->createQueryBuilder()
             ->select('tInner.id')
             ->from(Tuition::class, 'tInner')
-            ->leftJoin('tInner.teacher', 'ttInner')
-            ->leftJoin('tInner.additionalTeachers', 'tatInner')
+            ->leftJoin('tInner.teachers', 'ttInner')
             ->leftJoin('tInner.subject', 'sInner')
             ->leftJoin('tInner.studyGroup', 'sgInner')
             ->leftJoin('sgInner.grades', 'gInner')
             ->where(
                 $qb->expr()->andX(
-                    $qb->expr()->orX(
-                        $qb->expr()->in('ttInner.acronym', ':teachers'),
-                        $qb->expr()->in('tatInner.acronym', ':teachers')
-                    ),
+                    $qb->expr()->in('ttInner.acronym', ':teachers'),
                     $qb->expr()->orX(
                         'sInner.abbreviation = :subject',
                         'sgInner.name = :subject'

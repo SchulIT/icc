@@ -22,11 +22,22 @@ class SectionResolver implements SectionResolverInterface {
 
     public function getCurrentSection(): ?Section {
         $id = $this->settings->getCurrentSectionId();
+        $section = null;
 
-        if($id === null) {
+        if($id !== null) {
+            $section = $this->sectionRepository->findOneById($id);
+        }
+
+        if($section === null) {
+            $sections = $this->sectionRepository->findAll();
+
+            if(count($sections) === 1) {
+                return $sections[0];
+            }
+
             return null;
         }
 
-        return $this->sectionRepository->findOneById($id);
+        return $section;
     }
 }

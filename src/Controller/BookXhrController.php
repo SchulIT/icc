@@ -193,7 +193,7 @@ class BookXhrController extends AbstractController {
                 ->setLessonStart($lesson->getLessonStart())
                 ->setLessonEnd($lesson->getLessonEnd())
                 ->setIsCancelled(true)
-                ->setTeacher($tuition->getTeacher())
+                ->setTeacher($tuition->getTeachers()->first())
                 ->setSubject($tuition->getSubject())
                 ->setCancelReason($request->getReason());
 
@@ -215,7 +215,7 @@ class BookXhrController extends AbstractController {
                     ->setLessonStart($lessonNumber)
                     ->setLessonEnd($lessonNumber)
                     ->setIsCancelled(true)
-                    ->setTeacher($tuition->getTeacher())
+                    ->setTeacher($tuition->getTeachers()->first())
                     ->setSubject($tuition->getSubject())
                     ->setCancelReason($request->getReason());
 

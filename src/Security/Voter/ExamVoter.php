@@ -143,8 +143,10 @@ class ExamVoter extends Voter {
 
         /** @var Tuition $tuition */
         foreach($exam->getTuitions() as $tuition) {
-            if($tuition->getTeacher()->getId() === $teacher->getId()) {
-                return true;
+            foreach($tuition->getTeachers() as $tuitionTeacher) {
+                if ($tuitionTeacher->getId() === $teacher->getId()) {
+                    return true;
+                }
             }
         }
 

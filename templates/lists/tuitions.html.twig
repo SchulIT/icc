@@ -100,8 +100,10 @@
                                     <td>{{ tuition.subject.name }}</td>
                                     {% if teacherFilter.currentTeacher == null %}
                                     <td>
-                                        {% if tuition.teacher is not null %}
-                                            <a href="{{ path('list_tuitions', { teacher: tuition.teacher.uuid.toString }) }}">{{ tuition.teacher|teacher }}</a>
+                                        {% if tuition.teachers|length > 0 %}
+                                            {% for teacher in tuition.teachers %}
+                                                <a href="{{ path('list_tuitions', { teacher: teacher.uuid.toString }) }}">{{ tuition.teacher|teacher }}</a>{% if not loop.last %}, {% endif %}
+                                            {% endfor %}
                                         {% else %}
                                             <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
                                         {% endif %}

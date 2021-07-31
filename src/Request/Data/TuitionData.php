@@ -37,17 +37,10 @@ class TuitionData {
     private $subject;
 
     /**
-     * @Serializer\Type("string")
-     * @NullOrNotBlank()
-     * @var string|null
-     */
-    private $teacher;
-
-    /**
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $additionalTeachers;
+    private $teachers;
 
     /**
      * @Serializer\Type("string")
@@ -121,35 +114,20 @@ class TuitionData {
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getTeacher(): ?string {
-        return $this->teacher;
-    }
-
-    /**
-     * @param string|null $teacher
-     * @return TuitionData
-     */
-    public function setTeacher(?string $teacher): TuitionData {
-        $this->teacher = $teacher;
-        return $this;
-    }
 
     /**
      * @return string[]
      */
-    public function getAdditionalTeachers(): array {
-        return $this->additionalTeachers;
+    public function getTeachers(): array {
+        return $this->teachers;
     }
 
     /**
-     * @param string[] $additionalTeachers
+     * @param string[] $teachers
      * @return TuitionData
      */
-    public function setAdditionalTeachers(array $additionalTeachers): TuitionData {
-        $this->additionalTeachers = $additionalTeachers;
+    public function setTeachers(array $teachers): TuitionData {
+        $this->teachers = $teachers;
         return $this;
     }
 

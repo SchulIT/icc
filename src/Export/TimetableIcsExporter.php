@@ -143,7 +143,7 @@ class TimetableIcsExporter {
         $event->setEnd($this->timetableTimeHelper->getLessonEndDateTime($day, $lesson->getLesson() + ($lesson->isDoubleLesson() ? 1 : 0)));
 
         if($lesson->getTuition() !== null) {
-            $teacher = $lesson->getTuition()->getTeacher();
+            $teacher = $lesson->getTuition()->getTeachers()->first();
             if ($teacher !== null) {
                 $organizer = new Organizer(new Formatter());
                 $organizer->setName(sprintf('%s %s', $teacher->getFirstname(), $teacher->getLastname()));

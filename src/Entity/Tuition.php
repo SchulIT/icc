@@ -51,21 +51,14 @@ class Tuition {
     private $subject;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Teacher|null
-     */
-    private $teacher;
-
-    /**
      * @ORM\ManyToMany(targetEntity="Teacher")
-     * @ORM\JoinTable(name="tuition_additional_teachers",
+     * @ORM\JoinTable(name="tuition_teachers",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @var Collection<Teacher>
      */
-    private $additionalTeachers;
+    private $teachers;
 
     /**
      * @ORM\ManyToOne(targetEntity="StudyGroup", inversedBy="tuitions")
@@ -77,7 +70,7 @@ class Tuition {
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
-        $this->additionalTeachers = new ArrayCollection();
+        $this->teachers = new ArrayCollection();
     }
 
     /**
@@ -144,35 +137,19 @@ class Tuition {
         return $this;
     }
 
-    /**
-     * @return Teacher|null
-     */
-    public function getTeacher(): ?Teacher {
-        return $this->teacher;
+    public function addTeacher(Teacher $teacher) {
+        $this->teachers->add($teacher);
     }
 
-    /**
-     * @param Teacher|null $teacher
-     * @return Tuition
-     */
-    public function setTeacher(?Teacher $teacher): Tuition {
-        $this->teacher = $teacher;
-        return $this;
-    }
-
-    public function addAdditionalTeacher(Teacher $teacher) {
-        $this->additionalTeachers->add($teacher);
-    }
-
-    public function removeAdditionalTeacher(Teacher $teacher) {
-        $this->additionalTeachers->removeElement($teacher);
+    public function removeTeacher(Teacher $teacher) {
+        $this->teachers->removeElement($teacher);
     }
 
     /**
      * @return Collection<Teacher>
      */
-    public function getAdditionalTeachers(): Collection {
-        return $this->additionalTeachers;
+    public function getTeachers(): Collection {
+        return $this->teachers;
     }
 
     /**
@@ -189,20 +166,6 @@ class Tuition {
     public function setStudyGroup(?StudyGroup $studyGroup): Tuition {
         $this->studyGroup = $studyGroup;
         return $this;
-    }
-
-    /**
-     * @return Teacher[]
-     */
-    public function getTeachers() {
-        if($this->getTeacher() === null) {
-            return $this->getAdditionalTeachers()->toArray();
-        }
-
-        return array_merge(
-            [ $this->getTeacher() ],
-            $this->getAdditionalTeachers()->toArray()
-        );
     }
 
     public function __toString() {

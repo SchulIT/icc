@@ -4,15 +4,18 @@ namespace App\View\Filter;
 
 use App\Entity\Section;
 use App\Repository\SectionRepositoryInterface;
+use App\Section\SectionResolverInterface;
 use App\Settings\GeneralSettings;
 use App\Utils\ArrayUtils;
 
 class SectionFilter {
     private $sectionRepository;
+    private $sectionResolver;
     private $settings;
 
-    public function __construct(SectionRepositoryInterface $sectionRepository, GeneralSettings $settings) {
+    public function __construct(SectionRepositoryInterface $sectionRepository, SectionResolverInterface $sectionResolver, GeneralSettings $settings) {
         $this->sectionRepository = $sectionRepository;
+        $this->sectionResolver = $sectionResolver;
         $this->settings = $settings;
     }
 
@@ -26,8 +29,8 @@ class SectionFilter {
         $section = $sectionUuid !== null ?
             $sections[$sectionUuid] ?? null : null;
 
-        if($section === null && $this->settings->getCurrentSectionId() !== null) {
-            $section = $this->sectionRepository->findOneById($this->settings->getCurrentSectionId());
+        if($section === null) {
+            $section = $this->sectionResolver->getCurrentSection();
         }
 
         return new SectionFilterView($sections, $section);

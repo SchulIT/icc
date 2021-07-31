@@ -24,19 +24,15 @@ class TuitionTest extends TestCase {
         $tuition->setSubject($subject);
         $this->assertEquals($subject, $tuition->getSubject());
 
-        $teacher = new Teacher();
-        $tuition->setTeacher($teacher);
-        $this->assertEquals($teacher, $tuition->getTeacher());
-
         $studyGroup = new StudyGroup();
         $tuition->setStudyGroup($studyGroup);
         $this->assertEquals($studyGroup, $tuition->getStudyGroup());
 
         $teacher = new Teacher();
-        $tuition->addAdditionalTeacher($teacher);
-        $this->assertTrue($tuition->getAdditionalTeachers()->contains($teacher));
+        $tuition->addTeacher($teacher);
+        $this->assertTrue($tuition->getTeachers()->contains($teacher));
 
-        $tuition->removeAdditionalTeacher($teacher);
-        $this->assertFalse($tuition->getAdditionalTeachers()->contains($teacher));
+        $tuition->removeTeacher($teacher);
+        $this->assertFalse($tuition->getTeachers()->contains($teacher));
     }
 }

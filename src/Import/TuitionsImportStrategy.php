@@ -154,22 +154,10 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
 
         $entity->setSection($section);
 
-        if($data->getTeacher() === null) {
-            $entity->setTeacher(null);
-        } else {
-            $teacher = $this->teacherCache[$data->getTeacher()] ?? null;
+        $teachers = ArrayUtils::findAllWithKeys($this->teacherCache, $data->getTeachers());
 
-            if ($teacher === null) {
-                throw new ImportException(sprintf('Teacher with ID "%s" was not found on tuition with ID "%s"', $data->getTeacher(), $data->getId()));
-            }
-
-            $entity->setTeacher($teacher);
-        }
-
-        $additionalTeachers = ArrayUtils::findAllWithKeys($this->teacherCache, $data->getAdditionalTeachers());
-
-        if(count($additionalTeachers) !== count($data->getAdditionalTeachers())) {
-            $this->throwTeacherIsMissing($data->getAdditionalTeachers(), $additionalTeachers, $data->getId());
+        if(count($teachers) !== count($data->getTeachers())) {
+            $this->throwTeacherIsMissing($data->getTeachers(), $teachers, $data->getId());
         }
 
         $studyGroup = $this->studyGroupCache[$data->getStudyGroup()] ?? null;
@@ -184,8 +172,8 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
         $entity->setDisplayName($data->getDisplayName());
 
         CollectionUtils::synchronize(
-            $entity->getAdditionalTeachers(),
-            $additionalTeachers,
+            $entity->getTeachers(),
+            $teachers,
             function(Teacher $teacher) {
                 return $teacher->getId();
             }

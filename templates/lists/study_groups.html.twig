@@ -132,10 +132,12 @@
                                             <td>{{ tuition.name }}</td>
                                             <td>{{ tuition.subject.name }}</td>
                                             <td>
-                                                {% if tuition.teacher is null %}
+                                                {% if tuition.teachers|length == 0 %}
                                                     <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
                                                 {% else %}
-                                                    {{ tuition.teacher|teacher }}
+                                                    {% for teacher in tuition.teachers %}
+                                                        {{ teacher|teacher }}{% if not loop.last %}, {% endif %}
+                                                    {% endfor %}
                                                 {% endif %}
                                             </td>
                                             <td>

@@ -126,14 +126,10 @@ class LessonRepository extends AbstractTransactionalRepository implements Lesson
             ->where('lInner.date >= :start')
             ->andWhere('lInner.date <= :end')
             ->leftJoin('lInner.tuition', 'tInner')
-            ->leftJoin('tInner.teacher', 'ttInner')
-            ->leftJoin('tInner.additionalTeachers', 'atInner');
+            ->leftJoin('tInner.teachers', 'ttInner');
         $qbInner
             ->andWhere(
-                $qbInner->expr()->orX(
-                    'ttInner.id = :teacher',
-                    'atInner.id = :teacher'
-                )
+                'ttInner.id = :teacher'
             );
 
         $qb->andWhere(

@@ -176,7 +176,7 @@ class BookExporter {
             ->setStart($lessonNumber)
             ->setEnd($lessonNumber)
             ->setSubject($subject !== null ? $subject->getAbbreviation() : null)
-            ->setTeacher($this->castTeacher($lessonEntity->getTuition()->getTeacher()));
+            ->setTeacher($this->castTeacher($lessonEntity->getTuition()->getTeachers()->first()));
 
         return $lesson;
     }

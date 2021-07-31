@@ -30,7 +30,7 @@
                         <ul class="list-unstyled m-0">
                             <li>{{ 'label.study_group'|trans }}: {{ tuition.studyGroup.name }}</li>
                             <li>{{ 'label.grade'|trans }}: {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
-                            <li>{{ 'label.teacher'|trans }}: {{ tuition.teacher|teacher }}{% if tuition.additionalTeachers|length > 0 %}, {% for teacher in tuition.additionalTeachers %}{{ teacher|teacher }},{% endfor %}{% endif %}</li>
+                            <li>{{ 'label.teacher'|trans }}: {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
                             <li>{{ 'label.section'|trans }}: {{ tuition.section.displayName }}</li>
                         </ul>
                     </div>

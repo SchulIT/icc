@@ -125,8 +125,7 @@ easy_admin:
                     - name
                     - displayName
                     - subject
-                    - teacher
-                    - additionalTeachers
+                    - teachers
                     - studyGroup
 
         TimetableLesson:

@@ -4,9 +4,11 @@ namespace App\Form;
 
 use App\Converter\UserStringConverter;
 use App\Entity\DocumentCategory;
+use App\Entity\Grade;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Sorting\DocumentCategoryNameStrategy;
+use App\Sorting\GradeNameStrategy;
 use App\Sorting\UserUsernameStrategy;
 use Doctrine\ORM\EntityRepository;
 use SchulIT\CommonBundle\Form\FieldsetType;
@@ -19,6 +21,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class DocumentType extends AbstractType {
 
     private $documentCategoryNameStrategy;
+
     private $userConverter;
     private $userStrategy;
 
@@ -67,11 +70,12 @@ class DocumentType extends AbstractType {
                                     'class' => 'checkbox-custom'
                                 ]
                             ])
-                            ->add('studyGroups', StudyGroupType::class, [
-                                'label' => 'label.study_groups_simple',
+                            ->add('grades', GradeChoiceType::class, [
+                                'label' => 'label.grades',
                                 'multiple' => true,
                                 'attr' => [
-                                    'size' => 10
+                                    'size' => 10,
+                                    'data-choice' => 'true'
                                 ],
                                 'required' => false
                             ]);

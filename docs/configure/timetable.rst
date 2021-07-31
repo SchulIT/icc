@@ -70,6 +70,9 @@ eigentlich keine Stundenplan-Perioden, so gibt man eine Periode an, die über da
 Jede Periode kann individuell für einzelne Benutzergruppen freigeschaltet werden. Die Externe ID ist jene ID, die der
 Untis Importer mitschicken muss, wenn er Stundenplaneinträge für eine Periode importieren möchte.
 
+.. danger:: Wenn Perioden durch den Untis ICC Importer angelegt werden, müssen diese anschließend für die gewünschten
+   Benutzergruppen freigeschaltet werden. Standardmäßig sind sie für niemanden sichtbar.
+
 Wochen
 ######
 
@@ -81,6 +84,4 @@ Der Schlüssel der Woche ist dabei eine Zeichenkette, die das System nutzt, um S
 richtigen Woche zuzuordnen.
 
 **Tipp:** Standard A- und B-Wochen können per Knopfdruck angelegt werden.
-
-.. warning:: Komplexe Wochen-Periodizitäten werden aktuell nicht unterstützt. Bei Bedarf können diese jedoch implementiert werden 😉
 

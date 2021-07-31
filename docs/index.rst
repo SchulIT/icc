@@ -8,7 +8,7 @@ zu Workflows.
 
 .. toctree::
    :caption: Installation und Wartung
-   :maxdepth: 2
+   :maxdepth: 1
 
    admin/requirements
    admin/install
@@ -16,11 +16,10 @@ zu Workflows.
    admin/update
    admin/roles
    admin/cronjobs
-   admin/new-school-year
 
 .. toctree::
    :caption: Einrichtung
-   :maxdepth: 2
+   :maxdepth: 1
 
    configure/index.rst
    configure/timetable.rst
@@ -30,18 +29,31 @@ zu Workflows.
    configure/appointments.rst
    configure/notifications.rst
    configure/apps.rst
+   configure/sections.rst
+   configure/sick_notes.rst
+   configure/auditlog.rst
+   configure/import.rst
 
 .. toctree::
    :caption: Datenimport
-   :maxdepth: 2
+   :maxdepth: 1
 
    import/index.rst
    import/schild-nrw.rst
    import/untis.rst
 
+.. toctree::
+   :caption: Anleitungen
+   :maxdepth: 1
+
+   tutorials/display.rst
+   tutorials/kiosk.rst
+   tutorials/exam-planning.rst
+   tutorials/new-school-year
 
 .. toctree::
    :caption: Benutzer-Handbuch
-   :maxdepth: 2
+   :maxdepth: 1
 
    user/notifications.rst
+   user/book.rst

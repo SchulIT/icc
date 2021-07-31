@@ -20,7 +20,7 @@ import sphinx_fontawesome
 # -- Project information -----------------------------------------------------
 
 project = 'Information & Communication Center'
-copyright = '2020, SchulIT'
+copyright = '2021, SchulIT'
 author = 'Marcel Marnitz'
 
 

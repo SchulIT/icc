@@ -80,7 +80,10 @@
     </div>
 {% endblock %}
 
-{% block footer_links %} – <a href="{{ absolute_url('/docs/api/app') }}">{{ 'api.doc'|trans }}</a> {% endblock %}
+{% block footer_links %}
+    – <i class="fas fa-book"></i> <a href="https://icc.readthedocs.io/" target="_blank">{{ 'external.docs'|trans }}</a>
+    – <a href="{{ absolute_url('/docs/api/app') }}">{{ 'api.doc'|trans }}</a>
+{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{{ asset('build/app.css') }}" type="text/css" />

@@ -15,6 +15,7 @@ use App\Form\LessonEntryCreateType;
 use App\Form\LessonEntryType;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
+use App\Security\Voter\LessonEntryVoter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,6 +40,8 @@ class BookEntryController extends AbstractController {
      * @Route("/cancel/{uuid}", name="cancel_lesson")
      */
     public function cancelLesson(Lesson $lesson, Request $request) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::New);
+
         $lessonStart = $request->query->getInt('lesson_start');
         $lessonEnd = $request->query->getInt('lesson_end');
         $tuition = $lesson->getTuition();
@@ -73,6 +76,8 @@ class BookEntryController extends AbstractController {
      * @Route("/create/{uuid}", name="add_entry")
      */
     public function create(Lesson $lesson, Request $request) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::New);
+
         $entry = (new LessonEntry())
             ->setLesson($lesson)
             ->setTuition($lesson->getTuition())
@@ -127,6 +132,8 @@ class BookEntryController extends AbstractController {
      * @Route("/attendance/{uuid}/excuse_status", name="change_lesson_attendance_excuse_status")
      */
     public function attendance(LessonAttendance $attendance, Request $request, LessonAttendanceRepositoryInterface $attendanceRepository) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $attendance->getEntry());
+
         $form = $this->createForm(LessonAttendanceExcuseType::class, $attendance);
         $form->handleRequest($request);
 
@@ -146,6 +153,8 @@ class BookEntryController extends AbstractController {
      * @Route("/{uuid}", name="show_entry")
      */
     public function show(LessonEntry $entry, Request $request) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $entry);
+
         $form = $this->createForm(LessonEntryType::class, $entry, [
             'validation_groups' => [ $entry->isCancelled() ? 'cancel' : 'Default' ]
         ]);
@@ -170,6 +179,8 @@ class BookEntryController extends AbstractController {
      * @Route("/{uuid}/students/add", name="add_student_to_entry")
      */
     public function addStudent(LessonEntry $entry, Request $request) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $entry);
+
         $form = $this->createForm(LessonEntryAddStudent::class);
         $form->handleRequest($request);
 
@@ -203,6 +214,8 @@ class BookEntryController extends AbstractController {
      * @Route("/{uuid}/remove", name="remove_entry")
      */
     public function remove(LessonEntry $entry, Request $request) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::Remove, $entry);
+
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'book.entry.remove.confirm'
         ]);

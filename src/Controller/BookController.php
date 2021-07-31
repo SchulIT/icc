@@ -26,6 +26,7 @@ use App\Grouping\LessonDayStrategy;
 use App\Repository\LessonRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
+use App\Security\Voter\LessonEntryVoter;
 use App\Sorting\LessonAttendanceGroupStrategy;
 use App\Sorting\LessonAttendanceStrategy;
 use App\Sorting\LessonDayGroupStrategy;
@@ -260,6 +261,8 @@ class BookController extends AbstractController {
     public function missing(Request $request, SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter,
                             TuitionFilter $tuitionFilter, LessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository,
                             DateHelper $dateHelper, Sorter $sorter, Grouper $grouper) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::New);
+
         /** @var User $user */
         $user = $this->getUser();
 

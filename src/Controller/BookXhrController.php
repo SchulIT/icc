@@ -22,6 +22,7 @@ use App\Response\Api\V1\Teacher;
 use App\Response\Api\V1\Tuition as TuitionResponse;
 use App\Response\ViolationList;
 use App\Section\SectionResolverInterface;
+use App\Security\Voter\LessonEntryVoter;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
@@ -70,6 +71,8 @@ class BookXhrController extends AbstractController {
     public function possiblyAbsentStudents(Tuition $tuition, Request $request, AbsenceResolver $absenceResolver,
                                            LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
                                            SerializerInterface $serializer) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::New);
+
         $date = $this->getDateFromRequest($request, 'date');
 
         if($date === null) {
@@ -130,6 +133,8 @@ class BookXhrController extends AbstractController {
      * @Route("/attendances/{uuid}", name="xhr_entry_attendances")
      */
     public function attendances(LessonEntry $entry, SerializerInterface $serializer) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::New);
+
         $data = [ ];
 
         /** @var LessonAttendance $attendance */
@@ -147,6 +152,8 @@ class BookXhrController extends AbstractController {
      * @Route("/students", name="xhr_students")
      */
     public function students(StudentRepositoryInterface $studentRepository, SectionResolverInterface $sectionResolver, SerializerInterface $serializer) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::New);
+
         $students = [ ];
         $section = $sectionResolver->getCurrentSection();
 
@@ -176,6 +183,7 @@ class BookXhrController extends AbstractController {
      * )
      */
     public function cancelLesson(Lesson $lesson, CancelLessonRequest $request, LessonEntryRepositoryInterface $entryRepository) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::New);
         $tuition = $lesson->getTuition();
 
         dump($request);

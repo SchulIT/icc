@@ -61,7 +61,11 @@ abstract class AbstractGradeFilter {
         }
 
         $grades = ArrayUtils::createArrayWithKeys(
-            $grades,
+            array_filter(
+                $grades,
+                function($grade) {
+                    return $grade !== null;
+                }),
             function(Grade $grade) {
                 return (string)$grade->getUuid();
             }

@@ -70,7 +70,7 @@ class SickNoteSender {
         if($grade !== null && $section !== null) {
             /** @var GradeTeacher $teacher */
             foreach ($grade->getTeachers() as $teacher) {
-                if($teacher->getSection() === $section) {
+                if($teacher->getSection()->getId() === $section->getId()) {
                     $teachers[] = $teacher->getTeacher();
                     $cc[] = $teacher->getTeacher()->getEmail();
                 }
@@ -79,12 +79,20 @@ class SickNoteSender {
 
         $isQuarantine = $note->getReason()->equals(SickNoteReason::Quarantine());
 
+        $grade = $note->getStudent()->getGrade($section);
+        $gradeName = $this->translator->trans('label.not_available');
+        if($grade !== null) {
+            $gradeName = $grade->getName();
+        }
+
         $body = $this->twig->render('email/sick_note.html.twig', [
             'note' => $note,
             'teachers' => $teachers,
             'sender' => $this->userConverter->convert($sender),
             'now' => $this->dateHelper->getNow(),
-            'is_quarantine' => $isQuarantine
+            'is_quarantine' => $isQuarantine,
+            'section' => $section,
+            'grade' => $gradeName
         ]);
 
         $message = (new Swift_Message())

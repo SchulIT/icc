@@ -2,9 +2,9 @@
 
 {% block title %}
     {% if is_quarantine %}
-        {{ 'sick_note.quarantine.title'|trans({ '%student%': note.student|student, '%grade%': note.student.grade.name}, 'email') }}
+        {{ 'sick_note.quarantine.title'|trans({ '%student%': note.student|student, '%grade%': grade}, 'email') }}
     {% else %}
-        {{ 'sick_note.sick.title'|trans({ '%student%': note.student|student, '%grade%': note.student.grade.name}, 'email') }}
+        {{ 'sick_note.sick.title'|trans({ '%student%': note.student|student, '%grade%': grade}, 'email') }}
     {% endif %}
 {% endblock %}
 
@@ -12,18 +12,18 @@
 
 {% block preview %}
     {% if is_quarantine %}
-        {{ 'sick_note.quarantine.content'|trans({ '%student%': note.student|student, '%grade%': note.student.grade.name}, 'email') }}
+        {{ 'sick_note.quarantine.content'|trans({ '%student%': note.student|student, '%grade%': grade}, 'email') }}
     {% else %}
-        {{ 'sick_note.sick.content'|trans({ '%student%': note.student|student, '%grade%': note.student.grade.name}, 'email') }}
+        {{ 'sick_note.sick.content'|trans({ '%student%': note.student|student, '%grade%': grade}, 'email') }}
     {% endif %}
 {% endblock %}
 
 {% block content %}
     <p>
         {% if is_quarantine %}
-            {{ 'sick_note.quarantine.content'|trans({ '%student%': note.student|student, '%grade%': note.student.grade.name}, 'email') }}
+            {{ 'sick_note.quarantine.content'|trans({ '%student%': note.student|student, '%grade%': grade}, 'email') }}
         {% else %}
-            {{ 'sick_note.sick.content'|trans({ '%student%': note.student|student, '%grade%': note.student.grade.name}, 'email') }}
+            {{ 'sick_note.sick.content'|trans({ '%student%': note.student|student, '%grade%': grade}, 'email') }}
         {% endif %}
     </p>
 
@@ -31,7 +31,7 @@
 
     <ul>
         <li>{{ 'sick_note.student'|trans({'%student%': note.student|student }, 'email') }}</li>
-        <li>{{ 'sick_note.grade'|trans({'%grade%': note.student.grade.name }, 'email') }}</li>
+        <li>{{ 'sick_note.grade'|trans({'%grade%': grade }, 'email') }}</li>
         <li>{{ 'sick_note.teachers'|trans({'%teachers%': teachers|teachers }, 'email') }}</li>
         <li>{{ 'sick_note.reason'|trans({'%reason%': note.reason|enum }, 'email') }}</li>
         {% if note.orderedBy is not empty %}

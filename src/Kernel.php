@@ -3,6 +3,7 @@
 namespace App;
 
 use Acelaya\Doctrine\Type\PhpEnumType;
+use App\DependencyInjection\Compiler\RemoveDumpCommandPass;
 use App\DependencyInjection\Security\Factory\DeviceTokenFactory;
 use App\Entity\IcsAccessToken;
 use App\Entity\IcsAccessTokenType;
@@ -62,5 +63,6 @@ class Kernel extends BaseKernel
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');
         $extension->addSecurityListenerFactory(new DeviceTokenFactory());
+        $container->addCompilerPass(new RemoveDumpCommandPass());
     }
 }

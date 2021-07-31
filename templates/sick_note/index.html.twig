@@ -70,7 +70,14 @@
                                             <td>{{ note.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': note.until.lesson, '%count%': 0}) }})</td>
                                             <td>{{ note.createdAt|format_datetime }}</td>
                                             <td>{{ note.createdBy|user(false) }}</td>
-                                            <td>{{ note.student.grade.name }}</td>
+                                            <td>
+                                                {% set grade = note.student.grade(section) %}
+                                                {% if grade is not null %}
+                                                    {{ grade.name }}
+                                                {% else %}
+                                                    {{ 'label.not_available'|trans }}
+                                                {% endif %}
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>

@@ -94,7 +94,7 @@ class SickNoteController extends AbstractController {
      */
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Request $request,
                           SickNoteRepositoryInterface $sickNoteRepository, TuitionRepositoryInterface $tuitionRepository,
-                          DateHelper $dateHelper, Sorter $sorter, Grouper $grouper) {
+                          SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Sorter $sorter, Grouper $grouper) {
         $this->denyAccessUnlessGranted(SickNoteVoter::View);
 
         /** @var User $user */
@@ -171,7 +171,8 @@ class SickNoteController extends AbstractController {
             'sectionFilter' => $sectionFilterView,
             'gradeFilter' => $gradeFilterView,
             'teacherFilter' => $teacherFilterView,
-            'selectedDate' => $selectedDate
+            'selectedDate' => $selectedDate,
+            'section' => $sectionResolver->getCurrentSection()
         ]);
     }
 }

@@ -28,10 +28,10 @@ class DocumentTest extends WebTestCase {
 
         $studyGroup = new StudyGroup();
         $document->addStudyGroup($studyGroup);
-        $this->assertTrue($document->getStudyGroups()->contains($studyGroup));
+        $this->assertTrue($document->getGrades()->contains($studyGroup));
 
         $document->removeStudyGroup($studyGroup);
-        $this->assertFalse($document->getStudyGroups()->contains($studyGroup));
+        $this->assertFalse($document->getGrades()->contains($studyGroup));
 
         $attachment = new DocumentAttachment();
         $document->addAttachment($attachment);

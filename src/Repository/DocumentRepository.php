@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Document;
 use App\Entity\DocumentCategory;
-use App\Entity\StudyGroup;
+use App\Entity\Grade;
 use App\Entity\User;
 use App\Entity\UserType;
 use Doctrine\ORM\QueryBuilder;
@@ -13,11 +13,11 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
 
     private function createDefaultQueryBuilder(): QueryBuilder {
         $qb = $this->em->createQueryBuilder()
-            ->select(['d', 'a', 'c', 'sg', 'v'])
+            ->select(['d', 'a', 'c', 'g', 'v'])
             ->from(Document::class, 'd')
             ->leftJoin('d.authors', 'a')
             ->leftJoin('d.category', 'c')
-            ->leftJoin('d.studyGroups', 'sg')
+            ->leftJoin('d.grades', 'g')
             ->leftJoin('d.visibilities', 'v');
 
         return $qb;
@@ -91,21 +91,21 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
     /**
      * @inheritDoc
      */
-    public function findAllFor(UserType $type, ?StudyGroup $studyGroup = null, ?string $q = null) {
+    public function findAllFor(UserType $type, ?Grade $grade = null, ?string $q = null) {
         $qb = $this->createDefaultQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('dInner.id')
             ->from(Document::class, 'dInner')
-            ->leftJoin('dInner.studyGroups', 'sgInner')
+            ->leftJoin('dInner.grades', 'gInner')
             ->leftJoin('dInner.visibilities', 'vInner')
             ->where('vInner.userType = :type');
 
         $qb->setParameter('type', $type->getValue());
 
-        if($studyGroup !== null) {
-            $qbInner->andWhere('sgInner.id = :group');
-            $qb->setParameter('group', $studyGroup->getId());
+        if($grade !== null) {
+            $qbInner->andWhere('gInner.id = :grade');
+            $qb->setParameter('grade', $grade->getId());
         }
 
         if($q !== null) {

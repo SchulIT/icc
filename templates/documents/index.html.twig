@@ -67,18 +67,18 @@
 
                 <div class="card">
                     <div class="card-body">
-                        {% set studyGroupParam = (studyGroupFilter.currentStudyGroup == null) ? null : studyGroupFilter.currentStudyGroup.uuid %}
+                        {% set gradeParam = (gradeFilter.currentGrade == null) ? null : gradeFilter.currentGrade.uuid %}
                         {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}
 
-                        {% if studyGroupFilter.studyGroupGroups|length > 0 %}
-                            {% include "_filter/study_group.html.twig" with { grouped: false, params: { q: q, user_type: userTypeParam } } %}
+                        {% if gradeFilter.grades|length > 0 %}
+                            {% include "_filter/grade.html.twig" with { grouped: false, params: { q: q, user_type: userTypeParam } } %}
                         {% endif %}
 
                         {% if userTypeFilter.types|length > 0 %}
-                            {% include "_filter/user_type.html.twig" with { params: { q: q, study_group: studyGroupParam } } %}
+                            {% include "_filter/user_type.html.twig" with { params: { q: q, grade: gradeParam } } %}
                         {% endif %}
 
-                        {% include "_filter/query.html.twig" with { params: { q: q, study_group: studyGroupParam }, class: 'mb-0', route: 'documents' } %}
+                        {% include "_filter/query.html.twig" with { params: { q: q, grade: gradeParam }, class: 'mb-0', route: 'documents' } %}
                     </div>
                     <div class="card-footer">
                         <a href="{{ path('documents') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>

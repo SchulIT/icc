@@ -115,7 +115,7 @@ class DocumentVoter extends Voter {
                     return $student->getId();
                 })->toArray();
 
-                foreach($document->getStudyGroups() as $documentStudyGroup) {
+                foreach($document->getGrades() as $documentStudyGroup) {
                     foreach($documentStudyGroup->getMemberships() as $membership) {
                         $studentId = $membership->getStudent()->getId();
 

@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraint;
 /**
  * @Annotation
  */
-class StudyGroupsNotEmpty extends Constraint {
+class CollectionNotEmpty extends Constraint {
 
     /** @var string $propertyPath Property path of the target userType. */
     public $propertyPath;

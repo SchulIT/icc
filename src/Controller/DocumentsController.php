@@ -16,6 +16,7 @@ use App\Security\Voter\DocumentVoter;
 use App\Sorting\DocumentCategoryGroupStrategy;
 use App\Sorting\DocumentNameStrategy;
 use App\Sorting\Sorter;
+use App\View\Filter\GradeFilter;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\UserTypeFilter;
 use SchulIT\CommonBundle\Utils\RefererHelper;
@@ -41,16 +42,16 @@ class DocumentsController extends AbstractController {
     /**
      * @Route("", name="documents")
      */
-    public function index(DocumentRepositoryInterface $documentRepository, StudyGroupFilter $studyGroupFilter, UserTypeFilter $userTypeFilter,
+    public function index(DocumentRepositoryInterface $documentRepository, GradeFilter $gradeFilter, UserTypeFilter $userTypeFilter,
                           SectionResolverInterface $sectionResolver, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
 
         $q = $request->query->get('q', null);
-        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $sectionResolver->getCurrentSection(), $user, true);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionResolver->getCurrentSection(), $user);
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent()), $user->getUserType());
 
-        $documents = $documentRepository->findAllFor($userTypeFilterView->getCurrentType(), $studyGroupFilterView->getCurrentStudyGroup(), $q);
+        $documents = $documentRepository->findAllFor($userTypeFilterView->getCurrentType(), $gradeFilterView->getCurrentGrade(), $q);
         $documents = array_filter($documents, function(Document $document) {
             return $this->isGranted(DocumentVoter::View, $document);
         });
@@ -60,7 +61,7 @@ class DocumentsController extends AbstractController {
         $this->sorter->sort($categories, DocumentCategoryGroupStrategy::class);
 
         return $this->render('documents/index.html.twig', [
-            'studyGroupFilter' => $studyGroupFilterView,
+            'gradeFilter' => $gradeFilterView,
             'userTypeFilter' => $userTypeFilterView,
             'categories' => $categories,
             'q' => $q

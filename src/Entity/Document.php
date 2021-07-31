@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Validator\StudyGroupsNotEmpty;
+use App\Validator\CollectionNotEmpty;
 use DH\DoctrineAuditBundle\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -53,16 +53,16 @@ class Document {
     private $content;
 
     /**
-     * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(name="document_studygroups",
+     * @ORM\ManyToMany(targetEntity="Grade")
+     * @ORM\JoinTable(name="document_grades",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
-     * @StudyGroupsNotEmpty(propertyPath="visibilities")
-     * @var Collection<StudyGroup>
+     * @CollectionNotEmpty(propertyPath="visibilities")
+     * @var Collection<Grade>
      */
-    private $studyGroups;
+    private $grades;
 
     /**
      * @ORM\OneToMany(targetEntity="DocumentAttachment", mappedBy="document", cascade={"persist"})
@@ -101,7 +101,7 @@ class Document {
     public function __construct() {
         $this->uuid = Uuid::uuid4();
 
-        $this->studyGroups = new ArrayCollection();
+        $this->grades = new ArrayCollection();
         $this->attachments = new ArrayCollection();
         $this->visibilities = new ArrayCollection();
         $this->authors = new ArrayCollection();
@@ -155,19 +155,19 @@ class Document {
         return $this;
     }
 
-    public function addStudyGroup(StudyGroup $studyGroup) {
-        $this->studyGroups->add($studyGroup);
+    public function addGrade(Grade $grade) {
+        $this->grades->add($grade);
     }
 
-    public function removeStudyGroup(StudyGroup $studyGroup) {
-        $this->studyGroups->removeElement($studyGroup);
+    public function removeGrade(Grade $grade) {
+        $this->grades->removeElement($grade);
     }
 
     /**
      * @return Collection<StudyGroup>
      */
-    public function getStudyGroups(): Collection {
-        return $this->studyGroups;
+    public function getGrades(): Collection {
+        return $this->grades;
     }
 
     public function addAttachment(DocumentAttachment $attachment) {

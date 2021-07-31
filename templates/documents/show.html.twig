@@ -71,9 +71,10 @@
                             {% for visibility in document.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
                         </p>
 
-                        {% if document.studyGroups|length > 0 %}
+                        {% if document.grades|length > 0 %}
                             <p>
-                                <span class="text-muted">{{ 'label.study_groups'|trans({'%count%': document.studyGroups|length}) }}</span> {% include '_includes/study_groups.html.twig' with { studyGroups: document.studyGroups, id: document.uuid } only  %}
+                                <span class="text-muted">{{ 'label.grades'|trans({'%count%': document.grades|length}) }}</span>
+                                {% for grade in document.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
                             </p>
                         {% endif %}
                     </div>

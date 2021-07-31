@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-class StudyGroupsNotEmptyValidator extends ConstraintValidator {
+class CollectionNotEmptyValidator extends ConstraintValidator {
 
     private $propertyAccessor;
 
@@ -24,8 +24,8 @@ class StudyGroupsNotEmptyValidator extends ConstraintValidator {
      * @inheritDoc
      */
     public function validate($value, Constraint $constraint) {
-        if(!$constraint instanceof StudyGroupsNotEmpty) {
-            throw new UnexpectedTypeException($constraint, StudyGroupsNotEmpty::class);
+        if(!$constraint instanceof CollectionNotEmpty) {
+            throw new UnexpectedTypeException($constraint, CollectionNotEmpty::class);
         }
 
         if(!is_countable($value)) {

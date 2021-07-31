@@ -84,6 +84,7 @@ services:
             $prefixes:
                 - 'App\Request\Data'
                 - 'App\Request\Book'
+                - 'App\Request\Message'
 
     JMS\Serializer\SerializationContext:
         calls:

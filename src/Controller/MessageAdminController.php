@@ -24,6 +24,7 @@ use App\Message\PollResultViewHelper;
 use App\Repository\MessageFileUploadRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
+use App\Request\Message\RemoveMessageRequest;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\MessageVoter;
 use App\Sorting\MessageExpirationGroupStrategy;
@@ -504,4 +505,13 @@ class MessageAdminController extends AbstractController {
     }
 
 
+    /**
+     * @Route("/{uuid}/remove/xhr", name="xhr_remove_message")
+     */
+    public function removeXhr(Message $message, RemoveMessageRequest $request) {
+        $this->denyAccessUnlessGranted(MessageVoter::Remove, $message);
+        $this->repository->remove($message);
+
+        return new JsonResponse();
+    }
 }

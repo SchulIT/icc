@@ -862,6 +862,9 @@ admin:
             label: Mitteilung löschen
             confirm: 'Soll die Mitteilung "%name%" wirklich gelöscht werden?'
             success: Mitteilung erfolgreich gelöscht
+        bulk_remove:
+            label: Mitteilungen löschen
+            confirm: 'Sollen diese %count% Mitteilungen wirklich gelöscht werden?'
         confirmations:
             label: Bestätigungen anzeigen
             num: 'Die Mitteilung wurde %num% mal bestätigt.'

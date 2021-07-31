@@ -2,6 +2,10 @@
 
 {% block title %}{{ 'messages.overview.label'|trans }}{% endblock %}
 
+{% block post_javascript %}
+    <script src="{{ asset('build/message-overview.js') }}"></script>
+{% endblock %}
+
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
@@ -13,7 +17,7 @@
 {% block content %}
     {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
 
-    <div class="container-fluid px-0">
+    <div class="container-fluid px-0" id="app">
         <div class="row">
             <div class="col-md-9">
                 {% if groups|length == 0 %}
@@ -26,8 +30,25 @@
 
                 {% for group in groups %}
                     <div class="card">
-                        <div class="card-header">
-                            {% if group.expired %}{{ 'admin.messages.overview.expired'|trans }}{% else %}{{ 'admin.messages.overview.active'|trans }}{% endif %} <span class="badge badge-pill badge-primary">{{ group.messages|length }}</span>
+                        <div class="card-header d-flex align-items-center">
+                            <div class="flex-fill">
+                                {% if group.expired %}
+                                    {{ 'admin.messages.overview.expired'|trans }}
+                                {% else %}
+                                    {{ 'admin.messages.overview.active'|trans }}
+                                {% endif %}
+                                <span class="badge badge-pill badge-primary">{{ group.messages|length }}</span>
+                            </div>
+
+                            {% set actions = [ ] %}
+                            {% for message in group.messages %}
+                                {% set actions = actions|merge([ url('xhr_remove_message', { uuid: message.uuid.toString })]) %}
+                            {% endfor %}
+
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <bulk-remove-button :actions="{{ actions|json_encode }}"
+                                                    csrftoken="{{ csrf_token('remove_message') }}"></bulk-remove-button>
+                            {% endif %}
                         </div>
 
                         <div class="table-responsive">

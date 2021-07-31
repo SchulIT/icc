@@ -14,6 +14,7 @@ Encore
     .addEntry('modal', './assets/js/modal.js')
     .addEntry('appointments', './assets/js/appointments.js')
     .addEntry('message-downloads', './assets/js/message-downloads.js')
+    .addEntry('message-overview', './assets/js/message-overview.js')
     .addEntry('zipper', './assets/js/zipper.js')
     .addEntry('display', './assets/js/display.js')
     .addEntry('book', './assets/js/book.js')

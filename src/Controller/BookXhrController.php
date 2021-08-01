@@ -70,7 +70,7 @@ class BookXhrController extends AbstractController {
      */
     public function possiblyAbsentStudents(Tuition $tuition, Request $request, AbsenceResolver $absenceResolver,
                                            LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
-                                           SerializerInterface $serializer) {
+                                           SerializerInterface $serializer, SectionResolverInterface $sectionResolver) {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $date = $this->getDateFromRequest($request, 'date');
@@ -96,7 +96,7 @@ class BookXhrController extends AbstractController {
 
         foreach($absenceResolver->resolve($date, $lesson, $students) as $absentStudent) {
             $absences[] = [
-                'student' => Student::fromEntity($absentStudent->getStudent()),
+                'student' => Student::fromEntity($absentStudent->getStudent(), $sectionResolver->getCurrentSection()),
                 'reason' => $absentStudent->getReason()->getValue()
             ];
         }
@@ -104,7 +104,7 @@ class BookXhrController extends AbstractController {
         foreach($attendanceRepository->findAbsentByStudents($students, $date) as $attendance) {
             if($attendance->getEntry()->getLessonEnd() < $lesson) {
                 $absences[] = [
-                    'student' => Student::fromEntity($attendance->getStudent()),
+                    'student' => Student::fromEntity($attendance->getStudent(), $sectionResolver->getCurrentSection()),
                     'reason' => 'absent_before'
                 ];
             }
@@ -113,15 +113,15 @@ class BookXhrController extends AbstractController {
         foreach($excuseNoteRepository->findByStudentsAndDate($students, $date) as $note) {
             if($note->getLessonStart() <= $lesson && $note->getLessonEnd() >= $lesson) {
                 $absences[] = [
-                    'student' => Student::fromEntity($note->getStudent()),
+                    'student' => Student::fromEntity($note->getStudent(), $sectionResolver->getCurrentSection()),
                     'reason' => 'excuse'
                 ];
             }
         }
 
         $response = [
-            'students' => array_map(function(StudentEntity $student) {
-                return Student::fromEntity($student);
+            'students' => array_map(function(StudentEntity $student) use($sectionResolver) {
+                return Student::fromEntity($student, $sectionResolver->getCurrentSection());
             }, $students),
             'absent' => $absences
         ];
@@ -132,7 +132,7 @@ class BookXhrController extends AbstractController {
     /**
      * @Route("/attendances/{uuid}", name="xhr_entry_attendances")
      */
-    public function attendances(LessonEntry $entry, SerializerInterface $serializer) {
+    public function attendances(LessonEntry $entry, SerializerInterface $serializer, SectionResolverInterface $sectionResolver) {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $data = [ ];
@@ -140,7 +140,7 @@ class BookXhrController extends AbstractController {
         /** @var LessonAttendance $attendance */
         foreach($entry->getAttendances() as $attendance) {
             $data[] = [
-                'student' => Student::fromEntity($attendance->getStudent()),
+                'student' => Student::fromEntity($attendance->getStudent(), $sectionResolver->getCurrentSection()),
                 'type' => $attendance->getType()
             ];
         }

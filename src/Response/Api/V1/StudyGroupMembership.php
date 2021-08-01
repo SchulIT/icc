@@ -2,6 +2,7 @@
 
 namespace App\Response\Api\V1;
 
+use App\Entity\Section;
 use JMS\Serializer\Annotation as Serializer;
 use App\Entity\StudyGroupMembership as StudyGroupMembershipEntity;
 
@@ -79,10 +80,10 @@ class StudyGroupMembership {
         return $this;
     }
 
-    public static function fromEntity(StudyGroupMembershipEntity $studyGroupMembershipEntity): self {
+    public static function fromEntity(StudyGroupMembershipEntity $studyGroupMembershipEntity, ?Section $section = null): self {
         return (new self())
             ->setType($studyGroupMembershipEntity->getType())
-            ->setStudent(Student::fromEntity($studyGroupMembershipEntity->getStudent()))
+            ->setStudent(Student::fromEntity($studyGroupMembershipEntity->getStudent(), $section))
             ->setStudyGroup(StudyGroup::fromEntity($studyGroupMembershipEntity->getStudyGroup()));
     }
 }

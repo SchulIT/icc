@@ -41,6 +41,7 @@ use App\Response\Api\V1\TimetablePeriod;
 use App\Response\Api\V1\TimetablePeriodList;
 use App\Response\Api\V1\TimetableSupervision;
 use App\Response\Api\V1\User;
+use App\Section\SectionResolverInterface;
 use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
@@ -92,11 +93,11 @@ class ApiV1Controller extends AbstractController {
      * )
      * @Security(name="oauth")
      */
-    public function profile() {
+    public function profile(SectionResolverInterface $sectionResolver) {
         /** @var UserEntity $user */
         $user = $this->getUser();
 
-        return $this->returnJson(User::fromEntity($user));
+        return $this->returnJson(User::fromEntity($user, $sectionResolver->getCurrentSection()));
     }
 
     /**

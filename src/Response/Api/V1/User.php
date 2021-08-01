@@ -2,6 +2,7 @@
 
 namespace App\Response\Api\V1;
 
+use App\Entity\Section;
 use App\Entity\UserType;
 use App\Entity\User as UserEntity;
 use App\Entity\Student as StudentEntity;
@@ -188,7 +189,7 @@ class User {
         return $this->type->getValue();
     }
 
-    public static function fromEntity(?UserEntity $userEntity): ?self {
+    public static function fromEntity(?UserEntity $userEntity, ?Section $section = null): ?self {
         if($userEntity === null) {
             return null;
         }
@@ -201,8 +202,8 @@ class User {
             ->setUuid($userEntity->getUuid())
             ->setType($userEntity->getUserType())
             ->setTeacher(Teacher::fromEntity($userEntity->getTeacher()))
-            ->setStudents(array_map(function(StudentEntity $studentEntity) {
-                return Student::fromEntity($studentEntity);
+            ->setStudents(array_map(function(StudentEntity $studentEntity) use($section) {
+                return Student::fromEntity($studentEntity, $section);
             }, $userEntity->getStudents()->toArray()));
     }
 }

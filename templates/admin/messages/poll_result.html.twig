@@ -92,7 +92,7 @@
 
                             <tbody>
                             {% for teacher in teachers %}
-                                {% set vote = view.teacherVote(student) %}
+                                {% set vote = view.teacherVote(teacher) %}
                                 <tr class="{% if vote is null or vote.completed == false%}table-danger{% else %}table-success{% endif %}">
                                     <td>{{ teacher|teacher }}</td>
                                     {% for i in range(1, message.pollNumChoices) %}

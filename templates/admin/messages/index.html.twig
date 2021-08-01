@@ -104,6 +104,12 @@
                                                             </a>
                                                         {% endif %}
 
+                                                        {% if message.isPollEnabled %}
+                                                            <a href="{{ path('poll_result', { uuid: message.uuid }) }}" class="dropdown-item">
+                                                                <i class="fas fa-poll"></i> {{ 'messages.poll.result.label'|trans }}
+                                                            </a>
+                                                        {% endif %}
+
                                                         {% if message.downloadsEnabled %}
                                                             <a href="{{ path('message_downloads_admin', { uuid: message.uuid }) }}" class="dropdown-item">
                                                                 <i class="fa fa-download"></i> {{ 'messages.downloads.label'|trans }}

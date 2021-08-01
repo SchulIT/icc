@@ -72,8 +72,9 @@
                     {% for item in group.items %}
                         {% if item.name == 'substitution' %}
                             {% set substitution = item.substitution %}
+                            {% set highlight = item.substitution.createdAt > day %}
                             {% set duration = substitution.lessonEnd - substitution.lessonStart %}
-                            <tr class="{% if isLastGroup %}border-bottom{% endif %}">
+                            <tr class="{% if isLastGroup %}border-bottom{% endif %}{% if highlight %}table-warning{% endif %}">
                                 <td class="align-middle">
                                     {% if substitution.startsBefore %}
                                         {{ substitution.lessonStart|before_lesson }}

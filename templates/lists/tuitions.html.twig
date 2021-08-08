@@ -102,7 +102,7 @@
                                     <td>
                                         {% if tuition.teachers|length > 0 %}
                                             {% for teacher in tuition.teachers %}
-                                                <a href="{{ path('list_tuitions', { teacher: teacher.uuid.toString }) }}">{{ tuition.teacher|teacher }}</a>{% if not loop.last %}, {% endif %}
+                                                <a href="{{ path('list_tuitions', { teacher: teacher.uuid.toString }) }}">{{ teacher|teacher }}</a>{% if not loop.last %}, {% endif %}
                                             {% endfor %}
                                         {% else %}
                                             <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>

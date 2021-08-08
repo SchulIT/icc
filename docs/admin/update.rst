@@ -49,6 +49,8 @@ Schritt 2: Anwendung aktualisieren
 
 Nun die folgenden Kommandos ausführen, um die Anwendung zu aktualisieren:
 
+.. code-block:: shell
+
     $ php bin/console cache:clear
     $ php bin/console doctrine:migrations:migrate --no-interaction
     $ php bin/console app:setup

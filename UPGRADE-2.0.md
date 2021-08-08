@@ -38,32 +38,30 @@ DELETE FROM absence;
 DELETE FROM infotext;
 ```
 
-## Schritt 3: Code aktualisieren
+## Schritt 3: Mitteilungsdateien löschen
 
-Folgende Befehle auf der Kommandozeile ausführen:
+Da alle Mitteilungen gelöscht wurden, müssen nun noch die Dateien manuell gelöscht werden:
 
 ```
 $ rm -rf files/messages/*
-$ git switch -b 2-0-stable
-$ composer install --no-dev --optimize-autoloader
-$ php bin/console cache:clear
-$ php bin/console doctrine:migrations:migrate --no-interaction
-$ php bin/console app:setup
-$ php bin/console shapecode:cron:scan
 ```
 
-## Schritt 4: Neuen Schuljahresabschnitt anlegen
+## Schritt 4: Code aktualisieren
+
+Nun wie [hier](https://icc.readthedocs.io/de/latest/admin/update.html) beschrieben, den Code aktualisieren.
+
+## Schritt 5: Neuen Schuljahresabschnitt anlegen
 
 Im Verwaltungs-Menü unter Abschnitte den ersten Schuljahresabschnitt anlegen. Wahlweise auch schon alle
 Abschnitte anlegen.
 
 **Wichtig:** Anschließend in den Einstellungen den aktuellen Abschnitt festlegen.
 
-## Schritt 5: Import-Vorgang starten
+## Schritt 6: Import-Vorgang starten
 
 Wichtig: Diesen Import-Vorgang mit Version 2.0 des Importers starten.
 
-## Schritt 6: Schuljahresbeginn initiieren
+## Schritt 7: Schuljahresbeginn initiieren
 
 Folgende Kommandos auf der Konsole ausführen:
 

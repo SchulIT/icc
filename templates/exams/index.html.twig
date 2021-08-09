@@ -26,8 +26,8 @@
                     <div class="card-header border-bottom-0">
                         {% if teacherFilter.currentTeacher is not null %}
                             {{ 'plans.exams.title'|trans({'%for%' : teacherFilter.currentTeacher|teacher}) }}
-                        {% elseif studentFilter.currentStudent is not null %}
-                            {{ 'plans.exams.title'|trans({'%for%' : studentFilter.currentStudent|student}) }} ({{ studentFilter.currentStudent.grade.name }})
+                        {% elseif studentFilter.currentStudent is not null and sectionFilter.currentSection is not null %}
+                            {{ 'plans.exams.title'|trans({'%for%' : studentFilter.currentStudent|student}) }} ({{ studentFilter.currentStudent.grade(sectionFilter.currentSection).name }})
                         {% elseif gradeFilter.currentGrade is not null %}
                             {{ 'plans.exams.title_grades'|trans({'%for%' : gradeFilter.currentGrade.name}) }}
 

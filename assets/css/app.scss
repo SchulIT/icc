@@ -379,3 +379,9 @@
   border: $btn-border-width solid transparent;
   @include button-size($btn-padding-y-sm, $btn-padding-x-sm, $btn-font-size-sm, $btn-line-height-sm, $btn-border-radius-sm);
 }
+
+table.align-td-middle {
+  td {
+    @extend .align-middle;
+  }
+}

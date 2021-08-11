@@ -24,7 +24,7 @@ class TableRenderer implements BlockRendererInterface {
             $attrs[$key] = Xml::escape($value);
         }
 
-        $attrs['class'] = 'table table-striped table-hover';
+        $attrs['class'] = 'table table-striped table-hover align-td-middle';
 
         $separator = $htmlRenderer->getOption('inner_separator', "\n");
 

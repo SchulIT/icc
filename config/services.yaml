@@ -174,12 +174,15 @@ services:
     # MARKDOWN
     League\CommonMark\Extension\CommonMarkCoreExtension: ~
 
+    League\CommonMark\Extension\Autolink\AutolinkExtension: ~
+
     League\CommonMark\EnvironmentInterface:
         class: League\CommonMark\Environment
         arguments:
             $config: "%commonmark.config%"
         calls:
             - [ addExtension, [ "@League\\CommonMark\\Extension\\CommonMarkCoreExtension" ]]
+            - [ addExtension, [ "@League\\CommonMark\\Extension\\Autolink\\AutolinkExtension"]]
             - [ addExtension, [ "@App\\Markdown\\MarkdownExtension" ]]
 
     League\CommonMark\MarkdownConverterInterface:

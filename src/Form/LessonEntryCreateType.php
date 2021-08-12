@@ -104,7 +104,7 @@ class LessonEntryCreateType extends AbstractType {
                 if($entry !== null && $entry instanceof LessonEntry) {
                     $teachers = array_map(function(Teacher $teacher) {
                         return $teacher->getId();
-                    }, $entry->getTuition()->getTeachers());
+                    }, $entry->getTuition()->getTeachers()->toArray());
 
                     if($entry->getReplacementTeacher() !== null && in_array($entry->getReplacementTeacher()->getId(), $teachers)) {
                         $entry->setReplacementTeacher(null);

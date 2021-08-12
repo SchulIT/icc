@@ -114,7 +114,7 @@ class Tuition {
             ->setSubject(Subject::fromEntity($tuitionEntity->getSubject()))
             ->setTeachers(array_map(function(TeacherEntity $teacher) {
                 return Teacher::fromEntity($teacher);
-            }, $tuitionEntity->getTeachers()))
+            }, $tuitionEntity->getTeachers()->toArray()))
             ->setUuid($tuitionEntity->getUuid());
     }
 }

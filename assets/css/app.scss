@@ -189,6 +189,19 @@
     @extend .message-warning;
     color: black;
   }
+  
+  .list-group-item-danger {
+    color: #fff !important;
+  }
+  
+  .list-group-item-warning {
+    color: #212529 !important;
+  }
+  
+  .list-group-item-success {
+    color: #fff !important;
+  }
+
 }
 
 .dashboard-lesson {

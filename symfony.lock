@@ -179,6 +179,9 @@
     "frostiede/composer-dependency-list-bundle": {
         "version": "2.0.2"
     },
+    "frostiede/cron-bundle": {
+        "version": "dev-fork"
+    },
     "frostiede/enum-bundle": {
         "version": "3.0.0"
     },
@@ -498,9 +501,6 @@
         "files": [
             "./config/packages/ansi_to_html.yaml"
         ]
-    },
-    "shapecode/cron-bundle": {
-        "version": "4.0.2"
     },
     "spomky-labs/base64url": {
         "version": "v2.0.4"

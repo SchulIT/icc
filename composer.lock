@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e70044daefb63205bc1a1d8adda230f8",
+    "content-hash": "50ccf6b3b6047f21d58c16ba0a705c1f",
     "packages": [
         {
             "name": "antishov/doctrine-extensions-bundle",
@@ -633,26 +633,26 @@
         },
         {
             "name": "doctrine/collections",
-            "version": "1.6.7",
+            "version": "1.6.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/collections.git",
-                "reference": "55f8b799269a1a472457bd1a41b4f379d4cfba4a"
+                "reference": "1958a744696c6bb3bb0d28db2611dc11610e78af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/collections/zipball/55f8b799269a1a472457bd1a41b4f379d4cfba4a",
-                "reference": "55f8b799269a1a472457bd1a41b4f379d4cfba4a",
+                "url": "https://api.github.com/repos/doctrine/collections/zipball/1958a744696c6bb3bb0d28db2611dc11610e78af",
+                "reference": "1958a744696c6bb3bb0d28db2611dc11610e78af",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1.3 || ^8.0"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^6.0",
-                "phpstan/phpstan-shim": "^0.9.2",
-                "phpunit/phpunit": "^7.0",
-                "vimeo/psalm": "^3.8.1"
+                "doctrine/coding-standard": "^9.0",
+                "phpstan/phpstan": "^0.12",
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.1.5",
+                "vimeo/psalm": "^4.2.1"
             },
             "type": "library",
             "autoload": {
@@ -696,9 +696,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/collections/issues",
-                "source": "https://github.com/doctrine/collections/tree/1.6.7"
+                "source": "https://github.com/doctrine/collections/tree/1.6.8"
             },
-            "time": "2020-07-27T17:53:49+00:00"
+            "time": "2021-08-10T18:51:53+00:00"
         },
         {
             "name": "doctrine/common",
@@ -1581,43 +1581,45 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "2.9.3",
+            "version": "2.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/orm.git",
-                "reference": "82e77cf5089a1303733f75f0f0ed01be3ab9ec22"
+                "reference": "b19a13f4edfaa5806109cd899f5912a7df1547b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/orm/zipball/82e77cf5089a1303733f75f0f0ed01be3ab9ec22",
-                "reference": "82e77cf5089a1303733f75f0f0ed01be3ab9ec22",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/b19a13f4edfaa5806109cd899f5912a7df1547b5",
+                "reference": "b19a13f4edfaa5806109cd899f5912a7df1547b5",
                 "shasum": ""
             },
             "require": {
                 "composer/package-versions-deprecated": "^1.8",
                 "doctrine/annotations": "^1.13",
-                "doctrine/cache": "^1.11.3|^2.0.3",
+                "doctrine/cache": "^1.12.1 || ^2.1.1",
                 "doctrine/collections": "^1.5",
                 "doctrine/common": "^3.0.3",
                 "doctrine/dbal": "^2.13.0",
                 "doctrine/deprecations": "^0.5.3",
                 "doctrine/event-manager": "^1.1",
-                "doctrine/inflector": "^1.4|^2.0",
+                "doctrine/inflector": "^1.4 || ^2.0",
                 "doctrine/instantiator": "^1.3",
                 "doctrine/lexer": "^1.0",
                 "doctrine/persistence": "^2.2",
+                "ext-ctype": "*",
                 "ext-pdo": "*",
-                "php": "^7.1|^8.0",
+                "php": "^7.1 ||^8.0",
                 "psr/cache": "^1 || ^2 || ^3",
-                "symfony/console": "^3.0|^4.0|^5.0|^6.0"
+                "symfony/console": "^3.0 || ^4.0 || ^5.0 || ^6.0"
             },
             "require-dev": {
                 "doctrine/coding-standard": "^9.0",
-                "phpstan/phpstan": "^0.12.83",
-                "phpunit/phpunit": "^7.5|^8.5|^9.4",
+                "phpbench/phpbench": "^0.16.10 || ^1.0",
+                "phpstan/phpstan": "0.12.94",
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.4",
                 "squizlabs/php_codesniffer": "3.6.0",
-                "symfony/cache": "^4.4|^5.2",
-                "symfony/yaml": "^3.4|^4.0|^5.0|^6.0",
+                "symfony/cache": "^4.4 || ^5.2",
+                "symfony/yaml": "^3.4 || ^4.0 || ^5.0 || ^6.0",
                 "vimeo/psalm": "4.7.0"
             },
             "suggest": {
@@ -1667,22 +1669,22 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/orm/issues",
-                "source": "https://github.com/doctrine/orm/tree/2.9.3"
+                "source": "https://github.com/doctrine/orm/tree/2.9.4"
             },
-            "time": "2021-06-13T10:29:22+00:00"
+            "time": "2021-08-11T20:53:03+00:00"
         },
         {
             "name": "doctrine/persistence",
-            "version": "2.2.1",
+            "version": "2.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/persistence.git",
-                "reference": "d138f3ab5f761055cab1054070377cfd3222e368"
+                "reference": "4ce4712e6dc84a156176a0fbbb11954a25c93103"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/persistence/zipball/d138f3ab5f761055cab1054070377cfd3222e368",
-                "reference": "d138f3ab5f761055cab1054070377cfd3222e368",
+                "url": "https://api.github.com/repos/doctrine/persistence/zipball/4ce4712e6dc84a156176a0fbbb11954a25c93103",
+                "reference": "4ce4712e6dc84a156176a0fbbb11954a25c93103",
                 "shasum": ""
             },
             "require": {
@@ -1754,9 +1756,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/persistence/issues",
-                "source": "https://github.com/doctrine/persistence/tree/2.2.1"
+                "source": "https://github.com/doctrine/persistence/tree/2.2.2"
             },
-            "time": "2021-05-19T07:07:01+00:00"
+            "time": "2021-08-10T19:01:29+00:00"
         },
         {
             "name": "doctrine/sql-formatter",
@@ -2409,6 +2411,114 @@
                 "source": "https://github.com/frostieDE/composer-dependency-list-bundle/tree/2.0.2"
             },
             "time": "2021-05-13T16:09:56+00:00"
+        },
+        {
+            "name": "frostiede/cron-bundle",
+            "version": "dev-fork",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/frostieDE/cron-bundle.git",
+                "reference": "63ba5fbb7af4074339483d675367b3ee3f965f24"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/frostieDE/cron-bundle/zipball/63ba5fbb7af4074339483d675367b3ee3f965f24",
+                "reference": "63ba5fbb7af4074339483d675367b3ee3f965f24",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/annotations": "^1.8",
+                "doctrine/collections": "^1.6",
+                "doctrine/event-manager": "^1.1",
+                "doctrine/orm": "^2.6|^3.0",
+                "doctrine/persistence": "^1.2|^2.0",
+                "dragonmantank/cron-expression": "^3.0",
+                "php": "^7.4|^8.0",
+                "symfony/config": "^4.4|^5.0",
+                "symfony/console": "^4.4|^5.0",
+                "symfony/dependency-injection": "^4.4|^5.0",
+                "symfony/event-dispatcher": "^4.4|^5.0",
+                "symfony/event-dispatcher-contracts": "^1.1|^2.0",
+                "symfony/framework-bundle": "^4.4|^5.0",
+                "symfony/http-foundation": "^4.4|^5.0",
+                "symfony/http-kernel": "^4.4|^5.0",
+                "symfony/process": "^4.4|^5.0",
+                "symfony/stopwatch": "^4.4|^5.0"
+            },
+            "require-dev": {
+                "dg/bypass-finals": "~1.1",
+                "doctrine/coding-standard": "~8.2",
+                "icanhazstring/composer-unused": "~0.7",
+                "maglnet/composer-require-checker": "~2.0",
+                "phpstan/phpstan": "~0.12",
+                "phpstan/phpstan-deprecation-rules": "~0.12",
+                "phpstan/phpstan-phpunit": "~0.12",
+                "phpstan/phpstan-strict-rules": "~0.12",
+                "phpunit/phpunit": "~9.0",
+                "roave/security-advisories": "dev-master",
+                "squizlabs/php_codesniffer": "~3.4",
+                "symfony/var-dumper": "~5.0"
+            },
+            "suggest": {
+                "shapecode/cron-sonata-admin-bundle": "to manage cronjobs in the sonata admin panel"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-integration": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Shapecode\\Bundle\\CronBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nikita Loges",
+                    "email": "dev@loges.one",
+                    "homepage": "https://loges.one"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/shapecode/cron-bundle/graphs/contributors"
+                }
+            ],
+            "description": "This bundle provides scheduled execution of Symfony commands",
+            "homepage": "https://github.com/shapecode/cron-bundle",
+            "keywords": [
+                "bundle",
+                "command",
+                "cron",
+                "cronjob",
+                "execute",
+                "interval",
+                "schedule",
+                "shapecode",
+                "symfony",
+                "time"
+            ],
+            "support": {
+                "email": "support@shapeocode.de",
+                "issues": "https://github.com/shapecode/cron-bundle/issues",
+                "source": "https://github.com/shapecode/cron-bundle/releases",
+                "wiki": "https://github.com/shapecode/cron-bundle/wiki"
+            },
+            "funding": [
+                {
+                    "url": "https://liberapay.com/nicklog",
+                    "type": "liberapay"
+                },
+                {
+                    "url": "http://paypal.me/nloges",
+                    "type": "paypal"
+                }
+            ],
+            "time": "2021-08-14T21:27:27+00:00"
         },
         {
             "name": "frostiede/enum-bundle",
@@ -4222,16 +4332,16 @@
         },
         {
             "name": "lightsaml2/symfony-bridge",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lightsaml2/SymfonyBridgeBundle.git",
-                "reference": "2e5258dfc26d76b2b31cee262da8242b8a1e1e8a"
+                "reference": "9579a39037c006872361f653c6bb42cbe638b8f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lightsaml2/SymfonyBridgeBundle/zipball/2e5258dfc26d76b2b31cee262da8242b8a1e1e8a",
-                "reference": "2e5258dfc26d76b2b31cee262da8242b8a1e1e8a",
+                "url": "https://api.github.com/repos/lightsaml2/SymfonyBridgeBundle/zipball/9579a39037c006872361f653c6bb42cbe638b8f4",
+                "reference": "9579a39037c006872361f653c6bb42cbe638b8f4",
                 "shasum": ""
             },
             "require": {
@@ -4270,9 +4380,9 @@
             "description": "Light SAML Symfony bridge bundle",
             "homepage": "http://www.lightsaml.com",
             "support": {
-                "source": "https://github.com/lightsaml2/SymfonyBridgeBundle/tree/2.0.0"
+                "source": "https://github.com/lightsaml2/SymfonyBridgeBundle/tree/2.0.1"
             },
-            "time": "2021-06-10T16:47:23+00:00"
+            "time": "2021-08-06T13:58:54+00:00"
         },
         {
             "name": "minishlink/web-push",
@@ -5672,16 +5782,16 @@
         },
         {
             "name": "ramsey/uuid",
-            "version": "4.2.0",
+            "version": "4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "7231612a5221f5524d3575bebdce20eeef8547a1"
+                "reference": "fe665a03df4f056aa65af552a96e1976df8c8dae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/7231612a5221f5524d3575bebdce20eeef8547a1",
-                "reference": "7231612a5221f5524d3575bebdce20eeef8547a1",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/fe665a03df4f056aa65af552a96e1976df8c8dae",
+                "reference": "fe665a03df4f056aa65af552a96e1976df8c8dae",
                 "shasum": ""
             },
             "require": {
@@ -5753,7 +5863,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ramsey/uuid/issues",
-                "source": "https://github.com/ramsey/uuid/tree/4.2.0"
+                "source": "https://github.com/ramsey/uuid/tree/4.2.1"
             },
             "funding": [
                 {
@@ -5765,7 +5875,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-08-06T22:30:43+00:00"
+            "time": "2021-08-11T01:06:55+00:00"
         },
         {
             "name": "ramsey/uuid-doctrine",
@@ -6064,117 +6174,6 @@
                 "source": "https://github.com/sensiolabs/ansi-to-html/tree/v1.2.1"
             },
             "time": "2020-10-06T05:48:55+00:00"
-        },
-        {
-            "name": "shapecode/cron-bundle",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/shapecode/cron-bundle.git",
-                "reference": "eb70c70984d50d62069cd60c68c610a55f1329fa"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/shapecode/cron-bundle/zipball/eb70c70984d50d62069cd60c68c610a55f1329fa",
-                "reference": "eb70c70984d50d62069cd60c68c610a55f1329fa",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/annotations": "^1.8",
-                "doctrine/collections": "^1.6",
-                "doctrine/event-manager": "^1.1",
-                "doctrine/orm": "^2.6|^3.0",
-                "doctrine/persistence": "^1.2|^2.0",
-                "dragonmantank/cron-expression": "^3.1",
-                "php": "^7.4|^8.0",
-                "symfony/config": "^4.4|^5.0",
-                "symfony/console": "^4.4|^5.0",
-                "symfony/dependency-injection": "^4.4|^5.0",
-                "symfony/event-dispatcher": "^4.4|^5.0",
-                "symfony/event-dispatcher-contracts": "^1.1|^2.0",
-                "symfony/framework-bundle": "^4.4|^5.0",
-                "symfony/http-foundation": "^4.4|^5.0",
-                "symfony/http-kernel": "^4.4|^5.0",
-                "symfony/process": "^4.4|^5.0",
-                "symfony/stopwatch": "^4.4|^5.0"
-            },
-            "require-dev": {
-                "dg/bypass-finals": "~1.1",
-                "doctrine/coding-standard": "~8.2",
-                "icanhazstring/composer-unused": "~0.7",
-                "phpstan/phpstan": "~0.12",
-                "phpstan/phpstan-deprecation-rules": "~0.12",
-                "phpstan/phpstan-doctrine": "~0.12",
-                "phpstan/phpstan-phpunit": "~0.12",
-                "phpstan/phpstan-strict-rules": "~0.12",
-                "phpstan/phpstan-symfony": "~0.12",
-                "phpunit/phpunit": "~9.0",
-                "roave/security-advisories": "dev-master",
-                "squizlabs/php_codesniffer": "~3.4",
-                "symfony/var-dumper": "~5.0"
-            },
-            "default-branch": true,
-            "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Shapecode\\Bundle\\CronBundle\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nikita Loges",
-                    "email": "dev@loges.one",
-                    "homepage": "https://loges.one"
-                },
-                {
-                    "name": "Contributors",
-                    "homepage": "https://github.com/shapecode/cron-bundle/graphs/contributors"
-                }
-            ],
-            "description": "This bundle provides scheduled execution of Symfony commands",
-            "homepage": "https://github.com/shapecode/cron-bundle",
-            "keywords": [
-                "bundle",
-                "command",
-                "cron",
-                "cronjob",
-                "execute",
-                "interval",
-                "schedule",
-                "shapecode",
-                "symfony",
-                "time"
-            ],
-            "support": {
-                "email": "support@shapeocode.de",
-                "issues": "https://github.com/shapecode/cron-bundle/issues",
-                "source": "https://github.com/shapecode/cron-bundle/releases",
-                "wiki": "https://github.com/shapecode/cron-bundle/wiki"
-            },
-            "funding": [
-                {
-                    "url": "http://github.com/sponsors/nicklog",
-                    "type": "github"
-                },
-                {
-                    "url": "https://liberapay.com/nicklog",
-                    "type": "liberapay"
-                },
-                {
-                    "url": "http://paypal.me/nloges",
-                    "type": "paypal"
-                }
-            ],
-            "time": "2021-01-05T10:58:19+00:00"
         },
         {
             "name": "spomky-labs/base64url",
@@ -15193,8 +15192,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "frostiede/enum-bundle": 20,
-        "shapecode/cron-bundle": 20
+        "frostiede/cron-bundle": 20,
+        "frostiede/enum-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

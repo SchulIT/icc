@@ -31,7 +31,7 @@
                         {% elseif gradeFilter.currentGrade is not null %}
                             {{ 'plans.exams.title_grades'|trans({'%for%' : gradeFilter.currentGrade.name}) }}
 
-                            {% include "_includes/grade_teachers.html.twig" with { grade: gradeFilter.currentGrade } %}
+                            {% include "_includes/grade_teachers.html.twig" with { grade: gradeFilter.currentGrade, section: sectionFilter.currentSection } %}
                         {% else %}
                             {{ 'plans.exams.label'|trans }}
                         {% endif %}

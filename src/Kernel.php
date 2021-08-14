@@ -2,62 +2,47 @@
 
 namespace App;
 
-use Acelaya\Doctrine\Type\PhpEnumType;
 use App\DependencyInjection\Compiler\RemoveCleanupCommandPass;
 use App\DependencyInjection\Compiler\RemoveDumpCommandPass;
 use App\DependencyInjection\Security\Factory\DeviceTokenFactory;
-use App\Entity\IcsAccessToken;
-use App\Entity\IcsAccessTokenType;
-use App\Entity\Gender;
-use App\Entity\GradeTeacherType;
-use App\Entity\MessageScope;
-use App\Entity\StudyGroupType;
-use App\Entity\UserType;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
-use Symfony\Component\Routing\RouteCollectionBuilder;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class Kernel extends BaseKernel
 {
     use MicroKernelTrait;
 
-    private const CONFIG_EXTS = '.{php,xml,yaml,yml}';
-
-    public function registerBundles(): iterable
+    protected function configureContainer(ContainerConfigurator $container): void
     {
-        $contents = require $this->getProjectDir().'/config/bundles.php';
-        foreach ($contents as $class => $envs) {
-            if ($envs[$this->environment] ?? $envs['all'] ?? false) {
-                yield new $class();
-            }
+        $container->import('../config/version.yaml');
+        $container->import('../config/config.yaml');
+        $container->import('../config/{packages}/*.yaml');
+        $container->import('../config/{packages}/'.$this->environment.'/*.yaml');
+
+        if (is_file(\dirname(__DIR__).'/config/services.yaml')) {
+            $container->import('../config/services.yaml');
+            $container->import('../config/{services}_'.$this->environment.'.yaml');
+        } else {
+            $container->import('../config/{services}.php');
         }
     }
 
-    protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
+    protected function configureRoutes(RoutingConfigurator $routes): void
     {
-        $container->addResource(new FileResource($this->getProjectDir().'/config/bundles.php'));
-        $container->setParameter('container.dumper.inline_class_loader', true);
-        $confDir = $this->getProjectDir().'/config';
+        $routes->import('../config/{routes}/'.$this->environment.'/*.yaml');
+        $routes->import('../config/{routes}/*.yaml');
 
-        $loader->load($confDir.'/version'.self::CONFIG_EXTS, 'glob');
-        $loader->load($confDir.'/config'.self::CONFIG_EXTS, 'glob');
-        $loader->load($confDir.'/{packages}/*'.self::CONFIG_EXTS, 'glob');
-        $loader->load($confDir.'/{packages}/'.$this->environment.'/**/*'.self::CONFIG_EXTS, 'glob');
-        $loader->load($confDir.'/{services}'.self::CONFIG_EXTS, 'glob');
-        $loader->load($confDir.'/{services}_'.$this->environment.self::CONFIG_EXTS, 'glob');
-    }
-
-    protected function configureRoutes(RouteCollectionBuilder $routes): void
-    {
-        $confDir = $this->getProjectDir().'/config';
-
-        $routes->import($confDir.'/{routes}/'.$this->environment.'/**/*'.self::CONFIG_EXTS, '/', 'glob');
-        $routes->import($confDir.'/{routes}/*'.self::CONFIG_EXTS, '/', 'glob');
-        $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS, '/', 'glob');
+        if (is_file(\dirname(__DIR__).'/config/routes.yaml')) {
+            $routes->import('../config/routes.yaml');
+        } else {
+            $routes->import('../config/{routes}.php');
+        }
     }
 
     public function build(ContainerBuilder $container) {

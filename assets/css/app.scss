@@ -333,6 +333,12 @@
   margin-bottom: 0;
 }
 
+@media (min-width: 640px) {
+    .choices__list--dropdown .choices__item--selectable:after {
+        content: none !important;
+    }
+}
+
 .text-larger {
   font-size: 1.2rem;
 }

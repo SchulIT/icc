@@ -144,6 +144,8 @@ class TimetableLessonsImportStrategy implements ImportStrategyInterface {
             $entity->setSubject($subject);
         }
 
+        $entity->setSubjectName($data->getSubject());
+
         if($entity->getTuition() === null && $entity->getSubject() === null) {
             $this->logger->info(sprintf(
                 'Cannot resolve timetable lesson for subject "%s", teachers "%s" and grades "%s"',

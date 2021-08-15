@@ -91,6 +91,13 @@ class TimetableLesson {
     private $subject;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(allowNull=true)
+     * @var string|null
+     */
+    private $subjectName;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Teacher")
      * @ORM\JoinTable(name="timetable_lesson_teachers",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
@@ -273,6 +280,22 @@ class TimetableLesson {
      */
     public function setSubject(?Subject $subject): TimetableLesson {
         $this->subject = $subject;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSubjectName(): ?string {
+        return $this->subjectName;
+    }
+
+    /**
+     * @param string|null $subjectName
+     * @return TimetableLesson
+     */
+    public function setSubjectName(?string $subjectName): TimetableLesson {
+        $this->subjectName = $subjectName;
         return $this;
     }
 

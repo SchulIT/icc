@@ -27,6 +27,8 @@
                 {%- endif -%}
             {%- elseif subject is not null -%}
                 {{ subject.abbreviation }}
+            {%- else -%}
+                {{ lesson.subjectName }}
             {%- endif -%}
         </strong>
 

@@ -201,6 +201,8 @@
                                 {%- else -%}
                                     {{ subject.abbreviation|upper }}
                                 {%- endif -%}
+                            {% else %}
+                                {{ lesson.subjectName|upper }}
                             {% endif %}
                         </span>
 

@@ -100,7 +100,7 @@ class Student implements JsonSerializable {
     private $approvedPrivacyCategories;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Section", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\ManyToMany(targetEntity="Section", cascade={"persist"})
      * @ORM\JoinTable(name="student_sections",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}

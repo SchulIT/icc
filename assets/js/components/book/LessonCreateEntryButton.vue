@@ -65,16 +65,17 @@
                 </div>
               </div>
 
-              <div class="form-group">
-                <label for="start" class="control-label">{{ $trans('label.start')}}</label>
-                <number-input v-model="entry.start" name="lesson_entry_create[lessonStart]" :min="start" :max="end" id="start" :class="validation.start !== null ? 'is-invalid' : ''"></number-input>
-                <div class="invalid-feedback" v-show="validation.start !== null">{{ validation.start }}</div>
-              </div>
-
-              <div class="form-group">
-                <label for="end" class="control-label">{{ $trans('label.end')}}</label>
-                <number-input v-model="entry.end" name="lesson_entry_create[lessonEnd]" :min="start" :max="end" id="end" :class="validation.end !== null ? 'is-invalid' : ''"></number-input>
-                <div class="invalid-feedback" v-show="validation.end !== null">{{ validation.end }}</div>
+              <div class="form-group row">
+                <div class="col-6">
+                  <label for="start" class="control-label">{{ $trans('label.start')}}</label>
+                  <number-input v-model="entry.start" name="lesson_entry_create[lessonStart]" :min="start" :max="end" id="start" :class="validation.start !== null ? 'is-invalid' : ''"></number-input>
+                  <div class="invalid-feedback" v-show="validation.start !== null">{{ validation.start }}</div>
+                </div>
+                <div class="col-6">
+                  <label for="end" class="control-label">{{ $trans('label.end')}}</label>
+                  <number-input v-model="entry.end" name="lesson_entry_create[lessonEnd]" :min="start" :max="end" id="end" :class="validation.end !== null ? 'is-invalid' : ''"></number-input>
+                  <div class="invalid-feedback" v-show="validation.end !== null">{{ validation.end }}</div>
+                </div>
               </div>
 
               <div class="form-group">

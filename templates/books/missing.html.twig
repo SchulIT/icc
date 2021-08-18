@@ -30,7 +30,9 @@
                     {% for group in groups %}
                         <div class="card">
                             <div class="card-header">
+                                <i class="fas fa-calendar-alt"></i>
                                 {{ group.date|format_date }}
+                                <span class="text-muted">{{ group.date.format('N')|weekday }}</span>
                             </div>
 
                             <div class="list-group list-group-flush">
@@ -50,6 +52,13 @@
                                             {%- endif -%}
 
                                             {{ subject }}
+                                        </div>
+
+                                        <div class="ml-2">
+                                            <i class="fas fa-users"></i>
+                                            {% for grade in lesson.lesson.tuition.studyGroup.grades %}
+                                                {{ grade.name }}{% if not loop.last %}, {% endif %}
+                                            {% endfor %}
                                         </div>
 
                                         {% for teacher in lesson.lesson.tuition.teachers %}

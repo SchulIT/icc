@@ -40,7 +40,6 @@ easy_admin:
                     - { property: externalId, required: false }
                     - name
                     - allowCollapse
-                    - students
         GradeTeacher:
             class: App\Entity\GradeTeacher
 
@@ -49,6 +48,13 @@ easy_admin:
 
         Room:
             class: App\Entity\Room
+            form:
+                fields:
+                    - externalId
+                    - name
+                    - description
+                    - isReservationEnabled
+                    - capacity
 
         Student:
             class: App\Entity\Student
@@ -116,7 +122,7 @@ easy_admin:
                     - studyGroups
                     - replacementStudyGroups
                     - replacementGrades
-                    - { property: updatedAt, type: date, type_options: { widget: 'single_text' }}
+                    - { property: createdAt, type: date, type_options: { widget: 'single_text' }}
 
         Tuition:
             class: App\Entity\Tuition

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Book\Lesson\LessonCancelHelper;
 use App\Dashboard\Absence\AbsenceResolver;
 use App\Entity\Lesson;
 use App\Entity\LessonAttendance;
@@ -182,46 +183,10 @@ class BookXhrController extends AbstractController {
      *     @Model(type=ViolationList::class)
      * )
      */
-    public function cancelLesson(Lesson $lesson, CancelLessonRequest $request, LessonEntryRepositoryInterface $entryRepository) {
+    public function cancelLesson(Lesson $lesson, CancelLessonRequest $request, LessonCancelHelper $lessonCancelHelper) {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
-        $tuition = $lesson->getTuition();
-
-        if($lesson->getEntries()->count() === 0) {
-            $entry = (new LessonEntry())
-                ->setLesson($lesson)
-                ->setTuition($tuition)
-                ->setLessonStart($lesson->getLessonStart())
-                ->setLessonEnd($lesson->getLessonEnd())
-                ->setIsCancelled(true)
-                ->setTeacher($tuition->getTeachers()->first())
-                ->setSubject($tuition->getSubject())
-                ->setCancelReason($request->getReason());
-
-            $entryRepository->persist($entry);
-        } else {
-            $lessonNumbers = range($lesson->getLessonStart(), $lesson->getLessonEnd());
-
-            /** @var LessonEntry $entry */
-            foreach ($lesson->getEntries() as $entry) {
-                for ($lessonNumber = $entry->getLessonStart(); $lessonNumber <= $entry->getLessonEnd(); $lessonNumber++) {
-                    unset($lessonNumbers[$lessonNumber]);
-                }
-            }
-
-            foreach ($lessonNumbers as $lessonNumber) {
-                $entry = (new LessonEntry())
-                    ->setLesson($lesson)
-                    ->setTuition($tuition)
-                    ->setLessonStart($lessonNumber)
-                    ->setLessonEnd($lessonNumber)
-                    ->setIsCancelled(true)
-                    ->setTeacher($tuition->getTeachers()->first())
-                    ->setSubject($tuition->getSubject())
-                    ->setCancelReason($request->getReason());
-
-                $entryRepository->persist($entry);
-            }
-        }
+        $reason = $request->getReason();
+        $lessonCancelHelper->cancelLesson($lesson, $reason);
 
         return new Response('', Response::HTTP_CREATED, [
             'Content-Type' => 'application/json'

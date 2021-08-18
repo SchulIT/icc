@@ -45,7 +45,7 @@ class Lesson {
     private $tuition;
 
     /**
-     * @ORM\OneToMany(targetEntity="LessonEntry", mappedBy="lesson")
+     * @ORM\OneToMany(targetEntity="LessonEntry", mappedBy="lesson", cascade={"persist"})
      * @var Collection<LessonEntry>
      */
     private $entries;

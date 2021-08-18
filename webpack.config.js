@@ -31,6 +31,7 @@ Encore
     })
     .enablePostCssLoader()
     .enableVueLoader()
+    .enableVersioning(Encore.isProduction())
 
     .addLoader(
         {

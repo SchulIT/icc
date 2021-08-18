@@ -38,6 +38,7 @@ class WikiArticleRepository extends AbstractRepository implements WikiArticleRep
         return $this->em
             ->getRepository(WikiArticle::class)
             ->createQueryBuilder('node')
+            ->addOrderBy('node.title', 'asc')
             ->getQuery()
             ->setHint(Query::HINT_INCLUDE_META_COLUMNS, true)
             ->getResult('tree');
@@ -60,6 +61,7 @@ class WikiArticleRepository extends AbstractRepository implements WikiArticleRep
                     $qb->expr()->like('a.title', ':queryLike')
                 )
             )
+            ->addOrderBy('a.title', 'asc')
             ->setParameter('query', $q)
             ->setParameter('queryLike', '%' . $q . '%');
 

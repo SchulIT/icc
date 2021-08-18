@@ -42,7 +42,6 @@ class Appointment {
 
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
      * @Assert\NotNull()
      * @var DateTime|null
      */

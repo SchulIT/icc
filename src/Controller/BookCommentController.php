@@ -3,14 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\BookComment;
+use App\Entity\Student;
 use App\Entity\User;
 use App\Form\BookCommentType;
 use App\Repository\BookCommentRepositoryInterface;
+use App\Section\SectionResolverInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -21,10 +24,27 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class BookCommentController extends AbstractController {
 
     private $repository;
+    private $sectionResolver;
 
-    public function __construct(BookCommentRepositoryInterface $repository, RefererHelper $redirectHelper) {
+    public function __construct(BookCommentRepositoryInterface $repository, SectionResolverInterface $sectionResolver, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
         $this->repository = $repository;
+        $this->sectionResolver = $sectionResolver;
+    }
+
+    private function redirectToBookOfFirstStudent(BookComment $comment): Response {
+        $currentSection = $this->sectionResolver->getCurrentSection();
+        /** @var Student|null $firstStudent */
+        $firstStudent = $comment->getStudents()->first();
+
+        if($firstStudent !== null && $currentSection !== null) {
+            $grade = $firstStudent->getGrade($currentSection);
+            return $this->redirectToRoute('book', [
+                'grade' => $grade->getUuid()->toString()
+            ]);
+        }
+
+        return $this->redirectToRoute('book');
     }
 
     /**
@@ -46,6 +66,8 @@ class BookCommentController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $this->addFlash('success', 'book.comment.add.success');
             $this->repository->persist($comment);
+
+            return $this->redirectToBookOfFirstStudent($comment);
         }
 
         return $this->render('books/comment/add.html.twig', [
@@ -63,6 +85,8 @@ class BookCommentController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $this->addFlash('success', 'book.comment.add.success');
             $this->repository->persist($comment);
+
+            return $this->redirectToBookOfFirstStudent($comment);
         }
 
         return $this->render('books/comment/edit.html.twig', [

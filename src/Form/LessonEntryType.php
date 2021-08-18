@@ -59,6 +59,10 @@ class LessonEntryType extends AbstractType {
             ->add('topic', TextType::class, [
                 'label' => 'label.topic'
             ])
+            ->add('exercises', TextareaType::class, [
+                'label' => 'label.exercises',
+                'required' => false
+            ])
             ->add('comment', TextareaType::class, [
                 'label' => 'label.comment',
                 'required' => false

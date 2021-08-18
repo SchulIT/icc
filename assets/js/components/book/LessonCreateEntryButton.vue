@@ -85,6 +85,11 @@
               </div>
 
               <div class="form-group">
+                <label for="exercises" class="control-label">{{ $trans('label.exercises') }}</label>
+                <textarea v-model="entry.exercises" name="lesson_entry_create[exercises]" class="form-control" id="exercises"></textarea>
+              </div>
+
+              <div class="form-group">
                 <label for="comment" class="control-label">{{ $trans('label.comment') }}</label>
                 <textarea v-model="entry.comment" name="lesson_entry_create[comment]" class="form-control" id="comment"></textarea>
               </div>
@@ -161,6 +166,7 @@ export default {
         subject: null,
         replacementTeacher: null,
         replacementSubject: null,
+        exercises: null,
         comment: null
       }
     }

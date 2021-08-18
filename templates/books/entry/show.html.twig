@@ -90,6 +90,9 @@
                         {% if form.topic is defined %}
                             {{ form_row(form.topic) }}
                         {% endif %}
+                        {% if form.exercises is defined %}
+                            {{ form_row(form.exercises) }}
+                        {% endif %}
                         {% if form.comment is defined %}
                             {{ form_row(form.comment) }}
                         {% endif %}

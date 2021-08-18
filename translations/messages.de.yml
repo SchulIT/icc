@@ -191,7 +191,8 @@ label:
     year: Jahr
     number: Nummer
     topic: Thema
-    comment: Kommentar
+    comment: Bemerkung
+    exercises: Aufgaben
     absent_students: Abwesend
     replacement_teacher: Vertretungslehrkraft
     replacement_subject: Vertretungsfach

@@ -295,6 +295,14 @@
                                                         </div>
                                                     {% endif %}
                                                 </div>
+                                                {% if lesson.entry.exercises is not empty %}
+                                                    <div class="mt-1 d-flex align-items-baseline">
+                                                        <i class="fas fa-tasks"></i>
+                                                        <p class="mb-0 ml-1">
+                                                            {{ lesson.entry.exercises }}
+                                                        </p>
+                                                    </div>
+                                                {% endif %}
                                                 {% if lesson.entry.comment is not empty %}
                                                     <div class="mt-1 d-flex align-items-baseline">
                                                         <i class="far fa-comment-alt"></i>

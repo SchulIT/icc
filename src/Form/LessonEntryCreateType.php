@@ -68,6 +68,10 @@ class LessonEntryCreateType extends AbstractType {
                 'label' => 'label.replacement_subject',
                 'required' => false
             ])
+            ->add('exercises', MarkdownType::class, [
+                'label' => 'label.exercises',
+                'required' => false
+            ])
             ->add('comment', MarkdownType::class, [
                 'label' => 'label.comment',
                 'required' => false

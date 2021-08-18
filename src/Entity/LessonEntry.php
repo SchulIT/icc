@@ -93,6 +93,13 @@ class LessonEntry {
      * @Assert\NotBlank(allowNull=true, groups={"Default"})
      * @var string|null
      */
+    private $exercises;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Assert\NotBlank(allowNull=true, groups={"Default"})
+     * @var string|null
+     */
     private $comment;
 
     /**
@@ -245,6 +252,22 @@ class LessonEntry {
      */
     public function setTopic(?string $topic): LessonEntry {
         $this->topic = $topic;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExercises(): ?string {
+        return $this->exercises;
+    }
+
+    /**
+     * @param string|null $exercises
+     * @return LessonEntry
+     */
+    public function setExercises(?string $exercises): LessonEntry {
+        $this->exercises = $exercises;
         return $this;
     }
 

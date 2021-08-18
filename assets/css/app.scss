@@ -258,6 +258,10 @@
   background-color: theme-color-level("danger", $alert-bg-level)
 }
 
+.bg-warning-light {
+  background-color: theme-color-level("warning", $alert-bg-level)
+}
+
 [data-theme=dark] {
   .border-primary {
     border-color: $default-border !important;

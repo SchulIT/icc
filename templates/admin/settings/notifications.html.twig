@@ -15,11 +15,6 @@
         <div class="card-header">{{ 'label.general'|trans }}</div>
 
         <div class="card-body">
-            <div class="alert alert-danger">
-                <i class="fa fa-exclamation-triangle"></i> {{ 'webpush.caution.experimental'|trans }}
-            </div>
-
-            {{ form_row(form.push_enabled) }}
             {{ form_row(form.email_enabled) }}
         </div>
     </div>

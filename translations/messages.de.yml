@@ -1241,31 +1241,6 @@ remove:
 api:
     doc: API-Dokumentation
 
-webpush:
-    label: Push Benachrichtigungen
-    configure: Push Benachrichtigungen einrichten
-    info: Über WebPush können Push Benachrichtigungen über den Browser empfangen werden.
-    settings: Elemente auswählen, über die benachrichtigt wird
-    caution:
-        experimental: Dieses Feature ist experimentell. Möglicherweise funktioniert es nicht wie erwartet.
-        browser: Dieses Feature funktioniert nur in Google Chrome, Mozilla Firefox und Microsoft Edge.
-        running: Dieses Feature funktioniert nur, wenn der Browser im Hintergrund laufen darf.
-    state:
-        enabled: aktiviert
-        disabled: nicht aktiviert
-        not_supported: nicht unterstützt
-        not_granted: nicht erlaubt
-    enable:
-        label: aktivieren
-        success: Erfolgreich aktiviert.
-        loading: Push Benachrichtigung wird aktiviert - bitte warten...
-    disable:
-        label: deaktivieren
-        success: Erfolgreich deaktiviert.
-        loading: Push Benachrichtigung wird deaktiviert - bitte warten...
-    not_granted:
-        message: Push Benachrichtigungen wurden im Browser deaktiviert. Bitte Berechtigungen prüfen.
-
 system:
     label: System
 

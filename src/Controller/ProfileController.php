@@ -53,17 +53,13 @@ class ProfileController extends AbstractController {
         $user = $this->getUser();
 
         $allowedEmailUserTypes = $notificationSettings->getEmailEnabledUserTypes();
-        $allowedPushUserTypes = $notificationSettings->getPushEnabledUserTypes();
+        $isAllowed = EnumArrayUtils::inArray($user->getUserType(), $allowedEmailUserTypes) !== false;
 
-        $isEmailAllowed = EnumArrayUtils::inArray($user->getUserType(), $allowedEmailUserTypes) !== false;
-        $isPushAllowed = EnumArrayUtils::inArray($user->getUserType(), $allowedPushUserTypes);
-
-        $isAllowed = $isEmailAllowed || $isPushAllowed;
         $form = null;
 
         if($isAllowed === true) {
             $form = $this->createForm(NotificationsType::class, $user, [
-                'allow_email' => $isEmailAllowed
+                'allow_email' => $isAllowed
             ]);
             $form->handleRequest($request);
 
@@ -78,8 +74,7 @@ class ProfileController extends AbstractController {
         return $this->render('profile/notifications.html.twig', [
             'form' => $form !== null ? $form->createView() : null,
             'is_allowed' => $isAllowed,
-            'email_allowed' => $isEmailAllowed,
-            'push_allowed' => $isPushAllowed
+            'email_allowed' => $isAllowed
         ]);
     }
 

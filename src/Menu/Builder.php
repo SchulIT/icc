@@ -597,7 +597,7 @@ class Builder {
                 'class' => 'navbar-nav float-lg-right'
             ]);
 
-        $enabledFor = $this->notificationSettings->getPushEnabledUserTypes();
+        $enabledFor = $this->notificationSettings->getEmailEnabledUserTypes();
 
         $token = $this->tokenStorage->getToken();
 
@@ -614,12 +614,11 @@ class Builder {
         if(EnumArrayUtils::inArray($user->getUserType(), $enabledFor)) {
             $menu = $root->addChild('services', [
                 'label' => '',
-                'uri' => '#'
+                'route' => 'profile_notifications'
             ])
                 ->setExtra('icon', 'far fa-bell')
                 ->setExtra('pull-right', true)
-                ->setAttribute('title', $this->translator->trans('webpush.label'))
-                ->setAttribute('data-toggle', 'webpush_modal');
+                ->setAttribute('title', $this->translator->trans('profile.notifications.label'));
         }
 
         return $root;

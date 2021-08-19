@@ -8,11 +8,6 @@
 
 {% block profile_content %}
     {% if is_allowed %}
-
-        {% if push_allowed %}
-
-        {% endif %}
-
         {{ form_start(form) }}
 
         {% for child in form %}
@@ -31,29 +26,10 @@
             {% endif %}
         {% endfor %}
 
-        <div class="form-group row">
-            <div class="col-sm-2">{{ 'webpush.label'|trans }}</div>
-            <div class="col-sm-10">
-                <a href="#" data-toggle="webpush_modal" class="btn btn-primary btn-sm">
-                    <i class="far fa-bell"></i> {{ 'webpush.configure'|trans }}
-                </a>
-
-                <small id="notifications_isMessageNotificationsEnabled_help" class="form-text text-muted">
-                    {{ 'webpush.info'|trans }}
-                </small>
-            </div>
-        </div>
-
-        <div class="buttons">
-            <button type="submit" class="btn btn-primary btn-sm">
-                <i class="fa fa-save"></i> {{ 'action.save'|trans }}
-            </button>
-        </div>
-
         {{ form_end(form) }}
     {% else %}
         <div class="bs-callout bs-callout-info mb-0">
-            <h4><i class="fa fa-info-circle"></i> {{ 'info.label'|trans }}</h4>
+            <h4>{{ 'info.label'|trans }}</h4>
             <p>{{ 'profile.notifications.not_allowed'|trans }}</p>
         </div>
     {% endif %}

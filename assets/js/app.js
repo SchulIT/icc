@@ -13,8 +13,6 @@ require('../../vendor/schulit/common-bundle/Resources/assets/js/menu');
 require('../../vendor/schulit/common-bundle/Resources/assets/js/icon-picker');
 require('../../vendor/schulit/common-bundle/Resources/assets/js/dropdown-polyfill');
 
-require('./webpush');
-
 document.addEventListener('DOMContentLoaded', function() {
     bsCustomFileInput.init();
 

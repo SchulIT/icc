@@ -31,8 +31,6 @@ services:
             tags: [ 'app.sorting_strategy' ]
         App\Notification\Email\EmailStrategyInterface:
             tags: [ 'app.notifications.email_strategy' ]
-        App\Notification\WebPush\PushNotificationStrategyInterface:
-            tags: [ 'app.notifications.push_strategy' ]
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -225,13 +223,9 @@ services:
     App\Notification\Email\:
         resource: '../src/Notification/Email/*Strategy.php'
 
-    App\Notification\WebPush\:
-        resource: '../src/Notification/WebPush/*Strategy.php'
-
     App\Notification\NotificationService:
         arguments:
             $emailStrategies: !tagged app.notifications.email_strategy
-            $pushStrategies: !tagged app.notifications.push_strategy
 
     App\Notification\Email\EmailNotificationService:
         arguments:
@@ -250,11 +244,6 @@ services:
             $messageLimit: '%env(int:MAILER_LIMIT)%'
         tags:
             - { name: shapecode_cron.cron_job, expression: '*\/2 * * * *' }
-
-    # WEBPUSH
-    App\Notification\WebPush\UserSubscriptionManager:
-        tags:
-            - { name: bentools_webpush.subscription_manager, user_class: 'App\Entity\User' }
 
     # SICKNOTES
     App\SickNote\SickNoteSender:

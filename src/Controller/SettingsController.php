@@ -220,23 +220,6 @@ class SettingsController extends AbstractController {
     public function notifications(Request $request, NotificationSettings $notificationSettings, EnumStringConverter $enumStringConverter) {
         $builder = $this->createFormBuilder();
         $builder
-            ->add('push_enabled', ChoiceType::class, [
-                'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
-                'choice_label' => function(UserType $userType) use($enumStringConverter) {
-                    return $enumStringConverter->convert($userType);
-                },
-                'choice_value' => function(UserType $userType) {
-                    return $userType->getValue();
-                },
-                'expanded' => true,
-                'multiple' => true,
-                'label' => 'admin.settings.notifications.push.label',
-                'help' => 'admin.settings.notifications.push.help',
-                'data' => $notificationSettings->getPushEnabledUserTypes(),
-                'label_attr' => [
-                    'class' => 'checkbox-custom'
-                ]
-            ])
             ->add('email_enabled', ChoiceType::class, [
                 'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
                 'choice_label' => function(UserType $userType) use($enumStringConverter) {
@@ -260,9 +243,6 @@ class SettingsController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             $map = [
-                'push_enabled' => function($types) use ($notificationSettings) {
-                    $notificationSettings->setPushEnabledUserTypes($types);
-                },
                 'email_enabled' => function($types) use ($notificationSettings) {
                     $notificationSettings->setEmailEnabledUserTypes($types);
                 }

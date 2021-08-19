@@ -18,7 +18,6 @@
         "fakerphp/faker": "^1.8",
         "frostiede/cron-bundle": "dev-fork",
         "frostiede/enum-bundle": "dev-master",
-        "frostiede/webpush-bundle": "^0.7.0",
         "javiereguiluz/easyslugger": "^1.0",
         "jms/serializer-bundle": "^3.2",
         "jsvrcek/ics": "^0.8",

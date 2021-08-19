@@ -74,45 +74,7 @@ Anschließend muss noch ein Zertifikat für die OAuth2-Authentifizierung erstell
 
 Es werden erneut einige Daten abgefragt (siehe oben).
 
-Schritt 2.3: Schlüssel für Webpush erstellen
-############################################
-
-Zunächst auf der Konsole folgendes Kommando ausführen und anschließend eine Datei ``config/packages/bentools_webpush.yaml`` erstellen:
-
-.. code-block:: shell
-
-    $ php bin/console webpush:generate:keys
-
-Man erhält eine Ausgabe wie diese:
-
-.. warning:: Die untenstehenden Schlüssel **nicht** verwenden, sondern jene, die auf der eigenen Konsole ausgegeben werden.
-
-.. code-block:: shell
-
-    [OK] Your VAPID keys have been generated!
-
-    Your public key is: BNcOG_KouKkchEX6sCnPhnPVQeN16jbzQE_FplAoVf6GVzDLss7Z5PMDxc1EvrOitCVlFb6JYreZ8n_PySDrW7g
-    Your private key is: ohNxL_tfcZ_te4YRz6bWLEaR4fhAdX59PMrZqXVQMQU
-
-    Update config/packages/bentools_webpush.yaml:
-
-    # config/packages/bentools_webpush.yaml
-    bentools_webpush:
-        settings:
-            public_key: 'BNcOG_KouKkchEX6sCnPhnPVQeN16jbzQE_FplAoVf6GVzDLss7Z5PMDxc1EvrOitCVlFb6JYreZ8n_PySDrW7g'
-            private_key: 'ohNxL_tfcZ_te4YRz6bWLEaR4fhAdX59PMrZqXVQMQU'
-
-Den unteren Teil anschließend in der Datei ``config/packages/bentools_webpush.yaml`` einfügen:
-
-.. code-block:: shell
-
-    # config/packages/bentools_webpush.yaml
-    bentools_webpush:
-        settings:
-            public_key: 'BNcOG_KouKkchEX6sCnPhnPVQeN16jbzQE_FplAoVf6GVzDLss7Z5PMDxc1EvrOitCVlFb6JYreZ8n_PySDrW7g'
-            private_key: 'ohNxL_tfcZ_te4YRz6bWLEaR4fhAdX59PMrZqXVQMQU'
-
-Schritt 2.4: Identity Provider bekannt machen
+Schritt 2.3: Identity Provider bekannt machen
 #############################################
 
 Im Identity Provider unter Verwaltung > IdP Details öffnen. Den Inhalt der angezeigten XML-Datei in die Zwischenablage kopieren

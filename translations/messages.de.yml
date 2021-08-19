@@ -302,6 +302,7 @@ plans:
                 label: Link zur Synchronisation
                 info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Klausurplan damit aktuell hält.
                 name_help: Unter diesem Namen kann in den Profil-Einstellungen der Zugriff wieder entzogen werden.
+                success_head: Erfolg
                 success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
 
     exam:
@@ -331,6 +332,7 @@ plans:
                 label: Link zur Synchronisation
                 info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Stundenplan damit aktuell hält.
                 name_help: Unter diesem Namen kann in den Profil-Einstellungen der Zugriff wieder entzogen werden.
+                success_head: Erfolg
                 success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
         today: heute
         upcoming: demnächst
@@ -373,6 +375,7 @@ plans:
                 label: Link zur Synchronisation
                 info: Dieser Link kann in Diensten wie beispielsweise Outlook oder Google Kalender verwendet werden, der den Kalender damit aktuell hält.
                 name_help: Unter diesem Namen kann in den Profil-Einstellungen der Zugriff wieder entzogen werden.
+                success_head: Erfolg
                 success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
             name: Schulkalender
             description: Export der Schulkalenders

@@ -127,6 +127,11 @@ class TeachersImportStrategy implements ImportStrategyInterface {
     public function remove($entity, $requestData): bool {
         $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
 
+        if($entity->getSections()->count() === 0) {
+            $this->teacherRepository->remove($entity);
+            return true;
+        }
+
         if($section !== null && $entity->getSections()->contains($section)) {
             $entity->removeSection($section);
             $this->teacherRepository->persist($entity);

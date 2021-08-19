@@ -295,6 +295,7 @@ plans:
             label: Klausuren exportieren
             download:
                 label: Einmaliger Download
+                warning: Achtung
                 info: Der Klausurplan wird bei dieser Methode nicht aktualisiert!
                 filename: klausuren.ics
             sync:
@@ -323,6 +324,7 @@ plans:
             description: 'Stundenplan von %name%'
             download:
                 label: Einmaliger Download
+                warning: Achtung
                 info: Der Stundenplan wird bei dieser Methode nicht aktualisiert!
                 filename: stundenplan.ics
             sync:
@@ -364,6 +366,7 @@ plans:
             label: Kalender exportieren
             download:
                 label: Einmaliger Download
+                warning: Achtung
                 info: Der Kalender wird bei dieser Methode nicht aktualisiert!
                 filename: termine.ics
             sync:

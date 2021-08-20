@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="btn btn-danger btn-sm"
+    <div class="btn btn-outline-primary btn-sm"
          @click.prevent="openModal">
       <i class="fas fa-times"></i> {{ button }}
     </div>

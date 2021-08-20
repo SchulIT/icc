@@ -91,9 +91,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/appointments", methods={"POST"}, name="import_appointments")
      * @OA\Post(operationId="import_appointments")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=AppointmentsData::class)
      * )
      * @OA\Response(
@@ -118,9 +116,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/appointments/categories", methods={"POST"})
      * @OA\Post(operationId="import_appointment_categories")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=AppointmentCategoriesData::class)
      * )
      * @OA\Response(
@@ -145,9 +141,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/exams", methods={"POST"})
      * @OA\Post(operationId="import_exams")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=ExamsData::class)
      * )
      * @OA\Response(
@@ -172,9 +166,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/grades", methods={"POST"})
      * @OA\Post(operationId="import_grades")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=GradesData::class)
      * )
      * @OA\Response(
@@ -199,9 +191,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/grades/teachers", methods={"POST"})
      * @OA\Post(operationId="import_grade_teachers")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=GradeTeachersData::class)
      * )
      * @OA\Response(
@@ -226,9 +216,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/grades/memberships", methods={"POST"})
      * @OA\Post(operationId="import_grade_memberships")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=GradeMembershipsData::class)
      * )
      * @OA\Response(
@@ -253,9 +241,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/students", methods={"POST"})
      * @OA\Post(operationId="import_students")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=StudentsData::class)
      * )
      * @OA\Response(
@@ -280,9 +266,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/studygroups", methods={"POST"})
      * @OA\Post(operationId="import_studygroups")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=StudyGroupsData::class)
      * )
      * @OA\Response(
@@ -307,9 +291,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/studygroups/memberships", methods={"POST"})
      * @OA\Post(operationId="import_studygroups_memberships")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=StudyGroupMembershipsData::class)
      * )
      * @OA\Response(
@@ -334,9 +316,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/subjects", methods={"POST"})
      * @OA\Post(operationId="import_subjects")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=SubjectsData::class)
      * )
      * @OA\Response(
@@ -361,9 +341,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/substitutions", methods={"POST"})
      * @OA\Post(operationId="import_substitutions")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=SubstitutionsData::class)
      * )
      * @OA\Response(
@@ -388,9 +366,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/teachers", methods={"POST"})
      * @OA\Post(operationId="import_teachers")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=TeachersData::class)
      * )
      * @OA\Response(
@@ -415,9 +391,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/timetable/lessons", methods={"POST"})
      * @OA\Post(operationId="import_timetable_lessons")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=TimetableLessonsData::class)
      * )
      * @OA\Response(
@@ -442,9 +416,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/timetable/periods", methods={"POST"})
      * @OA\Post(operationId="import_timetable_periods")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=TimetablePeriodsData::class)
      * )
      * @OA\Response(
@@ -469,9 +441,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/timetable/supervisions", methods={"POST"})
      * @OA\Post(operationId="import_timetable_supervisions")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=TimetableSupervisionsData::class)
      * )
      * @OA\Response(
@@ -496,9 +466,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/tuitions", methods={"POST"})
      * @OA\Post(operationId="import_tuitions")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=TuitionsData::class)
      * )
      * @OA\Response(
@@ -523,9 +491,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/infotexts", methods={"POST"})
      * @OA\Post(operationId="import_infotexts")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=InfotextsData::class)
      * )
      * @OA\Response(
@@ -550,9 +516,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/absences", methods={"POST"})
      * @OA\Post(operationId="import_absences")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=AbsencesData::class)
      * )
      * @OA\Response(
@@ -577,9 +541,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/privacy/categories", methods={"POST"})
      * @OA\Post(operationId="import_privacy_categories")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=PrivacyCategoriesData::class)
      * )
      * @OA\Response(
@@ -604,9 +566,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/rooms", methods={"POST"})
      * @OA\Post(operationId="import_rooms")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=RoomsData::class)
      * )
      * @OA\Response(
@@ -631,9 +591,7 @@ class ImportController extends AbstractController {
      *
      * @Route("/free_lessons", methods={"POST"})
      * @OA\Post(operationId="import_lessons")
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
+     * @OA\RequestBody(
      *     @Model(type=FreeLessonTimespansData::class)
      * )
      * @OA\Response(

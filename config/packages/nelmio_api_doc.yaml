@@ -1,42 +1,38 @@
-services:
-    # see https://github.com/nelmio/NelmioApiDocBundle/issues/1807#issuecomment-853913181
-    nelmio_api_doc.generator_locator:
-        alias: "nelmio_api_doc.generator.default"
-        public: "true"
-
 nelmio_api_doc:
     documentation:
         info:
             title: "%env(APP_NAME)%"
             version: "%version%"
-        securityDefinitions:
-            oauth:
-                type: oauth2
-                flow: accessCode
-                authorizationUrl: /oauth2/authorize
-                tokenUrl: /oauth2/token
-                scopes:
-                    - messages
-                    - exams
-                    - substitutions
-                    - timetable
-                    - appointments
-            apiKey:
-                type: apiKey
-                in: header
-                name: X-Token
+        components:
+            securitySchemes:
+                oauth:
+                    type: oauth2
+                    flows:
+                        authorizationCode:
+                            authorizationUrl: /oauth2/authorize
+                            tokenUrl: /oauth2/token
+                            scopes:
+                                - messages
+                                - exams
+                                - substitutions
+                                - timetable
+                                - appointments
+                apiKey:
+                    type: apiKey
+                    in: header
+                    name: X-Token
         security:
-            oauth:
+            - oauth:
                 - messages
                 - exams
                 - substitutions
                 - timetable
                 - appointments
-            apiKey: []
+            - apiKey: []
 
     areas: # to filter documented areas
         default:
-            path_patterns: [^/api/v]
+            path_patterns: [^/api/v1]
 
         import:
             path_patterns: [^/api/import]

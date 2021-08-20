@@ -161,7 +161,7 @@
                                                                            :actions="{{ actions|json_encode }}"
                                                                            :tuition-urls="{{ tuitionUrls|json_encode }}"
                                                                            :date="new Date('{{ timespan.date.format('Y-m-d') }}')"
-                                                                           button="{{ 'book.entry.cancel.all'|trans }}"></lesson-cancel-bulk-button>
+                                                                           button="{{ 'book.entry.cancel.lessons'|trans({'%lessons%': 'label.exam_lessons'|trans({'%start%': timespan.lessonStart, '%end%': timespan.lessonEnd, '%count%': timespan.lessonEnd - timespan.lessonStart})}) }}"></lesson-cancel-bulk-button>
                                             </div>
                                         </div>
                                     {% endfor %}

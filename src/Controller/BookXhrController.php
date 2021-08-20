@@ -133,17 +133,20 @@ class BookXhrController extends AbstractController {
     /**
      * @Route("/attendances/{uuid}", name="xhr_entry_attendances")
      */
-    public function attendances(LessonEntry $entry, SerializerInterface $serializer, SectionResolverInterface $sectionResolver) {
+    public function attendances(Request $request, LessonEntry $entry, SerializerInterface $serializer, SectionResolverInterface $sectionResolver) {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
+        $filter = $request->query->get('filter', null);
         $data = [ ];
 
         /** @var LessonAttendance $attendance */
         foreach($entry->getAttendances() as $attendance) {
-            $data[] = [
-                'student' => Student::fromEntity($attendance->getStudent(), $sectionResolver->getCurrentSection()),
-                'type' => $attendance->getType()
-            ];
+            if($filter === null || intval($filter) === $attendance->getType()) {
+                $data[] = [
+                    'student' => Student::fromEntity($attendance->getStudent(), $sectionResolver->getCurrentSection()),
+                    'type' => $attendance->getType()
+                ];
+            }
         }
 
         return $this->returnJson($data, $serializer);

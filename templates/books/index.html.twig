@@ -331,25 +331,28 @@
 
                                             {% if lesson.presentCount > 0 %}
                                                 <div class="ml-2">
-                                                    <span class="border-success text-success btn-like" title="{{ 'book.attendance.type.present'|trans }}">
-                                                        <i class="fas fa-user-check"></i> {{ lesson.presentCount }}
-                                                    </span>
+                                                    <lesson-attendance-info class="border-success text-success btn-like"
+                                                                            icon="fas fa-user-check"
+                                                                            title="{{ 'book.attendance.type.present'|trans }}"
+                                                                            url="{{ url('xhr_entry_attendances', { uuid: lesson.entry.uuid, filter: 1}) }}"></lesson-attendance-info>
                                                 </div>
                                             {% endif %}
 
                                             {% if lesson.lateCount > 0 %}
                                                 <div class="ml-2">
-                                                    <span class="border-warning text-warning btn-like" title="{{ 'book.attendance.type.late'|trans }}">
-                                                        <i class="fas fa-user-clock"></i> {{ lesson.lateCount }}
-                                                    </span>
+                                                    <lesson-attendance-info class="border-warning text-warning btn-like"
+                                                                            icon="fas fa-user-clock"
+                                                                            title="{{ 'book.attendance.type.late'|trans }}"
+                                                                            url="{{ url('xhr_entry_attendances', { uuid: lesson.entry.uuid, filter: 2}) }}"></lesson-attendance-info>
                                                 </div>
                                             {% endif %}
 
                                             {% if lesson.absentCount > 0 %}
                                                 <div class="ml-2">
-                                                    <span class="border-danger text-danger btn-like" title="{{ 'book.attendance.type.absent'|trans }}">
-                                                        <i class="fas fa-user-times"></i> {{ lesson.absentCount }}
-                                                    </span>
+                                                    <lesson-attendance-info class="border-danger text-danger btn-like"
+                                                                            icon="fas fa-user-times"
+                                                                            title="{{ 'book.attendance.type.absent'|trans }}"
+                                                                            url="{{ url('xhr_entry_attendances', { uuid: lesson.entry.uuid, filter: 0}) }}"></lesson-attendance-info>
                                                 </div>
                                             {% endif %}
 

@@ -6,12 +6,14 @@ import Translations from "./plugins/trans";
 import LessonCancelButton from "./components/book/LessonCancelButton";
 import LessonCreateEntryButton from "./components/book/LessonCreateEntryButton";
 import LessonCancelBulkButton from "./components/book/LessonCancelBulkButton";
+import LessonAttendanceInfo from "./components/book/LessonAttendanceInfo"
 
 const app = createApp({
     components: {
         LessonCancelButton,
         LessonCreateEntryButton,
-        LessonCancelBulkButton
+        LessonCancelBulkButton,
+        LessonAttendanceInfo
     },
     methods: { },
     data() {

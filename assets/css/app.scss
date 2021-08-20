@@ -254,12 +254,28 @@
   min-width: 55px;
 }
 
+.bg-primary-light {
+  background-color: theme-color-level("primary", $alert-bg-level)
+}
+
+.bg-secondary-light {
+  background-color: theme-color-level("secondary", $alert-bg-level)
+}
+
+.bg-info-light {
+  background-color: theme-color-level("info", $alert-bg-level)
+}
+
 .bg-danger-light {
   background-color: theme-color-level("danger", $alert-bg-level)
 }
 
 .bg-warning-light {
   background-color: theme-color-level("warning", $alert-bg-level)
+}
+
+.bg-success-light {
+  background-color: theme-color-level("success", $alert-bg-level)
 }
 
 [data-theme=dark] {

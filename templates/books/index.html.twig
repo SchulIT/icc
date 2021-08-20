@@ -206,9 +206,24 @@
                                     </div>
                                 {% endfor %}
 
+                                {% set last_id = null %}
                                 {% for lesson in day.lessons %}
+                                    {% if lesson.entry is null or lesson.entry.id != last_id %}
                                     <div class="list-group-item d-flex align-items-center">
-                                        <div class="book-lesson m-0 p-0">{{ lesson.lessonNumber }}</div>
+                                        <div class="book-lesson m-0 p-0">
+                                            {% if lesson.entry is not null %}
+                                                {% set last_id = lesson.entry.id %}
+                                                {% set start = lesson.entry.lessonStart %}
+                                                {% set end = lesson.entry.lessonEnd %}
+
+                                                {% for lessonNumber in start..end %}
+                                                    {{ lessonNumber }}<br>
+                                                {% endfor %}
+
+                                            {% else %}
+                                                {{ lesson.lessonNumber }}
+                                            {% endif %}
+                                        </div>
                                         <div class="d-flex align-items-center flex-fill">
                                         {% if lesson.entry is null %}
                                             <div class="badge badge-secondary">
@@ -352,6 +367,7 @@
                                         {% endif %}
                                         </div>
                                     </div>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                         </div>

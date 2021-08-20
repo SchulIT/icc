@@ -113,6 +113,7 @@
             <input type="hidden" name="date" :value="date.toJSON()">
             <input type="hidden" name="tuition" :value="tuitionUuid">
             <input type="hidden" :name="'lesson_entry_create[' + csrfname + ']'" :value="csrftoken">
+            <input type="hidden" name="_ref" :value="ref">
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $trans('action.cancel') }}</button>
               <button type="button" class="btn btn-primary" @click.prevent="submit()" :disabled="!this.isValid">{{$trans('action.save')}}</button>
@@ -168,7 +169,8 @@ export default {
         replacementSubject: null,
         exercises: null,
         comment: null
-      }
+      },
+      ref: null
     }
   },
   computed: {
@@ -231,6 +233,7 @@ export default {
         }
       }
     });
+    this.ref = window.location;
   },
   watch: {
     entry: {

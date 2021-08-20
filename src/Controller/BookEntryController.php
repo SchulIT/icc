@@ -19,6 +19,7 @@ use App\Security\Voter\LessonEntryVoter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -34,6 +35,11 @@ class BookEntryController extends AbstractController {
         parent::__construct($redirectHelper);
 
         $this->repository = $entryRepository;
+    }
+
+    private function redirectToReferrerInRequest(Request $request, string $fallbackRoute, array $fallbackParameters = [ ]): Response {
+        $request->headers->set('referrer', $request->query->get('_ref'));
+        return $this->redirectToRequestReferer($fallbackRoute, $fallbackParameters);
     }
 
     /**
@@ -62,7 +68,7 @@ class BookEntryController extends AbstractController {
             $this->repository->persist($entry);
             $this->addFlash('success', 'book.entry.add.success');
 
-            return $this->redirectToRoute('show_entry', [
+            return $this->redirectToReferrerInRequest($request, 'show_entry', [
                 'uuid' => $entry->getUuid()->toString()
             ]);
         }
@@ -118,7 +124,7 @@ class BookEntryController extends AbstractController {
             $this->repository->persist($entry);
             $this->addFlash('success', 'book.entry.add.success');
 
-            return $this->redirectToRoute('show_entry', [
+            return $this->redirectToReferrerInRequest($request, 'show_entry', [
                 'uuid' => $entry->getUuid()->toString()
             ]);
         }

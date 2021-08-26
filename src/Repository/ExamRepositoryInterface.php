@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Exam;
 use App\Entity\Grade;
 use App\Entity\Room;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
@@ -181,5 +182,5 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
      * @param bool $onlyPlanned If set to true, only planned exams are returned
      * @return Paginator
      */
-    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, ?Teacher $teacher = null, ?Student $student = null, ?StudyGroup $studyGroup = null, bool $onlyPlanned = true, ?DateTime $today = null, ?DateTime $end = null): Paginator;
+    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, ?Teacher $teacher = null, ?Student $student = null, ?StudyGroup $studyGroup = null, bool $onlyPlanned = true, ?DateTime $today = null, ?DateTime $end = null, ?Section $section = null): Paginator;
 }

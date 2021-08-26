@@ -6,7 +6,10 @@ use App\Entity\Document;
 use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
 use App\Repository\DocumentRepositoryInterface;
+use App\Section\SectionResolverInterface;
+use App\Utils\EnumArrayUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -20,10 +23,12 @@ class DocumentVoter extends Voter {
     const ViewOthers = 'other-documents';
     const Admin = 'admin-documents';
 
+    private $sectionResolver;
     private $documentRepository;
     private $accessDecisionManager;
 
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager, DocumentRepositoryInterface $documentRepository) {
+    public function __construct(SectionResolverInterface $sectionResolver, AccessDecisionManagerInterface $accessDecisionManager, DocumentRepositoryInterface $documentRepository) {
+        $this->sectionResolver = $sectionResolver;
         $this->accessDecisionManager = $accessDecisionManager;
         $this->documentRepository = $documentRepository;
     }
@@ -101,26 +106,30 @@ class DocumentVoter extends Voter {
 
         /** @var User $user */
         $user = $token->getUser();
+        $section = $this->sectionResolver->getCurrentSection();
 
+        /** @var UserTypeEntity $visibility */
         foreach($document->getVisibilities() as $visibility) {
-            if($visibility->getUserType()->equals($user->getUserType())) {
-                // user type is in the visibility scope
-                if(!$visibility->getUserType()->equals(UserType::Student()) && !$visibility->getUserType()->equals(UserType::Parent())) {
-                    // no additional checks if usertype isn't student or teacher
+
+            if(EnumArrayUtils::inArray($visibility->getUserType(), [ UserType::Student(), UserType::Parent() ])) {
+                if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]) !== true) {
+                    // Non students/parents can view any student documents
                     return true;
                 }
 
-                // now also check study group membership
-                $studentIds = $user->getStudents()->map(function(Student $student) {
-                    return $student->getId();
-                })->toArray();
+                if($user->getUserType()->equals($visibility->getUserType())) {
+                    // now also check study group membership
+                    $studentIds = $user->getStudents()->map(function(Student $student) {
+                        return $student->getId();
+                    })->toArray();
 
-                foreach($document->getGrades() as $documentStudyGroup) {
-                    foreach($documentStudyGroup->getMemberships() as $membership) {
-                        $studentId = $membership->getStudent()->getId();
+                    foreach($document->getGrades() as $documentStudyGroup) {
+                        foreach($documentStudyGroup->getMemberships() as $membership) {
+                            $studentId = $membership->getStudent()->getId();
 
-                        if(in_array($studentId, $studentIds)) {
-                            return true;
+                            if(in_array($studentId, $studentIds)) {
+                                return true;
+                            }
                         }
                     }
                 }

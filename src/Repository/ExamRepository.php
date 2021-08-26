@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Exam;
 use App\Entity\Grade;
 use App\Entity\Room;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
@@ -393,7 +394,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, ?Teacher $teacher = null, ?Student $student = null, ?StudyGroup $studyGroup = null, bool $onlyPlanned = true, ?DateTime $today = null, ?DateTime $end = null): Paginator {
+    public function getPaginator(int $itemsPerPage, int &$page, ?Grade $grade = null, ?Teacher $teacher = null, ?Student $student = null, ?StudyGroup $studyGroup = null, bool $onlyPlanned = true, ?DateTime $today = null, ?DateTime $end = null, ?Section $section = null): Paginator {
         $qb = $this->getDefaultQueryBuilder($today, false, $onlyPlanned);
 
         if($end !== null) {
@@ -432,6 +433,12 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             $qbInner
                 ->andWhere('sgInner.id = :studygroup');
             $qb->setParameter('studygroup', $studyGroup->getId());
+        }
+
+        if($section !== null) {
+            $qb->leftJoin('t.section', 'section')
+                ->andWhere('section.id = :section')
+                ->setParameter('section', $section->getId());
         }
 
         $qb

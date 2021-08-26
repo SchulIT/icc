@@ -65,8 +65,9 @@ class ExamAdminController extends AbstractController {
             null,
             null,
             false,
-            $sectionFilterView->getCurrentSection() !== null ? $sectionFilterView->getCurrentSection()->getStart() : null,
-            $sectionFilterView->getCurrentSection() !== null ? $sectionFilterView->getCurrentSection()->getEnd() : null
+            null,
+            null,
+            $sectionFilterView->getCurrentSection()
         );
         $pages = 1;
 

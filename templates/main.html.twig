@@ -59,7 +59,7 @@
         </div>
     {% endfor %}
 
-    {% if is_granted('IS_IMPERSONATOR ') %}
+    {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
         <div class="bs-callout bs-callout-warning">
             <h4>{{ 'profile.switch.active.title'|trans }}</h4>
 

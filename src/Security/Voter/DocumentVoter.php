@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Document;
+use App\Entity\GradeMembership;
 use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
@@ -100,7 +101,7 @@ class DocumentVoter extends Voter {
     }
 
     private function canViewDocument(Document $document, TokenInterface $token) {
-        if($this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']) || $this->accessDecisionManager->decide($token, ['ROLE_KIOSK'])) {
+        if ($this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']) || $this->accessDecisionManager->decide($token, ['ROLE_KIOSK'])) {
             return true;
         }
 
@@ -108,30 +109,39 @@ class DocumentVoter extends Voter {
         $user = $token->getUser();
         $section = $this->sectionResolver->getCurrentSection();
 
+        if (EnumArrayUtils::inArray($user->getUserType(), [UserType::Student(), UserType::Parent(), UserType::Intern()]) !== true) {
+            // Non students/parents/intern can view any student documents
+            return true;
+        }
+
+        if ($section === null) {
+            return false;
+        }
+
         /** @var UserTypeEntity $visibility */
-        foreach($document->getVisibilities() as $visibility) {
-
-            if(EnumArrayUtils::inArray($visibility->getUserType(), [ UserType::Student(), UserType::Parent() ])) {
-                if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]) !== true) {
-                    // Non students/parents can view any student documents
-                    return true;
-                }
-
-                if($user->getUserType()->equals($visibility->getUserType())) {
-                    // now also check study group membership
-                    $studentIds = $user->getStudents()->map(function(Student $student) {
+        foreach ($document->getVisibilities() as $visibility) {
+            if ($user->getUserType()->equals($visibility->getUserType())) {
+                if ($visibility->getUserType()->equals(UserType::Intern()) !== true) {
+                    // Check grade memberships for students/parents
+                    $studentIds = $user->getStudents()->map(function (Student $student) {
                         return $student->getId();
                     })->toArray();
 
-                    foreach($document->getGrades() as $documentStudyGroup) {
-                        foreach($documentStudyGroup->getMemberships() as $membership) {
-                            $studentId = $membership->getStudent()->getId();
+                    foreach ($document->getGrades() as $documentStudyGroup) {
+                        /** @var GradeMembership $membership */
+                        foreach ($documentStudyGroup->getMemberships() as $membership) {
+                            if ($membership->getSection()->getId() === $section->getId()) {
+                                $studentId = $membership->getStudent()->getId();
 
-                            if(in_array($studentId, $studentIds)) {
-                                return true;
+                                if (in_array($studentId, $studentIds)) {
+                                    return true;
+                                }
                             }
                         }
                     }
+                } else {
+                    // Interns can view documents for Intern
+                    return true;
                 }
             }
         }

@@ -15,7 +15,8 @@
         <div class="card-body">
             <h5 class="card-title">{{ 'plans.appointments.export.download.label'|trans }}</h5>
 
-            <div class="bs-callout bs-callout-danger">
+            <div class="bs-callout bs-callout-warning">
+                <h4>{{ 'plans.appointments.export.download.warning'|trans }}</h4>
                 <p>{{ 'plans.appointments.export.download.info'|trans }}</p>
             </div>
 
@@ -42,6 +43,7 @@
                 {{ form_end(form) }}
             {% else %}
                 <div class="bs-callout bs-callout-success">
+                    <h4>{{ 'plans.appointments.export.sync.success_head'|trans }}</h4>
                     <p>{{ 'plans.appointments.export.sync.success'|trans }}</p>
                 </div>
 

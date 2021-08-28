@@ -19,30 +19,36 @@
                             <colgroup>
                                 <col>
                                 {% for category in categories %}
-                                <col class="column-md">
+                                    {% if filteredCategories|length == 0 or category.uuid.toString in filteredCategories %}
+                                        <col class="column-md">
+                                    {% endif %}
                                 {% endfor %}
                             </colgroup>
 
                             <thead>
                             <tr>
-                                <th>{{ 'label.student'|trans }}</th>
+                                <th class="text-center align-middle">{{ 'label.student'|trans }}</th>
                                 {% for category in categories %}
-                                    <th>{{ category.label }}</th>
+                                    {% if filteredCategories|length == 0 or category.uuid.toString in filteredCategories %}
+                                        <th class="text-center align-middle">{{ category.label }}</th>
+                                    {% endif %}
                                 {% endfor %}
                             </tr>
                             </thead>
                             <tbody>
                             {% for student in students %}
-                                <tr class="{% if student.approvedPrivacyCategories|length == categories|length %}table-success{% else %}table-warning{% endif %}">
-                                    <td>{{ student|student }}</td>
+                                <tr>
+                                    <td class="align-middle">{{ student|student }}</td>
                                     {% for category in categories %}
-                                    <td>
-                                        {% if category in student.approvedPrivacyCategories %}
-                                            <i class="fa fa-check"></i>
-                                        {% else %}
-                                            <i class="fa fa-times"></i>
+                                        {% if filteredCategories|length == 0 or category.uuid.toString in filteredCategories %}
+                                            <td class="align-middle text-center {% if category in student.approvedPrivacyCategories %}table-success{% else %}table-danger{% endif %}">
+                                                {% if category in student.approvedPrivacyCategories %}
+                                                    <i class="fa fa-check"></i>
+                                                {% else %}
+                                                    <i class="fa fa-times"></i>
+                                                {% endif %}
+                                            </td>
                                         {% endif %}
-                                    </td>
                                     {% endfor %}
                                 </tr>
                             {% endfor %}
@@ -90,6 +96,22 @@
                         {% include "_filter/study_group.html.twig" %}
 
                         {% include "_filter/query.html.twig" with { route: 'list_privacy', params: { } } %}
+
+                        <form role="form" method="get" class="form">
+                            {% include "_filter/_params.html.twig" with { params: {
+                                study_group: studyGroupFilter.currentStudyGroup != null ? studyGroupFilter.currentStudyGroup.uuid.toString : null,
+                                q : q
+                            }} %}
+
+                            <div class="form-group">
+                                {% for category in categories %}
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="filter-category-{{ category.uuid }}" data-trigger="submit" name="{{ category.uuid }}" value="✓" {% if category.uuid.toString in filteredCategories %}checked="checked"{% endif %}>
+                                        <label class="custom-control-label" for="filter-category-{{ category.uuid }}">{{ category.label }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </form>
                     </div>
 
                     <div class="card-footer">

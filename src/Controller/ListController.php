@@ -339,6 +339,16 @@ class ListController extends AbstractControllerWithMessages {
         $q = $request->query->get('q', null);
         $studygroupView = $studyGroupFilter->handle($request->query->get('study_group', null), $sectionResolver->getCurrentSection(), $user);
 
+        // Filter categories
+        $categories = $privacyCategoryRepository->findAll();
+        $filteredCategories = [ ];
+
+        foreach($categories as $category) {
+            if($request->query->get($category->getUuid()->toString()) === '✓') {
+                $filteredCategories[] = $category->getUuid()->toString();
+            }
+        }
+
         $students = [ ];
 
         if($q !== null) {
@@ -351,7 +361,8 @@ class ListController extends AbstractControllerWithMessages {
 
         return $this->render('lists/privacy.html.twig', [
             'students' => $students,
-            'categories' => $privacyCategoryRepository->findAll(),
+            'categories' => $categories,
+            'filteredCategories' => $filteredCategories,
             'q' => $q,
             'section' => $sectionResolver->getCurrentSection(),
             'studyGroupFilter' => $studygroupView,

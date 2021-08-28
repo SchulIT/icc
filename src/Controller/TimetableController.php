@@ -233,7 +233,7 @@ class TimetableController extends AbstractControllerWithMessages {
         $user = $this->getUser();
 
         $deviceToken = (new IcsAccessToken())
-            ->setType(IcsAccessTokenType::Calendar())
+            ->setType(IcsAccessTokenType::Timetable())
             ->setUser($user);
 
         $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);

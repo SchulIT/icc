@@ -17,7 +17,7 @@ gender:
   x: divers
 
 ics_access_token_type:
-  calendar: Kalender-Synchronisation
+  calendar: Terminplan-Synchronisation
   exams: Klausurplan-Synchronisation
   timetable: Stundenplan-Synchronisation
 

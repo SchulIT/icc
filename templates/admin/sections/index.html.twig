@@ -49,12 +49,12 @@
                                 <tbody>
                                 {% for section in sections %}
                                     <tr>
-                                        <td>{{ section.number }}</td>
-                                        <td>{{ section.year }}</td>
-                                        <td>{{ section.displayName }}</td>
-                                        <td>{{ section.start|format_date }}</td>
-                                        <td>{{ section.end|format_date }}</td>
-                                        <td>
+                                        <td class="align-middle">{{ section.number }}</td>
+                                        <td class="align-middle">{{ section.year }}</td>
+                                        <td class="align-middle">{{ section.displayName }}</td>
+                                        <td class="align-middle">{{ section.start|format_date }}</td>
+                                        <td class="align-middle">{{ section.end|format_date }}</td>
+                                        <td class="align-middle">
                                             <div class="dropdown d-inline" >
                                                 <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
                                                     <i class="fas fa-ellipsis-v"></i>

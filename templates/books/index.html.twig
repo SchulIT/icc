@@ -299,18 +299,21 @@
                                                             ⟶ {{ lesson.entry.replacementTeacher|teacher }}
                                                         {% endif %}
                                                     </div>
-
-                                                    {% if lesson.entry.isCancelled %}
-                                                        <div class="ml-2 flex-fill">
-                                                            <i class="fas fa-times"></i>
-                                                            {{ 'book.entry.cancel_reason'|trans({ '%reason%': lesson.entry.cancelReason}) }}
-                                                        </div>
-                                                    {% else %}
-                                                        <div class="ml-2 flex-fill">
-                                                            <i class="fas fa-info-circle"></i> {{ lesson.entry.topic }}
-                                                        </div>
-                                                    {% endif %}
                                                 </div>
+                                                {% if lesson.entry.isCancelled %}
+                                                    <div class="mt-1 d-flex align-items-baseline">
+                                                        <i class="fas fa-times"></i>
+                                                        {{ 'book.entry.cancel_reason'|trans({ '%reason%': lesson.entry.cancelReason}) }}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="mt-1 d-flex align-items-baseline">
+                                                        <i class="fas fa-info-circle"></i>
+                                                        <p class="mb-0 ml-1">
+                                                            {{ lesson.entry.topic }}
+                                                        </p>
+                                                    </div>
+                                                {% endif %}
+
                                                 {% if lesson.entry.exercises is not empty %}
                                                     <div class="mt-1 d-flex align-items-baseline">
                                                         <i class="fas fa-tasks"></i>

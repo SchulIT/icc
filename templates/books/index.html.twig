@@ -333,7 +333,7 @@
                                             </div>
 
                                             {% if lesson.presentCount > 0 %}
-                                                <div class="ml-2">
+                                                <div class="ml-2 flex-shrink-0">
                                                     <lesson-attendance-info class="border-success text-success btn-like"
                                                                             icon="fas fa-user-check"
                                                                             title="{{ 'book.attendance.type.present'|trans }}"
@@ -342,7 +342,7 @@
                                             {% endif %}
 
                                             {% if lesson.lateCount > 0 %}
-                                                <div class="ml-2">
+                                                <div class="ml-2 flex-shrink-0">
                                                     <lesson-attendance-info class="border-warning text-warning btn-like"
                                                                             icon="fas fa-user-clock"
                                                                             title="{{ 'book.attendance.type.late'|trans }}"
@@ -351,7 +351,7 @@
                                             {% endif %}
 
                                             {% if lesson.absentCount > 0 %}
-                                                <div class="ml-2">
+                                                <div class="ml-2 flex-shrink-0">
                                                     <lesson-attendance-info class="border-danger text-danger btn-like"
                                                                             icon="fas fa-user-times"
                                                                             title="{{ 'book.attendance.type.absent'|trans }}"

@@ -1405,9 +1405,9 @@ book:
     missing:
         label: Fehlende Einträge
 
-    not_excused:
-        label: Unentschuldigte Fehlstunden
-        status: Für die folgenden Lernenden sind noch unentschuldigte Fehlstunden offen.
+    open:
+        label: Offene Fehlstunden
+        status: Für die folgenden Lernenden sind noch Fehlstunden offen.
 
     export:
         label: Exportieren

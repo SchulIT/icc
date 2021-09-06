@@ -268,7 +268,13 @@ export default {
       this.entry.end = end;
 
       if(this.modal === null || this.modal === undefined) {
-        this.modal = new Modal(this.$el.querySelector('.modal'));
+        let $this = this;
+        let modalEl = this.$el.querySelector('.modal');
+        this.modal = new Modal(modalEl);
+        modalEl.addEventListener('shown.bs.modal', function() {
+          console.log('shown!');
+          $this.$el.querySelector('#topic').focus();
+        });
       }
 
       if(this.tuition === null) {

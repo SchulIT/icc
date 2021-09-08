@@ -115,6 +115,7 @@ label:
     external_organizers: Externe Organisatoren
     location: Ort
     all_day: ganztägig
+    mark_students_absent: markiere Lernende als absent
     hidden_from_students: vor Schülern verstecken
     people: Menschen
     color: Farbe

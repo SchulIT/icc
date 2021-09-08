@@ -91,6 +91,13 @@ class AppointmentType extends AbstractType {
                                 'class' => 'checkbox-custom'
                             ]
                         ])
+                        ->add('markStudentsAbsent', CheckboxType::class, [
+                            'required' => false,
+                            'label' => 'label.mark_students_absent',
+                            'label_attr' => [
+                                'class' => 'checkbox-custom'
+                            ]
+                        ])
                         ->add('visibilities', UserTypeEntityType::class, [
                             'label' => 'label.visibility',
                             'multiple' => true,

@@ -11,6 +11,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class SetPhpBinarySubscriber implements EventSubscriberInterface {
 
     private function setPhpBinary(): void {
+        if(!isset($_ENV['PHP_BINARY'])) {
+            return;
+        }
         $binary = $_ENV['PHP_BINARY'];
 
         if($binary !== null && $binary !== false) {

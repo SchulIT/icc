@@ -5,6 +5,7 @@ namespace App\Tests\Entity;
 use App\Entity\Document;
 use App\Entity\DocumentAttachment;
 use App\Entity\DocumentCategory;
+use App\Entity\Grade;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\UserTypeEntity;
@@ -26,12 +27,12 @@ class DocumentTest extends WebTestCase {
         $document->setContent('content');
         $this->assertEquals('content', $document->getContent());
 
-        $studyGroup = new StudyGroup();
-        $document->addStudyGroup($studyGroup);
-        $this->assertTrue($document->getGrades()->contains($studyGroup));
+        $grade = new Grade();
+        $document->addGrade($grade);
+        $this->assertTrue($document->getGrades()->contains($grade));
 
-        $document->removeStudyGroup($studyGroup);
-        $this->assertFalse($document->getGrades()->contains($studyGroup));
+        $document->removeGrade($grade);
+        $this->assertFalse($document->getGrades()->contains($grade));
 
         $attachment = new DocumentAttachment();
         $document->addAttachment($attachment);

@@ -109,8 +109,8 @@ class ExamsImportStrategyTest extends WebTestCase {
             ->setDisplayName('Testkurs')
             ->setSection($section)
             ->setStudyGroup($studyGroup)
-            ->setSubject($subject)
-            ->setTeacher($teacher1);
+            ->setSubject($subject);
+        $tuition->addTeacher($teacher1);
 
         $this->em->persist($tuition);
         $this->em->flush();

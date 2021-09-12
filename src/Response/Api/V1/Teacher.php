@@ -44,7 +44,7 @@ class Teacher {
     private $lastname;
 
     /**
-     * @Serializer\SerializedName("title")
+     * @Serializer\SerializedName("gender")
      * @Serializer\Type("string")
      * @Serializer\ReadOnly()
      * @Serializer\Accessor(getter="getGenderString")

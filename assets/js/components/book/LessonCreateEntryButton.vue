@@ -41,9 +41,10 @@
               </button>
             </div>
             <div class="modal-body">
-              <div class="form-group d-flex align-items-center">
-                <i class="fas fa-spinner fa-spin" v-if="isLoadingTuition"></i>
-
+              <div v-if="isLoading">
+                <i class="fas fa-spinner fa-spin"></i> {{ $trans('label.loading')}}
+              </div>
+              <div class="form-group d-flex align-items-center" v-if="isInitialized === true">
                 <span class="badge badge-secondary" v-if="tuition !== null">{{ tuition.subject.name.toUpperCase() }}</span>
 
                 <div class="ml-2" v-if="tuition !== null">
@@ -149,7 +150,9 @@ export default {
   },
   data() {
     return {
-      isLoadingTuition: false,
+      //isInitialized: false,
+      isLoading: false,
+      //isLoadingTuition: false,
       tuition: null,
       choices: null,
       students: null,
@@ -178,6 +181,9 @@ export default {
       return this.validation.start === null
           && this.validation.end === null
           && this.validation.topic === null;
+    },
+    isInitialized() {
+      return this.tuition !== null && this.choices !== null;
     }
   },
   mounted() {
@@ -277,53 +283,47 @@ export default {
         });
       }
 
-      if(this.tuition === null) {
-        this.isLoadingTuition = true;
-        let $this = this;
-        this.$http.get(this.tuitionUrl)
-            .then(function(response) {
-              $this.tuition = response.data;
+      let $this = this;
 
-              if($this.choices !== null) {
-                let teachers = $this.tuition.teachers.map(t => t.uuid);
-                let value = $this.choices.getValue();
+      // Load tuition and teachers
+      if(this.isInitialized !== true) {
+        this.isLoading = true;
+        let tuitionRequest = this.$http.get(this.tuitionUrl);
+        let teachersRequest = this.$http.get(this.teachersUrl);
 
-                if(value !== null && value !== undefined && teachers.indexOf(value.value) !== -1) {
-                  $this.choices.setValue([]);
-                }
+        this.$http
+            .all([tuitionRequest, teachersRequest])
+            .then(this.$http.spread((...responses) => {
+              let tuitionResponse = responses[0];
+              let teachersResponse = responses[1];
+
+              $this.tuition = tuitionResponse.data;
+
+              let choices = [ ];
+              let teachers = [ ];
+
+              if($this.tuition !== null) {
+                teachers = $this.tuition.teachers.map(t => t.uuid);
               }
+
+              teachersResponse.data.forEach(function(teacher) {
+                choices.push({
+                  value: teacher.uuid,
+                  label: $this.formatTeacher(teacher),
+                  selected: $this.teacher === teacher.acronym && teachers.indexOf(teacher.uuid) === -1
+                })
+              });
+
+              $this.choices.clearChoices();
+              $this.choices.setChoices(choices, 'value', 'label', true);
+            }))
+            .catch(error => {
+              console.error(error);
             })
-            .catch(function(error) {
-              console.log(error);
-            })
-            .finally(function() {
-              $this.isLoadingTuition = false;
+            .finally(() => {
+              $this.isLoading = false;
             });
       }
-
-      let $this = this;
-      this.$http.get(this.teachersUrl)
-        .then(function(response) {
-          let choices = [ ];
-          let teachers = [ ];
-
-          if($this.tuition !== null) {
-            teachers = $this.tuition.teachers.map(t => t.uuid);
-          }
-
-          response.data.forEach(function(teacher) {
-            choices.push({
-              value: teacher.uuid,
-              label: teacher.acronym,
-              selected: $this.teacher === teacher.acronym && teachers.indexOf(teacher.uuid) === -1
-            })
-          });
-
-          $this.choices.setChoices(choices, 'value', 'label', true);
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
 
       this.$http.get(this.studentsUrl)
         .then(function(response) {
@@ -345,7 +345,6 @@ export default {
           });
 
           let choices = [ ];
-
           for(let uuid in students) {
             let student = students[uuid];
             choices.push({
@@ -358,6 +357,8 @@ export default {
             })
           }
 
+          $this.students.destroy();
+          $this.students.init();
           $this.students.setChoices(choices, 'value', 'label', true);
         }).catch(function(error) {
           console.log(error);
@@ -368,6 +369,10 @@ export default {
     },
     submit() {
       this.$el.querySelector('form').submit();
+    },
+    formatTeacher(teacher) {
+      let saluation = teacher.gender === 'male' ? 'Herr' : (teacher.gender === 'female' ? 'Frau' : '');
+      return `${teacher.acronym} (${saluation} ${teacher.lastname}}`;
     }
   }
 }

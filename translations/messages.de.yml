@@ -198,6 +198,7 @@ label:
     replacement_teacher: Vertretungslehrkraft
     replacement_subject: Vertretungsfach
     excused_by: Entschuldigt durch
+    loading: Lade…
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

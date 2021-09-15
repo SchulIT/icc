@@ -162,13 +162,10 @@ class ExamIcsExporter {
             return false;
         }
 
+        /** @var Tuition $tuition */
         foreach($exam->getTuitions() as $tuition) {
-            if($tuition->getTeacher()->getId() === $teacher->getId()) {
-                return true;
-            }
-
-            foreach($tuition->getAdditionalTeachers() as $additionalTeacher) {
-                if($additionalTeacher->getId() === $teacher->getId()) {
+            foreach($tuition->getTeachers() as $currentTeacher) {
+                if($currentTeacher->getId() === $teacher->getId()) {
                     return true;
                 }
             }

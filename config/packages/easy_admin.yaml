@@ -122,7 +122,6 @@ easy_admin:
                     - studyGroups
                     - replacementStudyGroups
                     - replacementGrades
-                    - { property: createdAt, type: date, type_options: { widget: 'single_text' }}
 
         Tuition:
             class: App\Entity\Tuition

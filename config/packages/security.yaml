@@ -24,6 +24,7 @@ security:
     access_control:
         - { path: ^/admin/ea/, roles: ROLE_SUPER_ADMIN }
         - { path: ^/admin/audit/, roles: ROLE_SUPER_ADMIN }
+        - { path: ^/admin/editor/links$ , roles: [ ROLE_MESSAGE_CREATOR, ROLE_WIKI_ADMIN, ROLE_DOCUMENTS_ADMIN ] }
         - { path: ^/admin/(messages|exams|documents|appointments), roles: ROLE_USER }
         - { path: ^/admin$, roles: ROLE_USER }
         - { path: ^/admin/, roles: ROLE_ADMIN }

@@ -6,6 +6,7 @@ use App\Book\Lesson\LessonCreator;
 use App\Entity\BookComment;
 use App\Entity\Grade;
 use App\Entity\LessonEntry;
+use App\Entity\Substitution;
 use App\Entity\Teacher;
 use App\Entity\Lesson as LessonEntity;
 use App\Entity\Tuition;
@@ -18,6 +19,7 @@ use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\LessonRepositoryInterface;
+use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
@@ -39,6 +41,7 @@ class EntryOverviewHelper {
     private $appointmentCategoryRepository;
     private $appointmentRepository;
     private $freeTimespanRepository;
+    private $substitutionRepository;
 
     private $lessonCreator;
     private $sectionResolver;
@@ -49,7 +52,8 @@ class EntryOverviewHelper {
                                 LessonEntryRepositoryInterface $entryRepository, BookCommentRepositoryInterface $commentRepository,
                                 LessonAttendanceRepositoryInterface $attendanceRepository, LessonCreator $lessonCreator, SectionResolverInterface $sectionResolver,
                                 TimetableSettings $timetableSettings, AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, AppointmentRepositoryInterface $appointmentRepository,
-                                FreeTimespanRepositoryInterface $freeTimespanRepository, Grouper $grouper, Sorter $sorter) {
+                                FreeTimespanRepositoryInterface $freeTimespanRepository, SubstitutionRepositoryInterface $substitutionRepository,
+                                Grouper $grouper, Sorter $sorter) {
         $this->lessonRepository = $lessonRepository;
         $this->tuitionRepository = $tuitionRepository;
         $this->entryRepository = $entryRepository;
@@ -61,6 +65,7 @@ class EntryOverviewHelper {
         $this->appointmentCategoryRepository = $appointmentCategoryRepository;
         $this->appointmentRepository = $appointmentRepository;
         $this->freeTimespanRepository = $freeTimespanRepository;
+        $this->substitutionRepository = $substitutionRepository;
         $this->grouper = $grouper;
         $this->sorter = $sorter;
     }
@@ -69,18 +74,19 @@ class EntryOverviewHelper {
         $entries = $this->entryRepository->findAllByTuition($tuition, $start, $end);
         $comments = $this->commentRepository->findAllByDateAndTuition($tuition, $start, $end);
 
-        return $this->computeOverview([$tuition], $entries, $comments, $start, $end);
+        return $this->computeOverview([$tuition], $entries, $comments, [ ], $start, $end);
     }
 
     /**
      * @param Tuition[] $tuitions
      * @param LessonEntry[] $entries
      * @param BookComment[] $comments
+     * @param Substitution[] $substitutions
      * @param DateTime $start
      * @param DateTime $end
      * @return EntryOverview
      */
-    private function computeOverview(array $tuitions, array $entries, array $comments, DateTime $start, DateTime $end): EntryOverview {
+    private function computeOverview(array $tuitions, array $entries, array $comments, array $substitutions, DateTime $start, DateTime $end): EntryOverview {
         if($start > $end) {
             $tmp = $start;
             $start = $end;
@@ -148,6 +154,33 @@ class EntryOverviewHelper {
             $current = $current->modify('+1 day');
         }
 
+        foreach($substitutions as $substitution) {
+            $tuition = $this->tuitionRepository->findOneBySubstitution($substitution, $this->sectionResolver->getSectionForDate($substitution->getDate()));
+
+            if($tuition === null) {
+                continue;
+            }
+
+            $timetableLessons = $this->lessonRepository->findAllByTuitions([$tuition], $substitution->getDate(), $substitution->getDate());
+
+            // Filter correct lesson
+            foreach($timetableLessons as $dailyLesson) {
+                for($lessonNumber = $dailyLesson->getLessonStart(); $lessonNumber <= $dailyLesson->getLessonEnd(); $lessonNumber++) {
+                    if($substitution->getLessonStart() <= $lessonNumber && $lessonNumber <= $substitution->getLessonEnd()) {
+                        $key = sprintf('%s-%d-%s', $substitution->getDate()->format('Y-m-d'), $lessonNumber, $dailyLesson->getTuition()->getUuid()->toString());
+
+                        if (!array_key_exists($key, $lessons)) {
+                            $lessons[$key] = new Lesson($substitution->getDate(), $lessonNumber, null, null, $substitution);
+                        }
+
+                        if($lessons[$key]->getLesson() === null) {
+                            $lessons[$key]->setLesson($dailyLesson);
+                        }
+                    }
+                }
+            }
+        }
+
         $groups = $this->grouper->group(array_values($lessons), LessonDayStrategy::class);
         $this->sorter->sort($groups, LessonDayGroupStrategy::class);
         $this->sorter->sortGroupItems($groups, LessonStrategy::class);
@@ -164,6 +197,7 @@ class EntryOverviewHelper {
         $comments = [ ];
 
         if($section !== null) {
+            $entries = $this->entryRepository->findAllBySubstituteTeacher($teacher, $start, $end);
             $tuitions = $this->tuitionRepository->findAllByTeacher($teacher, $section);
 
             foreach($tuitions as $tuition) {
@@ -174,7 +208,22 @@ class EntryOverviewHelper {
             $comments = ArrayUtils::unique($comments);
         }
 
-        return $this->computeOverview($tuitions, $entries, $comments, $start, $end);
+        $substitutions = [ ];
+
+        $current = clone $start;
+        while($current <= $end) {
+            $substitutions = array_merge(
+                $substitutions,
+                $this->substitutionRepository->findAllForTeacher($teacher, $current)
+            );
+            $current = $current->modify('+1 day');
+        }
+
+        $substitutions = array_filter($substitutions, function(Substitution $substitution) use($teacher) {
+            return $substitution->getReplacementTeachers()->contains($teacher);
+        });
+
+        return $this->computeOverview($tuitions, $entries, $comments, $substitutions, $start, $end);
     }
 
     public function computeOverviewForGrade(Grade $grade, DateTime $start, DateTime $end): EntryOverview {
@@ -188,7 +237,7 @@ class EntryOverviewHelper {
             $comments = $this->commentRepository->findAllByDateAndGrade($grade, $section, $start, $end);
         }
 
-        return $this->computeOverview($tuitions, $entries, $comments, $start, $end);
+        return $this->computeOverview($tuitions, $entries, $comments, [ ], $start, $end);
     }
 
     /**

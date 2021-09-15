@@ -1321,6 +1321,7 @@ book:
     entry:
         label: Eintrag
         missing: Eintrag fehlt
+        substitution: Vertretung laut Vertretungsplan
         add:
             label: Neuer Eintrag
             single: Eintrag für Einzelstunde erstellen

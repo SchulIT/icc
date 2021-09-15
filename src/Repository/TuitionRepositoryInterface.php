@@ -6,6 +6,7 @@ use App\Entity\Grade;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\Subject;
+use App\Entity\Substitution;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 
@@ -79,6 +80,13 @@ interface TuitionRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Tuition[]
      */
     public function findAllByGradeTeacherAndSubjectOrCourse(array $grades, array $teachers, string $subjectOrCourse, Section $section): array;
+
+    /**
+     * @param Substitution $substitution
+     * @param Section $section
+     * @return Tuition|null
+     */
+    public function findOneBySubstitution(Substitution $substitution, Section $section): ?Tuition;
 
     /**
      * @param Section $section

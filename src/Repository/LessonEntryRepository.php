@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Grade;
 use App\Entity\LessonEntry;
+use App\Entity\Teacher;
 use App\Entity\Tuition;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
@@ -37,6 +38,19 @@ class LessonEntryRepository extends AbstractRepository implements LessonEntryRep
 
         $qb->andWhere('tt.id = :tuition')
             ->setParameter('tuition', $tuition->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllBySubstituteTeacher(Teacher $teacher, DateTime $start, DateTime $end): array {
+        $qb = $this->createDefaultQueryBuilder();
+        $qb = $this->applyStartEnd($qb, $start, $end);
+
+        $qb->andWhere('e.replacementTeacher = :teacher')
+            ->setParameter('teacher', $teacher->getId());
 
         return $qb->getQuery()->getResult();
     }

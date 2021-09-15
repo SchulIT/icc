@@ -4,6 +4,7 @@ namespace App\Book;
 
 use App\Entity\LessonEntry;
 use App\Entity\Lesson as LessonEntity;
+use App\Entity\Substitution;
 use DateTime;
 
 class Lesson {
@@ -29,11 +30,15 @@ class Lesson {
     /** @var int  */
     private $presentCount = 0;
 
-    public function __construct(DateTime $date, int $lessonNumber, ?LessonEntity $lesson = null, ?LessonEntry $entry = null) {
+    /** @var Substitution|null */
+    private $substitution = null;
+
+    public function __construct(DateTime $date, int $lessonNumber, ?LessonEntity $lesson = null, ?LessonEntry $entry = null, ?Substitution $substitution = null) {
         $this->date = $date;
         $this->lessonNumber = $lessonNumber;
         $this->lesson = $lesson;
         $this->entry = $entry;
+        $this->substitution = $substitution;
     }
 
     /**
@@ -128,5 +133,12 @@ class Lesson {
     public function setPresentCount(int $presentCount): Lesson {
         $this->presentCount = $presentCount;
         return $this;
+    }
+
+    /**
+     * @return Substitution|null
+     */
+    public function getSubstitution(): ?Substitution {
+        return $this->substitution;
     }
 }

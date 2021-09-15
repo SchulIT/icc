@@ -6,6 +6,7 @@ use App\Entity\Grade;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\Subject;
+use App\Entity\Substitution;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use Doctrine\ORM\QueryBuilder;
@@ -257,6 +258,26 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
+    public function findOneBySubstitution(Substitution $substitution, Section $section): ?Tuition {
+        $grades = array_map(function(Grade $grade) {
+            return $grade->getExternalId();
+        }, $substitution->getGrades());
+        $teachers = array_map(function(Teacher $teacher) {
+            return $teacher->getAcronym();
+        }, $substitution->getTeachers()->toArray());
+
+        $candidates = $this->findAllByGradeTeacherAndSubjectOrCourse($grades, $teachers, $substitution->getSubject(), $section);
+
+        if(count($candidates) > 0) {
+            return $candidates[0];
+        }
+
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findAll() {
         return $this->getDefaultQueryBuilder(true)
             ->getQuery()
@@ -296,4 +317,6 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         $this->em->remove($tuition);
         $this->flushIfNotInTransaction();
     }
+
+
 }

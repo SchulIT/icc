@@ -230,6 +230,12 @@
                                                 {{ _self.subject(lesson.lesson.tuition) }}
                                             </div>
 
+                                            {% if lesson.substitution is not null %}
+                                                <div class="ml-2">
+                                                    <i class="fas fa-random" title="{{ 'book.entry.substitution'|trans }}"></i>
+                                                </div>
+                                            {% endif %}
+
                                             <div class="ml-2">
                                                 <i class="fas fa-users"></i>
                                                 {% for grade in lesson.lesson.tuition.studyGroup.grades %}

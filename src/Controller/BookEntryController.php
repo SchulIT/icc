@@ -8,6 +8,7 @@ use App\Entity\LessonAttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
+use App\Entity\User;
 use App\Form\LessonAttendanceExcuseType;
 use App\Form\LessonEntryAddStudent;
 use App\Form\LessonEntryCancelType;
@@ -60,6 +61,12 @@ class BookEntryController extends AbstractController {
             ->setIsCancelled(true)
             ->setTeacher($tuition->getTeachers()->first())
             ->setSubject($tuition->getSubject());
+
+        /** @var User $user */
+        $user = $this->getUser();
+        if($user->getTeacher() !== null) {
+            $entry->setReplacementTeacher($user->getTeacher());
+        }
 
         $form = $this->createForm(LessonEntryCancelType::class, $entry);
         $form->handleRequest($request);

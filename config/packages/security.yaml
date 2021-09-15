@@ -34,7 +34,7 @@ security:
 
     role_hierarchy:
         # Administrator
-        ROLE_ADMIN: [ ROLE_USER, ROLE_WIKI_ADMIN, ROLE_DOCUMENTS_ADMIN, ROLE_MESSAGE_ADMIN, ROLE_APPOINTMENTS_ADMIN, ROLE_EXAMS_ADMIN, ROLE_SICK_NOTE_VIEWER, ROLE_SICK_NOTE_CREATOR, ROLE_BOOK_ENTRY_CREATOR ]
+        ROLE_ADMIN: [ ROLE_USER, ROLE_WIKI_ADMIN, ROLE_DOCUMENTS_ADMIN, ROLE_MESSAGE_ADMIN, ROLE_APPOINTMENTS_ADMIN, ROLE_EXAMS_ADMIN, ROLE_SICK_NOTE_VIEWER, ROLE_SICK_NOTE_CREATOR, ROLE_BOOK_ENTRY_CREATOR, ROLE_SHOW_BIRTHDAY ]
 
         # Administrator which is allowed to switch user
         ROLE_SUPER_ADMIN: [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
@@ -77,6 +77,9 @@ security:
 
         # Role which enables users to edit tuition books
         ROLE_BOOK_ENTRY_CREATOR: ROLE_BOOK_VIEWER
+
+        # Role which enables users to see student birthdays
+        ROLE_SHOW_BIRTHDAY: ROLE_USER
 
         # Cronjob user
         ROLE_CRON: ROLE_USER

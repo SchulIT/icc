@@ -59,6 +59,8 @@
                                         <col class="column-lg">
                                         <col class="column-md">
                                         <col>
+                                        <col class="column-md">
+                                        <col class="column-md">
                                     </colgroup>
 
                                     <thead>
@@ -67,6 +69,10 @@
                                         <th>{{ 'label.firstname'|trans }}</th>
                                         <th>{{ 'label.grade'|trans }}</th>
                                         <th>{{ 'label.email'|trans }}</th>
+                                        {% if is_granted('show-birthday') %}
+                                            <th data-type="date" data-format="{{ 'date.format'|trans|upper }}">{{ 'label.birthday'|trans }}</th>
+                                            <th data-sortable="false">{{ 'label.full_aged.label'|trans }}</th>
+                                        {% endif %}
                                     </tr>
                                     </thead>
 
@@ -91,6 +97,23 @@
                                                     </a>
                                                 {% endif %}
                                             </td>
+                                            {% if is_granted('show-birthday') %}
+                                                <td>
+                                                    {{ student.birthday|format_date }}
+                                                </td>
+                                                <td>
+                                                    {% set params = { '%date%': today|format_date } %}
+                                                    {% if student.isFullAged(today) %}
+                                                        <span title="{{ 'label.full_aged.hint_dashboard'|trans(params) }}">
+                                                            <i class="fas fa-check"></i>
+                                                        </span>
+                                                    {% else %}
+                                                        <span title="{{ 'label.not_full_aged.hint_dashboard'|trans(params) }}">
+                                                            <i class="fas fa-times"></i>
+                                                        </span>
+                                                    {% endif %}
+                                                </td>
+                                            {% endif %}
                                         </tr>
                                     {% endfor %}
                                     </tbody>

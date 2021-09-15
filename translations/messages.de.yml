@@ -199,6 +199,15 @@ label:
     replacement_subject: Vertretungsfach
     excused_by: Entschuldigt durch
     loading: Lade…
+    full_aged:
+        label: volljährig
+        hint_dashboard: Die Person ist am ausgewählten Datum (%date%) volljährig.
+        hint: Die Person ist am heutigen Tag (%date%) volljährig.
+    not_full_aged:
+        label: nicht volljährig
+        hint_dashboard: Die Person ist am ausgewählten Datum (%date%) noch nicht volljährig.
+        hint: Die Person ist am heutigen Tag (%date%) noch nicht volljährig.
+    birthday: Geburtstag
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

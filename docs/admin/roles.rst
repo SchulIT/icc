@@ -96,6 +96,12 @@ ROLE_SUPER_ADMIN
 Diese Rolle beinhaltet die Rolle ``ROLE_ADMIN`` und erlaubt darüber hinaus, das Log anzuzeigen und tiefgreifende Einstellungen am System
 vorzunehmen.
 
+ROLE_SHOW_BIRTHDAY
+##################
+
+Benutzer mit dieser Rolle können Geburtstage einsehen. Lernende und Eltern können dabei jedoch nur die eigenen Geburtstage anzeigen.
+Alle anderen Benutzertypen können Geburtstage aller Lernenden sehen.
+
 ROLE_CRON
 #########
 

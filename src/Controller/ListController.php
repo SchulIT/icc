@@ -155,6 +155,7 @@ class ListController extends AbstractControllerWithMessages {
             'tuition' => $tuition,
             'memberships' => $memberships,
             'exams' => $exams,
+            'today' => $this->dateHelper->getToday(),
             'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Tuition::class)
         ]);
     }
@@ -265,6 +266,7 @@ class ListController extends AbstractControllerWithMessages {
             'gradeTeachers' => $gradeTeachers,
             'substitutionalGradeTeachers' => $substitutionalGradeTeachers,
             'tuitions' => $tuitions,
+            'today' => $this->dateHelper->getToday(),
             'last_import' => $this->importDateTimeRepository->findOneByEntityClass(StudyGroup::class)
         ]);
     }

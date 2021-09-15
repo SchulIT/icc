@@ -331,6 +331,23 @@
                                 {% endfor %}
                             </p>
                             {% endif %}
+
+                            {% if is_granted('show-birthday', student) %}
+                                <p>
+                                    <i class="fas fa-birthday-cake" title="{{ 'label.birthday'|trans }}"></i> {{ student.birthday|format_date }}
+
+                                    {% set params = { '%date%': selectedDate|format_date } %}
+                                    {% if student.isFullAged(selectedDate) %}
+                                        <span class="badge badge-primary" title="{{ 'label.full_aged.hint_dashboard'|trans(params) }}">
+                                        {{ 'label.full_aged.label'|trans }}
+                                    </span>
+                                    {% else %}
+                                        <span class="badge badge-primary" title="{{ 'label.not_full_aged.hint_dashboard'|trans(params) }}">
+                                        {{ 'label.not_full_aged.label'|trans }}
+                                    </span>
+                                    {% endif %}
+                                </p>
+                            {% endif %}
                         </div>
                         <div class="list-group list-group-flush">
                             <a href="{{ path('timetable', { student: student.uuid.toString }) }}" class="list-group-item list-group-item-action">

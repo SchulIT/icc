@@ -266,6 +266,10 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
             return $teacher->getAcronym();
         }, $substitution->getTeachers()->toArray());
 
+        if(empty($substitution->getSubject())) {
+            return null;
+        }
+
         $candidates = $this->findAllByGradeTeacherAndSubjectOrCourse($grades, $teachers, $substitution->getSubject(), $section);
 
         if(count($candidates) > 0) {

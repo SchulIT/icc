@@ -74,12 +74,14 @@ class ResourceAdminController extends AbstractController {
     /**
      * @Route("/{uuid}/edit", name="edit_resource")
      */
-    public function edit(Room $room, Request $request) {
+    public function edit(ResourceEntity $room, Request $request) {
         $form = $this->createForm(ResourceType::class, $room);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $room->ensureAllTagsHaveRoomAssociated();
+            if($room instanceof Room) {
+                $room->ensureAllTagsHaveRoomAssociated();
+            }
             $this->repository->persist($room);
             $this->addFlash('success', 'admin.resources.edit.success');
 
@@ -94,7 +96,7 @@ class ResourceAdminController extends AbstractController {
     /**
      * @Route("/{uuid}/remove", name="remove_resource")
      */
-    public function remove(Room $room, Request $request) {
+    public function remove(ResourceEntity $room, Request $request) {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.resources.remove.confirm',
             'message_parameters' => [

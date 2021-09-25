@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\ResourceEntity;
 use App\Entity\Room;
 use App\Entity\User;
 use App\Entity\UserType;
@@ -10,7 +11,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class RoomVoter extends Voter {
+class ResourceVoter extends Voter {
 
     public const New = 'new-room';
     public const View = 'view-rooms';
@@ -38,7 +39,7 @@ class RoomVoter extends Voter {
         ];
 
         return in_array($attribute, $staticAttributes)
-            || ($subject instanceof Room && in_array($attribute, $attributes));
+            || ($subject instanceof ResourceEntity && in_array($attribute, $attributes));
     }
 
     /**
@@ -66,11 +67,11 @@ class RoomVoter extends Voter {
         return $this->accessDecisionManager->decide($token, [ 'ROLE_ADMIN' ]);
     }
 
-    public function canEdit(Room $room, TokenInterface $token) {
+    public function canEdit(ResourceEntity $room, TokenInterface $token) {
         return $this->accessDecisionManager->decide($token, [ 'ROLE_ADMIN' ]);
     }
 
-    public function canRemove(Room $room, TokenInterface $token) {
+    public function canRemove(ResourceEntity $room, TokenInterface $token) {
         return $this->accessDecisionManager->decide($token, [ 'ROLE_ADMIN' ]);
     }
 

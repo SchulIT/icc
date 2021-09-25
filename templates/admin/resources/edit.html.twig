@@ -17,6 +17,7 @@
     {{ form_start(form) }}
     {{ form_row(form.group_general) }}
 
+    {% if form.group_tags is defined %}
     <div class="card">
         <div class="card-header">
             {{ 'label.tags'|trans }}
@@ -28,6 +29,7 @@
             {% endfor %}
         </div>
     </div>
+    {% endif %}
 
     <div class="buttons">
         <button type="submit" class="btn btn-primary btn-sm">

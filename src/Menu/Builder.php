@@ -239,7 +239,7 @@ class Builder {
             ->setExtra('icon', 'fas fa-address-card');
 
         $label = 'dark_mode.enable';
-        $icon = 'far fa-moon';
+        $icon = 'fas fa-moon';
 
         if($this->darkModeManager->isDarkModeEnabled()) {
             $label = 'dark_mode.disable';

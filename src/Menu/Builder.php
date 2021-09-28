@@ -230,20 +230,20 @@ class Builder {
         $userMenu->addChild('profile.overview.label', [
             'route' => 'profile'
         ])
-            ->setExtra('icon', 'far fa-user');
+            ->setExtra('icon', 'fas fa-user');
 
         $userMenu->addChild('profile.label', [
             'uri' => $this->idpProfileUrl
         ])
             ->setLinkAttribute('target', '_blank')
-            ->setExtra('icon', 'far fa-address-card');
+            ->setExtra('icon', 'fas fa-address-card');
 
         $label = 'dark_mode.enable';
-        $icon = 'far fa-moon';
+        $icon = 'fas fa-moon';
 
         if($this->darkModeManager->isDarkModeEnabled()) {
             $label = 'dark_mode.disable';
-            $icon = 'far fa-sun';
+            $icon = 'fas fa-sun';
         }
 
         $userMenu->addChild($label, [
@@ -275,7 +275,7 @@ class Builder {
             $root->addChild('admin.documents.label', [
                 'route' => 'admin_documents'
             ])
-                ->setExtra('icon', 'far fa-file-alt');
+                ->setExtra('icon', 'fas fa-file-alt');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_MESSAGE_CREATOR')) {
@@ -533,7 +533,7 @@ class Builder {
         $menu->addChild('documents.label', [
             'route' => 'documents'
         ])
-            ->setExtra('icon', 'far fa-file-alt');
+            ->setExtra('icon', 'fas fa-file-alt');
 
         $this->wikiMenu($menu);
 

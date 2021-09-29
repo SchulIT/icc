@@ -418,3 +418,7 @@ table.align-td-middle {
     @extend .align-middle;
   }
 }
+
+.custom-control-label:after, .custom-control-label:before {
+  top: 0rem !important;
+}

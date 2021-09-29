@@ -493,7 +493,7 @@ messages:
     overview:
         label: Mitteilungen
         empty: Aktuell gibt es keine Mitteilungen im System.
-        archive: alte Mitteilungen anzeigen
+        archive: Alte Mitteilungen anzeigen
         show_all: "Alle %num% Lerngruppen anzeigen"
     add:
         label: Neue Mitteilung

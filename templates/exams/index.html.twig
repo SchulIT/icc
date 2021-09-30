@@ -18,7 +18,7 @@
                 {% set currentFilter = {
                     section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
                     student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null,
-                    teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null,
+                    teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : '✗',
                     grade : gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
                     study_group: studyGroupFilter.currentStudyGroup ? studyGroupFilter.currentStudyGroup.uuid.toString() : null
                 } %}

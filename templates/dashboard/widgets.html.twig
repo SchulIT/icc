@@ -219,6 +219,11 @@
                                 <span class="mx-1"></span>
                             </span>
                             {% endif %}
+
+                            <span>
+                                <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                            </span>
+                            
                             {% if lesson.room is not null or lesson.location is not null %}
                             <span>
                                 <i class="fa fa-door-open"></i> {% if lesson.room is not null%}{{ lesson.room.name }}{% elseif lesson.location is not empty %}{{ lesson.location }}{% else %}{{ 'label.not_available'|trans }}{% endif %}
@@ -226,9 +231,6 @@
                             </span>
                             {% endif %}
 
-                            <span>
-                                <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
-                            </span>
                         </div>
                     </div>
                 {% endfor %}

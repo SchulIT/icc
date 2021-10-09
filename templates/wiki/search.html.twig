@@ -34,7 +34,7 @@
                                 <a href="{{ path('show_wiki_article', { uuid: article.uuid }) }}">{{ article.title }}</a>
                             </h5>
 
-                            <ol class="breadcrumb">
+                            <ol class="breadcrumb mb-0">
                                 {{ _self.wiki_breadcrumb(article.parent) }}
                                 <li class="breadcrumb-item">{{ article.title }}</li>
                             </ol>

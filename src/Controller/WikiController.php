@@ -9,6 +9,7 @@ use App\Security\Voter\WikiVoter;
 use League\Flysystem\FilesystemInterface;
 use Mimey\MimeTypes;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -86,9 +87,12 @@ class WikiController extends AbstractController {
     }
 
     /**
-     * @Route("/search", name="wiki_search")
+     * @Route("/search", name="wiki_search", priority=10)
      */
-    public function search(?string $q, ?int $p = 1) {
+    public function search(Request $request) {
+        $p = $request->query->getInt('p', 1);
+        $q = $request->query->get('q');
+
         $results = [ ];
 
         if(!empty($q)) {
@@ -108,7 +112,7 @@ class WikiController extends AbstractController {
             $pages = ceil((float)count($results) / static::ResultsPerPage);
         }
 
-        if($p === null || !is_numeric($p) || $p <= 0 || $p > $pages) {
+        if(!is_numeric($p) || $p <= 0 || $p > $pages) {
             $p = 1;
         }
 

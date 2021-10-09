@@ -73,7 +73,8 @@
             {% include '@Common/includes/pagination.html.twig' with {
                 currentFilters: {
                     user_type: userTypeParam,
-                    student: studentParam
+                    student: studentParam,
+                    query: query
                 },
                 currentPage: page,
                 paginationPath: 'messages',
@@ -104,12 +105,14 @@
             <div class="card">
                 <div class="card-body">
                     {% if studentFilter.studentGradeGroups|length > 0 %}
-                        {% include "_filter/student.html.twig" with { params: { user_type: userTypeParam } } %}
+                        {% include "_filter/student.html.twig" with { params: { user_type: userTypeParam, query: query } } %}
                     {% endif %}
 
                     {% if userTypeFilter.types|length > 0 %}
-                        {% include "_filter/user_type.html.twig" with { params: { student: studentParam } } %}
+                        {% include "_filter/user_type.html.twig" with { params: { student: studentParam, query: query } } %}
                     {% endif %}
+
+                    {% include "_filter/query.html.twig" with { q: query, params: { query: query, student: studentParam, user_type: userTypeParam }, class: 'mb-0', route: 'messages' } %}
                 </div>
 
                 <div class="card-footer">

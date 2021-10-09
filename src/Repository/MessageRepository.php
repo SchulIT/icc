@@ -35,7 +35,7 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
 
     }
 
-    private function getFindByQueryBuilder(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = []): QueryBuilder {
+    private function getFindByQueryBuilder(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [], ?string $query = null): QueryBuilder {
         $qb = $this->createDefaultQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
@@ -51,6 +51,16 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
                 ->andWhere('mInner.expireDate >= :today');
 
             $qb->setParameter('today', $today);
+        }
+
+        if($query !== null) {
+            $qbInner->andWhere(
+                $qb->expr()->orX(
+                    'MATCH (mInner.title) AGAINST(:q) > 0',
+                    'MATCH (mInner.content) AGAINST(:q) > 0'
+                )
+            );
+            $qb->setParameter('q', $query);
         }
 
         if(count($studyGroups) > 0) {
@@ -206,8 +216,8 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
     /**
      * @inheritDoc
      */
-    public function getPaginator(int $itemsPerPage, int &$page, MessageScope $scope, UserType $userType, ?DateTime $today = null, array $studyGroups = []): Paginator {
-        $qb = $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups)
+    public function getPaginator(int $itemsPerPage, int &$page, MessageScope $scope, UserType $userType, ?DateTime $today = null, array $studyGroups = [], ?string $query = null): Paginator {
+        $qb = $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups, $query)
             ->orderBy('m.expireDate', 'desc');
 
         if(!is_numeric($page) || $page < 1) {

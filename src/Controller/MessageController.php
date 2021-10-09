@@ -68,6 +68,7 @@ class MessageController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
 
+        $query = $request->query->get('q');
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionResolver->getCurrentSection(), $user);
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]));
 
@@ -92,7 +93,8 @@ class MessageController extends AbstractController {
             MessageScope::Messages(),
             $userTypeFilterView->getCurrentType(),
             null,
-            $studyGroups
+            $studyGroups,
+            $query
         );
 
         $messages = [ ];
@@ -116,7 +118,8 @@ class MessageController extends AbstractController {
             'userTypeFilter' => $userTypeFilterView,
             'groups' => $groups,
             'page' => $page,
-            'pages' => $pages
+            'pages' => $pages,
+            'query' => $query
         ]);
     }
 

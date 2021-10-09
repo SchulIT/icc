@@ -497,7 +497,7 @@ teachers:
 messages:
     overview:
         label: Mitteilungen
-        empty: Aktuell gibt es keine Mitteilungen im System.
+        empty: Es wurden keine Mitteilungen gefunden.
         archive: alte Mitteilungen anzeigen
         show_all: "Alle %num% Lerngruppen anzeigen"
     add:

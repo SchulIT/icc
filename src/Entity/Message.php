@@ -15,6 +15,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @ORM\Table(
+ *     indexes={
+ *          @ORM\Index(columns={"title"}, flags={"fulltext"}),
+ *          @ORM\Index(columns={"content"}, flags={"fulltext"})
+ *     }
+ * )
  * @Auditable()
  */
 class Message {

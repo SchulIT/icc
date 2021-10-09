@@ -176,6 +176,40 @@
     </div>
 {%- endblock -%}
 
+{%- block subject_override_widget -%}
+    <div class="input-group mb-2">
+        {{ form_widget(form.untis) }}
+        {{ form_widget(form.override) }}
+
+        <div class="input-group-append">
+            <button type="button" class="btn btn-danger btn-sm btn-delete float-right" data-selector=".input-group">
+                <i class="fa fa-trash"></i>
+            </button>
+        </div>
+    </div>
+{%- endblock -%}
+
+{%- block calendar_week_school_week_widget -%}
+    <div class="input-group mb-2">
+        <div class="input-group-prepend">
+            <span class="input-group-text">{{ 'label.calendar_week'|trans }}</span>
+        </div>
+
+        {{ form_widget(form.calendar_week) }}
+
+        <div class="input-group-prepend">
+            <span class="input-group-text">{{ 'label.school_week'|trans }}</span>
+        </div>
+        {{ form_widget(form.school_week) }}
+
+        <div class="input-group-append">
+            <button type="button" class="btn btn-danger btn-sm btn-delete float-right" data-selector=".input-group">
+                <i class="fa fa-trash"></i>
+            </button>
+        </div>
+    </div>
+{%- endblock -%}
+
 {% block message_poll_choice_widget %}
     <div class="input-group mb-2">
         {{ form_widget(form) }}
@@ -198,3 +232,16 @@
     </div>
 {% endblock %}
 
+{% block reg_exp_widget %}
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text">~</span>
+        </div>
+
+        {{ form_widget(form) }}
+
+        <div class="input-group-append">
+            <span class="input-group-text">~{{ form.vars.modifier }}</span>
+        </div>
+    </div>
+{% endblock %}

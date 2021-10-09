@@ -208,6 +208,11 @@ label:
         hint_dashboard: Die Person ist am ausgewählten Datum (%date%) noch nicht volljährig.
         hint: Die Person ist am heutigen Tag (%date%) noch nicht volljährig.
     birthday: Geburtstag
+    calendar_week: Kalenderwoche
+    school_week: Schulwoche
+    suppress_notifications: Keine Benachrichtigungen senden
+    choose: auswählen
+    period: Stundenplan-Periode
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -1445,3 +1450,39 @@ book:
 
 external:
     docs: Handbuch
+
+import:
+    label: Import
+    settings:
+        label: Einstellungen
+        success: Einstellungen erfolgreich aktualisiert
+        overrides:
+            label: Fächer-Umbenennungen
+            help: Mit dieser Übersetzungstabelle können Untis-Fächer vor dem Import geändert werden.
+        weeks:
+            label: Schulwochen
+            help: Mit dieser Übersetzungstabelle können Untis-Schulwochen in Kalenderwochen aufgelöst werden. Wenn das Info-Stundenplanmodul vorhanden ist, kann die durch den Datenbank-Export erzeugte date.txt-Datei importiert werden.
+        substitutions:
+            days:
+                label: Tage
+                help: Standard-Anzahl von Tagen, die automatisch bei der Import-Maske ausgewählt werden soll.
+        exams:
+            include_students:
+                label: Klausurschreibende immer aus Untis importieren
+                help: Wenn diese Option aktiv ist, werden Klausurschreiber standardmäßig aus Untis (GPU017.txt) importiert.
+            ignore_options_regexp:
+                label: Ausnahmen (RegExp)
+                help: "Wenn in diesem Feld ein gültiger regulärer Ausdruck enthalten ist, wird der Klausurname mit diesem Ausdruck geprüft. Wenn er zutrifft, wird die Option 'Klausurschreiber importieren' umgekehrt."
+    substitutions:
+        label: Vertretungen
+        info: Hier kann die GPU014.txt importiert werden. Diese muss als UTF-8 mit Semikolon (;) als Trennzeichen exportiert werden.
+        result: '%added% neue Vertretung(en), %ignored% nicht importiert, %updated% aktualisiert, %removed% gelöscht'
+    supervisions:
+        label: Aufsichten
+        info: Hier kann die GPU009.txt importiert werden. Diese muss als UTF-8 mit Semikolon (;) als Trennzeichen exportiert werden.
+        result: 'Alle alten Aufsichten im Zeitabschnitt gelöscht und %added% neue hinzugefügt'
+    exams:
+        label: Klausuren
+        info: Hier kann die GPU017.txt importiert werden. Diese muss als UTF-8 mit Semikolon (;) als Trennzeichen exportiert werden. Um die Kurse auflösen zu können, muss eine passende GPU002.txt ausgewählt werden.
+        caution: Da sich Unterrichtsnummern insbesondere über Halbjahre hinweg ändern können, muss der Import stets auf Halbjahre beschränkt werden.
+        result: '%added% neue Klausur(en), %ignored% nicht importiert, %updated% aktualisiert, %removed% gelöscht'

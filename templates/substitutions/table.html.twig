@@ -52,12 +52,10 @@
                                 {% endif %}
                             </td>
                             <td class="align-middle">
-                                {{ _macro.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
+                                {{ _macro.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups(true, substitution.replacementGrades)) }}
 
-                                {% if substitution.replacementGrades|length > 0 %}
-                                    {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
+                                {% if substitution.replacementGrades|length > 0 and substitution.replacementStudyGroups|length == 0 %}
                                     ⟶
-                                    {% endif %}
                                     {{ substitution.replacementGrades|grades }}
                                 {% endif %}
                             </td>

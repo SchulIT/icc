@@ -112,10 +112,11 @@ class AppExtension extends AbstractExtension {
     /**
      * @param StudyGroup[]|ArrayCollection $studyGroups
      * @param bool $sort
+     * @param Grade[]|ArrayCollection $onlyGrades
      * @return string
      */
-    public function studyGroups(iterable $studyGroups, bool $sort = false) {
-        return $this->studyGroupsConverter->convert($studyGroups, $sort);
+    public function studyGroups(iterable $studyGroups, bool $sort = false, iterable $onlyGrades = [ ]) {
+        return $this->studyGroupsConverter->convert($studyGroups, $sort, $onlyGrades);
     }
 
     public function filesize(int $bytes) {

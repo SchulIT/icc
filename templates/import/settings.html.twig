@@ -1,0 +1,90 @@
+{% extends "import/_import.html.twig" %}
+
+{% block title %}{{ 'import.settings.label'|trans }}{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'import.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block import_content %}
+    <div class="card">
+        <div class="card-header">{{ 'import.substitutions.label'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_row(form.substitution_days) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'import.exams.label'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_row(form.exam_writers) }}
+            {{ form_row(form.ignore_options_regexp) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'import.settings.overrides.label'|trans }}</div>
+
+        <div class="card-body">
+            <p>
+                {{ 'import.settings.overrides.help'|trans }}
+            </p>
+
+            <div class="rules" data-collection="overrides" data-prototype="{{ form_widget(form.overrides.vars.prototype)|e('html_attr') }}">
+                {% for override in form.overrides %}
+                    {{ form_widget(override) }}
+                {% endfor %}
+            </div>
+
+            {{ form_errors(form.overrides) }}
+            {{ form_help(form.overrides) }}
+
+            {% do form.overrides.setRendered(true) %}
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="overrides">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'import.settings.weeks.label'|trans }}</div>
+
+        <div class="card-body">
+            <p>
+                {{ 'import.settings.weeks.help'|trans }}
+            </p>
+
+            <div class="rules" data-collection="weeks" data-prototype="{{ form_widget(form.weeks.vars.prototype)|e('html_attr') }}">
+                {% for week in form.weeks %}
+                    {{ form_widget(week) }}
+                {% endfor %}
+            </div>
+
+            {{ form_errors(form.weeks) }}
+            {{ form_help(form.weeks) }}
+
+            {% do form.weeks.setRendered(true) %}
+
+            {{ form_row(form.import_weeks) }}
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="weeks">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
+        </div>
+    </div>
+{% endblock %}

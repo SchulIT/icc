@@ -174,7 +174,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
             }
         );
 
-        if($data->getSubject() === $data->getReplacementSubject() && $data->getGrades() == $data->getReplacementGrades()) {
+        if($data->getSubject() === $data->getReplacementSubject()) {
             $replacementStudyGroups = $studyGroups;
         } else {
             $replacementStudyGroups = $this->resolveStudyGroup($section, $data->getReplacementSubject(), $data->getReplacementGrades(), $data->getReplacementTeachers(), $data->getId());

@@ -1,0 +1,38 @@
+{% extends "main.html.twig" %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'import.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {% block form_start %}
+        {% if form is defined %}
+            {{ form_start(form) }}
+        {% endif %}
+    {% endblock %}
+
+    <div class="card">
+        <div class="card-header border-bottom-0">
+            {{ knp_menu_render('importMenu', {'currentClass': 'active', 'template': 'import/_menu.html.twig' }) }}
+        </div>
+    </div>
+
+    {% block import_content %}{% endblock %}
+
+    {% block import_card_footer %}
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+        </button>
+    {% endblock %}
+
+    {% block import_footer %}{% endblock %}
+
+    {% block form_end %}
+        {% if form is defined %}
+            {{ form_end(form) }}
+        {% endif %}
+    {% endblock %}
+{% endblock %}

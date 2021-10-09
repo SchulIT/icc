@@ -1,0 +1,25 @@
+{% import "knp_menu.html.twig" as macros %}
+
+{% for rootItem in item %}
+    {% if rootItem.children|length > 0 %}
+        {% set isCurrent = false %}
+        {%- if matcher.isCurrent(rootItem) or matcher.isAncestor(rootItem) %}
+            {%- set isCurrent = true %}
+        {%- endif -%}
+
+        <ul class="nav nav-pills card-header-pills">
+            {% for child in rootItem.children %}
+                <li class="nav-item">
+                    <a href="{{ child.uri }}" class="nav-link {% if matcher.isCurrent(child) %}active{% endif %}" {{ macros.attributes(child.linkAttributes) }}>
+                        {% if child.extras['icon'] is defined %}
+                            <i class="{{ child.extras['icon'] }}"></i>
+                            {{ child.label|trans }}
+                        {% else %}
+                            {{ child.label|trans }}
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endfor %}

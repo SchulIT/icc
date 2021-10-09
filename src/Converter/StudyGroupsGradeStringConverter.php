@@ -25,12 +25,23 @@ class StudyGroupsGradeStringConverter {
 
     /**
      * @param StudyGroup[]|ArrayCollection $studyGroups
+     * @param bool $sort
+     * @param Grade[]|ArrayCollection $onlyGrades
      * @return string
      */
-    public function convert(iterable $studyGroups, bool $sort = false) {
+    public function convert(iterable $studyGroups, bool $sort = false, iterable $onlyGrades = [ ]) {
         if($studyGroups instanceof Collection) {
             $studyGroups = $studyGroups->toArray();
         }
+
+        if($onlyGrades instanceof Collection) {
+            $onlyGrades = $onlyGrades->toArray();
+        }
+
+        /** @var int[] $onlyGrades */
+        $onlyGrades = array_map(function(Grade $grade) {
+            return $grade->getId();
+        }, $onlyGrades);
 
         if($sort === true) {
             $this->sorter->sort($studyGroups, StudyGroupStrategy::class);
@@ -54,10 +65,16 @@ class StudyGroupsGradeStringConverter {
             return $group->getType()->equals(StudyGroupType::Grade()) === false;
         });
 
-        $output += array_map(function(StudyGroup $studyGroup) {
+        $output += array_map(function(StudyGroup $studyGroup) use($onlyGrades) {
             return $this->translator->trans('studygroup.string', [
                 '%name%' => $studyGroup->getName(),
-                '%grade%' => implode(', ', $this->gradeConverter->convert($studyGroup->getGrades()->toArray()))
+                '%grade%' => implode(', ', $this->gradeConverter->convert($studyGroup->getGrades()->filter(function(Grade $grade) use($onlyGrades) {
+                    if(empty($onlyGrades)) {
+                        return true;
+                    }
+
+                    return in_array($grade->getId(), $onlyGrades);
+                })->toArray()))
             ]);
         }, $studyGroups);
 

@@ -438,6 +438,46 @@ class Builder {
         return $root;
     }
 
+    public function importMenu(array $options = [ ]): ItemInterface {
+        $root = $this->factory->createItem('root')
+            ->setChildrenAttributes([
+                'class' => 'navbar-nav float-lg-right'
+            ]);
+
+        $menu = $root->addChild('import', [
+            'label' => ''
+        ])
+            ->setExtra('icon', 'fas fa-upload')
+            ->setExtra('menu', 'import')
+            ->setExtra('menu-container', '#submenu')
+            ->setExtra('pull-right', true)
+            ->setAttribute('title', $this->translator->trans('import.label'));
+
+        if($this->authorizationChecker->isGranted('ROLE_IMPORTER')) {
+            $menu->addChild('import.settings.label', [
+                'route' => 'import_untis_settings'
+            ])
+                ->setExtra('icon', 'fas fa-cogs');
+
+            $menu->addChild('import.substitutions.label', [
+                'route' => 'import_untis_substitutions'
+            ])
+                ->setExtra('icon', 'fas fa-random');
+
+            $menu->addChild('import.exams.label', [
+                'route' => 'import_untis_exams'
+            ])
+                ->setExtra('icon', 'fas fa-edit');
+
+            $menu->addChild('import.supervisions.label', [
+                'route' => 'import_untis_supervisions'
+            ])
+                ->setExtra('icon', 'fas fa-eye');
+        }
+
+        return $root;
+    }
+
     public function settingsMenu(array $options = [ ]): ItemInterface {
         $root = $this->factory->createItem('root')
             ->setChildrenAttributes([

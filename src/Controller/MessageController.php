@@ -68,9 +68,12 @@ class MessageController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
 
-        $archive = $request->query->get('archive', false) === '✓';
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionResolver->getCurrentSection(), $user);
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]));
+
+        if($studentFilterView->getCurrentStudent() !== null && EnumArrayUtils::inArray($userTypeFilterView->getCurrentType(), [ UserType::Student(), UserType::Parent() ]) === false) {
+            $userTypeFilterView->setCurrentType(UserType::Student());
+        }
 
         $studyGroups = [ ];
         if($userTypeFilterView->getCurrentType()->equals(UserType::Student()) || $userTypeFilterView->getCurrentType()->equals(UserType::Parent())) {
@@ -88,9 +91,8 @@ class MessageController extends AbstractController {
             $page,
             MessageScope::Messages(),
             $userTypeFilterView->getCurrentType(),
-            $this->dateHelper->getToday(),
-            $studyGroups,
-            $archive
+            null,
+            $studyGroups
         );
 
         $messages = [ ];
@@ -113,7 +115,6 @@ class MessageController extends AbstractController {
             'studentFilter' => $studentFilterView,
             'userTypeFilter' => $userTypeFilterView,
             'groups' => $groups,
-            'archive' => $archive,
             'page' => $page,
             'pages' => $pages
         ]);

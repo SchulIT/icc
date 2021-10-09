@@ -35,7 +35,7 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
 
     }
 
-    private function getFindByQueryBuilder(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [], bool $archive = false): QueryBuilder {
+    private function getFindByQueryBuilder(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = []): QueryBuilder {
         $qb = $this->createDefaultQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
@@ -46,17 +46,11 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
             ->andWhere('mInner.scope = :scope');
 
         if($today !== null) {
-            if($archive === true) {
-                $qbInner
-                    ->andWhere('mInner.expireDate < :today');
-                $qb->setParameter('today', $today);
-            } else {
-                $qbInner
-                    ->andWhere('mInner.startDate <= :today')
-                    ->andWhere('mInner.expireDate >= :today');
+            $qbInner
+                ->andWhere('mInner.startDate <= :today')
+                ->andWhere('mInner.expireDate >= :today');
 
-                $qb->setParameter('today', $today);
-            }
+            $qb->setParameter('today', $today);
         }
 
         if(count($studyGroups) > 0) {
@@ -212,8 +206,8 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
     /**
      * @inheritDoc
      */
-    public function getPaginator(int $itemsPerPage, int &$page, MessageScope $scope, UserType $userType, ?DateTime $today = null, array $studyGroups = [], bool $archive = false): Paginator {
-        $qb = $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups, $archive)
+    public function getPaginator(int $itemsPerPage, int &$page, MessageScope $scope, UserType $userType, ?DateTime $today = null, array $studyGroups = []): Paginator {
+        $qb = $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups)
             ->orderBy('m.expireDate', 'desc');
 
         if(!is_numeric($page) || $page < 1) {

@@ -73,8 +73,7 @@
             {% include '@Common/includes/pagination.html.twig' with {
                 currentFilters: {
                     user_type: userTypeParam,
-                    student: studentParam,
-                    archive: archive ? '✓' : null
+                    student: studentParam
                 },
                 currentPage: page,
                 paginationPath: 'messages',
@@ -105,27 +104,16 @@
             <div class="card">
                 <div class="card-body">
                     {% if studentFilter.studentGradeGroups|length > 0 %}
-                        {% include "_filter/student.html.twig" with { params: { archive: archive, user_type: userTypeParam } } %}
+                        {% include "_filter/student.html.twig" with { params: { user_type: userTypeParam } } %}
                     {% endif %}
 
                     {% if userTypeFilter.types|length > 0 %}
-                        {% include "_filter/user_type.html.twig" with { params: { archive: archive ? '✓' : null, student: studentParam } } %}
+                        {% include "_filter/user_type.html.twig" with { params: { student: studentParam } } %}
                     {% endif %}
+                </div>
 
-                    <form role="form" method="get" class="form hidden-print">
-                        {% include "_filter/_params.html.twig" with { params: { user_type: userTypeParam, student: studentParam } } %}
-
-                        <label class="control-label">{{ 'label.options'|trans }}:</label>
-                        <div class="form-group mb-0">
-                            <div class="custom-control custom-checkbox">
-
-                                <input class="custom-control-input" data-trigger="submit" type="checkbox" value="✓" id="archive" name="archive" {% if archive %} checked="checked"{% endif %}>
-                                <label for="archive" class="custom-control-label">
-                                    {{ 'messages.overview.archive'|trans }}
-                                </label>
-                            </div>
-                        </div>
-                    </form>
+                <div class="card-footer">
+                    <a href="{{ path('messages') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
                 </div>
             </div>
 

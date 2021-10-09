@@ -47,10 +47,9 @@ interface MessageRepositoryInterface {
      * @param UserType $userType
      * @param DateTime|null $today
      * @param array $studyGroups
-     * @param bool $archive
      * @return Paginator
      */
-    public function getPaginator(int $itemsPerPage, int &$page, MessageScope $scope, UserType $userType, ?DateTime $today = null, array $studyGroups = [ ], bool $archive = false): Paginator;
+    public function getPaginator(int $itemsPerPage, int &$page, MessageScope $scope, UserType $userType, ?DateTime $today = null, array $studyGroups = [ ]): Paginator;
 
     /**
      * @param UserType $userType

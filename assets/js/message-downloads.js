@@ -1,4 +1,5 @@
-window.Dropzone = require('dropzone');
+import Dropzone from "dropzone";
+window.Dropzone = Dropzone;
 window.Dropzone.autoDiscover = false;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -7,6 +8,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let containerElementSelector = dropzoneEl.getAttribute('data-preview-container');
         let containerElement = document.querySelector(containerElementSelector);
+
+        console.log({
+            url: dropzoneEl.getAttribute('data-url'),
+            clickable: false,
+            autoProcessQueue: true,
+            createImageThumbnails: false,
+            previewTemplate: previewTemplate,
+            previewsContainer: containerElement
+        });
 
         let dropzone = new Dropzone(dropzoneEl, {
             url: dropzoneEl.getAttribute('data-url'),

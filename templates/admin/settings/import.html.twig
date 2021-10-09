@@ -41,4 +41,16 @@
             </button>
         </div>
     </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.import.fallback_section.label'|trans }}</div>
+
+        <div class="card-body">
+            <p>
+                {{ 'admin.settings.import.fallback_section.help'|trans }}
+            </p>
+
+            {{ form_widget(form.fallback_section) }}
+        </div>
+    </div>
 {% endblock %}

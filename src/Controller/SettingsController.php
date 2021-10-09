@@ -881,7 +881,7 @@ class SettingsController extends AbstractController {
     /**
      * @Route("/import", name="admin_settings_import")
      */
-    public function import(Request $request, ImportSettings $settings) {
+    public function import(Request $request, ImportSettings $settings, SectionRepositoryInterface $sectionRepository) {
         $builder = $this->createFormBuilder();
         $builder
             ->add('rules', CollectionType::class, [
@@ -891,6 +891,20 @@ class SettingsController extends AbstractController {
                 'by_reference' => false,
                 'help' => 'label.comma_separated',
                 'data' => $settings->getExamRules()
+            ])
+            ->add('fallback_section', ChoiceType::class, [
+                'label' => 'label.section',
+                'placeholder' => 'label.choose',
+                'choices' => ArrayUtils::createArrayWithKeysAndValues(
+                    $sectionRepository->findAll(),
+                    function(Section $section) {
+                        return $section->getDisplayName();
+                    },
+                    function(Section $section) {
+                        return $section->getId();
+                    }
+                ),
+                'data' => $settings->getFallbackSection()
             ]);
         $form = $builder->getForm();
         $form->handleRequest($request);
@@ -899,6 +913,9 @@ class SettingsController extends AbstractController {
             $map = [
                 'rules' => function(array $rules) use($settings) {
                     $settings->setExamRules($rules);
+                },
+                'fallback_section' => function(?int $sectionId) use($settings) {
+                    $settings->setFallbackSection($sectionId);
                 }
             ];
 

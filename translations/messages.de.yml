@@ -664,6 +664,9 @@ admin:
             exam_rules:
                 label: Regeln für Klausurschreibende
                 help: Mit diesen Regeln wird festgelegt, welche Lernende automatisch einer Klausur zugeordnet werden, wenn diese nicht beim Import angegeben werden.
+            fallback_section:
+                label: Fallback-Schuljahresabschnitt
+                help: Diese Option wird aktuell beim Import von Terminen verwendet. Wenn für zukünftige Schuljahresabschnitte noch keine Lerngruppendaten vorhanden, werden stattdessen die Lerngruppen im ausgewählten Abschnitt gesucht.
 
         substitutions:
             label: Vertretungsplan

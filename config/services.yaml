@@ -170,6 +170,10 @@ services:
         bind:
             $wikiFilesystem: '@oneup_flysystem.wiki_filesystem'
 
+    App\Controller\SickNoteController:
+        bind:
+            $sickNoteFilesystem: '@oneup_flysystem.sick_notes_filesystem'
+
     # MARKDOWN
     League\CommonMark\Extension\CommonMarkCoreExtension: ~
 
@@ -245,6 +249,10 @@ services:
             $messageLimit: '%env(int:MAILER_LIMIT)%'
         tags:
             - { name: shapecode_cron.cron_job, expression: '*\/2 * * * *' }
+
+    App\Command\RemoveExpiredSickNotesCommand:
+        bind:
+            $filesystem: '@oneup_flysystem.sick_notes_filesystem'
 
     # SICKNOTES
     App\SickNote\SickNoteSender:

@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\DateLesson;
+use App\Entity\SickNote;
+use App\Entity\SickNoteAttachment;
 use App\Entity\StudyGroupMembership;
 use App\Entity\User;
 use App\Entity\UserType;
@@ -10,6 +13,7 @@ use App\Grouping\Grouper;
 use App\Grouping\SickNoteGradeGroup;
 use App\Grouping\SickNoteGradeStrategy;
 use App\Grouping\SickNoteTuitionGroup;
+use App\Http\FlysystemFileResponse;
 use App\Repository\SickNoteRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
@@ -17,8 +21,6 @@ use App\Section\SectionResolverInterface;
 use App\Security\Voter\SickNoteVoter;
 use App\Settings\SickNoteSettings;
 use App\Settings\TimetableSettings;
-use App\SickNote\SickNote;
-use App\SickNote\SickNoteSender;
 use App\Sorting\SickNoteGradeGroupStrategy;
 use App\Sorting\SickNoteStrategy;
 use App\Sorting\SickNoteTuitionGroupStrategy;
@@ -30,19 +32,26 @@ use App\View\Filter\SectionFilter;
 use App\View\Filter\TeacherFilter;
 use DateTime;
 use Exception;
+use League\Flysystem\FilesystemInterface;
+use Mimey\MimeTypes;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/sick_notes")
+ * @Security("is_granted('ROLE_SICK_NOTE_CREATOR') or is_granted('ROLE_SICK_NOTE_VIEWER') or is_granted('new-sicknote')")
+ */
 class SickNoteController extends AbstractController {
 
     use DateTimeHelperTrait;
 
     /**
-     * @Route("/sick_note", name="sick_note")
+     * @Route("/add", name="add_sick_note")
      */
-    public function add(Request $request, SickNoteSender $sender, SickNoteSettings $settings,
+    public function add(Request $request,/* SickNoteSender $sender, */SickNoteSettings $settings,
                         SickNoteRepositoryInterface $repository, StudentRepositoryInterface $studentRepository,
                         TimetableTimeHelper $timeHelper, TimetableSettings $timetableSettings, DateHelper $dateHelper) {
         $this->denyAccessUnlessGranted(SickNoteVoter::New);
@@ -68,6 +77,7 @@ class SickNoteController extends AbstractController {
 
         $note = new SickNote();
         $note->setFrom($timeHelper->getLessonDateForDateTime($this->getTodayOrNextDay($dateHelper, $settings->getNextDayThresholdTime())));
+        $note->setUntil(new DateLesson());
         $note->getUntil()->setLesson($timetableSettings->getMaxLessons());
 
         $form = $this->createForm(SickNoteType::class, $note, [
@@ -76,10 +86,10 @@ class SickNoteController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $sender->sendSickNote($note, $user);
+            $repository->persist($note);
 
             $this->addFlash('success', 'sick_notes.add.success');
-            return $this->redirectToRoute('sick_note');
+            return $this->redirectToRoute('sick_notes');
         }
 
         return $this->render('sick_note/add.html.twig', [
@@ -90,20 +100,18 @@ class SickNoteController extends AbstractController {
     }
 
     /**
-     * @Route("/sick_notes", name="sick_notes")
+     * @Route("", name="sick_notes")
      */
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Request $request,
                           SickNoteRepositoryInterface $sickNoteRepository, TuitionRepositoryInterface $tuitionRepository,
                           SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Sorter $sorter, Grouper $grouper) {
-        $this->denyAccessUnlessGranted(SickNoteVoter::View);
-
         /** @var User $user */
         $user = $this->getUser();
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $request->query->get('teacher') !== '✗' && $gradeFilterView->getCurrentGrade() === null);
-        $selectedDate = $dateHelper->getToday();
+        $selectedDate = $user->getUserType()->equals(UserType::Teacher()) ? $dateHelper->getToday() : null;
 
         try {
             if($request->query->has('date')) {
@@ -134,7 +142,9 @@ class SickNoteController extends AbstractController {
                     $group = new SickNoteTuitionGroup($tuition);
 
                     foreach($sickNotes as $note) {
-                        $group->addItem($note);
+                        if($this->isGranted(SickNoteVoter::View, $note)) {
+                            $group->addItem($note);
+                        }
                     }
 
                     $groups[] = $group;
@@ -150,7 +160,9 @@ class SickNoteController extends AbstractController {
                 $group = new SickNoteGradeGroup($gradeFilterView->getCurrentGrade());
 
                 foreach ($sickNotes as $note) {
-                    $group->addItem($note);
+                    if($this->isGranted(SickNoteVoter::View, $note)) {
+                        $group->addItem($note);
+                    }
                 }
 
                 $groups[] = $group;
@@ -159,6 +171,11 @@ class SickNoteController extends AbstractController {
             $sorter->sort($groups, SickNoteGradeGroupStrategy::class);
         } else if($sectionFilterView->getCurrentSection() !== null) {
             $sickNotes = $sickNoteRepository->findAll($selectedDate);
+
+            $sickNotes = array_filter($sickNotes, function(SickNote $note) {
+                return $this->isGranted(SickNoteVoter::View, $note);
+            });
+
             $groups = $grouper->group($sickNotes, SickNoteGradeStrategy::class, [ 'section' => $sectionFilterView->getCurrentSection() ]);
             $sorter->sort($groups, SickNoteGradeGroupStrategy::class);
         }
@@ -174,5 +191,36 @@ class SickNoteController extends AbstractController {
             'selectedDate' => $selectedDate,
             'section' => $sectionResolver->getCurrentSection()
         ]);
+    }
+
+    /**
+     * @Route("/{uuid}", name="show_sick_note")
+     */
+    public function show(SickNote $sickNote) {
+        $this->denyAccessUnlessGranted(SickNoteVoter::View, $sickNote);
+
+        return $this->render('sick_note/show.html.twig', [
+            'note' => $sickNote
+        ]);
+    }
+
+    /**
+     * @Route("/attachments/{uuid}", name="download_sick_note_attachment", priority="10")
+     */
+    public function downloadAttachment(SickNoteAttachment $attachment, FilesystemInterface $sickNoteFilesystem, MimeTypes $mimeTypes) {
+        $this->denyAccessUnlessGranted(SickNoteVoter::View, $sickNote);
+
+        if($sickNoteFilesystem->has($attachment->getPath()) !== true) {
+            throw new NotFoundHttpException();
+        }
+
+        $extension = pathinfo($attachment->getFilename(), PATHINFO_EXTENSION);
+
+        return new FlysystemFileResponse(
+            $sickNoteFilesystem,
+            $attachment->getPath(),
+            $attachment->getFilename(),
+            $mimeTypes->getMimeType($extension)
+        );
     }
 }

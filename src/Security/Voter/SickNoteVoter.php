@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\SickNote;
 use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
@@ -14,7 +15,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class SickNoteVoter extends Voter {
 
     public const New = 'new-sicknote';
-    public const View = 'view-sicknotes';
+    public const View = 'view';
 
     private $dateHelper;
     private $accessDicisionManager;
@@ -29,7 +30,7 @@ class SickNoteVoter extends Voter {
      */
     protected function supports($attribute, $subject) {
         return $attribute === static::New
-            || $attribute === static::View;
+            || ($attribute === static::View && $subject instanceof SickNote);
     }
 
     /**
@@ -41,7 +42,7 @@ class SickNoteVoter extends Voter {
                 return $this->canCreate($token);
 
             case static::View:
-                return $this->canView($token);
+                return $this->canView($token, $subject);
         }
 
         throw new LogicException('This code should not be reached.');
@@ -79,7 +80,23 @@ class SickNoteVoter extends Voter {
         return false;
     }
 
-    private function canView(TokenInterface $token) {
-        return $this->accessDicisionManager->decide($token, ['ROLE_SICK_NOTE_VIEWER']) === true;
+    private function canView(TokenInterface $token, SickNote $sickNote) {
+        if($this->accessDicisionManager->decide($token, ['ROLE_SICK_NOTE_VIEWER'])) {
+            return true;
+        }
+
+        $user = $token->getUser();
+
+        if(!$user instanceof User) {
+            return false;
+        }
+
+        foreach($user->getStudents() as $student) {
+            if($sickNote->getStudent() === $student) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\SickNote;
+namespace App\Entity;
 
 use MyCLabs\Enum\Enum;
 

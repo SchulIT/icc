@@ -47,6 +47,7 @@
                                         <col class="column-lg">
                                         <col class="column-lg">
                                         <col class="column-md">
+                                        <col class="column-sm">
                                     </colgroup>
                                     
                                     <thead>
@@ -58,6 +59,7 @@
                                         <th data-sortable="false">{{ 'sick_notes.created_at'|trans }}</th>
                                         <th data-sortable="false">{{ 'sick_notes.created_by'|trans }}</th>
                                         <th>{{ 'label.grade'|trans }}</th>
+                                        <th></th>
                                     </tr>
                                     </thead>
 
@@ -78,6 +80,11 @@
                                                     {{ 'label.not_available'|trans }}
                                                 {% endif %}
                                             </td>
+                                            <td>
+                                                <a href="{{ path('show_sick_note', { uuid: note.uuid }) }}" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -91,7 +98,7 @@
                 <div class="card">
                     <div class="list-group list-group-flush">
                         {% if is_granted('new-sicknote') %}
-                            <a href="{{ path('sick_note') }}" class="list-group-item list-group-item-action">
+                            <a href="{{ path('add_sick_note') }}" class="list-group-item list-group-item-action">
                                 <i class="fa fa-plus"></i> {{ 'sick_notes.add.label'|trans }}
                             </a>
                         {% endif %}
@@ -133,7 +140,7 @@
                     </div>
 
                     <div class="card-footer">
-                        <a href="{{ path('sick_notes') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ path('add_sick_note') }}" class="btn btn-primary btn-sm">
                             {{ 'filter.reset'|trans }}
                         </a>
                     </div>

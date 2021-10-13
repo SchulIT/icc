@@ -36,6 +36,6 @@ fervo_enum:
             doctrine_type: absence_reason
             form_type: absence_reason
 
-        App\SickNote\SickNoteReason:
+        App\Entity\SickNoteReason:
             doctrine_type: sick_reason
             form_type: sick_reason

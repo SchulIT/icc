@@ -1,5 +1,9 @@
 {% extends "main.html.twig" %}
 
+{% block post_javascript %}
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}
+
 {% block title %}{{ 'sick_notes.add.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
@@ -13,116 +17,87 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid px-0">
-        <div class="row">
-            <div class="col-md-9">
-                {{ form_start(form) }}
+    {{ form_start(form) }}
 
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
 
-                        {% if settings.introductionText is not null %}
-                            {{ settings.introductionText|markdown }}
-                        {% endif %}
+            {% if settings.introductionText is not null %}
+                {{ settings.introductionText|markdown }}
+            {% endif %}
 
-                        <p>
-                            {{ 'sick_notes.add.privacy.info'|trans }}
-                            {% if settings.retentionDays > 0 %}
-                                {{ 'sick_notes.history.retention'|trans({'%count%': settings.retentionDays }) }}
-                            {% endif %}
-                        </p>
+            <p>
+                {{ 'sick_notes.add.privacy.info'|trans }}
+                {% if settings.retentionDays > 0 %}
+                    {{ 'sick_notes.history.retention'|trans({'%count%': settings.retentionDays }) }}
+                {% endif %}
+            </p>
 
-                        {% if settings.privacyUrl is not null %}
-                            <a href="{{ settings.privacyUrl }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                                <i class="fa fa-external-link-alt"></i> {{ 'sick_notes.add.privacy.link'|trans }}
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">{{ 'label.general'|trans }}</div>
-                    <div class="card-body">
-                        {{ form_row(form.student) }}
-                        {{ form_row(form.reason)}}
-                        {{ form_row(form.orderedBy) }}
-                        {{ form_row(form.from) }}
-                        {{ form_row(form.until) }}
-                        {{ form_row(form.message) }}
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">{{ 'sick_notes.add.contact.label'|trans }}</div>
-                    <div class="card-body">
-                        <div class="bs-callout bs-callout-info">
-                            {{ 'sick_notes.add.contact.info'|trans }}
-                        </div>
-
-                        {{ form_row(form.phone) }}
-                        {{ form_row(form.email) }}
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">{{ 'sick_notes.add.attachments.label'|trans }}</div>
-                    <div class="card-body">
-                        <div class="bs-callout bs-callout-info">
-                            {{ 'sick_notes.add.attachments.info'|trans }}
-                        </div>
-
-                        {{ form_row(form.attachments) }}
-                    </div>
-                </div>
-
-                <div class="buttons">
-                    <button type="submit" class="btn btn-primary btn-sm">
-                        <i class="fa fa-envelope"></i> {{ 'sick_notes.add.send'|trans }}
-                    </button>
-                </div>
-
-                {{ form_end(form) }}
-            </div>
-
-            <div class="col-md-3 sticky-sidebar">
-                <div class="card">
-                    <div class="card-header">
-                        {{ 'sick_notes.history.label'|trans }}
-                    </div>
-
-                    <div class="card-body">
-                        <p>{{ 'sick_notes.history.info'|trans }}</p>
-                    </div>
-
-                        <ul class="list-group list-group-flush">
-                            {% if sick_notes|length == 0 %}
-                                <li class="list-group-item">
-                                    {{ 'sick_notes.history.empty'|trans }}
-                                </li>
-                            {% endif %}
-
-                            {% for note in sick_notes %}
-                                <li class="list-group-item">
-                                    <div>
-                                        <p class="mb-1">
-                                            <i class="fa fa-user"></i> {{ note.student|student }}
-                                        </p>
-                                        <i class="fa fa-calendar-alt"></i> {{ note.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': note.from.lesson, '%count%': 0}) }})
-                                        -
-                                        {{ note.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': note.until.lesson, '%count%': 0}) }})
-                                    </div>
-                                    <small class="text-secondary">
-                                        <i class="fa fa-clock" title="{{ 'sick_notes.created_at'|trans }}"></i> {{ note.createdAt|format_datetime }}
-                                    </small>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                </div>
-            </div>
+            {% if settings.privacyUrl is not null %}
+                <a href="{{ settings.privacyUrl }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                    <i class="fa fa-external-link-alt"></i> {{ 'sick_notes.add.privacy.link'|trans }}
+                </a>
+            {% endif %}
         </div>
     </div>
 
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+        <div class="card-body">
+            {{ form_row(form.student) }}
+            {{ form_row(form.reason)}}
+            {{ form_row(form.orderedBy) }}
+            {{ form_row(form.from) }}
+            {{ form_row(form.until) }}
+            {{ form_row(form.message) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'sick_notes.add.contact.label'|trans }}</div>
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                {{ 'sick_notes.add.contact.info'|trans }}
+            </div>
+
+            {{ form_row(form.phone) }}
+            {{ form_row(form.email) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'sick_notes.add.attachments.label'|trans }}</div>
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                {{ 'sick_notes.add.attachments.info'|trans }}
+            </div>
+
+            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}">
+                {{ form_widget(form.attachments) }}
+            </div>
+
+            {{ form_errors(form.attachments) }}
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="attachments">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-envelope"></i> {{ 'sick_notes.add.send'|trans }}
+        </button>
+
+        <a href="{{ path('sick_notes') }}" class="btn btn-secondary btn-sm">
+            {{ 'actions.cancel'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
 {% endblock %}
 
 {% block javascript %}

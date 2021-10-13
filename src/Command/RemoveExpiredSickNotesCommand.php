@@ -2,8 +2,10 @@
 
 namespace App\Command;
 
+use App\Repository\SickNoteAttachmentRepositoryInterface;
 use App\Repository\SickNoteRepositoryInterface;
 use App\Settings\SickNoteSettings;
+use League\Flysystem\FilesystemInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Shapecode\Bundle\CronBundle\Annotation\CronJob;
 use Symfony\Component\Console\Command\Command;
@@ -18,14 +20,20 @@ class RemoveExpiredSickNotesCommand extends Command {
 
     private $settings;
     private $repository;
+    private $attachmentRepository;
     private $dateHelper;
+    private $filesystem;
 
-    public function __construct(SickNoteSettings $settings, SickNoteRepositoryInterface $repository, DateHelper $dateHelper, string $name = null) {
+    public function __construct(SickNoteSettings $settings, SickNoteRepositoryInterface $repository,
+                                SickNoteAttachmentRepositoryInterface $attachmentRepository, FilesystemInterface $filesystem,
+                                DateHelper $dateHelper, string $name = null) {
         parent::__construct($name);
 
         $this->settings = $settings;
         $this->repository = $repository;
+        $this->attachmentRepository = $attachmentRepository;
         $this->dateHelper = $dateHelper;
+        $this->filesystem = $filesystem;
     }
 
     public function configure() {
@@ -51,6 +59,32 @@ class RemoveExpiredSickNotesCommand extends Command {
         $count = $this->repository->removeExpired($threshold);
 
         $style->success(sprintf('%d sick note(s) removed.', $count));
+
+        // Remove unused attachments
+        $style->section('Check attachments');
+
+        $exists = [ ];
+        $count = 0;
+        foreach($this->attachmentRepository->findAll() as $attachment) {
+            if($this->filesystem->has($attachment->getPath())) {
+                $exists[] = $attachment->getPath();
+            } else {
+                $this->attachmentRepository->remove($attachment);
+                $count++;
+            }
+        }
+
+        $style->success(sprintf('%d orphaned attachment(s) removed from database.', $count));
+
+        $count = 0;
+        foreach($this->filesystem->listContents() as $content) {
+            if(in_array($content['path'], $exists) !== true) {
+                $this->filesystem->delete($content['path']);
+                $count++;
+            }
+        }
+
+        $style->success(sprintf('%d orphaned attachment(s) removed from filesystem.', $count));
 
         return 0;
     }

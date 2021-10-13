@@ -14,3 +14,6 @@ vich_uploader:
             upload_destination: documents
             directory_namer: App\Filesystem\DocumentFilesystem
             namer: Vich\UploaderBundle\Naming\UniqidNamer
+        sick_notes:
+            upload_destination: sick_notes
+            namer: Vich\UploaderBundle\Naming\UniqidNamer

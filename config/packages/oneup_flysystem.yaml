@@ -11,6 +11,10 @@ oneup_flysystem:
             local:
                 directory: '%kernel.project_dir%/files/wiki'
 
+        sick_notes:
+            local:
+                directory: '%kernel.project_dir%/files/sick_notes'
+
     filesystems:
         messages:
             adapter: messages
@@ -21,3 +25,6 @@ oneup_flysystem:
         wiki:
             adapter: wiki
             mount: wiki
+        sick_notes:
+            adapter: sick_notes
+            mount: sick_notes

@@ -6,20 +6,21 @@ use App\Converter\StudentStringConverter;
 use App\Converter\UserStringConverter;
 use App\Entity\Grade;
 use App\Entity\GradeTeacher;
+use App\Entity\SickNote;
+use App\Entity\SickNoteReason;
 use App\Entity\User;
-use App\Repository\SickNoteRepositoryInterface;
+use App\Event\SickNoteCreatedEvent;
 use App\Section\SectionResolverInterface;
 use App\Settings\SickNoteSettings;
-use App\Timetable\TimetableTimeHelper;
 use SchulIT\CommonBundle\Helper\DateHelper;
-use Swift_Attachment;
 use Swift_Mailer;
 use Swift_Message;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
-use App\Entity\SickNote as SickNoteEntity;
 
-class SickNoteSender {
+class SickNoteSender implements EventSubscriberInterface {
 
     private $sender;
     private $appName;
@@ -31,11 +32,12 @@ class SickNoteSender {
     private $dateHelper;
     private $userConverter;
     private $settings;
-    private $repository;
     private $sectionResolver;
 
+    private $tokenStorage;
+
     public function __construct(string $sender, string $appName, StudentStringConverter $converter, Environment $twig, Swift_Mailer $mailer, TranslatorInterface $translator,
-                                DateHelper $dateHelper, UserStringConverter $userConverter, SickNoteSettings $settings, SickNoteRepositoryInterface $repository, SectionResolverInterface $sectionResolver) {
+                                DateHelper $dateHelper, UserStringConverter $userConverter, SickNoteSettings $settings, SectionResolverInterface $sectionResolver, TokenStorageInterface $tokenStorage) {
         $this->sender = $sender;
         $this->appName = $appName;
         $this->converter = $converter;
@@ -45,20 +47,11 @@ class SickNoteSender {
         $this->dateHelper = $dateHelper;
         $this->userConverter = $userConverter;
         $this->settings = $settings;
-        $this->repository = $repository;
         $this->sectionResolver = $sectionResolver;
+        $this->tokenStorage = $tokenStorage;
     }
 
-    private function persistInDatabase(SickNote $note): void {
-        $entity = (new SickNoteEntity())
-            ->setStudent($note->getStudent())
-            ->setFrom($note->getFrom())
-            ->setUntil($note->getUntil());
-        $this->repository->persist($entity);
-    }
-
-    public function sendSickNote(SickNote $note, User $sender) {
-        $this->persistInDatabase($note);
+    private function sendSickNote(SickNote $note, User $sender) {
 
         $cc = [ ];
         $teachers = [ ];
@@ -116,15 +109,31 @@ class SickNoteSender {
             $message->setReplyTo($this->settings->getRecipient());
         }
 
-        foreach($note->getAttachments() as $attachment) {
-            $message->attach(
-                new Swift_Attachment(
-                    file_get_contents($attachment->getRealPath()),
-                    $attachment->getClientOriginalName()
-                )
-            );
+        $this->mailer->send($message);
+    }
+
+    public function onSickNoteCreated(SickNoteCreatedEvent $event) {
+        $token = $this->tokenStorage->getToken();
+
+        if($token === null) {
+            return;
         }
 
-        $this->mailer->send($message);
+        $sender = $token->getUser();
+
+        if(!$sender instanceof User) {
+            return;
+        }
+
+        $this->sendSickNote($event->getSickNote(), $sender);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents() {
+        return [
+            SickNoteCreatedEvent::class => 'onSickNoteCreated'
+        ];
     }
 }

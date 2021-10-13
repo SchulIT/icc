@@ -1318,13 +1318,11 @@ sick_notes:
             label: Kontaktinformationen
             info: Es besteht die Möglichkeit, eine Telefonnummer oder E-Mail-Adresse zu hinterlegen, die für Rückfragen genutzt werden kann. Bei Angabe einer E-Mail-Adresse wird eine Kopie der Krankmeldung an diese Adresse versendet.
         send: absenden
-        success: Die Krankmeldung wurde erfolgreich an die Schule übermittelt. Falls eine E-Mail Adresse angegeben wurde, wird eine Kopie der Krankmeldung versendet. Der Versand der E-Mail dauert einige Minuten.
-    history:
-        label: Bisherige Krankmeldungen
-        empty: Keine Krankmeldungen eingereicht.
-        info: Hier sind eingesendete Krankmeldungen in zusammengefasster Form (Schüler, voraussichtliches Ende und Zeitpunkt der Meldung) einsehbar.
-        retention: '{1} Krankmeldungen werden einen Tag nach dem voraussichtlichen Ende automatisch gelöscht.|[1,Inf[ Krankmeldungen werden %count% Tage nach dem voraussichtlichen Ende automatisch gelöscht.'
-        note: '%student% bis zum %date%'
+        success: Die Krankmeldung wurde erfolgreich an die Schule übermittelt.
+    show:
+        label: Krankmeldung
+        header: "Krankmeldung von %student%"
+        contact: Kontaktinformationen
 
 audit:
     label: Audit-Log

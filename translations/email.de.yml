@@ -51,19 +51,7 @@ sick_note:
   quarantine:
     title: Quarantänemeldung %student% (%grade%)
     content: Es wurde eine Quarantänemeldung für %student% (%grade%) übermittelt.
-  created_by: "Übermittelt von: %user%"
-  created_at: "Zeitpunkt: %date%"
-  student: "Schüler/Schülerin: %student%"
-  grade: "Klasse/Jgst.: %grade%"
-  teachers: "Klassenleitung: %teachers%"
-  reason: "Grund: %reason%"
-  ordered_by: "Angeordnet von: %ordered_by%"
-  from: "Abwesend von: %date% (%lesson%. Stunde)"
-  until: "Abwesend bis voraussichtlich: %date% (%lesson%. Stunde)"
-  message: Mitteilung
-  phone: "Telefonnummer: %phone%"
-  email: "E-Mail-Adresse: %email%"
-  attachments: "Anhänge: %count%"
+  link: Zur Krankmeldung
   reply:
     email: "Auf diese E-Mail kann geantwortet werden. Antworten werden automatisch an den Verfasser (%email%) der Krankmeldung versendet."
     no_email: Dies ist eine automatisch versendete E-Mail. Da die Person keine E-Mail-Kontaktdaten angegeben hat, kann auf diese E-Mail nicht geantwortet werden.

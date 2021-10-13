@@ -6,13 +6,14 @@ use App\Converter\StudentStringConverter;
 use App\Entity\Student;
 use App\Settings\SickNoteSettings;
 use App\SickNote\SickNote;
-use App\SickNote\SickNoteReason;
+use App\Entity\SickNoteReason;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use FervoEnumBundle\Generated\Form\SickNoteReasonType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -90,10 +91,11 @@ class SickNoteType extends AbstractType {
                     'rows' => 5
                 ]
             ])
-            ->add('attachments', FileType::class, [
-                'multiple' => true,
-                'label' => 'sick_notes.add.attachments.label',
-                'required' => false
+            ->add('attachments', CollectionType::class, [
+                'entry_type' => SickNoteAttachmentType::class,
+                'allow_add' => true,
+                'allow_delete' => false,
+                'by_reference' => false
             ])
             ->add('phone', TextType::class, [
                 'required' => false,

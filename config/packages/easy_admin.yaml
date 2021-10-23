@@ -129,7 +129,7 @@ easy_admin:
                 fields:
                     - externalId
                     - name
-                    - displayName
+                    - { property: displayName, required: false }
                     - subject
                     - teachers
                     - studyGroup

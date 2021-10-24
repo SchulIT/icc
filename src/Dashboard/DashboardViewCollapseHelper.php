@@ -197,7 +197,9 @@ class DashboardViewCollapseHelper {
 
         // Add Non-Replacing substitutions
         foreach($additionalSubstitutions as $substitution) {
-            $lesson->addItem($substitution);
+            if($lesson->hasItem($substitution) === false) {
+                $lesson->addItem($substitution);
+            }
         }
 
         // STEP 4: EXAM SUPERVISION
@@ -467,6 +469,10 @@ class DashboardViewCollapseHelper {
     }
 
     private function isRemovableSubstitution(SubstitutionViewItem $viewItem, ?Teacher $teacher) {
+        if($this->isAdditionalSubstitution($viewItem)) {
+            return false;
+        }
+
         if(in_array($viewItem->getSubstitution()->getType(), $this->settings->getRemovableSubstitutionTypes())) {
             return true;
         }

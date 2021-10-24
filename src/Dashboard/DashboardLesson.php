@@ -72,6 +72,10 @@ class DashboardLesson {
         $this->items[] = $item;
     }
 
+    public function hasItem(AbstractViewItem $item): bool {
+        return in_array($item, $this->items);
+    }
+
     /**
      * Removes all timetable lessons from the lesson
      */

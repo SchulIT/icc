@@ -418,7 +418,7 @@ class DashboardViewHelper {
             foreach($exam->getTuitions() as $tuition) {
                 $tuitionTeacherIds = array_merge($tuitionTeacherIds, array_map(function(Teacher $teacher) {
                     return $teacher->getId();
-                }, $tuition->getTeachers()));
+                }, $tuition->getTeachers()->toArray()));
             }
 
             $supervisions = [ ];

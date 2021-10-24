@@ -90,7 +90,7 @@ class DashboardView {
     }
 
     public function getLesson(int $lessonNumber, bool $before = false): ?DashboardLesson {
-        if($before) {
+        if($before === true) {
             return $this->beforeLessons[$lessonNumber] ?? null;
         }
 

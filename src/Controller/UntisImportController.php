@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\TimetablePeriod;
+use App\Form\Import\Untis\CalendarWeekSchoolWeekType;
 use App\Form\Import\Untis\ExamImportType;
 use App\Form\Import\Untis\SubjectOverrideType;
 use App\Form\Import\Untis\SubstitutionImportType;
@@ -11,7 +12,6 @@ use App\Form\RegExpType;
 use App\Import\ImportException;
 use App\Section\SectionResolverInterface;
 use App\Settings\UntisSettings;
-use App\Untis\CalendarWeekSchoolWeekType;
 use App\Untis\DatabaseDateReader;
 use App\Untis\GpuExamImporter;
 use App\Untis\GpuSubstitutionImporter;

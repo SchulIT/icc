@@ -23,7 +23,7 @@ class GpuExamReader extends AbstractGpuReader {
             $exam->setLessonStart($this->getInt($record[4]));
             $exam->setLessonEnd($this->getInt($record[5]));
             $exam->setSubjects($this->getStringArrayOrEmptyArray($record[6]));
-            $exam->setTuitions($this->getStringArrayOrEmptyArray($record[7]));
+            $exam->setTuitions($this->getIntArrayOrEmptyArray($record[7]));
             $exam->setStudents($this->getStringArrayOrEmptyArray($record[8]));
             $exam->setSupervisions($this->getStringArrayOrEmptyArray($record[9], '-'));
             $exam->setRooms($this->getStringArrayOrEmptyArray($record[10], '-'));

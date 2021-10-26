@@ -3,20 +3,17 @@
 namespace App\Form;
 
 use App\Converter\StudentStringConverter;
+use App\Entity\SickNote;
+use App\Entity\SickNoteReason;
 use App\Entity\Student;
 use App\Settings\SickNoteSettings;
-use App\SickNote\SickNote;
-use App\Entity\SickNoteReason;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use FervoEnumBundle\Generated\Form\SickNoteReasonType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,15 +24,11 @@ class SickNoteType extends AbstractType {
 
     private $studentConverter;
     private $studentStrategy;
-    private $sorter;
-    private $dateHelper;
     private $settings;
 
-    public function __construct(StudentStringConverter $converter, StudentStrategy $strategy, Sorter $sorter, DateHelper $dateHelper, SickNoteSettings  $settings) {
+    public function __construct(StudentStringConverter $converter, StudentStrategy $strategy, SickNoteSettings  $settings) {
         $this->studentConverter = $converter;
         $this->studentStrategy = $strategy;
-        $this->sorter = $sorter;
-        $this->dateHelper = $dateHelper;
         $this->settings = $settings;
     }
 

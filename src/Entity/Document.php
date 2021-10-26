@@ -164,7 +164,7 @@ class Document {
     }
 
     /**
-     * @return Collection<StudyGroup>
+     * @return Collection<Grade>
      */
     public function getGrades(): Collection {
         return $this->grades;

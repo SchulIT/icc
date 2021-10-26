@@ -42,7 +42,7 @@ class GpuExam {
     private $subjects = [ ];
 
     /**
-     * @var string[]
+     * @var int[]
      */
     private $tuitions = [ ];
 
@@ -174,14 +174,14 @@ class GpuExam {
     }
 
     /**
-     * @return string[]
+     * @return int[]
      */
     public function getTuitions(): array {
         return $this->tuitions;
     }
 
     /**
-     * @param string[] $tuitions
+     * @param int[] $tuitions
      * @return GpuExam
      */
     public function setTuitions(array $tuitions): GpuExam {

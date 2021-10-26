@@ -40,7 +40,7 @@ class GpuExamImporter {
             }
 
             $exam = new ExamData();
-            $exam->setId($gpuExam->getId());
+            $exam->setId((string)$gpuExam->getId());
             $exam->setDate($gpuExam->getDate());
             $exam->setLessonStart($gpuExam->getLessonStart());
             $exam->setLessonEnd($gpuExam->getLessonEnd());

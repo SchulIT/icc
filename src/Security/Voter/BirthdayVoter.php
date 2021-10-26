@@ -3,7 +3,6 @@
 namespace App\Security\Voter;
 
 use App\Entity\Student;
-use App\Entity\Subject;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Exception\UnexpectedTypeException;
@@ -27,14 +26,11 @@ class BirthdayVoter extends Voter {
      * @inheritDoc
      */
     protected function supports(string $attribute, $subject) {
-        return $attribute === static::ShowBirthday;
+        return $attribute === static::ShowBirthday
+            && $subject instanceof Student;
     }
 
     /**
-     * @param string $attribute
-     * @param Student|null $subject
-     * @param TokenInterface $token
-     * @return bool|void
      * @throws UnexpectedTypeException
      */
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token) {
@@ -42,8 +38,8 @@ class BirthdayVoter extends Voter {
             throw new LogicException('This code should not be executed.');
         }
 
-        if($subject !== null && !$subject instanceof Student) {
-            throw new UnexpectedTypeException($subject, Subject::class);
+        if(!$subject instanceof Student) {
+            throw new UnexpectedTypeException($subject, Student::class);
         }
 
         $user = $token->getUser();
@@ -57,10 +53,6 @@ class BirthdayVoter extends Voter {
         }
 
         if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ])) {
-            if($subject === null) {
-                return false;
-            }
-
             return $user->getStudents()->contains($subject);
         }
 

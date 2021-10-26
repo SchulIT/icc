@@ -45,7 +45,7 @@ class GpuSubstitutionImporter {
             }
 
             $substitutionData = (new SubstitutionData())
-                ->setId($substitution->getId())
+                ->setId((string)$substitution->getId())
                 ->setDate($substitution->getDate())
                 ->setLessonStart($substitution->getLesson())
                 ->setLessonEnd($substitution->getLesson())
@@ -109,7 +109,7 @@ class GpuSubstitutionImporter {
         return $map;
     }
 
-    private function getType(GpuSubstitution $substitution): ?string {
+    private function getType(GpuSubstitution $substitution): string {
         $map = [
             'S' => 'Betreuung',
             'A' => 'Sondereinsatz',

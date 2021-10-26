@@ -208,7 +208,7 @@ class SickNoteController extends AbstractController {
      * @Route("/attachments/{uuid}", name="download_sick_note_attachment", priority="10")
      */
     public function downloadAttachment(SickNoteAttachment $attachment, FilesystemInterface $sickNoteFilesystem, MimeTypes $mimeTypes) {
-        $this->denyAccessUnlessGranted(SickNoteVoter::View, $sickNote);
+        $this->denyAccessUnlessGranted(SickNoteVoter::View, $attachment->getSickNote());
 
         if($sickNoteFilesystem->has($attachment->getPath()) !== true) {
             throw new NotFoundHttpException();

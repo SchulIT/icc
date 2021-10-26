@@ -73,7 +73,7 @@ class AnonymizeDatabaseCommand extends Command {
         $firstname = $this->slugger->slug($teacher->getFirstname());
         $lastname = $this->slugger->slug($teacher->getLastname());
 
-        return sprintf('%s%s', u($lastname)->upper()->truncate('2'), u($firstname)->upper()->truncate(2));
+        return sprintf('%s%s', u($lastname)->upper()->truncate(2), u($firstname)->upper()->truncate(2));
     }
 
     private function generateEmail(string $firstname, string $lastname): string {

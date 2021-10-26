@@ -110,9 +110,9 @@ class AppExtension extends AbstractExtension {
     }
 
     /**
-     * @param StudyGroup[]|ArrayCollection $studyGroups
+     * @param StudyGroup[]|ArrayCollection|iterable $studyGroups
      * @param bool $sort
-     * @param Grade[]|ArrayCollection $onlyGrades
+     * @param Grade[]|ArrayCollection|iterable $onlyGrades
      * @return string
      */
     public function studyGroups(iterable $studyGroups, bool $sort = false, iterable $onlyGrades = [ ]) {

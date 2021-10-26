@@ -543,28 +543,9 @@ class Builder {
         ])
             ->setExtra('icon', 'fa fa-home');
 
-        $messageCount = 0;
-
-        /** @var User|null $user */
-        $user = $this->tokenStorage->getToken()->getUser();
-
-        if($user instanceof User) {
-            $studyGroups = [ ];
-
-            foreach($user->getStudents() as $student) {
-                $studyGroups += $student->getStudyGroupMemberships()->map(function (StudyGroupMembership $membership) {
-                    return $membership->getStudyGroup();
-                })->toArray();
-            }
-
-            $messageCount = $this->messageRepository->countBy(MessageScope::Messages(), $user->getUserType(), $this->dateHelper->getToday(), $studyGroups);
-
-        }
-
         $menu->addChild('messages.overview.label', [
             'route' => 'messages'
         ])
-            ->setExtra('count', $messageCount)
             ->setExtra('icon', 'fas fa-envelope-open-text');
 
         $this->plansMenu($menu);

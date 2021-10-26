@@ -16,10 +16,10 @@ class Importer {
     private $importDateTimeRepository;
     private $logger;
 
-    public function __construct(ValidatorInterface $validator, ImportDateTypeRepositoryInterface $importDateTimeRepository, LoggerInterface $logger) {
+    public function __construct(ValidatorInterface $validator, ImportDateTypeRepositoryInterface $importDateTimeRepository, LoggerInterface $importLogger) {
         $this->validator = $validator;
         $this->importDateTimeRepository = $importDateTimeRepository;
-        $this->logger = $logger;
+        $this->logger = $importLogger;
     }
 
     /**

@@ -557,7 +557,7 @@ class Builder {
                 })->toArray();
             }
 
-            $messageCount = $this->messageRepository->countBy(MessageScope::Messages(), $user->getUserType(), $this->dateHelper->getToday(), $studyGroups, false);
+            $messageCount = $this->messageRepository->countBy(MessageScope::Messages(), $user->getUserType(), $this->dateHelper->getToday(), $studyGroups);
 
         }
 

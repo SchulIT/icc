@@ -163,7 +163,7 @@ class ApiV1Controller extends AbstractController {
         $user = $this->getUser();
         $studyGroups = $this->getStudyGroups($user);
 
-        $messages = $messageRepository->findBy(MessageScope::Messages(), $user->getUserType(), $dateHelper->getToday(), $studyGroups, false);
+        $messages = $messageRepository->findBy(MessageScope::Messages(), $user->getUserType(), $dateHelper->getToday(), $studyGroups);
 
         return $this->returnJson(
             (new MessageList())

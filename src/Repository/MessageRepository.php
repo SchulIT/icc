@@ -84,15 +84,15 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
     /**
      * @inheritDoc
      */
-    public function findBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [], bool $archive = false) {
-        return $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups, $archive)->getQuery()->getResult();
+    public function findBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = []) {
+        return $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups)->getQuery()->getResult();
     }
 
     /**
      * @inheritDoc
      */
-    public function countBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = [], bool $archive = false): int {
-        $qb = $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups, $archive);
+    public function countBy(MessageScope $scope, UserType $userType, \DateTime $today = null, array $studyGroups = []): int {
+        $qb = $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups);
 
         $qb->select('COUNT(DISTINCT m.id)');
 

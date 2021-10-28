@@ -101,6 +101,7 @@ class Appointment {
     /**
      * @ORM\ManyToOne(targetEntity="AppointmentCategory")
      * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Assert\NotNull()
      * @var AppointmentCategory
      */
     private $category;

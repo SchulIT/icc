@@ -68,7 +68,11 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
      */
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
-            $this->appointmentRepository->findAll(),
+            array_filter(
+                $this->appointmentRepository->findAll(),
+                function(Appointment $appointment) {
+                    return !empty($appointment->getExternalId());
+                }),
             function (Appointment $appointment) {
                 return $appointment->getExternalId();
             }

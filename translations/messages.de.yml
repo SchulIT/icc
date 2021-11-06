@@ -1467,6 +1467,9 @@ import:
             days:
                 label: Tage
                 help: Standard-Anzahl von Tagen, die automatisch bei der Import-Maske ausgewählt werden soll.
+            collapse:
+                label: Vertretungen zusammenfassen
+                help: Standardmäßig werden Vertretungen pro Stunde exportiert. Wenn diese Option aktiv ist, werden Doppelstunden-Vertretungen erkannt und nicht einzeln im System importiert (erhöht die Lesbarkeit des Vertretungsplans).
         exams:
             include_students:
                 label: Klausurschreibende immer aus Untis importieren

@@ -25,6 +25,25 @@ class GpuSubstitutionImporter {
         $this->settings = $settings;
     }
 
+    private function sort(GpuSubstitution $substitutionA, GpuSubstitution $substitutionB): int {
+        if($substitutionA->getDate() == $substitutionB->getDate()) {
+            if(strnatcmp($substitutionA->getTeacher(), $substitutionB->getTeacher()) === 0) {
+                if(strnatcmp($substitutionA->getSubject(),  $substitutionB->getSubject()) === 0) {
+                    // Sort by lesson last
+                    return $substitutionA->getLesson() - $substitutionB->getLesson();
+                }
+
+                return strnatcmp($substitutionA->getSubject(), $substitutionB->getSubject());
+            }
+
+            // Sort by teacher second
+            return strnatcmp($substitutionA->getTeacher(), $substitutionB->getTeacher());
+        }
+
+        // Sort by date first
+        return $substitutionA->getDate() < $substitutionB ? 1 : -1;
+    }
+
     public function import(Reader $reader, DateTime $start, DateTime $end, bool $suppressNotifications): ImportResult {
         $start->setTime(0,0,0);
         $end->setTime(0,0,0);
@@ -34,21 +53,36 @@ class GpuSubstitutionImporter {
         $substitutions = [ ];
 
         $subjectOverrideMap = $this->getSubjectOverridesMap();
+        $gpuSubstitutions = $this->gpuReader->readGpu($reader);
 
-        foreach($this->gpuReader->readGpu($reader) as $substitution) {
+        $gpuSubstitutions = array_filter($gpuSubstitutions, function(GpuSubstitution $substitution) use ($start, $end) {
             if($substitution->getDate() < $start || $substitution->getDate() > $end) {
-                continue;
+                return false;
             }
 
             if($substitution->getId() === 0) {
-                continue;
+                return false;
+            }
+
+            return true;
+        });
+
+        usort($gpuSubstitutions, [ $this, 'sort' ]);
+
+        for($idx = 0; $idx < count($gpuSubstitutions); $idx++) {
+            $substitution = $gpuSubstitutions[$idx];
+
+            $includeNextLesson = false;
+
+            if($this->settings->isSubstitutionCollapsingEnabled() && $idx+1 < count($gpuSubstitutions)) {
+                $includeNextLesson = $this->isSubstitutionOfNextLesson($substitution, $gpuSubstitutions[$idx + 1]);
             }
 
             $substitutionData = (new SubstitutionData())
                 ->setId((string)$substitution->getId())
                 ->setDate($substitution->getDate())
                 ->setLessonStart($substitution->getLesson())
-                ->setLessonEnd($substitution->getLesson())
+                ->setLessonEnd($substitution->getLesson() + ($includeNextLesson ? 1 : 0))
                 ->setRooms($substitution->getRooms())
                 ->setReplacementRooms($substitution->getReplacementRooms())
                 ->setGrades($substitution->getGrades())
@@ -91,6 +125,11 @@ class GpuSubstitutionImporter {
             }
 
             $substitutions[] = $substitutionData;
+
+            if($includeNextLesson) {
+                // Skip next substitution as it is already handled.
+                $idx++;
+            }
         }
 
         $data->setSubstitutions($substitutions);
@@ -148,5 +187,28 @@ class GpuSubstitutionImporter {
 
     private function matchesFlag(int $value, int $flag): bool {
         return ($value & $flag) == $flag;
+    }
+
+    /**
+     * Checks whether the substitution are identical but their IDs and their lessons. These values of the second
+     * substitution need to be increments of the ones of the first one.
+     *
+     * @param GpuSubstitution $first
+     * @param GpuSubstitution $second
+     * @return bool
+     */
+    private function isSubstitutionOfNextLesson(GpuSubstitution $first, GpuSubstitution $second): bool {
+        return $first->getLesson() + 1 === $second->getLesson()
+            && $first->getRooms() === $second->getRooms()
+            && $first->getReplacementRooms() === $second->getReplacementRooms()
+            && $first->getGrades() === $second->getGrades()
+            && $first->getReplacementGrades() === $second->getReplacementGrades()
+            && $first->getSubject() === $second->getSubject()
+            && $first->getReplacementSubject() === $second->getReplacementSubject()
+            && $first->getTeacher() === $second->getTeacher()
+            && $first->getReplacementTeacher() === $second->getReplacementTeacher()
+            && $first->getFlags() === $second->getFlags()
+            && (($first->getType() === null && $second->getType() === null) || $first->getType()->equals($second->getType()))
+            && $first->getRemark() === $second->getRemark();
     }
 }

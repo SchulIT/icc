@@ -27,6 +27,14 @@ class UntisSettings extends AbstractSettings {
         return $this->getValue('untis.import.substitution.days', 7);
     }
 
+    public function isSubstitutionCollapsingEnabled(): bool {
+        return $this->getValue('untis.import.substitution.collapse', true);
+    }
+
+    public function setSubstitutionCollapsingEnabled(bool $value) {
+        $this->setValue('untis.import.substitution.collapse', $value);
+    }
+
     public function setAlwaysImportExamWriters(bool $alwaysImport): void {
         $this->setValue('untis.import.exams.always_import_students', $alwaysImport);
     }

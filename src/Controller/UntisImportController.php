@@ -62,6 +62,15 @@ class UntisImportController extends AbstractController {
                 'help' => 'import.settings.substitutions.days.help',
                 'data' => $settings->getSubstitutionDays()
             ])
+            ->add('collapse_substitutions', CheckboxType::class, [
+                'label' => 'import.settings.substitutions.collapse.label',
+                'help' => 'import.settings.substitutions.collapse.help',
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ],
+                'data' => $settings->isSubstitutionCollapsingEnabled()
+            ])
             ->add('exam_writers', CheckboxType::class, [
                 'label' => 'import.settings.exams.include_students.label',
                 'help' => 'import.settings.exams.include_students.help',
@@ -83,6 +92,7 @@ class UntisImportController extends AbstractController {
             $settings->setSubjectOverrides($form->get('overrides')->getData());
             $settings->setWeekMap($form->get('weeks')->getData());
             $settings->setSubstitutionDays($form->get('substitution_days')->getData());
+            $settings->setSubstitutionCollapsingEnabled($form->get('collapse_substitutions')->getData());
             $settings->setAlwaysImportExamWriters($form->get('exam_writers')->getData());
             $settings->setIgnoreStudentOptionRegExp($form->get('ignore_options_regexp')->getData());
 

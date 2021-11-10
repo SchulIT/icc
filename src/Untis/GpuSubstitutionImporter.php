@@ -176,8 +176,16 @@ class GpuSubstitutionImporter {
             GpuSubstitutionFlag::NoLesson => 'Unterrichtsfrei'
         ];
 
+        /**
+         * @var int $flag
+         * @var string $value
+         */
         foreach($map as $flag => $value) {
             if($this->matchesFlag($substitution->getFlags(), $flag)) {
+                if($flag === GpuSubstitutionFlag::PlusAsStandIn && empty($substitution->getReplacementTeacher())) {
+                    return 'Eigenverantwortliches Arbeiten';
+                }
+
                 return $value;
             }
         }

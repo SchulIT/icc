@@ -48,7 +48,7 @@ easy_admin_bundle:
     type: annotation
 
 dh_doctrine_audit:
-    resource: "@DHDoctrineAuditBundle/Controller/"
+    resource: "@DHAuditorBundle/Controller/"
     type: annotation
     prefix: /admin
 

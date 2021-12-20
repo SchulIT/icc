@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Validator\Color;
-use DH\DoctrineAuditBundle\Annotation\Auditable;
+use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;

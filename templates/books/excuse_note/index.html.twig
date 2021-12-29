@@ -20,8 +20,7 @@
                             <colgroup>
                                 <col>
                                 <col class="column-md">
-                                <col class="column-sm">
-                                <col class="column-sm">
+                                <col class="column-md">
                                 <col class="column-lg">
                                 <col class="column-sm">
                             </colgroup>
@@ -29,7 +28,6 @@
                             <thead>
                             <tr>
                                 <th>{{ 'label.student'|trans }}</th>
-                                <th>{{ 'label.date'|trans }}</th>
                                 <th>{{ 'label.start'|trans }}</th>
                                 <th>{{ 'label.end'|trans }}</th>
                                 <th>{{ 'label.excused_by'|trans }}</th>
@@ -41,9 +39,12 @@
                             {% for note in notes %}
                                 <tr>
                                     <td class="align-middle">{{ note.student|student }}</td>
-                                    <td class="align-middle">{{ note.date|format_date }}</td>
-                                    <td class="align-middle">{{ note.lessonStart }}</td>
-                                    <td class="align-middle">{{ note.lessonEnd }}</td>
+                                    <td class="align-middle">
+                                        {{ note.from.date|format_date }} {{ 'dashboard.lesson'|trans({'%lesson%': note.from.lesson}) }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ note.until.date|format_date }} {{ 'dashboard.lesson'|trans({'%lesson%': note.until.lesson}) }}
+                                    </td>
                                     <td class="align-middle">{{ note.excusedBy|teacher }}</td>
                                     <td class="align-middle">
                                         <div class="dropdown d-inline">

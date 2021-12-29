@@ -122,9 +122,10 @@ class ExcuseNoteController extends AbstractController {
             'message_parameters' => [
                 '%firstname%' => $excuse->getStudent()->getFirstname(),
                 '%lastname%' => $excuse->getStudent()->getLastname(),
-                '%date%' => $excuse->getDate()->format($translator->trans('date.format')),
-                '%start%' => $excuse->getLessonStart(),
-                '%end%' => $excuse->getLessonEnd()
+                '%start_date%' => $excuse->getFrom()->getDate()->format($translator->trans('date.format')),
+                '%start_lesson%' => $excuse->getFrom()->getLesson(),
+                '%end_date%' => $excuse->getUntil()->getDate()->format($translator->trans('date.format')),
+                '%end_lesson%' => $excuse->getUntil()->getLesson()
             ]
         ]);
         $form->handleRequest($request);

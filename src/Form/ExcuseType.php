@@ -16,20 +16,16 @@ class ExcuseType extends AbstractType {
                 'placeholder' => 'label.select.student',
                 'multiple' => false,
             ])
-            ->add('date', DateType::class, [
-                'widget' => 'single_text',
-                'label' => 'label.date'
+            ->add('from', DateLessonType::class, [
+                'label' => 'label.start'
+            ])
+            ->add('until', DateLessonType::class, [
+                'label' => 'label.end'
             ])
             ->add('excusedBy', TeacherChoiceType::class, [
                 'label' => 'label.excused_by',
                 'multiple' => false,
                 'placeholder' => 'label.select.teacher'
-            ])
-            ->add('lessonStart', IntegerType::class, [
-                'label' => 'label.start'
-            ])
-            ->add('lessonEnd', IntegerType::class, [
-                'label' => 'label.end'
             ])
             ->add('comment', MarkdownType::class, [
                 'label' => 'label.comment'

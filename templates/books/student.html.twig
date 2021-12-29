@@ -158,39 +158,30 @@
                                             {{ attendance.comment }}
                                         </td>
                                         <td>
+                                            {% set has_excuses = lesson_attendance.excuses|length > 0 %}
                                             <form action="{{ path('change_lesson_attendance_excuse_status', { uuid: attendance.uuid.toString }) }}" method="post">
                                                 <input type="hidden" name="lesson_attendance_excuse[_token]" value="{{ csrf_token('lesson_attendance_excuse_status') }}">
 
                                                 <div class="btn-group">
                                                     <label class="btn btn-outline-secondary" title="{{ 'book.students.not_set'|trans }}">
-                                                        <input type="radio" name="lesson_attendance_excuse[excuseStatus]" value="0" data-trigger="submit" {% if attendance.excuseStatus == 0 and lesson_attendance.isExcused == false %}checked{% endif %}>
+                                                        <input type="radio" name="lesson_attendance_excuse[excuseStatus]" value="0" data-trigger="submit" {% if has_excuses %}disabled="disabled"{% endif %} {% if attendance.excuseStatus == 0 and lesson_attendance.isExcused == false %}checked{% endif %}>
                                                         <i class="fas fa-question"></i>
                                                     </label>
 
                                                     <label class="btn btn-outline-secondary" title="{{ 'book.students.excused'|trans }}">
-                                                        <input type="radio" name="lesson_attendance_excuse[excuseStatus]" value="1" data-trigger="submit" {% if lesson_attendance.isExcused %}checked{% endif %}>
+                                                        <input type="radio" name="lesson_attendance_excuse[excuseStatus]" value="1" data-trigger="submit" {% if has_excuses %}disabled="disabled"{% endif %} {% if lesson_attendance.isExcused %}checked{% endif %}>
                                                         <i class="fas fa-check"></i>
                                                     </label>
 
                                                     <label class="btn btn-outline-secondary" title="{{ 'book.students.not_excused'|trans }}">
-                                                        <input type="radio" name="lesson_attendance_excuse[excuseStatus]" value="2" data-trigger="submit" {% if attendance.excuseStatus == 2 and lesson_attendance.isExcused == false %}checked{% endif %}>
+                                                        <input type="radio" name="lesson_attendance_excuse[excuseStatus]" value="2" data-trigger="submit" {% if has_excuses %}disabled="disabled"{% endif %} {% if attendance.excuseStatus == 2 and lesson_attendance.isExcused == false %}checked{% endif %}>
                                                         <i class="fas fa-times"></i>
                                                     </label>
                                                 </div>
                                             </form>
 
-                                            {% if lesson_attendance.excuses|length > 0 %}
+                                            {% if has_excuses > 0 %}
                                                 {{ 'book.students.excuse_note_exists'|trans }}
-
-                                                <ul class="list-unstyled mb-0">
-                                                {% for excuse in lesson_attendance.excuses %}
-                                                    <li>
-                                                        <a href="{{ path('edit_excuse', { uuid: excuse.uuid.toString }) }}">
-                                                            <i class="fas fa-pencil-alt"></i> {{ excuse.date|format_date }}
-                                                        </a>
-                                                    </li>
-                                                {% endfor %}
-                                                </ul>
                                             {% endif %}
                                         </td>
                                     </tr>

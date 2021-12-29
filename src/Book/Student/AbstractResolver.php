@@ -6,14 +6,18 @@ use App\Entity\ExcuseNote;
 use App\Entity\LessonAttendance as LessonAttendanceEntity;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
+use App\Settings\TimetableSettings;
 
 abstract class AbstractResolver {
     private $attendanceRepository;
     private $excuseNoteRepository;
 
-    public function __construct(LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository) {
+    private $timetableSettings;
+
+    public function __construct(LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository, TimetableSettings $timetableSettings) {
         $this->attendanceRepository = $attendanceRepository;
         $this->excuseNoteRepository = $excuseNoteRepository;
+        $this->timetableSettings = $timetableSettings;
     }
 
     protected function getAttendanceRepository(): LessonAttendanceRepositoryInterface {
@@ -33,14 +37,19 @@ abstract class AbstractResolver {
         $collection = [ ];
 
         foreach($excuseNotes as $excuseNote) {
-            for($lesson = $excuseNote->getLessonStart(); $lesson <= $excuseNote->getLessonEnd(); $lesson++) {
-                $key = sprintf('%s-%d', $excuseNote->getDate()->format('Y-m-d'), $lesson);
+            for($date = $excuseNote->getFrom()->getDate(); $date <= $excuseNote->getUntil()->getDate(); $date->modify('+1 day')) {
+                for($lesson = ($date == $excuseNote->getFrom()->getDate() ? $excuseNote->getFrom()->getLesson() : 1);
+                    $lesson <= ($date == $excuseNote->getUntil()->getDate() ? $excuseNote->getUntil()->getLesson() : $this->timetableSettings->getMaxLessons());
+                    $lesson++
+                ) {
+                    $key = sprintf('%s-%d', $date->format('Y-m-d'), $lesson);
 
-                if(!isset($collection[$key])) {
-                    $collection[$key] = new ExcuseCollection($excuseNote->getDate(), $lesson);
+                    if(!isset($collection[$key])) {
+                        $collection[$key] = new ExcuseCollection($date, $lesson);
+                    }
+
+                    $collection[$key]->add($excuseNote);
                 }
-
-                $collection[$key]->add($excuseNote);
             }
         }
 

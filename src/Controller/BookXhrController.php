@@ -112,7 +112,7 @@ class BookXhrController extends AbstractController {
         }
 
         foreach($excuseNoteRepository->findByStudentsAndDate($students, $date) as $note) {
-            if($note->getLessonStart() <= $lesson && $note->getLessonEnd() >= $lesson) {
+            if($note->appliesToLesson($date, $lesson)) {
                 $absences[] = [
                     'student' => Student::fromEntity($note->getStudent(), $sectionResolver->getCurrentSection()),
                     'reason' => 'excuse'

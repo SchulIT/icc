@@ -1447,7 +1447,7 @@ book:
         remove:
             label: Entschuldigung löschen
             success: Entschuldigung erfolgreich gelöscht
-            confirm: 'Soll die Entschuldigung für %lastname%, %firstname (%date%, %start%.-%end%. Stunde) wirklich gelöscht werden?'
+            confirm: 'Soll die Entschuldigung für %lastname%, %firstname (%start_date% %start_lesson%. Stunde - %end_date% %end_lesson%. Stunde) wirklich gelöscht werden?'
 
 external:
     docs: Handbuch

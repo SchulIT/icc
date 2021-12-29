@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Validator\DateLessonGreaterThan;
 use DateTime;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
@@ -26,25 +27,19 @@ class ExcuseNote {
     private $student;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Embedded(class="DateLesson")
      * @Assert\NotNull()
-     * @var DateTime|null
+     * @var DateLesson|null
      */
-    private $date;
+    private $from;
 
     /**
-     * @ORM\Column(type="integer")
-     * @Assert\GreaterThanOrEqual(1)
-     * @var int
+     * @ORM\Embedded(class="DateLesson")
+     * @DateLessonGreaterThan(propertyPath="from")
+     * @Assert\NotNull()
+     * @var DateLesson|null
      */
-    private $lessonStart = 1;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\GreaterThanOrEqual(propertyPath="lessonStart")
-     * @var int
-     */
-    private $lessonEnd = 1;
+    private $until;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -81,50 +76,34 @@ class ExcuseNote {
     }
 
     /**
-     * @return DateTime|null
+     * @return DateLesson|null
      */
-    public function getDate(): ?DateTime {
-        return $this->date;
+    public function getFrom(): ?DateLesson {
+        return $this->from;
     }
 
     /**
-     * @param DateTime|null $date
+     * @param DateLesson|null $from
      * @return ExcuseNote
      */
-    public function setDate(?DateTime $date): ExcuseNote {
-        $this->date = $date;
+    public function setFrom(?DateLesson $from): ExcuseNote {
+        $this->from = $from;
         return $this;
     }
 
     /**
-     * @return int
+     * @return DateLesson|null
      */
-    public function getLessonStart(): int {
-        return $this->lessonStart;
+    public function getUntil(): ?DateLesson {
+        return $this->until;
     }
 
     /**
-     * @param int $lessonStart
+     * @param DateLesson|null $until
      * @return ExcuseNote
      */
-    public function setLessonStart(int $lessonStart): ExcuseNote {
-        $this->lessonStart = $lessonStart;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLessonEnd(): int {
-        return $this->lessonEnd;
-    }
-
-    /**
-     * @param int $lessonEnd
-     * @return ExcuseNote
-     */
-    public function setLessonEnd(int $lessonEnd): ExcuseNote {
-        $this->lessonEnd = $lessonEnd;
+    public function setUntil(?DateLesson $until): ExcuseNote {
+        $this->until = $until;
         return $this;
     }
 
@@ -158,5 +137,32 @@ class ExcuseNote {
     public function setExcusedBy(?Teacher $excusedBy): ExcuseNote {
         $this->excusedBy = $excusedBy;
         return $this;
+    }
+
+    /**
+     * Check if excuse note applies to a given lesson on a given day.
+     *
+     * @param DateTime $dateTime
+     * @param int $lesson
+     * @return bool
+     */
+    public function appliesToLesson(DateTime $dateTime, int $lesson): bool {
+        if($dateTime < $this->getFrom()->getDate() || $dateTime > $this->getUntil()->getDate()) {
+            return false;
+        }
+
+        if($this->getFrom()->getDate() < $dateTime && $dateTime < $this->getUntil()->getDate()) {
+            return true;
+        }
+
+        if($this->getFrom()->getDate() == $dateTime && $this->getFrom()->getLesson() <= $lesson) {
+            return true;
+        }
+
+        if($this->getUntil()->getDate() == $dateTime && $this->getUntil()->getLesson() >= $lesson) {
+            return true;
+        }
+
+        return false;
     }
 }

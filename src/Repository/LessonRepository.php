@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Grade;
 use App\Entity\Lesson;
 use App\Entity\Section;
+use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use DateTime;
@@ -257,5 +258,35 @@ class LessonRepository extends AbstractTransactionalRepository implements Lesson
             ->setParameter('section', $section->getId())
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param Tuition[] $tuitions
+     * @param Student|null $student
+     * @return int
+     */
+    public function countHoldLessons(array $tuitions, ?Student $student): int {
+        $tuitionIds = array_map(function(Tuition $tuition) {
+            return $tuition->getId();
+        }, $tuitions);
+
+        $qb = $this->em->createQueryBuilder()
+            ->select('SUM(l.lessonEnd - l.lessonStart + 1)')
+            ->from(Lesson::class, 'l')
+            ->leftJoin('l.tuition', 't')
+            ->leftJoin('l.entries', 'e')
+            ->where('t.id IN (:tuitions)')
+            ->setParameter('tuitions', $tuitionIds);
+
+        if($student !== null) {
+            $qb->leftJoin('t.studyGroup', 'sg')
+                ->leftJoin('sg.memberships', 'm')
+                ->leftJoin('m.student', 's')
+                ->andWhere('s.id = :student')
+                ->setParameter('student', $student->getId());
+        }
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
     }
 }

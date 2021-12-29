@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Grade;
 use App\Entity\Lesson;
 use App\Entity\Section;
+use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use DateTime;
@@ -45,4 +46,11 @@ interface LessonRepositoryInterface extends TransactionalRepositoryInterface {
     public function remove(Lesson $lesson): void;
 
     public function removeBySection(Section $section): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     * @param Student|null $student
+     * @return int
+     */
+    public function countHoldLessons(array $tuitions, ?Student $student): int;
 }

@@ -11,6 +11,9 @@ class StudentInfo {
     /** @var Student */
     private $student;
 
+    /** @var int */
+    private $totalLessonsCount;
+
     /** @var LessonAttendance[] */
     private $lateLessonAttendances;
 
@@ -22,12 +25,14 @@ class StudentInfo {
 
     /**
      * @param Student $student
+     * @param int $totalLessonsCount
      * @param LessonAttendance[] $lateLessonAttendances
      * @param LessonAttendance[] $absentLessonAttendances
      * @param BookComment[] $comments
      */
-    public function __construct(Student $student, array $lateLessonAttendances, array $absentLessonAttendances, array $comments) {
+    public function __construct(Student $student, int $totalLessonsCount, array $lateLessonAttendances, array $absentLessonAttendances, array $comments) {
         $this->student = $student;
+        $this->totalLessonsCount = $totalLessonsCount;
         $this->lateLessonAttendances = $lateLessonAttendances;
         $this->absentLessonAttendances = $absentLessonAttendances;
         $this->comments = $comments;
@@ -38,6 +43,13 @@ class StudentInfo {
      */
     public function getStudent(): Student {
         return $this->student;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalLessonsCount(): int {
+        return $this->totalLessonsCount;
     }
 
     /**
@@ -92,7 +104,8 @@ class StudentInfo {
         return array_sum(
             array_map(
                 function(LessonAttendance $attendance) {
-                    return $attendance->isExcused() ? 0 : 1;
+                    return $attendance->getAttendance()->getExcuseStatus() === LessonAttendanceExcuseStatus::NotExcused
+                        && $attendance->getExcuses()->count() === 0;
                 },
                 $this->getAbsentLessonAttendances()
             )

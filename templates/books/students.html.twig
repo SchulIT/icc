@@ -36,6 +36,7 @@
                                 <col class="column-md">
                                 <col class="column-md">
                                 <col class="column-md">
+                                <col class="column-md">
                                 <col class="column-sm">
                             </colgroup>
 
@@ -46,6 +47,7 @@
                                 <th>{{ 'book.students.late'|trans }}</th>
                                 <th>{{ 'book.students.absent'|trans }}</th>
                                 <th>{{ 'book.students.not_excused'|trans }}</th>
+                                <th>{{ 'book.students.not_set'|trans }}</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -74,12 +76,17 @@
                                     </td>
 
                                     <td class="align-middle {% if studentInfo.absentLessonsCount > 0 %}bg-warning{% endif %}">
-                                        <i class="fas fa-user-times"></i> {{ studentInfo.absentLessonsCount }}
+                                        <i class="fas fa-user-times"></i> {{ studentInfo.absentLessonsCount }} / {{ studentInfo.totalLessonsCount }}
                                     </td>
 
                                     {% set nonExcusedCount = studentInfo.notExcusedAbsentLessonsCount %}
                                     <td class="align-middle {% if nonExcusedCount > 0 %}bg-danger text-white{% endif%}">
                                         <i class="fas fa-exclamation-circle"></i> {{ nonExcusedCount }}
+                                    </td>
+
+                                    {% set nonSetCount = studentInfo.notExcusedOrNotSetLessonsCount %}
+                                    <td class="align-middle {% if nonSetCount > 0 %}bg-danger text-white{% endif%}">
+                                        <i class="fas fa-exclamation-circle"></i> {{ nonSetCount }}
                                     </td>
 
                                     <td class="align-middle">

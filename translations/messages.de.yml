@@ -1391,7 +1391,7 @@ book:
         absent: Absenzen
         not_excused: unentschuldigt
         excused: entschuldigt
-        not_set: nicht festgelegt (unentschuldigt)
+        not_set: offen (unentschuldigt)
         excuse_note_exists: Für diese Stunde liegt eine Entschuldigung vor.
 
     attendance:

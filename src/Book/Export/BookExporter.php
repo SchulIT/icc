@@ -66,7 +66,7 @@ class BookExporter {
         $studentInfo = [ ];
 
         foreach($students as $student) {
-            $info = $this->studentInfoResolver->resolveStudentInfo($student, $section, $tuition);
+            $info = $this->studentInfoResolver->resolveStudentInfo($student, $section, $tuition !== null ? [ $tuition ] : [ ]);
             $studentInfo[$student->getId()] = $info;
             $book->addStudentSummary(
                 (new StudentSummary())

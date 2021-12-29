@@ -71,7 +71,7 @@ class BookController extends AbstractController {
 
     private function getClosestMonthStart(DateTime $dateTime): DateTime {
         $dateTime = clone $dateTime;
-        $dateTime->setDate($dateTime->format('Y'), $dateTime->format('m'), 1);
+        $dateTime->setDate((int)$dateTime->format('Y'), (int)$dateTime->format('m'), 1);
         return $dateTime;
     }
 

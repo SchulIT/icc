@@ -66,6 +66,12 @@ class BookController extends AbstractController {
         return $dateTime;
     }
 
+    private function getClosestMonthStart(DateTime $dateTime): DateTime {
+        $dateTime = clone $dateTime;
+        $dateTime->setDate($dateTime->format('Y'), $dateTime->format('m'), 1);
+        return $dateTime;
+    }
+
     /**
      * @param DateTime $start
      * @param DateTime $end
@@ -81,6 +87,22 @@ class BookController extends AbstractController {
         }
 
         return $weekStarts;
+    }
+
+    /**
+     * @param DateTime $start
+     * @param DateTime $end $end - $start must not be greater than one year!
+     * @return DateTime[] All first days of the month with their month number as key.
+     */
+    private function listCalendarMonths(DateTime $start, DateTime $end): array {
+        $firstDays = [ ];
+        $current = $this->getClosestMonthStart($start);
+
+        while($current < $end) {
+            $firstDays[(int)$current->format('m')] = clone $current;
+            $current = $current->modify('+1 month');
+        }
+        return $firstDays;
     }
 
     private function resolveSelectedDate(Request $request, ?Section $currentSection, DateHelper $dateHelper): ?DateTime {
@@ -100,6 +122,30 @@ class BookController extends AbstractController {
 
         if($selectedDate !== null && $currentSection !== null && $dateHelper->isBetween($selectedDate, $currentSection->getStart(), $currentSection->getEnd()) !== true) {
             $selectedDate = $this->getClosestWeekStart($currentSection->getEnd());
+        }
+
+        return $selectedDate;
+    }
+
+    private function resolveSelectedDateForTuitionView(Request $request, ?Section $currentSection, DateHelper $dateHelper): ?DateTime {
+        $selectedDate = null;
+        try {
+            if($request->query->has('date')) {
+                $selectedDate = new DateTime($request->query->get('date', null));
+                $selectedDate->setTime(0, 0, 0);
+
+                $selectedDate = $this->getClosestMonthStart($selectedDate);
+            }
+        } catch (Exception $e) {
+            $selectedDate = null;
+        }
+
+        if($selectedDate === null && $currentSection !== null) {
+            $selectedDate = $this->getClosestMonthStart($dateHelper->getToday());
+        }
+
+        if($selectedDate !== null && $currentSection !== null && $dateHelper->isBetween($selectedDate, $currentSection->getStart(), $currentSection->getEnd()) !== true) {
+            $selectedDate = $this->getClosestMonthStart($currentSection->getEnd());
         }
 
         return $selectedDate;
@@ -171,6 +217,10 @@ class BookController extends AbstractController {
 
         $selectedDate = $this->resolveSelectedDate($request, $sectionFilterView->getCurrentSection(), $dateHelper);
 
+        if($tuitionFilterView->getCurrentTuition() !== null) {
+            $selectedDate = $this->resolveSelectedDateForTuitionView($request, $sectionFilterView->getCurrentSection(), $dateHelper);
+        }
+
         $ownGrades = $this->resolveOwnGrades($sectionFilterView->getCurrentSection(), $user);
         $ownTuitions = $this->resolveOwnTuitions($sectionFilterView->getCurrentSection(), $user, $tuitionRepository);
 
@@ -194,7 +244,7 @@ class BookController extends AbstractController {
                     $info[] = $absenceExcuseResolver->resolve($student);
                 }
             } else if ($tuitionFilterView->getCurrentTuition() !== null) {
-                $overview = $entryOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
+                $overview = $entryOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition(), $selectedDate, (clone $selectedDate)->modify('+1 month')->modify('-1 day'));
 
                 $students = $tuitionFilterView->getCurrentTuition()->getStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
                     return $membership->getStudent();
@@ -235,9 +285,11 @@ class BookController extends AbstractController {
             }, $missingExcuses));
 
         $weekStarts = [ ];
+        $monthStarts = [ ];
 
         if($sectionFilterView->getCurrentSection() !== null) {
             $weekStarts = $this->listCalendarWeeks($sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
+            $monthStarts = $this->listCalendarMonths($sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
         }
 
         return $this->render('books/index.html.twig', [
@@ -250,6 +302,7 @@ class BookController extends AbstractController {
             'selectedDate' => $selectedDate,
             'overview' => $overview,
             'weekStarts' => $weekStarts,
+            'monthStarts' => $monthStarts,
             'missingExcuses' => $missingExcuses,
             'missingExcusesCount' => $missingExcuseCount
         ]);

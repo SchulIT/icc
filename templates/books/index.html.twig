@@ -40,38 +40,73 @@
                 {% else %}
                     <div class="card">
                         <div class="card-header border-bottom-0">
-                            {% set currentWeek = selectedDate ? selectedDate.format('W') : null %}
+                            {% if tuitionFilter.currentTuition is not null %}
+                                {% set currentMonth = selectedDate ? selectedDate.format('m') %}
 
-                            <ul class="nav nav-pills card-header-pills flex-fill" data-trigger="resize-hide">
-                                {% if selectedDate != null %}
-                                <li class="nav-item align-self-center" data-resize="show">
-                                    <a class="nav-link" href="{{ path('book', currentFilter|merge({'date': (selectedDate|clone).modify('-7 days').format('Y-m-d')})) }}">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                {% endif %}
+                                <ul class="nav nav-pills card-header-pills flex-fill" data-trigger="resize-hide">
+                                    {% if selectedDate != null %}
+                                        <li class="nav-item align-self-center" data-resize="show">
+                                            <a class="nav-link" href="{{ path('book', currentFilter|merge({'date': (selectedDate|clone).modify('-1 month').format('Y-m-d')})) }}">
+                                                <i class="fas fa-chevron-left"></i>
+                                            </a>
+                                        </li>
+                                    {% endif %}
 
-                                {% for week, monday in weekStarts %}
-                                    <li class="nav-item" {% if currentWeek == week %}data-resize="prevent"{% endif %}>
-                                        <a class="nav-link {% if currentWeek == week %}active{% endif %}" href="{{ path('book', currentFilter|merge({'date': monday.format('Y-m-d')})) }}">
-                                            <div>
-                                                <i class="fas fa-calendar-alt"></i> {{ 'admin.exams.week'|trans({'%week%': week}) }}
-                                            </div>
-                                            <div class="{% if currentWeek != week %}text-muted{% endif %}">
-                                                {{ monday|format_date }}
-                                            </div>
+                                    {% for month, monday in monthStarts %}
+                                        <li class="nav-item" {% if currentMonth == month %}data-resize="prevent"{% endif %}>
+                                            <a class="nav-link {% if currentMonth == month %}active{% endif %}" href="{{ path('book', currentFilter|merge({'date': monday.format('Y-m-d')})) }}">
+                                                <div>
+                                                    <i class="fas fa-calendar-alt"></i> {{ ('date.months.'~month)|trans }}
+                                                </div>
+                                                <div class="{% if currentMonth != month %}text-muted{% endif %}">
+                                                    {{ monday|format_date }}
+                                                </div>
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+
+                                    {% if selectedDate != null %}
+                                        <li class="nav-item align-self-center" data-resize="show">
+                                            <a class="nav-link" href="{{ path('book', currentFilter|merge({'date': (selectedDate|clone).modify('+1 month').format('Y-m-d')})) }}">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            {% else %}
+                                {% set currentWeek = selectedDate ? selectedDate.format('W') : null %}
+
+                                <ul class="nav nav-pills card-header-pills flex-fill" data-trigger="resize-hide">
+                                    {% if selectedDate != null %}
+                                    <li class="nav-item align-self-center" data-resize="show">
+                                        <a class="nav-link" href="{{ path('book', currentFilter|merge({'date': (selectedDate|clone).modify('-7 days').format('Y-m-d')})) }}">
+                                            <i class="fas fa-chevron-left"></i>
                                         </a>
                                     </li>
-                                {% endfor %}
+                                    {% endif %}
 
-                                {% if selectedDate != null %}
-                                <li class="nav-item align-self-center" data-resize="show">
-                                    <a class="nav-link" href="{{ path('book', currentFilter|merge({'date': (selectedDate|clone).modify('+7 days').format('Y-m-d')})) }}">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                                {% endif %}
-                            </ul>
+                                    {% for week, monday in weekStarts %}
+                                        <li class="nav-item" {% if currentWeek == week %}data-resize="prevent"{% endif %}>
+                                            <a class="nav-link {% if currentWeek == week %}active{% endif %}" href="{{ path('book', currentFilter|merge({'date': monday.format('Y-m-d')})) }}">
+                                                <div>
+                                                    <i class="fas fa-calendar-alt"></i> {{ 'admin.exams.week'|trans({'%week%': week}) }}
+                                                </div>
+                                                <div class="{% if currentWeek != week %}text-muted{% endif %}">
+                                                    {{ monday|format_date }}
+                                                </div>
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+
+                                    {% if selectedDate != null %}
+                                    <li class="nav-item align-self-center" data-resize="show">
+                                        <a class="nav-link" href="{{ path('book', currentFilter|merge({'date': (selectedDate|clone).modify('+7 days').format('Y-m-d')})) }}">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            {% endif %}
                         </div>
                     </div>
 

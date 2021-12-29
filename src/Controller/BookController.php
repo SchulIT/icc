@@ -25,6 +25,7 @@ use App\Grouping\LessonAttendanceDateStrategy;
 use App\Grouping\LessonDayStrategy;
 use App\Repository\LessonRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
+use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Security\Voter\LessonEntryVoter;
 use App\Sorting\LessonAttendanceGroupStrategy;
@@ -38,6 +39,8 @@ use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
+use App\View\Filter\StudentAwareGradeFilter;
+use App\View\Filter\StudentAwareTuitionFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Filter\TuitionFilter;
 use DateTime;
@@ -394,7 +397,7 @@ class BookController extends AbstractController {
     /**
      * @Route("/student", name="book_students")
      */
-    public function students(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter,
+    public function students(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                              TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository, StudentInfoResolver $studentInfoResolver,
                              Sorter $sorter, Request $request) {
         /** @var User $user */
@@ -402,29 +405,40 @@ class BookController extends AbstractController {
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $tuitionFilterView = $tuitionFilter->handle($request->query->get('tuition'), $sectionFilterView->getCurrentSection(), $user);
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user, $tuitionFilterView->getCurrentTuition() === null);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher'), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $tuitionFilterView->getCurrentTuition() === null);
 
         $ownGrades = $this->resolveOwnGrades($sectionFilterView->getCurrentSection(), $user);
         $ownTuitions = $this->resolveOwnTuitions($sectionFilterView->getCurrentSection(), $user, $tuitionRepository);
 
         $students = [ ];
+        $tuitions = [ ];
         if($gradeFilterView->getCurrentGrade() !== null && $sectionFilterView->getCurrentSection() !== null) {
             $students = $studentRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
         } else if($tuitionFilterView->getCurrentTuition() !== null) {
+            $tuitions = [ $tuitionFilterView->getCurrentTuition() ];
             $students = $studentRepository->findAllByStudyGroups([$tuitionFilterView->getCurrentTuition()->getStudyGroup()]);
+        } else if($teacherFilterView->getCurrentTeacher() !== null) {
+            $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
+            $studyGroups = array_map(function(Tuition $tuition) {
+                return $tuition->getStudyGroup();
+            }, $tuitions);
+
+            $students = $studentRepository->findAllByStudyGroups($studyGroups);
         }
 
         $sorter->sort($students, StudentStrategy::class);
         $info = [ ];
 
         foreach($students as $student) {
-            $info[] = $studentInfoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitionFilterView->getCurrentTuition());
+            $info[] = $studentInfoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitions);
         }
 
         return $this->render('books/students.html.twig', [
             'sectionFilter' => $sectionFilterView,
             'gradeFilter' => $gradeFilterView,
             'tuitionFilter' => $tuitionFilterView,
+            'teacherFilter' => $teacherFilterView,
             'ownGrades' => $ownGrades,
             'ownTuitions' => $ownTuitions,
             'info' => $info
@@ -432,12 +446,30 @@ class BookController extends AbstractController {
     }
 
     /**
-     * @Route("/student/{section}/{student}", name="book_student")
-     * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
+     * @Route("/student/{student}", name="book_student")
      * @ParamConverter("student", class="App\Entity\Student", options={"mapping": {"student": "uuid"}})
      */
-    public function student(Student $student, Section $section, StudentInfoResolver $infoResolver, Sorter $sorter, Grouper $grouper) {
-        $info = $infoResolver->resolveStudentInfo($student, $section);
+    public function student(Student $student, SectionFilter $sectionFilter, StudentAwareTuitionFilter $tuitionFilter,
+                            StudentAwareGradeFilter $gradeFilter, TeacherFilter  $teacherFilter, Request $request,
+                            StudentInfoResolver $infoResolver, TuitionRepositoryInterface $tuitionRepository,
+                            Sorter $sorter, Grouper $grouper) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $tuitionFilterView = $tuitionFilter->handle($request->query->get('tuition'), $sectionFilterView->getCurrentSection(), $student);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $student);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher'), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $tuitionFilterView->getCurrentTuition() === null);
+
+        $tuitions = [ ];
+
+        if($tuitionFilterView->getCurrentTuition() !== null) {
+            $tuitions[] = $tuitionFilterView->getCurrentTuition();
+        } else if($teacherFilterView->getCurrentTeacher() !== null) {
+            $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
+        }
+
+        $info = $infoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitions);
         $groups = $grouper->group(
             array_merge(
                 $info->getAbsentLessonAttendances(),
@@ -454,7 +486,10 @@ class BookController extends AbstractController {
             'student' => $student,
             'info' => $info,
             'groups' => $groups,
-            'section' => $section
+            'sectionFilter' => $sectionFilterView,
+            'gradeFilter' => $gradeFilterView,
+            'tuitionFilter' => $tuitionFilterView,
+            'teacherFilter' => $teacherFilterView,
         ]);
     }
 

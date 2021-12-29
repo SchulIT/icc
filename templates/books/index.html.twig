@@ -123,7 +123,7 @@
                             <ul class="list-unstyled mb-0">
                                 {% for info in missingExcuses %}
                                     <li>
-                                        <a href="{{ path('book_student', { section: sectionFilter.currentSection.uuid.toString, student: info.student.uuid.toString }) }}">
+                                        <a href="{{ path('book_student', currentFilter|merge({ student: info.student.uuid.toString })) }}">
                                             <i class="fas fa-user-graduate"></i> {{ info.student|student }}
                                             <span class="badge badge-danger">{{ info.notExcusedOrNotSetLessonsCount }}</span>
                                         </a>

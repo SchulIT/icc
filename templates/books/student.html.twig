@@ -6,8 +6,8 @@
         <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('book_students') }}">{{ 'book.students.label'|trans }}</a></li>
         <li class="breadcrumb-item">
-            <a href="{{ path('book_students', { grade: student.grade(section).uuid.toString, section: section.uuid }) }}">
-                {{ student.grade(section).name }}
+            <a href="{{ path('book_students', { grade: student.grade(sectionFilter.currentSection).uuid.toString, section: sectionFilter.currentSection.uuid }) }}">
+                {{ student.grade(sectionFilter.currentSection).name }}
             </a>
         </li>
         <li class="breadcrumb-item">{{ student.lastname }}, {{ student.firstname }}</li>
@@ -15,6 +15,13 @@
 {% endblock %}
 
 {% block content %}
+
+    {% set currentFilter = {
+        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
+        tuition: tuitionFilter.currentTuition ? tuitionFilter.currentTuition.uuid.toString : null,
+        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null
+    } %}
 
     <div class="container-fluid px-0">
         <div class="row">
@@ -206,8 +213,20 @@
 
                         <p>
                             <i class="fas fa-graduation-cap"></i>
-                            {% include "_includes/grade_teachers.html.twig" with { grade: student.grade(section) } %}
+                            {% include "_includes/grade_teachers.html.twig" with { grade: student.grade(sectionFilter.currentSection), section: sectionFilter.currentSection } %}
                         </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+
+                        {% include "_filter/teacher.html.twig" with { params: currentFilter|merge({grade: null, tuition: null})} %}
+
+                        {% include "_filter/grade.html.twig" with { params: currentFilter|merge({tuition: null, teacher: null}) } %}
+
+                        {% include "_filter/tuition.html.twig" with { params: currentFilter|merge({grade: null, teacher: null}) } %}
                     </div>
                 </div>
             </div>

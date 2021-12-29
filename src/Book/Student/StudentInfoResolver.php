@@ -26,9 +26,9 @@ class StudentInfoResolver extends AbstractResolver {
         $this->sorter = $sorter;
     }
 
-    public function resolveStudentInfo(Student $student, ?Section $section, ?Tuition $tuition = null) {
-        $late = $this->getAttendanceRepository()->findLateByStudent($student, $tuition !== null ? [$tuition] : []);
-        $absent = $this->getAttendanceRepository()->findAbsentByStudent($student, $tuition !== null ? [$tuition] : []);
+    public function resolveStudentInfo(Student $student, ?Section $section, array $tuitions = []) {
+        $late = $this->getAttendanceRepository()->findLateByStudent($student, $tuitions);
+        $absent = $this->getAttendanceRepository()->findAbsentByStudent($student, $tuitions);
         $excuseNotes = $this->getExcuseNoteRepository()->findByStudent($student);
 
         $this->sorter->sort($late, LessonAttendenceStrategy::class);

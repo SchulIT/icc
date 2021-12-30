@@ -116,7 +116,7 @@
                             <h4 class="card-title">
                                 <i class="fas fa-user-times"></i>
                                 {{ 'book.open.label'|trans }}
-                                <span class="badge badge-danger">{{ missingExcusesCount }}</span>
+                                <span class="badge badge-danger badge-pill">{{ missingExcusesCount }}</span>
                             </h4>
                             <p>{{ 'book.open.status'|trans }}</p>
 
@@ -125,7 +125,7 @@
                                     <li>
                                         <a href="{{ path('book_student', currentFilter|merge({ student: info.student.uuid.toString })) }}">
                                             <i class="fas fa-user-graduate"></i> {{ info.student|student }}
-                                            <span class="badge badge-danger">{{ info.notExcusedOrNotSetLessonsCount }}</span>
+                                            <span class="badge badge-danger badge-pill">{{ info.notExcusedOrNotSetLessonsCount }}</span>
                                         </a>
                                     </li>
                                 {% endfor %}

@@ -289,4 +289,9 @@ class LessonRepository extends AbstractTransactionalRepository implements Lesson
         return $qb->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function findOneByUuid(string $uuid): ?Lesson {
+        return $this->em->getRepository(Lesson::class)
+            ->findOneBy(['uuid' => $uuid]);
+    }
 }

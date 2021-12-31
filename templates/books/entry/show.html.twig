@@ -116,12 +116,10 @@
                 <students :attendancedata="{{ entry.attendances.toArray|json_encode }}"
                           students-url="{{ url('xhr_tuition_students', { uuid: entry.tuition.uuid.toString, lesson: entry.lessonStart, date: entry.lesson.date.format('Y-m-d') }) }}"
                           :step="1"
+                          :show-save-button="true"
                           :start="{{ entry.lessonStart }}"
                           :end="{{ entry.lessonEnd }}"
                           list-students-url="{{ url('xhr_students') }}"
-                          add-student-url="{{ url('add_student_to_entry', { uuid: entry.uuid.toString }) }}"
-                          add-student-csrf-token="{{ csrf_token('lesson_entry_add_student') }}"
-                          add-student-csrf-name="_token"
                 ></students>
                     {% do form.attendances.setRendered %}
                 {% else %}

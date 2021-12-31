@@ -14,6 +14,7 @@
 
           <button class="btn btn-primary btn-sm ml-1"
                   :class="{ 'btn-danger': isDirty }"
+                  v-if="showSaveButton"
                   id="attendance_submit"
                   type="submit">
             <i class="fa fa-save"></i> {{ $trans('actions.save')}}
@@ -45,19 +46,15 @@
       </div>
 
       <div class="card-footer">
-        <form :action="addStudentUrl" method="post">
-          <input type="hidden" :name="'lesson_entry_add_student[' + addStudentCsrfName + ']'" :value="addStudentCsrfToken">
-
-          <div class="d-flex align-items-stretch">
-            <div class="flex-fill">
-              <select id="add_student" name="lesson_entry_add_student[student]"></select>
-            </div>
-            <button type="submit" class="btn btn-outline-primary btn-sm ml-2">
-              <i class="fas fa-user-plus"></i>
-              {{ $trans('book.entry.add_student.label')}}
-            </button>
+        <div class="d-flex align-items-stretch">
+          <div class="flex-fill">
+            <select id="add_student"></select>
           </div>
-        </form>
+          <button type="button" class="btn btn-outline-primary btn-sm ml-2" @click="onAddStudent()">
+            <i class="fas fa-user-plus"></i>
+            {{ $trans('book.entry.add_student.label')}}
+          </button>
+        </div>
       </div>
 
       <div class="card-footer d-flex align-items-center" v-if="selectedAttendances.length > 0">
@@ -113,10 +110,11 @@
              v-for="attendance in attendances"
              :class="{ 'bg-selected': selectedAttendances.indexOf(attendance) >= 0 }">
 
-          <input type="hidden" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][type]'" :value="attendance.type">
-          <input type="hidden" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][excuseStatus]'" :value="attendance.excuse_status">
-          <input type="hidden" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][lateMinutes]'" :value="attendance.minutes">
-          <input type="hidden" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][absentLessons]'" :value="attendance.lessons">
+          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][type]'" :value="attendance.type">
+          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][excuseStatus]'" :value="attendance.excuse_status">
+          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][lateMinutes]'" :value="attendance.minutes">
+          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][absentLessons]'" :value="attendance.lessons">
+          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][student]'" :value="attendance.student.uuid">
 
           <div class="d-flex">
             <div class="flex-fill p-3 pointer flex-grow-1"
@@ -210,7 +208,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
                 </div>
-                <input type="text" v-model="attendance.comment" class="form-control" :name="'lesson_entry[attendances][' + originalAttendances.indexOf(attendance) + '][comment]'">
+                <input type="text" v-model="attendance.comment" class="form-control" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][comment]'">
               </div>
             </div>
           </div>
@@ -246,26 +244,24 @@
 
 <script>
 import Choices from "choices.js";
-import { Modal } from 'bootstrap.native';
 
 export default {
   name: 'attendances',
   props: {
-    attendancedata: Array,
+    students: Array,
+    possibleAbsences: Array,
+    attendances: Array,
     step: Number,
-    studentsUrl: String,
     start: Number,
     end: Number,
     listStudentsUrl: String,
-    addStudentUrl: String,
-    addStudentCsrfToken: String,
-    addStudentCsrfName: String
+    showSaveButton: Boolean
   },
   data() {
     return {
       isDirty: false,
-      originalAttendances: this.attendancedata.slice(0, this.attendancedata.length),
-      attendances: this.attendancedata,
+      //originalAttendances: this.attendancedata.slice(0, this.attendancedata.length),
+      //attendances: this.attendancedata,
       selectedAttendances: [ ],
       absences: [ ]
     }
@@ -280,7 +276,7 @@ export default {
   },
   beforeMount() {
     window.addEventListener('beforeunload', this.preventReload);
-    this.attendancedata.sort(function(a, b) {
+    this.attendances.sort(function(a, b) {
       let studentA = a.student.lastname + ", " + a.student.firstname;
       let studentB = b.student.lastname + ", " + b.student.firstname;
       return studentA.localeCompare(studentB, 'de', { sensitivity: 'base', numeric: true });
@@ -291,41 +287,39 @@ export default {
   },
   mounted() {
     let $this = this;
-    let studentChoice = new Choices(this.$el.querySelector('#add_student'));
+    this.studentChoice = new Choices(this.$el.querySelector('#add_student'));
+    let students = { };
 
-    this.$http.get(this.studentsUrl)
-        .then(function(response) {
-          let students = { };
+    this.students.forEach(function(student) {
+      students[student.uuid] = {
+        uuid: student.uuid,
+        firstname: student.firstname,
+        lastname: student.lastname,
+        reasons: [ ]
+      };
 
-          response.data.students.forEach(function(student) {
-            students[student.uuid] = {
-              uuid: student.uuid,
-              firstname: student.firstname,
-              lastname: student.lastname,
-              reasons: [ ]
-            };
-          });
+      if($this.attendances.filter(x => x.student.uuid === student.uuid).length === 0) {
+        $this.addStudent(student.uuid, student.firstname, student.lastname, student.email);
+      }
+    });
 
-          response.data.absent.forEach(function(absence) {
-            if(absence.student.uuid in students) {
-              students[absence.student.uuid].reasons.push($this.$trans('book.attendance.absence_reason.' + absence.reason));
-            }
-          });
+    this.possibleAbsences.forEach(function(absence) {
+      if(absence.student.uuid in students) {
+        students[absence.student.uuid].reasons.push($this.$trans('book.attendance.absence_reason.' + absence.reason));
+      }
+    });
 
-          $this.absences = [ ];
+    $this.absences = [ ];
 
-          for(let uuid in students) {
-            let student = students[uuid];
+    for(let uuid in students) {
+      let student = students[uuid];
 
-            let attendance = $this.attendancedata.filter(x => x.student.uuid === uuid).map(x => x.type);
+      let attendance = $this.attendances.filter(x => x.student.uuid === uuid).map(x => x.type);
 
-            if(student.reasons.length > 0 && attendance.length > 0 && attendance[0] !== 0) {
-              $this.absences.push(student);
-            }
-          }
-        }).catch(function(error) {
-          console.log(error);
-        });
+      if(student.reasons.length > 0 && attendance.length > 0 && attendance[0] !== 0) {
+        $this.absences.push(student);
+      }
+    }
 
     this.$http.get(this.listStudentsUrl)
       .then(function(response) {
@@ -346,11 +340,16 @@ export default {
 
           choices.push({
             label: student.lastname + ', ' + student.firstname + gradeAppendix,
-            value: student.uuid
+            value: student.uuid,
+            customProperties: {
+              firstname: student.firstname,
+              lastname: student.lastname,
+              email: student.email
+            }
           });
         });
 
-        studentChoice.setChoices(choices, 'value', 'label', true);
+        $this.studentChoice.setChoices(choices, 'value', 'label', true);
       })
       .catch(function(error) {
         console.error(error);
@@ -408,9 +407,10 @@ export default {
     },
     applyAbsence(absence) {
       let $this = this;
-      this.attendancedata.forEach(function(attendance) {
+      this.attendances.forEach(function(attendance) {
         if(attendance.student.uuid === absence.uuid) {
           $this.absent(attendance);
+          attendance.comment = absence.reasons.join(', ');
           $this.absences.splice($this.absences.indexOf(absence), 1);
         }
       });
@@ -480,7 +480,33 @@ export default {
         attendance.excuse_status = status;
       });
     },
+    addStudent(uuid, firstname, lastname, email) {
+      let attendance = {
+        uuid: '',
+        comment: null,
+        excuse_status: 0,
+        lessons: 0,
+        minutes: 0,
+        type: 1,
+        student: {
+          uuid: uuid,
+          firstname: firstname,
+          lastname: lastname,
+          email: email
+        }
+      };
+
+      this.attendances.push(attendance);
+    },
+    onAddStudent() {
+      let student = this.studentChoice.getValue();
+      this.addStudent(student.value, student.customProperties.firstname, student.customProperties.lastname, student.customProperties.email);
+    },
     preventReload(event) {
+      if(this.showSaveButton === false) {
+        return;
+      }
+
       let isButtonOrChild = event.explicitOriginalTarget instanceof HTMLElement;
       let closestAttendanceSubmitButton = null;
 

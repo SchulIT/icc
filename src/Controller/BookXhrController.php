@@ -19,17 +19,20 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Request\Book\CancelLessonRequest;
 use App\Request\ValidationFailedException;
 use App\Response\Api\V1\Student;
+use App\Response\Api\V1\Subject;
 use App\Response\Api\V1\Teacher;
 use App\Response\Api\V1\Tuition as TuitionResponse;
 use App\Response\ViolationList;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\LessonEntryVoter;
+use DateTime;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -66,25 +69,10 @@ class BookXhrController extends AbstractController {
         return $this->returnJson(TuitionResponse::fromEntity($tuition), $serializer);
     }
 
-    /**
-     * @Route("/tuition/{uuid}/students", name="xhr_tuition_students")
-     */
-    public function possiblyAbsentStudents(Tuition $tuition, Request $request, AbsenceResolver $absenceResolver,
-                                           LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
-                                           SerializerInterface $serializer, SectionResolverInterface $sectionResolver) {
+    private function possiblyAbsentStudents(Tuition $tuition, DateTime $date, int $lesson, AbsenceResolver $absenceResolver,
+                                            LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
+                                            SectionResolverInterface $sectionResolver) {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
-
-        $date = $this->getDateFromRequest($request, 'date');
-
-        if($date === null) {
-            throw new BadRequestHttpException('date must not be null.');
-        }
-
-        $lesson = $request->query->getInt('lesson', 0);
-
-        if($lesson <= 0) {
-            throw new BadRequestHttpException('lesson must be greater than 0');
-        }
 
         $students = [ ];
 
@@ -120,14 +108,7 @@ class BookXhrController extends AbstractController {
             }
         }
 
-        $response = [
-            'students' => array_map(function(StudentEntity $student) use($sectionResolver) {
-                return Student::fromEntity($student, $sectionResolver->getCurrentSection());
-            }, $students),
-            'absent' => $absences
-        ];
-
-        return $this->returnJson($response, $serializer);
+        return $absences;
     }
 
     /**
@@ -166,6 +147,108 @@ class BookXhrController extends AbstractController {
         }
 
         return $this->returnJson($students, $serializer);
+    }
+
+    /**
+     * @Route("/entry", name="xhr_lesson_entry", methods={"GET"})
+     * @OA\Get()
+     * @OA\Parameter(
+     *     name="lesson",
+     *     in="query",
+     *     description="UUID of the lesson"
+     * )
+     * @OA\Parameter(
+     *     name="start",
+     *     in="query",
+     *     description="Start lesson number"
+     * )
+     * @OA\Parameter(
+     *     name="end",
+     *     in="path",
+     *     description="End lesson number"
+     * )
+     */
+    public function entry(Request $request, AbsenceResolver $absenceResolver, LessonRepositoryInterface $lessonRepository,
+                          LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
+                          SerializerInterface $serializer, SectionResolverInterface $sectionResolver) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::New);
+
+        $lesson = $lessonRepository->findOneByUuid($request->query->get('lesson'));
+        if($lesson === null) {
+            throw new NotFoundHttpException('Lesson not found.');
+        }
+
+        $start = $request->query->getInt('start');
+        if(!is_numeric($start)) {
+            throw new BadRequestHttpException('Start and end must be numeric values.');
+        }
+
+        if($start < $lesson->getLessonStart() || $start > $lesson->getLessonEnd()) {
+            throw new BadRequestHttpException('Start must be inside lesson boundaries.');
+        }
+
+        $entry = null;
+
+        /** @var LessonEntry $lessonEntry */
+        foreach($lesson->getEntries() as $lessonEntry) {
+            if($lessonEntry->getLessonStart() === (int)$start) {
+                $entry = $lessonEntry;
+                break;
+            }
+        }
+
+        $entryJson = null;
+
+        if($entry !== null) {
+            $attendances = [ ];
+            /** @var LessonAttendance $attendance */
+            foreach($entry->getAttendances() as $attendance) {
+                $attendances[] = [
+                    'student' => Student::fromEntity($attendance->getStudent()),
+                    'minutes' => $attendance->getLateMinutes(),
+                    'lessons' => $attendance->getAbsentLessons(),
+                    'comment' => $attendance->getComment(),
+                    'excuse_status' => $attendance->getExcuseStatus(),
+                    'type' => $attendance->getType()
+                ];
+            }
+
+            $entryJson = [
+                'uuid' => $entry->getUuid()->toString(),
+                'start' => $entry->getLessonStart(),
+                'end' => $entry->getLessonEnd(),
+                'subject' => Subject::fromEntity($entry->getSubject()),
+                'replacement_subject' => $entry->getReplacementSubject(),
+                'teacher' => Teacher::fromEntity($entry->getTeacher()),
+                'replacement_teacher' => Teacher::fromEntity($entry->getReplacementTeacher()),
+                'topic' => $entry->getTopic(),
+                'exercises' => $entry->getExercises(),
+                'comment' => $entry->getComment(),
+                'is_cancelled' => $entry->isCancelled(),
+                'cancel_reason' => $entry->getCancelReason(),
+                'attendances' => $attendances
+            ];
+        }
+
+        $students = [ ];
+        foreach($lesson->getTuition()->getStudyGroup()->getMemberships() as $membership) {
+            $students[] = Student::fromEntity($membership->getStudent());
+        }
+
+        $response = [
+            'lesson' => [
+                'uuid' => $lesson->getUuid()->toString(),
+                'date' => $lesson->getDate()->format('Y-m-d'),
+                'lesson_start' => $lesson->getLessonStart(),
+                'lesson_end' => $lesson->getLessonEnd(),
+                'tuition' => TuitionResponse::fromEntity($lesson->getTuition())
+            ],
+            'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $start, $absenceResolver, $attendanceRepository, $excuseNoteRepository, $sectionResolver),
+            'entry' => $entryJson,
+            'students' => $students
+        ];
+
+        return $this->returnJson($response, $serializer);
     }
 
     /**

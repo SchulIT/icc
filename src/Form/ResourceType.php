@@ -19,7 +19,7 @@ use Symfony\Component\Form\FormEvents;
 
 class ResourceType extends AbstractType {
 
-    private $sortingStrategy;
+    private ResourceTypeStrategy $sortingStrategy;
 
     public function __construct(ResourceTypeStrategy $sortingStrategy) {
         $this->sortingStrategy = $sortingStrategy;

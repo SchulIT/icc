@@ -18,11 +18,11 @@ use Symfony\Component\Form\FormEvents;
 
 class ExamStudentsType extends AbstractType {
 
-    private $studentConverter;
-    private $stringStrategy;
-    private $studentStrategy;
-    private $studentRepository;
-    private $sectionResolver;
+    private StudentStringConverter $studentConverter;
+    private StringStrategy $stringStrategy;
+    private StudentStrategy $studentStrategy;
+    private StudentRepositoryInterface $studentRepository;
+    private SectionResolverInterface $sectionResolver;
 
     public function __construct(StudentStringConverter $studentConverter, StudentStrategy $studentStrategy,
                                 StringStrategy $stringStrategy, StudentRepositoryInterface $studentRepository, SectionResolverInterface $sectionResolver) {

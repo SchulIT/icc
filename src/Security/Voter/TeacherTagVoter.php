@@ -17,17 +17,16 @@ class TeacherTagVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         return $subject instanceof TeacherTag && $attribute === static::View;
     }
 
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
-        switch($attribute) {
-            case static::View:
-                return $this->canView($subject, $token);
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
+        if ($attribute == static::View) {
+            return $this->canView($subject, $token);
         }
 
         throw new LogicException('This code should not be reached.');

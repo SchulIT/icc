@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraint;
  */
 class UniqueLessonEntry extends Constraint {
 
-    public $message = 'There is already an existing lesson entry for this lesson.';
+    public string $message = 'There is already an existing lesson entry for this lesson.';
 
     /**
      * {@inheritdoc}

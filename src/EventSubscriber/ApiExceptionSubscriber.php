@@ -20,8 +20,8 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
 
     private const JsonContentType = 'application/json';
 
-    private $serializer;
-    private $logger;
+    private SerializerInterface $serializer;
+    private LoggerInterface $logger;
 
     public function __construct(SerializerInterface $serializer, LoggerInterface $logger) {
         $this->serializer = $serializer;
@@ -93,7 +93,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
     /**
      * @inheritDoc
      */
-    public static function getSubscribedEvents() {
+    public static function getSubscribedEvents(): array {
         return [
             KernelEvents::EXCEPTION => [
                 [ 'onKernelException', 10 ]

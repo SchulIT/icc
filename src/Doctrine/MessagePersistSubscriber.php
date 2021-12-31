@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class MessagePersistSubscriber implements EventSubscriber {
 
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(EventDispatcherInterface $eventDispatcher) {
         $this->dispatcher = $eventDispatcher;
@@ -33,7 +33,7 @@ class MessagePersistSubscriber implements EventSubscriber {
     /**
      * @inheritDoc
      */
-    public function getSubscribedEvents() {
+    public function getSubscribedEvents(): array {
         return [
             Events::postPersist
         ];

@@ -8,8 +8,8 @@ use Symfony\Component\Validator\Constraint;
  * @Annotation
  */
 class DateLessonNotInPast extends Constraint {
-    public $message = 'This value must not be in the past.';
+    public string $message = 'This value must not be in the past.';
 
     /** @var array Specifies roles to which this constraint is not applied */
-    public $exceptions = [ ];
+    public array $exceptions = [ ];
 }

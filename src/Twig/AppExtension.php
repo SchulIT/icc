@@ -16,6 +16,7 @@ use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\User;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use MyCLabs\Enum\Enum;
@@ -26,15 +27,15 @@ use Twig\TwigTest;
 
 class AppExtension extends AbstractExtension {
 
-    private $teacherConverter;
-    private $studentConverter;
-    private $userConverter;
-    private $studyGroupConverter;
-    private $studyGroupsConverter;
-    private $filesizeConverter;
-    private $timestampConverter;
-    private $enumStringConverter;
-    private $gradeStringConverter;
+    private TeacherStringConverter $teacherConverter;
+    private StudentStringConverter $studentConverter;
+    private UserStringConverter $userConverter;
+    private StudyGroupStringConverter $studyGroupConverter;
+    private StudyGroupsGradeStringConverter $studyGroupsConverter;
+    private FilesizeStringConverter $filesizeConverter;
+    private TimestampDateTimeConverter $timestampConverter;
+    private EnumStringConverter $enumStringConverter;
+    private GradesStringConverter $gradeStringConverter;
 
     public function __construct(TeacherStringConverter $teacherConverter, StudentStringConverter $studentConverter,
                                 UserStringConverter $userConverter, StudyGroupStringConverter $studyGroupConverter,
@@ -52,7 +53,7 @@ class AppExtension extends AbstractExtension {
         $this->gradeStringConverter = $gradeStringConverter;
     }
 
-    public function getFilters() {
+    public function getFilters(): array {
         return [
             new TwigFilter('teacher', [ $this, 'teacher' ]),
             new TwigFilter('teachers', [ $this, 'teachers' ]),
@@ -67,13 +68,13 @@ class AppExtension extends AbstractExtension {
         ];
     }
 
-    public function getTests() {
+    public function getTests(): array {
         return [
             new TwigTest('instanceof', [ $this, 'isInstanceOf' ])
         ];
     }
 
-    public function teacher(?Teacher $teacher, bool $includeAcronym = false) {
+    public function teacher(?Teacher $teacher, bool $includeAcronym = false): ?string {
         return $this->teacherConverter->convert($teacher, $includeAcronym);
     }
 
@@ -83,7 +84,7 @@ class AppExtension extends AbstractExtension {
      * @param bool $onlyAcronyms
      * @return string
      */
-    public function teachers(iterable $teachers, bool $includeAcronyms = false, bool $onlyAcronyms = false) {
+    public function teachers(iterable $teachers, bool $includeAcronyms = false, bool $onlyAcronyms = false): string {
         if($teachers instanceof Collection) {
             $teachers = $teachers->toArray();
         }
@@ -97,15 +98,15 @@ class AppExtension extends AbstractExtension {
         }, $teachers));
     }
 
-    public function student(Student $student) {
+    public function student(Student $student): string {
         return $this->studentConverter->convert($student);
     }
 
-    public function user(User $user, bool $includeUsername = true) {
+    public function user(User $user, bool $includeUsername = true): string {
         return $this->userConverter->convert($user, $includeUsername);
     }
 
-    public function studyGroup(StudyGroup $group, bool $short = false, bool $includeGrades = false) {
+    public function studyGroup(StudyGroup $group, bool $short = false, bool $includeGrades = false): string {
         return $this->studyGroupConverter->convert($group, $short, $includeGrades);
     }
 
@@ -115,15 +116,15 @@ class AppExtension extends AbstractExtension {
      * @param Grade[]|ArrayCollection|iterable $onlyGrades
      * @return string
      */
-    public function studyGroups(iterable $studyGroups, bool $sort = false, iterable $onlyGrades = [ ]) {
+    public function studyGroups(iterable $studyGroups, bool $sort = false, iterable $onlyGrades = [ ]): string {
         return $this->studyGroupsConverter->convert($studyGroups, $sort, $onlyGrades);
     }
 
-    public function filesize(int $bytes) {
+    public function filesize(int $bytes): string {
         return $this->filesizeConverter->convert($bytes);
     }
 
-    public function toDateTime(int $timestamp) {
+    public function toDateTime(int $timestamp): DateTime {
         return $this->timestampConverter->convert($timestamp);
     }
 

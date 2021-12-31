@@ -9,28 +9,28 @@ class ImportUser implements UserInterface {
     /**
      * @inheritDoc
      */
-    public function getRoles() {
+    public function getRoles(): array {
         return ['ROLE_IMPORT'];
     }
 
     /**
      * @inheritDoc
      */
-    public function getPassword() {
+    public function getPassword(): ?string {
         return '';
     }
 
     /**
      * @inheritDoc
      */
-    public function getSalt() {
+    public function getSalt(): ?string {
         return null;
     }
 
     /**
      * @inheritDoc
      */
-    public function getUsername() {
+    public function getUsername(): string {
         return 'import-user';
     }
 

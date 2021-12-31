@@ -11,7 +11,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SickNotePersistSubscriber implements EventSubscriber {
 
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(EventDispatcherInterface $eventDispatcher) {
         $this->dispatcher = $eventDispatcher;
@@ -28,7 +28,7 @@ class SickNotePersistSubscriber implements EventSubscriber {
     /**
      * @inheritDoc
      */
-    public function getSubscribedEvents() {
+    public function getSubscribedEvents(): array {
         return [
             Events::postPersist
         ];

@@ -10,21 +10,21 @@ use Twig\TwigFunction;
 
 class MarkdownExtension extends AbstractExtension {
 
-    private $markdown;
-    private $tocHelper;
+    private Markdown $markdown;
+    private TableOfContentsHelper $tocHelper;
 
     public function __construct(Markdown $markdown, TableOfContentsHelper $tocHelper) {
         $this->markdown = $markdown;
         $this->tocHelper = $tocHelper;
     }
 
-    public function getFunctions() {
+    public function getFunctions(): array {
         return [
             new TwigFunction('toc', [ $this, 'toc' ])
         ];
     }
 
-    public function getFilters() {
+    public function getFilters(): array {
         return [
             new TwigFilter('markdown', [$this, 'markdown'], ['is_safe' => ['html']]),
         ];

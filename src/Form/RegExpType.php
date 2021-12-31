@@ -20,7 +20,7 @@ class RegExpType extends TextType {
         $view->vars['modifier'] = $options['modifier'];
     }
 
-    public function getBlockPrefix() {
+    public function getBlockPrefix(): string {
         return 'reg_exp';
     }
 }

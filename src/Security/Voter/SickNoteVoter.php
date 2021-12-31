@@ -17,8 +17,8 @@ class SickNoteVoter extends Voter {
     public const New = 'new-sicknote';
     public const View = 'view';
 
-    private $dateHelper;
-    private $accessDicisionManager;
+    private DateHelper $dateHelper;
+    private AccessDecisionManagerInterface $accessDicisionManager;
 
     public function __construct(DateHelper $dateHelper, AccessDecisionManagerInterface $accessDecisionManager) {
         $this->dateHelper = $dateHelper;
@@ -28,7 +28,7 @@ class SickNoteVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         return $attribute === static::New
             || ($attribute === static::View && $subject instanceof SickNote);
     }
@@ -36,7 +36,7 @@ class SickNoteVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
             case static::New:
                 return $this->canCreate($token);
@@ -48,7 +48,7 @@ class SickNoteVoter extends Voter {
         throw new LogicException('This code should not be reached.');
     }
 
-    private function canCreate(TokenInterface $token) {
+    private function canCreate(TokenInterface $token): bool {
         if($this->accessDicisionManager->decide($token, ['ROLE_SICK_NOTE_CREATOR']) === true || $this->accessDicisionManager->decide($token, ['ROLE_ADMIN']) ) {
             return true;
         }
@@ -80,7 +80,7 @@ class SickNoteVoter extends Voter {
         return false;
     }
 
-    private function canView(TokenInterface $token, SickNote $sickNote) {
+    private function canView(TokenInterface $token, SickNote $sickNote): bool {
         if($this->accessDicisionManager->decide($token, ['ROLE_SICK_NOTE_VIEWER'])) {
             return true;
         }

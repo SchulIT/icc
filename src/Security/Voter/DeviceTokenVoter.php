@@ -14,17 +14,11 @@ class DeviceTokenVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         return $attribute === static::Remove && $subject instanceof IcsAccessToken;
     }
 
-    /**
-     * @param string $attribute
-     * @param IcsAccessToken $subject
-     * @param TokenInterface $token
-     * @return bool|void
-     */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
         /** @var User|null $user */
         $user = $token->getUser();
 

@@ -14,7 +14,7 @@ class ResourceTypeVoter extends Voter {
     public const Edit = 'edit';
     public const Remove = 'remove';
 
-    private $accessDecisionManager;
+    private AccessDecisionManagerInterface $accessDecisionManager;
 
     public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
         $this->accessDecisionManager = $accessDecisionManager;
@@ -23,7 +23,7 @@ class ResourceTypeVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         return $attribute === static::New
             || ($subject instanceof ResourceType && in_array($attribute, [ static::Edit, static::Remove ]));
     }
@@ -31,7 +31,7 @@ class ResourceTypeVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
             case static::New:
                 return $this->canCreate($token);

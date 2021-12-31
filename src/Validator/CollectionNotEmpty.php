@@ -10,8 +10,8 @@ use Symfony\Component\Validator\Constraint;
 class CollectionNotEmpty extends Constraint {
 
     /** @var string $propertyPath Property path of the target userType. */
-    public $propertyPath;
+    public string $propertyPath;
 
-    public $message = 'This collection must not be empty.';
+    public string $message = 'This collection must not be empty.';
 
 }

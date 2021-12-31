@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @CronJob("@monthly")
  */
 class OptimizeDatabaseCommand extends Command {
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em, string $name = null) {
         parent::__construct($name);
@@ -25,10 +25,10 @@ class OptimizeDatabaseCommand extends Command {
             ->setDescription('Optimizes all database tables using an OPTIMIZE query.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output): int {
         $style = new SymfonyStyle($input, $output);
 
-        $tables = $this->em->getConnection()->getSchemaManager()->listTables();
+        $tables = $this->em->getConnection()->createSchemaManager()->listTables();
 
         $style->section(sprintf('Optimize %d tables', count($tables)));
 

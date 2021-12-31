@@ -9,7 +9,7 @@ use Trikoder\Bundle\OAuth2Bundle\Model\RefreshToken;
 
 class AppManager {
 
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em) {
         $this->em = $em;

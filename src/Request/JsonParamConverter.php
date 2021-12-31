@@ -16,13 +16,13 @@ class JsonParamConverter implements ParamConverterInterface {
 
     private const ContentType = 'json';
 
-    private $prefixes;
+    private array $prefixes;
 
-    private $serializer;
-    private $contextFactory;
-    private $validator;
+    private SerializerInterface $serializer;
+    private DeserializationContextFactoryInterface $contextFactory;
+    private ValidatorInterface $validator;
 
-    private $defaultOptions = [
+    private array $defaultOptions = [
         'validate' => true,
         'version' => null,
         'groups' => null
@@ -43,7 +43,7 @@ class JsonParamConverter implements ParamConverterInterface {
      * @throws BadRequestHttpException
      * @throws ValidationFailedException
      */
-    public function apply(Request $request, ParamConverter $configuration) {
+    public function apply(Request $request, ParamConverter $configuration): bool {
         $contentType = $request->getContentType();
 
         if($contentType !== static::ContentType) {
@@ -79,7 +79,7 @@ class JsonParamConverter implements ParamConverterInterface {
     /**
      * @inheritDoc
      */
-    public function supports(ParamConverter $configuration) {
+    public function supports(ParamConverter $configuration): bool {
         $class = $configuration->getClass();
 
         foreach($this->prefixes as $prefix) {

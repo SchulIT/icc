@@ -3,13 +3,13 @@
 namespace App\Markdown;
 
 use League\CommonMark\MarkdownConverterInterface;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class Markdown {
-    private $converter;
-    private $cache;
+    private MarkdownConverterInterface $converter;
+    private CacheItemPoolInterface $cache;
 
-    public function __construct(MarkdownConverterInterface $converter, AdapterInterface $cache) {
+    public function __construct(MarkdownConverterInterface $converter, CacheItemPoolInterface $cache) {
         $this->converter = $converter;
         $this->cache = $cache;
     }

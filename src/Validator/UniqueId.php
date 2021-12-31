@@ -11,7 +11,7 @@ class UniqueId extends Constraint {
     /**
      * @var string
      */
-    public $propertyPath;
+    public string $propertyPath;
 
-    public $message = 'Id {{ id }} is used more than once. All ids must be unique.';
+    public string $message = 'Id {{ id }} is used more than once. All ids must be unique.';
 }

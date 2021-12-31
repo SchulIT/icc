@@ -11,7 +11,7 @@ class MessageScopeVoter extends Voter {
 
     public const USE = 'use';
 
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     public function __construct(AuthorizationCheckerInterface $authorizationChecker) {
         $this->authorizationChecker = $authorizationChecker;
@@ -20,7 +20,7 @@ class MessageScopeVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         return $attribute === static::USE
             && $subject instanceof MessageScope;
     }
@@ -31,7 +31,7 @@ class MessageScopeVoter extends Voter {
      * @param TokenInterface $token
      * @return bool
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             return true;
         }

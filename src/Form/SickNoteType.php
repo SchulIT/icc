@@ -22,9 +22,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SickNoteType extends AbstractType {
 
-    private $studentConverter;
-    private $studentStrategy;
-    private $settings;
+    private StudentStringConverter $studentConverter;
+    private StudentStrategy $studentStrategy;
+    private SickNoteSettings $settings;
 
     public function __construct(StudentStringConverter $converter, StudentStrategy $strategy, SickNoteSettings  $settings) {
         $this->studentConverter = $converter;

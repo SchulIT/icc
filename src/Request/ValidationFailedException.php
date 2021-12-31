@@ -9,7 +9,7 @@ use Throwable;
 class ValidationFailedException extends ImportException {
 
     /** @var ConstraintViolationListInterface */
-    private $violations;
+    private ConstraintViolationListInterface $violations;
 
     public function __construct(ConstraintViolationListInterface $violations, $message = "", $code = 0, Throwable $previous = null) {
         parent::__construct($message, $code, $previous);

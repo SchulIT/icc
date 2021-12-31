@@ -9,19 +9,19 @@ use Twig\TwigFilter;
 
 class SortExtension extends AbstractExtension {
 
-    private $sorter;
+    private Sorter $sorter;
 
     public function __construct(Sorter $sorter) {
         $this->sorter = $sorter;
     }
 
-    public function getFilters() {
+    public function getFilters(): array {
         return [
             new TwigFilter('sort_gradeteachers', [ $this, 'sortGradeTeachers'])
         ];
     }
 
-    public function sortGradeTeachers(iterable $gradeTeachers) {
+    public function sortGradeTeachers(iterable $gradeTeachers): array {
         $collection = [ ];
 
         foreach($gradeTeachers as $gradeTeacher) {

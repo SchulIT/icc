@@ -16,7 +16,7 @@ class BirthdayVoter extends Voter {
 
     const ShowBirthday = 'show-birthday';
 
-    private $accessDecisionManager;
+    private AccessDecisionManagerInterface $accessDecisionManager;
 
     public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
         $this->accessDecisionManager = $accessDecisionManager;
@@ -25,7 +25,7 @@ class BirthdayVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports(string $attribute, $subject) {
+    protected function supports(string $attribute, $subject): bool {
         return $attribute === static::ShowBirthday
             && $subject instanceof Student;
     }
@@ -33,7 +33,7 @@ class BirthdayVoter extends Voter {
     /**
      * @throws UnexpectedTypeException
      */
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
         if($attribute !== static::ShowBirthday) {
             throw new LogicException('This code should not be executed.');
         }

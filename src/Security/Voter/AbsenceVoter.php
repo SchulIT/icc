@@ -13,7 +13,7 @@ class AbsenceVoter extends Voter {
     public const View = 'view';
     public const ViewAny = 'view-absences';
 
-    private $substitutionSettings;
+    private SubstitutionSettings $substitutionSettings;
 
     public function __construct(SubstitutionSettings $substitutionSettings) {
         $this->substitutionSettings = $substitutionSettings;
@@ -22,14 +22,14 @@ class AbsenceVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         return $attribute === static::ViewAny || ($attribute === static::View && $subject instanceof Absence);
     }
 
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         $user = $token->getUser();
 
         if(!$user instanceof User) {

@@ -23,9 +23,9 @@ class AppointmentVoter extends Voter {
     const View = 'view';
     const Confirm = 'confirm';
 
-    private $settings;
-    private $dateHelper;
-    private $accessDecisionManager;
+    private AppointmentsSettings $settings;
+    private DateHelper $dateHelper;
+    private AccessDecisionManagerInterface $accessDecisionManager;
 
     public function __construct(AppointmentsSettings $settings, DateHelper $dateHelper, AccessDecisionManagerInterface $accessDecisionManager) {
         $this->settings = $settings;
@@ -36,7 +36,7 @@ class AppointmentVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         $attributes = [
             static::Edit,
             static::Remove,
@@ -51,7 +51,7 @@ class AppointmentVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch ($attribute) {
             case static::New:
                 return $this->canCreate($token);
@@ -72,15 +72,15 @@ class AppointmentVoter extends Voter {
         throw new \LogicException('This code should be reached.');
     }
 
-    private function canCreate(TokenInterface $token) {
+    private function canCreate(TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENT_CREATOR']);
     }
 
-    private function canConfirm(TokenInterface $token) {
+    private function canConfirm(TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']);
     }
 
-    private function canEdit(Appointment $appointment, TokenInterface $token) {
+    private function canEdit(Appointment $appointment, TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']) === true) {
             return true;
         }
@@ -99,11 +99,11 @@ class AppointmentVoter extends Voter {
         return $appointment->getCreatedBy()->getId() === $user->getId();
     }
 
-    private function canRemove(Appointment $appointment, TokenInterface $token) {
+    private function canRemove(Appointment $appointment, TokenInterface $token): bool {
         return $this->canEdit($appointment, $token);
     }
 
-    private function canView(Appointment $appointment, TokenInterface $token) {
+    private function canView(Appointment $appointment, TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']) || $this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
             return true;
         }
@@ -162,7 +162,7 @@ class AppointmentVoter extends Voter {
         return false;
     }
 
-    private function checkVisibility(Appointment $appointment, UserType $userType) {
+    private function checkVisibility(Appointment $appointment, UserType $userType): bool {
         foreach($appointment->getVisibilities() as $visibility) {
             if($visibility->getUserType()->equals($userType)) {
                 return true;

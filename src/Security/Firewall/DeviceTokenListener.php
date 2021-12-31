@@ -11,8 +11,8 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class DeviceTokenListener {
 
-    private $tokenStorage;
-    private $authenticationManager;
+    private TokenStorageInterface $tokenStorage;
+    private AuthenticationManagerInterface $authenticationManager;
 
     public function __construct(TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $authenticationManager) {
         $this->tokenStorage = $tokenStorage;

@@ -19,10 +19,10 @@ use SchulIT\CommonBundle\Security\User\AbstractUserMapper;
 class UserMapper extends AbstractUserMapper {
     const ROLES_ASSERTION_NAME = 'urn:roles';
 
-    private $typesMap;
-    private $teacherRepository;
-    private $studentRepository;
-    private $logger;
+    private array $typesMap;
+    private TeacherRepositoryInterface $teacherRepository;
+    private StudentRepositoryInterface $studentRepository;
+    private LoggerInterface $logger;
 
     public function __construct(array $typesMap, TeacherRepositoryInterface $teacherRepository, StudentRepositoryInterface $studentRepository, LoggerInterface $logger = null) {
         $this->typesMap = $typesMap;
@@ -50,7 +50,7 @@ class UserMapper extends AbstractUserMapper {
      * @param Response|array[] $data Either a SAMLResponse or an array (keys: SAML Attribute names, values: corresponding values)
      * @return User
      */
-    public function mapUser(User $user, $data) {
+    public function mapUser(User $user, $data): User {
         if(is_array($data)) {
             return $this->mapUserFromArray($user, $data);
         } else if($data instanceof Response) {
@@ -58,7 +58,7 @@ class UserMapper extends AbstractUserMapper {
         }
     }
 
-    private function mapUserFromResponse(User $user, Response $response) {
+    private function mapUserFromResponse(User $user, Response $response): User {
         return $this->mapUserFromArray($user, $this->transformResponseToArray(
             $response,
             [
@@ -81,7 +81,7 @@ class UserMapper extends AbstractUserMapper {
      * @param array<string, mixed> $data
      * @return User
      */
-    private function mapUserFromArray(User $user, array $data) {
+    private function mapUserFromArray(User $user, array $data): User {
         $username = $data[ClaimTypes::COMMON_NAME];
         $firstname = $data[ClaimTypes::GIVEN_NAME];
         $lastname = $data[ClaimTypes::SURNAME];

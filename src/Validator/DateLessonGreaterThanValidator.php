@@ -14,9 +14,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DateLessonGreaterThanValidator extends ConstraintValidator {
 
-    private $timetableTimeHelper;
-    private $translator;
-    private $propertyAccessor;
+    private TimetableTimeHelper $timetableTimeHelper;
+    private TranslatorInterface $translator;
+    private PropertyAccessorInterface $propertyAccessor;
 
     public function __construct(TimetableTimeHelper $timeHelper, TranslatorInterface $translator, PropertyAccessorInterface $propertyAccessor) {
         $this->timetableTimeHelper = $timeHelper;
@@ -24,11 +24,11 @@ class DateLessonGreaterThanValidator extends ConstraintValidator {
         $this->propertyAccessor = $propertyAccessor;
     }
 
-    private function formatDate(DateLesson $lesson) {
+    private function formatDate(DateLesson $lesson): string {
         return $lesson->getDate()->format($this->translator->trans('date.format_short'));
     }
 
-    private function formatLesson(DateLesson $lesson) {
+    private function formatLesson(DateLesson $lesson): string {
         return $this->translator->trans('label.exam_lessons', [
             '%start%' => $lesson->getLesson(),
             '%count%' => 0
@@ -38,7 +38,7 @@ class DateLessonGreaterThanValidator extends ConstraintValidator {
     /**
      * @inheritDoc
      */
-    protected function compareValues($value1, $value2) {
+    protected function compareValues($value1, $value2): bool {
         $date1 = $this->timetableTimeHelper->getLessonEndDateTime($value1->getDate(), $value1->getLesson());
         $date2 = $this->timetableTimeHelper->getLessonStartDateTime($value2->getDate(), $value2->getLesson());
 

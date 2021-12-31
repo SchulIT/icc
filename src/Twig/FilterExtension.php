@@ -9,19 +9,19 @@ use Twig\TwigFilter;
 
 class FilterExtension extends AbstractExtension {
 
-    private $propertyAccessor;
+    private PropertyAccessorInterface $propertyAccessor;
 
     public function __construct(PropertyAccessorInterface $propertyAccessor) {
         $this->propertyAccessor = $propertyAccessor;
     }
 
-    public function getFilters() {
+    public function getFilters(): array {
         return [
             new TwigFilter('only_section', [ $this, 'filterCurrentSection'])
         ];
     }
 
-    public function filterCurrentSection(iterable $collection, Section $section) {
+    public function filterCurrentSection(iterable $collection, Section $section): array {
         $result = [ ];
 
         foreach($collection as $item) {

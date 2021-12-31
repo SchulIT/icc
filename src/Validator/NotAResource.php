@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraint;
  * @Target({"CLASS", "ANNOTATION"})
  */
 class NotAResource extends Constraint {
-    public $message = 'This room cannot be created as a resource with the same name ({{ name }}) already exists.';
+    public string $message = 'This room cannot be created as a resource with the same name ({{ name }}) already exists.';
 
     /**
      * {@inheritdoc}

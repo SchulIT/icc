@@ -17,9 +17,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class WikiArticleType extends AbstractType {
 
-    private $treeHelper;
-    private $wikiRepository;
-    private $urlGenerator;
+    private TreeHelper $treeHelper;
+    private WikiArticleRepositoryInterface $wikiRepository;
+    private UrlGeneratorInterface $urlGenerator;
 
     public function __construct(TreeHelper $treeHelper, WikiArticleRepositoryInterface $wikiRepository, UrlGeneratorInterface $urlGenerator) {
         $this->treeHelper = $treeHelper;

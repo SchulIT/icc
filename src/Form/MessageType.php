@@ -23,9 +23,9 @@ class MessageType extends AbstractType {
 
     private const YearsDelta = 1;
 
-    private $dateHelper;
+    private DateHelper $dateHelper;
 
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     public function __construct(DateHelper $dateHelper, AuthorizationCheckerInterface $authorizationChecker) {
         $this->dateHelper = $dateHelper;

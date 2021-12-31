@@ -26,21 +26,21 @@ use Twig\Environment;
 
 class ReservationCheckerSubscriber implements EventSubscriberInterface {
 
-    private $validator;
-    private $reservationRepository;
-    private $examRepository;
+    private ValidatorInterface $validator;
+    private ResourceReservationRepositoryInterface $reservationRepository;
+    private ExamRepositoryInterface $examRepository;
 
-    private $appName;
-    private $sender;
+    private string $appName;
+    private string $sender;
 
-    private $mailer;
-    private $twig;
-    private $translator;
-    private $dateHelper;
+    private Swift_Mailer $mailer;
+    private Environment $twig;
+    private TranslatorInterface $translator;
+    private DateHelper $dateHelper;
 
-    private $availabilityHelper;
+    private ResourceAvailabilityHelper $availabilityHelper;
 
-    public function __construct($appName, string $sender, ValidatorInterface $validator, ResourceReservationRepositoryInterface $reservationRepository,
+    public function __construct(string $appName, string $sender, ValidatorInterface $validator, ResourceReservationRepositoryInterface $reservationRepository,
                                 ExamRepositoryInterface $examRepository, Swift_Mailer $mailer, Environment $twig, TranslatorInterface $translator,
                                 DateHelper $dateHelper, ResourceAvailabilityHelper $availabilityHelper) {
         $this->appName = $appName;
@@ -232,7 +232,7 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
     /**
      * @inheritDoc
      */
-    public static function getSubscribedEvents() {
+    public static function getSubscribedEvents(): array {
         return [
             SubstitutionImportEvent::class => 'onSubstitutionImportEvent'
         ];

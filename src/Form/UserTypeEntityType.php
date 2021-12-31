@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserTypeEntityType extends EntityType {
 
-    private $enumStringConverter;
+    private EnumStringConverter $enumStringConverter;
 
     public function __construct(ManagerRegistry $registry, EnumStringConverter $enumStringConverter) {
         parent::__construct($registry);

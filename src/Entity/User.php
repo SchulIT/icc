@@ -243,7 +243,7 @@ class User implements UserInterface, \Serializable {
     /**
      * @return string[]
      */
-    public function getRoles() {
+    public function getRoles(): array {
         return $this->roles;
     }
 
@@ -259,7 +259,7 @@ class User implements UserInterface, \Serializable {
     /**
      * @return string
      */
-    public function getUsername() {
+    public function getUsername(): string {
         return $this->username;
     }
 
@@ -368,14 +368,14 @@ class User implements UserInterface, \Serializable {
     /**
      * @inheritDoc
      */
-    public function getPassword() {
+    public function getPassword(): ?string {
         return '';
     }
 
     /**
      * @inheritDoc
      */
-    public function getSalt() {
+    public function getSalt(): ?string {
         return null;
     }
 

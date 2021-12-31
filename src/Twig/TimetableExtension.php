@@ -10,22 +10,22 @@ use Twig\TwigFilter;
 class TimetableExtension extends AbstractExtension {
     const HexColorRegExp = '/^\#?([0-9a-f]{6})$/s';
 
-    private $translator;
-    private $timetableSettings;
+    private TranslatorInterface $translator;
+    private TimetableSettings $timetableSettings;
 
     public function __construct(TranslatorInterface $translator, TimetableSettings $timetableSettings) {
         $this->translator = $translator;
         $this->timetableSettings = $timetableSettings;
     }
 
-    public function getFilters() {
+    public function getFilters(): array {
         return [
             new TwigFilter('weekday', [ $this, 'getWeekday' ]),
             new TwigFilter('before_lesson', [ $this, 'getBeforeLessonDescription'])
         ];
     }
 
-    public function getWeekday(int $day, bool $short = false) {
+    public function getWeekday(int $day, bool $short = false): string {
         $id = $short ? 'date.days_short.%d' : 'date.days.%d';
 
         return $this->translator->trans(

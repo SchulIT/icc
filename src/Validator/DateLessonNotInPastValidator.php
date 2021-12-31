@@ -13,14 +13,12 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class DateLessonNotInPastValidator extends ConstraintValidator {
 
-    private $authorizationChecker;
-    private $dateHelper;
-    private $timetableLessonHelper;
+    private AuthorizationCheckerInterface $authorizationChecker;
+    private DateHelper $dateHelper;
 
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker, DateHelper $dateHelper, TimetableTimeHelper $timeHelper) {
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker, DateHelper $dateHelper) {
         $this->authorizationChecker = $authorizationChecker;
         $this->dateHelper = $dateHelper;
-        $this->timetableLessonHelper = $timeHelper;
     }
 
     /**

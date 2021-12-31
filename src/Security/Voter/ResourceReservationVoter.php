@@ -6,6 +6,7 @@ use App\Entity\ResourceReservation;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Utils\EnumArrayUtils;
+use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -17,7 +18,7 @@ class ResourceReservationVoter extends Voter {
     public const Edit = 'edit';
     public const Remove = 'remove';
 
-    private $accessDecisionManager;
+    private AccessDecisionManagerInterface $accessDecisionManager;
 
     public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
         $this->accessDecisionManager = $accessDecisionManager;
@@ -26,7 +27,7 @@ class ResourceReservationVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         $attributes = [
             static::Edit,
             static::Remove
@@ -43,7 +44,7 @@ class ResourceReservationVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
             case static::View:
                 return $this->canView($token);
@@ -59,10 +60,10 @@ class ResourceReservationVoter extends Voter {
 
         }
 
-        throw new \LogicException('This code should not be reached.');
+        throw new LogicException('This code should not be reached.');
     }
 
-    private function canView(TokenInterface $token) {
+    private function canView(TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) === true) {
             return true;
         }
@@ -76,11 +77,11 @@ class ResourceReservationVoter extends Voter {
         return EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]) === false;
     }
 
-    private function canCreate(TokenInterface $token) {
+    private function canCreate(TokenInterface $token): bool {
         return $this->canView($token);
     }
 
-    private function canEdit(ResourceReservation $reservation, TokenInterface $token) {
+    private function canEdit(ResourceReservation $reservation, TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) === true) {
             return true;
         }
@@ -98,7 +99,7 @@ class ResourceReservationVoter extends Voter {
         return false;
     }
 
-    private function canRemove(ResourceReservation $reservation, TokenInterface $token) {
+    private function canRemove(ResourceReservation $reservation, TokenInterface $token): bool {
         return $this->canEdit($reservation, $token);
     }
 }

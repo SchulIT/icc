@@ -12,8 +12,8 @@ class SubstitutionVoter extends Voter {
 
     public const View = 'view';
 
-    private $dateHelper;
-    private $substitutionSettings;
+    private DateHelper $dateHelper;
+    private SubstitutionSettings $substitutionSettings;
 
     public function __construct(DateHelper $dateHelper, SubstitutionSettings $substitutionSettings) {
         $this->dateHelper = $dateHelper;
@@ -23,7 +23,7 @@ class SubstitutionVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         return $attribute === static::View && $subject instanceof Substitution;
     }
 
@@ -33,7 +33,7 @@ class SubstitutionVoter extends Voter {
      * @param TokenInterface $token
      * @return bool
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
         $threshold = $this->getDateThreshold();
 
         return $subject->getDate() <= $threshold;

@@ -11,13 +11,13 @@ use Twig\TwigFunction;
 
 class RepositoryExtension extends AbstractExtension {
 
-    private $studyGroupRepository;
+    private StudyGroupRepositoryInterface $studyGroupRepository;
 
     public function __construct(StudyGroupRepositoryInterface $studyGroupRepository) {
         $this->studyGroupRepository = $studyGroupRepository;
     }
 
-    public function getFunctions() {
+    public function getFunctions(): array {
         return [
             new TwigFunction('get_study_group_by_grade', [ $this, 'getStudyGroupByGrade' ])
         ];

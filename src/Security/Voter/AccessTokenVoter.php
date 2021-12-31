@@ -13,7 +13,7 @@ class AccessTokenVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         return $attribute === static::Revoke && $subject instanceof AccessToken;
     }
 
@@ -23,7 +23,7 @@ class AccessTokenVoter extends Voter {
      * @param TokenInterface $token
      * @return bool
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
         return $subject->getUserIdentifier() === $token->getUsername();
     }
 }

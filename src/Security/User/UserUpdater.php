@@ -9,8 +9,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class UserUpdater implements EventSubscriberInterface {
 
-    private $userMapper;
-    private $userRepository;
+    private UserMapper $userMapper;
+    private UserRepositoryInterface $userRepository;
 
     public function __construct(UserMapper $userMapper, UserRepositoryInterface $userRepository) {
         $this->userMapper = $userMapper;
@@ -28,7 +28,7 @@ class UserUpdater implements EventSubscriberInterface {
     /**
      * @inheritDoc
      */
-    public static function getSubscribedEvents() {
+    public static function getSubscribedEvents(): array {
         return [
             AuthenticationEvent::class => 'onAuthentication'
         ];

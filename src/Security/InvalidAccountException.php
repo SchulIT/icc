@@ -6,7 +6,7 @@ use Symfony\Component\Security\Core\Exception\AccountStatusException;
 use Throwable;
 
 class InvalidAccountException extends AccountStatusException {
-    private $messageKey;
+    private string $messageKey;
 
     public function __construct(string $messageKey, $message = "", $code = 0, Throwable $previous = null) {
         parent::__construct($message, $code, $previous);
@@ -14,7 +14,7 @@ class InvalidAccountException extends AccountStatusException {
         $this->messageKey = $messageKey;
     }
 
-    public function getMessageKey() {
+    public function getMessageKey(): string {
         return $this->messageKey;
     }
 

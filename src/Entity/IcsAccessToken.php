@@ -6,12 +6,13 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
  */
-class IcsAccessToken {
+class IcsAccessToken implements UserInterface {
 
     use IdTrait;
     use UuidTrait;
@@ -144,5 +145,44 @@ class IcsAccessToken {
     public function setLastActive(DateTime $lastActive): IcsAccessToken {
         $this->lastActive = $lastActive;
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRoles() {
+        return $this->user->getRoles();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPassword() {
+        return $this->user->getPassword();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSalt() {
+        return $this->user->getSalt();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function eraseCredentials() {
+        $this->user->eraseCredentials();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUsername() {
+        return $this->user->getUsername();
+    }
+
+    public function getUserIdentifier(): string {
+        return $this->user->getUserIdentifier();
     }
 }

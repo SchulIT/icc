@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraint;
  * @Target({"CLASS", "ANNOTATION"})
  */
 class PeriodNotOverlaps extends Constraint {
-    public $message = 'Period overlaps with period "{{ key }}".';
+    public string $message = 'Period overlaps with period "{{ key }}".';
 
     /**
      * {@inheritdoc}

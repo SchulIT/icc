@@ -4,24 +4,22 @@ namespace App\Rooms\Status;
 
 use GuzzleHttp\ClientInterface;
 use JMS\Serializer\SerializerInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class ServiceCenterRoomStatusHelper implements StatusHelperInterface {
-    private $isEnabled;
+    private bool $isEnabled;
 
-    private $cache;
-    private $client;
-    private $serializer;
-    private $logger;
+    private CacheItemPoolInterface $cache;
+    private ClientInterface $client;
+    private LoggerInterface $logger;
 
-    public function __construct(bool $isEnabled, AdapterInterface $cache, SerializerInterface $serializer,
+    public function __construct(bool $isEnabled, CacheItemPoolInterface $cache,
                                 ClientInterface $servicecenterClient, LoggerInterface $logger) {
         $this->isEnabled = $isEnabled;
         $this->cache = $cache;
         $this->client = $servicecenterClient;
-        $this->serializer = $serializer;
         $this->logger = $logger;
     }
 

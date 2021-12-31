@@ -10,8 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TeacherChoiceType extends SortableEntityType {
 
-    private $teacherStrategy;
-    private $teacherConverter;
+    private TeacherStrategy $teacherStrategy;
+    private TeacherStringConverter $teacherConverter;
 
     public function __construct(TeacherStrategy $teacherStrategy, TeacherStringConverter $teacherConverter, ManagerRegistry $registry) {
         parent::__construct($registry);

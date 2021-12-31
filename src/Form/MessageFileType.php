@@ -27,7 +27,7 @@ class MessageFileType extends AbstractType {
         $resolver->setDefault('data_class', MessageFile::class);
     }
 
-    public function getBlockPrefix() {
+    public function getBlockPrefix(): string {
         return 'message_file';
     }
 }

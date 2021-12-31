@@ -8,6 +8,7 @@ use App\Entity\UserType;
 use App\Entity\UserTypeEntity;
 use App\Security\ImportUser;
 use App\Utils\EnumArrayUtils;
+use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -19,7 +20,7 @@ class TimetablePeriodVoter extends Voter {
     const Remove = 'remove';
     const View = 'view';
 
-    private $accessDecisionManager;
+    private AccessDecisionManagerInterface $accessDecisionManager;
 
     public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
         $this->accessDecisionManager = $accessDecisionManager;
@@ -28,7 +29,7 @@ class TimetablePeriodVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         $attributes = [
             static::Edit,
             static::Remove,
@@ -42,7 +43,7 @@ class TimetablePeriodVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
             case static::View:
                 return $this->canView($subject, $token);
@@ -57,7 +58,7 @@ class TimetablePeriodVoter extends Voter {
                 return $this->canRemove($subject, $token);
         }
 
-        throw new \LogicException('This code should not be reached.');
+        throw new LogicException('This code should not be reached.');
     }
 
     private function canView(TimetablePeriod $period, TokenInterface $token): bool {

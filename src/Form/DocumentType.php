@@ -20,12 +20,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DocumentType extends AbstractType {
 
-    private $documentCategoryNameStrategy;
+    private DocumentCategoryNameStrategy $documentCategoryNameStrategy;
 
-    private $userConverter;
-    private $userStrategy;
+    private UserStringConverter $userConverter;
+    private UserUsernameStrategy $userStrategy;
 
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     public function __construct(DocumentCategoryNameStrategy $documentCategorySorter, UserStringConverter $userConverter,
                                 UserUsernameStrategy $userStrategy, AuthorizationCheckerInterface $authorizationChecker) {

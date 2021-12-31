@@ -7,16 +7,16 @@ use League\CommonMark\Block\Element\Document;
 use League\CommonMark\Block\Element\Heading;
 use League\CommonMark\DocParser;
 use League\CommonMark\EnvironmentInterface;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class TableOfContentsHelper {
-    private $slugger;
-    private $cache;
-    private $environment;
+    private SluggerInterface $slugger;
+    private CacheItemPoolInterface $cache;
+    private EnvironmentInterface $environment;
 
-    public function __construct(SluggerInterface $slugger, AdapterInterface $adapter, EnvironmentInterface $environment) {
+    public function __construct(SluggerInterface $slugger, CacheItemPoolInterface $cache, EnvironmentInterface $environment) {
         $this->slugger = $slugger;
-        $this->cache = $adapter;
+        $this->cache = $cache;
         $this->environment = $environment;
     }
 

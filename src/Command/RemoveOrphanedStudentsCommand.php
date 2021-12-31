@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class RemoveOrphanedStudentsCommand extends Command {
 
-    private $studentRepository;
+    private StudentRepositoryInterface $studentRepository;
 
     public function __construct(StudentRepositoryInterface $studentRepository, string $name = null) {
         parent::__construct($name);
@@ -31,7 +31,7 @@ class RemoveOrphanedStudentsCommand extends Command {
             ->setDescription('Removes students without any linked grade or section.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output): int {
         $style = new SymfonyStyle($input, $output);
 
         $count = $this->studentRepository->removeOrphaned();

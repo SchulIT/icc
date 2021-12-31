@@ -13,10 +13,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class StudentsType extends SortableEntityType {
 
-    private $studentConverter;
-    private $stringStrategy;
-    private $studentStrategy;
-    private $sectionResolver;
+    private StudentStringConverter $studentConverter;
+    private StringStrategy $stringStrategy;
+    private StudentStrategy $studentStrategy;
+    private SectionResolverInterface $sectionResolver;
 
     public function __construct(ManagerRegistry $registry, StudentStringConverter $studentConverter, StudentStrategy $studentStrategy,
                                 StringStrategy $stringStrategy, SectionResolverInterface $sectionResolver) {

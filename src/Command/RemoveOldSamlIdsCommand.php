@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @CronJob("@daily")
  */
 class RemoveOldSamlIdsCommand extends Command {
-    private $em;
+    private EntityManagerInterface $em;
     private const Days = 30;
 
     public function __construct(EntityManagerInterface $em, string $name = null) {
@@ -28,7 +28,7 @@ class RemoveOldSamlIdsCommand extends Command {
             ->setDescription('Removes old SAML _InResponse IDs.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output): int {
         $style = new SymfonyStyle($input, $output);
         $threshold = (new DateTime('today'))->modify(sprintf('-%d days', static::Days));
 

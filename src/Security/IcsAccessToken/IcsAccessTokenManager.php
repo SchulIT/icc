@@ -8,13 +8,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
 class IcsAccessTokenManager {
-    private $em;
-    private $security;
-    private $utils;
+    private EntityManagerInterface $em;
+    private SecurityUtilsInterface $utils;
 
-    public function __construct(EntityManagerInterface $manager, Security $security, SecurityUtilsInterface $securityUtils) {
+    public function __construct(EntityManagerInterface $manager, SecurityUtilsInterface $securityUtils) {
         $this->em = $manager;
-        $this->security = $security;
         $this->utils = $securityUtils;
     }
 

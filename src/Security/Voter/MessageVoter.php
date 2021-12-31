@@ -30,8 +30,8 @@ class MessageVoter extends Voter {
     const Priority = 'message-priority';
     const Poll = 'poll';
 
-    private $accessDecisionManager;
-    private $confirmationHelper;
+    private AccessDecisionManagerInterface $accessDecisionManager;
+    private MessageConfirmationHelper $confirmationHelper;
 
     public function __construct(AccessDecisionManagerInterface $accessDecisionManager, MessageConfirmationHelper $confirmationHelper) {
         $this->accessDecisionManager = $accessDecisionManager;
@@ -41,7 +41,7 @@ class MessageVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         $attributes = [
             static::View,
             static::Edit,
@@ -59,7 +59,7 @@ class MessageVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
             case static::New:
                 return $this->canCreate($token);
@@ -95,11 +95,11 @@ class MessageVoter extends Voter {
         throw new \LogicException('This code should not be reached.');
     }
 
-    private function canCreate(TokenInterface $token) {
+    private function canCreate(TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_MESSAGE_CREATOR']);
     }
 
-    private function canView(Message $message, TokenInterface $token) {
+    private function canView(Message $message, TokenInterface $token): bool {
         $user = $token->getUser();
 
         if(!$user instanceof User) {
@@ -133,7 +133,7 @@ class MessageVoter extends Voter {
         return false;
     }
 
-    private function canEdit(Message $message, TokenInterface $token) {
+    private function canEdit(Message $message, TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, ['ROLE_MESSAGE_CREATOR']) !== true) {
             return false;
         }
@@ -153,11 +153,11 @@ class MessageVoter extends Voter {
         return $message->getCreatedBy()->getId() === $user->getId();
     }
 
-    private function canRemove(Message $message, TokenInterface $token) {
+    private function canRemove(Message $message, TokenInterface $token): bool {
         return $this->canEdit($message, $token);
     }
 
-    private function canConfirm(Message $message, TokenInterface $token) {
+    private function canConfirm(Message $message, TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
             return false;
         }
@@ -171,7 +171,7 @@ class MessageVoter extends Voter {
             );
     }
 
-    private function canVote(Message $message, TokenInterface $token) {
+    private function canVote(Message $message, TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
             return false;
         }
@@ -185,7 +185,7 @@ class MessageVoter extends Voter {
             );
     }
 
-    private function canDismiss(Message $message, TokenInterface $token) {
+    private function canDismiss(Message $message, TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
             return false;
         }
@@ -208,7 +208,7 @@ class MessageVoter extends Voter {
      * @param Collection<UserTypeEntity> $collection
      * @return UserType[]
      */
-    private function getUserTypes(Collection $collection) {
+    private function getUserTypes(Collection $collection): array {
         return array_map(function(UserTypeEntity $userTypeEntity) {
             return $userTypeEntity->getUserType();
         }, $collection->toArray());
@@ -273,7 +273,7 @@ class MessageVoter extends Voter {
         return $this->checkUserType($userTypes, $user->getUserType(), $strict);
     }
 
-    private function canDownload(Message $message, TokenInterface $token) {
+    private function canDownload(Message $message, TokenInterface $token): bool {
         return $message->isDownloadsEnabled()
             && $this->isMemberOfTypeAndStudyGroup(
                 $token,
@@ -283,7 +283,7 @@ class MessageVoter extends Voter {
             );
     }
 
-    private function canUpload(Message $message, TokenInterface $token) {
+    private function canUpload(Message $message, TokenInterface $token): bool {
         return $message->isUploadsEnabled()
             && $this->isMemberOfTypeAndStudyGroup(
                 $token,
@@ -293,7 +293,7 @@ class MessageVoter extends Voter {
             );
     }
 
-    private function canSetPriority(TokenInterface $token) {
+    private function canSetPriority(TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_MESSAGE_PRIORITY']);
     }
 }

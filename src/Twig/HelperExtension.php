@@ -24,15 +24,15 @@ use Twig\TwigFunction;
 
 class HelperExtension extends AbstractExtension {
 
-    private $confirmationHelper;
-    private $dismissedHelper;
-    private $redirectHelper;
-    private $colorUtils;
-    private $messageFilesystem;
-    private $messageFileUploadHelper;
-    private $tokenStorage;
-    private $authorizationChecker;
-    private $validator;
+    private MessageConfirmationHelper $confirmationHelper;
+    private DismissedMessagesHelper $dismissedHelper;
+    private RefererHelper $redirectHelper;
+    private ColorUtils $colorUtils;
+    private MessageFilesystem $messageFilesystem;
+    private MessageFileUploadHelper $messageFileUploadHelper;
+    private TokenStorageInterface $tokenStorage;
+    private AuthorizationCheckerInterface $authorizationChecker;
+    private ValidatorInterface $validator;
 
     public function __construct(MessageConfirmationHelper $confirmationHelper, DismissedMessagesHelper $dismissedHelper,
                                 RefererHelper $redirectHelper, ColorUtils $colorUtils, MessageFilesystem $messageFilesystem,
@@ -49,7 +49,7 @@ class HelperExtension extends AbstractExtension {
         $this->validator = $validator;
     }
 
-    public function getFilters() {
+    public function getFilters(): array {
         return [
             new TwigFilter('previous_date', [ $this, 'getPreviousDate' ]),
             new TwigFilter('next_date', [ $this, 'getNextDate']),
@@ -57,7 +57,7 @@ class HelperExtension extends AbstractExtension {
         ];
     }
 
-    public function getFunctions() {
+    public function getFunctions(): array {
         return [
             new TwigFunction('is_confirmed', [ $this, 'isConfirmed' ]),
             new TwigFunction('is_dismissed', [ $this, 'isDismissed' ]),
@@ -105,11 +105,11 @@ class HelperExtension extends AbstractExtension {
         return false;
     }
 
-    public function isConfirmed(Message $message) {
+    public function isConfirmed(Message $message): bool {
         return $this->confirmationHelper->isMessageConfirmed($message);
     }
 
-    public function isDismissed(Message $message) {
+    public function isDismissed(Message $message): bool {
         return $this->dismissedHelper->isMessageDismissed($message);
     }
 
@@ -133,7 +133,7 @@ class HelperExtension extends AbstractExtension {
         return false;
     }
 
-    public function messageDownloads(Message $message) {
+    public function messageDownloads(Message $message): array {
         if($this->authorizationChecker->isGranted(MessageVoter::Download, $message) !== true) {
             return [ ];
         }

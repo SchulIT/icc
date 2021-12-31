@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class NotAResourceValidator extends ConstraintValidator {
 
-    private $resourceRepository;
+    private ResourceRepositoryInterface $resourceRepository;
 
     public function __construct(ResourceRepositoryInterface $resourceRepository) {
         $this->resourceRepository = $resourceRepository;

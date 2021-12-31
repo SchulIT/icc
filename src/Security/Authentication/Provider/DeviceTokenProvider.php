@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class DeviceTokenProvider implements AuthenticationProviderInterface {
 
-    private $deviceManager;
+    private IcsAccessTokenManager $deviceManager;
 
     public function __construct(IcsAccessTokenManager $deviceManager) {
         $this->deviceManager = $deviceManager;
@@ -38,7 +38,7 @@ class DeviceTokenProvider implements AuthenticationProviderInterface {
     /**
      * @inheritDoc
      */
-    public function supports(TokenInterface $token) {
+    public function supports(TokenInterface $token): bool {
         return $token instanceof DeviceToken;
     }
 }

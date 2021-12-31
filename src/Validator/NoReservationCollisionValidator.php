@@ -12,8 +12,8 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class NoReservationCollisionValidator extends ConstraintValidator {
 
-    private $availabilityHelper;
-    private $teacherConverter;
+    private ResourceAvailabilityHelper $availabilityHelper;
+    private TeacherStringConverter $teacherConverter;
 
     public function __construct(ResourceAvailabilityHelper $availabilityHelper, TeacherStringConverter $teacherConverter) {
         $this->availabilityHelper = $availabilityHelper;

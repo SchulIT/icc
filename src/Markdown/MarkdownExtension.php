@@ -29,15 +29,15 @@ use League\CommonMark\Inline\Renderer\LinkRenderer;
 
 class MarkdownExtension implements ExtensionInterface {
 
-    private $alertBlockParser;
+    private AlertBlockParser $alertBlockParser;
 
-    private $headingProcessor;
-    private $linkProcessor;
-    private $imageProcessor;
+    private HeadingAnchorProcessor $headingProcessor;
+    private LinkProcessor $linkProcessor;
+    private ImageProcessor $imageProcessor;
 
-    private $alertBlockRenderer;
-    private $headingRenderer;
-    private $tableRenderer;
+    private AlertBlockRenderer $alertBlockRenderer;
+    private HeadingRenderer $headingRenderer;
+    private TableRenderer $tableRenderer;
 
     public function __construct(AlertBlockParser $alertBlockParser, HeadingAnchorProcessor $headingProcessor, LinkProcessor $linkProcessor, ImageProcessor $imageProcessor,
                                 AlertBlockRenderer $alertBlockRenderer, HeadingRenderer $headingRenderer, TableRenderer $tableRenderer) {
@@ -50,7 +50,7 @@ class MarkdownExtension implements ExtensionInterface {
         $this->tableRenderer = $tableRenderer;
     }
 
-    public function register(ConfigurableEnvironmentInterface $environment) {
+    public function register(ConfigurableEnvironmentInterface $environment): void {
         $environment
             ->addBlockParser(new TableParser())
             ->addBlockRenderer(Heading::class, $this->headingRenderer, 100)

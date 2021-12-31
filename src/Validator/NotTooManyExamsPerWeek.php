@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraint;
  * @Target({"CLASS", "ANNOTATION"})
  */
 class NotTooManyExamsPerWeek extends Constraint {
-    public $message = 'Only {{ maxNumber }} exam(s) per week are allowed. Got {{ number }}.';
+    public string $message = 'Only {{ maxNumber }} exam(s) per week are allowed. Got {{ number }}.';
 
     /**
      * {@inheritdoc}

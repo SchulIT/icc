@@ -14,8 +14,8 @@ use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 
 class ExamBulkType extends AbstractType {
 
-    private $tuitionStrategy;
-    private $stringStrategy;
+    private TuitionStrategy $tuitionStrategy;
+    private StringStrategy $stringStrategy;
 
     public function __construct(TuitionStrategy $tuitionStrategy, StringStrategy $stringStrategy) {
         $this->tuitionStrategy = $tuitionStrategy;

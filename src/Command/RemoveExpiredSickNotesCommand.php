@@ -18,11 +18,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class RemoveExpiredSickNotesCommand extends Command {
 
-    private $settings;
-    private $repository;
-    private $attachmentRepository;
-    private $dateHelper;
-    private $filesystem;
+    private SickNoteSettings $settings;
+    private SickNoteRepositoryInterface $repository;
+    private SickNoteAttachmentRepositoryInterface $attachmentRepository;
+    private DateHelper $dateHelper;
+    private FilesystemInterface $filesystem;
 
     public function __construct(SickNoteSettings $settings, SickNoteRepositoryInterface $repository,
                                 SickNoteAttachmentRepositoryInterface $attachmentRepository, FilesystemInterface $filesystem,
@@ -41,7 +41,7 @@ class RemoveExpiredSickNotesCommand extends Command {
             ->setDescription('Sends notifications for messages which did not push any notification yet.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output): int {
         $style = new SymfonyStyle($input, $output);
 
         $days = $this->settings->getRetentionDays();

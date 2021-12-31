@@ -8,7 +8,7 @@ use SchulIT\CommonBundle\Saml\ClaimTypes;
 
 class AttributeMapper implements AttributeMapperInterface {
 
-    public function getAttributes(SamlSpResponseToken $token) {
+    public function getAttributes(SamlSpResponseToken $token): array {
         return [
             'name_id' => $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue(),
             'internal_id' => $this->getValue($token, ClaimTypes::EXTERNAL_ID),
@@ -16,7 +16,7 @@ class AttributeMapper implements AttributeMapperInterface {
         ];
     }
 
-    private function getServices(SamlSpResponseToken $token) {
+    private function getServices(SamlSpResponseToken $token): array {
         $values = $this->getValues($token, ClaimTypes::SERVICES);
 
         $services = [ ];

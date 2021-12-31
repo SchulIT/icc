@@ -23,15 +23,15 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ExamType extends AbstractType {
 
-    private $tuitionStrategy;
-    private $stringStrategy;
-    private $roomStrategy;
-    private $sectionResolver;
+    private TuitionStrategy $tuitionStrategy;
+    private StringStrategy $stringStrategy;
+    private RoomNameStrategy $roomStrategy;
+    private SectionResolverInterface $sectionResolver;
 
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     public function __construct(TuitionStrategy $tuitionStrategy, StringStrategy $stringStrategy, RoomNameStrategy $roomStrategy,
-                                SectionResolverInterface $sectionResolver,AuthorizationCheckerInterface $authorizationChecker) {
+                                SectionResolverInterface $sectionResolver, AuthorizationCheckerInterface $authorizationChecker) {
         $this->tuitionStrategy = $tuitionStrategy;
         $this->stringStrategy = $stringStrategy;
         $this->roomStrategy = $roomStrategy;

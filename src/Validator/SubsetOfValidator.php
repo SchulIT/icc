@@ -15,7 +15,7 @@ class SubsetOfValidator extends AbstractComparisonValidator {
      * @param iterable $value1 All values in this iterable must be present in $value2
      * @param iterable $value2
      */
-    protected function compareValues($value1, $value2) {
+    protected function compareValues($value1, $value2): bool {
         foreach($value1 as $subsetValue) {
             foreach($value2 as $supersetValue) {
                 if($subsetValue === $supersetValue) {

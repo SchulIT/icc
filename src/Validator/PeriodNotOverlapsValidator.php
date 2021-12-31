@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class PeriodNotOverlapsValidator extends ConstraintValidator {
 
-    private $timetablePeriodRepository;
+    private TimetablePeriodRepositoryInterface $timetablePeriodRepository;
 
     public function __construct(TimetablePeriodRepositoryInterface $timetablePeriodRepository) {
         $this->timetablePeriodRepository = $timetablePeriodRepository;

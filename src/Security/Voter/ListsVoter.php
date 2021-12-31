@@ -18,7 +18,7 @@ class ListsVoter extends Voter {
     public const Privacy = 'privacy';
     public const ExportTeachers = 'export-teachers';
 
-    private $accessDecisionManager;
+    private AccessDecisionManagerInterface $accessDecisionManager;
 
     public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
         $this->accessDecisionManager = $accessDecisionManager;
@@ -27,7 +27,7 @@ class ListsVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         $attributes = [
             static::Teachers,
             static::Students,
@@ -44,7 +44,7 @@ class ListsVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
             case static::Teachers:
                 return true; // everyone can see teachers
@@ -60,7 +60,7 @@ class ListsVoter extends Voter {
         throw new \LogicException('This code should not be reached.');
     }
 
-    private function canViewLists(TokenInterface $token) {
+    private function canViewLists(TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, [ 'ROLE_ADMIN' ]) || $this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
             return true;
         }

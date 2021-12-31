@@ -24,9 +24,9 @@ class DocumentVoter extends Voter {
     const ViewOthers = 'other-documents';
     const Admin = 'admin-documents';
 
-    private $sectionResolver;
-    private $documentRepository;
-    private $accessDecisionManager;
+    private SectionResolverInterface $sectionResolver;
+    private DocumentRepositoryInterface $documentRepository;
+    private AccessDecisionManagerInterface $accessDecisionManager;
 
     public function __construct(SectionResolverInterface $sectionResolver, AccessDecisionManagerInterface $accessDecisionManager, DocumentRepositoryInterface $documentRepository) {
         $this->sectionResolver = $sectionResolver;
@@ -37,7 +37,7 @@ class DocumentVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         $attributes = [
             static::Edit,
             static::Remove,
@@ -51,7 +51,7 @@ class DocumentVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
             case static::New:
                 return $this->canCreateDocument($token);
@@ -75,11 +75,11 @@ class DocumentVoter extends Voter {
         throw new \LogicException('This code should not be reached.');
     }
 
-    private function canCreateDocument(TokenInterface $token) {
+    private function canCreateDocument(TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']);
     }
 
-    private function canEditDocument(Document $document, TokenInterface $token) {
+    private function canEditDocument(Document $document, TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN'])) {
             return true;
         }
@@ -96,11 +96,11 @@ class DocumentVoter extends Voter {
         return false;
     }
 
-    private function canRemoveDocument(TokenInterface $token) {
+    private function canRemoveDocument(TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']);
     }
 
-    private function canViewDocument(Document $document, TokenInterface $token) {
+    private function canViewDocument(Document $document, TokenInterface $token): bool {
         if ($this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']) || $this->accessDecisionManager->decide($token, ['ROLE_KIOSK'])) {
             return true;
         }
@@ -149,7 +149,7 @@ class DocumentVoter extends Voter {
         return false;
     }
 
-    private function canViewOtherDocuments(TokenInterface $token) {
+    private function canViewOtherDocuments(TokenInterface $token): bool {
         /** @var User $user */
         $user = $token->getUser();
 
@@ -157,7 +157,7 @@ class DocumentVoter extends Voter {
         return $isTeacher || $this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']);
     }
 
-    private function canViewAdminOverview(TokenInterface $token) {
+    private function canViewAdminOverview(TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN'])) {
             return true;
         }

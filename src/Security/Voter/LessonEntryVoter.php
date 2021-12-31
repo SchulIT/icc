@@ -14,7 +14,7 @@ class LessonEntryVoter extends Voter {
     public const Edit = 'edit';
     public const Remove = 'remove';
 
-    private $accessDecisionManager;
+    private AccessDecisionManagerInterface $accessDecisionManager;
 
     public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
         $this->accessDecisionManager = $accessDecisionManager;
@@ -23,7 +23,7 @@ class LessonEntryVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports(string $attribute, $subject) {
+    protected function supports(string $attribute, $subject): bool {
         $attributes = [
             static::Edit,
             static::Remove
@@ -36,7 +36,7 @@ class LessonEntryVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
             case static::New:
                 return $this->canCreate($token);

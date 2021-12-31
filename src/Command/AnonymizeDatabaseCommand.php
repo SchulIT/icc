@@ -16,10 +16,10 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use function Symfony\Component\String\u;
 
 class AnonymizeDatabaseCommand extends Command {
-    private $studentRepository;
-    private $teacherRepository;
-    private $slugger;
-    private $faker;
+    private StudentRepositoryInterface $studentRepository;
+    private TeacherRepositoryInterface $teacherRepository;
+    private SluggerInterface $slugger;
+    private Generator $faker;
 
     public function __construct(StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository,
                                 SluggerInterface $slugger, Generator $faker, string $name = null) {
@@ -36,7 +36,7 @@ class AnonymizeDatabaseCommand extends Command {
             ->setDescription('Anomyizes all students and teachers.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output): int {
         $style = new SymfonyStyle($input, $output);
 
         $style->section('Anomyize teachers');

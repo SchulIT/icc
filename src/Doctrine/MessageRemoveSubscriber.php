@@ -14,7 +14,7 @@ use Doctrine\ORM\Events;
  */
 class MessageRemoveSubscriber implements EventSubscriber {
 
-    private $filesystem;
+    private MessageFilesystem $filesystem;
 
     public function __construct(MessageFilesystem $filesystem) {
         $this->filesystem = $filesystem;
@@ -33,7 +33,7 @@ class MessageRemoveSubscriber implements EventSubscriber {
     /**
      * @inheritDoc
      */
-    public function getSubscribedEvents() {
+    public function getSubscribedEvents(): array {
         return [
             Events::postRemove
         ];

@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Entity\UserType;
 use App\Section\SectionResolverInterface;
 use App\Settings\ExamSettings;
+use LogicException;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -26,10 +27,10 @@ class ExamVoter extends Voter {
     public const Unplan = 'unplan';
     public const Remove = 'remove';
 
-    private $dateHelper;
-    private $examSettings;
-    private $accessDecisionManager;
-    private $sectionResoler;
+    private DateHelper $dateHelper;
+    private ExamSettings $examSettings;
+    private AccessDecisionManagerInterface $accessDecisionManager;
+    private SectionResolverInterface $sectionResoler;
 
     public function __construct(DateHelper $dateHelper, ExamSettings $examSettings,
                                 AccessDecisionManagerInterface $accessDecisionManager, SectionResolverInterface $sectionResolver) {
@@ -42,7 +43,7 @@ class ExamVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         $attributes = [
             static::Details,
             static::Supervisions,
@@ -58,7 +59,7 @@ class ExamVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
             case static::Show:
                 return $this->canViewExam($subject, $token);
@@ -83,7 +84,7 @@ class ExamVoter extends Voter {
                 return $this->canManage($token);
         }
 
-        throw new \LogicException('This code should not be reached.');
+        throw new LogicException('This code should not be reached.');
     }
 
     private function getUserType(TokenInterface $token): ?UserType {
@@ -106,11 +107,11 @@ class ExamVoter extends Voter {
         return $userType->equals(UserType::Student()) || $userType->equals(UserType::Parent());
     }
 
-    public function canAdd(TokenInterface $token) {
+    public function canAdd(TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, [ 'ROLE_EXAMS_CREATOR' ]);
     }
 
-    public function canEdit(Exam $exam, TokenInterface $token) {
+    public function canEdit(Exam $exam, TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, ['ROLE_EXAMS_ADMIN']) === true) {
             return true;
         }
@@ -153,7 +154,7 @@ class ExamVoter extends Voter {
         return false;
     }
 
-    public function canManage(TokenInterface $token) {
+    public function canManage(TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, ['ROLE_EXAMS_ADMIN']) === true || $this->accessDecisionManager->decide($token, [ 'ROLE_EXAMS_CREATOR'])) {
             return true;
         }
@@ -173,7 +174,7 @@ class ExamVoter extends Voter {
         return true;
     }
 
-    public function canRemove(Exam $exam, TokenInterface $token) {
+    public function canRemove(Exam $exam, TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, ['ROLE_EXAMS_ADMIN']) === true) {
             return true;
         }

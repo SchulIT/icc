@@ -184,6 +184,9 @@ class LessonAttendance implements JsonSerializable {
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function jsonSerialize() {
         return [
             'uuid' => $this->getUuid()->toString(),

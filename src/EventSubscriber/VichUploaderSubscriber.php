@@ -12,7 +12,7 @@ use Vich\UploaderBundle\Event\Events;
  */
 class VichUploaderSubscriber implements EventSubscriberInterface {
 
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em) {
         $this->em = $em;
@@ -28,7 +28,7 @@ class VichUploaderSubscriber implements EventSubscriberInterface {
     /**
      * @inheritDoc
      */
-    public static function getSubscribedEvents() {
+    public static function getSubscribedEvents(): array {
         return [
             Events::POST_REMOVE => [
                 [ 'postRemoveFile', 0]

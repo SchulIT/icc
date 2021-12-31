@@ -10,13 +10,13 @@ use Twig\TwigFunction;
 
 class SettingsExtension extends AbstractExtension {
 
-    private $timetableSettings;
+    private TimetableSettings $timetableSettings;
 
     public function __construct(TimetableSettings $timetableSettings) {
         $this->timetableSettings = $timetableSettings;
     }
 
-    public function getFunctions() {
+    public function getFunctions(): array {
         return [
             new TwigFunction('show_coursename', [ $this, 'showCourseName'])
         ];

@@ -17,9 +17,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class SendPushNotifications extends Command {
 
-    private $dateHelper;
-    private $notificationService;
-    private $messageRepository;
+    private DateHelper $dateHelper;
+    private NotificationService $notificationService;
+    private MessageRepositoryInterface $messageRepository;
 
     public function __construct(DateHelper $dateHelper, NotificationService $notificationService, MessageRepositoryInterface $messageRepository, string $name = null) {
         parent::__construct($name);
@@ -34,7 +34,7 @@ class SendPushNotifications extends Command {
             ->setDescription('Sends notifications for messages which did not push any notification yet.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output): int {
         $style = new SymfonyStyle($input, $output);
 
         $today = $this->dateHelper->getToday();

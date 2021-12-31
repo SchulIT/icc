@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class DisplayClientIpListener implements EventSubscriberInterface {
 
-    private $settings;
+    private DisplaySettings $settings;
 
     public function __construct(DisplaySettings $settings) {
         $this->settings = $settings;
@@ -45,7 +45,7 @@ class DisplayClientIpListener implements EventSubscriberInterface {
     /**
      * @inheritDoc
      */
-    public static function getSubscribedEvents() {
+    public static function getSubscribedEvents(): array {
         return [
             KernelEvents::REQUEST => [
                 [ 'onKernelRequest', 0 ]

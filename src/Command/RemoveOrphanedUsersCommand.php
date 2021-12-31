@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class RemoveOrphanedUsersCommand extends Command {
 
-    private $userRepository;
+    private UserRepositoryInterface $userRepository;
 
     public function __construct(UserRepositoryInterface $userRepository, string $name = null) {
         parent::__construct($name);
@@ -30,7 +30,7 @@ class RemoveOrphanedUsersCommand extends Command {
             ->setDescription('Removes student, parents or teachers without any linked entity.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output): int {
         $style = new SymfonyStyle($input, $output);
 
         $count = $this->userRepository->removeOrphaned();

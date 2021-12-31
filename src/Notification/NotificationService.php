@@ -12,10 +12,10 @@ use App\Notification\Email\EmailStrategyInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class NotificationService implements EventSubscriberInterface {
-    private $email;
+    private EmailNotificationService $email;
 
     /** @var EmailStrategyInterface[] */
-    private $emailStrategies;
+    private iterable $emailStrategies;
 
     public function __construct(EmailNotificationService $email, iterable $emailStrategies) {
         $this->email = $email;
@@ -38,7 +38,7 @@ class NotificationService implements EventSubscriberInterface {
     /**
      * @inheritDoc
      */
-    public static function getSubscribedEvents() {
+    public static function getSubscribedEvents(): array {
         return [
             MessageCreatedEvent::class => 'sendNotifications',
             MessageUpdatedEvent::class => 'sendNotifications',

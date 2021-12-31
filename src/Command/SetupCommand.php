@@ -15,10 +15,10 @@ use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 
 class SetupCommand extends Command {
 
-    private $userTypeEntityRepository;
-    private $pdoSessionHandler;
+    private UserTypeEntityRepositoryInterface $userTypeEntityRepository;
+    private PdoSessionHandler $pdoSessionHandler;
 
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(UserTypeEntityRepositoryInterface $userTypeEntityRepository, EntityManagerInterface $em, PdoSessionHandler $pdoSessionHandler, string $name = null) {
         parent::__construct($name);
@@ -37,7 +37,7 @@ class SetupCommand extends Command {
             ->setDescription('Sets up the application.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output): int {
         $style = new SymfonyStyle($input, $output);
 
         $this->setupSessions($style);
@@ -71,7 +71,7 @@ class SetupCommand extends Command {
         $sql = "SHOW TABLES LIKE 'sessions';";
         $row = $this->em->getConnection()->executeQuery($sql);
 
-        if($row->fetch() === false) {
+        if($row->fetchAssociative() === false) {
             $this->pdoSessionHandler->createTable();
         }
 

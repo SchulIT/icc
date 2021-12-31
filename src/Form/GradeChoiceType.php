@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GradeChoiceType extends SortableEntityType {
 
-    private $gradeStrategy;
+    private GradeNameStrategy $gradeStrategy;
 
     public function __construct(GradeNameStrategy $gradeStrategy, ManagerRegistry $registry) {
         parent::__construct($registry);
@@ -40,7 +40,7 @@ class GradeChoiceType extends SortableEntityType {
         $view->vars['grades'] = $gradeIds;
     }
 
-    public function getBlockPrefix() {
+    public function getBlockPrefix(): string {
         return 'grade_choice';
     }
 }

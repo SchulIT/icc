@@ -8,5 +8,5 @@ use Symfony\Component\Validator\Constraint;
  * @Annotation
  */
 class UniqueArray extends Constraint {
-    public $message = 'At least one choice is selected more than once.';
+    public string $message = 'At least one choice is selected more than once.';
 }

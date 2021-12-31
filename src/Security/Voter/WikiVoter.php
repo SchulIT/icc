@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Entity\UserTypeEntity;
 use App\Entity\WikiArticle;
 use App\Utils\EnumArrayUtils;
+use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -17,7 +18,7 @@ class WikiVoter extends Voter {
     public const Edit = 'edit';
     public const Remove = 'remove';
 
-    private $accessDecisionManager;
+    private AccessDecisionManagerInterface $accessDecisionManager;
 
     public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
         $this->accessDecisionManager = $accessDecisionManager;
@@ -26,7 +27,7 @@ class WikiVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function supports($attribute, $subject) {
+    protected function supports($attribute, $subject): bool {
         $attributes = [
             static::View,
             static::Edit,
@@ -40,7 +41,7 @@ class WikiVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
             case static::View:
                 return $this->canView($subject, $token);
@@ -55,10 +56,10 @@ class WikiVoter extends Voter {
                 return $this->canCreate($token);
         }
 
-        throw new \LogicException('This code should not be reached.');
+        throw new LogicException('This code should not be reached.');
     }
 
-    private function canView(WikiArticle $article, TokenInterface $token) {
+    private function canView(WikiArticle $article, TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, ['ROLE_WIKI_ADMIN'])) {
             // Admins can view all documents
             return true;
@@ -85,15 +86,15 @@ class WikiVoter extends Voter {
         return true;
     }
 
-    private function canEdit(TokenInterface $token) {
+    private function canEdit(TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_WIKI_ADMIN']);
     }
 
-    private function canRemove(TokenInterface $token) {
+    private function canRemove(TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_WIKI_ADMIN']);
     }
 
-    private function canCreate(TokenInterface $token) {
+    private function canCreate(TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_WIKI_ADMIN']);
     }
 }

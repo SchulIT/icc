@@ -19,10 +19,10 @@ use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AppointmentType extends AbstractType {
-    private $teacherConverter;
-    private $teacherStrategy;
-    private $appointmentCategoryStrategy;
-    private $authorizationChecker;
+    private TeacherStringConverter $teacherConverter;
+    private TeacherStrategy $teacherStrategy;
+    private AppointmentCategoryStrategy $appointmentCategoryStrategy;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     public function __construct(TeacherStringConverter $teacherConverter, TeacherStrategy $teacherStrategy, AppointmentCategoryStrategy $appointmentCategoryStrategy, AuthorizationCheckerInterface $authorizationChecker) {
         $this->teacherConverter = $teacherConverter;

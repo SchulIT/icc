@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraint;
  * @Annotation
  */
 class CsrfToken extends Constraint {
-    public $id;
+    public string $id;
 
-    public $message = 'The CSRF token is invalid.';
+    public string $message = 'The CSRF token is invalid.';
 }

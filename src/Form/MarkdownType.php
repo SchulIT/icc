@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class MarkdownType extends TextareaType {
 
-    private $urlGenerator;
+    private UrlGeneratorInterface $urlGenerator;
 
     public function __construct(UrlGeneratorInterface $urlGenerator) {
         $this->urlGenerator = $urlGenerator;
@@ -42,7 +42,7 @@ class MarkdownType extends TextareaType {
         }
     }
 
-    public function getBlockPrefix() {
+    public function getBlockPrefix(): string {
         return 'markdown';
     }
 }

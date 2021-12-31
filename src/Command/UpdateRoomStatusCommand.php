@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class UpdateRoomStatusCommand extends Command {
 
-    private $statusHelper;
+    private ServiceCenterRoomStatusHelper $statusHelper;
 
     public function __construct(ServiceCenterRoomStatusHelper $roomStatusHelper, string $name = null) {
         parent::__construct($name);
@@ -27,7 +27,7 @@ class UpdateRoomStatusCommand extends Command {
             ->setDescription('Updates the room status from ServiceCenter (if enabled).');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output): int {
         $style = new SymfonyStyle($input, $output);
 
         $this->statusHelper->retrieveFromRemote();

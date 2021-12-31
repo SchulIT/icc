@@ -18,11 +18,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class StudyGroupType extends SortableEntityType {
 
-    private $studyGroupConverter;
-    private $stringStrategy;
-    private $studyGroupStrategy;
-    private $enumStringConverter;
-    private $sectionResolver;
+    private StudyGroupStringConverter $studyGroupConverter;
+    private StringStrategy $stringStrategy;
+    private StudyGroupStrategy $studyGroupStrategy;
+    private EnumStringConverter $enumStringConverter;
+    private SectionResolverInterface $sectionResolver;
 
     public function __construct(ManagerRegistry $registry, StudyGroupStringConverter $studyGroupConverter,
                                 StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy,
@@ -96,8 +96,7 @@ class StudyGroupType extends SortableEntityType {
         $view->vars['section'] = $this->sectionResolver->getCurrentSection();
     }
 
-    public function getBlockPrefix()
-    {
+    public function getBlockPrefix(): string {
         return 'study_group';
     }
 }

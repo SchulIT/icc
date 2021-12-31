@@ -35,7 +35,7 @@ class MessagePollChoiceType extends AbstractType {
         $resolver->setDefault('data_class', MessagePollChoice::class);
     }
 
-    public function getBlockPrefix() {
+    public function getBlockPrefix(): string {
         return 'message_poll_choice';
     }
 }

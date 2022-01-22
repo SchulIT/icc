@@ -286,7 +286,7 @@ class LessonRepository extends AbstractTransactionalRepository implements Lesson
                 ->setParameter('student', $student->getId());
         }
 
-        return $qb->getQuery()
+        return (int)$qb->getQuery()
             ->getSingleScalarResult();
     }
 

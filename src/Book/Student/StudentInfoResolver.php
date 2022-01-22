@@ -39,7 +39,7 @@ class StudentInfoResolver extends AbstractResolver {
         $this->sorter->sort($absent, LessonAttendenceStrategy::class);
 
         $excuseCollections = $this->computeExcuseCollections($excuseNotes);
-        $lateAttendanceCollection = $this->computeAttendanceCollection($late, $excuseCollections);
+        $lateAttendanceCollection = $this->computeAttendanceCollectionWithoutExcuses($late);
         $absentAttendanceCollection = $this->computeAttendanceCollection($absent, $excuseCollections);
         $comments = [ ];
         if($section !== null) {

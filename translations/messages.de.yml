@@ -1435,6 +1435,9 @@ book:
             label: Exportieren (XML)
         pdf:
             label: Exportieren (PDF)
+            message: Bitte warten, bis das PDF erzeugt ist. Dieser Vorgang kann einige Augenblicke in Anspruch nehmen. Sobald der Vorgang abgeschlossen ist, wird die PDF herunterladen.
+            complete: Die PDF kann nun in einem neuen Tab geöffnet werden.
+            download: PDF herunterladen
 
     excuse_note:
         label: Entschuldigungen

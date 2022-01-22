@@ -77,6 +77,13 @@ class Lesson {
     private $comment;
 
     /**
+     * @Serializer\Type("string")
+     * @Serializer\SerializedName("exercises")
+     * @var string|null
+     */
+    private $exercises;
+
+    /**
      * @Serializer\Type("array<App\Book\Export\Attendance>")
      * @Serializer\SerializedName("attendances")
      * @var Attendance[]
@@ -240,6 +247,22 @@ class Lesson {
      */
     public function setComment(?string $comment): Lesson {
         $this->comment = $comment;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExercises(): ?string {
+        return $this->exercises;
+    }
+
+    /**
+     * @param string|null $exercises
+     * @return Lesson
+     */
+    public function setExercises(?string $exercises): Lesson {
+        $this->exercises = $exercises;
         return $this;
     }
 

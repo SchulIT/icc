@@ -28,6 +28,13 @@ class Attendance {
     private $absentLessonCount = 0;
 
     /**
+     * @Serializer\Type("integer")
+     * @Serializer\SerializedName("late_minutes_count")
+     * @var int
+     */
+    private $lateMinutesCount = 0;
+
+    /**
      * @Serializer\Type("boolean")
      * @Serializer\SerializedName("is_excused")
      * @var bool
@@ -86,6 +93,22 @@ class Attendance {
      */
     public function setAbsentLessonCount(int $absentLessonCount): Attendance {
         $this->absentLessonCount = $absentLessonCount;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLateMinutesCount(): int {
+        return $this->lateMinutesCount;
+    }
+
+    /**
+     * @param int $lateMinutesCount
+     * @return Attendance
+     */
+    public function setLateMinutesCount(int $lateMinutesCount): Attendance {
+        $this->lateMinutesCount = $lateMinutesCount;
         return $this;
     }
 

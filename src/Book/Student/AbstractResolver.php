@@ -58,6 +58,21 @@ abstract class AbstractResolver {
 
     /**
      * @param LessonAttendanceEntity[] $attendances
+     * @return LessonAttendance[]
+     */
+    protected function computeAttendanceCollectionWithoutExcuses(array $attendances): array {
+        $lessonAttendance = [ ];
+
+        foreach($attendances as $attendance) {
+            $excuses = new ExcuseCollection($attendance->getEntry()->getLesson()->getDate(), $attendance->getEntry()->getLessonStart());
+            $lessonAttendance[] = new LessonAttendance($attendance->getEntry()->getLesson()->getDate(), $attendance->getEntry()->getLessonStart(), $attendance, $excuses);
+        }
+
+        return $lessonAttendance;
+    }
+
+    /**
+     * @param LessonAttendanceEntity[] $attendances
      * @param ExcuseCollection[] $excuseCollection
      * @return LessonAttendance[]
      */

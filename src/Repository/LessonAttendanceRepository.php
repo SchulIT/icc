@@ -112,7 +112,7 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
         $qb = $this->getDefaultQueryBuilder()
             ->where('s.id = :student')
             ->andWhere('a.type = :type')
-            ->setParameter('student', $student)
+            ->setParameter('student', $student->getId())
             ->setParameter('type', LessonAttendanceType::Late);
         $this->applyTuition($qb, $tuitions);
 

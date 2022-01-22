@@ -15,11 +15,11 @@ class Book {
     private $section;
 
     /**
-     * @Serializer\Type("App\Book\Export\Grade")
-     * @Serializer\SerializedName("grade")
-     * @var Grade|null
+     * @Serializer\Type("array<App\Book\Export\Grade>")
+     * @Serializer\SerializedName("grades")
+     * @var Grade[]
      */
-    private $grade;
+    private $grades = [];
 
     /**
      * @Serializer\Type("App\Book\Export\Tuition")
@@ -73,19 +73,19 @@ class Book {
     }
 
     /**
-     * @return Grade|null
+     * @param Grade[] $grades
+     * @return Book
      */
-    public function getGrade(): ?Grade {
-        return $this->grade;
+    public function setGrades(array $grades): Book {
+        $this->grades = $grades;
+        return $this;
     }
 
     /**
-     * @param Grade|null $grade
-     * @return Book
+     * @return Grade[]
      */
-    public function setGrade(?Grade $grade): Book {
-        $this->grade = $grade;
-        return $this;
+    public function getGrades(): array {
+        return $this->grades;
     }
 
     /**

@@ -19,6 +19,7 @@ Encore
     .addEntry('display', './assets/js/display.js')
     .addEntry('book', './assets/js/book.js')
     .addEntry('entry', './assets/js/entry.js')
+    .addEntry('export-book', './assets/js/export-book.js')
     .addStyleEntry('simple', './vendor/schulit/common-bundle/Resources/assets/css/simple.scss')
     .addStyleEntry('signin', './vendor/schulit/common-bundle/Resources/assets/css/signin.scss')
 

@@ -10,25 +10,23 @@ use App\Book\Student\StudentInfo;
 use App\Book\Student\StudentInfoResolver;
 use App\Entity\BookComment as CommentEntity;
 use App\Entity\Grade as GradeEntity;
+use App\Entity\GradeMembership;
 use App\Entity\GradeTeacher;
-use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\Lesson as LessonEntity;
+use App\Entity\LessonAttendance as LessonAttendanceEntity;
 use App\Entity\LessonAttendanceType;
 use App\Entity\LessonEntry;
+use App\Entity\LessonEntry as LessonEntryEntity;
 use App\Entity\Section as SectionEntity;
 use App\Entity\Student as StudentEntity;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Teacher as TeacherEntity;
 use App\Entity\Tuition as TuitionEntity;
-use App\Entity\Lesson as LessonEntity;
-use App\Entity\LessonEntry as LessonEntryEntity;
-use App\Entity\LessonAttendance as LessonAttendanceEntity;
-use App\Grouping\Grouper;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\Utils\ArrayUtils;
 use InvalidArgumentException;
 use JMS\Serializer\SerializerInterface;
-use LogicException;
 
 class BookExporter {
 
@@ -61,6 +59,44 @@ class BookExporter {
             ->setEnd($section->getEnd())
             ->setSection($this->castSection($section));
 
+        if($book->getTuition() !== null && $tuition !== null) {
+            /** @var TeacherEntity $teacher */
+            foreach ($tuition->getTeachers() as $teacher) {
+                $book->getTuition()->addTeacher(
+                    (new Teacher())
+                        ->setAcronym($teacher->getAcronym())
+                        ->setId($teacher->getUuid()->toString())
+                        ->setFirstname($teacher->getFirstname())
+                        ->setLastname($teacher->getLastname())
+                        ->setTitle($teacher->getTitle())
+                );
+            }
+        }
+
+        if($tuition !== null) {
+            $grades = [];
+
+            foreach ($tuition->getStudyGroup()->getGrades() as $grade) {
+                $exportGrade = (new Grade())
+                    ->setName($grade->getName());
+
+                /** @var GradeTeacher $teacher */
+                foreach ($grade->getTeachers() as $teacher) {
+                    $exportGrade->addTeacher(
+                        (new Teacher())
+                            ->setAcronym($teacher->getTeacher()->getAcronym())
+                            ->setId($teacher->getTeacher()->getUuid()->toString())
+                            ->setFirstname($teacher->getTeacher()->getFirstname())
+                            ->setLastname($teacher->getTeacher()->getLastname())
+                            ->setTitle($teacher->getTeacher()->getTitle())
+                    );
+                }
+
+                $grades[] = $exportGrade;
+            }
+            $book->setGrades($grades);
+        }
+
         $this->sorter->sort($students, StudentStrategy::class);
 
         $studentInfo = [ ];
@@ -73,6 +109,7 @@ class BookExporter {
                     ->setStudent($this->castStudent($student, $section))
                     ->setLateMinutesCount($info->getLateMinutesCount())
                     ->setAbsentLessonsCount($info->getAbsentLessonsCount())
+                    ->setExcuseStatusNotSetLessonCount($info->getNotExcusedOrNotSetLessonsCount())
                     ->setNotExcusedAbsentLessonCount($info->getNotExcusedAbsentLessonsCount())
             );
         }
@@ -95,12 +132,18 @@ class BookExporter {
                 $exportDay->addComment($this->castComment($comment, $section));
             }
 
+            $lessons = [ ];
+
             foreach($day->getLessons() as $lesson) {
                 if($lesson->getEntry() === null) {
-                    $exportDay->addLesson($this->castLesson($lesson->getLesson(), $lesson->getLessonNumber()));
+                    $lessons[] = $this->castLesson($lesson->getLesson(), $lesson->getLessonNumber());
                 } else {
-                    $exportDay->addLesson($this->castEntry($lesson->getEntry(), $lesson->getLessonNumber(), $section, $studentInfo));
+                    $lessons[$lesson->getEntry()->getUuid()->toString()] = $this->castEntry($lesson->getEntry(), $section, $studentInfo);
                 }
+            }
+
+            foreach($lessons as $lesson) {
+                $exportDay->addLesson($lesson);
             }
 
             $weeks[$weekNumber]->addDay($exportDay);
@@ -119,9 +162,13 @@ class BookExporter {
 
     public function exportGrade(GradeEntity $grade, SectionEntity $section): Book {
         $book = (new Book())
-            ->setGrade($this->castGrade($grade, $section));
+            ->setGrades([$this->castGrade($grade, $section)]);
 
-        $students = [];
+        $students = $grade->getMemberships()->filter(function(GradeMembership $membership) use($section) {
+            return $membership->getSection() === $section;
+        })->map(function(GradeMembership $membership) {
+            return $membership->getStudent();
+        })->toArray();
         $overview = $this->overviewHelper->computeOverviewForGrade($grade, $section->getStart(), $section->getEnd());
 
         return $this->export($book, $students, null, $section, $overview);
@@ -183,17 +230,16 @@ class BookExporter {
 
     /**
      * @param LessonEntryEntity $entry
-     * @param int $lessonNumber
      * @param SectionEntity $section
      * @param StudentInfo[] $studentInfo
      * @return Lesson
      */
-    private function castEntry(LessonEntryEntity $entry, int $lessonNumber, SectionEntity $section, array $studentInfo): Lesson {
+    private function castEntry(LessonEntryEntity $entry, SectionEntity $section, array $studentInfo): Lesson {
         $subject = $entry->getTuition()->getSubject();
 
         $lesson = (new Lesson())
-            ->setStart($lessonNumber)
-            ->setEnd($lessonNumber)
+            ->setStart($entry->getLessonStart())
+            ->setEnd($entry->getLessonEnd())
             ->setSubject($subject !== null ? $subject->getAbbreviation() : null)
             ->setReplacementSubject($entry->getReplacementSubject())
             ->setTeacher($this->castTeacher($entry->getTeacher()))
@@ -201,19 +247,21 @@ class BookExporter {
             ->setWasCancelled($entry->isCancelled())
             ->setTopic($entry->isCancelled() ? $entry->getCancelReason() : $entry->getTopic())
             ->setComment($entry->getComment())
+            ->setExercises($entry->getExercises())
             ->setIsMissing(false);
 
         /** @var LessonAttendanceEntity $attendance */
         foreach($entry->getAttendances() as $attendance) {
             $exportAttendance = (new Attendance())
                 ->setComment($attendance->getComment())
+                ->setLateMinutesCount($attendance->getLateMinutes())
                 ->setStudent($this->castStudent($attendance->getStudent(), $section))
                 ->setType($this->castAttendanceType($attendance->getType()));
 
             // check if lesson is excused
             if($attendance->getType() === LessonAttendanceType::Absent) {
                 $exportAttendance->setAbsentLessonCount(
-                    ($entry->getLessonEnd() - $attendance->getAbsentLessons()) < $lessonNumber ? 1 : 0
+                    ($entry->getLessonEnd() - $attendance->getAbsentLessons()) < $entry->getLessonStart() ? 1 : 0
                 );
 
                 // check info
@@ -221,9 +269,9 @@ class BookExporter {
 
                 if($info !== null) {
                     /** @var LessonAttendance $possibleAttendance */
-                    $possibleAttendance = ArrayUtils::first($info->getAbsentLessonAttendances(), function(LessonAttendance $lessonAttendance) use($lessonNumber, $attendance) {
+                    $possibleAttendance = ArrayUtils::first($info->getAbsentLessonAttendances(), function(LessonAttendance $lessonAttendance) use($entry, $attendance) {
                         return $lessonAttendance->getAttendance()->getId() === $attendance->getId()
-                            && $lessonAttendance->getLesson() === $lessonNumber;
+                            && $lessonAttendance->getAttendance()->getEntry() === $entry;
                     });
 
                     if($possibleAttendance !== null) {

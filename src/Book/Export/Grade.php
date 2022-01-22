@@ -18,7 +18,7 @@ class Grade {
      * @Serializer\SerializedName("teachers")
      * @var Teacher[]
      */
-    private $teachers;
+    private $teachers = [ ];
 
     /**
      * @return string

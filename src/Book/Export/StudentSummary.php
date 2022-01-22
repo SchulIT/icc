@@ -28,6 +28,13 @@ class StudentSummary {
     private $notExcusedAbsentLessonCount = 0;
 
     /**
+     * @Serializer\SerializedName("excuse_status_not_set_lessons_count")
+     * @Serializer\Type("integer")
+     * @var int
+     */
+    private $excuseStatusNotSetLessonCount = 0;
+
+    /**
      * @Serializer\SerializedName("late_minutes_count")
      * @Serializer\Type("integer")
      * @var int
@@ -79,6 +86,22 @@ class StudentSummary {
      */
     public function setNotExcusedAbsentLessonCount(int $notExcusedAbsentLessonCount): StudentSummary {
         $this->notExcusedAbsentLessonCount = $notExcusedAbsentLessonCount;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExcuseStatusNotSetLessonCount(): int {
+        return $this->excuseStatusNotSetLessonCount;
+    }
+
+    /**
+     * @param int $excuseStatusNotSetLessonCount
+     * @return StudentSummary
+     */
+    public function setExcuseStatusNotSetLessonCount(int $excuseStatusNotSetLessonCount): StudentSummary {
+        $this->excuseStatusNotSetLessonCount = $excuseStatusNotSetLessonCount;
         return $this;
     }
 

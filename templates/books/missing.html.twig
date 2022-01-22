@@ -73,29 +73,13 @@
                                             </div>
 
                                             <div class="ml-2">
-                                                <lesson-create-entry-button tuition-uuid="{{ lesson.lesson.tuition.uuid.toString }}"
-                                                                            :start="{{ lesson.lesson.lessonStart }}"
-                                                                            :end="{{ lesson.lesson.lessonEnd }}"
-                                                                            :lesson="{{ lesson.lessonNumber }}"
-                                                                            :date="new Date('{{ group.date.format('Y-m-d') }}')"
-                                                                            csrfname="_token"
-                                                                            csrftoken="{{ createCsrfToken }}"
-                                                                            action="{{ path('add_entry', { uuid: lesson.lesson.uuid }) }}"
-                                                                            teacher="{{ user.user.teacher is not null ? user.user.teacher.acronym : null }}"
-                                                                            tuition-url="{{ path('xhr_tuition', { uuid: lesson.lesson.tuition.uuid}) }}"
-                                                                            students-url="{{ path('xhr_tuition_students', { uuid: lesson.lesson.tuition.uuid, date: group.date.format('Y-m-d'), lesson: lesson.lessonNumber }) }}"
-                                                                            teachers-url="{{ path('xhr_teachers') }}"></lesson-create-entry-button>
-                                            </div>
-                                            <div class="ml-2">
-                                                <lesson-cancel-button tuition-uuid="{{ lesson.lesson.tuition.uuid.toString }}"
-                                                                      :start="{{ lesson.lesson.lessonStart }}"
-                                                                      :end="{{ lesson.lesson.lessonEnd }}"
-                                                                      :lesson="{{ lesson.lessonNumber }}"
-                                                                      :date="new Date('{{ group.date.format('Y-m-d') }}')"
-                                                                      csrfname="_token"
-                                                                      csrftoken="{{ cancelCsrfToken }}"
-                                                                      action="{{ path('cancel_lesson', { uuid: lesson.lesson.uuid }) }}"
-                                                                      tuition-url="{{ path('xhr_tuition', { uuid: lesson.lesson.tuition.uuid}) }}"></lesson-cancel-button>
+                                                <entry students-url="{{ url('xhr_students') }}"
+                                                       url="{{ path('xhr_lesson_entry', { start: lesson.lessonNumber, lesson: lesson.lesson.uuid.toString }) }}"
+                                                       csrfname="_token"
+                                                       :lesson-number="{{ lesson.lessonNumber }}"
+                                                       csrftoken="{{ csrf_token('book_entry') }}"
+                                                       create-action="{{ path('add_entry', { uuid: lesson.lesson.uuid }) }}"
+                                                       cancel-action="{{ path('cancel_lesson', { uuid: lesson.lesson.uuid }) }}"></entry>
                                             </div>
                                     </div>
                                 {% endfor %}

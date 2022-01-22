@@ -328,7 +328,9 @@
                                                 {% if lesson.entry.isCancelled %}
                                                     <div class="mt-1 d-flex align-items-baseline">
                                                         <i class="fas fa-times"></i>
-                                                        {{ 'book.entry.cancel_reason'|trans({ '%reason%': lesson.entry.cancelReason}) }}
+                                                        <p class="mb-0 ml-1">
+                                                            {{ 'book.entry.cancel_reason'|trans({ '%reason%': lesson.entry.cancelReason}) }}
+                                                        </p>
                                                     </div>
                                                 {% else %}
                                                     <div class="mt-1 d-flex align-items-baseline">

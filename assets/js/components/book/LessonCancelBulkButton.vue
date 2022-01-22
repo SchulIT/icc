@@ -68,13 +68,14 @@ export default {
     tuitionUrls: Array,
     actions: Array,
     date: Date,
-    button: String
+    button: String,
+    reason: String
   },
   data() {
     return {
       isLoading: false,
       progress: 0,
-      reason: null,
+      //reason: null,
       tuitions: [ ],
       validation: {
         reason: null
@@ -103,7 +104,7 @@ export default {
   },
   methods: {
     validate() {
-      if(this.reason === null || this.reason.trim() === '') {
+      if(this.reason === null || this.reason === undefined || this.reason.trim() === '') {
         this.validation.reason = this.$trans('This value should not be blank.', {}, 'validators');
       } else {
         this.validation.reason = null;

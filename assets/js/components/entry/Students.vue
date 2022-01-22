@@ -214,31 +214,6 @@
           </div>
         </div>
       </div>
-
-      <div class="modal fade">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">{{ $trans('book.attendance.comment.label') }}</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-
-            <div class="modal-body">
-              <div class="form-group">
-                <label for="attendance_comment" class="control-label">{{ $trans('label.comment') }}</label>
-                <input id="attendance_comment" type="text" v-model="comment" class="form-control">
-              </div>
-            </div>
-
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $trans('action.cancel') }}</button>
-              <button type="button" class="btn btn-primary btn-submit">{{$trans('action.save')}}</button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 </template>
 

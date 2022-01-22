@@ -68,7 +68,9 @@ class BookEntryController extends AbstractController {
             $entry->setReplacementTeacher($user->getTeacher());
         }
 
-        $form = $this->createForm(LessonEntryCancelType::class, $entry);
+        $form = $this->createForm(LessonEntryCancelType::class, $entry, [
+            'csrf_token_id' => 'book_entry'
+        ]);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
@@ -97,7 +99,9 @@ class BookEntryController extends AbstractController {
             ->setTeacher($lesson->getTuition()->getTeachers()->first())
             ->setSubject($lesson->getTuition()->getSubject());
 
-        $form = $this->createForm(LessonEntryCreateType::class, $entry);
+        $form = $this->createForm(LessonEntryType::class, $entry, [
+            'csrf_token_id' => 'book_entry'
+        ]);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
@@ -105,26 +109,19 @@ class BookEntryController extends AbstractController {
                 return $membership->getStudent();
             });
 
+            $alreadyAddedStudents = array_map(function(LessonAttendance $attendance) {
+                return $attendance->getStudent()->getUuid()->toString();
+            }, $entry->getAttendances()->toArray());
+
             /** @var Student $student */
             foreach($students as $student) {
-                $entry->addAttendance(
-                    (new LessonAttendance())
-                    ->setStudent($student)
-                    ->setType(LessonAttendanceType::Present)
-                    ->setEntry($entry)
-                );
-            }
-
-            /** @var Student[] $absentStudents */
-            $absentStudents = $form->get('absentStudents')->getData();
-
-            /** @var LessonAttendance $attendance */
-            foreach($entry->getAttendances() as $attendance) {
-                foreach($absentStudents as $absentStudent) {
-                    if($attendance->getStudent() == $absentStudent) {
-                        $attendance->setType(LessonAttendanceType::Absent);
-                        $attendance->setAbsentLessons($entry->getLessonEnd() - $entry->getLessonStart() + 1);
-                    }
+                if(!in_array($student->getUuid()->toString(), $alreadyAddedStudents)) {
+                    $entry->addAttendance(
+                        (new LessonAttendance())
+                            ->setStudent($student)
+                            ->setType(LessonAttendanceType::Present)
+                            ->setEntry($entry)
+                    );
                 }
             }
 

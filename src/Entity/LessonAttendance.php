@@ -35,7 +35,7 @@ class LessonAttendance implements JsonSerializable {
      * @ORM\ManyToOne(targetEntity="Student")
      * @ORM\JoinColumn()
      * @Assert\NotNull()
-     * @var Student
+     * @var Student|null
      */
     private $student;
 
@@ -105,17 +105,17 @@ class LessonAttendance implements JsonSerializable {
     }
 
     /**
-     * @return Student
+     * @return Student|null
      */
-    public function getStudent(): Student {
+    public function getStudent(): ?Student {
         return $this->student;
     }
 
     /**
-     * @param Student $student
+     * @param Student|null $student
      * @return LessonAttendance
      */
-    public function setStudent(Student $student): LessonAttendance {
+    public function setStudent(?Student $student): LessonAttendance {
         $this->student = $student;
         return $this;
     }

@@ -31,7 +31,7 @@
     </button>
 
     <div class="modal fade">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-xl">
         <div class="modal-content">
           <form :action="action" method="post">
             <div class="modal-header">
@@ -41,79 +41,98 @@
               </button>
             </div>
             <div class="modal-body">
-              <div v-if="isLoading">
-                <i class="fas fa-spinner fa-spin"></i> {{ $trans('label.loading')}}
-              </div>
-              <div class="form-group d-flex align-items-center" v-if="isInitialized === true">
-                <span class="badge badge-secondary" v-if="tuition !== null">{{ tuition.subject.name.toUpperCase() }}</span>
 
-                <div class="ml-2" v-if="tuition !== null">
-                  {{ tuition.name }}
+
+              <div class="container-fluid px-0">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="card">
+                      <div class="card-header">
+                        <div v-if="isLoading">
+                          <i class="fas fa-spinner fa-spin"></i> {{ $trans('label.loading')}}
+                        </div>
+                        <div class="d-flex align-items-center" v-if="isInitialized === true">
+                          <span class="badge badge-secondary" v-if="tuition !== null">{{ tuition.subject.name.toUpperCase() }}</span>
+
+                          <div class="ml-2" v-if="tuition !== null">
+                            {{ tuition.name }}
+                          </div>
+
+                          <div class="ml-2" v-if="tuition !== null" v-for="grade in tuition.study_group.grades">
+                            <i class="fas fa-users"></i>
+                            {{ grade.name }}
+                          </div>
+
+                          <div class="ml-2" v-for="teacher in tuition.teachers" v-if="tuition !== null">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            {{ teacher.acronym }}
+                          </div>
+
+                          <div class="ml-2">
+                            <i class="fas fa-calendar-alt"></i> {{ date.toLocaleDateString() }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="card-body">
+                        <div class="form-group row">
+                          <div class="col-6">
+                            <label for="start" class="control-label">{{ $trans('label.start')}}</label>
+                            <number-input v-model="entry.start" name="lesson_entry[lessonStart]" :min="start" :max="end" id="start" :class="validation.start !== null ? 'is-invalid' : ''"></number-input>
+                            <div class="invalid-feedback" v-show="validation.start !== null">{{ validation.start }}</div>
+                          </div>
+                          <div class="col-6">
+                            <label for="end" class="control-label">{{ $trans('label.end')}}</label>
+                            <number-input v-model="entry.end" name="lesson_entry[lessonEnd]" :min="start" :max="end" id="end" :class="validation.end !== null ? 'is-invalid' : ''"></number-input>
+                            <div class="invalid-feedback" v-show="validation.end !== null">{{ validation.end }}</div>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="topic" class="control-label">{{ $trans('label.topic') }}</label>
+                          <input v-model="entry.topic" name="lesson_entry[topic]" :class="'form-control ' + (validation.topic !== null ? 'is-invalid' : '')" id="topic">
+                          <div class="invalid-feedback" v-show="validation.topic !== null">{{ validation.topic }}</div>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="exercises" class="control-label">{{ $trans('label.exercises') }}</label>
+                          <textarea v-model="entry.exercises" name="lesson_entry[exercises]" class="form-control" id="exercises"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="comment" class="control-label">{{ $trans('label.comment') }}</label>
+                          <textarea v-model="entry.comment" name="lesson_entry[comment]" class="form-control" id="comment"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="replacementSubject" class="control-label">{{ $trans('label.replacement_subject') }}</label>
+                          <input v-model="entry.replacementSubject" name="lesson_entry[replacementSubject]" class="form-control" id="replacementSubject">
+                        </div>
+
+                        <div class="form-group">
+                          <label for="replacementTeacher" class="control-label">{{ $trans('label.replacement_teacher') }}</label>
+                          <select name="lesson_entry[replacementTeacher]" class="form-control" id="replacementTeacher"></select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <students :students-url="studentsUrl"
+                              :attendancedata="[]"
+                              :step="1"
+                              :start="start"
+                              :end="end"
+                              :show-save-button="false"
+                              :list-students-url="listStudentsUrl"></students>
+                  </div>
                 </div>
-
-                <div class="ml-2" v-if="tuition !== null" v-for="grade in tuition.study_group.grades">
-                  <i class="fas fa-users"></i>
-                  {{ grade.name }}
-                </div>
-
-                <div class="ml-2" v-for="teacher in tuition.teachers" v-if="tuition !== null">
-                  <i class="fas fa-chalkboard-teacher"></i>
-                  {{ teacher.acronym }}
-                </div>
-
-                <div class="ml-2">
-                  <i class="fas fa-calendar-alt"></i> {{ date.toLocaleDateString() }}
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <div class="col-6">
-                  <label for="start" class="control-label">{{ $trans('label.start')}}</label>
-                  <number-input v-model="entry.start" name="lesson_entry_create[lessonStart]" :min="start" :max="end" id="start" :class="validation.start !== null ? 'is-invalid' : ''"></number-input>
-                  <div class="invalid-feedback" v-show="validation.start !== null">{{ validation.start }}</div>
-                </div>
-                <div class="col-6">
-                  <label for="end" class="control-label">{{ $trans('label.end')}}</label>
-                  <number-input v-model="entry.end" name="lesson_entry_create[lessonEnd]" :min="start" :max="end" id="end" :class="validation.end !== null ? 'is-invalid' : ''"></number-input>
-                  <div class="invalid-feedback" v-show="validation.end !== null">{{ validation.end }}</div>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="topic" class="control-label">{{ $trans('label.topic') }}</label>
-                <input v-model="entry.topic" name="lesson_entry_create[topic]" :class="'form-control ' + (validation.topic !== null ? 'is-invalid' : '')" id="topic">
-                <div class="invalid-feedback" v-show="validation.topic !== null">{{ validation.topic }}</div>
-              </div>
-
-              <div class="form-group">
-                <label for="exercises" class="control-label">{{ $trans('label.exercises') }}</label>
-                <textarea v-model="entry.exercises" name="lesson_entry_create[exercises]" class="form-control" id="exercises"></textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="comment" class="control-label">{{ $trans('label.comment') }}</label>
-                <textarea v-model="entry.comment" name="lesson_entry_create[comment]" class="form-control" id="comment"></textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="replacementSubject" class="control-label">{{ $trans('label.replacement_subject') }}</label>
-                <input v-model="entry.replacementSubject" name="lesson_entry_create[replacementSubject]" class="form-control" id="replacementSubject">
-              </div>
-
-              <div class="form-group">
-                <label for="replacementTeacher" class="control-label">{{ $trans('label.replacement_teacher') }}</label>
-                <select name="lesson_entry_create[replacementTeacher]" class="form-control" id="replacementTeacher"></select>
-              </div>
-
-              <div class="form-group">
-                <label for="absentStudents" class="control-label">{{ $trans('label.absent_students' )}}</label>
-                <select name="lesson_entry_create[absentStudents][]" class="form-control" id="absentStudents" multiple="multiple"></select>
               </div>
             </div>
 
             <input type="hidden" name="date" :value="date.toJSON()">
             <input type="hidden" name="tuition" :value="tuitionUuid">
-            <input type="hidden" :name="'lesson_entry_create[' + csrfname + ']'" :value="csrftoken">
+            <input type="hidden" :name="'lesson_entry[' + csrfname + ']'" :value="csrftoken">
             <input type="hidden" name="_ref" :value="ref">
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $trans('action.cancel') }}</button>
@@ -129,15 +148,17 @@
 <script>
 import { Dropdown, Modal } from 'bootstrap.native';
 import NumberInput from "../NumberInput";
+import Students from "../entry/Students";
 import Choices from "choices.js";
 
 export default {
-  name: 'lesson_cancel_button',
-  components: { NumberInput },
+  name: 'lesson_create_button',
+  components: { NumberInput, Students },
   props: {
     tuitionUrl: String,
     studentsUrl: String,
     teachersUrl: String,
+    listStudentsUrl: String,
     date: Date,
     start: Number,
     end: Number,
@@ -195,49 +216,6 @@ export default {
 
     this.choices = new Choices(this.$el.querySelector('#replacementTeacher'), {
       removeItemButton: true
-    });
-    this.students = new Choices(this.$el.querySelector('#absentStudents'), {
-      removeItemButton: true,
-      callbackOnCreateTemplates: function(template) {
-        return {
-          choice: (classNames, data) => {
-            return template(`
-              <div class="${classNames.item} ${classNames.itemChoice} ${data.disabled ? classNames.itemDisabled : classNames.itemSelectable}"
-                   data-select-text="${this.config.itemSelectText}"
-                   data-choice
-                   ${data.disabled ? 'data-choice-disabled aria-disabled="true"' : 'data-choice-selectable'}
-                   data-id="${data.id}"
-                   data-value="${data.value}"
-                   ${data.groupId > 0 ? 'role="treeitem"' : 'role="option"'}>
-                <div>
-                  <div>${data.label}</div>
-                  <div class="text-muted">${data.customProperties.reasons}</div>
-                </div>
-              </div>
-            `)
-          },
-          item: (classNames, data) => {
-            return template(`
-              <div class="${classNames.item} ${data.highlighted ? classNames.highlightedState : classNames.itemSelectable} ${data.placeholder ? classNames.placeholder : ''}"
-                   data-item
-                   data-id="${data.id}"
-                   data-value="${data.value}"
-                   ${data.active ? 'aria-selected="true"' : ''}
-                   ${data.disabled ? 'aria-disabled="true"' : ''}>
-                 <div class="d-flex"
-                      data-id="${data.id}"
-                      data-value="${data.value}">
-                  <div>
-                    <div>${data.label}</div>
-                    <div>${data.customProperties.reasons}</div>
-                  </div>
-                  <button type="button" class="${classNames.button}" aria-label="Remove item: '${data.value}'" data-button="">Remove item</button>
-                </div>
-             </div>
-            `)
-          }
-        }
-      }
     });
     this.ref = window.location;
   },
@@ -324,45 +302,6 @@ export default {
               $this.isLoading = false;
             });
       }
-
-      this.$http.get(this.studentsUrl)
-        .then(function(response) {
-          let students = { };
-
-          response.data.students.forEach(function(student) {
-            students[student.uuid] = {
-              uuid: student.uuid,
-              firstname: student.firstname,
-              lastname: student.lastname,
-              reasons: [ ]
-            };
-          });
-
-          response.data.absent.forEach(function(absence) {
-            if(absence.student.uuid in students) {
-              students[absence.student.uuid].reasons.push(absence.reason);
-            }
-          });
-
-          let choices = [ ];
-          for(let uuid in students) {
-            let student = students[uuid];
-            choices.push({
-              value: student.uuid,
-              label: student.lastname + ", " + student.firstname,
-              customProperties: {
-                reasons: student.reasons.map(reason => $this.$trans('book.attendance.absence_reason.' + reason)).join(', ')
-              },
-              selected: student.reasons.length > 0
-            })
-          }
-
-          $this.students.destroy();
-          $this.students.init();
-          $this.students.setChoices(choices, 'value', 'label', true);
-        }).catch(function(error) {
-          console.log(error);
-        });
 
       this.modal.show();
       this.validate();

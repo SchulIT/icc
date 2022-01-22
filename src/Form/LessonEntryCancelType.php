@@ -12,7 +12,6 @@ class LessonEntryCancelType extends AbstractType {
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefault('validation_groups', [ 'cancel']);
         $resolver->setDefault('csrf_field_name', '_token');
-        $resolver->setDefault('csrf_token_id', 'lesson_entry_cancel');
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {

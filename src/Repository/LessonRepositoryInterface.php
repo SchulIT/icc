@@ -41,6 +41,8 @@ interface LessonRepositoryInterface extends TransactionalRepositoryInterface {
      */
     public function findAllByTuitions(array $tuitions, DateTime $start, DateTime $end): array;
 
+    public function findOneByUuid(string $uuid): ?Lesson;
+
     public function persist(Lesson $lesson): void;
 
     public function remove(Lesson $lesson): void;

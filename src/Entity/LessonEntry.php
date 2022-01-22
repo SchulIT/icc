@@ -288,6 +288,7 @@ class LessonEntry {
     }
 
     public function addAttendance(LessonAttendance $attendance): void {
+        $attendance->setEntry($this);
         $this->attendances->add($attendance);
     }
 

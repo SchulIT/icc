@@ -68,7 +68,9 @@ class LessonEntryType extends AbstractType {
                 'required' => false
             ])
             ->add('attendances', CollectionType::class, [
-                'entry_type' => LessonAttendanceType::class
+                'entry_type' => LessonAttendanceType::class,
+                'allow_add' => true,
+                'by_reference' => false
             ]);
 
         $builder

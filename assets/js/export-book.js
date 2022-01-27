@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
     function formatDate(isoDate, extended) {
         let date = new Date(isoDate);
-        let output = date.getDate() + '.' + date.getMonth() + '.' + date.getFullYear();
+        let output = date.getDate() + '.' + (date.getMonth()+1) + '.' + date.getFullYear();
 
         if(extended === true) {
             output = weekdays[date.getDay()] + ', ' + output;
@@ -101,6 +101,23 @@ document.addEventListener('DOMContentLoaded', function(event) {
         });
 
         return comments;
+    }
+
+    function addComments(body, comments, colspan) {
+        comments.forEach(function(comment) {
+            body.push([
+                {
+                    content: [
+                        'Lehrkraft: ' + comment.teacher.acronym,
+                        'Kind(er): ' + comment.students.map(x => x.firstname + " " + x.lastname).join(', '),
+                        comment.comment
+                        ].join('\n'),
+                    colSpan: colspan
+                }
+            ]);
+        });
+
+        return body;
     }
 
     function addLessonsForGrades(pdf, data) {
@@ -156,6 +173,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     }
                 }]);
 
+                body = addComments(body, day.comments, 6);
+
                 day.lessons.forEach(function(lesson) {
                     let row = [
                         [ formatLessons(lesson.start, lesson.end) ],
@@ -164,14 +183,14 @@ document.addEventListener('DOMContentLoaded', function(event) {
                         ]
                     ];
 
-                    let comments = formatAttendances(lesson.attendances);
+                    let remarksAndAttendances = formatAttendances(lesson.attendances);
 
                     if(lesson.was_cancelled) {
                         lesson.topic = '[Entfall] ' + lesson.topic;
                     }
                     row.push([ lesson.topic ]);
                     row.push([ lesson.exercises ]);
-                    row.push([ comments.join(', ') ]);
+                    row.push([ remarksAndAttendances.join(', ') ]);
 
                     if(lesson.teacher !== null) {
                         row.push([
@@ -243,20 +262,22 @@ document.addEventListener('DOMContentLoaded', function(event) {
             }]);
 
             week.days.forEach(function(day) {
+                body = addComments(body, day.comments, 4);
+
                 day.lessons.forEach(function(lesson) {
                     let row = [
                         [ formatDate(day.date) ],
                         [ formatLessons(lesson.start, lesson.end) ]
                     ];
 
-                    let comments = formatAttendances(lesson.attendances);
+                    let remarksAndAttendances = formatAttendances(lesson.attendances);
 
                     if(lesson.was_cancelled) {
                         lesson.topic = '[Entfall] ' + lesson.topic;
                     }
                     row.push([ lesson.topic ]);
                     row.push([ lesson.exercises ]);
-                    row.push([ comments.join(', ') ]);
+                    row.push([ remarksAndAttendances.join(', ') ]);
 
                     body.push(row);
                 });

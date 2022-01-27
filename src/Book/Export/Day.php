@@ -19,14 +19,14 @@ class Day {
      * @Serializer\Type("array<App\Book\Export\Lesson>")
      * @var Lesson[]
      */
-    private $lessons;
+    private $lessons = [ ];
 
     /**
      * @Serializer\SerializedName("comments")
      * @Serializer\Type("array<App\Book\Export\Comment>")
      * @var Comment[]
      */
-    private $comments;
+    private $comments = [ ];
 
     /**
      * @return DateTime

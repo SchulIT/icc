@@ -21,7 +21,7 @@
                             <i class="fa fa-download"></i>
                         </button>
 
-                        <div class="dropdown-menu">
+                        <div class="dropdown-menu dropdown-menu-right">
                             {% for attachment in message.attachments %}
                                 <a class="dropdown-item" href="{{ path('download_message_attachment', { uuid: attachment.uuid, message: message.uuid }) }}">{{ attachment.filename }}</a>
                             {% endfor %}

@@ -325,7 +325,7 @@
                             {% if grade is not null %}
                             <p>
                                 <i class="fas fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>
-                                {% for teacher in grade.teachers|sort_gradeteachers %}
+                                {% for teacher in grade.teachers|sort_gradeteachers|only_section(section) %}
                                     <a href="mailto:{{ teacher.teacher.email }}">{{ teacher.teacher|teacher }}</a>{% if teacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}
                                     {%- if not loop.last -%}, {% endif -%}
                                 {% endfor %}

@@ -16,6 +16,7 @@ class SickNoteVoter extends Voter {
 
     public const New = 'new-sicknote';
     public const View = 'view';
+    public const CanViewAny = 'view-any-sicknote';
 
     private DateHelper $dateHelper;
     private AccessDecisionManagerInterface $accessDicisionManager;
@@ -30,6 +31,7 @@ class SickNoteVoter extends Voter {
      */
     protected function supports($attribute, $subject): bool {
         return $attribute === static::New
+            || $attribute === static::CanViewAny
             || ($attribute === static::View && $subject instanceof SickNote);
     }
 
@@ -43,6 +45,9 @@ class SickNoteVoter extends Voter {
 
             case static::View:
                 return $this->canView($token, $subject);
+
+            case static::CanViewAny:
+                return $this->canViewAny($token, $subject);
         }
 
         throw new LogicException('This code should not be reached.');
@@ -78,6 +83,10 @@ class SickNoteVoter extends Voter {
         }
 
         return false;
+    }
+
+    private function canViewAny(TokenInterface $token): bool {
+        return $this->canCreate($token) || $this->accessDicisionManager->decide($token, ['ROLE_SICK_NOTE_VIEWER']) === true;
     }
 
     private function canView(TokenInterface $token, SickNote $sickNote): bool {

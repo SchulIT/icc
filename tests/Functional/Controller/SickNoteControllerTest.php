@@ -138,25 +138,25 @@ class SickNoteControllerTest extends AbstractControllerTest {
 
     public function testParentCanCreateSickNote() {
         $this->login($this->parent, $this->client->getKernel());
-        $this->client->request('GET', '/sick_note');
+        $this->client->request('GET', '/sick_notes/add');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testNonFullAgedStudentCannotCreateSickNote() {
         $this->login($this->nonFullAgedStudentUser, $this->client->getKernel());
-        $this->client->request('GET', '/sick_note');
+        $this->client->request('GET', '/sick_notes/add');
         $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testFullAgedStudentCanCreateSickNote() {
         $this->login($this->studentUser, $this->client->getKernel());
-        $this->client->request('GET', '/sick_note');
+        $this->client->request('GET', '/sick_notes/add');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testUserWithRoleCanCreateSickNote() {
         $this->login($this->creatorUser, $this->client->getKernel());
-        $this->client->request('GET', '/sick_note');
+        $this->client->request('GET', '/sick_notes/add');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
@@ -166,16 +166,10 @@ class SickNoteControllerTest extends AbstractControllerTest {
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testUserWithoutRoleCannotViewSickNotes() {
-        $this->login($this->creatorUser, $this->client->getKernel());
-        $this->client->request('GET', '/sick_notes');
-        $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function testParentCannotViewSickNotes() {
+    public function testParentCanViewSickNotes() {
         $this->login($this->parent, $this->client->getKernel());
         $this->client->request('GET', '/sick_notes');
-        $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testNonFullAgedStudentCannotViewSickNotes() {
@@ -184,9 +178,9 @@ class SickNoteControllerTest extends AbstractControllerTest {
         $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testFullAgedStudentCannotViewSickNotes() {
+    public function testFullAgedStudentCanViewSickNotes() {
         $this->login($this->studentUser, $this->client->getKernel());
         $this->client->request('GET', '/sick_notes');
-        $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 }

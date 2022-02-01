@@ -112,6 +112,9 @@ class SickNoteController extends AbstractController {
                           SickNoteReasonFilter $reasonFilter, Request $request,
                           SickNoteRepositoryInterface $sickNoteRepository, TuitionRepositoryInterface $tuitionRepository,
                           SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Sorter $sorter, Grouper $grouper) {
+        $this->denyAccessUnlessGranted(SickNoteVoter::CanViewAny);
+
+
         /** @var User $user */
         $user = $this->getUser();
 

@@ -38,6 +38,7 @@ class LeakTest extends KernelTestCase {
         foreach($types as $type) {
             $kernel = static::bootKernel();
             $user = (new User())
+                ->setUsername('foo@bla.org')
                 ->setUserType($type);
             $user->setRoles(['ROLE_USER']);
             $this->login($user, $kernel);

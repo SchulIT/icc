@@ -16,12 +16,12 @@ use PHPUnit\Framework\TestCase;
 class GpuSubstitutionReaderTest extends TestCase {
     public function testFilledLine() {
         $lines = <<<GPU
-12,"20190807",2,3,124,"Stü","Zim","Ma",,,,"R233","R232",,"8a","Krank",,2,"8a", S,201906191028," - "
-13,"20190807",3,3,269,"Bol","Kal","De",,,,"R103","R103",,"8b","Krank",,0,"8b",,201908011452," + ~-"
-14,"20190807",1,,3922,"Stü","Kal","En",,"De",,"SH","KL6",,"2. M1~2. M1+S~2. M2",,"Urlaub",2,"2. M1~2. M1+S~2. M2", S,201908011452," -"
+12;"20190807";2;3;124;"Stü";"Zim";"Ma";;;;"R233";"R232";;"8a";"Krank";;2;"8a"; S;201906191028;" - "
+13;"20190807";3;3;269;"Bol";"Kal";"De";;;;"R103";"R103";;"8b";"Krank";;0;"8b";;201908011452;" + ~-"
+14;"20190807";1;;3922;"Stü";"Kal";"En";;"De";;"SH";"KL6";;"2. M1~2. M1+S~2. M2";;"Urlaub";2;"2. M1~2. M1+S~2. M2"; S;201908011452;" -"
 GPU;
         $reader = new SubstitutionReader();
-        $substitutions = $reader->readGpu(Reader::createFromString($lines));
+        $substitutions = $reader->readGpu(Reader::createFromString(trim($lines)));
 
         $this->assertEquals(3, count($substitutions));
 
@@ -37,7 +37,6 @@ GPU;
         $this->assertSame(['R232'], $current->getReplacementRooms());
         $this->assertSame(['8a'], $current->getGrades());
         $this->assertSame(['8a'], $current->getReplacementGrades());
-        $this->assertEquals(GpuSubstitutionFlag::SpecialDuty, $current->getFlags());
         $this->assertNotNull($current->getType());
         $this->assertTrue($current->getType()->equals(GpuSubstitutionType::Supervision()));
         $this->assertNull($current->getRemark());
@@ -54,7 +53,6 @@ GPU;
         $this->assertSame(['R103'], $current->getReplacementRooms());
         $this->assertSame(['8b'], $current->getGrades());
         $this->assertSame(['8b'], $current->getReplacementGrades());
-        $this->assertEquals(GpuSubstitutionFlag::Cancellation, $current->getFlags());
         $this->assertNull($current->getType());
         $this->assertNull($current->getRemark());
 
@@ -70,7 +68,6 @@ GPU;
         $this->assertSame(['KL6'], $current->getReplacementRooms());
         $this->assertSame(['2. M1', '2. M1+S', '2. M2'], $current->getGrades());
         $this->assertSame(['2. M1', '2. M1+S', '2. M2'], $current->getReplacementGrades());
-        $this->assertEquals(GpuSubstitutionFlag::SpecialDuty, $current->getFlags());
         $this->assertNotNull($current->getType());
         $this->assertTrue($current->getType()->equals(GpuSubstitutionType::Supervision()));
         $this->assertEquals("Urlaub", $current->getRemark());

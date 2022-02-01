@@ -291,6 +291,10 @@ export default {
         $this.lesson.lessonStart = response.data.lesson.lesson_start;
         $this.lesson.lessonEnd = response.data.lesson.lesson_end;
 
+        if(response.data.has_other_entries) {
+          $this.lesson.lessonEnd = response.data.lesson.lesson_start;
+        }
+
         $this.tuition.uuid = response.data.lesson.tuition.uuid;
         $this.tuition.name = response.data.lesson.tuition.name;
         $this.tuition.subject = response.data.lesson.tuition.subject;

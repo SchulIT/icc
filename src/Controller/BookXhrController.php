@@ -245,7 +245,8 @@ class BookXhrController extends AbstractController {
             ],
             'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $start, $absenceResolver, $attendanceRepository, $excuseNoteRepository, $sectionResolver),
             'entry' => $entryJson,
-            'students' => $students
+            'students' => $students,
+            'has_other_entries' => count($lesson->getEntries()) > 0
         ];
 
         return $this->returnJson($response, $serializer);

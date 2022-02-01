@@ -49,8 +49,8 @@ class RoomQueryBuilder {
         /**
          * Seats
          */
-        if($request->query->get('seats', false) !== false) {
-            $value = $request->query->get('seats-value', 0);
+        if($request->query->get('seats', null) !== null) {
+            $value = $request->query->getInt('seats-value', 0);
 
             if(!empty($value)) {
                 $query->addSeats($value);
@@ -66,7 +66,7 @@ class RoomQueryBuilder {
             if($request->query->get($paramName, null) !== null) {
                 if($tag->hasValue()) {
                     $valueParam = sprintf('tag-%s-value', $tag->getUuid());
-                    $value = $request->query->get($valueParam, 0);
+                    $value = $request->query->getInt($valueParam, 0);
 
                     if(!empty($value) || $value == 0)  {
                         $query->addTagWithValue($tag, $value);

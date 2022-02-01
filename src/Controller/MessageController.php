@@ -174,7 +174,7 @@ class MessageController extends AbstractController {
             return $upload->isUploaded() === false;
         });
 
-        $vote = $voteHelper->getPollVote($message, $this->getUser());
+        $vote = $voteHelper->getPollVote($message, $user);
         $rankedChoices = $voteHelper->getRankedChoices($vote);
         $allowVote = $dateHelper->getToday() < $message->getExpireDate();
         $voteForm = $this->createForm(MessagePollVoteType::class, $rankedChoices, [

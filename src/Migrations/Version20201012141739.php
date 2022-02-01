@@ -25,20 +25,20 @@ final class Version20201012141739 extends AbstractMigration
         $this->write('Getting current rooms...');
 
         $sql = $this->connection->prepare('SELECT id, external_id FROM room');
-        $sql->execute();
+        $result = $sql->executeQuery();
 
         $rooms = [ ];
 
-        foreach($sql as $row) {
+        foreach($result->fetchAllAssociative() as $row) {
             $rooms[$row['external_id']] = intval($row['id']);
         }
 
         $this->write('Create exam-room-map...');
 
         $sql = $this->connection->prepare('SELECT id, rooms FROM exam');
-        $sql->execute();
+        $result = $sql->executeQuery();
 
-        foreach($sql as $row) {
+        foreach($result->fetchAllAssociative() as $row) {
             $examId = intval($row['id']);
             $examRooms = json_decode($row['rooms']);
 
@@ -50,9 +50,9 @@ final class Version20201012141739 extends AbstractMigration
         $this->write('Create substitution-room-map...');
 
         $sql = $this->connection->prepare('SELECT id, room, replacement_room FROM substitution');
-        $sql->execute();
+        $result = $sql->executeQuery();
 
-        foreach($sql as $row) {
+        foreach($result->fetchAllAssociative() as $row) {
             $id = intval($row['id']);
             $room = $row['room'];
             $replacementRoom = $row['replacement_room'];
@@ -73,21 +73,21 @@ final class Version20201012141739 extends AbstractMigration
         $this->write('Migrate data...');
 
         foreach($this->examRooms as $examId => $roomId) {
-            $this->connection->executeUpdate('UPDATE exam SET room_id = :room WHERE id = :id', [
+            $this->connection->executeStatement('UPDATE exam SET room_id = :room WHERE id = :id', [
                 'id' => $examId,
                 'room' => $roomId
             ]);
         }
 
         foreach($this->substitutionRooms as $id => $roomId) {
-            $this->connection->executeUpdate('UPDATE substitution SET room_id = :room WHERE id = :id', [
+            $this->connection->executeStatement('UPDATE substitution SET room_id = :room WHERE id = :id', [
                 'id' => $id,
                 'room' => $roomId
             ]);
         }
 
         foreach($this->substitutionReplacementRooms as $id => $roomId) {
-            $this->connection->executeUpdate('UPDATE substitution SET replacement_room_id = :room WHERE id = :id', [
+            $this->connection->executeStatement('UPDATE substitution SET replacement_room_id = :room WHERE id = :id', [
                 'id' => $id,
                 'room' => $roomId
             ]);

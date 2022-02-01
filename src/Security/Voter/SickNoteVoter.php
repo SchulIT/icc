@@ -47,7 +47,7 @@ class SickNoteVoter extends Voter {
                 return $this->canView($token, $subject);
 
             case static::CanViewAny:
-                return $this->canViewAny($token, $subject);
+                return $this->canViewAny($token);
         }
 
         throw new LogicException('This code should not be reached.');

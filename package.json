@@ -40,7 +40,7 @@
         "intl-messageformat": "^9.7.1",
         "jspdf": "^2.5.0",
         "jspdf-autotable": "^3.5.23",
-        "jszip": "^3.6",
+        "jszip": "^3.7",
         "jszip-utils": "^0.1.0",
         "node-sass": "^6.0.0",
         "node-sass-glob-importer": "^5.3.2",

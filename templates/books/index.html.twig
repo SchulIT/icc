@@ -439,15 +439,18 @@
                         {% if gradeFilter.currentGrade != null and sectionFilter.currentSection != null %}
                             <a href="{{ path('book_export_grade_json', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}" class="list-group-item list-group-item-action">
                                 <i class="fas fa-download"></i> {{ 'book.export.json.label'|trans }}
+                                <span class="badge badge-danger" title="{{ 'experimental.info'|trans }}">{{ 'experimental.label'|trans }}</span>
                             </a>
 
                             <a href="{{ path('book_export_grade_xml', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}" class="list-group-item list-group-item-action">
                                 <i class="fas fa-download"></i> {{ 'book.export.xml.label'|trans }}
+                                <span class="badge badge-danger" title="{{ 'experimental.info'|trans }}">{{ 'experimental.label'|trans }}</span>
                             </a>
 
                             <button type="button" class="list-group-item list-group-item-action"
                                     data-export-url="{{ path('book_export_grade_json', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}">
                                 <i class="far fa-file-pdf"></i> {{ 'book.export.pdf.label'|trans }}
+                                <span class="badge badge-danger" title="{{ 'experimental.info'|trans }}">{{ 'experimental.label'|trans }}</span>
                             </button>
                         {% endif %}
                     </div>

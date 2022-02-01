@@ -1495,3 +1495,7 @@ import:
         info: Hier kann die GPU017.txt importiert werden. Diese muss als UTF-8 mit Semikolon (;) als Trennzeichen exportiert werden. Um die Kurse auflösen zu können, muss eine passende GPU002.txt ausgewählt werden.
         caution: Da sich Unterrichtsnummern insbesondere über Halbjahre hinweg ändern können, muss der Import stets auf Halbjahre beschränkt werden.
         result: '%added% neue Klausur(en), %ignored% nicht importiert, %updated% aktualisiert, %removed% gelöscht'
+
+experimental:
+    label: experimentell
+    info: Dieses Feature funktioniert möglichkerweise noch nicht so, wie erwartet. Es darf jedoch getestet werden.

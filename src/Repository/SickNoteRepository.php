@@ -3,25 +3,16 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\SickNote;
 use App\Entity\Student;
 use App\Entity\User;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class SickNoteRepository extends AbstractRepository implements SickNoteRepositoryInterface {
 
-    /**
-     * @inheritDoc
-     */
-    public function findByUser(User $user): array {
-        return $this->em->getRepository(SickNote::class)
-            ->findBy([
-                'createdBy' => $user
-            ], [
-                'createdAt' => 'desc'
-            ]);
-    }
 
     public function persist(SickNote $note): void {
         $this->em->persist($note);
@@ -94,26 +85,6 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
     /**
      * @inheritDoc
      */
-    public function findByGrade(Grade $grade, ?DateTime $date = null): array {
-        $qb = $this->em->createQueryBuilder()
-            ->select('sn', 's')
-            ->from(SickNote::class, 'sn')
-            ->leftJoin('sn.student', 's')
-            ->leftJoin('s.gradeMemberships', 'gm')
-            ->leftJoin('gm.grade', 'g')
-            ->where('g.id = :grade')
-            ->setParameter('grade', $grade->getId());
-
-        if($date !== null) {
-            $this->applyDate($qb, $date);
-        }
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function findAll(?DateTime $date = null): array {
         $qb = $this->em->createQueryBuilder()
             ->select('sn', 's')
@@ -131,5 +102,71 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
         $qb->andWhere('sn.from.date <= :date');
         $qb->andWhere('sn.until.date >= :date');
         $qb->setParameter('date', $date);
+    }
+
+    private function createPaginatorForQueryBuilder(QueryBuilder $queryBuilder, int $itemsPerPage, int &$page): Paginator {
+        if(!is_numeric($page) || $page < 1) {
+            $page = 1;
+        }
+
+        $offset = ($page - 1) * $itemsPerPage;
+        $paginator = new Paginator($queryBuilder);
+        $paginator->getQuery()
+            ->setMaxResults($itemsPerPage)
+            ->setFirstResult($offset);
+
+        return $paginator;
+    }
+
+    public function getStudentPaginator(Student $student, int $itemsPerPage, int &$page): Paginator {
+        $qb = $this->em->createQueryBuilder()
+            ->select('sn', 's')
+            ->from(SickNote::class, 'sn')
+            ->leftJoin('sn.student', 's');
+
+        $qb->where('s.id = :student')
+            ->setParameter('student', $student->getId())
+            ->orderBy('sn.until.date', 'desc');
+
+        return $this->createPaginatorForQueryBuilder($qb, $itemsPerPage, $page);
+    }
+
+    public function getGradePaginator(Grade $grade, Section $section, int $itemsPerPage, int &$page): Paginator {
+        $qb = $this->em->createQueryBuilder()
+            ->select('sn', 's')
+            ->from(SickNote::class, 'sn')
+            ->leftJoin('sn.student', 's')
+            ->leftJoin('s.gradeMemberships', 'gm')
+            ->leftJoin('gm.section', 'sec')
+            ->leftJoin('gm.grade', 'g')
+            ->where('g.id = :grade')
+            ->andWhere('sec.id = :section')
+            ->setParameter('grade', $grade->getId())
+            ->setParameter('section', $section->getId())
+            ->orderBy('sn.until.date', 'desc');
+
+        return $this->createPaginatorForQueryBuilder($qb, $itemsPerPage, $page);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getStudentsPaginator(array $students, DateTime $date, int $itemsPerPage, int &$page): Paginator {
+        $ids = array_map(function(Student $student) {
+            return $student->getId();
+        }, $students);
+
+        $qb = $this->em->createQueryBuilder()
+            ->select('sn', 's')
+            ->from(SickNote::class, 'sn')
+            ->leftJoin('sn.student', 's');
+
+        $qb->where($qb->expr()->in('s.id', ':students'))
+            ->setParameter('students', $ids)
+            ->andWhere('sn.from.date <= :date')
+            ->andWhere('sn.until.date >= :date')
+            ->orderBy('sn.until.date', 'desc');
+
+        return $this->createPaginatorForQueryBuilder($qb, $itemsPerPage, $page);
     }
 }

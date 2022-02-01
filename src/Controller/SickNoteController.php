@@ -12,6 +12,7 @@ use App\Form\SickNoteType;
 use App\Grouping\Grouper;
 use App\Grouping\SickNoteGradeGroup;
 use App\Grouping\SickNoteGradeStrategy;
+use App\Grouping\SickNoteStudentGroup;
 use App\Grouping\SickNoteTuitionGroup;
 use App\Http\FlysystemFileResponse;
 use App\Repository\SickNoteRepositoryInterface;
@@ -24,11 +25,13 @@ use App\Settings\TimetableSettings;
 use App\Sorting\SickNoteGradeGroupStrategy;
 use App\Sorting\SickNoteStrategy;
 use App\Sorting\SickNoteTuitionGroupStrategy;
+use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
 use App\Timetable\TimetableTimeHelper;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
+use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use DateTime;
 use Exception;
@@ -45,6 +48,8 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Security("is_granted('ROLE_SICK_NOTE_CREATOR') or is_granted('ROLE_SICK_NOTE_VIEWER') or is_granted('new-sicknote')")
  */
 class SickNoteController extends AbstractController {
+
+    const ITEMS_PER_PAGE = 25;
 
     use DateTimeHelperTrait;
 
@@ -102,7 +107,7 @@ class SickNoteController extends AbstractController {
     /**
      * @Route("", name="sick_notes")
      */
-    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Request $request,
+    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, StudentFilter $studentFilter, Request $request,
                           SickNoteRepositoryInterface $sickNoteRepository, TuitionRepositoryInterface $tuitionRepository,
                           SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Sorter $sorter, Grouper $grouper) {
         /** @var User $user */
@@ -110,23 +115,15 @@ class SickNoteController extends AbstractController {
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $request->query->get('teacher') !== '✗' && $gradeFilterView->getCurrentGrade() === null);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $request->query->get('teacher') !== '✗' && $gradeFilterView->getCurrentGrade() === null && $studentFilterView->getCurrentStudent() === null);
         $selectedDate = $user->getUserType()->equals(UserType::Teacher()) ? $dateHelper->getToday() : null;
 
-        try {
-            if($request->query->has('date')) {
-                if(empty($request->query->get('date'))) {
-                    $selectedDate = null;
-                } else {
-                    $selectedDate = new DateTime($request->query->get('date', null));
-                    $selectedDate->setTime(0, 0, 0);
-                }
-            }
-        } catch (Exception $e) {
-            $selectedDate = null;
-        }
-
         $groups = [ ];
+
+        $page = $request->query->getInt('page', 1);
+
+        $paginator = null;
 
         if($teacherFilterView->getCurrentTeacher() !== null && $sectionFilterView->getCurrentSection() !== null) {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
@@ -154,12 +151,13 @@ class SickNoteController extends AbstractController {
             $sorter->sort($groups, SickNoteTuitionGroupStrategy::class);
 
         } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $sickNotes = $sickNoteRepository->findByGrade($gradeFilterView->getCurrentGrade(), $selectedDate);
+            $paginator = $sickNoteRepository->getGradePaginator($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection(), static::ITEMS_PER_PAGE, $page);
 
-            if(count($sickNotes) > 0) {
+            if($paginator->count() > 0) {
                 $group = new SickNoteGradeGroup($gradeFilterView->getCurrentGrade());
 
-                foreach ($sickNotes as $note) {
+                /** @var SickNote $note */
+                foreach ($paginator as $note) {
                     if($this->isGranted(SickNoteVoter::View, $note)) {
                         $group->addItem($note);
                     }
@@ -167,29 +165,38 @@ class SickNoteController extends AbstractController {
 
                 $groups[] = $group;
             }
+        } else if($studentFilterView->getCurrentStudent() !== null) {
+            $paginator = $sickNoteRepository->getStudentPaginator($studentFilterView->getCurrentStudent(), static::ITEMS_PER_PAGE, $page);
 
-            $sorter->sort($groups, SickNoteGradeGroupStrategy::class);
-        } else if($sectionFilterView->getCurrentSection() !== null) {
-            $sickNotes = $sickNoteRepository->findAll($selectedDate);
+            if($paginator->count() > 0) {
+                $group = new SickNoteStudentGroup($studentFilterView->getCurrentStudent());
 
-            $sickNotes = array_filter($sickNotes, function(SickNote $note) {
-                return $this->isGranted(SickNoteVoter::View, $note);
-            });
+                /** @var SickNote $note */
+                foreach ($paginator as $note) {
+                    if($this->isGranted(SickNoteVoter::View, $note)) {
+                        $group->addItem($note);
+                    }
+                }
 
-            $groups = $grouper->group($sickNotes, SickNoteGradeStrategy::class, [ 'section' => $sectionFilterView->getCurrentSection() ]);
-            $sorter->sort($groups, SickNoteGradeGroupStrategy::class);
+                $groups[] = $group;
+            }
         }
 
-        $sorter->sortGroupItems($groups, SickNoteStrategy::class);
+        $pages = 0;
+        if($paginator !== null) {
+            $pages = ceil((double)$paginator->count() / static::ITEMS_PER_PAGE);
+        }
 
         return $this->render('sick_note/index.html.twig', [
-            'today' => $dateHelper->getToday(),
             'groups' => $groups,
             'sectionFilter' => $sectionFilterView,
             'gradeFilter' => $gradeFilterView,
             'teacherFilter' => $teacherFilterView,
-            'selectedDate' => $selectedDate,
-            'section' => $sectionResolver->getCurrentSection()
+            'studentFilter' => $studentFilterView,
+            'today' => $dateHelper->getToday(),
+            'section' => $sectionResolver->getCurrentSection(),
+            'pages' => $pages,
+            'page' => $page
         ]);
     }
 

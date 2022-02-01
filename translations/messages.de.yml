@@ -1301,6 +1301,8 @@ sick_notes:
     created_at: krankgemeldet am
     created_by: krankgemeldet von
     until_short: 'vsl. bis %date% (%lesson%. Stunde)'
+    active: aktiv
+    teacher_info: Diese Ansicht zeigt die für den heutigen Tag vorliegenden Krankmeldungen an. Vergangene Krankmeldungen können über den Lernenden- oder Klassenfilter auf der rechten Seite abgerufen werden.
     add:
         label: Neue Krankmeldung
         info: Hier besteht die Möglichkeit, eine Krankheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.

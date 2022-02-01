@@ -3,18 +3,14 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\Section;
 use App\Entity\SickNote;
 use App\Entity\Student;
 use App\Entity\User;
 use DateTime;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 interface SickNoteRepositoryInterface {
-    /**
-     * @param User $user
-     * @return SickNote[]
-     */
-    public function findByUser(User $user): array;
-
     /**
      * Returns all sick notes for the given students
      *
@@ -26,17 +22,20 @@ interface SickNoteRepositoryInterface {
     public function findByStudents(array $students, ?DateTime $date = null, ?int $lesson = null): array;
 
     /**
-     * @param Grade $grade
-     * @param DateTime|null $date
-     * @return SickNote[]
+     * Returns a paginator which paginates on all students (e.g. for a given teacher) which are sick on the
+     * specified date $date.
+     *
+     * @param Student[] $students
+     * @param DateTime $date The current date
+     * @param int $itemsPerPage
+     * @param int $page
+     * @return Paginator
      */
-    public function findByGrade(Grade $grade, ?DateTime $date = null): array;
+    public function getStudentsPaginator(array $students, DateTime $date, int $itemsPerPage, int &$page): Paginator;
 
-    /**
-     * @param DateTime|null $date
-     * @return SickNote[]
-     */
-    public function findAll(?DateTime $date = null): array;
+    public function getStudentPaginator(Student $student, int $itemsPerPage, int &$page): Paginator;
+
+    public function getGradePaginator(Grade $grade, Section $section, int $itemsPerPage, int &$page): Paginator;
 
     /**
      * @param DateTime $threshold

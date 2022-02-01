@@ -10,6 +10,13 @@
 {% endblock %}
 
 {% block content %}
+    {% set currentFilter = {
+        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
+        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null,
+        student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null
+    } %}
+
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9">
@@ -20,6 +27,13 @@
                         <p>{{ 'sick_notes.empty'|trans }}</p>
                     </div>
                 {% else %}
+                    {% if teacherFilter.currentTeacher is not null %}
+                        <div class="bs-callout bs-callout-info">
+                            <h4>{{ 'info.label'|trans }}</h4>
+                            <p>{{ 'sick_notes.teacher_info'|trans }}</p>
+                        </div>
+                    {% endif %}
+
                     {% for group in groups %}
                         <div class="card">
                             <div class="card-header">
@@ -33,6 +47,8 @@
                                     {% endif %} ({{ tuition.subject.name }})
 
                                     {% for grade in tuition.studyGroup.grades %}<span class="badge badge-primary">{{ grade.name }}</span> {% endfor %}
+                                {% elseif studentFilter.currentStudent is not null %}
+                                    {{ group.student|student }}
                                 {% else %}
                                     {{ group.grade.name }}
                                 {% endif %}
@@ -41,23 +57,25 @@
                             <div class="table-responsive">
                                 <table class="table table-striped card-table border-top-0" data-table="true">
                                     <colgroup>
+                                        <col class="column-lg">
                                         <col>
                                         <col>
                                         <col class="column-lg">
                                         <col class="column-lg">
-                                        <col class="column-lg">
+
                                         <col class="column-md">
                                         <col class="column-sm">
                                     </colgroup>
                                     
                                     <thead>
                                     <tr>
+                                        <th data-sortable="false">{{ 'label.reason'|trans({}, 'enums') }}</th>
                                         <th>{{ 'label.lastname'|trans }}</th>
                                         <th>{{ 'label.firstname'|trans }}</th>
                                         <th data-sortable="false">{{ 'sick_notes.add.absent_from'|trans }}</th>
                                         <th data-sortable="false">{{ 'sick_notes.add.absent_until'|trans }}</th>
                                         <th data-sortable="false">{{ 'sick_notes.created_at'|trans }}</th>
-                                        <th data-sortable="false">{{ 'label.reason'|trans({}, 'enums') }}</th>
+
                                         <th>{{ 'label.grade'|trans }}</th>
                                         <th></th>
                                     </tr>
@@ -66,12 +84,20 @@
                                     <tbody>
                                     {% for note in group.sickNotes %}
                                         <tr>
+                                            <td>
+                                                {{ note.reason|enum }}
+                                                {% if note.until.date >= today %}
+                                                    <span class="badge badge-primary">
+                                                        {{ 'sick_notes.active'|trans }}
+                                                    </span>
+                                                {% endif %}
+                                            </td>
                                             <td>{{ note.student.lastname }}</td>
                                             <td>{{ note.student.firstname }}</td>
                                             <td>{{ note.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': note.from.lesson, '%count%': 0}) }})</td>
                                             <td>{{ note.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': note.until.lesson, '%count%': 0}) }})</td>
                                             <td>{{ note.createdAt|format_datetime }}</td>
-                                            <td>{{ note.reason|enum }}</td>
+
                                             <td>
                                                 {% set grade = note.student.grade(section) %}
                                                 {% if grade is not null %}
@@ -92,6 +118,14 @@
                             </div>
                         </div>
                     {% endfor %}
+
+                    {% include '@Common/includes/pagination.html.twig' with {
+                        currentFilters: currentFilter,
+                        currentPage: page,
+                        paginationPath: 'sick_notes',
+                        lastPage: pages,
+                        showAlwaysFirstAndLast: true
+                    } only %}
                 {% endif %}
             </div>
             <div class="col-md-3 sticky-sidebar">
@@ -107,36 +141,13 @@
 
                 <div class="card">
                     <div class="card-body">
-                        {% set currentFilter = {
-                            section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
-                            teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null,
-                            grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null
-                        } %}
-                        {% set dateParam = selectedDate ? selectedDate|date('Y-m-d') : null %}
-
                         {% include "_filter/section.html.twig" %}
 
-                        {% include "_filter/teacher.html.twig" with { params: { date: dateParam }, allowClear: true, path: 'sick_notes' } %}
+                        {% include "_filter/teacher.html.twig" with { allowClear: true, path: 'sick_notes' } %}
 
-                        {% include "_filter/grade.html.twig" with { params: { date: dateParam } } %}
+                        {% include "_filter/student.html.twig" %}
 
-                        <form role="form" method="get" class="form hidden-print">
-                            {% include "_filter/_params.html.twig" with { params: currentFilter } %}
-
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                </div>
-                                <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
-                                {% if selectedDate is not null %}
-                                <div class="input-group-append">
-                                    <a href="{{ path('sick_notes', currentFilter|merge({date: '✗' })) }}" class="btn btn-outline-primary" title="{{ 'filter.reset_date'|trans }}">
-                                        <i class="fa fa-times"></i>
-                                    </a>
-                                </div>
-                                {% endif %}
-                            </div>
-                        </form>
+                        {% include "_filter/grade.html.twig" %}
                     </div>
 
                     <div class="card-footer">

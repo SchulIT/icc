@@ -31,6 +31,7 @@ use App\Timetable\TimetableTimeHelper;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
+use App\View\Filter\SickNoteReasonFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use DateTime;
@@ -107,7 +108,8 @@ class SickNoteController extends AbstractController {
     /**
      * @Route("", name="sick_notes")
      */
-    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, StudentFilter $studentFilter, Request $request,
+    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, StudentFilter $studentFilter,
+                          SickNoteReasonFilter $reasonFilter, Request $request,
                           SickNoteRepositoryInterface $sickNoteRepository, TuitionRepositoryInterface $tuitionRepository,
                           SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Sorter $sorter, Grouper $grouper) {
         /** @var User $user */
@@ -117,7 +119,7 @@ class SickNoteController extends AbstractController {
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $request->query->get('teacher') !== '✗' && $gradeFilterView->getCurrentGrade() === null && $studentFilterView->getCurrentStudent() === null);
-        $selectedDate = $user->getUserType()->equals(UserType::Teacher()) ? $dateHelper->getToday() : null;
+        $reasonFilterView = $reasonFilter->handle($request->query->get('reason'));
 
         $groups = [ ];
 
@@ -133,7 +135,7 @@ class SickNoteController extends AbstractController {
                     return $membership->getStudent();
                 })->toArray();
 
-                $sickNotes = $sickNoteRepository->findByStudents($students, $selectedDate);
+                $sickNotes = $sickNoteRepository->findByStudents($students, $reasonFilterView->getCurrentReason(), $dateHelper->getToday());
 
                 if(count($sickNotes) > 0) {
                     $group = new SickNoteTuitionGroup($tuition);
@@ -151,7 +153,7 @@ class SickNoteController extends AbstractController {
             $sorter->sort($groups, SickNoteTuitionGroupStrategy::class);
 
         } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $paginator = $sickNoteRepository->getGradePaginator($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection(), static::ITEMS_PER_PAGE, $page);
+            $paginator = $sickNoteRepository->getGradePaginator($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection(), $reasonFilterView->getCurrentReason(), static::ITEMS_PER_PAGE, $page);
 
             if($paginator->count() > 0) {
                 $group = new SickNoteGradeGroup($gradeFilterView->getCurrentGrade());
@@ -166,7 +168,7 @@ class SickNoteController extends AbstractController {
                 $groups[] = $group;
             }
         } else if($studentFilterView->getCurrentStudent() !== null) {
-            $paginator = $sickNoteRepository->getStudentPaginator($studentFilterView->getCurrentStudent(), static::ITEMS_PER_PAGE, $page);
+            $paginator = $sickNoteRepository->getStudentPaginator($studentFilterView->getCurrentStudent(), $reasonFilterView->getCurrentReason(), static::ITEMS_PER_PAGE, $page);
 
             if($paginator->count() > 0) {
                 $group = new SickNoteStudentGroup($studentFilterView->getCurrentStudent());
@@ -193,6 +195,7 @@ class SickNoteController extends AbstractController {
             'gradeFilter' => $gradeFilterView,
             'teacherFilter' => $teacherFilterView,
             'studentFilter' => $studentFilterView,
+            'reasonFilter' => $reasonFilterView,
             'today' => $dateHelper->getToday(),
             'section' => $sectionResolver->getCurrentSection(),
             'pages' => $pages,

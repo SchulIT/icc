@@ -21,7 +21,7 @@ class SickStudentsResolver implements AbsenceResolveStrategyInterface {
      */
     public function resolveAbsentStudents(DateTime $dateTime, int $lesson, iterable $students): array {
         $students = ArrayUtils::iterableToArray($students);
-        $sickNotes = $this->sickNoteRepository->findByStudents($students, $dateTime, $lesson);
+        $sickNotes = $this->sickNoteRepository->findByStudents($students, null, $dateTime, $lesson);
 
         return array_map(function(SickNote $note) {
             return new AbsentSickStudent($note->getStudent(), $note);

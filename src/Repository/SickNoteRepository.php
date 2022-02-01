@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Grade;
 use App\Entity\Section;
 use App\Entity\SickNote;
+use App\Entity\SickNoteReason;
 use App\Entity\Student;
 use App\Entity\User;
 use DateTime;
@@ -39,7 +40,7 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
     /**
      * @inheritDoc
      */
-    public function findByStudents(array $students, ?DateTime $date = null, ?int $lesson = null): array {
+    public function findByStudents(array $students, ?SickNoteReason $reason = null, ?DateTime $date = null, ?int $lesson = null): array {
         $ids = array_map(function(Student $student) {
             return $student->getId();
         }, $students);
@@ -51,6 +52,8 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
 
         $qb->where($qb->expr()->in('s.id', ':students'))
             ->setParameter('students', $ids);
+
+        $this->applyReasonIfGiven($qb, $reason);
 
         if($date != null && $lesson != null) {
             $qb->andWhere(
@@ -118,7 +121,16 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
         return $paginator;
     }
 
-    public function getStudentPaginator(Student $student, int $itemsPerPage, int &$page): Paginator {
+    private function applyReasonIfGiven(QueryBuilder $queryBuilder, ?SickNoteReason $reason): QueryBuilder {
+        if($reason !== null) {
+            $queryBuilder->andWhere('sn.reason = :reason')
+                ->setParameter('reason', $reason);
+        }
+
+        return $queryBuilder;
+    }
+
+    public function getStudentPaginator(Student $student, ?SickNoteReason $reason, int $itemsPerPage, int &$page): Paginator {
         $qb = $this->em->createQueryBuilder()
             ->select('sn', 's')
             ->from(SickNote::class, 'sn')
@@ -128,10 +140,12 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
             ->setParameter('student', $student->getId())
             ->orderBy('sn.until.date', 'desc');
 
+        $this->applyReasonIfGiven($qb, $reason);
+
         return $this->createPaginatorForQueryBuilder($qb, $itemsPerPage, $page);
     }
 
-    public function getGradePaginator(Grade $grade, Section $section, int $itemsPerPage, int &$page): Paginator {
+    public function getGradePaginator(Grade $grade, Section $section, ?SickNoteReason $reason, int $itemsPerPage, int &$page): Paginator {
         $qb = $this->em->createQueryBuilder()
             ->select('sn', 's')
             ->from(SickNote::class, 'sn')
@@ -145,13 +159,15 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
             ->setParameter('section', $section->getId())
             ->orderBy('sn.until.date', 'desc');
 
+        $this->applyReasonIfGiven($qb, $reason);
+
         return $this->createPaginatorForQueryBuilder($qb, $itemsPerPage, $page);
     }
 
     /**
      * @inheritDoc
      */
-    public function getStudentsPaginator(array $students, DateTime $date, int $itemsPerPage, int &$page): Paginator {
+    public function getStudentsPaginator(array $students, DateTime $date, ?SickNoteReason $reason, int $itemsPerPage, int &$page): Paginator {
         $ids = array_map(function(Student $student) {
             return $student->getId();
         }, $students);
@@ -166,6 +182,8 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
             ->andWhere('sn.from.date <= :date')
             ->andWhere('sn.until.date >= :date')
             ->orderBy('sn.until.date', 'desc');
+
+        $this->applyReasonIfGiven($qb, $reason);
 
         return $this->createPaginatorForQueryBuilder($qb, $itemsPerPage, $page);
     }

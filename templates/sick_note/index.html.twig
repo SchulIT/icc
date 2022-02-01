@@ -57,7 +57,7 @@
                                         <th data-sortable="false">{{ 'sick_notes.add.absent_from'|trans }}</th>
                                         <th data-sortable="false">{{ 'sick_notes.add.absent_until'|trans }}</th>
                                         <th data-sortable="false">{{ 'sick_notes.created_at'|trans }}</th>
-                                        <th data-sortable="false">{{ 'sick_notes.created_by'|trans }}</th>
+                                        <th data-sortable="false">{{ 'label.reason'|trans({}, 'enums') }}</th>
                                         <th>{{ 'label.grade'|trans }}</th>
                                         <th></th>
                                     </tr>
@@ -71,7 +71,7 @@
                                             <td>{{ note.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': note.from.lesson, '%count%': 0}) }})</td>
                                             <td>{{ note.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': note.until.lesson, '%count%': 0}) }})</td>
                                             <td>{{ note.createdAt|format_datetime }}</td>
-                                            <td>{{ note.createdBy|user(false) }}</td>
+                                            <td>{{ note.reason|enum }}</td>
                                             <td>
                                                 {% set grade = note.student.grade(section) %}
                                                 {% if grade is not null %}

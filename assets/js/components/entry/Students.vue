@@ -247,6 +247,11 @@ export default {
       handler() {
         this.isDirty = true;
       }
+    },
+    absences: {
+      handler() {
+
+      }
     }
   },
   beforeMount() {
@@ -261,74 +266,7 @@ export default {
     window.removeEventListener('beforeunload', this.preventReload);
   },
   mounted() {
-    let $this = this;
     this.studentChoice = new Choices(this.$el.querySelector('#add_student'));
-    let students = { };
-
-    this.students.forEach(function(student) {
-      students[student.uuid] = {
-        uuid: student.uuid,
-        firstname: student.firstname,
-        lastname: student.lastname,
-        reasons: [ ]
-      };
-
-      if($this.attendances.filter(x => x.student.uuid === student.uuid).length === 0) {
-        $this.addStudent(student.uuid, student.firstname, student.lastname, student.email);
-      }
-    });
-
-    this.possibleAbsences.forEach(function(absence) {
-      if(absence.student.uuid in students) {
-        students[absence.student.uuid].reasons.push($this.$trans('book.attendance.absence_reason.' + absence.reason));
-      }
-    });
-
-    $this.absences = [ ];
-
-    for(let uuid in students) {
-      let student = students[uuid];
-
-      let attendance = $this.attendances.filter(x => x.student.uuid === uuid).map(x => x.type);
-
-      if(student.reasons.length > 0 && attendance.length > 0 && attendance[0] !== 0) {
-        $this.absences.push(student);
-      }
-    }
-
-    this.$http.get(this.listStudentsUrl)
-      .then(function(response) {
-        let choices = [
-            {
-          label: $this.$trans('label.select.student'),
-          value: '',
-          selected: true
-          }
-        ];
-
-        response.data.forEach(function(student) {
-          let gradeAppendix = '';
-
-          if(student.grade !== null) {
-            gradeAppendix = ' [' + student.grade.name + ']';
-          }
-
-          choices.push({
-            label: student.lastname + ', ' + student.firstname + gradeAppendix,
-            value: student.uuid,
-            customProperties: {
-              firstname: student.firstname,
-              lastname: student.lastname,
-              email: student.email
-            }
-          });
-        });
-
-        $this.studentChoice.setChoices(choices, 'value', 'label', true);
-      })
-      .catch(function(error) {
-        console.error(error);
-      });
   },
   computed: {
     allPresent() {
@@ -492,6 +430,75 @@ export default {
       if(this.isDirty && (isButtonOrChild === false || closestAttendanceSubmitButton === null)) {
         event.preventDefault();
       }
+    },
+    load() {
+      let $this = this;
+      let students = { };
+
+      this.students.forEach(function(student) {
+        students[student.uuid] = {
+          uuid: student.uuid,
+          firstname: student.firstname,
+          lastname: student.lastname,
+          reasons: [ ]
+        };
+
+        if($this.attendances.filter(x => x.student.uuid === student.uuid).length === 0) {
+          $this.addStudent(student.uuid, student.firstname, student.lastname, student.email);
+        }
+      });
+
+      this.possibleAbsences.forEach(function(absence) {
+        if(absence.student.uuid in students) {
+          students[absence.student.uuid].reasons.push($this.$trans('book.attendance.absence_reason.' + absence.reason));
+        }
+      });
+
+      $this.absences = [ ];
+
+      for(let uuid in students) {
+        let student = students[uuid];
+
+        let attendance = $this.attendances.filter(x => x.student.uuid === uuid).map(x => x.type);
+
+        if(student.reasons.length > 0 && attendance.length > 0 && attendance[0] !== 0) {
+          $this.absences.push(student);
+        }
+      }
+
+      this.$http.get(this.listStudentsUrl)
+          .then(function(response) {
+            let choices = [
+              {
+                label: $this.$trans('label.select.student'),
+                value: '',
+                selected: true
+              }
+            ];
+
+            response.data.forEach(function(student) {
+              let gradeAppendix = '';
+
+              if(student.grade !== null) {
+                gradeAppendix = ' [' + student.grade.name + ']';
+              }
+
+              choices.push({
+                label: student.lastname + ', ' + student.firstname + gradeAppendix,
+                value: student.uuid,
+                customProperties: {
+                  firstname: student.firstname,
+                  lastname: student.lastname,
+                  email: student.email
+                }
+              });
+            });
+
+            $this.studentChoice.setChoices(choices, 'value', 'label', true);
+          })
+          .catch(function(error) {
+            console.error(error);
+          });
     }
   }
 }

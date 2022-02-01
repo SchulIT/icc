@@ -125,7 +125,8 @@
                               :list-students-url="studentsUrl"
                               :start="entry.start"
                               :end="entry.end"
-                              :show-save-button="false"></students>
+                              :show-save-button="false"
+                              ref="studentComponent"></students>
                   </div>
                 </div>
               </div>
@@ -326,6 +327,7 @@ export default {
           })
         }
 
+        $this.absences = response.data.absences;
         $this.isInitialized = true;
       })
       .catch(function(error) {
@@ -364,6 +366,7 @@ export default {
         });
       }
 
+      this.$refs.studentComponent.load();
       this.modal.create.show();
     },
 

@@ -12,7 +12,7 @@
 {% block content %}
     {% set currentFilter = {
         section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
-        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null,
+        teacher: (isTeacherX ? '✗' : (teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null)),
         student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null,
         grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
         reason: reasonFilter.currentReason ? reasonFilter.currentReason.value : null
@@ -50,8 +50,10 @@
                                     {% for grade in tuition.studyGroup.grades %}<span class="badge badge-primary">{{ grade.name }}</span> {% endfor %}
                                 {% elseif studentFilter.currentStudent is not null %}
                                     {{ group.student|student }}
-                                {% else %}
+                                {% elseif gradeFilter.currentGrade is not null %}
                                     {{ group.grade.name }}
+                                {% else %}
+                                    {{ 'label.students_simple'|trans }}
                                 {% endif %}
                             </div>
 

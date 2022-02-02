@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Entity\UserType;
 use App\Form\SickNoteType;
 use App\Grouping\Grouper;
+use App\Grouping\SickNoteGenericGroup;
 use App\Grouping\SickNoteGradeGroup;
 use App\Grouping\SickNoteGradeStrategy;
 use App\Grouping\SickNoteStudentGroup;
@@ -185,6 +186,21 @@ class SickNoteController extends AbstractController {
 
                 $groups[] = $group;
             }
+        } else {
+            $paginator = $sickNoteRepository->getPaginator($reasonFilterView->getCurrentReason(), static::ITEMS_PER_PAGE, $page);
+
+            if($paginator->count() > 0) {
+                $group = new SickNoteGenericGroup();
+
+                /** @var SickNote $note */
+                foreach ($paginator as $note) {
+                    if($this->isGranted(SickNoteVoter::View, $note)) {
+                        $group->addItem($note);
+                    }
+                }
+
+                $groups[] = $group;
+            }
         }
 
         $pages = 0;
@@ -202,7 +218,8 @@ class SickNoteController extends AbstractController {
             'today' => $dateHelper->getToday(),
             'section' => $sectionResolver->getCurrentSection(),
             'pages' => $pages,
-            'page' => $page
+            'page' => $page,
+            'isTeacherX' => $request->query->get('teacher') === '✗'
         ]);
     }
 

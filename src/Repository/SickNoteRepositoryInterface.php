@@ -40,6 +40,8 @@ interface SickNoteRepositoryInterface {
 
     public function getGradePaginator(Grade $grade, Section $section, ?SickNoteReason $reason, int $itemsPerPage, int &$page): Paginator;
 
+    public function getPaginator(?SickNoteReason $reason, int $itemsPerPage, int &$page): Paginator;
+
     /**
      * @param DateTime $threshold
      * @return int Number of removed sick notes

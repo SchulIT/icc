@@ -130,6 +130,18 @@ class SickNoteRepository extends AbstractRepository implements SickNoteRepositor
         return $queryBuilder;
     }
 
+    public function getPaginator(?SickNoteReason $reason, int $itemsPerPage, int &$page): Paginator {
+        $qb = $this->em->createQueryBuilder()
+            ->select('sn', 's')
+            ->from(SickNote::class, 'sn')
+            ->leftJoin('sn.student', 's')
+            ->orderBy('sn.until.date', 'desc');
+
+        $this->applyReasonIfGiven($qb, $reason);
+
+        return $this->createPaginatorForQueryBuilder($qb, $itemsPerPage, $page);
+    }
+
     public function getStudentPaginator(Student $student, ?SickNoteReason $reason, int $itemsPerPage, int &$page): Paginator {
         $qb = $this->em->createQueryBuilder()
             ->select('sn', 's')

@@ -183,13 +183,20 @@ easy_admin:
 
         SickNote:
             class: App\Entity\SickNote
+            list:
+                fields:
+                    - id
+                    - { property: uuid, template: 'admin/ea/uuid.html.twig' }
+                    - student
+                    - { property: from, template: 'admin/ea/date_lesson.html.twig' }
+                    - { property: until, template: 'admin/ea/date_lesson.html.twig' }
             form:
                 fields:
                     - student
                     - { property: from, type: App\Form\DateLessonType }
                     - { property: until, type: App\Form\DateLessonType }
                     - { property: reason, type_options: { translation_domain: enums } }
-                    - email
-                    - phone
-                    - orderedBy
+                    - { property: email, required: false }
+                    - { property: phone, required: false }
+                    - { property: orderedBy, required: false }
                     - message

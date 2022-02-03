@@ -107,10 +107,13 @@ class ExamType extends AbstractType {
                                 $section = $this->sectionResolver->getCurrentSection();
 
                                 $qb = $repository
-                                    ->createQueryBuilder('t');
+                                    ->createQueryBuilder('t')
+                                    ->select(['t', 's', 'sg', 'g']);
 
                                 if($section !== null) {
                                     $qb->leftJoin('t.section', 's')
+                                        ->leftJoin('t.studyGroup', 'sg')
+                                        ->leftJoin('sg.grades', 'g')
                                         ->where('s.id = :section')
                                         ->setParameter('section', $section->getId());
                                 }

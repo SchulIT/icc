@@ -45,7 +45,6 @@ class AnonymizeDatabaseCommand extends Command {
             $style->writeln('> Anonymize ' . $teacher->getLastname() . ', ' . $teacher->getFirstname());
             $teacher->setFirstname($this->faker->firstName($teacher->getGender()->equals(Gender::Male()) ? 'male' : 'female'));
             $teacher->setLastname($this->faker->lastName);
-            $teacher->setAcronym($this->generateAcronym($teacher));
             $teacher->setEmail($this->generateEmail($teacher->getFirstname(), $teacher->getLastname()));
 
             $this->teacherRepository->persist($teacher);
@@ -67,13 +66,6 @@ class AnonymizeDatabaseCommand extends Command {
         $this->studentRepository->commit();
 
         return 0;
-    }
-
-    private function generateAcronym(Teacher $teacher): string {
-        $firstname = $this->slugger->slug($teacher->getFirstname());
-        $lastname = $this->slugger->slug($teacher->getLastname());
-
-        return sprintf('%s%s', u($lastname)->upper()->truncate(2), u($firstname)->upper()->truncate(2));
     }
 
     private function generateEmail(string $firstname, string $lastname): string {

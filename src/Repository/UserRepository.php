@@ -8,7 +8,7 @@ use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
 
-class UserRepository extends AbstractRepository implements UserRepositoryInterface {
+class UserRepository extends AbstractTransactionalRepository implements UserRepositoryInterface {
 
     /**
      * @inheritDoc

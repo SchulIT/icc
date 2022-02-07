@@ -6,6 +6,7 @@ use App\Entity\Gender;
 use App\Entity\Teacher;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
+use App\Repository\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Generator;
 use Symfony\Component\Console\Command\Command;
@@ -18,15 +19,17 @@ use function Symfony\Component\String\u;
 class AnonymizeDatabaseCommand extends Command {
     private StudentRepositoryInterface $studentRepository;
     private TeacherRepositoryInterface $teacherRepository;
+    private UserRepositoryInterface $userRepository;
     private SluggerInterface $slugger;
     private Generator $faker;
 
     public function __construct(StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository,
-                                SluggerInterface $slugger, Generator $faker, string $name = null) {
+                                UserRepositoryInterface $userRepository, SluggerInterface $slugger, Generator $faker, string $name = null) {
         parent::__construct($name);
 
         $this->studentRepository = $studentRepository;
         $this->teacherRepository = $teacherRepository;
+        $this->userRepository = $userRepository;
         $this->slugger = $slugger;
         $this->faker = $faker;
     }
@@ -42,10 +45,9 @@ class AnonymizeDatabaseCommand extends Command {
         $style->section('Anomyize teachers');
         $this->teacherRepository->beginTransaction();
         foreach($this->teacherRepository->findAll() as $teacher) {
-            $style->writeln('> Anonymize ' . $teacher->getLastname() . ', ' . $teacher->getFirstname());
             $teacher->setFirstname($this->faker->firstName($teacher->getGender()->equals(Gender::Male()) ? 'male' : 'female'));
             $teacher->setLastname($this->faker->lastName);
-            $teacher->setEmail($this->generateEmail($teacher->getFirstname(), $teacher->getLastname()));
+            $teacher->setEmail($this->generateEmail($teacher->getFirstname(), $teacher->getLastname(), 't.schulit.dev'));
 
             $this->teacherRepository->persist($teacher);
         }
@@ -56,23 +58,34 @@ class AnonymizeDatabaseCommand extends Command {
         $style->section('Anonymize students');
         $this->studentRepository->beginTransaction();;
         foreach($this->studentRepository->findAll() as $student) {
-            $style->writeln(sprintf('> Anonymize %s, %s', $student->getLastname(), $student->getFirstname()));
             $student->setFirstname($this->faker->firstName($student->getGender()->equals(Gender::Male()) ? 'male' : 'female'));
             $student->setLastname($this->faker->lastName);
-            $student->setEmail($this->generateEmail($student->getFirstname(), $student->getLastname()));
+            $student->setEmail($this->generateEmail($student->getFirstname(), $student->getLastname(), 's.schulit.dev'));
 
             $this->studentRepository->persist($student);
         }
         $this->studentRepository->commit();
 
+        $style->section('Anonymize users');
+        $this->userRepository->beginTransaction();
+        foreach($this->userRepository->findAll() as $user) {
+            $user->setFirstname($this->faker->firstName);
+            $user->setLastname($this->faker->lastName);
+            $user->setEmail($this->generateEmail($user->getFirstname(), $user->getLastname(), 'u.schulit.dev'));
+            $user->setUsername($user->getEmail());
+
+            $this->userRepository->persist($user);
+        }
+        $this->userRepository->commit();
+
         return 0;
     }
 
-    private function generateEmail(string $firstname, string $lastname): string {
+    private function generateEmail(string $firstname, string $lastname, $domain): string {
         $firstname = $this->slugger->slug($firstname);
         $lastname = $this->slugger->slug($lastname);
 
-        return sprintf('%s.%s@schulit.dev', u($firstname)->normalize()->lower(), u($lastname)->lower());
+        return sprintf('%s.%s@%s', u($firstname)->normalize()->lower(), u($lastname)->lower(), u($domain)->lower());
     }
 
 }

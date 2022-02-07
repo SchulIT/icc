@@ -8,7 +8,7 @@ use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserType;
 
-interface UserRepositoryInterface {
+interface UserRepositoryInterface extends TransactionalRepositoryInterface {
     /**
      * @param int $id
      * @return User|null

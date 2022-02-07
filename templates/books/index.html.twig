@@ -296,6 +296,7 @@
                                                        :lesson-number="{{ lesson.lessonNumber }}"
                                                        csrftoken="{{ csrfToken }}"
                                                        create-action="{{ path('add_entry', { uuid: lesson.lesson.uuid }) }}"
+                                                       edit-action=""
                                                        cancel-action="{{ path('cancel_lesson', { uuid: lesson.lesson.uuid }) }}"></entry>
                                             </div>
                                         {% else %}
@@ -394,6 +395,7 @@
                                                        csrfname="_token"
                                                        csrftoken="{{ csrfToken }}"
                                                        create-action="{{ path('add_entry', { uuid: lesson.lesson.uuid }) }}"
+                                                       edit-action="{{ path('edit_entry', { uuid: lesson.entry.uuid }) }}"
                                                        cancel-action="{{ path('cancel_lesson', { uuid: lesson.lesson.uuid }) }}"></entry>
                                             </div>
 

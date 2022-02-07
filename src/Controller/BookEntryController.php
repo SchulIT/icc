@@ -88,6 +88,29 @@ class BookEntryController extends AbstractController {
     }
 
     /**
+     * @Route("/{uuid}", name="edit_entry", methods={"POST"})
+     */
+    public function edit(LessonEntry $entry, Request $request) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $entry);
+
+        $form = $this->createForm(LessonEntryType::class, $entry, [
+            'csrf_token_id' => 'book_entry'
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->persist($entry);
+            $this->addFlash('success', 'book.entry.edit.success');
+
+            return $this->redirectToReferrerInRequest($request, 'books');
+        }
+
+        return $this->render('books/edit.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
      * @Route("/create/{uuid}", name="add_entry")
      */
     public function create(Lesson $lesson, Request $request) {

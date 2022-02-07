@@ -39,7 +39,7 @@
     <div class="modal fade entry">
       <div class="modal-dialog modal-xl">
         <div class="modal-content">
-          <form :action="createAction" method="post">
+          <form :action="action" method="post">
             <div class="modal-header">
               <h5 class="modal-title">{{ $trans('book.entry.label') }}</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -230,11 +230,13 @@ export default {
     csrftoken: String,
     csrfname: String,
     createAction: String,
+    editAction: String,
     cancelAction: String,
     lessonNumber: Number
   },
   data() {
     return {
+      action: this.createAction,
       isInitialized: false,
       isLoading: false,
       lesson: {
@@ -326,6 +328,7 @@ export default {
         if($this.entry.uuid === null) {
           new Dropdown($this.$el.querySelector('.dropdown'), { persist: false });
         } else {
+          $this.action = $this.editAction;
           $this.$el.querySelector('.dropdown > button').addEventListener('click', function() {
             $this.show();
           })

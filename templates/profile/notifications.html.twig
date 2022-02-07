@@ -26,6 +26,10 @@
             {% endif %}
         {% endfor %}
 
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fas fa-save"> </i> {{ 'actions.save'|trans }}
+        </button>
+
         {{ form_end(form) }}
     {% else %}
         <div class="bs-callout bs-callout-info mb-0">

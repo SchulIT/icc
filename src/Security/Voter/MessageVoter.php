@@ -117,7 +117,7 @@ class MessageVoter extends Voter {
         }
 
         // You can see your own messages
-        if($message->getCreatedBy()->getId() === $user->getId()) {
+        if($message->getCreatedBy() !== null && $message->getCreatedBy()->getId() === $user->getId()) {
             return true;
         }
 

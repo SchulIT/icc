@@ -2,22 +2,21 @@
 
 namespace App\Security\User;
 
-use LightSaml\SpBundle\Security\Authentication\Token\SamlSpResponseToken;
+use LightSaml\Model\Protocol\Response;
 use LightSaml\SpBundle\Security\User\AttributeMapperInterface;
 use SchulIT\CommonBundle\Saml\ClaimTypes;
 
 class AttributeMapper implements AttributeMapperInterface {
 
-    public function getAttributes(SamlSpResponseToken $token): array {
+    public function getAttributes(Response $response): array {
         return [
-            'name_id' => $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue(),
-            'internal_id' => $this->getValue($token, ClaimTypes::EXTERNAL_ID),
-            'services' => $this->getServices($token)
+            'name_id' => $response->getFirstAssertion()->getSubject()->getNameID()->getValue(),
+            'services' => $this->getServices($response)
         ];
     }
 
-    private function getServices(SamlSpResponseToken $token): array {
-        $values = $this->getValues($token, ClaimTypes::SERVICES);
+    private function getServices(Response $response): array {
+        $values = $this->getValues($response, ClaimTypes::SERVICES);
 
         $services = [ ];
 
@@ -28,13 +27,8 @@ class AttributeMapper implements AttributeMapperInterface {
         return $services;
     }
 
-    private function getValue(SamlSpResponseToken $token, $attributeName) {
-        return $token->getResponse()->getFirstAssertion()->getFirstAttributeStatement()
-            ->getFirstAttributeByName($attributeName)->getFirstAttributeValue();
-    }
-
-    private function getValues(SamlSpResponseToken $token, $attributeName) {
-        return $token->getResponse()->getFirstAssertion()->getFirstAttributeStatement()
+    private function getValues(Response $response, $attributeName) {
+        return $response->getFirstAssertion()->getFirstAttributeStatement()
             ->getFirstAttributeByName($attributeName)->getAllAttributeValues();
     }
 }

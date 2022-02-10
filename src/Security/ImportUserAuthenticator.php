@@ -8,11 +8,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
+use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
-class ImportUserAuthenticator extends AbstractGuardAuthenticator {
+class ImportUserAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface {
 
     public const HeaderKey = 'X-Token';
 
@@ -27,7 +30,14 @@ class ImportUserAuthenticator extends AbstractGuardAuthenticator {
     /**
      * @inheritDoc
      */
-    public function start(Request $request, AuthenticationException $authException = null) {
+    public function supports(Request $request): bool {
+        return $request->headers->has(static::HeaderKey);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function start(Request $request, AuthenticationException $authException = null): Response {
         $json = $this->serializer->serialize(
             new ErrorResponse($authException != null ? $authException->getMessage() : 'Authentication required.')
             , 'json');
@@ -38,37 +48,7 @@ class ImportUserAuthenticator extends AbstractGuardAuthenticator {
     /**
      * @inheritDoc
      */
-    public function supports(Request $request) {
-        return $request->headers->has(static::HeaderKey);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCredentials(Request $request) {
-        return [
-            'token' => $request->headers->get(self::HeaderKey)
-        ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getUser($credentials, UserProviderInterface $userProvider) {
-        return new ImportUser();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function checkCredentials($credentials, UserInterface $user) {
-        return $credentials['token'] === $this->presharedKey;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception) {
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response {
         $json = $this->serializer->serialize(
             new ErrorResponse($exception->getMessage())
             , 'json');
@@ -79,14 +59,24 @@ class ImportUserAuthenticator extends AbstractGuardAuthenticator {
     /**
      * @inheritDoc
      */
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey) {
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response {
         return null;
     }
 
     /**
      * @inheritDoc
      */
-    public function supportsRememberMe() {
-        return false;
+    public function authenticate(Request $request): Passport {
+        $token = $request->headers->get(static::HeaderKey);
+
+        if($token === null) {
+            throw new CustomUserMessageAuthenticationException('No token provided.');
+        }
+
+        if($token !== $this->presharedKey) {
+            throw new CustomUserMessageAuthenticationException('Invalid token.');
+        }
+
+        return new SelfValidatingPassport(new UserBadge('import'));
     }
 }

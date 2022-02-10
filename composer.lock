@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8eb4640bb528801ffab4beccec3dc752",
+    "content-hash": "ac98f59773e7bc435c7516308f03ad65",
     "packages": [
         {
             "name": "antishov/doctrine-extensions-bundle",
@@ -3180,16 +3180,16 @@
         },
         {
             "name": "jsvrcek/ics",
-            "version": "0.8",
+            "version": "0.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jasvrcek/ICS.git",
-                "reference": "fce6d1f1af977b0650bfa630f2252d2b8ec1f0dc"
+                "reference": "161ecc642c573785e305477aebdcd491cb9f9526"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jasvrcek/ICS/zipball/fce6d1f1af977b0650bfa630f2252d2b8ec1f0dc",
-                "reference": "fce6d1f1af977b0650bfa630f2252d2b8ec1f0dc",
+                "url": "https://api.github.com/repos/jasvrcek/ICS/zipball/161ecc642c573785e305477aebdcd491cb9f9526",
+                "reference": "161ecc642c573785e305477aebdcd491cb9f9526",
                 "shasum": ""
             },
             "require": {
@@ -3226,9 +3226,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jasvrcek/ICS/issues",
-                "source": "https://github.com/jasvrcek/ICS/tree/0.8"
+                "source": "https://github.com/jasvrcek/ICS/tree/0.8.1"
             },
-            "time": "2021-01-12T15:30:40+00:00"
+            "time": "2022-02-02T16:40:24+00:00"
         },
         {
             "name": "knplabs/knp-menu",
@@ -4106,30 +4106,30 @@
         },
         {
             "name": "lightsaml2/sp-bundle",
-            "version": "2.0.0",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lightsaml2/SpBundle.git",
-                "reference": "d5d5a67292998d517cfca9aa843d59a971859f0d"
+                "reference": "66fc88b5d42fb2e87a855edc552c99dd4e399180"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lightsaml2/SpBundle/zipball/d5d5a67292998d517cfca9aa843d59a971859f0d",
-                "reference": "d5d5a67292998d517cfca9aa843d59a971859f0d",
+                "url": "https://api.github.com/repos/lightsaml2/SpBundle/zipball/66fc88b5d42fb2e87a855edc552c99dd4e399180",
+                "reference": "66fc88b5d42fb2e87a855edc552c99dd4e399180",
                 "shasum": ""
             },
             "require": {
                 "lightsaml2/lightsaml": "^2.0",
-                "lightsaml2/symfony-bridge": "^2.0",
-                "php": "^7.2|^8.0",
-                "symfony/framework-bundle": "^4.4|^5.0",
-                "symfony/security-bundle": "^4.4|^5.0"
+                "lightsaml2/symfony-bridge": "^3.0",
+                "php": "^7.4|^8.0",
+                "symfony/framework-bundle": "^5.4|^6.0",
+                "symfony/security-bundle": "^5.4|^6.0"
             },
             "require-dev": {
                 "ext-simplexml": "*",
                 "phpunit/phpunit": "^9.0",
                 "symfony/monolog-bundle": "^3.0",
-                "symfony/symfony": "^4.4|^5.0"
+                "symfony/symfony": "^5.4|^6.0"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -4153,37 +4153,37 @@
             "description": "Light SAML2 SP Symfony Bundle",
             "homepage": "http://www.lightsaml.com/SP-Bundle/",
             "support": {
-                "source": "https://github.com/lightsaml2/SpBundle/tree/2.0.0"
+                "source": "https://github.com/lightsaml2/SpBundle/tree/3.0.0"
             },
-            "time": "2021-06-10T16:48:10+00:00"
+            "time": "2022-01-01T16:47:52+00:00"
         },
         {
             "name": "lightsaml2/symfony-bridge",
-            "version": "2.0.1",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lightsaml2/SymfonyBridgeBundle.git",
-                "reference": "9579a39037c006872361f653c6bb42cbe638b8f4"
+                "reference": "42b952bbc98d22229426f12cd63643a58b816c0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lightsaml2/SymfonyBridgeBundle/zipball/9579a39037c006872361f653c6bb42cbe638b8f4",
-                "reference": "9579a39037c006872361f653c6bb42cbe638b8f4",
+                "url": "https://api.github.com/repos/lightsaml2/SymfonyBridgeBundle/zipball/42b952bbc98d22229426f12cd63643a58b816c0a",
+                "reference": "42b952bbc98d22229426f12cd63643a58b816c0a",
                 "shasum": ""
             },
             "require": {
                 "lightsaml2/lightsaml": "^2.0",
                 "php": "^7.2|^8.0",
-                "symfony/dependency-injection": "^4.4|^5.0",
-                "symfony/framework-bundle": "^4.4|^5.0",
-                "symfony/yaml": "^4.4|^5.0"
+                "symfony/dependency-injection": "^5.4|^6.0",
+                "symfony/framework-bundle": "^5.4|^6.0",
+                "symfony/yaml": "^5.4|^6.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^9.0",
-                "symfony/browser-kit": "^4.4|^5.0",
-                "symfony/filesystem": "^4.4|^5.0",
-                "symfony/finder": "^4.4|^5.0",
-                "symfony/routing": "^4.4|^5.0"
+                "symfony/browser-kit": "^5.4|^6.0",
+                "symfony/filesystem": "^5.4|^6.0",
+                "symfony/finder": "^5.4|^6.0",
+                "symfony/routing": "^5.4|^6.0"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -4207,9 +4207,9 @@
             "description": "Light SAML Symfony bridge bundle",
             "homepage": "http://www.lightsaml.com",
             "support": {
-                "source": "https://github.com/lightsaml2/SymfonyBridgeBundle/tree/2.0.1"
+                "source": "https://github.com/lightsaml2/SymfonyBridgeBundle/tree/3.0.0"
             },
-            "time": "2021-08-06T13:58:54+00:00"
+            "time": "2022-01-01T16:23:15+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -11870,21 +11870,22 @@
     "packages-dev": [
         {
             "name": "dama/doctrine-test-bundle",
-            "version": "v6.7.4",
+            "version": "v6.7.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dmaicher/doctrine-test-bundle.git",
-                "reference": "b1626f0e63a75a335aac49f6932d33018a6c5e2a"
+                "reference": "af6f8e8c56fcfdf2ae039b97607883961a14af9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dmaicher/doctrine-test-bundle/zipball/b1626f0e63a75a335aac49f6932d33018a6c5e2a",
-                "reference": "b1626f0e63a75a335aac49f6932d33018a6c5e2a",
+                "url": "https://api.github.com/repos/dmaicher/doctrine-test-bundle/zipball/af6f8e8c56fcfdf2ae039b97607883961a14af9c",
+                "reference": "af6f8e8c56fcfdf2ae039b97607883961a14af9c",
                 "shasum": ""
             },
             "require": {
                 "doctrine/dbal": "^2.9.3 || ^3.0",
                 "doctrine/doctrine-bundle": "^1.11 || ^2.0",
+                "ext-json": "*",
                 "php": "^7.1 || ^8.0",
                 "psr/cache": "^1.0 || ^2.0 || ^3.0",
                 "symfony/cache": "^4.4 || ^5.3 || ^6.0",
@@ -11930,9 +11931,9 @@
             ],
             "support": {
                 "issues": "https://github.com/dmaicher/doctrine-test-bundle/issues",
-                "source": "https://github.com/dmaicher/doctrine-test-bundle/tree/v6.7.4"
+                "source": "https://github.com/dmaicher/doctrine-test-bundle/tree/v6.7.5"
             },
-            "time": "2022-01-26T19:40:56+00:00"
+            "time": "2022-02-08T16:00:51+00:00"
         },
         {
             "name": "doctrine/data-fixtures",
@@ -12330,16 +12331,16 @@
         },
         {
             "name": "phar-io/version",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phar-io/version.git",
-                "reference": "bae7c545bef187884426f042434e561ab1ddb182"
+                "reference": "15a90844ad40f127afd244c0cad228de2a80052a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phar-io/version/zipball/bae7c545bef187884426f042434e561ab1ddb182",
-                "reference": "bae7c545bef187884426f042434e561ab1ddb182",
+                "url": "https://api.github.com/repos/phar-io/version/zipball/15a90844ad40f127afd244c0cad228de2a80052a",
+                "reference": "15a90844ad40f127afd244c0cad228de2a80052a",
                 "shasum": ""
             },
             "require": {
@@ -12375,9 +12376,9 @@
             "description": "Library for handling version information and constraints",
             "support": {
                 "issues": "https://github.com/phar-io/version/issues",
-                "source": "https://github.com/phar-io/version/tree/3.1.0"
+                "source": "https://github.com/phar-io/version/tree/3.1.1"
             },
-            "time": "2021-02-23T14:00:09+00:00"
+            "time": "2022-02-07T21:56:48+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -13378,16 +13379,16 @@
         },
         {
             "name": "sebastian/global-state",
-            "version": "3.0.1",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/global-state.git",
-                "reference": "474fb9edb7ab891665d3bfc6317f42a0a150454b"
+                "reference": "de036ec91d55d2a9e0db2ba975b512cdb1c23921"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/474fb9edb7ab891665d3bfc6317f42a0a150454b",
-                "reference": "474fb9edb7ab891665d3bfc6317f42a0a150454b",
+                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/de036ec91d55d2a9e0db2ba975b512cdb1c23921",
+                "reference": "de036ec91d55d2a9e0db2ba975b512cdb1c23921",
                 "shasum": ""
             },
             "require": {
@@ -13430,7 +13431,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/global-state/issues",
-                "source": "https://github.com/sebastianbergmann/global-state/tree/3.0.1"
+                "source": "https://github.com/sebastianbergmann/global-state/tree/3.0.2"
             },
             "funding": [
                 {
@@ -13438,7 +13439,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-30T07:43:24+00:00"
+            "time": "2022-02-10T06:55:38+00:00"
         },
         {
             "name": "sebastian/object-enumerator",

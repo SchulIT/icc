@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\IcsAccessToken;
 use App\Entity\User;
 use App\Entity\UserType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,6 +24,10 @@ class UserChecker implements EventSubscriberInterface {
      */
     public function onAuthenticationSuccess(AuthenticationSuccessEvent $event) {
         $user = $event->getAuthenticationToken()->getUser();
+
+        if($user instanceof IcsAccessToken) {
+            $user = $user->getUser();
+        }
 
         if(!$user instanceof User) {
             return;

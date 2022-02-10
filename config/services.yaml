@@ -60,6 +60,9 @@ services:
     LightSaml\SpBundle\Security\User\UsernameMapperInterface:
         alias: lightsaml_sp.username_mapper.simple
 
+    LightSaml\Store\Id\IdStoreInterface:
+        class: SchulIT\CommonBundle\Store\IdStore
+
     SchulIT\CommonBundle\Command\CreateCertificateCommand:
         arguments:
             $types:

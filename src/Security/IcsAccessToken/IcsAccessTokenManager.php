@@ -4,6 +4,7 @@ namespace App\Security\IcsAccessToken;
 
 use App\Entity\IcsAccessToken;
 use App\Utils\SecurityUtilsInterface;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -24,6 +25,12 @@ class IcsAccessTokenManager {
             ]);
 
         return $token;
+    }
+
+    public function setLastActive(IcsAccessToken $accessToken): void {
+        $accessToken->setLastActive(new DateTime());
+        $this->em->persist($accessToken);
+        $this->em->flush();
     }
 
     public function persistToken(IcsAccessToken $deviceToken): IcsAccessToken {

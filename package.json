@@ -42,7 +42,7 @@
         "jspdf-autotable": "^3.5.23",
         "jszip": "^3.6",
         "jszip-utils": "^0.1.0",
-        "node-sass": "^6.0.0",
+        "node-sass": "^7.0.0",
         "node-sass-glob-importer": "^5.3.2",
         "postcss-loader": "^4.0",
         "sass-loader": "^10.0",

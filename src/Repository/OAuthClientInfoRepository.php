@@ -2,20 +2,19 @@
 
 namespace App\Repository;
 
-use App\Entity\OAuthClientInfo;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client;
+use App\Entity\OAuthClient;
 
 class OAuthClientInfoRepository extends AbstractRepository implements OAuthClientInfoRepositoryInterface {
 
-    public function persist(OAuthClientInfo $clientInfo): void {
+    public function persist(OAuthClient $clientInfo): void {
         $this->em->persist($clientInfo);
         $this->em->flush();
     }
 
-    public function findOneByClient(Client $client): ?OAuthClientInfo {
-        return $this->em->getRepository(OAuthClientInfo::class)
+    public function findOneByIdentifier(string $identifier): ?OAuthClient {
+        return $this->em->getRepository(OAuthClient::class)
             ->findOneBy([
-                'client' => $client
+                'identifier' => $identifier
             ]);
     }
 
@@ -23,7 +22,7 @@ class OAuthClientInfoRepository extends AbstractRepository implements OAuthClien
      * @inheritDoc
      */
     public function findAll(): array {
-        return $this->em->getRepository(OAuthClientInfo::class)
+        return $this->em->getRepository(OAuthClient::class)
             ->findAll();
     }
 }

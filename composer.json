@@ -63,7 +63,6 @@
         "symfony/web-link": "^5.4",
         "symfony/webpack-encore-bundle": "^1.4",
         "symfony/yaml": "^5.4",
-        "trikoder/oauth2-bundle": "^3.1",
         "vich/uploader-bundle": "^1.9",
         "willdurand/js-translation-bundle": "^4.0",
         "xantios/mimey": "^2.1"

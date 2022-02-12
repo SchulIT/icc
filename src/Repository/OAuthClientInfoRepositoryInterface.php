@@ -2,16 +2,15 @@
 
 namespace App\Repository;
 
-use App\Entity\OAuthClientInfo;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client;
+use App\Entity\OAuthClient;
 
 interface OAuthClientInfoRepositoryInterface {
-    public function findOneByClient(Client $client): ?OAuthClientInfo;
+    public function findOneByIdentifier(string $identifier): ?OAuthClient;
 
     /**
-     * @return OAuthClientInfo[]
+     * @return OAuthClient[]
      */
     public function findAll(): array;
 
-    public function persist(OAuthClientInfo $clientInfo): void;
+    public function persist(OAuthClient $clientInfo): void;
 }

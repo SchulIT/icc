@@ -3,14 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\IcsAccessToken;
-use App\Entity\OAuthClientInfo;
 use App\Entity\User;
 use App\Form\NotificationsType;
 use App\Grouping\Grouper;
 use App\Grouping\UserTypeAndGradeStrategy;
-use App\Notification\Email\EmailNotificationService;
 use App\Repository\DeviceTokenRepositoryInterface;
-use App\Repository\OAuthClientInfoRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\OAuth2\AppManager;
@@ -19,17 +16,11 @@ use App\Security\Voter\DeviceTokenVoter;
 use App\Settings\NotificationSettings;
 use App\Sorting\Sorter;
 use App\Sorting\StringGroupStrategy;
-use App\Sorting\StringStrategy;
 use App\Sorting\UserUsernameStrategy;
-use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
-use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Trikoder\Bundle\OAuth2Bundle\Manager\ClientManagerInterface;
-use Trikoder\Bundle\OAuth2Bundle\Manager\RefreshTokenManagerInterface;
-use Trikoder\Bundle\OAuth2Bundle\Model\AccessToken;
 
 /**
  * @Route("/profile")
@@ -75,30 +66,6 @@ class ProfileController extends AbstractController {
             'form' => $form !== null ? $form->createView() : null,
             'is_allowed' => $isAllowed,
             'email_allowed' => $isAllowed
-        ]);
-    }
-
-    /**
-     * @Route("/apps", name="profile_apps")
-     */
-    public function apps(DeviceTokenRepositoryInterface $deviceTokenRepository, AppManager $appManager, OAuthClientInfoRepositoryInterface $clientInfoRepository) {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        $devices = $deviceTokenRepository->findAllBy($user);
-        $tokens = $appManager->getAccessTokens($user);
-        $clientInfo = ArrayUtils::createArrayWithKeys(
-            $clientInfoRepository->findAll(),
-            function(OAuthClientInfo $clientInfo) {
-                return $clientInfo->getClient()->getIdentifier();
-            }
-        );
-
-        return $this->render('profile/apps.html.twig', [
-            'apps' => $devices,
-            'tokens' => $tokens,
-            'info' => $clientInfo,
-            'csrf_key' => static::RemoveAppCrsfTokenKey
         ]);
     }
 

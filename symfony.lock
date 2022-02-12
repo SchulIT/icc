@@ -48,9 +48,6 @@
             "./config/routes/dh_auditor.yaml"
         ]
     },
-    "defuse/php-encryption": {
-        "version": "v2.3.1"
-    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -239,20 +236,11 @@
     "laminas/laminas-code": {
         "version": "4.4.2"
     },
-    "lcobucci/clock": {
-        "version": "2.0.0"
-    },
-    "lcobucci/jwt": {
-        "version": "4.0.3"
-    },
     "league/commonmark": {
         "version": "1.6.6"
     },
     "league/csv": {
         "version": "9.7.1"
-    },
-    "league/event": {
-        "version": "2.2.0"
     },
     "league/flysystem": {
         "version": "1.1.4"
@@ -262,9 +250,6 @@
     },
     "league/mime-type-detection": {
         "version": "1.4.0"
-    },
-    "league/oauth2-server": {
-        "version": "8.3.2"
     },
     "lightsaml2/lightsaml": {
         "version": "dev-master"
@@ -745,9 +730,6 @@
     "symfony/proxy-manager-bridge": {
         "version": "v4.4.18"
     },
-    "symfony/psr-http-message-bridge": {
-        "version": "v2.1.1"
-    },
     "symfony/routing": {
         "version": "5.3",
         "recipe": {
@@ -906,19 +888,6 @@
     },
     "theseer/tokenizer": {
         "version": "1.2.1"
-    },
-    "trikoder/oauth2-bundle": {
-        "version": "3.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "3.0",
-            "ref": "99d0b876c2828fec3b546b25bf84eb81774c2d64"
-        },
-        "files": [
-            "./config/packages/trikoder_oauth2.yaml",
-            "./config/routes/trikoder_oauth2.yaml"
-        ]
     },
     "twig/twig": {
         "version": "v3.3.2"

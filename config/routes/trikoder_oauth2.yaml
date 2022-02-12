@@ -1,7 +1,0 @@
-oauth2_authorization_code:
-    controller: Trikoder\Bundle\OAuth2Bundle\Controller\AuthorizationController::indexAction
-    path: /oauth2/authorize
-
-oauth2_token:
-    controller: Trikoder\Bundle\OAuth2Bundle\Controller\TokenController::indexAction
-    path: /oauth2/token

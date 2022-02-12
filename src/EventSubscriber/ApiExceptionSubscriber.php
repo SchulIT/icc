@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
 class ApiExceptionSubscriber implements EventSubscriberInterface {
@@ -50,6 +51,9 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
         // Case 1: general HttpException (Authorization/Authentication) or BadRequest
         if($throwable instanceof HttpException) {
             $code = $throwable->getStatusCode();
+            $message = new ErrorResponse($throwable->getMessage(), get_class($throwable));
+        } else if($throwable instanceof AccessDeniedException) {
+            $code = Response::HTTP_FORBIDDEN;
             $message = new ErrorResponse($throwable->getMessage(), get_class($throwable));
         } else if($throwable instanceof ValidationFailedException) { // Case 2: validation failed
             $code = Response::HTTP_BAD_REQUEST;

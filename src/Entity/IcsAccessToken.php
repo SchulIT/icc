@@ -150,21 +150,21 @@ class IcsAccessToken implements UserInterface {
     /**
      * @inheritDoc
      */
-    public function getRoles() {
+    public function getRoles(): array {
         return $this->user->getRoles();
     }
 
     /**
      * @inheritDoc
      */
-    public function getPassword() {
+    public function getPassword(): ?string {
         return $this->user->getPassword();
     }
 
     /**
      * @inheritDoc
      */
-    public function getSalt() {
+    public function getSalt(): ?string {
         return $this->user->getSalt();
     }
 

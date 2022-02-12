@@ -3762,16 +3762,16 @@
         },
         {
             "name": "lightsaml2/sp-bundle",
-            "version": "3.0.0",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lightsaml2/SpBundle.git",
-                "reference": "66fc88b5d42fb2e87a855edc552c99dd4e399180"
+                "reference": "42cc3eb64147f547c5ff9a9c9677dfdb059dd5e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lightsaml2/SpBundle/zipball/66fc88b5d42fb2e87a855edc552c99dd4e399180",
-                "reference": "66fc88b5d42fb2e87a855edc552c99dd4e399180",
+                "url": "https://api.github.com/repos/lightsaml2/SpBundle/zipball/42cc3eb64147f547c5ff9a9c9677dfdb059dd5e7",
+                "reference": "42cc3eb64147f547c5ff9a9c9677dfdb059dd5e7",
                 "shasum": ""
             },
             "require": {
@@ -3790,8 +3790,8 @@
             "type": "symfony-bundle",
             "autoload": {
                 "psr-0": {
-                    "LightSaml\\SpBundle\\Tests\\": "tests/",
-                    "LightSaml\\SpBundle\\": "src/"
+                    "LightSaml\\SpBundle\\": "src/",
+                    "LightSaml\\SpBundle\\Tests\\": "tests/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3809,9 +3809,9 @@
             "description": "Light SAML2 SP Symfony Bundle",
             "homepage": "http://www.lightsaml.com/SP-Bundle/",
             "support": {
-                "source": "https://github.com/lightsaml2/SpBundle/tree/3.0.0"
+                "source": "https://github.com/lightsaml2/SpBundle/tree/3.0.2"
             },
-            "time": "2022-01-01T16:47:52+00:00"
+            "time": "2022-02-12T17:18:01+00:00"
         },
         {
             "name": "lightsaml2/symfony-bridge",

@@ -4,7 +4,6 @@ namespace App;
 
 use App\DependencyInjection\Compiler\RemoveCleanupCommandPass;
 use App\DependencyInjection\Compiler\RemoveDumpCommandPass;
-use App\DependencyInjection\Security\Factory\DeviceTokenFactory;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -48,7 +47,6 @@ class Kernel extends BaseKernel
     public function build(ContainerBuilder $container) {
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');
-        $extension->addSecurityListenerFactory(new DeviceTokenFactory());
         $container->addCompilerPass(new RemoveDumpCommandPass());
         $container->addCompilerPass(new RemoveCleanupCommandPass());
     }

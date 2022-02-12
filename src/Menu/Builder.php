@@ -3,8 +3,6 @@
 namespace App\Menu;
 
 use App\Converter\UserStringConverter;
-use App\Entity\MessageScope;
-use App\Entity\StudyGroupMembership;
 use App\Entity\User;
 use App\Repository\LessonRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
@@ -20,7 +18,7 @@ use App\Settings\SickNoteSettings;
 use App\Utils\EnumArrayUtils;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
-use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
+use LightSaml\SpBundle\Security\Http\Authenticator\SamlToken;
 use SchulIT\CommonBundle\DarkMode\DarkModeManagerInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -579,7 +577,7 @@ class Builder {
 
         $token = $this->tokenStorage->getToken();
 
-        if($token instanceof SamlSpToken) {
+        if($token instanceof SamlToken) {
             $menu = $root->addChild('services', [
                 'label' => ''
             ])

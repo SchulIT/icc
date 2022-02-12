@@ -32,7 +32,7 @@ security:
         Symfony\Component\Security\Core\User\User: 'auto'
 
     access_control:
-        - { path: ^logout/success, roles: PUBLIC_ACCESS }
+        - { path: ^/logout/success, roles: PUBLIC_ACCESS }
         - { path: ^/saml/(login|discovery|metadata.xml)$, roles: PUBLIC_ACCESS }
         - { path: ^/display/, roles: PUBLIC_ACCESS }
         - { path: ^/admin/ea/, roles: ROLE_SUPER_ADMIN }

@@ -60,7 +60,7 @@ JSON;
         $this->assertEquals(JSON_ERROR_NONE, json_last_error());
         $this->assertObjectHasAttribute('violations', $jsonResponse);
     }
-
+    /*
     public function testMissingAuthorizationHeaderSendsUnauthorizedOnApiRequests() {
         $client = static::createClient();
 
@@ -72,5 +72,5 @@ JSON;
 
         // currently skip test as API is not enabled
         //$this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
+    }*/
 }

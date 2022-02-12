@@ -1,0 +1,62 @@
+{% extends "profile/_profile.twig" %}
+
+{% block title %}{{ 'profile.apps.label'|trans }}{% endblock %}
+
+{% block apps_active %}active{% endblock %}
+
+{% block profile_card_body %}
+    {% if apps|length == 0 %}
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                <p>{{ 'profile.apps.empty'|trans }}</p>
+            </div>
+        </div>
+    {% else %}
+        {% if app|length > 0 %}
+        <ul class="list-group list-group-flush">
+            {% for app in apps %}
+            <li class="list-group-item">
+                <button type="button" class="btn btn-danger btn-sm float-right" data-toggle="modal" data-target="#remove-app-modal-{{ app.uuid }}">
+                    <i class="fa fa-trash"></i>
+                </button>
+
+                <h6 class="font-weight-bolder">{{ app.name }}</h6>
+
+                <ul class="list-unstyled">
+                    <li>{{ 'profile.apps.platform'|trans({'%name%': app.type|enum }) }}</li>
+                    <li>{{ 'profile.apps.registration_date'|trans({'%date%': app.registered|format_datetime }) }}</li>
+                    {#<li>{{ 'profile.apps.last_activity'|trans({'%date%': app.lastActive|format_datetime }) }}</li>#}
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block profile_footer %}
+    {% for app in apps %}
+        <div class="modal fade" id="remove-app-modal-{{ app.uuid }}" tabindex="-1" role="dialog" aria-labelledby="remove-app-modal-label-{{ app.uuid }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form action="{{ path('profile_remove_app', { uuid: app.uuid }) }}" method="post">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_key) }}">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="remove-app-modal-label-{{ app.uuid }}">{{ 'profile.apps.remove.label'|trans }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {{ 'profile.apps.remove.confirm'|trans({'%name%': app.name }) }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

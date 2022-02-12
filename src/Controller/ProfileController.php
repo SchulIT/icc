@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\IcsAccessToken;
+use App\Entity\OAuthClientInfo;
 use App\Entity\User;
 use App\Form\NotificationsType;
 use App\Grouping\Grouper;
 use App\Grouping\UserTypeAndGradeStrategy;
 use App\Repository\DeviceTokenRepositoryInterface;
+use App\Repository\OAuthClientInfoRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\OAuth2\AppManager;
@@ -17,6 +19,7 @@ use App\Settings\NotificationSettings;
 use App\Sorting\Sorter;
 use App\Sorting\StringGroupStrategy;
 use App\Sorting\UserUsernameStrategy;
+use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,6 +69,21 @@ class ProfileController extends AbstractController {
             'form' => $form !== null ? $form->createView() : null,
             'is_allowed' => $isAllowed,
             'email_allowed' => $isAllowed
+        ]);
+    }
+
+    /**
+     * @Route("/apps", name="profile_apps")
+     */
+    public function apps(DeviceTokenRepositoryInterface $deviceTokenRepository, OAuthClientInfoRepositoryInterface $clientInfoRepository) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $devices = $deviceTokenRepository->findAllBy($user);
+
+        return $this->render('profile/apps.html.twig', [
+            'apps' => $devices,
+            'csrf_key' => static::RemoveAppCrsfTokenKey
         ]);
     }
 

@@ -112,9 +112,12 @@ class SickNoteController extends AbstractController {
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, StudentFilter $studentFilter,
                           SickNoteReasonFilter $reasonFilter, Request $request,
                           SickNoteRepositoryInterface $sickNoteRepository, TuitionRepositoryInterface $tuitionRepository,
-                          SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Sorter $sorter, Grouper $grouper) {
+                          SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Sorter $sorter, Grouper $grouper, SickNoteSettings $settings) {
         $this->denyAccessUnlessGranted(SickNoteVoter::CanViewAny);
 
+        if($settings->isEnabled() !== true) {
+            throw new NotFoundHttpException();
+        }
 
         /** @var User $user */
         $user = $this->getUser();
@@ -226,8 +229,12 @@ class SickNoteController extends AbstractController {
     /**
      * @Route("/{uuid}", name="show_sick_note")
      */
-    public function show(SickNote $sickNote) {
+    public function show(SickNote $sickNote, SickNoteSettings $settings) {
         $this->denyAccessUnlessGranted(SickNoteVoter::View, $sickNote);
+
+        if($settings->isEnabled() !== true) {
+            throw new NotFoundHttpException();
+        }
 
         return $this->render('sick_note/show.html.twig', [
             'note' => $sickNote
@@ -237,8 +244,12 @@ class SickNoteController extends AbstractController {
     /**
      * @Route("/attachments/{uuid}", name="download_sick_note_attachment", priority="10")
      */
-    public function downloadAttachment(SickNoteAttachment $attachment, FilesystemInterface $sickNoteFilesystem, MimeTypes $mimeTypes) {
+    public function downloadAttachment(SickNoteAttachment $attachment, FilesystemInterface $sickNoteFilesystem, MimeTypes $mimeTypes, SickNoteSettings $settings) {
         $this->denyAccessUnlessGranted(SickNoteVoter::View, $attachment->getSickNote());
+
+        if($settings->isEnabled() !== true) {
+            throw new NotFoundHttpException();
+        }
 
         if($sickNoteFilesystem->has($attachment->getPath()) !== true) {
             throw new NotFoundHttpException();

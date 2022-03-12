@@ -170,7 +170,16 @@ class EntryOverviewHelper {
                         $key = sprintf('%s-%d-%s', $substitution->getDate()->format('Y-m-d'), $lessonNumber, $dailyLesson->getTuition()->getUuid()->toString());
 
                         if (!array_key_exists($key, $lessons)) {
-                            $lessons[$key] = new Lesson($substitution->getDate(), $lessonNumber, null, null, $substitution);
+                            $lessons[$key] = new Lesson($substitution->getDate(), $lessonNumber, $dailyLesson, null, $substitution);
+                        }
+
+                        // Set correct entry
+                        /** @var LessonEntry $lessonEntry */
+                        foreach($dailyLesson->getEntries() as $lessonEntry) {
+                            if($lessonEntry->getLessonStart() <= $lessonNumber && $lessonNumber <= $lessonEntry->getLessonEnd()) {
+                                $lessons[$key]->setEntry($lessonEntry);
+                                break;
+                            }
                         }
 
                         if($lessons[$key]->getLesson() === null) {

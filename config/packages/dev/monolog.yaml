@@ -2,12 +2,12 @@ monolog:
     handlers:
         app:
             type: service
-            id: SchulIT\CommonBundle\Monolog\DatabaseHandler
+            id: App\Monolog\DatabaseHandler
             level: info
             channels: ["!request", "!php"]
         main:
-            type: stream
-            path: '%kernel.logs_dir%/%kernel.environment%.log'
+            type: service
+            id: App\Monolog\DatabaseHandler
             level: debug
             channels: ["!event"]
         console:

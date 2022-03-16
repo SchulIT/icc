@@ -274,3 +274,11 @@ services:
 
     App\Section\SectionResolverInterface:
         alias: App\Section\CachedSectionResolver
+
+    # MONOLOG
+    App\Monolog\UsernameProcessor:
+        tags:
+            - { name: monolog.processor }
+    App\Monolog\RequestProcessor:
+        tags:
+            - { name: monolog.processor }

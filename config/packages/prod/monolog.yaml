@@ -9,8 +9,9 @@ monolog:
                 - ^/
         nested:
             type: service
-            id: SchulIT\CommonBundle\Monolog\DatabaseHandler
+            id: App\Monolog\DatabaseHandler
             level: debug
+            formatter: monolog.formatter.normalizer
         console:
             type:   console
             process_psr_3_messages: false

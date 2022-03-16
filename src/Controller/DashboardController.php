@@ -21,6 +21,7 @@ use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Filter\UserTypeFilter;
 use DateTime;
+use League\Csv\Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;

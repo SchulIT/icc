@@ -13,6 +13,7 @@ use App\Entity\UserTypeEntity;
 use App\Message\MessageConfirmationHelper;
 use App\Utils\EnumArrayUtils;
 use Doctrine\Common\Collections\Collection;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -32,10 +33,12 @@ class MessageVoter extends Voter {
 
     private AccessDecisionManagerInterface $accessDecisionManager;
     private MessageConfirmationHelper $confirmationHelper;
+    private DateHelper $dateHelper;
 
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager, MessageConfirmationHelper $confirmationHelper) {
+    public function __construct(AccessDecisionManagerInterface $accessDecisionManager, MessageConfirmationHelper $confirmationHelper, DateHelper $dateHelper) {
         $this->accessDecisionManager = $accessDecisionManager;
         $this->confirmationHelper = $confirmationHelper;
+        $this->dateHelper = $dateHelper;
     }
 
     /**
@@ -285,6 +288,7 @@ class MessageVoter extends Voter {
 
     private function canUpload(Message $message, TokenInterface $token): bool {
         return $message->isUploadsEnabled()
+            && $this->dateHelper->getToday() <= $message->getExpireDate()
             && $this->isMemberOfTypeAndStudyGroup(
                 $token,
                 $this->getUserTypes($message->getUploadEnabledUserTypes()),

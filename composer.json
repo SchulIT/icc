@@ -11,7 +11,7 @@
         "antishov/doctrine-extensions-bundle": "^1.4",
         "beberlei/doctrineextensions": "^1.2",
         "composer/package-versions-deprecated": "1.11.99.4",
-        "damienharper/auditor-bundle": "^4.2",
+        "damienharper/auditor-bundle": "^5.0",
         "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.3",
         "doctrine/doctrine-migrations-bundle": "^3.0.0",
@@ -65,7 +65,8 @@
         "symfony/yaml": "^5.4",
         "vich/uploader-bundle": "^1.9",
         "willdurand/js-translation-bundle": "^4.0",
-        "xantios/mimey": "^2.1"
+        "xantios/mimey": "^2.1",
+      "ext-dom": "*"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^6.0",
@@ -82,7 +83,8 @@
         "symfony/maker-bundle": "^1.0",
         "symfony/phpunit-bridge": "^6.0",
         "symfony/stopwatch": "^5.4",
-        "symfony/web-profiler-bundle": "^5.4"
+        "symfony/web-profiler-bundle": "^5.4",
+        "ext-libxml": "*"
     },
     "config": {
         "preferred-install": {

@@ -38,7 +38,7 @@
                     {% for group in groups %}
                         <div class="card">
                             <div class="card-header">
-                                {% if teacherFilter.currentTeacher is not null %}
+                                {% if group.tuition is defined and group.tuition is instanceof('App\\Entity\\Tuition') %}
                                     {% set tuition = group.tuition %}
 
                                     {% if tuition.displayName is not empty %}
@@ -48,9 +48,9 @@
                                     {% endif %} ({{ tuition.subject.name }})
 
                                     {% for grade in tuition.studyGroup.grades %}<span class="badge badge-primary">{{ grade.name }}</span> {% endfor %}
-                                {% elseif studentFilter.currentStudent is not null %}
+                                {% elseif group.student is defined and group.student is instanceof('App\\Entity\\Student') %}
                                     {{ group.student|student }}
-                                {% elseif gradeFilter.currentGrade is not null %}
+                                {% elseif group.grade is defined and group.grade is instanceof('App\\Entity\\Grade') %}
                                     {{ group.grade.name }}
                                 {% else %}
                                     {{ 'label.students_simple'|trans }}
@@ -145,11 +145,15 @@
                     <div class="card-body">
                         {% include "_filter/section.html.twig" %}
 
-                        {% include "_filter/teacher.html.twig" with { allowClear: true, path: 'sick_notes' } %}
+                        {% if teacherFilter.teachers|length > 0 %}
+                            {% include "_filter/teacher.html.twig" with { allowClear: true, path: 'sick_notes' } %}
+                        {% endif %}
 
                         {% include "_filter/student.html.twig" %}
 
-                        {% include "_filter/grade.html.twig" %}
+                        {% if gradeFilter.grades|length > 0 %}
+                            {% include "_filter/grade.html.twig" %}
+                        {% endif %}
 
                         <form role="form" method="get" class="form hidden-print">
                             {% include "_filter/_params.html.twig" with { params: currentFilter|merge({reason: null}) } %}

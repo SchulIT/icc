@@ -31,6 +31,7 @@ use App\Sorting\Sorter;
 use App\Timetable\TimetableTimeHelper;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
+use App\View\Filter\GradeFilterView;
 use App\View\Filter\SectionFilter;
 use App\View\Filter\SickNoteReasonFilter;
 use App\View\Filter\StudentFilter;
@@ -124,6 +125,11 @@ class SickNoteController extends AbstractController {
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
+
+        if($user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent())) {
+            $gradeFilterView = new GradeFilterView([], null);
+        }
+
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $request->query->get('teacher') !== '✗' && $gradeFilterView->getCurrentGrade() === null && $studentFilterView->getCurrentStudent() === null);
         $reasonFilterView = $reasonFilter->handle($request->query->get('reason'));

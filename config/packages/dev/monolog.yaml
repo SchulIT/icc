@@ -6,8 +6,8 @@ monolog:
             level: info
             channels: ["!request", "!php"]
         main:
-            type: service
-            id: App\Monolog\DatabaseHandler
+            type: stream
+            path: '%kernel.logs_dir%/%kernel.environment%.log'
             level: debug
             channels: ["!event"]
         console:

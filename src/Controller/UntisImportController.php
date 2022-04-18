@@ -83,7 +83,8 @@ class UntisImportController extends AbstractController {
             ->add('ignore_options_regexp', RegExpType::class, [
                 'label' => 'import.settings.exams.ignore_options_regexp.label',
                 'help' => 'import.settings.exams.ignore_options_regexp.help',
-                'required' => false
+                'required' => false,
+                'data' => $settings->getIgnoreStudentOptionRegExp()
             ])
             ->getForm();
         $form->handleRequest($request);

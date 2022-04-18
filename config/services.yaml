@@ -274,3 +274,16 @@ services:
 
     App\Section\SectionResolverInterface:
         alias: App\Section\CachedSectionResolver
+
+    # MONOLOG
+    App\Monolog\DatabaseHandler:
+        arguments:
+            $connection: '@doctrine.dbal.default_connection'
+        calls:
+            - setFormatter: [ '@App\Monolog\LineFormatter']
+    #App\Monolog\UsernameProcessor:
+    #    tags:
+    #        - { name: monolog.processor }
+    #App\Monolog\RequestProcessor:
+    #    tags:
+    #        - { name: monolog.processor }

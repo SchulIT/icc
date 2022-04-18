@@ -2,7 +2,7 @@ monolog:
     handlers:
         app:
             type: service
-            id: SchulIT\CommonBundle\Monolog\DatabaseHandler
+            id: App\Monolog\DatabaseHandler
             level: info
             channels: ["!request", "!php"]
         main:

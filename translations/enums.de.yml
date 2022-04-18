@@ -60,3 +60,6 @@ sick_reason:
   quarantine: Quarantäne
   sick: Erkrankung
 
+grade_teacher_type:
+  primary: Primäre Klassenleitung
+  substitute: Vertretendende Klassenleitung

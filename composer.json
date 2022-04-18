@@ -16,7 +16,7 @@
         "doctrine/doctrine-bundle": "^2.3",
         "doctrine/doctrine-migrations-bundle": "^3.0.0",
         "doctrine/orm": "^2.10",
-        "easycorp/easyadmin-bundle": "^2.3",
+        "easycorp/easyadmin-bundle": "^3.0",
         "eightpoints/guzzle-bundle": "^8.2",
         "fakerphp/faker": "^1.8",
         "frostiede/enum-bundle": "^4.0.0",

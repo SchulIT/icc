@@ -312,9 +312,6 @@
             "./config/packages/oneup_flysystem.yaml"
         ]
     },
-    "pagerfanta/pagerfanta": {
-        "version": "v2.7.1"
-    },
     "phar-io/manifest": {
         "version": "2.0.3"
     },
@@ -715,6 +712,9 @@
     "symfony/polyfill-php81": {
         "version": "v1.23.0"
     },
+    "symfony/polyfill-uuid": {
+        "version": "v1.25.0"
+    },
     "symfony/process": {
         "version": "v5.3.4"
     },
@@ -821,6 +821,9 @@
             "./config/packages/twig.yaml",
             "./templates/base.html.twig"
         ]
+    },
+    "symfony/uid": {
+        "version": "v5.4.3"
     },
     "symfony/validator": {
         "version": "4.3",

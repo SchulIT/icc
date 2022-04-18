@@ -20,6 +20,9 @@
     "brick/math": {
         "version": "0.9.2"
     },
+    "composer/package-versions-deprecated": {
+        "version": "1.11.99.4"
+    },
     "dama/doctrine-test-bundle": {
         "version": "4.0",
         "recipe": {
@@ -318,9 +321,6 @@
     "phar-io/version": {
         "version": "3.1.0"
     },
-    "php": {
-        "version": "7.4"
-    },
     "php-http/message-factory": {
         "version": "v1.0.2"
     },
@@ -616,9 +616,6 @@
             "./src/Kernel.php"
         ]
     },
-    "symfony/http-client-contracts": {
-        "version": "v2.3.1"
-    },
     "symfony/http-foundation": {
         "version": "v5.3.6"
     },
@@ -888,6 +885,12 @@
     },
     "theseer/tokenizer": {
         "version": "1.2.1"
+    },
+    "twig/extra-bundle": {
+        "version": "v3.3.8"
+    },
+    "twig/intl-extra": {
+        "version": "v3.3.5"
     },
     "twig/twig": {
         "version": "v3.3.2"

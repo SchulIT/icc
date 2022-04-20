@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SubstitutionsData {
 
     use SuppressNotificationTrait;
+    use ContextTrait;
 
     /**
      * @Serializer\Type("array<App\Request\Data\SubstitutionData>")
@@ -33,4 +34,5 @@ class SubstitutionsData {
         $this->substitutions = $substitutions;
         return $this;
     }
+
 }

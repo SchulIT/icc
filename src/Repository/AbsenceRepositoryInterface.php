@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Absence;
 use App\Entity\Student;
+use DateTime;
 
 interface AbsenceRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAll(): array;
@@ -34,5 +35,5 @@ interface AbsenceRepositoryInterface extends TransactionalRepositoryInterface {
 
     public function persist(Absence $person): void;
 
-    public function removeAll(): void;
+    public function removeAll(?DateTime $dateTime = null): void;
 }

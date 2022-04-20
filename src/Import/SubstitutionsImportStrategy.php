@@ -21,9 +21,12 @@ use App\Request\Data\SubstitutionData;
 use App\Request\Data\SubstitutionsData;
 use App\Utils\ArrayUtils;
 use App\Utils\CollectionUtils;
+use DateTime;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class SubstitutionsImportStrategy implements ImportStrategyInterface, PostActionStrategyInterface {
+
+    use ContextAwareTrait;
 
     private $substitutionRepository;
     private $teacherRepository;
@@ -50,10 +53,19 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
     /**
      * @param SubstitutionsData $requestData
      * @return array<string, Substitution>
+     * @throws ImportException
      */
     public function getExistingEntities($requestData): array {
+        $dateTime = $this->getContext($requestData);
+
+        if ($dateTime !== null) {
+            $substitutions = $this->substitutionRepository->findAllByDate($dateTime);
+        } else {
+            $substitutions = $this->substitutionRepository->findAll();
+        }
+
         return ArrayUtils::createArrayWithKeys(
-            $this->substitutionRepository->findAll(),
+            $substitutions,
             function (Substitution $substitution) {
                 return $substitution->getExternalId();
             }

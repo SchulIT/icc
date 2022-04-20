@@ -7,6 +7,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class FreeLessonTimespansData {
 
+    use ContextTrait;
+
     /**
      * @Serializer\SerializedName("free_lessons")
      * @Serializer\Type("array<App\Request\Data\FreeLessonTimespanData>")
@@ -20,5 +22,14 @@ class FreeLessonTimespansData {
      */
     public function getFreeLessons(): array {
         return $this->freeLessons;
+    }
+
+    /**
+     * @param FreeLessonTimespanData[] $freeLessons
+     * @return FreeLessonTimespansData
+     */
+    public function setFreeLessons(array $freeLessons): FreeLessonTimespansData {
+        $this->freeLessons = $freeLessons;
+        return $this;
     }
 }

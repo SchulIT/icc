@@ -452,8 +452,13 @@ class Builder {
             ])
                 ->setExtra('icon', 'fas fa-cogs');
 
-            $menu->addChild('import.substitutions.label', [
-                'route' => 'import_untis_substitutions'
+            $menu->addChild('import.substitutions.gpu.label', [
+                'route' => 'import_untis_substitutions_gpu'
+            ])
+                ->setExtra('icon', 'fas fa-random');
+
+            $menu->addChild('import.substitutions.html.label', [
+                'route' => 'import_untis_substitutions_html'
             ])
                 ->setExtra('icon', 'fas fa-random');
 

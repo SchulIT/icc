@@ -6,7 +6,8 @@ use App\Entity\TimetablePeriod;
 use App\Form\Import\Untis\CalendarWeekSchoolWeekType;
 use App\Form\Import\Untis\ExamImportType;
 use App\Form\Import\Untis\SubjectOverrideType;
-use App\Form\Import\Untis\SubstitutionImportType;
+use App\Form\Import\Untis\SubstitutionGpuImportType;
+use App\Form\Import\Untis\SubstitutionHtmlImportType;
 use App\Form\Import\Untis\SupervisionImportType;
 use App\Form\RegExpType;
 use App\Import\ImportException;
@@ -16,7 +17,9 @@ use App\Untis\DatabaseDateReader;
 use App\Untis\GpuExamImporter;
 use App\Untis\GpuSubstitutionImporter;
 use App\Untis\GpuSupervisionImporter;
+use App\Untis\Html\HtmlSubstitutionImporter;
 use DateTime;
+use Exception;
 use League\Csv\Reader;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -126,9 +129,9 @@ class UntisImportController extends AbstractController {
     }
 
     /**
-     * @Route("/substitutions", name="import_untis_substitutions")
+     * @Route("/substitutions/gpu", name="import_untis_substitutions_gpu")
      */
-    public function substitutions(Request $request, GpuSubstitutionImporter $importer, TranslatorInterface $translator, UntisSettings $settings) {
+    public function substitutionsGpu(Request $request, GpuSubstitutionImporter $importer, TranslatorInterface $translator, UntisSettings $settings) {
         $data = [ ];
         if($settings->getSubstitutionDays() > 0) {
             $data = [
@@ -137,7 +140,7 @@ class UntisImportController extends AbstractController {
             ];
         }
 
-        $form = $this->createForm(SubstitutionImportType::class, $data);
+        $form = $this->createForm(SubstitutionGpuImportType::class, $data);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
@@ -161,18 +164,51 @@ class UntisImportController extends AbstractController {
                     '%removed%' => count($result->getRemoved())
                 ]));
 
-                return $this->redirectToRoute('import_untis_substitutions');
+                return $this->redirectToRoute('import_untis_substitutions_gpu');
             } catch (ImportException $exception) {
                 $this->addFlash('error', $exception->getMessage());
             }
         }
 
-        return $this->render('import/substitutions.html.twig', [
+        return $this->render('import/substitutions_gpu.html.twig', [
             'form' => $form->createView()
         ]);
     }
 
     /**
+     * @Route("/substitutions/html", name="import_untis_substitutions_html")
+     */
+    public function substitutionsHtml(Request $request, HtmlSubstitutionImporter $importer, TranslatorInterface $translator, UntisSettings $settings) {
+        $form = $this->createForm(SubstitutionHtmlImportType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile[] $files */
+            $files = $form->get('importFiles')->getData();
+            /** @var bool $suppressNotifications */
+            $suppressNotifications = $form->get('suppressNotifications')->getData();
+
+            try {
+                for($idx = 0; $idx < count($files); $idx++) {
+                    $file = $files[$idx];
+                    $isLast = $idx === (count($files) - 1);
+
+                    $importer->import($file->getContent(), $isLast === false || $suppressNotifications);
+                }
+
+                $this->addFlash('success', 'import.substitutions.html.success');
+                return $this->redirectToRoute('import_untis_substitutions_html');
+            } catch (Exception $exception) {
+                $this->addFlash('error', $exception->getMessage());
+            }
+        }
+
+        return $this->render('import/substitutions_html.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+        /**
      * @Route("/supervisions", name="import_untis_supervisions")
      */
     public function supervisions(Request $request, GpuSupervisionImporter $importer, TranslatorInterface $translator) {

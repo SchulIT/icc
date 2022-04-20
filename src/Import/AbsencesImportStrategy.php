@@ -14,6 +14,8 @@ use App\Section\SectionResolverInterface;
 
 class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
 
+    use ContextAwareTrait;
+
     private $repository;
     private $teacherRepository;
     private $studyGroupRepository;
@@ -34,7 +36,8 @@ class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
     }
 
     public function removeAll($requestData): void {
-        $this->repository->removeAll();
+        $dateTime = $this->getContext($requestData);
+        $this->repository->removeAll($dateTime);
     }
 
     /**

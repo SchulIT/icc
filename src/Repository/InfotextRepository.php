@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Infotext;
+use DateTime;
 
 class InfotextRepository extends AbstractTransactionalRepository implements InfotextRepositoryInterface {
 
@@ -34,10 +35,16 @@ class InfotextRepository extends AbstractTransactionalRepository implements Info
         $this->flushIfNotInTransaction();
     }
 
-    public function removeAll(): void {
-        $this->em->createQueryBuilder()
-            ->delete(Infotext::class, 'i')
-            ->getQuery()
+    public function removeAll(?DateTime $dateTime = null): void {
+        $qb = $this->em->createQueryBuilder()
+            ->delete(Infotext::class, 'i');
+
+        if($dateTime !== null) {
+            $qb->where('i.date = :date')
+                ->setParameter('date', $dateTime);
+        }
+
+        $qb->getQuery()
             ->execute();
 
         $this->flushIfNotInTransaction();

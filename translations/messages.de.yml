@@ -1483,9 +1483,19 @@ import:
                 label: Ausnahmen (RegExp)
                 help: "Wenn in diesem Feld ein gültiger regulärer Ausdruck enthalten ist, wird der Klausurname mit diesem Ausdruck geprüft. Wenn er zutrifft, wird die Option 'Klausurschreiber importieren' umgekehrt."
     substitutions:
-        label: Vertretungen
-        info: Hier kann die GPU014.txt importiert werden. Diese muss als UTF-8 mit Semikolon (;) als Trennzeichen exportiert werden.
-        result: '%added% neue Vertretung(en), %ignored% nicht importiert, %updated% aktualisiert, %removed% gelöscht'
+        gpu:
+            label: Vertretungen (GPU014)
+            info: Hier kann die GPU014.txt importiert werden. Diese muss als UTF-8 mit Semikolon (;) als Trennzeichen exportiert werden.
+            result: '%added% neue Vertretung(en), %ignored% nicht importiert, %updated% aktualisiert, %removed% gelöscht'
+        html:
+            label: Vertretungen (HTML)
+            success: Vertretungen erfolgreich importiert
+            info: Hier können Vertretungen der Monitor-HTML-Datei des Info-Stundenplan-Moduls hochgeladen werden. Im Gegensatz zur GPU014 werden so auch Tagestexte, Absenzen und unterrichtsfreie Zeiten importieren.
+            note: Klausuren und Veranstaltungen werden bei diesem Import ignoriert.
+            template:
+                info: Die Ausgabe muss ein bestimmtes Format einhalten, damit es ausgelesen werden kann. Dieses kann in Untis über "Import/Export" > "Untis" > "Formate/Fenstergruppen/Ribbon" > "Eingabeformat Import" importiert werden. Außerdem muss es im Info-Stundenplan als Vertretungsplan-Format hinterlegt werden.
+                download: Format herunterladen (Ziel speichern unter)
+
     supervisions:
         label: Aufsichten
         info: Hier kann die GPU009.txt importiert werden. Diese muss als UTF-8 mit Semikolon (;) als Trennzeichen exportiert werden.

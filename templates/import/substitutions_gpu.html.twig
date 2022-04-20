@@ -1,6 +1,6 @@
 {% extends "import/_import.html.twig" %}
 
-{% block title %}{{ 'import.substitutions.label'|trans }}{% endblock %}
+{% block title %}{{ 'import.substitutions.gpu.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -15,6 +15,10 @@
         <div class="card-header">{{ 'label.general'|trans }}</div>
 
         <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                <p>{{ 'import.substitutions.gpu.info'|trans }}</p>
+            </div>
+
             {{ form_widget(form) }}
         </div>
     </div>

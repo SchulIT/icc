@@ -8,6 +8,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class InfotextsData {
 
+    use ContextTrait;
+
     /**
      * @Serializer\Type("array<App\Request\Data\InfotextData>")
      * @Assert\Valid()

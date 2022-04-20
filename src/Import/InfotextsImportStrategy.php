@@ -10,6 +10,8 @@ use App\Request\Data\InfotextsData;
 
 class InfotextsImportStrategy implements ReplaceImportStrategyInterface {
 
+    use ContextAwareTrait;
+
     private $repository;
 
     public function __construct(InfotextRepositoryInterface $repository) {
@@ -21,7 +23,8 @@ class InfotextsImportStrategy implements ReplaceImportStrategyInterface {
     }
 
     public function removeAll($requestData): void {
-        $this->repository->removeAll();
+        $dateTime = $this->getContext($requestData);
+        $this->repository->removeAll($dateTime);
     }
 
     /**

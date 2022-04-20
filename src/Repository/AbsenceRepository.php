@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Absence;
 use App\Entity\Student;
+use DateTime;
 
 class AbsenceRepository extends AbstractTransactionalRepository implements AbsenceRepositoryInterface {
 
@@ -92,9 +93,16 @@ class AbsenceRepository extends AbstractTransactionalRepository implements Absen
         $this->flushIfNotInTransaction();
     }
 
-    public function removeAll(): void {
-        $this->em->createQueryBuilder()
-            ->delete(Absence::class, 'p')
+    public function removeAll(?DateTime $dateTime = null): void {
+        $qb = $this->em->createQueryBuilder()
+            ->delete(Absence::class, 'p');
+
+        if($dateTime !== null) {
+            $qb->where('p.date = :date')
+                ->setParameter('date', $dateTime);
+        }
+
+        $qb
             ->getQuery()
             ->execute();
 

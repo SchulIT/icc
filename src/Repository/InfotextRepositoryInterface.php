@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Infotext;
+use DateTime;
 
 interface InfotextRepositoryInterface extends TransactionalRepositoryInterface {
 
@@ -22,5 +23,5 @@ interface InfotextRepositoryInterface extends TransactionalRepositoryInterface {
      */
     public function persist(Infotext $infotext): void;
 
-    public function removeAll(): void;
+    public function removeAll(?DateTime $dateTime = null): void;
 }

@@ -1,6 +1,6 @@
 {% extends "import/_import.html.twig" %}
 
-{% block title %}{{ 'import.supervisions.label'|trans }}{% endblock %}
+{% block title %}{{ 'import.substitutions.html.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -16,10 +16,16 @@
 
         <div class="card-body">
             <div class="bs-callout bs-callout-info">
-                <p>{{ 'import.supervisions.info'|trans }}</p>
+                <p>{{ 'import.substitutions.html.info'|trans }}</p>
             </div>
 
             {{ form_widget(form) }}
+
+            <p>{{ 'import.substitutions.html.template.info'|trans }}</p>
+
+            <a href="/static/vertretungsplan.gpf" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-download"></i> {{ 'import.substitutions.html.template.download'|trans }}
+            </a>
         </div>
     </div>
 {% endblock %}

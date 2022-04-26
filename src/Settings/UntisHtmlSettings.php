@@ -44,7 +44,7 @@ class UntisHtmlSettings extends AbstractSettings {
     }
 
     public function getSubjectColumnName(): string {
-        return $this->getValue('untis.import.html.columns.subject', 'Fach');
+        return $this->getValue('untis.import.html.columns.subject', '(Fach)');
     }
 
     public function setSubjectColumnName(string $columnName): void {
@@ -52,7 +52,7 @@ class UntisHtmlSettings extends AbstractSettings {
     }
 
     public function getReplacementSubjectColumnName(): string {
-        return $this->getValue('untis.import.html.columns.replacement_subject', '(Fach)');
+        return $this->getValue('untis.import.html.columns.replacement_subject', 'Fach');
     }
 
     public function setReplacementSubjectColumnName(string $columnName): void {

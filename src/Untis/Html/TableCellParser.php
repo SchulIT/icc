@@ -8,7 +8,7 @@ use function Symfony\Component\String\u;
 
 class TableCellParser {
 
-    public const EmptyCellValues = [ '???', '---' ];
+    public const EmptyCellValues = [ '???', '---', '+' ];
 
     public function parseIntegerColumn(string $value): int {
         return intval($value);

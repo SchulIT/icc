@@ -30,6 +30,8 @@ class SubstitutionTableColumnOrder {
 
     private ?int $remarkColumn;
 
+    private ?int $isCancelledColumn;
+
     /**
      * @return int|null
      */
@@ -235,6 +237,22 @@ class SubstitutionTableColumnOrder {
      */
     public function setRemarkColumn(?int $remarkColumn): SubstitutionTableColumnOrder {
         $this->remarkColumn = $remarkColumn;
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getIsCancelledColumn(): ?int {
+        return $this->isCancelledColumn;
+    }
+
+    /**
+     * @param int|null $isCancelledColumn
+     * @return SubstitutionTableColumnOrder
+     */
+    public function setIsCancelledColumn(?int $isCancelledColumn): SubstitutionTableColumnOrder {
+        $this->isCancelledColumn = $isCancelledColumn;
         return $this;
     }
 }

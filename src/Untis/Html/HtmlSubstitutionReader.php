@@ -127,6 +127,15 @@ class HtmlSubstitutionReader extends AbstractHtmlReader {
             $substitution->setGrades($this->tableCellParser->parseMultiStringColumn($node->childNodes[$order->getGradesColumn()]->nodeValue));
             $substitution->setReplacementGrades($this->tableCellParser->parseMultiStringColumn($node->childNodes[$order->getReplacementGradesColumn()]->nodeValue));
 
+            $isCancelled = trim($this->tableCellParser->parseStringOrNullColumn($node->childNodes[$order->getIsCancelledColumn()]->nodeValue)) === 'x';
+
+            if($isCancelled === true) {
+                $substitution->setReplacementGrades([]);
+                $substitution->setReplacementSubject(null);
+                $substitution->setReplacementTeachers([]);
+                $substitution->setReplacementRooms([]);
+            }
+
             if(!in_array($substitution->getType(), static::IgnoredSubstitutionTypes)) {
                 $result->addSubstitution($substitution);
             }
@@ -157,7 +166,8 @@ class HtmlSubstitutionReader extends AbstractHtmlReader {
             ->setRoomColumn($this->tableCellParser->getCellIndexOrNull($cellIdxes, $this->settings->getRoomsColumnName()))
             ->setReplacementRoomColumn($this->tableCellParser->getCellIndexOrNull($cellIdxes, $this->settings->getReplacementRoomsColumnName()))
             ->setTypeColumn($this->tableCellParser->getCellIndexOrNull($cellIdxes, $this->settings->getTypeColumnName()))
-            ->setRemarkColumn($this->tableCellParser->getCellIndexOrNull($cellIdxes, $this->settings->getRemarkColumnName()));
+            ->setRemarkColumn($this->tableCellParser->getCellIndexOrNull($cellIdxes, $this->settings->getRemarkColumnName()))
+            ->setIsCancelledColumn($this->tableCellParser->getCellIndexOrNull($cellIdxes, $this->settings->getIsCancelledColumnName()));
     }
 
     private function parseDate(DOMXPath $xpath): DateTime {

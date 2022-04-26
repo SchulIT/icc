@@ -105,4 +105,12 @@ class UntisHtmlSettings extends AbstractSettings {
     public function setRemarkColumnName(string $columnName): void {
         $this->setValue('untis.import.html.columns.remark', $columnName);
     }
+
+    public function getIsCancelledColumnName(): string {
+        return $this->getValue('untis.import.html.columns.is_cancelled', 'Entfall');
+    }
+
+    public function setIsCancelledColumnName(string $columnName): void {
+        $this->setValue('untis.import.html.columns.is_cancelled', $columnName);
+    }
 }

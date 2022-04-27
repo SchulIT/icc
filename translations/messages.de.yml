@@ -213,6 +213,8 @@ label:
     suppress_notifications: Keine Benachrichtigungen senden
     choose: auswählen
     period: Stundenplan-Periode
+    untis_subject: Untis-Fach
+    icc_subject: ICC-Fach
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

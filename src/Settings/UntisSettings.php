@@ -43,7 +43,7 @@ class UntisSettings extends AbstractSettings {
         return $this->getValue('untis.import.exams.always_import_students', false);
     }
 
-    public function setIgnoreStudentOptionRegExp(string $regExp): void {
+    public function setIgnoreStudentOptionRegExp(?string $regExp): void {
         $this->setValue('untis.import.exams.ignore_import_students_options_regexp', $regExp);
     }
 

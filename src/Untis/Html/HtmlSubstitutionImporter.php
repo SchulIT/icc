@@ -15,6 +15,7 @@ use App\Request\Data\InfotextData;
 use App\Request\Data\InfotextsData;
 use App\Request\Data\SubstitutionData;
 use App\Request\Data\SubstitutionsData;
+use App\Settings\UntisSettings;
 
 class HtmlSubstitutionImporter {
     private Importer $importer;
@@ -23,15 +24,18 @@ class HtmlSubstitutionImporter {
     private FreeTimespanImportStrategy $freeTimespanStrategy;
     private AbsencesImportStrategy $absenceStrategy;
     private HtmlSubstitutionReader $reader;
+    private UntisSettings $untisSettings;
 
     public function __construct(Importer $importer, SubstitutionsImportStrategy $substitutionStrategy, InfotextsImportStrategy $infotextStrategy,
-                                FreeTimespanImportStrategy $freeTimespanStrategy, AbsencesImportStrategy $absenceStrategy, HtmlSubstitutionReader $reader) {
+                                FreeTimespanImportStrategy $freeTimespanStrategy, AbsencesImportStrategy $absenceStrategy, HtmlSubstitutionReader $reader,
+                                UntisSettings $untisSettings) {
         $this->importer = $importer;
         $this->substitutionStrategy = $substitutionStrategy;
         $this->infotextStrategy = $infotextStrategy;
         $this->freeTimespanStrategy = $freeTimespanStrategy;
         $this->absenceStrategy = $absenceStrategy;
         $this->reader = $reader;
+        $this->untisSettings = $untisSettings;
     }
 
     public function import(string $html, bool $suppressNotifications) {
@@ -103,6 +107,8 @@ class HtmlSubstitutionImporter {
 
         $substitutions = [ ];
 
+        $overrideMap = $this->getSubjectOverrideMap();
+
         foreach($result->getSubstitutions() as $htmlSubstitution) {
             $substitution = new SubstitutionData();
 
@@ -115,8 +121,8 @@ class HtmlSubstitutionImporter {
             $substitution->setReplacementRooms($htmlSubstitution->getReplacementRooms());
             $substitution->setTeachers($htmlSubstitution->getTeachers());
             $substitution->setReplacementTeachers($htmlSubstitution->getReplacementTeachers());
-            $substitution->setSubject($htmlSubstitution->getSubject());
-            $substitution->setReplacementSubject($htmlSubstitution->getReplacementSubject());
+            $substitution->setSubject($this->getSubject($htmlSubstitution->getSubject(), $overrideMap));
+            $substitution->setReplacementSubject($this->getSubject($htmlSubstitution->getReplacementSubject(), $overrideMap));
             $substitution->setGrades($htmlSubstitution->getGrades());
             $substitution->setReplacementGrades($htmlSubstitution->getReplacementGrades());
             $substitution->setType($htmlSubstitution->getType());
@@ -127,5 +133,27 @@ class HtmlSubstitutionImporter {
 
         $data->setSubstitutions($substitutions);
         $this->importer->import($data, $this->substitutionStrategy);
+    }
+
+    private function getSubject(?string $untisSubject, array $map): ?string {
+        if(empty($untisSubject)) {
+            return null;
+        }
+
+        if(array_key_exists($untisSubject, $map)) {
+            return $map[$untisSubject];
+        }
+
+        return $untisSubject;
+    }
+
+    private function getSubjectOverrideMap(): array {
+        $map = [ ];
+
+        foreach($this->untisSettings->getSubjectOverrides() as $override) {
+            $map[$override['untis']] = $override['override'];
+        }
+
+        return $map;
     }
 }

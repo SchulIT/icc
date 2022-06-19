@@ -15,10 +15,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LinkProcessor {
 
-    private $documentRepository;
-    private $wikiArticleRepository;
-    private $urlGenerator;
-    private $translator;
+    private DocumentRepositoryInterface $documentRepository;
+    private WikiArticleRepositoryInterface $wikiArticleRepository;
+    private UrlGeneratorInterface $urlGenerator;
+    private TranslatorInterface $translator;
 
     public function __construct(DocumentRepositoryInterface $documentRepository, WikiArticleRepositoryInterface $wikiArticleRepository,
                                 UrlGeneratorInterface $urlGenerator, TranslatorInterface $translator) {
@@ -28,10 +28,7 @@ class LinkProcessor {
         $this->translator = $translator;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function onDocumentParsed(DocumentParsedEvent $event) {
+    public function onDocumentParsed(DocumentParsedEvent $event): void {
         $document = $event->getDocument();
         $walker = $document->walker();
 
@@ -46,9 +43,9 @@ class LinkProcessor {
 
             $node->data['attributes']['class'] = 'btn btn-outline-primary btn-sm';
 
-            if(substr($url, 0, 7) === 'mailto:') {
+            if(str_starts_with($url, 'mailto:')) {
                 $this->prependIcon($node, 'far fa-envelope');
-            } else if(substr($url, 0, 9)  === 'document:') {
+            } else if(str_starts_with($url, 'document:')) {
                 $uuid = substr($url, 9);
 
                 if(Uuid::isValid($uuid)) {
@@ -66,7 +63,7 @@ class LinkProcessor {
                 } else {
                     $this->appendBroken($node);
                 }
-            } else if(substr($url, 0, 5) === 'wiki:') {
+            } else if(str_starts_with($url, 'wiki:')) {
                 $uuid = substr($url, 5);
 
                 if(Uuid::isValid($uuid)) {
@@ -98,7 +95,7 @@ class LinkProcessor {
         return $icon;
     }
 
-    private function appendBroken(Link $node) {
+    private function appendBroken(Link $node): void {
         $node->setUrl('');
         $icon = $this->prependIcon($node, 'fas fa-unlink');
         $icon->data['attributes']['title'] = $this->translator->trans('markdown.link_broken');

@@ -5,7 +5,7 @@ namespace App\Command;
 use App\Repository\SickNoteAttachmentRepositoryInterface;
 use App\Repository\SickNoteRepositoryInterface;
 use App\Settings\SickNoteSettings;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\Filesystem;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Shapecode\Bundle\CronBundle\Annotation\CronJob;
 use Symfony\Component\Console\Command\Command;
@@ -22,10 +22,10 @@ class RemoveExpiredSickNotesCommand extends Command {
     private SickNoteRepositoryInterface $repository;
     private SickNoteAttachmentRepositoryInterface $attachmentRepository;
     private DateHelper $dateHelper;
-    private FilesystemInterface $filesystem;
+    private Filesystem $filesystem;
 
     public function __construct(SickNoteSettings $settings, SickNoteRepositoryInterface $repository,
-                                SickNoteAttachmentRepositoryInterface $attachmentRepository, FilesystemInterface $filesystem,
+                                SickNoteAttachmentRepositoryInterface $attachmentRepository, Filesystem $filesystem,
                                 DateHelper $dateHelper, string $name = null) {
         parent::__construct($name);
 

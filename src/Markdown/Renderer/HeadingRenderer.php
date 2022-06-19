@@ -14,7 +14,7 @@ class HeadingRenderer implements BlockRendererInterface {
     /**
      * @inheritDoc
      */
-    public function render(AbstractBlock $block, ElementRendererInterface $htmlRenderer, $inTightList = false) {
+    public function render(AbstractBlock $block, ElementRendererInterface $htmlRenderer, $inTightList = false): string|HtmlElement|null {
         if(!$block instanceof Heading) {
             throw new \InvalidArgumentException(sprintf('$block must be of type "%s" ("%s" given)', Heading::class, get_class($block)));
         }

@@ -13,7 +13,7 @@ class IconRenderer implements InlineRendererInterface {
     /**
      * @inheritDoc
      */
-    public function render(AbstractInline $inline, ElementRendererInterface $htmlRenderer) {
+    public function render(AbstractInline $inline, ElementRendererInterface $htmlRenderer): string|HtmlElement|null {
         if(!$inline instanceof Icon) {
             throw new \InvalidArgumentException('Incompatible inline type: ' . \get_class($inline));
         }

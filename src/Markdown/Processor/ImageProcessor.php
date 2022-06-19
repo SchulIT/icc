@@ -7,7 +7,7 @@ use League\CommonMark\Inline\Element\Image;
 use League\CommonMark\Inline\Element\Newline;
 
 class ImageProcessor {
-    public function onDocumentParsed(DocumentParsedEvent $event) {
+    public function onDocumentParsed(DocumentParsedEvent $event): void {
         $document = $event->getDocument();
         $walker = $document->walker();
 

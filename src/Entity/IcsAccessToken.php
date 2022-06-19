@@ -178,7 +178,7 @@ class IcsAccessToken implements UserInterface {
     /**
      * @inheritDoc
      */
-    public function getUsername() {
+    public function getUsername(): string {
         return $this->user->getUsername();
     }
 

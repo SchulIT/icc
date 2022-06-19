@@ -9,7 +9,7 @@ class LineFormatter implements FormatterInterface {
     /**
      * @inheritDoc
      */
-    public function format(array $record) {
+    public function format(array $record): mixed {
         $line = $record['message'];
 
         foreach($record['context'] as $key => $value) {
@@ -22,7 +22,7 @@ class LineFormatter implements FormatterInterface {
     /**
      * @inheritDoc
      */
-    public function formatBatch(array $records) {
+    public function formatBatch(array $records): array {
         foreach($records as $key => $record) {
             $records[$key] = $this->format($record);
         }

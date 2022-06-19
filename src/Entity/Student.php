@@ -8,6 +8,7 @@ use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\ArrayShape;
 use JsonSerializable;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -334,7 +335,7 @@ class Student implements JsonSerializable {
     /**
      * @inheritDoc
      */
-    public function jsonSerialize() {
+    #[ArrayShape(['uuid' => "string", 'firstname' => "null|string", 'lastname' => "null|string", 'email' => "null|string"])] public function jsonSerialize(): array {
         return [
             'uuid' => $this->getUuid()->toString(),
             'firstname' => $this->getFirstname(),

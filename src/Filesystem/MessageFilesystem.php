@@ -8,7 +8,7 @@ use App\Entity\MessageFileUpload;
 use App\Entity\User;
 use App\Exception\UnexpectedTypeException;
 use App\Http\FlysystemFileResponse;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 use Mimey\MimeTypes;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -25,7 +25,7 @@ class MessageFilesystem implements DirectoryNamerInterface {
     private $mimeTypes;
     private $logger;
 
-    public function __construct(TokenStorageInterface $tokenStorage, FilesystemInterface $filesystem, MimeTypes $mimeTypes, LoggerInterface $logger = null) {
+    public function __construct(TokenStorageInterface $tokenStorage, FilesystemOperator $filesystem, MimeTypes $mimeTypes, LoggerInterface $logger = null) {
         $this->tokenStorage = $tokenStorage;
         $this->filesystem = $filesystem;
         $this->mimeTypes = $mimeTypes;

@@ -13,7 +13,7 @@ class AlertBlockRenderer implements BlockRendererInterface {
     /**
      * @inheritDoc
      */
-    public function render(AbstractBlock $block, ElementRendererInterface $htmlRenderer, $inTightList = false) {
+    public function render(AbstractBlock $block, ElementRendererInterface $htmlRenderer, $inTightList = false): string|HtmlElement|null {
         if(!$block instanceof AlertBlock) {
             throw new \InvalidArgumentException(sprintf('$block must be of type "%s" ("%s" given)', AlertBlock::class, get_class($block)));
         }

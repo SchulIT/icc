@@ -21,7 +21,7 @@ class DatabaseHandler extends AbstractProcessingHandler {
     /**
      * @inheritDoc
      */
-    protected function write(array $record) {
+    protected function write(array $record): void {
         $entry = [
             'channel' => $record['channel'],
             'level' => $record['level'],

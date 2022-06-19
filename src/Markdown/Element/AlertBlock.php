@@ -27,7 +27,7 @@ class AlertBlock extends AbstractBlock {
     /**
      * @inheritDoc
      */
-    public function acceptsLines() {
+    public function acceptsLines(): bool {
         return true;
     }
 

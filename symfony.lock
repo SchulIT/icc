@@ -1,20 +1,5 @@
 {
-    "antishov/doctrine-extensions-bundle": {
-        "version": "1.4",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "1.4",
-            "ref": "6c1ceb662f8997085f739cd089bfbef67f245983"
-        },
-        "files": [
-            "./config/packages/stof_doctrine_extensions.yaml"
-        ]
-    },
     "beberlei/doctrineextensions": {
-        "version": "v1.3.0"
-    },
-    "behat/transliterator": {
         "version": "v1.3.0"
     },
     "brick/math": {
@@ -191,9 +176,6 @@
     },
     "frostiede/enum-bundle": {
         "version": "3.0.0"
-    },
-    "gedmo/doctrine-extensions": {
-        "version": "v3.1.0"
     },
     "guzzlehttp/guzzle": {
         "version": "7.3.0"
@@ -487,6 +469,18 @@
     },
     "shapecode/cron-bundle": {
         "version": "5.0.0"
+    },
+    "stof/doctrine-extensions-bundle": {
+        "version": "1.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.2",
+            "ref": "e805aba9eff5372e2d149a9ff56566769e22819d"
+        },
+        "files": [
+            "./config/packages/stof_doctrine_extensions.yaml"
+        ]
     },
     "swiftmailer/swiftmailer": {
         "version": "v6.2.7"

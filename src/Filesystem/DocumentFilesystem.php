@@ -5,7 +5,7 @@ namespace App\Filesystem;
 use App\Entity\Document;
 use App\Entity\DocumentAttachment;
 use App\Http\FlysystemFileResponse;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 use Mimey\MimeTypes;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -19,7 +19,7 @@ class DocumentFilesystem implements DirectoryNamerInterface {
     private $mimeTypes;
     private $logger;
 
-    public function __construct(FilesystemInterface $filesystem, MimeTypes $mimeTypes, LoggerInterface $logger = null) {
+    public function __construct(FilesystemOperator $filesystem, MimeTypes $mimeTypes, LoggerInterface $logger = null) {
         $this->filesystem = $filesystem;
         $this->mimeTypes = $mimeTypes;
         $this->logger = $logger ?? new NullLogger();

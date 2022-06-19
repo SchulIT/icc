@@ -249,11 +249,11 @@ services:
             $sender: '%env(MAILER_FROM)%'
 
     # COMMANDS
-    SchulIT\CommonBundle\Command\SendMailsCommand:
-        arguments:
-            $messageLimit: '%env(int:MAILER_LIMIT)%'
-        tags:
-            - { name: shapecode_cron.cron_job, expression: '*\/2 * * * *' }
+    #SchulIT\CommonBundle\Command\SendMailsCommand:
+    #    arguments:
+    #        $messageLimit: '%env(int:MAILER_LIMIT)%'
+    #    tags:
+    #        - { name: shapecode_cron.cron_job, expression: '*\/2 * * * *' }
 
     App\Command\RemoveExpiredSickNotesCommand:
         bind:

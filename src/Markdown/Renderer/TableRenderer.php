@@ -14,7 +14,7 @@ class TableRenderer implements BlockRendererInterface {
     /**
      * @inheritDoc
      */
-    public function render(AbstractBlock $block, ElementRendererInterface $htmlRenderer, bool $inTightList = false) {
+    public function render(AbstractBlock $block, ElementRendererInterface $htmlRenderer, bool $inTightList = false): string|HtmlElement|null {
         if (!$block instanceof Table) {
             throw new \InvalidArgumentException('Incompatible block type: '.get_class($block));
         }

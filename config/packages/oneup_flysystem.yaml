@@ -3,17 +3,17 @@ oneup_flysystem:
     adapters:
         messages:
             local:
-                directory: '%kernel.project_dir%/files/messages'
+                location: '%kernel.project_dir%/files/messages'
         documents:
             local:
-                directory: '%kernel.project_dir%/files/documents'
+                location: '%kernel.project_dir%/files/documents'
         wiki:
             local:
-                directory: '%kernel.project_dir%/files/wiki'
+                location: '%kernel.project_dir%/files/wiki'
 
         sick_notes:
             local:
-                directory: '%kernel.project_dir%/files/sick_notes'
+                location: '%kernel.project_dir%/files/sick_notes'
 
     filesystems:
         messages:

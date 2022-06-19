@@ -14,7 +14,7 @@ class HeadingAnchorProcessor {
     /**
      * @var SluggerInterface
      */
-    private $slugger;
+    private SluggerInterface $slugger;
 
     public function __construct(SluggerInterface $slugger) {
         $this->slugger = $slugger;

@@ -30,9 +30,9 @@ class SickNoteVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject): bool {
-        return $attribute === static::New
-            || $attribute === static::CanViewAny
-            || ($attribute === static::View && $subject instanceof SickNote);
+        return $attribute === self::New
+            || $attribute === self::CanViewAny
+            || ($attribute === self::View && $subject instanceof SickNote);
     }
 
     /**
@@ -40,13 +40,13 @@ class SickNoteVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
-            case static::New:
+            case self::New:
                 return $this->canCreate($token);
 
-            case static::View:
+            case self::View:
                 return $this->canView($token, $subject);
 
-            case static::CanViewAny:
+            case self::CanViewAny:
                 return $this->canViewAny($token);
         }
 

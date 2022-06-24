@@ -9,11 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 class RoomQueryBuilder {
 
     private $roomTagRepository;
-    private $roomRepository;
 
-    public function __construct(RoomTagRepositoryInterface $roomTagRepository, RoomRepositoryInterface $roomRepository) {
+    public function __construct(RoomTagRepositoryInterface $roomTagRepository) {
         $this->roomTagRepository = $roomTagRepository;
-        $this->roomRepository = $roomRepository;
     }
 
     public function serialize(RoomQuery $query): array {

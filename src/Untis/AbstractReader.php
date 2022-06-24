@@ -4,6 +4,7 @@ namespace App\Untis;
 
 use DateTime;
 use League\Csv\Reader;
+use ValueError;
 
 abstract class AbstractReader {
 
@@ -46,8 +47,12 @@ abstract class AbstractReader {
      * @return string[]
      */
     protected function getStringArrayOrEmptyArray(?string $value, string $separator = '~'): array {
-        if(empty($value)) {
+        if(empty($value) === true) {
             return [ ];
+        }
+
+        if(empty($separator)) {
+            throw new ValueError('Separator must not be empty.');
         }
 
         return array_map(function($value) {

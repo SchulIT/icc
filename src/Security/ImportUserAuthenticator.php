@@ -31,7 +31,7 @@ class ImportUserAuthenticator extends AbstractAuthenticator implements Authentic
      * @inheritDoc
      */
     public function supports(Request $request): bool {
-        return $request->headers->has(static::HeaderKey);
+        return $request->headers->has(self::HeaderKey);
     }
 
     /**
@@ -67,7 +67,7 @@ class ImportUserAuthenticator extends AbstractAuthenticator implements Authentic
      * @inheritDoc
      */
     public function authenticate(Request $request): Passport {
-        $token = $request->headers->get(static::HeaderKey);
+        $token = $request->headers->get(self::HeaderKey);
 
         if($token === null) {
             throw new CustomUserMessageAuthenticationException('No token provided.');

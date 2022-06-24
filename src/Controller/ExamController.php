@@ -45,12 +45,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ExamController extends AbstractControllerWithMessages {
 
-    private static $ItemsPerPage = 25;
+    private static int $ItemsPerPage = 25;
 
-    private $grouper;
-    private $sorter;
+    private Grouper $grouper;
+    private Sorter $sorter;
 
-    private $importDateTypeRepository;
+    private ImportDateTypeRepositoryInterface $importDateTypeRepository;
 
     public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper, ImportDateTypeRepositoryInterface $importDateTypeRepository,
                                 DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
@@ -94,15 +94,15 @@ class ExamController extends AbstractControllerWithMessages {
             $paginator = null;
 
             if ($studentFilterView->getCurrentStudent() !== null) {
-                $paginator = $examRepository->getPaginator(static::$ItemsPerPage, $page, null, null, $studentFilterView->getCurrentStudent(), null, true, $threshold);
+                $paginator = $examRepository->getPaginator(self::$ItemsPerPage, $page, null, null, $studentFilterView->getCurrentStudent(), null, true, $threshold);
             } else if ($studyGroupFilterView->getCurrentStudyGroup() !== null) {
-                $paginator = $examRepository->getPaginator(static::$ItemsPerPage, $page, null, null, null, $studyGroupFilterView->getCurrentStudyGroup(), true, $threshold);
+                $paginator = $examRepository->getPaginator(self::$ItemsPerPage, $page, null, null, null, $studyGroupFilterView->getCurrentStudyGroup(), true, $threshold);
             } else if ($gradeFilterView->getCurrentGrade() !== null) {
-                $paginator = $examRepository->getPaginator(static::$ItemsPerPage, $page, $gradeFilterView->getCurrentGrade(), null, null, null, true, $threshold);
+                $paginator = $examRepository->getPaginator(self::$ItemsPerPage, $page, $gradeFilterView->getCurrentGrade(), null, null, null, true, $threshold);
             } else if ($teacherFilterView->getCurrentTeacher() !== null) {
-                $paginator = $examRepository->getPaginator(static::$ItemsPerPage, $page, null, $teacherFilterView->getCurrentTeacher(), null, null, true, $threshold);
+                $paginator = $examRepository->getPaginator(self::$ItemsPerPage, $page, null, $teacherFilterView->getCurrentTeacher(), null, null, true, $threshold);
             } else {
-                $paginator = $examRepository->getPaginator(static::$ItemsPerPage, $page, null, null, null, null, true, $threshold);
+                $paginator = $examRepository->getPaginator(self::$ItemsPerPage, $page, null, null, null, null, true, $threshold);
             }
 
             if($paginator !== null) {
@@ -114,7 +114,7 @@ class ExamController extends AbstractControllerWithMessages {
                 }
 
                 if($paginator->count() > 0) {
-                    $pages = ceil((float)$paginator->count() / static::$ItemsPerPage);
+                    $pages = ceil((float)$paginator->count() / self::$ItemsPerPage);
                 }
             }
         }

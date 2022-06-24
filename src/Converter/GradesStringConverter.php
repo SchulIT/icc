@@ -10,7 +10,7 @@ use App\Utils\ArrayUtils;
  */
 class GradesStringConverter {
 
-    private $collapsedArrayConverter;
+    private GradesCollapsedArrayConverter $collapsedArrayConverter;
 
     public function __construct(GradesCollapsedArrayConverter $collapsedArrayConverter) {
         $this->collapsedArrayConverter = $collapsedArrayConverter;

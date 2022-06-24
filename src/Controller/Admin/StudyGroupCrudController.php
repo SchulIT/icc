@@ -33,20 +33,10 @@ class StudyGroupCrudController extends AbstractCrudController
         $name = TextField::new('name');
         $type = EnumField::new('type')->setFormType(StudyGroupTypeType::class);
         $grades = AssociationField::new('grades');
-        $tuitions = AssociationField::new('tuitions');
+        $tuitions = AssociationField::new('tuitions')->hideOnIndex();
         $section = AssociationField::new('section');
-        $id = IntegerField::new('id', 'ID');
-        $uuid = Field::new('uuid');
-        $memberships = AssociationField::new('memberships');
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$externalId, $name, $type, $grades, $memberships, $tuitions, $section];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$externalId, $name, $type, $id, $uuid, $grades, $memberships, $tuitions, $section];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$externalId, $name, $type, $grades, $tuitions, $section];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$externalId, $name, $type, $grades, $tuitions, $section];
-        }
+        return [$id, $externalId, $name, $type, $grades, $tuitions, $section];
     }
 }

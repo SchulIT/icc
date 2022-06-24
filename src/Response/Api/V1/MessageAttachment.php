@@ -2,6 +2,7 @@
 
 namespace App\Response\Api\V1;
 
+use DateTime;
 use DateTimeImmutable;
 use App\Entity\MessageAttachment as MessageAttachmentEntity;
 use JMS\Serializer\Annotation as Serializer;
@@ -30,7 +31,7 @@ class MessageAttachment {
      * @Serializer\SerializedName("updated_at")
      * @Serializer\Type("DateTimeImmutable")
      *
-     * @var DateTimeImmutable
+     * @var DateTime
      */
     private $updatedAt;
 
@@ -67,17 +68,17 @@ class MessageAttachment {
     }
 
     /**
-     * @return DateTimeImmutable
+     * @return DateTime
      */
-    public function getUpdatedAt(): DateTimeImmutable {
+    public function getUpdatedAt(): DateTime {
         return $this->updatedAt;
     }
 
     /**
-     * @param DateTimeImmutable $updatedAt
+     * @param DateTime $updatedAt
      * @return MessageAttachment
      */
-    public function setUpdatedAt(DateTimeImmutable $updatedAt): MessageAttachment {
+    public function setUpdatedAt(DateTime $updatedAt): MessageAttachment {
         $this->updatedAt = $updatedAt;
         return $this;
     }

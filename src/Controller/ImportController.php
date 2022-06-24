@@ -63,8 +63,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ImportController extends AbstractController {
 
-    private $importer;
-    private $serializer;
+    private Importer $importer;
+    private SerializerInterface $serializer;
 
     public function __construct(Importer $importer, SerializerInterface $serializer, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);

@@ -89,6 +89,7 @@ class Teacher {
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
+     * @var Collection<TeacherTag>
      */
     private $tags;
 

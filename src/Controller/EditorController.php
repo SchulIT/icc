@@ -18,8 +18,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class EditorController extends SymfonyAbstractController {
 
-    private $grouper;
-    private $sorter;
+    private Grouper $grouper;
+    private Sorter $sorter;
 
     public function __construct(Grouper $grouper, Sorter $sorter) {
         $this->grouper = $grouper;

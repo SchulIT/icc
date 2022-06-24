@@ -18,8 +18,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class SubjectAdminController extends AbstractController {
 
-    private $sorter;
-    private $repository;
+    private Sorter $sorter;
+    private SubjectRepositoryInterface $repository;
 
     public function __construct(Sorter $sorter, SubjectRepositoryInterface $subjectRepository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);

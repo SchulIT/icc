@@ -16,10 +16,10 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TimetableAdminController extends AbstractController {
 
-    private $weekRepository;
-    private $periodRepository;
+    private TimetableWeekRepositoryInterface $weekRepository;
+    private TimetablePeriodRepositoryInterface $periodRepository;
 
-    private $sorter;
+    private Sorter $sorter;
 
     public function __construct(TimetableWeekRepositoryInterface $weekRepository, TimetablePeriodRepositoryInterface $periodRepository, Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);

@@ -66,7 +66,7 @@ class RemoveExpiredSickNotesCommand extends Command {
         $exists = [ ];
         $count = 0;
         foreach($this->attachmentRepository->findAll() as $attachment) {
-            if($this->filesystem->has($attachment->getPath())) {
+            if($this->filesystem->fileExists($attachment->getPath())) {
                 $exists[] = $attachment->getPath();
             } else {
                 $this->attachmentRepository->remove($attachment);
@@ -77,7 +77,7 @@ class RemoveExpiredSickNotesCommand extends Command {
         $style->success(sprintf('%d orphaned attachment(s) removed from database.', $count));
 
         $count = 0;
-        foreach($this->filesystem->listContents() as $content) {
+        foreach($this->filesystem->listContents('/') as $content) {
             if(in_array($content['path'], $exists) !== true) {
                 $this->filesystem->delete($content['path']);
                 $count++;

@@ -21,8 +21,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class AppointmentCategoryAdminController extends AbstractController {
 
-    private $repository;
-    private $sorter;
+    private AppointmentCategoryRepositoryInterface $repository;
+    private Sorter $sorter;
 
     public function __construct(AppointmentCategoryRepositoryInterface $categoryRepository, Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);

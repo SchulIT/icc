@@ -52,10 +52,10 @@ class DashboardController extends AbstractController {
 
         if($request->isMethod('POST')) {
             $showTimes = $request->request->getBoolean('show_times', false);
-            $user->setData(static::ShowTimesKey, $showTimes);
+            $user->setData(self::ShowTimesKey, $showTimes);
 
             $includeGradeMessages = $request->request->getBoolean('include_grade_messages', false);
-            $user->setData(static::IncludeGradeMessagesKey, $includeGradeMessages);
+            $user->setData(self::IncludeGradeMessagesKey, $includeGradeMessages);
 
             $userRepository->persist($user);
 
@@ -90,7 +90,7 @@ class DashboardController extends AbstractController {
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $section, $user, $studentFilterView->getCurrentStudent() === null && $roomFilterView->getCurrentRoom() === null);
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]), UserType::Student(), [ UserType::Student(), UserType::Parent() ]);
 
-        $includeGradeMessages = $user->getData(static::IncludeGradeMessagesKey, false);
+        $includeGradeMessages = $user->getData(self::IncludeGradeMessagesKey, false);
 
         if($studentFilterView->getCurrentStudent() !== null) {
             if($userTypeFilterView->getCurrentType() === null) {
@@ -113,7 +113,7 @@ class DashboardController extends AbstractController {
         $startTimes = [ ];
         $endTimes = [ ];
 
-        $showTimes = $user->getData(static::ShowTimesKey, true) === true;
+        $showTimes = $user->getData(self::ShowTimesKey, true) === true;
 
         for ($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
             $startTimes[$lesson] = $showTimes ? $timetableSettings->getStart($lesson) : null;
@@ -148,7 +148,7 @@ class DashboardController extends AbstractController {
             'gradesWithCourseNames' => $timetableSettings->getGradeIdsWithCourseNames(),
             'supervisionLabels' => $supervisionLabels,
             'showTimes' => $showTimes,
-            'includeGradeMessages' => $user->getData(static::IncludeGradeMessagesKey, false),
+            'includeGradeMessages' => $user->getData(self::IncludeGradeMessagesKey, false),
             'canIncludeGradeMessages' => $user->getTeacher() !== null,
             'last_import' => $importDateTypeRepository->findOneByEntityClass(Substitution::class),
             'settings' => $settings,

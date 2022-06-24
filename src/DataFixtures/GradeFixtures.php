@@ -60,26 +60,26 @@ class GradeFixtures extends Fixture implements DependentFixtureInterface {
     public function load(ObjectManager $manager) {
         $allTeachers = $manager->getRepository(Teacher::class)->findAll();
 
-        foreach(static::getSekIGradeNames() as $externalId => $name) {
+        foreach(self::getSekIGradeNames() as $externalId => $name) {
             $grade = (new Grade())
                 ->setExternalId($externalId)
                 ->setName($name);
 
             $teachers = $this->generator->randomElements($allTeachers, 2, false);
-            static::addTeacherToGrade($grade, $teachers[0], GradeTeacherType::Primary());
-            static::addTeacherToGrade($grade, $teachers[1], GradeTeacherType::Substitute());
+            self::addTeacherToGrade($grade, $teachers[0], GradeTeacherType::Primary());
+            self::addTeacherToGrade($grade, $teachers[1], GradeTeacherType::Substitute());
 
             $manager->persist($grade);
         }
 
-        foreach(static::getSekIIGradeNames() as $name) {
+        foreach(self::getSekIIGradeNames() as $name) {
             $grade = (new Grade())
                 ->setExternalId($name)
                 ->setName($name);
 
             $teachers = $this->generator->randomElements($allTeachers, 2, false);
-            static::addTeacherToGrade($grade, $teachers[0], GradeTeacherType::Primary());
-            static::addTeacherToGrade($grade, $teachers[1], GradeTeacherType::Substitute());
+            self::addTeacherToGrade($grade, $teachers[0], GradeTeacherType::Primary());
+            self::addTeacherToGrade($grade, $teachers[1], GradeTeacherType::Substitute());
 
             $manager->persist($grade);
         }

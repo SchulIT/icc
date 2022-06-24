@@ -167,11 +167,11 @@ services:
             $isEnabled: '%env(bool:ROOM_STATUS)%'
 
     # CONTROLLER
-    App\Controller\MarkdownController:
-        bind:
-            $baseUrl: '%env(APP_URL)%'
-
     App\Controller\WikiAdminController:
+        bind:
+            $wikiFilesystem: '@oneup_flysystem.wiki_filesystem'
+
+    App\Controller\WikiController:
         bind:
             $wikiFilesystem: '@oneup_flysystem.wiki_filesystem'
 

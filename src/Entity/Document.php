@@ -77,7 +77,7 @@ class Document {
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
-     * @var ArrayCollection<UserTypeEntity>
+     * @var Collection<UserTypeEntity>
      */
     private $visibilities;
 
@@ -94,7 +94,7 @@ class Document {
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
-     * @var Collection<Teacher>
+     * @var Collection<User>
      */
     private $authors;
 
@@ -222,7 +222,7 @@ class Document {
     }
 
     /**
-     * @return Collection<Teacher>
+     * @return Collection<User>
      */
     public function getAuthors(): Collection {
         return $this->authors;

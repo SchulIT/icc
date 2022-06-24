@@ -72,47 +72,44 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DashboardViewHelper {
 
-    private $substitutionRepository;
-    private $examRepository;
-    private $timetableRepository;
-    private $timetableWeekRepository;
-    private $supervisionRepository;
-    private $messageRepository;
-    private $infotextRepository;
-    private $absenceRepository;
-    private $studyGroupRepository;
-    private $appointmentRepository;
-    private $roomReservationRepository;
-    private $freeTimespanRepository;
+    private SubstitutionRepositoryInterface $substitutionRepository;
+    private ExamRepositoryInterface $examRepository;
+    private TimetableLessonRepositoryInterface $timetableRepository;
+    private TimetableSupervisionRepositoryInterface $supervisionRepository;
+    private MessageRepositoryInterface $messageRepository;
+    private InfotextRepositoryInterface $infotextRepository;
+    private AbsenceRepositoryInterface $absenceRepository;
+    private StudyGroupRepositoryInterface $studyGroupRepository;
+    private AppointmentRepositoryInterface $appointmentRepository;
+    private ResourceReservationRepositoryInterface $roomReservationRepository;
+    private FreeTimespanRepositoryInterface $freeTimespanRepository;
 
-    private $studyGroupHelper;
-    private $timetablePeriodHelper;
-    private $timetableSettings;
-    private $timetableWeekHelper;
-    private $timetableTimeHelper;
-    private $sorter;
-    private $grouper;
-    private $dashboardSettings;
+    private StudyGroupHelper $studyGroupHelper;
+    private TimetablePeriodHelper $timetablePeriodHelper;
+    private TimetableSettings $timetableSettings;
+    private TimetableTimeHelper $timetableTimeHelper;
+    private Sorter $sorter;
+    private Grouper $grouper;
+    private DashboardSettings $dashboardSettings;
 
-    private $authorizationChecker;
-    private $validator;
-    private $dateHelper;
+    private AuthorizationCheckerInterface $authorizationChecker;
+    private ValidatorInterface $validator;
+    private DateHelper $dateHelper;
 
-    private $absenceResolver;
-    private $sectionResolver;
+    private AbsenceResolver $absenceResolver;
+    private SectionResolverInterface $sectionResolver;
 
     public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
-                                TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableWeekRepositoryInterface $timetableWeekRepository,
+                                TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository,
                                 MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                                 StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, ResourceReservationRepositoryInterface $reservationRepository,
                                 FreeTimespanRepositoryInterface $freeTimespanRepository,
-                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableWeekHelper $weekHelper, TimetableTimeHelper $timetableTimeHelper, Sorter $sorter, Grouper $grouper,
+                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableTimeHelper $timetableTimeHelper, Sorter $sorter, Grouper $grouper,
                                 TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
                                 ValidatorInterface $validator, DateHelper $dateHelper, AbsenceResolver $absenceResolver, SectionResolverInterface $sectionResolver) {
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->timetableRepository = $timetableRepository;
-        $this->timetableWeekRepository = $timetableWeekRepository;
         $this->supervisionRepository = $supervisionRepository;
         $this->messageRepository = $messageRepository;
         $this->infotextRepository = $infotextRepository;
@@ -124,7 +121,6 @@ class DashboardViewHelper {
         $this->studyGroupHelper = $studyGroupHelper;
         $this->timetablePeriodHelper = $timetablePeriodHelper;
         $this->timetableSettings = $timetableSettings;
-        $this->timetableWeekHelper = $weekHelper;
         $this->timetableTimeHelper = $timetableTimeHelper;
         $this->sorter = $sorter;
         $this->grouper = $grouper;

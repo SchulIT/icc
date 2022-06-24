@@ -46,14 +46,12 @@ class MessageController extends AbstractController {
 
     private const MessagesPerPage = 25;
 
-    private $sorter;
-    private $dateHelper;
+    private Sorter $sorter;
 
-    public function __construct(Sorter $sorter, DateHelper $dateHelper, RefererHelper $refererHelper) {
+    public function __construct(Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
         
         $this->sorter = $sorter;
-        $this->dateHelper = $dateHelper;
     }
 
     protected function getMessageScope(): MessageScope {
@@ -88,7 +86,7 @@ class MessageController extends AbstractController {
         $page = $request->query->getInt('page', 1);
 
         $paginator = $messageRepository->getPaginator(
-            static::MessagesPerPage,
+            self::MessagesPerPage,
             $page,
             MessageScope::Messages(),
             $userTypeFilterView->getCurrentType(),
@@ -107,7 +105,7 @@ class MessageController extends AbstractController {
             return $this->isGranted(MessageVoter::View, $message);
         });
 
-        $pages = ceil((double)$paginator->count() / static::MessagesPerPage);
+        $pages = ceil((double)$paginator->count() / self::MessagesPerPage);
 
         $groups = $grouper->group($messages, MessageWeekStrategy::class);
         $this->sorter->sort($groups, MessageWeekGroupStrategy::class, SortDirection::Descending());

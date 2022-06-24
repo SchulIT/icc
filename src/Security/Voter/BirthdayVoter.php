@@ -26,7 +26,7 @@ class BirthdayVoter extends Voter {
      * @inheritDoc
      */
     protected function supports(string $attribute, $subject): bool {
-        return $attribute === static::ShowBirthday
+        return $attribute === self::ShowBirthday
             && $subject instanceof Student;
     }
 
@@ -34,7 +34,7 @@ class BirthdayVoter extends Voter {
      * @throws UnexpectedTypeException
      */
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
-        if($attribute !== static::ShowBirthday) {
+        if($attribute !== self::ShowBirthday) {
             throw new LogicException('This code should not be executed.');
         }
 

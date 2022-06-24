@@ -7,6 +7,7 @@ use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -41,27 +42,16 @@ class UserCrudController extends AbstractCrudController
         $lastname = TextField::new('lastname');
         $email = TextField::new('email');
         $userType = EnumField::new('userType')->setFormType(UserTypeType::class);
-        $teacher = AssociationField::new('teacher');
-        $students = AssociationField::new('students');
+        $teacher = AssociationField::new('teacher')->hideOnIndex();
+        $students = AssociationField::new('students')->hideOnIndex();
         $idpId = TextField::new('idpId');
-        $roles = TextField::new('roles');
-        $isSubstitutionNotificationsEnabled = Field::new('isSubstitutionNotificationsEnabled');
-        $isExamNotificationsEnabled = Field::new('isExamNotificationsEnabled');
-        $isMessageNotificationsEnabled = Field::new('isMessageNotificationsEnabled');
-        $isEmailNotificationsEnabled = Field::new('isEmailNotificationsEnabled');
-        $data = TextField::new('data');
-        $id = IntegerField::new('id', 'ID');
-        $uuid = Field::new('uuid');
-        $dismissedMessages = AssociationField::new('dismissedMessages');
+        $roles = ArrayField::new('roles')->hideOnIndex();
+        $isSubstitutionNotificationsEnabled = Field::new('isSubstitutionNotificationsEnabled')->hideOnIndex();
+        $isExamNotificationsEnabled = Field::new('isExamNotificationsEnabled')->hideOnIndex();
+        $isMessageNotificationsEnabled = Field::new('isMessageNotificationsEnabled')->hideOnIndex();
+        $isEmailNotificationsEnabled = Field::new('isEmailNotificationsEnabled')->hideOnIndex();
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$username, $firstname, $lastname, $email, $userType, $teacher, $students, $idpId];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$idpId, $username, $firstname, $lastname, $email, $roles, $userType, $isSubstitutionNotificationsEnabled, $isExamNotificationsEnabled, $isMessageNotificationsEnabled, $isEmailNotificationsEnabled, $data, $id, $uuid, $teacher, $students, $dismissedMessages];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$username, $firstname, $lastname, $email, $userType, $teacher, $students];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$username, $firstname, $lastname, $email, $userType, $teacher, $students];
-        }
+        return [$id, $idpId, $username, $firstname, $lastname, $email, $roles, $userType, $isSubstitutionNotificationsEnabled, $isExamNotificationsEnabled, $isMessageNotificationsEnabled, $isEmailNotificationsEnabled, $teacher, $students];
     }
 }

@@ -62,9 +62,9 @@ class MessageAdminController extends AbstractController {
     private const CsrfTokenName = '_csrf_token';
     private const CsrfTokenId = 'message_files';
 
-    private $repository;
-    private $grouper;
-    private $sorter;
+    private MessageRepositoryInterface $repository;
+    private Grouper $grouper;
+    private Sorter $sorter;
 
     public function __construct(MessageRepositoryInterface $repository, Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
@@ -279,8 +279,8 @@ class MessageAdminController extends AbstractController {
             'grades' => $gradeGroups,
             'view' => $view,
             'statistics' => $statistics,
-            'csrf_token_name' => static::CsrfTokenName,
-            'csrf_token_id' => static::CsrfTokenId
+            'csrf_token_name' => self::CsrfTokenName,
+            'csrf_token_id' => self::CsrfTokenId
         ]);
     }
 
@@ -336,7 +336,7 @@ class MessageAdminController extends AbstractController {
     public function uploadDownload(Message $message, User $user, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository) {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
-        if($this->isCsrfTokenValid(static::CsrfTokenId, $request->request->get(static::CsrfTokenName)) !== true) {
+        if($this->isCsrfTokenValid(self::CsrfTokenId, $request->request->get(self::CsrfTokenName)) !== true) {
             return new JsonResponse(
                 [
                     'error' => 'CSRF token invalid.'
@@ -348,7 +348,6 @@ class MessageAdminController extends AbstractController {
         $file = $request->files->get('file');
         $filesystem->uploadUserDownload($message, $user, $file);
         $fileInfo = $filesystem->getUserDownload($message, $user, $file->getClientOriginalName());
-        $fileInfo['basename'] = basename($fileInfo['path']);
 
         $response = $this->renderView('admin/messages/file_explorer_file.html.twig', [
             'user' => $user,
@@ -368,7 +367,7 @@ class MessageAdminController extends AbstractController {
     public function uploadDownloads(Message $message, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository) {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
-        if($this->isCsrfTokenValid(static::CsrfTokenId, $request->request->get(static::CsrfTokenName)) !== true) {
+        if($this->isCsrfTokenValid(self::CsrfTokenId, $request->request->get(self::CsrfTokenName)) !== true) {
             return new JsonResponse(
                 [
                     'error' => 'CSRF token invalid.'

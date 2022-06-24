@@ -21,7 +21,7 @@ class ExcuseNoteController extends AbstractController {
 
     private const ItemsPerPage = 25;
 
-    private $repository;
+    private ExcuseNoteRepositoryInterface $repository;
 
     public function __construct(ExcuseNoteRepositoryInterface $repository) {
         $this->repository = $repository;
@@ -44,7 +44,7 @@ class ExcuseNoteController extends AbstractController {
 
         if($sectionFilterView->getCurrentSection() !== null) {
             $paginator = $this->repository->getPaginator(
-                static::ItemsPerPage,
+                self::ItemsPerPage,
                 $page,
                 $studentFilterView->getCurrentStudent(),
                 $sectionFilterView->getCurrentSection()->getStart(),
@@ -53,7 +53,7 @@ class ExcuseNoteController extends AbstractController {
 
             $notes = $paginator->getIterator()->getArrayCopy();
             $count = $paginator->count();
-            $pages = ceil((float)$count / static::ItemsPerPage);
+            $pages = ceil((float)$count / self::ItemsPerPage);
         }
 
         return $this->render('books/excuse_note/index.html.twig', [

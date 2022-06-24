@@ -30,22 +30,12 @@ class RoomCrudController extends AbstractCrudController
     {
         $externalId = TextField::new('externalId');
         $name = TextField::new('name');
-        $description = TextareaField::new('description');
+        $description = TextareaField::new('description')->hideOnIndex();
         $isReservationEnabled = Field::new('isReservationEnabled');
         $capacity = IntegerField::new('capacity');
-        $id = IntegerField::new('id', 'ID');
-        $uuid = Field::new('uuid');
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
         $type = AssociationField::new('type');
-        $tags = AssociationField::new('tags');
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$name, $isReservationEnabled, $id, $externalId, $capacity, $type, $tags];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$name, $description, $isReservationEnabled, $id, $uuid, $externalId, $capacity, $type, $tags];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$externalId, $name, $description, $isReservationEnabled, $capacity];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$externalId, $name, $description, $isReservationEnabled, $capacity];
-        }
+        return [$id, $externalId, $name, $description, $isReservationEnabled,  $capacity, $type ];
     }
 }

@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ResourceRepository extends AbstractRepository implements ResourceRepositoryInterface {
 
-    private $roomTagRepository;
+    private RoomTagRepositoryInterface $roomTagRepository;
 
     public function __construct(EntityManagerInterface $em, RoomTagRepositoryInterface $roomTagRepository) {
         parent::__construct($em);
@@ -84,7 +84,7 @@ class ResourceRepository extends AbstractRepository implements ResourceRepositor
 
                     $qb->setParameter('tag' . $tag->getId() . 'id', $tag->getId())
                         ->setParameter('tag' . $tag->getId() . 'value', $query->getValueOrDefault($tag));
-                } else if(!$tag->hasValue()) {
+                } else {
                     $tagIds[] = $tag->getId();
                 }
             }

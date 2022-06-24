@@ -52,9 +52,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ListController extends AbstractControllerWithMessages {
 
-    private $grouper;
-    private $sorter;
-    private $importDateTimeRepository;
+    private Grouper $grouper;
+    private Sorter $sorter;
+    private ImportDateTypeRepositoryInterface $importDateTimeRepository;
 
     public function __construct(Grouper $grouper, Sorter $sorter, ImportDateTypeRepositoryInterface $importDateTimeRepository,
                                 MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,

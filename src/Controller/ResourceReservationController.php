@@ -41,7 +41,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ResourceReservationController extends AbstractController {
 
-    private $repository;
+    private ResourceReservationRepositoryInterface $repository;
 
     public function __construct(ResourceReservationRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);

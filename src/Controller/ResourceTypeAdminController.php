@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ResourceTypeAdminController extends AbstractController {
 
-    private $repository;
+    private ResourceTypeRepositoryInterface $repository;
 
     public function __construct(ResourceTypeRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);

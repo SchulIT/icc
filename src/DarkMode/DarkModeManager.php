@@ -11,8 +11,8 @@ class DarkModeManager implements DarkModeManagerInterface {
 
     private const Key = 'settings.dark_mode.enabled';
 
-    private $tokenStorage;
-    private $userRepository;
+    private TokenStorageInterface $tokenStorage;
+    private UserRepositoryInterface $userRepository;
 
     public function __construct(TokenStorageInterface $tokenStorage, UserRepositoryInterface $repository) {
         $this->tokenStorage = $tokenStorage;
@@ -39,7 +39,7 @@ class DarkModeManager implements DarkModeManagerInterface {
         $user = $this->getUser();
 
         if ($user !== null) {
-            $user->setData(static::Key, $isDarkModeEnabled);
+            $user->setData(self::Key, $isDarkModeEnabled);
             $this->userRepository->persist($user);
         }
     }
@@ -56,7 +56,7 @@ class DarkModeManager implements DarkModeManagerInterface {
         $user = $this->getUser();
 
         if ($user !== null) {
-            return $user->getData(static::Key, false) === true;
+            return $user->getData(self::Key, false) === true;
         }
 
         return false;

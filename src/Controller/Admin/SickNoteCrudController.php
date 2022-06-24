@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\Admin\Field\EnumField;
 use App\Entity\SickNote;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -12,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use FervoEnumBundle\Generated\Form\SickNoteReasonType;
 
 class SickNoteCrudController extends AbstractCrudController
 {
@@ -31,31 +33,19 @@ class SickNoteCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         $student = AssociationField::new('student');
-        $from = TextareaField::new('from')->setTemplatePath('admin/ea/date_lesson.html.twig');
-        $until = TextareaField::new('until')->setTemplatePath('admin/ea/date_lesson.html.twig');
-        $reason = Field::new('reason');
-        $email = TextField::new('email');
-        $phone = TextField::new('phone');
-        $orderedBy = TextField::new('orderedBy');
-        $message = TextareaField::new('message');
-        $createdAt = DateTimeField::new('createdAt');
-        $id = IntegerField::new('id', 'ID');
-        $uuid = Field::new('uuid')->setTemplatePath('admin/ea/uuid.html.twig');
+        $reason = EnumField::new('reason')->setFormType(SickNoteReasonType::class);
+        $email = TextField::new('email')->hideOnIndex();
+        $phone = TextField::new('phone')->hideOnIndex();
+        $orderedBy = TextField::new('orderedBy')->hideOnIndex();
+        $message = TextareaField::new('message')->hideOnIndex();
+        $createdAt = DateTimeField::new('createdAt')->hideOnIndex();
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
         $fromDate = DateField::new('from.date');
         $fromLesson = IntegerField::new('from.lesson');
         $untilDate = DateField::new('until.date');
         $untilLesson = IntegerField::new('until.lesson');
-        $createdBy = AssociationField::new('createdBy');
-        $attachments = AssociationField::new('attachments');
+        $createdBy = AssociationField::new('createdBy')->hideOnIndex();
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$id, $uuid, $student, $from, $until];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$reason, $email, $phone, $orderedBy, $message, $createdAt, $id, $uuid, $fromDate, $fromLesson, $untilDate, $untilLesson, $student, $createdBy, $attachments];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$student, $from, $until, $reason, $email, $phone, $orderedBy, $message];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$student, $from, $until, $reason, $email, $phone, $orderedBy, $message];
-        }
+        return [$id, $fromDate, $fromLesson, $untilDate, $untilLesson, $reason, $email, $phone, $orderedBy, $message, $createdAt, $student, $createdBy];
     }
 }

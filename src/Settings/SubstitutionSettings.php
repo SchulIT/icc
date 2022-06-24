@@ -10,19 +10,19 @@ class SubstitutionSettings extends AbstractSettings {
     public const SkipWeekends = 'substitutions.skip_weekends';
 
     public function getNumberOfAheadDaysForSubstitutions(): int {
-        return (int)$this->getValue(static::AheadDaysKeys, 7);
+        return (int)$this->getValue(self::AheadDaysKeys, 7);
     }
 
     public function setNumberOfAheadDaysForSubstitutions(int $days): void {
-        $this->setValue(static::AheadDaysKeys, $days);
+        $this->setValue(self::AheadDaysKeys, $days);
     }
 
     public function skipWeekends(): bool  {
-        return (bool)$this->getValue(static::SkipWeekends, false);
+        return (bool)$this->getValue(self::SkipWeekends, false);
     }
 
     public function setSkipWeekends(bool $skipWeekends): void {
-        $this->setValue(static::SkipWeekends, $skipWeekends);
+        $this->setValue(self::SkipWeekends, $skipWeekends);
     }
 
     public function isNotificationsEnabled(): bool {

@@ -28,16 +28,8 @@ class FreeTimespanCrudController extends AbstractCrudController
         $date = DateTimeField::new('date');
         $start = IntegerField::new('start');
         $end = IntegerField::new('end');
-        $id = IntegerField::new('id', 'ID');
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$date, $start, $end, $id];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$date, $start, $end, $id];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$date, $start, $end];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$date, $start, $end];
-        }
+        return [$id, $date, $start, $end ];
     }
 }

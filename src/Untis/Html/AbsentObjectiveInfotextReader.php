@@ -9,7 +9,7 @@ abstract class AbsentObjectiveInfotextReader implements InfotextReaderInterface 
     protected abstract function createAbsence(string $objective, ?int $lessonStart, ?int $lessonEnd): HtmlAbsence;
 
     public function handle(HtmlSubstitutionResult $result, string $content): void {
-        foreach(explode(static::ItemSeparator, $content) as $item) {
+        foreach(explode(self::ItemSeparator, $content) as $item) {
             $result->addAbsence($this->handleItem(trim($item)));
         }
     }

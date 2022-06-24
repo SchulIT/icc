@@ -23,7 +23,7 @@ class AbsenceVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject): bool {
-        return $attribute === static::ViewAny || ($attribute === static::View && $subject instanceof Absence);
+        return $attribute === self::ViewAny || ($attribute === self::View && $subject instanceof Absence);
     }
 
     /**

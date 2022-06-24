@@ -29,16 +29,8 @@ class StudyGroupMembershipCrudController extends AbstractCrudController
         $type = TextField::new('type');
         $studyGroup = AssociationField::new('studyGroup');
         $student = AssociationField::new('student');
-        $id = IntegerField::new('id', 'ID');
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$type, $id, $studyGroup, $student];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$type, $id, $studyGroup, $student];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$type, $studyGroup, $student];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$type, $studyGroup, $student];
-        }
+        return [$id, $type, $studyGroup, $student];
     }
 }

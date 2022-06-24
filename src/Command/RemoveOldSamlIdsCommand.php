@@ -30,7 +30,7 @@ class RemoveOldSamlIdsCommand extends Command {
 
     public function execute(InputInterface $input, OutputInterface $output): int {
         $style = new SymfonyStyle($input, $output);
-        $threshold = (new DateTime('today'))->modify(sprintf('-%d days', static::Days));
+        $threshold = (new DateTime('today'))->modify(sprintf('-%d days', self::Days));
 
         $style->section(sprintf('Remove _InResponse IDs older than %s', $threshold->format('c')));
 

@@ -46,7 +46,7 @@ class JsonParamConverter implements ParamConverterInterface {
     public function apply(Request $request, ParamConverter $configuration): bool {
         $contentType = $request->getContentType();
 
-        if($contentType !== static::ContentType) {
+        if($contentType !== self::ContentType) {
             throw new BadRequestHttpException(sprintf('Request header "Content-Type" must be "application/json", "%s" provided.', $contentType));
         }
 

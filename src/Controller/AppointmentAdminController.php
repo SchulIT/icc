@@ -33,9 +33,9 @@ class AppointmentAdminController extends AbstractController {
 
     private const NumberOfAppointments = 25;
 
-    private $repository;
-    private $grouper;
-    private $sorter;
+    private AppointmentRepositoryInterface $repository;
+    private Grouper $grouper;
+    private Sorter $sorter;
 
     public function __construct(AppointmentRepositoryInterface $appointmentRepository, Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
@@ -58,11 +58,11 @@ class AppointmentAdminController extends AbstractController {
         /** @var User|null $createdBy */
         $createdBy = $this->isGranted('ROLE_APPOINTMENTS_ADMIN') ? null : $this->getUser();
 
-        $paginator = $this->repository->getPaginator(static::NumberOfAppointments, $page, $categories, $q, $createdBy, $onlyConfirmed ?? null);
+        $paginator = $this->repository->getPaginator(self::NumberOfAppointments, $page, $categories, $q, $createdBy, $onlyConfirmed ?? null);
         $pages = 1;
 
         if($paginator->count() > 0) {
-            $pages = ceil((float)$paginator->count() / static::NumberOfAppointments);
+            $pages = ceil((float)$paginator->count() / self::NumberOfAppointments);
         }
 
         $appointments = [ ];

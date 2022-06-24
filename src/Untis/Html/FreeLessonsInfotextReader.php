@@ -13,7 +13,7 @@ class FreeLessonsInfotextReader implements InfotextReaderInterface {
     public function handle(HtmlSubstitutionResult $result, string $content): void {
         $content = $this->removeUnnecessaryText($content);
 
-        foreach(explode(static::ItemSeparator, $content) as $item) {
+        foreach(explode(self::ItemSeparator, $content) as $item) {
             $result->addFreeLesson($this->handleItem(trim($item)));
         }
     }

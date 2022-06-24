@@ -30,7 +30,7 @@ class Room extends ResourceEntity {
 
     /**
      * @ORM\OneToMany(targetEntity="RoomTagInfo", mappedBy="room", cascade={"persist"}, orphanRemoval=true)
-     * @var Collection
+     * @var Collection<RoomTagInfo>
      */
     private $tags;
 

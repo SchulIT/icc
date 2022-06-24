@@ -15,12 +15,10 @@ use App\Utils\ArrayUtils;
 class TeachersFilter {
 
     private $sorter;
-    private $grouper;
     private $teacherRepository;
 
-    public function __construct(Sorter $sorter, Grouper $grouper, TeacherRepositoryInterface $teacherRepository) {
+    public function __construct(Sorter $sorter, TeacherRepositoryInterface $teacherRepository) {
         $this->sorter = $sorter;
-        $this->grouper = $grouper;
         $this->teacherRepository = $teacherRepository;
     }
 

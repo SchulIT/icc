@@ -31,17 +31,9 @@ class AbsenceCrudController extends AbstractCrudController
         $lessonEnd = IntegerField::new('lessonEnd');
         $teacher = AssociationField::new('teacher');
         $studyGroup = AssociationField::new('studyGroup');
-        $id = IntegerField::new('id', 'ID');
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
         $room = AssociationField::new('room');
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$date, $lessonStart, $lessonEnd, $id, $teacher, $studyGroup, $room];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$date, $lessonStart, $lessonEnd, $id, $teacher, $studyGroup, $room];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$date, $lessonStart, $lessonEnd, $teacher, $studyGroup];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$date, $lessonStart, $lessonEnd, $teacher, $studyGroup];
-        }
+        return [$id, $date, $lessonStart, $lessonEnd, $teacher, $studyGroup, $room];
     }
 }

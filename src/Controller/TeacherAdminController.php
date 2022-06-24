@@ -21,8 +21,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class TeacherAdminController extends AbstractController {
 
-    private $sorter;
-    private $repository;
+    private Sorter $sorter;
+    private TeacherRepositoryInterface $repository;
 
     public function __construct(Sorter $sorter, TeacherRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);

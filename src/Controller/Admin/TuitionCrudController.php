@@ -33,18 +33,9 @@ class TuitionCrudController extends AbstractCrudController
         $subject = AssociationField::new('subject');
         $teachers = AssociationField::new('teachers');
         $studyGroup = AssociationField::new('studyGroup');
-        $id = IntegerField::new('id', 'ID');
-        $uuid = Field::new('uuid');
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
         $section = AssociationField::new('section');
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$externalId, $name, $displayName, $id, $subject, $teachers, $studyGroup];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$externalId, $name, $displayName, $id, $uuid, $subject, $teachers, $studyGroup, $section];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$externalId, $name, $displayName, $subject, $teachers, $studyGroup];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$externalId, $name, $displayName, $subject, $teachers, $studyGroup];
-        }
+        return [$id, $externalId, $name, $displayName, $subject, $teachers, $studyGroup, $section];
     }
 }

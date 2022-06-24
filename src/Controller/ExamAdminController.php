@@ -36,7 +36,7 @@ class ExamAdminController extends AbstractController {
 
     private const NumberOfExams = 25;
 
-    private $repository;
+    private ExamRepositoryInterface $repository;
 
     public function __construct(RefererHelper $redirectHelper, ExamRepositoryInterface $examRepository) {
         parent::__construct($redirectHelper);
@@ -58,7 +58,7 @@ class ExamAdminController extends AbstractController {
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $request->query->get('teacher') !== '✗' && $gradeFilterView->getCurrentGrade() === null);
 
-        $paginator = $this->repository->getPaginator(static::NumberOfExams,
+        $paginator = $this->repository->getPaginator(self::NumberOfExams,
             $page,
             $gradeFilterView->getCurrentGrade(),
             $teacherFilterView->getCurrentTeacher(),
@@ -72,7 +72,7 @@ class ExamAdminController extends AbstractController {
         $pages = 1;
 
         if($paginator->count() > 0) {
-            $pages = ceil((float)$paginator->count() / static::NumberOfExams);
+            $pages = ceil((float)$paginator->count() / self::NumberOfExams);
         }
 
         $exams = [ ];

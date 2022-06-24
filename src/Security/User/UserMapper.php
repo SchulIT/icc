@@ -71,7 +71,7 @@ class UserMapper extends AbstractUserMapper {
                 SamlClaimTypes::TYPE,
             ],
             [
-                static::ROLES_ASSERTION_NAME
+                self::ROLES_ASSERTION_NAME
             ]
         ));
     }
@@ -86,7 +86,7 @@ class UserMapper extends AbstractUserMapper {
         $firstname = $data[ClaimTypes::GIVEN_NAME];
         $lastname = $data[ClaimTypes::SURNAME];
         $email = $data[ClaimTypes::EMAIL_ADDRESS];
-        $roles = $data[static::ROLES_ASSERTION_NAME] ?? [ ];
+        $roles = $data[self::ROLES_ASSERTION_NAME] ?? [ ];
         $type = $this->getUserType($data[SamlClaimTypes::TYPE]);
 
         if(!is_array($roles)) {

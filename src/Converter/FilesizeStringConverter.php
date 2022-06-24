@@ -3,7 +3,7 @@
 namespace App\Converter;
 
 class FilesizeStringConverter {
-    public function convert(int $bytes) {
+    public function convert(int $bytes): string {
         $units = [ 'B', 'KB', 'MB', 'GB', 'TB' ];
         $unit = $units[0];
 

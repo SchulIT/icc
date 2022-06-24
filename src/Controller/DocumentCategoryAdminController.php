@@ -20,7 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class DocumentCategoryAdminController extends AbstractController {
 
-    private $repository;
+    private DocumentCategoryRepositoryInterface $repository;
 
     public function __construct(DocumentCategoryRepositoryInterface $repository, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);

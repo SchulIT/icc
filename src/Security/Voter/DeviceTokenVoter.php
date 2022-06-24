@@ -15,7 +15,7 @@ class DeviceTokenVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject): bool {
-        return $attribute === static::Remove && $subject instanceof IcsAccessToken;
+        return $attribute === self::Remove && $subject instanceof IcsAccessToken;
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {

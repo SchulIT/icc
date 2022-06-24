@@ -19,7 +19,7 @@ class GradesCollapsedArrayConverter {
     public function convert(iterable $grades): array {
         $grades = ArrayUtils::iterableToArray($grades);
 
-        if(count($grades) < static::Threshold) {
+        if(count($grades) < self::Threshold) {
             return array_map(function(Grade $grade) {
                 return $grade->getName();
             }, $grades);

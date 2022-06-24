@@ -31,12 +31,12 @@ class BookCommentVoter extends Voter {
      */
     protected function supports(string $attribute, $subject): bool {
         $attributes = [
-            static::View,
-            static::Edit,
-            static::Remove
+            self::View,
+            self::Edit,
+            self::Remove
         ];
 
-        return $attribute === static::New
+        return $attribute === self::New
             || (in_array($attribute, $attributes) && $subject instanceof BookComment);
     }
 
@@ -45,14 +45,14 @@ class BookCommentVoter extends Voter {
      */
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
-            case static::New:
+            case self::New:
                 return $this->canCreate($token);
 
-            case static::View:
+            case self::View:
                 return $this->canView($subject, $token);
 
-            case static::Edit:
-            case static::Remove:
+            case self::Edit:
+            case self::Remove:
                 return $this->canEditOrRemove($subject, $token);
         }
 

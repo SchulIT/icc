@@ -38,13 +38,13 @@ class AppointmentVoter extends Voter {
      */
     protected function supports($attribute, $subject): bool {
         $attributes = [
-            static::Edit,
-            static::Remove,
-            static::View,
-            static::Confirm
+            self::Edit,
+            self::Remove,
+            self::View,
+            self::Confirm
         ];
 
-        return $attribute === static::New ||
+        return $attribute === self::New ||
               (in_array($attribute, $attributes) && $subject instanceof Appointment);
     }
 
@@ -53,19 +53,19 @@ class AppointmentVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch ($attribute) {
-            case static::New:
+            case self::New:
                 return $this->canCreate($token);
 
-            case static::Edit:
+            case self::Edit:
                 return $this->canEdit($subject, $token);
 
-            case static::Remove:
+            case self::Remove:
                 return $this->canRemove($subject, $token);
 
-            case static::Confirm:
+            case self::Confirm:
                 return $this->canConfirm($token);
 
-            case static::View:
+            case self::View:
                 return $this->canView($subject, $token);
         }
 

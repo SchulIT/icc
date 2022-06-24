@@ -28,18 +28,9 @@ class InfotextCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         $date = DateField::new('date');
-        $content = TextareaField::new('content');
-        $id = IntegerField::new('id', 'ID');
-        $uuid = Field::new('uuid');
+        $content = TextareaField::new('content')->hideOnIndex();
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$date, $id];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$date, $content, $id, $uuid];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$date, $content];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$date, $content];
-        }
+        return [$id, $date, $content];
     }
 }

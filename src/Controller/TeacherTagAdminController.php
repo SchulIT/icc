@@ -18,7 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class TeacherTagAdminController extends AbstractController {
 
-    private $repository;
+    private TeacherTagRepositoryInterface $repository;
 
     public function __construct(TeacherTagRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);

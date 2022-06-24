@@ -18,30 +18,20 @@ use App\Utils\CollectionUtils;
 
 class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrategyInterface {
 
-    private $studentRepository;
-    private $gradeRepository;
-    private $privacyCategoryRepository;
-    private $sectionRepository;
+    private StudentRepositoryInterface $studentRepository;
+    private PrivacyCategoryRepositoryInterface $privacyCategoryRepository;
+    private SectionRepositoryInterface $sectionRepository;
 
-    private $gradesCache = [ ];
-    private $privacyCategoriesCache = [ ];
+    private array $privacyCategoriesCache = [ ];
 
-    public function __construct(StudentRepositoryInterface $studentRepository, GradeRepositoryInterface $gradeRepository,
+    public function __construct(StudentRepositoryInterface $studentRepository,
                                 PrivacyCategoryRepositoryInterface $privacyCategoryRepository, SectionRepositoryInterface $sectionRepository) {
         $this->studentRepository = $studentRepository;
-        $this->gradeRepository = $gradeRepository;
         $this->privacyCategoryRepository = $privacyCategoryRepository;
         $this->sectionRepository = $sectionRepository;
     }
 
     public function initialize($requestData): void {
-        $this->gradesCache = ArrayUtils::createArrayWithKeys(
-            $this->gradeRepository->findAll(),
-            function(Grade $grade) {
-                return $grade->getExternalId();
-            }
-        );
-
         $this->privacyCategoriesCache = ArrayUtils::createArrayWithKeys(
             $this->privacyCategoryRepository->findAll(),
             function(PrivacyCategory $category) {

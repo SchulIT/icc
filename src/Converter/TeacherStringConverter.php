@@ -7,7 +7,7 @@ use App\Entity\Teacher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TeacherStringConverter {
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(TranslatorInterface $translator) {
         $this->translator = $translator;

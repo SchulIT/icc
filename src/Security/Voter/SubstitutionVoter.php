@@ -24,7 +24,7 @@ class SubstitutionVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject): bool {
-        return $attribute === static::View && $subject instanceof Substitution;
+        return $attribute === self::View && $subject instanceof Substitution;
     }
 
     /**

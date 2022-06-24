@@ -20,7 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class TimetableWeekAdminController extends AbstractController {
 
-    private $repository;
+    private TimetableWeekRepositoryInterface $repository;
 
     public function __construct(TimetableWeekRepositoryInterface $repository, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);

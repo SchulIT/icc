@@ -12,7 +12,6 @@ use App\Form\SickNoteType;
 use App\Grouping\Grouper;
 use App\Grouping\SickNoteGenericGroup;
 use App\Grouping\SickNoteGradeGroup;
-use App\Grouping\SickNoteGradeStrategy;
 use App\Grouping\SickNoteStudentGroup;
 use App\Grouping\SickNoteTuitionGroup;
 use App\Http\FlysystemFileResponse;
@@ -23,10 +22,7 @@ use App\Section\SectionResolverInterface;
 use App\Security\Voter\SickNoteVoter;
 use App\Settings\SickNoteSettings;
 use App\Settings\TimetableSettings;
-use App\Sorting\SickNoteGradeGroupStrategy;
-use App\Sorting\SickNoteStrategy;
 use App\Sorting\SickNoteTuitionGroupStrategy;
-use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
 use App\Timetable\TimetableTimeHelper;
 use App\Utils\EnumArrayUtils;
@@ -36,9 +32,7 @@ use App\View\Filter\SectionFilter;
 use App\View\Filter\SickNoteReasonFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
-use DateTime;
-use Exception;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 use Mimey\MimeTypes;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -166,7 +160,7 @@ class SickNoteController extends AbstractController {
             $sorter->sort($groups, SickNoteTuitionGroupStrategy::class);
 
         } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $paginator = $sickNoteRepository->getGradePaginator($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection(), $reasonFilterView->getCurrentReason(), static::ITEMS_PER_PAGE, $page);
+            $paginator = $sickNoteRepository->getGradePaginator($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection(), $reasonFilterView->getCurrentReason(), self::ITEMS_PER_PAGE, $page);
 
             if($paginator->count() > 0) {
                 $group = new SickNoteGradeGroup($gradeFilterView->getCurrentGrade());
@@ -181,7 +175,7 @@ class SickNoteController extends AbstractController {
                 $groups[] = $group;
             }
         } else if($studentFilterView->getCurrentStudent() !== null) {
-            $paginator = $sickNoteRepository->getStudentPaginator($studentFilterView->getCurrentStudent(), $reasonFilterView->getCurrentReason(), static::ITEMS_PER_PAGE, $page);
+            $paginator = $sickNoteRepository->getStudentPaginator($studentFilterView->getCurrentStudent(), $reasonFilterView->getCurrentReason(), self::ITEMS_PER_PAGE, $page);
 
             if($paginator->count() > 0) {
                 $group = new SickNoteStudentGroup($studentFilterView->getCurrentStudent());
@@ -196,7 +190,7 @@ class SickNoteController extends AbstractController {
                 $groups[] = $group;
             }
         } else {
-            $paginator = $sickNoteRepository->getPaginator($reasonFilterView->getCurrentReason(), static::ITEMS_PER_PAGE, $page);
+            $paginator = $sickNoteRepository->getPaginator($reasonFilterView->getCurrentReason(), self::ITEMS_PER_PAGE, $page);
 
             if($paginator->count() > 0) {
                 $group = new SickNoteGenericGroup();
@@ -214,7 +208,7 @@ class SickNoteController extends AbstractController {
 
         $pages = 0;
         if($paginator !== null) {
-            $pages = ceil((double)$paginator->count() / static::ITEMS_PER_PAGE);
+            $pages = ceil((double)$paginator->count() / self::ITEMS_PER_PAGE);
         }
 
         return $this->render('sick_note/index.html.twig', [
@@ -250,14 +244,14 @@ class SickNoteController extends AbstractController {
     /**
      * @Route("/attachments/{uuid}", name="download_sick_note_attachment", priority="10")
      */
-    public function downloadAttachment(SickNoteAttachment $attachment, FilesystemInterface $sickNoteFilesystem, MimeTypes $mimeTypes, SickNoteSettings $settings) {
+    public function downloadAttachment(SickNoteAttachment $attachment, FilesystemOperator $sickNoteFilesystem, MimeTypes $mimeTypes, SickNoteSettings $settings) {
         $this->denyAccessUnlessGranted(SickNoteVoter::View, $attachment->getSickNote());
 
         if($settings->isEnabled() !== true) {
             throw new NotFoundHttpException();
         }
 
-        if($sickNoteFilesystem->has($attachment->getPath()) !== true) {
+        if($sickNoteFilesystem->fileExists($attachment->getPath()) !== true) {
             throw new NotFoundHttpException();
         }
 

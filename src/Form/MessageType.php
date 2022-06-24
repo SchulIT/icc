@@ -41,7 +41,7 @@ class MessageType extends AbstractType {
                     $years = [ ];
                     $currentYear = (int)$this->dateHelper->getToday()->format('Y');
 
-                    for($year = $currentYear - static::YearsDelta; $year <= $currentYear + static::YearsDelta; $year++) {
+                    for($year = $currentYear - self::YearsDelta; $year <= $currentYear + self::YearsDelta; $year++) {
                         $years[] = $year;
                     }
 

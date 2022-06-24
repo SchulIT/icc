@@ -16,14 +16,14 @@ class ViewParameter {
     }
 
     public function getViewType(?string $viewType, User $user, string $sectionKey): string {
-        if(!in_array($viewType, [ static::TableView, static::CardView ])) {
+        if(!in_array($viewType, [ self::TableView, self::CardView ])) {
             $viewType = null;
         }
 
         $key = sprintf('view.%s', $sectionKey);
 
         if($viewType === null) {
-            $viewType = $user->getData($key, null) ?? static::CardView;
+            $viewType = $user->getData($key, null) ?? self::CardView;
         } else {
             $user->setData($key, $viewType);
             $this->em->persist($user);

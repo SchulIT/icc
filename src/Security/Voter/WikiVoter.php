@@ -29,12 +29,12 @@ class WikiVoter extends Voter {
      */
     protected function supports($attribute, $subject): bool {
         $attributes = [
-            static::View,
-            static::Edit,
-            static::Remove
+            self::View,
+            self::Edit,
+            self::Remove
         ];
 
-        return $attribute === static::New ||
+        return $attribute === self::New ||
               (in_array($attribute, $attributes) && $subject instanceof WikiArticle);
     }
 
@@ -43,16 +43,16 @@ class WikiVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
-            case static::View:
+            case self::View:
                 return $this->canView($subject, $token);
 
-            case static::Edit:
+            case self::Edit:
                 return $this->canEdit($token);
 
-            case static::Remove:
+            case self::Remove:
                 return $this->canRemove($token);
 
-            case static::New:
+            case self::New:
                 return $this->canCreate($token);
         }
 

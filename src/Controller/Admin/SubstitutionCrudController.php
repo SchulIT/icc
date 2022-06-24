@@ -36,29 +36,19 @@ class SubstitutionCrudController extends AbstractCrudController
         $startsBefore = Field::new('startsBefore');
         $type = TextField::new('type');
         $subject = TextField::new('subject');
-        $replacementSubject = TextField::new('replacementSubject');
-        $rooms = AssociationField::new('rooms');
-        $replacementRooms = AssociationField::new('replacementRooms');
-        $remark = TextField::new('remark');
-        $teachers = AssociationField::new('teachers');
-        $replacementTeachers = AssociationField::new('replacementTeachers');
-        $studyGroups = AssociationField::new('studyGroups');
-        $replacementStudyGroups = AssociationField::new('replacementStudyGroups');
-        $replacementGrades = AssociationField::new('replacementGrades');
-        $roomName = TextField::new('roomName');
-        $replacementRoomName = TextField::new('replacementRoomName');
-        $createdAt = DateTimeField::new('createdAt');
-        $id = IntegerField::new('id', 'ID');
-        $uuid = Field::new('uuid');
+        $replacementSubject = TextField::new('replacementSubject')->hideOnIndex();
+        $rooms = AssociationField::new('rooms')->hideOnIndex();
+        $replacementRooms = AssociationField::new('replacementRooms')->hideOnIndex();
+        $remark = TextField::new('remark')->hideOnIndex();
+        $teachers = AssociationField::new('teachers')->hideOnIndex();
+        $replacementTeachers = AssociationField::new('replacementTeachers')->hideOnIndex();
+        $studyGroups = AssociationField::new('studyGroups')->hideOnIndex();
+        $replacementStudyGroups = AssociationField::new('replacementStudyGroups')->hideOnIndex();
+        $replacementGrades = AssociationField::new('replacementGrades')->hideOnIndex();
+        $roomName = TextField::new('roomName')->hideOnIndex();
+        $replacementRoomName = TextField::new('replacementRoomName')->hideOnIndex();
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$externalId, $date, $lessonStart, $lessonEnd, $startsBefore, $type, $subject];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$externalId, $date, $lessonStart, $lessonEnd, $startsBefore, $type, $subject, $replacementSubject, $roomName, $replacementRoomName, $remark, $createdAt, $id, $uuid, $teachers, $replacementTeachers, $rooms, $replacementRooms, $studyGroups, $replacementStudyGroups, $replacementGrades];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$externalId, $date, $lessonStart, $lessonEnd, $startsBefore, $type, $subject, $replacementSubject, $rooms, $replacementRooms, $remark, $teachers, $replacementTeachers, $studyGroups, $replacementStudyGroups, $replacementGrades];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$externalId, $date, $lessonStart, $lessonEnd, $startsBefore, $type, $subject, $replacementSubject, $rooms, $replacementRooms, $remark, $teachers, $replacementTeachers, $studyGroups, $replacementStudyGroups, $replacementGrades];
-        }
+        return [$id, $externalId, $date, $lessonStart, $lessonEnd, $startsBefore, $type, $subject, $replacementSubject, $roomName, $replacementRoomName, $remark, $teachers, $replacementTeachers, $rooms, $replacementRooms, $studyGroups, $replacementStudyGroups, $replacementGrades];
     }
 }

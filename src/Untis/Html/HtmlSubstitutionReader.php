@@ -33,7 +33,7 @@ class HtmlSubstitutionReader extends AbstractHtmlReader {
     }
 
     public function readHtml(string $html): HtmlSubstitutionResult {
-        libxml_use_internal_errors(true) AND libxml_clear_errors();
+        libxml_use_internal_errors(true); libxml_clear_errors();
 
         $html = $this->fixHtml($html);
 
@@ -56,7 +56,7 @@ class HtmlSubstitutionReader extends AbstractHtmlReader {
     private function parseInfotexts(HtmlSubstitutionResult $result, DOMXPath $xpath): void {
         $infotexts = [ ];
 
-        $nodes = $xpath->query("//table[@class='" . static::InfoTableSelectorClass . "']//tr[@class='" . static:: InfoEntrySelectorClass . "']");
+        $nodes = $xpath->query("//table[@class='" . self::InfoTableSelectorClass . "']//tr[@class='" . self:: InfoEntrySelectorClass . "']");
 
         for($idx = 1; $idx < count($nodes); $idx++) { // First item is table header
             $node = $nodes[$idx];
@@ -84,13 +84,13 @@ class HtmlSubstitutionReader extends AbstractHtmlReader {
      * @param DOMXPath $xpath
      */
     private function parseSubstitutions(HtmlSubstitutionResult $result, DOMXPath $xpath): void {
-        $table = $xpath->query("//table[@class='" . static::SubstitutionsTableSelectorClass . "']");
+        $table = $xpath->query("//table[@class='" . self::SubstitutionsTableSelectorClass . "']");
 
-        if($table === false || $table === null || count($table) === 0) {
+        if($table === false || count($table) === 0) {
             return;
         }
 
-        $nodes = $xpath->query("//table[@class='" . static::SubstitutionsTableSelectorClass . "']//tr[starts-with(@class, '" . static::SubstitutionEntryClass . "')]", $table[0]);
+        $nodes = $xpath->query("//table[@class='" . self::SubstitutionsTableSelectorClass . "']//tr[starts-with(@class, '" . self::SubstitutionEntryClass . "')]", $table[0]);
 
         if($nodes === false || $nodes->count() < 2) {
             // empty list or column headers only
@@ -136,7 +136,7 @@ class HtmlSubstitutionReader extends AbstractHtmlReader {
                 $substitution->setReplacementRooms([]);
             }
 
-            if(!in_array($substitution->getType(), static::IgnoredSubstitutionTypes)) {
+            if(!in_array($substitution->getType(), self::IgnoredSubstitutionTypes)) {
                 $result->addSubstitution($substitution);
             }
         }
@@ -170,9 +170,12 @@ class HtmlSubstitutionReader extends AbstractHtmlReader {
             ->setIsCancelledColumn($this->tableCellParser->getCellIndexOrNull($cellIdxes, $this->settings->getIsCancelledColumnName()));
     }
 
+    /**
+     * @throws Exception
+     */
     private function parseDate(DOMXPath $xpath): DateTime {
-        $elements = $xpath->query("//div[@class='" . static::DateSelectorClass . "']");
-        $firstElement = $elements !== null ? $elements->item(0) : null;
+        $elements = $xpath->query("//div[@class='" . self::DateSelectorClass . "']");
+        $firstElement = $elements !== false ? $elements->item(0) : null;
 
         if($firstElement === null) {
             throw new Exception('Date was not found.');
@@ -181,11 +184,12 @@ class HtmlSubstitutionReader extends AbstractHtmlReader {
         $dateValue = $firstElement->nodeValue;
         $parts = explode(' ', $dateValue);
 
-        if(count($parts) < 1) {
+        $date = DateTime::createFromFormat('j.n.Y', $parts[0]);
+
+        if($date === false) {
             throw new Exception('Date was not parsed correctly.');
         }
 
-        $date = DateTime::createFromFormat('j.n.Y', $parts[0]);
         $date->setTime(0, 0, 0);
 
         return $date;
@@ -193,8 +197,6 @@ class HtmlSubstitutionReader extends AbstractHtmlReader {
 
     private function fixHtml(string $html): string {
         $html = str_replace('<p>', '', $html);
-        $html = str_replace('&nbsp;', ' ', $html);
-
-        return $html;
+        return str_replace('&nbsp;', ' ', $html);
     }
 }

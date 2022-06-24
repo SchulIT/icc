@@ -13,9 +13,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudyGroupsGradeStringConverter {
 
-    private $gradeConverter;
-    private $translator;
-    private $sorter;
+    private GradesCollapsedArrayConverter $gradeConverter;
+    private TranslatorInterface $translator;
+    private Sorter $sorter;
 
     public function __construct(TranslatorInterface $translator, Sorter $sorter, GradesCollapsedArrayConverter $gradeConverter) {
         $this->translator = $translator;
@@ -29,7 +29,7 @@ class StudyGroupsGradeStringConverter {
      * @param Grade[]|ArrayCollection|iterable $onlyGrades
      * @return string
      */
-    public function convert(iterable $studyGroups, bool $sort = false, iterable $onlyGrades = [ ]) {
+    public function convert(iterable $studyGroups, bool $sort = false, iterable $onlyGrades = [ ]): string {
         if($studyGroups instanceof Collection) {
             $studyGroups = $studyGroups->toArray();
         }

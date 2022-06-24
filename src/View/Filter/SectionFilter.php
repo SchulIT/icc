@@ -9,14 +9,12 @@ use App\Settings\GeneralSettings;
 use App\Utils\ArrayUtils;
 
 class SectionFilter {
-    private $sectionRepository;
-    private $sectionResolver;
-    private $settings;
+    private SectionRepositoryInterface $sectionRepository;
+    private SectionResolverInterface $sectionResolver;
 
-    public function __construct(SectionRepositoryInterface $sectionRepository, SectionResolverInterface $sectionResolver, GeneralSettings $settings) {
+    public function __construct(SectionRepositoryInterface $sectionRepository, SectionResolverInterface $sectionResolver) {
         $this->sectionRepository = $sectionRepository;
         $this->sectionResolver = $sectionResolver;
-        $this->settings = $settings;
     }
 
     public function handle(?string $sectionUuid): SectionFilterView {

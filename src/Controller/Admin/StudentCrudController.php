@@ -36,23 +36,12 @@ class StudentCrudController extends AbstractCrudController
         $gender = EnumField::new('gender')->setFormType(GenderType::class);
         $email = TextField::new('email');
         $status = TextField::new('status');
-        $birthday = DateField::new('birthday');
-        $approvedPrivacyCategories = AssociationField::new('approvedPrivacyCategories');
-        $uniqueIdentifier = TextField::new('uniqueIdentifier');
-        $id = IntegerField::new('id', 'ID');
-        $uuid = Field::new('uuid');
-        $gradeMemberships = AssociationField::new('gradeMemberships');
-        $studyGroupMemberships = AssociationField::new('studyGroupMemberships');
-        $sections = AssociationField::new('sections');
+        $birthday = DateField::new('birthday')->hideOnIndex();
+        $approvedPrivacyCategories = AssociationField::new('approvedPrivacyCategories')->hideOnIndex();
+        $uniqueIdentifier = TextField::new('uniqueIdentifier')->hideOnIndex();
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
+        $sections = AssociationField::new('sections')->hideOnIndex();
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$externalId, $firstname, $lastname, $gender, $email, $status, $birthday, $approvedPrivacyCategories];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$externalId, $uniqueIdentifier, $firstname, $lastname, $gender, $email, $status, $birthday, $id, $uuid, $gradeMemberships, $studyGroupMemberships, $approvedPrivacyCategories, $sections];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$externalId, $firstname, $lastname, $gender, $email, $status, $birthday, $approvedPrivacyCategories];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$externalId, $firstname, $lastname, $gender, $email, $status, $birthday, $approvedPrivacyCategories];
-        }
+        return [$id, $externalId, $uniqueIdentifier, $firstname, $lastname, $gender, $email, $status, $birthday, $approvedPrivacyCategories, $sections];
     }
 }

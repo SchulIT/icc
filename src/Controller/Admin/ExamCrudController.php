@@ -32,23 +32,13 @@ class ExamCrudController extends AbstractCrudController
         $date = DateField::new('date');
         $lessonStart = IntegerField::new('lessonStart');
         $lessonEnd = IntegerField::new('lessonEnd');
-        $description = TextField::new('description');
+        $description = TextField::new('description')->hideOnIndex();
         $tuitions = AssociationField::new('tuitions');
         $students = AssociationField::new('students');
-        $tuitionTeachersCanEditExam = Field::new('tuitionTeachersCanEditExam');
-        $id = IntegerField::new('id', 'ID');
-        $uuid = Field::new('uuid');
-        $supervisions = AssociationField::new('supervisions');
-        $room = AssociationField::new('room');
+        $tuitionTeachersCanEditExam = Field::new('tuitionTeachersCanEditExam')->hideOnIndex();
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
+        $room = AssociationField::new('room')->hideOnIndex();
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$externalId, $date, $lessonStart, $lessonEnd, $description, $tuitionTeachersCanEditExam, $id];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$externalId, $date, $lessonStart, $lessonEnd, $description, $tuitionTeachersCanEditExam, $id, $uuid, $tuitions, $students, $supervisions, $room];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$externalId, $date, $lessonStart, $lessonEnd, $description, $tuitions, $students];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$externalId, $date, $lessonStart, $lessonEnd, $description, $tuitions, $students];
-        }
+        return [$id, $externalId, $date, $lessonStart, $lessonEnd, $description, $tuitionTeachersCanEditExam, $tuitions, $students, $room];
     }
 }

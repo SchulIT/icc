@@ -32,7 +32,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
     public function onKernelException(ExceptionEvent $event) {
         $request = $event->getRequest();
 
-        if(!in_array(static::JsonContentType, $request->getAcceptableContentTypes())) {
+        if(!in_array(self::JsonContentType, $request->getAcceptableContentTypes())) {
             return;
         }
 

@@ -91,7 +91,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
             }
         }
 
-        $groupingClass = $groupByParameter->getGroupingStrategyClassName($groupBy, $user, static::SectionKey);
+        $groupingClass = $groupByParameter->getGroupingStrategyClassName($groupBy, $user, self::SectionKey);
         $groups = $grouper->group($substitutions, $groupingClass);
 
         $sortingClass = $groupByParameter->getSortingStrategyClassName($groupingClass);

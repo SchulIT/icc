@@ -30,7 +30,7 @@ class DocumentAdminController extends AbstractController {
     private const RevertCsrfTokenParam = '_csrf_token';
     private const RevertCsrfToken = 'revert-document';
 
-    private $repository;
+    private DocumentRepositoryInterface $repository;
 
     public function __construct(DocumentRepositoryInterface $repository, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
@@ -117,9 +117,9 @@ class DocumentAdminController extends AbstractController {
         return $this->render('admin/documents/versions.html.twig', [
             'document' => $document,
             'logs' => $logs,
-            'token_id' => static::RevertCsrfToken,
-            'token_param' => static::RevertCsrfTokenParam,
-            'version_param' => static::VersionParam
+            'token_id' => self::RevertCsrfToken,
+            'token_param' => self::RevertCsrfTokenParam,
+            'version_param' => self::VersionParam
         ]);
     }
 
@@ -147,9 +147,9 @@ class DocumentAdminController extends AbstractController {
         return $this->render('admin/documents/version.html.twig', [
             'document' => $document,
             'entry' => $entry,
-            'token_id' => static::RevertCsrfToken,
-            'token_param' => static::RevertCsrfTokenParam,
-            'version_param' => static::VersionParam
+            'token_id' => self::RevertCsrfToken,
+            'token_param' => self::RevertCsrfTokenParam,
+            'version_param' => self::VersionParam
         ]);
     }
 
@@ -159,7 +159,7 @@ class DocumentAdminController extends AbstractController {
     public function restore(Document $document, Request $request, LogRepositoryInterface $logRepository, TranslatorInterface $translator) {
         $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
 
-        if($this->isCsrfTokenValid(static::RevertCsrfToken, $request->request->get(static::RevertCsrfTokenParam)) !== true) {
+        if($this->isCsrfTokenValid(self::RevertCsrfToken, $request->request->get(self::RevertCsrfTokenParam)) !== true) {
             $this->addFlash('error', $translator->trans('The CSRF token is invalid. Please try to resubmit the form.', [], 'validators'));
 
             return $this->redirectToRoute('document_versions', [
@@ -167,7 +167,7 @@ class DocumentAdminController extends AbstractController {
             ]);
         }
 
-        $logRepository->revert($document, $request->request->get(static::VersionParam));
+        $logRepository->revert($document, $request->request->get(self::VersionParam));
         $this->repository->persist($document);
 
         $this->addFlash('success', 'versions.restore.success');

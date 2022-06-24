@@ -30,6 +30,33 @@ class PrivacyCategoryData {
     private $description;
 
     /**
+     * @param string $id
+     * @return PrivacyCategoryData
+     */
+    public function setId(string $id): PrivacyCategoryData {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @param string $label
+     * @return PrivacyCategoryData
+     */
+    public function setLabel(string $label): PrivacyCategoryData {
+        $this->label = $label;
+        return $this;
+    }
+
+    /**
+     * @param string|null $description
+     * @return PrivacyCategoryData
+     */
+    public function setDescription(?string $description): PrivacyCategoryData {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getId() {

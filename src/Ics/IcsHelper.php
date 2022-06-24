@@ -13,18 +13,16 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Twig\Environment;
 
 class IcsHelper {
-    private static $batchSize = 20;
+    private static int $batchSize = 20;
 
-    private $appName;
-    private $languageCode;
-    private $twig;
-    private $appUrl;
+    private string $appName;
+    private string $languageCode;
+    private string $appUrl;
 
-    public function __construct(string $appName, string $languageCode, string $appUrl, Environment $twig) {
+    public function __construct(string $appName, string $languageCode, string $appUrl) {
         $this->appName = $appName;
         $this->languageCode = $languageCode;
         $this->appUrl = $appUrl;
-        $this->twig = $twig;
     }
 
     /**
@@ -43,7 +41,7 @@ class IcsHelper {
         ]);
 
         $calendar->setEventsProvider(function($startIndex) use ($events) {
-            return array_slice($events, $startIndex, static::$batchSize);
+            return array_slice($events, $startIndex, self::$batchSize);
         });
 
         // Fixes empty status field

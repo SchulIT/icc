@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class SectionController extends AbstractController {
 
-    private $repository;
+    private SectionRepositoryInterface $repository;
 
     public function __construct(SectionRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);

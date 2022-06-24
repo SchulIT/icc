@@ -17,7 +17,7 @@ class ColorUtils {
 
         $luminance = $this->computeLuminance($r, $g, $b);
 
-        if($luminance < static::Threshold) {
+        if($luminance < self::Threshold) {
             return 'white';
         }
 

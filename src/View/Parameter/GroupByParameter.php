@@ -38,13 +38,13 @@ class GroupByParameter {
 
     public function getGroupingStrategyClassName(?string $grouping, User $user, string $sectionKey): string {
         if($this->canGroup($user) !== true) {
-            return $this->groupMap[static::Grades];
+            return $this->groupMap[self::Grades];
         }
 
         $key = sprintf('group_by.%s', $sectionKey);
 
         if($grouping === null || !array_key_exists($grouping, $this->groupMap)) {
-            $grouping = $user->getData($key, null) ?? static::Teachers;
+            $grouping = $user->getData($key, null) ?? self::Teachers;
         } else {
             $user->setData($key, $grouping);
             $this->em->persist($user);

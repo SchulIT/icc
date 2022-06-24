@@ -45,15 +45,15 @@ class ExamVoter extends Voter {
      */
     protected function supports($attribute, $subject): bool {
         $attributes = [
-            static::Details,
-            static::Supervisions,
-            static::Show,
-            static::Edit,
-            static::Remove,
-            static::Unplan
+            self::Details,
+            self::Supervisions,
+            self::Show,
+            self::Edit,
+            self::Remove,
+            self::Unplan
         ];
 
-        return in_array($attribute , [ static::Add, static::Manage ]) || ($subject instanceof Exam && in_array($attribute, $attributes));
+        return in_array($attribute , [ self::Add, self::Manage ]) || ($subject instanceof Exam && in_array($attribute, $attributes));
     }
 
     /**
@@ -61,26 +61,26 @@ class ExamVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
-            case static::Show:
+            case self::Show:
                 return $this->canViewExam($subject, $token);
 
-            case static::Details:
+            case self::Details:
                 return $this->canViewDetails($subject, $token);
 
-            case static::Supervisions:
+            case self::Supervisions:
                 return $this->canViewSupervisions($subject, $token);
 
-            case static::Add:
+            case self::Add:
                 return $this->canAdd($token);
 
-            case static::Edit:
-            case static::Unplan:
+            case self::Edit:
+            case self::Unplan:
                 return $this->canEdit($subject, $token);
 
-            case static::Remove:
+            case self::Remove:
                 return $this->canRemove($subject, $token);
 
-            case static::Manage:
+            case self::Manage:
                 return $this->canManage($token);
         }
 

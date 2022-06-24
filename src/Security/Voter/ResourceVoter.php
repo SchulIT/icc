@@ -30,13 +30,13 @@ class ResourceVoter extends Voter {
      */
     protected function supports($attribute, $subject): bool {
         $attributes = [
-            static::Edit,
-            static::Remove
+            self::Edit,
+            self::Remove
         ];
 
         $staticAttributes = [
-            static::New,
-            static::View
+            self::New,
+            self::View
         ];
 
         return in_array($attribute, $staticAttributes)
@@ -48,16 +48,16 @@ class ResourceVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
-            case static::View:
+            case self::View:
                 return $this->canViewOverview($token);
 
-            case static::New:
+            case self::New:
                 return $this->canAdd($token);
 
-            case static::Edit:
+            case self::Edit:
                 return $this->canEdit($subject, $token);
 
-            case static::Remove:
+            case self::Remove:
                 return $this->canRemove($subject, $token);
         }
 

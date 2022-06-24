@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ResourceAdminController extends AbstractController {
 
-    private $repository;
+    private ResourceRepositoryInterface $repository;
 
     public function __construct(ResourceRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);

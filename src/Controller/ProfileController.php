@@ -3,23 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\IcsAccessToken;
-use App\Entity\OAuthClientInfo;
 use App\Entity\User;
 use App\Form\NotificationsType;
 use App\Grouping\Grouper;
 use App\Grouping\UserTypeAndGradeStrategy;
 use App\Repository\DeviceTokenRepositoryInterface;
-use App\Repository\OAuthClientInfoRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
-use App\Security\OAuth2\AppManager;
-use App\Security\Voter\AccessTokenVoter;
 use App\Security\Voter\DeviceTokenVoter;
 use App\Settings\NotificationSettings;
 use App\Sorting\Sorter;
 use App\Sorting\StringGroupStrategy;
 use App\Sorting\UserUsernameStrategy;
-use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,7 +70,7 @@ class ProfileController extends AbstractController {
     /**
      * @Route("/apps", name="profile_apps")
      */
-    public function apps(DeviceTokenRepositoryInterface $deviceTokenRepository, OAuthClientInfoRepositoryInterface $clientInfoRepository) {
+    public function apps(DeviceTokenRepositoryInterface $deviceTokenRepository) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -83,7 +78,7 @@ class ProfileController extends AbstractController {
 
         return $this->render('profile/apps.html.twig', [
             'apps' => $devices,
-            'csrf_key' => static::RemoveAppCrsfTokenKey
+            'csrf_key' => self::RemoveAppCrsfTokenKey
         ]);
     }
 
@@ -94,26 +89,8 @@ class ProfileController extends AbstractController {
         $this->denyAccessUnlessGranted(DeviceTokenVoter::Remove, $token);
 
         $csrfToken = $request->request->get('_csrf_token');
-        if($this->isCsrfTokenValid(static::RemoveAppCrsfTokenKey, $csrfToken)) {
+        if($this->isCsrfTokenValid(self::RemoveAppCrsfTokenKey, $csrfToken)) {
             $deviceTokenRepository->remove($token);
-
-            $this->addFlash('success', 'profile.apps.remove.success');
-        } else {
-            $this->addFlash('success', 'profile.apps.remove.error.csrf');
-        }
-
-        return $this->redirectToRoute('profile_apps');
-    }
-
-    /**
-     * @Route("/tokens/{identifier}/revoke", name="profile_revoke_token", methods={"POST"})
-     */
-    public function revokeToken(AccessToken $token, Request $request, AppManager $appManager) {
-        $this->denyAccessUnlessGranted(AccessTokenVoter::Revoke, $token);
-
-        $csrfToken = $request->request->get('_csrf_token');
-        if($this->isCsrfTokenValid(static::RemoveAppCrsfTokenKey, $csrfToken)) {
-            $appManager->revokeAccessToken($token);
 
             $this->addFlash('success', 'profile.apps.remove.success');
         } else {

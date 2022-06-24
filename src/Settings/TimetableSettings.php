@@ -40,53 +40,53 @@ class TimetableSettings extends AbstractSettings {
 
     public function getDescriptionBeforeLesson(int $lesson): ?string {
         return $this->getValue(
-            $this->getKeyName(static::DescriptionBeforeKey, $lesson)
+            $this->getKeyName(self::DescriptionBeforeKey, $lesson)
         );
     }
 
     public function setDescriptionBeforeLesson(int $lesson, ?string $description): void {
         $this->setValue(
-            $this->getKeyName(static::DescriptionBeforeKey, $lesson),
+            $this->getKeyName(self::DescriptionBeforeKey, $lesson),
             $description
         );
     }
 
     public function getStart($lesson) {
         return $this->getValue(
-            $this->getKeyName(static::StartKey, $lesson)
+            $this->getKeyName(self::StartKey, $lesson)
         );
     }
 
     public function getEnd($lesson) {
         return $this->getValue(
-            $this->getKeyName(static::EndKey, $lesson)
+            $this->getKeyName(self::EndKey, $lesson)
         );
     }
 
     public function setStart($lesson, $time = null): void {
         $this->setValue(
-            $this->getKeyName(static::StartKey, $lesson),
+            $this->getKeyName(self::StartKey, $lesson),
             $time
         );
     }
 
     public function setEnd($lesson, $time = null): void {
         $this->setValue(
-            $this->getKeyName(static::EndKey, $lesson),
+            $this->getKeyName(self::EndKey, $lesson),
             $time
         );
     }
 
     public function setCollapsible($lesson, bool $isCollapsable): void {
         $this->setValue(
-            $this->getKeyName(static::CollapsibleKey, $lesson),
+            $this->getKeyName(self::CollapsibleKey, $lesson),
             $isCollapsable
         );
     }
 
     public function isCollapsible($lesson): bool {
         return $this->getValue(
-            $this->getKeyName(static::CollapsibleKey, $lesson),
+            $this->getKeyName(self::CollapsibleKey, $lesson),
             false
         );
     }
@@ -95,73 +95,73 @@ class TimetableSettings extends AbstractSettings {
      * @return int[]
      */
     public function getCategoryIds(): array {
-        return $this->getValue(static::CategoriesKey, [ ]);
+        return $this->getValue(self::CategoriesKey, [ ]);
     }
 
     /**
      * @param int[] $ids
      */
     public function setCategoryIds(array $ids): void {
-        $this->setValue(static::CategoriesKey, $ids);
+        $this->setValue(self::CategoriesKey, $ids);
     }
 
     /**
      * @return int[]
      */
     public function getGradeIdsWithCourseNames(): array {
-        return $this->getValue(static::GradesWithCourseNames, [ ]);
+        return $this->getValue(self::GradesWithCourseNames, [ ]);
     }
 
     /**
      * @param int[] $ids
      */
     public function setGradeIdsWithCourseNames(array $ids): void {
-        $this->setValue(static::GradesWithCourseNames, $ids);
+        $this->setValue(self::GradesWithCourseNames, $ids);
     }
 
     /**
      * @return int[]
      */
     public function getGradeIdsWithMembershipTypes(): array {
-        return $this->getValue(static::GradesWithMembershipTypes, [ ]);
+        return $this->getValue(self::GradesWithMembershipTypes, [ ]);
     }
 
     /**
      * @param int[] $ids
      */
     public function setGradeIdsWithMembershipTypes(array $ids): void {
-        $this->setValue(static::GradesWithMembershipTypes, $ids);
+        $this->setValue(self::GradesWithMembershipTypes, $ids);
     }
 
     public function setSupervisionLabel(?string $label): void {
-        $this->setValue(static::SupervisionLabelKey, $label);
+        $this->setValue(self::SupervisionLabelKey, $label);
     }
 
     public function getSupervisionLabel(): ?string {
-        return $this->getValue(static::SupervisionLabelKey);
+        return $this->getValue(self::SupervisionLabelKey);
     }
 
     public function setSupervisionColor(?string $color): void {
-        $this->setValue(static::SupervisionColorKey, $color);
+        $this->setValue(self::SupervisionColorKey, $color);
     }
 
     public function getSupervisionColor(): ?string {
-        return $this->getValue(static::SupervisionColorKey, null);
+        return $this->getValue(self::SupervisionColorKey, null);
     }
 
     public function getMaxLessons(): int {
-        return (int)$this->getValue(static::MaxLessonsKey, 0);
+        return (int)$this->getValue(self::MaxLessonsKey, 0);
     }
 
     public function setMaxLessons(int $maxLessons): void {
-        $this->setValue(static::MaxLessonsKey, $maxLessons);
+        $this->setValue(self::MaxLessonsKey, $maxLessons);
     }
 
     public function getDays(): array {
-        return $this->getValue(static::Days, [1,2,3,4,5]);
+        return $this->getValue(self::Days, [1,2,3,4,5]);
     }
 
     public function setDays(array $days): void {
-        $this->setValue(static::Days, $days);
+        $this->setValue(self::Days, $days);
     }
 }

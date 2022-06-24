@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class RoomTagAdminController extends AbstractController {
 
-    private $repository;
+    private RoomTagRepositoryInterface $repository;
 
     public function __construct(RoomTagRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);

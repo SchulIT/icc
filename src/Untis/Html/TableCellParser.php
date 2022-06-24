@@ -25,7 +25,7 @@ class TableCellParser {
             $value = $value->trimStart('(')->trimEnd(')');
         }
 
-        if(in_array($value->toString(), static::EmptyCellValues)) {
+        if(in_array($value->toString(), self::EmptyCellValues)) {
             return null;
         }
 

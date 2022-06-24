@@ -21,7 +21,7 @@ class MessageScopeVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject): bool {
-        return $attribute === static::USE
+        return $attribute === self::USE
             && $subject instanceof MessageScope;
     }
 

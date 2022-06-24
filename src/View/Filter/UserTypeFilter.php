@@ -12,14 +12,12 @@ use App\Utils\EnumArrayUtils;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class UserTypeFilter {
-    private $sorter;
-    private $types;
-    private $authorizationChecker;
+    private Sorter $sorter;
+    private array $types;
 
-    public function __construct(Sorter $sorter, AuthorizationCheckerInterface $authorizationChecker) {
+    public function __construct(Sorter $sorter) {
         $this->sorter = $sorter;
         $this->types = UserType::values();
-        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**

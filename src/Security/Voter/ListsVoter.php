@@ -29,12 +29,12 @@ class ListsVoter extends Voter {
      */
     protected function supports($attribute, $subject): bool {
         $attributes = [
-            static::Teachers,
-            static::Students,
-            static::Tuitions,
-            static::StudyGroups,
-            static::Privacy,
-            static::ExportTeachers
+            self::Teachers,
+            self::Students,
+            self::Tuitions,
+            self::StudyGroups,
+            self::Privacy,
+            self::ExportTeachers
         ];
 
         return in_array($attribute, $attributes)
@@ -46,14 +46,14 @@ class ListsVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
-            case static::Teachers:
+            case self::Teachers:
                 return true; // everyone can see teachers
 
-            case static::Students:
-            case static::StudyGroups:
-            case static::Tuitions:
-            case static::Privacy:
-            case static::ExportTeachers:
+            case self::Students:
+            case self::StudyGroups:
+            case self::Tuitions:
+            case self::Privacy:
+            case self::ExportTeachers:
                 return $this->canViewLists($token);
         }
 

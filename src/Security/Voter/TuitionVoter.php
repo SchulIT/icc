@@ -18,7 +18,7 @@ class TuitionVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject): bool {
-        return $attribute === static::View && $subject instanceof Tuition;
+        return $attribute === self::View && $subject instanceof Tuition;
     }
 
     /**

@@ -15,9 +15,9 @@ use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 class DocumentFilesystem implements DirectoryNamerInterface {
 
-    private $filesystem;
-    private $mimeTypes;
-    private $logger;
+    private FilesystemOperator $filesystem;
+    private MimeTypes $mimeTypes;
+    private LoggerInterface|NullLogger $logger;
 
     public function __construct(FilesystemOperator $filesystem, MimeTypes $mimeTypes, LoggerInterface $logger = null) {
         $this->filesystem = $filesystem;
@@ -33,7 +33,7 @@ class DocumentFilesystem implements DirectoryNamerInterface {
     public function getDownloadResponse(DocumentAttachment $attachment): Response {
         $path = $this->getAttachmentPath($attachment);
 
-        if(!$this->filesystem->has($path)) {
+        if(!$this->filesystem->fileExists($path)) {
             $this->logger->alert('Cannot send document attachment as file does not exist on the filesystem', [
                 'file' => $path
             ]);
@@ -50,7 +50,7 @@ class DocumentFilesystem implements DirectoryNamerInterface {
     public function removeDocumentAttachment(DocumentAttachment $attachment): void {
         $path = $this->getAttachmentPath($attachment);
 
-        if($attachment->getDocument() !== null && $this->filesystem->has($path)) {
+        if($attachment->getDocument() !== null && $this->filesystem->fileExists($path)) {
             $this->filesystem->delete($this->getAttachmentPath($attachment));
         }
     }
@@ -58,8 +58,8 @@ class DocumentFilesystem implements DirectoryNamerInterface {
     public function removeDocumentDirectory(Document $document): void {
         $path = $this->getAttachmentsDirectory($document);
 
-        if($this->filesystem->has($path)) {
-            $this->filesystem->deleteDir($path);
+        if($this->filesystem->directoryExists($path)) {
+            $this->filesystem->deleteDirectory($path);
         }
     }
 

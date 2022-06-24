@@ -14,7 +14,6 @@ use App\Repository\ExamRepositoryInterface;
 use App\Security\Voter\ExamVoter;
 use App\Settings\ExamSettings;
 use App\Timetable\TimetableTimeHelper;
-use i;
 use Jsvrcek\ICS\Model\CalendarEvent;
 use Jsvrcek\ICS\Model\Description\Location;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,12 +21,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExamIcsExporter {
-    private $examSettings;
-    private $examRepository;
-    private $timetableTimeHelper;
-    private $icsHelper;
-    private $translator;
-    private $authorizationChecker;
+    private ExamSettings $examSettings;
+    private ExamRepositoryInterface $examRepository;
+    private TimetableTimeHelper $timetableTimeHelper;
+    private IcsHelper $icsHelper;
+    private TranslatorInterface $translator;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     public function __construct(ExamSettings $examSettings, ExamRepositoryInterface $examRepository, TimetableTimeHelper $timetableTimeHelper,
                                 IcsHelper $icsHelper, TranslatorInterface $translator, AuthorizationCheckerInterface $authorizationChecker) {
@@ -205,14 +204,6 @@ class ExamIcsExporter {
         return implode(', ', array_map(function(Grade $grade) {
             return $grade->getName();
         }, $grades));
-    }
-
-    /**
-     * @param string[] $rooms
-     * @return string
-     */
-    private function getRoomsAsString($rooms): string {
-        return implode(', ', $rooms);
     }
 
     private function getDateTime(\DateTime $day, \DateTime $time) {

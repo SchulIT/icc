@@ -18,14 +18,14 @@ class TeacherTagVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject): bool {
-        return $subject instanceof TeacherTag && $attribute === static::View;
+        return $subject instanceof TeacherTag && $attribute === self::View;
     }
 
     /**
      * @inheritDoc
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
-        if ($attribute == static::View) {
+        if ($attribute == self::View) {
             return $this->canView($subject, $token);
         }
 

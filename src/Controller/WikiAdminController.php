@@ -11,7 +11,7 @@ use App\Sorting\LogEntryStrategy;
 use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
 use EasySlugger\SluggerInterface;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\Filesystem;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -33,7 +33,7 @@ class WikiAdminController extends AbstractController {
     private const RevertCsrfTokenParam = '_csrf_token';
     private const RevertCsrfToken = 'revert-wiki-article';
 
-    private $repository;
+    private WikiArticleRepositoryInterface $repository;
 
     public function __construct(WikiArticleRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
@@ -100,9 +100,9 @@ class WikiAdminController extends AbstractController {
         return $this->render('admin/wiki/versions.html.twig', [
             'article' => $article,
             'logs' => $logs,
-            'token_id' => static::RevertCsrfToken,
-            'token_param' => static::RevertCsrfTokenParam,
-            'version_param' => static::VersionParam
+            'token_id' => self::RevertCsrfToken,
+            'token_param' => self::RevertCsrfTokenParam,
+            'version_param' => self::VersionParam
         ]);
     }
 
@@ -130,9 +130,9 @@ class WikiAdminController extends AbstractController {
         return $this->render('admin/wiki/version.html.twig', [
             'article' => $article,
             'entry' => $entry,
-            'token_id' => static::RevertCsrfToken,
-            'token_param' => static::RevertCsrfTokenParam,
-            'version_param' => static::VersionParam
+            'token_id' => self::RevertCsrfToken,
+            'token_param' => self::RevertCsrfTokenParam,
+            'version_param' => self::VersionParam
         ]);
     }
 
@@ -142,7 +142,7 @@ class WikiAdminController extends AbstractController {
     public function restore(WikiArticle $article, Request $request, LogRepositoryInterface $logRepository, TranslatorInterface $translator) {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
 
-        if($this->isCsrfTokenValid(static::RevertCsrfToken, $request->request->get(static::RevertCsrfTokenParam)) !== true) {
+        if($this->isCsrfTokenValid(self::RevertCsrfToken, $request->request->get(self::RevertCsrfTokenParam)) !== true) {
             $this->addFlash('error', $translator->trans('The CSRF token is invalid. Please try to resubmit the form.', [], 'validators'));
 
             return $this->redirectToRoute('wiki_article_versions', [
@@ -150,7 +150,7 @@ class WikiAdminController extends AbstractController {
             ]);
         }
 
-        $logRepository->revert($article, $request->request->get(static::VersionParam));
+        $logRepository->revert($article, $request->request->get(self::VersionParam));
         $this->repository->persist($article);
 
         $this->addFlash('success', 'versions.restore.success');
@@ -192,7 +192,7 @@ class WikiAdminController extends AbstractController {
     /**
      * @Route("/upload", name="wiki_upload", methods={"POST"})
      */
-    public function upload(Request $request, FilesystemInterface $wikiFilesystem, SluggerInterface $slugger, UrlGeneratorInterface $urlGenerator) {
+    public function upload(Request $request, Filesystem $wikiFilesystem, SluggerInterface $slugger, UrlGeneratorInterface $urlGenerator) {
         /** @var UploadedFile|null $file */
         $file = $request->files->get('file');
 
@@ -206,7 +206,7 @@ class WikiAdminController extends AbstractController {
 
             do {
                 $filename = sprintf('%s.%s', $slugger->uniqueSlugify($name), $ext);
-            } while($wikiFilesystem->has($filename));
+            } while($wikiFilesystem->fileExists($filename));
 
             $stream = fopen($file->getRealPath(), 'r+');
             $wikiFilesystem->writeStream($filename, $stream);

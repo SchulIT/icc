@@ -3,7 +3,7 @@
 namespace App\Twig;
 
 use App\Entity\User;
-use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
+use LightSaml\SpBundle\Security\Http\Authenticator\SamlToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserVariable {
@@ -34,7 +34,7 @@ class UserVariable {
     public function getServices() {
         $token = $this->tokenStorage->getToken();
 
-        if($token instanceof SamlSpToken) {
+        if($token instanceof SamlToken) {
             return $token->getAttribute('services');
         }
 

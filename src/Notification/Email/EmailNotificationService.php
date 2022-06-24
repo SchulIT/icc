@@ -5,30 +5,29 @@ namespace App\Notification\Email;
 use App\Settings\NotificationSettings;
 use App\Utils\EnumArrayUtils;
 use Psr\Log\LoggerInterface;
+use Swift_Mailer;
 use Swift_Message;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
 class EmailNotificationService {
 
-    private $blacklistDomains = [ 'example.com' ];
+    private array $blacklistDomains = [ 'example.com' ];
 
-    private $isEnabled;
-    private $appName;
-    private $sender;
-    private $mailer;
-    private $twig;
-    private $urlGenerator;
-    private $settings;
-    private $logger;
+    private bool $isEnabled;
+    private string $appName;
+    private string $sender;
+    private Swift_Mailer $mailer;
+    private Environment $twig;
+    private NotificationSettings $settings;
+    private ?LoggerInterface $logger;
 
-    public function __construct(bool $isEnabled, $appName, string $sender, \Swift_Mailer $mailer, Environment $twig, UrlGeneratorInterface $urlGenerator, NotificationSettings $notificationSettings, LoggerInterface $logger = null) {
+    public function __construct(bool $isEnabled, string $appName, string $sender, Swift_Mailer $mailer, Environment $twig, NotificationSettings $notificationSettings, LoggerInterface $logger = null) {
         $this->isEnabled = $isEnabled;
         $this->appName = $appName;
         $this->sender = $sender;
         $this->mailer = $mailer;
         $this->twig = $twig;
-        $this->urlGenerator = $urlGenerator;
         $this->settings = $notificationSettings;
         $this->logger = $logger;
     }

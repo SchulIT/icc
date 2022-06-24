@@ -46,17 +46,17 @@ class MessageVoter extends Voter {
      */
     protected function supports($attribute, $subject): bool {
         $attributes = [
-            static::View,
-            static::Edit,
-            static::Remove,
-            static::Confirm,
-            static::Dismiss,
-            static::Download,
-            static::Upload,
-            static::Poll
+            self::View,
+            self::Edit,
+            self::Remove,
+            self::Confirm,
+            self::Dismiss,
+            self::Download,
+            self::Upload,
+            self::Poll
         ];
 
-        return in_array($attribute, [ static::New, static::Priority]) || (in_array($attribute, $attributes) && $subject instanceof Message);
+        return in_array($attribute, [ self::New, self::Priority]) || (in_array($attribute, $attributes) && $subject instanceof Message);
     }
 
     /**
@@ -64,34 +64,34 @@ class MessageVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
-            case static::New:
+            case self::New:
                 return $this->canCreate($token);
 
-            case static::View:
+            case self::View:
                 return $this->canView($subject, $token);
 
-            case static::Edit:
+            case self::Edit:
                 return $this->canEdit($subject, $token);
 
-            case static::Remove:
+            case self::Remove:
                 return $this->canRemove($subject, $token);
 
-            case static::Confirm:
+            case self::Confirm:
                 return $this->canConfirm($subject, $token);
 
-            case static::Dismiss:
+            case self::Dismiss:
                 return $this->canDismiss($subject, $token);
 
-            case static::Download:
+            case self::Download:
                 return $this->canDownload($subject, $token);
 
-            case static::Upload:
+            case self::Upload:
                 return $this->canUpload($subject, $token);
 
-            case static::Priority:
+            case self::Priority:
                 return $this->canSetPriority($token);
 
-            case static::Poll:
+            case self::Poll:
                 return $this->canVote($subject, $token);
         }
 

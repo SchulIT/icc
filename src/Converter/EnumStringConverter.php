@@ -7,8 +7,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EnumStringConverter {
 
-    private $translator;
-    private $enumFormKeyMapping;
+    private TranslatorInterface $translator;
+    private array $enumFormKeyMapping;
 
     public function __construct(TranslatorInterface $translator, array $enumFormKeyMapping) {
         $this->translator = $translator;

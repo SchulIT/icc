@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
@@ -52,7 +53,7 @@ class MessageAttachment {
 
     /**
      * @ORM\Column(type="datetime")
-     * @var \DateTimeImmutable
+     * @var DateTime
      */
     private $updatedAt;
 
@@ -91,7 +92,7 @@ class MessageAttachment {
         $this->file = $file;
 
         if($file !== null) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new DateTime();
         }
 
         return $this;
@@ -146,9 +147,9 @@ class MessageAttachment {
     }
 
     /**
-     * @return \DateTimeImmutable
+     * @return DateTime
      */
-    public function getUpdatedAt(): \DateTimeImmutable {
+    public function getUpdatedAt(): DateTime {
         return $this->updatedAt;
     }
 }

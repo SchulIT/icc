@@ -39,12 +39,12 @@ class DocumentVoter extends Voter {
      */
     protected function supports($attribute, $subject): bool {
         $attributes = [
-            static::Edit,
-            static::Remove,
-            static::View,
+            self::Edit,
+            self::Remove,
+            self::View,
         ];
 
-        return $attribute === static::New || $attribute === static::ViewOthers || $attribute === static::Admin ||
+        return $attribute === self::New || $attribute === self::ViewOthers || $attribute === self::Admin ||
             ($subject instanceof Document && in_array($attribute, $attributes));
     }
 
@@ -53,22 +53,22 @@ class DocumentVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
-            case static::New:
+            case self::New:
                 return $this->canCreateDocument($token);
 
-            case static::Edit:
+            case self::Edit:
                 return $this->canEditDocument($subject, $token);
 
-            case static::Remove:
+            case self::Remove:
                 return $this->canRemoveDocument($token);
 
-            case static::View:
+            case self::View:
                 return $this->canViewDocument($subject, $token);
 
-            case static::ViewOthers:
+            case self::ViewOthers:
                 return $this->canViewOtherDocuments($token);
 
-            case static::Admin:
+            case self::Admin:
                 return $this->canViewAdminOverview($token);
         }
 

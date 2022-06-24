@@ -23,8 +23,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class BookCommentController extends AbstractController {
 
-    private $repository;
-    private $sectionResolver;
+    private BookCommentRepositoryInterface $repository;
+    private SectionResolverInterface $sectionResolver;
 
     public function __construct(BookCommentRepositoryInterface $repository, SectionResolverInterface $sectionResolver, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);

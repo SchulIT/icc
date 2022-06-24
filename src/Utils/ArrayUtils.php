@@ -130,8 +130,8 @@ class ArrayUtils {
     }
 
     public static function areEqual(iterable $iterableA, iterable $iterableB) {
-        $arrayA = static::iterableToArray($iterableA);
-        $arrayB = static::iterableToArray($iterableB);
+        $arrayA = self::iterableToArray($iterableA);
+        $arrayB = self::iterableToArray($iterableB);
 
         if(count($arrayA) != count($arrayB)) {
             return false;
@@ -149,8 +149,8 @@ class ArrayUtils {
      */
     public static function intersect(iterable $iterableA, iterable $iterableB): array {
         return array_uintersect(
-            static::iterableToArray($iterableA),
-            static::iterableToArray($iterableB),
+            self::iterableToArray($iterableA),
+            self::iterableToArray($iterableB),
             function($objectA, $objectB) {
                 return $objectA === $objectB ? 0 : 1;
             }

@@ -28,7 +28,7 @@ class RoomTagFixtures extends Fixture {
         $manager->persist($roomTagTablets);
         $manager->flush();
 
-        $this->addReference(static::WifiTagReference, $roomTagWifi);
-        $this->addReference(static::TabletsTagReference, $roomTagTablets);
+        $this->addReference(self::WifiTagReference, $roomTagWifi);
+        $this->addReference(self::TabletsTagReference, $roomTagTablets);
     }
 }

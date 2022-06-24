@@ -286,24 +286,6 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
     }
 
     /**
-     * @param array $studyGroups
-     * @param array $foundStudyGroups
-     * @param string $substitutionId
-     * @throws ImportException
-     */
-    private function throwMissingStudyGroup(array $studyGroups, array $foundStudyGroups, string $substitutionId) {
-        $foundStudyGroupIds = array_map(function(StudyGroup $studyGroup) {
-            return $studyGroup->getExternalId();
-        }, $foundStudyGroups);
-
-        foreach($studyGroups as $studyGroup) {
-            if(!in_array($studyGroup, $foundStudyGroupIds)) {
-                throw new ImportException(sprintf('Study group "%s" on substitution ID "%s" was not found.', $studyGroup, $substitutionId));
-            }
-        }
-    }
-
-    /**
      * @param string[] $teachers
      * @param Teacher[] $foundTeachers
      * @param string $substitutionId

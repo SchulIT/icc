@@ -11,16 +11,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class MarkdownController extends AbstractController {
-    private $markdown;
-    private $slugger;
-    private $baseUrl;
+    private Markdown $markdown;
 
-    public function __construct(string $baseUrl, Markdown $markdown, SluggerInterface $slugger, RefererHelper $refererHelper) {
+    public function __construct(Markdown $markdown, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
 
         $this->markdown = $markdown;
-        $this->slugger = $slugger;
-        $this->baseUrl = $baseUrl;
     }
 
     /**

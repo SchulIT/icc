@@ -8,10 +8,11 @@ use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use Doctrine\Common\Collections\Collection;
+use League\Flysystem\FilesystemException;
 
 class MessageDownloadViewHelper extends AbstractMessageFileViewHelper {
 
-    private $messageFilesystem;
+    private MessageFilesystem $messageFilesystem;
 
     public function __construct(StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository, UserRepositoryInterface $userRepository, MessageFilesystem $filesystem) {
         parent::__construct($studentRepository, $teacherRepository, $userRepository);
@@ -19,6 +20,9 @@ class MessageDownloadViewHelper extends AbstractMessageFileViewHelper {
         $this->messageFilesystem = $filesystem;
     }
 
+    /**
+     * @throws FilesystemException
+     */
     private function getDownloads(Message $message): array {
         $downloads = [ ];
 
@@ -43,6 +47,9 @@ class MessageDownloadViewHelper extends AbstractMessageFileViewHelper {
         return $message->getDownloadEnabledStudyGroups();
     }
 
+    /**
+     * @throws FilesystemException
+     */
     protected function createViewFromData(Message $message, array $students, array $studentUsersLookup, array $parentUsersLookup, array $teachers, array $teacherUsersLookup, array $users): AbstractMessageFileView {
         return new MessageDownloadView(
             $students,

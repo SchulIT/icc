@@ -7,8 +7,8 @@ use App\Entity\User;
 
 class MessageDownloadView extends AbstractMessageFileView {
 
-    /** @var array<int, string[]>  */
-    private $downloads;
+    /** @var array<string, string[]>  */
+    private array $downloads;
 
     public function __construct(array $students, array $studentUsersLookup, array $parentUsersLookup, array $teachers, array $teacherUsersLookup, array $users, array $downloads) {
         parent::__construct($students, $studentUsersLookup, $parentUsersLookup, $teachers, $teacherUsersLookup, $users);
@@ -18,9 +18,9 @@ class MessageDownloadView extends AbstractMessageFileView {
 
     /**
      * @param User $user
-     * @return array[]
+     * @return string[]
      */
-    public function getUserDownloads(User $user) {
+    public function getUserDownloads(User $user): array {
         return $this->downloads[$user->getUsername()] ?? [ ];
     }
 }

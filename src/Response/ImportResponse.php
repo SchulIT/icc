@@ -101,5 +101,38 @@ class ImportResponse {
         return $this->removed;
     }
 
+    /**
+     * @return object[]
+     */
+    public function getIgnored(): array {
+        return $this->ignored;
+    }
 
+    /**
+     * @return int
+     */
+    public function getAddedCount(): int {
+        return $this->addedCount;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUpdatedCount(): int {
+        return $this->updatedCount;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRemovedCount(): int {
+        return $this->removedCount;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIgnoredCount(): int {
+        return $this->ignoredCount;
+    }
 }

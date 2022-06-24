@@ -30,19 +30,10 @@ class GradeCrudController extends AbstractCrudController
         $externalId = TextField::new('externalId');
         $name = TextField::new('name');
         $allowCollapse = Field::new('allowCollapse');
-        $id = IntegerField::new('id', 'ID');
-        $uuid = Field::new('uuid');
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
         $memberships = AssociationField::new('memberships');
         $teachers = AssociationField::new('teachers');
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$externalId, $name, $allowCollapse, $id, $memberships, $teachers];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$externalId, $name, $allowCollapse, $id, $uuid, $memberships, $teachers];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$externalId, $name, $allowCollapse];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$externalId, $name, $allowCollapse];
-        }
+        return [$id, $externalId, $name, $allowCollapse, $memberships, $teachers];
     }
 }

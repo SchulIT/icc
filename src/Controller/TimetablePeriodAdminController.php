@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TimetablePeriodAdminController extends AbstractController {
 
-    private $repository;
+    private TimetablePeriodRepositoryInterface $repository;
 
     public function __construct(TimetablePeriodRepositoryInterface $repository, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);

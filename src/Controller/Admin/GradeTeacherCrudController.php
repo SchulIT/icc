@@ -32,16 +32,8 @@ class GradeTeacherCrudController extends AbstractCrudController
         $teacher = AssociationField::new('teacher');
         $grade = AssociationField::new('grade');
         $section = AssociationField::new('section');
-        $id = IntegerField::new('id', 'ID');
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$type, $id, $teacher, $grade, $section];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$type, $id, $teacher, $grade, $section];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$type, $teacher, $grade, $section];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$type, $teacher, $grade, $section];
-        }
+        return [$id, $grade, $type, $teacher, $section];
     }
 }

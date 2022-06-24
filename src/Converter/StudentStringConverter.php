@@ -8,13 +8,13 @@ use App\Section\SectionResolverInterface;
 
 class StudentStringConverter {
 
-    private $sectionResolver;
+    private SectionResolverInterface $sectionResolver;
 
     public function __construct(SectionResolverInterface $sectionResolver) {
         $this->sectionResolver = $sectionResolver;
     }
 
-    public function convert(Student $student, bool $includeGrade = false, ?Section $section = null) {
+    public function convert(Student $student, bool $includeGrade = false, ?Section $section = null): string {
         if($includeGrade === true) {
             if($section === null) {
                 $section = $this->sectionResolver->getCurrentSection();

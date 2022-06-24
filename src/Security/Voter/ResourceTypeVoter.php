@@ -24,8 +24,8 @@ class ResourceTypeVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject): bool {
-        return $attribute === static::New
-            || ($subject instanceof ResourceType && in_array($attribute, [ static::Edit, static::Remove ]));
+        return $attribute === self::New
+            || ($subject instanceof ResourceType && in_array($attribute, [ self::Edit, self::Remove ]));
     }
 
     /**
@@ -33,13 +33,13 @@ class ResourceTypeVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
         switch($attribute) {
-            case static::New:
+            case self::New:
                 return $this->canCreate($token);
 
-            case static::Edit:
+            case self::Edit:
                 return $this->canEdit($subject, $token);
 
-            case static::Remove:
+            case self::Remove:
                 return $this->canRemove($subject, $token);
         }
 

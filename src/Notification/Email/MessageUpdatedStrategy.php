@@ -11,15 +11,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MessageUpdatedStrategy implements EmailStrategyInterface, PostEmailSendActionInterface {
 
-    private $translator;
-    private $userRepository;
-    private $dateHelper;
-    private $recipientResolver;
-    private $messageRepository;
+    private TranslatorInterface $translator;
+    private DateHelper $dateHelper;
+    private MessageRecipientResolver $recipientResolver;
+    private MessageRepositoryInterface $messageRepository;
 
-    public function __construct(TranslatorInterface $translator, MessageRecipientResolver $recipientResolver, UserRepositoryInterface $userRepository, DateHelper $dateHelper, MessageRepositoryInterface $messageRepository) {
+    public function __construct(TranslatorInterface $translator, MessageRecipientResolver $recipientResolver, DateHelper $dateHelper, MessageRepositoryInterface $messageRepository) {
         $this->translator = $translator;
-        $this->userRepository = $userRepository;
         $this->dateHelper = $dateHelper;
         $this->recipientResolver = $recipientResolver;
         $this->messageRepository = $messageRepository;

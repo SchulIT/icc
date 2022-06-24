@@ -6,7 +6,7 @@ use App\Entity\WikiArticle;
 use App\Http\FlysystemFileResponse;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Security\Voter\WikiVoter;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\Filesystem;
 use Mimey\MimeTypes;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +21,7 @@ class WikiController extends AbstractController {
 
     private const ResultsPerPage = 20;
 
-    private $repository;
+    private WikiArticleRepositoryInterface $repository;
 
     public function __construct(WikiArticleRepositoryInterface $repository) {
         $this->repository = $repository;
@@ -70,8 +70,8 @@ class WikiController extends AbstractController {
     /**
      * @Route("/image/{filename}", name="wiki_image")
      */
-    public function image($filename, FilesystemInterface $wikiFilesystem, MimeTypes $mimeTypes) {
-        if($wikiFilesystem->has($filename) !== true) {
+    public function image($filename, Filesystem $wikiFilesystem, MimeTypes $mimeTypes) {
+        if($wikiFilesystem->fileExists($filename) !== true) {
             throw new NotFoundHttpException();
         }
 
@@ -109,15 +109,15 @@ class WikiController extends AbstractController {
         $pages = 0;
 
         if(count($results) > 0) {
-            $pages = ceil((float)count($results) / static::ResultsPerPage);
+            $pages = ceil((float)count($results) / self::ResultsPerPage);
         }
 
         if(!is_numeric($p) || $p <= 0 || $p > $pages) {
             $p = 1;
         }
 
-        $offset = ($p - 1) * static::ResultsPerPage;
-        $results = array_slice($results, $offset, static::ResultsPerPage);
+        $offset = ($p - 1) * self::ResultsPerPage;
+        $results = array_slice($results, $offset, self::ResultsPerPage);
 
         return $this->render('wiki/search.html.twig', [
             'articles' => $results,

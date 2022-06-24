@@ -339,11 +339,11 @@ class BookController extends AbstractController {
             $end = $dateHelper->getToday();
 
             if($gradeFilterView->getCurrentGrade() !== null) {
-                $paginator = $lessonRepository->getMissingByGradePaginator(static::ItemsPerPage, $page, $gradeFilterView->getCurrentGrade(), $start, $end);
+                $paginator = $lessonRepository->getMissingByGradePaginator(self::ItemsPerPage, $page, $gradeFilterView->getCurrentGrade(), $start, $end);
             } elseif($tuitionFilterView->getCurrentTuition() !== null) {
-                $paginator = $lessonRepository->getMissingByTuitionPaginator(static::ItemsPerPage, $page, $tuitionFilterView->getCurrentTuition(), $start, $end);
+                $paginator = $lessonRepository->getMissingByTuitionPaginator(self::ItemsPerPage, $page, $tuitionFilterView->getCurrentTuition(), $start, $end);
             } else if($teacherFilterView->getCurrentTeacher() !== null) {
-                $paginator = $lessonRepository->getMissingByTeacherPaginator(static::ItemsPerPage, $page, $teacherFilterView->getCurrentTeacher(), $start, $end);
+                $paginator = $lessonRepository->getMissingByTeacherPaginator(self::ItemsPerPage, $page, $teacherFilterView->getCurrentTeacher(), $start, $end);
             }
         }
 
@@ -352,7 +352,7 @@ class BookController extends AbstractController {
 
         if($paginator !== null) {
             $missing = [ ];
-            $pages = ceil((float)$paginator->count() / static::ItemsPerPage);
+            $pages = ceil((float)$paginator->count() / self::ItemsPerPage);
 
             /** @var LessonEntity $lessonEntity */
             foreach($paginator->getIterator() as $lessonEntity) {

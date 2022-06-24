@@ -30,7 +30,7 @@ class BookEntryController extends AbstractController {
 
     use DateRequestTrait;
 
-    private $repository;
+    private LessonEntryRepositoryInterface $repository;
 
     public function __construct(LessonEntryRepositoryInterface $entryRepository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);

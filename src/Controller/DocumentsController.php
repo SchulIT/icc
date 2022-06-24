@@ -29,8 +29,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DocumentsController extends AbstractController {
 
-    private $grouper;
-    private $sorter;
+    private Grouper $grouper;
+    private Sorter $sorter;
 
     public function __construct(Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);

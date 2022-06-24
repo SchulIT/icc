@@ -28,16 +28,8 @@ class GradeMembershipCrudController extends AbstractCrudController
         $student = AssociationField::new('student');
         $grade = AssociationField::new('grade');
         $section = AssociationField::new('section');
-        $id = IntegerField::new('id', 'ID');
+        $id = IntegerField::new('id', 'ID')->hideOnForm();
 
-        if (Crud::PAGE_INDEX === $pageName) {
-            return [$id, $student, $grade, $section];
-        } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$id, $student, $grade, $section];
-        } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$student, $grade, $section];
-        } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$student, $grade, $section];
-        }
+        return [$id, $student, $grade, $section];
     }
 }

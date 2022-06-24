@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Validator\Color;
+use DateTime;
 use DateTimeImmutable;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
@@ -54,7 +55,7 @@ class DocumentAttachment {
 
     /**
      * @ORM\Column(type="datetime")
-     * @var DateTimeImmutable
+     * @var DateTime
      */
     private $updatedAt;
 
@@ -93,7 +94,7 @@ class DocumentAttachment {
         $this->file = $file;
 
         if($file !== null) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new DateTime();
         }
 
         return $this;

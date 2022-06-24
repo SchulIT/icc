@@ -18,7 +18,7 @@ class ColorValidator extends ConstraintValidator {
             throw new UnexpectedTypeException($constraint, Color::class);
         }
 
-        if(!empty($value) && !preg_match(static::$ColorRegexp, $value)) {
+        if(!empty($value) && !preg_match(self::$ColorRegexp, $value)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $value)
                 ->addViolation();

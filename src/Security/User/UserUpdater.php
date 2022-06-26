@@ -27,8 +27,8 @@ class UserUpdater implements EventSubscriberInterface {
             return;
         }
 
-        //$this->userMapper->mapUser($user, $token->getAttributes());
-        //$this->userRepository->persist($user);
+        $this->userMapper->mapUser($user, $token->getAttributes());
+        $this->userRepository->persist($user);
     }
 
     /**

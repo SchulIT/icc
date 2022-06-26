@@ -51,6 +51,8 @@
         "symfony/flex": "^1.1",
         "symfony/form": "^5.4",
         "symfony/framework-bundle": "^5.4",
+        "symfony/mailer": "^5.4",
+        "symfony/messenger": "^5.4",
         "symfony/monolog-bundle": "^3.1",
         "symfony/process": "^5.4",
         "symfony/property-access": "^5.4",
@@ -59,13 +61,14 @@
         "symfony/security-bundle": "^5.4",
         "symfony/serializer": "^5.4",
         "symfony/string": "^5.4",
-        "symfony/swiftmailer-bundle": "^3.1",
         "symfony/translation": "^5.4",
         "symfony/twig-bundle": "^5.4",
         "symfony/validator": "^5.4",
         "symfony/web-link": "^5.4",
         "symfony/webpack-encore-bundle": "^1.4",
         "symfony/yaml": "^5.4",
+        "twig/extra-bundle": "^3.4",
+        "twig/inky-extra": "^3.4",
         "vich/uploader-bundle": "^1.9",
         "willdurand/js-translation-bundle": "^5.0",
         "xantios/mimey": "^2.1"
@@ -95,7 +98,8 @@
         },
         "sort-packages": true,
         "allow-plugins": {
-            "symfony/flex": true
+            "symfony/flex": true,
+            "phpstan/extension-installer": true
         }
     },
     "autoload": {

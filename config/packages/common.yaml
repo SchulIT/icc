@@ -12,8 +12,8 @@ common:
         logo_link: 'dashboard'
     locales: "%locales%"
     menu: mainMenu
-    disable:
-        messenger: ~
+    messenger:
+        transport: 'messenger.transport.async'
 
 services:
     SchulIT\CommonBundle\Monolog\DatabaseHandler:

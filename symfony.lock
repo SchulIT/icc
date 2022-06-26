@@ -147,9 +147,6 @@
             "./config/routes/easy_admin.yaml"
         ]
     },
-    "egulias/email-validator": {
-        "version": "3.1.1"
-    },
     "eightpoints/guzzle-bundle": {
         "version": "7.0",
         "recipe": {
@@ -473,9 +470,6 @@
             "./config/packages/stof_doctrine_extensions.yaml"
         ]
     },
-    "swiftmailer/swiftmailer": {
-        "version": "v6.2.7"
-    },
     "symfony/apache-pack": {
         "version": "1.0",
         "recipe": {
@@ -619,6 +613,18 @@
             "./config/packages/lock.yaml"
         ]
     },
+    "symfony/mailer": {
+        "version": "5.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "4.3",
+            "ref": "97a61eabb351d7f6cb7702039bcfe07fe9d7e03c"
+        },
+        "files": [
+            "./config/packages/mailer.yaml"
+        ]
+    },
     "symfony/maker-bundle": {
         "version": "1.0",
         "recipe": {
@@ -627,6 +633,18 @@
             "version": "1.0",
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
+    },
+    "symfony/messenger": {
+        "version": "5.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "5.4",
+            "ref": "dfe610928a5c61619bdfc830cd7fa7f091368023"
+        },
+        "files": [
+            "./config/packages/messenger.yaml"
+        ]
     },
     "symfony/mime": {
         "version": "v5.3.4"
@@ -760,20 +778,6 @@
     },
     "symfony/string": {
         "version": "v5.3.3"
-    },
-    "symfony/swiftmailer-bundle": {
-        "version": "2.5",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "2.5",
-            "ref": "f0b2fccdca2dfd97dc2fd5ad216d5e27c4f895ac"
-        },
-        "files": [
-            "./config/packages/dev/swiftmailer.yaml",
-            "./config/packages/swiftmailer.yaml",
-            "./config/packages/test/swiftmailer.yaml"
-        ]
     },
     "symfony/translation": {
         "version": "5.3",

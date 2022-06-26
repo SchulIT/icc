@@ -178,10 +178,14 @@ class Builder {
         ])
             ->setExtra('icon', 'fas fa-times');
 
+        if($this->tokenStorage->getToken() === null) {
+            return $book;
+        }
+
         $user = $this->tokenStorage->getToken()->getUser();
         $currentSection = $this->sectionResolver->getCurrentSection();
 
-        if($user !== null && $user instanceof User && $user->getTeacher() !== null && $currentSection !== null) {
+        if($user instanceof User && $user->getTeacher() !== null && $currentSection !== null) {
             $count = $this->lessonRepository->countMissingByTeacher($user->getTeacher(), $currentSection->getStart(), $this->dateHelper->getToday());
             $missing->setExtra('count', $count);
         }
@@ -204,6 +208,10 @@ class Builder {
             ->setChildrenAttributes([
                 'class' => 'navbar-nav float-lg-right'
             ]);
+
+        if($this->tokenStorage->getToken() === null) {
+            return $menu;
+        }
 
         $user = $this->tokenStorage->getToken()->getUser();
 
@@ -412,10 +420,10 @@ class Builder {
             ])
                 ->setExtra('icon', 'fas fa-clipboard-list');
 
-            /*$menu->addChild('mails.label', [
-                'route' => 'admin_mails'
+            $menu->addChild('messenger.label', [
+                'route' => 'admin_messenger'
             ])
-                ->setExtra('icon', 'far fa-envelope');*/
+                ->setExtra('icon', 'fas fa-envelope-open-text');
 
             $menu->addChild('audit.label', [
                 'uri' => '/admin/audit'

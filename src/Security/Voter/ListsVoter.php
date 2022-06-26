@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Utils\EnumArrayUtils;
+use phpDocumentor\Reflection\Utils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -67,6 +68,10 @@ class ListsVoter extends Voter {
 
         /** @var User $user */
         $user = $token->getUser();
+
+        if($user === null) {
+            return false;
+        }
 
         return EnumArrayUtils::inArray($user->getUserType(), [
             UserType::Student(),

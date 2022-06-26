@@ -13,30 +13,35 @@ use App\Event\SickNoteCreatedEvent;
 use App\Section\SectionResolverInterface;
 use App\Settings\SickNoteSettings;
 use SchulIT\CommonBundle\Helper\DateHelper;
-use Swift_Mailer;
-use Swift_Message;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class SickNoteSender implements EventSubscriberInterface {
 
-    private $sender;
-    private $appName;
+    private string $sender;
+    private string $appName;
 
-    private $converter;
-    private $twig;
-    private $mailer;
-    private $translator;
-    private $dateHelper;
-    private $userConverter;
-    private $settings;
-    private $sectionResolver;
+    private StudentStringConverter $converter;
+    private Environment $twig;
+    private MailerInterface $mailer;
+    private TranslatorInterface $translator;
+    private DateHelper $dateHelper;
+    private UserStringConverter $userConverter;
+    private SickNoteSettings $settings;
+    private SectionResolverInterface $sectionResolver;
 
-    private $tokenStorage;
+    private TokenStorageInterface $tokenStorage;
 
-    public function __construct(string $sender, string $appName, StudentStringConverter $converter, Environment $twig, Swift_Mailer $mailer, TranslatorInterface $translator,
+    public function __construct(string $sender, string $appName, StudentStringConverter $converter, Environment $twig, MailerInterface $mailer, TranslatorInterface $translator,
                                 DateHelper $dateHelper, UserStringConverter $userConverter, SickNoteSettings $settings, SectionResolverInterface $sectionResolver, TokenStorageInterface $tokenStorage) {
         $this->sender = $sender;
         $this->appName = $appName;
@@ -51,8 +56,15 @@ class SickNoteSender implements EventSubscriberInterface {
         $this->tokenStorage = $tokenStorage;
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws TransportExceptionInterface
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     private function sendSickNote(SickNote $note, User $sender) {
 
+        /** @var string[] $cc */
         $cc = [ ];
         $teachers = [ ];
 
@@ -88,30 +100,36 @@ class SickNoteSender implements EventSubscriberInterface {
             'grade' => $gradeName
         ]);
 
-        $message = (new Swift_Message())
-            ->setSubject($this->translator->trans($isQuarantine ? 'sick_note.quarantine.title' : 'sick_note.sick.title', [
+        $mail = (new Email())
+            ->subject($this->translator->trans($isQuarantine ? 'sick_note.quarantine.title' : 'sick_note.sick.title', [
                 '%student%' => $this->converter->convert($note->getStudent()),
-                '%grade%' => $grade !== null ? $grade->getName() : null
+                '%grade%' => $grade?->getName()
             ], 'email'))
-            ->setBody($body, 'text/html')
-            ->setCc($cc)
-            ->setFrom([$this->sender], $this->appName)
-            ->setSender($this->sender, $this->appName);
+            ->html($body)
+            ->cc(...$cc)
+            ->from(new Address($this->sender, $this->appName))
+            ->sender(new Address($this->sender, $this->appName));
 
         if(!empty($this->settings->getRecipient())) {
-            $message->setTo($this->settings->getRecipient());
+            $mail->to($this->settings->getRecipient());
         }
 
         if(!empty($note->getEmail())) {
-            $message->addBcc($note->getEmail());
-            $message->setReplyTo($note->getEmail());
+            $mail->bcc($note->getEmail());
+            $mail->replyTo($note->getEmail());
         } else {
-            $message->setReplyTo($this->settings->getRecipient());
+            $mail->replyTo($this->settings->getRecipient());
         }
 
-        $this->mailer->send($message);
+        $this->mailer->send($mail);
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws TransportExceptionInterface
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function onSickNoteCreated(SickNoteCreatedEvent $event) {
         $token = $this->tokenStorage->getToken();
 

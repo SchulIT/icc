@@ -68,6 +68,10 @@ class WikiVoter extends Voter {
         /** @var User $user */
         $user = $token->getUser();
 
+        if($user === null) {
+            return false;
+        }
+
         $currentArticle = $article;
         do {
             $visibilities = $currentArticle->getVisibilities()

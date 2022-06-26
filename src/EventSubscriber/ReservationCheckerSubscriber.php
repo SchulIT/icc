@@ -14,9 +14,10 @@ use App\Rooms\Reservation\ResourceAvailabilityHelper;
 use App\Validator\NoReservationCollision;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
-use Swift_Mailer;
-use Swift_Message;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -33,7 +34,7 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
     private string $appName;
     private string $sender;
 
-    private Swift_Mailer $mailer;
+    private MailerInterface $mailer;
     private Environment $twig;
     private TranslatorInterface $translator;
     private DateHelper $dateHelper;
@@ -41,7 +42,7 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
     private ResourceAvailabilityHelper $availabilityHelper;
 
     public function __construct(string $appName, string $sender, ValidatorInterface $validator, ResourceReservationRepositoryInterface $reservationRepository,
-                                ExamRepositoryInterface $examRepository, Swift_Mailer $mailer, Environment $twig, TranslatorInterface $translator,
+                                ExamRepositoryInterface $examRepository, MailerInterface $mailer, Environment $twig, TranslatorInterface $translator,
                                 DateHelper $dateHelper, ResourceAvailabilityHelper $availabilityHelper) {
         $this->appName = $appName;
         $this->sender = $sender;
@@ -168,14 +169,14 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
             'sender' => ''
         ]);
 
-        $message = (new Swift_Message())
-            ->setSubject($this->translator->trans('reservation_removed.title', [],'email'))
-            ->setFrom([$this->sender], $this->appName)
-            ->setSender($this->sender, $this->appName)
-            ->setBody($content, 'text/html')
-            ->setTo([ $reservation->getTeacher()->getEmail() ]);
+        $mail = (new Email())
+            ->from(new Address($this->sender, $this->appName))
+            ->sender(new Address($this->sender, $this->appName))
+            ->subject($this->translator->trans('reservation_removed.title', [],'email'))
+            ->to($reservation->getTeacher()->getEmail())
+            ->html($content);
 
-        $this->mailer->send($message);
+        $this->mailer->send($mail);
     }
 
     private function sendViolationsEmail(ResourceReservation $reservation, ConstraintViolationListInterface $violationList): void {
@@ -185,14 +186,14 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
             'sender' => ''
         ]);
 
-        $message = (new Swift_Message())
-            ->setSubject($this->translator->trans('reservation.title', [],'email'))
-            ->setFrom([$this->sender], $this->appName)
-            ->setSender($this->sender, $this->appName)
-            ->setBody($content, 'text/html')
-            ->setTo([ $reservation->getTeacher()->getEmail() ]);
+        $mail = (new Email())
+            ->from(new Address($this->sender, $this->appName))
+            ->sender(new Address($this->sender, $this->appName))
+            ->subject($this->translator->trans('reservation.title', [],'email'))
+            ->to($reservation->getTeacher()->getEmail())
+            ->html($content);
 
-        $this->mailer->send($message);
+        $this->mailer->send($mail);
     }
 
     /**
@@ -218,14 +219,14 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
         }
 
         foreach($recipients as $recipient) {
-            $message = (new Swift_Message())
-                ->setSubject($this->translator->trans('reservation.title', [], 'email'))
-                ->setFrom([$this->sender], $this->appName)
-                ->setSender($this->sender, $this->appName)
-                ->setBody($content, 'text/html')
-                ->setTo([$recipient->getEmail()]);
+            $mail = (new Email())
+                ->from(new Address($this->sender, $this->appName))
+                ->sender(new Address($this->sender, $this->appName))
+                ->subject($this->translator->trans('reservation.title', [],'email'))
+                ->to($recipient->getEmail())
+                ->html($content);
 
-            $this->mailer->send($message);
+            $this->mailer->send($mail);
         }
     }
 

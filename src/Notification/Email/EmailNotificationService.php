@@ -5,10 +5,14 @@ namespace App\Notification\Email;
 use App\Settings\NotificationSettings;
 use App\Utils\EnumArrayUtils;
 use Psr\Log\LoggerInterface;
-use Swift_Mailer;
-use Swift_Message;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class EmailNotificationService {
 
@@ -17,12 +21,12 @@ class EmailNotificationService {
     private bool $isEnabled;
     private string $appName;
     private string $sender;
-    private Swift_Mailer $mailer;
+    private MailerInterface $mailer;
     private Environment $twig;
     private NotificationSettings $settings;
     private ?LoggerInterface $logger;
 
-    public function __construct(bool $isEnabled, string $appName, string $sender, Swift_Mailer $mailer, Environment $twig, NotificationSettings $notificationSettings, LoggerInterface $logger = null) {
+    public function __construct(bool $isEnabled, string $appName, string $sender, MailerInterface $mailer, Environment $twig, NotificationSettings $notificationSettings, LoggerInterface $logger = null) {
         $this->isEnabled = $isEnabled;
         $this->appName = $appName;
         $this->sender = $sender;
@@ -32,6 +36,12 @@ class EmailNotificationService {
         $this->logger = $logger;
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws TransportExceptionInterface
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function sendNotification($objective, EmailStrategyInterface $strategy) {
         if($this->isEnabled === false) {
             $this->logger->info('E-Mail notifications are disabled. Skip sending them.');
@@ -61,20 +71,20 @@ class EmailNotificationService {
                 'sender' => $strategy->getSender($objective)
             ]);
 
-            $message = (new Swift_Message)
-                ->setSubject($strategy->getSubject($objective))
-                ->setFrom([$this->sender], $this->appName)
-                ->setSender($this->sender, $this->appName)
-                ->setBody($content, 'text/html')
-                ->setTo([ $recipient->getEmail() ]);
+            $mail = (new Email())
+                ->subject($strategy->getSubject($objective))
+                ->from(new Address($this->sender, $this->appName))
+                ->sender(new Address($this->sender, $this->appName))
+                ->html($content)
+                ->to($recipient->getEmail());
 
             $replyTo = $strategy->getReplyTo($objective);
 
             if (!empty($replyTo)) {
-                $message->setReplyTo($replyTo, $strategy->getSender($objective));
+                $mail->replyTo(new Address($replyTo, $strategy->getSender($objective)));
             }
 
-            $this->mailer->send($message);
+            $this->mailer->send($mail);
         }
 
         if($strategy instanceof PostEmailSendActionInterface) {
@@ -85,7 +95,7 @@ class EmailNotificationService {
     private function isBlacklistedEmailDomain(string $email): bool {
         foreach($this->blacklistDomains as $blacklistDomain) {
             $suffix = sprintf('@%s', $blacklistDomain);
-            if(substr($email, -strlen($suffix)) === $suffix) {
+            if(str_ends_with($email, $suffix)) {
                 return true;
             }
         }

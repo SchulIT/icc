@@ -3,9 +3,8 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Teacher;
-use App\Entity\TimetablePeriod;
 use App\Entity\TimetableSupervision;
-use App\Entity\TimetableWeek;
+use DateTime;
 use PHPUnit\Framework\TestCase;
 
 class TimetableSupervisionTest extends TestCase {
@@ -18,15 +17,12 @@ class TimetableSupervisionTest extends TestCase {
         $supervision->setTeacher($teacher);
         $this->assertEquals($teacher, $supervision->getTeacher());
 
-        $period = new TimetablePeriod();
-        $supervision->setPeriod($period);
-        $this->assertEquals($period, $supervision->getPeriod());
-
         $supervision->setLesson(1);
         $this->assertEquals(1, $supervision->getLesson());
 
-        $supervision->setDay(2);
-        $this->assertEquals(2, $supervision->getDay());
+        $date = new DateTime('2022-07-01');
+        $supervision->setDate($date);
+        $this->assertEquals($date, $supervision->getDate());
 
         $supervision->setLocation('location');
         $this->assertEquals('location', $supervision->getLocation());

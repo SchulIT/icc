@@ -61,7 +61,7 @@ class HtmlSubstitutionReaderTest extends TestCase {
         $substitutionWithEmptyValue = $result->getSubstitutions()[5];
         $this->assertEquals(6, $substitutionWithEmptyValue->getId());
         $this->assertEquals([], $substitutionWithEmptyValue->getReplacementTeachers());
-        $this->assertNull($substitutionWithEmptyValue->getSubject());
+        $this->assertNull($substitutionWithEmptyValue->getReplacementSubject());
         $this->assertEquals(['08A', '08B', '08C'], $substitutionWithEmptyValue->getGrades());
 
         $substitutionWithText = $result->getSubstitutions()[1];

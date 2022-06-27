@@ -26,37 +26,33 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Builder {
-    private $factory;
-    private $authorizationChecker;
+    private FactoryInterface $factory;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
-    private $wikiRepository;
-    private $messageRepository;
-    private $lessonRepository;
+    private WikiArticleRepositoryInterface $wikiRepository;
+    private TimetableLessonRepositoryInterface $lessonRepository;
 
-    private $tokenStorage;
-    private $dateHelper;
-    private $userConverter;
-    private $translator;
-    private $darkModeManager;
-    private $notificationSettings;
-    private $sickNoteSettings;
-    private $sectionResolver;
+    private TokenStorageInterface $tokenStorage;
+    private DateHelper $dateHelper;
+    private TranslatorInterface $translator;
+    private DarkModeManagerInterface $darkModeManager;
+    private NotificationSettings $notificationSettings;
+    private SickNoteSettings $sickNoteSettings;
+    private SectionResolverInterface $sectionResolver;
 
-    private $idpProfileUrl;
+    private string $idpProfileUrl;
 
     public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authorizationChecker,
-                                WikiArticleRepositoryInterface $wikiRepository, MessageRepositoryInterface $messageRepository, TimetableLessonRepositoryInterface $lessonRepository,
-                                TokenStorageInterface $tokenStorage, DateHelper $dateHelper, UserStringConverter $userConverter,
+                                WikiArticleRepositoryInterface $wikiRepository, TimetableLessonRepositoryInterface $lessonRepository,
+                                TokenStorageInterface $tokenStorage, DateHelper $dateHelper,
                                 TranslatorInterface $translator, DarkModeManagerInterface $darkModeManager,
                                 NotificationSettings $notificationSettings, SickNoteSettings $sickNoteSettings, SectionResolverInterface $sectionResolver, string $idpProfileUrl) {
         $this->factory = $factory;
         $this->authorizationChecker = $authorizationChecker;
         $this->wikiRepository = $wikiRepository;
-        $this->messageRepository = $messageRepository;
         $this->lessonRepository = $lessonRepository;
         $this->tokenStorage = $tokenStorage;
         $this->dateHelper = $dateHelper;
-        $this->userConverter = $userConverter;
         $this->translator = $translator;
         $this->darkModeManager = $darkModeManager;
         $this->idpProfileUrl = $idpProfileUrl;

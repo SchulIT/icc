@@ -7,8 +7,8 @@ use App\Entity\DocumentAttachment;
 use App\Filesystem\DocumentFilesystem;
 use App\Filesystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
-use League\Flysystem\FilesystemInterface;
-use League\Flysystem\Memory\MemoryAdapter;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Mimey\MimeTypes;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
@@ -56,18 +56,18 @@ class DocumentFilesystemTest extends TestCase {
         return $attachment;
     }
 
-    private function getFilesystem(FilesystemInterface $flysystem): DocumentFilesystem {
+    private function getFilesystem(FilesystemOperator $flysystem): DocumentFilesystem {
         $filesystem = new DocumentFilesystem($flysystem, new MimeTypes());
-        $flysystem->put('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/foo.txt', 'bla');
-        $flysystem->put('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/bla.txt', 'foo');
-        $flysystem->put('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/foo.txt', 'bla');
-        $flysystem->put('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/bla.txt', 'foo');
+        $flysystem->write('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/foo.txt', 'bla');
+        $flysystem->write('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/bla.txt', 'foo');
+        $flysystem->write('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/foo.txt', 'bla');
+        $flysystem->write('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/bla.txt', 'foo');
 
         return $filesystem;
     }
 
     public function testGetDownloadResponse() {
-        $flysystem = new Filesystem(new MemoryAdapter());
+        $flysystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
         $response = $filesystem->getDownloadResponse($this->getAttachment(Uuid::uuid4(), 'foo.txt', $this->documentOneUuid));
@@ -77,7 +77,7 @@ class DocumentFilesystemTest extends TestCase {
     public function testGetDownloadResponseFileNotExistent() {
         $this->expectException(FileNotFoundException::class);
 
-        $flysystem = new Filesystem(new MemoryAdapter());
+        $flysystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
         $response = $filesystem->getDownloadResponse($this->getAttachment(Uuid::uuid4(), 'non_existing_file.txt', $this->documentOneUuid));
@@ -85,7 +85,7 @@ class DocumentFilesystemTest extends TestCase {
     }
 
     public function testRemoveDocumentDirectory() {
-        $flysystem = new Filesystem(new MemoryAdapter());
+        $flysystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
         $filesystem->removeDocumentDirectory($this->getDocument($this->documentOneUuid));
@@ -97,7 +97,7 @@ class DocumentFilesystemTest extends TestCase {
     }
 
     public function testRemoveNonExistingDocumentDirectory() {
-        $flysystem = new Filesystem(new MemoryAdapter());
+        $flysystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
         $filesystem->removeDocumentDirectory($this->getDocument(Uuid::uuid4()));
@@ -109,7 +109,7 @@ class DocumentFilesystemTest extends TestCase {
     }
 
     public function testRemoveDocumentAttachment() {
-        $flysystem = new Filesystem(new MemoryAdapter());
+        $flysystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
         $filesystem->removeDocumentAttachment($this->getAttachment(Uuid::uuid4(), 'foo.txt', $this->documentOneUuid));
@@ -121,7 +121,7 @@ class DocumentFilesystemTest extends TestCase {
 
     public function testRemoveNonExistingDocumentAttachment() {
         $flysystem = $this->getMockBuilder(Filesystem::class)
-            ->setConstructorArgs([new MemoryAdapter()])
+            ->setConstructorArgs([new InMemoryFilesystemAdapter()])
             ->setMethods(['deleteDir'])
             ->getMock();
         $flysystem
@@ -135,7 +135,7 @@ class DocumentFilesystemTest extends TestCase {
 
     public function testInvalidDocument() {
         $flysystem = $this->getMockBuilder(Filesystem::class)
-            ->setConstructorArgs([new MemoryAdapter()])
+            ->setConstructorArgs([new InMemoryFilesystemAdapter()])
             ->setMethods(['deleteDir'])
             ->getMock();
         $flysystem

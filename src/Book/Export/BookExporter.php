@@ -154,10 +154,6 @@ class BookExporter {
         return $book;
     }
 
-    private function computeAttendance(LessonEntryEntity $entry, Lesson $lesson): void {
-
-    }
-
     public function exportGrade(GradeEntity $grade, SectionEntity $section): Book {
         $book = (new Book())
             ->setGrades([$this->castGrade($grade, $section)]);

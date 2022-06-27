@@ -7,8 +7,8 @@ use App\Entity\MessageAttachment;
 use App\Filesystem\FileNotFoundException;
 use App\Filesystem\MessageFilesystem;
 use League\Flysystem\Filesystem;
-use League\Flysystem\FilesystemInterface;
-use League\Flysystem\Memory\MemoryAdapter;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Mimey\MimeTypes;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
@@ -59,18 +59,18 @@ class MessageFilesystemTest extends TestCase {
         return $attachment;
     }
 
-    private function getFilesystem(FilesystemInterface $flysystem): MessageFilesystem {
+    private function getFilesystem(FilesystemOperator $flysystem): MessageFilesystem {
         $filesystem = new MessageFilesystem(new TokenStorage(), $flysystem, new MimeTypes());
-        $flysystem->put('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/foo.txt', 'bla');
-        $flysystem->put('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/bla.txt', 'foo');
-        $flysystem->put('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/foo.txt', 'bla');
-        $flysystem->put('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/bla.txt', 'foo');
+        $flysystem->write('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/foo.txt', 'bla');
+        $flysystem->write('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/bla.txt', 'foo');
+        $flysystem->write('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/foo.txt', 'bla');
+        $flysystem->write('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/bla.txt', 'foo');
 
         return $filesystem;
     }
 
     public function testGetDownloadResponse() {
-        $flysystem = new Filesystem(new MemoryAdapter());
+        $flysystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
         $response = $filesystem->getMessageAttachmentDownloadResponse($this->getAttachment(Uuid::uuid4(), 'foo.txt', $this->messageOneUuid));
@@ -80,7 +80,7 @@ class MessageFilesystemTest extends TestCase {
     public function testGetDownloadResponseFileNotExistent() {
         $this->expectException(FileNotFoundException::class);
 
-        $flysystem = new Filesystem(new MemoryAdapter());
+        $flysystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
         $response = $filesystem->getMessageAttachmentDownloadResponse($this->getAttachment(Uuid::uuid4(), 'non_existing_file.txt', $this->messageOneUuid));
@@ -88,7 +88,7 @@ class MessageFilesystemTest extends TestCase {
     }
 
     public function testRemoveMessageDirectory() {
-        $flysystem = new Filesystem(new MemoryAdapter());
+        $flysystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
         $filesystem->removeMessageDirectoy($this->getMessage($this->messageOneUuid));
@@ -100,7 +100,7 @@ class MessageFilesystemTest extends TestCase {
     }
 
     public function testRemoveNonExistingMessageDirectory() {
-        $flysystem = new Filesystem(new MemoryAdapter());
+        $flysystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
         $filesystem->removeMessageDirectoy($this->getMessage(Uuid::uuid4()));
@@ -112,7 +112,7 @@ class MessageFilesystemTest extends TestCase {
     }
 
     public function testRemoveMessageAttachment() {
-        $flysystem = new Filesystem(new MemoryAdapter());
+        $flysystem = new Filesystem(new InMemoryFilesystemAdapter());
         $filesystem = $this->getFilesystem($flysystem);
 
         $filesystem->removeMessageAttachment($this->getAttachment(Uuid::uuid4(), 'foo.txt', $this->messageOneUuid));
@@ -124,7 +124,7 @@ class MessageFilesystemTest extends TestCase {
 
     public function testRemoveNonExistingMessageAttachment() {
         $flysystem = $this->getMockBuilder(Filesystem::class)
-            ->setConstructorArgs([new MemoryAdapter()])
+            ->setConstructorArgs([new InMemoryFilesystemAdapter()])
             ->setMethods(['deleteDir'])
             ->getMock();
         $flysystem
@@ -138,7 +138,7 @@ class MessageFilesystemTest extends TestCase {
 
     public function testInvalidMessage() {
         $flysystem = $this->getMockBuilder(Filesystem::class)
-            ->setConstructorArgs([new MemoryAdapter()])
+            ->setConstructorArgs([new InMemoryFilesystemAdapter()])
             ->setMethods(['deleteDir'])
             ->getMock();
         $flysystem

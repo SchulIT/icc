@@ -4,9 +4,9 @@ namespace App\Tests\Entity;
 
 use App\Entity\Room;
 use App\Entity\TimetableLesson;
-use App\Entity\TimetablePeriod;
 use App\Entity\TimetableWeek;
 use App\Entity\Tuition;
+use DateTime;
 use PHPUnit\Framework\TestCase;
 
 class TimetableLessonTest extends TestCase {
@@ -15,23 +15,19 @@ class TimetableLessonTest extends TestCase {
 
         $this->assertNull($lesson->getId());
 
-        $lesson->setDay(1);
-        $this->assertEquals(1, $lesson->getDay());
+        $date = new DateTime('2022-07-01');
+        $lesson->setDate($date);
+        $this->assertEquals($date, $lesson->getDate());
 
-        $lesson->setLesson(2);
-        $this->assertEquals(2, $lesson->getLesson());
+        $lesson->setLessonStart(1);
+        $this->assertEquals(1, $lesson->getLessonStart());
+
+        $lesson->setLessonEnd(2);
+        $this->assertEquals(2, $lesson->getLessonEnd());
 
         $room = new Room();
         $lesson->setRoom($room);
         $this->assertEquals($room, $lesson->getRoom());
-
-        $week = new TimetableWeek();
-        $lesson->setWeek($week);
-        $this->assertEquals($week, $lesson->getWeek());
-
-        $period = new TimetablePeriod();
-        $lesson->setPeriod($period);
-        $this->assertEquals($period, $lesson->getPeriod());
 
         $tuition = new Tuition();
         $lesson->setTuition($tuition);

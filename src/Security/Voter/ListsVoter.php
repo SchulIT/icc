@@ -66,7 +66,7 @@ class ListsVoter extends Voter {
             return true;
         }
 
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $token->getUser();
 
         if($user === null) {

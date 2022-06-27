@@ -48,16 +48,14 @@ class TimetableController extends AbstractControllerWithMessages {
 
     private TimetableHelper $timetableHelper;
     private TimetableSettings $timetableSettings;
-    private Sorter $sorter;
 
     public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
                                 DateHelper $dateHelper, TimetableHelper $timetableHelper, TimetableSettings $timetableSettings,
-                                Sorter $sorter, RefererHelper $refererHelper) {
+                                RefererHelper $refererHelper) {
         parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper, $refererHelper);
 
         $this->timetableHelper = $timetableHelper;
         $this->timetableSettings = $timetableSettings;
-        $this->sorter = $sorter;
     }
 
     /**

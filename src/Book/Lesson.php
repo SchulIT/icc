@@ -3,37 +3,22 @@
 namespace App\Book;
 
 use App\Entity\LessonEntry;
-use App\Entity\Lesson as LessonEntity;
 use App\Entity\Substitution;
+use App\Entity\TimetableLesson;
 use DateTime;
 
 class Lesson {
 
-    /** @var DateTime */
-    private $date;
+    private DateTime $date;
+    private int $lessonNumber;
+    private ?TimetableLesson $lesson;
+    private ?LessonEntry $entry;
+    private int $absentCount = 0;
+    private int $lateCount = 0;
+    private int $presentCount = 0;
+    private ?Substitution $substitution;
 
-    /** @var int */
-    private $lessonNumber;
-
-    /** @var LessonEntity|null */
-    private $lesson;
-
-    /** @var LessonEntry|null */
-    private $entry;
-
-    /** @var int  */
-    private $absentCount = 0;
-
-    /** @var int  */
-    private $lateCount = 0;
-
-    /** @var int  */
-    private $presentCount = 0;
-
-    /** @var Substitution|null */
-    private $substitution = null;
-
-    public function __construct(DateTime $date, int $lessonNumber, ?LessonEntity $lesson = null, ?LessonEntry $entry = null, ?Substitution $substitution = null) {
+    public function __construct(DateTime $date, int $lessonNumber, ?TimetableLesson $lesson = null, ?LessonEntry $entry = null, ?Substitution $substitution = null) {
         $this->date = $date;
         $this->lessonNumber = $lessonNumber;
         $this->lesson = $lesson;
@@ -55,10 +40,7 @@ class Lesson {
         return $this->lessonNumber;
     }
 
-    /**
-     * @return LessonEntity|null
-     */
-    public function getLesson(): ?LessonEntity {
+    public function getLesson(): ?TimetableLesson {
         return $this->lesson;
     }
 
@@ -69,11 +51,7 @@ class Lesson {
         return $this->entry;
     }
 
-    /**
-     * @param LessonEntity|null $lesson
-     * @return Lesson
-     */
-    public function setLesson(?LessonEntity $lesson): Lesson {
+    public function setLesson(?TimetableLesson $lesson): Lesson {
         $this->lesson = $lesson;
         return $this;
     }

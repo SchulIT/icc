@@ -1,0 +1,37 @@
+{% extends "import/_import.html.twig" %}
+
+{% block title %}{{ 'import.timetable.html.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'import.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block import_content %}
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                <p>{{ 'import.timetable.html.info'|trans }}</p>
+            </div>
+
+            {{ form_widget(form) }}
+
+            <p>{{ 'import.timetable.html.template.info'|trans }}</p>
+
+            <a href="/static/stundenplan.gpf" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-download"></i> {{ 'import.timetable.html.template.download'|trans }}
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block import_card_footer %}
+    <button type="submit" class="btn btn-primary btn-sm">
+        <i class="fa fa-upload"></i> {{ 'actions.upload'|trans }}
+    </button>
+{% endblock %}

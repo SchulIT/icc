@@ -4,41 +4,37 @@ namespace App\Timetable;
 
 use App\Entity\TimetableSupervision;
 use App\Entity\TimetableLesson as TimetableLessonEntity;
+use DateTime;
 
 class TimetableDay {
-    /**
-     * @var int
-     */
-    private $day;
 
-    /**
-     * @var bool
-     */
-    private $isCurrentDay;
+    private DateTime $date;
+
+    private bool $isCurrentDay;
 
     /** @var bool Flag whether this is the upcoming day when viewing timetable on weekends */
-    private $isUpcomingDay;
+    private bool $isUpcomingDay;
 
     /** @var bool Flag whether this day is considered free */
-    private $isFree = false;
+    private bool $isFree = false;
 
     /**
-     * @var TimetableLesson[]
+     * @var TimetableLessonContainer[]
      */
-    private $lessons = [ ];
+    private array $lessons = [ ];
 
-    public function __construct(int $day, bool $isCurrentDay, bool $isUpcomingDay, bool $isFree) {
-        $this->day = $day;
+    public function __construct(DateTime $date, bool $isCurrentDay, bool $isUpcomingDay, bool $isFree) {
+        $this->date = $date;
         $this->isCurrentDay = $isCurrentDay;
         $this->isUpcomingDay = $isUpcomingDay;
         $this->isFree = $isFree;
     }
 
     /**
-     * @return int
+     * @return DateTime
      */
-    public function getDay(): int {
-        return $this->day;
+    public function getDate(): DateTime {
+        return $this->date;
     }
 
     /**
@@ -63,19 +59,19 @@ class TimetableDay {
     }
 
     /**
-     * @return TimetableLesson[]
+     * @return TimetableLessonContainer[]
      */
-    public function getLessons() {
+    public function getLessonsContainers(): array {
         return $this->lessons;
     }
 
     /**
      * @param int $lesson
-     * @return TimetableLesson
+     * @return TimetableLessonContainer
      */
-    public function getTimetableLesson(int $lesson): TimetableLesson {
+    public function getTimetableLessonsContainer(int $lesson): TimetableLessonContainer {
         if(!array_key_exists($lesson, $this->lessons)) {
-            $this->lessons[$lesson] = new TimetableLesson($lesson);
+            $this->lessons[$lesson] = new TimetableLessonContainer($lesson);
         }
 
         return $this->lessons[$lesson];
@@ -84,22 +80,19 @@ class TimetableDay {
     /**
      * @param int $lesson
      */
-    public function addEmptyTimetableLesson(int $lesson): void {
+    public function addEmptyTimetableLessonsContainer(int $lesson): void {
         if(!array_key_exists($lesson, $this->lessons)) {
-            $this->lessons[$lesson] = new TimetableLesson($lesson);
+            $this->lessons[$lesson] = new TimetableLessonContainer($lesson);
         }
     }
 
     /**
      * @param TimetableLessonEntity $lessonEntity
      */
-    public function addTimetableLesson(TimetableLessonEntity $lessonEntity): void {
-        $lesson = $this->getTimetableLesson($lessonEntity->getLesson());
-        $lesson->addTimetableLesson($lessonEntity);
-
-        if($lessonEntity->isDoubleLesson()) {
-            $nextLesson = $this->getTimetableLesson($lessonEntity->getLesson() + 1);
-            $nextLesson->addTimetableLesson($lessonEntity);
+    public function addTimetableLessonsContainer(TimetableLessonEntity $lessonEntity): void {
+        for($lessonNumber = $lessonEntity->getLessonStart(); $lessonNumber <= $lessonEntity->getLessonEnd(); $lessonNumber++) {
+            $container = $this->getTimetableLessonsContainer($lessonNumber);
+            $container->addTimetableLesson($lessonEntity);
         }
     }
 
@@ -107,12 +100,12 @@ class TimetableDay {
      * @param TimetableSupervision $supervision
      */
     public function addSupervisionEntry(TimetableSupervision $supervision): void {
-        $ttl = $this->getTimetableLesson($supervision->getLesson());
+        $container = $this->getTimetableLessonsContainer($supervision->getLesson());
 
         if($supervision->isBefore()) {
-            $ttl->addBeforeSupervison($supervision);
+            $container->addBeforeSupervison($supervision);
         } else {
-            $ttl->addSupervision($supervision);
+            $container->addSupervision($supervision);
         }
     }
 }

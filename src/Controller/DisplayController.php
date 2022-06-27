@@ -14,7 +14,6 @@ use App\Repository\InfotextRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Sorting\AppointmentStrategy;
 use App\Sorting\Sorter;
-use App\Timetable\TimetableWeekHelper;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,10 +28,9 @@ class DisplayController extends AbstractController {
      */
     public function show(Display $display, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                          SubstitutionRepositoryInterface $substitutionRepository, AppointmentRepositoryInterface $appointmentRepository,
-                         TimetableWeekHelper $weekHelper, DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper, ImportDateTypeRepositoryInterface  $importDateTymeRepository) {
+                         DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper, ImportDateTypeRepositoryInterface  $importDateTymeRepository) {
         $today = $dateHelper->getToday();
         $appointments = [ ];
-        $currentWeek = $weekHelper->getTimetableWeek($today);
         $groups = [ ];
 
         if($display->getTargetUserType()->equals(DisplayTargetUserType::Students())) {
@@ -55,7 +53,6 @@ class DisplayController extends AbstractController {
 
         return $this->render('display/two_column_bottom.html.twig', [
             'display' => $display,
-            'week' => $currentWeek,
             'infotexts' => $infotextRepository->findAllByDate($today),
             'absent_studygroups' => $absenceRepository->findAllStudyGroups($today),
             'absent_teachers' => $absenceRepository->findAllTeachers($today),

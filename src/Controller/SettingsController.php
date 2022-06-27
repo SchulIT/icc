@@ -519,7 +519,7 @@ class SettingsController extends AbstractController {
      * @Route("/timetable", name="admin_settings_timetable")
      */
     public function timetable(Request $request, TimetableSettings $timetableSettings, GradeRepositoryInterface $gradeRepository,
-                              AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, TranslatorInterface $translator) {
+                              AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, EnumStringConverter $enumStringConverter, TranslatorInterface $translator) {
         $builder = $this->createFormBuilder();
         $builder
             ->add('days', ChoiceType::class, [
@@ -597,6 +597,32 @@ class SettingsController extends AbstractController {
                 'data' => $timetableSettings->getGradeIdsWithMembershipTypes()
             ]);
 
+        $userTypes = UserType::values();
+
+        foreach($userTypes as $name => $userType) {
+            $builder
+                ->add(sprintf('start_%s', $name), DateType::class, [
+                    'label' => 'admin.settings.appointments.start.label',
+                    'label_translation_parameters' => [
+                        '%type%' => $enumStringConverter->convert($userType)
+                    ],
+                    'help' => 'admin.settings.appointments.start.help',
+                    'data' => $timetableSettings->getStartDate($userType),
+                    'widget' => 'single_text',
+                    'required' => false
+                ])
+                ->add(sprintf('end_%s', $name), DateType::class, [
+                    'label' => 'admin.settings.appointments.end.label',
+                    'label_translation_parameters' => [
+                        '%type%' => $enumStringConverter->convert($userType)
+                    ],
+                    'help' => 'admin.settings.appointments.end.help',
+                    'data' => $timetableSettings->getEndDate($userType),
+                    'widget' => 'single_text',
+                    'required' => false
+                ]);
+        }
+
         for($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
             $builder
                 ->add(sprintf('lesson_%d_start', $lesson), TimeType::class, [
@@ -669,6 +695,11 @@ class SettingsController extends AbstractController {
             $timetableSettings->setGradeIdsWithCourseNames($form->get('grades_course_names')->getData());
             $timetableSettings->setGradeIdsWithMembershipTypes($form->get('grades_membership_types')->getData());
 
+            foreach($userTypes as $name => $userType) {
+                $timetableSettings->setStartDate($userType, $form->get(sprintf('start_%s', $name))->getData());
+                $timetableSettings->setEndDate($userType, $form->get(sprintf('end_%s', $name))->getData());
+            }
+
             for($lesson = 1; $lesson <= $timetableSettings->getMaxLessons(); $lesson++) {
                 $startKey = sprintf('lesson_%d_start', $lesson);
                 $endKey = sprintf('lesson_%d_end', $lesson);
@@ -698,7 +729,8 @@ class SettingsController extends AbstractController {
 
         return $this->render('admin/settings/timetable.html.twig', [
             'form' => $form->createView(),
-            'maxLessons' => $timetableSettings->getMaxLessons()
+            'maxLessons' => $timetableSettings->getMaxLessons(),
+            'userTypes' => $userTypes
         ]);
     }
 

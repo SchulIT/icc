@@ -2,6 +2,7 @@
 
 namespace App\Request\Data;
 
+use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -15,22 +16,11 @@ class TimetableSupervisionData {
     private $id;
 
     /**
-     * Calendar week (1-53) this supervision takes place.
-     * Note: weeks <1 or >53 are ignored without any warning.
-     *
-     * @Serializer\Type("array<integer>")
-     * @Assert\Count(min="1")
-     * @var int[]
+     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
+     * @Assert\NotNull
+     * @var DateTime
      */
-    private $weeks;
-
-    /**
-     * @Serializer\Type("int")
-     * @Assert\NotNull()
-     * @Assert\GreaterThan(0)
-     * @var int
-     */
-    private $day;
+    private ?DateTime $date;
 
     /**
      * @Serializer\Type("boolean")
@@ -76,34 +66,18 @@ class TimetableSupervisionData {
     }
 
     /**
-     * @return int[]|null
+     * @return DateTime
      */
-    public function getWeeks(): ?array {
-        return $this->weeks;
+    public function getDate(): ?DateTime {
+        return $this->date;
     }
 
     /**
-     * @param int[]|null $weeks
+     * @param DateTime $date
      * @return TimetableSupervisionData
      */
-    public function setWeeks(?array $weeks): TimetableSupervisionData {
-        $this->weeks = $weeks;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getDay(): int {
-        return $this->day;
-    }
-
-    /**
-     * @param int $day
-     * @return TimetableSupervisionData
-     */
-    public function setDay(int $day): TimetableSupervisionData {
-        $this->day = $day;
+    public function setDate(?DateTime $date): TimetableSupervisionData {
+        $this->date = $date;
         return $this;
     }
 

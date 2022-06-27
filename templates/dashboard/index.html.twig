@@ -191,7 +191,7 @@
 
     {% set currentFilter = { student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null, teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString() : null, user_type: userTypeFilter.currentType ?  userTypeFilter.currentType.value : null } %}
 
-    <div class="container-fluid px-0">
+    <div class="container-fluid px-0" id="app">
         <div class="row">
             <div class="col-md-9">
                 <div class="card">
@@ -487,4 +487,8 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/book.js') }}"></script>
 {% endblock %}

@@ -25,8 +25,6 @@ class AttributeMapper extends AbstractUserMapper implements AttributeMapperInter
             }
         }
 
-        dump($attributes);
-
         $attributes['name_id'] = $response->getFirstAssertion()->getSubject()->getNameID()->getValue();
         $attributes['services'] = $this->getServices($response);
 

@@ -23,9 +23,13 @@ class UserUpdater implements EventSubscriberInterface {
         $user = $event->getUser();
         $token = $event->getAuthenticatedToken();
 
+        return;
+
         if(!$user instanceof User || !$token instanceof SamlToken) {
             return;
         }
+
+        dump($token);
 
         $this->userMapper->mapUser($user, $token->getAttributes());
         $this->userRepository->persist($user);

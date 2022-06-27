@@ -14,7 +14,6 @@ use App\Entity\StudyGroup as StudyGroupEntity;
 use App\Entity\StudyGroupMembership as StudyGroupMembershipEntity;
 use App\Entity\Substitution as SubstitutionEntity;
 use App\Entity\TimetableLesson as TimetableLessonEntity;
-use App\Entity\TimetablePeriod as TimetablePeriodEntity;
 use App\Entity\TimetableSupervision as TimetableSupervisionEntity;
 use App\Entity\User as UserEntity;
 use App\Entity\UserType;
@@ -25,7 +24,6 @@ use App\Repository\ExamRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
-use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Response\Api\V1\Appointment;
 use App\Response\Api\V1\AppointmentList;
@@ -35,25 +33,20 @@ use App\Response\Api\V1\Message;
 use App\Response\Api\V1\MessageList;
 use App\Response\Api\V1\Substitution;
 use App\Response\Api\V1\SubstitutionList;
-use App\Response\Api\V1\Timetable;
-use App\Response\Api\V1\TimetableLesson;
-use App\Response\Api\V1\TimetablePeriod;
-use App\Response\Api\V1\TimetablePeriodList;
-use App\Response\Api\V1\TimetableSupervision;
 use App\Response\Api\V1\User;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\SubstitutionVoter;
-use App\Security\Voter\TimetablePeriodVoter;
+use App\Settings\TimetableSettings;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -298,102 +291,6 @@ class ApiV1Controller extends AbstractController {
             ->setSubstitutions(array_map(function(SubstitutionEntity $substitution) {
                 return Substitution::fromEntity($substitution);
             }, $substitutions))
-        );
-    }
-
-    /**
-     * Gets all visible timetable periods for the current user.
-     *
-     * @Route("/timetable/periods", methods={"GET"})
-     * @IsGranted("ROLE_OAUTH2_TIMETABLE")
-     *
-     * @OA\Get()
-     * @OA\Response(
-     *     response="200",
-     *     description="Returns a list of timetable periods."
-     * )
-     * @OA\Tag(name="timetable")
-     */
-    public function timetablePeriods(TimetablePeriodRepositoryInterface $periodRepository, Request $request) {
-        $periods = array_filter(
-            $periodRepository->findAll(),
-            function(TimetablePeriodEntity $period) {
-                return $this->isGranted(TimetablePeriodVoter::View, $period);
-            });
-
-        return $this->returnJson(
-            (new TimetablePeriodList())
-                ->setPeriods(array_map(function(TimetablePeriodEntity $period) {
-                    return TimetablePeriod::fromEntity($period);
-                }, $periods))
-        );
-    }
-
-    /**
-     * Get timetable lessons for the current user.
-     *
-     * Note about users with multiple students (e.g. parents):
-     * By default, only the timetable of the first student is returned. You should specify the student
-     * in the query string.
-     *
-     * @Route("/timetable/{uuid}", methods={"GET"})
-     * @IsGranted("ROLE_OAUTH2_TIMETABLE")
-     *
-     * @OA\Get()
-     * @OA\Parameter(
-     *     in="path",
-     *     name="uuid",
-     *     description="UUID of the timetable period."
-     * )
-     * @OA\Parameter(
-     *     in="query",
-     *     name="student",
-     *     description="UUID of the student which the timetable should be returned for",
-     *     required=false
-     * )
-     * @OA\Response(
-     *     response="200",
-     *     description="Returns a list of timetable lessons and supervisions.",
-     *     @Model(type=Timetable::class)
-     * )
-     * @OA\Tag(name="timetable")
-     */
-    public function timetable(TimetablePeriodEntity $period, TimetableLessonRepositoryInterface $lessonRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, Request $request) {
-        /** @var UserEntity $user */
-        $user = $this->getUser();
-        $requestedStudentUuid = $request->query->get('student', null);
-
-        $student = $user->getStudents()->count() > 0 ? $user->getStudents()->first() : null;
-
-        if(!empty($requestedStudentUuid) && $user->getStudents()->count() > 1) {
-            /** @var Student $s */
-            foreach($user->getStudents() as $s) {
-                if($s->getUuid()->toString() === $requestedStudentUuid) {
-                    $student = $s;
-                    break;
-                }
-            }
-        }
-
-        $lessons = [ ];
-        $supervisions = [ ];
-
-        if($student !== null) {
-            $lessons = $lessonRepository->findAllByPeriodAndStudent($period, $student);
-        } else if($user->getTeacher() !== null) {
-            $lessons = $lessonRepository->findAllByPeriodAndTeacher($period, $user->getTeacher());
-            $supervisions = $supervisionRepository->findAllByPeriodAndTeacher($period, $user->getTeacher());
-        }
-
-        return $this->returnJson(
-            (new Timetable())
-                ->setPeriod(TimetablePeriod::fromEntity($period))
-                ->setLessons(array_map(function(TimetableLessonEntity $lesson) {
-                    return TimetableLesson::fromEntity($lesson);
-                }, $lessons))
-                ->setSupervisions(array_map(function(TimetableSupervisionEntity $supervision) {
-                    return TimetableSupervision::fromEntity($supervision);
-                }, $supervisions))
         );
     }
 

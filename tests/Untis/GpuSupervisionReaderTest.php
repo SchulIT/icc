@@ -2,7 +2,7 @@
 
 namespace App\Tests\Untis;
 
-use App\Untis\SupervisionReader;
+use App\Untis\Gpu\Supervision\SupervisionReader;
 use League\Csv\Reader;
 use PHPUnit\Framework\TestCase;
 

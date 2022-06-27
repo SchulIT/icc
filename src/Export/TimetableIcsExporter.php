@@ -8,50 +8,39 @@ use App\Entity\TimetableSupervision;
 use App\Entity\User;
 use App\Ics\IcsHelper;
 use App\Repository\TimetableLessonRepositoryInterface;
-use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
-use App\Security\Voter\TimetablePeriodVoter;
 use App\Settings\TimetableSettings;
 use App\Sorting\GradeNameStrategy;
 use App\Sorting\Sorter;
-use App\Timetable\TimetableCalenderExportHelper;
 use App\Timetable\TimetableTimeHelper;
-use DateTime;
 use Jsvrcek\ICS\Model\CalendarEvent;
 use Jsvrcek\ICS\Model\Description\Location;
 use Jsvrcek\ICS\Model\Relationship\Organizer;
 use Jsvrcek\ICS\Utility\Formatter;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TimetableIcsExporter {
 
-    private $sorter;
-    private $translator;
-    private $timetableSettings;
-    private $timetableExportHelper;
-    private $timetableTimeHelper;
-    private $icsHelper;
-    private $authorizationChecker;
+    private Sorter $sorter;
+    private TranslatorInterface $translator;
+    private TimetableSettings $timetableSettings;
+    private TimetableTimeHelper $timetableTimeHelper;
+    private IcsHelper $icsHelper;
 
-    private $lessonRepository;
-    private $periodRepository;
-    private $supervisionRepository;
+    private TimetableLessonRepositoryInterface $lessonRepository;
+    private TimetableSupervisionRepositoryInterface $supervisionRepository;
 
-    public function __construct(Sorter $sorter, TranslatorInterface $translator, TimetableSettings $timetableSettings, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
-                                TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableCalenderExportHelper $timetableExportHelper,
-                                IcsHelper $icsHelper, TimetableTimeHelper $timetableTimeHelper, AuthorizationCheckerInterface $authorizationChecker) {
+    public function __construct(Sorter $sorter, TranslatorInterface $translator, TimetableSettings $timetableSettings,
+                                TimetableLessonRepositoryInterface $lessonRepository,  TimetableSupervisionRepositoryInterface $supervisionRepository,
+                                IcsHelper $icsHelper, TimetableTimeHelper $timetableTimeHelper) {
         $this->sorter = $sorter;
         $this->translator = $translator;
         $this->timetableSettings = $timetableSettings;
-        $this->timetableExportHelper = $timetableExportHelper;
         $this->timetableTimeHelper = $timetableTimeHelper;
         $this->icsHelper = $icsHelper;
-        $this->authorizationChecker = $authorizationChecker;
 
         $this->lessonRepository = $lessonRepository;
-        $this->periodRepository = $periodRepository;
         $this->supervisionRepository = $supervisionRepository;
     }
 
@@ -74,30 +63,31 @@ class TimetableIcsExporter {
     private function makeIcsItems(User $user): array {
         $events = [ ];
 
-        foreach($this->periodRepository->findAll() as $period) {
-            if($this->authorizationChecker->isGranted(TimetablePeriodVoter::View, $period)) {
-                $lessons = [ ];
-                $supervisions = [ ];
+        $start = $this->timetableSettings->getStartDate($user->getUserType());
+        $end = $this->timetableSettings->getEndDate($user->getUserType());
 
-                if($user->getStudents()->count() > 0) {
-                    foreach($user->getStudents() as $student) {
-                        $lessons = array_merge($lessons, $this->lessonRepository->findAllByPeriodAndStudent($period, $student));
-                    }
-                } else if($user->getTeacher() !== null) {
-                    $lessons = $this->lessonRepository->findAllByPeriodAndTeacher($period, $user->getTeacher());
-                    $supervisions = $this->supervisionRepository->findAllByPeriodAndTeacher($period, $user->getTeacher());
-                }
+        if($start === null || $end === null || $start > $end) {
+            return [ ];
+        }
 
-                foreach($this->timetableExportHelper->getLessonsTimeline($period, $lessons, $supervisions) as $view) {
-                    foreach($view->getLessons() as $lesson) {
-                        $events[] = $this->makeIcsItemForLesson($view->getDay(), $lesson);
-                    }
+        $lessons = [ ];
+        $supervisions = [ ];
 
-                    foreach($view->getSupervisions() as $supervision) {
-                        $events[] = $this->makeIcsItemForSupervision($view->getDay(), $supervision);
-                    }
-                }
+        if($user->getStudents()->count() > 0) {
+            foreach($user->getStudents() as $student) {
+                $lessons = array_merge($lessons, $this->lessonRepository->findAllByStudent($start, $end, $student));
             }
+        } else if($user->getTeacher() !== null) {
+            $lessons = $this->lessonRepository->findAllByTeacher($start, $end, $user->getTeacher());
+            $supervisions = $this->supervisionRepository->findAllByTeacher($start, $end, $user->getTeacher());
+        }
+
+        foreach($lessons as $lesson) {
+            $events[] = $this->makeIcsItemForLesson($lesson);
+        }
+
+        foreach($supervisions as $supervision) {
+            $events[] = $this->makeIcsItemForSupervision($supervision);
         }
 
         return array_filter($events, function(?CalendarEvent $event) {
@@ -133,14 +123,14 @@ class TimetableIcsExporter {
         }, $grades));
     }
 
-    private function makeIcsItemForLesson(DateTime $day, TimetableLesson $lesson): CalendarEvent {
+    private function makeIcsItemForLesson(TimetableLesson $lesson): CalendarEvent {
         $event = new CalendarEvent();
-        $event->setUid(sprintf('timetable-%d-%d-%d', $day->format('W'), $day->format('N'), $lesson->getLesson()));
+        $event->setUid(sprintf('timetable-%d-%d-%d', $lesson->getDate()->format('W'), $lesson->getDate()->format('N'), $lesson->getLessonStart()));
         $event->setAllDay(false);
         $event->setSummary($this->getSubject($lesson));
 
-        $event->setStart($this->timetableTimeHelper->getLessonStartDateTime($day, $lesson->getLesson()));
-        $event->setEnd($this->timetableTimeHelper->getLessonEndDateTime($day, $lesson->getLesson() + ($lesson->isDoubleLesson() ? 1 : 0)));
+        $event->setStart($this->timetableTimeHelper->getLessonStartDateTime($lesson->getDate(), $lesson->getLessonStart()));
+        $event->setEnd($this->timetableTimeHelper->getLessonEndDateTime($lesson->getDate(), $lesson->getLessonEnd()));
 
         if($lesson->getTuition() !== null) {
             $teacher = $lesson->getTuition()->getTeachers()->first();
@@ -170,23 +160,21 @@ class TimetableIcsExporter {
         return $event;
     }
 
-    private function makeIcsItemForSupervision(DateTime $day, TimetableSupervision $supervision): CalendarEvent {
+    private function makeIcsItemForSupervision(TimetableSupervision $supervision): CalendarEvent {
         $event = new CalendarEvent();
-        $event->setUid(sprintf('supervision-%d-%d-%d-%d', $day->format('W'), $day->format('N'), $supervision->getLesson(), $supervision->isBefore()));
+        $event->setUid(sprintf('supervision-%d-%d-%d-%d', $supervision->getDate()->format('W'), $supervision->getDate()->format('N'), $supervision->getLesson(), $supervision->isBefore()));
         $event->setAllDay(false);
         $event->setSummary($this->timetableSettings->getSupervisionLabel());
 
-        $event->setStart($this->timetableTimeHelper->getLessonStartDateTime($day, $supervision->getLesson(), $supervision->isBefore()));
-        $event->setEnd($this->timetableTimeHelper->getLessonEndDateTime($day, $supervision->getLesson(), $supervision->isBefore()));
+        $event->setStart($this->timetableTimeHelper->getLessonStartDateTime($supervision->getDate(), $supervision->getLesson(), $supervision->isBefore()));
+        $event->setEnd($this->timetableTimeHelper->getLessonEndDateTime($supervision->getDate(), $supervision->getLesson(), $supervision->isBefore()));
 
         $teacher = $supervision->getTeacher();
-        if($teacher !== null) {
-            $organizer = new Organizer(new Formatter());
-            $organizer->setName(sprintf('%s %s', $teacher->getFirstname(), $teacher->getLastname()));
-            $organizer->setValue($teacher->getEmail());
+        $organizer = new Organizer(new Formatter());
+        $organizer->setName(sprintf('%s %s', $teacher->getFirstname(), $teacher->getLastname()));
+        $organizer->setValue($teacher->getEmail());
 
-            $event->setOrganizer($organizer);
-        }
+        $event->setOrganizer($organizer);
 
         if(!empty($supervision->getLocation())) {
             $location = new Location();

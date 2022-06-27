@@ -2,22 +2,26 @@
 
 namespace App\Controller;
 
-use App\Entity\TimetablePeriod;
 use App\Form\Import\Untis\CalendarWeekSchoolWeekType;
 use App\Form\Import\Untis\ExamImportType;
 use App\Form\Import\Untis\SubjectOverrideType;
 use App\Form\Import\Untis\SubstitutionGpuImportType;
 use App\Form\Import\Untis\SubstitutionHtmlImportType;
 use App\Form\Import\Untis\SupervisionImportType;
+use App\Form\Import\Untis\TimetableHtmlImportType;
+use App\Form\Import\Untis\TimetableImportType;
 use App\Form\RegExpType;
 use App\Import\ImportException;
 use App\Section\SectionResolverInterface;
 use App\Settings\UntisSettings;
-use App\Untis\DatabaseDateReader;
-use App\Untis\GpuExamImporter;
-use App\Untis\GpuSubstitutionImporter;
-use App\Untis\GpuSupervisionImporter;
-use App\Untis\Html\HtmlSubstitutionImporter;
+use App\Untis\Database\Date\DateReader;
+use App\Untis\Database\Timetable\TimetableImporter as DatabaseTimetableImporter;
+use App\Untis\Gpu\Exam\ExamImporter;
+use App\Untis\Gpu\Substitution\SubstitutionImporter as GpuSubstitutionImporter;
+use App\Untis\Gpu\Supervision\SupervisionImporter;
+use App\Untis\Html\HtmlParseException;
+use App\Untis\Html\Substitution\SubstitutionImporter as HtmlSubstitutionImporter;
+use App\Untis\Html\Timetable\TimetableImporter as HtmlTimetableImporter;
 use DateTime;
 use Exception;
 use League\Csv\Reader;
@@ -30,6 +34,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use ZipArchive;
 
 /**
  * @Route("/import")
@@ -40,7 +45,7 @@ class UntisImportController extends AbstractController {
     /**
      * @Route("/settings", name="import_untis_settings")
      */
-    public function settings(UntisSettings $settings, Request $request, DatabaseDateReader $reader) {
+    public function settings(UntisSettings $settings, Request $request, DateReader $reader) {
         $form = $this->createFormBuilder()
             ->add('overrides', CollectionType::class, [
                 'entry_type' => SubjectOverrideType::class,
@@ -208,22 +213,24 @@ class UntisImportController extends AbstractController {
         ]);
     }
 
-        /**
+    /**
      * @Route("/supervisions", name="import_untis_supervisions")
      */
-    public function supervisions(Request $request, GpuSupervisionImporter $importer, TranslatorInterface $translator) {
+    public function supervisions(Request $request, SupervisionImporter $importer, TranslatorInterface $translator) {
         $form = $this->createForm(SupervisionImportType::class);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            /** @var TimetablePeriod $period */
-            $period = $form->get('period')->getData();
+            /** @var DateTime $start */
+            $start = $form->get('start')->getData();
+            /** @var DateTime $end */
+            $end = $form->get('end')->getData();
             /** @var UploadedFile $file */
             $file = $form->get('importFile')->getData();
 
             $csvReader = Reader::createFromPath($file->getRealPath());
             try {
-                $result = $importer->import($csvReader, $period);
+                $result = $importer->import($csvReader, $start, $end);
 
                 $this->addFlash('success', $translator->trans('import.supervisions.result', [
                     '%added%' => count($result->getAdded())
@@ -243,7 +250,7 @@ class UntisImportController extends AbstractController {
     /**
      * @Route("/exams", name="import_untis_exams")
      */
-    public function exams(Request $request, GpuExamImporter $importer, TranslatorInterface $translator, SectionResolverInterface $sectionResolver) {
+    public function exams(Request $request, ExamImporter $importer, TranslatorInterface $translator, SectionResolverInterface $sectionResolver) {
         $currentSection = $sectionResolver->getCurrentSection();
         $data = [ ];
         if($currentSection !== null) {
@@ -285,5 +292,90 @@ class UntisImportController extends AbstractController {
         return $this->render('import/exams.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/timetable/db", name="import_untis_timetable")
+     */
+    public function timetable(Request $request, DatabaseTimetableImporter $importer, TranslatorInterface $translator) {
+        $form = $this->createForm(TimetableImportType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            /** @var DateTime $start */
+            $start = $form->get('start')->getData();
+            /** @var DateTime $end */
+            $end = $form->get('end')->getData();
+            /** @var UploadedFile $file */
+            $file = $form->get('importFile')->getData();
+
+            $csvReader = Reader::createFromPath($file->getRealPath());
+            try {
+                $result = $importer->import($csvReader, $start, $end);
+
+                $this->addFlash('success', $translator->trans('import.timetable.result', [
+                    '%added%' => count($result->getAdded())
+                ]));
+
+                return $this->redirectToRoute('import_untis_timetable');
+            } catch (ImportException $exception) {
+                $this->addFlash('error', $exception->getMessage());
+            }
+        }
+
+        return $this->render('import/timetable.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/timetable/html", name="import_untis_timetable_html")
+     */
+    public function timetableHtml(Request $request, HtmlTimetableImporter $importer, TranslatorInterface $translator) {
+        $form = $this->createForm(TimetableHtmlImportType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            /** @var DateTime $start */
+            $start = $form->get('start')->getData();
+            /** @var DateTime $end */
+            $end = $form->get('end')->getData();
+            /** @var UploadedFile $file */
+            $grades = $form->get('grades')->getData();
+            /** @var UploadedFile $subjects */
+            $subjects = $form->get('subjects')->getData();
+
+            try {
+                $gradesHtml = $this->readZip($grades);
+                $subjectsHtml = $this->readZip($subjects);
+
+                $result = $importer->import($gradesHtml, $subjectsHtml, $start, $end);
+
+                $this->addFlash('success', $translator->trans('import.timetable.html.result', [
+                    '%added%' => count($result->getAdded())
+                ]));
+
+                return $this->redirectToRoute('import_untis_timetable_html');
+            } catch (HtmlParseException|ImportException $exception) {
+                $this->addFlash('error', $exception->getMessage());
+            }
+        }
+
+        return $this->render('import/timetable_html.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    private function readZip(UploadedFile $file): array {
+        $html = [ ];
+
+        $zip = new ZipArchive();
+        $zip->open($file->getRealPath(), ZipArchive::RDONLY);
+        for($idx = 0; $idx < $zip->numFiles; $idx++) {
+            $html[] = $zip->getFromIndex($idx);
+        }
+        $zip->close();
+
+        return $html;
     }
 }

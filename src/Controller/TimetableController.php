@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
+use App\Date\WeekOfYear;
 use App\Entity\IcsAccessToken;
 use App\Entity\IcsAccessTokenType;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Subject;
 use App\Entity\TimetableLesson;
-use App\Entity\TimetablePeriod;
 use App\Entity\TimetableSupervision;
 use App\Entity\User;
 use App\Export\TimetableIcsExporter;
@@ -19,14 +19,10 @@ use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\SubjectRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
-use App\Repository\TimetablePeriodRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
-use App\Repository\TimetableWeekRepositoryInterface;
 use App\Security\IcsAccessToken\IcsAccessTokenManager;
-use App\Security\Voter\TimetablePeriodVoter;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
-use App\Sorting\TimetablePeriodStrategy;
 use App\Timetable\TimetableFilter;
 use App\Timetable\TimetableHelper;
 use App\Utils\ArrayUtils;
@@ -36,6 +32,7 @@ use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\SubjectsFilter;
 use App\View\Filter\TeachersFilter;
+use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,6 +44,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class TimetableController extends AbstractControllerWithMessages {
 
     use RequestTrait;
+    use CalendarWeeksTrait;
 
     private TimetableHelper $timetableHelper;
     private TimetableSettings $timetableSettings;
@@ -66,8 +64,7 @@ class TimetableController extends AbstractControllerWithMessages {
      * @Route("", name="timetable")
      */
     public function index(StudentFilter $studentFilter, TeachersFilter $teachersFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
-                          TimetableWeekRepositoryInterface $weekRepository, TimetableLessonRepositoryInterface $lessonRepository, TimetablePeriodRepositoryInterface $periodRepository,
-                          TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository,
+                          TimetableLessonRepositoryInterface $lessonRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository,
                           SubjectRepositoryInterface $subjectRepository, SectionFilter $sectionFilter, Request $request) {
         /** @var User $user */
         $user = $this->getUser();
@@ -79,32 +76,24 @@ class TimetableController extends AbstractControllerWithMessages {
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
         $teachersFilterView = $teachersFilter->handle($this->getArrayOrNull($request->query->get('teachers')), $sectionFilterView->getCurrentSection(), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
 
-        $periods = $periodRepository->findAll();
-        $periods = array_filter($periods, function(TimetablePeriod $period) use ($sectionFilterView) {
-            return $this->isGranted(TimetablePeriodVoter::View, $period) && $period->getSection() === $sectionFilterView->getCurrentSection();
-        });
+        $selectedDate = $this->resolveSelectedDate($request, $sectionFilterView->getCurrentSection(), $this->dateHelper);
 
-        $this->sorter->sort($periods, TimetablePeriodStrategy::class);
-
-        $currentPeriod = $this->getCurrentPeriod($periods);
-
-        if($request->query->get('period') !== null) {
-            foreach($periods as $period) {
-                if($period->getUuid()->toString() === $request->query->get('period')) {
-                    $currentPeriod = $period;
-                }
-            }
-        }
-
-        $weeks = $weekRepository->findAll();
+        $start = max(
+            $selectedDate,
+            $this->timetableSettings->getStartDate($user->getUserType())
+        );
+        $end = min(
+            (clone $start)->modify('+13 days'),
+            $this->timetableSettings->getEndDate($user->getUserType())
+        );
 
         $lessons = [ ];
         $supervisions = [ ];
         $membershipsTypes = [ ];
 
-        if($currentPeriod !== null) {
+        if($start <= $end) {
             if ($studentFilterView->getCurrentStudent() !== null) {
-                $lessons = $lessonRepository->findAllByPeriodAndStudent($currentPeriod, $studentFilterView->getCurrentStudent());
+                $lessons = $lessonRepository->findAllByStudent($start, $end, $studentFilterView->getCurrentStudent());
                 $lessons = $timetableFilter->filterStudentLessons($lessons);
 
                 $gradeIdsWithMembershipTypes = $this->timetableSettings->getGradeIdsWithMembershipTypes();
@@ -122,17 +111,17 @@ class TimetableController extends AbstractControllerWithMessages {
                 $supervisions = [ ];
 
                 foreach($teachersFilterView->getCurrentTeachers() as $teacher) {
-                    $lessons = array_merge($lessons, $timetableFilter->filterTeacherLessons($lessonRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher)));
-                    $supervisions = array_merge($supervisions, $supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher));
+                    $lessons = array_merge($lessons, $timetableFilter->filterTeacherLessons($lessonRepository->findAllByTeacher($start, $end, $teacher)));
+                    $supervisions = array_merge($supervisions, $supervisionRepository->findAllByTeacher($start, $end, $teacher));
                 }
             } else if ($gradeFilterView->getCurrentGrade() !== null) {
-                $lessons = $lessonRepository->findAllByPeriodAndGrade($currentPeriod, $gradeFilterView->getCurrentGrade());
+                $lessons = $lessonRepository->findAllByGrade($start, $end, $gradeFilterView->getCurrentGrade());
                 $lessons = $timetableFilter->filterGradeLessons($lessons);
             } else if ($roomFilterView->getCurrentRoom() !== null) {
-                $lessons = $lessonRepository->findAllByPeriodAndRoom($currentPeriod, $roomFilterView->getCurrentRoom());
+                $lessons = $lessonRepository->findAllByRoom($start, $end, $roomFilterView->getCurrentRoom());
                 $lessons = $timetableFilter->filterRoomLessons($lessons);
             } else if (count($subjectFilterView->getSubjects()) > 0) {
-                $lessons = $lessonRepository->findAllByPeriodAndSubjects($currentPeriod, $subjectFilterView->getCurrentSubjects());
+                $lessons = $lessonRepository->findAllBySubjects($start, $end, $subjectFilterView->getCurrentSubjects());
                 $lessons = $timetableFilter->filterSubjectsLessons($lessons);
             }
         }
@@ -140,6 +129,11 @@ class TimetableController extends AbstractControllerWithMessages {
         if(count($lessons) === 0 && count($supervisions) === 0) {
             $timetable = null;
         } else {
+            $weeks = [
+                (new WeekOfYear((int)$start->format('Y'), (int)$start->format('W'))),
+                (new WeekOfYear((int)$end->format('Y'), (int)$end->format('W')))
+            ];
+
             $timetable = $this->timetableHelper->makeTimetable($weeks, $lessons, $supervisions);
         }
 
@@ -169,32 +163,17 @@ class TimetableController extends AbstractControllerWithMessages {
             $supervisionLabels[$i] = $this->timetableSettings->getDescriptionBeforeLesson($i);
         }
 
-        $nextPeriod = null;
-        $previousPeriod = null;
-
-        if($currentPeriod !== null) {
-            // Search previous and next period (if any)
-            $periodIdx = null;
-
-            for($idx = 0; $idx < count($periods); $idx++) {
-                if($currentPeriod->getUuid() === $periods[$idx]->getUuid()) {
-                    $periodIdx = $idx;
-                    break;
-                }
-            }
-
-            if($periodIdx !== null) {
-                $nextPeriod = $periods[$periodIdx + 1] ?? null;
-                $previousPeriod = $periods[$periodIdx - 1] ?? null;
-            }
-        }
-
         $subjects = ArrayUtils::createArrayWithKeys(
             $subjectRepository->findAll(),
             function (Subject $subject) {
                 return $subject->getAbbreviation();
             }
         );
+
+        $weekStarts = [ ];
+        if($sectionFilterView->getCurrentSection() !== null) {
+            $weekStarts = $this->listCalendarWeeks($sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
+        }
 
         return $this->renderWithMessages($template, [
             'compact' => count($teachersFilterView->getCurrentTeachers()) > 1,
@@ -205,10 +184,6 @@ class TimetableController extends AbstractControllerWithMessages {
             'roomFilter'=> $roomFilterView,
             'subjectFilter' => $subjectFilterView,
             'sectionFilter' => $sectionFilterView,
-            'periods' => $periods,
-            'currentPeriod' => $currentPeriod,
-            'nextPeriod' => $nextPeriod,
-            'previousPeriod' => $previousPeriod,
             'startTimes' => $startTimes,
             'endTimes' => $endTimes,
             'gradesWithCourseNames' => $this->timetableSettings->getGradeIdsWithCourseNames(),
@@ -219,7 +194,9 @@ class TimetableController extends AbstractControllerWithMessages {
             'supervisionColor' => $this->timetableSettings->getSupervisionColor(),
             'last_import_lessons' => $importDateTypeRepository->findOneByEntityClass(TimetableLesson::class),
             'last_import_supervisions' => $importDateTypeRepository->findOneByEntityClass(TimetableSupervision::class),
-            'subjects' => $subjects
+            'subjects' => $subjects,
+            'selectedDate' => $selectedDate,
+            'weekStarts' => $weekStarts
         ]);
     }
 
@@ -256,30 +233,6 @@ class TimetableController extends AbstractControllerWithMessages {
         $user = $this->getUser();
 
         return $icsExporter->getIcsResponse($user);
-    }
-
-    /**
-     * @param TimetablePeriod[] $periods
-     * @return TimetablePeriod|null
-     */
-    private function getCurrentPeriod(array $periods): ?TimetablePeriod {
-        $today = $this->dateHelper->getToday();
-
-        while(count($this->timetableSettings->getDays()) > 0 && !in_array((int)$today->format('w'), $this->timetableSettings->getDays())) {
-            $today->modify('+1 day');
-        }
-
-        foreach($periods as $period) {
-            if($this->dateHelper->isBetween($today, $period->getStart(), $period->getEnd())) {
-                return $period;
-            }
-        }
-
-        if(count($periods) > 0) {
-            return $periods[count($periods) - 1];
-        }
-
-        return null;
     }
 
     protected function getMessageScope(): MessageScope {

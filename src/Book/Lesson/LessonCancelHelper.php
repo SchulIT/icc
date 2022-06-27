@@ -2,18 +2,18 @@
 
 namespace App\Book\Lesson;
 
-use App\Entity\Lesson;
 use App\Entity\LessonEntry;
-use App\Repository\LessonRepositoryInterface;
+use App\Entity\TimetableLesson;
+use App\Repository\TimetableLessonRepositoryInterface;
 
 class LessonCancelHelper {
-    private $lessonRepository;
+    private TimetableLessonRepositoryInterface $lessonRepository;
 
-    public function __construct(LessonRepositoryInterface $lessonRepository) {
+    public function __construct(TimetableLessonRepositoryInterface $lessonRepository) {
         $this->lessonRepository = $lessonRepository;
     }
 
-    public function cancelLesson(Lesson $lesson, string $reason) {
+    public function cancelLesson(TimetableLesson $lesson, string $reason) {
         $tuition = $lesson->getTuition();
 
         if($lesson->getEntries()->count() === 0) {

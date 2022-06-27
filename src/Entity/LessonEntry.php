@@ -21,19 +21,19 @@ class LessonEntry {
     use UuidTrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Lesson", inversedBy="entries")
+     * @ORM\ManyToOne(targetEntity="TimetableLesson", inversedBy="entries")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
-     * @var Lesson|null
+     * @var TimetableLesson|null
      */
-    private $lesson;
+    private ?TimetableLesson $lesson;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\GreaterThanOrEqual(propertyPath="lesson.lessonStart", groups={"Default", "cancel"})
      * @var int
      */
-    private $lessonStart = 1;
+    private int $lessonStart = 1;
 
     /**
      * @ORM\Column(type="integer")
@@ -41,7 +41,7 @@ class LessonEntry {
      * @Assert\GreaterThanOrEqual(propertyPath="lessonStart", groups={"Default", "cancel"})
      * @var int
      */
-    private $lessonEnd = 1;
+    private int $lessonEnd = 1;
 
     /**
      * @ORM\ManyToOne(targetEntity="Tuition")
@@ -49,7 +49,7 @@ class LessonEntry {
      * @Assert\NotNull(groups={"Default", "cancel"})
      * @var Tuition|null
      */
-    private $tuition;
+    private ?Tuition $tuition;
 
     /**
      * @ORM\ManyToOne(targetEntity="Subject")
@@ -57,14 +57,14 @@ class LessonEntry {
      * @Assert\NotNull(groups={"Default", "cancel"})
      * @var Subject|null
      */
-    private $subject;
+    private ?Subject $subject;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */
-    private $replacementSubject;
+    private ?string $replacementSubject;
 
     /**
      * @ORM\ManyToOne(targetEntity="Teacher")
@@ -72,55 +72,55 @@ class LessonEntry {
      * @Assert\NotNull(groups={"Default", "cancel"})
      * @var Teacher|null
      */
-    private $teacher;
+    private ?Teacher $teacher;
 
     /**
      * @ORM\ManyToOne(targetEntity="Teacher")
      * @ORM\JoinColumn()
      * @var Teacher|null
      */
-    private $replacementTeacher;
+    private ?Teacher $replacementTeacher;
 
     /**
      * @ORM\Column(type="string", nullable=true);
      * @Assert\NotBlank(groups={"Default"})
      * @var string|null
      */
-    private $topic;
+    private ?string $topic;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      * @Assert\NotBlank(allowNull=true, groups={"Default"})
      * @var string|null
      */
-    private $exercises;
+    private ?string $exercises;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      * @Assert\NotBlank(allowNull=true, groups={"Default"})
      * @var string|null
      */
-    private $comment;
+    private ?string $comment;
 
     /**
      * @ORM\OneToMany(targetEntity="LessonAttendance", mappedBy="entry", cascade={"persist"})
      * @Assert\Valid(groups={"Default"})
      * @var Collection<LessonAttendance>
      */
-    private $attendances;
+    private Collection $attendances;
 
     /**
      * @ORM\Column(type="boolean")
      * @var bool
      */
-    private $isCancelled = false;
+    private bool $isCancelled = false;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"cancel"})
      * @var string|null
      */
-    private $cancelReason;
+    private ?string $cancelReason;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -128,17 +128,17 @@ class LessonEntry {
     }
 
     /**
-     * @return Lesson|null
+     * @return TimetableLesson|null
      */
-    public function getLesson(): ?Lesson {
+    public function getLesson(): ?TimetableLesson {
         return $this->lesson;
     }
 
     /**
-     * @param Lesson|null $lesson
+     * @param TimetableLesson|null $lesson
      * @return LessonEntry
      */
-    public function setLesson(?Lesson $lesson): LessonEntry {
+    public function setLesson(?TimetableLesson $lesson): LessonEntry {
         $this->lesson = $lesson;
         return $this;
     }

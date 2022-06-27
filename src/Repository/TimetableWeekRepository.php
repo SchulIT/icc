@@ -26,6 +26,17 @@ class TimetableWeekRepository extends AbstractRepository implements TimetableWee
             ]);
     }
 
+    public function findOneByWeekNumber(int $number): ?TimetableWeek {
+        return $this->em->createQueryBuilder()
+            ->select('tw')
+            ->from(TimetableWeek::class, 'tw')
+            ->leftJoin('tw.weeks', 'w')
+            ->where('w.number = :number')
+            ->setParameter('number', $number)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     /**
      * @inheritDoc
      */

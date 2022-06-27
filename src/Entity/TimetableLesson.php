@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,9 +13,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  * @Auditable()
- * @ORM\Table(uniqueConstraints={
- *  @ORM\UniqueConstraint(columns={"external_id", "period_id"})
- * })
  */
 class TimetableLesson {
 
@@ -22,80 +20,64 @@ class TimetableLesson {
     use UuidTrait;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", unique=true)
      * @var string|null
      */
-    private $externalId;
+    private ?string $externalId;
 
     /**
-     * @ORM\ManyToOne(targetEntity="TimetablePeriod", inversedBy="lessons")
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\Column(type="date")
      * @Assert\NotNull()
-     * @var TimetablePeriod|null
+     * @var DateTime|null
      */
-    private $period;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="TimetableWeek")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Assert\NotNull()
-     * @var TimetableWeek|null
-     */
-    private $week;
+    private ?DateTime $date;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\Range(min="1", max="7")
      * @var int
      */
-    private $day = 0;
+    private int $lessonStart;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\GreaterThan(0)
+     * @Assert\GreaterThanOrEqual(propertyPath="lessonStart")
      * @var int
      */
-    private $lesson = 0;
-
-    /**
-     * @ORM\Column(type="boolean")
-     * @var bool
-     */
-    private $isDoubleLesson = false;
+    private int $lessonEnd;
 
     /**
      * @ORM\ManyToOne(targetEntity="Tuition")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=true, onDelete="SET NULL")
      * @var Tuition|null
      */
-    private $tuition;
+    private ?Tuition $tuition;
 
     /**
      * @ORM\ManyToOne(targetEntity="Room")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @var Room|null
      */
-    private $room;
+    private ?Room $room;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      * @var string|null
      */
-    private $location;
+    private ?string $location;
 
     /**
      * @ORM\ManyToOne(targetEntity="Subject")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @var Subject|null
      */
-    private $subject;
+    private ?Subject $subject;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */
-    private $subjectName;
+    private ?string $subjectName;
 
     /**
      * @ORM\ManyToMany(targetEntity="Teacher")
@@ -105,7 +87,7 @@ class TimetableLesson {
      * )
      * @var Collection<Teacher>
      */
-    private $teachers;
+    private Collection $teachers;
 
     /**
      * @ORM\ManyToMany(targetEntity="Grade")
@@ -115,12 +97,19 @@ class TimetableLesson {
      * )
      * @var Collection<Grade>
      */
-    private $grades;
+    private Collection $grades;
+
+    /**
+     * @ORM\OneToMany(targetEntity="LessonEntry", mappedBy="lesson", cascade={"persist"})
+     * @var Collection<LessonEntry>
+     */
+    private $entries;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->teachers = new ArrayCollection();
         $this->grades = new ArrayCollection();
+        $this->entries = new ArrayCollection();
     }
 
     /**
@@ -140,82 +129,50 @@ class TimetableLesson {
     }
 
     /**
-     * @return TimetablePeriod|null
+     * @return DateTime|null
      */
-    public function getPeriod(): ?TimetablePeriod {
-        return $this->period;
+    public function getDate(): ?DateTime {
+        return $this->date;
     }
 
     /**
-     * @param TimetablePeriod|null $period
+     * @param DateTime|null $date
      * @return TimetableLesson
      */
-    public function setPeriod(?TimetablePeriod $period): TimetableLesson {
-        $this->period = $period;
-        return $this;
-    }
-
-    /**
-     * @return TimetableWeek|null
-     */
-    public function getWeek(): ?TimetableWeek {
-        return $this->week;
-    }
-
-    /**
-     * @param TimetableWeek|null $week
-     * @return TimetableLesson
-     */
-    public function setWeek(?TimetableWeek $week): TimetableLesson {
-        $this->week = $week;
+    public function setDate(?DateTime $date): TimetableLesson {
+        $this->date = $date;
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getDay(): int {
-        return $this->day;
+    public function getLessonStart(): int {
+        return $this->lessonStart;
     }
 
     /**
-     * @param int $day
+     * @param int $lessonStart
      * @return TimetableLesson
      */
-    public function setDay(int $day): TimetableLesson {
-        $this->day = $day;
+    public function setLessonStart(int $lessonStart): TimetableLesson {
+        $this->lessonStart = $lessonStart;
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getLesson(): int {
-        return $this->lesson;
+    public function getLessonEnd(): int {
+        return $this->lessonEnd;
     }
 
     /**
-     * @param int $lesson
+     * @param int $lessonEnd
      * @return TimetableLesson
      */
-    public function setLesson(int $lesson): TimetableLesson {
-        $this->lesson = $lesson;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDoubleLesson(): bool {
-        return $this->isDoubleLesson;
-    }
-
-    /**
-     * @param bool $isDoubleLesson
-     * @return TimetableLesson
-     */
-    public function setIsDoubleLesson(bool $isDoubleLesson): TimetableLesson {
-        $this->isDoubleLesson = $isDoubleLesson;
+    public function setLessonEnd(int $lessonEnd): TimetableLesson {
+        $this->lessonEnd = $lessonEnd;
         return $this;
     }
 
@@ -339,5 +296,12 @@ class TimetableLesson {
      */
     public function getGrades(): Collection {
         return $this->grades;
+    }
+
+    /**
+     * @return Collection<LessonEntry>
+     */
+    public function getEntries(): Collection {
+        return $this->entries;
     }
 }

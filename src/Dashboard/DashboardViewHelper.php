@@ -12,22 +12,18 @@ use App\Entity\Grade;
 use App\Entity\GradeTeacher;
 use App\Entity\Message;
 use App\Entity\MessageScope;
-use App\Entity\Room;
 use App\Entity\ResourceReservation;
-use App\Entity\SickNote;
+use App\Entity\Room;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
-use App\Entity\TimetablePeriod;
 use App\Entity\TimetableSupervision;
-use App\Entity\TimetableWeek;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
-use App\Entity\Week;
 use App\Grouping\AbsentStudentGroup;
 use App\Grouping\AbsentStudentStrategy as AbstentStudentGroupStrategy;
 use App\Grouping\Grouper;
@@ -38,12 +34,10 @@ use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\ResourceReservationRepositoryInterface;
-use App\Repository\SickNoteRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
-use App\Repository\TimetableWeekRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\AbsenceVoter;
 use App\Security\Voter\AppointmentVoter;
@@ -51,7 +45,6 @@ use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\ResourceReservationVoter;
 use App\Security\Voter\SubstitutionVoter;
-use App\Security\Voter\TimetablePeriodVoter;
 use App\Settings\DashboardSettings;
 use App\Settings\TimetableSettings;
 use App\Sorting\AbsentStudentStrategy;
@@ -59,11 +52,8 @@ use App\Sorting\AbsentStudyGroupStrategy;
 use App\Sorting\AbsentTeacherStrategy;
 use App\Sorting\MessageStrategy;
 use App\Sorting\Sorter;
-use App\Timetable\TimetablePeriodHelper;
 use App\Timetable\TimetableTimeHelper;
-use App\Timetable\TimetableWeekHelper;
 use App\Utils\ArrayUtils;
-use App\Utils\EnumArrayUtils;
 use App\Utils\StudyGroupHelper;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
@@ -85,7 +75,6 @@ class DashboardViewHelper {
     private FreeTimespanRepositoryInterface $freeTimespanRepository;
 
     private StudyGroupHelper $studyGroupHelper;
-    private TimetablePeriodHelper $timetablePeriodHelper;
     private TimetableSettings $timetableSettings;
     private TimetableTimeHelper $timetableTimeHelper;
     private Sorter $sorter;
@@ -104,7 +93,7 @@ class DashboardViewHelper {
                                 MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                                 StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, ResourceReservationRepositoryInterface $reservationRepository,
                                 FreeTimespanRepositoryInterface $freeTimespanRepository,
-                                StudyGroupHelper $studyGroupHelper, TimetablePeriodHelper $timetablePeriodHelper, TimetableTimeHelper $timetableTimeHelper, Sorter $sorter, Grouper $grouper,
+                                StudyGroupHelper $studyGroupHelper, TimetableTimeHelper $timetableTimeHelper, Sorter $sorter, Grouper $grouper,
                                 TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
                                 ValidatorInterface $validator, DateHelper $dateHelper, AbsenceResolver $absenceResolver, SectionResolverInterface $sectionResolver) {
         $this->substitutionRepository = $substitutionRepository;
@@ -119,7 +108,6 @@ class DashboardViewHelper {
         $this->roomReservationRepository = $reservationRepository;
         $this->freeTimespanRepository = $freeTimespanRepository;
         $this->studyGroupHelper = $studyGroupHelper;
-        $this->timetablePeriodHelper = $timetablePeriodHelper;
         $this->timetableSettings = $timetableSettings;
         $this->timetableTimeHelper = $timetableTimeHelper;
         $this->sorter = $sorter;
@@ -135,12 +123,8 @@ class DashboardViewHelper {
     public function createViewForRoom(Room $room, DateTime $dateTime): DashboardView {
         $view = new DashboardView($dateTime);
 
-        $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
-
-        if($currentPeriod !== null) {
-            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndRoom($currentPeriod, $room), $dateTime, $view, true);
-            $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
-        }
+        $this->addTimetableLessons($this->timetableRepository->findAllByRoom($dateTime, $dateTime, $room), $dateTime, $view, true);
+        $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
 
         $this->addSubstitutions($this->substitutionRepository->findAllForRooms([ $room ], $dateTime), $view, true);
         $this->addExams($exams = $this->examRepository->findAllByRoomAndDate($room, $dateTime), $view, null, true);
@@ -154,11 +138,12 @@ class DashboardViewHelper {
     public function createViewForTeacher(Teacher $teacher, DateTime $dateTime, bool $includeGradeMessages = false): DashboardView {
         $view = new DashboardView($dateTime);
 
-        $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
+        $start = $this->timetableSettings->getStartDate(UserType::Teacher());
+        $end = $this->timetableSettings->getEndDate(UserType::Teacher());
 
-        if($currentPeriod !== null) {
-            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher), $dateTime, $view, true);
-            $this->addSupervisions($this->supervisionRepository->findAllByPeriodAndTeacher($currentPeriod, $teacher), $view);
+        if($this->dateHelper->isBetween($dateTime, $start, $end)) {
+            $this->addTimetableLessons($this->timetableRepository->findAllByTeacher($dateTime, $dateTime, $teacher), $dateTime, $view, true);
+            $this->addSupervisions($this->supervisionRepository->findAllByTeacher($dateTime, $dateTime, $teacher), $view);
             $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
         }
 
@@ -183,7 +168,7 @@ class DashboardViewHelper {
         $this->addMessages($messages, $view);
 
         $this->addSubstitutions($this->substitutionRepository->findAllForTeacher($teacher, $dateTime), $view, true);
-        $this->addExams($exams = $this->examRepository->findAllByTeacher($teacher, $dateTime, true), $view, $teacher, true);
+        $this->addExams($this->examRepository->findAllByTeacher($teacher, $dateTime, true), $view, $teacher, true);
         $this->addInfotexts($dateTime, $view);
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
@@ -196,18 +181,15 @@ class DashboardViewHelper {
     }
 
     public function createViewForStudentOrParent(Student $student, DateTime $dateTime, UserType $userType): DashboardView {
-        if(!EnumArrayUtils::inArray($userType, [ UserType::Student(), UserType::Parent() ])) {
-            throw new \InvalidArgumentException(sprintf('$userType must be either Student or Parent, "%s" given.', $userType->getValue()));
-        }
-
         $view = new DashboardView($dateTime);
 
         $studyGroups = $this->studyGroupHelper->getStudyGroups([$student])->toArray();
 
-        $currentPeriod = $this->getCurrentTimetablePeriod($dateTime);
+        $start = $this->timetableSettings->getStartDate($userType);
+        $end = $this->timetableSettings->getEndDate($userType);
 
-        if($currentPeriod !== null) {
-            $this->addTimetableLessons($this->timetableRepository->findAllByPeriodAndStudent($currentPeriod, $student), $dateTime, $view, false);
+        if($this->dateHelper->isBetween($dateTime, $start, $end)) {
+            $this->addTimetableLessons($this->timetableRepository->findAllByStudent($dateTime, $dateTime, $student), $dateTime, $view, false);
             $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
         }
 
@@ -215,7 +197,7 @@ class DashboardViewHelper {
 
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $userType, $dateTime, $studyGroups), $view);
         $this->addSubstitutions($this->filterSubstitutionsByGrade($this->substitutionRepository->findAllForStudyGroups($studyGroups, $dateTime), $student->getGrade($section)), $view, false);
-        $this->addExams($exams = $this->examRepository->findAllByStudents([$student], $dateTime, true), $view, null, false);
+        $this->addExams($this->examRepository->findAllByStudents([$student], $dateTime, true), $view, null, false);
         $this->addInfotexts($dateTime, $view);
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
@@ -256,17 +238,6 @@ class DashboardViewHelper {
      */
     private function addTimetableLessons(iterable $lessons, DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences): void {
         foreach($lessons as $lesson) {
-            if($this->authorizationChecker->isGranted(TimetablePeriodVoter::View, $lesson->getPeriod()) !== true) {
-                continue;
-            }
-
-            $isWeek = in_array((int)$dateTime->format('W'), $lesson->getWeek()->getWeeksAsIntArray());
-            $isDay = (int)$dateTime->format('N') === $lesson->getDay();
-
-            if($isWeek === false || $isDay === false) {
-                continue;
-            }
-
             $lessonStudents = [ ];
 
             if($lesson->getTuition() !== null) {
@@ -280,13 +251,9 @@ class DashboardViewHelper {
                     ->toArray();
             }
 
-            $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lessonStudents, $lesson->getLesson(), $dateTime) : [ ];
-
-            $dashboardView->addItem($lesson->getLesson(), new TimetableLessonViewItem($lesson, $absentStudents));
-
-            if($lesson->isDoubleLesson()) {
-                $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lessonStudents, $lesson->getLesson() + 1, $dateTime) : [ ];
-                $dashboardView->addItem($lesson->getLesson() + 1, new TimetableLessonViewItem($lesson, $absentStudents));
+            for($lessonNumber = $lesson->getLessonStart(); $lessonNumber <= $lesson->getLessonEnd(); $lessonNumber++) {
+                $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lessonStudents, $lessonNumber, $dateTime) : [ ];
+                $dashboardView->addItem($lessonNumber, new TimetableLessonViewItem($lesson, $absentStudents));
             }
         }
     }
@@ -326,22 +293,11 @@ class DashboardViewHelper {
      * @param DashboardView $dashboardView
      */
     private function addSupervisions(iterable $supervisions, DashboardView $dashboardView): void {
-        $dayOfWeek = (int)$dashboardView->getDateTime()->format('w'); // PHP gives the day of week 0-based
-
         foreach($supervisions as $supervision) {
-            if($this->authorizationChecker->isGranted(TimetablePeriodVoter::View, $supervision->getPeriod()) !== true) {
-                continue;
-            }
-
-            /** @var Week $week */
-            foreach($supervision->getWeeks() as $week) {
-                if($supervision->getDay() === $dayOfWeek && $week->getNumber() === (int)$dashboardView->getDateTime()->format('W')) {
-                    if ($supervision->isBefore()) {
-                        $dashboardView->addItemBefore($supervision->getLesson(), new SupervisionViewItem($supervision));
-                    } else {
-                        $dashboardView->addItem($supervision->getLesson(), new SupervisionViewItem($supervision));
-                    }
-                }
+            if ($supervision->isBefore()) {
+                $dashboardView->addItemBefore($supervision->getLesson(), new SupervisionViewItem($supervision));
+            } else {
+                $dashboardView->addItem($supervision->getLesson(), new SupervisionViewItem($supervision));
             }
         }
     }
@@ -518,10 +474,6 @@ class DashboardViewHelper {
                 $view->addItem($lessonNumber, new FreeLessonView());
             }
         }
-    }
-
-    private function getCurrentTimetablePeriod(DateTime $dateTime): ?TimetablePeriod {
-        return $this->timetablePeriodHelper->getPeriod($dateTime);
     }
 
     /**

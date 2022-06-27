@@ -2,6 +2,9 @@
 
 namespace App\Settings;
 
+use App\Entity\UserType;
+use DateTime;
+
 class TimetableSettings extends AbstractSettings {
 
     public const MaxLessonsKey = 'max_lessons';
@@ -15,6 +18,8 @@ class TimetableSettings extends AbstractSettings {
     public const CategoriesKey = 'no_lessons_categories';
     public const GradesWithCourseNames = 'course_names';
     public const GradesWithMembershipTypes = 'membership_types';
+    public const TimetableStartKey = 'timetable.%s.start';
+    public const TimetableEndKey = 'timetable.%s.end';
 
     public function __construct(SettingsManager $manager) {
         parent::__construct($manager);
@@ -164,4 +169,22 @@ class TimetableSettings extends AbstractSettings {
     public function setDays(array $days): void {
         $this->setValue(self::Days, $days);
     }
+
+    public function getStartDate(UserType $userType): ?DateTime {
+        return $this->getValue(sprintf(static::TimetableStartKey, $userType->getValue()));
+    }
+
+    public function setStartDate(UserType $userType, ?DateTime $date): void {
+        $this->setValue(sprintf(static::TimetableStartKey, $userType->getValue()), $date);
+    }
+
+    public function getEndDate(UserType $userType): ?DateTime {
+        return $this->getValue(sprintf(static::TimetableEndKey, $userType->getValue()));
+    }
+
+    public function setEndDate(UserType $userType, ?DateTime $date): void {
+        $this->setValue(sprintf(static::TimetableEndKey, $userType->getValue()), $date);
+    }
+
+
 }

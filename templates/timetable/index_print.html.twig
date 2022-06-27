@@ -30,7 +30,7 @@
 
         {% for week in timetable.weeks %}
             <div class="timetable-week">
-            <strong>{{ week.weekName }}</strong>
+            <strong>{{ week.label }}</strong>
 
             <table class="table table-bordered timetable">
                 <colgroup>
@@ -43,21 +43,19 @@
                 <thead>
                 <th>{{ 'label.lesson'|trans }}</th>
                 {% for day in week.days %}
-                    <th>{{ day.day|weekday }}</th>
+                    <th>{{ day.date.format('w')|weekday }}</th>
                 {% endfor %}
                 </thead>
 
                 <tbody>
                 {% for i in 1..week.maxLessons %}
-                    {% if continue is not defined %}{% set continue = false %}{% endif %}
-                    {% if not continue %}
-                        {% set isCombined = week.areCombinedLessons(i, i+1) %}
-                        {% if week.hasSupervisionBefore(i) %}
+                    {% if week.maxLessons > 0 %}
+                        {% if week.hasSupervisionBefore(i) and supervisionLabels[i] is defined and supervisionLabels[i] is not empty %}
                             <tr>
                                 <td>{{ supervisionLabels[i] }}</td>
 
                                 {% for day in week.days %}
-                                    {% set lessons = day.getTimetableLesson(i) %}
+                                    {% set lessons = day.getTimetableLessonsContainer(i) %}
                                     <td>
                                         {% for supervision in lessons.beforeSupervisions %}
                                             {% include 'timetable/supervision.html.twig' %}
@@ -69,22 +67,12 @@
 
                         <tr>
                             <td>
-                                {% set start = startTimes[i] %}
-                                {% if isCombined %}
-                                    <strong>{{ i }}./{{ i+1 }}.</strong>
-                                    {% set end = endTimes[i+1] %}
-                                {% else %}
-                                    <strong>{{ i }}.</strong>
-                                    {% set end = endTimes[i] %}
-                                {% endif %}
-                                {% if start != null and end != null %}
-                                    {{ start }} - {{ end }}
-                                {% endif %}
+                                <strong>{{ i }}.</strong>
                             </td>
                             {% for day in week.days %}
-                                {% set lessons = day.getTimetableLesson(i) %}
-                                {% if not lessons.isCollapsed %}
-                                    <td{% if lessons.includeNextLesson and not isCombined %} rowspan="2"{% endif %}{% if day.isCurrentDay %} class="current" {% endif %}>
+                                {% set lessons = day.getTimetableLessonsContainer(i) %}
+                                {% if lessons.rowspan > 0 %}
+                                    <td {% if lessons.rowspan > 1 %}rowspan="{{ lessons.rowspan }}"{% endif%} class="align-middle">
                                         {% for lesson in lessons.lessons %}
                                             {% include 'timetable/lesson_print.html.twig' with { student: studentFilter.currentStudent, memberships: memberships }%}
                                             {% if not loop.last %}<hr>{% endif %}
@@ -93,11 +81,6 @@
                                 {% endif %}
                             {% endfor %}
                         </tr>
-                        {% if isCombined %}
-                            {% set continue = true %}
-                        {% endif %}
-                    {% else %}
-                        {% set continue = false %}
                     {% endif %}
                 {% endfor %}
                 </tbody>

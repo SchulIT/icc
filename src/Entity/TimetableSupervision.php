@@ -2,9 +2,9 @@
 
 namespace App\Entity;
 
+use DateTime;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -20,66 +20,47 @@ class TimetableSupervision {
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @var string
+     * @var string|null
      */
-    private $externalId;
+    private ?string $externalId;
 
     /**
-     * @ORM\ManyToOne(targetEntity="TimetablePeriod", inversedBy="supervisions")
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\Column(type="datetime")
      * @Assert\NotNull()
-     * @var TimetablePeriod
+     * @var DateTime|null
      */
-    private $period;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Week")
-     * @ORM\JoinTable(
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
-     * @var Collection<Week>
-     */
-    private $weeks;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\Range(min="1", max="7")
-     * @var int
-     */
-    private $day;
+    private ?DateTime $date;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\GreaterThan(0)
      * @var int
      */
-    private $lesson;
+    private int $lesson;
 
     /**
      * @ORM\Column(type="boolean")
      * @var bool
      */
-    private $isBefore = true;
+    private bool $isBefore = true;
 
     /**
      * @ORM\ManyToOne(targetEntity="Teacher")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
-     * @var Teacher
+     * @var Teacher|null
      */
-    private $teacher;
+    private ?Teacher $teacher;
 
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * @var string
+     * @var string|null
      */
-    private $location;
+    private ?string $location;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
-        $this->weeks = new ArrayCollection();
     }
 
     /**
@@ -99,52 +80,18 @@ class TimetableSupervision {
     }
 
     /**
-     * @return TimetablePeriod
+     * @return DateTime|null
      */
-    public function getPeriod(): TimetablePeriod {
-        return $this->period;
+    public function getDate(): ?DateTime {
+        return $this->date;
     }
 
     /**
-     * @param TimetablePeriod $period
+     * @param DateTime|null $date
      * @return TimetableSupervision
      */
-    public function setPeriod(TimetablePeriod $period): TimetableSupervision {
-        $this->period = $period;
-        return $this;
-    }
-
-    public function addWeek(Week $week): void {
-        $this->weeks->add($week);
-    }
-
-    public function removeWeek(Week $week): void {
-        $this->weeks->removeElement($week);
-    }
-
-    public function getWeeks(): Collection {
-        return $this->weeks;
-    }
-
-    public function getWeeksAsIntArray(): array {
-        return $this->weeks->map(function(Week $week) {
-            return $week->getNumber();
-        })->toArray();
-    }
-
-    /**
-     * @return int
-     */
-    public function getDay(): int {
-        return $this->day;
-    }
-
-    /**
-     * @param int $day
-     * @return TimetableSupervision
-     */
-    public function setDay(int $day): TimetableSupervision {
-        $this->day = $day;
+    public function setDate(?DateTime $date): TimetableSupervision {
+        $this->date = $date;
         return $this;
     }
 

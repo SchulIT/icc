@@ -4,8 +4,8 @@ namespace App\Menu;
 
 use App\Converter\UserStringConverter;
 use App\Entity\User;
-use App\Repository\LessonRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
+use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\ExamVoter;
@@ -26,33 +26,37 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Builder {
-    private FactoryInterface $factory;
-    private AuthorizationCheckerInterface $authorizationChecker;
+    private $factory;
+    private $authorizationChecker;
 
-    private WikiArticleRepositoryInterface $wikiRepository;
-    private LessonRepositoryInterface $lessonRepository;
+    private $wikiRepository;
+    private $messageRepository;
+    private $lessonRepository;
 
-    private TokenStorageInterface $tokenStorage;
-    private DateHelper $dateHelper;
-    private TranslatorInterface $translator;
-    private DarkModeManagerInterface $darkModeManager;
-    private NotificationSettings $notificationSettings;
-    private SickNoteSettings $sickNoteSettings;
-    private SectionResolverInterface $sectionResolver;
+    private $tokenStorage;
+    private $dateHelper;
+    private $userConverter;
+    private $translator;
+    private $darkModeManager;
+    private $notificationSettings;
+    private $sickNoteSettings;
+    private $sectionResolver;
 
-    private string $idpProfileUrl;
+    private $idpProfileUrl;
 
     public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authorizationChecker,
-                                WikiArticleRepositoryInterface $wikiRepository, LessonRepositoryInterface $lessonRepository,
-                                TokenStorageInterface $tokenStorage, DateHelper $dateHelper,
+                                WikiArticleRepositoryInterface $wikiRepository, MessageRepositoryInterface $messageRepository, TimetableLessonRepositoryInterface $lessonRepository,
+                                TokenStorageInterface $tokenStorage, DateHelper $dateHelper, UserStringConverter $userConverter,
                                 TranslatorInterface $translator, DarkModeManagerInterface $darkModeManager,
                                 NotificationSettings $notificationSettings, SickNoteSettings $sickNoteSettings, SectionResolverInterface $sectionResolver, string $idpProfileUrl) {
         $this->factory = $factory;
         $this->authorizationChecker = $authorizationChecker;
         $this->wikiRepository = $wikiRepository;
+        $this->messageRepository = $messageRepository;
         $this->lessonRepository = $lessonRepository;
         $this->tokenStorage = $tokenStorage;
         $this->dateHelper = $dateHelper;
+        $this->userConverter = $userConverter;
         $this->translator = $translator;
         $this->darkModeManager = $darkModeManager;
         $this->idpProfileUrl = $idpProfileUrl;
@@ -314,11 +318,6 @@ class Builder {
             ])
                 ->setExtra('icon', 'fas fa-laptop-house');
 
-            $root->addChild('admin.timetable.label', [
-                'route' => 'admin_timetable'
-            ])
-                ->setExtra('icon', 'far fa-clock');
-
             $root->addChild('admin.teachers.label', [
                 'route' => 'admin_teachers'
             ])
@@ -424,7 +423,7 @@ class Builder {
                 'route' => 'admin_messenger'
             ])
                 ->setExtra('icon', 'fas fa-envelope-open-text');
-
+            
             $menu->addChild('audit.label', [
                 'uri' => '/admin/audit'
             ])
@@ -475,6 +474,15 @@ class Builder {
                 'route' => 'import_untis_supervisions'
             ])
                 ->setExtra('icon', 'fas fa-eye');
+
+            $menu->addChild('import.timetable.database.label', [
+                'route' => 'import_untis_timetable'
+            ])
+                ->setExtra('icon', 'far fa-clock');
+            $menu->addChild('import.timetable.html.label', [
+                'route' => 'import_untis_timetable_html'
+            ])
+                ->setExtra('icon', 'far fa-clock');
         }
 
         return $root;

@@ -26,6 +26,6 @@
 
 {{ 'plans.timetable.title'|trans({'%name%': name }) }}
 
-{% if gradeFilter.currentGrade != null and currentPeriod != null and currentPeriod.section != null %}
-    {% include "_includes/grade_teachers.html.twig" with { grade: gradeFilter.currentGrade, section: currentPeriod.section } %}
+{% if gradeFilter.currentGrade != null and sectionFilter.currentSection != null %}
+    {% include "_includes/grade_teachers.html.twig" with { grade: gradeFilter.currentGrade, section: sectionFilter.currentSection } %}
 {% endif %}

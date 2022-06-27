@@ -4,20 +4,17 @@ namespace App\Controller;
 
 use App\Book\Lesson\LessonCancelHelper;
 use App\Dashboard\Absence\AbsenceResolver;
-use App\Entity\Lesson;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonEntry;
-use App\Entity\Student as StudentEntity;
 use App\Entity\StudyGroupMembership;
+use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
-use App\Repository\LessonEntryRepositoryInterface;
-use App\Repository\LessonRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
+use App\Repository\TimetableLessonRepositoryInterface;
 use App\Request\Book\CancelLessonRequest;
-use App\Request\ValidationFailedException;
 use App\Response\Api\V1\Student;
 use App\Response\Api\V1\Subject;
 use App\Response\Api\V1\Teacher;
@@ -168,7 +165,7 @@ class BookXhrController extends AbstractController {
      *     description="End lesson number"
      * )
      */
-    public function entry(Request $request, AbsenceResolver $absenceResolver, LessonRepositoryInterface $lessonRepository,
+    public function entry(Request $request, AbsenceResolver $absenceResolver, TimetableLessonRepositoryInterface $lessonRepository,
                           LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
                           SerializerInterface $serializer, SectionResolverInterface $sectionResolver) {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
@@ -191,7 +188,7 @@ class BookXhrController extends AbstractController {
 
         /** @var LessonEntry $lessonEntry */
         foreach($lesson->getEntries() as $lessonEntry) {
-            if($lessonEntry->getLessonStart() === (int)$start) {
+            if($lessonEntry->getLessonStart() <= (int)$start && (int)$start <= $lessonEntry->getLessonEnd()) {
                 $entry = $lessonEntry;
                 break;
             }
@@ -270,7 +267,7 @@ class BookXhrController extends AbstractController {
      *     @Model(type=ViolationList::class)
      * )
      */
-    public function cancelLesson(Lesson $lesson, CancelLessonRequest $request, LessonCancelHelper $lessonCancelHelper) {
+    public function cancelLesson(TimetableLesson $lesson, CancelLessonRequest $request, LessonCancelHelper $lessonCancelHelper) {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
         $reason = $request->getReason();
         $lessonCancelHelper->cancelLesson($lesson, $reason);

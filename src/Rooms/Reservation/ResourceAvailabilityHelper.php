@@ -14,29 +14,23 @@ use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Settings\DashboardSettings;
 use App\Settings\TimetableSettings;
-use App\Timetable\TimetablePeriodHelper;
-use App\Timetable\TimetableWeekHelper;
 use App\Utils\ArrayUtils;
 use DateTime;
 
 class ResourceAvailabilityHelper {
-    private $reservationRepository;
-    private $timetableRepository;
-    private $timetableSettings;
-    private $substitutionRepository;
-    private $examRepository;
-    private $dashboardSettings;
-    private $weekHelper;
-    private $periodHelper;
+    private ResourceReservationRepositoryInterface $reservationRepository;
+    private TimetableLessonRepositoryInterface $timetableRepository;
+    private TimetableSettings $timetableSettings;
+    private SubstitutionRepositoryInterface $substitutionRepository;
+    private ExamRepositoryInterface $examRepository;
+    private DashboardSettings $dashboardSettings;
 
     public function __construct(ResourceReservationRepositoryInterface $reservationRepository, TimetableLessonRepositoryInterface $timetableRepository,
-                                TimetableSettings $timetableSettings, TimetableWeekHelper $weekHelper, TimetablePeriodHelper $periodHelper,
-                                SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository, DashboardSettings $dashboardSettings) {
+                                TimetableSettings $timetableSettings, SubstitutionRepositoryInterface $substitutionRepository,
+                                ExamRepositoryInterface $examRepository, DashboardSettings $dashboardSettings) {
         $this->reservationRepository = $reservationRepository;
         $this->timetableRepository = $timetableRepository;
         $this->timetableSettings = $timetableSettings;
-        $this->weekHelper = $weekHelper;
-        $this->periodHelper = $periodHelper;
         $this->substitutionRepository = $substitutionRepository;
         $this->examRepository = $examRepository;
         $this->dashboardSettings = $dashboardSettings;
@@ -111,19 +105,12 @@ class ResourceAvailabilityHelper {
     }
 
     public function getAvailability(ResourceEntity $resource, DateTime $date, int $lessonNumber): ?ResourceAvailability {
-        $week = $this->weekHelper->getTimetableWeek($date);
-        $period = $this->periodHelper->getPeriod($date);
-
-        if($period === null || $week === null) {
-            return null;
-        }
-
         $lesson = null;
         $conflictingSubstitution = null;
         $conflictingExams = [ ];
 
         if($resource instanceof Room) {
-            $lesson = $this->timetableRepository->findOneByPeriodAndRoomAndWeekAndDayAndLesson($period, $week, $resource, (int)$date->format('w'), $lessonNumber);
+            $lesson = $this->timetableRepository->findOneByPeriodAndRoomAndWeekAndDayAndLesson($date, $resource, $lessonNumber);
             $substitutions = $this->substitutionRepository->findAllForRooms([$resource], $date);
             $conflictingSubstitution = $this->getConflictingSubstitution($substitutions, $resource, $lessonNumber);
 
@@ -146,19 +133,12 @@ class ResourceAvailabilityHelper {
      * @return ResourceAvailabilityOverview|null
      */
     public function getAvailabilities(DateTime $date, array $resources): ?ResourceAvailabilityOverview {
-        $week = $this->weekHelper->getTimetableWeek($date);
-        $period = $this->periodHelper->getPeriod($date);
-
-        if($period === null || $week === null) {
-            return null;
-        }
-
         /** @var Room[] $rooms */
         $rooms = array_filter($resources, function(ResourceEntity $resource) {
             return $resource instanceof Room;
         });
 
-        $lessons = $this->timetableRepository->findAllByPeriodAndWeek($period, $week);
+        $lessons = $this->timetableRepository->findAllByRange($date, $date);
         $reservations = $this->reservationRepository->findAllByDate($date);
         $substitutions = $this->substitutionRepository->findAllForRooms($rooms, $date);
         $exams = $this->examRepository->findAllByDate($date);
@@ -166,10 +146,8 @@ class ResourceAvailabilityHelper {
         $overview = new ResourceAvailabilityOverview($this->timetableSettings->getMaxLessons());
 
         foreach($resources as $resource) {
-            $roomLessons = array_filter($lessons, function(TimetableLesson $lesson) use($resource, $date) {
-                return $lesson instanceof TimetableLesson
-                    && $lesson->getRoom() !== null && $lesson->getRoom()->getId() === $resource->getId()
-                    && $lesson->getDay() === (int)$date->format('w');
+            $roomLessons = array_filter($lessons, function(TimetableLesson $lesson) use($resource) {
+                return $lesson->getRoom() !== null && $lesson->getRoom()->getId() === $resource->getId();
             });
             $roomReservations = array_filter($reservations, function(ResourceReservation $reservation) use ($resource) {
                 return $reservation->getResource()->getId() === $resource->getId();
@@ -181,8 +159,7 @@ class ResourceAvailabilityHelper {
 
             for($lessonNumber = 1; $lessonNumber <= $this->timetableSettings->getMaxLessons(); $lessonNumber++) {
                 $lesson = ArrayUtils::first($roomLessons, function(TimetableLesson $lesson) use ($lessonNumber) {
-                    return $lesson->getLesson() === $lessonNumber
-                        || ($lesson->isDoubleLesson() && $lesson->getLesson() === $lessonNumber - 1);
+                    return $lesson->getLessonStart() <= $lessonNumber && $lessonNumber <= $lesson->getLessonEnd();
                 });
                 $reservation = ArrayUtils::first($roomReservations, function (ResourceReservation $reservation) use ($lessonNumber) {
                     return $reservation->getLessonStart() <= $lessonNumber

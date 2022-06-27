@@ -2,6 +2,7 @@
 
 namespace App\Grouping;
 
+use App\Date\WeekOfYear;
 use App\Entity\Message;
 
 class MessageWeekStrategy implements GroupingStrategyInterface {

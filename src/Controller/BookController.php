@@ -14,18 +14,16 @@ use App\Entity\GradeTeacher;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
+use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
-use App\Entity\Lesson as LessonEntity;
 use App\Grouping\GenericDateStrategy;
 use App\Grouping\Grouper;
 use App\Grouping\LessonAttendanceCommentsGroup;
-use App\Grouping\LessonAttendanceDateStrategy;
 use App\Grouping\LessonDayStrategy;
-use App\Repository\LessonRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
-use App\Repository\StudyGroupRepositoryInterface;
+use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Security\Voter\LessonEntryVoter;
 use App\Sorting\LessonAttendanceGroupStrategy;
@@ -57,39 +55,14 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class BookController extends AbstractController {
 
+    use CalendarWeeksTrait;
+
     private const ItemsPerPage = 25;
-
-    private function getClosestWeekStart(DateTime $dateTime): DateTime {
-        $dateTime = clone $dateTime;
-
-        while((int)$dateTime->format('N') > 1) {
-            $dateTime = $dateTime->modify('-1 day');
-        }
-
-        return $dateTime;
-    }
 
     private function getClosestMonthStart(DateTime $dateTime): DateTime {
         $dateTime = clone $dateTime;
         $dateTime->setDate((int)$dateTime->format('Y'), (int)$dateTime->format('m'), 1);
         return $dateTime;
-    }
-
-    /**
-     * @param DateTime $start
-     * @param DateTime $end
-     * @return DateTime[] All mondays with their week numbers as key
-     */
-    private function listCalendarWeeks(DateTime $start, DateTime $end): array {
-        $weekStarts = [ ];
-        $current = $this->getClosestWeekStart($start);
-
-        while($current < $end) {
-            $weekStarts[(int)$current->format('W')] = clone $current;
-            $current = $current->modify('+7 days');
-        }
-
-        return $weekStarts;
     }
 
     /**
@@ -106,28 +79,6 @@ class BookController extends AbstractController {
             $current = $current->modify('+1 month');
         }
         return $firstDays;
-    }
-
-    private function resolveSelectedDate(Request $request, ?Section $currentSection, DateHelper $dateHelper): ?DateTime {
-        $selectedDate = null;
-        try {
-            if($request->query->has('date')) {
-                $selectedDate = new DateTime($request->query->get('date', null));
-                $selectedDate->setTime(0, 0, 0);
-            }
-        } catch (Exception $e) {
-            $selectedDate = null;
-        }
-
-        if($selectedDate === null && $currentSection !== null) {
-            $selectedDate = $this->getClosestWeekStart($dateHelper->getToday());
-        }
-
-        if($selectedDate !== null && $currentSection !== null && $dateHelper->isBetween($selectedDate, $currentSection->getStart(), $currentSection->getEnd()) !== true) {
-            $selectedDate = $this->getClosestWeekStart($currentSection->getEnd());
-        }
-
-        return $selectedDate;
     }
 
     private function resolveSelectedDateForTuitionView(Request $request, ?Section $currentSection, DateHelper $dateHelper): ?DateTime {
@@ -315,7 +266,7 @@ class BookController extends AbstractController {
      * @Route("/missing", name="missing_book_entries")
      */
     public function missing(Request $request, SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter,
-                            TuitionFilter $tuitionFilter, LessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository,
+                            TuitionFilter $tuitionFilter, TimetableLessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository,
                             DateHelper $dateHelper, Sorter $sorter, Grouper $grouper) {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
@@ -354,7 +305,7 @@ class BookController extends AbstractController {
             $missing = [ ];
             $pages = ceil((float)$paginator->count() / self::ItemsPerPage);
 
-            /** @var LessonEntity $lessonEntity */
+            /** @var TimetableLesson $lessonEntity */
             foreach($paginator->getIterator() as $lessonEntity) {
                 for($lessonNumber = $lessonEntity->getLessonStart(); $lessonNumber <= $lessonEntity->getLessonEnd(); $lessonNumber++) {
                     $missing[] = new Lesson(clone $lessonEntity->getDate(), $lessonNumber, $lessonEntity, null);

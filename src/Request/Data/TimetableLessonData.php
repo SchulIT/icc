@@ -2,33 +2,25 @@
 
 namespace App\Request\Data;
 
+use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class TimetableLessonData {
-
 
     /**
      * @Serializer\Type("string")
      * @Assert\NotBlank()
      * @var string
      */
-    private $id;
+    private string $id;
 
     /**
-     * @Serializer\Type("string")
-     * @Assert\NotNull()
-     * @var string
+     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
+     * @Assert\NotNull
+     * @var DateTime|null
      */
-    private $week;
-
-    /**
-     * @Serializer\Type("int")
-     * @Assert\NotNull()
-     * @Assert\GreaterThan(0)
-     * @var int
-     */
-    private $day;
+    private ?DateTime $date;
 
     /**
      * @Serializer\Type("int")
@@ -36,32 +28,32 @@ class TimetableLessonData {
      * @Assert\GreaterThan(0)
      * @var int
      */
-    private $lesson;
+    private int $lessonStart;
 
     /**
-     * @Serializer\Type("bool")
-     * @Assert\NotNull()
-     * @var bool
+     * @Serializer\Type("int")
+     * @Assert\GreaterThanOrEqual(propertyPath="lessonStart")
+     * @var int
      */
-    private $isDoubleLesson;
+    private int $lessonEnd;
 
     /**
      * @Serializer\Type("string")
      * @var string|null
      */
-    private $room;
+    private ?string $room;
 
     /**
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $teachers = [ ];
+    private array $teachers = [ ];
 
     /**
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $grades = [ ];
+    private array $grades = [ ];
 
 
     /**
@@ -69,7 +61,7 @@ class TimetableLessonData {
      * @Assert\NotBlank(allowNull=true)
      * @var string|null
      */
-    private $subject;
+    private ?string $subject;
 
     /**
      * @return string|null
@@ -88,66 +80,50 @@ class TimetableLessonData {
     }
 
     /**
-     * @return string|null
+     * @return DateTime|null
      */
-    public function getWeek(): ?string {
-        return $this->week;
+    public function getDate(): ?DateTime {
+        return $this->date;
     }
 
     /**
-     * @param string|null $week
+     * @param DateTime|null $date
      * @return TimetableLessonData
      */
-    public function setWeek(?string $week): TimetableLessonData {
-        $this->week = $week;
+    public function setDate(?DateTime $date): TimetableLessonData {
+        $this->date = $date;
         return $this;
     }
 
     /**
-     * @return int|null
+     * @return int
      */
-    public function getDay(): ?int {
-        return $this->day;
+    public function getLessonStart(): int {
+        return $this->lessonStart;
     }
 
     /**
-     * @param int|null $day
+     * @param int $lessonStart
      * @return TimetableLessonData
      */
-    public function setDay(?int $day): TimetableLessonData {
-        $this->day = $day;
+    public function setLessonStart(int $lessonStart): TimetableLessonData {
+        $this->lessonStart = $lessonStart;
         return $this;
     }
 
     /**
-     * @return int|null
+     * @return int
      */
-    public function getLesson(): ?int {
-        return $this->lesson;
+    public function getLessonEnd(): int {
+        return $this->lessonEnd;
     }
 
     /**
-     * @param int|null $lesson
+     * @param int $lessonEnd
      * @return TimetableLessonData
      */
-    public function setLesson(?int $lesson): TimetableLessonData {
-        $this->lesson = $lesson;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDoubleLesson(): bool {
-        return $this->isDoubleLesson;
-    }
-
-    /**
-     * @param bool $isDoubleLesson
-     * @return TimetableLessonData
-     */
-    public function setIsDoubleLesson(bool $isDoubleLesson): TimetableLessonData {
-        $this->isDoubleLesson = $isDoubleLesson;
+    public function setLessonEnd(int $lessonEnd): TimetableLessonData {
+        $this->lessonEnd = $lessonEnd;
         return $this;
     }
 

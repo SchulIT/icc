@@ -2,9 +2,9 @@
 
 namespace App\Tests\Untis;
 
-use App\Untis\GpuSubstitutionFlag;
-use App\Untis\SubstitutionReader;
-use App\Untis\GpuSubstitutionType;
+use App\Untis\Gpu\Substitution\SubstitutionFlag;
+use App\Untis\Gpu\Substitution\SubstitutionReader;
+use App\Untis\Gpu\Substitution\SubstitutionType;
 use DateTime;
 use League\Csv\Reader;
 use PHPUnit\Framework\TestCase;
@@ -38,7 +38,7 @@ GPU;
         $this->assertSame(['8a'], $current->getGrades());
         $this->assertSame(['8a'], $current->getReplacementGrades());
         $this->assertNotNull($current->getType());
-        $this->assertTrue($current->getType()->equals(GpuSubstitutionType::Supervision()));
+        $this->assertTrue($current->getType()->equals(SubstitutionType::Supervision()));
         $this->assertNull($current->getRemark());
 
         $current = $substitutions[1];
@@ -69,7 +69,7 @@ GPU;
         $this->assertSame(['2. M1', '2. M1+S', '2. M2'], $current->getGrades());
         $this->assertSame(['2. M1', '2. M1+S', '2. M2'], $current->getReplacementGrades());
         $this->assertNotNull($current->getType());
-        $this->assertTrue($current->getType()->equals(GpuSubstitutionType::Supervision()));
+        $this->assertTrue($current->getType()->equals(SubstitutionType::Supervision()));
         $this->assertEquals("Urlaub", $current->getRemark());
     }
 }

@@ -23,7 +23,6 @@ use App\Import\SubjectsImportStrategy;
 use App\Import\SubstitutionsImportStrategy;
 use App\Import\TeachersImportStrategy;
 use App\Import\TimetableLessonsImportStrategy;
-use App\Import\TimetablePeriodsImportStrategy;
 use App\Import\TimetableSupervisionsImportStrategy;
 use App\Import\TuitionsImportStrategy;
 use App\Request\Data\AbsencesData;
@@ -44,16 +43,15 @@ use App\Request\Data\SubjectsData;
 use App\Request\Data\SubstitutionsData;
 use App\Request\Data\TeachersData;
 use App\Request\Data\TimetableLessonsData;
-use App\Request\Data\TimetablePeriodsData;
 use App\Request\Data\TimetableSupervisionsData;
 use App\Request\Data\TuitionsData;
 use App\Response\ErrorResponse;
 use App\Response\ImportResponse;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -407,32 +405,7 @@ class ImportController extends AbstractController {
      * @throws ImportException
      */
     public function timetableLessons(TimetableLessonsData $lessonsData, TimetableLessonsImportStrategy $strategy): Response {
-        $result = $this->importer->import($lessonsData, $strategy);
-        return $this->fromResult($result);
-    }
-
-    /**
-     * Imports timetable periods.
-     *
-     * @Route("/timetable/periods", methods={"POST"})
-     * @OA\Post(operationId="import_timetable_periods")
-     * @OA\RequestBody(
-     *     @Model(type=TimetablePeriodsData::class)
-     * )
-     * @OA\Response(
-     *     response=200,
-     *     description="Import was successful",
-     *     @Model(type=ImportResponse::class)
-     * )
-     * @OA\Response(
-     *     response=400,
-     *     description="Import was not successful",
-     *     @Model(type=ErrorResponse::class)
-     * )
-     * @throws ImportException
-     */
-    public function timetablePeriods(TimetablePeriodsData $periodsData, TimetablePeriodsImportStrategy $strategy): Response {
-        $result = $this->importer->import($periodsData, $strategy);
+        $result = $this->importer->replaceImport($lessonsData, $strategy);
         return $this->fromResult($result);
     }
 
@@ -457,7 +430,7 @@ class ImportController extends AbstractController {
      * @throws ImportException
      */
     public function timetableSupervisions(TimetableSupervisionsData $supervisionsData, TimetableSupervisionsImportStrategy $strategy): Response {
-        $result = $this->importer->import($supervisionsData, $strategy);
+        $result = $this->importer->replaceImport($supervisionsData, $strategy);
         return $this->fromResult($result);
     }
 

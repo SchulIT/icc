@@ -162,7 +162,8 @@
             {% if item.lesson is null %}
                 <span class="align-self-center badge badge-light badge-card">{{ 'dashboard.free_hour'|trans|upper }}</span>
             {% else %}
-            <div class="align-self-center">
+            <div class="align-self-center w-100">
+                {% set lessonNumber = lesson %}
                 {% for lesson in item.additionalLessons|merge([item.lesson]) %}
                     {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
                     {%- set showCourseName = false -%}
@@ -222,6 +223,7 @@
 
                             <span>
                                 <i class="fa fa-graduation-cap"></i> {% for teacher in lesson.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                <span class="mx-1"></span>
                             </span>
                             
                             {% if lesson.room is not null or lesson.location is not null %}
@@ -230,8 +232,27 @@
                                 <span class="mx-1"></span>
                             </span>
                             {% endif %}
-
                         </div>
+
+                        {% if lesson.tuition is not null and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                            {% set editAction = null %}
+
+                            {% for entry in lesson.entries %}
+                                {% if entry.lessonStart <= lessonNumber and lessonNumber <= entry.lessonEnd %}
+                                    {% set editAction = path('edit_entry', { uuid: entry.uuid }) %}
+                                {% endif %}
+                            {% endfor %}
+                            <div class="align-self-center p-3">
+                                <entry students-url="{{ url('xhr_students') }}"
+                                       url="{{ path('xhr_lesson_entry', { start: lessonNumber, lesson: lesson.uuid.toString }) }}"
+                                       :lesson-number="{{ lessonNumber }}"
+                                       csrfname="_token"
+                                       csrftoken="{{ csrf_token('book_entry') }}"
+                                       create-action="{{ path('add_entry', { uuid: lesson.uuid }) }}"
+                                       edit-action="{{ editAction }}"
+                                       cancel-action="{{ path('cancel_lesson', { uuid: lesson.uuid }) }}"></entry>
+                            </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
                 </div>

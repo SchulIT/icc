@@ -7,11 +7,11 @@ use App\Import\Importer;
 use App\Import\ImportResult;
 use App\Request\Data\ExamsData;
 use App\Settings\UntisSettings;
-use App\Untis\GpuExam;
-use App\Untis\GpuExamImporter;
-use App\Untis\GpuExamReader;
-use App\Untis\GpuTuition;
-use App\Untis\GpuTuitionReader;
+use App\Untis\Gpu\Exam\Exam;
+use App\Untis\Gpu\Exam\ExamImporter;
+use App\Untis\Gpu\Exam\ExamReader;
+use App\Untis\Gpu\Tuition\Tuition;
+use App\Untis\Gpu\Tuition\TuitionReader;
 use DateTime;
 use Hoa\File\Read;
 use League\Csv\Reader;
@@ -20,11 +20,11 @@ use stdClass;
 
 class GpuExamImporterTest extends TestCase {
 
-    private function getExamReaderMock(): GpuExamReader {
-        $examReader = $this->getMockBuilder(GpuExamReader::class)->getMock();
+    private function getExamReaderMock(): ExamReader {
+        $examReader = $this->getMockBuilder(ExamReader::class)->getMock();
         $examReader->method('readGpu')
             ->willReturn([
-                (new GpuExam())
+                (new Exam())
                     ->setId(1)
                     ->setName('Kla-NT-Foo')
                     ->setTuitions(['1'])
@@ -35,7 +35,7 @@ class GpuExamImporterTest extends TestCase {
                     ->setStudents([
                         'Mustermann_Max_20000101'
                     ]),
-                (new GpuExam())
+                (new Exam())
                     ->setId(2)
                     ->setTuitions(['1'])
                     ->setDate(new DateTime('2021-04-01'))
@@ -50,11 +50,11 @@ class GpuExamImporterTest extends TestCase {
         return $examReader;
     }
 
-    private function getTuitionReaderMock(): GpuTuitionReader {
-        $tuitionReader = $this->getMockBuilder(GpuTuitionReader::class)->getMock();
+    private function getTuitionReaderMock(): TuitionReader {
+        $tuitionReader = $this->getMockBuilder(TuitionReader::class)->getMock();
         $tuitionReader->method('readGpu')
             ->willReturn([
-                (new GpuTuition())->setId(1)->setGrade('EF')->setTeacher('TEST')->setSubject('IF-GK1')
+                (new Tuition())->setId(1)->setGrade('EF')->setTeacher('TEST')->setSubject('IF-GK1')
             ]);
 
         return $tuitionReader;
@@ -84,7 +84,7 @@ class GpuExamImporterTest extends TestCase {
                 return new ImportResult([], [], [], [], new stdClass());
             }));
 
-        $gpuExamImporter = new GpuExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings);
+        $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings);
         $gpuExamImporter->import(Reader::createFromString(''), Reader::createFromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
     }
 
@@ -112,7 +112,7 @@ class GpuExamImporterTest extends TestCase {
                 return new ImportResult([], [], [], [], new stdClass());
             }));
 
-        $gpuExamImporter = new GpuExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings);
+        $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings);
         $gpuExamImporter->import(Reader::createFromString(''), Reader::createFromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
     }
 
@@ -140,7 +140,7 @@ class GpuExamImporterTest extends TestCase {
                 return new ImportResult([], [], [], [], new stdClass());
             }));
 
-        $gpuExamImporter = new GpuExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings);
+        $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings);
         $gpuExamImporter->import(Reader::createFromString(''), Reader::createFromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
     }
 
@@ -168,7 +168,7 @@ class GpuExamImporterTest extends TestCase {
                 return new ImportResult([], [], [], [], new stdClass());
             }));
 
-        $gpuExamImporter = new GpuExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings);
+        $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings);
         $gpuExamImporter->import(Reader::createFromString(''), Reader::createFromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
     }
 

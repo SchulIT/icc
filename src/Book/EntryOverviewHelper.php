@@ -2,13 +2,12 @@
 
 namespace App\Book;
 
-use App\Book\Lesson\LessonCreator;
 use App\Entity\BookComment;
 use App\Entity\Grade;
 use App\Entity\LessonEntry;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
-use App\Entity\Lesson as LessonEntity;
+use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
 use App\Grouping\Grouper;
 use App\Grouping\LessonDayStrategy;
@@ -18,7 +17,6 @@ use App\Repository\BookCommentRepositoryInterface;
 use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
-use App\Repository\LessonRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
@@ -31,26 +29,25 @@ use App\Utils\ArrayUtils;
 use DateTime;
 
 class EntryOverviewHelper {
-    private $lessonRepository;
-    private $tuitionRepository;
-    private $entryRepository;
-    private $commentRepository;
-    private $attendanceRepository;
+    private TimetableLessonRepositoryInterface $lessonRepository;
+    private TuitionRepositoryInterface $tuitionRepository;
+    private LessonEntryRepositoryInterface $entryRepository;
+    private BookCommentRepositoryInterface $commentRepository;
+    private LessonAttendanceRepositoryInterface $attendanceRepository;
 
-    private $timetableSettings;
-    private $appointmentCategoryRepository;
-    private $appointmentRepository;
-    private $freeTimespanRepository;
-    private $substitutionRepository;
+    private TimetableSettings $timetableSettings;
+    private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository;
+    private AppointmentRepositoryInterface $appointmentRepository;
+    private FreeTimespanRepositoryInterface $freeTimespanRepository;
+    private SubstitutionRepositoryInterface $substitutionRepository;
 
-    private $lessonCreator;
-    private $sectionResolver;
-    private $grouper;
-    private $sorter;
+    private SectionResolverInterface $sectionResolver;
+    private Grouper $grouper;
+    private Sorter $sorter;
 
-    public function __construct(LessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository,
+    public function __construct(TimetableLessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository,
                                 LessonEntryRepositoryInterface $entryRepository, BookCommentRepositoryInterface $commentRepository,
-                                LessonAttendanceRepositoryInterface $attendanceRepository, LessonCreator $lessonCreator, SectionResolverInterface $sectionResolver,
+                                LessonAttendanceRepositoryInterface $attendanceRepository, SectionResolverInterface $sectionResolver,
                                 TimetableSettings $timetableSettings, AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, AppointmentRepositoryInterface $appointmentRepository,
                                 FreeTimespanRepositoryInterface $freeTimespanRepository, SubstitutionRepositoryInterface $substitutionRepository,
                                 Grouper $grouper, Sorter $sorter) {
@@ -58,7 +55,6 @@ class EntryOverviewHelper {
         $this->tuitionRepository = $tuitionRepository;
         $this->entryRepository = $entryRepository;
         $this->commentRepository = $commentRepository;
-        $this->lessonCreator = $lessonCreator;
         $this->sectionResolver = $sectionResolver;
         $this->attendanceRepository = $attendanceRepository;
         $this->timetableSettings = $timetableSettings;
@@ -92,8 +88,6 @@ class EntryOverviewHelper {
             $start = $end;
             $end = $tmp;
         }
-
-        $this->lessonCreator->createLessons($start, $end);
 
         $lessons = [ ];
 
@@ -131,11 +125,11 @@ class EntryOverviewHelper {
             $currentWeek = $currentWeek->modify('+7 days');
         }
 
-        $timetableLessons = $this->lessonRepository->findAllByTuitions($tuitions, $start, $end);
+        $timetableLessons = $this->lessonRepository->findAllByTuitions($start, $end, $tuitions);
 
         $current = clone $start;
         while($current < $end) {
-            $dailyLessons = array_filter($timetableLessons, function(LessonEntity $lesson) use ($current) {
+            $dailyLessons = array_filter($timetableLessons, function(TimetableLesson $lesson) use ($current) {
                 return $lesson->getDate() == $current;
             });
 
@@ -161,7 +155,7 @@ class EntryOverviewHelper {
                 continue;
             }
 
-            $timetableLessons = $this->lessonRepository->findAllByTuitions([$tuition], $substitution->getDate(), $substitution->getDate());
+            $timetableLessons = $this->lessonRepository->findAllByTuitions($substitution->getDate(), $substitution->getDate(), [$tuition]);
 
             // Filter correct lesson
             foreach($timetableLessons as $dailyLesson) {

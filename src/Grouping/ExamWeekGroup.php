@@ -2,6 +2,8 @@
 
 namespace App\Grouping;
 
+use App\Date\WeekOfYear;
+
 class ExamWeekGroup implements GroupInterface, SortableGroupInterface {
 
     private $weekOfYear;

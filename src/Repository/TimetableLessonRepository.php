@@ -8,24 +8,34 @@ use App\Entity\Student;
 use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
-use App\Entity\TimetablePeriod;
-use App\Entity\TimetableWeek;
 use App\Entity\Tuition;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class TimetableLessonRepository extends AbstractTransactionalRepository implements TimetableLessonRepositoryInterface {
 
-    private function getDefaultQueryBuilder(): QueryBuilder {
-        return $this->em->createQueryBuilder()
-            ->select(['l', 'p', 't', 'w', 'r', 't', 'sg', 'g'])
+    private function getDefaultQueryBuilder(?DateTime $start = null, ?DateTime $end = null): QueryBuilder {
+        $qb = $this->em->createQueryBuilder()
+            ->select(['l', 't', 'r', 't', 'sg', 'g'])
             ->from(TimetableLesson::class, 'l')
-            ->leftJoin('l.period', 'p')
             ->leftJoin('l.tuition', 't')
             ->leftJoin('t.studyGroup', 'sg')
             ->leftJoin('sg.grades', 'g')
-            ->leftJoin('l.week', 'w')
             ->leftJoin('l.room', 'r')
             ->leftJoin('l.subject', 's');
+
+        if($start !== null) {
+            $qb->andWhere('l.date >= :start')
+                ->setParameter('start', $start);
+        }
+
+        if($end !== null) {
+            $qb->andWhere('l.date <= :end')
+                ->setParameter('end', $end);
+        }
+
+        return $qb;
     }
 
     /**
@@ -39,13 +49,12 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
             ->getOneOrNullResult();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function findAll() {
+    public function findOneByUuid(string $uuid): ?TimetableLesson {
         return $this->getDefaultQueryBuilder()
+            ->where('l.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
             ->getQuery()
-            ->getResult();
+            ->getOneOrNullResult();
     }
 
     /**
@@ -64,73 +73,31 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
         $this->flushIfNotInTransaction();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function findAllByPeriod(TimetablePeriod $period) {
-        $qb = $this->em->createQueryBuilder()
-            ->select(['l', 'p', 'w'])
-            ->from(TimetableLesson::class, 'l')
-            ->leftJoin('l.period', 'p')
-            ->leftJoin('l.week', 'w')
-            ->setParameter('period', $period->getId());
-
-        $qbInner = $this->em->createQueryBuilder()
-            ->select('tInner.id')
-            ->from(TimetableLesson::class, 'tInner')
-            ->leftJoin('tInner.period', 'pInner')
-            ->where('pInner.id = :period');
-
-        $qb->andWhere(
-            $qb->expr()->in('l.id', $qbInner->getDQL())
-        );
-
-        return $qb->getQuery()->getResult();
+    public function removeRange(DateTime $start, DateTime $end): void {
+        $this->em->createQueryBuilder()
+            ->delete(TimetableLesson::class, 'l')
+            ->where('l.date >= :start')
+            ->andWhere('l.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
+        $this->flushIfNotInTransaction();
     }
 
     /**
      * @inheritDoc
      */
-    public function findAllByPeriodAndGrade(TimetablePeriod $period, Grade $grade) {
-        $qb = $this->getDefaultQueryBuilder();
+    public function findAllByGrade(DateTime $start, DateTime $end, Grade $grade): array {
+        $qb = $this->getDefaultQueryBuilder($start, $end);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner')
             ->from(TimetableLesson::class, 'lInner')
-            ->leftJoin('lInner.period', 'pInner')
             ->leftJoin('lInner.grades', 'gInner')
-            ->where('pInner.id = :period')
-            ->andWhere('gInner.id = :grade');
+            ->where('gInner.id = :grade');
 
-        $qb->setParameter('grade', $grade->getId())
-            ->setParameter('period', $period->getId());
-
-        $qb->where(
-            $qb->expr()->in('l.id', $qbInner->getDQL())
-        );
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function findAllByPeriodAndTeacher(TimetablePeriod $period, Teacher $teacher) {
-        $qb = $this->em->createQueryBuilder()
-            ->select(['l', 'p', 'w'])
-            ->from(TimetableLesson::class, 'l')
-            ->leftJoin('l.period', 'p')
-            ->leftJoin('l.week', 'w')
-            ->setParameter('teacher', $teacher->getId())
-            ->setParameter('period', $period->getId());
-
-        $qbInner = $this->em->createQueryBuilder()
-            ->select('tInner.id')
-            ->from(TimetableLesson::class, 'tInner')
-            ->leftJoin('tInner.period', 'pInner')
-            ->leftJoin('tInner.teachers', 'teacherInner')
-            ->where('pInner.id = :period')
-            ->andWhere('teacherInner.id = :teacher');
+        $qb->setParameter('grade', $grade->getId());
 
         $qb->andWhere(
             $qb->expr()->in('l.id', $qbInner->getDQL())
@@ -142,23 +109,41 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
     /**
      * @inheritDoc
      */
-    public function findAllByPeriodAndRoom(TimetablePeriod $period, Room $room) {
-        $qb = $this->getDefaultQueryBuilder();
+    public function findAllByTeacher(DateTime $start, DateTime $end, Teacher $teacher): array {
+        $qb = $this->getDefaultQueryBuilder($start, $end);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(TimetableLesson::class, 'tInner')
+            ->leftJoin('tInner.teachers', 'teacherInner')
+            ->where('teacherInner.id = :teacher');
+
+        $qb->andWhere(
+            $qb->expr()->in('l.id', $qbInner->getDQL())
+        )
+            ->setParameter('teacher', $teacher->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByRoom(DateTime $start, DateTime $end, Room $room): array {
+        $qb = $this->getDefaultQueryBuilder($start, $end);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner.id')
             ->from(TimetableLesson::class, 'lInner')
-            ->leftJoin('lInner.period', 'pInner')
             ->leftJoin('lInner.room', 'rInner')
-            ->where('pInner.id = :period')
-            ->andWhere('rInner.id = :room');
+            ->where('rInner.id = :room')
+            ->setParameter('room', $room->getId());
 
-        $qb->setParameter('room', $room->getId())
-            ->setParameter('period', $period->getId());
-
-        $qb->where(
+        $qb->andWhere(
             $qb->expr()->in('l.id', $qbInner->getDQL())
         );
+
+        $qb->setParameter('room', $room->getId());
 
         return $qb->getQuery()->getResult();
     }
@@ -166,24 +151,21 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
     /**
      * @inheritDoc
      */
-    public function findAllByPeriodAndStudent(TimetablePeriod $period, Student $student) {
-        $qb = $this->getDefaultQueryBuilder();
+    public function findAllByStudent(DateTime $start, DateTime $end, Student $student): array {
+        $qb = $this->getDefaultQueryBuilder($start, $end);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner')
             ->from(TimetableLesson::class, 'lInner')
-            ->leftJoin('lInner.period', 'pInner')
             ->leftJoin('lInner.tuition', 'tInner')
             ->leftJoin('tInner.studyGroup', 'sgInner')
             ->leftJoin('sgInner.memberships', 'sgmInner')
             ->leftJoin('sgmInner.student', 'studentInner')
-            ->where('pInner.id = :period')
-            ->andWhere('studentInner.id = :student');
+            ->where('studentInner.id = :student');
 
-        $qb->setParameter('student', $student->getId())
-            ->setParameter('period', $period->getId());
+        $qb->setParameter('student', $student->getId());
 
-        $qb->where(
+        $qb->andWhere(
             $qb->expr()->in('l.id', $qbInner->getDQL())
         );
 
@@ -193,21 +175,19 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
     /**
      * @inheritDoc
      */
-    public function findAllByPeriodAndSubjects(TimetablePeriod $period, array $subjects) {
-        $qbTuitionLessons = $this->getDefaultQueryBuilder();
+    public function findAllBySubjects(DateTime $start, DateTime $end, array $subjects): array {
+        $qb = $this->getDefaultQueryBuilder($start, $end);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner')
             ->from(TimetableLesson::class, 'lInner')
-            ->leftJoin('lInner.period', 'pInner')
             ->leftJoin('lInner.tuition', 'tInner')
             ->leftJoin('tInner.subject', 'sInner')
             ->leftJoin('lInner.subject', 'lsInner')
-            ->where('pInner.id = :period')
             ->andWhere(
-                $qbTuitionLessons->expr()->orX(
-                    $qbTuitionLessons->expr()->in('sInner.id', ':subjects'),
-                    $qbTuitionLessons->expr()->in('lsInner.id', ':subjects')
+                $qb->expr()->orX(
+                    $qb->expr()->in('sInner.id', ':subjects'),
+                    $qb->expr()->in('lsInner.id', ':subjects')
                 )
             );
 
@@ -215,50 +195,56 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
             return $subject->getId();
         }, $subjects);
 
-        $qbTuitionLessons->setParameter('subjects', $subjectIds)
-            ->setParameter('period', $period->getId());
+        $qb->setParameter('subjects', $subjectIds);
 
-        $qbTuitionLessons->where(
-            $qbTuitionLessons->expr()->in('l.id', $qbInner->getDQL())
+        $qb->andWhere(
+            $qb->expr()->in('l.id', $qbInner->getDQL())
         );
 
-        return $qbTuitionLessons->getQuery()->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @inheritDoc
      */
-    public function findOneByPeriodAndRoomAndWeekAndDayAndLesson(TimetablePeriod $period, TimetableWeek $week, Room $room, int $day, int $lessonNumber): ?TimetableLesson {
-        $qb = $this->getDefaultQueryBuilder();
+    public function findAllByTuitions(DateTime $start, DateTime $end, array $tuitions): array {
+        $ids = array_map(function(Tuition $tuition) {
+            return $tuition->getId();
+        }, $tuitions);
+
+        $qb = $this->getDefaultQueryBuilder($start, $end);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('lInner')
+            ->from(TimetableLesson::class, 'lInner')
+            ->leftJoin('lInner.tuition', 'tInner')
+            ->where($qb->expr()->in('tInner.id', ':tuitions'));
+
+        $qb->setParameter('tuitions', $ids);
+
+        $qb->andWhere(
+            $qb->expr()->in('l.id', $qbInner->getDQL())
+        );
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findOneByPeriodAndRoomAndWeekAndDayAndLesson(DateTime $date, Room $room, int $lessonNumber): ?TimetableLesson {
+        $qb = $this->getDefaultQueryBuilder($date, $date);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner.id')
             ->from(TimetableLesson::class, 'lInner')
-            ->leftJoin('lInner.period', 'pInner')
-            ->leftJoin('lInner.week', 'wInner')
             ->leftJoin('lInner.room', 'rInner')
-            ->where('pInner.id = :period')
-            ->andWhere('rInner.id = :room')
-            ->andWhere('wInner.id = :week')
-            ->andWhere('lInner.day = :day')
-            ->andWhere(
-                $qb->expr()->orX(
-                    'lInner.lesson = :lesson',
-                    $qb->expr()->andX(
-                        'lInner.lesson = :previousLesson',
-                        'lInner.isDoubleLesson = true'
-                    )
-                )
-            );
+            ->where('lInner.lessonStart >= :lesson')
+            ->andWhere('lInner.lessonEnd <= :lesson')
+            ->setParameter('room', $room->getId())
+            ->setParameter('lesson', $lessonNumber);
 
-        $qb->setParameter('room', $room->getId())
-            ->setParameter('period', $period->getId())
-            ->setParameter('week', $week->getId())
-            ->setParameter('day', $day)
-            ->setParameter('lesson', $lessonNumber)
-            ->setParameter('previousLesson', $lessonNumber-1);
-
-        $qb->where(
+        $qb->andWhere(
             $qb->expr()->in('l.id', $qbInner->getDQL())
         )
             ->setMaxResults(1);
@@ -269,58 +255,216 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
     /**
      * @inheritDoc
      */
-    public function findAllByPeriodAndWeek(TimetablePeriod $period, TimetableWeek $week): array {
-        $qb = $this->getDefaultQueryBuilder();
-
-        $qbInner = $this->em->createQueryBuilder()
-            ->select('lInner')
-            ->from(TimetableLesson::class, 'lInner')
-            ->leftJoin('lInner.period', 'pInner')
-            ->leftJoin('lInner.week', 'wInner')
-            ->where('pInner.id = :period')
-            ->andWhere('wInner.id = :week');
-
-        $qb->setParameter('period', $period->getId())
-            ->setParameter('week', $week->getId());
-
-        $qb->where(
-            $qb->expr()->in('l.id', $qbInner->getDQL())
-        );
-
-        return $qb->getQuery()->getResult();
+    public function findAllByRange(DateTime $start, DateTime $end): array {
+        return $this->getDefaultQueryBuilder($start, $end)
+            ->getQuery()
+            ->getResult();
     }
 
     /**
      * @inheritDoc
      */
-    public function findAllByTuitionsAndWeeks(array $tuitions, array $weeks): array {
+    public function findAll(): array {
+        return $this->em->getRepository(TimetableLesson::class)
+            ->findAll();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function removeStartingFrom(DateTime $dateTime): int {
+        return $this->em->createQueryBuilder()
+            ->delete(TimetableLesson::class, 'l')
+            ->where('l.date >= :date')
+            ->setParameter('date', $dateTime)
+            ->getQuery()
+            ->execute();
+    }
+
+    private function getMissingQueryBuilder(): QueryBuilder {
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('lIntern.id')
+            ->from(TimetableLesson::class, 'lIntern')
+            ->leftJoin('lIntern.entries', 'eIntern')
+            ->where('eIntern.id IS NOT NULL')
+            ->groupBy('lIntern.id, lIntern.lessonEnd, lIntern.lessonStart')
+            ->having('SUM(eIntern.lessonEnd - eIntern.lessonStart + 1) != (lIntern.lessonEnd - lIntern.lessonStart + 1)');
+
+        $qb = $this->em->createQueryBuilder();
+
+        $qb->select(['l', 'e', 't'])
+            ->from(TimetableLesson::class, 'l')
+            ->leftJoin('l.entries', 'e')
+            ->leftJoin('l.tuition', 't')
+            ->where(
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('e.id'),                    // lessons without any entries
+                    $qb->expr()->in('l.id', $qbInner->getDQL())     // partly incomplete lessons
+                )
+            );
+
+        return $qb;
+    }
+
+    private function getMissingByTeacherQueryBuilder(Teacher $teacher, DateTime $start, DateTime $end): QueryBuilder {
+        $qb = $this->getMissingQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('lInner.id')
+            ->from(TimetableLesson::class, 'lInner')
+            ->where('lInner.date >= :start')
+            ->andWhere('lInner.date <= :end')
+            ->leftJoin('lInner.tuition', 'tInner')
+            ->leftJoin('tInner.teachers', 'ttInner');
+        $qbInner
+            ->andWhere(
+                'ttInner.id = :teacher'
+            );
+
+        $qb->andWhere(
+            $qb->expr()->in('l.id', $qbInner->getDQL())
+        )
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->setParameter('teacher', $teacher->getId());
+
+        return $qb;
+    }
+
+    public function getMissingByTeacherPaginator(int $itemsPerPage, int &$page, Teacher $teacher, DateTime $start, DateTime $end): Paginator {
+        if($page < 1) {
+            $page = 1;
+        }
+
+        $offset = ($page - 1) * $itemsPerPage;
+
+        $paginator = new Paginator($this->getMissingByTeacherQueryBuilder($teacher, $start, $end)->orderBy('l.date', 'desc'));
+        $paginator->getQuery()
+            ->setMaxResults($itemsPerPage)
+            ->setFirstResult($offset);
+
+        return $paginator;
+    }
+
+    private function getMissingByGradeQueryBuilder(Grade $grade, DateTime $start, DateTime $end): QueryBuilder {
+        $qb = $this->getMissingQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('lInner.id')
+            ->from(TimetableLesson::class, 'lInner')
+            ->where('lInner.date >= :start')
+            ->andWhere('lInner.date <= :end')
+            ->leftJoin('lInner.tuition', 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.grades', 'gInner')
+            ->andWhere('gInner.id = :grade');
+
+        $qb->andWhere(
+            $qb->expr()->in('l.id', $qbInner->getDQL())
+        )
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->setParameter('grade', $grade->getId());
+
+        return $qb;
+    }
+
+    public function getMissingByGradePaginator(int $itemsPerPage, int &$page, Grade $grade, DateTime $start, DateTime $end): Paginator {
+        if($page < 1) {
+            $page = 1;
+        }
+
+        $offset = ($page - 1) * $itemsPerPage;
+
+        $paginator = new Paginator($this->getMissingByGradeQueryBuilder($grade, $start, $end)->orderBy('l.date', 'desc'));
+        $paginator->getQuery()
+            ->setMaxResults($itemsPerPage)
+            ->setFirstResult($offset);
+
+        return $paginator;
+    }
+
+    private function getMissingByTuitionQueryBuilder(Tuition $tuition, DateTime $start, DateTime $end): QueryBuilder {
+        $qb = $this->getMissingQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('lInner.id')
+            ->from(TimetableLesson::class, 'lInner')
+            ->where('lInner.date >= :start')
+            ->andWhere('lInner.date <= :end')
+            ->leftJoin('lInner.tuition', 'tInner')
+            ->andWhere('tInner.id = :tuition');
+
+        $qb->andWhere(
+            $qb->expr()->in('l.id', $qbInner->getDQL())
+        )
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->setParameter('tuition', $tuition->getId());
+
+        return $qb;
+    }
+
+    public function getMissingByTuitionPaginator(int $itemsPerPage, int &$page, Tuition $tuition, DateTime $start, DateTime $end): Paginator {
+        if($page < 1) {
+            $page = 1;
+        }
+
+        $offset = ($page - 1) * $itemsPerPage;
+
+        $paginator = new Paginator($this->getMissingByTuitionQueryBuilder($tuition, $start, $end)->orderBy('l.date', 'desc'));
+        $paginator->getQuery()
+            ->setMaxResults($itemsPerPage)
+            ->setFirstResult($offset);
+
+        return $paginator;
+    }
+
+    public function countMissingByGrade(Grade $grade, DateTime $start, DateTime $end): int {
+        return $this->getMissingByGradeQueryBuilder($grade, $start, $end)
+            ->select('COUNT(DISTINCT l.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countMissingByTeacher(Teacher $teacher, DateTime $start, DateTime $end): int {
+        return $this->getMissingByTeacherQueryBuilder($teacher, $start, $end)
+            ->select('COUNT(DISTINCT l.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countMissingByTuition(Tuition $tuition, DateTime $start, DateTime $end): int {
+        return $this->getMissingByTuitionQueryBuilder($tuition, $start, $end)
+            ->select('COUNT(DISTINCT l.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countHoldLessons(array $tuitions, ?Student $student): int {
         $tuitionIds = array_map(function(Tuition $tuition) {
             return $tuition->getId();
         }, $tuitions);
 
-        $qb = $this->getDefaultQueryBuilder();
+        $qb = $this->em->createQueryBuilder()
+            ->select('SUM(l.lessonEnd - l.lessonStart + 1)')
+            ->from(TimetableLesson::class, 'l')
+            ->leftJoin('l.tuition', 't')
+            ->leftJoin('l.entries', 'e')
+            ->where('t.id IN (:tuitions)')
+            ->setParameter('tuitions', $tuitionIds);
 
-        $qbInner = $this->em->createQueryBuilder()
-            ->select('lInner')
-            ->from(TimetableLesson::class, 'lInner')
-            ->leftJoin('lInner.tuition', 'tInner')
-            ->leftJoin('lInner.week', 'wInner')
-            ->leftJoin('wInner.weeks', 'weekInner');
-        $qbInner
-            ->where(
-                $qbInner->expr()->in('tInner.id', ':tuitions')
-            )
-            ->andWhere(
-                $qbInner->expr()->in('weekInner.number', ':weeks')
-            );
+        if($student !== null) {
+            $qb->leftJoin('t.studyGroup', 'sg')
+                ->leftJoin('sg.memberships', 'm')
+                ->leftJoin('m.student', 's')
+                ->andWhere('s.id = :student')
+                ->setParameter('student', $student->getId());
+        }
 
-        $qb->setParameter('tuitions', $tuitionIds)
-            ->setParameter('weeks', $weeks);
-
-        $qb->where(
-            $qb->expr()->in('l.id', $qbInner->getDQL())
-        );
-
-        return $qb->getQuery()->getResult();
+        return (int)$qb->getQuery()
+            ->getSingleScalarResult();
     }
+
+
 }

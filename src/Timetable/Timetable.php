@@ -6,7 +6,7 @@ class Timetable {
     /**
      * @var TimetableWeek[]
      */
-    private $weeks = [ ];
+    private array $weeks = [ ];
 
     /**
      * @return TimetableWeek[]

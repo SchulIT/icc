@@ -2,7 +2,7 @@
 
 namespace App\Sorting;
 
-use App\Grouping\WeekOfYear;
+use App\Date\WeekOfYear;
 
 class WeekOfYearStrategy implements SortingStrategyInterface {
 

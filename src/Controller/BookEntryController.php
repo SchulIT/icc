@@ -2,17 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Lesson;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonAttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
+use App\Entity\TimetableLesson;
 use App\Entity\User;
 use App\Form\LessonAttendanceExcuseType;
 use App\Form\LessonEntryAddStudent;
 use App\Form\LessonEntryCancelType;
-use App\Form\LessonEntryCreateType;
 use App\Form\LessonEntryType;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
@@ -46,7 +45,7 @@ class BookEntryController extends AbstractController {
     /**
      * @Route("/cancel/{uuid}", name="cancel_lesson")
      */
-    public function cancelLesson(Lesson $lesson, Request $request) {
+    public function cancelLesson(TimetableLesson $lesson, Request $request) {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $lessonStart = $request->query->getInt('lesson_start');
@@ -113,7 +112,7 @@ class BookEntryController extends AbstractController {
     /**
      * @Route("/create/{uuid}", name="add_entry")
      */
-    public function create(Lesson $lesson, Request $request) {
+    public function create(TimetableLesson $lesson, Request $request) {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $entry = (new LessonEntry())

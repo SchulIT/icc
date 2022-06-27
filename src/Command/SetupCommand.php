@@ -42,6 +42,7 @@ class SetupCommand extends Command {
 
         $this->setupSessions($style);
         $this->addMissingUserTypeEntities($style);
+        $this->addMissingWeeks($style);
 
         return 0;
     }
@@ -76,5 +77,32 @@ class SetupCommand extends Command {
         }
 
         $style->success('Sessions table ready.');
+    }
+
+    private function addMissingWeeks(SymfonyStyle $style) {
+        $weeksInDatabase = [ ];
+
+        $sql = "SELECT number FROM week";
+        $stmt = $this->em->getConnection()->executeQuery($sql);
+
+        while(($row = $stmt->fetchAssociative()) !== false) {
+            $weeksInDatabase[] = intval($row['number']);
+        }
+
+        foreach(range(1, 53) as $week) {
+            if(in_array($week, $weeksInDatabase)) {
+                $style->text(sprintf('Week %d already exists', $week));
+                continue;
+            }
+
+            $sql = 'INSERT INTO week (number) VALUES (?)';
+            $stmt = $this->em->getConnection()->prepare($sql);
+            $stmt->bindValue(1, $week);
+            $stmt->executeQuery();
+
+            $style->text(sprintf('Week %d added', $week));
+        }
+
+        $style->success('Finished adding missing weeks.');
     }
 }

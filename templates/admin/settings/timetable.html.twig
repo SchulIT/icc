@@ -31,16 +31,27 @@
         <div class="card-header">{{ 'admin.settings.timetable.lesson.legend'|trans }}</div>
 
         <div class="card-body">
-        {% for i in 1..maxLessons %}
-            {% if maxLessons > 0 %}
-                {{ form_row(form['lesson_' ~ i ~ '_start']) }}
-                {{ form_row(form['lesson_' ~ i ~ '_end']) }}
+            {% for i in 1..maxLessons %}
+                {% if maxLessons > 0 %}
+                    {{ form_row(form['lesson_' ~ i ~ '_start']) }}
+                    {{ form_row(form['lesson_' ~ i ~ '_end']) }}
 
-                {% if i > 1 %}
-                    {{ form_row(form['lesson_' ~ i ~ '_collapsible']) }}
+                    {% if i > 1 %}
+                        {{ form_row(form['lesson_' ~ i ~ '_collapsible']) }}
+                    {% endif %}
                 {% endif %}
-            {% endif %}
-        {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.timetable.ranges.legend'|trans }}</div>
+
+        <div class="card-body">
+            {% for name, type in userTypes %}
+                {{ form_row(form['start_' ~ name]) }}
+                {{ form_row(form['end_' ~ name]) }}
+            {% endfor %}
         </div>
     </div>
 

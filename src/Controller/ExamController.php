@@ -15,7 +15,7 @@ use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
 use App\Grouping\ExamWeekGroup;
 use App\Grouping\ExamWeekStrategy;
 use App\Grouping\Grouper;
-use App\Grouping\WeekOfYear;
+use App\Date\WeekOfYear;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;

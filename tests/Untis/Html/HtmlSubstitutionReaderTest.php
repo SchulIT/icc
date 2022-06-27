@@ -5,13 +5,13 @@ namespace App\Tests\Untis\Html;
 use App\Repository\SettingRepositoryInterface;
 use App\Settings\SettingsManager;
 use App\Settings\UntisHtmlSettings;
-use App\Untis\Html\AbsentRoomsInfotextReader;
-use App\Untis\Html\AbsentStudyGroupsInfotextReader;
-use App\Untis\Html\AbsentTeachersInfotextReader;
-use App\Untis\Html\FreeLessonsInfotextReader;
-use App\Untis\Html\HtmlInfotextReader;
-use App\Untis\Html\HtmlSubstitutionReader;
-use App\Untis\Html\TableCellParser;
+use App\Untis\Html\Substitution\AbsentRoomsInfotextReader;
+use App\Untis\Html\Substitution\AbsentStudyGroupsInfotextReader;
+use App\Untis\Html\Substitution\AbsentTeachersInfotextReader;
+use App\Untis\Html\Substitution\FreeLessonsInfotextReader;
+use App\Untis\Html\Substitution\InfotextReader;
+use App\Untis\Html\Substitution\SubstitutionReader;
+use App\Untis\Html\Substitution\TableCellParser;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 
@@ -25,12 +25,12 @@ class HtmlSubstitutionReaderTest extends TestCase {
         $repository = $this->createMock(SettingRepositoryInterface::class);
         $repository->method('findAll')->willReturn([]);
 
-        $reader = new HtmlSubstitutionReader([
+        $reader = new SubstitutionReader([
             new AbsentRoomsInfotextReader(),
             new AbsentStudyGroupsInfotextReader(),
             new AbsentTeachersInfotextReader(),
             new FreeLessonsInfotextReader(),
-            new HtmlInfotextReader()
+            new InfotextReader()
         ], new TableCellParser(), new UntisHtmlSettings(new SettingsManager($repository)));
         libxml_use_internal_errors(true) AND libxml_clear_errors();
         $result = $reader->readHtml($html);

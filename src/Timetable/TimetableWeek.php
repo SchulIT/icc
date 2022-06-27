@@ -2,36 +2,53 @@
 
 namespace App\Timetable;
 
-use App\Entity\TimetableWeek as TimetableWeekEntity;
-
 class TimetableWeek {
 
-    /** @var TimetableWeekEntity */
-    private $week;
+    private int $year;
+
+    private int $week;
+
+    private ?string $label;
 
     /**
      * Maximum of lesson number of all days in a week
      * @var int
      */
-    public $maxLessons;
+    public int $maxLessons;
 
     /** @var TimetableDay[] */
-    public $days = [ ];
+    public array $days = [ ];
 
     /**
      * @var bool
      */
-    public $isCurrentOrUpcoming = false;
+    public bool $isCurrentOrUpcoming = false;
 
-    public function __construct(TimetableWeekEntity $week) {
+    public function __construct(int $year, int $week, ?string $label) {
+        $this->year = $year;
         $this->week = $week;
+        $this->label = $label;
+    }
+
+    /**
+     * @return int
+     */
+    public function getYear(): int {
+        return $this->year;
+    }
+
+    /**
+     * @return int
+     */
+    public function getWeek(): int {
+        return $this->week;
     }
 
     /**
      * @return string
      */
-    public function getWeekName(): string {
-        return $this->week->getDisplayName();
+    public function getLabel(): ?string {
+        return $this->label;
     }
 
     /**
@@ -56,7 +73,7 @@ class TimetableWeek {
      */
     public function hasSupervisionBefore(int $firstLesson): bool {
         foreach($this->days as $day) {
-            $ttlFirst = $day->getTimetableLesson($firstLesson);
+            $ttlFirst = $day->getTimetableLessonsContainer($firstLesson);
 
             if($ttlFirst->hasSupervisionBefore()) {
                 return true;
@@ -64,24 +81,6 @@ class TimetableWeek {
         }
 
         return false;
-    }
-
-    /**
-     * @param int $firstLesson
-     * @param int $secondLesson
-     * @return bool
-     */
-    public function areCombinedLessons(int $firstLesson, int $secondLesson): bool {
-        foreach($this->days as $day) {
-            $ttlFirst = $day->getTimetableLesson($firstLesson);
-            $ttlSecond = $day->getTimetableLesson($secondLesson);
-
-            if($ttlFirst->includeNextLesson() === false || $ttlSecond->isCollapsed() === false) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     public function setCurrentOrUpcoming(): void {

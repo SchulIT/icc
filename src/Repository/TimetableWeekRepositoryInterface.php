@@ -18,6 +18,8 @@ interface TimetableWeekRepositoryInterface {
      */
     public function findOneByKey(string $key): ?TimetableWeek;
 
+    public function findOneByWeekNumber(int $number): ?TimetableWeek;
+
     /**
      * @return TimetableWeek[]
      */

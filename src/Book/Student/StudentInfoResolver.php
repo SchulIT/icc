@@ -2,18 +2,15 @@
 
 namespace App\Book\Student;
 
-use App\Entity\ExcuseNote;
 use App\Entity\Section;
 use App\Entity\Student;
-use App\Entity\Tuition;
 use App\Repository\BookCommentRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
-use App\Repository\LessonRepositoryInterface;
+use App\Repository\TimetableLessonRepositoryInterface;
 use App\Settings\TimetableSettings;
 use App\Sorting\LessonAttendenceStrategy;
 use App\Sorting\Sorter;
-use App\Entity\LessonAttendance as LessonAttendanceEntity;
 
 class StudentInfoResolver extends AbstractResolver {
 
@@ -22,7 +19,7 @@ class StudentInfoResolver extends AbstractResolver {
     private $sorter;
 
     public function __construct(LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
-                                TimetableSettings $timetableSettings, BookCommentRepositoryInterface $commentRepository, LessonRepositoryInterface $lessonRepository,
+                                TimetableSettings $timetableSettings, BookCommentRepositoryInterface $commentRepository, TimetableLessonRepositoryInterface $lessonRepository,
                                 Sorter $sorter) {
         parent::__construct($attendanceRepository, $excuseNoteRepository, $timetableSettings);
         $this->commentRepository = $commentRepository;

@@ -1495,18 +1495,39 @@ import:
             info: Hier können Vertretungen der Monitor-HTML-Datei des Info-Stundenplan-Moduls hochgeladen werden. Im Gegensatz zur GPU014 werden so auch Tagestexte, Absenzen und unterrichtsfreie Zeiten importieren.
             note: Klausuren und Veranstaltungen werden bei diesem Import ignoriert.
             template:
-                info: Die Ausgabe muss ein bestimmtes Format einhalten, damit es ausgelesen werden kann. Dieses kann in Untis über "Import/Export" > "Untis" > "Formate/Fenstergruppen/Ribbon" > "Eingabeformat Import" importiert werden. Außerdem muss es im Info-Stundenplan als Vertretungsplan-Format hinterlegt werden.
+                info: Die Ausgabe muss ein bestimmtes Format einhalten, damit es eingelesen werden kann. Dieses kann in Untis über "Import/Export" > "Untis" > "Formate/Fenstergruppen/Ribbon" > "Eingabeformat Import" importiert werden. Außerdem muss es im Info-Stundenplan als Vertretungsplan-Format hinterlegt werden.
                 download: Format herunterladen (Ziel speichern unter)
 
     supervisions:
         label: Aufsichten
         info: Hier kann die GPU009.txt importiert werden. Diese muss als UTF-8 mit Semikolon (;) als Trennzeichen exportiert werden.
+        caution: Damit der Import funktioniert, muss zunächst in den Einstellungen zunächst die Übersetzungstabelle für Schulwochen angelegt werden.
         result: 'Alle alten Aufsichten im Zeitabschnitt gelöscht und %added% neue hinzugefügt'
+        help: Das Startdatum gibt an, ab welchem Datum Aufsichten importiert werden. Im Normalfall handelt es sich dabei um das Startdatum der aktuellen Periode (die GPU009 wird stets für die aktuell ausgewählte Periode exportiert).
     exams:
         label: Klausuren
         info: Hier kann die GPU017.txt importiert werden. Diese muss als UTF-8 mit Semikolon (;) als Trennzeichen exportiert werden. Um die Kurse auflösen zu können, muss eine passende GPU002.txt ausgewählt werden.
         caution: Da sich Unterrichtsnummern insbesondere über Halbjahre hinweg ändern können, muss der Import stets auf Halbjahre beschränkt werden.
         result: '%added% neue Klausur(en), %ignored% nicht importiert, %updated% aktualisiert, %removed% gelöscht'
+
+    timetable:
+        help: Start- und Enddatum geben an, für welchen Zeitraum der Stundenplan importiert werden soll.
+        caution: Das Startdatum muss zwingend in der Zukunft liegen, da es anderenfalls zu Datenverlust beim Unterrichtsbuch kommt.
+
+        database:
+            label: Stundenplan (lesson.txt)
+            info: Hier kann die lessons.txt importiert werden. Diese wird über das Info-Stundenplan Modul im Reiter Datenbank exportiert.
+            result: '%added% Stundenplaneinträge hinzugefügt'
+        html:
+            label: Stundenplan (HTML)
+            info: Hier können die HTML-Stundenpläne importiert werden. Diese können über den Drucken-Dialog > "HTML-Ausg." erzeugt werden. Dazu muss vorab das entsprechende Format (Ex-F-HTML für Fächerpläne oder Ex-K-HTML für Klassenpläne) ausgewählt werden.
+            label_subjects: Fächerpläne
+            label_grades: Klassenpläne
+            zip: Die HTML-Dateien müssen in eine ZIP-Datei gepackt werden.
+            result: '%added% Stundenplaneinträge hinzugefügt'
+            template:
+                info: Die Ausgabe muss ein bestimmtes Format einhalten, damit es eingelesen werden kann. Dieses kann in Untis über "Import/Export" > "Untis" > "Formate/Fenstergruppen/Ribbon" > "Eingabeformat Import" importiert werden.
+                download: Format herunterladen (Ziel speichern unter)
 
 experimental:
     label: experimentell

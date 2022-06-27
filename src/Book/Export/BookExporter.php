@@ -12,7 +12,6 @@ use App\Entity\BookComment as CommentEntity;
 use App\Entity\Grade as GradeEntity;
 use App\Entity\GradeMembership;
 use App\Entity\GradeTeacher;
-use App\Entity\Lesson as LessonEntity;
 use App\Entity\LessonAttendance as LessonAttendanceEntity;
 use App\Entity\LessonAttendanceType;
 use App\Entity\LessonEntry;
@@ -21,6 +20,7 @@ use App\Entity\Section as SectionEntity;
 use App\Entity\Student as StudentEntity;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Teacher as TeacherEntity;
+use App\Entity\TimetableLesson;
 use App\Entity\Tuition as TuitionEntity;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
@@ -30,17 +30,15 @@ use JMS\Serializer\SerializerInterface;
 
 class BookExporter {
 
-    private $overviewHelper;
-    private $studentInfoResolver;
-    private $absenceExcuseResolver;
+    private EntryOverviewHelper $overviewHelper;
+    private StudentInfoResolver $studentInfoResolver;
 
-    private $sorter;
-    private $serializer;
+    private Sorter $sorter;
+    private SerializerInterface $serializer;
 
-    public function __construct(EntryOverviewHelper $overviewHelper, StudentInfoResolver $studentInfoResolver, AbsenceExcuseResolver $absenceExcuseResolver, Sorter $sorter, SerializerInterface $serializer) {
+    public function __construct(EntryOverviewHelper $overviewHelper, StudentInfoResolver $studentInfoResolver, Sorter $sorter, SerializerInterface $serializer) {
         $this->overviewHelper = $overviewHelper;
         $this->studentInfoResolver = $studentInfoResolver;
-        $this->absenceExcuseResolver = $absenceExcuseResolver;
         $this->sorter = $sorter;
         $this->serializer = $serializer;
     }
@@ -215,7 +213,7 @@ class BookExporter {
         );
     }
 
-    private function castLesson(LessonEntity $lessonEntity, int $lessonNumber): Lesson {
+    private function castLesson(TimetableLesson $lessonEntity, int $lessonNumber): Lesson {
         $subject = $lessonEntity->getTuition()->getSubject();
 
         $lesson = (new Lesson())

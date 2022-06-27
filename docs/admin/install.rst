@@ -66,14 +66,6 @@ Anschließend werden einige Daten abgefragt. Diese können abgesehen vom ``commo
 - ``commonName`` Domainname des ICCs, bspw. ``icc.example.com``
 - ``emailAddress`` entspricht der E-Mail-Adresse des Administrators
 
-Anschließend muss noch ein Zertifikat für die OAuth2-Authentifizierung erstellt werden, damit sich Apps mit dem ICC verbinden können:
-
-.. code-block:: shell
-
-    $ php bin/console app:create-certificate --type oauth2
-
-Es werden erneut einige Daten abgefragt (siehe oben).
-
 Schritt 2.3: Identity Provider bekannt machen
 #############################################
 

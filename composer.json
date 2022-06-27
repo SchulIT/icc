@@ -10,6 +10,7 @@
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-openssl": "*",
+        "ext-zip": "*",
         "beberlei/doctrineextensions": "^1.2",
         "composer/package-versions-deprecated": "1.11.99.4",
         "damienharper/auditor-bundle": "^5.0",

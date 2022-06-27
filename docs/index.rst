@@ -28,7 +28,6 @@ zu Workflows.
    configure/exams.rst
    configure/appointments.rst
    configure/notifications.rst
-   configure/apps.rst
    configure/sections.rst
    configure/sick_notes.rst
    configure/auditlog.rst

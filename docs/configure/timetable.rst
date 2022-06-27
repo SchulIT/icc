@@ -2,8 +2,7 @@ Stundenplan
 ===========
 
 Zunächst sollte der Stundenplan an die eigene Schule angepasst werden. Dazu zählen unter anderem die Angabe der
-Stundenanzahl, Unterrichtszeiten und Pausen. Die Angabe der Stundenplan-Perioden sowie Wochenperiodizität ist ebenfalls
-notwendig.
+Stundenanzahl, Unterrichtszeiten und Pausen. Die Angabe der Wochenperiodizität ist ebenfalls notwendig.
 
 Diese Einstellungen lassen sich im Einstellungen-Menü :fa:`wrench` unter Stundenplan vornehmen. Stundenplan-Perioden und
 -wochen lassen sich im Verwaltungs-Menü :fa:`cogs` unter Stundenplan verwalten.
@@ -58,30 +57,9 @@ da diese für die Pausenaufsichten benötigt werden.
 
 Mit der Angabe einer Farbe kann des Feld der Pausenaufsicht entsprechend hinterlegt werden (optional).
 
-Stundenplan-Perioden und -wochen
+Stundenplan-Wochen
 --------------------------------
 
-Perioden
-########
-
-Grundsätzlich muss der Stundenplan in Perioden angegeben werden. Die Anzahl an Perioden ist dabei unerheblich. Hat man
-eigentlich keine Stundenplan-Perioden, so gibt man eine Periode an, die über das gesamte Schuljahr verläuft.
-
-Jede Periode kann individuell für einzelne Benutzergruppen freigeschaltet werden. Die Externe ID ist jene ID, die der
-Untis Importer mitschicken muss, wenn er Stundenplaneinträge für eine Periode importieren möchte.
-
-.. danger:: Wenn Perioden durch den Untis ICC Importer angelegt werden, müssen diese anschließend für die gewünschten
-   Benutzergruppen freigeschaltet werden. Standardmäßig sind sie für niemanden sichtbar.
-
-Wochen
-######
-
 Viele Schulen nutzen A- und B-Wochen, um den Stundenplan abzubilden. Wie bspw. in Untis muss auch dies im ICC konfiguriert werden.
-Aktuell kann das ICC solche Wochen nur anhand der Kalenderwoche erkennen, d.h. ungerade Wochen (Wochen-Modulo 1) können
-der A-Woche und gerade Wochen (Wochen-Modulo 0) der B-Woche zugeordnet werden. Bei einer C-Woche würde man den Modulo 2 noch ergänzen.
-
-Der Schlüssel der Woche ist dabei eine Zeichenkette, die das System nutzt, um Stundenplaneinträge beim Import der
-richtigen Woche zuzuordnen.
-
-**Tipp:** Standard A- und B-Wochen können per Knopfdruck angelegt werden.
-
+Dazu gibt man für A- und B-Wochen jeweils an, welche Kalenderwoche diese Woche entspricht. Die gewählte Periodizität ist
+im übrigen nicht durch das ICC limitiert, d.h. man kann auch C- oder D-Wochen (etc.) hinzufügen.

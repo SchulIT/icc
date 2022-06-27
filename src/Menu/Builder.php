@@ -313,6 +313,11 @@ class Builder {
         }
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $root->addChild('admin.timetable.label', [
+                'route' => 'admin_timetable'
+            ])
+                ->setExtra('icon', 'far fa-clock');
+
             $root->addChild('admin.resources.label', [
                 'route' => 'admin_resources'
             ])
@@ -475,10 +480,6 @@ class Builder {
             ])
                 ->setExtra('icon', 'fas fa-eye');
 
-            $menu->addChild('import.timetable.database.label', [
-                'route' => 'import_untis_timetable'
-            ])
-                ->setExtra('icon', 'far fa-clock');
             $menu->addChild('import.timetable.html.label', [
                 'route' => 'import_untis_timetable_html'
             ])

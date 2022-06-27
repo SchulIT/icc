@@ -15,7 +15,6 @@ use App\Import\ImportException;
 use App\Section\SectionResolverInterface;
 use App\Settings\UntisSettings;
 use App\Untis\Database\Date\DateReader;
-use App\Untis\Database\Timetable\TimetableImporter as DatabaseTimetableImporter;
 use App\Untis\Gpu\Exam\ExamImporter;
 use App\Untis\Gpu\Substitution\SubstitutionImporter as GpuSubstitutionImporter;
 use App\Untis\Gpu\Supervision\SupervisionImporter;
@@ -290,40 +289,6 @@ class UntisImportController extends AbstractController {
         }
 
         return $this->render('import/exams.html.twig', [
-            'form' => $form->createView()
-        ]);
-    }
-
-    /**
-     * @Route("/timetable/db", name="import_untis_timetable")
-     */
-    public function timetable(Request $request, DatabaseTimetableImporter $importer, TranslatorInterface $translator) {
-        $form = $this->createForm(TimetableImportType::class);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-            /** @var DateTime $start */
-            $start = $form->get('start')->getData();
-            /** @var DateTime $end */
-            $end = $form->get('end')->getData();
-            /** @var UploadedFile $file */
-            $file = $form->get('importFile')->getData();
-
-            $csvReader = Reader::createFromPath($file->getRealPath());
-            try {
-                $result = $importer->import($csvReader, $start, $end);
-
-                $this->addFlash('success', $translator->trans('import.timetable.result', [
-                    '%added%' => count($result->getAdded())
-                ]));
-
-                return $this->redirectToRoute('import_untis_timetable');
-            } catch (ImportException $exception) {
-                $this->addFlash('error', $exception->getMessage());
-            }
-        }
-
-        return $this->render('import/timetable.html.twig', [
             'form' => $form->createView()
         ]);
     }

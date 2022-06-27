@@ -48,11 +48,6 @@ Folgende Funktionen sind geplant:
 
 Mitteilungen können nun Umfragen enthalten. Mehr dazu kann der Dokumentation entnommen werden.
 
-## API
-
-Die API hat sich verändert. Die neue API-Schnittstelle ist als OpenAPI-Spezifikation innerhalb des ICCs (Fußbereich -> API-Dokumentation)
-zu finden.
-
 ## Administrative Aufgaben
 
 Es ist nun möglich, einen Schuljahresabschnitt inkl. aller Daten (Unterrichte, Lerngruppen, Klassenbucheinträge, Stundenplan) 

@@ -31,11 +31,15 @@ DELETE FROM sick_note;
 DELETE FROM tuition;
 DELETE FROM message;
 DELETE FROM free_timespan;
-DELETE FROM timetable_lesson;
-DELETE FROM timetable_supervision;
-DELETE FROM timetable_period;
 DELETE FROM absence;
 DELETE FROM infotext;
+DELETE FROM lesson_attendance;
+DELETE FROM lesson_entry;
+DELETE FROM lesson;
+DELETE FROM timetable_lesson;
+DELETE FROM timetable_lesson_grades;
+DELETE FROM timetable_lesson_teachers;
+DELETE FROM timetable_period;
 ```
 
 ## Schritt 3: Mitteilungsdateien löschen

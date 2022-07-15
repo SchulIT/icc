@@ -18,13 +18,6 @@
         {% endif %}
     {% endfor %}
 
-    {% if view.substitutionMentions|length > 0
-        or view.infotexts|length > 0
-        or view.exams|length > 0
-        or view.appointments|length > 0
-        or (is_granted('view-absences') and (view.absentTeachers|length > 0 or view.absentStudyGroups|length > 0))
-        or (totalMessages > 0 and (totalMessages - dismissed) > 0)
-    %}
     <ul class="nav nav-pills card-header-pills">
         {% if view.substitutionMentions|length > 0 %}
             <li class="nav-item">
@@ -72,8 +65,13 @@
                 </a>
             </li>
         {% endif %}
+
+        <li class="nav-item pull-right d-md-none d-lg-none d-xl-none">
+            <a href="#filter" class="nav-link" data-trigger="scroll">
+                <i class="fas fa-filter"></i> {{ 'filter.label'|trans }}
+            </a>
+        </li>
     </ul>
-    {% endif %}
 {% endblock %}
 
 {% block priority_messages %}
@@ -257,7 +255,7 @@
                 {% block dashboard %}{% endblock %}
             </div>
             <div class="col-md-3 sticky-sidebar">
-                <div class="card">
+                <div class="card" id="filter">
                     <div class="card-body">
                         {% set studentParam = (studentFilter.currentStudent == null) ? null : studentFilter.currentStudent.uuid %}
                         {% set userTypeParam = (userTypeFilter.currentType == null or userTypeFilter.types|length == 0) ? null : userTypeFilter.currentType.value %}

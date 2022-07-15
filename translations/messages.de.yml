@@ -223,6 +223,7 @@ markdown:
     link_broken: Dieser Verweis ist defekt.
 
 filter:
+    label: Filter
     reset_date: Datum zurücksetzen
     reset: zurücksetzen
 

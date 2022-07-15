@@ -48,8 +48,8 @@
                     {% endif %}
                     <div class="d-block">
                         {% for absentStudent in group.students %}
-                            {% if absentStudent.reason == 'sick' %}<i class="fas fa-clinic-medical"></i>{% endif %}
-                            {{ absentStudent.student|student }} {% if absentStudent.reason == 'sick' %}({{ 'sick_notes.until_short'|trans({'%date%': absentStudent.sickNote.until.date|format_date, '%lesson%': absentStudent.sickNote.until.lesson }) }}){% endif %}{% if not loop.last %} – {% endif %}{% endfor %}
+                            {% if absentStudent.reason == 'absence' %}<i class="fas fa-user-times" title="{{ 'student_absences.show.label'|trans }}"></i>{% endif %}
+                            {{ absentStudent.student|student }} {% if absentStudent.reason == 'absence' %}({{ 'student_absences.until_short'|trans({'%date%': absentStudent.absence.until.date|format_date, '%lesson%': absentStudent.absence.until.lesson }) }}){% endif %}{% if not loop.last %} – {% endif %}{% endfor %}
                     </div>
                 </div>
             {% endfor %}

@@ -6,8 +6,8 @@ Import notwendig, da bei der Migration der Datenbank Daten verloren gehen.
 
 ## Softwarevoraussetzungen
 
-Es wird nun PHP 7.4 vorausgesetzt. Die Nutzung von PHP 8.0 sollte möglich sein, wird aber noch nicht empfohlen. 
-Das ICC basiert nun auf Symfony 5.3.
+Es wird nun PHP 8.0 vorausgesetzt. Das ICC basiert nun auf Symfony 5.4, sollte jedoch alsbald auf
+Symfony 6.0 aktualisiert werden.
 
 ## Schuljahresabschnitte
 
@@ -39,10 +39,7 @@ Die Klassenbuch-Funktion ist neu hinzugekommen. Funktionen:
 * Entschuldigungen
 * Lernendenübersicht mit Fehlstunden und Klassenbucheinträgen
 * Export als XML oder JSON
-
-Folgende Funktionen sind geplant:
 * PDF-Export zur Archivierung am Ende des Schuljahres
-* ...
 
 ## Mitteilungen
 

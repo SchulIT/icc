@@ -11,9 +11,9 @@ oneup_flysystem:
             local:
                 location: '%kernel.project_dir%/files/wiki'
 
-        sick_notes:
+        student_absence:
             local:
-                location: '%kernel.project_dir%/files/sick_notes'
+                location: '%kernel.project_dir%/files/student_absence'
 
     filesystems:
         messages:
@@ -25,6 +25,6 @@ oneup_flysystem:
         wiki:
             adapter: wiki
             mount: wiki
-        sick_notes:
-            adapter: sick_notes
-            mount: sick_notes
+        student_absence:
+            adapter: student_absence
+            mount: student_absence

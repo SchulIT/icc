@@ -1,0 +1,203 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'student_absences.show.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('absences') }}">{{ 'student_absences.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/editor.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-body flush-last-p">
+                        <h4 class="card-title">
+                            {{ 'student_absences.show.header'|trans({'%student%': absence.student|student}) }}
+
+                            <span class="badge badge-primary">
+                                {{ absence.type.name }}
+                            </span>
+
+                            {% if absence.type.mustApprove %}
+                                {% if absence.approvedAt is null %}
+                                    <span class="badge badge-warning">
+                                        {{ 'student_absences.approval.pending'|trans }}
+                                    </span>
+                                {% else %}
+                                    {% if absence.isApproved %}
+                                        <span class="badge badge-success">
+                                            {{ 'student_absences.approval.approved'|trans }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-danger">
+                                            {{ 'student_absences.approval.not_approved'|trans }}
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        </h4>
+
+                        {{ absence.message|markdown }}
+                    </div>
+
+                    {% if absence.attachments|length > 0 %}
+                        <div class="card-footer">
+                            <ul class="nav nav-pills card-header-pills">
+                                {% for attachment in absence.attachments %}
+                                    <li class="nav-item">
+                                        <a class="nav-link link-hover" href="{{ path('download_student_absence_attachment', { uuid: attachment.uuid }) }}">
+                                            <i class="fa fa-download"></i> {{ attachment.filename }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% for message in absence.messages %}
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-user"></i> {{ message.createdBy|user }}
+                            <i class="fas fa-clock"></i> {{ message.createdAt|format_datetime }}
+                        </div>
+
+                        <div class="card-body">
+                            {{ message.message|markdown }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {{ form_start(form) }}
+                <div class="card">
+                    <div class="card-header">{{ 'student_absences.message.label'|trans }}</div>
+
+                    <div class="card-body">
+                        {{ form_widget(form.message) }}
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-paper-plane"></i> {{ 'student_absences.message.submit'|trans }}
+                        </button>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </div>
+
+            <div class="col-md-3">
+                {% if absence.type.mustApprove %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ 'student_absences.approval.label'|trans }}</h4>
+
+                            <p>
+                                {% if absence.approvedAt is null %}
+                                    <span class="badge badge-warning">
+                                        {{ 'student_absences.approval.pending'|trans }}
+                                    </span>
+                                {% else %}
+                                    {% if absence.isApproved %}
+                                        <span class="badge badge-success">
+                                            {{ 'student_absences.approval.approved'|trans }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-danger">
+                                            {{ 'student_absences.approval.not_approved'|trans }}
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </p>
+
+                            {% if absence.approvedBy is not null %}
+                            <p>
+                                <i class="fas fa-chalkboard-teacher"></i> {{ absence.approvedBy|user(false) }}
+                            </p>
+                            {% endif %}
+
+                            {% if absence.approvedAt is not null %}
+                                <p>
+                                    <i class="far fa-clock"></i> {{ absence.approvedAt|format_datetime }}
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        {% if is_granted('approve', absence) or is_granted('deny', absence) %}
+                            <div class="list-group list-group-flush">
+                                {% if is_granted('approve', absence) %}
+                                    <a href="{{ path('approve_absence', { uuid: absence.uuid, '_csrf_token': csrf_token(token_id)}) }}" class="list-group-item list-group-item-action list-group-item-success">
+                                        <i class="fas fa-check-circle"></i> {{ 'student_absences.approval.approve'|trans }}
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('deny', absence) %}
+                                    <a href="{{ path('deny_absence', { uuid: absence.uuid, '_csrf_token': csrf_token(token_id)}) }}" class="list-group-item list-group-item-action list-group-item-danger">
+                                        <i class="fas fa-times-circle"></i> {{ 'student_absences.approval.deny'|trans }}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if absence.email is not empty or absence.phone is not empty %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ 'student_absences.show.contact'|trans }}</h4>
+
+                            {% if absence.email is not empty %}
+                                <p>
+                                    <i class="fas fa-envelope"></i>
+                                    <a href="mailto:{{ absence.email }}">
+                                        {{ absence.email }}
+                                    </a>
+                                </p>
+                            {% endif %}
+
+                            {% if absence.phone is not empty %}
+                                <p>
+                                    <i class="fas fa-phone"></i>
+                                    <a href="tel:{{ absence.phone }}">
+                                        {{ absence.phone }}
+                                    </a>
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        <p>
+                            <span class="text-muted">{{ 'student_absences.add.absent_from'|trans }}</span>
+                            {{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }})
+                        </p>
+
+                        <p>
+                            <span class="text-muted">{{ 'student_absences.add.absent_until'|trans }}</span>
+                            {{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})
+                        </p>
+
+                        <p>
+                            <span class="text-muted">{{ 'student_absences.created_by'|trans }}</span>
+                            {{ absence.createdBy|user }}
+                        </p>
+
+                        <p>
+                            <span class="text-muted">{{ 'student_absences.created_at'|trans }}</span>
+                            {{ absence.createdAt|format_datetime }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

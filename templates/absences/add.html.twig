@@ -1,0 +1,98 @@
+{% extends "main.html.twig" %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ 'student_absences.add.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('absences') }}">{{ 'student_absences.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
+
+            {% if settings.introductionText is not null %}
+                {{ settings.introductionText|markdown }}
+            {% endif %}
+
+            <p>
+                {{ 'student_absences.add.privacy.info'|trans }}
+                {% if settings.retentionDays > 0 %}
+                    {{ 'student_absences.history.retention'|trans({'%count%': settings.retentionDays }) }}
+                {% endif %}
+            </p>
+
+            {% if settings.privacyUrl is not null %}
+                <a href="{{ settings.privacyUrl }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                    <i class="fa fa-external-link-alt"></i> {{ 'student_absences.add.privacy.link'|trans }}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+        <div class="card-body">
+            {{ form_row(form.student) }}
+            {{ form_row(form.type)}}
+            {{ form_row(form.from) }}
+            {{ form_row(form.until) }}
+            {{ form_row(form.message) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'student_absences.add.contact.label'|trans }}</div>
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                {{ 'student_absences.add.contact.info'|trans }}
+            </div>
+
+            {{ form_row(form.phone) }}
+            {{ form_row(form.email) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'student_absences.add.attachments.label'|trans }}</div>
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                {{ 'student_absences.add.attachments.info'|trans }}
+            </div>
+
+            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}">
+                {{ form_widget(form.attachments) }}
+            </div>
+
+            {{ form_errors(form.attachments) }}
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="attachments">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-envelope"></i> {{ 'student_absences.add.send'|trans }}
+        </button>
+
+        <a href="{{ path('absences') }}" class="btn btn-secondary btn-sm">
+            {{ 'actions.cancel'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

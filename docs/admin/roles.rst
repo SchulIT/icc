@@ -69,15 +69,21 @@ ROLE_BOOK_ENTRY_CREATOR
 
 Diese Rolle beinhaltet die Rolle ``ROLE_BOOK_VIEWER`` und erlaubt darüber hinaus, Klassenbucheinträge oder Entschuldigungen einzutragen.
 
-ROLE_SICK_NOTE_VIEWER
-#####################
+ROLE_STUDENT_ABSENCE_VIEWER
+###########################
 
-Nutzer mit dieser Rolle haben lesenden Zugriff auf alle Krankmeldungen.
+Nutzer mit dieser Rolle haben lesenden Zugriff auf alle Abwesenheitsmeldungen.
 
-ROLE_SICK_NOTE_CREATOR
-######################
+ROLE_STUDENT_ABSENCE_CREATOR
+############################
 
-Diese Rolle erlaubt es, Krankmeldungen für beliebige Lernende zu erstellen.
+Diese Rolle erlaubt es, Abwesenheitsmeldungen für beliebige Lernende zu erstellen.
+
+ROLE_STUDENT_ABSENCE_APPROVER
+#############################
+
+Diese Rolle erlaubt es, Abwesenheitsmeldungen zu genehmigen (sofern diese genehmigt werden müssen). Standardmäßig
+können kann nur die Klassenleitung eine Abwesenheitsmeldung genehmigen.
 
 ROLE_KIOSK
 ##########

@@ -33,6 +33,10 @@ services:
             tags: [ 'app.notifications.email_strategy' ]
         App\Untis\Html\Substitution\InfotextReaderInterface:
             tags: [ 'app.untis.import.infotext_reader' ]
+        App\StudentAbsence\AbstractNotifier:
+            bind:
+                $appName: '%env(APP_NAME)%'
+                $sender: '%env(MAILER_FROM)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -175,9 +179,9 @@ services:
         bind:
             $wikiFilesystem: '@oneup_flysystem.wiki_filesystem'
 
-    App\Controller\SickNoteController:
+    App\Controller\StudentAbsenceController:
         bind:
-            $sickNoteFilesystem: '@oneup_flysystem.sick_notes_filesystem'
+            $studentAbsencesFilesystem: '@oneup_flysystem.student_absence_filesystem'
 
     # MARKDOWN
     League\CommonMark\Extension\CommonMarkCoreExtension: ~
@@ -255,15 +259,9 @@ services:
     #    tags:
     #        - { name: shapecode_cron.cron_job, expression: '*\/2 * * * *' }
 
-    App\Command\RemoveExpiredSickNotesCommand:
-        bind:
-            $filesystem: '@oneup_flysystem.sick_notes_filesystem'
-
-    # SICKNOTES
-    App\SickNote\SickNoteSender:
+    App\Command\RemoveExpiredStudentAbsencesCommand:
         arguments:
-            $appName: '%env(APP_NAME)%'
-            $sender: '%env(MAILER_FROM)%'
+            $studentAbsencesFilesystem: '@oneup_flysystem.student_absence_filesystem'
 
     # SECTION
     App\Section\SectionResolver: ~

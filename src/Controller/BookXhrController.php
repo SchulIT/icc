@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Book\Lesson\LessonCancelHelper;
 use App\Dashboard\Absence\AbsenceResolver;
+use App\Dashboard\AbsentStudentWithAbsenceNote;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonEntry;
 use App\Entity\StudyGroupMembership;
@@ -83,17 +84,9 @@ class BookXhrController extends AbstractController {
         foreach($absenceResolver->resolve($date, $lesson, $students) as $absentStudent) {
             $absences[] = [
                 'student' => Student::fromEntity($absentStudent->getStudent(), $sectionResolver->getCurrentSection()),
-                'reason' => $absentStudent->getReason()->getValue()
+                'reason' => $absentStudent->getReason()->getValue(),
+                'label' => ($absentStudent instanceof AbsentStudentWithAbsenceNote ? $absentStudent->getAbsence()->getType()->getName() : null)
             ];
-        }
-
-        foreach($attendanceRepository->findAbsentByStudents($students, $date) as $attendance) {
-            if($attendance->getEntry()->getLessonEnd() < $lesson) {
-                $absences[] = [
-                    'student' => Student::fromEntity($attendance->getStudent(), $sectionResolver->getCurrentSection()),
-                    'reason' => 'absent_before'
-                ];
-            }
         }
 
         foreach($excuseNoteRepository->findByStudentsAndDate($students, $date) as $note) {
@@ -102,6 +95,18 @@ class BookXhrController extends AbstractController {
                     'student' => Student::fromEntity($note->getStudent(), $sectionResolver->getCurrentSection()),
                     'reason' => 'excuse'
                 ];
+            }
+        }
+
+        if(empty($absences)) {
+            foreach ($attendanceRepository->findAbsentByStudents($students, $date) as $attendance) {
+                if ($attendance->getEntry()->getLessonEnd() < $lesson) {
+                    $absences[] = [
+                        'student' => Student::fromEntity($attendance->getStudent(), $sectionResolver->getCurrentSection()),
+                        'reason' => 'absent_before'
+                    ];
+                    break; // only show this absence once
+                }
             }
         }
 

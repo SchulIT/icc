@@ -11,10 +11,10 @@ use App\Section\SectionResolverInterface;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\ListsVoter;
 use App\Security\Voter\ResourceReservationVoter;
-use App\Security\Voter\SickNoteVoter;
+use App\Security\Voter\StudentAbsenceVoter;
 use App\Security\Voter\WikiVoter;
 use App\Settings\NotificationSettings;
-use App\Settings\SickNoteSettings;
+use App\Settings\StudentAbsenceSettings;
 use App\Utils\EnumArrayUtils;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
@@ -37,7 +37,7 @@ class Builder {
     private TranslatorInterface $translator;
     private DarkModeManagerInterface $darkModeManager;
     private NotificationSettings $notificationSettings;
-    private SickNoteSettings $sickNoteSettings;
+    private StudentAbsenceSettings $studentAbsenceSettings;
     private SectionResolverInterface $sectionResolver;
 
     private string $idpProfileUrl;
@@ -46,7 +46,7 @@ class Builder {
                                 WikiArticleRepositoryInterface $wikiRepository, TimetableLessonRepositoryInterface $lessonRepository,
                                 TokenStorageInterface $tokenStorage, DateHelper $dateHelper,
                                 TranslatorInterface $translator, DarkModeManagerInterface $darkModeManager,
-                                NotificationSettings $notificationSettings, SickNoteSettings $sickNoteSettings, SectionResolverInterface $sectionResolver, string $idpProfileUrl) {
+                                NotificationSettings $notificationSettings, StudentAbsenceSettings $studentAbsenceSettings, SectionResolverInterface $sectionResolver, string $idpProfileUrl) {
         $this->factory = $factory;
         $this->authorizationChecker = $authorizationChecker;
         $this->wikiRepository = $wikiRepository;
@@ -57,7 +57,7 @@ class Builder {
         $this->darkModeManager = $darkModeManager;
         $this->idpProfileUrl = $idpProfileUrl;
         $this->notificationSettings = $notificationSettings;
-        $this->sickNoteSettings = $sickNoteSettings;
+        $this->studentAbsenceSettings = $studentAbsenceSettings;
         $this->sectionResolver = $sectionResolver;
     }
 
@@ -323,6 +323,11 @@ class Builder {
                 'route' => 'admin_teachers'
             ])
                 ->setExtra('icon', 'fas fa-sort-alpha-down');
+
+            $root->addChild('admin.absence_types.label', [
+                'route' => 'admin_absence_types'
+            ])
+                ->setExtra('icon', 'fas fa-user-times');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
@@ -529,8 +534,8 @@ class Builder {
                 'route' => 'admin_settings_appointments'
             ]);
 
-            $menu->addChild('admin.settings.sick_notes.label', [
-                'route' => 'admin_settings_sick_notes'
+            $menu->addChild('admin.settings.student_absences.label', [
+                'route' => 'admin_settings_absences'
             ]);
 
             $menu->addChild('admin.settings.import.label', [
@@ -565,14 +570,14 @@ class Builder {
 
         $this->wikiMenu($menu);
 
-        if($this->sickNoteSettings->isEnabled() === true) {
+        if($this->studentAbsenceSettings->isEnabled() === true) {
             if($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_VIEWER')
             || $this->authorizationChecker->isGranted('ROLE_SICK_NOTE_CREATOR')
-            || $this->authorizationChecker->isGranted(SickNoteVoter::New)) {
-                $menu->addChild('sick_notes.label', [
-                    'route' => 'sick_notes'
+            || $this->authorizationChecker->isGranted(StudentAbsenceVoter::New)) {
+                $menu->addChild('student_absences.label', [
+                    'route' => 'absences'
                 ])
-                    ->setExtra('icon', 'fas fa-clinic-medical');
+                    ->setExtra('icon', 'fas fa-user-times');
             }
         }
 

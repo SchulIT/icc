@@ -10,7 +10,7 @@ use App\Entity\GradeMembership;
 use App\Entity\GradeTeacher;
 use App\Entity\Infotext;
 use App\Entity\Room;
-use App\Entity\SickNote;
+use App\Entity\StudentAbsence;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
@@ -55,8 +55,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('GradeMembership', 'fas fa-folder-open', GradeMembership::class);
         yield MenuItem::linkToCrud('Infotext', 'fas fa-folder-open', Infotext::class);
         yield MenuItem::linkToCrud('Room', 'fas fa-folder-open', Room::class);
-        yield MenuItem::linkToCrud('SickNote', 'fas fa-folder-open', SickNote::class);
         yield MenuItem::linkToCrud('Student', 'fas fa-folder-open', Student::class);
+        yield MenuItem::linkToCrud('StudentAbsence', 'fas fa-folder-open', StudentAbsence::class);
         yield MenuItem::linkToCrud('StudyGroup', 'fas fa-folder-open', StudyGroup::class);
         yield MenuItem::linkToCrud('StudyGroupMembership', 'fas fa-folder-open', StudyGroupMembership::class);
         yield MenuItem::linkToCrud('Substitution', 'fas fa-folder-open', Substitution::class);

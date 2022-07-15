@@ -215,6 +215,9 @@ label:
     period: Stundenplan-Periode
     untis_subject: Untis-Fach
     icc_subject: ICC-Fach
+    must_approve:
+        label: muss genehmigt werden
+        help: Abwesenheitsmeldungen mit diesem Typ müssen durch eine Lehrkraft genehmigt werden
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -777,24 +780,21 @@ admin:
                 label: Anzahl der zukünftigen Tage
                 help: Gibt die Anzahl der zukünftigen Tage an, die auf der Übersicht oben in der Leiste angezeigt werden.
 
-        sick_notes:
-            label: Krankmeldungen
+        student_absences:
+            label: Abwesenheitsmeldungen
             enabled: aktiviert
             recipient:
                 label: Empfänger
-                help: E-Mail-Adresse, an die die Krankmeldung versendet wird
+                help: E-Mail-Adresse, an die die Abwesenheitsmeldung zusätzlich zur Klassenleitung versendet wird. Wenn dieses Feld leer ist, wird die Abwesenheitsmeldung nur an die Klassenleitung versendet.
             privacy_url:
                 label: Datenschutz-URL
-                help: Link zur Datenschutzrichtlinie, die der Krankmeldung zugrunde liegt. Dieser Link wird bei der Krankmeldung angezeigt.
+                help: Link zur Datenschutzrichtlinie, die der Abwesenheitsmeldung zugrunde liegt. Dieser Link wird bei der Krankmeldung angezeigt.
             retention_days:
                 label: Aufbewahrung
-                help: Anzahl der Tage, die eine Krankmeldung online im System notiert bleibt. Sie ist dann für die Person sichtbar, die die Krankmeldung eingetragen hat. Dabei wird nur der Benutzer, der betroffende Lernende, die Dauer und der Zeitpunkt erfasst. Anhänge oder die Mitteilung wird nicht gespeichert. Der Wert 0 bedeutet, dass Krankmeldungen dauerhaft aufbewahrt werden.
+                help: Anzahl der Tage, die eine Abwesenheitsmeldung online im System notiert bleibt. Sie ist dann für die Person sichtbar, die die Abwesenheitsmeldung eingetragen hat. Dabei wird nur der Benutzer, der betroffende Lernende, die Dauer und der Zeitpunkt erfasst. Anhänge oder die Mitteilung wird nicht gespeichert. Der Wert 0 bedeutet, dass Krankmeldungen dauerhaft aufbewahrt werden.
             introduction_text:
                 label: Hinweistext
-                help: Der Hinweistext wird oberhalb der Krankmeldungsseite über der Information zum Datenschutz angezeigt.
-            ordered_by:
-                label: Angeordnet von
-                help: 'Dieser Hilfetext wird unterhalb des Feldes "Angeordnet von" angezeigt.'
+                help: Der Hinweistext wird oberhalb der Abwesenheitsmeldungsseite über der Information zum Datenschutz angezeigt.
 
         appointments:
             label: Terminplan
@@ -1196,6 +1196,21 @@ admin:
 
             success: Abschnitt erfolgreich gelöscht
 
+    absence_types:
+        label: Abwesenheitsart
+        empty: Keine Abwesenheitsarten vorhanden
+        add:
+            label: Neue Abwesenheitsart
+            success: Abwesenheitsart erfolgreich erstellt
+        edit:
+            label: Abwesenheitsart bearbeiten
+            success: Abwesenheitsart erfolgreich aktualisiert
+        remove:
+            label: Abwesenheitsart löschen
+            confirm: 'Soll die Abwesenheitsart "%type%" wirklich gelöscht werden?'
+            error: Abwesenheitsart kann nicht gelöscht werden, da es noch Abwesenheiten mit dieser Art gibt.
+            success: Abwesenheitsart erfolgreich gelöscht
+
 versions:
     label: Versionen
     restore:
@@ -1297,17 +1312,17 @@ servicecenter:
 important: Wichtig
 caution: Achtung
 
-sick_notes:
-    label: Krankmeldungen
-    empty: Es liegen keine Krankmeldungen vor.
-    created_at: krankgemeldet am
-    created_by: krankgemeldet von
+student_absences:
+    label: Abwesenheitsmeldungen
+    empty: Es liegen keine Abwesenheitsmeldungen vor.
+    created_at: abwesend am
+    created_by: gemeldet von
     until_short: 'vsl. bis %date% (%lesson%. Stunde)'
     active: aktiv
-    teacher_info: Diese Ansicht zeigt die für den heutigen Tag vorliegenden Krankmeldungen an. Vergangene Krankmeldungen können über den Lernenden- oder Klassenfilter auf der rechten Seite abgerufen werden.
+    teacher_info: Diese Ansicht zeigt die für den heutigen Tag vorliegenden Absenzmeldungen an. Vergangene Meldungen können über den Lernenden- oder Klassenfilter auf der rechten Seite abgerufen werden.
     add:
-        label: Neue Krankmeldung
-        info: Hier besteht die Möglichkeit, eine Krankheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.
+        label: Neue Abwesenheitsmeldung
+        info: Hier besteht die Möglichkeit, eine Abwesenheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.
         privacy:
             info: Die hier erhobenen Daten werden entsprechend der aktuellen Datenschutzrichtlinie der Schule gespeichert und verarbeitet.
             link: Datenschutzrichtlinie anzeigen
@@ -1320,13 +1335,26 @@ sick_notes:
         phone: Telefonnummer
         contact:
             label: Kontaktinformationen
-            info: Es besteht die Möglichkeit, eine Telefonnummer oder E-Mail-Adresse zu hinterlegen, die für Rückfragen genutzt werden kann. Bei Angabe einer E-Mail-Adresse wird eine Kopie der Krankmeldung an diese Adresse versendet.
+            info: Es besteht die Möglichkeit, eine Telefonnummer oder E-Mail-Adresse zu hinterlegen, die für Rückfragen genutzt werden kann. Bei Angabe einer E-Mail-Adresse werden Sie automatisch informiert, wenn eine Mitteilung der Klassen- oder Stufenleitung vorliegt.
         send: absenden
-        success: Die Krankmeldung wurde erfolgreich an die Schule übermittelt.
+        success: Die Abwesenheitsmeldung wurde erfolgreich an die Schule übermittelt.
     show:
-        label: Krankmeldung
-        header: "Krankmeldung von %student%"
+        label: Abwesenheitsmeldung
+        header: "Abwesenheitsmeldung von %student%"
         contact: Kontaktinformationen
+    message:
+        label: Neue Mitteilung
+        submit: abschicken
+    approval:
+        label: Genehmigungsstatus
+        approve: genehmigen
+        approved: genehmigt
+        not_approved: nicht genehmigt
+        deny: nicht genehmigen
+        pending: Genehmigung steht aus
+        success: Genehmigungsstatus erfolgreich geändert
+
+
 
 audit:
     label: Audit-Log
@@ -1415,13 +1443,13 @@ book:
             present: "%number% anwesend"
             late: "%number% verspätet"
             absent: "%number% abwesend"
-        possibly_absent: Absenz-Vorschläge
+        possibly_absent: Abwesenheits-Vorschläge
         excuse_status: Entschuldigung
         absence_reason:
             sick: krank gemeldet
             appointment: Veranstaltung
             exam: Klausur
-            absent_before: Absenz in vorheriger Stunde
+            absent_before: Abwesenheit in vorheriger Stunde
             excuse: Entschuldigung liegt vor
 
     missing:

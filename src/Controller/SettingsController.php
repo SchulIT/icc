@@ -20,7 +20,7 @@ use App\Settings\ExamSettings;
 use App\Settings\GeneralSettings;
 use App\Settings\ImportSettings;
 use App\Settings\NotificationSettings;
-use App\Settings\SickNoteSettings;
+use App\Settings\StudentAbsenceSettings;
 use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Sorting\GradeNameStrategy;
@@ -264,56 +264,50 @@ class SettingsController extends AbstractController {
     }
 
     /**
-     * @Route("/sick_notes", name="admin_settings_sick_notes")
+     * @Route("/absences", name="admin_settings_absences")
      */
-    public function sickNotes(Request $request, SickNoteSettings $sickNoteSettings) {
+    public function absences(Request $request, StudentAbsenceSettings $settings) {
         $builder = $this->createFormBuilder();
         $builder
             ->add('enabled', CheckboxType::class, [
                 'required' => false,
-                'data' => $sickNoteSettings->isEnabled(),
-                'label' => 'admin.settings.sick_notes.enabled',
+                'data' => $settings->isEnabled(),
+                'label' => 'admin.settings.student_absences.enabled',
                 'label_attr' => [
                     'class' => 'checkbox-custom'
                 ]
             ])
             ->add('recipient', EmailType::class, [
                 'required' => false,
-                'data' => $sickNoteSettings->getRecipient(),
-                'label' => 'admin.settings.sick_notes.recipient.label',
-                'help' => 'admin.settings.sick_notes.recipient.help'
+                'data' => $settings->getRecipient(),
+                'label' => 'admin.settings.student_absences.recipient.label',
+                'help' => 'admin.settings.student_absences.recipient.help'
             ])
             ->add('introduction_text', MarkdownType::class, [
                 'required' => false,
-                'data' => $sickNoteSettings->getIntroductionText(),
-                'label' => 'admin.settings.sick_notes.introduction_text.label',
-                'help' => 'admin.settings.sick_notes.introduction_text.help'
+                'data' => $settings->getIntroductionText(),
+                'label' => 'admin.settings.student_absences.introduction_text.label',
+                'help' => 'admin.settings.student_absences.introduction_text.help'
             ])
             ->add('privacy_url', TextType::class, [
                 'required' => true,
-                'data' => $sickNoteSettings->getPrivacyUrl(),
-                'label' => 'admin.settings.sick_notes.privacy_url.label',
-                'help' => 'admin.settings.sick_notes.privacy_url.help'
+                'data' => $settings->getPrivacyUrl(),
+                'label' => 'admin.settings.student_absences.privacy_url.label',
+                'help' => 'admin.settings.student_absences.privacy_url.help'
             ])
             ->add('retention_days', IntegerType::class, [
                 'required' => true,
-                'data' => $sickNoteSettings->getRetentionDays(),
-                'label' => 'admin.settings.sick_notes.retention_days.label',
-                'help' => 'admin.settings.sick_notes.retention_days.help',
+                'data' => $settings->getRetentionDays(),
+                'label' => 'admin.settings.student_absences.retention_days.label',
+                'help' => 'admin.settings.student_absences.retention_days.help',
                 'constraints' => [
                     new GreaterThanOrEqual(0)
                 ]
             ])
-            ->add('ordered_by_help', TextType::class, [
-                'required' => false,
-                'data' => $sickNoteSettings->getOrderedByHelp(),
-                'label' => 'admin.settings.sick_notes.ordered_by.label',
-                'help' => 'admin.settings.sick_notes.ordered_by.help'
-            ])
             ->add('next_day_threshold', TimeType::class, [
                 'label' => 'admin.settings.dashboard.next_day_threshold.label',
                 'help' => 'admin.settings.dashboard.next_day_threshold.help',
-                'data' => $sickNoteSettings->getNextDayThresholdTime(),
+                'data' => $settings->getNextDayThresholdTime(),
                 'required' => false,
                 'input' => 'string',
                 'input_format' => 'H:i',
@@ -325,26 +319,23 @@ class SettingsController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             $map = [
-                'enabled' => function($enabled) use ($sickNoteSettings) {
-                    $sickNoteSettings->setEnabled($enabled);
+                'enabled' => function($enabled) use ($settings) {
+                    $settings->setEnabled($enabled);
                 },
-                'recipient' => function($recipient) use ($sickNoteSettings) {
-                    $sickNoteSettings->setRecipient($recipient);
+                'recipient' => function($recipient) use ($settings) {
+                    $settings->setRecipient($recipient);
                 },
-                'privacy_url' => function($url) use ($sickNoteSettings) {
-                    $sickNoteSettings->setPrivacyUrl($url);
+                'privacy_url' => function($url) use ($settings) {
+                    $settings->setPrivacyUrl($url);
                 },
-                'retention_days' => function($days) use ($sickNoteSettings) {
-                    $sickNoteSettings->setRetentionDays($days);
+                'retention_days' => function($days) use ($settings) {
+                    $settings->setRetentionDays($days);
                 },
-                'introduction_text' => function($text) use ($sickNoteSettings) {
-                    $sickNoteSettings->setIntroductionText($text);
+                'introduction_text' => function($text) use ($settings) {
+                    $settings->setIntroductionText($text);
                 },
-                'ordered_by_help' => function($text) use ($sickNoteSettings) {
-                    $sickNoteSettings->setOrderedByHelp($text);
-                },
-                'next_day_threshold' => function($threshold) use ($sickNoteSettings) {
-                    $sickNoteSettings->setNextDayThresholdTime($threshold);
+                'next_day_threshold' => function($threshold) use ($settings) {
+                    $settings->setNextDayThresholdTime($threshold);
                 },
             ];
 
@@ -355,10 +346,10 @@ class SettingsController extends AbstractController {
 
             $this->addFlash('success', 'admin.settings.success');
 
-            return $this->redirectToRoute('admin_settings_sick_notes');
+            return $this->redirectToRoute('admin_settings_absences');
         }
 
-        return $this->render('admin/settings/sick_notes.html.twig', [
+        return $this->render('admin/settings/absences.html.twig', [
             'form' => $form->createView()
         ]);
     }

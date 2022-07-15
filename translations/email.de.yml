@@ -44,14 +44,15 @@ appointment:
   content: 'der Termin %name% wurde von %user% bestätigt und ist nun im ICC für die festgelegten Zielgruppen sichtbar.'
   link: Terminplan anzeigen
 
-sick_note:
-  sick:
-    title: Krankmeldung %student% (%grade%)
-    content: Es wurde eine Krankmeldung für %student% (%grade%) übermittelt.
-  quarantine:
-    title: Quarantänemeldung %student% (%grade%)
-    content: Es wurde eine Quarantänemeldung für %student% (%grade%) übermittelt.
-  link: Zur Krankmeldung
-  reply:
-    email: "Auf diese E-Mail kann geantwortet werden. Antworten werden automatisch an den Verfasser (%email%) der Krankmeldung versendet."
-    no_email: Dies ist eine automatisch versendete E-Mail. Da die Person keine E-Mail-Kontaktdaten angegeben hat, kann auf diese E-Mail nicht geantwortet werden.
+student_absence:
+  create:
+    title: "Neue Abwesenheitsmeldung: %type%"
+    content: Es wurde eine neue Abwesenheitsmeldung (%type%) übermittelt.
+  approval:
+    title: Genehmigungsstatus geändert
+    content: Der Genehmigungsstatus einer Abwesenheitsmeldung wurde geändert.
+  message:
+    title: Neue Mitteilung zur Abwesenheitsmeldung
+    content: Es wurde eine neue Mitteilung zu einer Abwesenheitsmeldung erstellt.
+  link: Zur Abwesenheitsmeldung
+  no_reply: Dies ist eine automatisch versendete E-Mail. Bitte nicht antworten.

@@ -1,0 +1,30 @@
+{% extends "admin/settings/_settings.html.twig" %}
+
+{% block title %}{{ 'admin.settings.student_absences.label'|trans }}{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/editor.js') }}"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'admin.settings.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block settings_content %}
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_row(form.enabled) }}
+            {{ form_row(form.recipient) }}
+            {{ form_row(form.introduction_text) }}
+            {{ form_row(form.privacy_url) }}
+            {{ form_row(form.retention_days) }}
+            {{ form_row(form.next_day_threshold) }}
+        </div>
+    </div>
+{% endblock %}

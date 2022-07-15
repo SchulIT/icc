@@ -256,7 +256,7 @@ class BookXhrController extends AbstractController {
 
     /**
      * @Route("/cancel/{uuid}", name="xhr_cancel_lesson", methods={"POST"})
-     * @OA\POST()
+     * @OA\Post()
      * @OA\Parameter(
      *     name="payload",
      *     in="body",

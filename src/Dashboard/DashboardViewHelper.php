@@ -141,7 +141,7 @@ class DashboardViewHelper {
         $start = $this->timetableSettings->getStartDate(UserType::Teacher());
         $end = $this->timetableSettings->getEndDate(UserType::Teacher());
 
-        if($this->dateHelper->isBetween($dateTime, $start, $end)) {
+        if($start !== null && $end !== null && $this->dateHelper->isBetween($dateTime, $start, $end)) {
             $this->addTimetableLessons($this->timetableRepository->findAllByTeacher($dateTime, $dateTime, $teacher), $dateTime, $view, true);
             $this->addSupervisions($this->supervisionRepository->findAllByTeacher($dateTime, $dateTime, $teacher), $view);
             $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
@@ -188,7 +188,7 @@ class DashboardViewHelper {
         $start = $this->timetableSettings->getStartDate($userType);
         $end = $this->timetableSettings->getEndDate($userType);
 
-        if($this->dateHelper->isBetween($dateTime, $start, $end)) {
+        if($start !== null && $end !== null && $this->dateHelper->isBetween($dateTime, $start, $end)) {
             $this->addTimetableLessons($this->timetableRepository->findAllByStudent($dateTime, $dateTime, $student), $dateTime, $view, false);
             $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
         }

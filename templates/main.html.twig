@@ -17,11 +17,6 @@
     {% endif %}
     {{ knp_menu_render('servicesMenu', {'currentClass': 'active' }) }}
 
-    {% set notificationsMenu = knp_menu_get('notificationsMenu') %}
-    {% if notificationsMenu.children|length > 0 %}
-        {{ knp_menu_render('notificationsMenu', { 'currentClass': 'active'}) }}
-    {% endif %}
-
     {{ knp_menu_render('userMenu', {'currentClass': 'active' }) }}
 {% endblock %}
 

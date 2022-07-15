@@ -620,37 +620,4 @@ class Builder {
 
         return $root;
     }
-
-    public function notificationsMenu(): ItemInterface {
-        $root = $this->factory->createItem('root')
-            ->setChildrenAttributes([
-                'class' => 'navbar-nav float-lg-right'
-            ]);
-
-        $enabledFor = $this->notificationSettings->getEmailEnabledUserTypes();
-
-        $token = $this->tokenStorage->getToken();
-
-        if($token === null) {
-            return $root;
-        }
-
-        $user = $token->getUser();
-
-        if(!$user instanceof User) {
-            return $root;
-        }
-
-        if(EnumArrayUtils::inArray($user->getUserType(), $enabledFor)) {
-            $menu = $root->addChild('services', [
-                'label' => '',
-                'route' => 'profile_notifications'
-            ])
-                ->setExtra('icon', 'far fa-bell')
-                ->setExtra('pull-right', true)
-                ->setAttribute('title', $this->translator->trans('profile.notifications.label'));
-        }
-
-        return $root;
-    }
 }

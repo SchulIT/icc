@@ -136,7 +136,6 @@ services:
             - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
             - { name: knp_menu.menu_builder, method: servicesMenu, alias: servicesMenu }
             - { name: knp_menu.menu_builder, method: systemMenu, alias: systemMenu }
-            - { name: knp_menu.menu_builder, method: notificationsMenu, alias: notificationsMenu }
             - { name: knp_menu.menu_builder, method: dataMenu, alias: dataMenu }
             - { name: knp_menu.menu_builder, method: importMenu, alias: importMenu }
 

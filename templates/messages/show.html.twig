@@ -121,6 +121,10 @@
                             </div>
                         {% endfor %}
                         {{ form_rest(form.uploads) }}
+
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-trigger="submit" data-confirm="#confirm-upload">
+                            <i class="fas fa-upload"></i> {{ 'actions.upload'|trans }}
+                        </button>
                         {{ form_end(form) }}
                     </div>
                 </div>

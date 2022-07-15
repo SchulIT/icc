@@ -45,11 +45,7 @@ class MessageFileUploadType extends AbstractType {
                         'help_translation_parameters' => [
                             '%extensions%' => $fileUpload->getMessageFile()->getExtension()
                         ],
-                        'required' => false,
-                        'attr' => [
-                            'data-trigger' => 'submit',
-                            'data-confirm' => $fileUpload->isUploaded() ? '#confirm-upload' : ''
-                        ]
+                        'required' => false
                     ]);
                 }
             });

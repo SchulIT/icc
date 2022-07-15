@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.querySelectorAll('[data-trigger="submit"]').forEach(function (el) {
-        el.addEventListener('change', function (event) {
+        el.addEventListener('click', function (event) {
             let confirmModalSelector = el.getAttribute('data-confirm');
             let form = this.closest('form');
 

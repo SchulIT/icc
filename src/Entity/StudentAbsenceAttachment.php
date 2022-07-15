@@ -25,11 +25,11 @@ class StudentAbsenceAttachment {
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @var StudentAbsence|null
      */
-    private ?StudentAbsence $absence;
+    private ?StudentAbsence $absence = null;
 
     /**
      * @Assert\File(maxSize="5M", mimeTypes={"application/pdf", "image/png", "image/jpg", "image/jpeg"})
-     * @Vich\UploadableField(mapping="sick_notes", fileNameProperty="path", originalName="filename", size="size")
+     * @Vich\UploadableField(mapping="student_absence", fileNameProperty="path", originalName="filename", size="size")
      */
     private ?File $file;
 
@@ -70,10 +70,10 @@ class StudentAbsenceAttachment {
     }
 
     /**
-     * @param StudentAbsence|null $absence
+     * @param StudentAbsence $absence
      * @return StudentAbsenceAttachment
      */
-    public function setAbsence(?StudentAbsence $absence): StudentAbsenceAttachment {
+    public function setAbsence(StudentAbsence $absence): StudentAbsenceAttachment {
         $this->absence = $absence;
         return $this;
     }

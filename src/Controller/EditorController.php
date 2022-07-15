@@ -30,11 +30,8 @@ class EditorController extends SymfonyAbstractController {
      * @Route("/links", name="editor_links")
      */
     public function links(DocumentRepositoryInterface $documentRepository, WikiArticleRepositoryInterface $wikiArticleRepository) {
-        /** @var User $user */
-        $user = $this->getUser();
-
         // Documents
-        $documents = $documentRepository->findAllFor($user->getUserType());
+        $documents = $documentRepository->findAll();
 
         $this->sorter->sort($documents, DocumentNameStrategy::class);
         $categories = $this->grouper->group($documents, DocumentCategoryGroupingStrategy::class);

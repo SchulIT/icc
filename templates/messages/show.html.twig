@@ -105,9 +105,10 @@
                                 <div class="col-sm-10">
                                     <div class="bs-callout {% if not upload.uploaded %}bs-callout-warning{% else %}bs-callout-success{% endif %} mr-0 pr-0" role="alert">
                                     {% if upload.uploaded %}
-                                        <div class="d-flex">
+                                        <div class="d-flex pr-3">
                                             <span class="mr-auto align-self-center">
-                                                <i class="fa fa-check-circle"></i> {{ upload.filename }}<span class="text-muted">{{ upload.size|filesize }} <i class="fa fa-calendar"></i> {{ upload.updatedAt|format_datetime }}</span>
+                                                <i class="fa fa-check-circle"></i> {{ upload.filename }}
+                                                <span class="text-muted">{{ upload.size|filesize }} <i class="fa fa-calendar"></i> {{ upload.updatedAt|format_datetime }}</span>
                                             </span>
 
                                             <a href="{{ path('download_uploaded_user_file', { message: message.uuid, uuid: upload.messageFile.uuid }) }}" class="btn btn-primary btn-sm align-self-center mr-2"><i class="fa fa-download"></i></a>

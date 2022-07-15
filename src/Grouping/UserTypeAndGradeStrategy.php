@@ -28,7 +28,9 @@ class UserTypeAndGradeStrategy implements GroupingStrategyInterface, OptionsAwar
             }
 
             return $object->getStudents()->map(function(Student $student) use($options) {
-                return $student->getGrade($options['section']);
+                $grade = $student->getGrade($options['section']);
+
+                return $grade?->getName();
             })->toArray();
         }
 

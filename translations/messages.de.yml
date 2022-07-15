@@ -1320,6 +1320,7 @@ student_absences:
     until_short: 'vsl. bis %date% (%lesson%. Stunde)'
     active: aktiv
     teacher_info: Diese Ansicht zeigt die für den heutigen Tag vorliegenden Absenzmeldungen an. Vergangene Meldungen können über den Lernenden- oder Klassenfilter auf der rechten Seite abgerufen werden.
+    retention: Abwesenheitsmeldungen werden automatisch %count% Tage nach dem Ablauf gelöscht.
     add:
         label: Neue Abwesenheitsmeldung
         info: Hier besteht die Möglichkeit, eine Abwesenheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.

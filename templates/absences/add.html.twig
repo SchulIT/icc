@@ -27,10 +27,13 @@
 
             <p>
                 {{ 'student_absences.add.privacy.info'|trans }}
-                {% if settings.retentionDays > 0 %}
-                    {{ 'student_absences.history.retention'|trans({'%count%': settings.retentionDays }) }}
-                {% endif %}
             </p>
+
+            {% if settings.retentionDays > 0 %}
+                <p>
+                    {{ 'student_absences.retention'|trans({'%count%': settings.retentionDays }) }}
+                </p>
+            {% endif %}
 
             {% if settings.privacyUrl is not null %}
                 <a href="{{ settings.privacyUrl }}" target="_blank" class="btn btn-outline-primary btn-sm">

@@ -26,8 +26,7 @@ class BirthdayVoter extends Voter {
      * @inheritDoc
      */
     protected function supports(string $attribute, $subject): bool {
-        return $attribute === self::ShowBirthday
-            && $subject instanceof Student;
+        return $attribute === self::ShowBirthday;
     }
 
     /**
@@ -38,10 +37,6 @@ class BirthdayVoter extends Voter {
             throw new LogicException('This code should not be executed.');
         }
 
-        if(!$subject instanceof Student) {
-            throw new UnexpectedTypeException($subject, Student::class);
-        }
-
         $user = $token->getUser();
 
         if(!$user instanceof User) {
@@ -49,6 +44,10 @@ class BirthdayVoter extends Voter {
         }
 
         if($this->accessDecisionManager->decide($token, ['ROLE_SHOW_BIRTHDAY']) !== true) {
+            return false;
+        }
+
+        if(!$subject instanceof Student) {
             return false;
         }
 

@@ -3,7 +3,7 @@
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/schulit/icc.svg?style=flat-square)](https://scrutinizer-ci.com/g/SchulIT/icc/?branch=master) 
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/schulit/icc.svg?style=flat-square)](https://scrutinizer-ci.com/g/SchulIT/icc/?branch=master) 
 [![Build Status](https://img.shields.io/travis/SchulIT/icc.svg?style=flat-square)](https://travis-ci.org/SchulIT/icc) 
-![PHP 7.4](https://img.shields.io/badge/PHP-7.4-success.svg?style=flat-square) 
+![PHP 7.4](https://img.shields.io/badge/PHP-8.0-success.svg?style=flat-square) 
 ![MIT License](https://img.shields.io/github/license/schulit/icc.svg?style=flat-square)
 
 
@@ -39,7 +39,7 @@ Das Handbuch ist [hier](https://icc.readthedocs.org) zu finden.
 
 Die Anwendung ist Teil der SchulIT Software Suite und kann kostenlos und auf eigene Gefahr installiert werden.
 
-Das ICC ist eine Symfony 4.4 Anwendung.
+Das ICC ist eine Symfony 5.4 Anwendung.
 
 ## Wichtige Information
 

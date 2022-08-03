@@ -756,6 +756,8 @@ admin:
             grades_membership_types:
                 label: Klassen mit Kursarten
                 help: Bei Stundenplaneinträgen von Kursen in diesen Klassen wird die Kursart eines Lernenden angezeigt.
+            ranges:
+                legend: Zeitraum für Stundenplan
 
         dashboard:
             label: Dashboard

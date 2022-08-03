@@ -59,8 +59,10 @@
                                         <col class="column-lg">
                                         <col class="column-md">
                                         <col>
-                                        <col class="column-md">
-                                        <col class="column-md">
+                                        {% if is_granted('show-birthday') %}
+                                            <col class="column-md">
+                                            <col class="column-md">
+                                        {% endif %}
                                     </colgroup>
 
                                     <thead>

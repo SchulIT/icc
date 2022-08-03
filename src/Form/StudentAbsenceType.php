@@ -15,16 +15,18 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudentAbsenceType extends AbstractType {
 
     private StudentStringConverter $studentConverter;
     private StudentStrategy $studentStrategy;
+    private TranslatorInterface $translator;
 
-    public function __construct(StudentStringConverter $converter, StudentStrategy $strategy, StudentAbsenceSettings $settings) {
+    public function __construct(StudentStringConverter $converter, StudentStrategy $strategy, TranslatorInterface $translator) {
         $this->studentConverter = $converter;
         $this->studentStrategy = $strategy;
-        $this->settings = $settings;
+        $this->translator = $translator;
     }
 
     public function configureOptions(OptionsResolver $resolver) {
@@ -54,6 +56,10 @@ class StudentAbsenceType extends AbstractType {
                 'label' => 'label.type',
                 'class' => StudentAbsenceTypeEntity::class,
                 'choice_label' => function(StudentAbsenceTypeEntity $type) {
+                    if($type->isMustApprove()) {
+                        return sprintf('%s (%s)', $type->getName(), $this->translator->trans('student_absences.add.must_approve.label'));
+                    }
+
                     return $type->getName();
                 }
             ])

@@ -1342,6 +1342,9 @@ student_absences:
             info: Es besteht die Möglichkeit, eine Telefonnummer oder E-Mail-Adresse zu hinterlegen, die für Rückfragen genutzt werden kann. Bei Angabe einer E-Mail-Adresse werden Sie automatisch informiert, wenn eine Mitteilung der Klassen- oder Stufenleitung vorliegt.
         send: absenden
         success: Die Abwesenheitsmeldung wurde erfolgreich an die Schule übermittelt.
+        must_approve:
+            label: muss genehmigt werden
+            help: Bei genehmigungspflichtigen Absenzen entscheidet die Klassenleitung, ob diese genehmigt wird oder nicht. Nur bei vorliegender Genehmigung ist die Schülerin oder der Schüler vom Unterricht befreit.
     show:
         label: Abwesenheitsmeldung
         header: "Abwesenheitsmeldung von %student%"

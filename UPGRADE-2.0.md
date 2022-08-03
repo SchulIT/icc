@@ -23,16 +23,17 @@ Zunächst mittels `mysqldump` oder einem Datenbank-Tool wie HeidiSQL die Datenba
 Folgende SQL-Befehle ausführen:
 
 ```sql
-DELETE FROM appointment;
+# DELETE FROM appointment; # (optional)
 DELETE FROM exam;
 DELETE FROM substitution;
 DELETE FROM resource_reservation;
 DELETE FROM sick_note;
-DELETE FROM tuition;
+DELETE FROM message_poll_vote;
 DELETE FROM message;
 DELETE FROM free_timespan;
 DELETE FROM absence;
 DELETE FROM infotext;
+DELETE FROM book_comment;
 DELETE FROM lesson_attendance;
 DELETE FROM lesson_entry;
 DELETE FROM lesson;
@@ -40,6 +41,7 @@ DELETE FROM timetable_lesson;
 DELETE FROM timetable_lesson_grades;
 DELETE FROM timetable_lesson_teachers;
 DELETE FROM timetable_period;
+DELETE FROM tuition;
 ```
 
 ## Schritt 3: Mitteilungsdateien löschen
@@ -54,18 +56,23 @@ $ rm -rf files/messages/*
 
 Nun wie [hier](https://icc.readthedocs.io/de/latest/admin/update.html) beschrieben, den Code aktualisieren.
 
-## Schritt 5: Neuen Schuljahresabschnitt anlegen
+## Schritt 5: Konfigurationsdatei aktualisieren
+
+Nun prüfen, inwiefern die `.env.local`-Konfigurationsdatei angepasst werden muss. Als Vorlage gilt die
+`.env`-Konfigurationsdatei.
+
+## Schritt 6: Neuen Schuljahresabschnitt anlegen
 
 Im Verwaltungs-Menü unter Abschnitte den ersten Schuljahresabschnitt anlegen. Wahlweise auch schon alle
 Abschnitte anlegen.
 
 **Wichtig:** Anschließend in den Einstellungen den aktuellen Abschnitt festlegen.
 
-## Schritt 6: Import-Vorgang starten
+## Schritt 7: Import-Vorgang starten
 
 Wichtig: Diesen Import-Vorgang mit Version 2.0 des Importers starten.
 
-## Schritt 7: Schuljahresbeginn initiieren
+## Schritt 8: Schuljahresbeginn initiieren
 
 Folgende Kommandos auf der Konsole ausführen:
 

@@ -44,7 +44,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/absences")
- * @Security("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-student-absence')")
+ * @Security("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-absence')")
  */
 class StudentAbsenceController extends AbstractController {
 

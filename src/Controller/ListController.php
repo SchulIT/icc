@@ -283,7 +283,8 @@ class ListController extends AbstractControllerWithMessages {
     /**
      * @Route("/teachers", name="list_teachers")
      */
-    public function teachers(SubjectFilter $subjectFilter, TeacherTagFilter $tagFilter, TeacherRepositoryInterface $teacherRepository, Request $request) {
+    public function teachers(SubjectFilter $subjectFilter, TeacherTagFilter $tagFilter, TeacherRepositoryInterface $teacherRepository,
+                             SectionResolverInterface $sectionResolver, Request $request) {
         $this->denyAccessUnlessGranted(ListsVoter::Teachers);
 
         $subjectFilterView = $subjectFilter->handle($request->query->get('subject', null));
@@ -303,6 +304,7 @@ class ListController extends AbstractControllerWithMessages {
             'groups' => $groups,
             'subjectFilter' => $subjectFilterView,
             'tagFilter' => $tagFilterView,
+            'section' => $sectionResolver->getCurrentSection(),
             'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Teacher::class)
         ]);
     }

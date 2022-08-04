@@ -54,7 +54,7 @@
 
                                             </td>
                                             <td>
-                                                {% for gradeTeacher in teacher.grades %}
+                                                {% for gradeTeacher in teacher.grades|only_section(section) %}
                                                     {{ gradeTeacher.grade.name }}{% if gradeTeacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}{% if not loop.last %}, {% endif %}
                                                 {% endfor %}
                                             </td>

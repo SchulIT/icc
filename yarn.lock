@@ -3372,6 +3372,11 @@ forwarded@0.2.0:
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.2.0.tgz#2269936428aad4c15c7ebe9779a84bf0b2a81811"
   integrity sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==
 
+foundation-emails@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/foundation-emails/-/foundation-emails-2.4.0.tgz#5020b44c6a1ee366ad53dd9ba29368d351aef8dd"
+  integrity sha512-aLma02P+OafCQtcEkZzVAhX1E3LiB4RYCxUu73BRma+YMrq2QOBUr6K8Cw37taL0jehQn4T8yfuWBQ8xv3Mvug==
+
 fragment-cache@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/fragment-cache/-/fragment-cache-0.2.1.tgz#4290fad27f13e89be7f33799c6bc5a0abfff0d19"

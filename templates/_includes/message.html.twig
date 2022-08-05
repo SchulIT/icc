@@ -16,7 +16,7 @@
 
             <div class="flex-shrink-0">
                 {% if is_dismissed(message) and (message.attachments|length > 0 or userDownloads|length > 0) %}
-                    <div class="dropdown d-inline">
+                    <div class="dropdown d-inline ml-1">
                         <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
                             <i class="fa fa-download"></i>
                         </button>
@@ -36,18 +36,18 @@
 
                 {% if message.mustConfirm and is_granted('confirm', message) %}
                     {% if not is_confirmed(message) and is_granted('confirm', message) %}
-                        <a href="{{ path('confirm_message', { uuid: message.uuid }) }}" class="btn btn-warning btn-sm" title="{{ 'actions.confirm'|trans }}">
+                        <a href="{{ path('confirm_message', { uuid: message.uuid }) }}" class="btn btn-warning btn-sm ml-1" title="{{ 'actions.confirm'|trans }}">
                             <i class="fa fa-check"></i>
                         </a>
                     {% else %}
-                        <button type="button" class="btn btn-success btn-sm" title="{{ 'messages.confirm.confirmed'|trans }}">
+                        <button type="button" class="btn btn-success btn-sm mr-1" title="{{ 'messages.confirm.confirmed'|trans }}">
                             <i class="fa fa-check"></i>
                         </button>
                     {% endif %}
                 {% endif %}
 
                 {% if message.uploadsEnabled and is_granted('upload', message) %}
-                    <div class="btn-group" role="group">
+                    <div class="btn-group ml-1" role="group">
                         <a href="{{ path('show_message', { uuid: message.uuid }) }}" class="btn {% if missingUploads|length > 0 %}btn-warning{% else %}btn-success{% endif %} btn-sm" title="{{ 'messages.uploads.info'|trans }}">
                             <i class="fa fa-upload"></i>
                         </a>
@@ -55,14 +55,14 @@
                 {% endif %}
 
                 {% if hasPoll %}
-                    <div class="btn-group" role="group">
+                    <div class="btn-group mr-1" role="group">
                         <a href="{{ path('show_message', { uuid: message.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.poll.info'|trans }}">
                             <i class="fas fa-poll"></i>
                         </a>
                     </div>
                 {% endif %}
 
-                <div class="dropdown d-inline">
+                <div class="dropdown d-inline ml-1">
                     <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
                         <i class="fas fa-ellipsis-v"></i>
                     </button>

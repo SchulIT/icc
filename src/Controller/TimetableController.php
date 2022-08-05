@@ -78,11 +78,11 @@ class TimetableController extends AbstractControllerWithMessages {
 
         $start = max(
             $selectedDate,
-            $this->timetableSettings->getStartDate($user->getUserType())
+            $startDate = $this->timetableSettings->getStartDate($user->getUserType())
         );
         $end = min(
             (clone $start)->modify('+13 days'),
-            $this->timetableSettings->getEndDate($user->getUserType())
+            $endDate = $this->timetableSettings->getEndDate($user->getUserType())
         );
 
         $lessons = [ ];
@@ -169,8 +169,12 @@ class TimetableController extends AbstractControllerWithMessages {
         );
 
         $weekStarts = [ ];
-        if($sectionFilterView->getCurrentSection() !== null) {
-            $weekStarts = $this->listCalendarWeeks($sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
+
+        if($startDate !== null && $endDate !== null && $sectionFilterView->getCurrentSection() !== null) {
+            $weekStarts = $this->listCalendarWeeks(
+                max($startDate, $sectionFilterView->getCurrentSection()->getStart()),
+                min($endDate, $sectionFilterView->getCurrentSection()->getEnd())
+            );
         }
 
         return $this->renderWithMessages($template, [

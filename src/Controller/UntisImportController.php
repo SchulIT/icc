@@ -311,8 +311,8 @@ class UntisImportController extends AbstractController {
             $subjects = $form->get('subjects')->getData();
 
             try {
-                $gradesHtml = $this->readZip($grades);
-                $subjectsHtml = $this->readZip($subjects);
+                $gradesHtml = $grades !== null ? $this->readZip($grades) : [ ];
+                $subjectsHtml = $subjects !== null ? $this->readZip($subjects) : [ ];
 
                 $result = $importer->import($gradesHtml, $subjectsHtml, $start, $end);
 

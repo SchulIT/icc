@@ -19,7 +19,7 @@ class RoomTagRepository extends AbstractRepository implements RoomTagRepositoryI
     }
 
     public function remove(RoomTag $roomTag): void {
-        $this->em->persist($roomTag);
+        $this->em->remove($roomTag);
         $this->em->flush();
     }
 }

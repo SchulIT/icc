@@ -58,7 +58,9 @@ class TimetableImporter {
 
         foreach($subjectLessonsHtml as $html) {
             $result = $this->reader->readHtml($html, TimetableType::Subject());
-            $lessons = array_merge($lessons, $result->getLessons());
+            $lessons = array_merge($lessons,
+                $this->lessonCombiner->combine($result->getLessons())
+            );
         }
 
         $groups = $this->grouper->group($lessons, LessonStrategy::class);

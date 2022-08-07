@@ -24,7 +24,7 @@ class TimetableReader extends AbstractHtmlReader {
         ];
 
         $this->subjectCellInformation = [
-            CellInformationType::Weeks(), CellInformationType::Teacher()
+            CellInformationType::Weeks(), CellInformationType::Teacher(), CellInformationType::Room()
         ];
     }
 

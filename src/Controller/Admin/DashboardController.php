@@ -16,6 +16,7 @@ use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Substitution;
 use App\Entity\TimetableLesson;
+use App\Entity\TimetableSupervision;
 use App\Entity\Tuition;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -60,6 +61,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('StudyGroup', 'fas fa-folder-open', StudyGroup::class);
         yield MenuItem::linkToCrud('StudyGroupMembership', 'fas fa-folder-open', StudyGroupMembership::class);
         yield MenuItem::linkToCrud('Substitution', 'fas fa-folder-open', Substitution::class);
+        yield MenuItem::linkToCrud('TimetableLesson', 'fas fa-folder-open', TimetableLesson::class);
+        yield MenuItem::linkToCrud('TimetableSupervision', 'fas fa-folder-open', TimetableSupervision::class);
         yield MenuItem::linkToCrud('Tuition', 'fas fa-folder-open', Tuition::class);
         yield MenuItem::linkToCrud('User', 'fas fa-folder-open', User::class);
 

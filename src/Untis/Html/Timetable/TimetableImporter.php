@@ -22,13 +22,16 @@ class TimetableImporter {
     private TimetableWeekRepositoryInterface $weekRepository;
     private Grouper $grouper;
     private UntisSettings $settings;
+    private TimetableLessonCombiner $lessonCombiner;
 
     public function __construct(Importer $importer, TimetableLessonsImportStrategy $strategy, TimetableReader $reader,
-                                TimetableWeekRepositoryInterface $weekRepository, Grouper $grouper, UntisSettings $settings) {
+                                TimetableWeekRepositoryInterface $weekRepository, TimetableLessonCombiner $combiner,
+                                Grouper $grouper, UntisSettings $settings) {
         $this->importer = $importer;
         $this->strategy = $strategy;
         $this->reader = $reader;
         $this->weekRepository = $weekRepository;
+        $this->lessonCombiner = $combiner;
         $this->grouper = $grouper;
         $this->settings = $settings;
     }
@@ -47,7 +50,10 @@ class TimetableImporter {
 
         foreach($gradeLessonsHtml as $html) {
             $result = $this->reader->readHtml($html, TimetableType::Grade());
-            $lessons = array_merge($lessons, $result->getLessons());
+            $lessons = array_merge(
+                $lessons,
+                $this->lessonCombiner->combine($result->getLessons())
+            );
         }
 
         foreach($subjectLessonsHtml as $html) {

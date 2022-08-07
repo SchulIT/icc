@@ -232,15 +232,17 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
     /**
      * @inheritDoc
      */
-    public function findOneByPeriodAndRoomAndWeekAndDayAndLesson(DateTime $date, Room $room, int $lessonNumber): ?TimetableLesson {
+    public function findOneByDateAndRoomAndLesson(DateTime $date, Room $room, int $lessonNumber): ?TimetableLesson {
         $qb = $this->getDefaultQueryBuilder($date, $date);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('lInner.id')
             ->from(TimetableLesson::class, 'lInner')
             ->leftJoin('lInner.room', 'rInner')
-            ->where('lInner.lessonStart >= :lesson')
-            ->andWhere('lInner.lessonEnd <= :lesson')
+            ->where('lInner.lessonStart <= :lesson')
+            ->andWhere('lInner.lessonEnd >= :lesson')
+            ->andWhere('rInner.id = :room');
+        $qb
             ->setParameter('room', $room->getId())
             ->setParameter('lesson', $lessonNumber);
 

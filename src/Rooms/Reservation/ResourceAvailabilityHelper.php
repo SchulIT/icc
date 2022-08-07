@@ -110,7 +110,7 @@ class ResourceAvailabilityHelper {
         $conflictingExams = [ ];
 
         if($resource instanceof Room) {
-            $lesson = $this->timetableRepository->findOneByPeriodAndRoomAndWeekAndDayAndLesson($date, $resource, $lessonNumber);
+            $lesson = $this->timetableRepository->findOneByDateAndRoomAndLesson($date, $resource, $lessonNumber);
             $substitutions = $this->substitutionRepository->findAllForRooms([$resource], $date);
             $conflictingSubstitution = $this->getConflictingSubstitution($substitutions, $resource, $lessonNumber);
 

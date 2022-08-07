@@ -2,6 +2,7 @@
 
 namespace App\Notification\Email;
 
+use App\Entity\MessageScope;
 use App\Event\MessageUpdatedEvent;
 use App\Message\MessageRecipientResolver;
 use App\Repository\MessageRepositoryInterface;
@@ -94,6 +95,7 @@ class MessageUpdatedStrategy implements EmailStrategyInterface, PostEmailSendAct
      */
     public function supports($objective): bool {
         return $objective instanceof MessageUpdatedEvent
+            && $objective->getMessage()->getScope()->equals(MessageScope::Messages())
             && $objective->getMessage()->getStartDate() <= $this->dateHelper->getToday();
     }
 }

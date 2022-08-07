@@ -2,6 +2,7 @@
 
 namespace App\Notification\Email;
 
+use App\Entity\MessageScope;
 use App\Event\MessageCreatedEvent;
 use App\Message\MessageRecipientResolver;
 use App\Repository\MessageRepositoryInterface;
@@ -83,6 +84,7 @@ class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendAct
      */
     public function supports($objective): bool {
         return $objective instanceof MessageCreatedEvent
+            && $objective->getMessage()->getScope()->equals(MessageScope::Messages())
             && $objective->getMessage()->isEmailNotificationSent() === false
             && $objective->getMessage()->getStartDate() <= $this->dateHelper->getToday();
     }

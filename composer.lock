@@ -2206,16 +2206,16 @@
         },
         {
             "name": "frostiede/composer-dependency-list",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/frostieDE/composer-dependency-list.git",
-                "reference": "18fb0d6ac091ffb48498b7f8842e03c78cf07170"
+                "reference": "553d37b49d3e09e07c03bd3fa2fb8b5168b88442"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/frostieDE/composer-dependency-list/zipball/18fb0d6ac091ffb48498b7f8842e03c78cf07170",
-                "reference": "18fb0d6ac091ffb48498b7f8842e03c78cf07170",
+                "url": "https://api.github.com/repos/frostieDE/composer-dependency-list/zipball/553d37b49d3e09e07c03bd3fa2fb8b5168b88442",
+                "reference": "553d37b49d3e09e07c03bd3fa2fb8b5168b88442",
                 "shasum": ""
             },
             "type": "library",
@@ -2237,9 +2237,9 @@
             "description": "Lists all Composer dependencies.",
             "support": {
                 "issues": "https://github.com/frostieDE/composer-dependency-list/issues",
-                "source": "https://github.com/frostieDE/composer-dependency-list/tree/2.0.1"
+                "source": "https://github.com/frostieDE/composer-dependency-list/tree/2.0.2"
             },
-            "time": "2021-12-31T11:39:52+00:00"
+            "time": "2021-12-31T11:43:43+00:00"
         },
         {
             "name": "frostiede/composer-dependency-list-bundle",

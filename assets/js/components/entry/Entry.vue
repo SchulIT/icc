@@ -41,7 +41,12 @@
         <div class="modal-content">
           <form :action="action" method="post">
             <div class="modal-header">
-              <h5 class="modal-title">{{ $trans('book.entry.label') }}</h5>
+              <h5 class="modal-title mr-auto">{{ $trans('book.entry.label') }}</h5>
+
+              <button type="submit" class="btn btn-primary" :disabled="!isValid || !isInitialized">
+                <i class="fas fa-save"></i> {{ $trans('actions.save')}}
+              </button>
+
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>

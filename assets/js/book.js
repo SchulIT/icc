@@ -8,7 +8,6 @@ import LessonCreateEntryButton from "./components/book/LessonCreateEntryButton";
 import LessonCancelBulkButton from "./components/book/LessonCancelBulkButton";
 import LessonAttendanceInfo from "./components/book/LessonAttendanceInfo";
 import Entry from "./components/entry/Entry"
-import { Dropdown } from "bootstrap.native";
 
 const app = createApp({
     components: {
@@ -27,9 +26,3 @@ const app = createApp({
 app.use(Translations);
 app.use(VueAxios, axios);
 app.mount('#app');
-
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('[data-toggle=dropdown]').forEach(function(el) {
-        new Dropdown(el);
-    });
-});

@@ -54,7 +54,14 @@ class LessonEntryType extends AbstractType {
             ->add('replacementTeacher', TeacherChoiceType::class, [
                 'label' => 'label.replacement_teacher',
                 'required' => false,
-                'placeholder' => 'label.select.teacher'
+                'placeholder' => 'label.select.teacher',
+                'choice_value' => function(?Teacher $teacher) {
+                    if($teacher === null) {
+                        return null;
+                    }
+
+                    return $teacher->getUuid()->toString();
+                }
             ])
             ->add('topic', TextType::class, [
                 'label' => 'label.topic'

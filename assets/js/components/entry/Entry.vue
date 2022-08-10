@@ -232,6 +232,7 @@ export default {
   props: {
     url: String,
     studentsUrl: String,
+    teachersUrl: String,
     csrftoken: String,
     csrfname: String,
     createAction: String,
@@ -322,6 +323,8 @@ export default {
           $this.entry.isCancelled = response.data.entry.is_cancelled;
           $this.entry.cancelReason = response.data.entry.cancel_reason;
           $this.entry.attendances = response.data.entry.attendances;
+          $this.entry.replacementTeacher = response.data.entry.replacement_teacher;
+          $this.entry.replacementSubject = response.data.entry.replacement_subject;
         }
 
         $this.students = response.data.students.sort(function(a, b) {
@@ -345,6 +348,8 @@ export default {
       .catch(function(error) {
         console.log(error);
       });
+
+    this.teacherChoice = new Choices(this.$el.querySelector('#replacementTeacher'));
   },
   watch: {
     entry: {
@@ -369,6 +374,8 @@ export default {
       }
     },
     show() {
+      let $this = this;
+
       if(this.modal.create === null) {
         let modalEl = this.$el.querySelector('.modal.entry');
         this.modal.create = new Modal(modalEl);
@@ -377,6 +384,31 @@ export default {
           modalEl.querySelector('input.topic').focus();
         });
       }
+
+      this.$http
+          .get(this.teachersUrl)
+          .then(function(response) {
+            let choices = [
+              {
+                label: $this.$trans('label.select.teacher'),
+                value: '',
+                selected: true
+              }
+            ];
+
+            response.data.forEach(function(teacher) {
+              choices.push({
+                label: teacher.acronym,
+                value: teacher.uuid,
+                selected: $this.entry.replacementTeacher !== null && $this.entry.replacementTeacher.uuid === teacher.uuid
+              });
+            });
+            
+            $this.teacherChoice.setChoices(choices, 'value', 'label', true);
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
 
       this.$refs.studentComponent.load();
       this.modal.create.show();

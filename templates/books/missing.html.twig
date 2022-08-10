@@ -74,6 +74,7 @@
 
                                             <div class="ml-2">
                                                 <entry students-url="{{ url('xhr_students') }}"
+                                                       teachers-url="{{ url('xhr_teachers') }}"
                                                        url="{{ path('xhr_lesson_entry', { start: lesson.lessonNumber, lesson: lesson.lesson.uuid.toString }) }}"
                                                        csrfname="_token"
                                                        :lesson-number="{{ lesson.lessonNumber }}"

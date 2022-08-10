@@ -162,7 +162,7 @@
             {% if item.lesson is null %}
                 <span class="align-self-center badge badge-light badge-card">{{ 'dashboard.free_hour'|trans|upper }}</span>
             {% else %}
-            <div class="align-self-center w-100">
+            <div class="align-self-center w-100 d-flex">
                 {% set lessonNumber = lesson %}
                 {% for lesson in item.additionalLessons|merge([item.lesson]) %}
                     {%- set gradesWithCourseNames = gradesWithCourseNames|default([]) -%}
@@ -182,7 +182,7 @@
                     {%- if lesson.room is not null -%}
                         {%- set room = lesson.room.name -%}
                     {%- endif -%}
-                    <div class="align-self-center d-flex flex-wrap">
+                    <div class="align-self-center d-flex flex-wrap mr-auto">
                         <span class="align-self-center badge badge-primary mr-3">
                             {% if tuition is not null %}
                                 {% if tuition.displayName is not empty -%}
@@ -233,27 +233,27 @@
                             </span>
                             {% endif %}
                         </div>
-
-                        {% if lesson.tuition is not null and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
-                            {% set editAction = null %}
-
-                            {% for entry in lesson.entries %}
-                                {% if entry.lessonStart <= lessonNumber and lessonNumber <= entry.lessonEnd %}
-                                    {% set editAction = path('edit_entry', { uuid: entry.uuid }) %}
-                                {% endif %}
-                            {% endfor %}
-                            <div class="align-self-center p-3">
-                                <entry students-url="{{ url('xhr_students') }}"
-                                       url="{{ path('xhr_lesson_entry', { start: lessonNumber, lesson: lesson.uuid.toString }) }}"
-                                       :lesson-number="{{ lessonNumber }}"
-                                       csrfname="_token"
-                                       csrftoken="{{ csrf_token('book_entry') }}"
-                                       create-action="{{ path('add_entry', { uuid: lesson.uuid }) }}"
-                                       edit-action="{{ editAction }}"
-                                       cancel-action="{{ path('cancel_lesson', { uuid: lesson.uuid }) }}"></entry>
-                            </div>
-                        {% endif %}
                     </div>
+
+                    {% if lesson.tuition is not null and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                        {% set editAction = null %}
+
+                        {% for entry in lesson.entries %}
+                            {% if entry.lessonStart <= lessonNumber and lessonNumber <= entry.lessonEnd %}
+                                {% set editAction = path('edit_entry', { uuid: entry.uuid }) %}
+                            {% endif %}
+                        {% endfor %}
+                        <div class="align-self-center px-3">
+                            <entry students-url="{{ url('xhr_students') }}"
+                                   url="{{ path('xhr_lesson_entry', { start: lessonNumber, lesson: lesson.uuid.toString }) }}"
+                                   :lesson-number="{{ lessonNumber }}"
+                                   csrfname="_token"
+                                   csrftoken="{{ csrf_token('book_entry') }}"
+                                   create-action="{{ path('add_entry', { uuid: lesson.uuid }) }}"
+                                   edit-action="{{ editAction }}"
+                                   cancel-action="{{ path('cancel_lesson', { uuid: lesson.uuid }) }}"></entry>
+                        </div>
+                    {% endif %}
                 {% endfor %}
                 </div>
             {% endif %}

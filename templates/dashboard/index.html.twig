@@ -351,7 +351,7 @@
                             <p>
                                 <i class="fas fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>
                                 {% for teacher in grade.teachers|sort_gradeteachers|only_section(section) %}
-                                    <a href="mailto:{{ teacher.teacher.email }}">{{ teacher.teacher|teacher }}</a>{% if teacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}
+                                    &nbsp;<a href="mailto:{{ teacher.teacher.email }}">{{ teacher.teacher|teacher }}</a>{% if teacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}
                                     {%- if not loop.last -%}, {% endif -%}
                                 {% endfor %}
                             </p>
@@ -403,7 +403,7 @@
                             {% endif %}
                             {% if teacher.grades|length > 0 %}
                             <p>
-                                <i class="fas fa-chalkboard-teacher" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>
+                                <i class="fas fa-chalkboard-teacher" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>&nbsp;
                                 {% for gradeTeacher in teacher.grades|only_section(section)|sort_gradeteachers %}
                                     {% set studyGroup = get_study_group_by_grade(gradeTeacher.grade, section) %}
                                     {%- if studyGroup is not null -%}
@@ -417,7 +417,7 @@
                             </p>
                             {% endif %}
                             <p>
-                                <i class="fas fa-graduation-cap" title="{{ 'label.subjects'|trans }}"></i>
+                                <i class="fas fa-graduation-cap" title="{{ 'label.subjects'|trans }}"></i>&nbsp;
                                 {% for subject in teacher.subjects %}
                                     <a href="{{ path('list_teachers', { subject: subject.uuid.toString }) }}">
                                         {{- subject.name -}}
@@ -430,7 +430,7 @@
                                 {% if is_granted('view', tag) %}
                                     {% if showTags == false %}
                                         <p>
-                                            <i class="fa fa-tags"></i>
+                                            <i class="fa fa-tags"></i>&nbsp;
 
                                         {% set showTags = true %}
                                     {% endif %}

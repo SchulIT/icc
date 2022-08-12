@@ -10,7 +10,9 @@ use App\Request\Data\FreeLessonTimespansData;
 
 class FreeTimespanImportStrategy implements ReplaceImportStrategyInterface {
 
-    private $repository;
+    use ContextAwareTrait;
+
+    private FreeTimespanRepositoryInterface $repository;
 
     public function __construct(FreeTimespanRepositoryInterface $repository) {
         $this->repository = $repository;
@@ -36,7 +38,8 @@ class FreeTimespanImportStrategy implements ReplaceImportStrategyInterface {
     }
 
     public function removeAll($requestData): void {
-        $this->repository->removeAll();;
+        $dateTime = $this->getContext($requestData);
+        $this->repository->removeAll($dateTime);
     }
 
     /**

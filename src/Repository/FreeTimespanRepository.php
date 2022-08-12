@@ -30,9 +30,16 @@ class FreeTimespanRepository extends AbstractTransactionalRepository implements 
         $this->flushIfNotInTransaction();
     }
 
-    public function removeAll(): void {
-        $this->em->createQueryBuilder()
-            ->delete(FreeTimespan::class, 't')
+    public function removeAll(?DateTime $dateTime): void {
+        $qb = $this->em->createQueryBuilder()
+            ->delete(FreeTimespan::class, 't');
+
+        if($dateTime !== null) {
+            $qb->where('t.date = :date')
+                ->setParameter('date', $dateTime);
+        }
+
+        $qb
             ->getQuery()
             ->execute();
 

@@ -337,6 +337,7 @@ plans:
         not_available_for_period: Für diese Periode ist kein Stundenplan verfügbar.
         lesson: Stunde
         title: "Stundenplan für %name%"
+        only_one_week: Stundenplan nur für die ausgewählte Woche anzeigen
         print:
             label: Stundenplan drucken
             date: "gedruckt am %date%"

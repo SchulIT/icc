@@ -266,6 +266,29 @@
                 </div>
                 {% endif %}
 
+                <form method="post">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-users-cog"></i> {{ 'dashboard.settings.label'|trans }}</h5>
+
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox" value="true" id="only_one_week" name="only_one_week" {% if onlyOneWeek %}checked="checked"{% endif %}>
+                                    <label for="only_one_week" class="custom-control-label">
+                                        {{ 'plans.timetable.only_one_week'|trans }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'label.last_import'|trans }}</h5>

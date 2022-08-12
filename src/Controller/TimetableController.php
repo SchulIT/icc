@@ -20,6 +20,7 @@ use App\Repository\MessageRepositoryInterface;
 use App\Repository\SubjectRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
+use App\Repository\UserRepositoryInterface;
 use App\Security\IcsAccessToken\IcsAccessTokenManager;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
@@ -43,6 +44,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TimetableController extends AbstractControllerWithMessages {
 
+    private const OnlyOneWeek = 'timetable.only_one_week';
+
     use RequestTrait;
     use CalendarWeeksTrait;
 
@@ -63,9 +66,17 @@ class TimetableController extends AbstractControllerWithMessages {
      */
     public function index(StudentFilter $studentFilter, TeachersFilter $teachersFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableLessonRepositoryInterface $lessonRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository,
-                          SubjectRepositoryInterface $subjectRepository, SectionFilter $sectionFilter, Request $request) {
+                          SubjectRepositoryInterface $subjectRepository, SectionFilter $sectionFilter, Request $request, UserRepositoryInterface $userRepository) {
         /** @var User $user */
         $user = $this->getUser();
+
+        if($request->isMethod('POST')) {
+            $onlyOneWeek = $request->request->getBoolean('only_one_week');
+            $user->setData(self::OnlyOneWeek, $onlyOneWeek);
+
+            $userRepository->persist($user);
+            return $this->redirectToRoute('timetable', $request->query->all());
+        }
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section', null));
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
@@ -131,6 +142,10 @@ class TimetableController extends AbstractControllerWithMessages {
                 (new WeekOfYear((int)$start->format('Y'), (int)$start->format('W'))),
                 (new WeekOfYear((int)$end->format('Y'), (int)$end->format('W')))
             ];
+
+            if($user->getData(self::OnlyOneWeek, false) === true) {
+                $weeks = [ $weeks[0] ];
+            }
 
             $timetable = $this->timetableHelper->makeTimetable($weeks, $lessons, $supervisions);
         }
@@ -198,7 +213,8 @@ class TimetableController extends AbstractControllerWithMessages {
             'last_import_supervisions' => $importDateTypeRepository->findOneByEntityClass(TimetableSupervision::class),
             'subjects' => $subjects,
             'selectedDate' => $selectedDate,
-            'weekStarts' => $weekStarts
+            'weekStarts' => $weekStarts,
+            'onlyOneWeek' => $user->getData(self::OnlyOneWeek, false)
         ]);
     }
 

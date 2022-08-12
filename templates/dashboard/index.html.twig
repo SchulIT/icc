@@ -375,6 +375,10 @@
                                     {% endif %}
                                 </p>
                             {% endif %}
+
+                            <p>
+                                <i class="fas fa-user-tag" title="{{ 'label.status'|trans }}"></i> {{ student.status }}
+                            </p>
                         </div>
                         <div class="list-group list-group-flush">
                             <a href="{{ path('timetable', { student: student.uuid.toString }) }}" class="list-group-item list-group-item-action">

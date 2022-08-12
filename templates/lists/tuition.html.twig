@@ -58,6 +58,7 @@
                                 <th data-type="date" data-format="{{ 'date.format'|trans|upper }}">{{ 'label.birthday'|trans }}</th>
                                 <th data-sortable="false">{{ 'label.full_aged.label'|trans }}</th>
                                 {% endif %}
+                                <th>{{ 'label.status'|trans }}</th>
                             </tr>
                             </thead>
 
@@ -101,6 +102,10 @@
                                         {% endif %}
                                     </td>
                                     {% endif %}
+
+                                    <td>
+                                        {{ membership.student.status }}
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>

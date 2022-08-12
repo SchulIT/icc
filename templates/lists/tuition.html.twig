@@ -18,25 +18,6 @@
         <div class="row">
             <div class="col-md-9">
                 <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            {% if tuition.displayName is not empty %}
-                                {{ tuition.displayName }}
-                            {% else %}
-                                {{ tuition.name }}
-                            {% endif %} ({{ tuition.subject.name }})
-                        </h5>
-
-                        <ul class="list-unstyled m-0">
-                            <li>{{ 'label.study_group'|trans }}: {{ tuition.studyGroup.name }}</li>
-                            <li>{{ 'label.grade'|trans }}: {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
-                            <li>{{ 'label.teacher'|trans }}: {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
-                            <li>{{ 'label.section'|trans }}: {{ tuition.section.displayName }}</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="card">
                     <div class="card-header d-flex align-items-center">
                         <div class="flex-fill">{{ 'label.students_simple'|trans }}</div>
 
@@ -169,6 +150,41 @@
                         <a href="mailto:{% for membership in memberships %}{{ membership.student.email }}{% if not loop.last %};{% endif %}{% endfor %}" class="list-group-item list-group-item-action">
                             <i class="fa fa-envelope"></i> {{ 'lists.tuitions.export.mail'|trans }}
                         </a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {% if tuition.displayName is not empty %}
+                                {{ tuition.displayName }}
+                            {% else %}
+                                {{ tuition.name }}
+                            {% endif %} ({{ tuition.subject.name }})
+                        </h5>
+
+                        <p>
+                            <i class="fas fa-users" title="{{ 'label.study_group'|trans }}"></i>
+                            <a href="{{ path('list_studygroups', { study_group: tuition.studyGroup.uuid }) }}">
+                                {{ tuition.studyGroup.name }}
+
+                                ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                            </a>
+                        </p>
+
+                        <p>
+                            <i class="fas fa-chalkboard-teacher" title="{{ 'label.teacher'|trans }}"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        </p>
+
+                        <p>
+                            <i class="fas fa-sliders-h" title="{{ 'label.section'|trans }}"></i> {{ tuition.section.displayName }}
+                        </p>
+
+                        <p>
+                            {% for type, counter in types %}
+                                {{ counter }}× {{ type }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
                     </div>
                 </div>
 

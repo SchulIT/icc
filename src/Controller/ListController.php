@@ -142,6 +142,7 @@ class ListController extends AbstractControllerWithMessages {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
 
         $tuition = $tuitionRepository->findOneById($tuition->getId());
+        /** @var StudyGroupMembership[] $memberships */
         $memberships = $tuition->getStudyGroup()->getMemberships()->toArray();
         $this->sorter->sort($memberships, StudentGroupMembershipStrategy::class);
 
@@ -151,12 +152,23 @@ class ListController extends AbstractControllerWithMessages {
             return $this->isGranted(ExamVoter::Show, $exam);
         });
 
+        $types = [ ];
+
+        foreach($memberships as $membership) {
+            if(!array_key_exists($membership->getType(), $types)) {
+                $types[$membership->getType()] = 0;
+            }
+
+            $types[$membership->getType()]++;
+        }
+
         return $this->renderWithMessages('lists/tuition.html.twig', [
             'tuition' => $tuition,
             'memberships' => $memberships,
             'exams' => $exams,
             'today' => $this->dateHelper->getToday(),
-            'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Tuition::class)
+            'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Tuition::class),
+            'types' => $types
         ]);
     }
 

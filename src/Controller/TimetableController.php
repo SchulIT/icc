@@ -143,6 +143,10 @@ class TimetableController extends AbstractControllerWithMessages {
                 (new WeekOfYear((int)$end->format('Y'), (int)$end->format('W')))
             ];
 
+            if($weeks[0]->getWeekNumber() === $weeks[1]->getWeekNumber() && $weeks[0]->getYear() === $weeks[1]->getYear()) {
+                $weeks = [ $weeks[0] ];
+            }
+
             if($user->getData(self::OnlyOneWeek, false) === true) {
                 $weeks = [ $weeks[0] ];
             }

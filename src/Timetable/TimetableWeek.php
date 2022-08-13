@@ -2,6 +2,8 @@
 
 namespace App\Timetable;
 
+use DateTime;
+
 class TimetableWeek {
 
     private int $year;
@@ -89,5 +91,20 @@ class TimetableWeek {
 
     public function isCurrentOrUpcoming(): bool {
         return $this->isCurrentOrUpcoming;
+    }
+
+    public function getStartDate(): DateTime {
+        $dateTime = new DateTime();
+        $dateTime->setISODate($this->getYear(), $this->getWeek());
+        $dateTime->setTime(0,0,0);
+
+        return $dateTime;
+    }
+
+    public function getEndDate(): DateTime {
+        $dateTime = $this->getStartDate();
+        $dateTime->modify('+6 days');
+
+        return $dateTime;
     }
 }

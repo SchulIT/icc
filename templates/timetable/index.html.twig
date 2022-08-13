@@ -98,7 +98,13 @@
                         <div class="card-header">
                             {{ week.label }}
 
-                            <span class="badge badge-secondary">{{ 'admin.exams.week'|trans({'%week%': week.week}) }}</span>
+                            <span class="badge badge-secondary">
+                                {{ 'admin.exams.week'|trans({'%week%': week.week}) }}
+                            </span>
+
+                            <span class="badge badge-primary">
+                                {{ week.startDate|format_date }}-{{ week.endDate|format_date }}
+                            </span>
                         </div>
 
                         <div class="table-responsive">

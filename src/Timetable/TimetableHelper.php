@@ -59,25 +59,6 @@ class TimetableHelper {
         $this->collapseTimetable($timetable);
         $this->ensureAllLessonsAreDisplayed($timetable);
 
-        $numWeeks = count($timetable->getWeeks());
-
-        if($numWeeks > 0){
-            $weeks = $timetable->getWeeks();
-
-            for($i = 0; $i < $numWeeks; $i++) {
-                /** @var TimetableWeek $first */
-                $first = array_shift($weeks);
-
-                if($first->isCurrentOrUpcoming()) {
-                    array_unshift($weeks, $first);
-                } else {
-                    $weeks[] = $first;
-                }
-            }
-
-            $timetable->setWeeks($weeks);
-        }
-
         return $timetable;
     }
 

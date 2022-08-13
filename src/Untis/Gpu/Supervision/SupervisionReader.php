@@ -28,6 +28,10 @@ class SupervisionReader extends AbstractGpuReader {
             $supervision->setLesson($this->getInt($record[3]));
             $supervision->setWeeks($this->getIntArrayOrEmptyArray($record[5]));
 
+            if(empty($supervision->getTeacher()) || empty($supervision->getCorridor())) {
+                continue;
+            }
+            
             $supervisions[] = $supervision;
         }
 

@@ -37,7 +37,7 @@ class SupervisionImporter {
 
         foreach($this->gpuReader->readGpu($reader) as $supervision) {
             $dates = [ ];
-            if(count($supervision->getWeeks())) {
+            if(count($supervision->getWeeks()) === 0) {
                 $dates = $this->getDatesForRange($supervision->getDay(), $start, $end);
             } else {
                 $dates = $this->getDatesForSchoolWeeks($supervision->getDay(), $supervision->getWeeks(), $map, $start, $end);
@@ -71,7 +71,7 @@ class SupervisionImporter {
         $dates = [ ];
         $current = clone $start;
 
-        while($current->format('w') != $day) {
+        while((int)$current->format('w') !== $day) {
             $current = $current->modify('+1 day');
         }
 

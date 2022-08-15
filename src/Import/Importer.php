@@ -154,6 +154,8 @@ class Importer {
             return new ImportResult($addedEntities, [], [], $ignoredEntities, $data);
         } catch (Throwable $e) {
             throw new ImportException($e->getMessage(), $e->getCode(), $e);
+        } finally {
+            $this->updateImportDateTime($strategy->getEntityClassName());
         }
     }
 

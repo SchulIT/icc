@@ -220,6 +220,9 @@ label:
         help: Abwesenheitsmeldungen mit diesem Typ müssen durch eine Lehrkraft genehmigt werden
     allowed:
         absent_type_help: Nur Benutzer dieser Gruppe können eine Abwesenheit mit dieser Art erstellen
+    type_with_zero_absence_lesson:
+        label: erzeugt keine Fehlstunden
+        help: Abwesenheiten mit dieser Art setzen die Anzahl der Fehlstunden bei Übernahme ins Unterrichtsbuch auf Null.
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

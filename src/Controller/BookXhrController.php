@@ -85,7 +85,8 @@ class BookXhrController extends AbstractController {
             $absences[] = [
                 'student' => Student::fromEntity($absentStudent->getStudent(), $sectionResolver->getCurrentSection()),
                 'reason' => $absentStudent->getReason()->getValue(),
-                'label' => ($absentStudent instanceof AbsentStudentWithAbsenceNote ? $absentStudent->getAbsence()->getType()->getName() : null)
+                'label' => ($absentStudent instanceof AbsentStudentWithAbsenceNote ? $absentStudent->getAbsence()->getType()->getName() : null),
+                'zero_absent_lessons' => ($absentStudent instanceof  AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons())
             ];
         }
 

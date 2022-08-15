@@ -30,6 +30,12 @@ class StudentAbsenceType {
     private bool $mustApprove = false;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private bool $isTypeWithZeroAbsenceLessons = false;
+
+    /**
      * @ORM\ManyToMany(targetEntity="UserTypeEntity")
      * @ORM\JoinTable(name="student_absence_type_allowed_usertypes",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
@@ -73,6 +79,22 @@ class StudentAbsenceType {
      */
     public function setMustApprove(bool $mustApprove): StudentAbsenceType {
         $this->mustApprove = $mustApprove;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTypeWithZeroAbsenceLessons(): bool {
+        return $this->isTypeWithZeroAbsenceLessons;
+    }
+
+    /**
+     * @param bool $isTypeWithZeroAbsenceLessons
+     * @return StudentAbsenceType
+     */
+    public function setIsTypeWithZeroAbsenceLessons(bool $isTypeWithZeroAbsenceLessons): StudentAbsenceType {
+        $this->isTypeWithZeroAbsenceLessons = $isTypeWithZeroAbsenceLessons;
         return $this;
     }
 

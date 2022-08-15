@@ -37,6 +37,8 @@
                 {{ absence.lastname }}, {{ absence.firstname }}
               </div>
               <span v-for="reason in absence.reasons" class="badge badge-primary">{{ reason }}</span>
+
+              <span v-if="absence.zero_absent_lessons" class="badge badge-info ml-1">0 FS</span>
             </div>
             <button type="button"
                     @click="applyAbsence(absence)"
@@ -323,6 +325,11 @@ export default {
       this.attendances.forEach(function(attendance) {
         if(attendance.student.uuid === absence.uuid) {
           $this.absent(attendance);
+
+          if(absence.zero_absent_lessons) {
+            attendance.lessons = 0;
+          }
+
           attendance.comment = absence.reasons.join(', ');
           $this.absences.splice($this.absences.indexOf(absence), 1);
         }
@@ -440,7 +447,8 @@ export default {
           uuid: student.uuid,
           firstname: student.firstname,
           lastname: student.lastname,
-          reasons: [ ]
+          reasons: [ ],
+          zero_absent_lessons: false
         };
 
         if($this.attendances.filter(x => x.student.uuid === student.uuid).length === 0) {
@@ -454,6 +462,10 @@ export default {
             students[absence.student.uuid].reasons.push(absence.label);
           } else {
             students[absence.student.uuid].reasons.push($this.$trans('book.attendance.absence_reason.' + absence.reason));
+          }
+
+          if(absence.zero_absent_lessons === true) {
+            students[absence.student.uuid].zero_absent_lessons = true;
           }
         }
       });

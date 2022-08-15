@@ -20,6 +20,15 @@ class StudentAbsenceTypeType extends AbstractType {
                 'label_attr' => [
                     'class' => 'checkbox-custom'
                 ]
+            ])
+            ->add('allowedUserTypes', UserTypeEntityType::class, [
+                'label' => 'label.usertypes',
+                'help' => 'label.allowed.absent_type_help',
+                'multiple' => true,
+                'expanded' => true,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ]);
     }
 }

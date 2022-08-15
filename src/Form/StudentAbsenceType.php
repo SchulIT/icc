@@ -5,7 +5,8 @@ namespace App\Form;
 use App\Converter\StudentStringConverter;
 use App\Entity\Student;
 use App\Entity\StudentAbsenceType as StudentAbsenceTypeEntity;
-use App\Settings\StudentAbsenceSettings;
+use App\Security\Voter\StudentAbsenceTypeVoter;
+use App\Security\Voter\StudentAbsenceVoter;
 use App\Sorting\StudentStrategy;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -15,6 +16,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudentAbsenceType extends AbstractType {
@@ -23,10 +27,13 @@ class StudentAbsenceType extends AbstractType {
     private StudentStrategy $studentStrategy;
     private TranslatorInterface $translator;
 
-    public function __construct(StudentStringConverter $converter, StudentStrategy $strategy, TranslatorInterface $translator) {
+    private AuthorizationCheckerInterface $authorizationChecker;
+
+    public function __construct(StudentStringConverter $converter, StudentStrategy $strategy, TranslatorInterface $translator, AuthorizationCheckerInterface $authorizationChecker) {
         $this->studentConverter = $converter;
         $this->studentStrategy = $strategy;
         $this->translator = $translator;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function configureOptions(OptionsResolver $resolver) {
@@ -61,6 +68,13 @@ class StudentAbsenceType extends AbstractType {
                     }
 
                     return $type->getName();
+                },
+                'choice_filter' => function(?StudentAbsenceTypeEntity $type) {
+                    if($type === null) {
+                        return true;
+                    }
+
+                    return $this->authorizationChecker->isGranted(StudentAbsenceTypeVoter::USE, $type);
                 }
             ])
             ->add('from', DateLessonType::class, [

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -27,8 +29,19 @@ class StudentAbsenceType {
      */
     private bool $mustApprove = false;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
+     * @ORM\JoinTable(name="student_absence_type_allowed_usertypes",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
+     * @var Collection<UserTypeEntity>
+     */
+    private Collection $allowedUserTypes;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
+        $this->allowedUserTypes = new ArrayCollection();
     }
 
     /**
@@ -61,6 +74,18 @@ class StudentAbsenceType {
     public function setMustApprove(bool $mustApprove): StudentAbsenceType {
         $this->mustApprove = $mustApprove;
         return $this;
+    }
+
+    public function addAllowedUserType(UserTypeEntity $entity): void {
+        $this->allowedUserTypes->add($entity);
+    }
+
+    public function removeAllowedUserType(UserTypeEntity $entity): void {
+        $this->allowedUserTypes->removeElement($entity);
+    }
+
+    public function getAllowedUserTypes(): Collection {
+        return $this->allowedUserTypes;
     }
 
     public function __toString(): string {

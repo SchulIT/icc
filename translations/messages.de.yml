@@ -218,6 +218,8 @@ label:
     must_approve:
         label: muss genehmigt werden
         help: Abwesenheitsmeldungen mit diesem Typ müssen durch eine Lehrkraft genehmigt werden
+    allowed:
+        absent_type_help: Nur Benutzer dieser Gruppe können eine Abwesenheit mit dieser Art erstellen
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

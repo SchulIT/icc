@@ -57,8 +57,10 @@
 
                         <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
                             {% if selectedDate != null %}
+                                {% set previousDate = (selectedDate|clone).modify('-7 days') %}
+                                {% set canNavigatePrevious = is_in_datetime_array(previousDate, weekStarts) %}
                                 <li class="nav-item align-self-center" data-resize="show">
-                                    <a class="nav-link" href="{{ path('timetable', currentFilter|merge({'date': (selectedDate|clone).modify('-7 days').format('Y-m-d')})) }}">
+                                    <a class="nav-link {% if not canNavigatePrevious %}disabled{% endif %}" href="{{ path('timetable', currentFilter|merge({'date': previousDate.format('Y-m-d')})) }}">
                                         <i class="fas fa-chevron-left"></i>
                                     </a>
                                 </li>
@@ -78,8 +80,10 @@
                             {% endfor %}
 
                             {% if selectedDate != null %}
+                                {% set nextDate = (selectedDate|clone).modify('+7 days') %}
+                                {% set canNavigateNext = is_in_datetime_array(nextDate, weekStarts) %}
                                 <li class="nav-item align-self-center" data-resize="show">
-                                    <a class="nav-link" href="{{ path('timetable', currentFilter|merge({'date': (selectedDate|clone).modify('+7 days').format('Y-m-d')})) }}">
+                                    <a class="nav-link {% if not canNavigateNext %}disabled{% endif %}" href="{{ path('timetable', currentFilter|merge({'date': nextDate.format('Y-m-d')})) }}">
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>

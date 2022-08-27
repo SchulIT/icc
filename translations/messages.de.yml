@@ -261,8 +261,8 @@ greeting:
     male: Herr
 
 teacher:
-    fullname: "%greeting% %title% %name%"
-    fullname_acronym: "%greeting% %title% %name% [%acronym%]"
+    fullname: "%title% %firstname% %lastname%"
+    fullname_acronym: "[%acronym%] %title% %firstname% %lastname%"
 
 user:
     display_name: "%lastname%, %firstname%"

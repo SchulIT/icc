@@ -54,17 +54,8 @@ class ResourceReservationType extends AbstractType {
             ->add('lessonEnd', IntegerType::class, [
                 'label' => 'label.end'
             ])
-            ->add('teacher', SortableEntityType::class, [
-                'label' => 'label.teacher',
-                'attr' => [
-                    'size' => 10,
-                    'data-choice' => 'true'
-                ],
-                'class' => Teacher::class,
-                'choice_label' => function(Teacher $teacher) {
-                    return $this->teacherConverter->convert($teacher);
-                },
-                'sort_by' => $this->teacherStrategy,
+            ->add('teacher', TeacherChoiceType::class, [
+                'label' => 'label.teacher'
             ]);
     }
 }

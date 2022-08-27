@@ -18,19 +18,10 @@ class TeacherStringConverter {
             return null;
         }
 
-        $greeting = $this->translator->trans('greeting.female');
-
-        if($teacher->getGender()->equals(Gender::Male())) {
-            $greeting = $this->translator->trans('greeting.male');
-        } else if($teacher->getGender()->equals(Gender::X())) {
-            // This should be fixed somehow!
-            $greeting = '';
-        }
-
         $string = $this->translator->trans($includeAcronym ? 'teacher.fullname_acronym' : 'teacher.fullname', [
-            '%greeting%' => $greeting,
             '%title%' => $teacher->getTitle(),
-            '%name%' => $teacher->getLastname(),
+            '%lastname%' => $teacher->getLastname(),
+            '%firstname%' => $teacher->getFirstname(),
             '%acronym%' => $teacher->getAcronym()
         ]);
 

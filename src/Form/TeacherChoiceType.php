@@ -29,7 +29,7 @@ class TeacherChoiceType extends SortableEntityType {
             ],
             'class' => Teacher::class,
             'choice_label' => function(Teacher $teacher) {
-                return $this->teacherConverter->convert($teacher);
+                return $this->teacherConverter->convert($teacher, true);
             },
             'sort_by' => $this->teacherStrategy
         ]);

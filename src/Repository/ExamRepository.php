@@ -374,6 +374,18 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->getResult();
     }
 
+    public function findAllExternalWithRange(DateTime $start, DateTime $end): array {
+        $qb = $this->getDefaultQueryBuilder(null)
+            ->andWhere('e.date >= :start')
+            ->andWhere('e.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        return $qb->andWhere($qb->expr()->isNotNull('e.externalId'))
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * @param Exam $exam
      */

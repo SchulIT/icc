@@ -57,7 +57,7 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
      */
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
-            $this->examRepository->findAllExternal(),
+            $this->examRepository->findAllExternalWithRange($requestData->getStartDate(), $requestData->getEndDate()),
             function(Exam $exam) {
                 return $exam->getExternalId();
             }

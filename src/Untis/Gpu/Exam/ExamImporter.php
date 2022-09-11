@@ -33,6 +33,8 @@ class ExamImporter {
         $tuitionMap = $this->computeTuitionMap($this->tuitionReader->readGpu($tuitionReader));
 
         $data = new ExamsData();
+        $data->setStartDate($start);
+        $data->setEndDate($end);
         $data->setSuppressNotifications($suppressNotifications);
         $exams = [ ];
 

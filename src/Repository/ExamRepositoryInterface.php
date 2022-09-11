@@ -162,6 +162,13 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllExternal(\DateTime $today = null);
 
     /**
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return Exam[]
+     */
+    public function findAllExternalWithRange(DateTime $start, DateTime $end): array;
+
+    /**
      * @param Exam $exam
      */
     public function persist(Exam $exam): void;

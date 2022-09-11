@@ -168,20 +168,6 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
             }
         }
 
-        if(count($data->getStudents()) > 0) {
-            $students = $this->studentRepository->findAllByExternalId($data->getStudents());
-        } else {
-            $students = $this->resolveStudentsFromRules($entity, $section);
-        }
-
-        CollectionUtils::synchronize(
-            $entity->getStudents(),
-            $students,
-            function(Student $student) {
-                return $student->getId();
-            }
-        );
-
         $tuitions = [ ];
 
         foreach($data->getTuitions() as $tuitionData) {
@@ -205,6 +191,20 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
             $tuitions,
             function(Tuition $tuition) {
                 return $tuition->getId();
+            }
+        );
+
+        if(count($data->getStudents()) > 0) {
+            $students = $this->studentRepository->findAllByExternalId($data->getStudents());
+        } else {
+            $students = $this->resolveStudentsFromRules($entity, $section);
+        }
+
+        CollectionUtils::synchronize(
+            $entity->getStudents(),
+            $students,
+            function(Student $student) {
+                return $student->getId();
             }
         );
     }

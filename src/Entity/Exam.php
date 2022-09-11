@@ -79,7 +79,7 @@ class Exam {
     private $tuitions;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Student")
+     * @ORM\ManyToMany(targetEntity="Student", cascade={"persist"})
      * @ORM\JoinTable(name="exam_students",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}

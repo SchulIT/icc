@@ -6,6 +6,7 @@ use App\Book\Lesson\LessonCancelHelper;
 use App\Dashboard\Absence\AbsenceResolver;
 use App\Dashboard\AbsentStudentWithAbsenceNote;
 use App\Entity\LessonAttendance;
+use App\Entity\LessonAttendanceExcuseStatus;
 use App\Entity\LessonEntry;
 use App\Entity\StudyGroupMembership;
 use App\Entity\TimetableLesson;
@@ -86,7 +87,8 @@ class BookXhrController extends AbstractController {
                 'student' => Student::fromEntity($absentStudent->getStudent(), $sectionResolver->getCurrentSection()),
                 'reason' => $absentStudent->getReason()->getValue(),
                 'label' => ($absentStudent instanceof AbsentStudentWithAbsenceNote ? $absentStudent->getAbsence()->getType()->getName() : null),
-                'zero_absent_lessons' => ($absentStudent instanceof  AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons())
+                'zero_absent_lessons' => ($absentStudent instanceof  AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons()),
+                'excuse_status' => ($absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isAlwaysExcused()) ? LessonAttendanceExcuseStatus::Excused : LessonAttendanceExcuseStatus::NotSet
             ];
         }
 
@@ -94,7 +96,8 @@ class BookXhrController extends AbstractController {
             if($note->appliesToLesson($date, $lesson)) {
                 $absences[] = [
                     'student' => Student::fromEntity($note->getStudent(), $sectionResolver->getCurrentSection()),
-                    'reason' => 'excuse'
+                    'reason' => 'excuse',
+                    'excuse_status' => LessonAttendanceExcuseStatus::Excused
                 ];
             }
         }

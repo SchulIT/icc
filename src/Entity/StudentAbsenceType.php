@@ -36,6 +36,12 @@ class StudentAbsenceType {
     private bool $isTypeWithZeroAbsenceLessons = false;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private bool $isAlwaysExcused = false;
+
+    /**
      * @ORM\ManyToMany(targetEntity="UserTypeEntity")
      * @ORM\JoinTable(name="student_absence_type_allowed_usertypes",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
@@ -95,6 +101,22 @@ class StudentAbsenceType {
      */
     public function setIsTypeWithZeroAbsenceLessons(bool $isTypeWithZeroAbsenceLessons): StudentAbsenceType {
         $this->isTypeWithZeroAbsenceLessons = $isTypeWithZeroAbsenceLessons;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAlwaysExcused(): bool {
+        return $this->isAlwaysExcused;
+    }
+
+    /**
+     * @param bool $isAlwaysExcused
+     * @return StudentAbsenceType
+     */
+    public function setIsAlwaysExcused(bool $isAlwaysExcused): StudentAbsenceType {
+        $this->isAlwaysExcused = $isAlwaysExcused;
         return $this;
     }
 

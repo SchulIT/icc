@@ -223,6 +223,9 @@ label:
     type_with_zero_absence_lesson:
         label: erzeugt keine Fehlstunden
         help: Abwesenheiten mit dieser Art setzen die Anzahl der Fehlstunden bei Übernahme ins Unterrichtsbuch auf Null.
+    always_excused:
+        label: immer entschuldigt
+        help: Abwesenheiten mit dieser Art setzt die Fehlstunde bei Übernahme ins Unterrichtsbuch auf entschuldigt.
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

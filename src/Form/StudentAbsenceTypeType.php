@@ -29,6 +29,14 @@ class StudentAbsenceTypeType extends AbstractType {
                     'class' => 'checkbox-custom'
                 ]
             ])
+            ->add('isAlwaysExcused', CheckboxType::class, [
+                'label' => 'label.always_excused.label',
+                'help' => 'label.always_excused.help',
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
+            ])
             ->add('allowedUserTypes', UserTypeEntityType::class, [
                 'label' => 'label.usertypes',
                 'help' => 'label.allowed.absent_type_help',

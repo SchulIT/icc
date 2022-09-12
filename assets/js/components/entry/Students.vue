@@ -330,6 +330,10 @@ export default {
             attendance.lessons = 0;
           }
 
+          if(absence.excuse_status) {
+            attendance.excuse_status = absence.excuse_status;
+          }
+
           attendance.comment = absence.reasons.join(', ');
           $this.absences.splice($this.absences.indexOf(absence), 1);
         }
@@ -448,7 +452,8 @@ export default {
           firstname: student.firstname,
           lastname: student.lastname,
           reasons: [ ],
-          zero_absent_lessons: false
+          zero_absent_lessons: false,
+          status: 0
         };
 
         if($this.attendances.filter(x => x.student.uuid === student.uuid).length === 0) {
@@ -462,6 +467,10 @@ export default {
             students[absence.student.uuid].reasons.push(absence.label);
           } else {
             students[absence.student.uuid].reasons.push($this.$trans('book.attendance.absence_reason.' + absence.reason));
+          }
+
+          if(absence.excuse_status) {
+            students[absence.student.uuid].excuse_status = absence.excuse_status;
           }
 
           if(absence.zero_absent_lessons === true) {

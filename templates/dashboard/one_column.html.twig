@@ -4,9 +4,9 @@
     <div class="container-fluid px-0">
         {{ block('priority_messages') }}
 
+        {{ block('daily_info') }}
         {{ block('agenda') }}
         {{ block('mentions') }}
-        {{ block('daily_info') }}
         {{ block('exams') }}
 
         {% if view.messages|length > 0 %}

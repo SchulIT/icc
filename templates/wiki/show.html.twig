@@ -40,8 +40,9 @@
                     {% for child in childrenWithChildren %}
                         <div class="card">
                             <div class="card-header">
+                                <i class="{% if child.icon is not empty %}{{ child.icon }}{% else %}far fa-copy{% endif %}"></i>
                                 <a href="{{ path('show_wiki_article', { uuid: child.uuid }) }}">
-                                    <i class="far fa-copy"></i> {{ child.title }}
+                                    {{ child.title }}
                                 </a>
                             </div>
                             <div class="list-group list-group-flush">

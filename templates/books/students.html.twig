@@ -91,7 +91,7 @@
 
                                     <td class="align-middle">
                                         {% if sectionFilter.currentSection != null %}
-                                        <a href="{{ path('book_student', { student: student.uuid, section: sectionFilter.currentSection.uuid.toString }) }}" class="btn btn-primary btn-sm" title="{{ 'label.details'|trans }}">
+                                        <a href="{{ path('book_student', { student: student.uuid }|merge(currentFilter)) }}" class="btn btn-primary btn-sm" title="{{ 'label.details'|trans }}">
                                             <i class="fas fa-info-circle"></i>
                                         </a>
                                         {% endif %}

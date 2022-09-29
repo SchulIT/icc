@@ -387,6 +387,9 @@
                             <a href="{{ path('exams', { student: student.uuid.toString }) }}" class="list-group-item list-group-item-action">
                                 <i class="fas fa-edit"></i> {{ 'plans.exams.label'|trans }}
                             </a>
+                            <a href="{{ path('appointments', { student: student.uuid.toString }) }}" class="list-group-item list-group-item-action">
+                                <i class="far fa-calendar"></i> {{ 'plans.appointments.label'|trans }}
+                            </a>
                             {% if is_granted('tuitions') %}
                                 <a href="{{ path('list_tuitions', { student: student.uuid.toString }) }}" class="list-group-item list-group-item-action">
                                     <i class="fas fa-chalkboard-teacher"></i> {{ 'label.tuitions'|trans }}

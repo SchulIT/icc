@@ -7,12 +7,17 @@ use App\Entity\TimetableLesson;
 use App\Entity\TimetableSupervision;
 use App\Entity\User;
 use App\Ics\IcsHelper;
+use App\Import\ReplaceImportStrategyInterface;
+use App\Repository\AppointmentCategoryRepositoryInterface;
+use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Settings\TimetableSettings;
 use App\Sorting\GradeNameStrategy;
 use App\Sorting\Sorter;
 use App\Timetable\TimetableTimeHelper;
+use App\Utils\ArrayUtils;
+use DateTime;
 use Jsvrcek\ICS\Model\CalendarEvent;
 use Jsvrcek\ICS\Model\Description\Location;
 use Jsvrcek\ICS\Model\Relationship\Organizer;
@@ -30,9 +35,12 @@ class TimetableIcsExporter {
 
     private TimetableLessonRepositoryInterface $lessonRepository;
     private TimetableSupervisionRepositoryInterface $supervisionRepository;
+    private AppointmentRepositoryInterface $appointmentRepository;
+    private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository;
 
     public function __construct(Sorter $sorter, TranslatorInterface $translator, TimetableSettings $timetableSettings,
                                 TimetableLessonRepositoryInterface $lessonRepository,  TimetableSupervisionRepositoryInterface $supervisionRepository,
+                                AppointmentRepositoryInterface $appointmentRepository, AppointmentCategoryRepositoryInterface $appointmentCategoryRepository,
                                 IcsHelper $icsHelper, TimetableTimeHelper $timetableTimeHelper) {
         $this->sorter = $sorter;
         $this->translator = $translator;
@@ -42,10 +50,13 @@ class TimetableIcsExporter {
 
         $this->lessonRepository = $lessonRepository;
         $this->supervisionRepository = $supervisionRepository;
+        $this->appointmentRepository = $appointmentRepository;
+        $this->appointmentCategoryRepository = $appointmentCategoryRepository;
     }
 
     public function getIcsResponse(User $user): Response {
-        $events = $this->makeIcsItems($user);
+        $freeDays = $this->getFreeDays();
+        $events = $this->makeIcsItems($user, $freeDays);
 
         return $this->icsHelper->getIcsResponse(
             $this->translator->trans('plans.timetable.export.title'),
@@ -58,9 +69,10 @@ class TimetableIcsExporter {
 
     /**
      * @param User $user
+     * @param DateTime[] $freeDays
      * @return CalendarEvent[]
      */
-    private function makeIcsItems(User $user): array {
+    private function makeIcsItems(User $user, array $freeDays): array {
         $events = [ ];
 
         $start = $this->timetableSettings->getStartDate($user->getUserType());
@@ -81,6 +93,13 @@ class TimetableIcsExporter {
             $lessons = $this->lessonRepository->findAllByTeacher($start, $end, $user->getTeacher());
             $supervisions = $this->supervisionRepository->findAllByTeacher($start, $end, $user->getTeacher());
         }
+
+        $filter = function(TimetableLesson|TimetableSupervision $item) use ($freeDays) {
+            return !in_array($item->getDate(), $freeDays);
+        };
+
+        $lessons = array_filter($lessons, $filter);
+        $supervisions = array_filter($supervisions, $filter);
 
         foreach($lessons as $lesson) {
             $events[] = $this->makeIcsItemForLesson($lesson);
@@ -183,5 +202,36 @@ class TimetableIcsExporter {
         }
 
         return $event;
+    }
+
+    /**
+     * @return DateTime[]
+     */
+    private function getFreeDays(): array {
+        $freeDays = [ ];
+
+        $ids = $this->timetableSettings->getCategoryIds();
+        $categories = [ ];
+
+        foreach($this->timetableSettings->getCategoryIds() as $id) {
+            $category = $this->appointmentCategoryRepository->findOneById($id);
+
+            if($category !== null) {
+                $categories[] = $category;
+            }
+        }
+
+        $appointments = $this->appointmentRepository->findAll($categories);
+
+        foreach($appointments as $appointment) {
+            $current = (clone $appointment->getStart());
+
+            while($current <= $appointment->getEnd()) {
+                $freeDays[] = $current;
+                $current = (clone $current)->modify('+1 day');
+            }
+        }
+
+        return ArrayUtils::unique($freeDays);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Book\Lesson\LessonCancelHelper;
 use App\Dashboard\Absence\AbsenceResolver;
+use App\Dashboard\AbsenceReason;
 use App\Dashboard\AbsentStudentWithAbsenceNote;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonAttendanceExcuseStatus;
@@ -83,12 +84,20 @@ class BookXhrController extends AbstractController {
         $absences = [ ];
 
         foreach($absenceResolver->resolve($date, $lesson, $students) as $absentStudent) {
+            $zeroAbsentLessons = ($absentStudent instanceof  AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons());
+            $excuseStatus = ($absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isAlwaysExcused()) ? LessonAttendanceExcuseStatus::Excused : LessonAttendanceExcuseStatus::NotSet;
+
+            if($absentStudent->getReason()->equals(AbsenceReason::Exam())) {
+                $zeroAbsentLessons = true;
+                $excuseStatus = LessonAttendanceExcuseStatus::Excused;
+            }
+
             $absences[] = [
                 'student' => Student::fromEntity($absentStudent->getStudent(), $sectionResolver->getCurrentSection()),
                 'reason' => $absentStudent->getReason()->getValue(),
                 'label' => ($absentStudent instanceof AbsentStudentWithAbsenceNote ? $absentStudent->getAbsence()->getType()->getName() : null),
-                'zero_absent_lessons' => ($absentStudent instanceof  AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons()),
-                'excuse_status' => ($absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isAlwaysExcused()) ? LessonAttendanceExcuseStatus::Excused : LessonAttendanceExcuseStatus::NotSet
+                'zero_absent_lessons' => $zeroAbsentLessons,
+                'excuse_status' => $excuseStatus
             ];
         }
 

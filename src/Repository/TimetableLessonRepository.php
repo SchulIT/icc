@@ -460,6 +460,8 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
             $qb->leftJoin('t.studyGroup', 'sg')
                 ->leftJoin('sg.memberships', 'm')
                 ->leftJoin('m.student', 's')
+                ->leftJoin('e.attendances', 'a')
+                ->andWhere('a.student = :student')
                 ->andWhere('s.id = :student')
                 ->setParameter('student', $student->getId());
         }

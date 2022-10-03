@@ -1,0 +1,22 @@
+{% extends "admin/settings/_settings.html.twig" %}
+
+{% block title %}{{ 'admin.settings.book.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'admin.settings.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block settings_content %}
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_row(form.grades_grade_teacher_excuses) }}
+            {{ form_row(form.grades_tuition_teacher_excuses) }}
+        </div>
+    </div>
+{% endblock %}

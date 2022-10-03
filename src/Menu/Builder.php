@@ -538,6 +538,10 @@ class Builder {
                 'route' => 'admin_settings_absences'
             ]);
 
+            $menu->addChild('admin.settings.book.label', [
+                'route' => 'admin_settings_book'
+            ]);
+
             $menu->addChild('admin.settings.import.label', [
                 'route' => 'admin_settings_import'
             ]);

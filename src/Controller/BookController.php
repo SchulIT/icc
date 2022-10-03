@@ -26,6 +26,7 @@ use App\Repository\StudentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Security\Voter\LessonEntryVoter;
+use App\Settings\BookSettings;
 use App\Sorting\LessonAttendanceGroupStrategy;
 use App\Sorting\LessonAttendanceStrategy;
 use App\Sorting\LessonDayGroupStrategy;
@@ -160,7 +161,7 @@ class BookController extends AbstractController {
      */
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                           TuitionRepositoryInterface $tuitionRepository, DateHelper $dateHelper, Request $request,
-                          EntryOverviewHelper $entryOverviewHelper, AbsenceExcuseResolver $absenceExcuseResolver) {
+                          EntryOverviewHelper $entryOverviewHelper, AbsenceExcuseResolver $absenceExcuseResolver, BookSettings $settings) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -230,8 +231,38 @@ class BookController extends AbstractController {
             }
         }
 
-        $missingExcuses = array_filter($info, function(StudentInfo $info) {
-            return $info->getNotExcusedOrNotSetLessonsCount() > 0;
+        $teacherGrades = [ ];
+        if($teacherFilterView->getCurrentTeacher() !== null) {
+            $teacherGrades = $teacherFilterView->getCurrentTeacher()->getGrades()
+                ->filter(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getSection()->getId() === $sectionFilterView->getCurrentSection()->getId())
+                ->map(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getGrade()->getId())
+                ->toArray();
+        }
+
+        $missingExcuses = array_filter($info, function(StudentInfo $info) use ($teacherFilterView, $teacherGrades, $sectionFilterView, $settings) {
+            if($teacherFilterView->getCurrentTeacher() === null) {
+                return $info->getNotExcusedOrNotSetLessonsCount() > 0;
+            }
+
+            // When filter view is active, check settings first
+            $studentGrade = $info->getStudent()->getGrade($sectionFilterView->getCurrentSection())?->getId();
+
+            if($studentGrade === null) {
+                // fallback (this should not happen)
+                return $info->getNotExcusedOrNotSetLessonsCount() > 0;
+            }
+
+            $isStudentInTeacherGrade = count(array_intersect([$studentGrade], $teacherGrades)) > 0;
+
+            if(in_array($studentGrade, $settings->getGradesGradeTeacherExcuses()) && $isStudentInTeacherGrade) {
+                return $info->getNotExcusedOrNotSetLessonsCount() > 0;
+            }
+
+            if(in_array($studentGrade, $settings->getGradesTuitionTeacherExcuses()) && $isStudentInTeacherGrade !== true) {
+                return $info->getNotExcusedOrNotSetLessonsCount() > 0;
+            }
+
+            return false;
         });
         $missingExcuseCount = array_sum(
             array_map(function(StudentInfo $info) {

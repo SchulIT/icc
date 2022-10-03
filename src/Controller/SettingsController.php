@@ -15,6 +15,7 @@ use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Repository\GradeRepositoryInterface;
 use App\Repository\SectionRepositoryInterface;
 use App\Settings\AppointmentsSettings;
+use App\Settings\BookSettings;
 use App\Settings\DashboardSettings;
 use App\Settings\ExamSettings;
 use App\Settings\GeneralSettings;
@@ -953,6 +954,70 @@ class SettingsController extends AbstractController {
         }
 
         return $this->render('admin/settings/import.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/book", name="admin_settings_book")
+     *
+     */
+    public function book(Request $request, BookSettings $settings, GradeRepositoryInterface $gradeRepository) {
+        $builder = $this->createFormBuilder();
+        $builder->add('grades_grade_teacher_excuses', ChoiceType::class, [
+                'label' => 'admin.settings.book.excuses.grades_grade_teacher_excuses.label',
+                'help' => 'admin.settings.book.excuses.grades_grade_teacher_excuses.help',
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
+                    return $grade->getName();
+                }, function (Grade $grade) {
+                    return $grade->getId();
+                }),
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => [
+                    'size' => 10
+                ],
+                'data' => $settings->getGradesGradeTeacherExcuses()
+            ])
+            ->add('grades_tuition_teacher_excuses', ChoiceType::class, [
+                'label' => 'admin.settings.book.excuses.grades_tuition_teacher_excuses.label',
+                'help' => 'admin.settings.book.excuses.grades_tuition_teacher_excuses.help',
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
+                    return $grade->getName();
+                }, function (Grade $grade) {
+                    return $grade->getId();
+                }),
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => [
+                    'size' => 10
+                ],
+                'data' => $settings->getGradesTuitionTeacherExcuses()
+            ]);
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $map = [
+                'grades_grade_teacher_excuses' => function(array $ids) use($settings) {
+                    $settings->setGradesGradeTeacherExcuses($ids);
+                },
+                'grades_tuition_teacher_excuses' => function(array $ids) use($settings) {
+                    $settings->setGradesTuitionTeacherExcuses($ids);
+                }
+            ];
+
+            foreach($map as $formKey => $callable) {
+                $value = $form->get($formKey)->getData();
+                $callable($value);
+            }
+
+            $this->addFlash('success', 'admin.settings.success');
+
+            return $this->redirectToRoute('admin_settings_book');
+        }
+
+        return $this->render('admin/settings/book.html.twig', [
             'form' => $form->createView()
         ]);
     }

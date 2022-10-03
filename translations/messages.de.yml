@@ -831,6 +831,16 @@ admin:
                 label: E-Mail Benachrichtigungen aktiviert für
                 help: Schaltet E-Mail-Benachrichtigungen für diese Benutzergruppen frei oder sperrt sie.
 
+        book:
+            label: Unterrichtsbuch
+            excuses:
+                grades_grade_teacher_excuses:
+                    label: Klassenleitung entschuldigt
+                    help: In diesen Klassen entschuldigt die Klassenleitung. In der Lehrkraft-Übersicht werden die offenen Fehlstunden nur angezeigt, wenn der Schüler oder die Schülerin in einer der genannten Klassen ist.
+                grades_tuition_teacher_excuses:
+                    label: Fachlehrkraft entschuldigt
+                    help: In diesen Klassen entschuldigt die Fachlehrkraft. In der Lehrkraft-Übersicht werden die offenen Fehlstunden nur angezeigt, wenn der Schüler oder die Schülerin in einer der genannten Klassen ist.
+
     timetable:
         label: Stundenplan
         weeks:
@@ -1568,6 +1578,7 @@ import:
             template:
                 info: Die Ausgabe muss ein bestimmtes Format einhalten, damit es eingelesen werden kann. Dieses kann in Untis über "Import/Export" > "Untis" > "Formate/Fenstergruppen/Ribbon" > "Eingabeformat Import" importiert werden.
                 download: Format herunterladen (Ziel speichern unter)
+
 
 experimental:
     label: experimentell

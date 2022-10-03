@@ -1452,6 +1452,11 @@ book:
         not_set: offen (unentschuldigt)
         excuse_note_exists: Für diese Stunde liegt eine Entschuldigung vor.
 
+    excuse_status_short:
+        excused: u
+        not_excused: ue
+        not_set: offen
+
     attendance:
         label: Anwesenheit
         not_possible: Die Anwesenheit kann bei ausgefallen Stunden nicht dokumentiert werden.

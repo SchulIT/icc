@@ -361,30 +361,27 @@
                                                 {% endif %}
                                             </div>
 
-                                            {% if lesson.presentCount > 0 %}
-                                                <div class="ml-2 flex-shrink-0">
-                                                    <lesson-attendance-info class="border-success text-success btn-like"
-                                                                            icon="fas fa-user-check"
-                                                                            title="{{ 'book.attendance.type.present'|trans }}"
-                                                                            url="{{ url('xhr_entry_attendances', { uuid: lesson.entry.uuid, filter: 1}) }}"></lesson-attendance-info>
-                                                </div>
-                                            {% endif %}
+                                            {% if absentStudentsByLesson[lesson.entry.uuid.toString] is defined or lateStudentsByLesson[lesson.entry.uuid.toString] is defined %}
+                                                <div class="ml-2" style="min-width: 20%">
+                                                    <ul class="list-unstyled mb-0">
+                                                        {% for attendance in lateStudentsByLesson[lesson.entry.uuid.toString] %}
+                                                            <li><i class="fa fa-user-clock"></i> {{ attendance.student|student }} <span class="badge badge-primary">{{ 'book.attendance.late_minutes'|trans({'%count%': attendance.lateMinutes}) }}</span> </li>
+                                                        {% endfor %}
 
-                                            {% if lesson.lateCount > 0 %}
-                                                <div class="ml-2 flex-shrink-0">
-                                                    <lesson-attendance-info class="border-warning text-warning btn-like"
-                                                                            icon="fas fa-user-clock"
-                                                                            title="{{ 'book.attendance.type.late'|trans }}"
-                                                                            url="{{ url('xhr_entry_attendances', { uuid: lesson.entry.uuid, filter: 2}) }}"></lesson-attendance-info>
-                                                </div>
-                                            {% endif %}
-
-                                            {% if lesson.absentCount > 0 %}
-                                                <div class="ml-2 flex-shrink-0">
-                                                    <lesson-attendance-info class="border-danger text-danger btn-like"
-                                                                            icon="fas fa-user-times"
-                                                                            title="{{ 'book.attendance.type.absent'|trans }}"
-                                                                            url="{{ url('xhr_entry_attendances', { uuid: lesson.entry.uuid, filter: 0}) }}"></lesson-attendance-info>
+                                                        {% for attendance in absentStudentsByLesson[lesson.entry.uuid.toString] %}
+                                                            <li><i class="fa fa-user-times"></i> {{ attendance.student|student }}
+                                                                {% if attendance.absentLessons > 0 %}
+                                                                    {% if attendance.excuseStatus == 2 %}
+                                                                        <span class="badge badge-danger">{{ 'book.excuse_status_short.not_excused'|trans }}</span>
+                                                                    {% elseif attendance.excuseStatus == 1 %}
+                                                                        <span class="badge badge-success">{{ 'book.excuse_status_short.excused'|trans }}</span>
+                                                                    {% else %}
+                                                                        <span class="badge badge-warning">{{ 'book.excuse_status_short.not_set'|trans }}</span>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
                                                 </div>
                                             {% endif %}
 

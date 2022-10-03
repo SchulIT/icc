@@ -8,9 +8,14 @@ use App\Book\Lesson;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\StudentInfo;
 use App\Book\Student\StudentInfoResolver;
+use App\Entity\DateLesson;
+use App\Entity\ExcuseNote;
 use App\Entity\Grade;
 use App\Entity\GradeMembership;
 use App\Entity\GradeTeacher;
+use App\Entity\LessonAttendance;
+use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\LessonAttendanceType;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
@@ -22,6 +27,7 @@ use App\Grouping\GenericDateStrategy;
 use App\Grouping\Grouper;
 use App\Grouping\LessonAttendanceCommentsGroup;
 use App\Grouping\LessonDayStrategy;
+use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
@@ -160,7 +166,7 @@ class BookController extends AbstractController {
      * @Route("/entry", name="book")
      */
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
-                          TuitionRepositoryInterface $tuitionRepository, DateHelper $dateHelper, Request $request,
+                          TuitionRepositoryInterface $tuitionRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository, DateHelper $dateHelper, Request $request,
                           EntryOverviewHelper $entryOverviewHelper, AbsenceExcuseResolver $absenceExcuseResolver, BookSettings $settings) {
         /** @var User $user */
         $user = $this->getUser();
@@ -277,6 +283,49 @@ class BookController extends AbstractController {
             $monthStarts = $this->listCalendarMonths($sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
         }
 
+        $lateStudentsByLesson = [ ];
+        $absentStudentsByLesson = [ ];
+
+        foreach($overview->getDays() as $day) {
+            $excusesByStudent = [ ];
+
+            foreach($day->getLessons() as $lesson) {
+                if($lesson->getEntry() === null) {
+                    continue;
+                }
+
+                $uuid = $lesson->getEntry()->getUuid()->toString();
+                $lateStudentsByLesson[$uuid] = [];
+                $absentStudentsByLesson[$uuid] = [];
+
+                if($lesson->getAbsentCount() === 0 && $lesson->getLateCount() === 0) {
+                    continue;
+                }
+
+                /** @var LessonAttendance $attendance */
+                foreach($lesson->getEntry()->getAttendances() as $attendance) {
+                    if($attendance->getType() === LessonAttendanceType::Late) {
+                        $lateStudentsByLesson[$uuid][] = $attendance;
+                    } else if($attendance->getType() === LessonAttendanceType::Absent) {
+                        $studentUuid = $attendance->getStudent()->getUuid()->toString();
+
+                        if(!isset($excusesByStudent[$studentUuid])) {
+                            $excusesByStudent[$studentUuid] = $excuseNoteRepository->findByStudentsAndDate([$attendance->getStudent()], $day->getDate());
+                        }
+
+                        /** @var ExcuseNote[] $excuseNote */
+                        foreach($excusesByStudent[$studentUuid] as $excuseNote) {
+                            if($attendance->getExcuseStatus() === LessonAttendanceExcuseStatus::NotSet && (new DateLesson())->setDate($day->getDate())->setLesson($lesson->getLessonNumber())->isBetween($excuseNote->getFrom(), $excuseNote->getUntil())) {
+                                $attendance->setExcuseStatus(LessonAttendanceExcuseStatus::Excused);
+                            }
+                        }
+
+                        $absentStudentsByLesson[$uuid][] = $attendance;
+                    }
+                }
+            }
+        }
+
         return $this->render('books/index.html.twig', [
             'sectionFilter' => $sectionFilterView,
             'gradeFilter' => $gradeFilterView,
@@ -289,7 +338,9 @@ class BookController extends AbstractController {
             'weekStarts' => $weekStarts,
             'monthStarts' => $monthStarts,
             'missingExcuses' => $missingExcuses,
-            'missingExcusesCount' => $missingExcuseCount
+            'missingExcusesCount' => $missingExcuseCount,
+            'absentStudentsByLesson' => $absentStudentsByLesson,
+            'lateStudentsByLesson' => $lateStudentsByLesson
         ]);
     }
 

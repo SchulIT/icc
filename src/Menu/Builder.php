@@ -123,7 +123,7 @@ class Builder {
             $lists->addChild('lists.teachers.label', [
                 'route' => 'list_teachers'
             ])
-                ->setExtra('icon', 'fas fa-sort-alpha-down');
+                ->setExtra('icon', 'fas fa-user-tie');
         }
 
         if($this->authorizationChecker->isGranted(ListsVoter::Privacy)) {

@@ -463,7 +463,7 @@ export default {
 
       this.possibleAbsences.forEach(function(absence) {
         if(absence.student.uuid in students) {
-          if(absence.label !== undefined) {
+          if(absence.label !== undefined && absence.label !== null) {
             students[absence.student.uuid].reasons.push(absence.label);
           } else {
             students[absence.student.uuid].reasons.push($this.$trans('book.attendance.absence_reason.' + absence.reason));

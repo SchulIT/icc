@@ -7,7 +7,8 @@ import LessonCancelButton from "./components/book/LessonCancelButton";
 import LessonCreateEntryButton from "./components/book/LessonCreateEntryButton";
 import LessonCancelBulkButton from "./components/book/LessonCancelBulkButton";
 import LessonAttendanceInfo from "./components/book/LessonAttendanceInfo";
-import Entry from "./components/entry/Entry"
+import Entry from "./components/entry/Entry";
+import Attendance from "./components/student/Attendance";
 
 const app = createApp({
     components: {
@@ -15,7 +16,8 @@ const app = createApp({
         LessonCancelButton,
         LessonCreateEntryButton,
         LessonCancelBulkButton,
-        LessonAttendanceInfo
+        LessonAttendanceInfo,
+        Attendance
     },
     methods: { },
     data() {

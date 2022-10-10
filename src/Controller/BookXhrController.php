@@ -18,6 +18,7 @@ use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Request\Book\CancelLessonRequest;
+use App\Request\Book\UpdateAttendanceRequest;
 use App\Response\Api\V1\Student;
 use App\Response\Api\V1\Subject;
 use App\Response\Api\V1\Teacher;
@@ -291,6 +292,40 @@ class BookXhrController extends AbstractController {
         $lessonCancelHelper->cancelLesson($lesson, $reason);
 
         return new Response('', Response::HTTP_CREATED, [
+            'Content-Type' => 'application/json'
+        ]);
+    }
+
+    /**
+     * @Route("/attendance/{uuid}", name="xhr_update_attendance", methods={"PUT"})
+     * @OA\Put()
+     * @OA\Parameter(
+     *     name="payload",
+     *     in="body",
+     *     @Model(type=UpdateAttendanceRequest::class)
+     * )
+     * @OA\Response(
+     *     response="200",
+     *     description="Attendance successfully updated"
+     * )
+     * @OA\Response(
+     *     response="403",
+     *     description="Bad request.",
+     *     @Model(type=ViolationList::class)
+     * )
+     */
+    public function updateAttendance(LessonAttendance $attendance, UpdateAttendanceRequest $request, LessonAttendanceRepositoryInterface $repository) {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $attendance->getEntry());
+
+        $attendance->setAbsentLessons($request->getAbsentLessons());
+        $attendance->setLateMinutes($request->getLateMinutes());
+        $attendance->setExcuseStatus($request->getExcuseStatus());
+        $attendance->setType($request->getType());
+        $attendance->setComment($request->getComment());
+
+        $repository->persist($attendance);
+
+        return new Response('', Response::HTTP_OK, [
             'Content-Type' => 'application/json'
         ]);
     }

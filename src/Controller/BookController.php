@@ -516,8 +516,6 @@ class BookController extends AbstractController {
         $sorter->sort($groups, LessonAttendanceGroupStrategy::class, SortDirection::Descending());
         $sorter->sortGroupItems($groups, LessonAttendanceStrategy::class);
 
-        dump($groups);
-
         return $this->render('books/student.html.twig', [
             'student' => $student,
             'info' => $info,

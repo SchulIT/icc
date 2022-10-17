@@ -135,7 +135,7 @@
                                                 :excuse-status="{{ attendance.excuseStatus }}"
                                                 :type="{{ attendance.type }}"
                                                 :step="5"
-                                                :has-excuses="{{ has_excuses }}"
+                                                :has-excuses="{% if has_excuses %}true{% else %}false{% endif %}"
                                                 csrftoken="{{ csrf_token('update_attendance') }}"
                                                 url="{{ path('xhr_update_attendance', { uuid: attendance.uuid.toString }) }}"
                                     ></attendance>

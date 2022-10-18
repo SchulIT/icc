@@ -1453,7 +1453,7 @@ book:
         excuse_note_exists: Für diese Stunde liegt eine Entschuldigung vor.
 
     excuse_status_short:
-        excused: u
+        excused: e
         not_excused: ue
         not_set: offen
 

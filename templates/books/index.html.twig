@@ -370,6 +370,10 @@
 
                                                         {% for attendance in absentStudentsByLesson[lesson.entry.uuid.toString] %}
                                                             <li><i class="fa fa-user-times"></i> {{ attendance.student|student }}
+                                                                {% if attendance.absentLessons == 0 %}
+                                                                    <span class="badge badge-info">0 FS</span>
+                                                                {% endif %}
+
                                                                 {% if attendance.absentLessons > 0 %}
                                                                     {% if attendance.excuseStatus == 2 %}
                                                                         <span class="badge badge-danger">{{ 'book.excuse_status_short.not_excused'|trans }}</span>

@@ -47,7 +47,7 @@
         <div class="btn-group d-inline-flex align-items-center ml-1"
              v-if="attendance.type === 0">
           <button class="btn btn-outline-danger btn-sm"
-                  :title="$trans('book.students.not_set')"
+                  :title="hasExcuses ? $trans('book.students.excuse_note_exists') : $trans('book.students.not_set')"
                   :class="{ active: attendance.excuse_status === 0}"
                   :disabled="hasExcuses"
                   @click.prevent="setExcuseStatus(0)">
@@ -60,7 +60,7 @@
             <i class="fas fa-check"></i>
           </button>
           <button class="btn btn-outline-danger btn-sm"
-                  :title="$trans('book.students.not_excused')"
+                  :title="hasExcuses ? $trans('book.students.excuse_note_exists') : $trans('book.students.not_excused')"
                   :class="{ active: attendance.excuse_status === 2}"
                   :disabled="hasExcuses"
                   @click.prevent="setExcuseStatus(2)">
@@ -85,7 +85,7 @@
         </button>
       </div>
       <div class="ml-2">
-        <button type="button" class="btn btn-primary btn-sm">
+        <button type="button" class="btn btn-primary btn-sm" title="coming soon 😉" disabled>
           <i class="fas fa-book-open"></i>
         </button>
       </div>
@@ -186,7 +186,7 @@ export default {
       }
     },
     setExcuseStatus(status) {
-      this.attendance.status = status;
+      this.attendance.excuse_status = status;
     },
     absent() {
       this.attendance.type = 0;

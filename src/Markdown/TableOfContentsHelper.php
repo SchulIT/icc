@@ -10,14 +10,8 @@ use League\CommonMark\EnvironmentInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 class TableOfContentsHelper {
-    private SluggerInterface $slugger;
-    private CacheItemPoolInterface $cache;
-    private EnvironmentInterface $environment;
-
-    public function __construct(SluggerInterface $slugger, CacheItemPoolInterface $cache, EnvironmentInterface $environment) {
-        $this->slugger = $slugger;
-        $this->cache = $cache;
-        $this->environment = $environment;
+    public function __construct(private SluggerInterface $slugger, private CacheItemPoolInterface $cache, private EnvironmentInterface $environment)
+    {
     }
 
     public function getTableOfContents(string $markdown) {

@@ -9,10 +9,8 @@ use Twig\TwigFunction;
 
 class FilesystemExtension extends AbstractExtension {
 
-    private MessageFilesystem $messageFilesystem;
-
-    public function __construct(MessageFilesystem $filesystem) {
-        $this->messageFilesystem = $filesystem;
+    public function __construct(private MessageFilesystem $messageFilesystem)
+    {
     }
 
     public function getFunctions(): array {

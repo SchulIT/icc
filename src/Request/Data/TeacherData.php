@@ -11,62 +11,54 @@ class TeacherData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotNull()
-     * @var string|null
      */
-    private $id;
+    #[Assert\NotNull]
+    private ?string $id = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $acronym;
+    #[Assert\NotBlank]
+    private ?string $acronym = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $firstname;
-
-    /**
-     * @Serializer\Type("string")
-     * @NullOrNotBlank()
-     * @var string|null
-     */
-    private $lastname;
+    #[Assert\NotBlank]
+    private ?string $firstname = null;
 
     /**
      * @Serializer\Type("string")
      * @NullOrNotBlank()
-     * @var string|null
      */
-    private $title;
+    private ?string $lastname = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\Email()
      * @NullOrNotBlank()
-     * @var string|null
      */
-    private $email;
+    private ?string $title = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @Assert\Choice(callback="getGenders")
+     * @NullOrNotBlank()
+     */
+    #[Assert\Email]
+    private ?string $email = null;
+
+    /**
+     * @Serializer\Type("string")
      * @see Gender
-     * @var string|null
      */
-    private $gender;
+    #[Assert\NotBlank]
+    #[Assert\Choice(callback: 'getGenders')]
+    private ?string $gender = null;
 
     /**
      * @Serializer\Type("array<string>")
-     * List of external IDs of the subjects the teacher teachers.
      * @var string[]
      */
-    private $subjects = [ ];
+    private array $subjects = [ ];
 
     /**
      * List of external IDs of tags which are added to the user. Note: tags are not synchronized but only added if not present. You have to remove them by hand using the UI.
@@ -74,83 +66,48 @@ class TeacherData {
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $tags = [ ];
+    private array $tags = [ ];
 
-    /**
-     * @return string|null
-     */
     public function getId(): ?string {
         return $this->id;
     }
 
-    /**
-     * @param string|null $id
-     * @return TeacherData
-     */
     public function setId(?string $id): TeacherData {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getAcronym(): ?string {
         return $this->acronym;
     }
 
-    /**
-     * @param string|null $acronym
-     * @return TeacherData
-     */
     public function setAcronym(?string $acronym): TeacherData {
         $this->acronym = $acronym;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFirstname(): ?string {
         return $this->firstname;
     }
 
-    /**
-     * @param string|null $firstname
-     * @return TeacherData
-     */
     public function setFirstname(?string $firstname): TeacherData {
         $this->firstname = $firstname;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLastname(): ?string {
         return $this->lastname;
     }
 
-    /**
-     * @param string|null $lastname
-     * @return TeacherData
-     */
     public function setLastname(?string $lastname): TeacherData {
         $this->lastname = $lastname;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTitle(): ?string {
         return $this->title;
     }
 
-    /**
-     * @param string|null $title
-     * @return TeacherData
-     */
     public function setTitle(?string $title): TeacherData {
         $this->title = $title;
         return $this;
@@ -172,17 +129,10 @@ class TeacherData {
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getGender(): ?string {
         return $this->gender;
     }
 
-    /**
-     * @param string|null $gender
-     * @return TeacherData
-     */
     public function setGender(?string $gender): TeacherData {
         $this->gender = $gender;
         return $this;
@@ -197,7 +147,6 @@ class TeacherData {
 
     /**
      * @param string[] $subjects
-     * @return TeacherData
      */
     public function setSubjects(array $subjects): TeacherData {
         $this->subjects = $subjects;
@@ -213,7 +162,6 @@ class TeacherData {
 
     /**
      * @param string[] $tags
-     * @return TeacherData
      */
     public function setTags(array $tags): TeacherData {
         $this->tags = $tags;

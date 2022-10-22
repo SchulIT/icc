@@ -14,12 +14,8 @@ use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 
 class ExamBulkType extends AbstractType {
 
-    private TuitionStrategy $tuitionStrategy;
-    private StringStrategy $stringStrategy;
-
-    public function __construct(TuitionStrategy $tuitionStrategy, StringStrategy $stringStrategy) {
-        $this->tuitionStrategy = $tuitionStrategy;
-        $this->stringStrategy = $stringStrategy;
+    public function __construct(private TuitionStrategy $tuitionStrategy, private StringStrategy $stringStrategy)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -44,9 +40,7 @@ class ExamBulkType extends AbstractType {
 
                     return sprintf('%s - %s - %s', $tuition->getName(), $tuition->getStudyGroup()->getName(), $tuition->getSubject()->getName());
                 },
-                'group_by' => function(Tuition $tuition) {
-                    return implode(', ', $tuition->getStudyGroup()->getGrades()->map(function(Grade $grade) { return $grade->getName(); })->toArray());
-                },
+                'group_by' => fn(Tuition $tuition) => implode(', ', $tuition->getStudyGroup()->getGrades()->map(fn(Grade $grade) => $grade->getName())->toArray()),
                 'sort_by' => $this->stringStrategy,
                 'sort_items_by' => $this->tuitionStrategy
             ])

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Converter\StudyGroupsGradeStringConverter;
 use App\Converter\TeacherStringConverter;
 use App\Converter\UserStringConverter;
@@ -41,16 +42,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/appointments")
- */
+#[Route(path: '/appointments')]
 class AppointmentController extends AbstractControllerWithMessages {
 
-    /**
-     * @Route("", name="appointments")
-     */
+    #[Route(path: '', name: 'appointments')]
     public function index(SectionFilter $sectionFilter, AppointmentCategoriesFilter $categoryFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter,
-                          TeacherFilter $teacherFilter, GradesFilter $gradesFilter, Request $request, ImportDateTypeRepositoryInterface $importDateTypeRepository) {
+                          TeacherFilter $teacherFilter, GradesFilter $gradesFilter, Request $request, ImportDateTypeRepositoryInterface $importDateTypeRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -72,14 +69,12 @@ class AppointmentController extends AbstractControllerWithMessages {
         ]);
     }
 
-    /**
-     * @Route("/xhr", name="appointments_xhr", methods={"GET"})
-     */
+    #[Route(path: '/xhr', name: 'appointments_xhr', methods: ['GET'])]
     public function indexXhr(AppointmentRepositoryInterface $appointmentRepository, ColorUtils $colorUtils, TranslatorInterface $translator,
                              StudyGroupsGradeStringConverter $studyGroupsGradeStringConverter, TeacherStringConverter $teacherStringConverter,
                              AppointmentCategoriesFilter $categoryFilter, SectionFilter $sectionFilter, StudentFilter $studentFilter, StudyGroupFilter $studyGroupFilter,
                              TeacherFilter $teacherFilter, GradesFilter $gradesFilter, ExamRepositoryInterface $examRepository,
-                             AppointmentsSettings $appointmentsSettings, TimetableTimeHelper $timetableTimeHelper, UserStringConverter $userStringConverter, Request $request) {
+                             AppointmentsSettings $appointmentsSettings, TimetableTimeHelper $timetableTimeHelper, UserStringConverter $userStringConverter, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
         $isStudent = $user->getUserType()->equals(UserType::Student());
@@ -111,13 +106,9 @@ class AppointmentController extends AbstractControllerWithMessages {
         }
 
         if(!empty($categoryFilterView->getCurrentCategories())) {
-            $selectedCategoryIds = array_map(function(AppointmentCategory $category) {
-                return $category->getId();
-            }, $categoryFilterView->getCurrentCategories());
+            $selectedCategoryIds = array_map(fn(AppointmentCategory $category) => $category->getId(), $categoryFilterView->getCurrentCategories());
 
-            $appointments = array_filter($appointments, function(Appointment $appointment) use($selectedCategoryIds) {
-                return in_array($appointment->getCategory()->getId(), $selectedCategoryIds);
-            });
+            $appointments = array_filter($appointments, fn(Appointment $appointment) => in_array($appointment->getCategory()->getId(), $selectedCategoryIds));
         }
 
         $json = [ ];
@@ -164,9 +155,7 @@ class AppointmentController extends AbstractControllerWithMessages {
             if($appointment->getOrganizers()->count() > 0) {
                 $view[] = [
                     'label' => $translator->trans('label.organizers'),
-                    'content' => implode(', ', array_map(function (Teacher $teacher) use ($teacherStringConverter) {
-                        return $teacherStringConverter->convert($teacher);
-                    }, $appointment->getOrganizers()->toArray()))
+                    'content' => implode(', ', array_map(fn(Teacher $teacher) => $teacherStringConverter->convert($teacher), $appointment->getOrganizers()->toArray()))
                 ];
             }
 
@@ -202,23 +191,21 @@ class AppointmentController extends AbstractControllerWithMessages {
         }
 
         // Add exams
-        if(count($examGradesFilterView->getCurrentGrades()) > 0) {
+        if((is_countable($examGradesFilterView->getCurrentGrades()) ? count($examGradesFilterView->getCurrentGrades()) : 0) > 0) {
             $exams = [ ];
 
             foreach($examGradesFilterView->getCurrentGrades() as $grade) {
                 $exams = array_merge($exams, $examRepository->findAllByGrade($grade));
             }
 
-            $exams = ArrayUtils::createArrayWithKeys($exams, function(Exam $exam) {
-                return $exam->getUuid()->toString();
-            });
+            $exams = ArrayUtils::createArrayWithKeys($exams, fn(Exam $exam) => $exam->getUuid()->toString());
 
             /** @var Exam $exam */
             foreach($exams as $exam) {
                 if($this->isGranted(ExamVoter::Show, $exam)) {
                     $view = [ ];
 
-                    $tuitions = implode(', ', $exam->getTuitions()->map(function(Tuition $tuition) { return $tuition->getName(); })->toArray());
+                    $tuitions = implode(', ', $exam->getTuitions()->map(fn(Tuition $tuition) => $tuition->getName())->toArray());
 
                     $view[] = [
                         'label' => $translator->trans('label.tuitions'),
@@ -291,10 +278,8 @@ class AppointmentController extends AbstractControllerWithMessages {
         return $this->json($json);
     }
 
-    /**
-     * @Route("/export", name="appointments_export")
-     */
-    public function export(Request $request, IcsAccessTokenManager $manager) {
+    #[Route(path: '/export', name: 'appointments_export')]
+    public function export(Request $request, IcsAccessTokenManager $manager): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -315,11 +300,9 @@ class AppointmentController extends AbstractControllerWithMessages {
         ]);
     }
 
-    /**
-     * @Route("/ics/download", name="appointments_ics")
-     * @Route("/ics/download/{token}", name="appointments_ics_token")
-     */
-    public function ics(AppointmentIcsExporter $exporter) {
+    #[Route(path: '/ics/download', name: 'appointments_ics')]
+    #[Route(path: '/ics/download/{token}', name: 'appointments_ics_token')]
+    public function ics(AppointmentIcsExporter $exporter): Response {
         /** @var User $user */
         $user = $this->getUser();
 

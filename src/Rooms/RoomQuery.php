@@ -5,7 +5,7 @@ namespace App\Rooms;
 use App\Entity\RoomTag;
 
 class RoomQuery {
-    private $conditions = [ ];
+    private array $conditions = [ ];
 
     public function hasConditions() {
         return count($this->conditions) > 0;

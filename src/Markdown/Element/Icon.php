@@ -5,10 +5,8 @@ namespace App\Markdown\Element;
 use League\CommonMark\Inline\Element\AbstractInline;
 
 class Icon extends AbstractInline {
-    private $icon;
-
-    public function __construct(string $icon) {
-        $this->icon = $icon;
+    public function __construct(private string $icon)
+    {
     }
 
     public function setIcon(string $icon): void {

@@ -6,10 +6,6 @@ use App\Entity\Subject;
 
 class SubjectRepository extends AbstractTransactionalRepository implements SubjectRepositoryInterface {
 
-    /**
-     * @param int $id
-     * @return Subject|null
-     */
     public function findOneById(int $id): ?Subject {
         return $this->em->getRepository(Subject::class)
             ->findOneBy([
@@ -27,10 +23,6 @@ class SubjectRepository extends AbstractTransactionalRepository implements Subje
             ]);
     }
 
-    /**
-     * @param string $abbreviation
-     * @return Subject|null
-     */
     public function findOneByAbbreviation(string $abbreviation): ?Subject {
         return $this->em->getRepository(Subject::class)
             ->findOneBy([
@@ -59,7 +51,6 @@ class SubjectRepository extends AbstractTransactionalRepository implements Subje
     }
 
     /**
-     * @param bool $onlyExternal
      * @return Subject[]
      */
     public function findAll(bool $onlyExternal = false) {
@@ -67,9 +58,7 @@ class SubjectRepository extends AbstractTransactionalRepository implements Subje
             ->findAll();
 
         if($onlyExternal === true) {
-            $subjects = array_filter($subjects, function(Subject $subject) {
-                return $subject->getExternalId() !== null;
-            });
+            $subjects = array_filter($subjects, fn(Subject $subject) => $subject->getExternalId() !== null);
         }
 
         return $subjects;
@@ -90,17 +79,11 @@ class SubjectRepository extends AbstractTransactionalRepository implements Subje
             ->getResult();
     }
 
-    /**
-     * @param Subject $subject
-     */
     public function persist(Subject $subject): void {
         $this->em->persist($subject);
         $this->flushIfNotInTransaction();
     }
 
-    /**
-     * @param Subject $subject
-     */
     public function remove(Subject $subject): void {
         $this->em->remove($subject);
         $this->flushIfNotInTransaction();

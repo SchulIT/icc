@@ -16,19 +16,8 @@ class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
 
     use ContextAwareTrait;
 
-    private $repository;
-    private $teacherRepository;
-    private $studyGroupRepository;
-    private $roomRepository;
-    private $sectionResolver;
-
-    public function __construct(AbsenceRepositoryInterface $repository, TeacherRepositoryInterface $teacherRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository, RoomRepositoryInterface $roomRepository, SectionResolverInterface $sectionResolver) {
-        $this->repository = $repository;
-        $this->teacherRepository = $teacherRepository;
-        $this->studyGroupRepository = $studyGroupRepository;
-        $this->roomRepository = $roomRepository;
-        $this->sectionResolver = $sectionResolver;
+    public function __construct(private AbsenceRepositoryInterface $repository, private TeacherRepositoryInterface $teacherRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private RoomRepositoryInterface $roomRepository, private SectionResolverInterface $sectionResolver)
+    {
     }
 
     public function getRepository(): TransactionalRepositoryInterface {

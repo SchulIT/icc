@@ -11,12 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserTypeEntityType extends EntityType {
 
-    private EnumStringConverter $enumStringConverter;
-
-    public function __construct(ManagerRegistry $registry, EnumStringConverter $enumStringConverter) {
+    public function __construct(ManagerRegistry $registry, private EnumStringConverter $enumStringConverter) {
         parent::__construct($registry);
-
-        $this->enumStringConverter = $enumStringConverter;
     }
 
     public function configureOptions(OptionsResolver $resolver) {
@@ -24,12 +20,8 @@ class UserTypeEntityType extends EntityType {
 
         $resolver
             ->setDefault('class', UserTypeEntity::class)
-            ->setDefault('query_builder', function(EntityRepository $repository) {
-                return $repository->createQueryBuilder('v')
-                    ->orderBy('v.userType', 'asc');
-            })
-            ->setDefault('choice_label', function(UserTypeEntity $visibility) {
-                return $this->enumStringConverter->convert($visibility->getUserType());
-            });
+            ->setDefault('query_builder', fn(EntityRepository $repository) => $repository->createQueryBuilder('v')
+                ->orderBy('v.userType', 'asc'))
+            ->setDefault('choice_label', fn(UserTypeEntity $visibility) => $this->enumStringConverter->convert($visibility->getUserType()));
     }
 }

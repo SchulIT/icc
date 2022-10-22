@@ -8,8 +8,6 @@ use DateTime;
 
 interface AbsenceResolveStrategyInterface {
     /**
-     * @param DateTime $dateTime
-     * @param int $lesson
      * @param Student[] $students
      * @return AbsentStudent[]
      */

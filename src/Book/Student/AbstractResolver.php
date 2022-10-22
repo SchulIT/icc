@@ -9,15 +9,8 @@ use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Settings\TimetableSettings;
 
 abstract class AbstractResolver {
-    private $attendanceRepository;
-    private $excuseNoteRepository;
-
-    private $timetableSettings;
-
-    public function __construct(LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository, TimetableSettings $timetableSettings) {
-        $this->attendanceRepository = $attendanceRepository;
-        $this->excuseNoteRepository = $excuseNoteRepository;
-        $this->timetableSettings = $timetableSettings;
+    public function __construct(private LessonAttendanceRepositoryInterface $attendanceRepository, private ExcuseNoteRepositoryInterface $excuseNoteRepository, private TimetableSettings $timetableSettings)
+    {
     }
 
     protected function getAttendanceRepository(): LessonAttendanceRepositoryInterface {

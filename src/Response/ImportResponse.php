@@ -10,70 +10,54 @@ use JMS\Serializer\Annotation as Serializer;
 class ImportResponse {
 
     /**
-     * Added entities.
-     * @Serializer\Exclude()
-     * @var object[]
-     */
-    private $added;
-
-    /**
-     * Updated entities.
-     * @Serializer\Exclude()
-     * @var object[]
-     */
-    private $updated;
-
-    /**
-     * Removed entities.
-     * @Serializer\Exclude()
-     * @var object[]
-     */
-    private $removed;
-
-    /**
-     * Ignored entities.
-     *
-     * @var object[]
-     */
-    private $ignored;
-
-    /**
      * Number of added entities.
      *
      * @Serializer\Type("int")
-     * @var int
      */
-    private $addedCount;
+    private int $addedCount;
 
     /**
      * Number of updated entities.
      *
      * @Serializer\Type("int")
-     * @var int
      */
-    private $updatedCount;
+    private int $updatedCount;
 
     /**
      * Number of removed entities.
      *
      * @Serializer\Type("int")
-     * @var int
      */
-    private $removedCount;
+    private int $removedCount;
 
     /**
      * Number of ignored entities.
      * @Serializer\Type("int")
-     * @var int
      */
-    private $ignoredCount;
+    private int $ignoredCount;
 
-    public function __construct(array $added, array $updated, array $removed, array $ignored) {
-        $this->added = $added;
-        $this->updated = $updated;
-        $this->removed = $removed;
-        $this->ignored = $ignored;
-
+    /**
+     * @param object[] $added
+     * @param object[] $updated
+     * @param object[] $removed
+     * @param object[] $ignored
+     */
+    public function __construct(/**
+     * Added entities.
+     * @Serializer\Exclude()
+     */
+    private array $added, /**
+     * Updated entities.
+     * @Serializer\Exclude()
+     */
+    private array $updated, /**
+     * Removed entities.
+     * @Serializer\Exclude()
+     */
+    private array $removed, /**
+     * Ignored entities.
+     */
+    private array $ignored) {
         $this->addedCount = count($added);
         $this->updatedCount = count($updated);
         $this->removedCount = count($removed);
@@ -108,30 +92,18 @@ class ImportResponse {
         return $this->ignored;
     }
 
-    /**
-     * @return int
-     */
     public function getAddedCount(): int {
         return $this->addedCount;
     }
 
-    /**
-     * @return int
-     */
     public function getUpdatedCount(): int {
         return $this->updatedCount;
     }
 
-    /**
-     * @return int
-     */
     public function getRemovedCount(): int {
         return $this->removedCount;
     }
 
-    /**
-     * @return int
-     */
     public function getIgnoredCount(): int {
         return $this->ignoredCount;
     }

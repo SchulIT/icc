@@ -14,14 +14,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class AppointmentStudentsResolver implements AbsenceResolveStrategyInterface {
 
-    private $em;
-    private $appointmentRepository;
-    private $timeHelper;
-
-    public function __construct(EntityManagerInterface $em, AppointmentRepositoryInterface $appointmentRepository, TimetableTimeHelper $timeHelper) {
-        $this->em = $em;
-        $this->appointmentRepository = $appointmentRepository;
-        $this->timeHelper = $timeHelper;
+    public function __construct(private EntityManagerInterface $em, private AppointmentRepositoryInterface $appointmentRepository, private TimetableTimeHelper $timeHelper)
+    {
     }
 
     /**
@@ -30,9 +24,7 @@ class AppointmentStudentsResolver implements AbsenceResolveStrategyInterface {
     public function resolveAbsentStudents(DateTime $dateTime, int $lesson, iterable $students): array {
         $students = ArrayUtils::createArrayWithKeys(
             $students,
-            function(Student $student) {
-                return $student->getId();
-            }
+            fn(Student $student) => $student->getId()
         );
 
         // STEP 1: Resolve student -> appointment relation (IDs only)
@@ -54,16 +46,12 @@ class AppointmentStudentsResolver implements AbsenceResolveStrategyInterface {
 
         // STEP 2: Resolve attending appointments
         $appointmentIds = array_unique(
-            array_map(function($row) {
-                return $row['appointmentId'];
-            }, $result)
+            array_map(fn($row) => $row['appointmentId'], $result)
         );
 
         $appointments = ArrayUtils::createArrayWithKeys(
             $this->appointmentRepository->findAllByIds($appointmentIds),
-            function(Appointment $appointment) {
-                return $appointment->getId();
-            }
+            fn(Appointment $appointment) => $appointment->getId()
         );
 
         // STEP 3: compile list of absent students

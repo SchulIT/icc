@@ -15,19 +15,13 @@ use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 class DocumentFilesystem implements DirectoryNamerInterface {
 
-    private FilesystemOperator $filesystem;
-    private MimeTypes $mimeTypes;
     private LoggerInterface|NullLogger $logger;
 
-    public function __construct(FilesystemOperator $filesystem, MimeTypes $mimeTypes, LoggerInterface $logger = null) {
-        $this->filesystem = $filesystem;
-        $this->mimeTypes = $mimeTypes;
+    public function __construct(private FilesystemOperator $filesystem, private MimeTypes $mimeTypes, LoggerInterface $logger = null) {
         $this->logger = $logger ?? new NullLogger();
     }
 
     /**
-     * @param DocumentAttachment $attachment
-     * @return Response
      * @throws FileNotFoundException
      */
     public function getDownloadResponse(DocumentAttachment $attachment): Response {
@@ -73,8 +67,6 @@ class DocumentFilesystem implements DirectoryNamerInterface {
 
     /**
      * @param DocumentAttachment $object
-     * @param PropertyMapping $mapping
-     * @return string
      */
     public function directoryName($object, PropertyMapping $mapping): string {
         return $this->getAttachmentsDirectory($object->getDocument());

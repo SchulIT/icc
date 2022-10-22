@@ -12,10 +12,10 @@ class FreeLessonTimespansData {
     /**
      * @Serializer\SerializedName("free_lessons")
      * @Serializer\Type("array<App\Request\Data\FreeLessonTimespanData>")
-     * @Assert\Valid()
      * @var FreeLessonTimespanData[]
      */
-    private $freeLessons = [ ];
+    #[Assert\Valid]
+    private array $freeLessons = [ ];
 
     /**
      * @return FreeLessonTimespanData[]
@@ -26,7 +26,6 @@ class FreeLessonTimespansData {
 
     /**
      * @param FreeLessonTimespanData[] $freeLessons
-     * @return FreeLessonTimespansData
      */
     public function setFreeLessons(array $freeLessons): FreeLessonTimespansData {
         $this->freeLessons = $freeLessons;

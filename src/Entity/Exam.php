@@ -28,45 +28,39 @@ class Exam {
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $externalId;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $externalId = null;
 
     /**
      * @ORM\Column(type="date", nullable=true)
-     * @Assert\NotNull()
      * @DateInActiveSection()
-     * @var DateTime|null
      */
-    private $date;
+    #[Assert\NotNull]
+    private ?\DateTime $date = null;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\GreaterThan(0)
-     * @var int
      */
-    private $lessonStart = 0;
+    #[Assert\GreaterThan(0)]
+    private int $lessonStart = 0;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\GreaterThan(0)
-     * @Assert\GreaterThanOrEqual(propertyPath="lessonStart")
-     * @var int
      */
-    private $lessonEnd = 0;
+    #[Assert\GreaterThan(0)]
+    #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart')]
+    private int $lessonEnd = 0;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @var string|null
      */
-    private $description;
+    private ?string $description = null;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $tuitionTeachersCanEditExam = true;
+    private bool $tuitionTeachersCanEditExam = true;
 
     /**
      * @ORM\ManyToMany(targetEntity="Tuition")
@@ -98,9 +92,8 @@ class Exam {
     /**
      * @ORM\ManyToOne(targetEntity="Room")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     * @var Room|null
      */
-    private $room;
+    private ?Room $room = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -110,104 +103,59 @@ class Exam {
         $this->supervisions = new ArrayCollection();
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int {
         return $this->id;
     }
 
-    /**
-     * @return string|null
-     */
     public function getExternalId(): ?string {
         return $this->externalId;
     }
 
-    /**
-     * @param string|null $externalId
-     * @return Exam
-     */
     public function setExternalId(?string $externalId): Exam {
         $this->externalId = $externalId;
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getDate(): ?DateTime {
         return $this->date;
     }
 
-    /**
-     * @param DateTime|null $date
-     * @return Exam
-     */
     public function setDate(?DateTime $date): Exam {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLessonStart(): int {
         return $this->lessonStart;
     }
 
-    /**
-     * @param int $lessonStart
-     * @return Exam
-     */
     public function setLessonStart(int $lessonStart): Exam {
         $this->lessonStart = $lessonStart;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLessonEnd(): int {
         return $this->lessonEnd;
     }
 
-    /**
-     * @param int $lessonEnd
-     * @return Exam
-     */
     public function setLessonEnd(int $lessonEnd): Exam {
         $this->lessonEnd = $lessonEnd;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDescription(): ?string {
         return $this->description;
     }
 
-    /**
-     * @param string|null $description
-     * @return Exam
-     */
     public function setDescription(?string $description): Exam {
         $this->description = $description;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isTuitionTeachersCanEditExam(): bool {
         return $this->tuitionTeachersCanEditExam;
     }
 
-    /**
-     * @param bool $tuitionTeachersCanEditExam
-     * @return Exam
-     */
     public function setTuitionTeachersCanEditExam(bool $tuitionTeachersCanEditExam): Exam {
         $this->tuitionTeachersCanEditExam = $tuitionTeachersCanEditExam;
         return $this;
@@ -258,17 +206,10 @@ class Exam {
         return $this->supervisions;
     }
 
-    /**
-     * @return Room|null
-     */
     public function getRoom(): ?Room {
         return $this->room;
     }
 
-    /**
-     * @param Room|null $room
-     * @return Exam
-     */
     public function setRoom(?Room $room): Exam {
         $this->room = $room;
         return $this;

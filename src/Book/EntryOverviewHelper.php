@@ -29,41 +29,8 @@ use App\Utils\ArrayUtils;
 use DateTime;
 
 class EntryOverviewHelper {
-    private TimetableLessonRepositoryInterface $lessonRepository;
-    private TuitionRepositoryInterface $tuitionRepository;
-    private LessonEntryRepositoryInterface $entryRepository;
-    private BookCommentRepositoryInterface $commentRepository;
-    private LessonAttendanceRepositoryInterface $attendanceRepository;
-
-    private TimetableSettings $timetableSettings;
-    private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository;
-    private AppointmentRepositoryInterface $appointmentRepository;
-    private FreeTimespanRepositoryInterface $freeTimespanRepository;
-    private SubstitutionRepositoryInterface $substitutionRepository;
-
-    private SectionResolverInterface $sectionResolver;
-    private Grouper $grouper;
-    private Sorter $sorter;
-
-    public function __construct(TimetableLessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository,
-                                LessonEntryRepositoryInterface $entryRepository, BookCommentRepositoryInterface $commentRepository,
-                                LessonAttendanceRepositoryInterface $attendanceRepository, SectionResolverInterface $sectionResolver,
-                                TimetableSettings $timetableSettings, AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, AppointmentRepositoryInterface $appointmentRepository,
-                                FreeTimespanRepositoryInterface $freeTimespanRepository, SubstitutionRepositoryInterface $substitutionRepository,
-                                Grouper $grouper, Sorter $sorter) {
-        $this->lessonRepository = $lessonRepository;
-        $this->tuitionRepository = $tuitionRepository;
-        $this->entryRepository = $entryRepository;
-        $this->commentRepository = $commentRepository;
-        $this->sectionResolver = $sectionResolver;
-        $this->attendanceRepository = $attendanceRepository;
-        $this->timetableSettings = $timetableSettings;
-        $this->appointmentCategoryRepository = $appointmentCategoryRepository;
-        $this->appointmentRepository = $appointmentRepository;
-        $this->freeTimespanRepository = $freeTimespanRepository;
-        $this->substitutionRepository = $substitutionRepository;
-        $this->grouper = $grouper;
-        $this->sorter = $sorter;
+    public function __construct(private TimetableLessonRepositoryInterface $lessonRepository, private TuitionRepositoryInterface $tuitionRepository, private LessonEntryRepositoryInterface $entryRepository, private BookCommentRepositoryInterface $commentRepository, private LessonAttendanceRepositoryInterface $attendanceRepository, private SectionResolverInterface $sectionResolver, private TimetableSettings $timetableSettings, private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, private AppointmentRepositoryInterface $appointmentRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private SubstitutionRepositoryInterface $substitutionRepository, private Grouper $grouper, private Sorter $sorter)
+    {
     }
 
     public function computeOverviewForTuition(Tuition $tuition, DateTime $start, DateTime $end): EntryOverview {
@@ -78,9 +45,6 @@ class EntryOverviewHelper {
      * @param LessonEntry[] $entries
      * @param BookComment[] $comments
      * @param Substitution[] $substitutions
-     * @param DateTime $start
-     * @param DateTime $end
-     * @return EntryOverview
      */
     private function computeOverview(array $tuitions, array $entries, array $comments, array $substitutions, DateTime $start, DateTime $end): EntryOverview {
         if($start > $end) {
@@ -129,9 +93,7 @@ class EntryOverviewHelper {
 
         $current = clone $start;
         while($current < $end) {
-            $dailyLessons = array_filter($timetableLessons, function(TimetableLesson $lesson) use ($current) {
-                return $lesson->getDate() == $current;
-            });
+            $dailyLessons = array_filter($timetableLessons, fn(TimetableLesson $lesson) => $lesson->getDate() == $current);
 
             foreach($dailyLessons as $dailyLesson) {
                 for($lessonNumber = $dailyLesson->getLessonStart(); $lessonNumber <= $dailyLesson->getLessonEnd(); $lessonNumber++) {
@@ -222,9 +184,7 @@ class EntryOverviewHelper {
             $current = $current->modify('+1 day');
         }
 
-        $substitutions = array_filter($substitutions, function(Substitution $substitution) use($teacher) {
-            return $substitution->getReplacementTeachers()->contains($teacher);
-        });
+        $substitutions = array_filter($substitutions, fn(Substitution $substitution) => $substitution->getReplacementTeachers()->contains($teacher));
 
         return $this->computeOverview($tuitions, $entries, $comments, $substitutions, $start, $end);
     }
@@ -244,16 +204,12 @@ class EntryOverviewHelper {
     }
 
     /**
-     * @param DateTime $start
-     * @param DateTime $end
      * @return FreeTimespan[]
      */
     private function computeFreeTimespans(DateTime $start, DateTime $end): array {
         $result = [ ];
 
-        $categories = array_map(function(int $id) {
-            return $this->appointmentCategoryRepository->findOneById($id);
-        }, $this->timetableSettings->getCategoryIds());
+        $categories = array_map(fn(int $id) => $this->appointmentCategoryRepository->findOneById($id), $this->timetableSettings->getCategoryIds());
 
         if(count($categories) > 0) {
             $appointments = $this->appointmentRepository->findAllStartEnd($start, $end, $categories);

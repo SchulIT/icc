@@ -6,14 +6,11 @@ use App\Entity\StudentAbsenceType;
 
 class StudentAbsenceTypeFilterView {
 
-    /** @var StudentAbsenceType[] */
-    private array $types;
-
-    private ?StudentAbsenceType $currentType;
-
-    public function __construct(array $types, ?StudentAbsenceType $currentType) {
-        $this->types = $types;
-        $this->currentType = $currentType;
+    /**
+     * @param StudentAbsenceType[] $types
+     */
+    public function __construct(private array $types, private ?StudentAbsenceType $currentType)
+    {
     }
 
     /**
@@ -23,9 +20,6 @@ class StudentAbsenceTypeFilterView {
         return $this->types;
     }
 
-    /**
-     * @return StudentAbsenceType|null
-     */
     public function getCurrentType(): ?StudentAbsenceType {
         return $this->currentType;
     }

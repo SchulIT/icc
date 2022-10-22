@@ -10,11 +10,11 @@ class PrivacyCategoriesData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\PrivacyCategoryData>")
-     * @Assert\Valid()
      * @UniqueId(propertyPath="id")
      * @var PrivacyCategoryData[]
      */
-    private $categories = [ ];
+    #[Assert\Valid]
+    private array $categories = [ ];
 
     /**
      * @return PrivacyCategoryData[]

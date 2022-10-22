@@ -12,12 +12,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserCreator implements UserCreatorInterface {
 
-    private EntityManagerInterface $em;
-    private UserMapper $userMapper;
-
-    public function __construct(EntityManagerInterface $em, UserMapper $userMapper) {
-        $this->em = $em;
-        $this->userMapper = $userMapper;
+    public function __construct(private EntityManagerInterface $em, private UserMapper $userMapper)
+    {
     }
 
     /**

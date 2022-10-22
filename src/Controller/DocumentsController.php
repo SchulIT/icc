@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Document;
 use App\Entity\DocumentAttachment;
 use App\Entity\User;
@@ -24,26 +25,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/documents")
- */
+#[Route(path: '/documents')]
 class DocumentsController extends AbstractController {
 
-    private Grouper $grouper;
-    private Sorter $sorter;
-
-    public function __construct(Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
+    public function __construct(private Grouper $grouper, private Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
-
-        $this->grouper = $grouper;
-        $this->sorter = $sorter;
     }
 
-    /**
-     * @Route("", name="documents")
-     */
+    #[Route(path: '', name: 'documents')]
     public function index(DocumentRepositoryInterface $documentRepository, GradeFilter $gradeFilter, UserTypeFilter $userTypeFilter,
-                          SectionResolverInterface $sectionResolver, Request $request) {
+                          SectionResolverInterface $sectionResolver, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -52,9 +43,7 @@ class DocumentsController extends AbstractController {
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent()), $user->getUserType());
 
         $documents = $documentRepository->findAllFor($userTypeFilterView->getCurrentType(), $gradeFilterView->getCurrentGrade(), $q);
-        $documents = array_filter($documents, function(Document $document) {
-            return $this->isGranted(DocumentVoter::View, $document);
-        });
+        $documents = array_filter($documents, fn(Document $document) => $this->isGranted(DocumentVoter::View, $document));
 
         $this->sorter->sort($documents, DocumentNameStrategy::class);
         $categories = $this->grouper->group($documents, DocumentCategoryGroupingStrategy::class);
@@ -68,23 +57,19 @@ class DocumentsController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/attachment/{uuid}", name="download_document_attachment")
-     */
-    public function downloadAttachment(DocumentAttachment $attachment, DocumentFilesystem $documentFilesystem) {
+    #[Route(path: '/attachment/{uuid}', name: 'download_document_attachment')]
+    public function downloadAttachment(DocumentAttachment $attachment, DocumentFilesystem $documentFilesystem): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::View, $attachment->getDocument());
 
         try {
             return $documentFilesystem->getDownloadResponse($attachment);
-        } catch (FileNotFoundException $exception) {
+        } catch (FileNotFoundException) {
             throw new NotFoundHttpException();
         }
     }
 
-    /**
-     * @Route("/{uuid}", name="show_document")
-     */
-    public function show(Document $document) {
+    #[Route(path: '/{uuid}', name: 'show_document')]
+    public function show(Document $document): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::View, $document);
 
         return $this->render('documents/show.html.twig', [

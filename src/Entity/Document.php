@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use App\Validator\CollectionNotEmpty;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -29,28 +30,25 @@ class Document {
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
      * @Gedmo\Versioned()
-     * @var string
      */
-    private $title;
+    #[Assert\NotBlank]
+    private ?string $title = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="DocumentCategory", inversedBy="documents")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Assert\NotNull()
-     * @var DocumentCategory|null
      */
-    private $category;
+    #[Assert\NotNull]
+    private ?DocumentCategory $category = null;
 
     /**
      * @ORM\Column(type="text")
      * @Gedmo\Versioned()
-     * @Assert\NotNull()
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $content;
+    #[Assert\NotNull]
+    #[Assert\NotBlank]
+    private ?string $content = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="Grade")
@@ -107,47 +105,29 @@ class Document {
         $this->authors = new ArrayCollection();
     }
 
-    /**
-     * @return string|null
-     */
     public function getTitle(): ?string {
         return $this->title;
     }
 
-    /**
-     * @param string|null $title
-     * @return Document
-     */
     public function setTitle(?string $title): Document {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * @return DocumentCategory|null
-     */
     public function getCategory(): ?DocumentCategory {
         return $this->category;
     }
 
-    /**
-     * @param DocumentCategory $category
-     * @return Document
-     */
     public function setCategory(DocumentCategory $category): Document {
         $this->category = $category;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getContent(): ?string {
         return $this->content;
     }
 
     /**
-     * @param string|null $content
      * @return Document
      */
     public function setContent(?string $content) {
@@ -206,10 +186,7 @@ class Document {
         return $this->visibilities;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt(): \DateTime {
+    public function getUpdatedAt(): DateTime {
         return $this->updatedAt;
     }
 

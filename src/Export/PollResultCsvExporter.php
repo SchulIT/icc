@@ -13,20 +13,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PollResultCsvExporter {
-    private PollResultViewHelper $viewHelper;
-    private CsvHelper $csvHelper;
-    private TranslatorInterface $translator;
-    private SectionResolverInterface $sectionResolver;
-
-    public function __construct(PollResultViewHelper $resultViewHelper, CsvHelper $csvHelper, TranslatorInterface $translator,
-                                SectionResolverInterface $sectionResolver) {
-        $this->viewHelper = $resultViewHelper;
-        $this->csvHelper = $csvHelper;
-        $this->translator = $translator;
-        $this->sectionResolver = $sectionResolver;
+    public function __construct(private PollResultViewHelper $viewHelper, private CsvHelper $csvHelper, private TranslatorInterface $translator, private SectionResolverInterface $sectionResolver)
+    {
     }
 
     public function getRows(Message $message): array {
+        $rows = [];
         $view = $this->viewHelper->createView($message);
 
         $header = [

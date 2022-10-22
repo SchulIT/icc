@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Date\WeekOfYear;
 use App\Entity\IcsAccessToken;
 use App\Entity\IcsAccessTokenType;
@@ -39,9 +40,7 @@ use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/timetable")
- */
+#[Route(path: '/timetable')]
 class TimetableController extends AbstractControllerWithMessages {
 
     private const OnlyOneWeek = 'timetable.only_one_week';
@@ -49,24 +48,16 @@ class TimetableController extends AbstractControllerWithMessages {
     use RequestTrait;
     use CalendarWeeksTrait;
 
-    private TimetableHelper $timetableHelper;
-    private TimetableSettings $timetableSettings;
-
     public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
-                                DateHelper $dateHelper, TimetableHelper $timetableHelper, TimetableSettings $timetableSettings,
+                                DateHelper $dateHelper, private TimetableHelper $timetableHelper, private TimetableSettings $timetableSettings,
                                 RefererHelper $refererHelper) {
         parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper, $refererHelper);
-
-        $this->timetableHelper = $timetableHelper;
-        $this->timetableSettings = $timetableSettings;
     }
 
-    /**
-     * @Route("", name="timetable")
-     */
+    #[Route(path: '', name: 'timetable')]
     public function index(StudentFilter $studentFilter, TeachersFilter $teachersFilter, GradeFilter $gradeFilter, RoomFilter $roomFilter, SubjectsFilter $subjectFilter,
                           TimetableLessonRepositoryInterface $lessonRepository, TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository,
-                          SubjectRepositoryInterface $subjectRepository, SectionFilter $sectionFilter, Request $request, UserRepositoryInterface $userRepository) {
+                          SubjectRepositoryInterface $subjectRepository, SectionFilter $sectionFilter, Request $request, UserRepositoryInterface $userRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -82,8 +73,8 @@ class TimetableController extends AbstractControllerWithMessages {
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
         $roomFilterView = $roomFilter->handle($request->query->get('room', null), $user);
         $subjectFilterView = $subjectFilter->handle($this->getArrayOrNull($request->query->get('subjects')), $user);
-        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
-        $teachersFilterView = $teachersFilter->handle($this->getArrayOrNull($request->query->get('teachers')), $sectionFilterView->getCurrentSection(), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && count($subjectFilterView->getCurrentSubjects()) === 0);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && (is_countable($subjectFilterView->getCurrentSubjects()) ? count($subjectFilterView->getCurrentSubjects()) : 0) === 0);
+        $teachersFilterView = $teachersFilter->handle($this->getArrayOrNull($request->query->get('teachers')), $sectionFilterView->getCurrentSection(), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && (is_countable($subjectFilterView->getCurrentSubjects()) ? count($subjectFilterView->getCurrentSubjects()) : 0) === 0);
 
         $selectedDate = $this->resolveSelectedDate($request, $sectionFilterView->getCurrentSection(), $this->dateHelper);
 
@@ -129,13 +120,13 @@ class TimetableController extends AbstractControllerWithMessages {
             } else if ($roomFilterView->getCurrentRoom() !== null) {
                 $lessons = $lessonRepository->findAllByRoom($start, $end, $roomFilterView->getCurrentRoom());
                 $lessons = $timetableFilter->filterRoomLessons($lessons);
-            } else if (count($subjectFilterView->getSubjects()) > 0) {
+            } else if ((is_countable($subjectFilterView->getSubjects()) ? count($subjectFilterView->getSubjects()) : 0) > 0) {
                 $lessons = $lessonRepository->findAllBySubjects($start, $end, $subjectFilterView->getCurrentSubjects());
                 $lessons = $timetableFilter->filterSubjectsLessons($lessons);
             }
         }
 
-        if(count($lessons) === 0 && count($supervisions) === 0) {
+        if((is_countable($lessons) ? count($lessons) : 0) === 0 && count($supervisions) === 0) {
             $timetable = null;
         } else {
             $weeks = [
@@ -182,9 +173,7 @@ class TimetableController extends AbstractControllerWithMessages {
 
         $subjects = ArrayUtils::createArrayWithKeys(
             $subjectRepository->findAll(),
-            function (Subject $subject) {
-                return $subject->getAbbreviation();
-            }
+            fn(Subject $subject) => $subject->getAbbreviation()
         );
 
         $weekStarts = [ ];
@@ -222,10 +211,8 @@ class TimetableController extends AbstractControllerWithMessages {
         ]);
     }
 
-    /**
-     * @Route("/export", name="timetable_export")
-     */
-    public function export(Request $request, IcsAccessTokenManager $manager) {
+    #[Route(path: '/export', name: 'timetable_export')]
+    public function export(Request $request, IcsAccessTokenManager $manager): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -246,11 +233,9 @@ class TimetableController extends AbstractControllerWithMessages {
         ]);
     }
 
-    /**
-     * @Route("/ics/download", name="timetable_ics")
-     * @Route("/ics/downloads/{token}", name="timetable_ics_token")
-     */
-    public function ics(TimetableIcsExporter $icsExporter) {
+    #[Route(path: '/ics/download', name: 'timetable_ics')]
+    #[Route(path: '/ics/downloads/{token}', name: 'timetable_ics_token')]
+    public function ics(TimetableIcsExporter $icsExporter): Response {
         /** @var User $user */
         $user = $this->getUser();
 

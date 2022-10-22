@@ -9,7 +9,6 @@ class AppointmentDateGroupStrategy implements SortingStrategyInterface {
     /**
      * @param AppointmentDateGroup $objectA
      * @param AppointmentDateGroup $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         $yearDiff = $objectA->getYear() - $objectB->getYear();

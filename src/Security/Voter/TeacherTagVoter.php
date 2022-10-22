@@ -39,8 +39,6 @@ class TeacherTagVoter extends Voter {
             return false;
         }
 
-        return EnumArrayUtils::inArray($user->getUserType(), $tag->getVisibilities()->map(function(UserTypeEntity $entity) {
-            return $entity->getUserType();
-        }));
+        return EnumArrayUtils::inArray($user->getUserType(), $tag->getVisibilities()->map(fn(UserTypeEntity $entity) => $entity->getUserType()));
     }
 }

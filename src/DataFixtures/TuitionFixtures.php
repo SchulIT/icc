@@ -13,10 +13,8 @@ use Faker\Generator;
 
 class TuitionFixtures extends Fixture implements DependentFixtureInterface {
 
-    private $generator;
-
-    public function __construct(Generator $generator) {
-        $this->generator = $generator;
+    public function __construct(private Generator $generator)
+    {
     }
 
     /**
@@ -172,9 +170,7 @@ class TuitionFixtures extends Fixture implements DependentFixtureInterface {
             ->findAll();
 
         /** @var Subject[] $mainSubjects */
-        $mainSubjects = array_filter($subjects, function(Subject $subject) {
-            return in_array($subject->getAbbreviation(), [ 'M', 'D', 'E']);
-        });
+        $mainSubjects = array_filter($subjects, fn(Subject $subject) => in_array($subject->getAbbreviation(), [ 'M', 'D', 'E']));
 
         $grades = GradeFixtures::getSekIGradeNames();
 

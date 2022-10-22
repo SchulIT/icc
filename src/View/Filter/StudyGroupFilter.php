@@ -20,14 +20,8 @@ use App\Sorting\StudyGroupTypeGroupStrategy;
 use App\Utils\ArrayUtils;
 
 class StudyGroupFilter {
-    private $sorter;
-    private $grouper;
-    private $studyGroupRepository;
-
-    public function __construct(Sorter $sorter, Grouper $grouper, StudyGroupRepositoryInterface $studyGroupRepository) {
-        $this->sorter = $sorter;
-        $this->grouper = $grouper;
-        $this->studyGroupRepository = $studyGroupRepository;
+    public function __construct(private Sorter $sorter, private Grouper $grouper, private StudyGroupRepositoryInterface $studyGroupRepository)
+    {
     }
 
     public function handle(?string $studyGroupUuid, ?Section $section, User $user, bool $onlyGrades = false) {
@@ -43,9 +37,7 @@ class StudyGroupFilter {
             foreach($students as $student) {
                 $studyGroups = array_merge(
                     $studyGroups,
-                    $student->getStudyGroupMemberships()->map(function(StudyGroupMembership $membership) {
-                        return $membership->getStudyGroup();
-                    })->toArray()
+                    $student->getStudyGroupMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudyGroup())->toArray()
                 );
             }
 
@@ -61,16 +53,12 @@ class StudyGroupFilter {
         }
 
         if($onlyGrades === true) {
-            $studyGroups = array_filter($studyGroups, function(StudyGroup $studyGroup) {
-                return $studyGroup->getType()->equals(StudyGroupType::Grade());
-            });
+            $studyGroups = array_filter($studyGroups, fn(StudyGroup $studyGroup) => $studyGroup->getType()->equals(StudyGroupType::Grade()));
         }
 
         $studyGroups = ArrayUtils::createArrayWithKeys(
             $studyGroups,
-            function(StudyGroup $studyGroup) {
-                return (string)$studyGroup->getUuid();
-            }
+            fn(StudyGroup $studyGroup) => (string)$studyGroup->getUuid()
         );
 
         $studyGroup = $studyGroupUuid !== null ?

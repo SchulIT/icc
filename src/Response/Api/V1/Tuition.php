@@ -13,59 +13,41 @@ class Tuition {
     /**
      * @Serializer\SerializedName("name")
      * @Serializer\Type("string")
-     * @var string
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * @Serializer\SerializedName("subject")
      * @Serializer\Type("App\Response\Api\V1\Subject")
-     * @var Subject
      */
-    private $subject;
+    private ?Subject $subject = null;
 
     /**
      * @Serializer\SerializedName("teachers")
      * @Serializer\Type("array<App\Response\Api\V1\Teacher>")
      * @var Teacher[]
      */
-    private $teachers;
+    private ?array $teachers = null;
 
     /**
      * @Serializer\SerializedName("study_group")
      * @Serializer\Type("App\Response\Api\V1\StudyGroup")
-     *
-     * @var StudyGroup
      */
-    private $studyGroup;
+    private ?StudyGroup $studyGroup = null;
 
-    /**
-     * @return string
-     */
     public function getName(): string {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Tuition
-     */
     public function setName(string $name): Tuition {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return Subject
-     */
     public function getSubject(): Subject {
         return $this->subject;
     }
 
-    /**
-     * @param Subject $subject
-     * @return Tuition
-     */
     public function setSubject(Subject $subject): Tuition {
         $this->subject = $subject;
         return $this;
@@ -80,24 +62,16 @@ class Tuition {
 
     /**
      * @param Teacher[] $teachers
-     * @return Tuition
      */
     public function setTeachers(array $teachers): Tuition {
         $this->teachers = $teachers;
         return $this;
     }
 
-    /**
-     * @return StudyGroup
-     */
     public function getStudyGroup(): StudyGroup {
         return $this->studyGroup;
     }
 
-    /**
-     * @param StudyGroup $studyGroup
-     * @return Tuition
-     */
     public function setStudyGroup(StudyGroup $studyGroup): Tuition {
         $this->studyGroup = $studyGroup;
         return $this;
@@ -112,9 +86,7 @@ class Tuition {
             ->setName($tuitionEntity->getName())
             ->setStudyGroup(StudyGroup::fromEntity($tuitionEntity->getStudyGroup()))
             ->setSubject(Subject::fromEntity($tuitionEntity->getSubject()))
-            ->setTeachers(array_map(function(TeacherEntity $teacher) {
-                return Teacher::fromEntity($teacher);
-            }, $tuitionEntity->getTeachers()->toArray()))
+            ->setTeachers(array_map(fn(TeacherEntity $teacher) => Teacher::fromEntity($teacher), $tuitionEntity->getTeachers()->toArray()))
             ->setUuid($tuitionEntity->getUuid());
     }
 }

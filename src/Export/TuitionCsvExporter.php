@@ -13,17 +13,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TuitionCsvExporter {
 
-    private $tuitionRepository;
-    private $csvHelper;
-    private $translator;
-    private $sorter;
-
-
-    public function __construct(TuitionRepositoryInterface $tuitionRepository, CsvHelper $csvHelper, TranslatorInterface $translator, Sorter $sorter) {
-        $this->tuitionRepository = $tuitionRepository;
-        $this->csvHelper = $csvHelper;
-        $this->translator = $translator;
-        $this->sorter = $sorter;
+    public function __construct(private TuitionRepositoryInterface $tuitionRepository, private CsvHelper $csvHelper, private TranslatorInterface $translator, private Sorter $sorter)
+    {
     }
 
     /**

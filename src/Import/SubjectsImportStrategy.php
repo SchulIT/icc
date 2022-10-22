@@ -11,10 +11,8 @@ use App\Utils\ArrayUtils;
 
 class SubjectsImportStrategy implements ImportStrategyInterface {
 
-    private $repository;
-
-    public function __construct(SubjectRepositoryInterface $repository) {
-        $this->repository = $repository;
+    public function __construct(private SubjectRepositoryInterface $repository)
+    {
     }
 
     /**
@@ -24,9 +22,7 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(true),
-            function(Subject $subject) {
-                return $subject->getExternalId();
-            }
+            fn(Subject $subject) => $subject->getExternalId()
         );
     }
 
@@ -54,7 +50,6 @@ class SubjectsImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param Subject $entity
-     * @return int
      */
     public function getEntityId($entity): int {
         return $entity->getId();

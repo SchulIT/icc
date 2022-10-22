@@ -7,22 +7,14 @@ use App\Entity\Student;
 
 class StudentGradeGroup implements GroupInterface, SortableGroupInterface {
     /**
-     * @var Grade
-     */
-    private $grade;
-
-    /**
      * @var Student[]
      */
-    private $students = [ ];
+    private array $students = [ ];
 
-    public function __construct(?Grade $grade) {
-        $this->grade = $grade;
+    public function __construct(private ?Grade $grade)
+    {
     }
 
-    /**
-     * @return Grade|null
-     */
     public function getGrade(): ?Grade {
         return $this->grade;
     }

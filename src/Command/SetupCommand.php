@@ -15,26 +15,15 @@ use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 
 class SetupCommand extends Command {
 
-    private UserTypeEntityRepositoryInterface $userTypeEntityRepository;
-    private PdoSessionHandler $pdoSessionHandler;
-
-    private EntityManagerInterface $em;
-
-    public function __construct(UserTypeEntityRepositoryInterface $userTypeEntityRepository, EntityManagerInterface $em, PdoSessionHandler $pdoSessionHandler, string $name = null) {
+    protected static $defaultName = 'app:setup';
+    public function __construct(private UserTypeEntityRepositoryInterface $userTypeEntityRepository, private EntityManagerInterface $em, private PdoSessionHandler $pdoSessionHandler, string $name = null) {
         parent::__construct($name);
-
-        $this->userTypeEntityRepository = $userTypeEntityRepository;
-
-        $this->em = $em;
-        $this->pdoSessionHandler = $pdoSessionHandler;
     }
 
     public function configure() {
         parent::configure();
 
-        $this
-            ->setName('app:setup')
-            ->setDescription('Sets up the application.');
+        $this->setDescription('Sets up the application.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {
@@ -52,9 +41,7 @@ class SetupCommand extends Command {
         $types = UserType::values();
         $existingTypes = ArrayUtils::createArrayWithKeys(
             $this->userTypeEntityRepository->findAll(),
-            function(UserTypeEntity $userType) {
-                return $userType->getUserType()->getValue();
-            });
+            fn(UserTypeEntity $userType) => $userType->getUserType()->getValue());
 
         foreach($types as $type) {
             if(array_key_exists($type->getValue(), $existingTypes)) {

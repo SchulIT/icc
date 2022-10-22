@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Stringable;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,26 +14,24 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  * @Auditable()
- * @UniqueEntity(fields={"key"})
  */
-class TimetableWeek {
+#[UniqueEntity(fields: ['key'])]
+class TimetableWeek implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true, name="`key`")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $key;
+    #[Assert\NotBlank]
+    private string $key;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $displayName;
+    #[Assert\NotBlank]
+    private string $displayName;
 
     /**
      * @ORM\OneToMany(targetEntity="Week", mappedBy="timetableWeek", cascade={"persist", "remove", "refresh"})
@@ -54,7 +53,6 @@ class TimetableWeek {
 
     /**
      * @param string $key
-     * @return TimetableWeek
      */
     public function setKey($key): TimetableWeek {
         $this->key = $key;
@@ -70,7 +68,6 @@ class TimetableWeek {
 
     /**
      * @param string $displayName
-     * @return TimetableWeek
      */
     public function setDisplayName($displayName): TimetableWeek {
         $this->displayName = $displayName;
@@ -92,12 +89,10 @@ class TimetableWeek {
     }
 
     public function getWeeksAsIntArray(): array {
-        return $this->weeks->map(function(Week $week) {
-            return $week->getNumber();
-        })->toArray();
+        return $this->weeks->map(fn(Week $week) => $week->getNumber())->toArray();
     }
 
-    public function __toString() {
+    public function __toString(): string {
         return $this->displayName;
     }
 }

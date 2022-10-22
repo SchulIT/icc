@@ -19,7 +19,7 @@ trait DateRequestTrait {
             $dateTime->setTime(0, 0, 0);
 
             return $dateTime;
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
     }

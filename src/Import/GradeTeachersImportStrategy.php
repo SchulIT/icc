@@ -14,17 +14,8 @@ use App\Request\Data\GradeTeachersData;
 
 class GradeTeachersImportStrategy implements ReplaceImportStrategyInterface {
 
-    private $gradeTeacherRepository;
-    private $gradeRepository;
-    private $teacherRepository;
-    private $sectionRepository;
-
-    public function __construct(GradeTeacherRepositoryInterface $gradeTeacherRepository, GradeRepositoryInterface $gradeRepository,
-                                TeacherRepositoryInterface $teacherRepository, SectionRepositoryInterface $sectionRepository) {
-        $this->gradeTeacherRepository = $gradeTeacherRepository;
-        $this->gradeRepository = $gradeRepository;
-        $this->teacherRepository = $teacherRepository;
-        $this->sectionRepository = $sectionRepository;
+    public function __construct(private GradeTeacherRepositoryInterface $gradeTeacherRepository, private GradeRepositoryInterface $gradeRepository, private TeacherRepositoryInterface $teacherRepository, private SectionRepositoryInterface $sectionRepository)
+    {
     }
 
     /**

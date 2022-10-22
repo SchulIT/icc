@@ -11,7 +11,6 @@ class StudyGroupHelper {
 
     /**
      * @param Student[] $students
-     * @return ArrayCollection
      */
     public function getStudyGroups(iterable $students): ArrayCollection {
         /** @var ArrayCollection<StudyGroup> $studyGroups */
@@ -20,9 +19,7 @@ class StudyGroupHelper {
         foreach($students as $student) {
             $studentStudyGroups = $student
                 ->getStudyGroupMemberships()
-                ->map(function(StudyGroupMembership $membership) {
-                    return $membership->getStudyGroup();
-                });
+                ->map(fn(StudyGroupMembership $membership) => $membership->getStudyGroup());
 
             /** @var StudyGroup $studyGroup */
             foreach($studentStudyGroups as $studyGroup) {

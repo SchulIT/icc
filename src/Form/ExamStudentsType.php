@@ -18,19 +18,8 @@ use Symfony\Component\Form\FormEvents;
 
 class ExamStudentsType extends AbstractType {
 
-    private StudentStringConverter $studentConverter;
-    private StringStrategy $stringStrategy;
-    private StudentStrategy $studentStrategy;
-    private StudentRepositoryInterface $studentRepository;
-    private SectionResolverInterface $sectionResolver;
-
-    public function __construct(StudentStringConverter $studentConverter, StudentStrategy $studentStrategy,
-                                StringStrategy $stringStrategy, StudentRepositoryInterface $studentRepository, SectionResolverInterface $sectionResolver) {
-        $this->studentConverter = $studentConverter;
-        $this->stringStrategy = $stringStrategy;
-        $this->studentStrategy = $studentStrategy;
-        $this->studentRepository = $studentRepository;
-        $this->sectionResolver = $sectionResolver;
+    public function __construct(private StudentStringConverter $studentConverter, private StudentStrategy $studentStrategy, private StringStrategy $stringStrategy, private StudentRepositoryInterface $studentRepository, private SectionResolverInterface $sectionResolver)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -41,9 +30,7 @@ class ExamStudentsType extends AbstractType {
                 $exam = $event->getData();
 
                 if($exam !== null) {
-                    $studyGroups = $exam->getTuitions()->map(function(Tuition $tuition) {
-                        return $tuition->getStudyGroup();
-                    })->toArray();
+                    $studyGroups = $exam->getTuitions()->map(fn(Tuition $tuition) => $tuition->getStudyGroup())->toArray();
 
                     $section = $this->sectionResolver->getSectionForDate($exam->getDate());
 
@@ -55,13 +42,9 @@ class ExamStudentsType extends AbstractType {
                             ],
                             'class' => Student::class,
                             'multiple' => true,
-                            'choice_label' => function(Student $student) {
-                                return $this->studentConverter->convert($student);
-                            },
-                            'query_builder' => function(EntityRepository $repository) use($studyGroups) {
-                                return $this->studentRepository
-                                    ->getQueryBuilderFindAllByStudyGroups($studyGroups);
-                            },
+                            'choice_label' => fn(Student $student) => $this->studentConverter->convert($student),
+                            'query_builder' => fn(EntityRepository $repository) => $this->studentRepository
+                                ->getQueryBuilderFindAllByStudyGroups($studyGroups),
                             'group_by' => function(Student $student) use($section) {
                                 $grade = $student->getGrade($section);
 

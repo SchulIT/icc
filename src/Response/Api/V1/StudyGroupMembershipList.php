@@ -10,7 +10,7 @@ class StudyGroupMembershipList {
      *
      * @var StudyGroupMembership[]
      */
-    private $memberships;
+    private ?array $memberships = null;
 
     /**
      * @return StudyGroupMembership[]
@@ -21,7 +21,6 @@ class StudyGroupMembershipList {
 
     /**
      * @param StudyGroupMembership[] $memberships
-     * @return StudyGroupMembershipList
      */
     public function setMemberships(array $memberships): StudyGroupMembershipList {
         $this->memberships = $memberships;

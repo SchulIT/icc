@@ -14,14 +14,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DateLessonGreaterThanValidator extends ConstraintValidator {
 
-    private TimetableTimeHelper $timetableTimeHelper;
-    private TranslatorInterface $translator;
-    private PropertyAccessorInterface $propertyAccessor;
-
-    public function __construct(TimetableTimeHelper $timeHelper, TranslatorInterface $translator, PropertyAccessorInterface $propertyAccessor) {
-        $this->timetableTimeHelper = $timeHelper;
-        $this->translator = $translator;
-        $this->propertyAccessor = $propertyAccessor;
+    public function __construct(private TimetableTimeHelper $timetableTimeHelper, private TranslatorInterface $translator, private PropertyAccessorInterface $propertyAccessor)
+    {
     }
 
     private function formatDate(DateLesson $lesson): string {

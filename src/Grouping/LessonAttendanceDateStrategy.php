@@ -18,8 +18,6 @@ class LessonAttendanceDateStrategy implements GroupingStrategyInterface {
     /**
      * @param DateTime $keyA
      * @param DateTime $keyB
-     * @param array $options
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA == $keyB;

@@ -28,26 +28,8 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
 
     use ContextAwareTrait;
 
-    private $substitutionRepository;
-    private $teacherRepository;
-    private $studyGroupRepository;
-    private $tuitionRepository;
-    private $roomRepository;
-    private $gradeRepository;
-    private $sectionRepository;
-    private $dispatcher;
-
-    public function __construct(SubstitutionRepositoryInterface $substitutionRepository, TeacherRepositoryInterface $teacherRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository, TuitionRepositoryInterface $tuitionRepository, RoomRepositoryInterface $roomRepository,
-                                GradeRepositoryInterface $gradeRepository, SectionRepositoryInterface $sectionRepository, EventDispatcherInterface $eventDispatcher) {
-        $this->substitutionRepository = $substitutionRepository;
-        $this->teacherRepository = $teacherRepository;
-        $this->studyGroupRepository = $studyGroupRepository;
-        $this->tuitionRepository = $tuitionRepository;
-        $this->roomRepository = $roomRepository;
-        $this->gradeRepository = $gradeRepository;
-        $this->sectionRepository = $sectionRepository;
-        $this->dispatcher = $eventDispatcher;
+    public function __construct(private SubstitutionRepositoryInterface $substitutionRepository, private TeacherRepositoryInterface $teacherRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private TuitionRepositoryInterface $tuitionRepository, private RoomRepositoryInterface $roomRepository, private GradeRepositoryInterface $gradeRepository, private SectionRepositoryInterface $sectionRepository, private EventDispatcherInterface $dispatcher)
+    {
     }
 
     /**
@@ -66,9 +48,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
 
         return ArrayUtils::createArrayWithKeys(
             $substitutions,
-            function (Substitution $substitution) {
-                return $substitution->getExternalId();
-            }
+            fn(Substitution $substitution) => $substitution->getExternalId()
         );
     }
 
@@ -97,7 +77,6 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
 
     /**
      * @param Substitution $entity
-     * @return int
      */
     public function getEntityId($entity): int {
         return $entity->getId();
@@ -111,9 +90,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
      * @throws SectionNotResolvableException
      */
     public function updateEntity($entity, $data, $requestData): void {
-        $teacherIdSelector = function(Teacher $teacher) {
-            return $teacher->getId();
-        };
+        $teacherIdSelector = fn(Teacher $teacher) => $teacher->getId();
 
         $teachers = $this->teacherRepository->findAllByExternalId($data->getTeachers());
 
@@ -150,9 +127,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
         CollectionUtils::synchronize(
             $entity->getRooms(),
             $rooms,
-            function(Room $room) {
-                return $room->getId();
-            }
+            fn(Room $room) => $room->getId()
         );
 
         if(count($rooms) > 0 || count($data->getRooms()) === 0) {
@@ -165,9 +140,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
         CollectionUtils::synchronize(
             $entity->getReplacementRooms(),
             $replacementRooms,
-            function(Room $room) {
-                return $room->getId();
-            }
+            fn(Room $room) => $room->getId()
         );
 
         if(count($replacementRooms) > 0 || count($data->getReplacementRooms()) === 0) {
@@ -181,9 +154,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
         CollectionUtils::synchronize(
             $entity->getStudyGroups(),
             $studyGroups,
-            function (StudyGroup $studyGroup) {
-                return $studyGroup->getId();
-            }
+            fn(StudyGroup $studyGroup) => $studyGroup->getId()
         );
 
         if($data->getSubject() === $data->getReplacementSubject()) {
@@ -195,9 +166,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
         CollectionUtils::synchronize(
             $entity->getReplacementStudyGroups(),
             $replacementStudyGroups,
-            function (StudyGroup $studyGroup) {
-                return $studyGroup->getId();
-            }
+            fn(StudyGroup $studyGroup) => $studyGroup->getId()
         );
 
         $replacementGrades = $this->gradeRepository->findAllByExternalId($data->getReplacementGrades());
@@ -220,9 +189,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
             CollectionUtils::synchronize(
                 $entity->getReplacementGrades(),
                 $replacementGrades,
-                function(Grade $grade) {
-                    return $grade->getId();
-                }
+                fn(Grade $grade) => $grade->getId()
             );
         } else {
             $entity->getReplacementGrades()->clear();
@@ -230,10 +197,8 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
     }
 
     /**
-     * @param string|null $subject
      * @param string[] $grades
      * @param string[] $teachers
-     * @param string $id
      * @return StudyGroup[]
      * @throws ImportException
      */
@@ -288,13 +253,10 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
     /**
      * @param string[] $teachers
      * @param Teacher[] $foundTeachers
-     * @param string $substitutionId
      * @throws ImportException
      */
     private function throwMissingTeacher(array $teachers, array $foundTeachers, string $substitutionId) {
-        $foundTeacherExternalIds = array_map(function(Teacher $teacher) {
-            return $teacher->getExternalId();
-        }, $foundTeachers);
+        $foundTeacherExternalIds = array_map(fn(Teacher $teacher) => $teacher->getExternalId(), $foundTeachers);
 
         foreach($teachers as $teacher) {
             if(!in_array($teacher, $foundTeacherExternalIds)) {
@@ -306,13 +268,10 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
     /**
      * @param string[]$grades
      * @param Grade[] $foundGrades
-     * @param string $substitutionId
      * @throws ImportException
      */
     private function throwMissingGrade(array $grades, array $foundGrades, string $substitutionId) {
-        $foundGradeExternalIds = array_map(function(Grade $grade) {
-            return $grade->getExternalId();
-        }, $foundGrades);
+        $foundGradeExternalIds = array_map(fn(Grade $grade) => $grade->getExternalId(), $foundGrades);
 
         foreach($grades as $grade) {
             if(!in_array($grade, $foundGradeExternalIds)) {

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Exam;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
@@ -29,25 +30,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/admin/exams")
- */
+#[Route(path: '/admin/exams')]
 class ExamAdminController extends AbstractController {
 
     private const NumberOfExams = 25;
 
-    private ExamRepositoryInterface $repository;
-
-    public function __construct(RefererHelper $redirectHelper, ExamRepositoryInterface $examRepository) {
+    public function __construct(RefererHelper $redirectHelper, private ExamRepositoryInterface $repository) {
         parent::__construct($redirectHelper);
-
-        $this->repository = $examRepository;
     }
 
-    /**
-     * @Route("", name="admin_exams")
-     */
-    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Grouper $grouper, ExamRepositoryInterface $examRepository, Sorter $sorter, Request $request) {
+    #[Route(path: '', name: 'admin_exams')]
+    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Grouper $grouper, ExamRepositoryInterface $examRepository, Sorter $sorter, Request $request): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Manage);
 
         $page = $request->query->getInt('page');
@@ -97,10 +90,8 @@ class ExamAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add", name="new_exam")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'new_exam')]
+    public function add(Request $request): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Add);
         $exam = new Exam();
 
@@ -123,10 +114,8 @@ class ExamAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/bulk", name="bulk_exams")
-     */
-    public function addBulk(Request $request) {
+    #[Route(path: '/bulk', name: 'bulk_exams')]
+    public function addBulk(Request $request): Response {
         $this->denyAccessUnlessGranted('ROLE_EXAMS_CREATOR');
 
         $defaultData = [
@@ -152,10 +141,8 @@ class ExamAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_exam")
-     */
-    public function edit(Exam $exam, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_exam')]
+    public function edit(Exam $exam, Request $request): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Edit, $exam);
 
         $form = $this->createForm(ExamType::class, $exam);
@@ -178,10 +165,8 @@ class ExamAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/unplan", name="unplan_exam")
-     */
-    public function unplan(Exam $exam, Request $request, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/unplan', name: 'unplan_exam')]
+    public function unplan(Exam $exam, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Unplan, $exam);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -214,10 +199,8 @@ class ExamAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_exam")
-     */
-    public function remove(Exam $exam, Request $request, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_exam')]
+    public function remove(Exam $exam, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Remove, $exam);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -247,10 +230,8 @@ class ExamAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/students", name="edit_exam_students")
-     */
-    public function students(Exam $exam, Request $request) {
+    #[Route(path: '/{uuid}/students', name: 'edit_exam_students')]
+    public function students(Exam $exam, Request $request): Response {
         $form = $this->createForm(ExamStudentsType::class, $exam);
         $form->handleRequest($request);
 
@@ -269,8 +250,6 @@ class ExamAdminController extends AbstractController {
 
     /**
      * Adds all students of the related tuitions to the exam (which means they attend to this exam)
-     *
-     * @param Exam $exam
      */
     private function addAllStudents(Exam $exam): void {
         $students = [];
@@ -286,24 +265,18 @@ class ExamAdminController extends AbstractController {
         CollectionUtils::synchronize(
             $exam->getStudents(),
             $students,
-            function (Student $student) {
-                return $student->getId();
-            }
+            fn(Student $student) => $student->getId()
         );
     }
 
     /**
-     * @param int $number
      * @param Tuition[] $tuitions
-     * @param bool $addStudents
      */
     private function bulkCreateExams(int $number, array $tuitions, bool $addStudents): void {
         $this->repository->beginTransaction();
 
         foreach($tuitions as $tuition) {
-            $students = $tuition->getStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
-                return $membership->getStudent();
-            })->toArray();
+            $students = $tuition->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
 
             for($i = 0; $i < $number; $i++) {
                 $exam = new Exam();

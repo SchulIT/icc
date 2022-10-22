@@ -17,14 +17,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class WikiArticleType extends AbstractType {
 
-    private TreeHelper $treeHelper;
-    private WikiArticleRepositoryInterface $wikiRepository;
-    private UrlGeneratorInterface $urlGenerator;
-
-    public function __construct(TreeHelper $treeHelper, WikiArticleRepositoryInterface $wikiRepository, UrlGeneratorInterface $urlGenerator) {
-        $this->treeHelper = $treeHelper;
-        $this->wikiRepository = $wikiRepository;
-        $this->urlGenerator = $urlGenerator;
+    public function __construct(private TreeHelper $treeHelper, private WikiArticleRepositoryInterface $wikiRepository, private UrlGeneratorInterface $urlGenerator)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {

@@ -11,19 +11,12 @@ trait SuppressNotificationTrait {
      * @Serializer\Type("boolean")
      * @Serializer\SerializedName("suppress_notifications")
      */
-    private $suppressNotifications = false;
+    private bool $suppressNotifications = false;
 
-    /**
-     * @return bool
-     */
     public function isSuppressNotifications(): bool {
         return $this->suppressNotifications;
     }
 
-    /**
-     * @param bool $suppressNotifications
-     * @return self
-     */
     public function setSuppressNotifications(bool $suppressNotifications): self {
         $this->suppressNotifications = $suppressNotifications;
         return $this;

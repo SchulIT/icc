@@ -24,7 +24,6 @@ interface DocumentRepositoryInterface {
     public function findOneByUuid(string $uuid): ?Document;
 
     /**
-     * @param DocumentCategory $category
      * @return Document[]
      */
     public function findAllByCategory(DocumentCategory $category);
@@ -36,9 +35,6 @@ interface DocumentRepositoryInterface {
     public function findAllByAuthor(User $user): array;
 
     /**
-     * @param UserType $type
-     * @param Grade|null $grade
-     * @param string|null $q
      * @return Document[]
      */
     public function findAllFor(UserType $type, ?Grade $grade = null, ?string $q = null);

@@ -14,63 +14,42 @@ class StudyGroup {
     /**
      * @Serializer\SerializedName("name")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * @Serializer\SerializedName("type")
      * @Serializer\Type("string")
      * @Serializer\ReadOnly()
      * @Serializer\Accessor(getter="getTypeString")
-     *
-     * @var StudyGroupType
      */
-    private $type;
+    private ?StudyGroupType $type = null;
 
     /**
      * @Serializer\SerializedName("grades")
      * @Serializer\Type("array<App\Response\Api\V1\Grade>")
      * @var Grade[]
      */
-    private $grades;
+    private ?array $grades = null;
 
-    /**
-     * @return string
-     */
     public function getName(): string {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return StudyGroup
-     */
     public function setName(string $name): StudyGroup {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return StudyGroupType
-     */
     public function getType(): StudyGroupType {
         return $this->type;
     }
 
-    /**
-     * @param StudyGroupType $type
-     * @return StudyGroup
-     */
     public function setType(StudyGroupType $type): StudyGroup {
         $this->type = $type;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTypeString(): string {
         return $this->type->getValue();
     }
@@ -84,7 +63,6 @@ class StudyGroup {
 
     /**
      * @param Grade[] $grades
-     * @return StudyGroup
      */
     public function setGrades(array $grades): StudyGroup {
         $this->grades = $grades;
@@ -100,8 +78,6 @@ class StudyGroup {
             ->setUuid($studyGroupEntity->getUuid())
             ->setName($studyGroupEntity->getName())
             ->setType($studyGroupEntity->getType())
-            ->setGrades(array_map(function(GradeEntity $gradeEntity) {
-                return Grade::fromEntity($gradeEntity);
-            }, $studyGroupEntity->getGrades()->toArray()));
+            ->setGrades(array_map(fn(GradeEntity $gradeEntity) => Grade::fromEntity($gradeEntity), $studyGroupEntity->getGrades()->toArray()));
     }
 }

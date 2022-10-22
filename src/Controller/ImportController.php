@@ -56,19 +56,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/api/import")
  * @Security("is_granted('ROLE_IMPORT')")
  */
+#[Route(path: '/api/import')]
 class ImportController extends AbstractController {
 
-    private Importer $importer;
-    private SerializerInterface $serializer;
-
-    public function __construct(Importer $importer, SerializerInterface $serializer, RefererHelper $refererHelper) {
+    public function __construct(private Importer $importer, private SerializerInterface $serializer, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
-
-        $this->importer = $importer;
-        $this->serializer = $serializer;
     }
 
     private function fromResult(ImportResult $importResult): Response {
@@ -77,7 +71,7 @@ class ImportController extends AbstractController {
 
         return new Response(
             $json,
-            200,
+            Response::HTTP_OK,
             [
                 'Content-Type' => 'application/json'
             ]
@@ -87,7 +81,6 @@ class ImportController extends AbstractController {
     /**
      * Imports appointments. Note: you first must create appointment categories from the web interface.
      *
-     * @Route("/appointments", methods={"POST"}, name="import_appointments")
      * @OA\Post(operationId="import_appointments")
      * @OA\RequestBody(
      *     @Model(type=AppointmentsData::class)
@@ -104,6 +97,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/appointments', methods: ['POST'], name: 'import_appointments')]
     public function appointments(AppointmentsData $appointmentsData, AppointmentsImportStrategy $strategy): Response {
         $result = $this->importer->import($appointmentsData, $strategy);
         return $this->fromResult($result);
@@ -112,7 +106,6 @@ class ImportController extends AbstractController {
     /**
      * Imports appointment categories.
      *
-     * @Route("/appointments/categories", methods={"POST"})
      * @OA\Post(operationId="import_appointment_categories")
      * @OA\RequestBody(
      *     @Model(type=AppointmentCategoriesData::class)
@@ -129,6 +122,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/appointments/categories', methods: ['POST'])]
     public function appointmentCategories(AppointmentCategoriesData $appointmentCategoriesData, AppointmentCategoriesImportStrategy $strategy): Response {
         $result = $this->importer->import($appointmentCategoriesData, $strategy);
         return $this->fromResult($result);
@@ -137,7 +131,6 @@ class ImportController extends AbstractController {
     /**
      * Imports exams.
      *
-     * @Route("/exams", methods={"POST"})
      * @OA\Post(operationId="import_exams")
      * @OA\RequestBody(
      *     @Model(type=ExamsData::class)
@@ -154,6 +147,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/exams', methods: ['POST'])]
     public function exams(ExamsData $examsData, ExamsImportStrategy $strategy): Response {
         $result = $this->importer->import($examsData, $strategy);
         return $this->fromResult($result);
@@ -162,7 +156,6 @@ class ImportController extends AbstractController {
     /**
      * Imports grades.
      *
-     * @Route("/grades", methods={"POST"})
      * @OA\Post(operationId="import_grades")
      * @OA\RequestBody(
      *     @Model(type=GradesData::class)
@@ -179,6 +172,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/grades', methods: ['POST'])]
     public function grades(GradesData $gradesData, GradesImportStrategy $strategy): Response {
         $result = $this->importer->import($gradesData, $strategy);
         return $this->fromResult($result);
@@ -187,7 +181,6 @@ class ImportController extends AbstractController {
     /**
      * Imports grade teachers.
      *
-     * @Route("/grades/teachers", methods={"POST"})
      * @OA\Post(operationId="import_grade_teachers")
      * @OA\RequestBody(
      *     @Model(type=GradeTeachersData::class)
@@ -204,6 +197,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/grades/teachers', methods: ['POST'])]
     public function gradeTeachers(GradeTeachersData $gradeTeachersData, GradeTeachersImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($gradeTeachersData, $strategy);
         return $this->fromResult($result);
@@ -212,7 +206,6 @@ class ImportController extends AbstractController {
     /**
      * Imports grade memberships.
      *
-     * @Route("/grades/memberships", methods={"POST"})
      * @OA\Post(operationId="import_grade_memberships")
      * @OA\RequestBody(
      *     @Model(type=GradeMembershipsData::class)
@@ -229,6 +222,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/grades/memberships', methods: ['POST'])]
     public function gradeMemberships(GradeMembershipsData $membershipsData, GradeMembershipImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($membershipsData, $strategy);
         return $this->fromResult($result);
@@ -237,7 +231,6 @@ class ImportController extends AbstractController {
     /**
      * Imports students.
      *
-     * @Route("/students", methods={"POST"})
      * @OA\Post(operationId="import_students")
      * @OA\RequestBody(
      *     @Model(type=StudentsData::class)
@@ -254,6 +247,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/students', methods: ['POST'])]
     public function students(StudentsData $studentsData, StudentsImportStrategy $strategy): Response {
         $result = $this->importer->import($studentsData, $strategy);
         return $this->fromResult($result);
@@ -262,7 +256,6 @@ class ImportController extends AbstractController {
     /**
      * Imports study groups.
      *
-     * @Route("/studygroups", methods={"POST"})
      * @OA\Post(operationId="import_studygroups")
      * @OA\RequestBody(
      *     @Model(type=StudyGroupsData::class)
@@ -279,6 +272,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/studygroups', methods: ['POST'])]
     public function studyGroups(StudyGroupsData $studyGroupsData, StudyGroupImportStrategy $strategy): Response {
         $result = $this->importer->import($studyGroupsData, $strategy);
         return $this->fromResult($result);
@@ -287,7 +281,6 @@ class ImportController extends AbstractController {
     /**
      * Imports study group memberships.
      *
-     * @Route("/studygroups/memberships", methods={"POST"})
      * @OA\Post(operationId="import_studygroups_memberships")
      * @OA\RequestBody(
      *     @Model(type=StudyGroupMembershipsData::class)
@@ -304,6 +297,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/studygroups/memberships', methods: ['POST'])]
     public function studyGroupsMemberships(StudyGroupMembershipsData $membershipsData, StudyGroupMembershipImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($membershipsData, $strategy);
         return $this->fromResult($result);
@@ -312,7 +306,6 @@ class ImportController extends AbstractController {
     /**
      * Imports subjects.
      *
-     * @Route("/subjects", methods={"POST"})
      * @OA\Post(operationId="import_subjects")
      * @OA\RequestBody(
      *     @Model(type=SubjectsData::class)
@@ -329,6 +322,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/subjects', methods: ['POST'])]
     public function subjects(SubjectsData $subjectsData, SubjectsImportStrategy $strategy): Response {
         $result = $this->importer->import($subjectsData, $strategy);
         return $this->fromResult($result);
@@ -337,7 +331,6 @@ class ImportController extends AbstractController {
     /**
      * Imports study groups.
      *
-     * @Route("/substitutions", methods={"POST"})
      * @OA\Post(operationId="import_substitutions")
      * @OA\RequestBody(
      *     @Model(type=SubstitutionsData::class)
@@ -354,6 +347,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/substitutions', methods: ['POST'])]
     public function substitutions(SubstitutionsData $substitutionsData, SubstitutionsImportStrategy $strategy): Response {
         $result = $this->importer->import($substitutionsData, $strategy);
         return $this->fromResult($result);
@@ -362,7 +356,6 @@ class ImportController extends AbstractController {
     /**
      * Imports teachers.
      *
-     * @Route("/teachers", methods={"POST"})
      * @OA\Post(operationId="import_teachers")
      * @OA\RequestBody(
      *     @Model(type=TeachersData::class)
@@ -379,6 +372,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/teachers', methods: ['POST'])]
     public function teachers(TeachersData $teachersData, TeachersImportStrategy $strategy): Response {
         $result = $this->importer->import($teachersData, $strategy);
         return $this->fromResult($result);
@@ -387,7 +381,6 @@ class ImportController extends AbstractController {
     /**
      * Imports timetable lessons. Note: you must import periods first.
      *
-     * @Route("/timetable/lessons", methods={"POST"})
      * @OA\Post(operationId="import_timetable_lessons")
      * @OA\RequestBody(
      *     @Model(type=TimetableLessonsData::class)
@@ -404,6 +397,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/timetable/lessons', methods: ['POST'])]
     public function timetableLessons(TimetableLessonsData $lessonsData, TimetableLessonsImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($lessonsData, $strategy);
         return $this->fromResult($result);
@@ -412,7 +406,6 @@ class ImportController extends AbstractController {
     /**
      * Imports timetable supervisions. Note: you must import periods first.
      *
-     * @Route("/timetable/supervisions", methods={"POST"})
      * @OA\Post(operationId="import_timetable_supervisions")
      * @OA\RequestBody(
      *     @Model(type=TimetableSupervisionsData::class)
@@ -429,6 +422,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/timetable/supervisions', methods: ['POST'])]
     public function timetableSupervisions(TimetableSupervisionsData $supervisionsData, TimetableSupervisionsImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($supervisionsData, $strategy);
         return $this->fromResult($result);
@@ -437,7 +431,6 @@ class ImportController extends AbstractController {
     /**
      * Imports tuitions.
      *
-     * @Route("/tuitions", methods={"POST"})
      * @OA\Post(operationId="import_tuitions")
      * @OA\RequestBody(
      *     @Model(type=TuitionsData::class)
@@ -454,6 +447,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/tuitions', methods: ['POST'])]
     public function tuitions(TuitionsData $tuitionsData, TuitionsImportStrategy $strategy): Response {
         $result = $this->importer->import($tuitionsData, $strategy);
         return $this->fromResult($result);
@@ -462,7 +456,6 @@ class ImportController extends AbstractController {
     /**
      * Imports infotexts.
      *
-     * @Route("/infotexts", methods={"POST"})
      * @OA\Post(operationId="import_infotexts")
      * @OA\RequestBody(
      *     @Model(type=InfotextsData::class)
@@ -479,6 +472,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/infotexts', methods: ['POST'])]
     public function infotexts(InfotextsData $infotextsData, InfotextsImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($infotextsData, $strategy);
         return $this->fromResult($result);
@@ -487,7 +481,6 @@ class ImportController extends AbstractController {
     /**
      * Imports absences.
      *
-     * @Route("/absences", methods={"POST"})
      * @OA\Post(operationId="import_absences")
      * @OA\RequestBody(
      *     @Model(type=AbsencesData::class)
@@ -504,6 +497,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/absences', methods: ['POST'])]
     public function absences(AbsencesData $absencesData, AbsencesImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($absencesData, $strategy);
         return $this->fromResult($result);
@@ -512,7 +506,6 @@ class ImportController extends AbstractController {
     /**
      * Imports privacy categories.
      *
-     * @Route("/privacy/categories", methods={"POST"})
      * @OA\Post(operationId="import_privacy_categories")
      * @OA\RequestBody(
      *     @Model(type=PrivacyCategoriesData::class)
@@ -529,6 +522,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/privacy/categories', methods: ['POST'])]
     public function privacyCategories(PrivacyCategoriesData $categoriesData, PrivacyCategoryImportStrategy $strategy): Response {
         $result = $this->importer->import($categoriesData, $strategy);
         return $this->fromResult($result);
@@ -537,7 +531,6 @@ class ImportController extends AbstractController {
     /**
      * Imports rooms.
      *
-     * @Route("/rooms", methods={"POST"})
      * @OA\Post(operationId="import_rooms")
      * @OA\RequestBody(
      *     @Model(type=RoomsData::class)
@@ -554,6 +547,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/rooms', methods: ['POST'])]
     public function rooms(RoomsData $roomsData, RoomImportStrategy $strategy): Response {
         $result = $this->importer->import($roomsData, $strategy);
         return $this->fromResult($result);
@@ -562,7 +556,6 @@ class ImportController extends AbstractController {
     /**
      * Imports rooms.
      *
-     * @Route("/free_lessons", methods={"POST"})
      * @OA\Post(operationId="import_lessons")
      * @OA\RequestBody(
      *     @Model(type=FreeLessonTimespansData::class)
@@ -579,6 +572,7 @@ class ImportController extends AbstractController {
      * )
      * @throws ImportException
      */
+    #[Route(path: '/free_lessons', methods: ['POST'])]
     public function freeLessons(FreeLessonTimespansData $timespansData, FreeTimespanImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($timespansData, $strategy);
         return $this->fromResult($result);

@@ -7,7 +7,7 @@ use App\Entity\Exam;
 class ExamSupervisionViewItem extends AbstractViewItem {
 
     /** @var Exam[] */
-    private $exams = [ ];
+    private array $exams = [ ];
 
     /**
      * @param Exam|Exam[] $examOrExams
@@ -20,16 +20,10 @@ class ExamSupervisionViewItem extends AbstractViewItem {
         }
     }
 
-    /**
-     * @return Exam|null
-     */
     public function getFirst(): ?Exam {
         return $this->exams[0] ?? null;
     }
 
-    /**
-     * @param Exam $exam
-     */
     public function addExam(Exam $exam): void {
         $this->exams[] = $exam;
     }

@@ -2,18 +2,15 @@
 
 namespace App\Sorting;
 
+use DateTimeInterface;
 class DateStrategy implements SortingStrategyInterface {
 
     /**
-     * @param \DateTimeInterface $objectA
-     * @param \DateTimeInterface $objectB
-     * @return int
+     * @param DateTimeInterface $objectA
+     * @param DateTimeInterface $objectB
      */
-    public function compare($objectA, $objectB): int {
-        if($objectA === $objectB) {
-            return 0;
-        }
-
-        return $objectA < $objectB ? -1 : 1;
+    public function compare($objectA, $objectB): int
+    {
+        return $objectA <=> $objectB;
     }
 }

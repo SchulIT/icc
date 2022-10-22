@@ -7,19 +7,13 @@ use App\Entity\Student;
 
 class StudentAbsenceStudentGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var Student */
-    private Student $student;
-
     /** @var StudentAbsence[] */
     private array $absences = [ ];
 
-    public function __construct(Student $student) {
-        $this->student = $student;
+    public function __construct(private Student $student)
+    {
     }
 
-    /**
-     * @return Student
-     */
     public function getStudent(): Student {
         return $this->student;
     }

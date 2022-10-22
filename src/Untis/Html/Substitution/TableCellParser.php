@@ -50,13 +50,9 @@ class TableCellParser {
         }
 
         $parts = $value->split(',');
-        $parts = array_map(function(AbstractString $string) {
-            return $this->parseStringOrNullColumn($string->toString());
-        }, $parts);
+        $parts = array_map(fn(AbstractString $string) => $this->parseStringOrNullColumn($string->toString()), $parts);
 
-        return array_filter($parts, function(?string $value) {
-            return !empty($value);
-        });
+        return array_filter($parts, fn(?string $value) => !empty($value));
     }
 
     /**
@@ -73,12 +69,12 @@ class TableCellParser {
         }
 
         // Case 2: compound lessons (X-Y)
-        if(strpos($value, '-') !== false && count($lessons = explode('-', $value)) === 2) {
+        if(str_contains($value, '-') && count($lessons = explode('-', $value)) === 2) {
             return new ParsedLesson(intval($lessons[0]), intval($lessons[1]), false);
         }
 
         // Case 3: Supervisions (X/Y)
-        if(strpos($value, '/') !== false && count($lessons = explode('/', $value)) === 2) {
+        if(str_contains($value, '/') && count($lessons = explode('/', $value)) === 2) {
             return new ParsedLesson(intval($lessons[0]), intval($lessons[1]), true);
         }
 

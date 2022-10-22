@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Serializable;
+use Stringable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,53 +15,47 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
- * @UniqueEntity(fields={"username"})
  */
-class User implements UserInterface, \Serializable {
+#[UniqueEntity(fields: ['username'])]
+class User implements UserInterface, Serializable, Stringable {
 
     use IdTrait;
     use UuidTrait;
 
     /**
      * @ORM\Column(type="uuid")
-     * @var UuidInterface
      */
-    private $idpId;
+    private ?UuidInterface $idpId = null;
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @var string
      */
-    private $username;
+    private ?string $username = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $firstname;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $firstname = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $lastname;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $lastname = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\Email()
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $email;
+    #[Assert\Email]
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $email = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Teacher")
      * @ORM\JoinColumn(onDelete="SET NULL")
-     * @var Teacher|null
      */
-    private $teacher = null;
+    private ?Teacher $teacher = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="Student")
@@ -75,13 +71,12 @@ class User implements UserInterface, \Serializable {
      * @ORM\Column(type="json")
      * @var string[]
      */
-    private $roles = ['ROLE_USER'];
+    private array $roles = ['ROLE_USER'];
 
     /**
      * @ORM\Column(type="user_type")
-     * @var UserType
      */
-    private $userType;
+    private ?UserType $userType = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="Message")
@@ -95,33 +90,29 @@ class User implements UserInterface, \Serializable {
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $isSubstitutionNotificationsEnabled = false;
+    private bool $isSubstitutionNotificationsEnabled = false;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $isExamNotificationsEnabled = false;
+    private bool $isExamNotificationsEnabled = false;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $isMessageNotificationsEnabled = false;
+    private bool $isMessageNotificationsEnabled = false;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $isEmailNotificationsEnabled = false;
+    private bool $isEmailNotificationsEnabled = false;
 
     /**
      * @ORM\Column(type="json")
      * @var string[]
      */
-    private $data = [ ];
+    private array $data = [ ];
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -130,104 +121,59 @@ class User implements UserInterface, \Serializable {
         $this->dismissedMessages = new ArrayCollection();
     }
 
-    /**
-     * @return UuidInterface|null
-     */
     public function getIdpId(): ?UuidInterface {
         return $this->idpId;
     }
 
-    /**
-     * @param UuidInterface $uuid
-     * @return User
-     */
     public function setIdpId(UuidInterface $uuid): User {
         $this->idpId = $uuid;
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int {
         return $this->id;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFirstname(): ?string {
         return $this->firstname;
     }
 
-    /**
-     * @param string|null $firstname
-     * @return User
-     */
     public function setFirstname(?string $firstname): User {
         $this->firstname = $firstname;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLastname(): ?string {
         return $this->lastname;
     }
 
-    /**
-     * @param string|null $lastname
-     * @return User
-     */
     public function setLastname(?string $lastname): User {
         $this->lastname = $lastname;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getEmail(): ?string {
         return $this->email;
     }
 
-    /**
-     * @param string|null $email
-     * @return User
-     */
     public function setEmail(?string $email): User {
         $this->email = $email;
         return $this;
     }
 
-    /**
-     * @return Teacher|null
-     */
     public function getTeacher(): ?Teacher {
         return $this->teacher;
     }
 
-    /**
-     * @param Teacher|null $teacher
-     * @return User
-     */
     public function setTeacher(?Teacher $teacher): User {
         $this->teacher = $teacher;
         return $this;
     }
 
-    /**
-     * @return UserType
-     */
     public function getUserType(): UserType {
         return $this->userType;
     }
 
-    /**
-     * @param UserType $userType
-     * @return User
-     */
     public function setUserType(UserType $userType): User {
         $this->userType = $userType;
         return $this;
@@ -247,18 +193,11 @@ class User implements UserInterface, \Serializable {
         return $this->roles;
     }
 
-    /**
-     * @param string $username
-     * @return User
-     */
     public function setUsername(string $username): User {
         $this->username = $username;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getUsername(): string {
         return $this->username;
     }
@@ -293,65 +232,37 @@ class User implements UserInterface, \Serializable {
         return $this->students;
     }
 
-    /**
-     * @return bool
-     */
     public function isSubstitutionNotificationsEnabled(): bool {
         return $this->isSubstitutionNotificationsEnabled;
     }
 
-    /**
-     * @param bool $isSubstitutionNotificationsEnabled
-     * @return User
-     */
     public function setIsSubstitutionNotificationsEnabled(bool $isSubstitutionNotificationsEnabled): User {
         $this->isSubstitutionNotificationsEnabled = $isSubstitutionNotificationsEnabled;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isExamNotificationsEnabled(): bool {
         return $this->isExamNotificationsEnabled;
     }
 
-    /**
-     * @param bool $isExamNotificationsEnabled
-     * @return User
-     */
     public function setIsExamNotificationsEnabled(bool $isExamNotificationsEnabled): User {
         $this->isExamNotificationsEnabled = $isExamNotificationsEnabled;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isMessageNotificationsEnabled(): bool {
         return $this->isMessageNotificationsEnabled;
     }
 
-    /**
-     * @param bool $isMessageNotificationsEnabled
-     * @return User
-     */
     public function setIsMessageNotificationsEnabled(bool $isMessageNotificationsEnabled): User {
         $this->isMessageNotificationsEnabled = $isMessageNotificationsEnabled;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isEmailNotificationsEnabled(): bool {
         return $this->isEmailNotificationsEnabled;
     }
 
-    /**
-     * @param bool $isEmailNotificationsEnabled
-     * @return User
-     */
     public function setIsEmailNotificationsEnabled(bool $isEmailNotificationsEnabled): User {
         $this->isEmailNotificationsEnabled = $isEmailNotificationsEnabled;
         return $this;
@@ -402,10 +313,10 @@ class User implements UserInterface, \Serializable {
      * @inheritDoc
      */
     public function unserialize($serialized) {
-        list($this->id, $this->username) = unserialize($serialized);
+        [$this->id, $this->username] = unserialize($serialized);
     }
 
-    public function __toString() {
+    public function __toString(): string {
         return sprintf('%s, %s (%s)', $this->getLastname(), $this->getFirstname(), $this->getUsername());
     }
 }

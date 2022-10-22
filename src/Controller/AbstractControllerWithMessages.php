@@ -11,18 +11,11 @@ use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractControllerWithMessages extends AbstractController {
-    protected $messageRepository;
-    protected $dismissedMessagesHelper;
     protected $userResolver;
-    protected $dateHelper;
 
-    public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
-                                 DateHelper $dateHelper, RefererHelper $refererHelper) {
+    public function __construct(protected MessageRepositoryInterface $messageRepository, protected DismissedMessagesHelper $dismissedMessagesHelper,
+                                 protected DateHelper $dateHelper, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
-
-        $this->messageRepository = $messageRepository;
-        $this->dismissedMessagesHelper = $dismissedMessagesHelper;
-        $this->dateHelper = $dateHelper;
     }
 
     protected abstract function getMessageScope(): MessageScope;

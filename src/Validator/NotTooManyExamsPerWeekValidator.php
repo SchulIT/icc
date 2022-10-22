@@ -13,14 +13,8 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
 
-    private ExamSettings $examSettings;
-    private SectionResolverInterface $sectionResolver;
-
-    public function __construct(ExamSettings $examSettings, ExamRepositoryInterface $examRepository, SectionResolverInterface $sectionResolver) {
+    public function __construct(private ExamSettings $examSettings, ExamRepositoryInterface $examRepository, private SectionResolverInterface $sectionResolver) {
         parent::__construct($examRepository);
-
-        $this->examSettings = $examSettings;
-        $this->sectionResolver = $sectionResolver;
     }
 
     /**

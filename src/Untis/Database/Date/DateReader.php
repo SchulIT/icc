@@ -9,7 +9,6 @@ use League\Csv\Reader;
 class DateReader extends AbstractDatabaseReader {
 
     /**
-     * @param Reader $reader
      * @return Date[]
      */
     public function readDatabase(Reader $reader): array {

@@ -19,7 +19,6 @@ use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 class UserChecker implements EventSubscriberInterface {
 
     /**
-     * @param AuthenticationSuccessEvent $event
      * @throws InvalidAccountException
      */
     public function onAuthenticationSuccess(AuthenticationSuccessEvent $event) {

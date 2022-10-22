@@ -54,30 +54,18 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/admin/messages")
- */
+#[Route(path: '/admin/messages')]
 class MessageAdminController extends AbstractController {
 
     private const CsrfTokenName = '_csrf_token';
     private const CsrfTokenId = 'message_files';
 
-    private MessageRepositoryInterface $repository;
-    private Grouper $grouper;
-    private Sorter $sorter;
-
-    public function __construct(MessageRepositoryInterface $repository, Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
+    public function __construct(private MessageRepositoryInterface $repository, private Grouper $grouper, private Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
-
-        $this->repository = $repository;
-        $this->grouper = $grouper;
-        $this->sorter = $sorter;
     }
 
-    /**
-     * @Route("", name="admin_messages")
-     */
-    public function index(UserTypeFilter $userTypeFilter, GradeFilter $gradeFilter, Request $request) {
+    #[Route(path: '', name: 'admin_messages')]
+    public function index(UserTypeFilter $userTypeFilter, GradeFilter $gradeFilter, Request $request): Response {
         $this->denyAccessUnlessGranted('ROLE_MESSAGE_CREATOR');
 
         /** @var User $user */
@@ -108,10 +96,8 @@ class MessageAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_message")
-     */
-    public function add(Request $request, DateHelper $dateHelper) {
+    #[Route(path: '/add', name: 'add_message')]
+    public function add(Request $request, DateHelper $dateHelper): Response {
         $this->denyAccessUnlessGranted(MessageVoter::New);
 
         $message = (new Message())
@@ -132,10 +118,8 @@ class MessageAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_message")
-     */
-    public function edit(Request $request, Message $message, EventDispatcherInterface $eventDispatcher) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_message')]
+    public function edit(Request $request, Message $message, EventDispatcherInterface $eventDispatcher): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         $originalFiles = new ArrayCollection();
@@ -178,10 +162,8 @@ class MessageAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_message")
-     */
-    public function remove(Message $message, Request $request, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_message')]
+    public function remove(Message $message, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Remove, $message);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -205,10 +187,8 @@ class MessageAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/confirmations", name="message_confirmations")
-     */
-    public function confirmations(Message $message, MessageConfirmationViewHelper $confirmationViewHelper, Grouper $grouper, SectionResolverInterface $sectionResolver) {
+    #[Route(path: '/{uuid}/confirmations', name: 'message_confirmations')]
+    public function confirmations(Message $message, MessageConfirmationViewHelper $confirmationViewHelper, Grouper $grouper, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
         $view = $confirmationViewHelper->createView($message);
 
@@ -235,10 +215,8 @@ class MessageAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/downloads", name="message_downloads_admin")
-     */
-    public function downloads(Message $message, MessageDownloadViewHelper $messageDownloadViewHelper, SectionResolverInterface $sectionResolver) {
+    #[Route(path: '/{uuid}/downloads', name: 'message_downloads_admin')]
+    public function downloads(Message $message, MessageDownloadViewHelper $messageDownloadViewHelper, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         /** @var MessageDownloadView $view */
@@ -285,21 +263,21 @@ class MessageAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{message}/downloads/{user}/{filename}/download", name="download_message_download")
      * @ParamConverter("message", class="App\Entity\Message", options={"mapping": { "message" = "uuid"}})
      * @ParamConverter("user", class="App\Entity\User", options={"mapping": {"user" = "uuid"}})
      */
-    public function downloadDownload(Message $message, User $user, string $filename, MessageFilesystem $messageFilesystem) {
+    #[Route(path: '/{message}/downloads/{user}/{filename}/download', name: 'download_message_download')]
+    public function downloadDownload(Message $message, User $user, string $filename, MessageFilesystem $messageFilesystem): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
         return $messageFilesystem->getMessageUserFileDownloadResponse($message, $user, $filename);
     }
 
     /**
-     * @Route("/{message}/downloads/{user}/{filename}/remove", name="remove_message_download")
      * @ParamConverter("message", class="App\Entity\Message", options={"mapping": { "message" = "uuid"}})
      * @ParamConverter("user", class="App\Entity\User", options={"mapping": {"user" = "uuid"}})
      */
-    public function removeDownload(Message $message, User $user, string $filename, MessageFilesystem $messageFilesystem, Request $request) {
+    #[Route(path: '/{message}/downloads/{user}/{filename}/remove', name: 'remove_message_download')]
+    public function removeDownload(Message $message, User $user, string $filename, MessageFilesystem $messageFilesystem, Request $request): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -329,11 +307,11 @@ class MessageAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{message}/downloads/upload/{user}", name="upload_message_download")
      * @ParamConverter("message", class="App\Entity\Message", options={"mapping": { "message" = "uuid"}})
      * @ParamConverter("user", class="App\Entity\User", options={"mapping": {"user" = "uuid"}})
      */
-    public function uploadDownload(Message $message, User $user, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository) {
+    #[Route(path: '/{message}/downloads/upload/{user}', name: 'upload_message_download')]
+    public function uploadDownload(Message $message, User $user, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         if($this->isCsrfTokenValid(self::CsrfTokenId, $request->request->get(self::CsrfTokenName)) !== true) {
@@ -361,10 +339,8 @@ class MessageAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/downloads/upload", name="upload_message_downloads")
-     */
-    public function uploadDownloads(Message $message, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository) {
+    #[Route(path: '/{uuid}/downloads/upload', name: 'upload_message_downloads')]
+    public function uploadDownloads(Message $message, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         if($this->isCsrfTokenValid(self::CsrfTokenId, $request->request->get(self::CsrfTokenName)) !== true) {
@@ -415,10 +391,8 @@ class MessageAdminController extends AbstractController {
         );
     }
 
-    /**
-     * @Route("/{uuid}/uploads", name="message_uploads_admin")
-     */
-    public function uploads(Message $message, MessageFileUploadViewHelper $messageFileUploadViewHelper, SectionResolverInterface $sectionResolver) {
+    #[Route(path: '/{uuid}/uploads', name: 'message_uploads_admin')]
+    public function uploads(Message $message, MessageFileUploadViewHelper $messageFileUploadViewHelper, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         $view = $messageFileUploadViewHelper->createView($message);
@@ -447,13 +421,13 @@ class MessageAdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{message}/uploads/download/{file}/{user}", name="download_message_upload")
      * @ParamConverter("message", class="App\Entity\Message", options={"mapping": { "message" = "uuid"}})
      * @ParamConverter("file", class="App\Entity\MessageFile", options={"mapping": {"file" = "uuid"}})
      * @ParamConverter("user", class="App\Entity\User", options={"mapping": {"user" = "uuid"}})
      */
+    #[Route(path: '/{message}/uploads/download/{file}/{user}', name: 'download_message_upload')]
     public function downloadUploads(Message $message, MessageFile $file, User $user,
-                                    MessageFilesystem $filesystem, MessageFileUploadRepositoryInterface $fileUploadRepository) {
+                                    MessageFilesystem $filesystem, MessageFileUploadRepositoryInterface $fileUploadRepository): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         $fileUpload = $fileUploadRepository->findOneByFileAndUser($file, $user);
@@ -464,15 +438,13 @@ class MessageAdminController extends AbstractController {
 
         try {
             return $filesystem->getMessageUploadedUserFileDownloadResponse($fileUpload, $user);
-        } catch (FileNotFoundException $e) {
+        } catch (FileNotFoundException) {
             throw new NotFoundHttpException();
         }
     }
 
-    /**
-     * @Route("/{uuid}/poll", name="poll_result")
-     */
-    public function pollResult(Message $message, PollResultViewHelper $resultViewHelper, SectionResolverInterface $sectionResolver) {
+    #[Route(path: '/{uuid}/poll', name: 'poll_result')]
+    public function pollResult(Message $message, PollResultViewHelper $resultViewHelper, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
         $view = $resultViewHelper->createView($message);
 
@@ -494,20 +466,16 @@ class MessageAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/poll/export", name="export_poll_result")
-     */
-    public function exportPollResult(Message $message, PollResultCsvExporter $exporter) {
+    #[Route(path: '/{uuid}/poll/export', name: 'export_poll_result')]
+    public function exportPollResult(Message $message, PollResultCsvExporter $exporter): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
         return $exporter->getCsvResponse($message);
     }
 
 
-    /**
-     * @Route("/{uuid}/remove/xhr", name="xhr_remove_message")
-     */
-    public function removeXhr(Message $message, RemoveMessageRequest $request) {
+    #[Route(path: '/{uuid}/remove/xhr', name: 'xhr_remove_message')]
+    public function removeXhr(Message $message, RemoveMessageRequest $request): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Remove, $message);
         $this->repository->remove($message);
 

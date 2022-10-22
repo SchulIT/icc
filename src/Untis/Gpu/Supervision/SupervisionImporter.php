@@ -13,17 +13,8 @@ use League\Csv\Reader;
 use Ramsey\Uuid\Uuid;
 
 class SupervisionImporter {
-    private Importer $importer;
-    private TimetableSupervisionsImportStrategy $strategy;
-    private SupervisionReader $gpuReader;
-    private UntisSettings $settings;
-
-    public function __construct(Importer $importer, TimetableSupervisionsImportStrategy $strategy,
-                                SupervisionReader $gpuReader, UntisSettings $settings) {
-        $this->importer = $importer;
-        $this->strategy = $strategy;
-        $this->gpuReader = $gpuReader;
-        $this->settings = $settings;
+    public function __construct(private Importer $importer, private TimetableSupervisionsImportStrategy $strategy, private SupervisionReader $gpuReader, private UntisSettings $settings)
+    {
     }
 
     public function import(Reader $reader, DateTime $start, DateTime $end): ImportResult {
@@ -62,9 +53,6 @@ class SupervisionImporter {
     }
 
     /**
-     * @param int $day
-     * @param DateTime $start
-     * @param DateTime $end
      * @return DateTime[]
      */
     private function getDatesForRange(int $day, DateTime $start, DateTime $end): array {
@@ -84,16 +72,12 @@ class SupervisionImporter {
     }
 
     /**
-     * @param int $day
      * @param int[] $weeks
-     * @param array $map
      * @return DateTime[]
      */
     private function getDatesForSchoolWeeks(int $day, array $weeks, array $map, DateTime $start, DateTime $end): array {
         $dates = [ ];
-        $calendarWeeks = array_map(function($week) use($map) {
-            return $map[$week];
-        }, $weeks);
+        $calendarWeeks = array_map(fn($week) => $map[$week], $weeks);
 
         $current = clone $start;
         while($current->format('w') != $day) {

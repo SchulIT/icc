@@ -26,29 +26,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategyInterface, InitializeStrategyInterface {
 
-    private $examRepository;
-    private $tuitionRepository;
-    private $studentRepository;
-    private $teacherRepository;
-    private $roomRepository;
-    private $importSettings;
-    private $dispatcher;
-    private $sectionResolver;
+    private array $rules = [ ];
 
-    private $rules = [ ];
-
-    public function __construct(ExamRepositoryInterface $examRepository, TuitionRepositoryInterface $tuitionRepository,
-                                StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository,
-                                EventDispatcherInterface $eventDispatcher, RoomRepositoryInterface $roomRepository,
-                                ImportSettings $importSettings, SectionResolverInterface $sectionResolver) {
-        $this->examRepository = $examRepository;
-        $this->tuitionRepository = $tuitionRepository;
-        $this->studentRepository = $studentRepository;
-        $this->teacherRepository = $teacherRepository;
-        $this->roomRepository = $roomRepository;
-        $this->importSettings = $importSettings;
-        $this->dispatcher = $eventDispatcher;
-        $this->sectionResolver = $sectionResolver;
+    public function __construct(private ExamRepositoryInterface $examRepository, private TuitionRepositoryInterface $tuitionRepository, private StudentRepositoryInterface $studentRepository, private TeacherRepositoryInterface $teacherRepository, private EventDispatcherInterface $dispatcher, private RoomRepositoryInterface $roomRepository, private ImportSettings $importSettings, private SectionResolverInterface $sectionResolver)
+    {
     }
 
     /**
@@ -58,9 +39,7 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->examRepository->findAllExternalWithRange($requestData->getStartDate(), $requestData->getEndDate()),
-            function(Exam $exam) {
-                return $exam->getExternalId();
-            }
+            fn(Exam $exam) => $exam->getExternalId()
         );
     }
 
@@ -88,7 +67,6 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
 
     /**
      * @param Exam $entity
-     * @return int
      */
     public function getEntityId($entity): int {
         return $entity->getId();
@@ -132,9 +110,7 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
         }
 
         // Remove all supervisions which are outside the exam lesson bounds
-        $remove = $entity->getSupervisions()->filter(function(ExamSupervision $supervision) use($entity) {
-            return $supervision->getLesson() < $entity->getLessonStart() || $supervision->getLesson() > $entity->getLessonEnd();
-        });
+        $remove = $entity->getSupervisions()->filter(fn(ExamSupervision $supervision) => $supervision->getLesson() < $entity->getLessonStart() || $supervision->getLesson() > $entity->getLessonEnd());
 
         foreach($remove as $item) {
             $entity->removeSupervision($item);
@@ -143,9 +119,7 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
         $supervisions = $data->getSupervisions();
 
         for($lesson = $data->getLessonStart(), $idx = 0; $lesson <= $data->getLessonEnd(); $lesson++, $idx++) {
-            $supervision = $entity->getSupervisions()->filter(function(ExamSupervision $supervision) use ($lesson) {
-                return $supervision->getLesson() === $lesson;
-            })->first();
+            $supervision = $entity->getSupervisions()->filter(fn(ExamSupervision $supervision) => $supervision->getLesson() === $lesson)->first();
 
             if($supervision === false) {
                 $supervision = (new ExamSupervision())
@@ -189,9 +163,7 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
         CollectionUtils::synchronize(
             $entity->getTuitions(),
             $tuitions,
-            function(Tuition $tuition) {
-                return $tuition->getId();
-            }
+            fn(Tuition $tuition) => $tuition->getId()
         );
 
         if(count($data->getStudents()) > 0) {
@@ -203,14 +175,11 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
         CollectionUtils::synchronize(
             $entity->getStudents(),
             $students,
-            function(Student $student) {
-                return $student->getId();
-            }
+            fn(Student $student) => $student->getId()
         );
     }
 
     /**
-     * @param Exam $exam
      * @return Student[]
      */
     private function resolveStudentsFromRules(Exam $exam, Section $section): array {

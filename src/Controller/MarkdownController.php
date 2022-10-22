@@ -11,28 +11,21 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class MarkdownController extends AbstractController {
-    private Markdown $markdown;
-
-    public function __construct(Markdown $markdown, RefererHelper $refererHelper) {
+    public function __construct(private Markdown $markdown, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
-
-        $this->markdown = $markdown;
     }
 
-    /**
-     * @Route("/markdown/preview", name="markdown_preview")
-     */
-    public function preview(Request $request) {
+    #[Route(path: '/markdown/preview', name: 'markdown_preview')]
+    public function preview(Request $request): Response {
         $body = $request->getContent();
 
         $html = $this->markdown->convertToHtml($body);
         return new Response($html);
     }
 
-    /**
-     * @Route("/markdown/upload", name="markdown_upload")
-     */
-    public function upload(Request $request) {
+    #[Route(path: '/markdown/upload', name: 'markdown_upload')]
+    public function upload(): Response
+    {
         throw new NotFoundHttpException();
     }
 }

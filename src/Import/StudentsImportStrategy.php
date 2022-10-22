@@ -18,25 +18,16 @@ use App\Utils\CollectionUtils;
 
 class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrategyInterface {
 
-    private StudentRepositoryInterface $studentRepository;
-    private PrivacyCategoryRepositoryInterface $privacyCategoryRepository;
-    private SectionRepositoryInterface $sectionRepository;
-
     private array $privacyCategoriesCache = [ ];
 
-    public function __construct(StudentRepositoryInterface $studentRepository,
-                                PrivacyCategoryRepositoryInterface $privacyCategoryRepository, SectionRepositoryInterface $sectionRepository) {
-        $this->studentRepository = $studentRepository;
-        $this->privacyCategoryRepository = $privacyCategoryRepository;
-        $this->sectionRepository = $sectionRepository;
+    public function __construct(private StudentRepositoryInterface $studentRepository, private PrivacyCategoryRepositoryInterface $privacyCategoryRepository, private SectionRepositoryInterface $sectionRepository)
+    {
     }
 
     public function initialize($requestData): void {
         $this->privacyCategoriesCache = ArrayUtils::createArrayWithKeys(
             $this->privacyCategoryRepository->findAll(),
-            function(PrivacyCategory $category) {
-                return $category->getExternalId();
-            }
+            fn(PrivacyCategory $category) => $category->getExternalId()
         );
     }
 
@@ -47,9 +38,7 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->studentRepository->findAll(),
-            function(Student $student) {
-                return $student->getExternalId();
-            }
+            fn(Student $student) => $student->getExternalId()
         );
     }
 
@@ -78,7 +67,6 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
 
     /**
      * @param Student $entity
-     * @return int
      */
     public function getEntityId($entity): int {
         return $entity->getId();
@@ -117,9 +105,7 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
         CollectionUtils::synchronize(
             $entity->getApprovedPrivacyCategories(),
             $approvedPrivacyCategories,
-            function(PrivacyCategory $category) {
-                return $category->getId();
-            }
+            fn(PrivacyCategory $category) => $category->getId()
         );
     }
 

@@ -27,31 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TimetableIcsExporter {
 
-    private Sorter $sorter;
-    private TranslatorInterface $translator;
-    private TimetableSettings $timetableSettings;
-    private TimetableTimeHelper $timetableTimeHelper;
-    private IcsHelper $icsHelper;
-
-    private TimetableLessonRepositoryInterface $lessonRepository;
-    private TimetableSupervisionRepositoryInterface $supervisionRepository;
-    private AppointmentRepositoryInterface $appointmentRepository;
-    private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository;
-
-    public function __construct(Sorter $sorter, TranslatorInterface $translator, TimetableSettings $timetableSettings,
-                                TimetableLessonRepositoryInterface $lessonRepository,  TimetableSupervisionRepositoryInterface $supervisionRepository,
-                                AppointmentRepositoryInterface $appointmentRepository, AppointmentCategoryRepositoryInterface $appointmentCategoryRepository,
-                                IcsHelper $icsHelper, TimetableTimeHelper $timetableTimeHelper) {
-        $this->sorter = $sorter;
-        $this->translator = $translator;
-        $this->timetableSettings = $timetableSettings;
-        $this->timetableTimeHelper = $timetableTimeHelper;
-        $this->icsHelper = $icsHelper;
-
-        $this->lessonRepository = $lessonRepository;
-        $this->supervisionRepository = $supervisionRepository;
-        $this->appointmentRepository = $appointmentRepository;
-        $this->appointmentCategoryRepository = $appointmentCategoryRepository;
+    public function __construct(private Sorter $sorter, private TranslatorInterface $translator, private TimetableSettings $timetableSettings, private TimetableLessonRepositoryInterface $lessonRepository, private TimetableSupervisionRepositoryInterface $supervisionRepository, private AppointmentRepositoryInterface $appointmentRepository, private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, private IcsHelper $icsHelper, private TimetableTimeHelper $timetableTimeHelper)
+    {
     }
 
     public function getIcsResponse(User $user): Response {
@@ -68,7 +45,6 @@ class TimetableIcsExporter {
 
 
     /**
-     * @param User $user
      * @param DateTime[] $freeDays
      * @return CalendarEvent[]
      */
@@ -94,9 +70,7 @@ class TimetableIcsExporter {
             $supervisions = $this->supervisionRepository->findAllByTeacher($start, $end, $user->getTeacher());
         }
 
-        $filter = function(TimetableLesson|TimetableSupervision $item) use ($freeDays) {
-            return !in_array($item->getDate(), $freeDays);
-        };
+        $filter = fn(TimetableLesson|TimetableSupervision $item) => !in_array($item->getDate(), $freeDays);
 
         $lessons = array_filter($lessons, $filter);
         $supervisions = array_filter($supervisions, $filter);
@@ -109,9 +83,7 @@ class TimetableIcsExporter {
             $events[] = $this->makeIcsItemForSupervision($supervision);
         }
 
-        return array_filter($events, function(?CalendarEvent $event) {
-            return $event !== null;
-        });
+        return array_filter($events, fn(?CalendarEvent $event) => $event !== null);
     }
 
     private function getSubject(TimetableLesson $lesson): string {
@@ -137,9 +109,7 @@ class TimetableIcsExporter {
     private function getGradesAsString(array $grades): string {
         $this->sorter->sort($grades, GradeNameStrategy::class);
 
-        return implode(', ', array_map(function(Grade $grade) {
-            return $grade->getName();
-        }, $grades));
+        return implode(', ', array_map(fn(Grade $grade) => $grade->getName(), $grades));
     }
 
     private function makeIcsItemForLesson(TimetableLesson $lesson): CalendarEvent {

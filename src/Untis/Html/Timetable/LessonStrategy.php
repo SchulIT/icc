@@ -9,7 +9,6 @@ class LessonStrategy implements GroupingStrategyInterface {
 
     /**
      * @param Lesson $object
-     * @param array $options
      * @return string
      */
     public function computeKey($object, array $options = []) {
@@ -27,8 +26,6 @@ class LessonStrategy implements GroupingStrategyInterface {
     /**
      * @param string $keyA
      * @param string $keyB
-     * @param array $options
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = []): bool {
         return $keyA === $keyB;
@@ -36,7 +33,6 @@ class LessonStrategy implements GroupingStrategyInterface {
 
     /**
      * @param string $key
-     * @param array $options
      * @return LessonGroup
      */
     public function createGroup($key, array $options = []): GroupInterface {

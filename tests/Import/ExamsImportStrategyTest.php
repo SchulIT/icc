@@ -118,6 +118,8 @@ class ExamsImportStrategyTest extends WebTestCase {
 
     private function getDefaultImportData(): ExamsData {
         return (new ExamsData())
+            ->setStartDate(new DateTime('2020-12-01'))
+            ->setEndDate(new DateTime('2020-12-31'))
             ->setExams([
                 (new ExamData())
                     ->setId('TEST')
@@ -187,6 +189,8 @@ class ExamsImportStrategyTest extends WebTestCase {
         $importer->import($this->getDefaultImportData(), $strategy);
 
         $updateData = (new ExamsData())
+            ->setStartDate(new DateTime('2020-12-01'))
+            ->setEndDate(new DateTime('2020-12-31'))
             ->setExams([
                 (new ExamData())
                     ->setId('TEST')

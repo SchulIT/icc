@@ -8,10 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractController extends SymfonyAbstractController {
 
-    private $redirectHelper;
-
-    public function __construct(RefererHelper $redirectHelper) {
-        $this->redirectHelper = $redirectHelper;
+    public function __construct(private RefererHelper $redirectHelper)
+    {
     }
 
     protected function redirectToReferer(array $mapping, string $route, array $parameters =  [ ], array $fallbackParameters = [ ]): Response {

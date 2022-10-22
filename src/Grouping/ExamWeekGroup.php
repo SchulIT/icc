@@ -6,11 +6,10 @@ use App\Date\WeekOfYear;
 
 class ExamWeekGroup implements GroupInterface, SortableGroupInterface {
 
-    private $weekOfYear;
     private $exams;
 
-    public function __construct(?WeekOfYear $weekOfYear) {
-        $this->weekOfYear = $weekOfYear;
+    public function __construct(private ?WeekOfYear $weekOfYear)
+    {
     }
 
     public function getWeekOfYear() {

@@ -6,16 +6,13 @@ use App\Grouping\RoomReservationWeekGroup;
 
 class RoomReservationWeekGroupStrategy implements SortingStrategyInterface {
 
-    private $weekStrategy;
-
-    public function __construct(WeekOfYearStrategy $weekStrategy) {
-        $this->weekStrategy = $weekStrategy;
+    public function __construct(private WeekOfYearStrategy $weekStrategy)
+    {
     }
 
     /**
      * @param RoomReservationWeekGroup $objectA
      * @param RoomReservationWeekGroup $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         return $this->weekStrategy->compare($objectA->getWeek(), $objectB->getWeek());

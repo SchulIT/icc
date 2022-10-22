@@ -20,16 +20,8 @@ use DateTime;
 
 class DisplayHelper {
 
-    private $substitutionRepository;
-    private $examRepository;
-    private $grouper;
-    private $sorter;
-
-    public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository, Grouper $grouper, Sorter $sorter) {
-        $this->substitutionRepository = $substitutionRepository;
-        $this->examRepository = $examRepository;
-        $this->grouper = $grouper;
-        $this->sorter = $sorter;
+    public function __construct(private SubstitutionRepositoryInterface $substitutionRepository, private ExamRepositoryInterface $examRepository, private Grouper $grouper, private Sorter $sorter)
+    {
     }
 
     public function getStudentsItems(DateTime $dateTime) {

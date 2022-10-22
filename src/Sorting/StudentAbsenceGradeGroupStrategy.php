@@ -6,16 +6,13 @@ use App\Grouping\StudentAbsenceGradeGroup;
 
 class StudentAbsenceGradeGroupStrategy implements SortingStrategyInterface {
 
-    private GradeNameStrategy $gradeStrategy;
-
-    public function __construct(GradeNameStrategy $gradeNameStrategy) {
-        $this->gradeStrategy = $gradeNameStrategy;
+    public function __construct(private GradeNameStrategy $gradeStrategy)
+    {
     }
 
     /**
      * @param StudentAbsenceGradeGroup $objectA
      * @param StudentAbsenceGradeGroup $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         return $this->gradeStrategy->compare($objectA->getGrade(), $objectB->getGrade());

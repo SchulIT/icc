@@ -12,10 +12,8 @@ use App\Utils\ArrayUtils;
 
 class PollVoteHelper {
 
-    private $repository;
-
-    public function __construct(MessagePollVoteRepositoryInterface $repository) {
-        $this->repository = $repository;
+    public function __construct(private MessagePollVoteRepositoryInterface $repository)
+    {
     }
 
     public function getPollVote(Message $message, User $user): ?MessagePollVote {
@@ -45,8 +43,6 @@ class PollVoteHelper {
     }
 
     /**
-     * @param Message $message
-     * @param User $user
      * @param MessagePollChoice[] $choices Choices in the correct order
      */
     public function persistVote(Message $message, User $user, array $choices) {

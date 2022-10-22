@@ -18,38 +18,16 @@ use App\Utils\ArrayUtils;
 use DateTime;
 
 class ResourceAvailabilityHelper {
-    private ResourceReservationRepositoryInterface $reservationRepository;
-    private TimetableLessonRepositoryInterface $timetableRepository;
-    private TimetableSettings $timetableSettings;
-    private SubstitutionRepositoryInterface $substitutionRepository;
-    private ExamRepositoryInterface $examRepository;
-    private DashboardSettings $dashboardSettings;
-
-    public function __construct(ResourceReservationRepositoryInterface $reservationRepository, TimetableLessonRepositoryInterface $timetableRepository,
-                                TimetableSettings $timetableSettings, SubstitutionRepositoryInterface $substitutionRepository,
-                                ExamRepositoryInterface $examRepository, DashboardSettings $dashboardSettings) {
-        $this->reservationRepository = $reservationRepository;
-        $this->timetableRepository = $timetableRepository;
-        $this->timetableSettings = $timetableSettings;
-        $this->substitutionRepository = $substitutionRepository;
-        $this->examRepository = $examRepository;
-        $this->dashboardSettings = $dashboardSettings;
+    public function __construct(private ResourceReservationRepositoryInterface $reservationRepository, private TimetableLessonRepositoryInterface $timetableRepository, private TimetableSettings $timetableSettings, private SubstitutionRepositoryInterface $substitutionRepository, private ExamRepositoryInterface $examRepository, private DashboardSettings $dashboardSettings)
+    {
     }
 
-    /**
-     * @param Substitution $substitution
-     * @param int $lessonNumber
-     * @return bool
-     */
     private function isSubstitutionInLesson(Substitution $substitution, int $lessonNumber): bool {
         return $substitution->startsBefore() === false && $substitution->getLessonStart() <= $lessonNumber && $substitution->getLessonEnd() >= $lessonNumber;
     }
 
     /**
      * @param Substitution[] $substitutions
-     * @param Room $room
-     * @param int $lessonNumber
-     * @return Substitution|null
      */
     private function getConflictingSubstitution(array $substitutions, Room $room, int $lessonNumber): ?Substitution {
         foreach($substitutions as $substitution) {
@@ -67,9 +45,6 @@ class ResourceAvailabilityHelper {
 
     /**
      * @param Substitution[] $substitutions
-     * @param Room $room
-     * @param int $lessonNumber
-     * @return bool
      */
     private function isTimetableLessonCancelled(array $substitutions, Room $room, int $lessonNumber): bool {
         $isCancelled = null;
@@ -80,12 +55,8 @@ class ResourceAvailabilityHelper {
             }
 
             // Case 1: there is a substitution away from the room (potentially making the room available)
-            $rooms = $substitution->getRooms()->map(function(Room $room) {
-                return $room->getId();
-            });
-            $replacementRooms = $substitution->getReplacementRooms()->map(function(Room $room) {
-                return $room->getId();
-            });
+            $rooms = $substitution->getRooms()->map(fn(Room $room) => $room->getId());
+            $replacementRooms = $substitution->getReplacementRooms()->map(fn(Room $room) => $room->getId());
 
             if($rooms->contains($room->getId())
                 && $replacementRooms->contains($room->getId()) === false
@@ -128,15 +99,11 @@ class ResourceAvailabilityHelper {
     }
 
     /**
-     * @param DateTime $date
      * @param ResourceEntity[] $resources
-     * @return ResourceAvailabilityOverview|null
      */
     public function getAvailabilities(DateTime $date, array $resources): ?ResourceAvailabilityOverview {
         /** @var Room[] $rooms */
-        $rooms = array_filter($resources, function(ResourceEntity $resource) {
-            return $resource instanceof Room;
-        });
+        $rooms = array_filter($resources, fn(ResourceEntity $resource) => $resource instanceof Room);
 
         $lessons = $this->timetableRepository->findAllByRange($date, $date);
         $reservations = $this->reservationRepository->findAllByDate($date);
@@ -146,25 +113,15 @@ class ResourceAvailabilityHelper {
         $overview = new ResourceAvailabilityOverview($this->timetableSettings->getMaxLessons());
 
         foreach($resources as $resource) {
-            $roomLessons = array_filter($lessons, function(TimetableLesson $lesson) use($resource) {
-                return $lesson->getRoom() !== null && $lesson->getRoom()->getId() === $resource->getId();
-            });
-            $roomReservations = array_filter($reservations, function(ResourceReservation $reservation) use ($resource) {
-                return $reservation->getResource()->getId() === $resource->getId();
-            });
-            $roomSubstitutions = array_filter($substitutions, function(Substitution $substitution) use ($resource) {
-                return ($substitution->getRooms()->contains($resource)
-                    || ($substitution->getReplacementRooms()->contains($resource)));
-            });
+            $roomLessons = array_filter($lessons, fn(TimetableLesson $lesson) => $lesson->getRoom() !== null && $lesson->getRoom()->getId() === $resource->getId());
+            $roomReservations = array_filter($reservations, fn(ResourceReservation $reservation) => $reservation->getResource()->getId() === $resource->getId());
+            $roomSubstitutions = array_filter($substitutions, fn(Substitution $substitution) => $substitution->getRooms()->contains($resource)
+                || ($substitution->getReplacementRooms()->contains($resource)));
 
             for($lessonNumber = 1; $lessonNumber <= $this->timetableSettings->getMaxLessons(); $lessonNumber++) {
-                $lesson = ArrayUtils::first($roomLessons, function(TimetableLesson $lesson) use ($lessonNumber) {
-                    return $lesson->getLessonStart() <= $lessonNumber && $lessonNumber <= $lesson->getLessonEnd();
-                });
-                $reservation = ArrayUtils::first($roomReservations, function (ResourceReservation $reservation) use ($lessonNumber) {
-                    return $reservation->getLessonStart() <= $lessonNumber
-                        && $reservation->getLessonEnd() >= $lessonNumber;
-                });
+                $lesson = ArrayUtils::first($roomLessons, fn(TimetableLesson $lesson) => $lesson->getLessonStart() <= $lessonNumber && $lessonNumber <= $lesson->getLessonEnd());
+                $reservation = ArrayUtils::first($roomReservations, fn(ResourceReservation $reservation) => $reservation->getLessonStart() <= $lessonNumber
+                    && $reservation->getLessonEnd() >= $lessonNumber);
 
                 $substitution = null;
                 $collidingExams = [ ];
@@ -172,10 +129,8 @@ class ResourceAvailabilityHelper {
                 if($resource instanceof Room) {
                     $substitution = $this->getConflictingSubstitution($roomSubstitutions, $resource, $lessonNumber);
 
-                    $collidingExams = array_filter($exams, function (Exam $exam) use ($lessonNumber, $resource) {
-                        return $exam->getRoom() != null && $exam->getRoom()->getId() === $resource->getId()
-                            && $exam->getLessonStart() <= $lessonNumber && $lessonNumber <= $exam->getLessonEnd();
-                    });
+                    $collidingExams = array_filter($exams, fn(Exam $exam) => $exam->getRoom() != null && $exam->getRoom()->getId() === $resource->getId()
+                        && $exam->getLessonStart() <= $lessonNumber && $lessonNumber <= $exam->getLessonEnd());
                 }
 
                 $availability = new ResourceAvailability($reservation, $lesson, $substitution, $collidingExams);

@@ -18,22 +18,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class StudyGroupType extends SortableEntityType {
 
-    private StudyGroupStringConverter $studyGroupConverter;
-    private StringStrategy $stringStrategy;
-    private StudyGroupStrategy $studyGroupStrategy;
-    private EnumStringConverter $enumStringConverter;
-    private SectionResolverInterface $sectionResolver;
-
-    public function __construct(ManagerRegistry $registry, StudyGroupStringConverter $studyGroupConverter,
-                                StringStrategy $stringStrategy, StudyGroupStrategy $studyGroupStrategy,
-                                EnumStringConverter $enumStringConverter, SectionResolverInterface $sectionResolver) {
+    public function __construct(ManagerRegistry $registry, private StudyGroupStringConverter $studyGroupConverter,
+                                private StringStrategy $stringStrategy, private StudyGroupStrategy $studyGroupStrategy,
+                                private EnumStringConverter $enumStringConverter, private SectionResolverInterface $sectionResolver) {
         parent::__construct($registry);
-
-        $this->stringStrategy = $stringStrategy;
-        $this->studyGroupConverter = $studyGroupConverter;
-        $this->studyGroupStrategy = $studyGroupStrategy;
-        $this->enumStringConverter = $enumStringConverter;
-        $this->sectionResolver = $sectionResolver;
     }
 
     public function configureOptions(OptionsResolver $resolver) {
@@ -57,12 +45,8 @@ class StudyGroupType extends SortableEntityType {
 
                 return $qb;
             })
-            ->setDefault('group_by', function(StudyGroup $group) {
-                return $this->enumStringConverter->convert($group->getType());
-            })
-            ->setDefault('choice_label', function(StudyGroup $group) {
-                return $this->studyGroupConverter->convert($group, false, true);
-            })
+            ->setDefault('group_by', fn(StudyGroup $group) => $this->enumStringConverter->convert($group->getType()))
+            ->setDefault('choice_label', fn(StudyGroup $group) => $this->studyGroupConverter->convert($group, false, true))
             ->setDefault('sort_by', $this->stringStrategy)
             ->setDefault('sort_items_by', $this->studyGroupStrategy);
 

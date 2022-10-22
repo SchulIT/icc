@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Subject;
 use App\Form\SubjectType;
 use App\Repository\SubjectRepositoryInterface;
@@ -13,25 +14,15 @@ use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/admin/subjects")
- */
+#[Route(path: '/admin/subjects')]
 class SubjectAdminController extends AbstractController {
 
-    private Sorter $sorter;
-    private SubjectRepositoryInterface $repository;
-
-    public function __construct(Sorter $sorter, SubjectRepositoryInterface $subjectRepository, RefererHelper $redirectHelper) {
+    public function __construct(private Sorter $sorter, private SubjectRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
-
-        $this->sorter = $sorter;
-        $this->repository = $subjectRepository;
     }
 
-    /**
-     * @Route("", name="admin_subjects")
-     */
-    public function index() {
+    #[Route(path: '', name: 'admin_subjects')]
+    public function index(): Response {
         $subjects = $this->repository->findAll();
         $this->sorter->sort($subjects, SubjectAbbreviationStrategy::class);
 
@@ -40,10 +31,8 @@ class SubjectAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add", name="new_subject")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'new_subject')]
+    public function add(Request $request): Response {
         $subject = new Subject();
         $form = $this->createForm(SubjectType::class, $subject);
         $form->handleRequest($request);
@@ -59,10 +48,8 @@ class SubjectAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_subject")
-     */
-    public function edit(Subject $subject, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_subject')]
+    public function edit(Subject $subject, Request $request): Response {
         $form = $this->createForm(SubjectType::class, $subject);
         $form->handleRequest($request);
 
@@ -78,10 +65,8 @@ class SubjectAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_subject")
-     */
-    public function remove(Subject $subject, Request $request, TuitionRepositoryInterface $tuitionRepository) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_subject')]
+    public function remove(Subject $subject, Request $request, TuitionRepositoryInterface $tuitionRepository): Response {
         $tuitions = $tuitionRepository->findAllBySubjects([$subject]);
 
         if(count($tuitions) > 0) {

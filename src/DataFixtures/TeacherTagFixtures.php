@@ -9,10 +9,8 @@ use Faker\Generator;
 
 class TeacherTagFixtures extends Fixture {
 
-    private $generator;
-
-    public function __construct(Generator $generator) {
-        $this->generator = $generator;
+    public function __construct(private Generator $generator)
+    {
     }
 
     /**

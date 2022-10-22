@@ -7,10 +7,8 @@ use App\Entity\Teacher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TeacherStringConverter {
-    private TranslatorInterface $translator;
-
-    public function __construct(TranslatorInterface $translator) {
-        $this->translator = $translator;
+    public function __construct(private TranslatorInterface $translator)
+    {
     }
 
     public function convert(?Teacher $teacher, bool $includeAcronym = false): ?string {

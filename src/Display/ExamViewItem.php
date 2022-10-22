@@ -6,8 +6,7 @@ use App\Entity\Exam;
 
 class ExamViewItem extends AbstractViewItem {
 
-    /** @var Exam */
-    private $exam;
+    private Exam $exam;
 
     public function __construct(Exam $exam) {
         parent::__construct($exam->getLessonStart(), false);
@@ -15,9 +14,6 @@ class ExamViewItem extends AbstractViewItem {
         $this->exam = $exam;
     }
 
-    /**
-     * @return Exam
-     */
     public function getExam(): Exam {
         return $this->exam;
     }

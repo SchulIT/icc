@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Substitution;
@@ -36,13 +37,11 @@ class SubstitutionController extends AbstractControllerWithMessages {
 
     private const SectionKey = 'substitutions';
 
-    /**
-     * @Route("/substitutions", name="substitutions")
-     */
+    #[Route(path: '/substitutions', name: 'substitutions')]
     public function index(SubstitutionRepositoryInterface $substitutionRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                           StudentFilter $studentFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, GroupByParameter $groupByParameter, ViewParameter $viewParameter,
                           Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, DashboardSettings $dashboardSettings, SubstitutionSettings $substitutionSettings,
-                          ImportDateTypeRepositoryInterface $importDateTypeRepository, SectionRepositoryInterface $sectionRepository, Request $request) {
+                          ImportDateTypeRepositoryInterface $importDateTypeRepository, SectionRepositoryInterface $sectionRepository, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
         $days = $this->getListOfNextDays($dateHelper, $substitutionSettings->getNumberOfAheadDaysForSubstitutions(), $substitutionSettings->skipWeekends(), $this->getTodayOrNextDay($dateHelper, $dashboardSettings->getNextDayThresholdTime()));
@@ -64,29 +63,27 @@ class SubstitutionController extends AbstractControllerWithMessages {
         if($teacherFilterView->getCurrentTeacher() !== null) {
             $substitutions = $substitutionRepository->findAllForTeacher($teacherFilterView->getCurrentTeacher(), $selectedDate);
 
-            for($idx = 0; $idx < count($days); $idx++) {
+            for($idx = 0; $idx < (is_countable($days) ? count($days) : 0); $idx++) {
                 $counts[$idx] = $substitutionRepository->countAllForTeacher($teacherFilterView->getCurrentTeacher(), $days[$idx]);
             }
         } else if($gradeFilterView->getCurrentGrade() !== null) {
             $substitutions = $substitutionRepository->findAllForGrade($gradeFilterView->getCurrentGrade(), $selectedDate);
 
-            for($idx = 0; $idx < count($days); $idx++) {
+            for($idx = 0; $idx < (is_countable($days) ? count($days) : 0); $idx++) {
                 $counts[$idx] = $substitutionRepository->countAllForGrade($gradeFilterView->getCurrentGrade(), $days[$idx]);
             }
         } else if($studentFilterView->getCurrentStudent() !== null) {
-            $studyGroups = array_map(function(StudyGroupMembership $membership) {
-                return $membership->getStudyGroup();
-            }, $studentFilterView->getCurrentStudent()->getStudyGroupMemberships()->toArray());
+            $studyGroups = array_map(fn(StudyGroupMembership $membership) => $membership->getStudyGroup(), $studentFilterView->getCurrentStudent()->getStudyGroupMemberships()->toArray());
 
             $substitutions = $substitutionRepository->findAllForStudyGroups($studyGroups, $selectedDate);
 
-            for($idx = 0; $idx < count($days); $idx++) {
+            for($idx = 0; $idx < (is_countable($days) ? count($days) : 0); $idx++) {
                 $counts[$idx] = $substitutionRepository->countAllForStudyGroups($studyGroups, $days[$idx]);
             }
         } else {
             $substitutions = $substitutionRepository->findAllByDate($selectedDate);
 
-            for($idx = 0; $idx < count($days); $idx++) {
+            for($idx = 0; $idx < (is_countable($days) ? count($days) : 0); $idx++) {
                 $counts[$idx] = $substitutionRepository->countAllByDate($days[$idx]);
             }
         }

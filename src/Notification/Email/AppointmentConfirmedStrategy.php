@@ -8,12 +8,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AppointmentConfirmedStrategy implements EmailStrategyInterface {
 
-    private $translator;
-    private $converter;
-
-    public function __construct(TranslatorInterface $translator, UserStringConverter $converter) {
-        $this->translator = $translator;
-        $this->converter = $converter;
+    public function __construct(private TranslatorInterface $translator, private UserStringConverter $converter)
+    {
     }
 
     /**
@@ -32,7 +28,6 @@ class AppointmentConfirmedStrategy implements EmailStrategyInterface {
 
     /**
      * @param AppointmentConfirmedEvent $objective
-     * @return string|null
      */
     public function getReplyTo($objective): ?string {
         return $objective->getConfirmedBy()->getEmail();
@@ -40,7 +35,6 @@ class AppointmentConfirmedStrategy implements EmailStrategyInterface {
 
     /**
      * @param AppointmentConfirmedEvent $objective
-     * @return array
      */
     public function getRecipients($objective): array {
         return [ $objective->getAppointment()->getCreatedBy() ];
@@ -55,7 +49,6 @@ class AppointmentConfirmedStrategy implements EmailStrategyInterface {
 
     /**
      * @param AppointmentConfirmedEvent $objective
-     * @return string
      */
     public function getSender($objective): string {
         return $this->converter->convert($objective->getConfirmedBy(), false);

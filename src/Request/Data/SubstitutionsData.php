@@ -13,11 +13,11 @@ class SubstitutionsData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\SubstitutionData>")
-     * @Assert\Valid()
      * @UniqueId(propertyPath="id")
      * @var SubstitutionData[]
      */
-    private $substitutions = [ ];
+    #[Assert\Valid]
+    private array $substitutions = [ ];
 
     /**
      * @return SubstitutionData[]
@@ -28,7 +28,6 @@ class SubstitutionsData {
 
     /**
      * @param SubstitutionData[] $substitutions
-     * @return SubstitutionsData
      */
     public function setSubstitutions($substitutions): SubstitutionsData {
         $this->substitutions = $substitutions;

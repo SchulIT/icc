@@ -17,34 +17,26 @@ class Message {
     /**
      * @Serializer\SerializedName("title")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $title;
+    private ?string $title = null;
 
     /**
      * @Serializer\SerializedName("title")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $content;
+    private ?string $content = null;
 
     /**
      * @Serializer\SerializedName("start_date")
      * @Serializer\Type("DateTime")
-     *
-     * @var DateTime
      */
-    private $startDate;
+    private ?\DateTime $startDate = null;
 
     /**
      * @Serializer\SerializedName("expire_date")
      * @Serializer\Type("DateTime")
-     *
-     * @var DateTime
      */
-    private $expireDate;
+    private ?\DateTime $expireDate = null;
 
     /**
      * @Serializer\SerializedName("study_groups")
@@ -52,7 +44,7 @@ class Message {
      *
      * @var StudyGroup[]
      */
-    private $studyGroups;
+    private ?array $studyGroups = null;
 
     /**
      * @Serializer\SerializedName("attachments")
@@ -60,7 +52,7 @@ class Message {
      *
      * @var MessageAttachment[]
      */
-    private $attachments;
+    private ?array $attachments = null;
 
     /**
      * @Serializer\SerializedName("visibilities")
@@ -68,47 +60,37 @@ class Message {
      *
      * @var string[]
      */
-    private $visibilities;
+    private ?array $visibilities = null;
 
     /**
      * @Serializer\SerializedName("scope")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $scope;
+    private ?string $scope = null;
 
     /**
      * @Serializer\SerializedName("created_by")
      * @Serializer\Type("App\Response\Api\V1\User")
-     *
-     * @var User
      */
-    private $createdBy;
+    private ?\App\Response\Api\V1\User $createdBy = null;
 
     /**
      * @Serializer\SerializedName("created_at")
      * @Serializer\Type("DateTime")
-     *
-     * @var DateTime
      */
-    private $createdAt;
+    private ?\DateTime $createdAt = null;
 
     /**
      * @Serializer\SerializedName("updated_at")
      * @Serializer\Type("DateTime")
-     *
-     * @var DateTime|null
      */
-    private $updatedAt;
+    private ?\DateTime $updatedAt = null;
 
     /**
      * @Serializer\SerializedName("downloads_enabled")
      * @Serializer\Type("bool")
-     *
-     * @var bool
      */
-    private $isDownloadsEnabled;
+    private ?bool $isDownloadsEnabled = null;
 
     /**
      * @Serializer\SerializedName("download_user_types")
@@ -116,7 +98,7 @@ class Message {
      *
      * @var string[]
      */
-    private $downloadEnabledUserTypes;
+    private ?array $downloadEnabledUserTypes = null;
 
     /**
      * @Serializer\SerializedName("download_study_groups")
@@ -124,15 +106,13 @@ class Message {
      *
      * @var StudyGroup[]
      */
-    private $downloadEnabledStudyGroups;
+    private ?array $downloadEnabledStudyGroups = null;
 
     /**
      * @Serializer\SerializedName("uploads_enabled")
      * @Serializer\Type("bool")
-     *
-     * @var bool
      */
-    private $isUploadEnabled;
+    private ?bool $isUploadEnabled = null;
 
     /**
      * @Serializer\SerializedName("upload_user_types")
@@ -140,7 +120,7 @@ class Message {
      *
      * @var string[]
      */
-    private $uploadEnabledUserTypes;
+    private ?array $uploadEnabledUserTypes = null;
 
     /**
      * @Serializer\SerializedName("upload_study_groups")
@@ -148,23 +128,19 @@ class Message {
      *
      * @var StudyGroup[]
      */
-    private $uploadEnabledStudyGroups;
+    private ?array $uploadEnabledStudyGroups = null;
 
     /**
      * @Serializer\SerializedName("upload_description")
      * @Serializer\Type("string")
-     *
-     * @var string|null
      */
-    private $uploadDescription;
+    private ?string $uploadDescription = null;
 
     /**
      * @Serializer\SerializedName("must_confirm")
      * @Serializer\Type("bool")
-     *
-     * @var bool
      */
-    private $mustConfirm;
+    private ?bool $mustConfirm = null;
 
     /**
      * @Serializer\SerializedName("confirmation_user_types")
@@ -172,7 +148,7 @@ class Message {
      *
      * @var string[]
      */
-    private $confirmationRequiredUserTypes;
+    private ?array $confirmationRequiredUserTypes = null;
 
     /**
      * @Serializer\SerializedName("confirmation_study_groups")
@@ -180,75 +156,45 @@ class Message {
      *
      * @var StudyGroup[]
      */
-    private $confirmationRequiredStudyGroups;
+    private ?array $confirmationRequiredStudyGroups = null;
 
     /**
      * @Serializer\SerializedName("priority")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $priority;
+    private ?string $priority = null;
 
-    /**
-     * @return string
-     */
     public function getTitle(): string {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     * @return Message
-     */
     public function setTitle(string $title): Message {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getContent(): string {
         return $this->content;
     }
 
-    /**
-     * @param string $content
-     * @return Message
-     */
     public function setContent(string $content): Message {
         $this->content = $content;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getStartDate(): DateTime {
         return $this->startDate;
     }
 
-    /**
-     * @param DateTime $startDate
-     * @return Message
-     */
     public function setStartDate(DateTime $startDate): Message {
         $this->startDate = $startDate;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getExpireDate(): DateTime {
         return $this->expireDate;
     }
 
-    /**
-     * @param DateTime $expireDate
-     * @return Message
-     */
     public function setExpireDate(DateTime $expireDate): Message {
         $this->expireDate = $expireDate;
         return $this;
@@ -263,7 +209,6 @@ class Message {
 
     /**
      * @param StudyGroup[] $studyGroups
-     * @return Message
      */
     public function setStudyGroups(array $studyGroups): Message {
         $this->studyGroups = $studyGroups;
@@ -279,7 +224,6 @@ class Message {
 
     /**
      * @param MessageAttachment[] $attachments
-     * @return Message
      */
     public function setAttachments(array $attachments): Message {
         $this->attachments = $attachments;
@@ -295,88 +239,52 @@ class Message {
 
     /**
      * @param string[] $visibilities
-     * @return Message
      */
     public function setVisibilities(array $visibilities): Message {
         $this->visibilities = $visibilities;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getScope(): string {
         return $this->scope;
     }
 
-    /**
-     * @param string $scope
-     * @return Message
-     */
     public function setScope(string $scope): Message {
         $this->scope = $scope;
         return $this;
     }
 
-    /**
-     * @return User
-     */
     public function getCreatedBy(): User {
         return $this->createdBy;
     }
 
-    /**
-     * @param User $createdBy
-     * @return Message
-     */
     public function setCreatedBy(User $createdBy): Message {
         $this->createdBy = $createdBy;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getCreatedAt(): DateTime {
         return $this->createdAt;
     }
 
-    /**
-     * @param DateTime $createdAt
-     * @return Message
-     */
     public function setCreatedAt(DateTime $createdAt): Message {
         $this->createdAt = $createdAt;
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getUpdatedAt(): ?DateTime {
         return $this->updatedAt;
     }
 
-    /**
-     * @param DateTime|null $updatedAt
-     * @return Message
-     */
     public function setUpdatedAt(?DateTime $updatedAt): Message {
         $this->updatedAt = $updatedAt;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isDownloadsEnabled(): bool {
         return $this->isDownloadsEnabled;
     }
 
-    /**
-     * @param bool $isDownloadsEnabled
-     * @return Message
-     */
     public function setIsDownloadsEnabled(bool $isDownloadsEnabled): Message {
         $this->isDownloadsEnabled = $isDownloadsEnabled;
         return $this;
@@ -391,7 +299,6 @@ class Message {
 
     /**
      * @param string[] $downloadEnabledUserTypes
-     * @return Message
      */
     public function setDownloadEnabledUserTypes(array $downloadEnabledUserTypes): Message {
         $this->downloadEnabledUserTypes = $downloadEnabledUserTypes;
@@ -407,24 +314,16 @@ class Message {
 
     /**
      * @param StudyGroup[] $downloadEnabledStudyGroups
-     * @return Message
      */
     public function setDownloadEnabledStudyGroups(array $downloadEnabledStudyGroups): Message {
         $this->downloadEnabledStudyGroups = $downloadEnabledStudyGroups;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isUploadEnabled(): bool {
         return $this->isUploadEnabled;
     }
 
-    /**
-     * @param bool $isUploadEnabled
-     * @return Message
-     */
     public function setIsUploadEnabled(bool $isUploadEnabled): Message {
         $this->isUploadEnabled = $isUploadEnabled;
         return $this;
@@ -439,7 +338,6 @@ class Message {
 
     /**
      * @param string[] $uploadEnabledUserTypes
-     * @return Message
      */
     public function setUploadEnabledUserTypes(array $uploadEnabledUserTypes): Message {
         $this->uploadEnabledUserTypes = $uploadEnabledUserTypes;
@@ -455,40 +353,25 @@ class Message {
 
     /**
      * @param StudyGroup[] $uploadEnabledStudyGroups
-     * @return Message
      */
     public function setUploadEnabledStudyGroups(array $uploadEnabledStudyGroups): Message {
         $this->uploadEnabledStudyGroups = $uploadEnabledStudyGroups;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getUploadDescription(): ?string {
         return $this->uploadDescription;
     }
 
-    /**
-     * @param string|null $uploadDescription
-     * @return Message
-     */
     public function setUploadDescription(?string $uploadDescription): Message {
         $this->uploadDescription = $uploadDescription;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isMustConfirm(): bool {
         return $this->mustConfirm;
     }
 
-    /**
-     * @param bool $mustConfirm
-     * @return Message
-     */
     public function setMustConfirm(bool $mustConfirm): Message {
         $this->mustConfirm = $mustConfirm;
         return $this;
@@ -503,7 +386,6 @@ class Message {
 
     /**
      * @param string[] $confirmationRequiredUserTypes
-     * @return Message
      */
     public function setConfirmationRequiredUserTypes(array $confirmationRequiredUserTypes): Message {
         $this->confirmationRequiredUserTypes = $confirmationRequiredUserTypes;
@@ -519,24 +401,16 @@ class Message {
 
     /**
      * @param StudyGroup[] $confirmationRequiredStudyGroups
-     * @return Message
      */
     public function setConfirmationRequiredStudyGroups(array $confirmationRequiredStudyGroups): Message {
         $this->confirmationRequiredStudyGroups = $confirmationRequiredStudyGroups;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPriority(): string {
         return $this->priority;
     }
 
-    /**
-     * @param string $priority
-     * @return Message
-     */
     public function setPriority(string $priority): Message {
         $this->priority = $priority;
         return $this;
@@ -549,41 +423,23 @@ class Message {
             ->setContent($messageEntity->getContent())
             ->setStartDate($messageEntity->getStartDate())
             ->setExpireDate($messageEntity->getExpireDate())
-            ->setStudyGroups(array_map(function(StudyGroupEntity $studyGroupEntity) {
-                return StudyGroup::fromEntity($studyGroupEntity);
-            }, $messageEntity->getStudyGroups()->toArray()))
-            ->setAttachments(array_map(function(MessageAttachmentEntity $attachmentEntity) {
-                return MessageAttachment::fromEntity($attachmentEntity);
-            }, $messageEntity->getAttachments()->toArray()))
-            ->setVisibilities(array_map(function(UserTypeEntity $userTypeEntity) {
-                return $userTypeEntity->getUserType()->getValue();
-            }, $messageEntity->getVisibilities()->toArray()))
+            ->setStudyGroups(array_map(fn(StudyGroupEntity $studyGroupEntity) => StudyGroup::fromEntity($studyGroupEntity), $messageEntity->getStudyGroups()->toArray()))
+            ->setAttachments(array_map(fn(MessageAttachmentEntity $attachmentEntity) => MessageAttachment::fromEntity($attachmentEntity), $messageEntity->getAttachments()->toArray()))
+            ->setVisibilities(array_map(fn(UserTypeEntity $userTypeEntity) => $userTypeEntity->getUserType()->getValue(), $messageEntity->getVisibilities()->toArray()))
             ->setScope($messageEntity->getScope()->getValue())
             ->setCreatedBy(User::fromEntity($messageEntity->getCreatedBy()))
             ->setCreatedAt($messageEntity->getCreatedAt())
             ->setUpdatedAt($messageEntity->getUpdatedAt())
             ->setIsDownloadsEnabled($messageEntity->isDownloadsEnabled())
-            ->setDownloadEnabledUserTypes(array_map(function(UserTypeEntity $userTypeEntity) {
-                return $userTypeEntity->getUserType()->getValue();
-            }, $messageEntity->getDownloadEnabledUserTypes()->toArray()))
-            ->setDownloadEnabledStudyGroups(array_map(function(StudyGroupEntity $studyGroupEntity) {
-                return StudyGroup::fromEntity($studyGroupEntity);
-            }, $messageEntity->getDownloadEnabledStudyGroups()->toArray()))
+            ->setDownloadEnabledUserTypes(array_map(fn(UserTypeEntity $userTypeEntity) => $userTypeEntity->getUserType()->getValue(), $messageEntity->getDownloadEnabledUserTypes()->toArray()))
+            ->setDownloadEnabledStudyGroups(array_map(fn(StudyGroupEntity $studyGroupEntity) => StudyGroup::fromEntity($studyGroupEntity), $messageEntity->getDownloadEnabledStudyGroups()->toArray()))
             ->setIsUploadEnabled($messageEntity->isUploadsEnabled())
-            ->setUploadEnabledUserTypes(array_map(function(UserTypeEntity $userTypeEntity) {
-                return $userTypeEntity->getUserType()->getValue();
-            }, $messageEntity->getUploadEnabledUserTypes()->toArray()))
-            ->setUploadEnabledStudyGroups(array_map(function(StudyGroupEntity $studyGroupEntity) {
-                return StudyGroup::fromEntity($studyGroupEntity);
-            }, $messageEntity->getUploadEnabledStudyGroups()->toArray()))
+            ->setUploadEnabledUserTypes(array_map(fn(UserTypeEntity $userTypeEntity) => $userTypeEntity->getUserType()->getValue(), $messageEntity->getUploadEnabledUserTypes()->toArray()))
+            ->setUploadEnabledStudyGroups(array_map(fn(StudyGroupEntity $studyGroupEntity) => StudyGroup::fromEntity($studyGroupEntity), $messageEntity->getUploadEnabledStudyGroups()->toArray()))
             ->setUploadDescription($messageEntity->getUploadDescription())
             ->setMustConfirm($messageEntity->mustConfirm())
-            ->setConfirmationRequiredUserTypes(array_map(function(UserTypeEntity $userTypeEntity) {
-                return $userTypeEntity->getUserType()->getValue();
-            }, $messageEntity->getConfirmationRequiredUserTypes()->toArray()))
-            ->setConfirmationRequiredStudyGroups(array_map(function(StudyGroupEntity $studyGroupEntity) {
-                return StudyGroup::fromEntity($studyGroupEntity);
-            }, $messageEntity->getConfirmationRequiredStudyGroups()->toArray()))
+            ->setConfirmationRequiredUserTypes(array_map(fn(UserTypeEntity $userTypeEntity) => $userTypeEntity->getUserType()->getValue(), $messageEntity->getConfirmationRequiredUserTypes()->toArray()))
+            ->setConfirmationRequiredStudyGroups(array_map(fn(StudyGroupEntity $studyGroupEntity) => StudyGroup::fromEntity($studyGroupEntity), $messageEntity->getConfirmationRequiredStudyGroups()->toArray()))
             ->setPriority($messageEntity->getPriority()->getValue());
 
     }

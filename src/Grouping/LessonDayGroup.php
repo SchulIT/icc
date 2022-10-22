@@ -7,14 +7,11 @@ use DateTime;
 
 class LessonDayGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var DateTime */
-    private $date;
-
     /** @var Lesson[] */
     private $lessons;
 
-    public function __construct(DateTime $dateTime) {
-        $this->date = $dateTime;
+    public function __construct(private DateTime $date)
+    {
     }
 
     public function getDate(): DateTime {
@@ -28,10 +25,6 @@ class LessonDayGroup implements GroupInterface, SortableGroupInterface {
         return $this->lessons;
     }
 
-    /**
-     * @param int $lessonNumber
-     * @return Lesson|null
-     */
     public function getLesson(int $lessonNumber): ?Lesson {
         foreach($this->lessons as $lesson) {
             if($lesson->getLessonNumber() === $lessonNumber) {

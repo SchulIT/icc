@@ -9,12 +9,8 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class CachedSectionResolver implements SectionResolverInterface {
 
-    private $sectionResolver;
-    private $cache;
-
-    public function __construct(SectionResolver $sectionResolver, CacheInterface $cache) {
-        $this->sectionResolver = $sectionResolver;
-        $this->cache = $cache;
+    public function __construct(private SectionResolver $sectionResolver, private CacheInterface $cache)
+    {
     }
 
     public function getSectionForDate(DateTime $dateTime): ?Section {

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\DateLesson;
 use App\Entity\StudentAbsence;
 use App\Entity\StudentAbsenceAttachment;
@@ -43,23 +44,21 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/absences")
  * @Security("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-absence')")
  */
+#[Route(path: '/absences')]
 class StudentAbsenceController extends AbstractController {
 
-    const ITEMS_PER_PAGE = 25;
+    public const ITEMS_PER_PAGE = 25;
 
     private const CSRF_TOKEN_ID = 'student_absence_approval';
 
     use DateTimeHelperTrait;
 
-    /**
-     * @Route("/add", name="add_absence")
-     */
+    #[Route(path: '/add', name: 'add_absence')]
     public function add(Request $request, StudentAbsenceSettings $settings,
                         StudentAbsenceRepositoryInterface $repository, StudentRepositoryInterface $studentRepository,
-                        TimetableTimeHelper $timeHelper, TimetableSettings $timetableSettings, DateHelper $dateHelper) {
+                        TimetableTimeHelper $timeHelper, TimetableSettings $timetableSettings, DateHelper $dateHelper): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::New);
 
         if($settings->isEnabled() !== true) {
@@ -105,13 +104,11 @@ class StudentAbsenceController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("", name="absences")
-     */
+    #[Route(path: '', name: 'absences')]
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, StudentFilter $studentFilter,
                           StudentAbsenceTypeFilter $typeFilter, Request $request,
                           StudentAbsenceRepositoryInterface $absenceRepository, TuitionRepositoryInterface $tuitionRepository,
-                          SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Sorter $sorter, StudentAbsenceSettings $settings) {
+                          SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Sorter $sorter, StudentAbsenceSettings $settings): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::CanViewAny);
 
         if($settings->isEnabled() !== true) {
@@ -142,9 +139,7 @@ class StudentAbsenceController extends AbstractController {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
 
             foreach($tuitions as $tuition) {
-                $students = $tuition->getStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
-                    return $membership->getStudent();
-                })->toArray();
+                $students = $tuition->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
 
                 $absences = $absenceRepository->findByStudents($students, $typeFilterView->getCurrentType(), $dateHelper->getToday());
 
@@ -230,10 +225,8 @@ class StudentAbsenceController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}", name="show_absence")
-     */
-    public function show(StudentAbsence $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository) {
+    #[Route(path: '/{uuid}', name: 'show_absence')]
+    public function show(StudentAbsence $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $absence);
 
         if($settings->isEnabled() !== true) {
@@ -262,10 +255,8 @@ class StudentAbsenceController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/approve", name="approve_absence")
-     */
-    public function approve(StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper) {
+    #[Route(path: '/{uuid}/approve', name: 'approve_absence')]
+    public function approve(StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Approve, $absence);
 
         /** @var User $user */
@@ -283,10 +274,8 @@ class StudentAbsenceController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/deny", name="deny_absence")
-     */
-    public function deny(StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper) {
+    #[Route(path: '/{uuid}/deny', name: 'deny_absence')]
+    public function deny(StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Deny, $absence);
 
         /** @var User $user */
@@ -304,10 +293,8 @@ class StudentAbsenceController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/attachments/{uuid}", name="download_student_absence_attachment", priority="10")
-     */
-    public function downloadAttachment(StudentAbsenceAttachment $attachment, FilesystemOperator $studentAbsencesFilesystem, MimeTypes $mimeTypes, StudentAbsenceSettings $settings) {
+    #[Route(path: '/attachments/{uuid}', name: 'download_student_absence_attachment', priority: 10)]
+    public function downloadAttachment(StudentAbsenceAttachment $attachment, FilesystemOperator $studentAbsencesFilesystem, MimeTypes $mimeTypes, StudentAbsenceSettings $settings): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $attachment->getAbsence());
 
         if($settings->isEnabled() !== true) {

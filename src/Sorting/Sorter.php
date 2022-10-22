@@ -10,14 +10,14 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 class Sorter {
 
     /** @var SortingStrategyInterface[] */
-    private $strategies;
+    private ?array $strategies = null;
 
     /**
      * @param SortingStrategyInterface[] $strategies
      */
     public function __construct(iterable $strategies) {
         foreach($strategies as $strategy) {
-            $this->strategies[get_class($strategy)] = $strategy;
+            $this->strategies[$strategy::class] = $strategy;
         }
     }
 
@@ -30,10 +30,7 @@ class Sorter {
     }
 
     /**
-     * @param array $array
-     * @param string $strategyService
      * @param SortDirection|null $direction
-     * @param bool $keepIndices
      */
     public function sort(array &$array, string $strategyService, SortDirection $direction = null, bool $keepIndices = false) {
         $strategy = $this->strategies[$strategyService] ?? null;

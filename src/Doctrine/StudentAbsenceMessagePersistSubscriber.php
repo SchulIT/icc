@@ -11,10 +11,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class StudentAbsenceMessagePersistSubscriber implements EventSubscriber {
 
-    private EventDispatcherInterface $dispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher) {
-        $this->dispatcher = $eventDispatcher;
+    public function __construct(private EventDispatcherInterface $dispatcher)
+    {
     }
 
     public function postPersist(LifecycleEventArgs $eventArgs) {

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Exam;
 use App\Entity\Grade;
 use App\Entity\GradeTeacher;
@@ -52,28 +53,18 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ListController extends AbstractControllerWithMessages {
 
-    private Grouper $grouper;
-    private Sorter $sorter;
-    private ImportDateTypeRepositoryInterface $importDateTimeRepository;
-
-    public function __construct(Grouper $grouper, Sorter $sorter, ImportDateTypeRepositoryInterface $importDateTimeRepository,
+    public function __construct(private Grouper $grouper, private Sorter $sorter, private ImportDateTypeRepositoryInterface $importDateTimeRepository,
                                 MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper,
                                 DateHelper $dateHelper, RefererHelper $refererHelper) {
         parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper, $refererHelper);
-
-        $this->grouper = $grouper;
-        $this->sorter = $sorter;
-        $this->importDateTimeRepository = $importDateTimeRepository;
     }
 
     protected function getMessageScope(): MessageScope {
         return MessageScope::Lists();
     }
 
-    /**
-     * @Route("/tuitions", name="list_tuitions")
-     */
-    public function tuitions(SectionFilter $sectionFilter, GradeFilter $gradeFilter, StudentFilter $studentFilter, TeacherFilter $teacherFilter, TuitionRepositoryInterface $tuitionRepository, Request $request) {
+    #[Route(path: '/tuitions', name: 'list_tuitions')]
+    public function tuitions(SectionFilter $sectionFilter, GradeFilter $gradeFilter, StudentFilter $studentFilter, TeacherFilter $teacherFilter, TuitionRepositoryInterface $tuitionRepository, Request $request): Response {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
 
         /** @var User $user */
@@ -93,9 +84,7 @@ class ListController extends AbstractControllerWithMessages {
 
             foreach($tuitions as $tuition) {
                 /** @var StudyGroupMembership|null $membership */
-                $membership = $tuition->getStudyGroup()->getMemberships()->filter(function(StudyGroupMembership $membership) use ($studentFilterView) {
-                    return $membership->getStudent()->getId() === $studentFilterView->getCurrentStudent()->getId();
-                })->first();
+                $membership = $tuition->getStudyGroup()->getMemberships()->filter(fn(StudyGroupMembership $membership) => $membership->getStudent()->getId() === $studentFilterView->getCurrentStudent()->getId())->first();
 
                 $memberships[$tuition->getExternalId()] = $membership->getType();
             }
@@ -117,9 +106,7 @@ class ListController extends AbstractControllerWithMessages {
             $teacherMailAddresses = array_unique($teacherMailAddresses);
         }
 
-        $tuitions = array_filter($tuitions, function(Tuition $tuition) use ($sectionFilterView) {
-            return $tuition->getSection() === $sectionFilterView->getCurrentSection();
-        });
+        $tuitions = array_filter($tuitions, fn(Tuition $tuition) => $tuition->getSection() === $sectionFilterView->getCurrentSection());
 
         $this->sorter->sort($tuitions, TuitionStrategy::class);
 
@@ -135,10 +122,8 @@ class ListController extends AbstractControllerWithMessages {
         ]);
     }
 
-    /**
-     * @Route("/tuitions/{uuid}", name="list_tuition")
-     */
-    public function tuition(Tuition $tuition, TuitionRepositoryInterface $tuitionRepository, ExamRepositoryInterface $examRepository) {
+    #[Route(path: '/tuitions/{uuid}', name: 'list_tuition')]
+    public function tuition(Tuition $tuition, TuitionRepositoryInterface $tuitionRepository, ExamRepositoryInterface $examRepository): Response {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
 
         $tuition = $tuitionRepository->findOneById($tuition->getId());
@@ -148,9 +133,7 @@ class ListController extends AbstractControllerWithMessages {
 
         $exams = $examRepository->findAllByTuitions([$tuition], null, true);
 
-        $exams = array_filter($exams, function(Exam $exam) {
-            return $this->isGranted(ExamVoter::Show, $exam);
-        });
+        $exams = array_filter($exams, fn(Exam $exam) => $this->isGranted(ExamVoter::Show, $exam));
 
         $types = [ ];
 
@@ -172,20 +155,16 @@ class ListController extends AbstractControllerWithMessages {
         ]);
     }
 
-    /**
-     * @Route("/tuitions/{uuid}/export", name="export_tuition")
-     */
-    public function exportTuition(Tuition $tuition, TuitionCsvExporter $tuitionCsvExporter) {
+    #[Route(path: '/tuitions/{uuid}/export', name: 'export_tuition')]
+    public function exportTuition(Tuition $tuition, TuitionCsvExporter $tuitionCsvExporter): Response {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
 
         return $tuitionCsvExporter->getCsvResponse($tuition);
     }
 
-    /**
-     * @Route("/study_groups", name="list_studygroups")
-     */
+    #[Route(path: '/study_groups', name: 'list_studygroups')]
     public function studyGroups(SectionFilter $sectionFilter, StudyGroupFilter $studyGroupFilter, StudentFilter $studentFilter,
-                                TuitionRepositoryInterface $tuitionRepository, Request $request, Sorter $sorter) {
+                                TuitionRepositoryInterface $tuitionRepository, Request $request, Sorter $sorter): Response {
         $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);
 
         /** @var User $user */
@@ -220,9 +199,7 @@ class ListController extends AbstractControllerWithMessages {
             $this->sorter->sort($studyGroups, StudyGroupStrategy::class);
         }
 
-        $studyGroups = array_filter($studyGroups, function(StudyGroup $studyGroup) use ($sectionFilterView) {
-            return $studyGroup->getSection() === $sectionFilterView->getCurrentSection();
-        });
+        $studyGroups = array_filter($studyGroups, fn(StudyGroup $studyGroup) => $studyGroup->getSection() === $sectionFilterView->getCurrentSection());
 
         $grade = null;
         $gradeTeachers = [ ];
@@ -236,18 +213,10 @@ class ListController extends AbstractControllerWithMessages {
         }
 
         if($grade !== null) {
-            $gradeTeachers = array_map(function(GradeTeacher $gradeTeacher) {
-                return $gradeTeacher->getTeacher();
-            }, array_filter($grade->getTeachers()->toArray(), function(GradeTeacher $gradeTeacher){
-                    return $gradeTeacher->getType()->equals(GradeTeacherType::Primary());
-                })
+            $gradeTeachers = array_map(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getTeacher(), array_filter($grade->getTeachers()->toArray(), fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getType()->equals(GradeTeacherType::Primary()))
             );
 
-            $substitutionalGradeTeachers = array_map(function(GradeTeacher $gradeTeacher) {
-                return $gradeTeacher->getTeacher();
-            }, array_filter($grade->getTeachers()->toArray(), function(GradeTeacher $gradeTeacher){
-                    return $gradeTeacher->getType()->equals(GradeTeacherType::Substitute());
-                })
+            $substitutionalGradeTeachers = array_map(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getTeacher(), array_filter($grade->getTeachers()->toArray(), fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getType()->equals(GradeTeacherType::Substitute()))
             );
         }
 
@@ -261,9 +230,7 @@ class ListController extends AbstractControllerWithMessages {
             }
         }
 
-        $tuitions = array_filter($tuitions, function(Tuition $tuition) use ($sectionFilterView) {
-            return $tuition->getSection() === $sectionFilterView->getCurrentSection();
-        });
+        $tuitions = array_filter($tuitions, fn(Tuition $tuition) => $tuition->getSection() === $sectionFilterView->getCurrentSection());
 
         $sorter->sort($tuitions, TuitionStrategy::class);
 
@@ -283,20 +250,16 @@ class ListController extends AbstractControllerWithMessages {
         ]);
     }
 
-    /**
-     * @Route("/study_groups/{uuid}/export", name="export_studygroup")
-     */
-    public function exportStudyGroup(StudyGroup $studyGroup, StudyGroupCsvExporter $csvExporter) {
+    #[Route(path: '/study_groups/{uuid}/export', name: 'export_studygroup')]
+    public function exportStudyGroup(StudyGroup $studyGroup, StudyGroupCsvExporter $csvExporter): Response {
         $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);
 
         return $csvExporter->getCsvResponse($studyGroup);
     }
 
-    /**
-     * @Route("/teachers", name="list_teachers")
-     */
+    #[Route(path: '/teachers', name: 'list_teachers')]
     public function teachers(SubjectFilter $subjectFilter, TeacherTagFilter $tagFilter, TeacherRepositoryInterface $teacherRepository,
-                             SectionResolverInterface $sectionResolver, Request $request) {
+                             SectionResolverInterface $sectionResolver, Request $request): Response {
         $this->denyAccessUnlessGranted(ListsVoter::Teachers);
 
         $subjectFilterView = $subjectFilter->handle($request->query->get('subject', null));
@@ -323,7 +286,6 @@ class ListController extends AbstractControllerWithMessages {
 
     /**
      * @param Teacher[] $teachers
-     * @param TeacherTag $tag
      * @return Teacher[]
      */
     private function filterImplicitTeacherTag(array $teachers, TeacherTag $tag): array {
@@ -343,10 +305,8 @@ class ListController extends AbstractControllerWithMessages {
         });
     }
 
-    /**
-     * @Route("/privacy", name="list_privacy")
-     */
-    public function privacy(SectionResolverInterface $sectionResolver, StudyGroupFilter $studyGroupFilter, Request $request, StudentRepositoryInterface $studentRepository, PrivacyCategoryRepositoryInterface $privacyCategoryRepository) {
+    #[Route(path: '/privacy', name: 'list_privacy')]
+    public function privacy(SectionResolverInterface $sectionResolver, StudyGroupFilter $studyGroupFilter, Request $request, StudentRepositoryInterface $studentRepository, PrivacyCategoryRepositoryInterface $privacyCategoryRepository): Response {
         $this->denyAccessUnlessGranted(ListsVoter::Privacy);
 
         /** @var User $user */

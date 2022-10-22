@@ -52,9 +52,7 @@ class AbsenceRepository extends AbstractTransactionalRepository implements Absen
      * @inheritDoc
      */
     public function findAllStudentsByDateAndLesson(\DateTime $dateTime, array $students, int $lesson) {
-        $studentIds = array_map(function(Student $student) {
-            return $student->getId();
-        }, $students);
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->em->createQueryBuilder();
         $qbInner = $this->em->createQueryBuilder();

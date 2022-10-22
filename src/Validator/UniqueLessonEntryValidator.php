@@ -47,7 +47,6 @@ class UniqueLessonEntryValidator extends ConstraintValidator {
     }
 
     /**
-     * @param LessonEntry $entry
      * @return int[]
      */
     private function getLessonsForEntry(LessonEntry $entry): array {

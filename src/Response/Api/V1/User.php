@@ -15,42 +15,32 @@ class User {
     /**
      * @Serializer\SerializedName("username")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $username;
+    private ?string $username = null;
 
     /**
      * @Serializer\SerializedName("firstname")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $firstname;
+    private ?string $firstname = null;
 
     /**
      * @Serializer\SerializedName("lastname")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $lastname;
+    private ?string $lastname = null;
 
     /**
      * @Serializer\SerializedName("email")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $email;
+    private ?string $email = null;
 
     /**
      * @Serializer\SerializedName("teacher")
      * @Serializer\Type("App\Response\Api\V1\Teacher")
-     *
-     * @var Teacher|null
      */
-    private $teacher;
+    private ?Teacher $teacher = null;
 
     /**
      * @Serializer\SerializedName("students")
@@ -58,93 +48,56 @@ class User {
      *
      * @var Student[]
      */
-    private $students;
+    private ?array $students = null;
 
     /**
      * @Serializer\SerializedName("type")
      * @Serializer\Type("string")
      * @Serializer\ReadOnly()
      * @Serializer\Accessor(getter="getTypeString")
-     *
-     * @var UserType
      */
-    private $type;
+    private ?UserType $type = null;
 
-    /**
-     * @return string
-     */
     public function getUsername(): string {
         return $this->username;
     }
 
-    /**
-     * @param string $username
-     * @return User
-     */
     public function setUsername(string $username): User {
         $this->username = $username;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getFirstname(): string {
         return $this->firstname;
     }
 
-    /**
-     * @param string $firstname
-     * @return User
-     */
     public function setFirstname(string $firstname): User {
         $this->firstname = $firstname;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLastname(): string {
         return $this->lastname;
     }
 
-    /**
-     * @param string $lastname
-     * @return User
-     */
     public function setLastname(string $lastname): User {
         $this->lastname = $lastname;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getEmail(): string {
         return $this->email;
     }
 
-    /**
-     * @param string $email
-     * @return User
-     */
     public function setEmail(string $email): User {
         $this->email = $email;
         return $this;
     }
 
-    /**
-     * @return Teacher|null
-     */
     public function getTeacher(): ?Teacher {
         return $this->teacher;
     }
 
-    /**
-     * @param Teacher|null $teacher
-     * @return User
-     */
     public function setTeacher(?Teacher $teacher): User {
         $this->teacher = $teacher;
         return $this;
@@ -159,32 +112,21 @@ class User {
 
     /**
      * @param Student[] $students
-     * @return User
      */
     public function setStudents(array $students): User {
         $this->students = $students;
         return $this;
     }
 
-    /**
-     * @return UserType
-     */
     public function getType(): UserType {
         return $this->type;
     }
 
-    /**
-     * @param UserType $type
-     * @return User
-     */
     public function setType(UserType $type): User {
         $this->type = $type;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTypeString(): string {
         return $this->type->getValue();
     }
@@ -202,8 +144,6 @@ class User {
             ->setUuid($userEntity->getUuid())
             ->setType($userEntity->getUserType())
             ->setTeacher(Teacher::fromEntity($userEntity->getTeacher()))
-            ->setStudents(array_map(function(StudentEntity $studentEntity) use($section) {
-                return Student::fromEntity($studentEntity, $section);
-            }, $userEntity->getStudents()->toArray()));
+            ->setStudents(array_map(fn(StudentEntity $studentEntity) => Student::fromEntity($studentEntity, $section), $userEntity->getStudents()->toArray()));
     }
 }

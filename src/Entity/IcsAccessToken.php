@@ -19,42 +19,36 @@ class IcsAccessToken implements UserInterface {
 
     /**
      * @ORM\Column(type="string", unique=true, length=128)
-     * @var string
      */
-    private $token;
+    private ?string $token = null;
 
     /**
      * @ORM\Column(type="ics_access_token_type")
-     * @var IcsAccessTokenType
      */
-    private $type;
+    private ?IcsAccessTokenType $type = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var User|null
      */
-    private $user;
+    private ?User $user = null;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $name;
+    #[Assert\NotBlank]
+    private ?string $name = null;
 
     /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
-     * @var DateTime
      */
-    private $registered;
+    private \DateTime $registered;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @var DateTime|null
      */
-    private $lastActive;
+    private ?\DateTime $lastActive = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -67,10 +61,6 @@ class IcsAccessToken implements UserInterface {
         return $this->token;
     }
 
-    /**
-     * @param string $token
-     * @return IcsAccessToken
-     */
     public function setToken(string $token): IcsAccessToken {
         $this->token = $token;
         return $this;
@@ -83,10 +73,6 @@ class IcsAccessToken implements UserInterface {
         return $this->type;
     }
 
-    /**
-     * @param IcsAccessTokenType $type
-     * @return IcsAccessToken
-     */
     public function setType(IcsAccessTokenType $type): IcsAccessToken {
         $this->type = $type;
         return $this;
@@ -99,10 +85,6 @@ class IcsAccessToken implements UserInterface {
         return $this->user;
     }
 
-    /**
-     * @param User $user
-     * @return IcsAccessToken
-     */
     public function setUser(User $user): IcsAccessToken {
         $this->user = $user;
         return $this;
@@ -115,33 +97,19 @@ class IcsAccessToken implements UserInterface {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return IcsAccessToken
-     */
     public function setName(string $name): IcsAccessToken {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getRegistered(): DateTime {
         return $this->registered;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getLastActive(): ?DateTime {
         return $this->lastActive;
     }
 
-    /**
-     * @param DateTime $lastActive
-     * @return IcsAccessToken
-     */
     public function setLastActive(DateTime $lastActive): IcsAccessToken {
         $this->lastActive = $lastActive;
         return $this;
@@ -179,7 +147,7 @@ class IcsAccessToken implements UserInterface {
      * @inheritDoc
      */
     public function getUsername(): string {
-        return $this->user->getUsername();
+        return $this->user->getUserIdentifier();
     }
 
     public function getUserIdentifier(): string {

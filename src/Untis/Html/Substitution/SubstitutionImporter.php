@@ -18,24 +18,8 @@ use App\Request\Data\SubstitutionsData;
 use App\Settings\UntisSettings;
 
 class SubstitutionImporter {
-    private Importer $importer;
-    private SubstitutionsImportStrategy $substitutionStrategy;
-    private InfotextsImportStrategy $infotextStrategy;
-    private FreeTimespanImportStrategy $freeTimespanStrategy;
-    private AbsencesImportStrategy $absenceStrategy;
-    private SubstitutionReader $reader;
-    private UntisSettings $untisSettings;
-
-    public function __construct(Importer                   $importer, SubstitutionsImportStrategy $substitutionStrategy, InfotextsImportStrategy $infotextStrategy,
-                                FreeTimespanImportStrategy $freeTimespanStrategy, AbsencesImportStrategy $absenceStrategy, SubstitutionReader $reader,
-                                UntisSettings              $untisSettings) {
-        $this->importer = $importer;
-        $this->substitutionStrategy = $substitutionStrategy;
-        $this->infotextStrategy = $infotextStrategy;
-        $this->freeTimespanStrategy = $freeTimespanStrategy;
-        $this->absenceStrategy = $absenceStrategy;
-        $this->reader = $reader;
-        $this->untisSettings = $untisSettings;
+    public function __construct(private Importer                   $importer, private SubstitutionsImportStrategy $substitutionStrategy, private InfotextsImportStrategy $infotextStrategy, private FreeTimespanImportStrategy $freeTimespanStrategy, private AbsencesImportStrategy $absenceStrategy, private SubstitutionReader $reader, private UntisSettings              $untisSettings)
+    {
     }
 
     public function import(string $html, bool $suppressNotifications) {

@@ -6,19 +6,13 @@ use App\Entity\Teacher;
 
 class TeacherFirstCharacterGroup implements GroupInterface {
 
-    /** @var string  */
-    private $firstCharacter;
-
     /** @var Teacher[]  */
-    private $teachers = [ ];
+    private array $teachers = [ ];
 
-    public function __construct(string $firstCharacter) {
-        $this->firstCharacter = $firstCharacter;
+    public function __construct(private string $firstCharacter)
+    {
     }
 
-    /**
-     * @return string
-     */
     public function getFirstCharacter(): string {
         return $this->firstCharacter;
     }

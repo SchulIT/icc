@@ -9,10 +9,8 @@ class UsernameProcessor implements ProcessorInterface {
 
     private ?string $username = null;
 
-    private TokenStorageInterface $tokenStorage;
-
-    public function __construct(TokenStorageInterface $tokenStorage) {
-        $this->tokenStorage = $tokenStorage;
+    public function __construct(private TokenStorageInterface $tokenStorage)
+    {
     }
 
     /**

@@ -12,7 +12,7 @@ class SubstitutionList {
      *
      * @var Substitution[]
      */
-    private $substitutions;
+    private ?array $substitutions = null;
 
     /**
      * @return Substitution[]
@@ -23,7 +23,6 @@ class SubstitutionList {
 
     /**
      * @param Substitution[] $substitutions
-     * @return SubstitutionList
      */
     public function setSubstitutions(array $substitutions): SubstitutionList {
         $this->substitutions = $substitutions;

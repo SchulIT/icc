@@ -24,29 +24,8 @@ use Twig\TwigFunction;
 
 class HelperExtension extends AbstractExtension {
 
-    private MessageConfirmationHelper $confirmationHelper;
-    private DismissedMessagesHelper $dismissedHelper;
-    private RefererHelper $redirectHelper;
-    private ColorUtils $colorUtils;
-    private MessageFilesystem $messageFilesystem;
-    private MessageFileUploadHelper $messageFileUploadHelper;
-    private TokenStorageInterface $tokenStorage;
-    private AuthorizationCheckerInterface $authorizationChecker;
-    private ValidatorInterface $validator;
-
-    public function __construct(MessageConfirmationHelper $confirmationHelper, DismissedMessagesHelper $dismissedHelper,
-                                RefererHelper $redirectHelper, ColorUtils $colorUtils, MessageFilesystem $messageFilesystem,
-                                MessageFileUploadHelper $messageFileUploadHelper, TokenStorageInterface $tokenStorage,
-                                AuthorizationCheckerInterface $authorizationChecker, ValidatorInterface $validator) {
-        $this->confirmationHelper = $confirmationHelper;
-        $this->dismissedHelper = $dismissedHelper;
-        $this->redirectHelper = $redirectHelper;
-        $this->colorUtils = $colorUtils;
-        $this->messageFilesystem = $messageFilesystem;
-        $this->messageFileUploadHelper = $messageFileUploadHelper;
-        $this->tokenStorage = $tokenStorage;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->validator = $validator;
+    public function __construct(private MessageConfirmationHelper $confirmationHelper, private DismissedMessagesHelper $dismissedHelper, private RefererHelper $redirectHelper, private ColorUtils $colorUtils, private MessageFilesystem $messageFilesystem, private MessageFileUploadHelper $messageFileUploadHelper, private TokenStorageInterface $tokenStorage, private AuthorizationCheckerInterface $authorizationChecker, private ValidatorInterface $validator)
+    {
     }
 
     public function getFilters(): array {
@@ -167,7 +146,6 @@ class HelperExtension extends AbstractExtension {
 
     /**
      * @param FilterViewInterface[] $filters
-     * @return bool
      */
     public function containsActiveFilters(array $filters): bool {
         foreach($filters as $filter) {

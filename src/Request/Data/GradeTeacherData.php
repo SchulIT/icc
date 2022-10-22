@@ -10,70 +10,46 @@ class GradeTeacherData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $grade;
+    #[Assert\NotBlank]
+    private ?string $grade = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $teacher;
+    #[Assert\NotBlank]
+    private ?string $teacher = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @Assert\Choice(callback="getGradeTeacherTypes")
      * @see GradeTeacherType
-     * @var string
      */
-    private $type;
+    #[Assert\NotBlank]
+    #[Assert\Choice(callback: 'getGradeTeacherTypes')]
+    private ?string $type = null;
 
-    /**
-     * @return string|null
-     */
     public function getGrade(): ?string {
         return $this->grade;
     }
 
-    /**
-     * @param string|null $grade
-     * @return GradeTeacherData
-     */
     public function setGrade(?string $grade): GradeTeacherData {
         $this->grade = $grade;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTeacher(): ?string {
         return $this->teacher;
     }
 
-    /**
-     * @param string|null $teacher
-     * @return GradeTeacherData
-     */
     public function setTeacher(?string $teacher): GradeTeacherData {
         $this->teacher = $teacher;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getType(): ?string {
         return $this->type;
     }
 
-    /**
-     * @param string|null $type
-     * @return GradeTeacherData
-     */
     public function setType(?string $type): GradeTeacherData {
         $this->type = $type;
         return $this;

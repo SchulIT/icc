@@ -18,7 +18,6 @@ class StudyGroupTypeStrategy implements GroupingStrategyInterface {
     /**
      * @param StudyGroupType $keyA
      * @param StudyGroupType $keyB
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA->equals($keyB);
@@ -26,7 +25,6 @@ class StudyGroupTypeStrategy implements GroupingStrategyInterface {
 
     /**
      * @param StudyGroupType $key
-     * @return GroupInterface
      */
     public function createGroup($key, array $options = [ ]): GroupInterface {
         return new StudyGroupTypeGroup($key);

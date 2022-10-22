@@ -6,11 +6,11 @@ use App\Grouping\AbsentStudentGroup;
 
 abstract class AbsenceAwareViewItem extends AbstractViewItem {
 
-    /** @var AbsentStudentGroup[] */
-    private $absentStudentGroups = [ ];
-
-    public function __construct(array $absentStudentGroups) {
-        $this->absentStudentGroups = $absentStudentGroups;
+    /**
+     * @param AbsentStudentGroup[] $absentStudentGroups
+     */
+    public function __construct(private array $absentStudentGroups)
+    {
     }
 
     /**

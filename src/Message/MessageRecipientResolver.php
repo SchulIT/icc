@@ -14,27 +14,19 @@ use App\Utils\EnumArrayUtils;
 
 class MessageRecipientResolver {
 
-    private $userRepository;
-
-    public function __construct(UserRepositoryInterface $userRepository) {
-        $this->userRepository = $userRepository;
+    public function __construct(private UserRepositoryInterface $userRepository)
+    {
     }
 
     public function resolveRecipients(Message $message) {
         // Get users that have email notifications enabled and an email address
         $users = array_filter(
             $this->userRepository->findAllByNotifyMessages($message),
-            function(User $user) {
-                return $user->getEmail() !== null && $user->isEmailNotificationsEnabled();
-            });
+            fn(User $user) => $user->getEmail() !== null && $user->isEmailNotificationsEnabled());
 
-        $userTypes = $message->getVisibilities()->map(function (UserTypeEntity $entity) {
-            return $entity->getUserType();
-        })->toArray();
+        $userTypes = $message->getVisibilities()->map(fn(UserTypeEntity $entity) => $entity->getUserType())->toArray();
 
-        $studyGroupIds = $message->getStudyGroups()->map(function(StudyGroup $studyGroup) {
-            return $studyGroup->getId();
-        })->toArray();
+        $studyGroupIds = $message->getStudyGroups()->map(fn(StudyGroup $studyGroup) => $studyGroup->getId())->toArray();
 
         $users = array_filter(
             $users,

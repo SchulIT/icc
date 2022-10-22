@@ -7,10 +7,6 @@ use App\Entity\Section;
 
 class GradeRepository extends AbstractTransactionalRepository implements GradeRepositoryInterface {
 
-    /**
-     * @param int $id
-     * @return Grade|null
-     */
     public function findOneById(int $id): ?Grade {
         return $this->em->getRepository(Grade::class)
             ->findOneBy([
@@ -73,31 +69,13 @@ class GradeRepository extends AbstractTransactionalRepository implements GradeRe
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param Grade $grade
-     */
     public function persist(Grade $grade): void {
         $this->em->persist($grade);
         $this->flushIfNotInTransaction();
     }
 
-    /**
-     * @param Grade $grade
-     */
     public function remove(Grade $grade): void {
         $this->em->remove($grade);
         $this->flushIfNotInTransaction();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function findAllBySection(Section $section): array {
-        return $this->em->getRepository(Grade::class)
-            ->findBy([
-                'section' => $section
-            ], [
-                'name' => 'asc'
-            ]);
     }
 }

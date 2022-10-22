@@ -15,10 +15,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 
 class DeviceAuthenticator extends AbstractAuthenticator {
 
-    private IcsAccessTokenManager $deviceManager;
-
-    public function __construct(IcsAccessTokenManager $deviceManager) {
-        $this->deviceManager = $deviceManager;
+    public function __construct(private IcsAccessTokenManager $deviceManager)
+    {
     }
 
     /**

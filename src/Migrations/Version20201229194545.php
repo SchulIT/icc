@@ -18,7 +18,7 @@ final class Version20201229194545 extends AbstractMigration
         return '';
     }
 
-    private $rooms = [ ];
+    private array $rooms = [ ];
 
     public function preUp(Schema $schema): void {
         $stmt = $this->connection->executeQuery('SELECT * FROM room');

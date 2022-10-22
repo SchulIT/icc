@@ -7,25 +7,17 @@ use App\Grouping\AbsentStudentGroup;
 
 class TimetableLessonViewItem extends AbsenceAwareViewItem {
 
-    /** @var TimetableLesson|null */
-    private $lesson;
-
     /** @var TimetableLesson[] */
-    private $additionalLessons = [ ];
+    private array $additionalLessons = [ ];
 
     /**
      * @param TimetableLesson|null $lesson
      * @param AbsentStudentGroup[] $absentStudentGroups
      */
-    public function __construct(?TimetableLesson $lesson, array $absentStudentGroups) {
+    public function __construct(private ?TimetableLesson $lesson, array $absentStudentGroups) {
         parent::__construct($absentStudentGroups);
-
-        $this->lesson = $lesson;
     }
 
-    /**
-     * @return TimetableLesson|null
-     */
     public function getLesson(): ?TimetableLesson {
         return $this->lesson;
     }

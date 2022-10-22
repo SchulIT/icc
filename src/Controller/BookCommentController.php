@@ -18,18 +18,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Route("/book/comment")
  * @IsGranted("ROLE_BOOK_ENTRY_CREATOR")
  */
+#[Route(path: '/book/comment')]
 class BookCommentController extends AbstractController {
 
-    private BookCommentRepositoryInterface $repository;
-    private SectionResolverInterface $sectionResolver;
-
-    public function __construct(BookCommentRepositoryInterface $repository, SectionResolverInterface $sectionResolver, RefererHelper $redirectHelper) {
+    public function __construct(private BookCommentRepositoryInterface $repository, private SectionResolverInterface $sectionResolver, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
-        $this->repository = $repository;
-        $this->sectionResolver = $sectionResolver;
     }
 
     private function redirectToBookOfFirstStudent(BookComment $comment): Response {
@@ -47,10 +42,8 @@ class BookCommentController extends AbstractController {
         return $this->redirectToRoute('book');
     }
 
-    /**
-     * @Route("/add", name="add_book_comment")
-     */
-    public function add(Request $request, DateHelper $dateHelper) {
+    #[Route(path: '/add', name: 'add_book_comment')]
+    public function add(Request $request, DateHelper $dateHelper): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -75,10 +68,8 @@ class BookCommentController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_book_comment")
-     */
-    public function edit(BookComment $comment, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_book_comment')]
+    public function edit(BookComment $comment, Request $request): Response {
         $form = $this->createForm(BookCommentType::class, $comment);
         $form->handleRequest($request);
 
@@ -94,10 +85,8 @@ class BookCommentController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_book_student")
-     */
-    public function remove(BookComment $comment, Request $request, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_book_student')]
+    public function remove(BookComment $comment, Request $request, TranslatorInterface $translator): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'book.comment.remove.confirm',
             'message_parameters' => [

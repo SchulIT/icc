@@ -10,10 +10,8 @@ use App\Utils\ArrayUtils;
  */
 class GradesStringConverter {
 
-    private GradesCollapsedArrayConverter $collapsedArrayConverter;
-
-    public function __construct(GradesCollapsedArrayConverter $collapsedArrayConverter) {
-        $this->collapsedArrayConverter = $collapsedArrayConverter;
+    public function __construct(private GradesCollapsedArrayConverter $collapsedArrayConverter)
+    {
     }
 
     public function convert(iterable $grades, bool $collapse = true): string {
@@ -22,9 +20,7 @@ class GradesStringConverter {
         if($collapse === false) {
             return implode(
                 ', ',
-                array_map(function(Grade $grade) {
-                    return $grade->getName();
-                }, $grades)
+                array_map(fn(Grade $grade) => $grade->getName(), $grades)
             );
         }
 

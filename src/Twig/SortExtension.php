@@ -9,10 +9,8 @@ use Twig\TwigFilter;
 
 class SortExtension extends AbstractExtension {
 
-    private Sorter $sorter;
-
-    public function __construct(Sorter $sorter) {
-        $this->sorter = $sorter;
+    public function __construct(private Sorter $sorter)
+    {
     }
 
     public function getFilters(): array {

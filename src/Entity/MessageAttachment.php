@@ -23,9 +23,8 @@ class MessageAttachment {
     /**
      * @ORM\ManyToOne(targetEntity="Message", inversedBy="attachments")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Message|null
      */
-    private $message;
+    private ?Message $message = null;
 
     /**
      * @Vich\UploadableField(mapping="messages", fileNameProperty="path", originalName="filename", size="size")
@@ -34,60 +33,42 @@ class MessageAttachment {
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $filename;
+    #[Assert\NotBlank]
+    private ?string $filename = null;
 
     /**
      * @ORM\Column(type="string")
-     * @var string
      */
-    private $path;
+    private ?string $path = null;
 
     /**
      * @ORM\Column(type="integer")
-     * @var int
      */
-    private $size;
+    private ?int $size = null;
 
     /**
      * @ORM\Column(type="datetime")
-     * @var DateTime
      */
-    private $updatedAt;
+    private ?\DateTime $updatedAt = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
     }
 
-    /**
-     * @return Message|null
-     */
     public function getMessage(): ?Message {
         return $this->message;
     }
 
-    /**
-     * @param Message $message
-     * @return MessageAttachment
-     */
     public function setMessage(Message $message): MessageAttachment {
         $this->message = $message;
         return $this;
     }
 
-    /**
-     * @return File|null
-     */
     public function getFile(): ?File {
         return $this->file;
     }
 
-    /**
-     * @param File|null $file
-     * @return MessageAttachment
-     */
     public function setFile(?File $file = null): MessageAttachment {
         $this->file = $file;
 
@@ -98,17 +79,10 @@ class MessageAttachment {
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFilename(): ?string {
         return $this->filename;
     }
 
-    /**
-     * @param string|null $filename
-     * @return MessageAttachment
-     */
     public function setFilename(?string $filename): MessageAttachment {
         $this->filename = $filename;
         return $this;
@@ -121,34 +95,20 @@ class MessageAttachment {
         return $this->path;
     }
 
-    /**
-     * @param string|null $path
-     * @return MessageAttachment
-     */
     public function setPath(?string $path): MessageAttachment {
         $this->path = $path;
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getSize(): ?int {
         return $this->size;
     }
 
-    /**
-     * @param int|null $size
-     * @return MessageAttachment
-     */
     public function setSize(?int $size): MessageAttachment {
         $this->size = $size;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getUpdatedAt(): DateTime {
         return $this->updatedAt;
     }

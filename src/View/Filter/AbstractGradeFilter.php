@@ -16,17 +16,11 @@ use FervoEnumBundle\Generated\Form\GradeTeacherTypeType;
 
 abstract class AbstractGradeFilter {
 
-    protected $sorter;
-    protected $gradeRepository;
-
-    public function __construct(Sorter $sorter, GradeRepositoryInterface $gradeRepository) {
-        $this->sorter = $sorter;
-        $this->gradeRepository = $gradeRepository;
+    public function __construct(protected Sorter $sorter, protected GradeRepositoryInterface $gradeRepository)
+    {
     }
 
     /**
-     * @param User $user
-     * @param Section|null $section
      * @param Grade|null $defaultGrade
      * @return Grade[]
      */
@@ -39,9 +33,7 @@ abstract class AbstractGradeFilter {
                 return [ ];
             }
 
-            $grades = $user->getStudents()->map(function(Student $student) use($section) {
-                return $student->getGrade($section);
-            })->toArray();
+            $grades = $user->getStudents()->map(fn(Student $student) => $student->getGrade($section))->toArray();
             $defaultGrade = $grades[0] ?? null;
         } else {
             $grades = $this->gradeRepository->findAll();
@@ -63,12 +55,8 @@ abstract class AbstractGradeFilter {
         $grades = ArrayUtils::createArrayWithKeys(
             array_filter(
                 $grades,
-                function($grade) {
-                    return $grade !== null;
-                }),
-            function(Grade $grade) {
-                return (string)$grade->getUuid();
-            }
+                fn($grade) => $grade !== null),
+            fn(Grade $grade) => (string)$grade->getUuid()
         );
 
         return $grades;

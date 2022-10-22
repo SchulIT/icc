@@ -6,16 +6,13 @@ use App\Entity\Absence;
 
 class AbsentStudyGroupStrategy implements SortingStrategyInterface {
 
-    private $studyGroupStrategy;
-
-    public function __construct(StudyGroupStrategy $studyGroupStrategy) {
-        $this->studyGroupStrategy = $studyGroupStrategy;
+    public function __construct(private StudyGroupStrategy $studyGroupStrategy)
+    {
     }
 
     /**
      * @param Absence $objectA
      * @param Absence $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         return $this->studyGroupStrategy->compare($objectA->getStudyGroup(), $objectB->getStudyGroup());

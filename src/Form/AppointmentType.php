@@ -19,16 +19,8 @@ use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AppointmentType extends AbstractType {
-    private TeacherStringConverter $teacherConverter;
-    private TeacherStrategy $teacherStrategy;
-    private AppointmentCategoryStrategy $appointmentCategoryStrategy;
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    public function __construct(TeacherStringConverter $teacherConverter, TeacherStrategy $teacherStrategy, AppointmentCategoryStrategy $appointmentCategoryStrategy, AuthorizationCheckerInterface $authorizationChecker) {
-        $this->teacherConverter = $teacherConverter;
-        $this->teacherStrategy = $teacherStrategy;
-        $this->appointmentCategoryStrategy = $appointmentCategoryStrategy;
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(private TeacherStringConverter $teacherConverter, private TeacherStrategy $teacherStrategy, private AppointmentCategoryStrategy $appointmentCategoryStrategy, private AuthorizationCheckerInterface $authorizationChecker)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -62,9 +54,7 @@ class AppointmentType extends AbstractType {
 
                                 return $qb;
                             },
-                            'choice_label' => function(AppointmentCategory $appointmentCategory) {
-                                return $appointmentCategory->getName();
-                            },
+                            'choice_label' => fn(AppointmentCategory $appointmentCategory) => $appointmentCategory->getName(),
                             'attr' => [
                                 'data-choice' => 'true'
                             ]
@@ -125,9 +115,7 @@ class AppointmentType extends AbstractType {
                             'required' => false,
                             'class' => Teacher::class,
                             'multiple' => true,
-                            'choice_label' => function(Teacher $teacher) {
-                                return $this->teacherConverter->convert($teacher);
-                            },
+                            'choice_label' => fn(Teacher $teacher) => $this->teacherConverter->convert($teacher),
                             'sort_by' => $this->teacherStrategy,
                             'attr' => [
                                 'size' => 10

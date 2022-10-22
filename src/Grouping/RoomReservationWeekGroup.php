@@ -7,14 +7,11 @@ use App\Entity\ResourceReservation;
 
 class RoomReservationWeekGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var WeekOfYear */
-    private $week;
-
     /** @var ResourceReservation[] */
     private $reservations;
 
-    public function __construct(WeekOfYear $week) {
-        $this->week = $week;
+    public function __construct(private WeekOfYear $week)
+    {
     }
 
     public function getWeek(): WeekOfYear {

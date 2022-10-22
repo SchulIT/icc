@@ -6,16 +6,13 @@ use App\Entity\ResourceType;
 
 class ResourceTypeStrategy implements SortingStrategyInterface {
 
-    private $stringStrategy;
-
-    public function __construct(StringStrategy $strategy) {
-        $this->stringStrategy = $strategy;
+    public function __construct(private StringStrategy $stringStrategy)
+    {
     }
 
     /**
      * @param ResourceType $objectA
      * @param ResourceType $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         return $this->stringStrategy->compare($objectA->getName(), $objectB->getName());

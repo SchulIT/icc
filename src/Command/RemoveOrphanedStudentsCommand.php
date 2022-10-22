@@ -15,20 +15,16 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class RemoveOrphanedStudentsCommand extends Command {
 
-    private StudentRepositoryInterface $studentRepository;
+    protected static $defaultName = 'app:students:remove_orphaned';
 
-    public function __construct(StudentRepositoryInterface $studentRepository, string $name = null) {
+    public function __construct(private StudentRepositoryInterface $studentRepository, string $name = null) {
         parent::__construct($name);
-
-        $this->studentRepository = $studentRepository;
     }
 
     public function configure() {
         parent::configure();
 
-        $this
-            ->setName('app:students:remove_orphaned')
-            ->setDescription('Removes students without any linked grade or section.');
+        $this->setDescription('Removes students without any linked grade or section.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

@@ -11,23 +11,15 @@ class RemoveMessageRequest {
     /**
      * @Serializer\SerializedName("_token")
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
      * @CsrfToken(id="remove_message")
-     * @var string|null
      */
-    private $csrfToken;
+    #[Assert\NotBlank]
+    private ?string $csrfToken = null;
 
-    /**
-     * @return string|null
-     */
     public function getCsrfToken(): ?string {
         return $this->csrfToken;
     }
 
-    /**
-     * @param string|null $csrfToken
-     * @return RemoveMessageRequest
-     */
     public function setCsrfToken(?string $csrfToken): RemoveMessageRequest {
         $this->csrfToken = $csrfToken;
         return $this;

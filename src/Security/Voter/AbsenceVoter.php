@@ -13,10 +13,8 @@ class AbsenceVoter extends Voter {
     public const View = 'view';
     public const ViewAny = 'view-absences';
 
-    private SubstitutionSettings $substitutionSettings;
-
-    public function __construct(SubstitutionSettings $substitutionSettings) {
-        $this->substitutionSettings = $substitutionSettings;
+    public function __construct(private SubstitutionSettings $substitutionSettings)
+    {
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Document;
 use App\Form\DocumentType;
 use App\Grouping\DocumentCategoryStrategy;
@@ -21,27 +22,19 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/admin/documents")
- */
+#[Route(path: '/admin/documents')]
 class DocumentAdminController extends AbstractController {
 
     private const VersionParam = '_version';
     private const RevertCsrfTokenParam = '_csrf_token';
     private const RevertCsrfToken = 'revert-document';
 
-    private DocumentRepositoryInterface $repository;
-
-    public function __construct(DocumentRepositoryInterface $repository, RefererHelper $refererHelper) {
+    public function __construct(private DocumentRepositoryInterface $repository, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
-
-        $this->repository = $repository;
     }
 
-    /**
-     * @Route("", name="admin_documents")
-     */
-    public function index(Sorter $sorter, Grouper $grouper) {
+    #[Route(path: '', name: 'admin_documents')]
+    public function index(Sorter $sorter, Grouper $grouper): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::Admin);
 
         $documents = [ ];
@@ -61,10 +54,8 @@ class DocumentAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add", name="admin_add_document")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'admin_add_document')]
+    public function add(Request $request): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::New);
 
         $document = new Document();
@@ -83,10 +74,8 @@ class DocumentAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="admin_edit_document")
-     */
-    public function edit(Document $document, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'admin_edit_document')]
+    public function edit(Document $document, Request $request): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
 
         $form = $this->createForm(DocumentType::class, $document);
@@ -105,10 +94,8 @@ class DocumentAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/versions", name="document_versions")
-     */
-    public function versions(Document $document, Request $request, LogRepositoryInterface $logRepository, Sorter $sorter) {
+    #[Route(path: '/{uuid}/versions', name: 'document_versions')]
+    public function versions(Document $document, LogRepositoryInterface $logRepository, Sorter $sorter): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
 
         $logs = $logRepository->getLogEntries($document);
@@ -123,10 +110,8 @@ class DocumentAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/versions/{version}", name="show_document_version")
-     */
-    public function version(Document $document, LogRepositoryInterface $logRepository, int $version) {
+    #[Route(path: '/{uuid}/versions/{version}', name: 'show_document_version')]
+    public function version(Document $document, LogRepositoryInterface $logRepository, int $version): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
 
         $logs = $logRepository->getLogEntries($document);
@@ -153,10 +138,8 @@ class DocumentAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/restore", name="restore_document_version")
-     */
-    public function restore(Document $document, Request $request, LogRepositoryInterface $logRepository, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/restore', name: 'restore_document_version')]
+    public function restore(Document $document, Request $request, LogRepositoryInterface $logRepository, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
 
         if($this->isCsrfTokenValid(self::RevertCsrfToken, $request->request->get(self::RevertCsrfTokenParam)) !== true) {
@@ -177,10 +160,8 @@ class DocumentAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="admin_remove_document")
-     */
-    public function remove(Document $document, Request $request, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/remove', name: 'admin_remove_document')]
+    public function remove(Document $document, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::Remove, $document);
 
         $form = $this->createForm(ConfirmType::class, null, [

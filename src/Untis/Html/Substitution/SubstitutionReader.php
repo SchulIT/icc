@@ -21,16 +21,11 @@ class SubstitutionReader extends AbstractHtmlReader {
 
     private const IgnoredSubstitutionTypes = [ 'Veranst.', 'Klausur' ];
 
-    /** @var InfotextReaderInterface[] $infotextReader */
-    private iterable $infotextReader;
-
-    private TableCellParser $tableCellParser;
-    private UntisHtmlSettings $settings;
-
-    public function __construct(iterable $infotextReader, TableCellParser $tableCellParser, UntisHtmlSettings $settings) {
-        $this->infotextReader = $infotextReader;
-        $this->tableCellParser = $tableCellParser;
-        $this->settings = $settings;
+    /**
+     * @param InfotextReaderInterface[] $infotextReader
+     */
+    public function __construct(private iterable $infotextReader, private TableCellParser $tableCellParser, private UntisHtmlSettings $settings)
+    {
     }
 
     public function readHtml(string $html): SubstitutionResult {
@@ -50,18 +45,14 @@ class SubstitutionReader extends AbstractHtmlReader {
         return $result;
     }
 
-    /**
-     * @param SubstitutionResult $result
-     * @param DOMXPath $xpath
-     */
     private function parseInfotexts(SubstitutionResult $result, DOMXPath $xpath): void {
         $infotexts = [ ];
 
         $nodes = $xpath->query("//table[@class='" . self::InfoTableSelectorClass . "']//tr[@class='" . self:: InfoEntrySelectorClass . "']");
 
-        for($idx = 1; $idx < count($nodes); $idx++) { // First item is table header
+        for($idx = 1; $idx < (is_countable($nodes) ? count($nodes) : 0); $idx++) { // First item is table header
             $node = $nodes[$idx];
-            $childrenCount = count($node->childNodes);
+            $childrenCount = is_countable($node->childNodes) ? count($node->childNodes) : 0;
 
             $identifier = null;
             $content = trim(strip_tags($nodes[$idx]->nodeValue));
@@ -80,10 +71,6 @@ class SubstitutionReader extends AbstractHtmlReader {
 
     }
 
-    /**
-     * @param SubstitutionResult $result
-     * @param DOMXPath $xpath
-     */
     private function parseSubstitutions(SubstitutionResult $result, DOMXPath $xpath): void {
         $table = $xpath->query("//table[@class='" . self::SubstitutionsTableSelectorClass . "']");
 

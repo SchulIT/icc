@@ -9,12 +9,8 @@ use Faker\Generator;
 
 class RoomFixtures extends Fixture {
 
-    private $generator;
-    private $roomGenerator;
-
-    public function __construct(Generator $generator, RoomGenerator $roomGenerator) {
-        $this->generator = $generator;
-        $this->roomGenerator = $roomGenerator;
+    public function __construct(private Generator $generator, private RoomGenerator $roomGenerator)
+    {
     }
 
     /**

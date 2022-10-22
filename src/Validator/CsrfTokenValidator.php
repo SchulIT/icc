@@ -9,10 +9,8 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class CsrfTokenValidator extends ConstraintValidator {
 
-    private CsrfTokenManagerInterface $tokenManager;
-
-    public function __construct(CsrfTokenManagerInterface $tokenManager) {
-        $this->tokenManager = $tokenManager;
+    public function __construct(private CsrfTokenManagerInterface $tokenManager)
+    {
     }
 
     /**

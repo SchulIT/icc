@@ -21,14 +21,14 @@ class StudentAbsenceMessage {
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @var StudentAbsence|null
      */
-    private ?StudentAbsence $absence;
+    private ?StudentAbsence $absence = null;
 
     /**
      * @ORM\Column(type="text")
-     * @Assert\NotBlank()
      * @var string|null
      */
-    private ?string $message;
+    #[Assert\NotBlank]
+    private ?string $message = null;
 
     /**
      * @Gedmo\Blameable(on="create")
@@ -36,61 +36,41 @@ class StudentAbsenceMessage {
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @var User|null
      */
-    private ?User $createdBy;
+    private ?User $createdBy = null;
 
     /**
      * @ORM\Column(type="datetime")
      * @Gedmo\Timestampable(on="create")
      * @var DateTime|null
      */
-    private ?DateTime $createdAt;
+    private ?DateTime $createdAt = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
     }
 
-    /**
-     * @return StudentAbsence
-     */
     public function getAbsence(): StudentAbsence {
         return $this->absence;
     }
 
-    /**
-     * @param StudentAbsence $absence
-     * @return StudentAbsenceMessage
-     */
     public function setAbsence(StudentAbsence $absence): StudentAbsenceMessage {
         $this->absence = $absence;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getMessage(): ?string {
         return $this->message;
     }
 
-    /**
-     * @param string|null $message
-     * @return StudentAbsenceMessage
-     */
     public function setMessage(?string $message): StudentAbsenceMessage {
         $this->message = $message;
         return $this;
     }
 
-    /**
-     * @return User
-     */
     public function getCreatedBy(): User {
         return $this->createdBy;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getCreatedAt(): ?DateTime {
         return $this->createdAt;
     }

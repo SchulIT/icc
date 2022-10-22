@@ -12,16 +12,8 @@ use DateTime;
 use League\Csv\Reader;
 
 class SubstitutionImporter {
-    private Importer $importer;
-    private SubstitutionsImportStrategy $strategy;
-    private SubstitutionReader $gpuReader;
-    private UntisSettings $settings;
-
-    public function __construct(Importer $importer, SubstitutionsImportStrategy $strategy, SubstitutionReader $gpuReader, UntisSettings $settings) {
-        $this->importer = $importer;
-        $this->strategy = $strategy;
-        $this->gpuReader = $gpuReader;
-        $this->settings = $settings;
+    public function __construct(private Importer $importer, private SubstitutionsImportStrategy $strategy, private SubstitutionReader $gpuReader, private UntisSettings $settings)
+    {
     }
 
     private function sort(Substitution $substitutionA, Substitution $substitutionB): int {
@@ -199,10 +191,6 @@ class SubstitutionImporter {
     /**
      * Checks whether the substitution are identical but their IDs and their lessons. These values of the second
      * substitution need to be increments of the ones of the first one.
-     *
-     * @param Substitution $first
-     * @param Substitution $second
-     * @return bool
      */
     private function isSubstitutionOfNextLesson(Substitution $first, Substitution $second): bool {
         return $first->getLesson() + 1 === $second->getLesson()

@@ -12,19 +12,14 @@ use App\Utils\EnumArrayUtils;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class UserTypeFilter {
-    private Sorter $sorter;
     private array $types;
 
-    public function __construct(Sorter $sorter) {
-        $this->sorter = $sorter;
+    public function __construct(private Sorter $sorter) {
         $this->types = UserType::values();
     }
 
     /**
-     * @param string|null $userType
      * @param User|null $user
-     * @param bool $isRestrictedToOwnType
-     * @param UserType|null $defaultType
      * @param UserType[] $onlyTypes Restrict to the given user types
      * @return UserTypeFilterView
      */
@@ -39,9 +34,7 @@ class UserTypeFilter {
             $enums = $onlyTypes;
         }
 
-        $types = ArrayUtils::createArrayWithKeys($enums, function(UserType $type) {
-            return $type->getValue();
-        });
+        $types = ArrayUtils::createArrayWithKeys($enums, fn(UserType $type) => $type->getValue());
 
         if($user === null) {
             $fallbackUserType = null;

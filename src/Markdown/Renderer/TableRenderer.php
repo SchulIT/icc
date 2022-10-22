@@ -2,6 +2,7 @@
 
 namespace App\Markdown\Renderer;
 
+use InvalidArgumentException;
 use League\CommonMark\Block\Element\AbstractBlock;
 use League\CommonMark\Block\Renderer\BlockRendererInterface;
 use League\CommonMark\ElementRendererInterface;
@@ -16,7 +17,7 @@ class TableRenderer implements BlockRendererInterface {
      */
     public function render(AbstractBlock $block, ElementRendererInterface $htmlRenderer, bool $inTightList = false): string|HtmlElement|null {
         if (!$block instanceof Table) {
-            throw new \InvalidArgumentException('Incompatible block type: '.get_class($block));
+            throw new InvalidArgumentException('Incompatible block type: '.$block::class);
         }
 
         $attrs = [];

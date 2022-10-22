@@ -11,70 +11,43 @@ class StudyGroupMembership {
     /**
      * @Serializer\SerializedName("study_group")
      * @Serializer\Type("App\Response\Api\V1\StudyGroup")
-     *
-     * @var StudyGroup
      */
-    private $studyGroup;
+    private ?StudyGroup $studyGroup = null;
 
     /**
      * @Serializer\SerializedName("student")
      * @Serializer\Type("App\Response\Api\V1\Student")
-     *
-     * @var Student
      */
-    private $student;
+    private ?Student $student = null;
 
     /**
      * @Serializer\SerializedName("type")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $type;
+    private ?string $type = null;
 
-    /**
-     * @return StudyGroup
-     */
     public function getStudyGroup(): StudyGroup {
         return $this->studyGroup;
     }
 
-    /**
-     * @param StudyGroup $studyGroup
-     * @return StudyGroupMembership
-     */
     public function setStudyGroup(StudyGroup $studyGroup): StudyGroupMembership {
         $this->studyGroup = $studyGroup;
         return $this;
     }
 
-    /**
-     * @return Student
-     */
     public function getStudent(): Student {
         return $this->student;
     }
 
-    /**
-     * @param Student $student
-     * @return StudyGroupMembership
-     */
     public function setStudent(Student $student): StudyGroupMembership {
         $this->student = $student;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     * @return StudyGroupMembership
-     */
     public function setType(string $type): StudyGroupMembership {
         $this->type = $type;
         return $this;

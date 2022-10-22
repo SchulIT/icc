@@ -7,10 +7,8 @@ use SchulIT\CommonBundle\Helper\DateHelper;
 
 class AppointmentExpirationStrategy implements GroupingStrategyInterface {
 
-    private $dateHelper;
-
-    public function __construct(DateHelper $dateHelper) {
-        $this->dateHelper = $dateHelper;
+    public function __construct(private DateHelper $dateHelper)
+    {
     }
 
     /**
@@ -33,7 +31,6 @@ class AppointmentExpirationStrategy implements GroupingStrategyInterface {
     /**
      * @param bool $keyA
      * @param bool $keyB
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA === $keyB;
@@ -41,7 +38,6 @@ class AppointmentExpirationStrategy implements GroupingStrategyInterface {
 
     /**
      * @param bool $key
-     * @return GroupInterface
      */
     public function createGroup($key, array $options = [ ]): GroupInterface {
         return new AppointmentExpirationGroup($key);

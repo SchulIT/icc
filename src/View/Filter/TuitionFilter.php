@@ -13,12 +13,8 @@ use App\Utils\ArrayUtils;
 
 class TuitionFilter {
 
-    private $sorter;
-    private $repository;
-
-    public function __construct(TuitionRepositoryInterface $repository, Sorter $sorter) {
-        $this->repository = $repository;
-        $this->sorter = $sorter;
+    public function __construct(private TuitionRepositoryInterface $repository, private Sorter $sorter)
+    {
     }
 
     public function handle(?string $tuitionUuid, ?Section $section, User $user): TuitionFilterView {
@@ -26,9 +22,7 @@ class TuitionFilter {
             return new TuitionFilterView([], null);
         }
 
-        $keyFunc = function (Tuition $tuition) {
-            return $tuition->getUuid()->toString();
-        };
+        $keyFunc = fn(Tuition $tuition) => $tuition->getUuid()->toString();
 
         if($user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent())) {
             $tuitions = ArrayUtils::createArrayWithKeys(

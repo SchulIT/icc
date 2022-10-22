@@ -9,24 +9,21 @@ class SubjectData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $id;
+    #[Assert\NotBlank]
+    private string $id;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $abbreviation;
+    #[Assert\NotBlank]
+    private ?string $abbreviation = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $name;
+    #[Assert\NotBlank]
+    private ?string $name = null;
 
     /**
      * @return string
@@ -37,40 +34,25 @@ class SubjectData {
 
     /**
      * @param string $id
-     * @return SubjectData
      */
     public function setId($id): SubjectData {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getAbbreviation(): ?string {
         return $this->abbreviation;
     }
 
-    /**
-     * @param string|null $abbreviation
-     * @return SubjectData
-     */
     public function setAbbreviation(?string $abbreviation): SubjectData {
         $this->abbreviation = $abbreviation;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     * @return SubjectData
-     */
     public function setName(?string $name): SubjectData {
         $this->name = $name;
         return $this;

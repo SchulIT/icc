@@ -11,10 +11,8 @@ use Twig\TwigFunction;
 
 class RepositoryExtension extends AbstractExtension {
 
-    private StudyGroupRepositoryInterface $studyGroupRepository;
-
-    public function __construct(StudyGroupRepositoryInterface $studyGroupRepository) {
-        $this->studyGroupRepository = $studyGroupRepository;
+    public function __construct(private StudyGroupRepositoryInterface $studyGroupRepository)
+    {
     }
 
     public function getFunctions(): array {
@@ -23,11 +21,6 @@ class RepositoryExtension extends AbstractExtension {
         ];
     }
 
-    /**
-     * @param Grade $grade
-     * @param Section $section
-     * @return StudyGroup|null
-     */
     public function getStudyGroupByGrade(Grade $grade, Section $section): ?StudyGroup {
         return $this->studyGroupRepository->findOneByGrade($grade, $section);
     }

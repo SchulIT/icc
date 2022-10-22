@@ -8,22 +8,16 @@ use DateTime;
 
 class LessonAttendanceCommentsGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var DateTime */
-    private $date;
-
     /** @var LessonAttendance[] */
-    private $attendances = [ ];
+    private array $attendances = [ ];
 
     /** @var BookComment[] */
-    private $comments = [ ];
+    private array $comments = [ ];
 
-    public function __construct(DateTime $date) {
-        $this->date = $date;
+    public function __construct(private DateTime $date)
+    {
     }
 
-    /**
-     * @return DateTime
-     */
     public function getDate(): DateTime {
         return $this->date;
     }

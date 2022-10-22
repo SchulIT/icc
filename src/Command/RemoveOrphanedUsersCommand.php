@@ -14,20 +14,16 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class RemoveOrphanedUsersCommand extends Command {
 
-    private UserRepositoryInterface $userRepository;
+    protected static $defaultName = 'app:user:remove_orphaned';
 
-    public function __construct(UserRepositoryInterface $userRepository, string $name = null) {
+    public function __construct(private UserRepositoryInterface $userRepository, string $name = null) {
         parent::__construct($name);
-
-        $this->userRepository = $userRepository;
     }
 
     public function configure() {
         parent::configure();
 
-        $this
-            ->setName('app:user:remove_orphaned')
-            ->setDescription('Removes student, parents or teachers without any linked entity.');
+        $this->setDescription('Removes student, parents or teachers without any linked entity.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

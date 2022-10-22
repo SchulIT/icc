@@ -31,46 +31,40 @@ class WikiArticle {
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
      * @Gedmo\Versioned()
-     * @var string
      */
-    private $title;
+    #[Assert\NotBlank]
+    private ?string $title = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $icon;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $icon = null;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $isOnline = true;
+    private bool $isOnline = true;
 
     /**
      * @ORM\Column(type="datetime")
      * @Gedmo\Timestampable(on="create")
-     * @var DateTime|null
      */
-    private $createdAt;
+    private ?\DateTime $createdAt = null;
 
     /**
      * @ORM\Column(type="datetime")
      * @Gedmo\Timestampable(on="update")
-     * @var DateTime|null
      */
-    private $updatedAt;
+    private ?\DateTime $updatedAt = null;
 
     /**
      * @ORM\Column(type="text")
      * @Gedmo\Versioned()
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $content;
+    #[Assert\NotBlank]
+    private ?string $content = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="UserTypeEntity")
@@ -85,39 +79,34 @@ class WikiArticle {
     /**
      * @Gedmo\TreeLeft()
      * @ORM\Column(type="integer", name="`left`")
-     * @var int
      */
-    private $left;
+    private int $left;
 
     /**
      * @Gedmo\TreeLevel()
      * @ORM\Column(type="integer")
-     * @var int
      */
-    private $level;
+    private int $level;
 
     /**
      * @Gedmo\TreeRight()
      * @ORM\Column(type="integer", name="`right`")
-     * @var int
      */
-    private $right;
+    private int $right;
 
     /**
      * @Gedmo\TreeRoot()
      * @ORM\ManyToOne(targetEntity="WikiArticle")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var WikiArticle|null
      */
-    private $root;
+    private ?\App\Entity\WikiArticle $root = null;
 
     /**
      * @Gedmo\TreeParent()
      * @ORM\ManyToOne(targetEntity="WikiArticle", inversedBy="children")
      * @ORM\JoinColumn(name="`parent`", onDelete="CASCADE")
-     * @var WikiArticle|null
      */
-    private $parent;
+    private ?\App\Entity\WikiArticle $parent = null;
 
     /**
      * @ORM\OneToMany(targetEntity="WikiArticle", mappedBy="parent")
@@ -133,79 +122,45 @@ class WikiArticle {
         $this->children = new ArrayCollection();
     }
 
-    /**
-     * @return string|null
-     */
     public function getTitle(): ?string {
         return $this->title;
     }
 
-    /**
-     * @param string|null $title
-     * @return WikiArticle
-     */
     public function setTitle(?string $title): WikiArticle {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getIcon(): ?string {
         return $this->icon;
     }
 
-    /**
-     * @param string|null $icon
-     * @return WikiArticle
-     */
     public function setIcon(?string $icon): WikiArticle {
         $this->icon = $icon;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isOnline(): bool {
         return $this->isOnline;
     }
 
-    /**
-     * @param bool $isOnline
-     * @return WikiArticle
-     */
     public function setIsOnline(bool $isOnline): WikiArticle {
         $this->isOnline = $isOnline;
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getCreatedAt(): ?DateTime {
         return $this->createdAt;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getUpdatedAt(): ?DateTime {
         return $this->updatedAt;
     }
 
-    /**
-     * @return string|null
-     */
     public function getContent(): ?string {
         return $this->content;
     }
 
-    /**
-     * @param string|null $content
-     * @return WikiArticle
-     */
     public function setContent(?string $content): WikiArticle {
         $this->content = $content;
         return $this;
@@ -219,31 +174,18 @@ class WikiArticle {
         $this->visibilities->removeElement($visibility);
     }
 
-    /**
-     * @return Collection
-     */
     public function getVisibilities(): Collection {
         return $this->visibilities;
     }
 
-    /**
-     * @return WikiArticle|null
-     */
     public function getRoot(): ?WikiArticle {
         return $this->root;
     }
 
-    /**
-     * @return WikiArticle|null
-     */
     public function getParent(): ?WikiArticle {
         return $this->parent;
     }
 
-    /**
-     * @param WikiArticle|null $parent
-     * @return WikiArticle
-     */
     public function setParent(?WikiArticle $parent): WikiArticle {
         $this->parent = $parent;
         return $this;

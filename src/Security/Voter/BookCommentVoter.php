@@ -20,10 +20,8 @@ class BookCommentVoter extends Voter {
     public const Edit = 'edit';
     public const Remove = 'remove';
 
-    private AccessDecisionManagerInterface $accessDecisionManager;
-
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
-        $this->accessDecisionManager = $accessDecisionManager;
+    public function __construct(private AccessDecisionManagerInterface $accessDecisionManager)
+    {
     }
 
     /**
@@ -43,20 +41,14 @@ class BookCommentVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
-        switch($attribute) {
-            case self::New:
-                return $this->canCreate($token);
-
-            case self::View:
-                return $this->canView($subject, $token);
-
-            case self::Edit:
-            case self::Remove:
-                return $this->canEditOrRemove($subject, $token);
-        }
-
-        throw new LogicException('This code should not be reached.');
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    {
+        return match ($attribute) {
+            self::New => $this->canCreate($token),
+            self::View => $this->canView($subject, $token),
+            self::Edit, self::Remove => $this->canEditOrRemove($subject, $token),
+            default => throw new LogicException('This code should not be reached.'),
+        };
     }
 
     private function canCreate(TokenInterface $token): bool {
@@ -68,13 +60,9 @@ class BookCommentVoter extends Voter {
         $user = $token->getUser();
 
         if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ])) {
-            $userStudentIds = $user->getStudents()->map(function(Student $student) {
-                return $student->getId();
-            })->toArray();
+            $userStudentIds = $user->getStudents()->map(fn(Student $student) => $student->getId())->toArray();
 
-            $commentStudentIds = $comment->getStudents()->map(function(Student $student) {
-                return $student->getId();
-            })->toArray();
+            $commentStudentIds = $comment->getStudents()->map(fn(Student $student) => $student->getId())->toArray();
 
             if(count(array_intersect($userStudentIds, $commentStudentIds)) > 0) {
                 return true;

@@ -8,12 +8,8 @@ use App\Settings\GeneralSettings;
 use DateTime;
 
 class SectionResolver implements SectionResolverInterface {
-    private $settings;
-    private $sectionRepository;
-
-    public function __construct(GeneralSettings $settings, SectionRepositoryInterface $sectionRepository) {
-        $this->settings = $settings;
-        $this->sectionRepository = $sectionRepository;
+    public function __construct(private GeneralSettings $settings, private SectionRepositoryInterface $sectionRepository)
+    {
     }
 
     public function getSectionForDate(DateTime $dateTime): ?Section {

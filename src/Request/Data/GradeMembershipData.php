@@ -9,45 +9,29 @@ class GradeMembershipData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $student;
+    #[Assert\NotBlank]
+    private ?string $student = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $grade;
+    #[Assert\NotBlank]
+    private ?string $grade = null;
 
-    /**
-     * @return string
-     */
     public function getStudent(): string {
         return $this->student;
     }
 
-    /**
-     * @param string $student
-     * @return GradeMembershipData
-     */
     public function setStudent(string $student): GradeMembershipData {
         $this->student = $student;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getGrade(): string {
         return $this->grade;
     }
 
-    /**
-     * @param string $grade
-     * @return GradeMembershipData
-     */
     public function setGrade(string $grade): GradeMembershipData {
         $this->grade = $grade;
         return $this;

@@ -8,21 +8,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class Grouper {
 
     /** @var GroupingStrategyInterface[] */
-    private $strategies = [ ];
+    private array $strategies = [ ];
 
     /**
      * @param GroupingStrategyInterface[] $strategies
      */
     public function __construct(iterable $strategies) {
         foreach($strategies as $strategy) {
-            $this->strategies[get_class($strategy)] = $strategy;
+            $this->strategies[$strategy::class] = $strategy;
         }
     }
 
     /**
-     * @param array $items
-     * @param string $strategyService
-     * @param array $options
      * @return GroupInterface[]
      */
     public function group(array $items, string $strategyService, array $options = [ ]) {

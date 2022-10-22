@@ -14,45 +14,29 @@ class Week {
 
     /**
      * @ORM\Column(type="integer", unique=true)
-     * @var int
      */
-    private $number = 0;
+    private int $number = 0;
 
     /**
      * @ORM\ManyToOne(targetEntity="TimetableWeek", inversedBy="weeks")
      * @ORM\JoinColumn(onDelete="SET NULL")
-     * @var TimetableWeek|null
      */
-    private $timetableWeek;
+    private ?TimetableWeek $timetableWeek = null;
 
-    /**
-     * @Assert\GreaterThan(0)
-     * @return int
-     */
+    #[Assert\GreaterThan(0)]
     public function getNumber(): int {
         return $this->number;
     }
 
-    /**
-     * @param int $number
-     * @return Week
-     */
     public function setNumber(int $number): Week {
         $this->number = $number;
         return $this;
     }
 
-    /**
-     * @return TimetableWeek|null
-     */
     public function getTimetableWeek(): ?TimetableWeek {
         return $this->timetableWeek;
     }
 
-    /**
-     * @param TimetableWeek|null $timetableWeek
-     * @return Week
-     */
     public function setTimetableWeek(?TimetableWeek $timetableWeek): Week {
         $this->timetableWeek = $timetableWeek;
         return $this;

@@ -21,25 +21,22 @@ class MessageFile {
     /**
      * @ORM\ManyToOne(targetEntity="Message", inversedBy="files", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Message|null
      */
-    private $message;
+    private ?Message $message = null;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @Assert\NotNull()
-     * @var string
      */
-    private $label;
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    private ?string $label = null;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @Assert\NotNull()
-     * @var string
      */
-    private $extension;
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    private ?string $extension = null;
 
     /**
      * @ORM\OneToMany(targetEntity="MessageFileUpload", mappedBy="messageFile")
@@ -52,64 +49,37 @@ class MessageFile {
         $this->uploads = new ArrayCollection();
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int {
         return $this->id;
     }
 
-    /**
-     * @return Message
-     */
     public function getMessage(): Message {
         return $this->message;
     }
 
-    /**
-     * @param Message $message
-     * @return MessageFile
-     */
     public function setMessage(Message $message): MessageFile {
         $this->message = $message;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLabel(): ?string {
         return $this->label;
     }
 
-    /**
-     * @param string|null $label
-     * @return MessageFile
-     */
     public function setLabel(?string $label): MessageFile {
         $this->label = $label;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getExtension(): ?string {
         return $this->extension;
     }
 
-    /**
-     * @param string|null $extension
-     * @return MessageFile
-     */
     public function setExtension(?string $extension): MessageFile {
         $this->extension = $extension;
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getUploads(): Collection {
         return $this->uploads;
     }

@@ -13,12 +13,8 @@ use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
 
 class RoomFilter {
-    private $sorter;
-    private $roomRepository;
-
-    public function __construct(Sorter $sorter, RoomRepositoryInterface $roomRepository) {
-        $this->sorter = $sorter;
-        $this->roomRepository = $roomRepository;
+    public function __construct(private Sorter $sorter, private RoomRepositoryInterface $roomRepository)
+    {
     }
 
     public function handle(?string $roomUuid, User $user) {
@@ -27,9 +23,7 @@ class RoomFilter {
         if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent()]) === false) {
             $rooms = ArrayUtils::createArrayWithKeys(
                 $this->roomRepository->findAll(),
-                function (Room $room) {
-                    return (string)$room->getUuid();
-                }
+                fn(Room $room) => (string)$room->getUuid()
             );
         }
 

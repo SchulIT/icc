@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Stringable;
 use App\Validator\NullOrNotBlank;
 use DateTime;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
@@ -16,66 +17,58 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  * @Auditable()
- * @UniqueEntity(fields={"externalId"})
  */
-class Student implements JsonSerializable {
+#[UniqueEntity(fields: ['externalId'])]
+class Student implements JsonSerializable, Stringable {
 
     use IdTrait;
     use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @Assert\NotNull()
-     * @var string|null
      */
-    private $externalId;
+    #[Assert\NotNull]
+    private ?string $externalId = null;
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @Assert\NotNull()
-     * @var string
      */
-    private $uniqueIdentifier = null;
+    #[Assert\NotNull]
+    private ?string $uniqueIdentifier = null;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $firstname;
+    #[Assert\NotBlank]
+    private ?string $firstname = null;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $lastname;
+    #[Assert\NotBlank]
+    private ?string $lastname = null;
 
     /**
      * @ORM\Column(type="gender")
-     * @var Gender
      */
-    private $gender;
+    private ?Gender $gender;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      * @NullOrNotBlank()
-     * @Assert\Email()
-     * @var string|null
      */
-    private $email;
+    #[Assert\Email]
+    private ?string $email = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @var string|null
      */
-    private $status;
+    private ?string $status = null;
 
     /**
      * @ORM\Column(type="date")
-     * @var DateTime
      */
-    private $birthday;
+    private ?\DateTime $birthday = null;
 
     /**
      * @ORM\OneToMany(targetEntity="GradeMembership", mappedBy="student", cascade={"persist"}, orphanRemoval=true)
@@ -119,148 +112,84 @@ class Student implements JsonSerializable {
         $this->gradeMemberships = new ArrayCollection();
     }
 
-    /**
-     * @return string|null
-     */
     public function getExternalId(): ?string {
         return $this->externalId;
     }
 
-    /**
-     * @param string|null $externalId
-     * @return Student
-     */
     public function setExternalId(?string $externalId): Student {
         $this->externalId = $externalId;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getUniqueIdentifier(): string {
         return $this->uniqueIdentifier;
     }
 
-    /**
-     * @param string $uniqueIdentifier
-     * @return Student
-     */
     public function setUniqueIdentifier(string $uniqueIdentifier): Student {
         $this->uniqueIdentifier = $uniqueIdentifier;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFirstname(): ?string {
         return $this->firstname;
     }
 
-    /**
-     * @param string|null $firstname
-     * @return Student
-     */
     public function setFirstname(?string $firstname): Student {
         $this->firstname = $firstname;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLastname(): ?string {
         return $this->lastname;
     }
 
-    /**
-     * @param string|null $lastname
-     * @return Student
-     */
     public function setLastname(?string $lastname): Student {
         $this->lastname = $lastname;
         return $this;
     }
 
-    /**
-     * @return Gender|null
-     */
     public function getGender(): ?Gender {
         return $this->gender;
     }
 
-    /**
-     * @param Gender|null $gender
-     * @return Student
-     */
     public function setGender(?Gender $gender): Student {
         $this->gender = $gender;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getEmail(): ?string {
         return $this->email;
     }
 
-    /**
-     * @param string|null $email
-     * @return Student
-     */
     public function setEmail(?string $email): Student {
         $this->email = $email;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getStatus(): ?string {
         return $this->status;
     }
 
-    /**
-     * @param string|null $status
-     * @return Student
-     */
     public function setStatus(?string $status): Student {
         $this->status = $status;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getBirthday(): DateTime {
         return $this->birthday;
     }
 
-    /**
-     * @param DateTime $birthday
-     * @return Student
-     */
     public function setBirthday(DateTime $birthday): Student {
         $this->birthday = $birthday;
         return $this;
     }
 
-    /**
-     * @param DateTime $today
-     * @return bool
-     */
     public function isFullAged(DateTime $today): bool {
         $diff = date_diff($this->getBirthday(), $today);
         $age = $diff->y;
         return $age >= 18;
     }
 
-    /**
-     * @param Section|null $section
-     * @return Grade|null
-     */
     public function getGrade(?Section $section): ?Grade {
         if($section !== null) {
             /** @var GradeMembership $membership */
@@ -290,8 +219,6 @@ class Student implements JsonSerializable {
     }
 
     /**
-     * @param Grade|null $grade
-     * @return Student
      * @deprecated
      */
     public function setGrade(?Grade $grade): Student {
@@ -327,7 +254,7 @@ class Student implements JsonSerializable {
         return $this->sections;
     }
 
-    public function __toString() {
+    public function __toString(): string {
         return sprintf('%s, %s', $this->getLastname(), $this->getFirstname());
     }
 

@@ -13,7 +13,7 @@ class LineFormatter implements FormatterInterface {
         $line = $record['message'];
 
         foreach($record['context'] as $key => $value) {
-            $line = str_replace('{' . $key . '}', is_scalar($value) ? $value : json_encode($value), $line);
+            $line = str_replace('{' . $key . '}', is_scalar($value) ? $value : json_encode($value, JSON_THROW_ON_ERROR), $line);
         }
 
         return $line;

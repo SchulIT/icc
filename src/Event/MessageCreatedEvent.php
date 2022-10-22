@@ -6,11 +6,8 @@ use App\Entity\Message;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class MessageCreatedEvent extends Event {
-    /** @var Message */
-    private $message;
-
-    public function __construct(Message $message) {
-        $this->message = $message;
+    public function __construct(private Message $message)
+    {
     }
 
     public function getMessage(): Message {

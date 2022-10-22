@@ -13,16 +13,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @CronJob("@monthly")
  */
 class OptimizeDatabaseCommand extends Command {
-    private EntityManagerInterface $em;
+    protected static $defaultName = 'app:db:optimize';
 
-    public function __construct(EntityManagerInterface $em, string $name = null) {
+    public function __construct(private EntityManagerInterface $em, string $name = null) {
         parent::__construct($name);
-        $this->em = $em;
     }
 
     public function configure() {
-        $this->setName('app:db:optimize')
-            ->setDescription('Optimizes all database tables using an OPTIMIZE query.');
+        $this->setDescription('Optimizes all database tables using an OPTIMIZE query.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

@@ -6,12 +6,9 @@ use Faker\Generator;
 
 class RoomGenerator {
 
-    private $generator;
+    private array $rooms = [ ];
 
-    private $rooms = [ ];
-
-    public function __construct(Generator $generator) {
-        $this->generator = $generator;
+    public function __construct(private Generator $generator) {
         $this->loadRooms();
     }
 

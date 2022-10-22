@@ -15,12 +15,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DateLessonType extends AbstractType implements DataMapperInterface {
 
-    private TimetableSettings $timetableSettings;
-    private TranslatorInterface $translator;
-
-    public function __construct(TimetableSettings $settings, TranslatorInterface $translator) {
-        $this->timetableSettings = $settings;
-        $this->translator = $translator;
+    public function __construct(private TimetableSettings $timetableSettings, private TranslatorInterface $translator)
+    {
     }
 
     public function configureOptions(OptionsResolver $resolver) {

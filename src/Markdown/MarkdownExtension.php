@@ -29,25 +29,8 @@ use League\CommonMark\Inline\Renderer\LinkRenderer;
 
 class MarkdownExtension implements ExtensionInterface {
 
-    private AlertBlockParser $alertBlockParser;
-
-    private HeadingAnchorProcessor $headingProcessor;
-    private LinkProcessor $linkProcessor;
-    private ImageProcessor $imageProcessor;
-
-    private AlertBlockRenderer $alertBlockRenderer;
-    private HeadingRenderer $headingRenderer;
-    private TableRenderer $tableRenderer;
-
-    public function __construct(AlertBlockParser $alertBlockParser, HeadingAnchorProcessor $headingProcessor, LinkProcessor $linkProcessor, ImageProcessor $imageProcessor,
-                                AlertBlockRenderer $alertBlockRenderer, HeadingRenderer $headingRenderer, TableRenderer $tableRenderer) {
-        $this->alertBlockParser = $alertBlockParser;
-        $this->headingProcessor = $headingProcessor;
-        $this->linkProcessor = $linkProcessor;
-        $this->imageProcessor = $imageProcessor;
-        $this->alertBlockRenderer = $alertBlockRenderer;
-        $this->headingRenderer = $headingRenderer;
-        $this->tableRenderer = $tableRenderer;
+    public function __construct(private AlertBlockParser $alertBlockParser, private HeadingAnchorProcessor $headingProcessor, private LinkProcessor $linkProcessor, private ImageProcessor $imageProcessor, private AlertBlockRenderer $alertBlockRenderer, private HeadingRenderer $headingRenderer, private TableRenderer $tableRenderer)
+    {
     }
 
     public function register(ConfigurableEnvironmentInterface $environment): void {

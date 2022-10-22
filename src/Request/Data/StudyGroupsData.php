@@ -10,23 +10,21 @@ class StudyGroupsData {
 
     /**
      * @Serializer\Type("int")
-     * @var int
      */
-    private $year;
+    private ?int $year = null;
 
     /**
      * @Serializer\Type("int")
-     * @var int
      */
-    private $section;
+    private ?int $section = null;
 
     /**
      * @Serializer\Type("array<App\Request\Data\StudyGroupData>")
-     * @Assert\Valid()
      * @UniqueId(propertyPath="id")
      * @var StudyGroupData[]
      */
-    private $studyGroups = [ ];
+    #[Assert\Valid]
+    private array $studyGroups = [ ];
 
     /**
      * @return StudyGroupData[]
@@ -37,40 +35,25 @@ class StudyGroupsData {
 
     /**
      * @param StudyGroupData[] $studyGroups
-     * @return StudyGroupsData
      */
     public function setStudyGroups($studyGroups): StudyGroupsData {
         $this->studyGroups = $studyGroups;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getYear(): int {
         return $this->year;
     }
 
-    /**
-     * @param int $year
-     * @return StudyGroupsData
-     */
     public function setYear(int $year): StudyGroupsData {
         $this->year = $year;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getSection(): int {
         return $this->section;
     }
 
-    /**
-     * @param int $section
-     * @return StudyGroupsData
-     */
     public function setSection(int $section): StudyGroupsData {
         $this->section = $section;
         return $this;

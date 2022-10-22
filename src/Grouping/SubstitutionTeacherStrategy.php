@@ -12,10 +12,8 @@ class SubstitutionTeacherStrategy implements GroupingStrategyInterface {
     /** @var Teacher[] */
     private $teachers = null;
 
-    private $teacherRepository;
-
-    public function __construct(TeacherRepositoryInterface $teacherRepository) {
-        $this->teacherRepository = $teacherRepository;
+    public function __construct(private TeacherRepositoryInterface $teacherRepository)
+    {
     }
 
 
@@ -73,7 +71,6 @@ class SubstitutionTeacherStrategy implements GroupingStrategyInterface {
     /**
      * @param Teacher|null $keyA
      * @param Teacher|null $keyB
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         if($keyA === null && $keyB === null) {
@@ -85,7 +82,6 @@ class SubstitutionTeacherStrategy implements GroupingStrategyInterface {
 
     /**
      * @param Teacher $key
-     * @return GroupInterface
      */
     public function createGroup($key, array $options = [ ]): GroupInterface {
         return new SubstitutionTeacherGroup($key);

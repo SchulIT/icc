@@ -11,14 +11,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SubstitutionStrategy implements EmailStrategyInterface {
 
-    private $settings;
-    private $translator;
-    private $userRepository;
-
-    public function __construct(SubstitutionSettings $settings, UserRepositoryInterface $userRepository, TranslatorInterface $translator) {
-        $this->settings = $settings;
-        $this->userRepository = $userRepository;
-        $this->translator = $translator;
+    public function __construct(private SubstitutionSettings $settings, private UserRepositoryInterface $userRepository, private TranslatorInterface $translator)
+    {
     }
 
     /**
@@ -34,14 +28,11 @@ class SubstitutionStrategy implements EmailStrategyInterface {
     public function getRecipients($objective): array {
         return array_filter(
             $this->userRepository->findAllByNotifySubstitutions(),
-            function(User $user) {
-                return $user->getEmail() !== null && $user->isEmailNotificationsEnabled();
-            });
+            fn(User $user) => $user->getEmail() !== null && $user->isEmailNotificationsEnabled());
     }
 
     /**
      * @param Substitution $objective
-     * @return string
      */
     public function getSender($objective): string {
         return $this->settings->getNotificationSender();

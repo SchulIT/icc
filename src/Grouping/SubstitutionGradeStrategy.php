@@ -38,7 +38,6 @@ class SubstitutionGradeStrategy implements GroupingStrategyInterface {
     /**
      * @param Grade|null $keyA
      * @param Grade|null $keyB
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         if($keyA === null && $keyB === null) {
@@ -52,7 +51,6 @@ class SubstitutionGradeStrategy implements GroupingStrategyInterface {
 
     /**
      * @param Grade|null $key
-     * @return GroupInterface
      */
     public function createGroup($key, array $options = [ ]): GroupInterface {
         return new SubstitutionGradeGroup($key);

@@ -15,17 +15,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LinkProcessor {
 
-    private DocumentRepositoryInterface $documentRepository;
-    private WikiArticleRepositoryInterface $wikiArticleRepository;
-    private UrlGeneratorInterface $urlGenerator;
-    private TranslatorInterface $translator;
-
-    public function __construct(DocumentRepositoryInterface $documentRepository, WikiArticleRepositoryInterface $wikiArticleRepository,
-                                UrlGeneratorInterface $urlGenerator, TranslatorInterface $translator) {
-        $this->documentRepository = $documentRepository;
-        $this->wikiArticleRepository = $wikiArticleRepository;
-        $this->urlGenerator = $urlGenerator;
-        $this->translator = $translator;
+    public function __construct(private DocumentRepositoryInterface $documentRepository, private WikiArticleRepositoryInterface $wikiArticleRepository, private UrlGeneratorInterface $urlGenerator, private TranslatorInterface $translator)
+    {
     }
 
     public function onDocumentParsed(DocumentParsedEvent $event): void {

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\RoomTag;
 use App\Form\RoomTagType;
 use App\Repository\RoomTagRepositoryInterface;
@@ -12,32 +13,24 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/admin/resources/tags")
  * @Security("is_granted('ROLE_APPOINTMENTS_ADMIN')")
  */
+#[Route(path: '/admin/resources/tags')]
 class RoomTagAdminController extends AbstractController {
 
-    private RoomTagRepositoryInterface $repository;
-
-    public function __construct(RoomTagRepositoryInterface $repository, RefererHelper $redirectHelper) {
+    public function __construct(private RoomTagRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
-
-        $this->repository = $repository;
     }
 
-    /**
-     * @Route("", name="admin_room_tags")
-     */
-    public function index() {
+    #[Route(path: '', name: 'admin_room_tags')]
+    public function index(): Response {
         return $this->render('admin/resources/tags/index.html.twig', [
             'tags' => $this->repository->findAll()
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_room_tag")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'add_room_tag')]
+    public function add(Request $request): Response {
         $tag = new RoomTag();
         $form = $this->createForm(RoomTagType::class, $tag);
         $form->handleRequest($request);
@@ -54,10 +47,8 @@ class RoomTagAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_room_tag")
-     */
-    public function edit(RoomTag $tag, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_room_tag')]
+    public function edit(RoomTag $tag, Request $request): Response {
         $form = $this->createForm(RoomTagType::class, $tag);
         $form->handleRequest($request);
 
@@ -74,10 +65,8 @@ class RoomTagAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_room_tag")
-     */
-    public function remove(RoomTag $tag, Request $request) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_room_tag')]
+    public function remove(RoomTag $tag, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.resources.tags.remove.confirm',
             'message_parameters' => [

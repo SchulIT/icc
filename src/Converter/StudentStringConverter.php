@@ -8,10 +8,8 @@ use App\Section\SectionResolverInterface;
 
 class StudentStringConverter {
 
-    private SectionResolverInterface $sectionResolver;
-
-    public function __construct(SectionResolverInterface $sectionResolver) {
-        $this->sectionResolver = $sectionResolver;
+    public function __construct(private SectionResolverInterface $sectionResolver)
+    {
     }
 
     public function convert(Student $student, bool $includeGrade = false, ?Section $section = null): string {

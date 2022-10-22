@@ -9,7 +9,6 @@ class WeekOfYearStrategy implements SortingStrategyInterface {
     /**
      * @param WeekOfYear|null $objectA
      * @param WeekOfYear|null $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         if($objectA === null && $objectB === null) {

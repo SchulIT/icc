@@ -14,70 +14,43 @@ class MessageAttachment {
     /**
      * @Serializer\SerializedName("filename")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $filename;
+    private ?string $filename = null;
 
     /**
      * @Serializer\SerializedName("size")
      * @Serializer\Type("int")
-     *
-     * @var int
      */
-    private $size;
+    private ?int $size = null;
 
     /**
      * @Serializer\SerializedName("updated_at")
      * @Serializer\Type("DateTimeImmutable")
-     *
-     * @var DateTime
      */
-    private $updatedAt;
+    private ?\DateTime $updatedAt = null;
 
-    /**
-     * @return string
-     */
     public function getFilename(): string {
         return $this->filename;
     }
 
-    /**
-     * @param string $filename
-     * @return MessageAttachment
-     */
     public function setFilename(string $filename): MessageAttachment {
         $this->filename = $filename;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getSize(): int {
         return $this->size;
     }
 
-    /**
-     * @param int $size
-     * @return MessageAttachment
-     */
     public function setSize(int $size): MessageAttachment {
         $this->size = $size;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getUpdatedAt(): DateTime {
         return $this->updatedAt;
     }
 
-    /**
-     * @param DateTime $updatedAt
-     * @return MessageAttachment
-     */
     public function setUpdatedAt(DateTime $updatedAt): MessageAttachment {
         $this->updatedAt = $updatedAt;
         return $this;

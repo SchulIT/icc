@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Stringable;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * })
  * @Auditable()
  */
-class StudyGroup {
+class StudyGroup implements Stringable {
 
     use IdTrait;
     use UuidTrait;
@@ -24,24 +25,21 @@ class StudyGroup {
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $externalId;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $externalId = null;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $name;
+    #[Assert\NotBlank]
+    private ?string $name = null;
 
     /**
      * @ORM\Column(type="study_group_type")
-     * @Assert\NotNull()
-     * @var StudyGroupType
      */
-    private $type;
+    #[Assert\NotNull]
+    private StudyGroupType $type;
 
     /**
      * @ORM\ManyToMany(targetEntity="Grade")
@@ -73,49 +71,28 @@ class StudyGroup {
         $this->tuitions = new ArrayCollection();
     }
 
-    /**
-     * @return string|null
-     */
     public function getExternalId(): ?string {
         return $this->externalId;
     }
 
-    /**
-     * @param string|null $externalId
-     * @return StudyGroup
-     */
     public function setExternalId(?string $externalId): StudyGroup {
         $this->externalId = $externalId;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     * @return StudyGroup
-     */
     public function setName(?string $name): StudyGroup {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return StudyGroupType
-     */
     public function getType(): StudyGroupType {
         return $this->type;
     }
 
-    /**
-     * @param StudyGroupType $type
-     * @return StudyGroup
-     */
     public function setType(StudyGroupType $type): StudyGroup {
         $this->type = $type;
         return $this;
@@ -150,7 +127,7 @@ class StudyGroup {
         return $this->tuitions;
     }
 
-    public function __toString() {
+    public function __toString(): string {
         return sprintf('%s: %s', implode(', ', $this->getGrades()->toArray()), $this->getName());
     }
 }

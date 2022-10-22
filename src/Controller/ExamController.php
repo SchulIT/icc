@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
+use Closure;
 use App\Entity\Exam;
 use App\Entity\IcsAccessToken;
 use App\Entity\IcsAccessTokenType;
@@ -40,32 +42,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-/**
- * @Route("/exams")
- */
+#[Route(path: '/exams')]
 class ExamController extends AbstractControllerWithMessages {
 
     private static int $ItemsPerPage = 25;
 
-    private Grouper $grouper;
-    private Sorter $sorter;
-
-    private ImportDateTypeRepositoryInterface $importDateTypeRepository;
-
-    public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper, ImportDateTypeRepositoryInterface $importDateTypeRepository,
-                                DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
+    public function __construct(MessageRepositoryInterface $messageRepository, DismissedMessagesHelper $dismissedMessagesHelper, private ImportDateTypeRepositoryInterface $importDateTypeRepository,
+                                DateHelper $dateHelper, private Grouper $grouper, private Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($messageRepository, $dismissedMessagesHelper, $dateHelper, $refererHelper);
-
-        $this->grouper = $grouper;
-        $this->sorter = $sorter;
-        $this->importDateTypeRepository = $importDateTypeRepository;
     }
 
-    /**
-     * @Route("", name="exams")
-     */
+    #[Route(path: '', name: 'exams')]
     public function index(SectionFilter $sectionFilter, TeacherFilter $teacherFilter, StudentFilter $studentsFilter, GradeFilter $gradeFilter, StudyGroupFilter $studyGroupFilter,
-                          ExamRepositoryInterface $examRepository, ExamSettings $examSettings, Request $request, DateHelper $dateHelper) {
+                          ExamRepositoryInterface $examRepository, ExamSettings $examSettings, Request $request, DateHelper $dateHelper): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -159,7 +148,7 @@ class ExamController extends AbstractControllerWithMessages {
         return count(array_intersect($visibleGradeIds, $gradeIds)) > 0;
     }
 
-    private function getExams(?ExamWeekGroup $group, \Closure $repositoryCall) {
+    private function getExams(?ExamWeekGroup $group, Closure $repositoryCall) {
         if($group === null) {
             return [];
         }
@@ -178,10 +167,6 @@ class ExamController extends AbstractControllerWithMessages {
 
     /**
      * @param ExamWeekGroup[] $groups
-     * @param int|null $year
-     * @param int|null $weekNumber
-     * @param DateHelper $dateHelper
-     * @return ExamWeekGroup|null
      */
     private function getCurrentGroup(array $groups, ?int $year, ?int $weekNumber, DateHelper $dateHelper): ?ExamWeekGroup {
         if ($year === null || $weekNumber === null) {
@@ -230,10 +215,8 @@ class ExamController extends AbstractControllerWithMessages {
         return array_values($groups);
     }
 
-    /**
-     * @Route("/export", name="exams_export")
-     */
-    public function export(Request $request, IcsAccessTokenManager $manager) {
+    #[Route(path: '/export', name: 'exams_export')]
+    public function export(Request $request, IcsAccessTokenManager $manager): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -254,11 +237,9 @@ class ExamController extends AbstractControllerWithMessages {
         ]);
     }
 
-    /**
-     * @Route("/ics/download", name="exams_ics")
-     * @Route("/ics/download/{token}", name="exams_ics_token")
-     */
-    public function ics(ExamIcsExporter $exporter) {
+    #[Route(path: '/ics/download', name: 'exams_ics')]
+    #[Route(path: '/ics/download/{token}', name: 'exams_ics_token')]
+    public function ics(ExamIcsExporter $exporter): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -269,10 +250,8 @@ class ExamController extends AbstractControllerWithMessages {
         return MessageScope::Exams();
     }
 
-    /**
-     * @Route("/{uuid}", name="show_exam", requirements={"id": "\d+"})
-     */
-    public function show(Exam $exam) {
+    #[Route(path: '/{uuid}', name: 'show_exam', requirements: ['id' => '\d+'])]
+    public function show(Exam $exam): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Show, $exam);
 
         $studyGroups = [ ];

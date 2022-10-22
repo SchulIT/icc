@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Section;
 use App\Form\SectionType;
 use App\Repository\SectionRepositoryInterface;
@@ -11,32 +12,22 @@ use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/admin/section")
- */
+#[Route(path: '/admin/section')]
 class SectionController extends AbstractController {
 
-    private SectionRepositoryInterface $repository;
-
-    public function __construct(SectionRepositoryInterface $repository, RefererHelper $redirectHelper) {
+    public function __construct(private SectionRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
-
-        $this->repository = $repository;
     }
 
-    /**
-     * @Route("", name="admin_sections")
-     */
-    public function index() {
+    #[Route(path: '', name: 'admin_sections')]
+    public function index(): Response {
         return $this->render('admin/sections/index.html.twig', [
             'sections' => $this->repository->findAll()
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_section")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'add_section')]
+    public function add(Request $request): Response {
         $section = new Section();
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
@@ -53,10 +44,8 @@ class SectionController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_section")
-     */
-    public function edit(Section $section, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_section')]
+    public function edit(Section $section, Request $request): Response {
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
 
@@ -73,10 +62,8 @@ class SectionController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_section")
-     */
-    public function remove(Section $section, Request $request, TimetableLessonRepositoryInterface $lessonRepository) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_section')]
+    public function remove(Section $section, Request $request, TimetableLessonRepositoryInterface $lessonRepository): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.sections.remove.confirm',
             'message_parameters' => [

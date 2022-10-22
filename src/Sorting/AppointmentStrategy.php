@@ -9,7 +9,6 @@ class AppointmentStrategy implements SortingStrategyInterface {
     /**
      * @param Appointment $objectA
      * @param Appointment $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         if($objectA->getStart() < $objectB->getStart()) {

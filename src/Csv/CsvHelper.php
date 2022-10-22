@@ -14,7 +14,6 @@ class CsvHelper {
      *
      * @param string[][] $fields
      * @param string $separator The separator which is used to separate the values (default: ;)
-     * @return string
      * @throws Exception
      */
     public function getCsvContent(array $fields, string $separator = ';'): string {
@@ -32,7 +31,6 @@ class CsvHelper {
      * @param string $filename The filename which is used for downloading the file.
      * @param string[][] $fields CSV data (see fputcsv())
      * @param string $separator The separator which is used to separate the values (default: ;)
-     * @return Response
      * @throws Exception
      */
     public function getCsvResponse(string $filename, array $fields, $separator = ';'): Response {

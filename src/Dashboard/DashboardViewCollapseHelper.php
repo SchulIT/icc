@@ -14,10 +14,8 @@ use InvalidArgumentException;
  */
 class DashboardViewCollapseHelper {
 
-    private $settings;
-
-    public function __construct(DashboardSettings $settings) {
-        $this->settings = $settings;
+    public function __construct(private DashboardSettings $settings)
+    {
     }
 
     public function collapseView(DashboardView $view, ?Teacher $teacher) {
@@ -37,9 +35,7 @@ class DashboardViewCollapseHelper {
         $mentions = $view->getSubstitutionMentions();
         $view->clearSubstitutionMentions();
 
-        usort($mentions, function(SubstitutionViewItem $viewItemA, SubstitutionViewItem $viewItemB) {
-            return $viewItemA->getSubstitution()->getLessonStart() - $viewItemB->getSubstitution()->getLessonEnd();
-        });
+        usort($mentions, fn(SubstitutionViewItem $viewItemA, SubstitutionViewItem $viewItemB) => $viewItemA->getSubstitution()->getLessonStart() - $viewItemB->getSubstitution()->getLessonEnd());
 
         foreach($mentions as $mention) {
             $view->addSubstitutonMention($mention);
@@ -50,9 +46,7 @@ class DashboardViewCollapseHelper {
         $exams = $view->getExams();
         $view->clearExams();
 
-        usort($exams, function(ExamViewItem $examA, ExamViewItem $examB) {
-            return $examA->getExam()->getLessonStart() - $examB->getExam()->getLessonStart();
-        });
+        usort($exams, fn(ExamViewItem $examA, ExamViewItem $examB) => $examA->getExam()->getLessonStart() - $examB->getExam()->getLessonStart());
 
         foreach($exams as $exam) {
             $view->addExam($exam);
@@ -161,13 +155,9 @@ class DashboardViewCollapseHelper {
         /** @var SubstitutionViewItem[] $additionalSubstitutions */
         $additionalSubstitutions = array_values(array_filter($substitutions, [ $this, 'isAdditionalSubstitution']));
         /** @var SubstitutionViewItem[] $removableSubstitutions */
-        $removableSubstitutions = array_values(array_filter($substitutions, function(SubstitutionViewItem $viewItem) use ($teacher) {
-            return $this->isRemovableSubstitution($viewItem, $teacher);
-        }));
+        $removableSubstitutions = array_values(array_filter($substitutions, fn(SubstitutionViewItem $viewItem) => $this->isRemovableSubstitution($viewItem, $teacher)));
         /** @var SubstitutionViewItem[] $defaultSubstitutions */
-        $defaultSubstitutions = array_values(array_filter($substitutions, function(SubstitutionViewItem $viewItem) use ($teacher) {
-            return $this->isDefault($viewItem, $teacher);
-        }));
+        $defaultSubstitutions = array_values(array_filter($substitutions, fn(SubstitutionViewItem $viewItem) => $this->isDefault($viewItem, $teacher)));
 
         $defaultSubstitutionsCount = $this->countDefaultSubstitutions($defaultSubstitutions);
 
@@ -255,7 +245,7 @@ class DashboardViewCollapseHelper {
         ];
 
         foreach($originalItems as $originalItem) {
-            if(!in_array(get_class($originalItem), $consideredTypes)) {
+            if(!in_array($originalItem::class, $consideredTypes)) {
                 $lesson->addItem($originalItem);
             }
         }
@@ -338,9 +328,6 @@ class DashboardViewCollapseHelper {
         }
     }
 
-    /**
-     * @param DashboardLesson $lesson
-     */
     private function mergeExamSupervisions(DashboardLesson $lesson): void {
         $items = $lesson->getItems();
         $supervisions = [ ];

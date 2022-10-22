@@ -20,11 +20,10 @@ class DocumentCategory {
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @Assert\NotNull()
-     * @var string
      */
-    private $name;
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    private ?string $name = null;
 
     /**
      * @ORM\OneToMany(targetEntity="Document", mappedBy="category")
@@ -44,10 +43,6 @@ class DocumentCategory {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     * @return DocumentCategory
-     */
     public function setName(?string $name): DocumentCategory {
         $this->name = $name;
         return $this;

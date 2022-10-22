@@ -15,17 +15,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @CronJob("@daily")
  */
 class RemoveOldSamlIdsCommand extends Command {
-    private EntityManagerInterface $em;
+    protected static $defaultName = 'app:saml:remove_ids';
     private const Days = 30;
 
-    public function __construct(EntityManagerInterface $em, string $name = null) {
+    public function __construct(private EntityManagerInterface $em, string $name = null) {
         parent::__construct($name);
-        $this->em = $em;
     }
 
     public function configure() {
-        $this->setName('app:saml:remove_ids')
-            ->setDescription('Removes old SAML _InResponse IDs.');
+        $this->setDescription('Removes old SAML _InResponse IDs.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

@@ -37,7 +37,6 @@ class RoomTagInfo {
     }
 
     /**
-     * @param Room $room
      * @return RoomTagInfo $this
      */
     public function setRoom(Room $room) {
@@ -53,7 +52,6 @@ class RoomTagInfo {
     }
 
     /**
-     * @param RoomTag $tag
      * @return RoomTagInfo $this
      */
     public function setTag(RoomTag $tag) {

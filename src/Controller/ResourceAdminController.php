@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\ResourceEntity;
 use App\Entity\Room;
 use App\Form\ResourceType;
@@ -17,23 +18,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/admin/resources")
  * @Security("is_granted('ROLE_ADMIN')")
  */
+#[Route(path: '/admin/resources')]
 class ResourceAdminController extends AbstractController {
 
-    private ResourceRepositoryInterface $repository;
-
-    public function __construct(ResourceRepositoryInterface $repository, RefererHelper $redirectHelper) {
+    public function __construct(private ResourceRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
-
-        $this->repository = $repository;
     }
 
-    /**
-     * @Route("", name="admin_resources")
-     */
-    public function index(Sorter $sorter) {
+    #[Route(path: '', name: 'admin_resources')]
+    public function index(Sorter $sorter): Response {
         $resources = $this->repository->findAll();
         $sorter->sort($resources, ResourceStrategy::class);
 
@@ -42,10 +37,8 @@ class ResourceAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_resource")
-     */
-    public function add(Request $request, ResourceTypeRepositoryInterface $typeRepository) {
+    #[Route(path: '/add', name: 'add_resource')]
+    public function add(Request $request, ResourceTypeRepositoryInterface $typeRepository): Response {
         $resource = new ResourceEntity();
 
         if($request->query->get('type') === 'room') {
@@ -71,10 +64,8 @@ class ResourceAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_resource")
-     */
-    public function edit(ResourceEntity $room, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_resource')]
+    public function edit(ResourceEntity $room, Request $request): Response {
         $form = $this->createForm(ResourceType::class, $room);
         $form->handleRequest($request);
 
@@ -93,10 +84,8 @@ class ResourceAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_resource")
-     */
-    public function remove(ResourceEntity $room, Request $request) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_resource')]
+    public function remove(ResourceEntity $room, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.resources.remove.confirm',
             'message_parameters' => [

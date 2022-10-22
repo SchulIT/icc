@@ -12,46 +12,30 @@ class AppointmentCategory {
     /**
      * @Serializer\SerializedName("name")
      * @Serializer\Type("string")
-     * @var string
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * HTML Hex-Color, e.g. #AB00A1 (case might be mixed)
      *
      * @Serializer\SerializedName("color")
      * @Serializer\Type("string")
-     * @var string
      */
-    private $color;
+    private ?string $color = null;
 
-    /**
-     * @return string
-     */
     public function getName(): string {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return AppointmentCategory
-     */
     public function setName(string $name): AppointmentCategory {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getColor(): string {
         return $this->color;
     }
 
-    /**
-     * @param string $color
-     * @return AppointmentCategory
-     */
     public function setColor(string $color): AppointmentCategory {
         $this->color = $color;
         return $this;

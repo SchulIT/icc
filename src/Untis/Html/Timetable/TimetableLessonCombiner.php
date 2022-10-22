@@ -13,12 +13,8 @@ class TimetableLessonCombiner {
      */
     public function combine(array $lessons): array {
         usort($lessons, function(Lesson $lessonA, Lesson $lessonB) {
-            if($lessonA->getDay() === $lessonB->getDay()) {
-                if($lessonA->getLessonStart() === $lessonB->getLessonStart()) {
-                    return 0;
-                }
-
-                return $lessonA->getLessonStart() < $lessonB->getLessonStart() ? -1 : 1;
+            if ($lessonA->getDay() === $lessonB->getDay()) {
+                return $lessonA->getLessonStart() <=> $lessonB->getLessonStart();
             }
 
             return $lessonA->getDay() < $lessonB->getDay() ? -1 : 1;
@@ -32,9 +28,7 @@ class TimetableLessonCombiner {
                 continue;
             }
 
-            $lessonsToCompare = array_filter($lessons, function(Lesson $compareLesson) use($lesson) {
-                return $this->isSameLesson($lesson, $compareLesson);
-            });
+            $lessonsToCompare = array_filter($lessons, fn(Lesson $compareLesson) => $this->isSameLesson($lesson, $compareLesson));
 
             foreach($lessonsToCompare as $compareLesson) {
                 if($compareLesson->getLessonStart() === $lesson->getLessonEnd() + 1) {

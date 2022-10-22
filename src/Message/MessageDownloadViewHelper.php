@@ -12,12 +12,8 @@ use League\Flysystem\FilesystemException;
 
 class MessageDownloadViewHelper extends AbstractMessageFileViewHelper {
 
-    private MessageFilesystem $messageFilesystem;
-
-    public function __construct(StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository, UserRepositoryInterface $userRepository, MessageFilesystem $filesystem) {
+    public function __construct(StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository, UserRepositoryInterface $userRepository, private MessageFilesystem $messageFilesystem) {
         parent::__construct($studentRepository, $teacherRepository, $userRepository);
-
-        $this->messageFilesystem = $filesystem;
     }
 
     /**

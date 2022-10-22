@@ -8,22 +8,14 @@ use App\Entity\UserType;
 class MessageVisibilityGroup implements GroupInterface {
 
     /**
-     * @var UserType
-     */
-    private $userType;
-
-    /**
      * @var Message[]
      */
-    private $messages = [ ];
+    private array $messages = [ ];
 
-    public function __construct(UserType $userType) {
-        $this->userType = $userType;
+    public function __construct(private UserType $userType)
+    {
     }
 
-    /**
-     * @return UserType
-     */
     public function getUserType(): UserType {
         return $this->userType;
     }

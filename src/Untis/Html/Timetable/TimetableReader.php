@@ -29,9 +29,6 @@ class TimetableReader extends AbstractHtmlReader {
     }
 
     /**
-     * @param string $html
-     * @param TimetableType $type
-     * @return TimetableResult
      * @throws HtmlParseException
      */
     public function readHtml(string $html, TimetableType $type): TimetableResult {
@@ -67,7 +64,6 @@ class TimetableReader extends AbstractHtmlReader {
     }
 
     /**
-     * @param DOMXPath $xpath
      * @return Lesson[]
      * @throws HtmlParseException
      */
@@ -104,7 +100,7 @@ class TimetableReader extends AbstractHtmlReader {
                 $currentDay += $this->computeAdvanceDayCount($lessonStarts, $currentLesson, $currentDay);
 
                 $lessonStart = $currentLesson;
-                $numberOfLessonsStartingAtLessonStart = count(array_filter($lessonStarts[$currentDay], function(int $start) use ($lessonStart) { return $start === $lessonStart; }));
+                $numberOfLessonsStartingAtLessonStart = count((array) array_filter($lessonStarts[$currentDay], fn(int $start) => $start === $lessonStart));
                 $lessonEnd = $currentLesson + $numberOfLessonsStartingAtLessonStart - 1;
 
                 $lessons = array_merge($lessons, $this->parseLessonsFromCell($xpath, $tdNodes->item($tdIdx), $currentDay, $lessonStart, $lessonEnd, $cellTypes, true));
@@ -187,8 +183,8 @@ class TimetableReader extends AbstractHtmlReader {
             throw new InvalidArgumentException(sprintf('Parameter $day must be less than %d (%d given)', count($lessonStarts), $day));
         }
 
-        if($lesson > count($lessonStarts[0])) {
-            throw new InvalidArgumentException(sprintf('Parameter $lesson mut be less than %d (%d given)', count($lessonStarts[0]), $lesson));
+        if($lesson > (is_countable($lessonStarts[0]) ? count($lessonStarts[0]) : 0)) {
+            throw new InvalidArgumentException(sprintf('Parameter $lesson mut be less than %d (%d given)', is_countable($lessonStarts[0]) ? count($lessonStarts[0]) : 0, $lesson));
         }
 
         $advance = 0;
@@ -205,13 +201,7 @@ class TimetableReader extends AbstractHtmlReader {
     }
 
     /**
-     * @param DOMXPath $xpath
-     * @param DOMNode $tdNode
-     * @param int $day
-     * @param int $lessonStart
-     * @param int $lessonEnd
      * @param CellInformationType[] $cellTypes
-     * @param bool $useWeeks
      * @return Lesson[]
      */
     private function parseLessonsFromCell(DOMXPath $xpath, DOMNode $tdNode, int $day, int $lessonStart, int $lessonEnd, array $cellTypes, bool $useWeeks = true): array {

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Converter\TeacherStringConverter;
 use App\Entity\Teacher;
 use App\Form\TeacherType;
@@ -16,25 +17,17 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Route("/admin/teachers")
  * @Security("is_granted('ROLE_ADMIN')")
  */
+#[Route(path: '/admin/teachers')]
 class TeacherAdminController extends AbstractController {
 
-    private Sorter $sorter;
-    private TeacherRepositoryInterface $repository;
-
-    public function __construct(Sorter $sorter, TeacherRepositoryInterface $repository, RefererHelper $redirectHelper) {
+    public function __construct(private Sorter $sorter, private TeacherRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
-
-        $this->sorter = $sorter;
-        $this->repository = $repository;
     }
 
-    /**
-     * @Route("", name="admin_teachers")
-     */
-    public function index() {
+    #[Route(path: '', name: 'admin_teachers')]
+    public function index(): Response {
         $teachers = $this->repository->findAll();
         $this->sorter->sort($teachers, TeacherStrategy::class);
 
@@ -43,10 +36,8 @@ class TeacherAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_teacher")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'add_teacher')]
+    public function add(Request $request): Response {
         $teacher = new Teacher();
         $form = $this->createForm(TeacherType::class, $teacher);
         $form->handleRequest($request);
@@ -63,10 +54,8 @@ class TeacherAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_teacher")
-     */
-    public function edit(Teacher $teacher, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_teacher')]
+    public function edit(Teacher $teacher, Request $request): Response {
         $form = $this->createForm(TeacherType::class, $teacher);
         $form->handleRequest($request);
 
@@ -83,10 +72,8 @@ class TeacherAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_teacher")
-     */
-    public function remove(Teacher $teacher, Request $request, TranslatorInterface $translator, TeacherStringConverter $teacherStringConverter) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_teacher')]
+    public function remove(Teacher $teacher, Request $request, TranslatorInterface $translator, TeacherStringConverter $teacherStringConverter): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => $translator->trans('admin.teachers.remove.confirm', [
                 '%name%' => $teacherStringConverter->convert($teacher),

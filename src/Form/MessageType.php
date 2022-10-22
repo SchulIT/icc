@@ -23,13 +23,8 @@ class MessageType extends AbstractType {
 
     private const YearsDelta = 1;
 
-    private DateHelper $dateHelper;
-
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    public function __construct(DateHelper $dateHelper, AuthorizationCheckerInterface $authorizationChecker) {
-        $this->dateHelper = $dateHelper;
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(private DateHelper $dateHelper, private AuthorizationCheckerInterface $authorizationChecker)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -252,11 +247,9 @@ class MessageType extends AbstractType {
                             'label_attr' => [
                                 'class' => 'checkbox-custom'
                             ],
-                            'query_builder' => function(EntityRepository $repository) {
-                                return $repository->createQueryBuilder('v')
-                                    ->where("v.userType IN ('student', 'teacher')")
-                                    ->orderBy('v.userType', 'asc');
-                            }
+                            'query_builder' => fn(EntityRepository $repository) => $repository->createQueryBuilder('v')
+                                ->where("v.userType IN ('student', 'teacher')")
+                                ->orderBy('v.userType', 'asc')
                         ])
                         ->add('pollStudyGroups', StudyGroupType::class, [
                             'label' => 'label.study_groups_simple',

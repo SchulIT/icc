@@ -15,19 +15,13 @@ use App\Utils\EnumArrayUtils;
 
 class PollResultViewHelper {
 
-    private $studentRepository;
-    private $teacherRepository;
-
-    public function __construct(StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository) {
-        $this->studentRepository = $studentRepository;
-        $this->teacherRepository = $teacherRepository;
+    public function __construct(private StudentRepositoryInterface $studentRepository, private TeacherRepositoryInterface $teacherRepository)
+    {
     }
 
     public function createView(Message $message): PollResultView {
         /** @var UserType[] $visibilities */
-        $visibilities = $message->getPollUserTypes()->map(function(UserTypeEntity $visibility) {
-            return $visibility->getUserType();
-        });
+        $visibilities = $message->getPollUserTypes()->map(fn(UserTypeEntity $visibility) => $visibility->getUserType());
 
         $students = [ ];
         $teachers = [ ];
@@ -51,34 +45,24 @@ class PollResultViewHelper {
     /**
      * Returns all student votes. Keys are the student ids.
      *
-     * @param Message $message
      * @return MessagePollVote[]
      */
     private function getStudentVotes(Message $message): array {
         $votes = $message->getPollVotes()
-            ->filter(function(MessagePollVote $vote) {
-                return $vote->getUser()->getUserType()->equals(UserType::Student()) && $vote->getUser()->getStudents()->first() !== null;
-            })->toArray();
+            ->filter(fn(MessagePollVote $vote) => $vote->getUser()->getUserType()->equals(UserType::Student()) && $vote->getUser()->getStudents()->first() !== null)->toArray();
 
-        return ArrayUtils::createArrayWithKeys($votes, function(MessagePollVote $vote) {
-            return $vote->getUser()->getStudents()->first()->getId();
-        });
+        return ArrayUtils::createArrayWithKeys($votes, fn(MessagePollVote $vote) => $vote->getUser()->getStudents()->first()->getId());
     }
 
     /**
      * Returns all teacher votes. Keys are the teacher ids.
      *
-     * @param Message $message
      * @return MessagePollVote[]
      */
     private function getTeacherVotes(Message $message): array {
         $votes = $message->getPollVotes()
-            ->filter(function(MessagePollVote $vote) {
-                return $vote->getUser()->getUserType()->equals(UserType::Teacher()) && $vote->getUser()->getTeacher() !== null;
-            })->toArray();
+            ->filter(fn(MessagePollVote $vote) => $vote->getUser()->getUserType()->equals(UserType::Teacher()) && $vote->getUser()->getTeacher() !== null)->toArray();
 
-        return ArrayUtils::createArrayWithKeys($votes, function(MessagePollVote $vote) {
-            return $vote->getUser()->getTeacher()->getId();
-        });
+        return ArrayUtils::createArrayWithKeys($votes, fn(MessagePollVote $vote) => $vote->getUser()->getTeacher()->getId());
     }
 }

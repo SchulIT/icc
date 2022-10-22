@@ -13,21 +13,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudyGroupsGradeStringConverter {
 
-    private GradesCollapsedArrayConverter $gradeConverter;
-    private TranslatorInterface $translator;
-    private Sorter $sorter;
-
-    public function __construct(TranslatorInterface $translator, Sorter $sorter, GradesCollapsedArrayConverter $gradeConverter) {
-        $this->translator = $translator;
-        $this->sorter = $sorter;
-        $this->gradeConverter = $gradeConverter;
+    public function __construct(private TranslatorInterface $translator, private Sorter $sorter, private GradesCollapsedArrayConverter $gradeConverter)
+    {
     }
 
     /**
-     * @param StudyGroup[]|ArrayCollection|iterable $studyGroups
-     * @param bool $sort
-     * @param Grade[]|ArrayCollection|iterable $onlyGrades
-     * @return string
+     * @param StudyGroup[]|iterable $studyGroups
+     * @param Grade[]|iterable $onlyGrades
      */
     public function convert(iterable $studyGroups, bool $sort = false, iterable $onlyGrades = [ ]): string {
         if($studyGroups instanceof Collection) {
@@ -39,9 +31,7 @@ class StudyGroupsGradeStringConverter {
         }
 
         /** @var int[] $onlyGrades */
-        $onlyGrades = array_map(function(Grade $grade) {
-            return $grade->getId();
-        }, $onlyGrades);
+        $onlyGrades = array_map(fn(Grade $grade) => $grade->getId(), $onlyGrades);
 
         if($sort === true) {
             $this->sorter->sort($studyGroups, StudyGroupStrategy::class);
@@ -50,33 +40,25 @@ class StudyGroupsGradeStringConverter {
         $output = [ ];
 
         // First: Grades
-        $grades = array_filter($studyGroups, function(StudyGroup $group) {
-            return $group->getType()->equals(StudyGroupType::Grade());
-        });
+        $grades = array_filter($studyGroups, fn(StudyGroup $group) => $group->getType()->equals(StudyGroupType::Grade()));
 
         $output = $this->gradeConverter->convert(
-            array_map(function(StudyGroup $group) {
-                return $group->getGrades()->first();
-            }, $grades)
+            array_map(fn(StudyGroup $group) => $group->getGrades()->first(), $grades)
         );
 
         // Second: Individual groups
-        $studyGroups = array_filter($studyGroups, function (StudyGroup $group) {
-            return $group->getType()->equals(StudyGroupType::Grade()) === false;
-        });
+        $studyGroups = array_filter($studyGroups, fn(StudyGroup $group) => $group->getType()->equals(StudyGroupType::Grade()) === false);
 
-        $output += array_map(function(StudyGroup $studyGroup) use($onlyGrades) {
-            return $this->translator->trans('studygroup.string', [
-                '%name%' => $studyGroup->getName(),
-                '%grade%' => implode(', ', $this->gradeConverter->convert($studyGroup->getGrades()->filter(function(Grade $grade) use($onlyGrades) {
-                    if(empty($onlyGrades)) {
-                        return true;
-                    }
+        $output += array_map(fn(StudyGroup $studyGroup) => $this->translator->trans('studygroup.string', [
+            '%name%' => $studyGroup->getName(),
+            '%grade%' => implode(', ', $this->gradeConverter->convert($studyGroup->getGrades()->filter(function(Grade $grade) use($onlyGrades) {
+                if(empty($onlyGrades)) {
+                    return true;
+                }
 
-                    return in_array($grade->getId(), $onlyGrades);
-                })->toArray()))
-            ]);
-        }, $studyGroups);
+                return in_array($grade->getId(), $onlyGrades);
+            })->toArray()))
+        ]), $studyGroups);
 
         return implode(', ', $output);
     }

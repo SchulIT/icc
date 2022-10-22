@@ -9,10 +9,8 @@ use Twig\TwigFilter;
 
 class FilterExtension extends AbstractExtension {
 
-    private PropertyAccessorInterface $propertyAccessor;
-
-    public function __construct(PropertyAccessorInterface $propertyAccessor) {
-        $this->propertyAccessor = $propertyAccessor;
+    public function __construct(private PropertyAccessorInterface $propertyAccessor)
+    {
     }
 
     public function getFilters(): array {

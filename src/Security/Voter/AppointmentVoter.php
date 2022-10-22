@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use LogicException;
 use App\Entity\Appointment;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
@@ -17,20 +18,14 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class AppointmentVoter extends Voter {
 
-    const New = 'new-appointment';
-    const Edit = 'edit';
-    const Remove = 'remove';
-    const View = 'view';
-    const Confirm = 'confirm';
+    public const New = 'new-appointment';
+    public const Edit = 'edit';
+    public const Remove = 'remove';
+    public const View = 'view';
+    public const Confirm = 'confirm';
 
-    private AppointmentsSettings $settings;
-    private DateHelper $dateHelper;
-    private AccessDecisionManagerInterface $accessDecisionManager;
-
-    public function __construct(AppointmentsSettings $settings, DateHelper $dateHelper, AccessDecisionManagerInterface $accessDecisionManager) {
-        $this->settings = $settings;
-        $this->dateHelper = $dateHelper;
-        $this->accessDecisionManager = $accessDecisionManager;
+    public function __construct(private AppointmentsSettings $settings, private DateHelper $dateHelper, private AccessDecisionManagerInterface $accessDecisionManager)
+    {
     }
 
     /**
@@ -51,25 +46,16 @@ class AppointmentVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
-        switch ($attribute) {
-            case self::New:
-                return $this->canCreate($token);
-
-            case self::Edit:
-                return $this->canEdit($subject, $token);
-
-            case self::Remove:
-                return $this->canRemove($subject, $token);
-
-            case self::Confirm:
-                return $this->canConfirm($token);
-
-            case self::View:
-                return $this->canView($subject, $token);
-        }
-
-        throw new \LogicException('This code should be reached.');
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
+    {
+        return match ($attribute) {
+            self::New => $this->canCreate($token),
+            self::Edit => $this->canEdit($subject, $token),
+            self::Remove => $this->canRemove($subject, $token),
+            self::Confirm => $this->canConfirm($token),
+            self::View => $this->canView($subject, $token),
+            default => throw new LogicException('This code should be reached.'),
+        };
     }
 
     private function canCreate(TokenInterface $token): bool {
@@ -137,9 +123,7 @@ class AppointmentVoter extends Voter {
         }
 
         $appointmentStudyGroupsIds = $appointment->getStudyGroups()
-            ->map(function(StudyGroup $studyGroup) {
-                return $studyGroup->getId();
-            })
+            ->map(fn(StudyGroup $studyGroup) => $studyGroup->getId())
             ->toArray();
 
         /** @var Student[] $students */
@@ -147,9 +131,7 @@ class AppointmentVoter extends Voter {
 
         foreach($students as $student) {
             $studentStudyGroupsIds = $student->getStudyGroupMemberships()
-                ->map(function(StudyGroupMembership $membership) {
-                    return $membership->getStudyGroup()->getId();
-                })
+                ->map(fn(StudyGroupMembership $membership) => $membership->getStudyGroup()->getId())
                 ->toArray();
 
             $intersection = array_intersect($appointmentStudyGroupsIds, $studentStudyGroupsIds);

@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use DateTime;
 use App\Entity\Substitution;
 use App\Settings\SubstitutionSettings;
 use SchulIT\CommonBundle\Helper\DateHelper;
@@ -12,12 +13,8 @@ class SubstitutionVoter extends Voter {
 
     public const View = 'view';
 
-    private DateHelper $dateHelper;
-    private SubstitutionSettings $substitutionSettings;
-
-    public function __construct(DateHelper $dateHelper, SubstitutionSettings $substitutionSettings) {
-        $this->dateHelper = $dateHelper;
-        $this->substitutionSettings = $substitutionSettings;
+    public function __construct(private DateHelper $dateHelper, private SubstitutionSettings $substitutionSettings)
+    {
     }
 
     /**
@@ -28,10 +25,7 @@ class SubstitutionVoter extends Voter {
     }
 
     /**
-     * @param string $attribute
      * @param Substitution $subject
-     * @param TokenInterface $token
-     * @return bool
      */
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
         $threshold = $this->getDateThreshold();
@@ -39,7 +33,7 @@ class SubstitutionVoter extends Voter {
         return $subject->getDate() <= $threshold;
     }
 
-    private function getDateThreshold(): \DateTime {
+    private function getDateThreshold(): DateTime {
         $today = $this->dateHelper->getToday();
         $numberOfDays = $this->substitutionSettings->getNumberOfAheadDaysForSubstitutions();
         $skipWeekends = $this->substitutionSettings->skipWeekends();

@@ -6,19 +6,12 @@ use App\Entity\Subject;
 
 class SubjectsFilterView implements FilterViewInterface {
 
-    /** @var Subject[] */
-    private $subjects;
-
-    /** @var Subject[] */
-    private $currentSubjects;
-
     /**
      * @param Subject[] $subjects
      * @param Subject[] $currentSubjects
      */
-    public function __construct(array $subjects, array $currentSubjects) {
-        $this->subjects = $subjects;
-        $this->currentSubjects = $currentSubjects;
+    public function __construct(private array $subjects, private array $currentSubjects)
+    {
     }
 
     /**

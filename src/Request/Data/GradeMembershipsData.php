@@ -9,50 +9,34 @@ class GradeMembershipsData {
 
     /**
      * @Serializer\Type("int")
-     * @var int
      */
-    private $section;
+    private ?int $section = null;
 
     /**
      * @Serializer\Type("int")
-     * @var int
      */
-    private $year;
+    private ?int $year = null;
 
     /**
      * @Serializer\Type("array<App\Request\Data\GradeMembershipData>")
-     * @Assert\Valid()
      * @var GradeMembershipData[]
      */
-    private $memberships = [ ];
+    #[Assert\Valid]
+    private array $memberships = [ ];
 
-    /**
-     * @return int
-     */
     public function getSection(): int {
         return $this->section;
     }
 
-    /**
-     * @param int $section
-     * @return GradeMembershipsData
-     */
     public function setSection(int $section): GradeMembershipsData {
         $this->section = $section;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getYear(): int {
         return $this->year;
     }
 
-    /**
-     * @param int $year
-     * @return GradeMembershipsData
-     */
     public function setYear(int $year): GradeMembershipsData {
         $this->year = $year;
         return $this;
@@ -67,7 +51,6 @@ class GradeMembershipsData {
 
     /**
      * @param GradeMembershipData[] $memberships
-     * @return GradeMembershipsData
      */
     public function setMemberships(array $memberships): GradeMembershipsData {
         $this->memberships = $memberships;

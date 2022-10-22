@@ -12,22 +12,13 @@ class Grade {
     /**
      * @Serializer\SerializedName("name")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $name;
+    private ?string $name = null;
 
-    /**
-     * @return string
-     */
     public function getName(): string {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Grade
-     */
     public function setName(string $name): Grade {
         $this->name = $name;
         return $this;

@@ -17,7 +17,6 @@ class AppointmentDateStrategy implements GroupingStrategyInterface {
     /**
      * @param int $keyA
      * @param int $keyB
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA === $keyB;
@@ -25,7 +24,6 @@ class AppointmentDateStrategy implements GroupingStrategyInterface {
 
     /**
      * @param int $key
-     * @return GroupInterface
      */
     public function createGroup($key, array $options = [ ]): GroupInterface {
         $year = (int)($key / 100);

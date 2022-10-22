@@ -3,15 +3,10 @@
 namespace App\Untis\Html\Substitution;
 
 class Infotext {
-    private string $content;
-
-    public function __construct(string $content) {
-        $this->content = $content;
+    public function __construct(private string $content)
+    {
     }
 
-    /**
-     * @return string
-     */
     public function getContent(): string {
         return $this->content;
     }

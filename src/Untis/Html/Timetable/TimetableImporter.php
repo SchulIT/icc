@@ -16,32 +16,13 @@ use DateTime;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 class TimetableImporter {
-    private Importer $importer;
-    private TimetableLessonsImportStrategy $strategy;
-    private TimetableReader $reader;
-    private TimetableWeekRepositoryInterface $weekRepository;
-    private Grouper $grouper;
-    private UntisSettings $settings;
-    private TimetableLessonCombiner $lessonCombiner;
-
-    public function __construct(Importer $importer, TimetableLessonsImportStrategy $strategy, TimetableReader $reader,
-                                TimetableWeekRepositoryInterface $weekRepository, TimetableLessonCombiner $combiner,
-                                Grouper $grouper, UntisSettings $settings) {
-        $this->importer = $importer;
-        $this->strategy = $strategy;
-        $this->reader = $reader;
-        $this->weekRepository = $weekRepository;
-        $this->lessonCombiner = $combiner;
-        $this->grouper = $grouper;
-        $this->settings = $settings;
+    public function __construct(private Importer $importer, private TimetableLessonsImportStrategy $strategy, private TimetableReader $reader, private TimetableWeekRepositoryInterface $weekRepository, private TimetableLessonCombiner $lessonCombiner, private Grouper $grouper, private UntisSettings $settings)
+    {
     }
 
     /**
      * @param string[] $gradeLessonsHtml
      * @param string[] $subjectLessonsHtml
-     * @param DateTime $start
-     * @param DateTime $end
-     * @return ImportResult
      * @throws HtmlParseException
      * @throws ImportException
      */

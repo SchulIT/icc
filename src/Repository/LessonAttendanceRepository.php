@@ -15,9 +15,7 @@ use Doctrine\ORM\QueryBuilder;
 class LessonAttendanceRepository extends AbstractRepository implements LessonAttendanceRepositoryInterface {
 
     public function findAbsentByStudents(array $students, DateTime $dateTime): array {
-        $studentIds = array_map(function(Student $student) {
-            return $student->getId();
-        }, $students);
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->em->createQueryBuilder();
 
@@ -93,9 +91,7 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->leftJoin('eInner.tuition', 'tInner')
             ->where('tInner.id IN(:tuitions)');
 
-        $ids = array_map(function(Tuition $tuition) {
-            return $tuition->getId();
-        }, $tuitions);
+        $ids = array_map(fn(Tuition $tuition) => $tuition->getId(), $tuitions);
 
         $queryBuilder
             ->andWhere(

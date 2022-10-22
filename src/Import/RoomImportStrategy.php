@@ -13,12 +13,8 @@ use App\Utils\ArrayUtils;
 
 class RoomImportStrategy implements ImportStrategyInterface {
 
-    private $roomRepository;
-    private $resourceTypeRepository;
-
-    public function __construct(RoomRepositoryInterface $roomRepository, ResourceTypeRepositoryInterface $resourceTypeRepository) {
-        $this->roomRepository = $roomRepository;
-        $this->resourceTypeRepository = $resourceTypeRepository;
+    public function __construct(private RoomRepositoryInterface $roomRepository, private ResourceTypeRepositoryInterface $resourceTypeRepository)
+    {
     }
 
     /**
@@ -36,9 +32,7 @@ class RoomImportStrategy implements ImportStrategyInterface {
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->roomRepository->findAllExternal(),
-            function (Room $room) {
-                return $room->getExternalId();
-            });
+            fn(Room $room) => $room->getExternalId());
     }
 
     /**
@@ -65,7 +59,6 @@ class RoomImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param Room $entity
-     * @return int
      */
     public function getEntityId($entity): int {
         return $entity->getId();

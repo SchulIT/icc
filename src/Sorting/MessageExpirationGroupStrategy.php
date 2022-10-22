@@ -9,7 +9,6 @@ class MessageExpirationGroupStrategy implements SortingStrategyInterface {
     /**
      * @param MessageExpirationGroup $objectA
      * @param MessageExpirationGroup $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         if($objectA->isExpired()) {

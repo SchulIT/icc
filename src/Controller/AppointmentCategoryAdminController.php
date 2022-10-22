@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
 use App\Form\AppointmentCategoryType;
@@ -16,25 +17,17 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Route("/admin/appointments/categories")
  * @Security("is_granted('ROLE_APPOINTMENTS_ADMIN')")
  */
+#[Route(path: '/admin/appointments/categories')]
 class AppointmentCategoryAdminController extends AbstractController {
 
-    private AppointmentCategoryRepositoryInterface $repository;
-    private Sorter $sorter;
-
-    public function __construct(AppointmentCategoryRepositoryInterface $categoryRepository, Sorter $sorter, RefererHelper $refererHelper) {
+    public function __construct(private AppointmentCategoryRepositoryInterface $repository, private Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
-
-        $this->repository = $categoryRepository;
-        $this->sorter = $sorter;
     }
 
-    /**
-     * @Route("", name="admin_appointment_categories")
-     */
-    public function index() {
+    #[Route(path: '', name: 'admin_appointment_categories')]
+    public function index(): Response {
         $categories = $this->repository->findAll();
         $this->sorter->sort($categories, AppointmentCategoryStrategy::class);
 
@@ -43,10 +36,8 @@ class AppointmentCategoryAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_appointment_category")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'add_appointment_category')]
+    public function add(Request $request): Response {
         $category = new AppointmentCategory();
         $form = $this->createForm(AppointmentCategoryType::class, $category);
         $form->handleRequest($request);
@@ -63,10 +54,8 @@ class AppointmentCategoryAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_appointment_category")
-     */
-    public function edit(AppointmentCategory $category, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_appointment_category')]
+    public function edit(AppointmentCategory $category, Request $request): Response {
         $form = $this->createForm(AppointmentCategoryType::class, $category);
         $form->handleRequest($request);
 
@@ -83,10 +72,8 @@ class AppointmentCategoryAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_appointment_category")
-     */
-    public function remove(AppointmentCategory $category, Request $request, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_appointment_category')]
+    public function remove(AppointmentCategory $category, Request $request, TranslatorInterface $translator): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => $translator->trans('admin.appointments.categories.remove.confirm', [
                 '%name%' => $category->getName()

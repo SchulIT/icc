@@ -7,14 +7,11 @@ use App\Entity\StudyGroup;
 
 class StudyGroupGradeGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var Grade */
-    private $grade;
-
     /** @var StudyGroup[] */
-    private $studyGroups = [ ];
+    private array $studyGroups = [ ];
 
-    public function __construct(Grade $grade) {
-        $this->grade = $grade;
+    public function __construct(private Grade $grade)
+    {
     }
 
     public function getGrade(): Grade {

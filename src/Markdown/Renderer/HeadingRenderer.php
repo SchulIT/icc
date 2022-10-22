@@ -2,6 +2,7 @@
 
 namespace App\Markdown\Renderer;
 
+use InvalidArgumentException;
 use League\CommonMark\Block\Element\AbstractBlock;
 use League\CommonMark\Block\Element\Heading;
 use League\CommonMark\Block\Renderer\BlockRendererInterface;
@@ -16,7 +17,7 @@ class HeadingRenderer implements BlockRendererInterface {
      */
     public function render(AbstractBlock $block, ElementRendererInterface $htmlRenderer, $inTightList = false): string|HtmlElement|null {
         if(!$block instanceof Heading) {
-            throw new \InvalidArgumentException(sprintf('$block must be of type "%s" ("%s" given)', Heading::class, get_class($block)));
+            throw new InvalidArgumentException(sprintf('$block must be of type "%s" ("%s" given)', Heading::class, $block::class));
         }
 
         $level = $block->getLevel();

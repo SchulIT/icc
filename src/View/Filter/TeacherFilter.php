@@ -14,12 +14,8 @@ use App\Utils\ArrayUtils;
 
 class TeacherFilter {
 
-    private $sorter;
-    private $teacherRepository;
-
-    public function __construct(Sorter $sorter, TeacherRepositoryInterface $teacherRepository) {
-        $this->sorter = $sorter;
-        $this->teacherRepository = $teacherRepository;
+    public function __construct(private Sorter $sorter, private TeacherRepositoryInterface $teacherRepository)
+    {
     }
 
     public function handle(?string $uuid, ?Section $section, User $user, bool $setDefaultTeacher): TeacherFilterView {
@@ -33,9 +29,7 @@ class TeacherFilter {
 
         $teachers = ArrayUtils::createArrayWithKeys(
             $teachers,
-            function(Teacher $teacher) {
-                return (string)$teacher->getUuid();
-            }
+            fn(Teacher $teacher) => (string)$teacher->getUuid()
         );
 
         $fallbackTeacher = $setDefaultTeacher ? $user->getTeacher() : null;

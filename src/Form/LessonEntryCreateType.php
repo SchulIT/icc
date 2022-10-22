@@ -86,19 +86,13 @@ class LessonEntryCreateType extends AbstractType {
                         'required' => false,
                         'multiple' => true,
                         'mapped' => false,
-                        'choice_value' => function(Student $student) {
-                            return $student->getUuid()->toString();
-                        },
-                        'query_builder' => function(EntityRepository $repository) use($entry) {
-                            return $repository->createQueryBuilder('s')
-                                ->where('s.id IN (:ids)')
-                                ->setParameter(
-                                    'ids',
-                                    $entry->getTuition()->getStudyGroup()->getMemberships()
-                                        ->map(function(StudyGroupMembership $membership) {
-                                            return $membership->getStudent()->getId();
-                                        }));
-                        }
+                        'choice_value' => fn(Student $student) => $student->getUuid()->toString(),
+                        'query_builder' => fn(EntityRepository $repository) => $repository->createQueryBuilder('s')
+                            ->where('s.id IN (:ids)')
+                            ->setParameter(
+                                'ids',
+                                $entry->getTuition()->getStudyGroup()->getMemberships()
+                                    ->map(fn(StudyGroupMembership $membership) => $membership->getStudent()->getId()))
                     ]);
                 }
             })
@@ -106,9 +100,7 @@ class LessonEntryCreateType extends AbstractType {
                 $entry = $event->getData();
 
                 if($entry !== null && $entry instanceof LessonEntry) {
-                    $teachers = array_map(function(Teacher $teacher) {
-                        return $teacher->getId();
-                    }, $entry->getTuition()->getTeachers()->toArray());
+                    $teachers = array_map(fn(Teacher $teacher) => $teacher->getId(), $entry->getTuition()->getTeachers()->toArray());
 
                     if($entry->getReplacementTeacher() !== null && in_array($entry->getReplacementTeacher()->getId(), $teachers)) {
                         $entry->setReplacementTeacher(null);

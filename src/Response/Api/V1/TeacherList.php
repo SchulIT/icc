@@ -10,7 +10,7 @@ class TeacherList {
      *
      * @var Teacher[]
      */
-    private $teachers;
+    private ?array $teachers = null;
 
     /**
      * @return Teacher[]
@@ -21,7 +21,6 @@ class TeacherList {
 
     /**
      * @param Teacher[] $teachers
-     * @return TeacherList
      */
     public function setTeachers(array $teachers): TeacherList {
         $this->teachers = $teachers;

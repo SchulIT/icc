@@ -27,30 +27,8 @@ use Twig\TwigTest;
 
 class AppExtension extends AbstractExtension {
 
-    private TeacherStringConverter $teacherConverter;
-    private StudentStringConverter $studentConverter;
-    private UserStringConverter $userConverter;
-    private StudyGroupStringConverter $studyGroupConverter;
-    private StudyGroupsGradeStringConverter $studyGroupsConverter;
-    private FilesizeStringConverter $filesizeConverter;
-    private TimestampDateTimeConverter $timestampConverter;
-    private EnumStringConverter $enumStringConverter;
-    private GradesStringConverter $gradeStringConverter;
-
-    public function __construct(TeacherStringConverter $teacherConverter, StudentStringConverter $studentConverter,
-                                UserStringConverter $userConverter, StudyGroupStringConverter $studyGroupConverter,
-                                StudyGroupsGradeStringConverter $studyGroupsConverter, FilesizeStringConverter $filesizeConverter,
-                                TimestampDateTimeConverter $timestampConverter, EnumStringConverter $enumStringConverter,
-                                GradesStringConverter $gradeStringConverter) {
-        $this->teacherConverter = $teacherConverter;
-        $this->studentConverter = $studentConverter;
-        $this->userConverter = $userConverter;
-        $this->studyGroupConverter = $studyGroupConverter;
-        $this->studyGroupsConverter = $studyGroupsConverter;
-        $this->filesizeConverter = $filesizeConverter;
-        $this->timestampConverter = $timestampConverter;
-        $this->enumStringConverter = $enumStringConverter;
-        $this->gradeStringConverter = $gradeStringConverter;
+    public function __construct(private TeacherStringConverter $teacherConverter, private StudentStringConverter $studentConverter, private UserStringConverter $userConverter, private StudyGroupStringConverter $studyGroupConverter, private StudyGroupsGradeStringConverter $studyGroupsConverter, private FilesizeStringConverter $filesizeConverter, private TimestampDateTimeConverter $timestampConverter, private EnumStringConverter $enumStringConverter, private GradesStringConverter $gradeStringConverter)
+    {
     }
 
     public function getFilters(): array {
@@ -80,9 +58,6 @@ class AppExtension extends AbstractExtension {
 
     /**
      * @param Teacher[]|Collection<Teacher> $teachers
-     * @param bool $includeAcronyms
-     * @param bool $onlyAcronyms
-     * @return string
      */
     public function teachers(iterable $teachers, bool $includeAcronyms = false, bool $onlyAcronyms = false): string {
         if($teachers instanceof Collection) {
@@ -111,10 +86,8 @@ class AppExtension extends AbstractExtension {
     }
 
     /**
-     * @param StudyGroup[]|ArrayCollection|iterable $studyGroups
-     * @param bool $sort
-     * @param Grade[]|ArrayCollection|iterable $onlyGrades
-     * @return string
+     * @param StudyGroup[]|iterable $studyGroups
+     * @param Grade[]|iterable $onlyGrades
      */
     public function studyGroups(iterable $studyGroups, bool $sort = false, iterable $onlyGrades = [ ]): string {
         return $this->studyGroupsConverter->convert($studyGroups, $sort, $onlyGrades);
@@ -139,7 +112,6 @@ class AppExtension extends AbstractExtension {
 
     /**
      * @param Grade[] $grades
-     * @return string
      */
     public function grades(iterable $grades): string {
         return $this->gradeStringConverter->convert($grades);

@@ -5,17 +5,12 @@ namespace App\Rooms\Reservation;
 use App\Entity\ResourceEntity;
 
 class ResourceAvailabilityOverview {
-    private $maxLessons;
+    private array $resources = [ ];
 
-    private $resources = [ ];
-
-    public function __construct(int $maxLessons) {
-        $this->maxLessons = $maxLessons;
+    public function __construct(private int $maxLessons)
+    {
     }
 
-    /**
-     * @return int
-     */
     public function getMaxLessons(): int {
         return $this->maxLessons;
     }

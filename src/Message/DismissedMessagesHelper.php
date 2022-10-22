@@ -9,18 +9,10 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class DismissedMessagesHelper {
 
-    private $tokenStorage;
-    private $userRepository;
-
-    public function __construct(TokenStorageInterface $tokenStorage, UserRepositoryInterface $userRepository) {
-        $this->tokenStorage = $tokenStorage;
-        $this->userRepository = $userRepository;
+    public function __construct(private TokenStorageInterface $tokenStorage, private UserRepositoryInterface $userRepository)
+    {
     }
 
-    /**
-     * @param Message $message
-     * @param User $user
-     */
     public function dismiss(Message $message, User $user) {
         if($user->getDismissedMessages()->contains($message) === false) {
             $user->addDismissedMessage($message);
@@ -37,13 +29,10 @@ class DismissedMessagesHelper {
 
     /**
      * @param Message[] $messages
-     * @param User $user
      * @return Message[]
      */
     public function getDismissedMessages(array $messages, User $user) {
-        $dismissedIds = array_map(function(Message $message) {
-            return $message->getId();
-        }, $user->getDismissedMessages()->toArray());
+        $dismissedIds = array_map(fn(Message $message) => $message->getId(), $user->getDismissedMessages()->toArray());
 
         $dismissedMessages = [ ];
 
@@ -58,13 +47,10 @@ class DismissedMessagesHelper {
 
     /**
      * @param Message[] $messages
-     * @param User $user
      * @return Message[]
      */
     public function getNonDismissedMessages(array $messages, User $user) {
-        $dismissedIds = array_map(function(Message $message) {
-            return $message->getId();
-        }, $user->getDismissedMessages()->toArray());
+        $dismissedIds = array_map(fn(Message $message) => $message->getId(), $user->getDismissedMessages()->toArray());
 
         $dismissedMessages = [ ];
 

@@ -10,11 +10,11 @@ class AppointmentsData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\AppointmentData>")
-     * @Assert\Valid()
      * @UniqueId(propertyPath="id")
      * @var AppointmentData[]
      */
-    private $appointments = [ ];
+    #[Assert\Valid]
+    private array $appointments = [ ];
 
     /**
      * @return AppointmentData[]
@@ -25,7 +25,6 @@ class AppointmentsData {
 
     /**
      * @param AppointmentData[] $appointments
-     * @return AppointmentsData
      */
     public function setAppointments($appointments): AppointmentsData {
         $this->appointments = $appointments;

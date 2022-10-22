@@ -10,58 +10,41 @@ class Comment {
     /**
      * @Serializer\Type("DateTime")
      * @Serializer\SerializedName("date")
-     * @var DateTime
      */
-    private $date;
+    private ?\DateTime $date = null;
 
     /**
      * @Serializer\Type("App\Book\Export\Teacher")
      * @Serializer\SerializedName("teacher")
-     * @var Teacher
      */
-    private $teacher;
+    private ?Teacher $teacher = null;
 
     /**
      * @Serializer\Type("array<App\Book\Export\Student>")
      * @Serializer\SerializedName("students")
      * @var Student[]
      */
-    private $students;
+    private ?array $students = null;
 
     /**
      * @Serializer\Type("string")
      * @Serializer\SerializedName("comment")
-     * @var string
      */
-    private $comment;
+    private ?string $comment = null;
 
-    /**
-     * @return DateTime
-     */
     public function getDate(): DateTime {
         return $this->date;
     }
 
-    /**
-     * @param DateTime $date
-     * @return Comment
-     */
     public function setDate(DateTime $date): Comment {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return Teacher
-     */
     public function getTeacher(): Teacher {
         return $this->teacher;
     }
 
-    /**
-     * @param Teacher $teacher
-     * @return Comment
-     */
     public function setTeacher(Teacher $teacher): Comment {
         $this->teacher = $teacher;
         return $this;
@@ -76,24 +59,16 @@ class Comment {
 
     /**
      * @param Student[] $students
-     * @return Comment
      */
     public function setStudents(array $students): Comment {
         $this->students = $students;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getComment(): string {
         return $this->comment;
     }
 
-    /**
-     * @param string $comment
-     * @return Comment
-     */
     public function setComment(string $comment): Comment {
         $this->comment = $comment;
         return $this;

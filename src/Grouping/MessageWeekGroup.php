@@ -7,14 +7,11 @@ use App\Entity\Message;
 
 class MessageWeekGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var WeekOfYear */
-    private $week;
-
     /** @var Message[] */
-    private $messages = [ ];
+    private array $messages = [ ];
 
-    public function __construct(WeekOfYear $week) {
-        $this->week = $week;
+    public function __construct(private WeekOfYear $week)
+    {
     }
 
     public function getWeek(): WeekOfYear {

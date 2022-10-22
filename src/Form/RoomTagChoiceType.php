@@ -15,10 +15,8 @@ use Symfony\Component\Form\FormInterface;
 
 class RoomTagChoiceType extends AbstractType implements DataMapperInterface {
 
-    private RoomTagRepositoryInterface $tagRepository;
-
-    public function __construct(RoomTagRepositoryInterface $tagRepository) {
-        $this->tagRepository = $tagRepository;
+    public function __construct(private RoomTagRepositoryInterface $tagRepository)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {

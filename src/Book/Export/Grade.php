@@ -9,28 +9,20 @@ class Grade {
     /**
      * @Serializer\Type("string")
      * @Serializer\SerializedName("name")
-     * @var string
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * @Serializer\Type("array<App\Book\Export\Teacher>")
      * @Serializer\SerializedName("teachers")
      * @var Teacher[]
      */
-    private $teachers = [ ];
+    private array $teachers = [ ];
 
-    /**
-     * @return string
-     */
     public function getName(): string {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Grade
-     */
     public function setName(string $name): Grade {
         $this->name = $name;
         return $this;

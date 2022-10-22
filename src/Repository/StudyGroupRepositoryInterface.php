@@ -47,17 +47,9 @@ interface StudyGroupRepositoryInterface extends TransactionalRepositoryInterface
     public function findAllByExternalId(array $externalIds, Section $section): array;
 
     /**
-     * @param Grade $grade
-     * @param StudyGroupType|null $type
      * @return StudyGroup[]
      */
     public function findAllByGrades(Grade $grade, Section $section, ?StudyGroupType $type = null);
-
-    /**
-     * @param Student $student
-     * @return StudyGroup[]
-     */
-    public function findAllByStudent(Student $student, ?Section $section);
 
     /**
      * @return StudyGroup[]

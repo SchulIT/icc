@@ -27,36 +27,8 @@ use Twig\Environment;
 
 class ReservationCheckerSubscriber implements EventSubscriberInterface {
 
-    private ValidatorInterface $validator;
-    private ResourceReservationRepositoryInterface $reservationRepository;
-    private ExamRepositoryInterface $examRepository;
-
-    private string $appName;
-    private string $sender;
-
-    private MailerInterface $mailer;
-    private Environment $twig;
-    private TranslatorInterface $translator;
-    private DateHelper $dateHelper;
-
-    private ResourceAvailabilityHelper $availabilityHelper;
-
-    public function __construct(string $appName, string $sender, ValidatorInterface $validator, ResourceReservationRepositoryInterface $reservationRepository,
-                                ExamRepositoryInterface $examRepository, MailerInterface $mailer, Environment $twig, TranslatorInterface $translator,
-                                DateHelper $dateHelper, ResourceAvailabilityHelper $availabilityHelper) {
-        $this->appName = $appName;
-        $this->sender = $sender;
-
-        $this->validator = $validator;
-        $this->reservationRepository = $reservationRepository;
-        $this->examRepository = $examRepository;
-
-        $this->mailer = $mailer;
-        $this->twig = $twig;
-        $this->translator = $translator;
-
-        $this->dateHelper = $dateHelper;
-        $this->availabilityHelper = $availabilityHelper;
+    public function __construct(private string $appName, private string $sender, private ValidatorInterface $validator, private ResourceReservationRepositoryInterface $reservationRepository, private ExamRepositoryInterface $examRepository, private MailerInterface $mailer, private Environment $twig, private TranslatorInterface $translator, private DateHelper $dateHelper, private ResourceAvailabilityHelper $availabilityHelper)
+    {
     }
 
     public function onSubstitutionImportEvent(SubstitutionImportEvent $event): void {
@@ -140,12 +112,8 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
 
             $substitution = $availability->getSubstitution();
             if($substitution !== null) {
-                $teachers = $substitution->getTeachers()->map(function (Teacher $teacher) {
-                    return $teacher->getId();
-                })->toArray();
-                $replacementTeachers = $substitution->getReplacementTeachers()->map(function (Teacher $teacher) {
-                    return $teacher->getId();
-                })->toArray();
+                $teachers = $substitution->getTeachers()->map(fn(Teacher $teacher) => $teacher->getId())->toArray();
+                $replacementTeachers = $substitution->getReplacementTeachers()->map(fn(Teacher $teacher) => $teacher->getId())->toArray();
 
                 if (!(count($replacementTeachers) > 0 && in_array($reservation->getTeacher()->getId(), $replacementTeachers) || count($replacementTeachers) === 0 && in_array($reservation->getTeacher()->getId(), $teachers))) {
                     $conflictingSubstitutions++;
@@ -197,7 +165,6 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
     }
 
     /**
-     * @param Exam $exam
      * @param ConstraintViolationInterface[] $violationList
      */
     private function sendExamViolationsEmail(Exam $exam, array $violationList): void {

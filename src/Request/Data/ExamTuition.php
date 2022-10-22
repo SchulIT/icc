@@ -8,36 +8,28 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ExamTuition {
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $subjectOrCourse;
+    #[Assert\NotBlank]
+    private ?string $subjectOrCourse = null;
 
     /**
      * @Serializer\Type("array<string>")
-     * @Assert\Count(min="1")
      * @var string[]
      */
-    private $grades = [ ];
+    #[Assert\Count(min: 1)]
+    private array $grades = [ ];
 
     /**
      * @Serializer\Type("array<string>")
-     * @Assert\Count(min="1")
      * @var string[]
      */
-    private $teachers = [ ];
+    #[Assert\Count(min: 1)]
+    private array $teachers = [ ];
 
-    /**
-     * @return string|null
-     */
     public function getSubjectOrCourse(): ?string {
         return $this->subjectOrCourse;
     }
 
-    /**
-     * @param string|null $subjectOrCourse
-     * @return ExamTuition
-     */
     public function setSubjectOrCourse(?string $subjectOrCourse): ExamTuition {
         $this->subjectOrCourse = $subjectOrCourse;
         return $this;
@@ -52,7 +44,6 @@ class ExamTuition {
 
     /**
      * @param string[] $grades
-     * @return ExamTuition
      */
     public function setGrades(array $grades): ExamTuition {
         $this->grades = $grades;
@@ -68,7 +59,6 @@ class ExamTuition {
 
     /**
      * @param string[] $teachers
-     * @return ExamTuition
      */
     public function setTeachers(array $teachers): ExamTuition {
         $this->teachers = $teachers;

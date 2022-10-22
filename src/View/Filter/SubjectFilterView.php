@@ -6,15 +6,11 @@ use App\Entity\Subject;
 
 class SubjectFilterView implements FilterViewInterface {
 
-    /** @var Subject|null */
-    private $currectSubject;
-
-    /** @var Subject[] */
-    private $subjects;
-
-    public function __construct(array $subjects, ?Subject $currectSubject = null) {
-        $this->subjects = $subjects;
-        $this->currectSubject = $currectSubject;
+    /**
+     * @param Subject[] $subjects
+     */
+    public function __construct(private array $subjects, private ?Subject $currectSubject = null)
+    {
     }
 
     /**
@@ -24,9 +20,6 @@ class SubjectFilterView implements FilterViewInterface {
         return $this->subjects;
     }
 
-    /**
-     * @return Subject|null
-     */
     public function getCurrentSubject(): ?Subject {
         return $this->currectSubject;
     }

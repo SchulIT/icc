@@ -21,45 +21,29 @@ class GradeMembership {
     /**
      * @ORM\ManyToOne(targetEntity="Student", inversedBy="gradeMemberships")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Assert\NotNull()
-     * @var Student|null
      */
-    private $student;
+    #[Assert\NotNull]
+    private ?Student $student = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Grade", inversedBy="memberships")
-     * @Assert\NotNull()
-     * @var Grade|null
      */
-    private $grade;
+    #[Assert\NotNull]
+    private ?Grade $grade = null;
 
-    /**
-     * @return Student|null
-     */
     public function getStudent(): ?Student {
         return $this->student;
     }
 
-    /**
-     * @param Student|null $student
-     * @return GradeMembership
-     */
     public function setStudent(?Student $student): GradeMembership {
         $this->student = $student;
         return $this;
     }
 
-    /**
-     * @return Grade|null
-     */
     public function getGrade(): ?Grade {
         return $this->grade;
     }
 
-    /**
-     * @param Grade|null $grade
-     * @return GradeMembership
-     */
     public function setGrade(?Grade $grade): GradeMembership {
         $this->grade = $grade;
         return $this;

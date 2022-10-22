@@ -12,17 +12,15 @@ class StudentAbsenceTypeVoter extends Voter {
 
     public const USE = 'use';
 
-    protected function supports(string $attribute, $subject) {
+    protected function supports(string $attribute, $subject): bool {
         return $attribute === self::USE && $subject instanceof StudentAbsenceType;
     }
 
     /**
-     * @param string $attribute
      * @param StudentAbsenceType $subject
-     * @param TokenInterface $token
      * @return bool
      */
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token) {
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
         $user = $token->getUser();
 
         if(!$user instanceof User) {

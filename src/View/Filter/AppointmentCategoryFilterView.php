@@ -6,15 +6,11 @@ use App\Entity\AppointmentCategory;
 
 class AppointmentCategoryFilterView implements FilterViewInterface {
 
-    /** @var AppointmentCategory[] */
-    private $categories;
-
-    /** @var AppointmentCategory|null */
-    private $currentCategory;
-
-    public function __construct(array $categories, ?AppointmentCategory $currentCategory) {
-        $this->categories = $categories;
-        $this->currentCategory = $currentCategory;
+    /**
+     * @param AppointmentCategory[] $categories
+     */
+    public function __construct(private array $categories, private ?AppointmentCategory $currentCategory)
+    {
     }
 
     /**
@@ -24,9 +20,6 @@ class AppointmentCategoryFilterView implements FilterViewInterface {
         return $this->categories;
     }
 
-    /**
-     * @return AppointmentCategory|null
-     */
     public function getCurrentCategory(): ?AppointmentCategory {
         return $this->currentCategory;
     }

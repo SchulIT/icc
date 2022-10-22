@@ -12,46 +12,28 @@ class Subject {
     /**
      * @Serializer\SerializedName("abbreviation")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $abbreviation;
+    private ?string $abbreviation = null;
 
     /**
      * @Serializer\SerializedName("name")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $name;
+    private ?string $name = null;
 
-    /**
-     * @return string
-     */
     public function getAbbreviation(): string {
         return $this->abbreviation;
     }
 
-    /**
-     * @param string $abbreviation
-     * @return Subject
-     */
     public function setAbbreviation(string $abbreviation): Subject {
         $this->abbreviation = $abbreviation;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Subject
-     */
     public function setName(string $name): Subject {
         $this->name = $name;
         return $this;

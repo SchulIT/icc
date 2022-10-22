@@ -18,7 +18,6 @@ class MessageStrategy implements SortingStrategyInterface {
     /**
      * @param Message $objectA
      * @param Message $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         if($objectA->getPriority()->equals($objectB->getPriority()) !== true) {

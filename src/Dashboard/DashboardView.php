@@ -13,41 +13,38 @@ use DateTime;
 
 class DashboardView {
 
-    /** @var DateTime */
-    private $dateTime;
-
     /** @var Message[] */
-    private $messages = [ ];
+    private array $messages = [ ];
 
     /** @var Infotext[] */
-    private $infotexts = [ ];
+    private array $infotexts = [ ];
 
     /** @var Absence[] */
-    private $absentTeachers = [ ];
+    private array $absentTeachers = [ ];
 
     /** @var Absence[] */
-    private $absentStudyGroups = [ ];
+    private array $absentStudyGroups = [ ];
 
     /** @var DashboardLesson[] */
-    private $lessons = [ ];
+    private array $lessons = [ ];
 
     /** @var DashboardLesson[] */
-    private $beforeLessons = [ ];
+    private array $beforeLessons = [ ];
 
     /** @var Message[] */
-    private $priorityMessages = [ ];
+    private array $priorityMessages = [ ];
 
     /** @var SubstitutionViewItem[] */
-    private $substitutionMentions = [ ];
+    private array $substitutionMentions = [ ];
 
     /** @var ExamViewItem[] */
-    private $exams = [ ];
+    private array $exams = [ ];
 
     /** @var Appointment[] */
-    private $appointments = [ ];
+    private array $appointments = [ ];
 
-    public function __construct(DateTime $dateTime) {
-        $this->dateTime = $dateTime;
+    public function __construct(private DateTime $dateTime)
+    {
     }
 
     public function getDateTime(): DateTime {
@@ -76,7 +73,7 @@ class DashboardView {
      * @return int[]
      */
     public function getLessonNumbers(): array {
-        $lessons = array_merge(array_keys($this->lessons), array_keys($this->beforeLessons));
+        $lessons = [...array_keys($this->lessons), ...array_keys($this->beforeLessons)];
         sort($lessons, SORT_NUMERIC);
 
         return array_unique($lessons);

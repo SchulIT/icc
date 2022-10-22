@@ -12,24 +12,13 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TeacherTagFilter {
-    private $sorter;
-    private $tagRepository;
-
-    private $translator;
-    private $authorizationChecker;
-
-    public function __construct(Sorter $sorter, TeacherTagRepositoryInterface $tagRepository, TranslatorInterface $translator, AuthorizationCheckerInterface $authorizationChecker) {
-        $this->sorter = $sorter;
-        $this->tagRepository = $tagRepository;
-        $this->translator = $translator;
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(private Sorter $sorter, private TeacherTagRepositoryInterface $tagRepository, private TranslatorInterface $translator, private AuthorizationCheckerInterface $authorizationChecker)
+    {
     }
 
     public function handle(?string $tagUuid = null): TeacherTagFilterView {
         $tags = $this->tagRepository->findAll();
-        $tags = array_filter($tags, function(TeacherTag $tag) {
-            return $this->authorizationChecker->isGranted(TeacherTagVoter::View, $tag);
-        });
+        $tags = array_filter($tags, fn(TeacherTag $tag) => $this->authorizationChecker->isGranted(TeacherTagVoter::View, $tag));
         $tags = $this->addImplicitTags($tags);
 
 
@@ -37,9 +26,7 @@ class TeacherTagFilter {
 
         $tags = ArrayUtils::createArrayWithKeys(
             $tags,
-            function(TeacherTag $tag) {
-                return $tag->getUuid()->toString();
-            }
+            fn(TeacherTag $tag) => $tag->getUuid()->toString()
         );
 
         $tag = $tagUuid !== null ?

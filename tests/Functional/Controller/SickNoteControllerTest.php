@@ -114,14 +114,14 @@ class SickNoteControllerTest extends AbstractControllerTest {
             ->setEmail($faker->email)
             ->setUsername($faker->email)
             ->setIdpId(Uuid::fromString($faker->uuid));
-        $this->viewerUser->setRoles(['ROLE_USER', 'ROLE_SICK_NOTE_VIEWER']);
+        $this->viewerUser->setRoles(['ROLE_USER', 'ROLE_STUDENT_ABSENCE_VIEWER']);
 
         $this->creatorUser = (new User())
             ->setUserType(UserType::User())
             ->setEmail($faker->email)
             ->setUsername($faker->email)
             ->setIdpId(Uuid::fromString($faker->uuid));
-        $this->creatorUser->setRoles(['ROLE_USER', 'ROLE_SICK_NOTE_CREATOR']);
+        $this->creatorUser->setRoles(['ROLE_USER', 'ROLE_STUDENT_ABSENCE_CREATOR']);
 
         $this->em->persist($this->nonFullAgedStudent);
         $this->em->persist($this->fullAgedStudent);
@@ -131,56 +131,56 @@ class SickNoteControllerTest extends AbstractControllerTest {
         $this->em->persist($this->viewerUser);
         $this->em->persist($this->creatorUser);
 
-        $this->em->persist((new Setting())->setKey('sick_note.enabled')->setValue(true));
+        $this->em->persist((new Setting())->setKey('student_absences.enabled')->setValue(true));
 
         $this->em->flush();
     }
 
     public function testParentCanCreateSickNote() {
         $this->login($this->parent, $this->client->getKernel());
-        $this->client->request('GET', '/sick_notes/add');
+        $this->client->request('GET', '/absences/add');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testNonFullAgedStudentCannotCreateSickNote() {
         $this->login($this->nonFullAgedStudentUser, $this->client->getKernel());
-        $this->client->request('GET', '/sick_notes/add');
+        $this->client->request('GET', '/absences/add');
         $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testFullAgedStudentCanCreateSickNote() {
         $this->login($this->studentUser, $this->client->getKernel());
-        $this->client->request('GET', '/sick_notes/add');
+        $this->client->request('GET', '/absences/add');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testUserWithRoleCanCreateSickNote() {
         $this->login($this->creatorUser, $this->client->getKernel());
-        $this->client->request('GET', '/sick_notes/add');
+        $this->client->request('GET', '/absences/add');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testUserWithRoleCanViewSickNotes() {
         $this->login($this->viewerUser, $this->client->getKernel());
-        $this->client->request('GET', '/sick_notes');
+        $this->client->request('GET', '/absences');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testParentCanViewSickNotes() {
         $this->login($this->parent, $this->client->getKernel());
-        $this->client->request('GET', '/sick_notes');
+        $this->client->request('GET', '/absences');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testNonFullAgedStudentCannotViewSickNotes() {
         $this->login($this->nonFullAgedStudentUser, $this->client->getKernel());
-        $this->client->request('GET', '/sick_notes');
+        $this->client->request('GET', '/absences');
         $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testFullAgedStudentCanViewSickNotes() {
         $this->login($this->studentUser, $this->client->getKernel());
-        $this->client->request('GET', '/sick_notes');
+        $this->client->request('GET', '/absences');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 }

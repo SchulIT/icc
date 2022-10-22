@@ -6,19 +6,11 @@ use App\Entity\Room;
 
 class RoomFilterView implements FilterViewInterface {
 
-    /** @var Room[] */
-    private $rooms;
-
-    /** @var Room|null */
-    private $currentRoom;
-
     /**
      * @param Room[] $rooms
-     * @param Room|null $room
      */
-    public function __construct(array $rooms, ?Room $room) {
-        $this->rooms = $rooms;
-        $this->currentRoom = $room;
+    public function __construct(private array $rooms, private ?Room $currentRoom)
+    {
     }
 
     /**
@@ -28,9 +20,6 @@ class RoomFilterView implements FilterViewInterface {
         return $this->rooms;
     }
 
-    /**
-     * @return Room|null
-     */
     public function getCurrentRoom(): ?Room {
         return $this->currentRoom;
     }

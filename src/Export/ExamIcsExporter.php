@@ -2,6 +2,7 @@
 
 namespace App\Export;
 
+use DateTime;
 use App\Entity\Exam;
 use App\Entity\ExamSupervision;
 use App\Entity\Grade;
@@ -21,21 +22,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExamIcsExporter {
-    private ExamSettings $examSettings;
-    private ExamRepositoryInterface $examRepository;
-    private TimetableTimeHelper $timetableTimeHelper;
-    private IcsHelper $icsHelper;
-    private TranslatorInterface $translator;
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    public function __construct(ExamSettings $examSettings, ExamRepositoryInterface $examRepository, TimetableTimeHelper $timetableTimeHelper,
-                                IcsHelper $icsHelper, TranslatorInterface $translator, AuthorizationCheckerInterface $authorizationChecker) {
-        $this->examSettings = $examSettings;
-        $this->examRepository = $examRepository;
-        $this->timetableTimeHelper = $timetableTimeHelper;
-        $this->icsHelper = $icsHelper;
-        $this->translator = $translator;
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(private ExamSettings $examSettings, private ExamRepositoryInterface $examRepository, private TimetableTimeHelper $timetableTimeHelper, private IcsHelper $icsHelper, private TranslatorInterface $translator, private AuthorizationCheckerInterface $authorizationChecker)
+    {
     }
 
     public function getIcsResponse(User $user): Response {
@@ -48,7 +36,6 @@ class ExamIcsExporter {
     }
 
     /**
-     * @param User $user
      * @return CalendarEvent[]
      */
     private function getIcsItems(User $user) {
@@ -64,9 +51,7 @@ class ExamIcsExporter {
             $exams = $this->examRepository->findAllByTeacher($user->getTeacher(), null, false, true);
         }
 
-        $exams = array_filter($exams, function(Exam $exam) {
-            return $this->authorizationChecker->isGranted(ExamVoter::Show, $exam);
-        });
+        $exams = array_filter($exams, fn(Exam $exam) => $this->authorizationChecker->isGranted(ExamVoter::Show, $exam));
 
         $items = [ ];
 
@@ -78,8 +63,6 @@ class ExamIcsExporter {
     }
 
     /**
-     * @param Exam $exam
-     * @param User $user
      * @return CalendarEvent[]
      */
     private function makeIcsItems(Exam $exam, User $user) {
@@ -175,7 +158,6 @@ class ExamIcsExporter {
 
     /**
      * @param Tuition[] $tuitions
-     * @return string
      */
     private function getTuitionsAsString($tuitions): string {
         $strings = [ ];
@@ -198,16 +180,13 @@ class ExamIcsExporter {
 
     /**
      * @param Grade[] $grades
-     * @return string
      */
     private function getGradesAsString($grades): string {
-        return implode(', ', array_map(function(Grade $grade) {
-            return $grade->getName();
-        }, $grades));
+        return implode(', ', array_map(fn(Grade $grade) => $grade->getName(), $grades));
     }
 
-    private function getDateTime(\DateTime $day, \DateTime $time) {
+    private function getDateTime(DateTime $day, DateTime $time) {
         $dateString = sprintf('%s %s:00', $day->format('Y-m-d'), $time->format('H:i'));
-        return new \DateTime($dateString);
+        return new DateTime($dateString);
     }
 }

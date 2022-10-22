@@ -11,16 +11,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendActionInterface {
 
-    private $translator;
-    private $messageRepository;
-    private $dateHelper;
-    private $recipientResolver;
-
-    public function __construct(TranslatorInterface $translator, MessageRecipientResolver $recipientResolver, MessageRepositoryInterface $messageRepository, DateHelper $dateHelper) {
-        $this->translator = $translator;
-        $this->messageRepository = $messageRepository;
-        $this->dateHelper = $dateHelper;
-        $this->recipientResolver = $recipientResolver;
+    public function __construct(private TranslatorInterface $translator, private MessageRecipientResolver $recipientResolver, private MessageRepositoryInterface $messageRepository, private DateHelper $dateHelper)
+    {
     }
 
     /**
@@ -32,7 +24,6 @@ class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendAct
 
     /**
      * @param MessageCreatedEvent $objective
-     * @return string|null
      */
     public function getReplyTo($objective): ?string {
         return $objective->getMessage()->getCreatedBy()->getEmail();
@@ -40,7 +31,6 @@ class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendAct
 
     /**
      * @param MessageCreatedEvent $objective
-     * @return array
      */
     public function getRecipients($objective): array {
         return $this->recipientResolver->resolveRecipients($objective->getMessage());
@@ -48,7 +38,6 @@ class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendAct
 
     /**
      * @param MessageCreatedEvent $objective
-     * @return string
      */
     public function getSubject($objective): string {
         return $this->translator->trans('message.create.title', ['%title%' => $objective->getMessage()->getTitle()], 'email');
@@ -56,7 +45,6 @@ class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendAct
 
     /**
      * @param MessageCreatedEvent $objective
-     * @return string
      */
     public function getSender($objective): string {
         $creator = $objective->getMessage()->getCreatedBy();

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Display;
 use App\Form\DisplayType;
 use App\Repository\DisplayRepositoryInterface;
@@ -12,23 +13,15 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/admin/displays")
- */
+#[Route(path: '/admin/displays')]
 class DisplayAdminController extends AbstractController {
 
-    private $repository;
-
-    public function __construct(DisplayRepositoryInterface $repository, RefererHelper $redirectHelper) {
+    public function __construct(private DisplayRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
-
-        $this->repository = $repository;
     }
 
-    /**
-     * @Route("", name="admin_displays")
-     */
-    public function index(Request $request, DisplaySettings $settings) {
+    #[Route(path: '', name: 'admin_displays')]
+    public function index(Request $request, DisplaySettings $settings): Response {
         $form = $this->createFormBuilder()
             ->add('allowedIps', TextType::class, [
                 'required' => false,
@@ -54,10 +47,8 @@ class DisplayAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_display")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'add_display')]
+    public function add(Request $request): Response {
         $display = new Display();
         $form = $this->createForm(DisplayType::class, $display);
         $form->handleRequest($request);
@@ -74,10 +65,8 @@ class DisplayAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_display")
-     */
-    public function edit(Display $display, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_display')]
+    public function edit(Display $display, Request $request): Response {
         $form = $this->createForm(DisplayType::class, $display);
         $form->handleRequest($request);
 
@@ -94,10 +83,8 @@ class DisplayAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_display")
-     */
-    public function remove(Display $display, Request $request) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_display')]
+    public function remove(Display $display, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.displays.remove.confirm',
             'message_parameters' => [

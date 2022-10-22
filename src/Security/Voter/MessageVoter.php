@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use LogicException;
 use App\Entity\Message;
 use App\Entity\MessagePriority;
 use App\Entity\Student;
@@ -20,25 +21,19 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class MessageVoter extends Voter {
 
-    const New = 'new-message';
-    const View = 'view';
-    const Edit = 'edit';
-    const Remove = 'remove';
-    const Confirm = 'confirm';
-    const Dismiss = 'dismiss';
-    const Download = 'download';
-    const Upload = 'upload';
-    const Priority = 'message-priority';
-    const Poll = 'poll';
+    public const New = 'new-message';
+    public const View = 'view';
+    public const Edit = 'edit';
+    public const Remove = 'remove';
+    public const Confirm = 'confirm';
+    public const Dismiss = 'dismiss';
+    public const Download = 'download';
+    public const Upload = 'upload';
+    public const Priority = 'message-priority';
+    public const Poll = 'poll';
 
-    private AccessDecisionManagerInterface $accessDecisionManager;
-    private MessageConfirmationHelper $confirmationHelper;
-    private DateHelper $dateHelper;
-
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager, MessageConfirmationHelper $confirmationHelper, DateHelper $dateHelper) {
-        $this->accessDecisionManager = $accessDecisionManager;
-        $this->confirmationHelper = $confirmationHelper;
-        $this->dateHelper = $dateHelper;
+    public function __construct(private AccessDecisionManagerInterface $accessDecisionManager, private MessageConfirmationHelper $confirmationHelper, private DateHelper $dateHelper)
+    {
     }
 
     /**
@@ -62,40 +57,21 @@ class MessageVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
-        switch($attribute) {
-            case self::New:
-                return $this->canCreate($token);
-
-            case self::View:
-                return $this->canView($subject, $token);
-
-            case self::Edit:
-                return $this->canEdit($subject, $token);
-
-            case self::Remove:
-                return $this->canRemove($subject, $token);
-
-            case self::Confirm:
-                return $this->canConfirm($subject, $token);
-
-            case self::Dismiss:
-                return $this->canDismiss($subject, $token);
-
-            case self::Download:
-                return $this->canDownload($subject, $token);
-
-            case self::Upload:
-                return $this->canUpload($subject, $token);
-
-            case self::Priority:
-                return $this->canSetPriority($token);
-
-            case self::Poll:
-                return $this->canVote($subject, $token);
-        }
-
-        throw new \LogicException('This code should not be reached.');
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
+    {
+        return match ($attribute) {
+            self::New => $this->canCreate($token),
+            self::View => $this->canView($subject, $token),
+            self::Edit => $this->canEdit($subject, $token),
+            self::Remove => $this->canRemove($subject, $token),
+            self::Confirm => $this->canConfirm($subject, $token),
+            self::Dismiss => $this->canDismiss($subject, $token),
+            self::Download => $this->canDownload($subject, $token),
+            self::Upload => $this->canUpload($subject, $token),
+            self::Priority => $this->canSetPriority($token),
+            self::Poll => $this->canVote($subject, $token),
+            default => throw new LogicException('This code should not be reached.'),
+        };
     }
 
     private function canCreate(TokenInterface $token): bool {
@@ -212,16 +188,11 @@ class MessageVoter extends Voter {
      * @return UserType[]
      */
     private function getUserTypes(Collection $collection): array {
-        return array_map(function(UserTypeEntity $userTypeEntity) {
-            return $userTypeEntity->getUserType();
-        }, $collection->toArray());
+        return array_map(fn(UserTypeEntity $userTypeEntity) => $userTypeEntity->getUserType(), $collection->toArray());
     }
 
     /**
      * @param UserType[] $allowedUserTypes
-     * @param UserType $userType
-     * @param bool $strict
-     * @return bool
      */
     private function checkUserType(array $allowedUserTypes, UserType $userType, bool $strict = true): bool {
         if(EnumArrayUtils::inArray($userType, $allowedUserTypes)) {
@@ -238,7 +209,6 @@ class MessageVoter extends Voter {
     /**
      * @param StudyGroup[] $studyGroups
      * @param Student[] $students
-     * @return bool
      */
     private function isMemberOfStudyGroups(array $studyGroups, array $students): bool {
         foreach($students as $student) {
@@ -256,11 +226,8 @@ class MessageVoter extends Voter {
     }
 
     /**
-     * @param TokenInterface $token
      * @param UserType[] $userTypes
      * @param StudyGroup[] $studyGroups
-     * @param bool $strict
-     * @return bool
      */
     private function isMemberOfTypeAndStudyGroup(TokenInterface $token, array $userTypes, array $studyGroups, bool $strict = true): bool {
         $user = $token->getUser();

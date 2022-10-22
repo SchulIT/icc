@@ -6,16 +6,13 @@ use App\Entity\User;
 
 class UserLastnameFirstnameStrategy implements SortingStrategyInterface {
 
-    private $stringStrategy;
-
-    public function __construct(StringStrategy $strategy) {
-        $this->stringStrategy = $strategy;
+    public function __construct(private StringStrategy $stringStrategy)
+    {
     }
 
     /**
      * @param User $objectA
      * @param User $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         // Sort by lastname first

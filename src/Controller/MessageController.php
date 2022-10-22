@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Message;
 use App\Entity\MessageAttachment;
 use App\Entity\MessageConfirmation;
@@ -39,30 +40,22 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/messages")
- */
+#[Route(path: '/messages')]
 class MessageController extends AbstractController {
 
     private const MessagesPerPage = 25;
 
-    private Sorter $sorter;
-
-    public function __construct(Sorter $sorter, RefererHelper $refererHelper) {
+    public function __construct(private Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
-        
-        $this->sorter = $sorter;
     }
 
     protected function getMessageScope(): MessageScope {
         return MessageScope::Messages();
     }
 
-    /**
-     * @Route("", name="messages")
-     */
+    #[Route(path: '', name: 'messages')]
     public function index(MessageRepositoryInterface $messageRepository, StudentFilter $studentFilter, UserTypeFilter $userTypeFilter,
-                          SectionResolverInterface $sectionResolver, Request $request, Grouper $grouper) {
+                          SectionResolverInterface $sectionResolver, Request $request, Grouper $grouper): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -77,9 +70,7 @@ class MessageController extends AbstractController {
         $studyGroups = [ ];
         if($userTypeFilterView->getCurrentType()->equals(UserType::Student()) || $userTypeFilterView->getCurrentType()->equals(UserType::Parent())) {
             if($studentFilterView->getCurrentStudent() !== null) {
-                $studyGroups = $studentFilterView->getCurrentStudent()->getStudyGroupMemberships()->map(function(StudyGroupMembership $membership) {
-                    return $membership->getStudyGroup();
-                })->toArray();
+                $studyGroups = $studentFilterView->getCurrentStudent()->getStudyGroupMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudyGroup())->toArray();
             }
         }
 
@@ -101,9 +92,7 @@ class MessageController extends AbstractController {
             $messages[] = $message;
         }
 
-        $messages = array_filter($messages, function(Message $message) {
-            return $this->isGranted(MessageVoter::View, $message);
-        });
+        $messages = array_filter($messages, fn(Message $message) => $this->isGranted(MessageVoter::View, $message));
 
         $pages = ceil((double)$paginator->count() / self::MessagesPerPage);
 
@@ -121,12 +110,10 @@ class MessageController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}", name="show_message")
-     */
+    #[Route(path: '/{uuid}', name: 'show_message')]
     public function show(Message $message, MessageRepositoryInterface $messageRepository,
                          MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem,
-                         PollVoteHelper $voteHelper, Request $request, DateHelper $dateHelper) {
+                         PollVoteHelper $voteHelper, Request $request, DateHelper $dateHelper): Response {
         // Requery message for better performance
         $message = $messageRepository->findOneById($message->getId());
 
@@ -168,9 +155,7 @@ class MessageController extends AbstractController {
             ]);
         }
 
-        $missing = array_filter($uploads, function(MessageFileUpload $upload) {
-            return $upload->isUploaded() === false;
-        });
+        $missing = array_filter($uploads, fn(MessageFileUpload $upload) => $upload->isUploaded() === false);
 
         $vote = $voteHelper->getPollVote($message, $user);
         $rankedChoices = $voteHelper->getRankedChoices($vote);
@@ -201,23 +186,19 @@ class MessageController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/attachments/{uuid}", name="download_message_attachment")
-     */
-    public function downloadAttachment(MessageAttachment $attachment, MessageFilesystem $messageFilesystem) {
+    #[Route(path: '/attachments/{uuid}', name: 'download_message_attachment')]
+    public function downloadAttachment(MessageAttachment $attachment, MessageFilesystem $messageFilesystem): Response {
         $this->denyAccessUnlessGranted(MessageVoter::View, $attachment->getMessage());
 
         try {
             return $messageFilesystem->getMessageAttachmentDownloadResponse($attachment);
-        } catch (FileNotFoundException $exception) {
+        } catch (FileNotFoundException) {
             throw new NotFoundHttpException();
         }
     }
 
-    /**
-     * @Route("/{uuid}/downloads/{filename}", name="download_user_file")
-     */
-    public function downloadUserFile(Message $message, string $filename, MessageFilesystem $messageFilesystem) {
+    #[Route(path: '/{uuid}/downloads/{filename}', name: 'download_user_file')]
+    public function downloadUserFile(Message $message, string $filename, MessageFilesystem $messageFilesystem): Response {
         /** @var User $user */
         $user = $this->getUser();
         $this->denyAccessUnlessGranted(MessageVoter::View, $message);
@@ -225,15 +206,13 @@ class MessageController extends AbstractController {
 
         try {
             return $messageFilesystem->getMessageUserFileDownloadResponse($message, $user, $filename);
-        } catch (FileNotFoundException $e) {
+        } catch (FileNotFoundException) {
             throw new NotFoundHttpException();
         }
     }
 
-    /**
-     * @Route("/uploads/{uuid}/download", name="download_uploaded_user_file")
-     */
-    public function downloadUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem) {
+    #[Route(path: '/uploads/{uuid}/download', name: 'download_uploaded_user_file')]
+    public function downloadUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem): Response {
         /** @var User $user */
         $user = $this->getUser();
         $this->denyAccessUnlessGranted(MessageVoter::View, $file->getMessage());
@@ -247,15 +226,13 @@ class MessageController extends AbstractController {
 
         try {
             return $messageFilesystem->getMessageUploadedUserFileDownloadResponse($fileUpload, $user);
-        } catch (FileNotFoundException $e) {
+        } catch (FileNotFoundException) {
             throw new NotFoundHttpException();
         }
     }
 
-    /**
-     * @Route("/uploads/{uuid}/remove", name="remove_uploaded_user_file")
-     */
-    public function removeUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $filesystem, Request $request) {
+    #[Route(path: '/uploads/{uuid}/remove', name: 'remove_uploaded_user_file')]
+    public function removeUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $filesystem, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
         $this->denyAccessUnlessGranted(MessageVoter::View, $file->getMessage());
@@ -279,7 +256,7 @@ class MessageController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             try {
                 $fileUploadRepository->remove($fileUpload);
-            } catch (FileNotFoundException $e) {
+            } catch (FileNotFoundException) {
                 throw new NotFoundHttpException();
             }
 
@@ -297,19 +274,15 @@ class MessageController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/confirm", name="confirm_message")
-     */
-    public function confirm(Message $message, EntityManagerInterface $entityManager) {
+    #[Route(path: '/{uuid}/confirm', name: 'confirm_message')]
+    public function confirm(Message $message, EntityManagerInterface $entityManager): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Confirm, $message);
 
         /** @var User $user */
         $user = $this->getUser();
 
         $confirmations = $message->getConfirmations()
-            ->filter(function(MessageConfirmation $confirmation) use ($user) {
-                return $confirmation->getUser()->getId() === $user->getId();
-            });
+            ->filter(fn(MessageConfirmation $confirmation) => $confirmation->getUser()->getId() === $user->getId());
 
         if($confirmations->count() === 0) {
             $confirmation = (new MessageConfirmation())
@@ -323,10 +296,8 @@ class MessageController extends AbstractController {
         return $this->redirectToRequestReferer('show_message', [ 'uuid' => $message->getUuid() ]);
     }
 
-    /**
-     * @Route("/{uuid}/dismiss", name="dismiss_message")
-     */
-    public function dismiss(Message $message, UserRepositoryInterface $userRepository) {
+    #[Route(path: '/{uuid}/dismiss', name: 'dismiss_message')]
+    public function dismiss(Message $message, UserRepositoryInterface $userRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -338,10 +309,8 @@ class MessageController extends AbstractController {
         return $this->redirectToRequestReferer('messages');
     }
 
-    /**
-     * @Route("/{uuid}/reenable", name="reenable_message")
-     */
-    public function reenable(Message $message, UserRepositoryInterface $userRepository) {
+    #[Route(path: '/{uuid}/reenable', name: 'reenable_message')]
+    public function reenable(Message $message, UserRepositoryInterface $userRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 

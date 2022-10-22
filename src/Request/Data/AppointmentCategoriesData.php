@@ -10,11 +10,11 @@ class AppointmentCategoriesData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\AppointmentCategoryData>")
-     * @Assert\Valid()
      * @UniqueId(propertyPath="id")
      * @var AppointmentCategoryData[]
      */
-    private $categories = [ ];
+    #[Assert\Valid]
+    private array $categories = [ ];
 
     /**
      * @return AppointmentCategoryData[]

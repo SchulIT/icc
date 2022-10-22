@@ -8,24 +8,14 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class AppointmentConfirmedEvent extends Event {
 
-    private $appointment;
-    private $confirmedBy;
-
-    public function __construct(Appointment $appointment, User $confirmedBy) {
-        $this->appointment = $appointment;
-        $this->confirmedBy = $confirmedBy;
+    public function __construct(private Appointment $appointment, private User $confirmedBy)
+    {
     }
 
-    /**
-     * @return Appointment
-     */
     public function getAppointment(): Appointment {
         return $this->appointment;
     }
 
-    /**
-     * @return User
-     */
     public function getConfirmedBy(): User {
         return $this->confirmedBy;
     }

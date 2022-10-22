@@ -9,81 +9,57 @@ class StudyGroupData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $id;
+    #[Assert\NotBlank]
+    private ?string $id = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $name;
+    #[Assert\NotBlank]
+    private ?string $name = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $type;
-
-    /**
-     * @Serializer\Type("array<string>")
-     * @Assert\Count(min=1)
-     * @var string[]
-     */
-    private $grades = [ ];
+    #[Assert\NotBlank]
+    private ?string $type = null;
 
     /**
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $students = [ ];
+    #[Assert\Count(min: 1)]
+    private array $grades = [ ];
 
     /**
-     * @return string|null
+     * @Serializer\Type("array<string>")
+     * @var string[]
      */
+    private array $students = [ ];
+
     public function getId(): ?string {
         return $this->id;
     }
 
-    /**
-     * @param string|null $id
-     * @return StudyGroupData
-     */
     public function setId(?string $id): StudyGroupData {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     * @return StudyGroupData
-     */
     public function setName(?string $name): StudyGroupData {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getType(): ?string {
         return $this->type;
     }
 
-    /**
-     * @param string|null $type
-     * @return StudyGroupData
-     */
     public function setType(?string $type): StudyGroupData {
         $this->type = $type;
         return $this;
@@ -98,7 +74,6 @@ class StudyGroupData {
 
     /**
      * @param string[] $grades
-     * @return StudyGroupData
      */
     public function setGrades(array $grades): StudyGroupData {
         $this->grades = $grades;
@@ -114,7 +89,6 @@ class StudyGroupData {
 
     /**
      * @param string[] $students
-     * @return StudyGroupData
      */
     public function setStudents(array $students): StudyGroupData {
         $this->students = $students;

@@ -27,7 +27,7 @@ class TeacherConverterTest extends WebTestCase {
             ->setLastname('Mustermann')
             ->setTitle(null);
         $converter = new TeacherStringConverter($this->getTranslator());
-        $this->assertEquals('Herr Mustermann [MUSM]', $converter->convert($teacher, true));
+        $this->assertEquals('[MUSM] Max Mustermann', $converter->convert($teacher, true));
     }
 
     public function testFemale() {
@@ -38,7 +38,7 @@ class TeacherConverterTest extends WebTestCase {
             ->setLastname('Musterfrau')
             ->setTitle('Dr.');
         $converter = new TeacherStringConverter($this->getTranslator());
-        $this->assertEquals('Frau Dr. Musterfrau [MUSF]', $converter->convert($teacher, true));
+        $this->assertEquals('[MUSF] Dr. Erika Musterfrau', $converter->convert($teacher, true));
     }
 
     public function testX() {
@@ -47,6 +47,6 @@ class TeacherConverterTest extends WebTestCase {
             ->setGender(Gender::X())
             ->setLastname('Doe');
         $converter = new TeacherStringConverter($this->getTranslator());
-        $this->assertEquals('Doe [DOEX]', $converter->convert($teacher, true));
+        $this->assertEquals('[DOEX] Doe', $converter->convert($teacher, true));
     }
 }

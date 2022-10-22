@@ -31,8 +31,6 @@ class ExamSettings extends AbstractSettings {
 
     /**
      * Returns the number of days students can view in the future. Detaults to 0 (unlimited days)
-     *
-     * @return int
      */
     public function getTimeWindowForStudents(): int {
         return (int)$this->getValue('exams.window', 0);
@@ -44,8 +42,6 @@ class ExamSettings extends AbstractSettings {
 
     /**
      * Returns the number of days students can view supervisions for future exams. Defaults to 0 (unlimited days)
-     *
-     * @return int
      */
     public function getTimeWindowForStudentsToSeeSupervisions(): int {
         return (int)$this->getValue('exams.window.supervisions', 0);

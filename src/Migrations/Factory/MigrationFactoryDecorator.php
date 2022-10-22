@@ -10,16 +10,8 @@ use Doctrine\Migrations\AbstractMigration;
 use Doctrine\Migrations\Version\MigrationFactory;
 
 class MigrationFactoryDecorator implements MigrationFactory {
-    private $migrationFactory;
-
-    private $timetableSettings;
-    private $timetableTimeHelper;
-
-    public function __construct(MigrationFactory $migrationFactory, TimetableSettings $timetableSettings, TimetableTimeHelper $timeHelper)
+    public function __construct(private MigrationFactory $migrationFactory, private TimetableSettings $timetableSettings, private TimetableTimeHelper $timetableTimeHelper)
     {
-        $this->migrationFactory = $migrationFactory;
-        $this->timetableSettings = $timetableSettings;
-        $this->timetableTimeHelper = $timeHelper;
     }
 
     public function createVersion(string $migrationClassName): AbstractMigration {

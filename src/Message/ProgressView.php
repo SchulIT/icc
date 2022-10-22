@@ -4,27 +4,14 @@ namespace App\Message;
 
 class ProgressView {
 
-    /** @var int */
-    private $current;
-
-    /** @var int */
-    private $total;
-
-    public function __construct(int $current, int $total) {
-        $this->current = $current;
-        $this->total = $total;
+    public function __construct(private int $current, private int $total)
+    {
     }
 
-    /**
-     * @return int
-     */
     public function getCurrent(): int {
         return $this->current;
     }
 
-    /**
-     * @return int
-     */
     public function getTotal(): int {
         return $this->total;
     }

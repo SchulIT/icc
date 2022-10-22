@@ -15,10 +15,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class AppointmentBlameableSubscriber implements EventSubscriber {
 
-    private $tokenStorage;
-
-    public function __construct(TokenStorageInterface $tokenStorage) {
-        $this->tokenStorage = $tokenStorage;
+    public function __construct(private TokenStorageInterface $tokenStorage)
+    {
     }
 
     public function prePersist(LifecycleEventArgs $args) {

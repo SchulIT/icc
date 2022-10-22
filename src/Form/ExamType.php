@@ -23,20 +23,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ExamType extends AbstractType {
 
-    private TuitionStrategy $tuitionStrategy;
-    private StringStrategy $stringStrategy;
-    private RoomNameStrategy $roomStrategy;
-    private SectionResolverInterface $sectionResolver;
-
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    public function __construct(TuitionStrategy $tuitionStrategy, StringStrategy $stringStrategy, RoomNameStrategy $roomStrategy,
-                                SectionResolverInterface $sectionResolver, AuthorizationCheckerInterface $authorizationChecker) {
-        $this->tuitionStrategy = $tuitionStrategy;
-        $this->stringStrategy = $stringStrategy;
-        $this->roomStrategy = $roomStrategy;
-        $this->sectionResolver = $sectionResolver;
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(private TuitionStrategy $tuitionStrategy, private StringStrategy $stringStrategy, private RoomNameStrategy $roomStrategy, private SectionResolverInterface $sectionResolver, private AuthorizationCheckerInterface $authorizationChecker)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -62,13 +50,9 @@ class ExamType extends AbstractType {
                                 'data-choice' => 'true'
                             ],
                             'class' => Room::class,
-                            'query_builder' => function(EntityRepository $repository) {
-                                return $repository->createQueryBuilder('r')
-                                    ->where('r.isReservationEnabled = true');
-                            },
-                            'choice_label' => function(Room $room) {
-                                return $room->getName();
-                            },
+                            'query_builder' => fn(EntityRepository $repository) => $repository->createQueryBuilder('r')
+                                ->where('r.isReservationEnabled = true'),
+                            'choice_label' => fn(Room $room) => $room->getName(),
                             'sort_by' => $this->roomStrategy,
                             'required' => false,
                             'placeholder' => 'label.select.room',
@@ -127,9 +111,7 @@ class ExamType extends AbstractType {
 
                                 return sprintf('%s - %s - %s', $tuition->getName(), $tuition->getStudyGroup()->getName(), $tuition->getSubject()->getName());
                             },
-                            'group_by' => function(Tuition $tuition) {
-                                return implode(', ', $tuition->getStudyGroup()->getGrades()->map(function(Grade $grade) { return $grade->getName(); })->toArray());
-                            },
+                            'group_by' => fn(Tuition $tuition) => implode(', ', $tuition->getStudyGroup()->getGrades()->map(fn(Grade $grade) => $grade->getName())->toArray()),
                             'sort_by' => $this->stringStrategy,
                             'sort_items_by' => $this->tuitionStrategy,
                             'disabled' => $this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR') !== true

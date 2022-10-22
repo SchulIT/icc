@@ -15,16 +15,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudyGroupCsvExporter {
 
-    private $studyGroupRepository;
-    private $csvHelper;
-    private $translator;
-    private $sorter;
-
-    public function __construct(StudyGroupRepositoryInterface $studyGroupRepository, CsvHelper $csvHelper, TranslatorInterface $translator, Sorter $sorter) {
-        $this->studyGroupRepository = $studyGroupRepository;
-        $this->csvHelper = $csvHelper;
-        $this->translator = $translator;
-        $this->sorter = $sorter;
+    public function __construct(private StudyGroupRepositoryInterface $studyGroupRepository, private CsvHelper $csvHelper, private TranslatorInterface $translator, private Sorter $sorter)
+    {
     }
 
     /**

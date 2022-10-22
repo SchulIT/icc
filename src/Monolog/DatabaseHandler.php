@@ -10,12 +10,8 @@ use Monolog\Logger;
 
 class DatabaseHandler extends AbstractProcessingHandler {
 
-    private Connection $connection;
-
-    public function __construct(Connection $connection, int $level = Logger::INFO) {
+    public function __construct(private Connection $connection, int $level = Logger::INFO) {
         parent::__construct($level, false);
-
-        $this->connection = $connection;
     }
 
     /**
@@ -39,7 +35,7 @@ class DatabaseHandler extends AbstractProcessingHandler {
                     Types::DATETIME_MUTABLE,
                     Types::STRING
                 ]);
-        } catch (Exception $exception) {
+        } catch (Exception) {
             // Logging failed :-/
         }
     }

@@ -11,12 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GradeChoiceType extends SortableEntityType {
 
-    private GradeNameStrategy $gradeStrategy;
-
-    public function __construct(GradeNameStrategy $gradeStrategy, ManagerRegistry $registry) {
+    public function __construct(private GradeNameStrategy $gradeStrategy, ManagerRegistry $registry) {
         parent::__construct($registry);
-
-        $this->gradeStrategy = $gradeStrategy;
     }
 
     public function configureOptions(OptionsResolver $resolver) {

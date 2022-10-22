@@ -11,47 +11,31 @@ class CancelLessonRequest {
     /**
      * @Serializer\SerializedName("_token")
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
      * @CsrfToken(id="cancel_lesson")
-     * @var string|null
      */
-    private $csrfToken;
+    #[Assert\NotBlank]
+    private ?string $csrfToken = null;
 
     /**
      * @Serializer\SerializedName("reason")
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $reason;
+    #[Assert\NotBlank]
+    private ?string $reason = null;
 
-    /**
-     * @return string|null
-     */
     public function getCsrfToken(): ?string {
         return $this->csrfToken;
     }
 
-    /**
-     * @param string|null $csrfToken
-     * @return CancelLessonRequest
-     */
     public function setCsrfToken(?string $csrfToken): CancelLessonRequest {
         $this->csrfToken = $csrfToken;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getReason(): ?string {
         return $this->reason;
     }
 
-    /**
-     * @param string|null $reason
-     * @return CancelLessonRequest
-     */
     public function setReason(?string $reason): CancelLessonRequest {
         $this->reason = $reason;
         return $this;

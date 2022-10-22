@@ -9,22 +9,6 @@ use App\Entity\User;
 
 class MessageConfirmationView {
 
-    /** @var Student[]|array  */
-    private $students;
-    /** @var Teacher[]|array  */
-    private $teachers;
-    /** @var User[]|array  */
-    private $users;
-
-    /** @var MessageConfirmation[] */
-    private $studentConfirmations;
-    /** @var MessageConfirmation[] */
-    private $parentConfirmations;
-    /** @var MessageConfirmation[]  */
-    private $teacherConfirmations;
-    /** @var MessageConfirmation[]  */
-    private $userConfirmations;
-
     /**
      * MessageConfirmationView constructor.
      * @param Student[] $students
@@ -35,15 +19,8 @@ class MessageConfirmationView {
      * @param User[] $users
      * @param MessageConfirmation[] $userConfirmations
      */
-    public function __construct(array $students, array $studentConfirmations, array $parentConfirmations, array $teachers, array $teacherConfirmations, array $users, array $userConfirmations) {
-        $this->students = $students;
-        $this->teachers = $teachers;
-        $this->users = $users;
-
-        $this->studentConfirmations = $studentConfirmations;
-        $this->parentConfirmations = $parentConfirmations;
-        $this->teacherConfirmations = $teacherConfirmations;
-        $this->userConfirmations = $userConfirmations;
+    public function __construct(private array $students, private array $studentConfirmations, private array $parentConfirmations, private array $teachers, private array $teacherConfirmations, private array $users, private array $userConfirmations)
+    {
     }
 
     /**

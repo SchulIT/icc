@@ -11,10 +11,8 @@ use App\Utils\ArrayUtils;
 
 class AppointmentCategoriesImportStrategy implements ImportStrategyInterface {
 
-    private $repository;
-
-    public function __construct(AppointmentCategoryRepositoryInterface $appointmentCategoryRepository) {
-        $this->repository = $appointmentCategoryRepository;
+    public function __construct(private AppointmentCategoryRepositoryInterface $repository)
+    {
     }
 
     /**
@@ -24,9 +22,7 @@ class AppointmentCategoriesImportStrategy implements ImportStrategyInterface {
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(),
-            function(AppointmentCategory $category) {
-                return $category->getExternalId();
-            }
+            fn(AppointmentCategory $category) => $category->getExternalId()
         );
     }
 
@@ -54,7 +50,6 @@ class AppointmentCategoriesImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param AppointmentCategory $entity
-     * @return int
      */
     public function getEntityId($entity): int {
         return $entity->getId();

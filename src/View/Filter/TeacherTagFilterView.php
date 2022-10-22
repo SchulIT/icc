@@ -6,15 +6,11 @@ use App\Entity\TeacherTag;
 
 class TeacherTagFilterView implements FilterViewInterface {
 
-    /** @var TeacherTag[] */
-    private $tags;
-
-    /** @var TeacherTag|null */
-    private $currentTag;
-
-    public function __construct(array $tags, ?TeacherTag $currentTag) {
-        $this->tags = $tags;
-        $this->currentTag = $currentTag;
+    /**
+     * @param TeacherTag[] $tags
+     */
+    public function __construct(private array $tags, private ?TeacherTag $currentTag)
+    {
     }
 
     /**
@@ -24,9 +20,6 @@ class TeacherTagFilterView implements FilterViewInterface {
         return $this->tags;
     }
 
-    /**
-     * @return TeacherTag|null
-     */
     public function getCurrentTag(): ?TeacherTag {
         return $this->currentTag;
     }

@@ -11,74 +11,50 @@ class Tuition {
      *
      * @Serializer\Type("string")
      * @Serializer\SerializedName("id")
-     * @var string
      */
-    private $id;
+    private ?string $id = null;
 
     /**
      * @Serializer\Type("string")
      * @Serializer\SerializedName("name")
-     * @var string
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * @Serializer\Type("string")
      * @Serializer\SerializedName("subject")
-     * @var string
      */
-    private $subject;
+    private ?string $subject = null;
 
     /**
      * @Serializer\Type("array<App\Book\Export\Teacher>")
      * @Serializer\SerializedName("teachers")
      * @var Teacher[]
      */
-    private $teachers = [ ];
+    private array $teachers = [ ];
 
-    /**
-     * @return string
-     */
     public function getId(): string {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     * @return Tuition
-     */
     public function setId(string $id): Tuition {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Tuition
-     */
     public function setName(string $name): Tuition {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getSubject(): string {
         return $this->subject;
     }
 
-    /**
-     * @param string $subject
-     * @return Tuition
-     */
     public function setSubject(string $subject): Tuition {
         $this->subject = $subject;
         return $this;

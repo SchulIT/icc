@@ -14,10 +14,6 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class MessageRepository extends AbstractRepository implements MessageRepositoryInterface {
 
-    /**
-     * @param int $id
-     * @return Message|null
-     */
     public function findOneById(int $id): ?Message {
         return $this->em->createQueryBuilder()
             ->select(['m', 'sg', 'sgg', 'v', 'f', 'c', 'a'])
@@ -68,9 +64,7 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
                 ->leftJoin('mInner.studyGroups', 'sgInner')
                 ->andWhere($qb->expr()->in('sgInner.id', ':studyGroups'));
 
-            $qb->setParameter('studyGroups', array_map(function(StudyGroup $studyGroup) {
-                return $studyGroup->getId();
-            }, $studyGroups));
+            $qb->setParameter('studyGroups', array_map(fn(StudyGroup $studyGroup) => $studyGroup->getId(), $studyGroups));
         }
 
         $qb
@@ -108,7 +102,6 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
     }
 
     /**
-     * @param UserType $userType
      * @return Message[]
      */
     public function findAllByUserType(UserType $userType) {
@@ -153,9 +146,6 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param Message $message
-     */
     public function persist(Message $message): void {
         /*
          * Ensure that all 1:N relations are set correctly
@@ -169,9 +159,6 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
         $this->em->flush();
     }
 
-    /**
-     * @param Message $message
-     */
     public function remove(Message $message): void {
         $this->em->remove($message);
         $this->em->flush();

@@ -7,10 +7,6 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class DocumentCategoryRepository extends AbstractRepository implements DocumentCategoryRepositoryInterface {
 
-    /**
-     * @param int $id
-     * @return DocumentCategory|null
-     */
     public function findOneById(int $id): ?DocumentCategory {
         return $this->em->getRepository(DocumentCategory::class)
             ->findOneBy([
@@ -28,17 +24,11 @@ class DocumentCategoryRepository extends AbstractRepository implements DocumentC
             ]);
     }
 
-    /**
-     * @param DocumentCategory $category
-     */
     public function persist(DocumentCategory $category): void {
         $this->em->persist($category);
         $this->em->flush();
     }
 
-    /**
-     * @param DocumentCategory $category
-     */
     public function remove(DocumentCategory $category): void {
         $this->em->remove($category);
         $this->em->flush();

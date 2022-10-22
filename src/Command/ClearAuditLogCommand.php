@@ -11,16 +11,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use function Symfony\Component\String\u;
 
 class ClearAuditLogCommand extends Command {
-    private EntityManagerInterface $em;
+    protected static $defaultName = 'app:db:clear_audit';
 
-    public function __construct(EntityManagerInterface $em, string $name = null) {
+    public function __construct(private EntityManagerInterface $em, string $name = null) {
         parent::__construct($name);
-        $this->em = $em;
     }
 
     public function configure() {
-        $this->setName('app:db:clear_audit')
-            ->setDescription('Clears the audit log.');
+        $this->setDescription('Clears the audit log.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {
@@ -29,9 +27,7 @@ class ClearAuditLogCommand extends Command {
         /** @var Table[] $tables */
         $tables = array_filter(
             $this->em->getConnection()->createSchemaManager()->listTables(),
-            function(Table $table) {
-                return u($table->getName())->endsWith('_audit');
-            });
+            fn(Table $table) => u($table->getName())->endsWith('_audit'));
 
         $style->section(sprintf('Clear %d audit tables', count($tables)));
 

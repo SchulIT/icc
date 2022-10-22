@@ -13,10 +13,8 @@ use Doctrine\ORM\ORMException;
 
 class GradesImportStrategy implements ImportStrategyInterface {
 
-    private $repository;
-
-    public function __construct(GradeRepositoryInterface $repository) {
-        $this->repository = $repository;
+    public function __construct(private GradeRepositoryInterface $repository)
+    {
     }
 
     /**
@@ -26,9 +24,7 @@ class GradesImportStrategy implements ImportStrategyInterface {
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(),
-            function (Grade $grade) {
-                return $grade->getExternalId();
-            }
+            fn(Grade $grade) => $grade->getExternalId()
         );
     }
 
@@ -56,7 +52,6 @@ class GradesImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param Grade $entity
-     * @return int
      */
     public function getEntityId($entity): int {
         return $entity->getId();
@@ -81,14 +76,13 @@ class GradesImportStrategy implements ImportStrategyInterface {
     /**
      * @param Grade $entity
      * @param GradesData $requestData
-     * @return bool
      */
     public function remove($entity, $requestData): bool {
         try {
             $this->repository->remove($entity);
 
             return true;
-        } catch (ORMException $e) {
+        } catch (ORMException) {
             return false;
         }
     }

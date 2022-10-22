@@ -10,105 +10,72 @@ class TuitionData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $id;
+    #[Assert\NotBlank]
+    private ?string $id = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $name;
+    #[Assert\NotBlank]
+    private ?string $name = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $displayName;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $displayName = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $subject;
+    #[Assert\NotBlank]
+    private ?string $subject = null;
 
     /**
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $teachers;
+    private ?array $teachers = null;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @Assert\NotNull()
-     * @var string|null
      */
-    private $studyGroup;
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    private ?string $studyGroup = null;
 
-    /**
-     * @return string|null
-     */
     public function getId(): ?string {
         return $this->id;
     }
 
-    /**
-     * @param string|null $id
-     * @return TuitionData
-     */
     public function setId(?string $id): TuitionData {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     * @return TuitionData
-     */
     public function setName(?string $name): TuitionData {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDisplayName(): ?string {
         return $this->displayName;
     }
 
-    /**
-     * @param string|null $displayName
-     * @return TuitionData
-     */
     public function setDisplayName(?string $displayName): TuitionData {
         $this->displayName = $displayName;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSubject(): ?string {
         return $this->subject;
     }
 
-    /**
-     * @param string|null $subject
-     * @return TuitionData
-     */
     public function setSubject(?string $subject): TuitionData {
         $this->subject = $subject;
         return $this;
@@ -124,24 +91,16 @@ class TuitionData {
 
     /**
      * @param string[] $teachers
-     * @return TuitionData
      */
     public function setTeachers(array $teachers): TuitionData {
         $this->teachers = $teachers;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getStudyGroup(): ?string {
         return $this->studyGroup;
     }
 
-    /**
-     * @param string|null $studyGroup
-     * @return TuitionData
-     */
     public function setStudyGroup(?string $studyGroup): TuitionData {
         $this->studyGroup = $studyGroup;
         return $this;

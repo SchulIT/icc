@@ -19,10 +19,8 @@ use Symfony\Component\Form\FormEvents;
 
 class ResourceType extends AbstractType {
 
-    private ResourceTypeStrategy $sortingStrategy;
-
-    public function __construct(ResourceTypeStrategy $sortingStrategy) {
-        $this->sortingStrategy = $sortingStrategy;
+    public function __construct(private ResourceTypeStrategy $sortingStrategy)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -97,13 +95,9 @@ class ResourceType extends AbstractType {
                                     'required' => true,
                                     'class' => ResourceTypeEntity::class,
                                     'sort_by' => $this->sortingStrategy,
-                                    'query_builder' => function(EntityRepository $repository) {
-                                        return $repository->createQueryBuilder('t')
-                                            ->where('t.id > 1');
-                                    },
-                                    'choice_label' => function(ResourceTypeEntity $entity) {
-                                        return $entity->getName();
-                                    },
+                                    'query_builder' => fn(EntityRepository $repository) => $repository->createQueryBuilder('t')
+                                        ->where('t.id > 1'),
+                                    'choice_label' => fn(ResourceTypeEntity $entity) => $entity->getName(),
                                     'attr' => [
                                         'data-choice' => 'true'
                                     ]

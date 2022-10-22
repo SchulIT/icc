@@ -8,12 +8,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudyGroupStringConverter {
 
-    private GradesStringConverter $gradeConverter;
-    private TranslatorInterface $translator;
-
-    public function __construct(TranslatorInterface $translator, GradesStringConverter $gradeConverter) {
-        $this->translator = $translator;
-        $this->gradeConverter = $gradeConverter;
+    public function __construct(private TranslatorInterface $translator, private GradesStringConverter $gradeConverter)
+    {
     }
 
     public function convert(StudyGroup $group, bool $short = false, bool $includeGrades = false): string {

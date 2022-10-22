@@ -9,40 +9,20 @@ use App\Entity\TimetableLesson;
 
 class ResourceAvailability {
 
-    private $reservation;
+    private bool $isTimetableLessonCancelled = false;
 
-    private $timetableLesson;
-
-    private $substitution;
-
-    private $exams = [ ];
-
-    private $isTimetableLessonCancelled = false;
-
-    public function __construct(?ResourceReservation $reservation, ?TimetableLesson $timetableLesson, ?Substitution $substitution, array $exams) {
-        $this->reservation = $reservation;
-        $this->timetableLesson = $timetableLesson;
-        $this->substitution = $substitution;
-        $this->exams = $exams;
+    public function __construct(private ?ResourceReservation $reservation, private ?TimetableLesson $timetableLesson, private ?Substitution $substitution, private array $exams)
+    {
     }
 
-    /**
-     * @return ResourceReservation|null
-     */
     public function getReservation(): ?ResourceReservation {
         return $this->reservation;
     }
 
-    /**
-     * @return TimetableLesson|null
-     */
     public function getTimetableLesson(): ?TimetableLesson {
         return $this->timetableLesson;
     }
 
-    /**
-     * @return Substitution|null
-     */
     public function getSubstitution(): ?Substitution {
         return $this->substitution;
     }

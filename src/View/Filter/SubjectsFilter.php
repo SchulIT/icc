@@ -10,12 +10,8 @@ use App\Sorting\SubjectNameStrategy;
 use App\Utils\EnumArrayUtils;
 
 class SubjectsFilter {
-    private $sorter;
-    private $subjectRepository;
-
-    public function __construct(Sorter $sorter, SubjectRepositoryInterface $subjectRepository) {
-        $this->sorter = $sorter;
-        $this->subjectRepository = $subjectRepository;
+    public function __construct(private Sorter $sorter, private SubjectRepositoryInterface $subjectRepository)
+    {
     }
 
     public function handle(?array $subjectUuids, User $user) {

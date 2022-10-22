@@ -13,10 +13,8 @@ use DateTime;
  */
 class AbsentStudentsResolver implements AbsenceResolveStrategyInterface {
 
-    private StudentAbsenceRepositoryInterface $repository;
-
-    public function __construct(StudentAbsenceRepositoryInterface $repository) {
-        $this->repository = $repository;
+    public function __construct(private StudentAbsenceRepositoryInterface $repository)
+    {
     }
 
     /**
@@ -26,12 +24,8 @@ class AbsentStudentsResolver implements AbsenceResolveStrategyInterface {
         $students = ArrayUtils::iterableToArray($students);
         $absences = $this->repository->findByStudents($students, null, $dateTime, $lesson);
 
-        $absences = array_filter($absences, function (StudentAbsence $absence) {
-            return $absence->getType()->isMustApprove() === false || $absence->isApproved();
-        });
+        $absences = array_filter($absences, fn(StudentAbsence $absence) => $absence->getType()->isMustApprove() === false || $absence->isApproved());
 
-        return array_map(function(StudentAbsence $note) {
-            return new AbsentStudentWithAbsenceNote($note->getStudent(), $note);
-        }, $absences);
+        return array_map(fn(StudentAbsence $note) => new AbsentStudentWithAbsenceNote($note->getStudent(), $note), $absences);
     }
 }

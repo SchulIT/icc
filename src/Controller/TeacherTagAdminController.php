@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\TeacherTag;
 use App\Form\TeacherTagType;
 use App\Repository\TeacherTagRepositoryInterface;
@@ -13,32 +14,24 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Route("/admin/teachers/tags")
  * @Security("is_granted('ROLE_ADMIN')")
  */
+#[Route(path: '/admin/teachers/tags')]
 class TeacherTagAdminController extends AbstractController {
 
-    private TeacherTagRepositoryInterface $repository;
-
-    public function __construct(TeacherTagRepositoryInterface $repository, RefererHelper $redirectHelper) {
+    public function __construct(private TeacherTagRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
-
-        $this->repository = $repository;
     }
 
-    /**
-     * @Route("", name="admin_teacher_tags")
-     */
-    public function index() {
+    #[Route(path: '', name: 'admin_teacher_tags')]
+    public function index(): Response {
         return $this->render('admin/teachers/tags/index.html.twig', [
             'tags' => $this->repository->findAll()
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_teacher_tag")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'add_teacher_tag')]
+    public function add(Request $request): Response {
         $tag = new TeacherTag();
         $form = $this->createForm(TeacherTagType::class, $tag);
         $form->handleRequest($request);
@@ -55,10 +48,8 @@ class TeacherTagAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_teacher_tag")
-     */
-    public function edit(TeacherTag $tag, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_teacher_tag')]
+    public function edit(TeacherTag $tag, Request $request): Response {
         $form = $this->createForm(TeacherTagType::class, $tag);
         $form->handleRequest($request);
 
@@ -75,10 +66,8 @@ class TeacherTagAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_teacher_tag")
-     */
-    public function remove(TeacherTag $tag, Request $request, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_teacher_tag')]
+    public function remove(TeacherTag $tag, Request $request, TranslatorInterface $translator): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => $translator->trans('admin.teachers.tags.remove.confirm', [
                 '%name%' => $tag->getName()

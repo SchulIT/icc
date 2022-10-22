@@ -4,27 +4,14 @@ namespace App\Display;
 
 abstract class AbstractViewItem {
 
-    /** @var int */
-    private $lesson;
-
-    /** @var bool */
-    private $startsBefore;
-
-    public function __construct(int $lesson, bool $startsBefore) {
-        $this->lesson = $lesson;
-        $this->startsBefore = $startsBefore;
+    public function __construct(private int $lesson, private bool $startsBefore)
+    {
     }
 
-    /**
-     * @return int
-     */
     public function getLesson(): int {
         return $this->lesson;
     }
 
-    /**
-     * @return bool
-     */
     public function isStartsBefore(): bool {
         return $this->startsBefore;
     }
@@ -34,8 +21,6 @@ abstract class AbstractViewItem {
     /**
      * Specifies the sorting index. Items with lower indices
      * will be sorted before others.
-     *
-     * @return int
      */
     public abstract function getSortingIndex(): int;
 }

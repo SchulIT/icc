@@ -191,9 +191,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
                 )
             );
 
-        $subjectIds = array_map(function(Subject $subject) {
-            return $subject->getId();
-        }, $subjects);
+        $subjectIds = array_map(fn(Subject $subject) => $subject->getId(), $subjects);
 
         $qb->setParameter('subjects', $subjectIds);
 
@@ -208,9 +206,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
      * @inheritDoc
      */
     public function findAllByTuitions(DateTime $start, DateTime $end, array $tuitions): array {
-        $ids = array_map(function(Tuition $tuition) {
-            return $tuition->getId();
-        }, $tuitions);
+        $ids = array_map(fn(Tuition $tuition) => $tuition->getId(), $tuitions);
 
         $qb = $this->getDefaultQueryBuilder($start, $end);
 
@@ -444,9 +440,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
     }
 
     public function countHoldLessons(array $tuitions, ?Student $student): int {
-        $tuitionIds = array_map(function(Tuition $tuition) {
-            return $tuition->getId();
-        }, $tuitions);
+        $tuitionIds = array_map(fn(Tuition $tuition) => $tuition->getId(), $tuitions);
 
         $qb = $this->em->createQueryBuilder()
             ->select('SUM(l.lessonEnd - l.lessonStart + 1)')

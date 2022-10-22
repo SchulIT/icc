@@ -7,14 +7,11 @@ use App\Entity\StudyGroup;
 
 class StudentStudyGroupGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var StudyGroup */
-    private $studyGroup;
-
     /** @var Student[] */
-    private $students = [ ];
+    private array $students = [ ];
 
-    public function __construct(StudyGroup $studyGroup) {
-        $this->studyGroup = $studyGroup;
+    public function __construct(private StudyGroup $studyGroup)
+    {
     }
 
     public function getStudyGroup() {

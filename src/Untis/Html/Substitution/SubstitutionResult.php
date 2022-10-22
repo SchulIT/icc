@@ -6,8 +6,6 @@ use DateTime;
 
 class SubstitutionResult {
 
-    private DateTime $dateTime;
-
     private array $substitutions = [ ];
 
     private array $freeLessons = [ ];
@@ -16,8 +14,8 @@ class SubstitutionResult {
 
     private array $absences = [ ];
 
-    public function __construct(DateTime $dateTime) {
-        $this->dateTime = $dateTime;
+    public function __construct(private DateTime $dateTime)
+    {
     }
 
     public function addSubstitution(Substitution $substitution): SubstitutionResult {
@@ -40,9 +38,6 @@ class SubstitutionResult {
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getDateTime(): DateTime {
         return $this->dateTime;
     }

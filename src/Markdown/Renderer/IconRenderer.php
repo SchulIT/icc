@@ -2,6 +2,7 @@
 
 namespace App\Markdown\Renderer;
 
+use InvalidArgumentException;
 use App\Markdown\Element\Icon;
 use League\CommonMark\ElementRendererInterface;
 use League\CommonMark\HtmlElement;
@@ -15,7 +16,7 @@ class IconRenderer implements InlineRendererInterface {
      */
     public function render(AbstractInline $inline, ElementRendererInterface $htmlRenderer): string|HtmlElement|null {
         if(!$inline instanceof Icon) {
-            throw new \InvalidArgumentException('Incompatible inline type: ' . \get_class($inline));
+            throw new InvalidArgumentException('Incompatible inline type: ' . $inline::class);
         }
 
         $attrs = $inline->getData('attributes', []);

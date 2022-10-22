@@ -7,19 +7,13 @@ use App\Entity\Teacher;
 
 class SubstitutionTeacherGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var Teacher|null */
-    private $teacher;
-
     /** @var Substitution[] */
-    private $substitutions = [ ];
+    private array $substitutions = [ ];
 
-    public function __construct(?Teacher $teacher) {
-        $this->teacher = $teacher;
+    public function __construct(private ?Teacher $teacher)
+    {
     }
 
-    /**
-     * @return Teacher|null
-     */
     public function getTeacher(): ?Teacher {
         return $this->teacher;
     }

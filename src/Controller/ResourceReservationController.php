@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\ResourceEntity;
 use App\Entity\ResourceReservation;
 use App\Entity\Room;
@@ -36,24 +37,18 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Route("/reservations")
  * @Security("is_granted('view-reservations')")
  */
+#[Route(path: '/reservations')]
 class ResourceReservationController extends AbstractController {
 
-    private ResourceReservationRepositoryInterface $repository;
-
-    public function __construct(ResourceReservationRepositoryInterface $repository, RefererHelper $redirectHelper) {
+    public function __construct(private ResourceReservationRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
-
-        $this->repository = $repository;
     }
 
-    /**
-     * @Route("", name="resource_reservations")
-     */
+    #[Route(path: '', name: 'resource_reservations')]
     public function index(DateHelper $dateHelper, ResourceRepositoryInterface $resourceRepository, RoomQueryBuilder $queryBuilder, RoomTagRepositoryInterface  $roomTagRepository,
-                          ResourceAvailabilityHelper $availabilityHelper, Sorter $sorter, Request $request, StatusHelperInterface $statusHelper, ImportDateTypeRepositoryInterface  $importDateTypeRepository) {
+                          ResourceAvailabilityHelper $availabilityHelper, Sorter $sorter, Request $request, StatusHelperInterface $statusHelper, ImportDateTypeRepositoryInterface  $importDateTypeRepository): Response {
         $date = $this->getDateFromRequest($request, $dateHelper);
         $query = $queryBuilder->buildFromRequest($request);
 
@@ -71,9 +66,7 @@ class ResourceReservationController extends AbstractController {
 
         $sorter->sort($resources, ResourceStrategy::class);
 
-        $resources = array_filter($resources, function(ResourceEntity $room) {
-            return $room->isReservationEnabled();
-        });
+        $resources = array_filter($resources, fn(ResourceEntity $room) => $room->isReservationEnabled());
 
         $overview = $availabilityHelper->getAvailabilities($date, $resources);
 
@@ -118,11 +111,9 @@ class ResourceReservationController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/reservation", name="reservation_xhr")
-     */
+    #[Route(path: '/reservation', name: 'reservation_xhr')]
     public function reservation(DateHelper $dateHelper, ResourceRepositoryInterface $resourceRepository,
-                                ResourceAvailabilityHelper $availabilityHelper, TimetableSettings $timetableSettings, Request $request) {
+                                ResourceAvailabilityHelper $availabilityHelper, TimetableSettings $timetableSettings, Request $request): Response {
         $date = $this->getDateFromRequest($request, $dateHelper);
         $resource = $this->getResourceFromRequest($request, $resourceRepository);
         $lessonNumber = $request->query->getInt('lessonNumber', 0);
@@ -137,11 +128,9 @@ class ResourceReservationController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/list", name="list_reservations")
-     */
+    #[Route(path: '/list', name: 'list_reservations')]
     public function list(RoomFilter $roomFilter, TeacherFilter $teacherFilter, DateHelper $dateHelper,
-                          Sorter $sorter, Grouper $grouper, Request $request, SectionResolverInterface $sectionResolver) {
+                          Sorter $sorter, Grouper $grouper, Request $request, SectionResolverInterface $sectionResolver): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -175,7 +164,7 @@ class ResourceReservationController extends AbstractController {
         try {
             $date = new DateTime($request->query->get('date', null));
             $date->setTime(0, 0, 0);
-        } catch (Exception $exception) { }
+        } catch (Exception) { }
 
         if($date === null) {
             return $dateHelper->getToday();
@@ -194,10 +183,8 @@ class ResourceReservationController extends AbstractController {
         return $repository->findOneByUuid($uuid);
     }
 
-    /**
-     * @Route("/add", name="add_room_reservation")
-     */
-    public function add(DateHelper $dateHelper, ResourceRepositoryInterface $resourceRepository, Request $request) {
+    #[Route(path: '/add', name: 'add_room_reservation')]
+    public function add(DateHelper $dateHelper, ResourceRepositoryInterface $resourceRepository, Request $request): Response {
         $this->denyAccessUnlessGranted(ResourceReservationVoter::New);
 
         $date = $this->getDateFromRequest($request, $dateHelper);
@@ -236,10 +223,8 @@ class ResourceReservationController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_room_reservation")
-     */
-    public function edit(ResourceReservation $reservation, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_room_reservation')]
+    public function edit(ResourceReservation $reservation, Request $request): Response {
         $this->denyAccessUnlessGranted(ResourceReservationVoter::Edit, $reservation);
 
         $form = $this->createForm(ResourceReservationType::class, $reservation);
@@ -258,10 +243,8 @@ class ResourceReservationController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_room_reservation")
-     */
-    public function remove(ResourceReservation $reservation, TranslatorInterface $translator, Request $request) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_room_reservation')]
+    public function remove(ResourceReservation $reservation, TranslatorInterface $translator, Request $request): Response {
         $this->denyAccessUnlessGranted(ResourceReservationVoter::Remove, $reservation);
 
         $form = $this->createForm(ConfirmType::class, null, [

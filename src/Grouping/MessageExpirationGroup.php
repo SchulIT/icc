@@ -6,22 +6,14 @@ use App\Entity\Message;
 
 class MessageExpirationGroup implements GroupInterface, SortableGroupInterface {
     /**
-     * @var bool
-     */
-    private $isExpired = false;
-
-    /**
      * @var Message[]
      */
-    private $messages = [ ];
+    private array $messages = [ ];
 
-    public function __construct(bool $isExpired) {
-        $this->isExpired = $isExpired;
+    public function __construct(private bool $isExpired)
+    {
     }
 
-    /**
-     * @return bool
-     */
     public function isExpired(): bool {
         return $this->isExpired;
     }

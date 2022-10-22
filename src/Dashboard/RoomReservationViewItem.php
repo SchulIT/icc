@@ -7,25 +7,14 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class RoomReservationViewItem extends AbstractViewItem {
 
-    private $reservation;
-
-    private $violations;
-
-    public function __construct(ResourceReservation $reservation, ConstraintViolationListInterface $violations) {
-        $this->reservation = $reservation;
-        $this->violations = $violations;
+    public function __construct(private ResourceReservation $reservation, private ConstraintViolationListInterface $violations)
+    {
     }
 
-    /**
-     * @return ResourceReservation
-     */
     public function getReservation(): ResourceReservation {
         return $this->reservation;
     }
 
-    /**
-     * @return ConstraintViolationListInterface
-     */
     public function getViolations(): ConstraintViolationListInterface {
         return $this->violations;
     }

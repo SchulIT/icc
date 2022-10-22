@@ -11,7 +11,7 @@ class ExamList {
      * @Serializer\Type("array<App\Response\Api\V1\Exam>")
      * @var Exam[]
      */
-    private $exams;
+    private ?array $exams = null;
 
     /**
      * @return Exam[]
@@ -22,7 +22,6 @@ class ExamList {
 
     /**
      * @param Exam[] $exams
-     * @return ExamList
      */
     public function setExams(array $exams): ExamList {
         $this->exams = $exams;

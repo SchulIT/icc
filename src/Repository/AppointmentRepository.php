@@ -16,10 +16,6 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class AppointmentRepository extends AbstractTransactionalRepository implements AppointmentRepositoryInterface {
-    /**
-     * @param int $id
-     * @return Appointment|null
-     */
     public function findOneById(int $id): ?Appointment {
         return $this->em->getRepository(Appointment::class)
             ->findOneBy([
@@ -27,10 +23,6 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ]);
     }
 
-    /**
-     * @param string $externalId
-     * @return Appointment|null
-     */
     public function findOneByExternalId(string $externalId): ?Appointment {
         return $this->em->getRepository(Appointment::class)
             ->findOneBy([
@@ -38,12 +30,6 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ]);
     }
 
-    /**
-     * @param string|null $idsDQL
-     * @param array $parameters
-     * @param DateTime|null $today
-     * @return QueryBuilder
-     */
     private function getAppointments(?string $idsDQL, array $parameters, ?DateTime $today): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
 
@@ -144,9 +130,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
                 $qbStudyGroups->expr()->in('aSgInner.id', $qbStudyGroups->getDQL())
             );
 
-        $studentIds = array_map(function(Student $student) {
-            return $student->getId();
-        }, $students);
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         return $this->getAppointments($qbAppointments, ['studentIds' => $studentIds ], $today)
             ->getQuery()->getResult();
@@ -172,9 +156,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
                 $qbStudyGroups->expr()->in('aSgInner.id', $qbStudyGroups->getDQL())
             );
 
-        $studentIds = array_map(function(Student $student) {
-            return $student->getId();
-        }, $students);
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         return $this->getAppointments($qbAppointments, ['studentIds' => $studentIds ], null)
                 ->andWhere('a.start <= :end')
@@ -203,8 +185,6 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
     }
 
     /**
-     * @param Teacher $teacher
-     * @param DateTime|null $today
      * @return Appointment[]
      */
     public function findAllForTeacher(Teacher $teacher, ?DateTime $today = null): array {
@@ -250,7 +230,6 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
 
     /**
      * @param AppointmentCategory[] $categories
-     * @param DateTime|null $today
      * @return Appointment[]
      */
     public function findAll(array $categories = [ ], ?string $q = null, ?DateTime $today = null) {
@@ -266,9 +245,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
                 ->leftJoin('aInner.category', 'cInner')
                 ->andWhere('cInner.id IN (:categories)');
 
-            $params['categories'] = array_map(function(AppointmentCategory $category) {
-                return $category->getId();
-            }, $categories);
+            $params['categories'] = array_map(fn(AppointmentCategory $category) => $category->getId(), $categories);
         }
 
         if($q !== null) {
@@ -303,9 +280,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
                 ->leftJoin('aInner.category', 'cInner')
                 ->andWhere('cInner.id IN (:categories)');
 
-            $params['categories'] = array_map(function(AppointmentCategory $category) {
-                return $category->getId();
-            }, $categories);
+            $params['categories'] = array_map(fn(AppointmentCategory $category) => $category->getId(), $categories);
         }
 
         return $this->getAppointments($qbIds->getDQL(), $params, null)
@@ -341,9 +316,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
                 ->leftJoin('aInner.category', 'cInner')
                 ->andWhere('cInner.id IN (:categories)');
 
-            $params['categories'] = array_map(function(AppointmentCategory $category) {
-                return $category->getId();
-            }, $categories);
+            $params['categories'] = array_map(fn(AppointmentCategory $category) => $category->getId(), $categories);
         }
 
         if($q !== null) {
@@ -384,17 +357,11 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
         return $paginator;
     }
 
-    /**
-     * @param Appointment $appointment
-     */
     public function persist(Appointment $appointment): void {
         $this->em->persist($appointment);
         $this->flushIfNotInTransaction();
     }
 
-    /**
-     * @param Appointment $appointment
-     */
     public function remove(Appointment $appointment): void {
         $this->em->remove($appointment);
         $this->flushIfNotInTransaction();

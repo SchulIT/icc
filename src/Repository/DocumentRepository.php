@@ -23,10 +23,6 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
         return $qb;
     }
 
-    /**
-     * @param int $id
-     * @return Document|null
-     */
     public function findOneById(int $id): ?Document {
         $qb = $this->createDefaultQueryBuilder();
         $qb->where('d.id = :id')
@@ -46,7 +42,6 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
     }
 
     /**
-     * @param DocumentCategory $category
      * @return Document[]
      */
     public function findAllByCategory(DocumentCategory $category) {
@@ -125,9 +120,6 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param Document $document
-     */
     public function persist(Document $document): void {
         /*
          * Ensure that all 1:N relations are set correctly
@@ -141,9 +133,6 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
         $this->em->flush();
     }
 
-    /**
-     * @param Document $document
-     */
     public function remove(Document $document): void {
         $this->em->remove($document);
         $this->em->flush();

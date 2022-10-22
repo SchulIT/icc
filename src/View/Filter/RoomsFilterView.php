@@ -5,19 +5,12 @@ namespace App\View\Filter;
 use App\Entity\Room;
 
 class RoomsFilterView {
-    /** @var Room[] */
-    private $rooms;
-
-    /** @var Room[] */
-    private $currentRooms;
-
     /**
      * @param Room[] $rooms
      * @param Room[] $currentRooms
      */
-    public function __construct(array $rooms, array $currentRooms) {
-        $this->rooms = $rooms;
-        $this->currentRooms = $currentRooms;
+    public function __construct(private array $rooms, private array $currentRooms)
+    {
     }
 
     /**

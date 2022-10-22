@@ -18,22 +18,8 @@ class EmailNotificationService {
 
     private array $blacklistDomains = [ 'example.com' ];
 
-    private bool $isEnabled;
-    private string $appName;
-    private string $sender;
-    private MailerInterface $mailer;
-    private Environment $twig;
-    private NotificationSettings $settings;
-    private ?LoggerInterface $logger;
-
-    public function __construct(bool $isEnabled, string $appName, string $sender, MailerInterface $mailer, Environment $twig, NotificationSettings $notificationSettings, LoggerInterface $logger = null) {
-        $this->isEnabled = $isEnabled;
-        $this->appName = $appName;
-        $this->sender = $sender;
-        $this->mailer = $mailer;
-        $this->twig = $twig;
-        $this->settings = $notificationSettings;
-        $this->logger = $logger;
+    public function __construct(private bool $isEnabled, private string $appName, private string $sender, private MailerInterface $mailer, private Environment $twig, private NotificationSettings $settings, private ?LoggerInterface $logger = null)
+    {
     }
 
     /**
@@ -49,7 +35,7 @@ class EmailNotificationService {
         }
 
         if($strategy->isEnabled() === false) {
-            $this->logger->info(sprintf('E-Mail notifications for strategy %s are disabled. Skip sending them.', get_class($strategy)));
+            $this->logger->info(sprintf('E-Mail notifications for strategy %s are disabled. Skip sending them.', $strategy::class));
             return;
         }
 

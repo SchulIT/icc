@@ -9,18 +9,8 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class ServiceCenterRoomStatusHelper implements StatusHelperInterface {
-    private bool $isEnabled;
-
-    private CacheItemPoolInterface $cache;
-    private ClientInterface $client;
-    private LoggerInterface $logger;
-
-    public function __construct(bool $isEnabled, CacheItemPoolInterface $cache,
-                                ClientInterface $servicecenterClient, LoggerInterface $logger) {
-        $this->isEnabled = $isEnabled;
-        $this->cache = $cache;
-        $this->client = $servicecenterClient;
-        $this->logger = $logger;
+    public function __construct(private bool $isEnabled, private CacheItemPoolInterface $cache, private ClientInterface $client, private LoggerInterface $logger)
+    {
     }
 
     public function retrieveFromRemote(): void {
@@ -82,7 +72,7 @@ class ServiceCenterRoomStatusHelper implements StatusHelperInterface {
         $statuses = unserialize($item->get());
 
         foreach($statuses as $roomStatus) {
-            if(substr($roomStatus->getName(), 0, strlen($room)) === $room) {
+            if(str_starts_with($roomStatus->getName(), $room)) {
                 return $roomStatus;
             }
         }

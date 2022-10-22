@@ -6,16 +6,13 @@ use App\Entity\Student;
 
 class StudentStrategy implements SortingStrategyInterface {
 
-    private $stringStrategy;
-
-    public function __construct(StringStrategy $stringStrategy) {
-        $this->stringStrategy = $stringStrategy;
+    public function __construct(private StringStrategy $stringStrategy)
+    {
     }
 
     /**
      * @param Student $objectA
      * @param Student $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         $compareLastname = $this->stringStrategy->compare($objectA->getLastname(), $objectB->getLastname());

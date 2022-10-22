@@ -15,44 +15,28 @@ class ImportDateTime {
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $entityClass;
+    #[Assert\NotBlank]
+    private ?string $entityClass = null;
 
     /**
      * @ORM\Column(type="datetime")
-     * @var DateTime
      */
-    private $updatedAt;
+    private ?\DateTime $updatedAt = null;
 
-    /**
-     * @return string
-     */
     public function getEntityClass(): string {
         return $this->entityClass;
     }
 
-    /**
-     * @param string $entityClass
-     * @return ImportDateTime
-     */
     public function setEntityClass(string $entityClass): ImportDateTime {
         $this->entityClass = $entityClass;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getUpdatedAt(): DateTime {
         return $this->updatedAt;
     }
 
-    /**
-     * @param DateTime $updatedAt
-     * @return ImportDateTime
-     */
     public function setUpdatedAt(DateTime $updatedAt): ImportDateTime {
         $this->updatedAt = $updatedAt;
         return $this;

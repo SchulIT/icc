@@ -11,13 +11,8 @@ use League\CommonMark\Inline\Element\HtmlInline;
 
 class HeadingAnchorProcessor {
 
-    /**
-     * @var SluggerInterface
-     */
-    private SluggerInterface $slugger;
-
-    public function __construct(SluggerInterface $slugger) {
-        $this->slugger = $slugger;
+    public function __construct(private SluggerInterface $slugger)
+    {
     }
 
     /**

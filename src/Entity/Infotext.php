@@ -19,30 +19,24 @@ class Infotext {
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\NotNull()
-     * @var DateTime|null
      */
-    private $date;
+    #[Assert\NotNull]
+    private ?\DateTime $date = null;
 
     /**
      * @ORM\Column(type="text")
-     * @var string|null
      */
-    private $content;
+    private ?string $content = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getDate(): ?DateTime {
         return $this->date;
     }
 
     /**
-     * @param DateTime|null $date
      * @return Infotext
      */
     public function setDate(?DateTime $date) {
@@ -50,15 +44,11 @@ class Infotext {
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getContent(): ?string {
         return $this->content;
     }
 
     /**
-     * @param string $content
      * @return Infotext
      */
     public function setContent(string $content) {

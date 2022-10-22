@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Dashboard\DashboardViewHelper;
 use App\Dashboard\DashboardViewCollapseHelper;
 use App\Entity\Section;
@@ -33,20 +34,16 @@ class DashboardController extends AbstractController {
     private const ShowTimesKey = 'dashboard.show_times';
     private const IncludeGradeMessagesKey = 'dashboard.include_grade_messages';
 
-    /**
-     * @Route("/", name="index")
-     */
-    public function index() {
+    #[Route(path: '/', name: 'index')]
+    public function index(): Response {
         return $this->redirectToRoute('dashboard');
     }
 
-    /**
-     * @Route("/dashboard", name="dashboard")
-     */
+    #[Route(path: '/dashboard', name: 'dashboard')]
     public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter, RoomFilter $roomFilter,
                               DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper,
                               DateHelper $dateHelper, DashboardSettings $settings, TimetableSettings $timetableSettings, SectionRepositoryInterface $sectionRepository,
-                              UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request) {
+                              UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -68,7 +65,7 @@ class DashboardController extends AbstractController {
                 $selectedDate = new \DateTime($request->query->get('date', null));
                 $selectedDate->setTime(0, 0, 0);
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $selectedDate = null;
         }
 
@@ -176,10 +173,6 @@ class DashboardController extends AbstractController {
     }
 
     /**
-     * @param \DateTime $dateTime
-     * @param int $daysInFuture
-     * @param int $daysInPast
-     * @param bool $skipWeekends
      * @return \DateTime[]
      */
     private function getListOfSurroundingDays(\DateTime $dateTime, int $daysInFuture, int $daysInPast, bool $skipWeekends): array {

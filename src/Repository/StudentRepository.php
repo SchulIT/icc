@@ -31,10 +31,6 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
             ->leftJoin('s.sections', 'sec');
     }
 
-    /**
-     * @param int $id
-     * @return Student|null
-     */
     public function findOneById(int $id): ?Student {
         return $this->getDefaultQueryBuilder()
             ->andWhere('s.id = :id')
@@ -54,10 +50,6 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
             ->getOneOrNullResult();
     }
 
-    /**
-     * @param string $externalId
-     * @return Student|null
-     */
     public function findOneByExternalId(string $externalId): ?Student {
         return $this->getDefaultQueryBuilder()
             ->andWhere('s.externalId = :externalId')
@@ -123,17 +115,11 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
             ->getResult();
     }
 
-    /**
-     * @param Student $student
-     */
     public function persist(Student $student): void {
         $this->em->persist($student);
         $this->flushIfNotInTransaction();
     }
 
-    /**
-     * @param Student $student
-     */
     public function remove(Student $student): void {
         $this->em->remove($student);
         $this->flushIfNotInTransaction();
@@ -169,9 +155,7 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
      * @inheritDoc
      */
     public function getQueryBuilderFindAllByStudyGroups(array $studyGroups): QueryBuilder {
-        $studyGroupIds = array_map(function(StudyGroup $studyGroup) {
-            return $studyGroup->getId();
-        }, $studyGroups);
+        $studyGroupIds = array_map(fn(StudyGroup $studyGroup) => $studyGroup->getId(), $studyGroups);
 
         $qb = $this->getDefaultQueryBuilder();
 

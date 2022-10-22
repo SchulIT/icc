@@ -6,15 +6,10 @@ use App\Entity\StudentAbsence;
 use Symfony\Contracts\EventDispatcher\Event;
 
 abstract class AbstractStudentAbsenceEvent extends Event {
-    private StudentAbsence $absence;
-
-    public function __construct(StudentAbsence $absence) {
-        $this->absence = $absence;
+    public function __construct(private StudentAbsence $absence)
+    {
     }
 
-    /**
-     * @return StudentAbsence
-     */
     public function getAbsence(): StudentAbsence {
         return $this->absence;
     }

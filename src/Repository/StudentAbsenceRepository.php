@@ -39,9 +39,7 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
      * @inheritDoc
      */
     public function findByStudents(array $students, ?StudentAbsenceType $type = null, ?DateTime $date = null, ?int $lesson = null): array {
-        $ids = array_map(function(Student $student) {
-            return $student->getId();
-        }, $students);
+        $ids = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->em->createQueryBuilder()
             ->select('sn', 's')
@@ -178,9 +176,7 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
      * @inheritDoc
      */
     public function getStudentsPaginator(array $students, DateTime $date, ?StudentAbsenceType $type, int $itemsPerPage, int &$page): Paginator {
-        $ids = array_map(function(Student $student) {
-            return $student->getId();
-        }, $students);
+        $ids = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->em->createQueryBuilder()
             ->select('sn', 's')

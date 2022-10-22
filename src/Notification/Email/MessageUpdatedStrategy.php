@@ -12,16 +12,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MessageUpdatedStrategy implements EmailStrategyInterface, PostEmailSendActionInterface {
 
-    private TranslatorInterface $translator;
-    private DateHelper $dateHelper;
-    private MessageRecipientResolver $recipientResolver;
-    private MessageRepositoryInterface $messageRepository;
-
-    public function __construct(TranslatorInterface $translator, MessageRecipientResolver $recipientResolver, DateHelper $dateHelper, MessageRepositoryInterface $messageRepository) {
-        $this->translator = $translator;
-        $this->dateHelper = $dateHelper;
-        $this->recipientResolver = $recipientResolver;
-        $this->messageRepository = $messageRepository;
+    public function __construct(private TranslatorInterface $translator, private MessageRecipientResolver $recipientResolver, private DateHelper $dateHelper, private MessageRepositoryInterface $messageRepository)
+    {
     }
 
     /**
@@ -33,7 +25,6 @@ class MessageUpdatedStrategy implements EmailStrategyInterface, PostEmailSendAct
 
     /**
      * @param MessageUpdatedEvent $objective
-     * @return string|null
      */
     public function getReplyTo($objective): ?string {
         $creator = $objective->getMessage()->getUpdatedBy();
@@ -47,7 +38,6 @@ class MessageUpdatedStrategy implements EmailStrategyInterface, PostEmailSendAct
 
     /**
      * @param MessageUpdatedEvent $objective
-     * @return array
      */
     public function getRecipients($objective): array {
         return $this->recipientResolver->resolveRecipients($objective->getMessage());
@@ -55,7 +45,6 @@ class MessageUpdatedStrategy implements EmailStrategyInterface, PostEmailSendAct
 
     /**
      * @param MessageUpdatedEvent $objective
-     * @return string
      */
     public function getSubject($objective): string {
         return $this->translator->trans('message.update.title', ['%title%' => $objective->getMessage()->getTitle()], 'email');
@@ -71,7 +60,6 @@ class MessageUpdatedStrategy implements EmailStrategyInterface, PostEmailSendAct
 
     /**
      * @param MessageUpdatedEvent $objective
-     * @return string
      */
     public function getSender($objective): string {
         $creator = $objective->getMessage()->getUpdatedBy();

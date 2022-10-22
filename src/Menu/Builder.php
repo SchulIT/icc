@@ -26,37 +26,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Builder {
-    private FactoryInterface $factory;
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    private WikiArticleRepositoryInterface $wikiRepository;
-    private TimetableLessonRepositoryInterface $lessonRepository;
-
-    private TokenStorageInterface $tokenStorage;
-    private DateHelper $dateHelper;
-    private TranslatorInterface $translator;
-    private DarkModeManagerInterface $darkModeManager;
-    private StudentAbsenceSettings $studentAbsenceSettings;
-    private SectionResolverInterface $sectionResolver;
-
-    private string $idpProfileUrl;
-
-    public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authorizationChecker,
-                                WikiArticleRepositoryInterface $wikiRepository, TimetableLessonRepositoryInterface $lessonRepository,
-                                TokenStorageInterface $tokenStorage, DateHelper $dateHelper,
-                                TranslatorInterface $translator, DarkModeManagerInterface $darkModeManager,
-                                StudentAbsenceSettings $studentAbsenceSettings, SectionResolverInterface $sectionResolver, string $idpProfileUrl) {
-        $this->factory = $factory;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->wikiRepository = $wikiRepository;
-        $this->lessonRepository = $lessonRepository;
-        $this->tokenStorage = $tokenStorage;
-        $this->dateHelper = $dateHelper;
-        $this->translator = $translator;
-        $this->darkModeManager = $darkModeManager;
-        $this->idpProfileUrl = $idpProfileUrl;
-        $this->studentAbsenceSettings = $studentAbsenceSettings;
-        $this->sectionResolver = $sectionResolver;
+    public function __construct(private FactoryInterface $factory, private AuthorizationCheckerInterface $authorizationChecker, private WikiArticleRepositoryInterface $wikiRepository, private TimetableLessonRepositoryInterface $lessonRepository, private TokenStorageInterface $tokenStorage, private DateHelper $dateHelper, private TranslatorInterface $translator, private DarkModeManagerInterface $darkModeManager, private StudentAbsenceSettings $studentAbsenceSettings, private SectionResolverInterface $sectionResolver, private string $idpProfileUrl)
+    {
     }
 
     private function plansMenu(ItemInterface $menu): ItemInterface {

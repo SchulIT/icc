@@ -17,26 +17,14 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use function Symfony\Component\String\u;
 
 class AnonymizeDatabaseCommand extends Command {
-    private StudentRepositoryInterface $studentRepository;
-    private TeacherRepositoryInterface $teacherRepository;
-    private UserRepositoryInterface $userRepository;
-    private SluggerInterface $slugger;
-    private Generator $faker;
-
-    public function __construct(StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository,
-                                UserRepositoryInterface $userRepository, SluggerInterface $slugger, Generator $faker, string $name = null) {
+    protected static $defaultName = 'app:anonymize';
+    public function __construct(private StudentRepositoryInterface $studentRepository, private TeacherRepositoryInterface $teacherRepository,
+                                private UserRepositoryInterface $userRepository, private SluggerInterface $slugger, private Generator $faker, string $name = null) {
         parent::__construct($name);
-
-        $this->studentRepository = $studentRepository;
-        $this->teacherRepository = $teacherRepository;
-        $this->userRepository = $userRepository;
-        $this->slugger = $slugger;
-        $this->faker = $faker;
     }
 
     public function configure() {
-        $this->setName('app:anonymize')
-            ->setDescription('Anomyizes all students and teachers.');
+        $this->setDescription('Anomyizes all students and teachers.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

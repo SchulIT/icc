@@ -28,7 +28,6 @@ interface SubstitutionRepositoryInterface extends TransactionalRepositoryInterfa
     public function findAll();
 
     /**
-     * @param DateTime $date
      * @param bool $excludeNonStudentSubstitutions Whether or not to exclude all substitution without study groups assigned
      * @return Substitution[]
      */
@@ -37,8 +36,6 @@ interface SubstitutionRepositoryInterface extends TransactionalRepositoryInterfa
     public function countAllByDate(DateTime $date): int;
 
     /**
-     * @param array $studyGroups
-     * @param \DateTime|null $date
      * @return Substitution[]
      */
     public function findAllForStudyGroups(array $studyGroups, ?\DateTime $date = null);
@@ -46,8 +43,6 @@ interface SubstitutionRepositoryInterface extends TransactionalRepositoryInterfa
     public function countAllForStudyGroups(array $studyGroups, ?DateTime $date = null): int;
 
     /**
-     * @param Teacher $teacher
-     * @param \DateTime|null $date
      * @return Substitution[]
      */
     public function findAllForTeacher(Teacher $teacher, ?\DateTime $date = null);
@@ -55,8 +50,6 @@ interface SubstitutionRepositoryInterface extends TransactionalRepositoryInterfa
     public function countAllForTeacher(Teacher $teacher, ?DateTime $date = null): int;
 
     /**
-     * @param Grade $grade
-     * @param \DateTime|null $date
      * @return Substitution[]
      */
     public function findAllForGrade(Grade $grade, ?\DateTime $date = null);

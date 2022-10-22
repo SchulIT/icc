@@ -13,17 +13,8 @@ use App\Request\Data\GradeMembershipsData;
 
 class GradeMembershipImportStrategy implements ReplaceImportStrategyInterface {
 
-    private $membershipRepository;
-    private $studentRepository;
-    private $gradeRepository;
-    private $sectionRepository;
-
-    public function __construct(GradeMembershipRepositoryInterface $membershipRepository, StudentRepositoryInterface $studentRepository,
-                                GradeRepositoryInterface $gradeRepository, SectionRepositoryInterface $sectionRepository) {
-        $this->membershipRepository = $membershipRepository;
-        $this->studentRepository = $studentRepository;
-        $this->gradeRepository = $gradeRepository;
-        $this->sectionRepository = $sectionRepository;
+    public function __construct(private GradeMembershipRepositoryInterface $membershipRepository, private StudentRepositoryInterface $studentRepository, private GradeRepositoryInterface $gradeRepository, private SectionRepositoryInterface $sectionRepository)
+    {
     }
 
     /**

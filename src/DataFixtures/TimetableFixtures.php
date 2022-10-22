@@ -16,10 +16,8 @@ use Faker\Generator;
 
 class TimetableFixtures extends Fixture implements DependentFixtureInterface {
 
-    private $generator;
-
-    public function __construct(Generator $generator) {
-        $this->generator = $generator;
+    public function __construct(private Generator $generator)
+    {
     }
 
     /**
@@ -65,7 +63,7 @@ class TimetableFixtures extends Fixture implements DependentFixtureInterface {
             ->findAll();
 
         foreach($lks as $lk) {
-            if(substr($lk->getName(), -3) === 'LK1') {
+            if(str_ends_with($lk->getName(), 'LK1')) {
                 foreach([$weekA, $weekB] as $week) {
                     // LK1
                     $manager->persist(
@@ -112,7 +110,7 @@ class TimetableFixtures extends Fixture implements DependentFixtureInterface {
                         )
                     );
                 }
-            } else if(substr($lk->getName(), -3) === 'LK2')  {
+            } else if(str_ends_with($lk->getName(), 'LK2'))  {
                 foreach([$weekA, $weekB] as $week) {
                     // LK2
                     $manager->persist(

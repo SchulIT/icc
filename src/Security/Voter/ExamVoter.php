@@ -27,17 +27,8 @@ class ExamVoter extends Voter {
     public const Unplan = 'unplan';
     public const Remove = 'remove';
 
-    private DateHelper $dateHelper;
-    private ExamSettings $examSettings;
-    private AccessDecisionManagerInterface $accessDecisionManager;
-    private SectionResolverInterface $sectionResoler;
-
-    public function __construct(DateHelper $dateHelper, ExamSettings $examSettings,
-                                AccessDecisionManagerInterface $accessDecisionManager, SectionResolverInterface $sectionResolver) {
-        $this->dateHelper = $dateHelper;
-        $this->examSettings = $examSettings;
-        $this->accessDecisionManager = $accessDecisionManager;
-        $this->sectionResoler = $sectionResolver;
+    public function __construct(private DateHelper $dateHelper, private ExamSettings $examSettings, private AccessDecisionManagerInterface $accessDecisionManager, private SectionResolverInterface $sectionResoler)
+    {
     }
 
     /**
@@ -59,32 +50,18 @@ class ExamVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
-        switch($attribute) {
-            case self::Show:
-                return $this->canViewExam($subject, $token);
-
-            case self::Details:
-                return $this->canViewDetails($subject, $token);
-
-            case self::Supervisions:
-                return $this->canViewSupervisions($subject, $token);
-
-            case self::Add:
-                return $this->canAdd($token);
-
-            case self::Edit:
-            case self::Unplan:
-                return $this->canEdit($subject, $token);
-
-            case self::Remove:
-                return $this->canRemove($subject, $token);
-
-            case self::Manage:
-                return $this->canManage($token);
-        }
-
-        throw new LogicException('This code should not be reached.');
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
+    {
+        return match ($attribute) {
+            self::Show => $this->canViewExam($subject, $token),
+            self::Details => $this->canViewDetails($subject, $token),
+            self::Supervisions => $this->canViewSupervisions($subject, $token),
+            self::Add => $this->canAdd($token),
+            self::Edit, self::Unplan => $this->canEdit($subject, $token),
+            self::Remove => $this->canRemove($subject, $token),
+            self::Manage => $this->canManage($token),
+            default => throw new LogicException('This code should not be reached.'),
+        };
     }
 
     private function getUserType(TokenInterface $token): ?UserType {

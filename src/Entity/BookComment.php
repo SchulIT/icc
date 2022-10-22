@@ -22,25 +22,22 @@ class BookComment {
 
     /**
      * @ORM\Column(type="text")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $text;
+    #[Assert\NotBlank]
+    private ?string $text = null;
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\NotNull()
-     * @var DateTime|null
      */
-    private $date;
+    #[Assert\NotNull]
+    private ?\DateTime $date = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Teacher")
      * @ORM\JoinColumn()
-     * @Assert\NotNull()
-     * @var Teacher|null
      */
-    private $teacher;
+    #[Assert\NotNull]
+    private ?Teacher $teacher = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="Student")
@@ -55,65 +52,42 @@ class BookComment {
     /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
-     * @var DateTime|null
      */
-    private $createdAt;
+    private ?\DateTime $createdAt = null;
 
     /**
      * @Gedmo\Blameable(on="create")
      * @ORM\Column(type="string")
-     * @var string|null
      */
-    private $createdBy;
+    private ?string $createdBy = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->students = new ArrayCollection();
     }
 
-    /**
-     * @return string|null
-     */
     public function getText(): ?string {
         return $this->text;
     }
 
-    /**
-     * @param string|null $text
-     * @return BookComment
-     */
     public function setText(?string $text): BookComment {
         $this->text = $text;
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getDate(): ?DateTime {
         return $this->date;
     }
 
-    /**
-     * @param DateTime|null $date
-     * @return BookComment
-     */
     public function setDate(?DateTime $date): BookComment {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return Teacher|null
-     */
     public function getTeacher(): ?Teacher {
         return $this->teacher;
     }
 
-    /**
-     * @param Teacher|null $teacher
-     * @return BookComment
-     */
     public function setTeacher(?Teacher $teacher): BookComment {
         $this->teacher = $teacher;
         return $this;
@@ -134,16 +108,10 @@ class BookComment {
         return $this->students;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getCreatedAt(): ?DateTime {
         return $this->createdAt;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCreatedBy(): ?string {
         return $this->createdBy;
     }

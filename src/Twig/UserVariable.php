@@ -7,15 +7,10 @@ use LightSaml\SpBundle\Security\Http\Authenticator\SamlToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserVariable {
-    private TokenStorageInterface $tokenStorage;
-
-    public function __construct(TokenStorageInterface $tokenStorage) {
-        $this->tokenStorage = $tokenStorage;
+    public function __construct(private TokenStorageInterface $tokenStorage)
+    {
     }
 
-    /**
-     * @return User
-     */
     public function getUser(): User {
         /** @var User $user */
         $user = $this->tokenStorage->getToken()->getUser();

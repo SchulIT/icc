@@ -10,10 +10,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class MarkdownType extends TextareaType {
 
-    private UrlGeneratorInterface $urlGenerator;
-
-    public function __construct(UrlGeneratorInterface $urlGenerator) {
-        $this->urlGenerator = $urlGenerator;
+    public function __construct(private UrlGeneratorInterface $urlGenerator)
+    {
     }
 
     public function configureOptions(OptionsResolver $resolver) {

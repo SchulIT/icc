@@ -16,21 +16,13 @@ use App\Utils\EnumArrayUtils;
 use Doctrine\Common\Collections\Collection;
 
 abstract class AbstractMessageFileViewHelper {
-    private $studentRepository;
-    private $teacherRepository;
-    private $userRepository;
-
-    public function __construct(StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository, UserRepositoryInterface $userRepository) {
-        $this->studentRepository = $studentRepository;
-        $this->teacherRepository = $teacherRepository;
-        $this->userRepository = $userRepository;
+    public function __construct(private StudentRepositoryInterface $studentRepository, private TeacherRepositoryInterface $teacherRepository, private UserRepositoryInterface $userRepository)
+    {
     }
 
     public function createView(Message $message): AbstractMessageFileView {
         /** @var UserType[] $visibilities */
-        $visibilities = $this->getUserTypes($message)->map(function(UserTypeEntity $visibility) {
-            return $visibility->getUserType();
-        });
+        $visibilities = $this->getUserTypes($message)->map(fn(UserTypeEntity $visibility) => $visibility->getUserType());
 
         $students = [ ];
         $studentUsersLookup = [ ];
@@ -42,9 +34,7 @@ abstract class AbstractMessageFileViewHelper {
             $teachers = $this->teacherRepository->findAll();
             $teacherUsersLookup = ArrayUtils::createArrayWithKeys(
                 $this->userRepository->findAllTeachers($teachers),
-                function(User $user) {
-                    return $user->getTeacher()->getId();
-                },
+                fn(User $user) => $user->getTeacher()->getId(),
                 true
             );
         }
@@ -54,21 +44,13 @@ abstract class AbstractMessageFileViewHelper {
 
             $studentUsersLookup = ArrayUtils::createArrayWithKeys(
                 $this->userRepository->findAllStudentsByStudents($students),
-                function(User $user) {
-                    return $user->getStudents()->map(function(Student $student) {
-                        return $student->getId();
-                    });
-                },
+                fn(User $user) => $user->getStudents()->map(fn(Student $student) => $student->getId()),
                 true
             );
 
             $parentUsersLookup = ArrayUtils::createArrayWithKeys(
                 $this->userRepository->findAllParentsByStudents($students),
-                function(User $user) {
-                    return $user->getStudents()->map(function(Student $student) {
-                        return $student->getId();
-                    });
-                },
+                fn(User $user) => $user->getStudents()->map(fn(Student $student) => $student->getId()),
                 true
             );
         }
@@ -83,22 +65,18 @@ abstract class AbstractMessageFileViewHelper {
 
         $users = ArrayUtils::createArrayWithKeys(
             $this->userRepository->findAllByUserTypes($remainingUserTypes),
-            function(User $user) {
-                return $user->getId();
-            }
+            fn(User $user) => $user->getId()
         );
 
         return $this->createViewFromData($message, $students, $studentUsersLookup, $parentUsersLookup, $teachers, $teacherUsersLookup, $users);
     }
 
     /**
-     * @param Message $message
      * @return Collection<UserTypeEntity>
      */
     protected abstract function getUserTypes(Message $message): Collection;
 
     /**
-     * @param Message $message
      * @return Collection<StudyGroup>
      */
     protected abstract function getStudyGroups(Message $message): Collection;

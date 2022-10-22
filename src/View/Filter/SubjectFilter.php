@@ -11,12 +11,8 @@ use App\Utils\ArrayUtils;
 
 class SubjectFilter {
 
-    private $sorter;
-    private $subjectRepository;
-
-    public function __construct(Sorter $sorter, SubjectRepositoryInterface $subjectRepository) {
-        $this->sorter = $sorter;
-        $this->subjectRepository = $subjectRepository;
+    public function __construct(private Sorter $sorter, private SubjectRepositoryInterface $subjectRepository)
+    {
     }
 
     public function handle(?string $subjectUuid, bool $onlySubjectsWithTeachers = true) {
@@ -28,9 +24,7 @@ class SubjectFilter {
 
         $this->sorter->sort($subjects, SubjectNameStrategy::class);
 
-        $subjects = ArrayUtils::createArrayWithKeys($subjects, function(Subject $subject) {
-            return (string)$subject->getUuid();
-        });
+        $subjects = ArrayUtils::createArrayWithKeys($subjects, fn(Subject $subject) => (string)$subject->getUuid());
 
         $subject = $subjectUuid !== null ?
             $subjects[$subjectUuid] ?? null : null;

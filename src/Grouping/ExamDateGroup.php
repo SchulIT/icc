@@ -2,27 +2,20 @@
 
 namespace App\Grouping;
 
+use DateTime;
 use App\Entity\Exam;
 
 class ExamDateGroup implements GroupInterface, SortableGroupInterface {
     /**
-     * @var \DateTime
-     */
-    private $date;
-
-    /**
      * @var Exam[]
      */
-    private $exams;
+    private ?array $exams = null;
 
-    public function __construct(\DateTime $date) {
-        $this->date = $date;
+    public function __construct(private DateTime $date)
+    {
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getDate(): \DateTime {
+    public function getDate(): DateTime {
         return $this->date;
     }
 
@@ -34,7 +27,7 @@ class ExamDateGroup implements GroupInterface, SortableGroupInterface {
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getKey() {
         return $this->date;

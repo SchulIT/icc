@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\WikiArticle;
 use App\Form\WikiArticleType;
 use App\Repository\LogRepositoryInterface;
@@ -24,36 +25,28 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Route("/admin/wiki")
  * @Security("is_granted('ROLE_WIKI_ADMIN')")
  */
+#[Route(path: '/admin/wiki')]
 class WikiAdminController extends AbstractController {
 
     private const VersionParam = '_version';
     private const RevertCsrfTokenParam = '_csrf_token';
     private const RevertCsrfToken = 'revert-wiki-article';
 
-    private WikiArticleRepositoryInterface $repository;
-
-    public function __construct(WikiArticleRepositoryInterface $repository, RefererHelper $redirectHelper) {
+    public function __construct(private WikiArticleRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
-
-        $this->repository = $repository;
     }
 
-    /**
-     * @Route("", name="admin_wiki")
-     */
-    public function index() {
+    #[Route(path: '', name: 'admin_wiki')]
+    public function index(): Response {
         return $this->render('admin/wiki/index.html.twig', [
             'tree' => $this->repository->findAll()
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_wiki_article")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'add_wiki_article')]
+    public function add(Request $request): Response {
         $article = new WikiArticle();
         $form = $this->createForm(WikiArticleType::class, $article);
         $form->handleRequest($request);
@@ -69,10 +62,8 @@ class WikiAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_wiki_article")
-     */
-    public function edit(WikiArticle $article, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_wiki_article')]
+    public function edit(WikiArticle $article, Request $request): Response {
         $form = $this->createForm(WikiArticleType::class, $article);
         $form->handleRequest($request);
 
@@ -88,10 +79,8 @@ class WikiAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/versions", name="wiki_article_versions")
-     */
-    public function versions(WikiArticle $article, Request $request, LogRepositoryInterface $logRepository, Sorter $sorter) {
+    #[Route(path: '/{uuid}/versions', name: 'wiki_article_versions')]
+    public function versions(WikiArticle $article, LogRepositoryInterface $logRepository, Sorter $sorter): Response {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
 
         $logs = $logRepository->getLogEntries($article);
@@ -106,10 +95,8 @@ class WikiAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/versions/{version}", name="wiki_article_version")
-     */
-    public function version(WikiArticle $article, Request $request, LogRepositoryInterface $logRepository, int $version) {
+    #[Route(path: '/{uuid}/versions/{version}', name: 'wiki_article_version')]
+    public function version(WikiArticle $article, LogRepositoryInterface $logRepository, int $version): Response {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
 
         $logs = $logRepository->getLogEntries($article);
@@ -136,10 +123,8 @@ class WikiAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/restore", name="restore_wiki_article_version")
-     */
-    public function restore(WikiArticle $article, Request $request, LogRepositoryInterface $logRepository, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/restore', name: 'restore_wiki_article_version')]
+    public function restore(WikiArticle $article, Request $request, LogRepositoryInterface $logRepository, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
 
         if($this->isCsrfTokenValid(self::RevertCsrfToken, $request->request->get(self::RevertCsrfTokenParam)) !== true) {
@@ -160,10 +145,8 @@ class WikiAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_wiki_article")
-     */
-    public function remove(WikiArticle $article, Request $request, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_wiki_article')]
+    public function remove(WikiArticle $article, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(WikiVoter::Remove, $article);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -189,10 +172,8 @@ class WikiAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/upload", name="wiki_upload", methods={"POST"})
-     */
-    public function upload(Request $request, Filesystem $wikiFilesystem, SluggerInterface $slugger, UrlGeneratorInterface $urlGenerator) {
+    #[Route(path: '/upload', name: 'wiki_upload', methods: ['POST'])]
+    public function upload(Request $request, Filesystem $wikiFilesystem, SluggerInterface $slugger, UrlGeneratorInterface $urlGenerator): Response {
         /** @var UploadedFile|null $file */
         $file = $request->files->get('file');
 

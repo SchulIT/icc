@@ -14,16 +14,13 @@ class StudentStudyGroupStrategy implements GroupingStrategyInterface {
      */
     public function computeKey($object, array $options = [ ]) {
         return $object->getStudyGroupMemberships()
-            ->map(function(StudyGroupMembership $membership) {
-                return $membership->getStudyGroup();
-            })
+            ->map(fn(StudyGroupMembership $membership) => $membership->getStudyGroup())
             ->toArray();
     }
 
     /**
      * @param StudyGroup $keyA
      * @param StudyGroup $keyB
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA->getId() === $keyB->getId();

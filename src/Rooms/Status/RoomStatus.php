@@ -6,42 +6,26 @@ use App\Entity\Room;
 
 class RoomStatus {
 
-    /** @var string */
-    private $name;
+    private ?string $name = null;
 
-    /** @var string|null */
-    private $link;
+    private ?string $link = null;
 
     /** @var RoomStatusBadge[] */
-    private $badges = [ ];
+    private array $badges = [ ];
 
-    /**
-     * @return string
-     */
     public function getName(): string {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return RoomStatus
-     */
     public function setName(string $name): RoomStatus {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLink(): ?string {
         return $this->link;
     }
 
-    /**
-     * @param string|null $link
-     * @return RoomStatus
-     */
     public function setLink(?string $link): RoomStatus {
         $this->link = $link;
         return $this;
@@ -54,10 +38,6 @@ class RoomStatus {
         return $this->badges;
     }
 
-    /**
-     * @param RoomStatusBadge $badge
-     * @return RoomStatus
-     */
     public function addBadge(RoomStatusBadge $badge): RoomStatus {
         $this->badges[] = $badge;
         return $this;

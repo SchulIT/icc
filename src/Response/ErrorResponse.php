@@ -9,25 +9,21 @@ use JMS\Serializer\Annotation as Serializer;
  */
 class ErrorResponse {
 
-    /**
-     * Type of exception (optional).
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("type")
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @Serializer\SerializedName("message")
-     * @Serializer\Type("string")
-     * @var string
-     */
-    private $message;
-
-    public function __construct(string $message, ?string $type = null) {
-        $this->message = $message;
-        $this->type = $type;
+    public function __construct(
+        /**
+         * @Serializer\SerializedName("message")
+         * @Serializer\Type("string")
+         */
+        private string $message,
+        /**
+         * Type of exception (optional).
+         *
+         * @Serializer\Type("string")
+         * @Serializer\SerializedName("type")
+         */
+        private ?string $type = null
+    )
+    {
     }
 
     public function getType(): ?string {

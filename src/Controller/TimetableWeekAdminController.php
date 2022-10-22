@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\TimetableWeek;
 use App\Entity\Week;
 use App\Form\TimetableWeekType;
@@ -15,23 +16,17 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Route("/admin/timetable/weeks")
  * @Security("is_granted('ROLE_ADMIN')")
  */
+#[Route(path: '/admin/timetable/weeks')]
 class TimetableWeekAdminController extends AbstractController {
 
-    private TimetableWeekRepositoryInterface $repository;
-
-    public function __construct(TimetableWeekRepositoryInterface $repository, RefererHelper $refererHelper) {
+    public function __construct(private TimetableWeekRepositoryInterface $repository, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
-
-        $this->repository = $repository;
     }
 
-    /**
-     * @Route("/add", name="admin_add_timetable_week")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'admin_add_timetable_week')]
+    public function add(Request $request): Response {
         $week = new TimetableWeek();
         $form = $this->createForm(TimetableWeekType::class, $week);
         $form->handleRequest($request);
@@ -48,10 +43,8 @@ class TimetableWeekAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="admin_edit_timetable_week")
-     */
-    public function edit(TimetableWeek $week, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'admin_edit_timetable_week')]
+    public function edit(TimetableWeek $week, Request $request): Response {
         $form = $this->createForm(TimetableWeekType::class, $week);
         $form->handleRequest($request);
 
@@ -67,10 +60,8 @@ class TimetableWeekAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add/default", name="add_default_timetable_weeks")
-     */
-    public function addDefaultWeeks(TranslatorInterface $translator, WeekRepositoryInterface $weekRepository) {
+    #[Route(path: '/add/default', name: 'add_default_timetable_weeks')]
+    public function addDefaultWeeks(TranslatorInterface $translator, WeekRepositoryInterface $weekRepository): Response {
         $weeks = $this->repository->findAll();
 
         if(count($weeks) > 0) {
@@ -81,9 +72,7 @@ class TimetableWeekAdminController extends AbstractController {
         $allWeeks = $weekRepository->findAll();
 
         for($weekMod = 0; $weekMod <= 1; $weekMod++) {
-            $weeks = array_filter($allWeeks, function(Week $week) use ($weekMod) {
-                return $week->getNumber() % 2 == $weekMod;
-            });
+            $weeks = array_filter($allWeeks, fn(Week $week) => $week->getNumber() % 2 == $weekMod);
 
             $week = (new TimetableWeek())
                 ->setDisplayName($translator->trans(sprintf('admin.timetable.weeks.add_default.weeks.%d.label', $weekMod)))
@@ -100,10 +89,8 @@ class TimetableWeekAdminController extends AbstractController {
         return $this->redirectToRoute('admin_timetable');
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="admin_remove_timetable_week")
-     */
-    public function remove(TimetableWeek $week, Request $request) {
+    #[Route(path: '/{uuid}/remove', name: 'admin_remove_timetable_week')]
+    public function remove(TimetableWeek $week, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.timetable.weeks.remove.confirm',
             'message_parameters' => [

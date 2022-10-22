@@ -16,8 +16,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  * @Auditable()
- * @UniqueEntity(fields={"externalId"})
  */
+#[UniqueEntity(fields: ['externalId'])]
 class Substitution {
 
     use IdTrait;
@@ -25,55 +25,47 @@ class Substitution {
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @var string|null
      */
-    private $externalId;
+    private ?string $externalId = null;
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\NotNull()
-     * @var DateTime
      */
-    private $date;
+    #[Assert\NotNull]
+    private ?\DateTime $date = null;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\GreaterThan(0)
-     * @var int
      */
-    private $lessonStart = 0;
+    #[Assert\GreaterThan(0)]
+    private int $lessonStart = 0;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\GreaterThan(0)
-     * @Assert\GreaterThanOrEqual(propertyPath="lessonStart")
-     * @var int
      */
-    private $lessonEnd = 0;
+    #[Assert\GreaterThan(0)]
+    #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart')]
+    private int $lessonEnd = 0;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $startsBefore = false;
+    private bool $startsBefore = false;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @var string|null
      */
-    private $type = null;
+    private ?string $type = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @var string|null
      */
-    private $subject = null;
+    private ?string $subject = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @var string|null
      */
-    private $replacementSubject = null;
+    private ?string $replacementSubject = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="Teacher")
@@ -119,21 +111,18 @@ class Substitution {
 
     /**
      * @ORM\Column(type="string", nullable=true, options={"comment": "Plain room name in case room resolve is not possible when importing substitutions."})
-     * @var string|null
      */
-    private $roomName = null;
+    private ?string $roomName = null;
 
     /**
      * @ORM\Column(type="string", nullable=true, options={"comment": "Plain room name in case room resolve is not possible when importing substitutions."})
-     * @var string|null
      */
-    private $replacementRoomName = null;
+    private ?string $replacementRoomName = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @var string|null
      */
-    private $remark;
+    private ?string $remark = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup")
@@ -168,9 +157,8 @@ class Substitution {
     /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
-     * @var DateTime
      */
-    private $createdAt;
+    private \DateTime $createdAt;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -184,129 +172,73 @@ class Substitution {
         $this->replacementGrades = new ArrayCollection();
     }
 
-    /**
-     * @return string|null
-     */
     public function getExternalId(): ?string {
         return $this->externalId;
     }
 
-    /**
-     * @param string|null $externalId
-     * @return Substitution
-     */
     public function setExternalId(?string $externalId): Substitution {
         $this->externalId = $externalId;
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getDate(): ?DateTime  {
         return $this->date;
     }
 
-    /**
-     * @param DateTime|null $date
-     * @return Substitution
-     */
     public function setDate(?DateTime $date): Substitution {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLessonStart(): int {
         return $this->lessonStart;
     }
 
-    /**
-     * @param int $lessonStart
-     * @return Substitution
-     */
     public function setLessonStart(int $lessonStart): Substitution {
         $this->lessonStart = $lessonStart;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLessonEnd(): int {
         return $this->lessonEnd;
     }
 
-    /**
-     * @param int $lessonEnd
-     * @return Substitution
-     */
     public function setLessonEnd(int $lessonEnd): Substitution {
         $this->lessonEnd = $lessonEnd;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function startsBefore(): bool {
         return $this->startsBefore;
     }
 
-    /**
-     * @param bool $startsBefore
-     * @return Substitution
-     */
     public function setStartsBefore(bool $startsBefore): Substitution {
         $this->startsBefore = $startsBefore;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getType(): ?string {
         return $this->type;
     }
 
-    /**
-     * @param string|null $type
-     * @return Substitution
-     */
     public function setType(?string $type): Substitution {
         $this->type = $type;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSubject(): ?string {
         return $this->subject;
     }
 
-    /**
-     * @param string|null $subject
-     * @return Substitution
-     */
     public function setSubject(?string $subject): Substitution {
         $this->subject = $subject;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getReplacementSubject(): ?string {
         return $this->replacementSubject;
     }
 
-    /**
-     * @param string|null $replacementSubject
-     * @return Substitution
-     */
     public function setReplacementSubject(?string $replacementSubject): Substitution {
         $this->replacementSubject = $replacementSubject;
         return $this;
@@ -367,71 +299,44 @@ class Substitution {
     }
 
 
-    /**
-     * @return string|null
-     */
     public function getRoomsAsString(): ?string {
         if($this->getRooms()->count() > 0) {
-            return implode(', ', $this->getRooms()->map(function(Room $room) { return $room->getName(); })->toArray());
+            return implode(', ', $this->getRooms()->map(fn(Room $room) => $room->getName())->toArray());
         }
 
         return $this->getRoomName();
     }
 
-    /**
-     * @return string|null
-     */
     public function getReplacementRoomsAsString(): ?string {
         if($this->getReplacementRooms()->count() > 0) {
-            return implode(', ', $this->getReplacementRooms()->map(function(Room $room) { return $room->getName(); })->toArray());
+            return implode(', ', $this->getReplacementRooms()->map(fn(Room $room) => $room->getName())->toArray());
         }
 
         return $this->getReplacementRoomName();
     }
 
-    /**
-     * @return string|null
-     */
     public function getRoomName(): ?string {
         return $this->roomName;
     }
 
-    /**
-     * @param string|null $roomName
-     * @return Substitution
-     */
     public function setRoomName(?string $roomName): Substitution {
         $this->roomName = $roomName;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getReplacementRoomName(): ?string {
         return $this->replacementRoomName;
     }
 
-    /**
-     * @param string|null $replacementRoomName
-     * @return Substitution
-     */
     public function setReplacementRoomName(?string $replacementRoomName): Substitution {
         $this->replacementRoomName = $replacementRoomName;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getRemark(): ?string {
         return $this->remark;
     }
 
-    /**
-     * @param string|null $remark
-     * @return Substitution
-     */
     public function setRemark(?string $remark): Substitution {
         $this->remark = $remark;
         return $this;
@@ -558,9 +463,6 @@ class Substitution {
         return $clone;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getCreatedAt(): DateTime {
         return $this->createdAt;
     }

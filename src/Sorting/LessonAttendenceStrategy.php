@@ -6,16 +6,13 @@ use App\Entity\LessonAttendance;
 
 class LessonAttendenceStrategy implements SortingStrategyInterface {
 
-    private $dateStrategy;
-
-    public function __construct(DateStrategy $dateStrategy) {
-        $this->dateStrategy = $dateStrategy;
+    public function __construct(private DateStrategy $dateStrategy)
+    {
     }
 
     /**
      * @param LessonAttendance $objectA
      * @param LessonAttendance $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         $dateCmp = $this->dateStrategy->compare($objectA->getEntry()->getLesson()->getDate(), $objectB->getEntry()->getLesson()->getDate());

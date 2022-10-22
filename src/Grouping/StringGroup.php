@@ -4,14 +4,10 @@ namespace App\Grouping;
 
 class StringGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var string|null */
-    private $key;
+    private ?array $items = null;
 
-    /** @var array */
-    private $items;
-
-    public function __construct(?string $key) {
-        $this->key = $key;
+    public function __construct(private ?string $key)
+    {
     }
 
     public function getKey() {

@@ -12,10 +12,10 @@ class AbsencesData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\AbsenceData>")
-     * @Assert\Valid()
      * @var AbsenceData[]
      */
-    private $absences = [ ];
+    #[Assert\Valid]
+    private array $absences = [ ];
 
     /**
      * @return AbsenceData[]
@@ -26,7 +26,6 @@ class AbsencesData {
 
     /**
      * @param AbsenceData[] $absences
-     * @return AbsencesData
      */
     public function setAbsences(array $absences): AbsencesData {
         $this->absences = $absences;

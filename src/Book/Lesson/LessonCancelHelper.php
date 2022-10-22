@@ -7,10 +7,8 @@ use App\Entity\TimetableLesson;
 use App\Repository\TimetableLessonRepositoryInterface;
 
 class LessonCancelHelper {
-    private TimetableLessonRepositoryInterface $lessonRepository;
-
-    public function __construct(TimetableLessonRepositoryInterface $lessonRepository) {
-        $this->lessonRepository = $lessonRepository;
+    public function __construct(private TimetableLessonRepositoryInterface $lessonRepository)
+    {
     }
 
     public function cancelLesson(TimetableLesson $lesson, string $reason) {

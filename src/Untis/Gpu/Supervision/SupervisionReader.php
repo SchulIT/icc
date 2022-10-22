@@ -9,7 +9,6 @@ use League\Csv\Reader;
 class SupervisionReader extends AbstractGpuReader {
 
     /**
-     * @param Reader $reader
      * @return Supervision[]
      */
     public function readGpu(Reader $reader): array {
@@ -17,7 +16,7 @@ class SupervisionReader extends AbstractGpuReader {
         $supervisions = [ ];
 
         foreach($reader->getRecords() as $record) {
-            if(count($record) < 6) {
+            if((is_countable($record) ? count($record) : 0) < 6) {
                 continue;
             }
 

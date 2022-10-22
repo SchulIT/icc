@@ -19,16 +19,14 @@ class MessagePollVote {
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var User|null
      */
-    private $user;
+    private ?User $user = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Message", inversedBy="pollVotes")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Message|null
      */
-    private $message;
+    private ?Message $message = null;
 
     /**
      * @ORM\OneToMany(targetEntity="MessagePollVoteRankedChoice", cascade={"persist"}, orphanRemoval=true, mappedBy="vote")
@@ -39,48 +37,32 @@ class MessagePollVote {
     /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
-     * @var DateTime
      */
-    private $createdAt;
+    private \DateTime $createdAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="MessagePollChoice")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var MessagePollChoice|null
      */
-    private $assignedChoice;
+    private ?MessagePollChoice $assignedChoice = null;
 
     public function __construct() {
         $this->choices = new ArrayCollection();
     }
 
-    /**
-     * @return User
-     */
     public function getUser(): User {
         return $this->user;
     }
 
-    /**
-     * @param User $user
-     * @return MessagePollVote
-     */
     public function setUser(User $user): MessagePollVote {
         $this->user = $user;
         return $this;
     }
 
-    /**
-     * @return Message
-     */
     public function getMessage(): Message {
         return $this->message;
     }
 
-    /**
-     * @param Message $message
-     * @return MessagePollVote
-     */
     public function setMessage(Message $message): MessagePollVote {
         $this->message = $message;
         return $this;
@@ -105,24 +87,14 @@ class MessagePollVote {
         return null;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getCreatedAt(): DateTime {
         return $this->createdAt;
     }
 
-    /**
-     * @return MessagePollChoice|null
-     */
     public function getAssignedChoice(): ?MessagePollChoice {
         return $this->assignedChoice;
     }
 
-    /**
-     * @param MessagePollChoice|null $assignedChoice
-     * @return MessagePollVote
-     */
     public function setAssignedChoice(?MessagePollChoice $assignedChoice): MessagePollVote {
         $this->assignedChoice = $assignedChoice;
         return $this;

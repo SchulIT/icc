@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use InvalidArgumentException;
 use Closure;
 
 class ArrayUtils {
@@ -30,7 +31,7 @@ class ArrayUtils {
         $values = array_values($values);
 
         if(count($keys) !== count($values)) {
-            throw new \InvalidArgumentException('$keys and $items parameter need to have the same length.');
+            throw new InvalidArgumentException('$keys and $items parameter need to have the same length.');
         }
 
         for($i = 0; $i < $count; $i++) {
@@ -92,14 +93,12 @@ class ArrayUtils {
      * Returns all items of an array of object which are the same type as given.
      *
      * @param array $items
-     * @param string $type
-     * @return array
      */
     public static function filterByType(iterable $items, string $type): array {
         $result = [ ];
 
         foreach($items as $item) {
-            if(is_object($item) && get_class($item) === $type) {
+            if(is_object($item) && $item::class === $type) {
                 $result[] = $item;
             }
         }
@@ -142,23 +141,16 @@ class ArrayUtils {
 
     /**
      * Like array_intersect but compares using the === operator (and is thus capable of intersecting arrays of objects).
-     *
-     * @param iterable $iterableA
-     * @param iterable $iterableB
-     * @return array
      */
     public static function intersect(iterable $iterableA, iterable $iterableB): array {
         return array_uintersect(
             self::iterableToArray($iterableA),
             self::iterableToArray($iterableB),
-            function($objectA, $objectB) {
-                return $objectA === $objectB ? 0 : 1;
-            }
+            fn($objectA, $objectB) => $objectA === $objectB ? 0 : 1
         );
     }
 
     /**
-     * @param iterable $items
      * @return string[]
      */
     public static function toString(iterable $items): array {

@@ -10,14 +10,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExamStrategy implements EmailStrategyInterface {
 
-    private $settings;
-    private $translator;
-    private $userRepository;
-
-    public function __construct(ExamSettings $settings, TranslatorInterface $translator, UserRepositoryInterface $userRepository) {
-        $this->settings = $settings;
-        $this->translator = $translator;
-        $this->userRepository = $userRepository;
+    public function __construct(private ExamSettings $settings, private TranslatorInterface $translator, private UserRepositoryInterface $userRepository)
+    {
     }
 
     /**
@@ -40,9 +34,7 @@ class ExamStrategy implements EmailStrategyInterface {
     public function getRecipients($objective): array {
         return array_filter(
             $this->userRepository->findAllByNotifyExams(),
-            function(User $user) {
-                return $user->getEmail() !== null && $user->isEmailNotificationsEnabled();
-            });
+            fn(User $user) => $user->getEmail() !== null && $user->isEmailNotificationsEnabled());
     }
 
     /**

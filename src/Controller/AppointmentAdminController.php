@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Converter\UserStringConverter;
 use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
@@ -26,29 +27,19 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Route("/admin/appointments")
  * @Security("is_granted('ROLE_APPOINTMENT_CREATOR')")
  */
+#[Route(path: '/admin/appointments')]
 class AppointmentAdminController extends AbstractController {
 
     private const NumberOfAppointments = 25;
 
-    private AppointmentRepositoryInterface $repository;
-    private Grouper $grouper;
-    private Sorter $sorter;
-
-    public function __construct(AppointmentRepositoryInterface $appointmentRepository, Grouper $grouper, Sorter $sorter, RefererHelper $refererHelper) {
+    public function __construct(private AppointmentRepositoryInterface $repository, private Grouper $grouper, private Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
-
-        $this->repository = $appointmentRepository;
-        $this->grouper = $grouper;
-        $this->sorter = $sorter;
     }
 
-    /**
-     * @Route("", name="admin_appointments")
-     */
-    public function index(AppointmentCategoryFilter $categoryFilter, Request $request) {
+    #[Route(path: '', name: 'admin_appointments')]
+    public function index(AppointmentCategoryFilter $categoryFilter, Request $request): Response {
         $q = $request->query->get('q', null);
         $categoryFilterView = $categoryFilter->handle($request->query->get('category', null));
         $categories = $categoryFilterView->getCurrentCategory() === null ? [ ] : [$categoryFilterView->getCurrentCategory()];
@@ -86,10 +77,8 @@ class AppointmentAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_appointment")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'add_appointment')]
+    public function add(Request $request): Response {
         $appointment = (new Appointment())
             ->setIsConfirmed(false);
 
@@ -112,10 +101,8 @@ class AppointmentAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_appointment")
-     */
-    public function edit(Appointment $appointment, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_appointment')]
+    public function edit(Appointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(AppointmentVoter::Edit, $appointment);
 
         $form = $this->createForm(AppointmentType::class, $appointment);
@@ -134,10 +121,8 @@ class AppointmentAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_appointment")
-     */
-    public function remove(Appointment $appointment, Request $request, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_appointment')]
+    public function remove(Appointment $appointment, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(AppointmentVoter::Remove, $appointment);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -161,10 +146,8 @@ class AppointmentAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/confirm", name="confirm_appointment")
-     */
-    public function confirm(Appointment $appointment, Request $request, UserStringConverter $converter, EventDispatcherInterface $eventDispatcher) {
+    #[Route(path: '/{uuid}/confirm', name: 'confirm_appointment')]
+    public function confirm(Appointment $appointment, Request $request, UserStringConverter $converter, EventDispatcherInterface $eventDispatcher): Response {
         $this->denyAccessUnlessGranted('ROLE_APPOINTMENTS_ADMIN');
 
         if($appointment->getCreatedBy() === null) {

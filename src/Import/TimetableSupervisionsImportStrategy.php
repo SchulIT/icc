@@ -12,12 +12,8 @@ use Ramsey\Uuid\Uuid;
 
 class TimetableSupervisionsImportStrategy implements ReplaceImportStrategyInterface {
 
-    private TimetableSupervisionRepositoryInterface $supervisionRepository;
-    private TeacherRepositoryInterface $teacherRepository;
-
-    public function __construct(TimetableSupervisionRepositoryInterface $supervisionRepository, TeacherRepositoryInterface $teacherRepository) {
-        $this->supervisionRepository = $supervisionRepository;
-        $this->teacherRepository = $teacherRepository;
+    public function __construct(private TimetableSupervisionRepositoryInterface $supervisionRepository, private TeacherRepositoryInterface $teacherRepository)
+    {
     }
 
     /**
@@ -44,7 +40,6 @@ class TimetableSupervisionsImportStrategy implements ReplaceImportStrategyInterf
 
     /**
      * @param TimetableSupervisionsData $data
-     * @return void
      */
     public function removeAll($data): void {
         $this->supervisionRepository->removeBetween($data->getStartDate(), $data->getEndDate());
@@ -53,7 +48,6 @@ class TimetableSupervisionsImportStrategy implements ReplaceImportStrategyInterf
     /**
      * @param TimetableSupervisionData $data
      * @param TimetableSupervisionsData $requestData
-     * @return void
      */
     public function persist($data, $requestData): void {
         if($data->getDate() < $requestData->getStartDate()) {

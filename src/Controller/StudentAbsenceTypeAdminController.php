@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\StudentAbsenceType;
 use App\Form\StudentAbsenceTypeType;
 use App\Repository\StudentAbsenceTypeRepositoryInterface;
@@ -13,29 +14,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/admin/absence_types")
  * @Security("is_granted('ROLE_ADMIN')")
  */
+#[Route(path: '/admin/absence_types')]
 class StudentAbsenceTypeAdminController extends AbstractController {
-    private StudentAbsenceTypeRepositoryInterface $repository;
-
-    public function __construct(StudentAbsenceTypeRepositoryInterface $repository) {
-        $this->repository = $repository;
+    public function __construct(private StudentAbsenceTypeRepositoryInterface $repository)
+    {
     }
 
-    /**
-     * @Route("", name="admin_absence_types")
-     */
-    public function index() {
+    #[Route(path: '', name: 'admin_absence_types')]
+    public function index(): Response {
         return $this->render('admin/absence_types/index.html.twig', [
             'absence_types' => $this->repository->findAll()
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_absence_type")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'add_absence_type')]
+    public function add(Request $request): Response {
         $absenceType = new StudentAbsenceType();
         $form = $this->createForm(StudentAbsenceTypeType::class, $absenceType);
         $form->handleRequest($request);
@@ -51,10 +46,8 @@ class StudentAbsenceTypeAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_absence_type")
-     */
-    public function edit(StudentAbsenceType $absenceType, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_absence_type')]
+    public function edit(StudentAbsenceType $absenceType, Request $request): Response {
         $form = $this->createForm(StudentAbsenceTypeType::class, $absenceType);
         $form->handleRequest($request);
 
@@ -70,10 +63,8 @@ class StudentAbsenceTypeAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_absence_type")
-     */
-    public function remove(StudentAbsenceType $absenceType, Request $request) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_absence_type')]
+    public function remove(StudentAbsenceType $absenceType, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.absence_types.remove.confirm',
             'message_parameters' => [

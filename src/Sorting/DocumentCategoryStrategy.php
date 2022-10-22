@@ -9,7 +9,6 @@ class DocumentCategoryStrategy implements SortingStrategyInterface {
     /**
      * @param DocumentCategory $objectA
      * @param DocumentCategory $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         return strcmp($objectA->getName(), $objectB->getName());

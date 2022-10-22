@@ -14,17 +14,10 @@ use App\Sorting\Sorter;
 
 class StudentInfoResolver extends AbstractResolver {
 
-    private $commentRepository;
-    private $lessonRepository;
-    private $sorter;
-
     public function __construct(LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
-                                TimetableSettings $timetableSettings, BookCommentRepositoryInterface $commentRepository, TimetableLessonRepositoryInterface $lessonRepository,
-                                Sorter $sorter) {
+                                TimetableSettings $timetableSettings, private BookCommentRepositoryInterface $commentRepository, private TimetableLessonRepositoryInterface $lessonRepository,
+                                private Sorter $sorter) {
         parent::__construct($attendanceRepository, $excuseNoteRepository, $timetableSettings);
-        $this->commentRepository = $commentRepository;
-        $this->lessonRepository = $lessonRepository;
-        $this->sorter = $sorter;
     }
 
     public function resolveStudentInfo(Student $student, ?Section $section, array $tuitions = []) {

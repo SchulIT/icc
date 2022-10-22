@@ -18,7 +18,6 @@ class DocumentCategoryStrategy implements GroupingStrategyInterface {
     /**
      * @param DocumentCategory $keyA
      * @param DocumentCategory $keyB
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA === $keyB;
@@ -26,7 +25,6 @@ class DocumentCategoryStrategy implements GroupingStrategyInterface {
 
     /**
      * @param DocumentCategory $key
-     * @return GroupInterface
      */
     public function createGroup($key, array $options = [ ]): GroupInterface {
         return new DocumentCategoryGroup($key);

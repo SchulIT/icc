@@ -24,14 +24,8 @@ class StudentAbsenceVoter extends Voter {
     public const Approve = 'approve';
     public const Deny = 'deny';
 
-    private DateHelper $dateHelper;
-    private SectionResolverInterface $sectionResolver;
-    private AccessDecisionManagerInterface $accessDecisionManager;
-
-    public function __construct(DateHelper $dateHelper, SectionResolverInterface $sectionResolver, AccessDecisionManagerInterface $accessDecisionManager) {
-        $this->dateHelper = $dateHelper;
-        $this->sectionResolver = $sectionResolver;
-        $this->accessDecisionManager = $accessDecisionManager;
+    public function __construct(private DateHelper $dateHelper, private SectionResolverInterface $sectionResolver, private AccessDecisionManagerInterface $accessDecisionManager)
+    {
     }
 
     /**
@@ -46,23 +40,15 @@ class StudentAbsenceVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
-        switch($attribute) {
-            case self::New:
-                return $this->canCreate($token);
-
-            case self::View:
-                return $this->canView($token, $subject);
-
-            case self::CanViewAny:
-                return $this->canViewAny($token);
-
-            case self::Approve:
-            case self::Deny:
-                return $this->canApproveOrDeny($token, $subject);
-        }
-
-        throw new LogicException('This code should not be reached.');
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
+    {
+        return match ($attribute) {
+            self::New => $this->canCreate($token),
+            self::View => $this->canView($token, $subject),
+            self::CanViewAny => $this->canViewAny($token),
+            self::Approve, self::Deny => $this->canApproveOrDeny($token, $subject),
+            default => throw new LogicException('This code should not be reached.'),
+        };
     }
 
     private function canCreate(TokenInterface $token): bool {

@@ -2,38 +2,31 @@
 
 namespace App\Entity;
 
+use Stringable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  */
-class UserTypeEntity {
+class UserTypeEntity implements Stringable {
 
     use IdTrait;
 
     /**
      * @ORM\Column(type="user_type", unique=true)
-     * @var UserType
      */
-    private $userType;
+    private ?UserType $userType = null;
 
-    /**
-     * @return UserType
-     */
     public function getUserType(): UserType {
         return $this->userType;
     }
 
-    /**
-     * @param UserType $userType
-     * @return UserTypeEntity
-     */
     public function setUserType(UserType $userType): UserTypeEntity {
         $this->userType = $userType;
         return $this;
     }
 
-    public function __toString() {
+    public function __toString(): string {
         return $this->getUserType()->getKey();
     }
 }

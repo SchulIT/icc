@@ -16,14 +16,8 @@ use Faker\Generator;
 
 class ExamFixtures extends Fixture implements DependentFixtureInterface {
 
-    private $generator;
-    private $tuitionRepository;
-    private $roomGenerator;
-
-    public function __construct(Generator $generator, TuitionRepositoryInterface $tuitionRepository, RoomGenerator $roomGenerator) {
-        $this->generator = $generator;
-        $this->tuitionRepository = $tuitionRepository;
-        $this->roomGenerator = $roomGenerator;
+    public function __construct(private Generator $generator, private TuitionRepositoryInterface $tuitionRepository, private RoomGenerator $roomGenerator)
+    {
     }
 
     /**
@@ -77,14 +71,10 @@ class ExamFixtures extends Fixture implements DependentFixtureInterface {
                     ->getStudyGroup()
                     ->getMemberships()
                     ->filter(
-                        function(StudyGroupMembership $membership) {
-                            return in_array($membership->getType(), [ 'GKS', 'LK1', 'LK2', 'ABI3', 'ABI4']);
-                        }
+                        fn(StudyGroupMembership $membership) => in_array($membership->getType(), [ 'GKS', 'LK1', 'LK2', 'ABI3', 'ABI4'])
                     )
                     ->map(
-                        function(StudyGroupMembership $membership) {
-                            return $membership->getStudent();
-                        }
+                        fn(StudyGroupMembership $membership) => $membership->getStudent()
                     )
                     ->toArray();
 

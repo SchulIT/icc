@@ -11,11 +11,11 @@ class RoomsData {
     /**
      * @Serializer\Type("array<App\Request\Data\RoomData>")
      * @Serializer\SerializedName("rooms")
-     * @Assert\Valid()
      * @UniqueId(propertyPath="id")
      * @var RoomData[]
      */
-    private $rooms = [ ];
+    #[Assert\Valid]
+    private array $rooms = [ ];
 
     /**
      * @return RoomData[]
@@ -26,7 +26,6 @@ class RoomsData {
 
     /**
      * @param RoomData[] $rooms
-     * @return RoomsData
      */
     public function setRooms(array $rooms): RoomsData {
         $this->rooms = $rooms;

@@ -7,14 +7,11 @@ use App\Entity\DocumentCategory;
 
 class DocumentCategoryGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var DocumentCategory */
-    private $category;
-
     /** @var Document[] */
     private $documents;
 
-    public function __construct(DocumentCategory $category) {
-        $this->category = $category;
+    public function __construct(private DocumentCategory $category)
+    {
     }
 
     public function getCategory(): DocumentCategory {

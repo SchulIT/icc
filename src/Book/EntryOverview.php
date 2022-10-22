@@ -8,39 +8,19 @@ use DateTime;
 
 class EntryOverview {
 
-    /** @var DateTime */
-    private DateTime $start;
-
-    /** @var DateTime */
-    private DateTime $end;
-
-    /** @var LessonDayGroup[] */
-    private array $days;
-
-    /** @var BookComment[] */
-    private array $comments;
-
-    /** @var FreeTimespan[] */
-    private array $freeTimespans;
-
-    public function __construct(DateTime $start, DateTime $end, array $days, array $comments, array $freeTimespans) {
-        $this->start = $start;
-        $this->end = $end;
-        $this->days = $days;
-        $this->comments = $comments;
-        $this->freeTimespans = $freeTimespans;
+    /**
+     * @param LessonDayGroup[] $days
+     * @param BookComment[] $comments
+     * @param FreeTimespan[] $freeTimespans
+     */
+    public function __construct(private DateTime $start, private DateTime $end, private array $days, private array $comments, private array $freeTimespans)
+    {
     }
 
-    /**
-     * @return DateTime
-     */
     public function getStart(): DateTime {
         return $this->start;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getEnd(): DateTime {
         return $this->end;
     }
@@ -53,9 +33,7 @@ class EntryOverview {
     }
 
     public function getComments(DateTime $dateTime): array {
-        return array_filter($this->comments, function(BookComment $comment) use($dateTime) {
-            return $comment->getDate() == $dateTime;
-        });
+        return array_filter($this->comments, fn(BookComment $comment) => $comment->getDate() == $dateTime);
     }
 
     public function hasLessonsWithinFreeTimespans(DateTime $dateTime): bool {
@@ -79,12 +57,9 @@ class EntryOverview {
     }
 
     /**
-     * @param DateTime $dateTime
      * @return FreeTimespan[]
      */
     public function getFreeTimespans(DateTime $dateTime): array {
-        return array_filter($this->freeTimespans, function(FreeTimespan $timespan) use($dateTime) {
-            return $timespan->getDate() == $dateTime;
-        });
+        return array_filter($this->freeTimespans, fn(FreeTimespan $timespan) => $timespan->getDate() == $dateTime);
     }
 }

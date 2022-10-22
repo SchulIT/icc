@@ -12,12 +12,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ExamStudentsResolver implements AbsenceResolveStrategyInterface {
 
-    private $em;
-    private $examRepository;
-
-    public function __construct(EntityManagerInterface $em, ExamRepositoryInterface $examRepository) {
-        $this->em = $em;
-        $this->examRepository = $examRepository;
+    public function __construct(private EntityManagerInterface $em, private ExamRepositoryInterface $examRepository)
+    {
     }
 
     /**
@@ -26,9 +22,7 @@ class ExamStudentsResolver implements AbsenceResolveStrategyInterface {
     public function resolveAbsentStudents(DateTime $dateTime, int $lesson, iterable $students): array {
         $students = ArrayUtils::createArrayWithKeys(
             $students,
-            function(Student $student) {
-                return $student->getId();
-            }
+            fn(Student $student) => $student->getId()
         );
 
         // STEP 1: Resolve student -> exam relation (IDs only)
@@ -48,16 +42,12 @@ class ExamStudentsResolver implements AbsenceResolveStrategyInterface {
 
         // STEP 2: Resolve attending exams
         $examIds = array_unique(
-            array_map(function ($row) {
-                return $row['examId'];
-            }, $result)
+            array_map(fn($row) => $row['examId'], $result)
         );
 
         $exams = ArrayUtils::createArrayWithKeys(
             $this->examRepository->findAllByIds($examIds),
-            function(Exam $exam) {
-                return $exam->getId();
-            });
+            fn(Exam $exam) => $exam->getId());
 
         $absent = [ ];
 

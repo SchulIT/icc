@@ -20,29 +20,14 @@ use SchulIT\CommonBundle\Helper\DateHelper;
  */
 class TimetableHelper {
 
-    private DateHelper $dateHelper;
-    private TimetableSettings $settings;
-    private AppointmentRepositoryInterface $appointmentRepository;
-    private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository;
-    private FreeTimespanRepositoryInterface $freeTimespanRepository;
-    private TimetableWeekRepositoryInterface $weekRepository;
-
-    public function __construct(DateHelper $dateHelper, TimetableSettings $settingsManager,
-                                AppointmentRepositoryInterface $appointmentRepository, FreeTimespanRepositoryInterface $freeTimespanRepository,
-                                AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, TimetableWeekRepositoryInterface $weekRepository) {
-        $this->dateHelper = $dateHelper;
-        $this->settings = $settingsManager;
-        $this->appointmentRepository = $appointmentRepository;
-        $this->appointmentCategoryRepository = $appointmentCategoryRepository;
-        $this->freeTimespanRepository = $freeTimespanRepository;
-        $this->weekRepository = $weekRepository;
+    public function __construct(private DateHelper $dateHelper, private TimetableSettings $settings, private AppointmentRepositoryInterface $appointmentRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, private TimetableWeekRepositoryInterface $weekRepository)
+    {
     }
 
     /**
      * @param WeekOfYear[] $weeks
      * @param TimetableLessonEntity[] $lessons
      * @param TimetableSupervision[] $supervision
-     * @return Timetable
      */
     public function makeTimetable(array $weeks, array $lessons, array $supervision = [ ]): Timetable {
         $timetable = new Timetable();
@@ -109,8 +94,6 @@ class TimetableHelper {
     /**
      * Ensures that no lessons are missed out even if they are free because otherwise
      * rendering will glitch.
-     *
-     * @param Timetable $timetable
      */
     private function ensureAllLessonsAreDisplayed(Timetable $timetable): void {
         $numberOfLessons = $this->settings->getMaxLessons();
@@ -122,8 +105,6 @@ class TimetableHelper {
 
     /**
      * Adds empty TimetableLessons in order to improve collapsing capabilitites
-     *
-     * @param Timetable $timetable
      */
     private function addEmptyLessons(Timetable $timetable) {
         foreach($timetable->getWeeks() as $week) {
@@ -144,8 +125,6 @@ class TimetableHelper {
     /**
      * Computes the model for double lessons such that the model knows which lessons are collapsed. (Does NOT compute
      * which lessons are considered double lessons -> this information must be set at import)
-     *
-     * @param Timetable $timetable
      */
     private function collapseTimetable(Timetable $timetable) {
         foreach($timetable->getWeeks() as $week) {
@@ -175,9 +154,7 @@ class TimetableHelper {
                     // now check if following lessons have same lessons (they might have additional lessons) or have
                     // supervisions before them (also, then do not collapse)
 
-                    $lessonIds = array_map(function(TimetableLessonEntity $lesson) {
-                        return $lesson->getId();
-                    }, $container->getLessons());
+                    $lessonIds = array_map(fn(TimetableLessonEntity $lesson) => $lesson->getId(), $container->getLessons());
 
                     for($nextLessonNumber = $lessonNumber + 1; $nextLessonNumber <= $lessonNumber + $duration - 1; $nextLessonNumber++) {
                         $nextLessonContainer = $day->getTimetableLessonsContainer($nextLessonNumber);
@@ -187,9 +164,7 @@ class TimetableHelper {
                         }
 
                         // Now check if lessons are same
-                        $nextLessonIds = array_map(function(TimetableLessonEntity $lesson) {
-                            return $lesson->getId();
-                        }, $nextLessonContainer->getLessons());
+                        $nextLessonIds = array_map(fn(TimetableLessonEntity $lesson) => $lesson->getId(), $nextLessonContainer->getLessons());
 
                         if(ArrayUtils::areEqual($lessonIds, $nextLessonIds)) {
                             $container->setRowSpan($container->getRowSpan() + 1);
@@ -203,24 +178,18 @@ class TimetableHelper {
     }
 
     /**
-     * @param WeekOfYear $week
      * @param TimetableLessonEntity[] $lessons
      * @param TimetableSupervision[] $supervision
      * @param DateTime[] $freeDays
-     * @return TimetableWeek
      */
     private function makeTimetableWeek(WeekOfYear $week, array $lessons, array $supervision, array $freeDays): TimetableWeek {
         $timetableWeekEntity = $this->weekRepository->findOneByWeekNumber($week->getWeekNumber());
 
         $timetableWeek = new TimetableWeek($week->getYear(), $week->getWeekNumber(), $timetableWeekEntity?->getDisplayName());
 
-        $lessons = array_filter($lessons, function (TimetableLessonEntity $lesson) use ($week) {
-            return $this->dateHelper->isBetween($lesson->getDate(), $week->getFirstDay(), $week->getLastDay());
-        });
+        $lessons = array_filter($lessons, fn(TimetableLessonEntity $lesson) => $this->dateHelper->isBetween($lesson->getDate(), $week->getFirstDay(), $week->getLastDay()));
 
-        $supervision = array_filter($supervision, function(TimetableSupervision $entry) use ($week) {
-            return $this->dateHelper->isBetween($entry->getDate(), $week->getFirstDay(), $week->getLastDay());
-        });
+        $supervision = array_filter($supervision, fn(TimetableSupervision $entry) => $this->dateHelper->isBetween($entry->getDate(), $week->getFirstDay(), $week->getLastDay()));
 
         for($i = 0; $i < 5; $i++) {
             $date = (clone $week->getFirstDay())->modify(sprintf('+%d days', $i));
@@ -253,25 +222,16 @@ class TimetableHelper {
     }
 
     /**
-     * @param DateTime $date
-     * @param bool $isCurrentDay
-     * @param bool $isUpcomingDay
-     * @param bool $isFree
      * @param TimetableLessonEntity[] $lessons
      * @param TimetableSupervision[] $supervision
-     * @return TimetableDay
      */
     private function makeTimetableDay(DateTime $date, bool $isCurrentDay, bool $isUpcomingDay, bool $isFree, array $lessons, array $supervision): TimetableDay {
         $timetableDay = new TimetableDay($date, $isCurrentDay, $isUpcomingDay, $isFree);
 
         /** @var TimetableLessonEntity[] $lessons */
-        $lessons = array_filter($lessons, function(TimetableLessonEntity $lesson) use ($date) {
-            return $lesson->getDate() == $date;
-        });
+        $lessons = array_filter($lessons, fn(TimetableLessonEntity $lesson) => $lesson->getDate() == $date);
 
-        $supervision = array_filter($supervision, function(TimetableSupervision $entry) use($date) {
-            return $entry->getDate() == $date;
-        });
+        $supervision = array_filter($supervision, fn(TimetableSupervision $entry) => $entry->getDate() == $date);
 
         foreach($lessons as $lesson) {
             $timetableDay->addTimetableLessonsContainer($lesson);
@@ -305,9 +265,7 @@ class TimetableHelper {
     }
 
     /**
-     * @param DateTime $dateTime
      * @param DateTime[] $freeDays
-     * @return bool
      */
     private function isFree(DateTime $dateTime, array $freeDays): bool {
         foreach($freeDays as $freeDay) {

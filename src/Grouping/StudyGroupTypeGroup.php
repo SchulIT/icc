@@ -7,14 +7,11 @@ use App\Entity\StudyGroupType;
 
 class StudyGroupTypeGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var StudyGroupType */
-    private $type;
-
     /** @var StudyGroup[] */
     private $studyGroups;
 
-    public function __construct(StudyGroupType $type) {
-        $this->type = $type;
+    public function __construct(private StudyGroupType $type)
+    {
     }
 
     public function getKey() {

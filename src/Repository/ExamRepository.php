@@ -51,10 +51,6 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         return $qb;
     }
 
-    /**
-     * @param int $id
-     * @return Exam|null
-     */
     public function findOneById(int $id): ?Exam {
         return $this->getDefaultQueryBuilder()
             ->andWhere('e.id = :id')
@@ -63,10 +59,6 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->getOneOrNullResult();
     }
 
-    /**
-     * @param string $externalId
-     * @return Exam|null
-     */
     public function findOneByExternalId(string $externalId): ?Exam {
         return $this->getDefaultQueryBuilder()
             ->andWhere('e.externalId = :externalId')
@@ -204,9 +196,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     public function findAllByStudents(array $students, ?\DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
         $qb = $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned);
 
-        $studentIds = array_map(function(Student $student) {
-            return $student->getId();
-        }, $students);
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
@@ -231,9 +221,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->select(['e.date', 'COUNT(DISTINCT e.id) AS count'])
             ->groupBy('e.date');
 
-        $studentIds = array_map(function(Student $student) {
-            return $student->getId();
-        }, $students);
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('eInner.id')
@@ -386,17 +374,11 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->getResult();
     }
 
-    /**
-     * @param Exam $exam
-     */
     public function persist(Exam $exam): void {
         $this->em->persist($exam);
         $this->flushIfNotInTransaction();
     }
 
-    /**
-     * @param Exam $exam
-     */
     public function remove(Exam $exam): void {
         $this->em->remove($exam);
         $this->flushIfNotInTransaction();

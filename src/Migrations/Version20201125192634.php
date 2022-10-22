@@ -17,14 +17,12 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201125192634 extends AbstractMigration implements TimetableTimeHelperDependentMigrationInterface, TimetableSettingsDependentMigrationInterface
 {
-    /** @var TimetableTimeHelper */
-    private $timetableTimeHelper;
+    private ?TimetableTimeHelper $timetableTimeHelper = null;
 
-    /** @var TimetableSettings */
-    private $timetableSettings;
+    private ?TimetableSettings $timetableSettings = null;
 
     /** @var array[] */
-    private $sickNotes = [ ];
+    private array $sickNotes = [ ];
 
     /**
      * @inheritdoc

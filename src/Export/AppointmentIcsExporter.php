@@ -2,6 +2,7 @@
 
 namespace App\Export;
 
+use Jsvrcek\ICS\Exception\CalendarEventException;
 use App\Converter\StudyGroupsGradeStringConverter;
 use App\Converter\TeacherStringConverter;
 use App\Entity\Appointment;
@@ -21,26 +22,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AppointmentIcsExporter {
 
-    private $appointmentsRepository;
-    private $icsHelper;
-    private $studyGroupsConverter;
-    private $teacherConverter;
-    private $authorizationChecker;
-    private $translator;
-
-    public function __construct(AppointmentRepositoryInterface $appointmentsRepository, IcsHelper $icsHelper,
-                                StudyGroupsGradeStringConverter $studyGroupsConverter, TeacherStringConverter $teacherConverter,
-                                AuthorizationCheckerInterface $authorizationChecker, TranslatorInterface $translator) {
-        $this->appointmentsRepository = $appointmentsRepository;
-        $this->icsHelper = $icsHelper;
-        $this->studyGroupsConverter = $studyGroupsConverter;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->translator = $translator;
-        $this->teacherConverter = $teacherConverter;
+    public function __construct(private AppointmentRepositoryInterface $appointmentsRepository, private IcsHelper $icsHelper, private StudyGroupsGradeStringConverter $studyGroupsConverter, private TeacherStringConverter $teacherConverter, private AuthorizationCheckerInterface $authorizationChecker, private TranslatorInterface $translator)
+    {
     }
 
     /**
-     * @param User $user
      * @return CalendarEvent[]
      */
     private function getEvents(User $user): array {
@@ -69,9 +55,7 @@ class AppointmentIcsExporter {
     }
 
     /**
-     * @param Appointment $appointment
-     * @return CalendarEvent
-     * @throws \Jsvrcek\ICS\Exception\CalendarEventException
+     * @throws CalendarEventException
      */
     private function getEvent(Appointment $appointment): CalendarEvent {
         $event = (new CalendarEvent())
@@ -116,9 +100,7 @@ class AppointmentIcsExporter {
         }
 
         if($appointment->getOrganizers()->count() > 0 || !empty($appointment->getExternalOrganizers())) {
-            $organizers = $appointment->getOrganizers()->map(function(Teacher $teacher) {
-                return $this->teacherConverter->convert($teacher);
-            })->toArray();
+            $organizers = $appointment->getOrganizers()->map(fn(Teacher $teacher) => $this->teacherConverter->convert($teacher))->toArray();
             $organizers[] = $appointment->getExternalOrganizers();
 
             $description[] = $this->translator->trans('plans.appointments.export.organizers', [

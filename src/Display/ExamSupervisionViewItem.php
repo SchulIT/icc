@@ -7,8 +7,7 @@ use App\Entity\ExamSupervision;
 
 class ExamSupervisionViewItem extends AbstractViewItem {
 
-    /** @var ExamSupervision  */
-    private $supervision;
+    private ExamSupervision $supervision;
 
     public function __construct(ExamSupervision $supervision) {
         parent::__construct($supervision->getLesson(), false);
@@ -16,16 +15,10 @@ class ExamSupervisionViewItem extends AbstractViewItem {
         $this->supervision = $supervision;
     }
 
-    /**
-     * @return ExamSupervision
-     */
     public function getSupervision(): ExamSupervision {
         return $this->supervision;
     }
 
-    /**
-     * @return Exam
-     */
     public function getExam(): Exam {
         return $this->supervision->getExam();
     }

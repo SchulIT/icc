@@ -14,10 +14,8 @@ use Faker\Generator;
 
 class StudyGroupFixtures extends Fixture implements DependentFixtureInterface {
 
-    private $generator;
-
-    public function __construct(Generator $generator) {
-        $this->generator = $generator;
+    public function __construct(private Generator $generator)
+    {
     }
 
     /**
@@ -39,9 +37,7 @@ class StudyGroupFixtures extends Fixture implements DependentFixtureInterface {
             ->setType(StudyGroupType::Course());
 
         $grades = GradeFixtures::getSekIGradeNames();
-        $agGrades = array_filter($grades, function(string $name) {
-            return substr($name, 0, 1) === '5';
-        });
+        $agGrades = array_filter($grades, fn(string $name) => str_starts_with($name, '5'));
 
         $students = [ ];
 

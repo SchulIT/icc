@@ -20,29 +20,17 @@ use App\Utils\ArrayUtils;
 
 class TuitionsImportStrategy implements ImportStrategyInterface {
 
-    private $tuitionRepository;
-    private $subjectRepository;
-    private $teacherRepository;
-    private $studyGroupRepository;
-    private $sectionRepository;
+    private bool $isInitialized = false;
 
-    private $isInitialized = false;
+    private array $subjectCache = [ ];
+    private array $teacherCache = [ ];
+    private array $studyGroupCache = [ ];
 
-    private $subjectCache = [ ];
-    private $teacherCache = [ ];
-    private $studyGroupCache = [ ];
-
-    public function __construct(TuitionRepositoryInterface $tuitionRepository, SubjectRepositoryInterface $subjectRepository,
-                                TeacherRepositoryInterface $teacherRepository, StudyGroupRepositoryInterface $studyGroupRepository, SectionRepositoryInterface $sectionRepository) {
-        $this->tuitionRepository = $tuitionRepository;
-        $this->subjectRepository = $subjectRepository;
-        $this->teacherRepository = $teacherRepository;
-        $this->studyGroupRepository = $studyGroupRepository;
-        $this->sectionRepository = $sectionRepository;
+    public function __construct(private TuitionRepositoryInterface $tuitionRepository, private SubjectRepositoryInterface $subjectRepository, private TeacherRepositoryInterface $teacherRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private SectionRepositoryInterface $sectionRepository)
+    {
     }
 
     /**
-     * @param TuitionsData $requestData
      * @throws SectionNotFoundException
      */
     private function initialize(TuitionsData $requestData) {
@@ -58,23 +46,17 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
 
         $this->subjectCache = ArrayUtils::createArrayWithKeys(
             $this->subjectRepository->findAll(),
-            function(Subject $subject) {
-                return $subject->getExternalId();
-            }
+            fn(Subject $subject) => $subject->getExternalId()
         );
 
         $this->teacherCache = ArrayUtils::createArrayWithKeys(
             $this->teacherRepository->findAllBySection($section),
-            function(Teacher $teacher) {
-                return $teacher->getExternalId();
-            }
+            fn(Teacher $teacher) => $teacher->getExternalId()
         );
 
         $this->studyGroupCache = ArrayUtils::createArrayWithKeys(
             $this->studyGroupRepository->findAllBySection($section),
-            function(StudyGroup $studyGroup) {
-                return $studyGroup->getExternalId();
-            }
+            fn(StudyGroup $studyGroup) => $studyGroup->getExternalId()
         );
 
         $this->isInitialized = true;
@@ -94,9 +76,7 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
 
         return ArrayUtils::createArrayWithKeys(
             $this->tuitionRepository->findAllBySection($section),
-            function(Tuition $tuition) {
-                return $tuition->getExternalId();
-            }
+            fn(Tuition $tuition) => $tuition->getExternalId()
         );
     }
 
@@ -125,7 +105,6 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param Tuition $entity
-     * @return int
      */
     public function getEntityId($entity): int {
         return $entity->getId();
@@ -174,9 +153,7 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
         CollectionUtils::synchronize(
             $entity->getTeachers(),
             $teachers,
-            function(Teacher $teacher) {
-                return $teacher->getId();
-            }
+            fn(Teacher $teacher) => $teacher->getId()
         );
     }
 
@@ -205,13 +182,10 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
     /**
      * @param string[] $teachers
      * @param Teacher[] $foundTeachers
-     * @param string $tuitionExternalId
      * @throws ImportException
      */
     private function throwTeacherIsMissing(array $teachers, array $foundTeachers, string $tuitionExternalId) {
-        $foundTeacherAcronyms = array_map(function(Teacher $teacher) {
-            return $teacher->getExternalId();
-        }, $foundTeachers);
+        $foundTeacherAcronyms = array_map(fn(Teacher $teacher) => $teacher->getExternalId(), $foundTeachers);
 
         foreach($teachers as $teacher) {
             if(!in_array($teachers, $foundTeacherAcronyms)) {

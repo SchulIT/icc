@@ -14,23 +14,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractNotifier {
-    protected string $sender;
-    protected string $appName;
-
-    protected MailerInterface $mailer;
-    protected SectionResolverInterface $sectionResolver;
-    protected StudentAbsenceSettings $settings;
-    protected TranslatorInterface $translator;
-    protected UrlGeneratorInterface $urlGenerator;
-
-    public function __construct(string $sender, string $appName, MailerInterface $mailer, SectionResolverInterface $sectionResolver, StudentAbsenceSettings $settings, TranslatorInterface $translator, UrlGeneratorInterface $urlGenerator) {
-        $this->sender = $sender;
-        $this->appName = $appName;
-        $this->mailer = $mailer;
-        $this->sectionResolver = $sectionResolver;
-        $this->settings = $settings;
-        $this->translator = $translator;
-        $this->urlGenerator = $urlGenerator;
+    public function __construct(protected string $sender, protected string $appName, protected MailerInterface $mailer, protected SectionResolverInterface $sectionResolver, protected StudentAbsenceSettings $settings, protected TranslatorInterface $translator, protected UrlGeneratorInterface $urlGenerator)
+    {
     }
 
     protected function getTeacherRecipients(StudentAbsence $absence, array $exclude = [ ]): array {

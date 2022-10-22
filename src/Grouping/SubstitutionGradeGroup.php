@@ -7,19 +7,13 @@ use App\Entity\Substitution;
 
 class SubstitutionGradeGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var Grade|null */
-    private $grade;
-
     /** @var Substitution[] */
-    private $substitutions = [ ];
+    private array $substitutions = [ ];
 
-    public function __construct(?Grade $grade) {
-        $this->grade = $grade;
+    public function __construct(private ?Grade $grade)
+    {
     }
 
-    /**
-     * @return Grade|null
-     */
     public function getGrade(): ?Grade {
         return $this->grade;
     }

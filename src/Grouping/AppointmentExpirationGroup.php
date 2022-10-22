@@ -6,19 +6,13 @@ use App\Entity\Appointment;
 
 class AppointmentExpirationGroup implements GroupInterface {
 
-    /** @var bool  */
-    private $isExpired;
-
     /** @var Appointment[] */
-    private $appointments = [ ];
+    private array $appointments = [ ];
 
-    public function __construct(bool $isExpired) {
-        $this->isExpired = $isExpired;
+    public function __construct(private bool $isExpired)
+    {
     }
 
-    /**
-     * @return bool
-     */
     public function isExpired(): bool {
         return $this->isExpired;
     }

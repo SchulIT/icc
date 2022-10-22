@@ -10,13 +10,8 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class NotTooManyExamsPerDayValidator extends AbstractExamConstraintValidator {
 
-    private ExamSettings $examSettings;
-
-
-    public function __construct(ExamSettings $examSettings, ExamRepositoryInterface $examRepository) {
+    public function __construct(private ExamSettings $examSettings, ExamRepositoryInterface $examRepository) {
         parent::__construct($examRepository);
-
-        $this->examSettings = $examSettings;
     }
 
     /**

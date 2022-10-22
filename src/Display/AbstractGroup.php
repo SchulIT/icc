@@ -6,7 +6,7 @@ use App\Grouping\SortableGroupInterface;
 
 abstract class AbstractGroup implements SortableGroupInterface {
     /** @var AbstractViewItem[] */
-    private $items = [ ];
+    private array $items = [ ];
 
     public function addItem(AbstractViewItem $item): void {
         $this->items[] = $item;

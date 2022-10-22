@@ -2,6 +2,7 @@
 
 namespace App\Ics;
 
+use DateTimeZone;
 use Jsvrcek\ICS\CalendarExport;
 use Jsvrcek\ICS\CalendarStream;
 use Jsvrcek\ICS\Model\Calendar;
@@ -15,34 +16,23 @@ use Twig\Environment;
 class IcsHelper {
     private static int $batchSize = 20;
 
-    private string $appName;
-    private string $languageCode;
-    private string $appUrl;
-
-    public function __construct(string $appName, string $languageCode, string $appUrl) {
-        $this->appName = $appName;
-        $this->languageCode = $languageCode;
-        $this->appUrl = $appUrl;
+    public function __construct(private string $appName, private string $languageCode, private string $appUrl)
+    {
     }
 
     /**
-     * @param string $name
-     * @param string $description
      * @param CalendarEvent[] $events
-     * @return string
      */
     public function getIcsStream(string $name, string $description, array $events): string {
         $calendar = new Calendar();
-        $calendar->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+        $calendar->setTimezone(new DateTimeZone(date_default_timezone_get()));
         $calendar->setProdId(sprintf('-//%s//%s//%s', parse_url($this->appUrl,PHP_URL_HOST), $this->appName, $this->languageCode));
         $calendar->setCustomHeaders([
             'X-WR-CALNAME' => $name,
             'X-WR-CALDESC' => $description
         ]);
 
-        $calendar->setEventsProvider(function($startIndex) use ($events) {
-            return array_slice($events, $startIndex, self::$batchSize);
-        });
+        $calendar->setEventsProvider(fn($startIndex) => array_slice($events, $startIndex, self::$batchSize));
 
         // Fixes empty status field
         foreach($events as $event) {
@@ -58,16 +48,11 @@ class IcsHelper {
     }
 
     /**
-     * @param string $name
-     * @param string $description
      * @param CalendarEvent[] $events
      * @param string|null $filename
-     * @return Response
      */
     public function getIcsResponse(string $name, string $description, array $events, $filename = null): Response {
-        $response = new StreamedResponse(function() use($name, $description, $events) {
-            return $this->getIcsStream($name, $description, $events);
-        });
+        $response = new StreamedResponse(fn() => $this->getIcsStream($name, $description, $events));
 
         if($filename !== null) {
             $disposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);

@@ -11,7 +11,6 @@ class MessageFileUploadViewHelper extends AbstractMessageFileViewHelper {
     /**
      * Returns the uploads for all users.
      *
-     * @param Message $message
      * @return array<int, MessageFileUpload[]> Key is the user's ID
      */
     private function getUploads(Message $message): array {

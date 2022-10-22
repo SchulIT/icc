@@ -10,10 +10,8 @@ use Twig\TwigFunction;
 
 class SettingsExtension extends AbstractExtension {
 
-    private TimetableSettings $timetableSettings;
-
-    public function __construct(TimetableSettings $timetableSettings) {
-        $this->timetableSettings = $timetableSettings;
+    public function __construct(private TimetableSettings $timetableSettings)
+    {
     }
 
     public function getFunctions(): array {
@@ -24,7 +22,6 @@ class SettingsExtension extends AbstractExtension {
 
     /**
      * @param iterable|Grade[] $grades
-     * @return bool
      */
     public function showCourseName(iterable $grades): bool {
         $grades = ArrayUtils::iterableToArray($grades);

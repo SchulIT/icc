@@ -17,21 +17,13 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class SendPushNotifications extends Command {
 
-    private DateHelper $dateHelper;
-    private NotificationService $notificationService;
-    private MessageRepositoryInterface $messageRepository;
-
-    public function __construct(DateHelper $dateHelper, NotificationService $notificationService, MessageRepositoryInterface $messageRepository, string $name = null) {
+    protected static $defaultName = 'app:notifications:send';
+    public function __construct(private DateHelper $dateHelper, private NotificationService $notificationService, private MessageRepositoryInterface $messageRepository, string $name = null) {
         parent::__construct($name);
-
-        $this->dateHelper = $dateHelper;
-        $this->notificationService = $notificationService;
-        $this->messageRepository = $messageRepository;
     }
 
     public function configure() {
-        $this->setName('app:notifications:send')
-            ->setDescription('Sends notifications for messages which did not push any notification yet.');
+        $this->setDescription('Sends notifications for messages which did not push any notification yet.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

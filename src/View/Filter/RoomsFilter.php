@@ -10,20 +10,14 @@ use App\Sorting\Sorter;
 use App\Utils\ArrayUtils;
 
 class RoomsFilter {
-    private $sorter;
-    private $roomRepository;
-
-    public function __construct(Sorter $sorter, RoomRepositoryInterface $roomRepository) {
-        $this->sorter = $sorter;
-        $this->roomRepository = $roomRepository;
+    public function __construct(private Sorter $sorter, private RoomRepositoryInterface $roomRepository)
+    {
     }
 
     public function handle(array $roomUuids) {
         $rooms = ArrayUtils::createArrayWithKeys(
             $this->roomRepository->findAll(),
-            function(Room $room) {
-                return (string)$room->getUuid();
-            }
+            fn(Room $room) => (string)$room->getUuid()
         );
         $this->sorter->sort($rooms, RoomNameStrategy::class, SortDirection::Ascending(), true);
 

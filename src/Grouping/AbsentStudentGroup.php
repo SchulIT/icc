@@ -8,14 +8,14 @@ use App\Entity\Student;
 
 class AbsentStudentGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var Exam|Appointment|null */
-    private $objective;
-
     /** @var Student[] */
     private $students;
 
-    public function __construct($objective) {
-        $this->objective = $objective;
+    /**
+     * @param Exam|Appointment|null $objective
+     */
+    public function __construct(private $objective)
+    {
     }
 
     /**

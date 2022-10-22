@@ -14,21 +14,13 @@ use App\Utils\EnumArrayUtils;
 
 class MessageConfirmationViewHelper {
 
-    private $studentRepository;
-    private $teacherRepository;
-    private $userRepository;
-
-    public function __construct(StudentRepositoryInterface $studentRepository, TeacherRepositoryInterface $teacherRepository, UserRepositoryInterface $userRepository) {
-        $this->studentRepository = $studentRepository;
-        $this->teacherRepository = $teacherRepository;
-        $this->userRepository = $userRepository;
+    public function __construct(private StudentRepositoryInterface $studentRepository, private TeacherRepositoryInterface $teacherRepository, private UserRepositoryInterface $userRepository)
+    {
     }
 
     public function createView(Message $message): MessageConfirmationView {
         /** @var UserType[] $visibilities */
-        $visibilities = $message->getConfirmationRequiredUserTypes()->map(function(UserTypeEntity $visibility) {
-            return $visibility->getUserType();
-        });
+        $visibilities = $message->getConfirmationRequiredUserTypes()->map(fn(UserTypeEntity $visibility) => $visibility->getUserType());
 
         $students = [ ];
         $teachers = [ ];
@@ -65,32 +57,24 @@ class MessageConfirmationViewHelper {
     /**
      * Returns all student confirmations. Keys are the student ids.
      *
-     * @param Message $message
      * @return MessageConfirmation[]
      */
     private function getStudentConfirmations(Message $message): array {
         $confirmations = $message->getConfirmations()
-            ->filter(function(MessageConfirmation $confirmation) {
-                return $confirmation->getUser()->getUserType()->equals(UserType::Student()) && $confirmation->getUser()->getStudents()->first() !== null;
-            })->toArray();
+            ->filter(fn(MessageConfirmation $confirmation) => $confirmation->getUser()->getUserType()->equals(UserType::Student()) && $confirmation->getUser()->getStudents()->first() !== null)->toArray();
 
-        return ArrayUtils::createArrayWithKeys($confirmations, function(MessageConfirmation $confirmation) {
-            return $confirmation->getUser()->getStudents()->first()->getId();
-        });
+        return ArrayUtils::createArrayWithKeys($confirmations, fn(MessageConfirmation $confirmation) => $confirmation->getUser()->getStudents()->first()->getId());
     }
 
     /**
      * Returns all parent confirmations. Keys are the student ids.
      *
-     * @param Message $message
      * @return MessageConfirmation[]
      */
     private function getParentConfirmations(Message $message): array {
         /** @var MessageConfirmation[] $confirmedParentUsers */
         $confirmedParentUsers = $message->getConfirmations()
-            ->filter(function(MessageConfirmation $confirmation) {
-                return $confirmation->getUser()->getUserType()->equals(UserType::Parent());
-            });
+            ->filter(fn(MessageConfirmation $confirmation) => $confirmation->getUser()->getUserType()->equals(UserType::Parent()));
 
         $confirmations = [ ];
 
@@ -106,38 +90,28 @@ class MessageConfirmationViewHelper {
     /**
      * Returns all teacher confirmations. Keys are the teacher ids.
      *
-     * @param Message $message
      * @return MessageConfirmation[]
      */
     private function getTeacherConfirmations(Message $message): array {
         $confirmedTeachers = $message->getConfirmations()
-            ->filter(function(MessageConfirmation $confirmation) {
-                return $confirmation->getUser()->getUserType()->equals(UserType::Teacher()) && $confirmation->getUser()->getTeacher() !== null;
-            })->toArray();
+            ->filter(fn(MessageConfirmation $confirmation) => $confirmation->getUser()->getUserType()->equals(UserType::Teacher()) && $confirmation->getUser()->getTeacher() !== null)->toArray();
 
-        return ArrayUtils::createArrayWithKeys($confirmedTeachers, function(MessageConfirmation $confirmation) {
-            return $confirmation->getUser()->getTeacher()->getId();
-        });
+        return ArrayUtils::createArrayWithKeys($confirmedTeachers, fn(MessageConfirmation $confirmation) => $confirmation->getUser()->getTeacher()->getId());
     }
 
     /**
      * Returns all normal user (non-student/-parent/-teacher users) confirmations. Keys are the user ids.
      *
-     * @param Message $message
      * @return MessageConfirmation[]
      */
     private function getUserConfirmations(Message $message): array {
         $confirmedUsers = $message->getConfirmations()
-            ->filter(function (MessageConfirmation $confirmation) {
-                return !EnumArrayUtils::inArray($confirmation->getUser()->getUserType(), [
-                    UserType::Student(),
-                    UserType::Parent(),
-                    UserType::Teacher()
-                ]);
-            })->toArray();
+            ->filter(fn(MessageConfirmation $confirmation) => !EnumArrayUtils::inArray($confirmation->getUser()->getUserType(), [
+                UserType::Student(),
+                UserType::Parent(),
+                UserType::Teacher()
+            ]))->toArray();
 
-        return ArrayUtils::createArrayWithKeys($confirmedUsers, function (MessageConfirmation $confirmation) {
-            return $confirmation->getUser()->getId();
-        });
+        return ArrayUtils::createArrayWithKeys($confirmedUsers, fn(MessageConfirmation $confirmation) => $confirmation->getUser()->getId());
     }
 }

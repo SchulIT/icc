@@ -12,7 +12,7 @@ class MessageList {
      *
      * @var Message[]
      */
-    private $messages;
+    private ?array $messages = null;
 
     /**
      * @return Message[]
@@ -23,7 +23,6 @@ class MessageList {
 
     /**
      * @param Message[] $messages
-     * @return MessageList
      */
     public function setMessages(array $messages): MessageList {
         $this->messages = $messages;

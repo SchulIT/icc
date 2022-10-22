@@ -7,20 +7,12 @@ use App\Grouping\StudyGroupGradeGroup;
 
 class StudyGroupFilterView implements FilterViewInterface {
 
-    /** @var StudyGroupGradeGroup[] */
-    private $studyGroupGroups;
-
-    /** @var StudyGroup|null */
-    private $currentStudyGroup;
-
     /**
      * StudyGroupFilterView constructor.
      * @param StudyGroupGradeGroup[] $studyGroupGroups
-     * @param StudyGroup|null $studyGroup
      */
-    public function __construct(array $studyGroupGroups, ?StudyGroup $studyGroup = null) {
-        $this->studyGroupGroups = $studyGroupGroups;
-        $this->currentStudyGroup = $studyGroup;
+    public function __construct(private array $studyGroupGroups, private ?StudyGroup $currentStudyGroup = null)
+    {
     }
     /**
      * @return StudyGroupGradeGroup[]
@@ -29,9 +21,6 @@ class StudyGroupFilterView implements FilterViewInterface {
         return $this->studyGroupGroups;
     }
 
-    /**
-     * @return StudyGroup|null
-     */
     public function getCurrentStudyGroup(): ?StudyGroup {
         return $this->currentStudyGroup;
     }

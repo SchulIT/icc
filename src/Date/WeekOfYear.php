@@ -7,27 +7,14 @@ use DateTime;
 
 class WeekOfYear {
 
-    /** @var int */
-    private int $year;
-
-    /** @var int */
-    private int $weekNumber;
-
-    public function __construct(int $year, int $weekNumber) {
-        $this->year = $year;
-        $this->weekNumber = $weekNumber;
+    public function __construct(private int $year, private int $weekNumber)
+    {
     }
 
-    /**
-     * @return int
-     */
     public function getYear(): int {
         return $this->year;
     }
 
-    /**
-     * @return int
-     */
     public function getWeekNumber(): int {
         return $this->weekNumber;
     }

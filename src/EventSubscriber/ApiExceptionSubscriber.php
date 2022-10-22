@@ -21,12 +21,8 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
 
     private const JsonContentType = 'application/json';
 
-    private SerializerInterface $serializer;
-    private LoggerInterface $logger;
-
-    public function __construct(SerializerInterface $serializer, LoggerInterface $logger) {
-        $this->serializer = $serializer;
-        $this->logger = $logger;
+    public function __construct(private SerializerInterface $serializer, private LoggerInterface $logger)
+    {
     }
 
     public function onKernelException(ExceptionEvent $event) {
@@ -51,10 +47,10 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
         // Case 1: general HttpException (Authorization/Authentication) or BadRequest
         if($throwable instanceof HttpException) {
             $code = $throwable->getStatusCode();
-            $message = new ErrorResponse($throwable->getMessage(), get_class($throwable));
+            $message = new ErrorResponse($throwable->getMessage(), $throwable::class);
         } else if($throwable instanceof AccessDeniedException) {
             $code = Response::HTTP_FORBIDDEN;
-            $message = new ErrorResponse($throwable->getMessage(), get_class($throwable));
+            $message = new ErrorResponse($throwable->getMessage(), $throwable::class);
         } else if($throwable instanceof ValidationFailedException) { // Case 2: validation failed
             $code = Response::HTTP_BAD_REQUEST;
 
@@ -69,12 +65,12 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
 
             $message = new ErrorResponse(
                 $throwable->getMessage(),
-                get_class($throwable)
+                $throwable::class
             );
         } else { // Case 3: General error
             $message = new ErrorResponse(
                 'An unknown error occured.',
-                get_class($throwable)
+                $throwable::class
             );
         }
 

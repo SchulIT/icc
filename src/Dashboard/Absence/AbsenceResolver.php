@@ -11,18 +11,14 @@ use DateTime;
  * All strategies are explicitly allowed to use a dedicated QueryBuilder instead of relying on the repository methods.
  */
 class AbsenceResolver {
-    private $strategies;
-
     /**
      * @param AbsenceResolveStrategyInterface[] $strategies
      */
-    public function __construct(iterable $strategies) {
-        $this->strategies = $strategies;
+    public function __construct(private iterable $strategies)
+    {
     }
 
     /**
-     * @param DateTime $dateTime
-     * @param int $lesson
      * @param Student[] $students
      * @param string[] $excludedResolvers FQCN of excluded strategies
      * @return AbsentStudent[]
@@ -31,7 +27,7 @@ class AbsenceResolver {
         $absent = [ ];
 
         foreach($this->strategies as $strategy) {
-            if(in_array(get_class($strategy), $excludedResolvers)) {
+            if(in_array($strategy::class, $excludedResolvers)) {
                 continue;
             }
             $absent = array_merge($absent, $strategy->resolveAbsentStudents($dateTime, $lesson, $students));

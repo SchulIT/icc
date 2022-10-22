@@ -18,7 +18,6 @@ class UserUserTypeStrategy implements GroupingStrategyInterface {
     /**
      * @param UserType $keyA
      * @param UserType $keyB
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA->equals($keyB);

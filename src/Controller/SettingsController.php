@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Converter\EnumStringConverter;
 use App\Entity\AppointmentCategory;
 use App\Entity\Grade;
@@ -48,22 +49,18 @@ use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Route("/admin/settings")
  * @Security("is_granted('ROLE_ADMIN')")
  */
+#[Route(path: '/admin/settings')]
 class SettingsController extends AbstractController {
 
-    /**
-     * @Route("", name="admin_settings")
-     */
-    public function index() {
+    #[Route(path: '', name: 'admin_settings')]
+    public function index(): Response {
         return $this->redirectToRoute('admin_settings_general');
     }
 
-    /**
-     * @Route("/general", name="admin_settings_general")
-     */
-    public function general(Request $request, GeneralSettings $settings, DateHelper $dateHelper, SectionRepositoryInterface $sectionRepository) {
+    #[Route(path: '/general', name: 'admin_settings_general')]
+    public function general(Request $request, GeneralSettings $settings, DateHelper $dateHelper, SectionRepositoryInterface $sectionRepository): Response {
         $currentYear = (int)$dateHelper->getToday()->format('Y');
         $choices = [ ];
         for($year = $currentYear - 1; $year <= $currentYear + 1; $year++) {
@@ -75,12 +72,8 @@ class SettingsController extends AbstractController {
             ->add('current_section', ChoiceType::class,  [
                 'choices' => ArrayUtils::createArrayWithKeysAndValues(
                     $sectionRepository->findAll(),
-                    function(Section $section) {
-                        return $section->getDisplayName();
-                    },
-                    function(Section $section) {
-                        return $section->getId();
-                    }
+                    fn(Section $section) => $section->getDisplayName(),
+                    fn(Section $section) => $section->getId()
                 ),
                 'data' => $settings->getCurrentSectionId(),
                 'label' => 'admin.settings.general.current_section.label',
@@ -111,10 +104,8 @@ class SettingsController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/dashboard", name="admin_settings_dashboard")
-     */
-    public function dashboard(Request $request, DashboardSettings $dashboardSettings) {
+    #[Route(path: '/dashboard', name: 'admin_settings_dashboard')]
+    public function dashboard(Request $request, DashboardSettings $dashboardSettings): Response {
         $builder = $this->createFormBuilder();
         $builder
             ->add('removable_types', TextType::class, [
@@ -215,20 +206,14 @@ class SettingsController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/notifications", name="admin_settings_notifications")
-     */
-    public function notifications(Request $request, NotificationSettings $notificationSettings, EnumStringConverter $enumStringConverter) {
+    #[Route(path: '/notifications', name: 'admin_settings_notifications')]
+    public function notifications(Request $request, NotificationSettings $notificationSettings, EnumStringConverter $enumStringConverter): Response {
         $builder = $this->createFormBuilder();
         $builder
             ->add('email_enabled', ChoiceType::class, [
                 'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
-                'choice_label' => function(UserType $userType) use($enumStringConverter) {
-                    return $enumStringConverter->convert($userType);
-                },
-                'choice_value' => function(UserType $userType) {
-                    return $userType->getValue();
-                },
+                'choice_label' => fn(UserType $userType) => $enumStringConverter->convert($userType),
+                'choice_value' => fn(UserType $userType) => $userType->getValue(),
                 'expanded' => true,
                 'multiple' => true,
                 'label' => 'admin.settings.notifications.email.label',
@@ -264,10 +249,8 @@ class SettingsController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/absences", name="admin_settings_absences")
-     */
-    public function absences(Request $request, StudentAbsenceSettings $settings) {
+    #[Route(path: '/absences', name: 'admin_settings_absences')]
+    public function absences(Request $request, StudentAbsenceSettings $settings): Response {
         $builder = $this->createFormBuilder();
         $builder
             ->add('enabled', CheckboxType::class, [
@@ -355,21 +338,15 @@ class SettingsController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/exams", name="admin_settings_exams")
-     */
+    #[Route(path: '/exams', name: 'admin_settings_exams')]
     public function exams(Request $request, ExamSettings $examSettings, EnumStringConverter $enumStringConverter,
-                          GradeRepositoryInterface $gradeRepository, Sorter $sorter) {
+                          GradeRepositoryInterface $gradeRepository, Sorter $sorter): Response {
         $builder = $this->createFormBuilder();
         $builder
             ->add('visibility', ChoiceType::class, [
                 'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
-                'choice_label' => function(UserType $userType) use($enumStringConverter) {
-                    return $enumStringConverter->convert($userType);
-                },
-                'choice_value' => function(UserType $userType) {
-                    return $userType->getValue();
-                },
+                'choice_label' => fn(UserType $userType) => $enumStringConverter->convert($userType),
+                'choice_value' => fn(UserType $userType) => $userType->getValue(),
                 'expanded' => true,
                 'multiple' => true,
                 'label' => 'label.visibility',
@@ -426,11 +403,7 @@ class SettingsController extends AbstractController {
             ->add('visible_grades', ChoiceType::class, [
                 'label' => 'admin.settings.exams.visible_grades.label',
                 'help' => 'admin.settings.exams.visible_grades.help',
-                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
-                    return $grade->getName();
-                }, function (Grade $grade) {
-                    return $grade->getId();
-                }),
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), fn(Grade $grade) => $grade->getName(), fn(Grade $grade) => $grade->getId()),
                 'multiple' => true,
                 'expanded' => false,
                 'attr' => [
@@ -507,11 +480,9 @@ class SettingsController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/timetable", name="admin_settings_timetable")
-     */
+    #[Route(path: '/timetable', name: 'admin_settings_timetable')]
     public function timetable(Request $request, TimetableSettings $timetableSettings, GradeRepositoryInterface $gradeRepository,
-                              AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, EnumStringConverter $enumStringConverter, TranslatorInterface $translator) {
+                              AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, EnumStringConverter $enumStringConverter, TranslatorInterface $translator): Response {
         $builder = $this->createFormBuilder();
         $builder
             ->add('days', ChoiceType::class, [
@@ -545,11 +516,7 @@ class SettingsController extends AbstractController {
             ->add('categories', ChoiceType::class, [
                 'label' => 'admin.settings.timetable.no_school_category.label',
                 'help' => 'admin.settings.timetable.no_school_category.help',
-                'choices' => ArrayUtils::createArrayWithKeysAndValues($appointmentCategoryRepository->findAll(), function(AppointmentCategory $category) {
-                    return $category->getName();
-                }, function (AppointmentCategory $category) {
-                    return $category->getId();
-                }),
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($appointmentCategoryRepository->findAll(), fn(AppointmentCategory $category) => $category->getName(), fn(AppointmentCategory $category) => $category->getId()),
                 'placeholder' => 'admin.settings.timetable.no_school_category.none',
                 'required' => false,
                 'multiple' => true,
@@ -561,11 +528,7 @@ class SettingsController extends AbstractController {
             ->add('grades_course_names', ChoiceType::class, [
                 'label' => 'admin.settings.timetable.grades_course_names.label',
                 'help' => 'admin.settings.timetable.grades_course_names.help',
-                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
-                    return $grade->getName();
-                }, function (Grade $grade) {
-                    return $grade->getId();
-                }),
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), fn(Grade $grade) => $grade->getName(), fn(Grade $grade) => $grade->getId()),
                 'multiple' => true,
                 'expanded' => false,
                 'attr' => [
@@ -576,11 +539,7 @@ class SettingsController extends AbstractController {
             ->add('grades_membership_types', ChoiceType::class, [
                 'label' => 'admin.settings.timetable.grades_membership_types.label',
                 'help' => 'admin.settings.timetable.grades_membership_types.help',
-                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
-                    return $grade->getName();
-                }, function (Grade $grade) {
-                    return $grade->getId();
-                }),
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), fn(Grade $grade) => $grade->getName(), fn(Grade $grade) => $grade->getId()),
                 'multiple' => true,
                 'expanded' => false,
                 'attr' => [
@@ -726,10 +685,8 @@ class SettingsController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/substitutions", name="admin_settings_substitutions")
-     */
-    public function substitutions(Request $request, SubstitutionSettings $substitutionSettings, EnumStringConverter $enumStringConverter) {
+    #[Route(path: '/substitutions', name: 'admin_settings_substitutions')]
+    public function substitutions(Request $request, SubstitutionSettings $substitutionSettings, EnumStringConverter $enumStringConverter): Response {
         $builder = $this->createFormBuilder();
         $builder
             ->add('ahead_days', IntegerType::class, [
@@ -752,12 +709,8 @@ class SettingsController extends AbstractController {
             ])
             ->add('absence_visibility', ChoiceType::class, [
                 'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
-                'choice_label' => function(UserType $userType) use($enumStringConverter) {
-                    return $enumStringConverter->convert($userType);
-                },
-                'choice_value' => function(UserType $userType) {
-                    return $userType->getValue();
-                },
+                'choice_label' => fn(UserType $userType) => $enumStringConverter->convert($userType),
+                'choice_value' => fn(UserType $userType) => $userType->getValue(),
                 'expanded' => true,
                 'multiple' => true,
                 'label' => 'label.absence_visibility',
@@ -828,10 +781,8 @@ class SettingsController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/appointments", name="admin_settings_appointments")
-     */
-    public function appointments(Request $request, AppointmentsSettings $appointmentsSettings, EnumStringConverter $enumStringConverter) {
+    #[Route(path: '/appointments', name: 'admin_settings_appointments')]
+    public function appointments(Request $request, AppointmentsSettings $appointmentsSettings, EnumStringConverter $enumStringConverter): Response {
         $builder = $this->createFormBuilder();
         $userTypes = UserType::values();
 
@@ -902,10 +853,8 @@ class SettingsController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/import", name="admin_settings_import")
-     */
-    public function import(Request $request, ImportSettings $settings, SectionRepositoryInterface $sectionRepository) {
+    #[Route(path: '/import', name: 'admin_settings_import')]
+    public function import(Request $request, ImportSettings $settings, SectionRepositoryInterface $sectionRepository): Response {
         $builder = $this->createFormBuilder();
         $builder
             ->add('rules', CollectionType::class, [
@@ -921,12 +870,8 @@ class SettingsController extends AbstractController {
                 'placeholder' => 'label.choose',
                 'choices' => ArrayUtils::createArrayWithKeysAndValues(
                     $sectionRepository->findAll(),
-                    function(Section $section) {
-                        return $section->getDisplayName();
-                    },
-                    function(Section $section) {
-                        return $section->getId();
-                    }
+                    fn(Section $section) => $section->getDisplayName(),
+                    fn(Section $section) => $section->getId()
                 ),
                 'data' => $settings->getFallbackSection()
             ]);
@@ -958,20 +903,13 @@ class SettingsController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/book", name="admin_settings_book")
-     *
-     */
-    public function book(Request $request, BookSettings $settings, GradeRepositoryInterface $gradeRepository) {
+    #[Route(path: '/book', name: 'admin_settings_book')]
+    public function book(Request $request, BookSettings $settings, GradeRepositoryInterface $gradeRepository): Response {
         $builder = $this->createFormBuilder();
         $builder->add('grades_grade_teacher_excuses', ChoiceType::class, [
                 'label' => 'admin.settings.book.excuses.grades_grade_teacher_excuses.label',
                 'help' => 'admin.settings.book.excuses.grades_grade_teacher_excuses.help',
-                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
-                    return $grade->getName();
-                }, function (Grade $grade) {
-                    return $grade->getId();
-                }),
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), fn(Grade $grade) => $grade->getName(), fn(Grade $grade) => $grade->getId()),
                 'multiple' => true,
                 'expanded' => false,
                 'attr' => [
@@ -982,11 +920,7 @@ class SettingsController extends AbstractController {
             ->add('grades_tuition_teacher_excuses', ChoiceType::class, [
                 'label' => 'admin.settings.book.excuses.grades_tuition_teacher_excuses.label',
                 'help' => 'admin.settings.book.excuses.grades_tuition_teacher_excuses.help',
-                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), function(Grade $grade) {
-                    return $grade->getName();
-                }, function (Grade $grade) {
-                    return $grade->getId();
-                }),
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), fn(Grade $grade) => $grade->getName(), fn(Grade $grade) => $grade->getId()),
                 'multiple' => true,
                 'expanded' => false,
                 'attr' => [

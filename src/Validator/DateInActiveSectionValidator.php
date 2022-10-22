@@ -13,14 +13,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DateInActiveSectionValidator extends ConstraintValidator {
 
-    private DateHelper $dateHelper;
-    private SectionResolverInterface $sectionResolver;
-    private TranslatorInterface $translator;
-
-    public function __construct(DateHelper $dateHelper, SectionResolverInterface $sectionResolver, TranslatorInterface $translator) {
-        $this->dateHelper = $dateHelper;
-        $this->sectionResolver = $sectionResolver;
-        $this->translator = $translator;
+    public function __construct(private DateHelper $dateHelper, private SectionResolverInterface $sectionResolver, private TranslatorInterface $translator)
+    {
     }
 
     /**

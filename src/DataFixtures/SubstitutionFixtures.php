@@ -14,14 +14,8 @@ use SchulIT\CommonBundle\Helper\DateHelper;
 
 class SubstitutionFixtures extends Fixture implements DependentFixtureInterface {
 
-    private $roomGenerator;
-    private $generator;
-    private $dateHelper;
-
-    public function __construct(RoomGenerator $roomGenerator, Generator $generator, DateHelper $dateHelper) {
-        $this->roomGenerator = $roomGenerator;
-        $this->generator = $generator;
-        $this->dateHelper = $dateHelper;
+    public function __construct(private RoomGenerator $roomGenerator, private Generator $generator, private DateHelper $dateHelper)
+    {
     }
 
     public function load(ObjectManager $manager) {

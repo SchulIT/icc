@@ -12,45 +12,29 @@ use Symfony\Component\Validator\Constraints as Assert;
 class DateLesson {
     /**
      * @ORM\Column(type="date")
-     * @Assert\NotNull()
-     * @var DateTime|null
      */
-    private $date;
+    #[Assert\NotNull]
+    private ?\DateTime $date = null;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotNull()
-     * @var int|null
      */
-    private $lesson;
+    #[Assert\NotNull]
+    private ?int $lesson = null;
 
-    /**
-     * @return DateTime|null
-     */
     public function getDate(): ?DateTime {
         return $this->date;
     }
 
-    /**
-     * @param DateTime|null $date
-     * @return DateLesson
-     */
     public function setDate(?DateTime $date): DateLesson {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getLesson(): ?int {
         return $this->lesson;
     }
 
-    /**
-     * @param int|null $lesson
-     * @return DateLesson
-     */
     public function setLesson(?int $lesson): DateLesson {
         $this->lesson = $lesson;
         return $this;
@@ -58,10 +42,6 @@ class DateLesson {
 
     /**
      * Note: boundaries are considered inclusive
-     *
-     * @param DateLesson $start
-     * @param DateLesson $end
-     * @return bool
      */
     public function isBetween(DateLesson $start, DateLesson $end): bool {
         if ($this->getDate() < $start->getDate() || $this->getDate() > $end->getDate()) {

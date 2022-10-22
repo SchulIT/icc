@@ -16,16 +16,15 @@ class Room extends ResourceEntity {
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $externalId;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $externalId = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\NotBlank(allowNull=true)
-     * @Assert\GreaterThanOrEqual(0)
      */
+    #[Assert\NotBlank(allowNull: true)]
+    #[Assert\GreaterThanOrEqual(0)]
     private $capacity;
 
     /**
@@ -40,17 +39,10 @@ class Room extends ResourceEntity {
         $this->tags = new ArrayCollection();
     }
 
-    /**
-     * @return string|null
-     */
     public function getExternalId(): ?string {
         return $this->externalId;
     }
 
-    /**
-     * @param string|null $externalId
-     * @return Room
-     */
     public function setExternalId(?string $externalId): Room {
         $this->externalId = $externalId;
         return $this;
@@ -74,16 +66,10 @@ class Room extends ResourceEntity {
         return $this;
     }
 
-    /**
-     * @param RoomTagInfo $tagInfo
-     */
     public function addTag(RoomTagInfo $tagInfo) {
         $this->tags->add($tagInfo);
     }
 
-    /**
-     * @param RoomTagInfo $tagInfo
-     */
     public function removeTag(RoomTagInfo $tagInfo) {
         $this->tags->removeElement($tagInfo);
     }

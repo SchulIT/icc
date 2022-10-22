@@ -10,24 +10,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WeekType extends EntityType {
-    private TranslatorInterface $translator;
-
-    public function __construct(TranslatorInterface $translator, ManagerRegistry $registry) {
+    public function __construct(private TranslatorInterface $translator, ManagerRegistry $registry) {
         parent::__construct($registry);
-        $this->translator = $translator;
     }
 
     public function configureOptions(OptionsResolver $resolver) {
         parent::configureOptions($resolver);
 
         $resolver->setDefault('class', Week::class);
-        $resolver->setDefault('choice_label', function(Week $week) {
-            return $this->translator->trans('date.week_label', [ '%week%' => $week->getNumber() ]);
-        });
-        $resolver->setDefault('query_builder', function (EntityRepository $repository) {
-            return $repository->createQueryBuilder('w')
-                ->orderBy('w.number', 'asc');
-        });
+        $resolver->setDefault('choice_label', fn(Week $week) => $this->translator->trans('date.week_label', [ '%week%' => $week->getNumber() ]));
+        $resolver->setDefault('query_builder', fn(EntityRepository $repository) => $repository->createQueryBuilder('w')
+            ->orderBy('w.number', 'asc'));
         $resolver->setDefault('by_reference', false);
     }
 }

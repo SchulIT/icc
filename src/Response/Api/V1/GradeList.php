@@ -12,7 +12,7 @@ class GradeList {
      *
      * @var Grade[]
      */
-    private $grades;
+    private ?array $grades = null;
 
     /**
      * @return Grade[]
@@ -23,7 +23,6 @@ class GradeList {
 
     /**
      * @param Grade[] $grades
-     * @return GradeList
      */
     public function setGrades(array $grades): GradeList {
         $this->grades = $grades;

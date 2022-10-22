@@ -8,7 +8,6 @@ use League\Csv\Reader;
 class ExamReader extends AbstractGpuReader {
 
     /**
-     * @param Reader $reader
      * @return Exam[]
      */
     public function readGpu(Reader $reader): array {

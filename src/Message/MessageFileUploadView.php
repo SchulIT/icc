@@ -10,17 +10,14 @@ use Doctrine\Common\Collections\Collection;
 
 class MessageFileUploadView extends AbstractMessageFileView {
 
-    /** @var array<int, MessageFileUpload[]>  */
-    private $userUploads;
-
-    public function __construct(array $students, array $studentUsersLookup, array $parentUsersLookup, array $teachers, array $teacherUsersLookup, array $users, array $userUploads) {
+    /**
+     * @param array<int, MessageFileUpload[]> $userUploads
+     */
+    public function __construct(array $students, array $studentUsersLookup, array $parentUsersLookup, array $teachers, array $teacherUsersLookup, array $users, private array $userUploads) {
         parent::__construct($students, $studentUsersLookup, $parentUsersLookup, $teachers, $teacherUsersLookup, $users);
-
-        $this->userUploads = $userUploads;
     }
 
     /**
-     * @param User $user
      * @param iterable|MessageFile[] $files
      * @param bool $onlyUploaded Whether or not to only include uploaded files in result (otherwise, dummy elements are created)
      * @return MessageFileUpload[]
@@ -30,9 +27,7 @@ class MessageFileUploadView extends AbstractMessageFileView {
 
         $userUploads = ArrayUtils::createArrayWithKeys(
             $this->userUploads[$user->getId()] ?? [ ],
-            function(MessageFileUpload $upload) {
-                return $upload->getMessageFile()->getId();
-            }
+            fn(MessageFileUpload $upload) => $upload->getMessageFile()->getId()
         );
 
         foreach($files as $file) {
@@ -47,9 +42,7 @@ class MessageFileUploadView extends AbstractMessageFileView {
     }
 
     /**
-     * @param array $users
      * @param array|MessageFile[]|Collection<MessageFile> $files
-     * @return ProgressView
      */
     public function getProgress(array $users, iterable $files): ProgressView {
         $progress = 0;

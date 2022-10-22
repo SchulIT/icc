@@ -14,17 +14,10 @@ trait ContextTrait {
      */
     private ?string $context = null;
 
-    /**
-     * @return string|null
-     */
     public function getContext(): ?string {
         return $this->context;
     }
 
-    /**
-     * @param string|null $context
-     * @return self
-     */
     public function setContext(?string $context): self {
         $this->context = $context;
         return $this;

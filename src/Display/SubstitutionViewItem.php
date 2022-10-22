@@ -6,17 +6,13 @@ use App\Entity\Substitution;
 
 class SubstitutionViewItem extends AbstractViewItem {
 
-    /** @var Substitution */
-    private $substitution;
+    private Substitution $substitution;
 
     public function __construct(Substitution $substitution) {
         parent::__construct($substitution->getLessonStart(), $substitution->startsBefore());
         $this->substitution = $substitution;
     }
 
-    /**
-     * @return Substitution
-     */
     public function getSubstitution(): Substitution {
         return $this->substitution;
     }

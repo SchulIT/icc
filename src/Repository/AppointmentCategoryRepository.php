@@ -6,10 +6,6 @@ use App\Entity\AppointmentCategory;
 
 class AppointmentCategoryRepository extends AbstractTransactionalRepository implements AppointmentCategoryRepositoryInterface {
 
-    /**
-     * @param int $id
-     * @return AppointmentCategory|null
-     */
     public function findOneById(int $id): ?AppointmentCategory {
         return $this->em->getRepository(AppointmentCategory::class)
             ->findOneBy([
@@ -17,10 +13,6 @@ class AppointmentCategoryRepository extends AbstractTransactionalRepository impl
             ]);
     }
 
-    /**
-     * @param string $externalId
-     * @return AppointmentCategory|null
-     */
     public function findOneByExternalId(string $externalId): ?AppointmentCategory {
         return $this->em->getRepository(AppointmentCategory::class)
             ->findOneBy([
@@ -38,17 +30,11 @@ class AppointmentCategoryRepository extends AbstractTransactionalRepository impl
             ]);
     }
 
-    /**
-     * @param AppointmentCategory $appointmentCategory
-     */
     public function persist(AppointmentCategory $appointmentCategory): void {
         $this->em->persist($appointmentCategory);
         $this->flushIfNotInTransaction();
     }
 
-    /**
-     * @param AppointmentCategory $appointmentCategory
-     */
     public function remove(AppointmentCategory $appointmentCategory): void {
         $this->em->remove($appointmentCategory);
         $this->flushIfNotInTransaction();

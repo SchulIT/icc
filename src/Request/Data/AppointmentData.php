@@ -12,75 +12,67 @@ class AppointmentData {
      * Your ID which is used to update existing appointments.
      *
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $id;
+    #[Assert\NotBlank]
+    private string $id;
 
     /**
      * The key of the category which the appointment belongs to.
      *
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $category;
+    #[Assert\NotBlank]
+    private string $category;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $subject;
+    #[Assert\NotBlank]
+    private string $subject;
 
     /**
      * Content of the appointment - must not be empty but may be null.
      *
      * @Serializer\Type("string")
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $content;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $content = null;
 
     /**
      * @Serializer\Type("DateTime")
-     * @Assert\NotNull()
-     * @var DateTime
      */
-    private $start;
+    #[Assert\NotNull]
+    private \DateTime $start;
 
     /**
      * End of the appointment. Note: this value is exclusive which means that an all day appointment on April 30, 2020
      * has a start date of "2020-04-30T00:00:00" and end date of "2020-05-01T00:00:00".
      *
      * @Serializer\Type("DateTime")
-     * @Assert\NotNull()
-     * @var DateTime
      */
-    private $end;
+    #[Assert\NotNull]
+    private \DateTime $end;
 
     /**
      * Location of the appointment - must not be empty but may be null.
      *
      * @Serializer\Type("string")
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $location;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $location = null;
 
     /**
      * @Serializer\Type("boolean")
-     * @var boolean
      */
-    private $isAllDay;
+    private bool $isAllDay;
 
     /**
      * @Serializer\Type("array<string>")
-     * @Assert\Type("array")
-     * @Assert\Choice({"student", "parent", "teacher"}, multiple=true)
      * @var string[]
      */
-    private $visibilities;
+    #[Assert\Type('array')]
+    #[Assert\Choice(['student', 'parent', 'teacher'], multiple: true)]
+    private ?array $visibilities = null;
 
     /**
      * List of external study group IDs, which this appointment belongs to. May be empty.
@@ -88,15 +80,14 @@ class AppointmentData {
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $studyGroups;
+    private array $studyGroups;
 
     /**
      * @Serializer\Type("bool")
      * @Serializer\SerializedName("mark_students_absent")
      * Whether or not to mark students absent during this appointment
-     * @var bool
      */
-    private $markStudentsAbsent = true;
+    private bool $markStudentsAbsent = true;
 
     /**
      * List of teachers (their acronyms) which attend this appointment.
@@ -104,16 +95,15 @@ class AppointmentData {
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $organizers;
+    private array $organizers;
 
     /**
      * List of external organizers - must not be empty but may be null.
      *
      * @Serializer\Type("string")
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $externalOrganizers;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $externalOrganizers = null;
 
     /**
      * @return string
@@ -124,7 +114,6 @@ class AppointmentData {
 
     /**
      * @param string $id
-     * @return AppointmentData
      */
     public function setId($id): AppointmentData {
         $this->id = $id;
@@ -140,7 +129,6 @@ class AppointmentData {
 
     /**
      * @param string $category
-     * @return AppointmentData
      */
     public function setCategory($category): AppointmentData {
         $this->category = $category;
@@ -156,24 +144,16 @@ class AppointmentData {
 
     /**
      * @param string $subject
-     * @return AppointmentData
      */
     public function setSubject($subject): AppointmentData {
         $this->subject = $subject;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getContent(): ?string {
         return $this->content;
     }
 
-    /**
-     * @param string|null $content
-     * @return AppointmentData
-     */
     public function setContent(?string $content): AppointmentData {
         $this->content = $content;
         return $this;
@@ -188,7 +168,6 @@ class AppointmentData {
 
     /**
      * @param \DateTime $start
-     * @return AppointmentData
      */
     public function setStart($start): AppointmentData {
         $this->start = $start;
@@ -204,7 +183,6 @@ class AppointmentData {
 
     /**
      * @param \DateTime $end
-     * @return AppointmentData
      */
     public function setEnd($end): AppointmentData {
         $this->end = $end;
@@ -220,7 +198,6 @@ class AppointmentData {
 
     /**
      * @param string|null $location
-     * @return AppointmentData
      */
     public function setLocation($location): AppointmentData {
         $this->location = $location;
@@ -236,7 +213,6 @@ class AppointmentData {
 
     /**
      * @param bool $isAllDay
-     * @return AppointmentData
      */
     public function setIsAllDay($isAllDay): AppointmentData {
         $this->isAllDay = $isAllDay;
@@ -252,7 +228,6 @@ class AppointmentData {
 
     /**
      * @param string[] $visibilities
-     * @return AppointmentData
      */
     public function setVisibilities(array $visibilities): AppointmentData {
         $this->visibilities = $visibilities;
@@ -268,24 +243,16 @@ class AppointmentData {
 
     /**
      * @param string[] $studyGroups
-     * @return AppointmentData
      */
     public function setStudyGroups($studyGroups): AppointmentData {
         $this->studyGroups = $studyGroups;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isMarkStudentsAbsent(): bool {
         return $this->markStudentsAbsent;
     }
 
-    /**
-     * @param bool $markStudentsAbsent
-     * @return AppointmentData
-     */
     public function setMarkStudentsAbsent(bool $markStudentsAbsent): AppointmentData {
         $this->markStudentsAbsent = $markStudentsAbsent;
         return $this;
@@ -300,7 +267,6 @@ class AppointmentData {
 
     /**
      * @param string[] $organizers
-     * @return AppointmentData
      */
     public function setOrganizers($organizers): AppointmentData {
         $this->organizers = $organizers;
@@ -316,7 +282,6 @@ class AppointmentData {
 
     /**
      * @param string|null $externalOrganizers
-     * @return AppointmentData
      */
     public function setExternalOrganizers($externalOrganizers): AppointmentData {
         $this->externalOrganizers = $externalOrganizers;

@@ -167,6 +167,7 @@ services:
 
     App\Rooms\Status\ServiceCenterRoomStatusHelper:
         arguments:
+            $client: '@eight_points_guzzle.client.servicecenter'
             $isEnabled: '%env(bool:ROOM_STATUS)%'
 
     # CONTROLLER
@@ -260,7 +261,7 @@ services:
 
     App\Command\RemoveExpiredStudentAbsencesCommand:
         arguments:
-            $studentAbsencesFilesystem: '@oneup_flysystem.student_absence_filesystem'
+            $filesystem: '@oneup_flysystem.student_absence_filesystem'
 
     # SECTION
     App\Section\SectionResolver: ~

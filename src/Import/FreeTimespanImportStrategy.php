@@ -12,10 +12,8 @@ class FreeTimespanImportStrategy implements ReplaceImportStrategyInterface {
 
     use ContextAwareTrait;
 
-    private FreeTimespanRepositoryInterface $repository;
-
-    public function __construct(FreeTimespanRepositoryInterface $repository) {
-        $this->repository = $repository;
+    public function __construct(private FreeTimespanRepositoryInterface $repository)
+    {
     }
 
     /**
@@ -27,7 +25,6 @@ class FreeTimespanImportStrategy implements ReplaceImportStrategyInterface {
 
     /**
      * @param FreeLessonTimespansData $data
-     * @return array
      */
     public function getData($data): array {
         return $data->getFreeLessons();

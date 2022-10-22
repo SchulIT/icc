@@ -2,6 +2,7 @@
 
 namespace App\Markdown\Renderer;
 
+use InvalidArgumentException;
 use App\Markdown\Element\AlertBlock;
 use League\CommonMark\Block\Element\AbstractBlock;
 use League\CommonMark\Block\Renderer\BlockRendererInterface;
@@ -15,7 +16,7 @@ class AlertBlockRenderer implements BlockRendererInterface {
      */
     public function render(AbstractBlock $block, ElementRendererInterface $htmlRenderer, $inTightList = false): string|HtmlElement|null {
         if(!$block instanceof AlertBlock) {
-            throw new \InvalidArgumentException(sprintf('$block must be of type "%s" ("%s" given)', AlertBlock::class, get_class($block)));
+            throw new InvalidArgumentException(sprintf('$block must be of type "%s" ("%s" given)', AlertBlock::class, $block::class));
         }
 
         return new HtmlElement('div', [

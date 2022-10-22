@@ -6,16 +6,13 @@ use App\Entity\Exam;
 
 class ExamDateLessonStrategy implements SortingStrategyInterface {
 
-    private $dateStrategy;
-
-    public function __construct(DateStrategy $dateStrategy) {
-        $this->dateStrategy = $dateStrategy;
+    public function __construct(private DateStrategy $dateStrategy)
+    {
     }
 
     /**
      * @param Exam $objectA
      * @param Exam $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         $cmpDate = $this->dateStrategy->compare($objectA->getDate(), $objectB->getDate());

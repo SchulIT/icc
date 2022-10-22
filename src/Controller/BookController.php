@@ -57,9 +57,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/book")
- */
+#[Route(path: '/book')]
 class BookController extends AbstractController {
 
     use CalendarWeeksTrait;
@@ -73,7 +71,6 @@ class BookController extends AbstractController {
     }
 
     /**
-     * @param DateTime $start
      * @param DateTime $end $end - $start must not be greater than one year!
      * @return DateTime[] All first days of the month with their month number as key.
      */
@@ -97,7 +94,7 @@ class BookController extends AbstractController {
 
                 $selectedDate = $this->getClosestMonthStart($selectedDate);
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             $selectedDate = null;
         }
 
@@ -113,9 +110,6 @@ class BookController extends AbstractController {
     }
 
     /**
-     * @param Section|null $currentSection
-     * @param User $user
-     * @param TuitionRepositoryInterface $tuitionRepository
      * @return Tuition[]
      */
     private function resolveOwnTuitions(?Section $currentSection, User $user, TuitionRepositoryInterface $tuitionRepository): array {
@@ -133,8 +127,6 @@ class BookController extends AbstractController {
     }
 
     /**
-     * @param Section|null $currentSection
-     * @param User $user
      * @return Grade[]
      */
     private function resolveOwnGrades(?Section $currentSection, User $user): array {
@@ -144,30 +136,22 @@ class BookController extends AbstractController {
 
         if (EnumArrayUtils::inArray($user->getUserType(), [UserType::Student(), UserType::Parent()])) {
             return ArrayUtils::unique(
-                $user->getStudents()->map(function(Student $student) use($currentSection) {
-                    return $student->getGrade($currentSection);
-                })
+                $user->getStudents()->map(fn(Student $student) => $student->getGrade($currentSection))
             );
         } else if ($user->getUserType()->equals(UserType::Teacher())) {
             return $user->getTeacher()->getGrades()->
-                filter(function(GradeTeacher $gradeTeacher) use ($currentSection) {
-                    return $gradeTeacher->getSection() === $currentSection;
-                })
-                ->map(function(GradeTeacher $gradeTeacher) {
-                    return $gradeTeacher->getGrade();
-                })
+                filter(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getSection() === $currentSection)
+                ->map(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getGrade())
                 ->toArray();
         }
 
         return [ ];
     }
 
-    /**
-     * @Route("/entry", name="book")
-     */
+    #[Route(path: '/entry', name: 'book')]
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                           TuitionRepositoryInterface $tuitionRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository, DateHelper $dateHelper, Request $request,
-                          EntryOverviewHelper $entryOverviewHelper, AbsenceExcuseResolver $absenceExcuseResolver, BookSettings $settings) {
+                          EntryOverviewHelper $entryOverviewHelper, AbsenceExcuseResolver $absenceExcuseResolver, BookSettings $settings): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -195,11 +179,7 @@ class BookController extends AbstractController {
             if ($gradeFilterView->getCurrentGrade() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForGrade($gradeFilterView->getCurrentGrade(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
 
-                $students = $gradeFilterView->getCurrentGrade()->getMemberships()->filter(function(GradeMembership $membership) use ($sectionFilterView) {
-                    return $membership->getSection()->getId() === $sectionFilterView->getCurrentSection()->getId();
-                })->map(function(GradeMembership $membership) {
-                    return $membership->getStudent();
-                })->toArray();
+                $students = $gradeFilterView->getCurrentGrade()->getMemberships()->filter(fn(GradeMembership $membership) => $membership->getSection()->getId() === $sectionFilterView->getCurrentSection()->getId())->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
 
                 foreach($students as $student) {
                     $info[] = $absenceExcuseResolver->resolve($student);
@@ -207,9 +187,7 @@ class BookController extends AbstractController {
             } else if ($tuitionFilterView->getCurrentTuition() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition(), $selectedDate, (clone $selectedDate)->modify('+1 month')->modify('-1 day'));
 
-                $students = $tuitionFilterView->getCurrentTuition()->getStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
-                    return $membership->getStudent();
-                });
+                $students = $tuitionFilterView->getCurrentTuition()->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent());
 
                 foreach($students as $student) {
                     $info[] = $absenceExcuseResolver->resolve($student, [$tuitionFilterView->getCurrentTuition()]);
@@ -271,9 +249,7 @@ class BookController extends AbstractController {
             return false;
         });
         $missingExcuseCount = array_sum(
-            array_map(function(StudentInfo $info) {
-                return $info->getNotExcusedOrNotSetLessonsCount();
-            }, $missingExcuses));
+            array_map(fn(StudentInfo $info) => $info->getNotExcusedOrNotSetLessonsCount(), $missingExcuses));
 
         $weekStarts = [ ];
         $monthStarts = [ ];
@@ -344,12 +320,10 @@ class BookController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/missing", name="missing_book_entries")
-     */
+    #[Route(path: '/missing', name: 'missing_book_entries')]
     public function missing(Request $request, SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter,
                             TuitionFilter $tuitionFilter, TimetableLessonRepositoryInterface $lessonRepository, TuitionRepositoryInterface $tuitionRepository,
-                            DateHelper $dateHelper, Sorter $sorter, Grouper $grouper) {
+                            DateHelper $dateHelper, Sorter $sorter, Grouper $grouper): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         /** @var User $user */
@@ -427,12 +401,10 @@ class BookController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/student", name="book_students")
-     */
+    #[Route(path: '/student', name: 'book_students')]
     public function students(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                              TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository, StudentInfoResolver $studentInfoResolver,
-                             Sorter $sorter, Request $request) {
+                             Sorter $sorter, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -454,9 +426,7 @@ class BookController extends AbstractController {
             $students = $studentRepository->findAllByStudyGroups([$tuitionFilterView->getCurrentTuition()->getStudyGroup()]);
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
-            $studyGroups = array_map(function(Tuition $tuition) {
-                return $tuition->getStudyGroup();
-            }, $tuitions);
+            $studyGroups = array_map(fn(Tuition $tuition) => $tuition->getStudyGroup(), $tuitions);
 
             $students = $studentRepository->findAllByStudyGroups($studyGroups);
         }
@@ -480,13 +450,13 @@ class BookController extends AbstractController {
     }
 
     /**
-     * @Route("/student/{student}", name="book_student")
      * @ParamConverter("student", class="App\Entity\Student", options={"mapping": {"student": "uuid"}})
      */
+    #[Route(path: '/student/{student}', name: 'book_student')]
     public function student(Student $student, SectionFilter $sectionFilter, StudentAwareTuitionFilter $tuitionFilter,
                             StudentAwareGradeFilter $gradeFilter, TeacherFilter  $teacherFilter, Request $request,
                             StudentInfoResolver $infoResolver, TuitionRepositoryInterface $tuitionRepository,
-                            Sorter $sorter, Grouper $grouper) {
+                            Sorter $sorter, Grouper $grouper): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -536,44 +506,44 @@ class BookController extends AbstractController {
     }
 
     /**
-     * @Route("/{section}/t/{tuition}/export/json", name="book_export_tuition_json")
      * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
      * @ParamConverter("tuition", class="App\Entity\Tuition", options={"mapping": {"tuition": "uuid"}})
      */
-    public function exportTutionJson(Tuition $tuition, Section $section, BookExporter $exporter) {
+    #[Route(path: '/{section}/t/{tuition}/export/json', name: 'book_export_tuition_json')]
+    public function exportTutionJson(Tuition $tuition, Section $section, BookExporter $exporter): Response {
         $filename = sprintf('%s-%d-%d.json', $tuition->getName(), $section->getYear(), $section->getNumber());
         $json = $exporter->exportTuitionJson($tuition, $section);
         return $this->createResponse($json, 'application/json', $filename);
     }
 
     /**
-     * @Route("/{section}/t/{tuition}/export/xml", name="book_export_tuition_xml")
      * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
      * @ParamConverter("tuition", class="App\Entity\Tuition", options={"mapping": {"tuition": "uuid"}})
      */
-    public function exportTuitionXml(Tuition $tuition, Section $section, BookExporter $exporter) {
+    #[Route(path: '/{section}/t/{tuition}/export/xml', name: 'book_export_tuition_xml')]
+    public function exportTuitionXml(Tuition $tuition, Section $section, BookExporter $exporter): Response {
         $filename = sprintf('%s-%d-%d.xml', $tuition->getName(), $section->getYear(), $section->getNumber());
         $xml = $exporter->exportTuitionXml($tuition, $section);
         return $this->createResponse($xml, 'application/xml', $filename);
     }
 
     /**
-     * @Route("/{section}/g/{grade}/export/json", name="book_export_grade_json")
      * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
      * @ParamConverter("grade", class="App\Entity\Grade", options={"mapping": {"grade": "uuid"}})
      */
-    public function exportGradeJson(Grade $grade, Section $section, BookExporter $exporter) {
+    #[Route(path: '/{section}/g/{grade}/export/json', name: 'book_export_grade_json')]
+    public function exportGradeJson(Grade $grade, Section $section, BookExporter $exporter): Response {
         $filename = sprintf('%s-%d-%d.json', $grade->getName(), $section->getYear(), $section->getNumber());
         $json = $exporter->exportGradeJson($grade, $section);
         return $this->createResponse($json, 'application/json', $filename);
     }
 
     /**
-     * @Route("/{section}/g/{grade}/export/xml", name="book_export_grade_xml")
      * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
      * @ParamConverter("grade", class="App\Entity\Grade", options={"mapping": {"grade": "uuid"}})
      */
-    public function exportGradeXml(Grade $grade, Section $section, BookExporter $exporter) {
+    #[Route(path: '/{section}/g/{grade}/export/xml', name: 'book_export_grade_xml')]
+    public function exportGradeXml(Grade $grade, Section $section, BookExporter $exporter): Response {
         $filename = sprintf('%s-%d-%d.xml', $grade->getName(), $section->getYear(), $section->getNumber());
         $xml = $exporter->exportGradeXml($grade, $section);
         return $this->createResponse($xml, 'application/xml', $filename);

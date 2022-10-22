@@ -17,9 +17,7 @@ class MessagePollVoteType extends AbstractType {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $choices = ArrayUtils::createArrayWithKeys($options['choices'], function(MessagePollChoice $choice) {
-            return $choice->getLabel();
-        });
+        $choices = ArrayUtils::createArrayWithKeys($options['choices'], fn(MessagePollChoice $choice) => $choice->getLabel());
 
         for($i = 1; $i <= $options['num_choices']; $i++) {
             $builder

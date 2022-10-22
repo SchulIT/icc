@@ -17,24 +17,13 @@ use SchulIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
 use SchulIT\CommonBundle\Security\User\AbstractUserMapper;
 
 class UserMapper extends AbstractUserMapper {
-    const ROLES_ASSERTION_NAME = 'urn:roles';
-
-    private array $typesMap;
-    private TeacherRepositoryInterface $teacherRepository;
-    private StudentRepositoryInterface $studentRepository;
+    public const ROLES_ASSERTION_NAME = 'urn:roles';
     private LoggerInterface $logger;
 
-    public function __construct(array $typesMap, TeacherRepositoryInterface $teacherRepository, StudentRepositoryInterface $studentRepository, LoggerInterface $logger = null) {
-        $this->typesMap = $typesMap;
-        $this->teacherRepository = $teacherRepository;
-        $this->studentRepository = $studentRepository;
+    public function __construct(private array $typesMap, private TeacherRepositoryInterface $teacherRepository, private StudentRepositoryInterface $studentRepository, LoggerInterface $logger = null) {
         $this->logger = $logger ?? new NullLogger();
     }
 
-    /**
-     * @param string $type
-     * @return UserType
-     */
     private function getUserType(string $type): UserType {
         if(!array_key_exists($type, $this->typesMap) || !in_array($type, UserType::values())) {
             $this->logger
@@ -46,11 +35,9 @@ class UserMapper extends AbstractUserMapper {
     }
 
     /**
-     * @param User $user
      * @param Response|array[] $data Either a SAMLResponse or an array (keys: SAML Attribute names, values: corresponding values)
-     * @return User
      */
-    public function mapUser(User $user, $data): User {
+    public function mapUser(User $user, Response|array $data): User {
         if(is_array($data)) {
             return $this->mapUserFromArray($user, $data);
         } else if($data instanceof Response) {
@@ -79,7 +66,6 @@ class UserMapper extends AbstractUserMapper {
     /**
      * @param User $user User to populate data to
      * @param array<string, mixed> $data
-     * @return User
      */
     private function mapUserFromArray(User $user, array $data): User {
         $username = $data[ClaimTypes::COMMON_NAME];
@@ -135,9 +121,7 @@ class UserMapper extends AbstractUserMapper {
                     CollectionUtils::synchronize(
                         $user->getStudents(),
                         [$student],
-                        function (Student $student) {
-                            return $student->getId();
-                        }
+                        fn(Student $student) => $student->getId()
                     );
                 } else {
                     $this->logger
@@ -157,9 +141,7 @@ class UserMapper extends AbstractUserMapper {
                 CollectionUtils::synchronize(
                     $user->getStudents(),
                     $students,
-                    function (Student $student) {
-                        return $student->getId();
-                    }
+                    fn(Student $student) => $student->getId()
                 );
             } else {
                 $this->logger

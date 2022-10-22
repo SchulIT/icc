@@ -6,16 +6,13 @@ use App\Grouping\LessonDayGroup;
 
 class LessonDayGroupStrategy implements SortingStrategyInterface {
 
-    private $dateStrategy;
-
-    public function __construct(DateStrategy $dateStrategy) {
-        $this->dateStrategy = $dateStrategy;
+    public function __construct(private DateStrategy $dateStrategy)
+    {
     }
 
     /**
      * @param LessonDayGroup $objectA
      * @param LessonDayGroup $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         return $this->dateStrategy->compare($objectA->getDate(), $objectB->getDate());

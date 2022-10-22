@@ -10,63 +10,52 @@ class Book {
     /**
      * @Serializer\Type("App\Book\Export\Section")
      * @Serializer\SerializedName("section")
-     * @var Section
      */
-    private $section;
+    private ?Section $section = null;
 
     /**
      * @Serializer\Type("array<App\Book\Export\Grade>")
      * @Serializer\SerializedName("grades")
      * @var Grade[]
      */
-    private $grades = [];
+    private array $grades = [];
 
     /**
      * @Serializer\Type("App\Book\Export\Tuition")
      * @Serializer\SerializedName("tuition")
-     * @var Tuition|null
      */
-    private $tuition;
+    private ?Tuition $tuition = null;
 
     /**
      * @Serializer\Type("DateTime")
      * @Serializer\SerializedName("start")
-     * @var DateTime
      */
-    private $start;
+    private ?\DateTime $start = null;
 
     /**
      * @Serializer\Type("DateTime")
      * @Serializer\SerializedName("end")
-     * @var DateTime
      */
-    private $end;
+    private ?\DateTime $end = null;
 
     /**
      * @Serializer\Type("array<App\Book\Export\StudentSummary>")
      * @Serializer\SerializedName("students_summary")
      * @var StudentSummary[]
      */
-    private $studentSummaries;
+    private ?array $studentSummaries = null;
 
     /**
      * @Serializer\Type("array<App\Book\Export\Week>")
      * @Serializer\SerializedName("weeks")
      * @var Week[]
      */
-    private $weeks;
+    private ?array $weeks = null;
 
-    /**
-     * @return Section
-     */
     public function getSection(): Section {
         return $this->section;
     }
 
-    /**
-     * @param Section $section
-     * @return Book
-     */
     public function setSection(Section $section): Book {
         $this->section = $section;
         return $this;
@@ -74,7 +63,6 @@ class Book {
 
     /**
      * @param Grade[] $grades
-     * @return Book
      */
     public function setGrades(array $grades): Book {
         $this->grades = $grades;
@@ -88,49 +76,28 @@ class Book {
         return $this->grades;
     }
 
-    /**
-     * @return Tuition|null
-     */
     public function getTuition(): ?Tuition {
         return $this->tuition;
     }
 
-    /**
-     * @param Tuition|null $tuition
-     * @return Book
-     */
     public function setTuition(?Tuition $tuition): Book {
         $this->tuition = $tuition;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getStart(): DateTime {
         return $this->start;
     }
 
-    /**
-     * @param DateTime $start
-     * @return Book
-     */
     public function setStart(DateTime $start): Book {
         $this->start = $start;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getEnd(): DateTime {
         return $this->end;
     }
 
-    /**
-     * @param DateTime $end
-     * @return Book
-     */
     public function setEnd(DateTime $end): Book {
         $this->end = $end;
         return $this;

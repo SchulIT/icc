@@ -21,119 +21,79 @@ class ExcuseNote {
     /**
      * @ORM\ManyToOne(targetEntity="Student")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Assert\NotNull()
-     * @var Student|null
      */
-    private $student;
+    #[Assert\NotNull]
+    private ?Student $student = null;
 
     /**
      * @ORM\Embedded(class="DateLesson")
-     * @Assert\NotNull()
-     * @var DateLesson|null
      */
-    private $from;
+    #[Assert\NotNull]
+    private ?DateLesson $from = null;
 
     /**
      * @ORM\Embedded(class="DateLesson")
      * @DateLessonGreaterThan(propertyPath="from")
-     * @Assert\NotNull()
-     * @var DateLesson|null
      */
-    private $until;
+    #[Assert\NotNull]
+    private ?DateLesson $until = null;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @var string|null
      */
-    private $comment;
+    private ?string $comment = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Teacher")
      * @ORM\JoinColumn()
-     * @Assert\NotNull()
-     * @var Teacher|null
      */
-    private $excusedBy;
+    #[Assert\NotNull]
+    private ?Teacher $excusedBy = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
     }
 
-    /**
-     * @return Student|null
-     */
     public function getStudent(): ?Student {
         return $this->student;
     }
 
-    /**
-     * @param Student|null $student
-     * @return ExcuseNote
-     */
     public function setStudent(?Student $student): ExcuseNote {
         $this->student = $student;
         return $this;
     }
 
-    /**
-     * @return DateLesson|null
-     */
     public function getFrom(): ?DateLesson {
         return $this->from;
     }
 
-    /**
-     * @param DateLesson|null $from
-     * @return ExcuseNote
-     */
     public function setFrom(?DateLesson $from): ExcuseNote {
         $this->from = $from;
         return $this;
     }
 
-    /**
-     * @return DateLesson|null
-     */
     public function getUntil(): ?DateLesson {
         return $this->until;
     }
 
-    /**
-     * @param DateLesson|null $until
-     * @return ExcuseNote
-     */
     public function setUntil(?DateLesson $until): ExcuseNote {
         $this->until = $until;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getComment(): ?string {
         return $this->comment;
     }
 
-    /**
-     * @param string|null $comment
-     * @return ExcuseNote
-     */
     public function setComment(?string $comment): ExcuseNote {
         $this->comment = $comment;
         return $this;
     }
 
-    /**
-     * @return Teacher|null
-     */
     public function getExcusedBy(): ?Teacher {
         return $this->excusedBy;
     }
 
-    /**
-     * @param Teacher|null $excusedBy
-     * @return ExcuseNote
-     */
     public function setExcusedBy(?Teacher $excusedBy): ExcuseNote {
         $this->excusedBy = $excusedBy;
         return $this;
@@ -141,10 +101,6 @@ class ExcuseNote {
 
     /**
      * Check if excuse note applies to a given lesson on a given day.
-     *
-     * @param DateTime $dateTime
-     * @param int $lesson
-     * @return bool
      */
     public function appliesToLesson(DateTime $dateTime, int $lesson): bool {
         if($dateTime < $this->getFrom()->getDate() || $dateTime > $this->getUntil()->getDate()) {

@@ -7,28 +7,16 @@ use App\Entity\Teacher;
 use App\Entity\User;
 
 abstract class AbstractMessageFileView {
-    /** @var Student[] */
-    private $students;
-
-    /** @var Teacher[] */
-    private $teachers;
-
-    /** @var array<int, User[]>  */
-    private $studentUsersLookup;
-    /** @var array<int, User[]> */
-    private $parentUsersLookup;
-    /** @var array<int, User[]>  */
-    private $teacherUsersLookup;
-    /** @var array<int, User>  */
-    private $users;
-
-    public function __construct(array $students, array $studentUsersLookup, array $parentUsersLookup, array $teachers, array $teacherUsersLookup, array $users) {
-        $this->students = $students;
-        $this->studentUsersLookup = $studentUsersLookup;
-        $this->parentUsersLookup = $parentUsersLookup;
-        $this->teachers = $teachers;
-        $this->teacherUsersLookup = $teacherUsersLookup;
-        $this->users = $users;
+    /**
+     * @param Student[] $students
+     * @param Teacher[] $teachers
+     * @param array<int, User[]> $studentUsersLookup
+     * @param array<int, User[]> $parentUsersLookup
+     * @param array<int, User[]> $teacherUsersLookup
+     * @param User[] $users
+     */
+    public function __construct(private array $students, private array $studentUsersLookup, private array $parentUsersLookup, private array $teachers, private array $teacherUsersLookup, private array $users)
+    {
     }
 
     public function getStudents() {

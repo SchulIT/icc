@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Stringable;
 use App\Validator\NullOrNotBlank;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,19 +19,19 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      "resource"="ResourceEntity",
  *      "room"="Room"
  * })
- * @UniqueEntity(fields={"name"})
  * @Auditable()
  */
-class ResourceEntity {
+#[UniqueEntity(fields: ['name'])]
+class ResourceEntity implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
     /**
      * @ORM\Column(type="string", length=16, unique=true)
-     * @Assert\NotNull()
-     * @Assert\Length(max="16")
      */
+    #[Assert\NotNull]
+    #[Assert\Length(max: 16)]
     private $name;
 
     /**
@@ -41,31 +42,25 @@ class ResourceEntity {
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $isReservationEnabled = true;
+    private bool $isReservationEnabled = true;
 
     /**
      * @ORM\ManyToOne(targetEntity="ResourceType", inversedBy="resources")
      * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
-     * @Assert\NotNull
-     * @var ResourceType|null
      */
-    private $type;
+    #[Assert\NotNull]
+    private ?ResourceType $type = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string {
         return $this->name;
     }
 
     /**
-     * @param string|null $name
      * @return ResourceEntity $this
      */
     public function setName(?string $name): ResourceEntity {
@@ -73,15 +68,11 @@ class ResourceEntity {
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDescription(): ?string {
         return $this->description;
     }
 
     /**
-     * @param string|null $description
      * @return ResourceEntity $this
      */
     public function setDescription(?string $description): ResourceEntity {
@@ -89,33 +80,19 @@ class ResourceEntity {
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isReservationEnabled(): bool {
         return $this->isReservationEnabled;
     }
 
-    /**
-     * @param bool $isReservationEnabled
-     * @return ResourceEntity
-     */
     public function setIsReservationEnabled(bool $isReservationEnabled): ResourceEntity {
         $this->isReservationEnabled = $isReservationEnabled;
         return $this;
     }
 
-    /**
-     * @return ResourceType|null
-     */
     public function getType(): ?ResourceType {
         return $this->type;
     }
 
-    /**
-     * @param ResourceType|null $type
-     * @return ResourceEntity
-     */
     public function setType(?ResourceType $type): ResourceEntity {
         $this->type = $type;
         return $this;

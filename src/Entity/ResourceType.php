@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Stringable;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,24 +14,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity()
  * @Auditable()
  */
-class ResourceType {
+class ResourceType implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $name;
+    #[Assert\NotBlank]
+    private ?string $name = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $icon;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $icon = null;
 
     /**
      * @ORM\OneToMany(targetEntity="ResourceEntity", mappedBy="type", fetch="EXTRA_LAZY")
@@ -43,33 +42,19 @@ class ResourceType {
         $this->resources = new ArrayCollection();
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     * @return ResourceType
-     */
     public function setName(?string $name): ResourceType {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getIcon(): ?string {
         return $this->icon;
     }
 
-    /**
-     * @param string|null $icon
-     * @return ResourceType
-     */
     public function setIcon(?string $icon): ResourceType {
         $this->icon = $icon;
         return $this;
@@ -82,7 +67,7 @@ class ResourceType {
         return $this->resources;
     }
 
-    public function __toString() {
-        return $this->getName();
+    public function __toString(): string {
+        return (string) $this->getName();
     }
 }

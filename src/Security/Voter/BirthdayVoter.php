@@ -14,12 +14,10 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class BirthdayVoter extends Voter {
 
-    const ShowBirthday = 'show-birthday';
+    public const ShowBirthday = 'show-birthday';
 
-    private AccessDecisionManagerInterface $accessDecisionManager;
-
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
-        $this->accessDecisionManager = $accessDecisionManager;
+    public function __construct(private AccessDecisionManagerInterface $accessDecisionManager)
+    {
     }
 
     /**

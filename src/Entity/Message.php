@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Stringable;
 use App\Validator\CollectionNotEmpty;
 use App\Validator\SubsetOf;
 use DateTime;
@@ -23,39 +24,35 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @Auditable()
  */
-class Message {
+class Message implements Stringable {
 
    use IdTrait;
    use UuidTrait;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $title;
+    #[Assert\NotBlank]
+    private ?string $title = null;
 
     /**
      * @ORM\Column(type="text")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $content;
+    #[Assert\NotBlank]
+    private ?string $content = null;
 
     /**
      * @ORM\Column(type="datetime", name="start_date")
-     * @Assert\NotNull()
-     * @var DateTime
      */
-    private $startDate;
+    #[Assert\NotNull]
+    private ?\DateTime $startDate = null;
 
     /**
      * @ORM\Column(type="datetime", name="expire_date")
-     * @Assert\GreaterThan(propertyPath="startDate")
-     * @Assert\NotNull()
-     * @var DateTime
      */
-    private $expireDate;
+    #[Assert\GreaterThan(propertyPath: 'startDate')]
+    #[Assert\NotNull]
+    private ?\DateTime $expireDate = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup")
@@ -88,47 +85,41 @@ class Message {
 
     /**
      * @ORM\Column(type="message_scope")
-     * @var MessageScope
      */
-    private $scope;
+    private MessageScope $scope;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="SET NULL")
      * @Gedmo\Blameable(on="create")
-     * @var User|null
      */
-    private $createdBy = null;
+    private ?User $createdBy = null;
 
     /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
-     * @var DateTime
      */
-    private $createdAt;
+    private \DateTime $createdAt;
 
     /**
      * @Gedmo\Timestampable(on="create")
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
-     * @var DateTime
      */
-    private $updatedAt;
+    private \DateTime $updatedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="SET NULL")
      * @Gedmo\Blameable(on="update")
      * @Gedmo\Blameable(on="create")
-     * @var User|null
      */
-    private $updatedBy;
+    private ?User $updatedBy = null;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $isDownloadsEnabled = false;
+    private bool $isDownloadsEnabled = false;
 
     /**
      * @ORM\ManyToMany(targetEntity="UserTypeEntity")
@@ -155,9 +146,8 @@ class Message {
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $isUploadsEnabled = false;
+    private bool $isUploadsEnabled = false;
 
     /**
      * @ORM\ManyToMany(targetEntity="UserTypeEntity")
@@ -184,34 +174,30 @@ class Message {
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @var string|null
      */
-    private $uploadDescription;
+    private ?string $uploadDescription = null;
 
     /**
      * @ORM\OneToMany(targetEntity="MessageFile", mappedBy="message", cascade={"persist"})
-     * @Assert\Valid()
      * @var Collection<MessageFile>
      */
+    #[Assert\Valid]
     private $files;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $isEmailNotificationSent = false;
+    private bool $isEmailNotificationSent = false;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $isPushNotificationSent = false;
+    private bool $isPushNotificationSent = false;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $mustConfirm = false;
+    private bool $mustConfirm = false;
 
     /**
      * @ORM\ManyToMany(targetEntity="UserTypeEntity")
@@ -244,28 +230,24 @@ class Message {
 
     /**
      * @ORM\Column(type="message_priority")
-     * @var MessagePriority
      */
-    private $priority;
+    private MessagePriority $priority;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $isPollEnabled = false;
+    private bool $isPollEnabled = false;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $allowPollRevote = true;
+    private bool $allowPollRevote = true;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\GreaterThanOrEqual(1)
-     * @var int
      */
-    private $pollNumChoices = 1;
+    #[Assert\GreaterThanOrEqual(1)]
+    private int $pollNumChoices = 1;
 
     /**
      * @ORM\ManyToMany(targetEntity="UserTypeEntity")
@@ -334,7 +316,6 @@ class Message {
 
     /**
      * @param string $title
-     * @return Message
      */
     public function setTitle(?string $title): Message {
         $this->title = $title;
@@ -350,7 +331,6 @@ class Message {
 
     /**
      * @param string $content
-     * @return Message
      */
     public function setContent(?string $content): Message {
         $this->content = $content;
@@ -364,10 +344,6 @@ class Message {
         return $this->startDate;
     }
 
-    /**
-     * @param DateTime $startDate
-     * @return Message
-     */
     public function setStartDate(DateTime $startDate): Message {
         $this->startDate = $startDate;
         return $this;
@@ -380,10 +356,6 @@ class Message {
         return $this->expireDate;
     }
 
-    /**
-     * @param DateTime $expireDate
-     * @return Message
-     */
     public function setExpireDate(DateTime $expireDate): Message {
         $this->expireDate = $expireDate;
         return $this;
@@ -440,81 +412,46 @@ class Message {
         return $this->visibilities;
     }
 
-    /**
-     * @return MessageScope
-     */
     public function getScope(): MessageScope {
         return $this->scope;
     }
 
-    /**
-     * @param MessageScope $scope
-     * @return Message
-     */
     public function setScope(MessageScope $scope): Message {
         $this->scope = $scope;
         return $this;
     }
 
-    /**
-     * @return User|null
-     */
     public function getCreatedBy(): ?User {
         return $this->createdBy;
     }
 
-    /**
-     * @param User $createdBy
-     * @return Message
-     */
     public function setCreatedBy(User $createdBy): Message {
         $this->createdBy = $createdBy;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isDownloadsEnabled(): bool {
         return $this->isDownloadsEnabled;
     }
 
-    /**
-     * @param bool $isDownloadsEnabled
-     * @return Message
-     */
     public function setIsDownloadsEnabled(bool $isDownloadsEnabled): Message {
         $this->isDownloadsEnabled = $isDownloadsEnabled;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isUploadsEnabled(): bool {
         return $this->isUploadsEnabled;
     }
 
-    /**
-     * @param bool $isUploadsEnabled
-     * @return Message
-     */
     public function setIsUploadsEnabled(bool $isUploadsEnabled): Message {
         $this->isUploadsEnabled = $isUploadsEnabled;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getUploadDescription(): ?string {
         return $this->uploadDescription;
     }
 
-    /**
-     * @param string|null $uploadDescription
-     * @return Message
-     */
     public function setUploadDescription(?string $uploadDescription): Message {
         $this->uploadDescription = $uploadDescription;
         return $this;
@@ -536,49 +473,28 @@ class Message {
         return $this->files;
     }
 
-    /**
-     * @return bool
-     */
     public function isEmailNotificationSent(): bool {
         return $this->isEmailNotificationSent;
     }
 
-    /**
-     * @param bool $isEmailNotificationSent
-     * @return Message
-     */
     public function setIsEmailNotificationSent(bool $isEmailNotificationSent): Message {
         $this->isEmailNotificationSent = $isEmailNotificationSent;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isPushNotificationSent(): bool {
         return $this->isPushNotificationSent;
     }
 
-    /**
-     * @param bool $isPushNotificationSent
-     * @return Message
-     */
     public function setIsPushNotificationSent(bool $isPushNotificationSent): Message {
         $this->isPushNotificationSent = $isPushNotificationSent;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function mustConfirm(): bool {
         return $this->mustConfirm;
     }
 
-    /**
-     * @param bool $mustConfirm
-     * @return Message
-     */
     public function setMustConfirm(bool $mustConfirm): Message {
         $this->mustConfirm = $mustConfirm;
         return $this;
@@ -591,129 +507,74 @@ class Message {
         return $this->confirmations;
     }
 
-    /**
-     * @return Collection
-     */
     public function getUploadEnabledUserTypes(): Collection {
         return $this->uploadEnabledUserTypes;
     }
 
-    /**
-     * @return Collection
-     */
     public function getDownloadEnabledUserTypes(): Collection {
         return $this->downloadEnabledUserTypes;
     }
 
-    /**
-     * @return Collection
-     */
     public function getDownloadEnabledStudyGroups(): Collection {
         return $this->downloadEnabledStudyGroups;
     }
 
-    /**
-     * @return Collection
-     */
     public function getUploadEnabledStudyGroups(): Collection {
         return $this->uploadEnabledStudyGroups;
     }
 
-    /**
-     * @return Collection
-     */
     public function getConfirmationRequiredUserTypes(): Collection {
         return $this->confirmationRequiredUserTypes;
     }
 
-    /**
-     * @return Collection
-     */
     public function getConfirmationRequiredStudyGroups(): Collection {
         return $this->confirmationRequiredStudyGroups;
     }
 
-    /**
-     * @return MessagePriority
-     */
     public function getPriority(): MessagePriority {
         return $this->priority;
     }
 
-    /**
-     * @param MessagePriority $priority
-     * @return Message
-     */
     public function setPriority(MessagePriority $priority): Message {
         $this->priority = $priority;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isPollEnabled(): bool {
         return $this->isPollEnabled;
     }
 
-    /**
-     * @param bool $isPollEnabled
-     * @return Message
-     */
     public function setIsPollEnabled(bool $isPollEnabled): Message {
         $this->isPollEnabled = $isPollEnabled;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isAllowPollRevote(): bool {
         return $this->allowPollRevote;
     }
 
-    /**
-     * @param bool $allowPollRevote
-     * @return Message
-     */
     public function setAllowPollRevote(bool $allowPollRevote): Message {
         $this->allowPollRevote = $allowPollRevote;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getPollNumChoices(): int {
         return $this->pollNumChoices;
     }
 
-    /**
-     * @param int $pollNumChoices
-     * @return Message
-     */
     public function setPollNumChoices(int $pollNumChoices): Message {
         $this->pollNumChoices = $pollNumChoices;
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getPollUserTypes(): Collection {
         return $this->pollUserTypes;
     }
 
-    /**
-     * @return Collection
-     */
     public function getPollStudyGroups(): Collection {
         return $this->pollStudyGroups;
     }
 
-    /**
-     * @return Collection
-     */
     public function getPollChoices(): Collection {
         return $this->pollChoices;
     }
@@ -735,28 +596,19 @@ class Message {
         return $this->pollVotes;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getCreatedAt(): DateTime {
         return $this->createdAt;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getUpdatedAt(): DateTime {
         return $this->updatedAt;
     }
 
-    /**
-     * @return User|null
-     */
     public function getUpdatedBy(): ?User {
         return $this->updatedBy;
     }
 
-    public function __toString() {
-        return $this->getTitle();
+    public function __toString(): string {
+        return (string) $this->getTitle();
     }
 }

@@ -23,7 +23,7 @@ class UniqueArrayValidator extends ConstraintValidator {
 
         $unique = ArrayUtils::unique($value);
 
-        if(count($value) !== count($unique)) {
+        if(count($value) !== (is_countable($unique) ? count($unique) : 0)) {
             $this->context
                 ->buildViolation($constraint->message)
                 ->addViolation();

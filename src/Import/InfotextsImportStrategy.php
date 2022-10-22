@@ -12,10 +12,8 @@ class InfotextsImportStrategy implements ReplaceImportStrategyInterface {
 
     use ContextAwareTrait;
 
-    private $repository;
-
-    public function __construct(InfotextRepositoryInterface $repository) {
-        $this->repository = $repository;
+    public function __construct(private InfotextRepositoryInterface $repository)
+    {
     }
 
     public function getRepository(): TransactionalRepositoryInterface {

@@ -19,17 +19,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class TeachersImportStrategy implements ImportStrategyInterface {
 
-    private $teacherRepository;
-    private $subjectRepository;
-    private $teacherTagRepository;
-    private $sectionRepository;
-
-    public function __construct(TeacherRepositoryInterface $teacherRepository, SubjectRepositoryInterface $subjectRepository,
-                                TeacherTagRepositoryInterface $teacherTagRepository, SectionRepositoryInterface $sectionRepository) {
-        $this->teacherRepository = $teacherRepository;
-        $this->subjectRepository = $subjectRepository;
-        $this->teacherTagRepository = $teacherTagRepository;
-        $this->sectionRepository = $sectionRepository;
+    public function __construct(private TeacherRepositoryInterface $teacherRepository, private SubjectRepositoryInterface $subjectRepository, private TeacherTagRepositoryInterface $teacherTagRepository, private SectionRepositoryInterface $sectionRepository)
+    {
     }
 
     /**
@@ -39,9 +30,7 @@ class TeachersImportStrategy implements ImportStrategyInterface {
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->teacherRepository->findAll(),
-            function(Teacher $teacher) {
-                return $teacher->getExternalId();
-            }
+            fn(Teacher $teacher) => $teacher->getExternalId()
         );
     }
 
@@ -70,7 +59,6 @@ class TeachersImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param Teacher $entity
-     * @return int
      */
     public function getEntityId($entity): int {
         return $entity->getId();
@@ -103,14 +91,10 @@ class TeachersImportStrategy implements ImportStrategyInterface {
         CollectionUtils::synchronize(
             $entity->getSubjects(),
             $this->subjectRepository->findAllByExternalId($data->getSubjects()),
-            function(Subject $subject) {
-                return $subject->getId();
-            }
+            fn(Subject $subject) => $subject->getId()
         );
 
-        CollectionUtils::add($entity->getTags(), $this->createTagCollection($data->getTags()), function(TeacherTag $tag) {
-            return $tag->getExternalId();
-        });
+        CollectionUtils::add($entity->getTags(), $this->createTagCollection($data->getTags()), fn(TeacherTag $tag) => $tag->getExternalId());
     }
 
     /**
@@ -159,9 +143,7 @@ class TeachersImportStrategy implements ImportStrategyInterface {
     private function createTagCollection(array $tagExternalIds): array {
         $tags = new ArrayCollection($this->teacherTagRepository->findAll());
 
-        return $tags->filter(function(TeacherTag $tag) use($tagExternalIds) {
-            return in_array($tag->getExternalId(), $tagExternalIds);
-        })->toArray();
+        return $tags->filter(fn(TeacherTag $tag) => in_array($tag->getExternalId(), $tagExternalIds))->toArray();
     }
 
     /**

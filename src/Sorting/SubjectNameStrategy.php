@@ -8,7 +8,6 @@ class SubjectNameStrategy extends AbstractStringPropertyStrategy {
 
     /**
      * @param Subject $object
-     * @return string
      */
     protected function getValue($object): string {
         return $object->getName();

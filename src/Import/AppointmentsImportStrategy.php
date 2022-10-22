@@ -23,34 +23,15 @@ use App\Utils\CollectionUtils;
 
 class AppointmentsImportStrategy implements ImportStrategyInterface {
 
-    private $appointmentRepository;
-    private $appointmentCategoryRepository;
-    private $userTypeEntityRepository;
-    private $studentGroupRepository;
-    private $teacherRepository;
-    private $sectionResolver;
-    private $sectionRepository;
-    private $settings;
-
-    private $isInitialized = false;
+    private bool $isInitialized = false;
 
     /**
      * @var UserTypeEntity[]
      */
-    private $visibilities = [];
+    private array $visibilities = [];
 
-    public function __construct(AppointmentRepositoryInterface $appointmentRepository, AppointmentCategoryRepositoryInterface $appointmentCategoryRepository,
-                                UserTypeEntityRepositoryInterface $userTypeEntityRepository, StudyGroupRepositoryInterface $studentRepository,
-                                TeacherRepositoryInterface $teacherRepository, SectionResolverInterface $sectionResolver,
-                                SectionRepositoryInterface $sectionRepository, ImportSettings $settings) {
-        $this->appointmentRepository = $appointmentRepository;
-        $this->appointmentCategoryRepository = $appointmentCategoryRepository;
-        $this->userTypeEntityRepository = $userTypeEntityRepository;
-        $this->studentGroupRepository = $studentRepository;
-        $this->teacherRepository = $teacherRepository;
-        $this->sectionResolver = $sectionResolver;
-        $this->sectionRepository = $sectionRepository;
-        $this->settings = $settings;
+    public function __construct(private AppointmentRepositoryInterface $appointmentRepository, private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, private UserTypeEntityRepositoryInterface $userTypeEntityRepository, private StudyGroupRepositoryInterface $studentGroupRepository, private TeacherRepositoryInterface $teacherRepository, private SectionResolverInterface $sectionResolver, private SectionRepositoryInterface $sectionRepository, private ImportSettings $settings)
+    {
     }
 
     private function initializeIfNecessary() {
@@ -70,12 +51,8 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
         return ArrayUtils::createArrayWithKeys(
             array_filter(
                 $this->appointmentRepository->findAll(),
-                function(Appointment $appointment) {
-                    return !empty($appointment->getExternalId());
-                }),
-            function (Appointment $appointment) {
-                return $appointment->getExternalId();
-            }
+                fn(Appointment $appointment) => !empty($appointment->getExternalId())),
+            fn(Appointment $appointment) => $appointment->getExternalId()
         );
     }
 
@@ -104,7 +81,6 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param Appointment $entity
-     * @return int
      */
     public function getEntityId($entity): int {
         return $entity->getId();
@@ -151,27 +127,19 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
         CollectionUtils::synchronize(
             $entity->getStudyGroups(),
             $studyGroups,
-            function (StudyGroup $group) {
-                return $group->getId();
-            }
+            fn(StudyGroup $group) => $group->getId()
         );
 
         CollectionUtils::synchronize(
             $entity->getOrganizers(),
             $this->teacherRepository->findAllByAcronym($data->getOrganizers()),
-            function(Teacher $teacher) {
-                return $teacher->getId();
-            }
+            fn(Teacher $teacher) => $teacher->getId()
         );
 
         CollectionUtils::synchronize(
             $entity->getVisibilities(),
-            array_filter($this->visibilities, function(UserTypeEntity $visibility) use ($data) {
-                return in_array($visibility->getUserType()->getValue(), $data->getVisibilities());
-            }),
-            function(UserTypeEntity $visibility) {
-                return $visibility->getId();
-            }
+            array_filter($this->visibilities, fn(UserTypeEntity $visibility) => in_array($visibility->getUserType()->getValue(), $data->getVisibilities())),
+            fn(UserTypeEntity $visibility) => $visibility->getId()
         );
     }
 

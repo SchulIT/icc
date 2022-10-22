@@ -9,7 +9,6 @@ class MessageWeekStrategy implements GroupingStrategyInterface {
 
     /**
      * @param Message $object
-     * @param array $options
      * @return WeekOfYear|null
      */
     public function computeKey($object, array $options = []) {
@@ -26,8 +25,6 @@ class MessageWeekStrategy implements GroupingStrategyInterface {
     /**
      * @param WeekOfYear|null $keyA
      * @param WeekOfYear|null $keyB
-     * @param array $options
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         if($keyA === null && $keyB === null) {
@@ -42,8 +39,6 @@ class MessageWeekStrategy implements GroupingStrategyInterface {
 
     /**
      * @param WeekOfYear $key
-     * @param array $options
-     * @return GroupInterface
      */
     public function createGroup($key, array $options = []): GroupInterface {
         return new MessageWeekGroup($key);

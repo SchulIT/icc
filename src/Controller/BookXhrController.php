@@ -36,9 +36,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/book/xhr")
- */
+#[Route(path: '/book/xhr')]
 class BookXhrController extends AbstractController {
 
     use DateRequestTrait;
@@ -50,10 +48,8 @@ class BookXhrController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/teachers", name="xhr_teachers")
-     */
-    public function teachers(TeacherRepositoryInterface $teacherRepository, SerializerInterface $serializer) {
+    #[Route(path: '/teachers', name: 'xhr_teachers')]
+    public function teachers(TeacherRepositoryInterface $teacherRepository, SerializerInterface $serializer): Response {
         $teachers = [];
 
         foreach($teacherRepository->findAll() as $teacher) {
@@ -63,10 +59,8 @@ class BookXhrController extends AbstractController {
         return $this->returnJson($teachers, $serializer);
     }
 
-    /**
-     * @Route("/tuition/{uuid}", name="xhr_tuition")
-     */
-    public function tuition(Tuition $tuition, SerializerInterface $serializer) {
+    #[Route(path: '/tuition/{uuid}', name: 'xhr_tuition')]
+    public function tuition(Tuition $tuition, SerializerInterface $serializer): Response {
         return $this->returnJson(TuitionResponse::fromEntity($tuition), $serializer);
     }
 
@@ -127,10 +121,8 @@ class BookXhrController extends AbstractController {
         return $absences;
     }
 
-    /**
-     * @Route("/attendances/{uuid}", name="xhr_entry_attendances")
-     */
-    public function attendances(Request $request, LessonEntry $entry, SerializerInterface $serializer, SectionResolverInterface $sectionResolver) {
+    #[Route(path: '/attendances/{uuid}', name: 'xhr_entry_attendances')]
+    public function attendances(Request $request, LessonEntry $entry, SerializerInterface $serializer, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $filter = $request->query->get('filter', null);
@@ -149,10 +141,8 @@ class BookXhrController extends AbstractController {
         return $this->returnJson($data, $serializer);
     }
 
-    /**
-     * @Route("/students", name="xhr_students")
-     */
-    public function students(StudentRepositoryInterface $studentRepository, SectionResolverInterface $sectionResolver, SerializerInterface $serializer) {
+    #[Route(path: '/students', name: 'xhr_students')]
+    public function students(StudentRepositoryInterface $studentRepository, SectionResolverInterface $sectionResolver, SerializerInterface $serializer): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $students = [ ];
@@ -166,7 +156,6 @@ class BookXhrController extends AbstractController {
     }
 
     /**
-     * @Route("/entry", name="xhr_lesson_entry", methods={"GET"})
      * @OA\Get()
      * @OA\Parameter(
      *     name="lesson",
@@ -184,9 +173,10 @@ class BookXhrController extends AbstractController {
      *     description="End lesson number"
      * )
      */
+    #[Route(path: '/entry', name: 'xhr_lesson_entry', methods: ['GET'])]
     public function entry(Request $request, AbsenceResolver $absenceResolver, TimetableLessonRepositoryInterface $lessonRepository,
                           LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
-                          SerializerInterface $serializer, SectionResolverInterface $sectionResolver) {
+                          SerializerInterface $serializer, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $lesson = $lessonRepository->findOneByUuid($request->query->get('lesson'));
@@ -269,7 +259,6 @@ class BookXhrController extends AbstractController {
     }
 
     /**
-     * @Route("/cancel/{uuid}", name="xhr_cancel_lesson", methods={"POST"})
      * @OA\Post()
      * @OA\Parameter(
      *     name="payload",
@@ -286,7 +275,8 @@ class BookXhrController extends AbstractController {
      *     @Model(type=ViolationList::class)
      * )
      */
-    public function cancelLesson(TimetableLesson $lesson, CancelLessonRequest $request, LessonCancelHelper $lessonCancelHelper) {
+    #[Route(path: '/cancel/{uuid}', name: 'xhr_cancel_lesson', methods: ['POST'])]
+    public function cancelLesson(TimetableLesson $lesson, CancelLessonRequest $request, LessonCancelHelper $lessonCancelHelper): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
         $reason = $request->getReason();
         $lessonCancelHelper->cancelLesson($lesson, $reason);
@@ -297,7 +287,6 @@ class BookXhrController extends AbstractController {
     }
 
     /**
-     * @Route("/attendance/{uuid}", name="xhr_update_attendance", methods={"PUT"})
      * @OA\Put()
      * @OA\Parameter(
      *     name="payload",
@@ -314,7 +303,8 @@ class BookXhrController extends AbstractController {
      *     @Model(type=ViolationList::class)
      * )
      */
-    public function updateAttendance(LessonAttendance $attendance, UpdateAttendanceRequest $request, LessonAttendanceRepositoryInterface $repository) {
+    #[Route(path: '/attendance/{uuid}', name: 'xhr_update_attendance', methods: ['PUT'])]
+    public function updateAttendance(LessonAttendance $attendance, UpdateAttendanceRequest $request, LessonAttendanceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $attendance->getEntry());
 
         $attendance->setAbsentLessons($request->getAbsentLessons());

@@ -30,26 +30,12 @@ use JMS\Serializer\SerializerInterface;
 
 class BookExporter {
 
-    private EntryOverviewHelper $overviewHelper;
-    private StudentInfoResolver $studentInfoResolver;
-
-    private Sorter $sorter;
-    private SerializerInterface $serializer;
-
-    public function __construct(EntryOverviewHelper $overviewHelper, StudentInfoResolver $studentInfoResolver, Sorter $sorter, SerializerInterface $serializer) {
-        $this->overviewHelper = $overviewHelper;
-        $this->studentInfoResolver = $studentInfoResolver;
-        $this->sorter = $sorter;
-        $this->serializer = $serializer;
+    public function __construct(private EntryOverviewHelper $overviewHelper, private StudentInfoResolver $studentInfoResolver, private Sorter $sorter, private SerializerInterface $serializer)
+    {
     }
 
     /**
-     * @param Book $book
      * @param StudentEntity[] $students
-     * @param TuitionEntity|null $tuition
-     * @param SectionEntity $section
-     * @param EntryOverview $overview
-     * @return Book
      */
     private function export(Book $book, array $students, ?TuitionEntity $tuition, SectionEntity $section, EntryOverview $overview): Book {
         $book
@@ -158,11 +144,7 @@ class BookExporter {
         $book = (new Book())
             ->setGrades([$this->castGrade($grade, $section)]);
 
-        $students = $grade->getMemberships()->filter(function(GradeMembership $membership) use($section) {
-            return $membership->getSection() === $section;
-        })->map(function(GradeMembership $membership) {
-            return $membership->getStudent();
-        })->toArray();
+        $students = $grade->getMemberships()->filter(fn(GradeMembership $membership) => $membership->getSection() === $section)->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
         $overview = $this->overviewHelper->computeOverviewForGrade($grade, $section->getStart(), $section->getEnd());
 
         return $this->export($book, $students, null, $section, $overview);
@@ -172,9 +154,7 @@ class BookExporter {
         $book = (new Book())
             ->setTuition($this->castTuition($tuition));
 
-        $students = $tuition->getStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
-            return $membership->getStudent();
-        })->toArray();
+        $students = $tuition->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
 
         $overview = $this->overviewHelper->computeOverviewForTuition($tuition, $section->getStart(), $section->getEnd());
 
@@ -223,10 +203,7 @@ class BookExporter {
     }
 
     /**
-     * @param LessonEntryEntity $entry
-     * @param SectionEntity $section
      * @param StudentInfo[] $studentInfo
-     * @return Lesson
      */
     private function castEntry(LessonEntryEntity $entry, SectionEntity $section, array $studentInfo): Lesson {
         $subject = $entry->getTuition()->getSubject();
@@ -263,10 +240,8 @@ class BookExporter {
 
                 if($info !== null) {
                     /** @var LessonAttendance $possibleAttendance */
-                    $possibleAttendance = ArrayUtils::first($info->getAbsentLessonAttendances(), function(LessonAttendance $lessonAttendance) use($entry, $attendance) {
-                        return $lessonAttendance->getAttendance()->getId() === $attendance->getId()
-                            && $lessonAttendance->getAttendance()->getEntry() === $entry;
-                    });
+                    $possibleAttendance = ArrayUtils::first($info->getAbsentLessonAttendances(), fn(LessonAttendance $lessonAttendance) => $lessonAttendance->getAttendance()->getId() === $attendance->getId()
+                        && $lessonAttendance->getAttendance()->getEntry() === $entry);
 
                     if($possibleAttendance !== null) {
                         $exportAttendance->setIsExcused($possibleAttendance->isExcused());
@@ -280,19 +255,14 @@ class BookExporter {
         return $lesson;
     }
 
-    private function castAttendanceType(int $type): string {
-        switch($type) {
-            case LessonAttendanceType::Absent:
-                return 'absent';
-
-            case LessonAttendanceType::Present:
-                return 'present';
-
-            case LessonAttendanceType::Late:
-                return 'late';
-        }
-
-        throw new InvalidArgumentException(sprintf('$type must be either 0, 1 or 2, %d given', $type));
+    private function castAttendanceType(int $type): string
+    {
+        return match ($type) {
+            LessonAttendanceType::Absent => 'absent',
+            LessonAttendanceType::Present => 'present',
+            LessonAttendanceType::Late => 'late',
+            default => throw new InvalidArgumentException(sprintf('$type must be either 0, 1 or 2, %d given', $type)),
+        };
     }
 
     private function castSection(SectionEntity $section): Section {
@@ -321,9 +291,7 @@ class BookExporter {
             ->setDate($comment->getDate())
             ->setTeacher($this->castTeacher($comment->getTeacher()))
             ->setStudents(
-                $comment->getStudents()->map(function(StudentEntity $student) use($section) {
-                    return $this->castStudent($student, $section);
-                })->toArray()
+                $comment->getStudents()->map(fn(StudentEntity $student) => $this->castStudent($student, $section))->toArray()
             )
             ->setComment($comment->getText());
     }

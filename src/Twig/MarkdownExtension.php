@@ -10,12 +10,8 @@ use Twig\TwigFunction;
 
 class MarkdownExtension extends AbstractExtension {
 
-    private Markdown $markdown;
-    private TableOfContentsHelper $tocHelper;
-
-    public function __construct(Markdown $markdown, TableOfContentsHelper $tocHelper) {
-        $this->markdown = $markdown;
-        $this->tocHelper = $tocHelper;
+    public function __construct(private Markdown $markdown, private TableOfContentsHelper $tocHelper)
+    {
     }
 
     public function getFunctions(): array {

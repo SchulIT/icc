@@ -2,6 +2,7 @@
 
 namespace App\Request\Data;
 
+use DateTime;
 use App\Validator\NullOrNotBlank;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -12,41 +13,36 @@ class ExamData {
      * Your ID which is used to update existing exams.
      *
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $id;
+    #[Assert\NotBlank]
+    private ?string $id = null;
 
     /**
      * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     * @Assert\NotNull()
-     * @var \DateTime
      */
-    private $date;
+    #[Assert\NotNull]
+    private ?DateTime $date = null;
 
     /**
      * @Serializer\Type("int")
-     * @Assert\GreaterThan(0)
-     * @var int
      */
-    private $lessonStart;
+    #[Assert\GreaterThan(0)]
+    private ?int $lessonStart = null;
 
     /**
      * @Serializer\Type("int")
-     * @Assert\GreaterThan(0)
-     * @Assert\GreaterThanOrEqual(propertyPath="lessonStart")
-     * @var int
      */
-    private $lessonEnd;
+    #[Assert\GreaterThan(0)]
+    #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart')]
+    private ?int $lessonEnd = null;
 
     /**
      * Optional description of the exam
      *
      * @Serializer\Type("string")
      * @NullOrNotBlank()
-     * @var string|null
      */
-    private $description;
+    private ?string $description = null;
 
     /**
      * List of external tuition which are related to this exam.
@@ -54,7 +50,7 @@ class ExamData {
      * @Serializer\Type("array<App\Request\Data\ExamTuition>")
      * @var ExamTuition[]
      */
-    private $tuitions;
+    private ?array $tuitions = null;
 
     /**
      * List of external student IDs which attend this exam.
@@ -62,7 +58,7 @@ class ExamData {
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $students;
+    private ?array $students = null;
 
     /**
      * Acronyms of the teachers (their acronyms) which supervise the exam.
@@ -70,7 +66,7 @@ class ExamData {
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $supervisions;
+    private ?array $supervisions = null;
 
     /**
      * List of rooms, in which the exam takes place.
@@ -78,83 +74,48 @@ class ExamData {
      * @Serializer\Type("array<string>")
      * @var string[]
      */
-    private $rooms;
+    private ?array $rooms = null;
 
-    /**
-     * @return string
-     */
     public function getId(): string {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     * @return ExamData
-     */
     public function setId(string $id): ExamData {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getDate(): \DateTime {
+    public function getDate(): DateTime {
         return $this->date;
     }
 
-    /**
-     * @param \DateTime $date
-     * @return ExamData
-     */
-    public function setDate(\DateTime $date): ExamData {
+    public function setDate(DateTime $date): ExamData {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLessonStart(): int {
         return $this->lessonStart;
     }
 
-    /**
-     * @param int $lessonStart
-     * @return ExamData
-     */
     public function setLessonStart(int $lessonStart): ExamData {
         $this->lessonStart = $lessonStart;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLessonEnd(): int {
         return $this->lessonEnd;
     }
 
-    /**
-     * @param int $lessonEnd
-     * @return ExamData
-     */
     public function setLessonEnd(int $lessonEnd): ExamData {
         $this->lessonEnd = $lessonEnd;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDescription(): ?string {
         return $this->description;
     }
 
-    /**
-     * @param string|null $description
-     * @return ExamData
-     */
     public function setDescription(?string $description): ExamData {
         $this->description = $description;
         return $this;
@@ -169,7 +130,6 @@ class ExamData {
 
     /**
      * @param ExamTuition[] $tuitions
-     * @return ExamData
      */
     public function setTuitions(array $tuitions): ExamData {
         $this->tuitions = $tuitions;
@@ -185,7 +145,6 @@ class ExamData {
 
     /**
      * @param string[] $students
-     * @return ExamData
      */
     public function setStudents(array $students): ExamData {
         $this->students = $students;
@@ -201,7 +160,6 @@ class ExamData {
 
     /**
      * @param string[] $supervisions
-     * @return ExamData
      */
     public function setSupervisions(array $supervisions): ExamData {
         $this->supervisions = $supervisions;
@@ -217,7 +175,6 @@ class ExamData {
 
     /**
      * @param string[] $rooms
-     * @return ExamData
      */
     public function setRooms(array $rooms): ExamData {
         $this->rooms = $rooms;

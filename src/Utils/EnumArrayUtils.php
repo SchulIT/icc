@@ -31,9 +31,7 @@ class EnumArrayUtils {
     }
 
     /**
-     * @param Enum $needle
      * @param Enum[] $array
-     * @return bool
      */
     public static function inArray(Enum $needle, iterable $array): bool {
         foreach($array as $item) {

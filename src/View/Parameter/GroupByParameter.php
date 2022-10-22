@@ -2,6 +2,7 @@
 
 namespace App\View\Parameter;
 
+use InvalidArgumentException;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Grouping\SubstitutionGradeStrategy;
@@ -14,20 +15,18 @@ class GroupByParameter {
     public const Grades = 'grades';
     public const Teachers = 'teachers';
 
-    private $groupMap = [
+    private array $groupMap = [
         self::Grades => SubstitutionGradeStrategy::class,
         self::Teachers => SubstitutionTeacherStrategy::class
     ];
 
-    private $sortMap = [
+    private array $sortMap = [
         SubstitutionGradeStrategy::class => SubstitutionGradeGroupStrategy::class,
         SubstitutionTeacherStrategy::class => SubstitutionTeacherGroupStrategy::class
     ];
 
-    private $em;
-
-    public function __construct(EntityManagerInterface $em) {
-        $this->em = $em;
+    public function __construct(private EntityManagerInterface $em)
+    {
     }
 
     public function canGroup(User $user): bool {
@@ -60,7 +59,7 @@ class GroupByParameter {
 
     public function getSortingStrategyClassName(string $groupingStrategy): string {
         if(!isset($this->sortMap[$groupingStrategy])) {
-            throw new \InvalidArgumentException(sprintf('Groupstrategy "%s" is not a recognized grouping strategy', $groupingStrategy));
+            throw new InvalidArgumentException(sprintf('Groupstrategy "%s" is not a recognized grouping strategy', $groupingStrategy));
         }
 
         return $this->sortMap[$groupingStrategy];

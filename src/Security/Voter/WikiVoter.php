@@ -18,10 +18,8 @@ class WikiVoter extends Voter {
     public const Edit = 'edit';
     public const Remove = 'remove';
 
-    private AccessDecisionManagerInterface $accessDecisionManager;
-
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
-        $this->accessDecisionManager = $accessDecisionManager;
+    public function __construct(private AccessDecisionManagerInterface $accessDecisionManager)
+    {
     }
 
     /**
@@ -41,22 +39,15 @@ class WikiVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
-        switch($attribute) {
-            case self::View:
-                return $this->canView($subject, $token);
-
-            case self::Edit:
-                return $this->canEdit($token);
-
-            case self::Remove:
-                return $this->canRemove($token);
-
-            case self::New:
-                return $this->canCreate($token);
-        }
-
-        throw new LogicException('This code should not be reached.');
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
+    {
+        return match ($attribute) {
+            self::View => $this->canView($subject, $token),
+            self::Edit => $this->canEdit($token),
+            self::Remove => $this->canRemove($token),
+            self::New => $this->canCreate($token),
+            default => throw new LogicException('This code should not be reached.'),
+        };
     }
 
     private function canView(WikiArticle $article, TokenInterface $token): bool {
@@ -75,9 +66,7 @@ class WikiVoter extends Voter {
         $currentArticle = $article;
         do {
             $visibilities = $currentArticle->getVisibilities()
-                ->map(function(UserTypeEntity $visibility) {
-                    return $visibility->getUserType();
-                })
+                ->map(fn(UserTypeEntity $visibility) => $visibility->getUserType())
                 ->toArray();
 
             if(count($visibilities) > 0 && EnumArrayUtils::inArray($user->getUserType(), $visibilities) !== true) {

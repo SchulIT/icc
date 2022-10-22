@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\ExcuseNote;
 use App\Entity\User;
 use App\Form\ExcuseType;
@@ -14,23 +15,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/book/excuses")
- */
+#[Route(path: '/book/excuses')]
 class ExcuseNoteController extends AbstractController {
 
     private const ItemsPerPage = 25;
 
-    private ExcuseNoteRepositoryInterface $repository;
-
-    public function __construct(ExcuseNoteRepositoryInterface $repository) {
-        $this->repository = $repository;
+    public function __construct(private ExcuseNoteRepositoryInterface $repository)
+    {
     }
 
-    /**
-     * @Route("", name="excuse_notes")
-     */
-    public function index(SectionFilter $sectionFilter, StudentFilter $studentFilter, Request $request) {
+    #[Route(path: '', name: 'excuse_notes')]
+    public function index(SectionFilter $sectionFilter, StudentFilter $studentFilter, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -65,10 +60,8 @@ class ExcuseNoteController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_excuse")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'add_excuse')]
+    public function add(Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -93,10 +86,8 @@ class ExcuseNoteController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_excuse")
-     */
-    public function edit(ExcuseNote $excuse, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_excuse')]
+    public function edit(ExcuseNote $excuse, Request $request): Response {
         $form = $this->createForm(ExcuseType::class, $excuse);
         $form->handleRequest($request);
 
@@ -113,10 +104,8 @@ class ExcuseNoteController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_excuse")
-     */
-    public function remove(ExcuseNote $excuse, Request $request, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_excuse')]
+    public function remove(ExcuseNote $excuse, Request $request, TranslatorInterface $translator): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'book.excuse_note.remove.confirm',
             'message_parameters' => [

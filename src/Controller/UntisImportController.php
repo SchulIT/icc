@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Form\Import\Untis\CalendarWeekSchoolWeekType;
 use App\Form\Import\Untis\ExamImportType;
 use App\Form\Import\Untis\SubjectOverrideType;
@@ -36,15 +37,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use ZipArchive;
 
 /**
- * @Route("/import")
  * @IsGranted("ROLE_IMPORTER")
  */
+#[Route(path: '/import')]
 class UntisImportController extends AbstractController {
 
-    /**
-     * @Route("/settings", name="import_untis_settings")
-     */
-    public function settings(UntisSettings $settings, Request $request, DateReader $reader) {
+    #[Route(path: '/settings', name: 'import_untis_settings')]
+    public function settings(UntisSettings $settings, Request $request, DateReader $reader): Response {
         $form = $this->createFormBuilder()
             ->add('overrides', CollectionType::class, [
                 'entry_type' => SubjectOverrideType::class,
@@ -132,10 +131,8 @@ class UntisImportController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/substitutions/gpu", name="import_untis_substitutions_gpu")
-     */
-    public function substitutionsGpu(Request $request, GpuSubstitutionImporter $importer, TranslatorInterface $translator, UntisSettings $settings) {
+    #[Route(path: '/substitutions/gpu', name: 'import_untis_substitutions_gpu')]
+    public function substitutionsGpu(Request $request, GpuSubstitutionImporter $importer, TranslatorInterface $translator, UntisSettings $settings): Response {
         $data = [ ];
         if($settings->getSubstitutionDays() > 0) {
             $data = [
@@ -179,10 +176,8 @@ class UntisImportController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/substitutions/html", name="import_untis_substitutions_html")
-     */
-    public function substitutionsHtml(Request $request, HtmlSubstitutionImporter $importer, TranslatorInterface $translator, UntisSettings $settings) {
+    #[Route(path: '/substitutions/html', name: 'import_untis_substitutions_html')]
+    public function substitutionsHtml(Request $request, HtmlSubstitutionImporter $importer, TranslatorInterface $translator, UntisSettings $settings): Response {
         $form = $this->createForm(SubstitutionHtmlImportType::class);
         $form->handleRequest($request);
 
@@ -212,10 +207,8 @@ class UntisImportController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/supervisions", name="import_untis_supervisions")
-     */
-    public function supervisions(Request $request, SupervisionImporter $importer, TranslatorInterface $translator) {
+    #[Route(path: '/supervisions', name: 'import_untis_supervisions')]
+    public function supervisions(Request $request, SupervisionImporter $importer, TranslatorInterface $translator): Response {
         $form = $this->createForm(SupervisionImportType::class);
         $form->handleRequest($request);
 
@@ -246,10 +239,8 @@ class UntisImportController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/exams", name="import_untis_exams")
-     */
-    public function exams(Request $request, ExamImporter $importer, TranslatorInterface $translator, SectionResolverInterface $sectionResolver) {
+    #[Route(path: '/exams', name: 'import_untis_exams')]
+    public function exams(Request $request, ExamImporter $importer, TranslatorInterface $translator, SectionResolverInterface $sectionResolver): Response {
         $currentSection = $sectionResolver->getCurrentSection();
         $data = [ ];
         if($currentSection !== null) {
@@ -276,10 +267,10 @@ class UntisImportController extends AbstractController {
                 $result = $importer->import(Reader::createFromPath($examFile->getRealPath()), Reader::createFromPath($tuitionFile->getRealPath()), $start, $end, $suppressNotifications);
 
                 $this->addFlash('success', $translator->trans('import.exams.result', [
-                    '%added%' => count($result->getAdded()),
-                    '%ignored%' => count($result->getIgnored()),
-                    '%updated%' => count($result->getUpdated()),
-                    '%removed%' => count($result->getRemoved())
+                    '%added%' => is_countable($result->getAdded()) ? count($result->getAdded()) : 0,
+                    '%ignored%' => is_countable($result->getIgnored()) ? count($result->getIgnored()) : 0,
+                    '%updated%' => is_countable($result->getUpdated()) ? count($result->getUpdated()) : 0,
+                    '%removed%' => is_countable($result->getRemoved()) ? count($result->getRemoved()) : 0
                 ]));
 
                 return $this->redirectToRoute('import_untis_exams');
@@ -293,10 +284,8 @@ class UntisImportController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/timetable/html", name="import_untis_timetable_html")
-     */
-    public function timetableHtml(Request $request, HtmlTimetableImporter $importer, TranslatorInterface $translator) {
+    #[Route(path: '/timetable/html', name: 'import_untis_timetable_html')]
+    public function timetableHtml(Request $request, HtmlTimetableImporter $importer, TranslatorInterface $translator): Response {
         $form = $this->createForm(TimetableHtmlImportType::class);
         $form->handleRequest($request);
 

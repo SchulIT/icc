@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use LogicException;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Utils\EnumArrayUtils;
@@ -19,10 +20,8 @@ class ListsVoter extends Voter {
     public const Privacy = 'privacy';
     public const ExportTeachers = 'export-teachers';
 
-    private AccessDecisionManagerInterface $accessDecisionManager;
-
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
-        $this->accessDecisionManager = $accessDecisionManager;
+    public function __construct(private AccessDecisionManagerInterface $accessDecisionManager)
+    {
     }
 
     /**
@@ -45,20 +44,13 @@ class ListsVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
-        switch($attribute) {
-            case self::Teachers:
-                return true; // everyone can see teachers
-
-            case self::Students:
-            case self::StudyGroups:
-            case self::Tuitions:
-            case self::Privacy:
-            case self::ExportTeachers:
-                return $this->canViewLists($token);
-        }
-
-        throw new \LogicException('This code should not be reached.');
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
+    {
+        return match ($attribute) {
+            self::Teachers => true,
+            self::Students, self::StudyGroups, self::Tuitions, self::Privacy, self::ExportTeachers => $this->canViewLists($token),
+            default => throw new LogicException('This code should not be reached.'),
+        };
     }
 
     private function canViewLists(TokenInterface $token): bool {

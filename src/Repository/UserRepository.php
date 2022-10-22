@@ -53,32 +53,8 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
     /**
      * @inheritDoc
      */
-    public function findAllByStudent(Student $student) {
-        $qb = $this->em->createQueryBuilder();
-
-        $qbInner = $this->em->createQueryBuilder()
-            ->select('uInner.id')
-            ->from(User::class, 'uInner')
-            ->leftJoin('uInner.student', 'sInner')
-            ->where('sInner.id = :student');
-
-        $qb
-            ->select(['u', 's'])
-            ->from(User::class, 'u')
-            ->leftJoin('u.student', 's')
-            ->where($qb->expr()->in('u.id', $qbInner->getDQL()))
-            ->setParameter('student', $student->getId());
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function findAllParentsByStudents(array $students): array {
-        $studentIds = array_map(function(Student $student) {
-            return $student->getId();
-        }, $students);
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->em->createQueryBuilder();
 
@@ -104,9 +80,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
      * @inheritDoc
      */
     public function findAllStudentsByStudents(array $students): array {
-        $studentIds = array_map(function(Student $student) {
-            return $student->getId();
-        }, $students);
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->em->createQueryBuilder();
 
@@ -132,9 +106,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
      * @inheritDoc
      */
     public function findAllTeachers(array $teachers): array {
-        $teacherIds = array_map(function(Teacher $teacher) {
-            return $teacher->getId();
-        }, $teachers);
+        $teacherIds = array_map(fn(Teacher $teacher) => $teacher->getId(), $teachers);
 
         $qb = $this->em->createQueryBuilder();
 
@@ -216,9 +188,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
      * @inheritDoc
      */
     public function findAllByUserTypes(array $types): array {
-        $typeNames = array_map(function(UserType $type) {
-            return $type->getValue();
-        }, $types);
+        $typeNames = array_map(fn(UserType $type) => $type->getValue(), $types);
 
         $qb = $this->em->createQueryBuilder();
 

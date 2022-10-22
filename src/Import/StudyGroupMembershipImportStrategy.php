@@ -16,21 +16,11 @@ use App\Utils\ArrayUtils;
 
 class StudyGroupMembershipImportStrategy implements ReplaceImportStrategyInterface, InitializeStrategyInterface {
 
-    private $studyGroupMembershipRepository;
-    private $studyGroupRepository;
-    private $studentRepository;
-    private $sectionRepository;
+    private array $studyGroups = [ ];
+    private array $students = [ ];
 
-    private $studyGroups = [ ];
-    private $students = [ ];
-
-    public function __construct(StudyGroupMembershipRepositoryInterface $studyGroupMembershipRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository,
-                                StudentRepositoryInterface $studentRepository, SectionRepositoryInterface $sectionRepository) {
-        $this->studyGroupMembershipRepository = $studyGroupMembershipRepository;
-        $this->studyGroupRepository = $studyGroupRepository;
-        $this->studentRepository = $studentRepository;
-        $this->sectionRepository = $sectionRepository;
+    public function __construct(private StudyGroupMembershipRepositoryInterface $studyGroupMembershipRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private StudentRepositoryInterface $studentRepository, private SectionRepositoryInterface $sectionRepository)
+    {
     }
 
     public function getRepository(): TransactionalRepositoryInterface {
@@ -50,16 +40,12 @@ class StudyGroupMembershipImportStrategy implements ReplaceImportStrategyInterfa
 
         $this->studyGroups = ArrayUtils::createArrayWithKeys(
             $this->studyGroupRepository->findAllBySection($section),
-            function(StudyGroup $studyGroup) {
-                return $studyGroup->getExternalId();
-            }
+            fn(StudyGroup $studyGroup) => $studyGroup->getExternalId()
         );
 
         $this->students = ArrayUtils::createArrayWithKeys(
             $this->studentRepository->findAllBySection($section),
-            function(Student $student) {
-                return $student->getExternalId();
-            }
+            fn(Student $student) => $student->getExternalId()
         );
     }
 

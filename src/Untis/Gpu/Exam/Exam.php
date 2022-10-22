@@ -6,152 +6,92 @@ use DateTime;
 
 class Exam {
 
-    /**
-     * @var int
-     */
-    private $id;
+    private ?int $id = null;
 
-    /**
-     * @var string|null
-     */
-    private $name;
+    private ?string $name = null;
 
-    /**
-     * @var string|null
-     */
-    private $text;
+    private ?string $text = null;
 
-    /**
-     * @var DateTime
-     */
-    private $date;
+    private ?\DateTime $date = null;
 
-    /**
-     * @var int
-     */
-    private $lessonStart;
+    private ?int $lessonStart = null;
 
-    /**
-     * @var int
-     */
-    private $lessonEnd;
+    private ?int $lessonEnd = null;
 
     /**
      * @var string[]
      */
-    private $subjects = [ ];
+    private array $subjects = [ ];
 
     /**
      * @var int[]
      */
-    private $tuitions = [ ];
+    private array $tuitions = [ ];
 
     /**
      * @var string[]
      */
-    private $students = [ ];
+    private array $students = [ ];
 
     /**
      * @var string[]
      */
-    private $supervisions = [ ];
+    private array $supervisions = [ ];
 
     /**
      * @var string[]
      */
-    private $rooms = [ ];
+    private array $rooms = [ ];
 
-    /**
-     * @return int
-     */
     public function getId(): int {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     * @return Exam
-     */
     public function setId(int $id): Exam {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     * @return Exam
-     */
     public function setName(?string $name): Exam {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getText(): ?string {
         return $this->text;
     }
 
-    /**
-     * @param string|null $text
-     * @return Exam
-     */
     public function setText(?string $text): Exam {
         $this->text = $text;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getDate(): DateTime {
         return $this->date;
     }
 
-    /**
-     * @param DateTime $date
-     * @return Exam
-     */
     public function setDate(DateTime $date): Exam {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLessonStart(): int {
         return $this->lessonStart;
     }
 
-    /**
-     * @param int $lessonStart
-     * @return Exam
-     */
     public function setLessonStart(int $lessonStart): Exam {
         $this->lessonStart = $lessonStart;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLessonEnd(): int {
         return $this->lessonEnd;
     }
 
-    /**
-     * @param int $lessonEnd
-     * @return Exam
-     */
     public function setLessonEnd(int $lessonEnd): Exam {
         $this->lessonEnd = $lessonEnd;
         return $this;
@@ -166,7 +106,6 @@ class Exam {
 
     /**
      * @param string[] $subjects
-     * @return Exam
      */
     public function setSubjects(array $subjects): Exam {
         $this->subjects = $subjects;
@@ -182,7 +121,6 @@ class Exam {
 
     /**
      * @param int[] $tuitions
-     * @return Exam
      */
     public function setTuitions(array $tuitions): Exam {
         $this->tuitions = $tuitions;
@@ -198,7 +136,6 @@ class Exam {
 
     /**
      * @param string[] $students
-     * @return Exam
      */
     public function setStudents(array $students): Exam {
         $this->students = $students;
@@ -214,7 +151,6 @@ class Exam {
 
     /**
      * @param string[] $supervisions
-     * @return Exam
      */
     public function setSupervisions(array $supervisions): Exam {
         $this->supervisions = $supervisions;
@@ -230,7 +166,6 @@ class Exam {
 
     /**
      * @param string[] $rooms
-     * @return Exam
      */
     public function setRooms(array $rooms): Exam {
         $this->rooms = $rooms;

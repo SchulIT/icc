@@ -20,7 +20,6 @@ class StudentGradeStrategy implements GroupingStrategyInterface, OptionsAwareGro
     /**
      * @param Grade|null $keyA
      * @param Grade|null $keyB
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         if($keyA === null && $keyB === null) {
@@ -40,7 +39,6 @@ class StudentGradeStrategy implements GroupingStrategyInterface, OptionsAwareGro
 
     /**
      * @param Grade $key
-     * @return GroupInterface
      */
     public function createGroup($key, array $options = [ ]): GroupInterface {
         return new StudentGradeGroup($key);

@@ -4,41 +4,25 @@ namespace App\Dashboard;
 
 class DashboardLesson {
 
-    /** @var bool */
-    private $isCurrent = false;
+    private bool $isCurrent = false;
 
-    /** @var int */
-    private $lessonNumber;
-
-    /** @var bool */
-    private $isBefore;
-
-    /** @var bool */
-    private $hasWarning = false;
+    private bool $hasWarning = false;
 
     /** @var AbstractViewItem[] */
-    private $items = [ ];
+    private array $items = [ ];
 
-    public function __construct(int $lessonNumber, bool $isBefore) {
-        $this->lessonNumber = $lessonNumber;
-        $this->isBefore = $isBefore;
+    public function __construct(private int $lessonNumber, private bool $isBefore)
+    {
     }
 
     public function isBefore(): bool {
         return $this->isBefore;
     }
 
-    /**
-     * @return bool
-     */
     public function isCurrent(): bool {
         return $this->isCurrent;
     }
 
-    /**
-     * @param bool $isCurrent
-     * @return DashboardLesson
-     */
     public function setIsCurrent(bool $isCurrent): DashboardLesson {
         $this->isCurrent = $isCurrent;
         return $this;

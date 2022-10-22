@@ -16,10 +16,6 @@ abstract class AbstractReader {
         return intval($value);
     }
 
-    /**
-     * @param string|null $value
-     * @return string|null
-     */
     protected function getStringOrNull(?string $value): ?string {
         if(empty($value)) {
             return null;
@@ -29,21 +25,15 @@ abstract class AbstractReader {
     }
 
     /**
-     * @param string|null $value
-     * @param string $separator
      * @return int[]
      */
     protected function getIntArrayOrEmptyArray(?string $value, string $separator = '~'): array {
         $stringArray = $this->getStringArrayOrEmptyArray($value, $separator);
 
-        return array_map(function($value) {
-            return intval($value);
-        }, $stringArray);
+        return array_map(fn($value) => intval($value), $stringArray);
     }
 
     /**
-     * @param string|null $value
-     * @param string $separator
      * @return string[]
      */
     protected function getStringArrayOrEmptyArray(?string $value, string $separator = '~'): array {
@@ -55,15 +45,9 @@ abstract class AbstractReader {
             throw new ValueError('Separator must not be empty.');
         }
 
-        return array_map(function($value) {
-            return trim($value);
-        }, explode($separator, $value));
+        return array_map(fn($value) => trim($value), explode($separator, $value));
     }
 
-    /**
-     * @param string|null $dateString
-     * @return DateTime|null
-     */
     protected function convertDate(?string $dateString): ?DateTime {
         if(empty($dateString)) {
             return null;
@@ -74,10 +58,6 @@ abstract class AbstractReader {
         return $dateTime;
     }
 
-    /**
-     * @param string|null $dateTimeString
-     * @return DateTime|null
-     */
     protected function convertDateTime(?string $dateTimeString): ?DateTime {
         if(empty($dateTimeString)) {
             return null;

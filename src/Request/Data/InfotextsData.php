@@ -12,10 +12,10 @@ class InfotextsData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\InfotextData>")
-     * @Assert\Valid()
      * @var InfotextData[]
      */
-    private $infotexts = [ ];
+    #[Assert\Valid]
+    private array $infotexts = [ ];
 
     /**
      * @return InfotextData[]
@@ -26,7 +26,6 @@ class InfotextsData {
 
     /**
      * @param InfotextData[] $infotexts
-     * @return InfotextsData
      */
     public function setInfotexts($infotexts): InfotextsData {
         $this->infotexts = $infotexts;

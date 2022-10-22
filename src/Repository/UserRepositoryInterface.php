@@ -34,12 +34,6 @@ interface UserRepositoryInterface extends TransactionalRepositoryInterface {
     public function findOneByEmail(string $email): ?User;
 
     /**
-     * @param Student $student
-     * @return User[]
-     */
-    public function findAllByStudent(Student $student);
-
-    /**
      * @param Student[] $students
      * @return User[]
      */

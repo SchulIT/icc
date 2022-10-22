@@ -16,10 +16,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ResourceReservationType extends AbstractType {
 
-    private ResourceStrategy $strategy;
-
-    public function __construct(ResourceStrategy $strategy) {
-        $this->strategy = $strategy;
+    public function __construct(private ResourceStrategy $strategy)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -31,13 +29,9 @@ class ResourceReservationType extends AbstractType {
                     'data-choice' => 'true'
                 ],
                 'class' => ResourceEntity::class,
-                'query_builder' => function(EntityRepository $repository) {
-                    return $repository->createQueryBuilder('r')
-                        ->where('r.isReservationEnabled = true');
-                },
-                'choice_label' => function(ResourceEntity $resource) {
-                    return sprintf('%s [%s]', $resource->getName(), $resource->getType()->getName());
-                },
+                'query_builder' => fn(EntityRepository $repository) => $repository->createQueryBuilder('r')
+                    ->where('r.isReservationEnabled = true'),
+                'choice_label' => fn(ResourceEntity $resource) => sprintf('%s [%s]', $resource->getName(), $resource->getType()->getName()),
                 'sort_by' => $this->strategy
             ])
             ->add('date', DateType::class, [

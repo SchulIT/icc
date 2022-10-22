@@ -6,12 +6,6 @@ use DateTime;
 
 class TimetableWeek {
 
-    private int $year;
-
-    private int $week;
-
-    private ?string $label;
-
     /**
      * Maximum of lesson number of all days in a week
      * @var int
@@ -26,22 +20,14 @@ class TimetableWeek {
      */
     public bool $isCurrentOrUpcoming = false;
 
-    public function __construct(int $year, int $week, ?string $label) {
-        $this->year = $year;
-        $this->week = $week;
-        $this->label = $label;
+    public function __construct(private int $year, private int $week, private ?string $label)
+    {
     }
 
-    /**
-     * @return int
-     */
     public function getYear(): int {
         return $this->year;
     }
 
-    /**
-     * @return int
-     */
     public function getWeek(): int {
         return $this->week;
     }
@@ -53,26 +39,15 @@ class TimetableWeek {
         return $this->label;
     }
 
-    /**
-     * @param int $maxLessons
-     * @return TimetableWeek
-     */
     public function setMaxLesson(int $maxLessons): TimetableWeek {
         $this->maxLessons = $maxLessons;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getMaxLessons(): int {
         return $this->maxLessons;
     }
 
-    /**
-     * @param int $firstLesson
-     * @return bool
-     */
     public function hasSupervisionBefore(int $firstLesson): bool {
         foreach($this->days as $day) {
             $ttlFirst = $day->getTimetableLessonsContainer($firstLesson);

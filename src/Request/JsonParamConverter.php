@@ -16,30 +16,17 @@ class JsonParamConverter implements ParamConverterInterface {
 
     private const ContentType = 'json';
 
-    private array $prefixes;
-
-    private SerializerInterface $serializer;
-    private DeserializationContextFactoryInterface $contextFactory;
-    private ValidatorInterface $validator;
-
     private array $defaultOptions = [
         'validate' => true,
         'version' => null,
         'groups' => null
     ];
 
-    public function __construct(array $prefixes, SerializerInterface $serializer, ValidatorInterface $validator, DeserializationContextFactoryInterface $contextFactory) {
-        $this->prefixes = $prefixes;
-
-        $this->serializer = $serializer;
-        $this->contextFactory = $contextFactory;
-        $this->validator = $validator;
+    public function __construct(private array $prefixes, private SerializerInterface $serializer, private ValidatorInterface $validator, private DeserializationContextFactoryInterface $contextFactory)
+    {
     }
 
     /**
-     * @param Request $request
-     * @param ParamConverter $configuration
-     * @return bool
      * @throws BadRequestHttpException
      * @throws ValidationFailedException
      */
@@ -69,7 +56,7 @@ class JsonParamConverter implements ParamConverterInterface {
             }
 
             $request->attributes->set($name, $object);
-        } catch (SerializerException $e) {
+        } catch (SerializerException) {
             throw new BadRequestHttpException('Request body does not contain valid JSON.');
         }
 
@@ -83,7 +70,7 @@ class JsonParamConverter implements ParamConverterInterface {
         $class = $configuration->getClass();
 
         foreach($this->prefixes as $prefix) {
-            if (substr($class, 0, strlen($prefix)) === $prefix) {
+            if (str_starts_with($class, $prefix)) {
                 return true;
             }
         }

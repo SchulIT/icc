@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Stringable;
 use App\Validator\NullOrNotBlank;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,58 +15,51 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  * @Auditable()
- * @UniqueEntity(fields={"acronym"})
  */
-class Teacher {
+#[UniqueEntity(fields: ['acronym'])]
+class Teacher implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @var string
      */
-    private $externalId;
+    private ?string $externalId = null;
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @var string
      */
-    private $acronym;
+    private ?string $acronym = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @var string|null
      */
-    private $title;
+    private ?string $title = null;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $firstname;
+    #[Assert\NotBlank]
+    private ?string $firstname = null;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $lastname;
+    #[Assert\NotBlank]
+    private ?string $lastname = null;
 
     /**
      * @ORM\Column(type="gender")
-     * @var Gender
      */
-    private $gender;
+    private Gender $gender;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\Email()
      * @NullOrNotBlank()
-     * @var string|null
      */
-    private $email;
+    #[Assert\Email]
+    private ?string $email = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="Subject", inversedBy="teachers")
@@ -113,114 +107,65 @@ class Teacher {
         $this->sections = new ArrayCollection();
     }
 
-    /**
-     * @return string|null
-     */
     public function getExternalId(): ?string {
         return $this->externalId;
     }
 
-    /**
-     * @param string|null $externalId
-     * @return Teacher
-     */
     public function setExternalId(?string $externalId): Teacher {
         $this->externalId = $externalId;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getAcronym(): ?string {
         return $this->acronym;
     }
 
-    /**
-     * @param string|null $acronym
-     * @return Teacher
-     */
     public function setAcronym(?string $acronym): Teacher {
         $this->acronym = $acronym;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTitle(): ?string {
         return $this->title;
     }
 
-    /**
-     * @param string|null $title
-     * @return Teacher
-     */
     public function setTitle(?string $title): Teacher {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFirstname(): ?string {
         return $this->firstname;
     }
 
-    /**
-     * @param string|null $firstname
-     * @return Teacher
-     */
     public function setFirstname(?string $firstname): Teacher {
         $this->firstname = $firstname;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLastname(): ?string {
         return $this->lastname;
     }
 
-    /**
-     * @param string|null $lastname
-     * @return Teacher
-     */
     public function setLastname(?string $lastname): Teacher {
         $this->lastname = $lastname;
         return $this;
     }
 
-    /**
-     * @return Gender
-     */
     public function getGender(): Gender {
         return $this->gender;
     }
 
-    /**
-     * @param Gender $gender
-     * @return Teacher
-     */
     public function setGender(Gender $gender): Teacher {
         $this->gender = $gender;
         return $this;
     }
 
-    /**
-     * @param string|null $email
-     * @return Teacher
-     */
     public function setEmail(?string $email): Teacher {
         $this->email = $email;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getEmail(): ?string {
         return $this->email;
     }
@@ -277,7 +222,7 @@ class Teacher {
         return $this->sections;
     }
 
-    public function __toString() {
-        return $this->getAcronym();
+    public function __toString(): string {
+        return (string) $this->getAcronym();
     }
 }

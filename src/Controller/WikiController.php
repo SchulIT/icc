@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\WikiArticle;
 use App\Http\FlysystemFileResponse;
 use App\Repository\WikiArticleRepositoryInterface;
@@ -14,30 +15,22 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/wiki")
- */
+#[Route(path: '/wiki')]
 class WikiController extends AbstractController {
 
     private const ResultsPerPage = 20;
 
-    private WikiArticleRepositoryInterface $repository;
-
-    public function __construct(WikiArticleRepositoryInterface $repository) {
-        $this->repository = $repository;
+    public function __construct(private WikiArticleRepositoryInterface $repository)
+    {
     }
 
-    /**
-     * @Route("", name="wiki")
-     */
-    public function index() {
+    #[Route(path: '', name: 'wiki')]
+    public function index(): Response {
         return $this->show(null);
     }
 
-    /**
-     * @Route("/{uuid}", name="show_wiki_article")
-     */
-    public function show(?WikiArticle $article) {
+    #[Route(path: '/{uuid}', name: 'show_wiki_article')]
+    public function show(?WikiArticle $article): Response {
         if($article !== null) {
             $this->denyAccessUnlessGranted(WikiVoter::View, $article);
         }
@@ -67,10 +60,8 @@ class WikiController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/image/{filename}", name="wiki_image")
-     */
-    public function image($filename, Filesystem $wikiFilesystem, MimeTypes $mimeTypes) {
+    #[Route(path: '/image/{filename}', name: 'wiki_image')]
+    public function image($filename, Filesystem $wikiFilesystem, MimeTypes $mimeTypes): Response {
         if($wikiFilesystem->fileExists($filename) !== true) {
             throw new NotFoundHttpException();
         }
@@ -86,10 +77,8 @@ class WikiController extends AbstractController {
         );
     }
 
-    /**
-     * @Route("/search", name="wiki_search", priority=10)
-     */
-    public function search(Request $request) {
+    #[Route(path: '/search', name: 'wiki_search', priority: 10)]
+    public function search(Request $request): Response {
         $p = $request->query->getInt('p', 1);
         $q = $request->query->get('q');
 

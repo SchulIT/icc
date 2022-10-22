@@ -14,10 +14,8 @@ class LessonEntryVoter extends Voter {
     public const Edit = 'edit';
     public const Remove = 'remove';
 
-    private AccessDecisionManagerInterface $accessDecisionManager;
-
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
-        $this->accessDecisionManager = $accessDecisionManager;
+    public function __construct(private AccessDecisionManagerInterface $accessDecisionManager)
+    {
     }
 
     /**
@@ -36,17 +34,13 @@ class LessonEntryVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
-        switch($attribute) {
-            case self::New:
-                return $this->canCreate($token);
-
-            case self::Edit:
-            case self::Remove:
-                return $this->canEditOrRemove($subject, $token);
-        }
-
-        throw new LogicException('This code should not be reached.');
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    {
+        return match ($attribute) {
+            self::New => $this->canCreate($token),
+            self::Edit, self::Remove => $this->canEditOrRemove($subject, $token),
+            default => throw new LogicException('This code should not be reached.'),
+        };
     }
 
     private function canCreate(TokenInterface $token): bool {

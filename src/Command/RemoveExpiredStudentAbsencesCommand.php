@@ -18,27 +18,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class RemoveExpiredStudentAbsencesCommand extends Command {
 
-    private StudentAbsenceSettings $settings;
-    private StudentAbsenceRepositoryInterface $repository;
-    private StudentAbsenceAttachmentRepositoryInterface $attachmentRepository;
-    private DateHelper $dateHelper;
-    private Filesystem $filesystem;
-
-    public function __construct(StudentAbsenceSettings $settings, StudentAbsenceRepositoryInterface $repository,
-                                StudentAbsenceAttachmentRepositoryInterface $attachmentRepository, Filesystem $studentAbsencesFilesystem,
-                                DateHelper $dateHelper, string $name = null) {
+    protected static $defaultName = 'app:absences:cleanup';
+    public function __construct(private StudentAbsenceSettings $settings, private StudentAbsenceRepositoryInterface $repository,
+                                private StudentAbsenceAttachmentRepositoryInterface $attachmentRepository, private Filesystem $filesystem,
+                                private DateHelper $dateHelper, string $name = null) {
         parent::__construct($name);
-
-        $this->settings = $settings;
-        $this->repository = $repository;
-        $this->attachmentRepository = $attachmentRepository;
-        $this->dateHelper = $dateHelper;
-        $this->filesystem = $studentAbsencesFilesystem;
     }
 
     public function configure() {
-        $this->setName('app:absences:cleanup')
-            ->setDescription('Cleans up expired absences.');
+        $this->setDescription('Cleans up expired absences.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

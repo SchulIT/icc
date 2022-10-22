@@ -14,10 +14,6 @@ use Doctrine\ORM\QueryBuilder;
 
 class SubstitutionRepository extends AbstractTransactionalRepository implements SubstitutionRepositoryInterface {
 
-    /**
-     * @param int $id
-     * @return Substitution|null
-     */
     public function findOneById(int $id): ?Substitution {
         return $this->em->getRepository(Substitution::class)
             ->findOneBy([
@@ -25,10 +21,6 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
             ]);
     }
 
-    /**
-     * @param string $externalId
-     * @return Substitution|null
-     */
     public function findOneByExternalId(string $externalId): ?Substitution {
         return $this->em->getRepository(Substitution::class)
             ->findOneBy([
@@ -46,7 +38,6 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
     }
 
     /**
-     * @param DateTime $date
      * @return Substitution[]
      */
     public function findAllByDate(DateTime $date, bool $excludeNonStudentSubstitutions = false) {
@@ -77,17 +68,11 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param Substitution $substitution
-     */
     public function persist(Substitution $substitution): void {
         $this->em->persist($substitution);
         $this->flushIfNotInTransaction();
     }
 
-    /**
-     * @param Substitution $substitution
-     */
     public function remove(Substitution $substitution): void {
         $this->em->remove($substitution);
         $this->flushIfNotInTransaction();
@@ -97,14 +82,10 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
      * @inheritDoc
      */
     public function findAllForStudyGroups(array $studyGroups, ?\DateTime $date = null) {
-        $ids = array_map(function(StudyGroup $studyGroup) {
-            return $studyGroup->getId();
-        }, $studyGroups);
+        $ids = array_map(fn(StudyGroup $studyGroup) => $studyGroup->getId(), $studyGroups);
 
         /** @var StudyGroup|null $gradeStudyGroup */
-        $gradeStudyGroup = ArrayUtils::first($studyGroups, function(StudyGroup $studyGroup) {
-            return $studyGroup->getType()->equals(StudyGroupType::Grade());
-        });
+        $gradeStudyGroup = ArrayUtils::first($studyGroups, fn(StudyGroup $studyGroup) => $studyGroup->getType()->equals(StudyGroupType::Grade()));
         /** @var Grade|null $grade */
         $grade = $gradeStudyGroup != null ? $gradeStudyGroup->getGrades()->first() : null;
         $gradeId = $grade !== null ? $grade->getId() : null;
@@ -210,11 +191,7 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
      * @inheritDoc
      */
     public function findAllForRooms(array $rooms, ?DateTime $date): array {
-        $roomIds = array_filter(array_map(function(Room $room) {
-            return $room->getId();
-        }, $rooms), function($input) {
-            return !empty($input);
-        });
+        $roomIds = array_filter(array_map(fn(Room $room) => $room->getId(), $rooms), fn($input) => !empty($input));
 
         $qb = $this->getDefaultQueryBuilder($date);
         $qb->leftJoin('s.replacementRooms', 'r')

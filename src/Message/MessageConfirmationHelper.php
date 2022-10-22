@@ -13,13 +13,10 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class MessageConfirmationHelper {
 
-    private $tokenStorage;
-    private $entityManager;
-    private $cache = [ ];
+    private array $cache = [ ];
 
-    public function __construct(TokenStorageInterface $tokenStorage, EntityManagerInterface $entityManager) {
-        $this->tokenStorage = $tokenStorage;
-        $this->entityManager = $entityManager;
+    public function __construct(private TokenStorageInterface $tokenStorage, private EntityManagerInterface $entityManager)
+    {
     }
 
     public function isMessageConfirmed(Message $message, User $user = null) {

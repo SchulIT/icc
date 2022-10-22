@@ -37,7 +37,7 @@ class AttributeMapper extends AbstractUserMapper implements AttributeMapperInter
         $services = [ ];
 
         foreach($values as $value) {
-            $services[] = json_decode($value);
+            $services[] = json_decode($value, null, 512, JSON_THROW_ON_ERROR);
         }
 
         return $services;

@@ -7,19 +7,13 @@ use App\Entity\UserType;
 
 class UserUserTypeGroup implements GroupInterface, SortableGroupInterface {
 
-    /** @var UserType */
-    private $userType;
-
     /** @var User[] */
     private $users;
 
-    public function __construct(UserType $userType) {
-        $this->userType = $userType;
+    public function __construct(private UserType $userType)
+    {
     }
 
-    /**
-     * @return UserType
-     */
     public function getUserType(): UserType {
         return $this->userType;
     }

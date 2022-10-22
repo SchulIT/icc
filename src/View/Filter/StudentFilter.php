@@ -16,14 +16,8 @@ use App\Utils\ArrayUtils;
 
 class StudentFilter {
 
-    private $sorter;
-    private $grouper;
-    private $studentRepository;
-
-    public function __construct(Sorter $sorter, Grouper $grouper, StudentRepositoryInterface $studentRepository) {
-        $this->sorter = $sorter;
-        $this->grouper = $grouper;
-        $this->studentRepository = $studentRepository;
+    public function __construct(private Sorter $sorter, private Grouper $grouper, private StudentRepositoryInterface $studentRepository)
+    {
     }
 
     public function handle(?string $studentUuid, ?Section $section, User $user, bool $setDefaultStudent = true): StudentFilterView {
@@ -39,9 +33,7 @@ class StudentFilter {
 
         $students = ArrayUtils::createArrayWithKeys(
             $students,
-            function(Student $student) {
-                return (string)$student->getUuid();
-            }
+            fn(Student $student) => (string)$student->getUuid()
         );
 
         $student = $studentUuid !== null ?

@@ -26,22 +26,13 @@ use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 class MessageFilesystem implements DirectoryNamerInterface {
 
-    private TokenStorageInterface $tokenStorage;
-    private FilesystemOperator $filesystem;
-    private MimeTypes $mimeTypes;
     private LoggerInterface|NullLogger $logger;
 
-    public function __construct(TokenStorageInterface $tokenStorage, FilesystemOperator $filesystem, MimeTypes $mimeTypes, LoggerInterface $logger = null) {
-        $this->tokenStorage = $tokenStorage;
-        $this->filesystem = $filesystem;
-        $this->mimeTypes = $mimeTypes;
+    public function __construct(private TokenStorageInterface $tokenStorage, private FilesystemOperator $filesystem, private MimeTypes $mimeTypes, LoggerInterface $logger = null) {
         $this->logger = $logger ?? new NullLogger();
     }
 
     /**
-     * @param string $path
-     * @param string $filename
-     * @return Response
      * @throws FileNotFoundException|FilesystemException
      */
     private function getDownloadResponse(string $path, string $filename): Response {
@@ -60,8 +51,6 @@ class MessageFilesystem implements DirectoryNamerInterface {
     }
 
     /**
-     * @param MessageAttachment $attachment
-     * @return Response
      * @throws FileNotFoundException
      * @throws FilesystemException
      */
@@ -106,9 +95,6 @@ class MessageFilesystem implements DirectoryNamerInterface {
 
     /**
      * Returns the full path of a MessageAttachment
-     *
-     * @param MessageAttachment $attachment
-     * @return string
      */
     private function getMessageAttachmentPath(MessageAttachment $attachment): string {
         return sprintf('/%s/%s', $attachment->getMessage()->getUuid(), $attachment->getPath());
@@ -117,9 +103,6 @@ class MessageFilesystem implements DirectoryNamerInterface {
 
     /**
      * Returns the messages basedir which is used for any sorts of file (attachments and user specific downloads/uploads)
-     *
-     * @param Message $message
-     * @return string
      */
     private function getMessageDirectory(Message $message): string {
         return sprintf('/%s/', $message->getUuid());
@@ -128,9 +111,7 @@ class MessageFilesystem implements DirectoryNamerInterface {
     /**
      * Returns the base dir for user specific downloads
      *
-     * @param Message $message
      * @param User|null $user The directory of a specific user (if specified)
-     * @return string
      */
     public function getMessageDownloadsDirectory(Message $message, ?User $user): string {
         if($user === null) {
@@ -143,9 +124,7 @@ class MessageFilesystem implements DirectoryNamerInterface {
     /**
      * Returns the directory for user specific uploads
      *
-     * @param Message|MessageFileUpload $messageOrUpload
      * @param User|null $user The directory of a specific user (if specified)
-     * @return string
      */
     public function getMessageUploadsDirectory(MessageFileUpload|Message $messageOrUpload, ?User $user): string {
         if($user === null) {
@@ -158,7 +137,6 @@ class MessageFilesystem implements DirectoryNamerInterface {
     /**
      * @param MessageAttachment|MessageFileUpload|Message $object
      * @param PropertyMapping $mapping
-     * @return string
      * @throws UnexpectedTypeException
      */
     public function directoryName($object, PropertyMapping $mapping): string {
@@ -180,8 +158,6 @@ class MessageFilesystem implements DirectoryNamerInterface {
     /**
      * Returns a list of user specific downloads
      *
-     * @param Message $message
-     * @param User $user
      * @return string[]
      * @throws FilesystemException
      */
@@ -197,11 +173,6 @@ class MessageFilesystem implements DirectoryNamerInterface {
 
     /**
      * Returns information about a given user specific download
-     *
-     * @param Message $message
-     * @param User $user
-     * @param string $filename
-     * @return array|null
      */
     public function getUserDownload(Message $message, User $user, string $filename): ?array {
         $path = sprintf('%s/%s',
@@ -223,8 +194,6 @@ class MessageFilesystem implements DirectoryNamerInterface {
     /**
      * Returns all user downloads as nested array
      *
-     * @param Message $message
-     * @return array
      * @throws FilesystemException
      */
     public function getAllUserDownloads(Message $message): array {
@@ -260,9 +229,6 @@ class MessageFilesystem implements DirectoryNamerInterface {
     /**
      * Uploads a user-specific download
      *
-     * @param Message $message
-     * @param User $user
-     * @param UploadedFile $uploadedFile
      * @throws FilesystemException
      */
     public function uploadUserDownload(Message $message, User $user, UploadedFile $uploadedFile) {
@@ -280,9 +246,6 @@ class MessageFilesystem implements DirectoryNamerInterface {
     /**
      * Uploads a user-specific file
      *
-     * @param Message $message
-     * @param User $user
-     * @param UploadedFile $uploadedFile
      * @throws FilesystemException
      */
     public function uploadFile(Message $message, User $user, UploadedFile $uploadedFile) {

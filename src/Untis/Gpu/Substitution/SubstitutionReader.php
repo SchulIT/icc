@@ -14,7 +14,7 @@ class SubstitutionReader extends AbstractGpuReader {
 
         try {
             return SubstitutionType::from($value);
-        } catch (UnexpectedValueException $e) { }
+        } catch (UnexpectedValueException) { }
 
         return null;
     }

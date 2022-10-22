@@ -10,74 +10,50 @@ class Week {
     /**
      * @Serializer\Type("integer")
      * @Serializer\SerializedName("week_number")
-     * @var int
      */
-    private $weekNumber = 0;
+    private int $weekNumber = 0;
 
     /**
      * @Serializer\Type("DateTime")
      * @Serializer\SerializedName("start")
-     * @var DateTime
      */
-    private $start;
+    private ?\DateTime $start = null;
 
     /**
      * @Serializer\Type("DateTime")
      * @Serializer\SerializedName("end")
-     * @var DateTime
      */
-    private $end;
+    private ?\DateTime $end = null;
 
     /**
      * @Serializer\Type("array<App\Book\Export\Day>")
      * @Serializer\SerializedName("days")
      * @var Day[]
      */
-    private $days;
+    private ?array $days = null;
 
-    /**
-     * @return int
-     */
     public function getWeekNumber(): int {
         return $this->weekNumber;
     }
 
-    /**
-     * @param int $weekNumber
-     * @return Week
-     */
     public function setWeekNumber(int $weekNumber): Week {
         $this->weekNumber = $weekNumber;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getStart(): DateTime {
         return $this->start;
     }
 
-    /**
-     * @param DateTime $start
-     * @return Week
-     */
     public function setStart(DateTime $start): Week {
         $this->start = $start;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getEnd(): DateTime {
         return $this->end;
     }
 
-    /**
-     * @param DateTime $end
-     * @return Week
-     */
     public function setEnd(DateTime $end): Week {
         $this->end = $end;
         return $this;

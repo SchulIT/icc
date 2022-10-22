@@ -8,10 +8,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RoomQueryBuilder {
 
-    private $roomTagRepository;
-
-    public function __construct(RoomTagRepositoryInterface $roomTagRepository) {
-        $this->roomTagRepository = $roomTagRepository;
+    public function __construct(private RoomTagRepositoryInterface $roomTagRepository)
+    {
     }
 
     public function serialize(RoomQuery $query): array {
@@ -38,7 +36,6 @@ class RoomQueryBuilder {
     }
 
     /**
-     * @param Request $request
      * @return RoomQuery
      */
     public function buildFromRequest(Request $request) {

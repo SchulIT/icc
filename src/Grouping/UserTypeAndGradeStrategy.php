@@ -11,10 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserTypeAndGradeStrategy implements GroupingStrategyInterface, OptionsAwareGroupInterface {
 
-    private $enumStringConverter;
-
-    public function __construct(EnumStringConverter $enumStringConverter) {
-        $this->enumStringConverter = $enumStringConverter;
+    public function __construct(private EnumStringConverter $enumStringConverter)
+    {
     }
 
     /**
@@ -40,7 +38,6 @@ class UserTypeAndGradeStrategy implements GroupingStrategyInterface, OptionsAwar
     /**
      * @param string $keyA
      * @param string $keyB
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA === $keyB;
@@ -48,7 +45,6 @@ class UserTypeAndGradeStrategy implements GroupingStrategyInterface, OptionsAwar
 
     /**
      * @param string|null $key
-     * @return GroupInterface
      */
     public function createGroup($key, array $options = [ ]): GroupInterface {
         return new StringGroup($key);

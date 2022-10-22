@@ -16,17 +16,10 @@ trait UuidTrait {
      */
     private $uuid;
 
-    /**
-     * @return UuidInterface
-     */
     public function getUuid(): UuidInterface {
         return $this->uuid;
     }
 
-    /**
-     * @param UuidInterface $uuid
-     * @return self
-     */
     public function setUuid(UuidInterface $uuid): self {
         $this->uuid = $uuid;
         return $this;

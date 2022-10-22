@@ -16,14 +16,8 @@ use App\Utils\ArrayUtils;
 
 class StudyGroupImportStrategy implements ImportStrategyInterface {
 
-    private $studyGroupRepository;
-    private $gradeRepository;
-    private $sectionRepository;
-
-    public function __construct(StudyGroupRepositoryInterface $studyGroupRepository, GradeRepositoryInterface $gradeRepository, SectionRepositoryInterface $sectionRepository) {
-        $this->studyGroupRepository = $studyGroupRepository;
-        $this->gradeRepository = $gradeRepository;
-        $this->sectionRepository = $sectionRepository;
+    public function __construct(private StudyGroupRepositoryInterface $studyGroupRepository, private GradeRepositoryInterface $gradeRepository, private SectionRepositoryInterface $sectionRepository)
+    {
     }
 
     /**
@@ -40,9 +34,7 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
 
         return ArrayUtils::createArrayWithKeys(
             $this->studyGroupRepository->findAllBySection($section),
-            function(StudyGroup $studyGroup) {
-                return $studyGroup->getExternalId();
-            }
+            fn(StudyGroup $studyGroup) => $studyGroup->getExternalId()
         );
     }
 
@@ -71,7 +63,6 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param StudyGroup $entity
-     * @return int
      */
     public function getEntityId($entity): int {
         return $entity->getId();
@@ -99,9 +90,7 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
         CollectionUtils::synchronize(
             $entity->getGrades(),
             $grades,
-            function(Grade $grade) {
-                return $grade->getId();
-            }
+            fn(Grade $grade) => $grade->getId()
         );
     }
 
@@ -134,9 +123,7 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
      * @throws ImportException
      */
     private function throwGradeIsMissing(array $grades, array $foundGrades, string $studyGroupExternalId) {
-        $foundIds = array_map(function(Grade $grade) {
-            return $grade->getExternalId();
-        }, $foundGrades);
+        $foundIds = array_map(fn(Grade $grade) => $grade->getExternalId(), $foundGrades);
 
         foreach($grades as $grade) {
             if(!in_array($grade, $foundIds)) {

@@ -9,7 +9,6 @@ use League\Csv\Reader;
 class TuitionReader extends AbstractGpuReader {
 
     /**
-     * @param Reader $reader
      * @return Tuition[]
      */
     public function readGpu(Reader $reader): array {

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\DocumentCategory;
 use App\Form\DocumentCategoryType;
 use App\Repository\DocumentCategoryRepositoryInterface;
@@ -15,23 +16,17 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Route("/admin/documents/categories")
  * @Security("is_granted('ROLE_DOCUMENTS_ADMIN')")
  */
+#[Route(path: '/admin/documents/categories')]
 class DocumentCategoryAdminController extends AbstractController {
 
-    private DocumentCategoryRepositoryInterface $repository;
-
-    public function __construct(DocumentCategoryRepositoryInterface $repository, RefererHelper $refererHelper) {
+    public function __construct(private DocumentCategoryRepositoryInterface $repository, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
-
-        $this->repository = $repository;
     }
 
-    /**
-     * @Route("", name="admin_document_categories")
-     */
-    public function index(Sorter $sorter) {
+    #[Route(path: '', name: 'admin_document_categories')]
+    public function index(Sorter $sorter): Response {
         $categories = $this->repository->findAll();
         $sorter->sort($categories, DocumentCategoryNameStrategy::class);
 
@@ -40,10 +35,8 @@ class DocumentCategoryAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add", name="admin_add_document_category")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'admin_add_document_category')]
+    public function add(Request $request): Response {
         $documentCategory = new DocumentCategory();
         $form = $this->createForm(DocumentCategoryType::class, $documentCategory);
         $form->handleRequest($request);
@@ -61,10 +54,8 @@ class DocumentCategoryAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="admin_edit_document_category")
-     */
-    public function edit(DocumentCategory $documentCategory, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'admin_edit_document_category')]
+    public function edit(DocumentCategory $documentCategory, Request $request): Response {
         $form = $this->createForm(DocumentCategoryType::class, $documentCategory);
         $form->handleRequest($request);
 
@@ -81,10 +72,8 @@ class DocumentCategoryAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="admin_remove_document_category")
-     */
-    public function remove(DocumentCategory $category, Request $request, TranslatorInterface $translator) {
+    #[Route(path: '/{uuid}/remove', name: 'admin_remove_document_category')]
+    public function remove(DocumentCategory $category, Request $request, TranslatorInterface $translator): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => $translator->trans('admin.documents.categories.remove.confirm', [
                 '%name%' => $category->getName()

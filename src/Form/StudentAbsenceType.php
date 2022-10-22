@@ -23,17 +23,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudentAbsenceType extends AbstractType {
 
-    private StudentStringConverter $studentConverter;
-    private StudentStrategy $studentStrategy;
-    private TranslatorInterface $translator;
-
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    public function __construct(StudentStringConverter $converter, StudentStrategy $strategy, TranslatorInterface $translator, AuthorizationCheckerInterface $authorizationChecker) {
-        $this->studentConverter = $converter;
-        $this->studentStrategy = $strategy;
-        $this->translator = $translator;
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(private StudentStringConverter $studentConverter, private StudentStrategy $studentStrategy, private TranslatorInterface $translator, private AuthorizationCheckerInterface $authorizationChecker)
+    {
     }
 
     public function configureOptions(OptionsResolver $resolver) {
@@ -44,9 +35,7 @@ class StudentAbsenceType extends AbstractType {
         $builder
             ->add('student', SortableChoiceType::class, [
                 'choices' => $options['students'],
-                'choice_label' => function(Student $student) {
-                    return $this->studentConverter->convert($student, true);
-                },
+                'choice_label' => fn(Student $student) => $this->studentConverter->convert($student, true),
                 'placeholder' => 'label.select.student',
                 'attr' => [
                     'data-choice' => 'true',

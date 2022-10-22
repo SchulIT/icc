@@ -10,11 +10,11 @@ class SubjectsData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\SubjectData>")
-     * @Assert\Valid()
      * @UniqueId(propertyPath="id")
      * @var SubjectData[]
      */
-    private $subjects = [ ];
+    #[Assert\Valid]
+    private array $subjects = [ ];
 
     /**
      * @return SubjectData[]
@@ -25,7 +25,6 @@ class SubjectsData {
 
     /**
      * @param SubjectData[] $subjects
-     * @return SubjectsData
      */
     public function setSubjects($subjects): SubjectsData {
         $this->subjects = $subjects;

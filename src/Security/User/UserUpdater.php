@@ -11,12 +11,8 @@ use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
 class UserUpdater implements EventSubscriberInterface {
 
-    private UserMapper $userMapper;
-    private UserRepositoryInterface $userRepository;
-
-    public function __construct(UserMapper $userMapper, UserRepositoryInterface $userRepository) {
-        $this->userMapper = $userMapper;
-        $this->userRepository = $userRepository;
+    public function __construct(private UserMapper $userMapper, private UserRepositoryInterface $userRepository)
+    {
     }
 
     public function onLoginSuccess(LoginSuccessEvent $event) {

@@ -14,10 +14,8 @@ use DateTime;
  */
 class AbsentStudyGroupResolver implements AbsenceResolveStrategyInterface {
 
-    private AbsenceRepositoryInterface $absenceRepository;
-
-    public function __construct(AbsenceRepositoryInterface $absenceRepository) {
-        $this->absenceRepository = $absenceRepository;
+    public function __construct(private AbsenceRepositoryInterface $absenceRepository)
+    {
     }
 
     /**
@@ -25,9 +23,7 @@ class AbsentStudyGroupResolver implements AbsenceResolveStrategyInterface {
      */
     public function resolveAbsentStudents(DateTime $dateTime, int $lesson, iterable $students): array {
         return array_map(
-            function(Student $student) {
-                return new AbsentStudent($student, AbsenceReason::Other());
-            },
+            fn(Student $student) => new AbsentStudent($student, AbsenceReason::Other()),
             $this->absenceRepository->findAllStudentsByDateAndLesson($dateTime, ArrayUtils::iterableToArray($students), $lesson)
         );
     }

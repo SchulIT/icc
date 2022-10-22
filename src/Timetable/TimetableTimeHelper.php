@@ -10,23 +10,21 @@ use Exception;
 
 class TimetableTimeHelper {
 
-    private $timetableSettings;
-
-    public function __construct(TimetableSettings $timetableSettings) {
-        $this->timetableSettings = $timetableSettings;
+    public function __construct(private TimetableSettings $timetableSettings)
+    {
     }
 
     private function getDateTime(DateTime $date, ?string $time) {
-        if(empty($time) || strpos($time, ':') === false) {
+        if(empty($time) || !str_contains($time, ':')) {
             return $date;
         }
 
-        list($hour, $minute) = explode(':', $time);
+        [$hour, $minute] = explode(':', $time);
 
         try {
             $interval = new DateInterval(sprintf('PT%dH%dM', $hour, $minute));
             return (clone $date)->add($interval);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return $date;
         }
     }

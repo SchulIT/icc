@@ -13,7 +13,6 @@ class BookSettings extends AbstractSettings {
 
     /**
      * @param int[] $ids
-     * @return void
      */
     public function setGradesGradeTeacherExcuses(array $ids): void {
         $this->setValue('book.excuses.grades_grade_teacher_excuses', $ids);
@@ -28,7 +27,6 @@ class BookSettings extends AbstractSettings {
 
     /**
      * @param int[] $ids
-     * @return void
      */
     public function setGradesTuitionTeacherExcuses(array $ids): void {
         $this->setValue('book.excuses.grades_tuition_teacher_excuses', $ids);

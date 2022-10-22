@@ -43,7 +43,6 @@ interface ImportStrategyInterface {
      * Returns an existing entity based on the imported data or null if such entity does not exist
      *
      * @param mixed $object
-     * @param array $existingEntities
      * @return mixed|null
      */
     public function getExistingEntity($object, array $existingEntities);

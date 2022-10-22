@@ -21,8 +21,6 @@ interface MessageRepositoryInterface {
     public function findOneById(int $id): ?Message;
 
     /**
-     * @param MessageScope $scope
-     * @param UserType $userType
      * @param \DateTime|null $today Only return messages which are active on this given date
      * @param StudyGroup[] $studyGroups Only return messages which belong to the given study groups
      * @return Message[]
@@ -51,13 +49,11 @@ interface MessageRepositoryInterface {
     public function getPaginator(int $itemsPerPage, int &$page, MessageScope $scope, UserType $userType, ?DateTime $today = null, array $studyGroups = [ ], ?string $query = null): Paginator;
 
     /**
-     * @param UserType $userType
      * @return Message[]
      */
     public function findAllByUserType(UserType $userType);
 
     /**
-     * @param Grade $grade
      * @return Message[]
      */
     public function findAllByGrade(Grade $grade);

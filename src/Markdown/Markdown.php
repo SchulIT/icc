@@ -6,12 +6,8 @@ use League\CommonMark\MarkdownConverterInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 class Markdown {
-    private MarkdownConverterInterface $converter;
-    private CacheItemPoolInterface $cache;
-
-    public function __construct(MarkdownConverterInterface $converter, CacheItemPoolInterface $cache) {
-        $this->converter = $converter;
-        $this->cache = $cache;
+    public function __construct(private MarkdownConverterInterface $converter, private CacheItemPoolInterface $cache)
+    {
     }
 
     public function convertToHtml(string $markdown): string {

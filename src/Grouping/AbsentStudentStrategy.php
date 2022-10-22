@@ -29,15 +29,13 @@ class AbsentStudentStrategy implements GroupingStrategyInterface {
     /**
      * @param Appointment|Exam|null $keyA
      * @param Appointment|Exam|null $keyB
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         return $keyA === $keyB;
     }
 
     /**
-     * @param AbsentStudent $key
-     * @return GroupInterface
+     * @param Appointment|Exam|null $key
      */
     public function createGroup($key, array $options = [ ]): GroupInterface {
         return new AbsentStudentGroup($key);

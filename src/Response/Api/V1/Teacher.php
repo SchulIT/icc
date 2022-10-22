@@ -14,151 +14,94 @@ class Teacher {
     /**
      * @Serializer\SerializedName("acronym")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $acronym;
+    private ?string $acronym = null;
 
     /**
      * @Serializer\SerializedName("title")
      * @Serializer\Type("string")
-     *
-     * @var string|null
      */
-    private $title;
+    private ?string $title = null;
 
     /**
      * @Serializer\SerializedName("firstname")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $firstname;
+    private ?string $firstname = null;
 
     /**
      * @Serializer\SerializedName("lastname")
      * @Serializer\Type("string")
-     *
-     * @var string
      */
-    private $lastname;
+    private ?string $lastname = null;
 
     /**
      * @Serializer\SerializedName("gender")
      * @Serializer\Type("string")
      * @Serializer\ReadOnly()
      * @Serializer\Accessor(getter="getGenderString")
-     *
-     * @var Gender
      */
-    private $gender;
+    private ?Gender $gender = null;
 
     /**
      * @Serializer\SerializedName("email")
      * @Serializer\Type("string")
-     *
-     * @var string|null
      */
-    private $email;
+    private ?string $email = null;
 
-    /**
-     * @return string
-     */
     public function getAcronym(): string {
         return $this->acronym;
     }
 
-    /**
-     * @param string $acronym
-     * @return Teacher
-     */
     public function setAcronym(string $acronym): Teacher {
         $this->acronym = $acronym;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTitle(): ?string {
         return $this->title;
     }
 
-    /**
-     * @param string|null $title
-     * @return Teacher
-     */
     public function setTitle(?string $title): Teacher {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getFirstname(): string {
         return $this->firstname;
     }
 
-    /**
-     * @param string $firstname
-     * @return Teacher
-     */
     public function setFirstname(string $firstname): Teacher {
         $this->firstname = $firstname;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLastname(): string {
         return $this->lastname;
     }
 
-    /**
-     * @param string $lastname
-     * @return Teacher
-     */
     public function setLastname(string $lastname): Teacher {
         $this->lastname = $lastname;
         return $this;
     }
 
-    /**
-     * @return Gender
-     */
     public function getGender(): Gender {
         return $this->gender;
     }
 
-    /**
-     * @return string
-     */
     public function getGenderString(): string {
         return $this->gender->getValue();
     }
 
-    /**
-     * @param Gender $gender
-     * @return Teacher
-     */
     public function setGender(Gender $gender): Teacher {
         $this->gender = $gender;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getEmail(): ?string {
         return $this->email;
     }
 
-    /**
-     * @param string|null $email
-     * @return Teacher
-     */
     public function setEmail(?string $email): Teacher {
         $this->email = $email;
         return $this;

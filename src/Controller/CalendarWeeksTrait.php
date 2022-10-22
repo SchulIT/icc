@@ -21,8 +21,6 @@ trait CalendarWeeksTrait {
     }
 
     /**
-     * @param DateTime $start
-     * @param DateTime $end
      * @return DateTime[] All mondays with their week numbers as key
      */
     private function listCalendarWeeks(DateTime $start, DateTime $end): array {
@@ -44,7 +42,7 @@ trait CalendarWeeksTrait {
                 $selectedDate = new DateTime($request->query->get('date', null));
                 $selectedDate->setTime(0, 0, 0);
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             $selectedDate = null;
         }
 

@@ -25,7 +25,6 @@ class ExamWeekStrategy implements GroupingStrategyInterface {
     /**
      * @param WeekOfYear|null $keyA
      * @param WeekOfYear|null $keyB
-     * @return bool
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
         if($keyA === null && $keyB === null) {
@@ -40,7 +39,6 @@ class ExamWeekStrategy implements GroupingStrategyInterface {
 
     /**
      * @param WeekOfYear $key
-     * @return GroupInterface
      */
     public function createGroup($key, array $options = [ ]): GroupInterface {
         return new ExamWeekGroup($key);

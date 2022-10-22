@@ -14,55 +14,42 @@ class TimetableSupervisionsData {
      * will be removed from the system and replaced by the ones provided by this import.
      *
      * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     * @Assert\NotNull
      * @var DateTime|null
      */
-    private ?DateTime $startDate;
+    #[Assert\NotNull]
+    private ?DateTime $startDate = null;
 
     /**
      * This date controls at which date the imported timetable supervisions ends. All existing entries before (and including) this date
      * will be removed from the system and replaced by the ones provided by this import.
      *
      * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     * @Assert\NotNull
      * @var DateTime|null
      */
-    private ?DateTime $endDate;
+    #[Assert\NotNull]
+    private ?DateTime $endDate = null;
 
     /**
      * @Serializer\Type("array<App\Request\Data\TimetableSupervisionData>")
-     * @Assert\Valid()
      * @UniqueId(propertyPath="id")
      * @var TimetableSupervisionData[]
      */
+    #[Assert\Valid]
     private array $supervisions = [ ];
 
-    /**
-     * @return DateTime|null
-     */
     public function getStartDate(): ?DateTime {
         return $this->startDate;
     }
 
-    /**
-     * @param DateTime|null $startDate
-     * @return TimetableSupervisionsData
-     */
     public function setStartDate(?DateTime $startDate): TimetableSupervisionsData {
         $this->startDate = $startDate;
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getEndDate(): ?DateTime {
         return $this->endDate;
     }
 
-    /**
-     * @param DateTime|null $endDate
-     */
     public function setEndDate(?DateTime $endDate): void {
         $this->endDate = $endDate;
     }
@@ -76,7 +63,6 @@ class TimetableSupervisionsData {
 
     /**
      * @param TimetableSupervisionData[] $supervisions
-     * @return TimetableSupervisionsData
      */
     public function setSupervisions(array $supervisions): TimetableSupervisionsData {
         $this->supervisions = $supervisions;

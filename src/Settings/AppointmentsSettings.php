@@ -2,11 +2,12 @@
 
 namespace App\Settings;
 
+use DateTime;
 use App\Entity\UserType;
 
 class AppointmentsSettings extends AbstractSettings {
-    const StartDate = 'start';
-    const EndDate = 'end';
+    public const StartDate = 'start';
+    public const EndDate = 'end';
 
     public function __construct(SettingsManager $manager) {
         parent::__construct($manager);
@@ -26,12 +27,12 @@ class AppointmentsSettings extends AbstractSettings {
         return $this->getValue($key);
     }
 
-    public function setStart(UserType $userType, \DateTime $dateTime = null) {
+    public function setStart(UserType $userType, DateTime $dateTime = null) {
         $key = $this->getKeyName($userType, AppointmentsSettings::StartDate);
         $this->setValue($key, $dateTime);
     }
 
-    public function setEnd(UserType $userType, \DateTime $dateTime = null) {
+    public function setEnd(UserType $userType, DateTime $dateTime = null) {
         $key = $this->getKeyName($userType, AppointmentsSettings::EndDate);
         $this->setValue($key, $dateTime);
     }

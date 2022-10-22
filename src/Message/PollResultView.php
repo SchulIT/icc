@@ -10,27 +10,14 @@ use App\Entity\User;
 
 class PollResultView {
 
-    /** @var Student[]|array  */
-    private $students;
-    /** @var Teacher[]|array  */
-    private $teachers;
-
-    /** @var MessagePollVote[] */
-    private $studentVotes;
-    /** @var MessagePollVote[]  */
-    private $teacherVotes;
-
     /**
      * @param MessagePollVote[] $studentVotes
      * @param Teacher[] $teachers
      * @param MessagePollVote[] $teacherVotes
+     * @param Student[]|mixed[] $students
      */
-    public function __construct(array $students, array $studentVotes, array $teachers, array $teacherVotes) {
-        $this->students = $students;
-        $this->teachers = $teachers;
-
-        $this->studentVotes = $studentVotes;
-        $this->teacherVotes = $teacherVotes;
+    public function __construct(private array $students, private array $studentVotes, private array $teachers, private array $teacherVotes)
+    {
     }
 
     /**

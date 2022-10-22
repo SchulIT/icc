@@ -5,14 +5,8 @@ namespace App\Event;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class ImportEvent extends Event {
-    private $added;
-    private $updated;
-    private $removed;
-
-    public function __construct(array $added, array $updated, array $removed) {
-        $this->added = $added;
-        $this->updated = $updated;
-        $this->removed = $removed;
+    public function __construct(private array $added, private array $updated, private array $removed)
+    {
     }
 
     public function getAdded(): array {

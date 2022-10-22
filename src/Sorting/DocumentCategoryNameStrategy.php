@@ -8,7 +8,6 @@ class DocumentCategoryNameStrategy extends AbstractStringPropertyStrategy {
 
     /**
      * @param DocumentCategory $object
-     * @return string
      */
     protected function getValue($object): string {
         return $object->getName();

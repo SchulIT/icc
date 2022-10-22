@@ -15,12 +15,12 @@ trait DateTimeHelperTrait {
             return $today;
         }
 
-        list($hour, $minute) = explode(':', $threshold);
+        [$hour, $minute] = explode(':', $threshold);
 
         try {
             $interval = new DateInterval(sprintf('PT%dH%dM', $hour, $minute));
             $threshold = (clone $today)->add($interval);
-        } catch (Exception $e) {
+        } catch (Exception) {
             $threshold = $today;
         }
 
@@ -62,8 +62,6 @@ trait DateTimeHelperTrait {
 
     /**
      * @param \DateTime[] $dateTimes
-     * @param string|null $date
-     * @return \DateTime|null
      */
     private function getCurrentDate(array $dateTimes, ?string $date): ?\DateTime {
         if(count($dateTimes) === 0) {

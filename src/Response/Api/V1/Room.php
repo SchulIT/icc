@@ -12,21 +12,13 @@ class Room {
     /**
      * @Serializer\Type("string")
      * @Serializer\SerializedName("name")
-     * @var string
      */
-    private $name;
+    private ?string $name = null;
 
-    /**
-     * @return string
-     */
     public function getName(): string {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Room
-     */
     public function setName(string $name): Room {
         $this->name = $name;
         return $this;

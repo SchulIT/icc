@@ -8,14 +8,10 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 class TimetableExtension extends AbstractExtension {
-    const HexColorRegExp = '/^\#?([0-9a-f]{6})$/s';
+    public const HexColorRegExp = '/^\#?([0-9a-f]{6})$/s';
 
-    private TranslatorInterface $translator;
-    private TimetableSettings $timetableSettings;
-
-    public function __construct(TranslatorInterface $translator, TimetableSettings $timetableSettings) {
-        $this->translator = $translator;
-        $this->timetableSettings = $timetableSettings;
+    public function __construct(private TranslatorInterface $translator, private TimetableSettings $timetableSettings)
+    {
     }
 
     public function getFilters(): array {

@@ -9,7 +9,6 @@ class DisplayViewItemStrategy implements SortingStrategyInterface {
     /**
      * @param AbstractViewItem $objectA
      * @param AbstractViewItem $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         $lessonStartCmp = $objectA->getLesson() - $objectB->getLesson();

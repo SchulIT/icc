@@ -10,15 +10,13 @@ use App\Repository\SettingRepositoryInterface;
  */
 class SettingsManager {
 
-    private $repository;
-
-    private $initialised = false;
+    private bool $initialised = false;
 
     /** @var Setting[] */
-    private $settings = [ ];
+    private array $settings = [ ];
 
-    public function __construct(SettingRepositoryInterface $settingRepository) {
-        $this->repository = $settingRepository;
+    public function __construct(private SettingRepositoryInterface $repository)
+    {
     }
 
     /**
@@ -28,7 +26,7 @@ class SettingsManager {
      * @param mixed $default Default value which is returned if the setting with key $key is non-existent
      * @return mixed|null
      */
-    public function getValue($key, $default = null) {
+    public function getValue($key, mixed $default = null) {
         $this->initializeIfNecessary();
 
         if(isset($this->settings[$key])) {
@@ -42,9 +40,8 @@ class SettingsManager {
      * Sets the value of a setting
      *
      * @param string $key
-     * @param mixed $value
      */
-    public function setValue($key, $value) {
+    public function setValue($key, mixed $value) {
         $this->initializeIfNecessary();
 
         if(!isset($this->settings[$key])) {

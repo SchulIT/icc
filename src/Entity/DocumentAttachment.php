@@ -25,9 +25,8 @@ class DocumentAttachment {
     /**
      * @ORM\ManyToOne(targetEntity="Document", inversedBy="attachments")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Document|null
      */
-    private $document;
+    private ?Document $document = null;
 
     /**
      * @Vich\UploadableField(mapping="documents", fileNameProperty="path", originalName="filename", size="size")
@@ -36,60 +35,42 @@ class DocumentAttachment {
 
     /**
      * @ORM\Column(type="text")
-     * @Assert\NotNull()
-     * @var string
      */
-    private $filename;
+    #[Assert\NotNull]
+    private ?string $filename = null;
 
     /**
      * @ORM\Column(type="string")
-     * @var string
      */
-    private $path;
+    private ?string $path = null;
 
     /**
      * @ORM\Column(type="integer")
-     * @var int
      */
-    private $size;
+    private ?int $size = null;
 
     /**
      * @ORM\Column(type="datetime")
-     * @var DateTime
      */
-    private $updatedAt;
+    private ?\DateTime $updatedAt = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
     }
 
-    /**
-     * @return Document|null
-     */
     public function getDocument(): ?Document {
         return $this->document;
     }
 
-    /**
-     * @param Document $document
-     * @return DocumentAttachment
-     */
     public function setDocument(Document $document): DocumentAttachment {
         $this->document = $document;
         return $this;
     }
 
-    /**
-     * @return File|null
-     */
     public function getFile(): ?File {
         return $this->file;
     }
 
-    /**
-     * @param File|null $file
-     * @return DocumentAttachment
-     */
     public function setFile(?File $file = null): DocumentAttachment {
         $this->file = $file;
 
@@ -100,17 +81,10 @@ class DocumentAttachment {
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFilename(): ?string {
         return $this->filename;
     }
 
-    /**
-     * @param string|null $filename
-     * @return DocumentAttachment
-     */
     public function setFilename(?string $filename): DocumentAttachment {
         $this->filename = $filename;
         return $this;
@@ -123,26 +97,15 @@ class DocumentAttachment {
         return $this->path;
     }
 
-    /**
-     * @param string|null $path
-     * @return DocumentAttachment
-     */
     public function setPath(?string $path): DocumentAttachment {
         $this->path = $path;
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getSize(): ?int {
         return $this->size;
     }
 
-    /**
-     * @param int|null $size
-     * @return DocumentAttachment
-     */
     public function setSize(?int $size): DocumentAttachment {
         $this->size = $size;
         return $this;

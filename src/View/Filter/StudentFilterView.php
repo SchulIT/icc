@@ -7,15 +7,11 @@ use App\Grouping\StudentGradeGroup;
 
 class StudentFilterView implements FilterViewInterface {
 
-    /** @var StudentGradeGroup[] */
-    private $studentGradeGroups;
-
-    /** @var Student|null */
-    private $currentStudent;
-
-    public function __construct(array $studentGradeGroups, ?Student $currentStudent) {
-        $this->studentGradeGroups = $studentGradeGroups;
-        $this->currentStudent = $currentStudent;
+    /**
+     * @param StudentGradeGroup[] $studentGradeGroups
+     */
+    public function __construct(private array $studentGradeGroups, private ?Student $currentStudent)
+    {
     }
 
     /**
@@ -25,9 +21,6 @@ class StudentFilterView implements FilterViewInterface {
         return $this->studentGradeGroups;
     }
 
-    /**
-     * @return Student|null
-     */
     public function getCurrentStudent(): ?Student {
         return $this->currentStudent;
     }

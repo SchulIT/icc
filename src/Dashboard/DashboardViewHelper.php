@@ -62,62 +62,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DashboardViewHelper {
 
-    private SubstitutionRepositoryInterface $substitutionRepository;
-    private ExamRepositoryInterface $examRepository;
-    private TimetableLessonRepositoryInterface $timetableRepository;
-    private TimetableSupervisionRepositoryInterface $supervisionRepository;
-    private MessageRepositoryInterface $messageRepository;
-    private InfotextRepositoryInterface $infotextRepository;
-    private AbsenceRepositoryInterface $absenceRepository;
-    private StudyGroupRepositoryInterface $studyGroupRepository;
-    private AppointmentRepositoryInterface $appointmentRepository;
-    private ResourceReservationRepositoryInterface $roomReservationRepository;
-    private FreeTimespanRepositoryInterface $freeTimespanRepository;
-
-    private StudyGroupHelper $studyGroupHelper;
-    private TimetableSettings $timetableSettings;
-    private TimetableTimeHelper $timetableTimeHelper;
-    private Sorter $sorter;
-    private Grouper $grouper;
-    private DashboardSettings $dashboardSettings;
-
-    private AuthorizationCheckerInterface $authorizationChecker;
-    private ValidatorInterface $validator;
-    private DateHelper $dateHelper;
-
-    private AbsenceResolver $absenceResolver;
-    private SectionResolverInterface $sectionResolver;
-
-    public function __construct(SubstitutionRepositoryInterface $substitutionRepository, ExamRepositoryInterface $examRepository,
-                                TimetableLessonRepositoryInterface $timetableRepository, TimetableSupervisionRepositoryInterface $supervisionRepository,
-                                MessageRepositoryInterface $messageRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
-                                StudyGroupRepositoryInterface $studyGroupRepository, AppointmentRepositoryInterface $appointmentRepository, ResourceReservationRepositoryInterface $reservationRepository,
-                                FreeTimespanRepositoryInterface $freeTimespanRepository,
-                                StudyGroupHelper $studyGroupHelper, TimetableTimeHelper $timetableTimeHelper, Sorter $sorter, Grouper $grouper,
-                                TimetableSettings $timetableSettings, DashboardSettings $dashboardSettings, AuthorizationCheckerInterface $authorizationChecker,
-                                ValidatorInterface $validator, DateHelper $dateHelper, AbsenceResolver $absenceResolver, SectionResolverInterface $sectionResolver) {
-        $this->substitutionRepository = $substitutionRepository;
-        $this->examRepository = $examRepository;
-        $this->timetableRepository = $timetableRepository;
-        $this->supervisionRepository = $supervisionRepository;
-        $this->messageRepository = $messageRepository;
-        $this->infotextRepository = $infotextRepository;
-        $this->absenceRepository = $absenceRepository;
-        $this->studyGroupRepository = $studyGroupRepository;
-        $this->appointmentRepository = $appointmentRepository;
-        $this->roomReservationRepository = $reservationRepository;
-        $this->freeTimespanRepository = $freeTimespanRepository;
-        $this->studyGroupHelper = $studyGroupHelper;
-        $this->timetableSettings = $timetableSettings;
-        $this->timetableTimeHelper = $timetableTimeHelper;
-        $this->sorter = $sorter;
-        $this->grouper = $grouper;
-        $this->dashboardSettings = $dashboardSettings;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->validator = $validator;
-        $this->dateHelper = $dateHelper;
-        $this->absenceResolver = $absenceResolver;
-        $this->sectionResolver = $sectionResolver;
+    public function __construct(private SubstitutionRepositoryInterface $substitutionRepository, private ExamRepositoryInterface $examRepository, private TimetableLessonRepositoryInterface $timetableRepository, private TimetableSupervisionRepositoryInterface $supervisionRepository, private MessageRepositoryInterface $messageRepository, private InfotextRepositoryInterface $infotextRepository, private AbsenceRepositoryInterface $absenceRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private AppointmentRepositoryInterface $appointmentRepository, private ResourceReservationRepositoryInterface $roomReservationRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private StudyGroupHelper $studyGroupHelper, private TimetableTimeHelper $timetableTimeHelper, private Sorter $sorter, private Grouper $grouper, private TimetableSettings $timetableSettings, private DashboardSettings $dashboardSettings, private AuthorizationCheckerInterface $authorizationChecker, private ValidatorInterface $validator, private DateHelper $dateHelper, private AbsenceResolver $absenceResolver, private SectionResolverInterface $sectionResolver)
+    {
     }
 
     public function createViewForRoom(Room $room, DateTime $dateTime): DashboardView {
@@ -161,9 +107,7 @@ class DashboardViewHelper {
 
         $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages(), UserType::Teacher(), $dateTime));
 
-        $messages = ArrayUtils::createArrayWithKeys($messages, function(Message $message) {
-            return $message->getId();
-        });
+        $messages = ArrayUtils::createArrayWithKeys($messages, fn(Message $message) => $message->getId());
 
         $this->addMessages($messages, $view);
 
@@ -232,9 +176,6 @@ class DashboardViewHelper {
 
     /**
      * @param TimetableLesson[] $lessons
-     * @param DateTime $dateTime
-     * @param DashboardView $dashboardView
-     * @param bool $computeAbsences
      */
     private function addTimetableLessons(iterable $lessons, DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences): void {
         foreach($lessons as $lesson) {
@@ -245,9 +186,7 @@ class DashboardViewHelper {
                     ->getTuition()
                     ->getStudyGroup()
                     ->getMemberships()
-                    ->map(function (StudyGroupMembership $membership) {
-                        return $membership->getStudent();
-                    })
+                    ->map(fn(StudyGroupMembership $membership) => $membership->getStudent())
                     ->toArray();
             }
 
@@ -290,7 +229,6 @@ class DashboardViewHelper {
 
     /**
      * @param TimetableSupervision[] $supervisions
-     * @param DashboardView $dashboardView
      */
     private function addSupervisions(iterable $supervisions, DashboardView $dashboardView): void {
         foreach($supervisions as $supervision) {
@@ -304,8 +242,6 @@ class DashboardViewHelper {
 
     /**
      * @param Substitution[] $substitutions
-     * @param DashboardView $dashboardView
-     * @param bool $computeAbsences
      */
     private function addSubstitutions(iterable $substitutions, DashboardView $dashboardView, bool $computeAbsences): void {
         $freeTypes = $this->dashboardSettings->getFreeLessonSubstitutionTypes();
@@ -337,7 +273,6 @@ class DashboardViewHelper {
 
     /**
      * @param Message[] $messages
-     * @param DashboardView $dashboardView
      */
     private function addMessages(iterable $messages, DashboardView $dashboardView): void {
         $this->sorter->sort($messages, MessageStrategy::class);
@@ -353,9 +288,6 @@ class DashboardViewHelper {
 
     /**
      * @param Exam[] $exams
-     * @param DashboardView $dashboardView
-     * @param Teacher|null $teacher
-     * @param bool $computeAbsences
      */
     private function addExams(iterable $exams, DashboardView $dashboardView, ?Teacher $teacher, bool $computeAbsences): void {
         foreach($exams as $exam) {
@@ -368,9 +300,7 @@ class DashboardViewHelper {
 
             /** @var Tuition $tuition */
             foreach($exam->getTuitions() as $tuition) {
-                $tuitionTeacherIds = array_merge($tuitionTeacherIds, array_map(function(Teacher $teacher) {
-                    return $teacher->getId();
-                }, $tuition->getTeachers()->toArray()));
+                $tuitionTeacherIds = array_merge($tuitionTeacherIds, array_map(fn(Teacher $teacher) => $teacher->getId(), $tuition->getTeachers()->toArray()));
             }
 
             $supervisions = [ ];
@@ -400,10 +330,6 @@ class DashboardViewHelper {
         }
     }
 
-    /**
-     * @param DateTime $dateTime
-     * @param DashboardView $view
-     */
     private function addInfotexts(DateTime $dateTime, DashboardView $view): void {
         $infotexts = $this->infotextRepository->findAllByDate($dateTime);
 
@@ -432,7 +358,6 @@ class DashboardViewHelper {
 
     /**
      * @param Appointment[] $appointments
-     * @param DashboardView $view
      */
     private function addAppointments(array $appointments, DashboardView $view): void {
         $freeCategories = $this->timetableSettings->getCategoryIds();
@@ -450,7 +375,6 @@ class DashboardViewHelper {
 
     /**
      * @param ResourceReservation[] $reservations
-     * @param DashboardView $view
      */
     private function addRoomReservations(array $reservations, DashboardView $view): void {
         foreach($reservations as $reservation) {
@@ -466,7 +390,6 @@ class DashboardViewHelper {
 
     /**
      * @param FreeTimespan[] $timespans
-     * @param DashboardView $view
      */
     private function addFreeTimespans(array $timespans, DashboardView $view): void {
          foreach($timespans as $timespan) {
@@ -478,8 +401,6 @@ class DashboardViewHelper {
 
     /**
      * @param Student[] $students
-     * @param int $lesson
-     * @param DateTime $dateTime
      * @param string[] $excludedResolvers FQCN of excluded strategies
      * @return AbsentStudentGroup[]
      */
@@ -514,7 +435,6 @@ class DashboardViewHelper {
      * Filters the given substitutions for only those which are applied to the given grade.
      *
      * @param Substitution[] $substitutions
-     * @param Grade|null $grade
      * @return Substitution[]
      */
     private function filterSubstitutionsByGrade(array $substitutions, ?Grade $grade) {

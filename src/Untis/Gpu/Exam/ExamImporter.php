@@ -14,18 +14,8 @@ use DateTime;
 use League\Csv\Reader;
 
 class ExamImporter {
-    private Importer $importer;
-    private ExamsImportStrategy $strategy;
-    private ExamReader $examReader;
-    private TuitionReader $tuitionReader;
-    private UntisSettings $settings;
-
-    public function __construct(Importer $importer, ExamsImportStrategy $strategy, ExamReader $examReader, TuitionReader $tuitionReader, UntisSettings $settings) {
-        $this->importer = $importer;
-        $this->strategy = $strategy;
-        $this->examReader = $examReader;
-        $this->tuitionReader = $tuitionReader;
-        $this->settings = $settings;
+    public function __construct(private Importer $importer, private ExamsImportStrategy $strategy, private ExamReader $examReader, private TuitionReader $tuitionReader, private UntisSettings $settings)
+    {
     }
 
     public function import(Reader $examReader, Reader $tuitionReader, DateTime $start, DateTime $end, bool $suppressNotifications) {
@@ -110,7 +100,6 @@ class ExamImporter {
 
     /**
      * @param Tuition[] $gpuTuitions
-     * @return array
      */
     private function computeTuitionMap(array $gpuTuitions): array {
         $map = [ ];

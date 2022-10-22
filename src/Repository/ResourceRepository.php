@@ -9,12 +9,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ResourceRepository extends AbstractRepository implements ResourceRepositoryInterface {
 
-    private RoomTagRepositoryInterface $roomTagRepository;
-
-    public function __construct(EntityManagerInterface $em, RoomTagRepositoryInterface $roomTagRepository) {
+    public function __construct(EntityManagerInterface $em, private RoomTagRepositoryInterface $roomTagRepository) {
         parent::__construct($em);
-
-        $this->roomTagRepository = $roomTagRepository;
     }
 
     public function findOneByName(string $name): ?ResourceEntity {

@@ -17,9 +17,7 @@ class ExcuseNoteRepository extends AbstractRepository implements ExcuseNoteRepos
     }
 
     public function findByStudentsAndDate(array $students, DateTime $date): array {
-        $studentIds = array_map(function(Student $student) {
-            return $student->getId();
-        }, $students);
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->em->createQueryBuilder();
         $qb->select(['n', 's'])

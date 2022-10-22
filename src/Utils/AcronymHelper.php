@@ -10,14 +10,10 @@ class AcronymHelper {
     /**
      * @var Teacher[]|null
      */
-    private $cache = null;
+    private ?array $cache = null;
 
-    private $teacherConverter;
-    private $teacherRepository;
-
-    public function __construct(TeacherStringConverter $teacherConverter, TeacherRepositoryInterface $teacherRepository) {
-        $this->teacherConverter = $teacherConverter;
-        $this->teacherRepository = $teacherRepository;
+    public function __construct(private TeacherStringConverter $teacherConverter, private TeacherRepositoryInterface $teacherRepository)
+    {
     }
 
     public function replaceAcronyms(string $content) {
@@ -27,9 +23,7 @@ class AcronymHelper {
         foreach($teachers as $teacher) {
             $regExp = '~\b' . $teacher->getAcronym() . '\b~';
 
-            $content = preg_replace_callback($regExp, function($matches) use ($teacher) {
-                return $this->teacherConverter->convert($teacher);
-            }, $content);
+            $content = preg_replace_callback($regExp, fn($matches) => $this->teacherConverter->convert($teacher), $content);
         }
 
         return $content;

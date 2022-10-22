@@ -12,14 +12,11 @@ use App\Notification\Email\EmailStrategyInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class NotificationService implements EventSubscriberInterface {
-    private EmailNotificationService $email;
-
-    /** @var EmailStrategyInterface[] */
-    private iterable $emailStrategies;
-
-    public function __construct(EmailNotificationService $email, iterable $emailStrategies) {
-        $this->email = $email;
-        $this->emailStrategies = $emailStrategies;
+    /**
+     * @param EmailStrategyInterface[] $emailStrategies
+     */
+    public function __construct(private EmailNotificationService $email, private iterable $emailStrategies)
+    {
     }
 
     /**

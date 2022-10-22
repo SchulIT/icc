@@ -19,12 +19,8 @@ class ImportUserAuthenticator extends AbstractAuthenticator implements Authentic
 
     public const HeaderKey = 'X-Token';
 
-    private $presharedKey;
-    private $serializer;
-
-    public function __construct(string $presharedKey, SerializerInterface $serializer) {
-        $this->presharedKey = $presharedKey;
-        $this->serializer = $serializer;
+    public function __construct(private string $presharedKey, private SerializerInterface $serializer)
+    {
     }
 
     /**

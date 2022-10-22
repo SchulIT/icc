@@ -10,17 +10,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  * @Auditable()
- * @UniqueEntity(fields={"key"})
  */
+#[UniqueEntity(fields: ['key'])]
 class Setting {
 
     /**
      * @ORM\Id()
      * @ORM\Column(name="`key`", type="string", unique=true)
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $key;
+    #[Assert\NotBlank]
+    private ?string $key = null;
 
     /**
      * @ORM\Column(type="object")
@@ -28,17 +27,10 @@ class Setting {
      */
     private $value = null;
 
-    /**
-     * @return string
-     */
     public function getKey(): string {
         return $this->key;
     }
 
-    /**
-     * @param string $key
-     * @return Setting
-     */
     public function setKey(string $key): Setting {
         $this->key = $key;
         return $this;
@@ -52,10 +44,9 @@ class Setting {
     }
 
     /**
-     * @param mixed $value
      * @return Setting
      */
-    public function setValue($value) {
+    public function setValue(mixed $value) {
         $this->value = $value;
         return $this;
     }

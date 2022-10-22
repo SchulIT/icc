@@ -22,49 +22,42 @@ class Appointment {
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
-     * @var string|null
      */
-    private $externalId = null;
+    private ?string $externalId = null;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotNull()
-     * @Assert\NotBlank()
-     * @var string|null
      */
-    private $title;
+    #[Assert\NotNull]
+    #[Assert\NotBlank]
+    private ?string $title = null;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @var string|null
      */
-    private $content;
+    private ?string $content = null;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\NotNull()
-     * @var DateTime|null
      */
-    private $start;
+    #[Assert\NotNull]
+    private ?\DateTime $start = null;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Assert\GreaterThan(propertyPath="start")
-     * @var DateTime|null
      */
-    private $end;
+    #[Assert\GreaterThan(propertyPath: 'start')]
+    private ?\DateTime $end = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @var string|null
      */
-    private $location;
+    private ?string $location = null;
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $allDay = true;
+    private bool $allDay = true;
 
     /**
      * @ORM\ManyToMany(targetEntity="StudyGroup", cascade={"persist"})
@@ -78,9 +71,8 @@ class Appointment {
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $markStudentsAbsent = true;
+    private bool $markStudentsAbsent = true;
 
     /**
      * @ORM\ManyToMany(targetEntity="Teacher", cascade={"persist"})
@@ -94,17 +86,15 @@ class Appointment {
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @var string|null
      */
-    private $externalOrganizers;
+    private ?string $externalOrganizers = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="AppointmentCategory")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Assert\NotNull()
-     * @var AppointmentCategory|null
      */
-    private $category;
+    #[Assert\NotNull]
+    private ?AppointmentCategory $category = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="UserTypeEntity")
@@ -118,19 +108,17 @@ class Appointment {
 
     /**
      * @ORM\Column(type="boolean", options={"default": true})
-     * @var bool
      */
-    private $isConfirmed = true;
+    private bool $isConfirmed = true;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(nullable=true)
-     * @var null|User
      *
      * Note: we cannot use the Blameable() listener here as it would break when importing appointments
      * from API
      */
-    private $createdBy = null;
+    private ?User $createdBy = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -140,17 +128,10 @@ class Appointment {
         $this->visibilities = new ArrayCollection();
     }
 
-    /**
-     * @return string|null
-     */
     public function getExternalId(): ?string {
         return $this->externalId;
     }
 
-    /**
-     * @param string|null $externalId
-     * @return Appointment
-     */
     public function setExternalId(?string $externalId): Appointment {
         $this->externalId = $externalId;
         return $this;
@@ -165,24 +146,16 @@ class Appointment {
 
     /**
      * @param string $title
-     * @return Appointment
      */
     public function setTitle(?string $title): Appointment {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getContent(): ?string {
         return $this->content;
     }
 
-    /**
-     * @param string|null $content
-     * @return Appointment
-     */
     public function setContent(?string $content): Appointment {
         $this->content = $content;
         return $this;
@@ -197,7 +170,6 @@ class Appointment {
 
     /**
      * @param DateTime $start
-     * @return Appointment
      */
     public function setStart(?DateTime $start): Appointment {
         $this->start = $start;
@@ -213,72 +185,43 @@ class Appointment {
 
     /**
      * @param DateTime $end
-     * @return Appointment
      */
     public function setEnd(?DateTime $end): Appointment {
         $this->end = $end;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLocation(): ?string {
         return $this->location;
     }
 
-    /**
-     * @param string|null $location
-     * @return Appointment
-     */
     public function setLocation(?string $location): Appointment {
         $this->location = $location;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isAllDay(): bool {
         return $this->allDay;
     }
 
-    /**
-     * @param bool $allDay
-     * @return Appointment
-     */
     public function setAllDay(bool $allDay): Appointment {
         $this->allDay = $allDay;
         return $this;
     }
 
-    /**
-     * @return AppointmentCategory|null
-     */
     public function getCategory(): ?AppointmentCategory {
         return $this->category;
     }
 
-    /**
-     * @param AppointmentCategory $category
-     * @return Appointment
-     */
     public function setCategory(AppointmentCategory $category): Appointment {
         $this->category = $category;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getExternalOrganizers(): ?string {
         return $this->externalOrganizers;
     }
 
-    /**
-     * @param string|null $externalOrganizers
-     * @return Appointment
-     */
     public function setExternalOrganizers(?string $externalOrganizers): Appointment {
         $this->externalOrganizers = $externalOrganizers;
         return $this;
@@ -314,17 +257,10 @@ class Appointment {
         return $this->studyGroups;
     }
 
-    /**
-     * @return bool
-     */
     public function isMarkStudentsAbsent(): bool {
         return $this->markStudentsAbsent;
     }
 
-    /**
-     * @param bool $markStudentsAbsent
-     * @return Appointment
-     */
     public function setMarkStudentsAbsent(bool $markStudentsAbsent): Appointment {
         $this->markStudentsAbsent = $markStudentsAbsent;
         return $this;
@@ -345,33 +281,19 @@ class Appointment {
         return $this->visibilities;
     }
 
-    /**
-     * @return bool
-     */
     public function isConfirmed(): bool {
         return $this->isConfirmed;
     }
 
-    /**
-     * @param bool $isConfirmed
-     * @return Appointment
-     */
     public function setIsConfirmed(bool $isConfirmed): Appointment {
         $this->isConfirmed = $isConfirmed;
         return $this;
     }
 
-    /**
-     * @return User|null
-     */
     public function getCreatedBy(): ?User {
         return $this->createdBy;
     }
 
-    /**
-     * @param User|null $createdBy
-     * @return Appointment
-     */
     public function setCreatedBy(?User $createdBy): Appointment {
         $this->createdBy = $createdBy;
         return $this;
@@ -385,9 +307,6 @@ class Appointment {
         return (clone $this->getEnd())->modify('-1 second');
     }
 
-    /**
-     * @return DateInterval
-     */
     public function getDuration(): DateInterval {
         return $this->getStart()->diff($this->getEnd());
     }

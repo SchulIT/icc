@@ -14,10 +14,8 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class CollectionNotEmptyValidator extends ConstraintValidator {
 
-    private PropertyAccessorInterface $propertyAccessor;
-
-    public function __construct(PropertyAccessorInterface $propertyAccessor) {
-        $this->propertyAccessor = $propertyAccessor;
+    public function __construct(private PropertyAccessorInterface $propertyAccessor)
+    {
     }
 
     /**

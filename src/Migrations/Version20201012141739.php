@@ -17,9 +17,9 @@ final class Version20201012141739 extends AbstractMigration
         return '';
     }
 
-    private $examRooms = [ ];
-    private $substitutionRooms = [ ];
-    private $substitutionReplacementRooms = [ ];
+    private array $examRooms = [ ];
+    private array $substitutionRooms = [ ];
+    private array $substitutionReplacementRooms = [ ];
 
     public function preUp(Schema $schema): void {
         $this->write('Getting current rooms...');
@@ -40,9 +40,9 @@ final class Version20201012141739 extends AbstractMigration
 
         foreach($result->fetchAllAssociative() as $row) {
             $examId = intval($row['id']);
-            $examRooms = json_decode($row['rooms']);
+            $examRooms = json_decode($row['rooms'], null, 512, JSON_THROW_ON_ERROR);
 
-            if(count($examRooms) > 0 && array_key_exists($examRooms[0], $rooms)) {
+            if((is_countable($examRooms) ? count($examRooms) : 0) > 0 && array_key_exists($examRooms[0], $rooms)) {
                 $this->examRooms[$examId] = $rooms[$examRooms[0]];
             }
         }

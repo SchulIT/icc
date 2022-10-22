@@ -8,7 +8,6 @@ use App\Entity\Tuition;
 class AbsenceExcuseResolver extends AbstractResolver {
 
     /**
-     * @param Student $student
      * @param Tuition[] $tuitions
      */
     public function resolve(Student $student, array $tuitions = [ ]) {

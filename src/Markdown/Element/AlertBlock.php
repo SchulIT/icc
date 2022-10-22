@@ -7,10 +7,8 @@ use League\CommonMark\Cursor;
 
 class AlertBlock extends AbstractBlock {
 
-    private $type;
-
-    public function __construct($type) {
-        $this->type = $type;
+    public function __construct(private $type)
+    {
     }
 
     public function getType() {

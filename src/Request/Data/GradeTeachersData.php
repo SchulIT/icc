@@ -10,22 +10,20 @@ class GradeTeachersData {
 
     /**
      * @Serializer\Type("int")
-     * @var int
      */
-    private $year;
+    private ?int $year = null;
 
     /**
      * @Serializer\Type("int")
-     * @var int
      */
-    private $section;
+    private ?int $section = null;
 
     /**
      * @Serializer\Type("array<App\Request\Data\GradeTeacherData>")
-     * @Assert\Valid()
      * @var GradeTeacherData[]
      */
-    private $gradeTeachers = [ ];
+    #[Assert\Valid]
+    private array $gradeTeachers = [ ];
 
     /**
      * @return GradeTeacherData[]
@@ -36,40 +34,25 @@ class GradeTeachersData {
 
     /**
      * @param GradeTeacherData[] $gradeTeachers
-     * @return GradeTeachersData
      */
     public function setGradeTeachers($gradeTeachers): GradeTeachersData {
         $this->gradeTeachers = $gradeTeachers;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getYear(): int {
         return $this->year;
     }
 
-    /**
-     * @param int $year
-     * @return GradeTeachersData
-     */
     public function setYear(int $year): GradeTeachersData {
         $this->year = $year;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getSection(): int {
         return $this->section;
     }
 
-    /**
-     * @param int $section
-     * @return GradeTeachersData
-     */
     public function setSection(int $section): GradeTeachersData {
         $this->section = $section;
         return $this;

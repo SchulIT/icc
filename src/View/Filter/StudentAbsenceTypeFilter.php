@@ -8,18 +8,14 @@ use App\Utils\ArrayUtils;
 
 class StudentAbsenceTypeFilter {
 
-    private StudentAbsenceTypeRepositoryInterface $repository;
-
-    public function __construct(StudentAbsenceTypeRepositoryInterface $repository) {
-        $this->repository = $repository;
+    public function __construct(private StudentAbsenceTypeRepositoryInterface $repository)
+    {
     }
 
     public function handle(?string $typeUuid): StudentAbsenceTypeFilterView {
         $types = ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(),
-            function (StudentAbsenceType $type) {
-                return (string)$type->getUuid();
-            }
+            fn(StudentAbsenceType $type) => (string)$type->getUuid()
         );
 
         $type = $typeUuid !== null ?

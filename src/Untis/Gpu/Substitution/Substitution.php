@@ -6,140 +6,79 @@ use DateTime;
 
 class Substitution {
 
-    /**
-     * @var int
-     */
-    private $id;
+    private ?int $id = null;
 
-    /**
-     * @var DateTime
-     */
-    private $date;
+    private ?\DateTime $date = null;
 
-    /**
-     * @var DateTime|null
-     */
-    private $lastChange;
+    private ?\DateTime $lastChange = null;
 
-    /**
-     * @var int
-     */
-    private $lesson;
+    private ?int $lesson = null;
 
     /**
      * @var string[]
      */
-    private $rooms = [ ];
+    private array $rooms = [ ];
 
     /**
      * @var string[]
      */
-    private $replacementRooms = [ ];
+    private array $replacementRooms = [ ];
 
     /**
      * @var string[]
      */
-    private $grades = [ ];
+    private array $grades = [ ];
 
     /**
      * @var string[]
      */
-    private $replacementGrades = [ ];
+    private array $replacementGrades = [ ];
 
-    /**
-     * @var string|null
-     */
-    private $subject;
+    private ?string $subject = null;
 
-    /**
-     * @var string|null
-     */
-    private $replacementSubject;
+    private ?string $replacementSubject = null;
 
-    /**
-     * @var string|null
-     */
-    private $teacher;
+    private ?string $teacher = null;
 
-    /**
-     * @var string|null
-     */
-    private $replacementTeacher;
+    private ?string $replacementTeacher = null;
 
-    /**
-     * @var int
-     */
-    private $flags = 0;
+    private int $flags = 0;
 
-    /**
-     * @var SubstitutionType|null
-     */
-    private $type;
+    private ?SubstitutionType $type = null;
 
-    /**
-     * @var string|null
-     */
-    private $remark;
+    private ?string $remark = null;
 
-    /**
-     * @return int
-     */
     public function getId(): int {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     * @return Substitution
-     */
     public function setId(int $id): Substitution {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getDate(): DateTime {
         return $this->date;
     }
 
-    /**
-     * @param DateTime $date
-     * @return Substitution
-     */
     public function setDate(DateTime $date): Substitution {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getLastChange(): ?DateTime {
         return $this->lastChange;
     }
 
-    /**
-     * @param DateTime|null $lastChange
-     * @return Substitution
-     */
     public function setLastChange(?DateTime $lastChange): Substitution {
         $this->lastChange = $lastChange;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLesson(): int {
         return $this->lesson;
     }
 
-    /**
-     * @param int $lesson
-     * @return Substitution
-     */
     public function setLesson(int $lesson): Substitution {
         $this->lesson = $lesson;
         return $this;
@@ -154,7 +93,6 @@ class Substitution {
 
     /**
      * @param string[] $rooms
-     * @return Substitution
      */
     public function setRooms(array $rooms): Substitution {
         $this->rooms = $rooms;
@@ -170,7 +108,6 @@ class Substitution {
 
     /**
      * @param string[] $replacementRooms
-     * @return Substitution
      */
     public function setReplacementRooms(array $replacementRooms): Substitution {
         $this->replacementRooms = $replacementRooms;
@@ -186,7 +123,6 @@ class Substitution {
 
     /**
      * @param string[] $grades
-     * @return Substitution
      */
     public function setGrades(array $grades): Substitution {
         $this->grades = $grades;
@@ -202,120 +138,70 @@ class Substitution {
 
     /**
      * @param string[] $replacementGrades
-     * @return Substitution
      */
     public function setReplacementGrades(array $replacementGrades): Substitution {
         $this->replacementGrades = $replacementGrades;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSubject(): ?string {
         return $this->subject;
     }
 
-    /**
-     * @param string|null $subject
-     * @return Substitution
-     */
     public function setSubject(?string $subject): Substitution {
         $this->subject = $subject;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getReplacementSubject(): ?string {
         return $this->replacementSubject;
     }
 
-    /**
-     * @param string|null $replacementSubject
-     * @return Substitution
-     */
     public function setReplacementSubject(?string $replacementSubject): Substitution {
         $this->replacementSubject = $replacementSubject;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTeacher(): ?string {
         return $this->teacher;
     }
 
-    /**
-     * @param string|null $teacher
-     * @return Substitution
-     */
     public function setTeacher(?string $teacher): Substitution {
         $this->teacher = $teacher;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getReplacementTeacher(): ?string {
         return $this->replacementTeacher;
     }
 
-    /**
-     * @param string|null $replacementTeacher
-     * @return Substitution
-     */
     public function setReplacementTeacher(?string $replacementTeacher): Substitution {
         $this->replacementTeacher = $replacementTeacher;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getFlags(): int {
         return $this->flags;
     }
 
-    /**
-     * @param int $flags
-     * @return Substitution
-     */
     public function setFlags(int $flags): Substitution {
         $this->flags = $flags;
         return $this;
     }
 
-    /**
-     * @return SubstitutionType|null
-     */
     public function getType(): ?SubstitutionType {
         return $this->type;
     }
 
-    /**
-     * @param SubstitutionType|null $type
-     * @return Substitution
-     */
     public function setType(?SubstitutionType $type): Substitution {
         $this->type = $type;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getRemark(): ?string {
         return $this->remark;
     }
 
-    /**
-     * @param string|null $remark
-     * @return Substitution
-     */
     public function setRemark(?string $remark): Substitution {
         $this->remark = $remark;
         return $this;

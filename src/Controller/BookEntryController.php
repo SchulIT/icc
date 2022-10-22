@@ -22,19 +22,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/book/entry")
- */
+#[Route(path: '/book/entry')]
 class BookEntryController extends AbstractController {
 
     use DateRequestTrait;
 
-    private LessonEntryRepositoryInterface $repository;
-
-    public function __construct(LessonEntryRepositoryInterface $entryRepository, RefererHelper $redirectHelper) {
+    public function __construct(private LessonEntryRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
-
-        $this->repository = $entryRepository;
     }
 
     private function redirectToReferrerInRequest(Request $request, string $fallbackRoute, array $fallbackParameters = [ ]): Response {
@@ -42,10 +36,8 @@ class BookEntryController extends AbstractController {
         return $this->redirectToRequestReferer($fallbackRoute, $fallbackParameters);
     }
 
-    /**
-     * @Route("/cancel/{uuid}", name="cancel_lesson")
-     */
-    public function cancelLesson(TimetableLesson $lesson, Request $request) {
+    #[Route(path: '/cancel/{uuid}', name: 'cancel_lesson')]
+    public function cancelLesson(TimetableLesson $lesson, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $lessonStart = $request->query->getInt('lesson_start');
@@ -86,10 +78,8 @@ class BookEntryController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}", name="edit_entry", methods={"POST"})
-     */
-    public function edit(LessonEntry $entry, Request $request) {
+    #[Route(path: '/{uuid}', name: 'edit_entry', methods: ['POST'])]
+    public function edit(LessonEntry $entry, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $entry);
 
         $form = $this->createForm(LessonEntryType::class, $entry, [
@@ -109,10 +99,8 @@ class BookEntryController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/create/{uuid}", name="add_entry")
-     */
-    public function create(TimetableLesson $lesson, Request $request) {
+    #[Route(path: '/create/{uuid}', name: 'add_entry')]
+    public function create(TimetableLesson $lesson, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $entry = (new LessonEntry())
@@ -127,13 +115,9 @@ class BookEntryController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $students = $lesson->getTuition()->getStudyGroup()->getMemberships()->map(function(StudyGroupMembership $membership) {
-                return $membership->getStudent();
-            });
+            $students = $lesson->getTuition()->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent());
 
-            $alreadyAddedStudents = array_map(function(LessonAttendance $attendance) {
-                return $attendance->getStudent()->getUuid()->toString();
-            }, $entry->getAttendances()->toArray());
+            $alreadyAddedStudents = array_map(fn(LessonAttendance $attendance) => $attendance->getStudent()->getUuid()->toString(), $entry->getAttendances()->toArray());
 
             /** @var Student $student */
             foreach($students as $student) {
@@ -160,10 +144,8 @@ class BookEntryController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/attendance/{uuid}/excuse_status", name="change_lesson_attendance_excuse_status")
-     */
-    public function attendance(LessonAttendance $attendance, Request $request, LessonAttendanceRepositoryInterface $attendanceRepository) {
+    #[Route(path: '/attendance/{uuid}/excuse_status', name: 'change_lesson_attendance_excuse_status')]
+    public function attendance(LessonAttendance $attendance, Request $request, LessonAttendanceRepositoryInterface $attendanceRepository): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $attendance->getEntry());
 
         $form = $this->createForm(LessonAttendanceExcuseType::class, $attendance);
@@ -181,10 +163,8 @@ class BookEntryController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}", name="show_entry")
-     */
-    public function show(LessonEntry $entry, Request $request) {
+    #[Route(path: '/{uuid}', name: 'show_entry')]
+    public function show(LessonEntry $entry, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $entry);
 
         $form = $this->createForm(LessonEntryType::class, $entry, [
@@ -207,10 +187,8 @@ class BookEntryController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/students/add", name="add_student_to_entry")
-     */
-    public function addStudent(LessonEntry $entry, Request $request) {
+    #[Route(path: '/{uuid}/students/add', name: 'add_student_to_entry')]
+    public function addStudent(LessonEntry $entry, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $entry);
 
         $form = $this->createForm(LessonEntryAddStudent::class);
@@ -242,10 +220,8 @@ class BookEntryController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_entry")
-     */
-    public function remove(LessonEntry $entry, Request $request) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_entry')]
+    public function remove(LessonEntry $entry, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Remove, $entry);
 
         $form = $this->createForm(ConfirmType::class, null, [

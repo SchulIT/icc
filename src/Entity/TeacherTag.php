@@ -14,8 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  * @Auditable()
- * @UniqueEntity(fields={"externalId"})
  */
+#[UniqueEntity(fields: ['externalId'])]
 class TeacherTag {
 
     public const GradeTeacherTagUuid = '89274ce2-3f85-48c8-890e-1aea0e08d21d';
@@ -26,22 +26,22 @@ class TeacherTag {
 
     /**
      * @ORM\Column(type="string", unique=true, length=32)
-     * @Assert\NotBlank()
-     * @Assert\Length(max="32")
      */
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 32)]
     private $externalId;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     private $name;
 
     /**
      * @ORM\Column(type="string", length=7)
      * @Color()
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     private $color;
 
     /**

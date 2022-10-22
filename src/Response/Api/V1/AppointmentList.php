@@ -11,7 +11,7 @@ class AppointmentList {
      * @Serializer\SerializedName("appointments")
      * @var Appointment[]
      */
-    private $appointments;
+    private ?array $appointments = null;
 
     /**
      * @return Appointment[]
@@ -22,7 +22,6 @@ class AppointmentList {
 
     /**
      * @param Appointment[] $appointments
-     * @return AppointmentList
      */
     public function setAppointments(array $appointments): AppointmentList {
         $this->appointments = $appointments;

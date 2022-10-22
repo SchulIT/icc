@@ -11,10 +11,8 @@ use App\Utils\ArrayUtils;
 
 class PrivacyCategoryImportStrategy implements ImportStrategyInterface {
 
-    private $repository;
-
-    public function __construct(PrivacyCategoryRepositoryInterface $repository) {
-        $this->repository = $repository;
+    public function __construct(private PrivacyCategoryRepositoryInterface $repository)
+    {
     }
 
     /**
@@ -32,9 +30,7 @@ class PrivacyCategoryImportStrategy implements ImportStrategyInterface {
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->repository->findAll(),
-            function (PrivacyCategory $category) {
-                return $category->getExternalId();
-            }
+            fn(PrivacyCategory $category) => $category->getExternalId()
         );
     }
 
@@ -62,7 +58,6 @@ class PrivacyCategoryImportStrategy implements ImportStrategyInterface {
 
     /**
      * @param PrivacyCategory $entity
-     * @return int
      */
     public function getEntityId($entity): int {
         return $entity->getId();

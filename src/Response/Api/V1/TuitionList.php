@@ -12,7 +12,7 @@ class TuitionList {
      *
      * @var Tuition[]
      */
-    private $tuitions;
+    private ?array $tuitions = null;
 
     /**
      * @return Tuition[]
@@ -23,7 +23,6 @@ class TuitionList {
 
     /**
      * @param Tuition[] $tuitions
-     * @return TuitionList
      */
     public function setTuitions(array $tuitions): TuitionList {
         $this->tuitions = $tuitions;

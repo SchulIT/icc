@@ -8,7 +8,6 @@ class GradeNameStrategy extends AbstractStringPropertyStrategy {
 
     /**
      * @param Grade|null $object
-     * @return string
      */
     protected function getValue($object): string {
         if($object === null) {

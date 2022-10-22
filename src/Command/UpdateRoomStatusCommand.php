@@ -14,17 +14,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class UpdateRoomStatusCommand extends Command {
 
-    private ServiceCenterRoomStatusHelper $statusHelper;
+    protected static $defaultName = 'app:room:status:update';
 
-    public function __construct(ServiceCenterRoomStatusHelper $roomStatusHelper, string $name = null) {
+    public function __construct(private ServiceCenterRoomStatusHelper $statusHelper, string $name = null) {
         parent::__construct($name);
-
-        $this->statusHelper = $roomStatusHelper;
     }
 
     public function configure() {
-        $this->setName('app:room:status:update')
-            ->setDescription('Updates the room status from ServiceCenter (if enabled).');
+        $this->setDescription('Updates the room status from ServiceCenter (if enabled).');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

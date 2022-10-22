@@ -13,9 +13,6 @@ class StudentAbsenceMessageCreatedEvent extends AbstractStudentAbsenceEvent {
         $this->message = $message;
     }
 
-    /**
-     * @return StudentAbsenceMessage
-     */
     public function getMessage(): StudentAbsenceMessage {
         return $this->message;
     }

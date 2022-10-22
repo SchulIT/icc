@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\ResourceType;
 use App\Form\ResourceTypeType;
 use App\Form\RoomTagType;
@@ -16,23 +17,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/admin/resources/types")
  * @Security("is_granted('ROLE_ADMIN')")
  */
+#[Route(path: '/admin/resources/types')]
 class ResourceTypeAdminController extends AbstractController {
 
-    private ResourceTypeRepositoryInterface $repository;
-
-    public function __construct(ResourceTypeRepositoryInterface $repository, RefererHelper $redirectHelper) {
+    public function __construct(private ResourceTypeRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
-
-        $this->repository = $repository;
     }
 
-    /**
-     * @Route("", name="admin_resource_types")
-     */
-    public function index(Sorter $sorter) {
+    #[Route(path: '', name: 'admin_resource_types')]
+    public function index(Sorter $sorter): Response {
         $types = $this->repository->findAll();
         $sorter->sort($types, ResourceTypeStrategy::class);
 
@@ -41,10 +36,8 @@ class ResourceTypeAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/add", name="add_resource_type")
-     */
-    public function add(Request $request) {
+    #[Route(path: '/add', name: 'add_resource_type')]
+    public function add(Request $request): Response {
         $this->denyAccessUnlessGranted(ResourceTypeVoter::New);
 
         $tag = new ResourceType();
@@ -63,10 +56,8 @@ class ResourceTypeAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/edit", name="edit_resource_type")
-     */
-    public function edit(ResourceType $type, Request $request) {
+    #[Route(path: '/{uuid}/edit', name: 'edit_resource_type')]
+    public function edit(ResourceType $type, Request $request): Response {
         $this->denyAccessUnlessGranted(ResourceTypeVoter::Edit, $type);
 
         $form = $this->createForm(ResourceTypeType::class, $type);
@@ -85,10 +76,8 @@ class ResourceTypeAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/{uuid}/remove", name="remove_resource_type")
-     */
-    public function remove(ResourceType $type, Request $request) {
+    #[Route(path: '/{uuid}/remove', name: 'remove_resource_type')]
+    public function remove(ResourceType $type, Request $request): Response {
         $this->denyAccessUnlessGranted(ResourceTypeVoter::Remove, $type);
 
         $form = $this->createForm(ConfirmType::class, null, [

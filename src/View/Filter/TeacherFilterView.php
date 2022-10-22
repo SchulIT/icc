@@ -6,15 +6,11 @@ use App\Entity\Teacher;
 
 class TeacherFilterView implements FilterViewInterface {
 
-    /** @var Teacher[] */
-    private $teachers;
-
-    /** @var Teacher|null */
-    private $currentTeacher;
-
-    public function __construct(array $teachers, ?Teacher $teacher) {
-        $this->teachers = $teachers;
-        $this->currentTeacher = $teacher;
+    /**
+     * @param Teacher[] $teachers
+     */
+    public function __construct(private array $teachers, private ?Teacher $currentTeacher)
+    {
     }
 
     /**
@@ -24,9 +20,6 @@ class TeacherFilterView implements FilterViewInterface {
         return $this->teachers;
     }
 
-    /**
-     * @return Teacher|null
-     */
     public function getCurrentTeacher(): ?Teacher {
         return $this->currentTeacher;
     }

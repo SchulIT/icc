@@ -10,35 +10,27 @@ class Day {
     /**
      * @Serializer\SerializedName("date")
      * @Serializer\Type("DateTime")
-     * @var DateTime
      */
-    private $date;
+    private ?\DateTime $date = null;
 
     /**
      * @Serializer\SerializedName("lessons")
      * @Serializer\Type("array<App\Book\Export\Lesson>")
      * @var Lesson[]
      */
-    private $lessons = [ ];
+    private array $lessons = [ ];
 
     /**
      * @Serializer\SerializedName("comments")
      * @Serializer\Type("array<App\Book\Export\Comment>")
      * @var Comment[]
      */
-    private $comments = [ ];
+    private array $comments = [ ];
 
-    /**
-     * @return DateTime
-     */
     public function getDate(): DateTime {
         return $this->date;
     }
 
-    /**
-     * @param DateTime $date
-     * @return Day
-     */
     public function setDate(DateTime $date): Day {
         $this->date = $date;
         return $this;

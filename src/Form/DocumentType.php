@@ -20,19 +20,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DocumentType extends AbstractType {
 
-    private DocumentCategoryNameStrategy $documentCategoryNameStrategy;
-
-    private UserStringConverter $userConverter;
-    private UserUsernameStrategy $userStrategy;
-
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    public function __construct(DocumentCategoryNameStrategy $documentCategorySorter, UserStringConverter $userConverter,
-                                UserUsernameStrategy $userStrategy, AuthorizationCheckerInterface $authorizationChecker) {
-        $this->documentCategoryNameStrategy = $documentCategorySorter;
-        $this->userConverter = $userConverter;
-        $this->userStrategy = $userStrategy;
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(private DocumentCategoryNameStrategy $documentCategoryNameStrategy, private UserStringConverter $userConverter, private UserUsernameStrategy $userStrategy, private AuthorizationCheckerInterface $authorizationChecker)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -51,9 +40,7 @@ class DocumentType extends AbstractType {
                             'label' => 'label.category',
                             'sort_by' => $this->documentCategoryNameStrategy,
                             'class' => DocumentCategory::class,
-                            'choice_label' => function (DocumentCategory $category) {
-                                return $category->getName();
-                            },
+                            'choice_label' => fn(DocumentCategory $category) => $category->getName(),
                             'disabled' => $isRestrictedView,
                             'attr' => [
                                 'data-choice' => 'true'
@@ -110,15 +97,11 @@ class DocumentType extends AbstractType {
                             ->add('authors', SortableEntityType::class, [
                                 'label' => 'label.authors',
                                 'class' => User::class,
-                                'query_builder' => function(EntityRepository $repository) {
-                                    return $repository->createQueryBuilder('u')
-                                        ->select('u')
-                                        ->where('u.userType = :userType')
-                                        ->setParameter('userType', UserType::Teacher());
-                                },
-                                'choice_label' => function(User $user) {
-                                    return $this->userConverter->convert($user);
-                                },
+                                'query_builder' => fn(EntityRepository $repository) => $repository->createQueryBuilder('u')
+                                    ->select('u')
+                                    ->where('u.userType = :userType')
+                                    ->setParameter('userType', UserType::Teacher()),
+                                'choice_label' => fn(User $user) => $this->userConverter->convert($user),
                                 'sort_by' => $this->userStrategy,
                                 'multiple' => true,
                                 'required' => false

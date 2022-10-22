@@ -6,15 +6,12 @@ use App\Entity\AppointmentCategory;
 
 class AppointmentCategoriesFilterView implements FilterViewInterface {
 
-    /** @var AppointmentCategory[] */
-    private $categories;
-
-    /** @var AppointmentCategory[] */
-    private $currentCategories;
-
-    public function __construct(array $categories, array $currentCategories) {
-        $this->categories = $categories;
-        $this->currentCategories = $currentCategories;
+    /**
+     * @param AppointmentCategory[] $categories
+     * @param AppointmentCategory[] $currentCategories
+     */
+    public function __construct(private array $categories, private array $currentCategories)
+    {
     }
 
     /**

@@ -6,16 +6,13 @@ use App\Grouping\SubstitutionGradeGroup;
 
 class SubstitutionGradeGroupStrategy implements SortingStrategyInterface {
 
-    private $gradeStrategy;
-
-    public function __construct(GradeNameStrategy $gradeStrategy) {
-        $this->gradeStrategy = $gradeStrategy;
+    public function __construct(private GradeNameStrategy $gradeStrategy)
+    {
     }
 
     /**
      * @param SubstitutionGradeGroup $objectA
      * @param SubstitutionGradeGroup $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         if($objectA->getGrade() === null) {

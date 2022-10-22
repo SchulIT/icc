@@ -16,56 +16,42 @@ class ExamsData {
      * be considered on import.
      *
      * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     * @Assert\NotNull
      * @var DateTime|null
      */
-    private ?DateTime $startDate;
+    #[Assert\NotNull]
+    private ?DateTime $startDate = null;
 
     /**
      * This date controls at which date the imported exams end. Only exams before this date (inclusive) will
      * be considered on import.
      *
      * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     * @Assert\NotNull
      * @var DateTime|null
      */
-    private ?DateTime $endDate;
+    #[Assert\NotNull]
+    private ?DateTime $endDate = null;
 
     /**
      * @Serializer\Type("array<App\Request\Data\ExamData>")
-     * @Assert\Valid()
      * @UniqueId(propertyPath="id")
      * @var ExamData[]
      */
-    private $exams = [ ];
+    #[Assert\Valid]
+    private array $exams = [ ];
 
-    /**
-     * @return DateTime|null
-     */
     public function getStartDate(): ?DateTime {
         return $this->startDate;
     }
 
-    /**
-     * @param DateTime|null $startDate
-     * @return ExamsData
-     */
     public function setStartDate(?DateTime $startDate): ExamsData {
         $this->startDate = $startDate;
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getEndDate(): ?DateTime {
         return $this->endDate;
     }
 
-    /**
-     * @param DateTime|null $endDate
-     * @return ExamsData
-     */
     public function setEndDate(?DateTime $endDate): ExamsData {
         $this->endDate = $endDate;
         return $this;
@@ -80,7 +66,6 @@ class ExamsData {
 
     /**
      * @param ExamData[] $exams
-     * @return ExamsData
      */
     public function setExams($exams): ExamsData {
         $this->exams = $exams;

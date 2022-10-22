@@ -6,12 +6,8 @@ use App\Entity\Student;
 
 class AbsentStudent {
 
-    private $student;
-    private $reason;
-
-    public function __construct(Student $student, AbsenceReason $reason) {
-        $this->student = $student;
-        $this->reason = $reason;
+    public function __construct(private Student $student, private AbsenceReason $reason)
+    {
     }
 
     /**

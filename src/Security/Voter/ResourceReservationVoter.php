@@ -18,10 +18,8 @@ class ResourceReservationVoter extends Voter {
     public const Edit = 'edit';
     public const Remove = 'remove';
 
-    private AccessDecisionManagerInterface $accessDecisionManager;
-
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager) {
-        $this->accessDecisionManager = $accessDecisionManager;
+    public function __construct(private AccessDecisionManagerInterface $accessDecisionManager)
+    {
     }
 
     /**
@@ -44,23 +42,15 @@ class ResourceReservationVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
-        switch($attribute) {
-            case self::View:
-                return $this->canView($token);
-
-            case self::New:
-                return $this->canCreate($token);
-
-            case self::Edit:
-                return $this->canEdit($subject, $token);
-
-            case self::Remove:
-                return $this->canRemove($subject, $token);
-
-        }
-
-        throw new LogicException('This code should not be reached.');
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
+    {
+        return match ($attribute) {
+            self::View => $this->canView($token),
+            self::New => $this->canCreate($token),
+            self::Edit => $this->canEdit($subject, $token),
+            self::Remove => $this->canRemove($subject, $token),
+            default => throw new LogicException('This code should not be reached.'),
+        };
     }
 
     private function canView(TokenInterface $token): bool {

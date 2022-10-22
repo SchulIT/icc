@@ -16,38 +16,33 @@ class Exam {
     /**
      * @Serializer\SerializedName("date")
      * @Serializer\Type("DateTime")
-     * @var DateTime
      */
-    private $date;
+    private ?\DateTime $date = null;
 
     /**
      * @Serializer\SerializedName("lesson_start")
      * @Serializer\Type("integer")
-     * @var int
      */
-    private $lessonStart;
+    private ?int $lessonStart = null;
 
     /**
      * @Serializer\SerializedName("lesson_end")
      * @Serializer\Type("integer")
-     * @var int
      */
-    private $lessonEnd;
+    private ?int $lessonEnd = null;
 
     /**
      * @Serializer\SerializedName("description")
      * @Serializer\Type("string")
-     *
-     * @var string|null
      */
-    private $description;
+    private ?string $description = null;
 
     /**
      * @Serializer\SerializedName("tuitions")
      * @Serializer\Type("array<App\Response\Api\V1\Tuition>")
      * @var Tuition[]
      */
-    private $tuitions;
+    private ?array $tuitions = null;
 
     /**
      * @Serializer\SerializedName("supervisions")
@@ -55,7 +50,7 @@ class Exam {
      *
      * @var ExamSupervision[]
      */
-    private $supervisions;
+    private ?array $supervisions = null;
 
     /**
      * @Serializer\SerializedName("rooms")
@@ -63,83 +58,48 @@ class Exam {
      *
      * @var string[]
      */
-    private $rooms;
+    private ?array $rooms = null;
 
-    /**
-     * @return UuidInterface
-     */
     public function getUuid(): UuidInterface {
         return $this->uuid;
     }
 
-    /**
-     * @param UuidInterface $uuid
-     * @return Exam
-     */
     public function setUuid(UuidInterface $uuid): Exam {
         $this->uuid = $uuid;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getDate(): DateTime {
         return $this->date;
     }
 
-    /**
-     * @param DateTime $date
-     * @return Exam
-     */
     public function setDate(DateTime $date): Exam {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLessonStart(): int {
         return $this->lessonStart;
     }
 
-    /**
-     * @param int $lessonStart
-     * @return Exam
-     */
     public function setLessonStart(int $lessonStart): Exam {
         $this->lessonStart = $lessonStart;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLessonEnd(): int {
         return $this->lessonEnd;
     }
 
-    /**
-     * @param int $lessonEnd
-     * @return Exam
-     */
     public function setLessonEnd(int $lessonEnd): Exam {
         $this->lessonEnd = $lessonEnd;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDescription(): ?string {
         return $this->description;
     }
 
-    /**
-     * @param string|null $description
-     * @return Exam
-     */
     public function setDescription(?string $description): Exam {
         $this->description = $description;
         return $this;
@@ -154,7 +114,6 @@ class Exam {
 
     /**
      * @param Tuition[] $tuitions
-     * @return Exam
      */
     public function setTuitions(array $tuitions): Exam {
         $this->tuitions = $tuitions;
@@ -170,7 +129,6 @@ class Exam {
 
     /**
      * @param ExamSupervision[] $supervisions
-     * @return Exam
      */
     public function setSupervisions(array $supervisions): Exam {
         $this->supervisions = $supervisions;
@@ -186,7 +144,6 @@ class Exam {
 
     /**
      * @param string[] $rooms
-     * @return Exam
      */
     public function setRooms(array $rooms): Exam {
         $this->rooms = $rooms;
@@ -201,11 +158,7 @@ class Exam {
             ->setLessonStart($exam->getLessonStart())
             ->setLessonEnd($exam->getLessonEnd())
             ->setRooms($exam->getRoom() !== null ? [ $exam->getRoom()->getName() ] : [ ]) // for compatibility reasons only
-            ->setSupervisions(array_map(function(ExamSupervisionEntity $supervisionEntity) {
-                return ExamSupervision::fromEntity($supervisionEntity);
-            }, $supervisions))
-            ->setTuitions(array_map(function(TuitionEntity $tuitionEntity) {
-                return Tuition::fromEntity($tuitionEntity);
-            }, $exam->getTuitions()->toArray()));
+            ->setSupervisions(array_map(fn(ExamSupervisionEntity $supervisionEntity) => ExamSupervision::fromEntity($supervisionEntity), $supervisions))
+            ->setTuitions(array_map(fn(TuitionEntity $tuitionEntity) => Tuition::fromEntity($tuitionEntity), $exam->getTuitions()->toArray()));
     }
 }

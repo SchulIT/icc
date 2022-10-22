@@ -4,10 +4,8 @@ namespace App\Sorting;
 
 abstract class AbstractStringPropertyStrategy implements SortingStrategyInterface {
 
-    private $stringStrategy;
-
-    public function __construct(StringStrategy $stringStrategy) {
-        $this->stringStrategy = $stringStrategy;
+    public function __construct(private StringStrategy $stringStrategy)
+    {
     }
 
     abstract  protected function getValue($object): string;

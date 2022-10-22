@@ -23,10 +23,6 @@ class CollectionUtils {
 
     /**
      * Synchronises a Collection with $targetEntities based on the given $idSelector.
-     *
-     * @param Collection $collection
-     * @param array $targetEntities
-     * @param \Closure $idSelector
      */
     public static function synchronize(Collection $collection, array $targetEntities, \Closure $idSelector) {
         $currentCollection = clone $collection;

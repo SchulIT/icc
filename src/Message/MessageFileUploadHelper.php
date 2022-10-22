@@ -8,17 +8,13 @@ use App\Entity\User;
 use App\Repository\MessageFileUploadRepositoryInterface;
 
 class MessageFileUploadHelper {
-    private $messageFileUploadRepository;
-
-    public function __construct(MessageFileUploadRepositoryInterface $messageFileUploadRepository) {
-        $this->messageFileUploadRepository = $messageFileUploadRepository;
+    public function __construct(private MessageFileUploadRepositoryInterface $messageFileUploadRepository)
+    {
     }
 
     /**
      * Returns the missing files which a user has to upload.
      *
-     * @param Message $message
-     * @param User $user
      * @return MessageFile[]
      */
     public function getMissingUploadedFiles(Message $message, User $user) {

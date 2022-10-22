@@ -6,18 +6,13 @@ use App\Entity\StudentAbsence;
 
 class StudentAbsenceStrategy implements SortingStrategyInterface {
 
-    private StudentStrategy $studentStrategy;
-    private DateStrategy $dateStrategy;
-
-    public function __construct(StudentStrategy $strategy, DateStrategy $dateStrategy) {
-        $this->studentStrategy = $strategy;
-        $this->dateStrategy = $dateStrategy;
+    public function __construct(private StudentStrategy $studentStrategy, private DateStrategy $dateStrategy)
+    {
     }
 
     /**
      * @param StudentAbsence $objectA
      * @param StudentAbsence $objectB
-     * @return int
      */
     public function compare($objectA, $objectB): int {
         $cmpStudents = $this->studentStrategy->compare($objectA->getStudent(), $objectB->getStudent());

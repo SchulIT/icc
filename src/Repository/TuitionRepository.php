@@ -109,9 +109,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
      * @inheritDoc
      */
     public function findAllByStudents(array $students, Section $section): array {
-        $studentIds = array_map(function (Student $student) {
-            return $student->getId();
-        }, $students);
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->em->createQueryBuilder();
         $qb = $this->filterSection($qb, $section);
@@ -134,9 +132,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
      * @inheritDoc
      */
     public function findAllByGrades(array $grades): array {
-        $gradeIds = array_map(function (Grade $grade) {
-            return $grade->getId();
-        }, $grades);
+        $gradeIds = array_map(fn(Grade $grade) => $grade->getId(), $grades);
 
         $qb = $this->em->createQueryBuilder();
 
@@ -158,9 +154,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
      * @inheritDoc
      */
     public function findAllBySubjects(array $subjects): array {
-        $subjectIds = array_map(function(Subject $subject) {
-            return $subject->getId();
-        }, $subjects);
+        $subjectIds = array_map(fn(Subject $subject) => $subject->getId(), $subjects);
 
         $qb = $this->em->createQueryBuilder();
 
@@ -204,7 +198,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
 
         /** @var Tuition $tuition */
         foreach($result as $tuition) {
-            $tuitionGrades = $tuition->getStudyGroup()->getGrades()->map(function(Grade $grade) { return $grade->getName(); })->toArray();
+            $tuitionGrades = $tuition->getStudyGroup()->getGrades()->map(fn(Grade $grade) => $grade->getName())->toArray();
             if(count(array_intersect($tuitionGrades, $grades)) > 0) {
                 $tuitions[] = $tuition;
             }
@@ -246,7 +240,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
 
         /** @var Tuition $tuition */
         foreach($result as $tuition) {
-            $tuitionGrades = $tuition->getStudyGroup()->getGrades()->map(function(Grade $grade) { return $grade->getName(); })->toArray();
+            $tuitionGrades = $tuition->getStudyGroup()->getGrades()->map(fn(Grade $grade) => $grade->getName())->toArray();
             if(count(array_intersect($tuitionGrades, $grades)) > 0) {
                 $tuitions[] = $tuition;
             }
@@ -259,12 +253,8 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
      * @inheritDoc
      */
     public function findOneBySubstitution(Substitution $substitution, Section $section): ?Tuition {
-        $grades = array_map(function(Grade $grade) {
-            return $grade->getExternalId();
-        }, $substitution->getGrades());
-        $teachers = array_map(function(Teacher $teacher) {
-            return $teacher->getAcronym();
-        }, $substitution->getTeachers()->toArray());
+        $grades = array_map(fn(Grade $grade) => $grade->getExternalId(), $substitution->getGrades());
+        $teachers = array_map(fn(Teacher $teacher) => $teacher->getAcronym(), $substitution->getTeachers()->toArray());
 
         if(empty($substitution->getSubject())) {
             return null;

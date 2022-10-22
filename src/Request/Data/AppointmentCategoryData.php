@@ -10,26 +10,23 @@ class AppointmentCategoryData {
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $id;
+    #[Assert\NotBlank]
+    private string $id;
 
     /**
      * @Serializer\Type("string")
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $name;
+    #[Assert\NotBlank]
+    private string $name;
 
     /**
      * Hex color string without leading hashtag. Note: abbreviated values (e.g. 000, fff, ...) are not allowed.
      *
      * @Serializer\Type("string")
      * @NullOrNotBlank()
-     * @var string|null
      */
-    private $color;
+    private ?string $color = null;
 
     /**
      * @return string
@@ -40,7 +37,6 @@ class AppointmentCategoryData {
 
     /**
      * @param string $id
-     * @return AppointmentCategoryData
      */
     public function setId($id): AppointmentCategoryData {
         $this->id = $id;
@@ -56,7 +52,6 @@ class AppointmentCategoryData {
 
     /**
      * @param string $name
-     * @return AppointmentCategoryData
      */
     public function setName($name): AppointmentCategoryData {
         $this->name = $name;
@@ -72,7 +67,6 @@ class AppointmentCategoryData {
 
     /**
      * @param string|null $color
-     * @return AppointmentCategoryData
      */
     public function setColor($color): AppointmentCategoryData {
         $this->color = $color;

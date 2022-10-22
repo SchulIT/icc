@@ -6,20 +6,12 @@ use App\Entity\Grade;
 
 class GradeFilterView implements FilterViewInterface {
 
-    /** @var Grade[] */
-    private $grades;
-
-    /** @var Grade|null */
-    private $currentGrade;
-
     /**
      * GradeFilterView constructor.
      * @param Grade[] $grades
-     * @param Grade|null $grade
      */
-    public function __construct(array $grades, ?Grade $grade) {
-        $this->grades = $grades;
-        $this->currentGrade = $grade;
+    public function __construct(private array $grades, private ?Grade $currentGrade)
+    {
     }
 
     /**
@@ -29,9 +21,6 @@ class GradeFilterView implements FilterViewInterface {
         return $this->grades;
     }
 
-    /**
-     * @return Grade|null
-     */
     public function getCurrentGrade(): ?Grade {
         return $this->currentGrade;
     }

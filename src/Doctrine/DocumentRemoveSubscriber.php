@@ -14,10 +14,8 @@ use Doctrine\ORM\Events;
  */
 class DocumentRemoveSubscriber implements EventSubscriber {
 
-    private DocumentFilesystem $filesystem;
-
-    public function __construct(DocumentFilesystem $filesystem) {
-        $this->filesystem = $filesystem;
+    public function __construct(private DocumentFilesystem $filesystem)
+    {
     }
 
     public function postRemove(LifecycleEventArgs $eventArgs) {

@@ -9,12 +9,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
 class IcsAccessTokenManager {
-    private EntityManagerInterface $em;
-    private SecurityUtilsInterface $utils;
-
-    public function __construct(EntityManagerInterface $manager, SecurityUtilsInterface $securityUtils) {
-        $this->em = $manager;
-        $this->utils = $securityUtils;
+    public function __construct(private EntityManagerInterface $em, private SecurityUtilsInterface $utils)
+    {
     }
 
     public function getToken(string $token): ?IcsAccessToken {

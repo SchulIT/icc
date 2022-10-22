@@ -11,10 +11,8 @@ use Faker\Generator;
 
 class TimetablePeriodFixtures extends Fixture implements DependentFixtureInterface {
 
-    private $generator;
-
-    public function __construct(Generator $generator) {
-        $this->generator = $generator;
+    public function __construct(private Generator $generator)
+    {
     }
 
     /**

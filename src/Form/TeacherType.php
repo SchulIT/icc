@@ -43,13 +43,9 @@ class TeacherType extends AbstractType {
             ->add('tags', EntityType::class, [
                 'class' => TeacherTag::class,
                 'label' => 'label.tags',
-                'choice_label' => function(TeacherTag $tag) {
-                    return $tag->getName();
-                },
-                'query_builder' => function(EntityRepository $repository) {
-                    return $repository->createQueryBuilder('t')
-                        ->orderBy('t.name', 'asc');
-                },
+                'choice_label' => fn(TeacherTag $tag) => $tag->getName(),
+                'query_builder' => fn(EntityRepository $repository) => $repository->createQueryBuilder('t')
+                    ->orderBy('t.name', 'asc'),
                 'multiple' => true,
                 'expanded' => true,
                 'label_attr' => [

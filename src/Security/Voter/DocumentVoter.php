@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use LogicException;
 use App\Entity\Document;
 use App\Entity\GradeMembership;
 use App\Entity\Student;
@@ -17,21 +18,15 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class DocumentVoter extends Voter {
 
-    const New = 'new-document';
-    const Edit = 'edit';
-    const Remove = 'remove';
-    const View = 'view';
-    const ViewOthers = 'other-documents';
-    const Admin = 'admin-documents';
+    public const New = 'new-document';
+    public const Edit = 'edit';
+    public const Remove = 'remove';
+    public const View = 'view';
+    public const ViewOthers = 'other-documents';
+    public const Admin = 'admin-documents';
 
-    private SectionResolverInterface $sectionResolver;
-    private DocumentRepositoryInterface $documentRepository;
-    private AccessDecisionManagerInterface $accessDecisionManager;
-
-    public function __construct(SectionResolverInterface $sectionResolver, AccessDecisionManagerInterface $accessDecisionManager, DocumentRepositoryInterface $documentRepository) {
-        $this->sectionResolver = $sectionResolver;
-        $this->accessDecisionManager = $accessDecisionManager;
-        $this->documentRepository = $documentRepository;
+    public function __construct(private SectionResolverInterface $sectionResolver, private AccessDecisionManagerInterface $accessDecisionManager, private DocumentRepositoryInterface $documentRepository)
+    {
     }
 
     /**
@@ -51,28 +46,17 @@ class DocumentVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
-        switch($attribute) {
-            case self::New:
-                return $this->canCreateDocument($token);
-
-            case self::Edit:
-                return $this->canEditDocument($subject, $token);
-
-            case self::Remove:
-                return $this->canRemoveDocument($token);
-
-            case self::View:
-                return $this->canViewDocument($subject, $token);
-
-            case self::ViewOthers:
-                return $this->canViewOtherDocuments($token);
-
-            case self::Admin:
-                return $this->canViewAdminOverview($token);
-        }
-
-        throw new \LogicException('This code should not be reached.');
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
+    {
+        return match ($attribute) {
+            self::New => $this->canCreateDocument($token),
+            self::Edit => $this->canEditDocument($subject, $token),
+            self::Remove => $this->canRemoveDocument($token),
+            self::View => $this->canViewDocument($subject, $token),
+            self::ViewOthers => $this->canViewOtherDocuments($token),
+            self::Admin => $this->canViewAdminOverview($token),
+            default => throw new LogicException('This code should not be reached.'),
+        };
     }
 
     private function canCreateDocument(TokenInterface $token): bool {
@@ -123,9 +107,7 @@ class DocumentVoter extends Voter {
             if ($user->getUserType()->equals($visibility->getUserType())) {
                 if ($visibility->getUserType()->equals(UserType::Intern()) !== true) {
                     // Check grade memberships for students/parents
-                    $studentIds = $user->getStudents()->map(function (Student $student) {
-                        return $student->getId();
-                    })->toArray();
+                    $studentIds = $user->getStudents()->map(fn(Student $student) => $student->getId())->toArray();
 
                     foreach ($document->getGrades() as $documentStudyGroup) {
                         /** @var GradeMembership $membership */

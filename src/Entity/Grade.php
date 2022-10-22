@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Stringable;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,25 +14,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity()
  * @Auditable()
  */
-class Grade {
+class Grade implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $externalId;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $externalId = null;
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @Assert\NotNull()
-     * @Assert\NotBlank()
-     * @var string
      */
-    private $name;
+    #[Assert\NotNull]
+    #[Assert\NotBlank]
+    private ?string $name = null;
 
     /**
      * @ORM\OneToMany(targetEntity="GradeMembership", mappedBy="grade")
@@ -47,9 +46,8 @@ class Grade {
 
     /**
      * @ORM\Column(type="boolean")
-     * @var bool
      */
-    private $allowCollapse = true;
+    private bool $allowCollapse = true;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -58,40 +56,23 @@ class Grade {
         $this->teachers = new ArrayCollection();
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int {
         return $this->id;
     }
 
-    /**
-     * @return string|null
-     */
     public function getExternalId(): ?string {
         return $this->externalId;
     }
 
-    /**
-     * @param string $externalId
-     * @return Grade
-     */
     public function setExternalId(string $externalId): Grade {
         $this->externalId = $externalId;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     * @return Grade
-     */
     public function setName(?string $name): Grade {
         $this->name = $name;
         return $this;
@@ -116,24 +97,17 @@ class Grade {
         return $this->teachers;
     }
 
-    /**
-     * @return bool
-     */
     public function allowCollapse(): bool {
         return $this->allowCollapse;
     }
 
-    /**
-     * @param bool $allowCollapse
-     * @return Grade
-     */
     public function setAllowCollapse(bool $allowCollapse): Grade {
         $this->allowCollapse = $allowCollapse;
         return $this;
     }
 
-    public function __toString() {
-        return $this->getName();
+    public function __toString(): string {
+        return (string) $this->getName();
     }
 
 }

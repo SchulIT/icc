@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\User;
 use App\Grouping\DocumentCategoryStrategy as DocumentCategoryGroupingStrategy;
 use App\Grouping\Grouper;
@@ -13,23 +14,15 @@ use App\Sorting\Sorter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as SymfonyAbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/admin/editor")
- */
+#[Route(path: '/admin/editor')]
 class EditorController extends SymfonyAbstractController {
 
-    private Grouper $grouper;
-    private Sorter $sorter;
-
-    public function __construct(Grouper $grouper, Sorter $sorter) {
-        $this->grouper = $grouper;
-        $this->sorter = $sorter;
+    public function __construct(private Grouper $grouper, private Sorter $sorter)
+    {
     }
 
-    /**
-     * @Route("/links", name="editor_links")
-     */
-    public function links(DocumentRepositoryInterface $documentRepository, WikiArticleRepositoryInterface $wikiArticleRepository) {
+    #[Route(path: '/links', name: 'editor_links')]
+    public function links(DocumentRepositoryInterface $documentRepository, WikiArticleRepositoryInterface $wikiArticleRepository): Response {
         // Documents
         $documents = $documentRepository->findAll();
 

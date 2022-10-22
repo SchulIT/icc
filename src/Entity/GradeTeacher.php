@@ -21,18 +21,18 @@ class GradeTeacher {
     /**
      * @ORM\ManyToOne(targetEntity="Teacher", inversedBy="grades")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Assert\NotNull()
      * @var Teacher|null
      */
-    private ?Teacher $teacher;
+    #[Assert\NotNull]
+    private ?Teacher $teacher = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Grade", inversedBy="teachers")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Assert\NotNull()
      * @var Grade|null
      */
-    private ?Grade $grade;
+    #[Assert\NotNull]
+    private ?Grade $grade = null;
 
     /**
      * @ORM\Column(type="grade_teacher_type")
@@ -44,49 +44,28 @@ class GradeTeacher {
         $this->type = GradeTeacherType::Primary();
     }
 
-    /**
-     * @return Teacher|null
-     */
     public function getTeacher(): ?Teacher {
         return $this->teacher;
     }
 
-    /**
-     * @param Teacher|null $teacher
-     * @return GradeTeacher
-     */
     public function setTeacher(?Teacher $teacher): GradeTeacher {
         $this->teacher = $teacher;
         return $this;
     }
 
-    /**
-     * @return Grade|null
-     */
     public function getGrade(): ?Grade {
         return $this->grade;
     }
 
-    /**
-     * @param Grade|null $grade
-     * @return GradeTeacher
-     */
     public function setGrade(?Grade $grade): GradeTeacher {
         $this->grade = $grade;
         return $this;
     }
 
-    /**
-     * @return GradeTeacherType
-     */
     public function getType(): GradeTeacherType {
         return $this->type;
     }
 
-    /**
-     * @param GradeTeacherType $type
-     * @return GradeTeacher
-     */
     public function setType(GradeTeacherType $type): GradeTeacher {
         $this->type = $type;
         return $this;

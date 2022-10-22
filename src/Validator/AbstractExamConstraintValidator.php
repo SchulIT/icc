@@ -10,13 +10,11 @@ use App\Utils\ArrayUtils;
 use Symfony\Component\Validator\ConstraintValidator;
 
 abstract class AbstractExamConstraintValidator extends ConstraintValidator {
-    private $examCache = [ ];
-    private $initialized = false;
+    private array $examCache = [ ];
+    private bool $initialized = false;
 
-    protected $examRepository;
-
-    public function __construct(ExamRepositoryInterface $examRepository) {
-        $this->examRepository = $examRepository;
+    public function __construct(protected ExamRepositoryInterface $examRepository)
+    {
     }
 
     protected function initializeCache() {

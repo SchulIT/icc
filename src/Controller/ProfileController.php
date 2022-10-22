@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\IcsAccessToken;
 use App\Entity\User;
 use App\Form\NotificationsType;
@@ -20,24 +21,18 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/profile")
- */
+#[Route(path: '/profile')]
 class ProfileController extends AbstractController {
 
     private const RemoveAppCrsfTokenKey = '_remove_app_csrf';
 
-    /**
-     * @Route("", name="profile")
-     */
-    public function index() {
+    #[Route(path: '', name: 'profile')]
+    public function index(): Response {
         return $this->render('profile/index.html.twig');
     }
 
-    /**
-     * @Route("/notifications", name="profile_notifications")
-     */
-    public function notifications(Request $request, UserRepositoryInterface $userRepository, NotificationSettings $notificationSettings) {
+    #[Route(path: '/notifications', name: 'profile_notifications')]
+    public function notifications(Request $request, UserRepositoryInterface $userRepository, NotificationSettings $notificationSettings): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -67,10 +62,8 @@ class ProfileController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/apps", name="profile_apps")
-     */
-    public function apps(DeviceTokenRepositoryInterface $deviceTokenRepository) {
+    #[Route(path: '/apps', name: 'profile_apps')]
+    public function apps(DeviceTokenRepositoryInterface $deviceTokenRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -82,10 +75,8 @@ class ProfileController extends AbstractController {
         ]);
     }
 
-    /**
-     * @Route("/apps/{uuid}/remove", name="profile_remove_app", methods={"POST"})
-     */
-    public function removeApp(IcsAccessToken $token, Request $request, DeviceTokenRepositoryInterface $deviceTokenRepository) {
+    #[Route(path: '/apps/{uuid}/remove', name: 'profile_remove_app', methods: ['POST'])]
+    public function removeApp(IcsAccessToken $token, Request $request, DeviceTokenRepositoryInterface $deviceTokenRepository): Response {
         $this->denyAccessUnlessGranted(DeviceTokenVoter::Remove, $token);
 
         $csrfToken = $request->request->get('_csrf_token');
@@ -101,10 +92,10 @@ class ProfileController extends AbstractController {
     }
 
     /**
-     * @Route("/switch", name="switch_user")
      * @Security("is_granted('ROLE_ALLOWED_TO_SWITCH')")
      */
-    public function switchUser(Grouper $grouper, Sorter $sorter, UserRepositoryInterface $userRepository, SectionResolverInterface $sectionResolver) {
+    #[Route(path: '/switch', name: 'switch_user')]
+    public function switchUser(Grouper $grouper, Sorter $sorter, UserRepositoryInterface $userRepository, SectionResolverInterface $sectionResolver): Response {
         $users = $userRepository->findAll();
         $groups = $grouper->group($users, UserTypeAndGradeStrategy::class, ['section' => $sectionResolver->getCurrentSection()]);
         $sorter->sort($groups, StringGroupStrategy::class);

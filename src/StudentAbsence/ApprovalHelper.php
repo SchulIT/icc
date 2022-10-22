@@ -10,12 +10,8 @@ use DateTime;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ApprovalHelper {
-    private StudentAbsenceRepositoryInterface $repository;
-    private EventDispatcherInterface $eventDispatcher;
-
-    public function __construct(StudentAbsenceRepositoryInterface $repository, EventDispatcherInterface $eventDispatcher) {
-        $this->repository = $repository;
-        $this->eventDispatcher = $eventDispatcher;
+    public function __construct(private StudentAbsenceRepositoryInterface $repository, private EventDispatcherInterface $eventDispatcher)
+    {
     }
 
     public function setApprovalStatus(StudentAbsence $absence, bool $isApproved, User $user): void {

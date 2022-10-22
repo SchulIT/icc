@@ -5,105 +5,56 @@ namespace App\Untis\Gpu\Tuition;
 use DateTime;
 
 class Tuition {
-    /**
-     * @var int
-     */
-    private $id;
+    private ?int $id = null;
 
-    /**
-     * @var string
-     */
-    private $grade;
+    private ?string $grade = null;
 
-    /**
-     * @var string
-     */
-    private $teacher;
+    private ?string $teacher = null;
 
-    /**
-     * @var string
-     */
-    private $subject;
+    private ?string $subject = null;
 
     /**
      * @var string[]
      */
-    private $rooms = [ ];
+    private array $rooms = [ ];
 
-    /**
-     * @var string|null
-     */
-    private $group;
+    private ?string $group = null;
 
-    /**
-     * @var DateTime|null
-     */
-    private $validFrom;
+    private ?\DateTime $validFrom = null;
 
-    /**
-     * @var DateTime|null
-     */
-    private $validTo;
+    private ?\DateTime $validTo = null;
 
-    /**
-     * @return int
-     */
     public function getId(): int {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     * @return Tuition
-     */
     public function setId(int $id): Tuition {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getGrade(): string {
         return $this->grade;
     }
 
-    /**
-     * @param string $grade
-     * @return Tuition
-     */
     public function setGrade(string $grade): Tuition {
         $this->grade = $grade;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTeacher(): string {
         return $this->teacher;
     }
 
-    /**
-     * @param string $teacher
-     * @return Tuition
-     */
     public function setTeacher(string $teacher): Tuition {
         $this->teacher = $teacher;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getSubject(): string {
         return $this->subject;
     }
 
-    /**
-     * @param string $subject
-     * @return Tuition
-     */
     public function setSubject(string $subject): Tuition {
         $this->subject = $subject;
         return $this;
@@ -118,56 +69,34 @@ class Tuition {
 
     /**
      * @param string[] $rooms
-     * @return Tuition
      */
     public function setRooms(array $rooms): Tuition {
         $this->rooms = $rooms;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getGroup(): ?string {
         return $this->group;
     }
 
-    /**
-     * @param string|null $group
-     * @return Tuition
-     */
     public function setGroup(?string $group): Tuition {
         $this->group = $group;
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getValidFrom(): ?DateTime {
         return $this->validFrom;
     }
 
-    /**
-     * @param DateTime|null $validFrom
-     * @return Tuition
-     */
     public function setValidFrom(?DateTime $validFrom): Tuition {
         $this->validFrom = $validFrom;
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getValidTo(): ?DateTime {
         return $this->validTo;
     }
 
-    /**
-     * @param DateTime|null $validTo
-     * @return Tuition
-     */
     public function setValidTo(?DateTime $validTo): Tuition {
         $this->validTo = $validTo;
         return $this;

@@ -18,9 +18,9 @@ class RoomTag {
 
     /**
      * @ORM\Column(type="string", length=64)
-     * @Assert\NotBlank()
-     * @Assert\Length(max="64")
      */
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 64)]
     private $name;
 
     /**
@@ -31,14 +31,13 @@ class RoomTag {
     /**
      * @ORM\Column(type="boolean")
      */
-    private $hasValue = false;
+    private bool $hasValue = false;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(allowNull=true)
-     * @var string|null
      */
-    private $icons;
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $icons = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -84,7 +83,6 @@ class RoomTag {
     }
 
     /**
-     * @param boolean $hasValue
      * @return RoomTag $this
      */
     public function setHasValue(bool $hasValue): RoomTag {
@@ -92,17 +90,10 @@ class RoomTag {
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getIcons(): ?string {
         return $this->icons;
     }
 
-    /**
-     * @param string|null $icons
-     * @return RoomTag
-     */
     public function setIcons(?string $icons): RoomTag {
         $this->icons = $icons;
         return $this;

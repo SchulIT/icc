@@ -27,34 +27,14 @@ use Ramsey\Uuid\Uuid;
 
 class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, InitializeStrategyInterface {
 
-    private TimetableLessonRepositoryInterface $timetableRepository;
-    private TuitionRepositoryInterface $tuitionRepository;
-    private RoomRepositoryInterface $roomRepository;
-    private TeacherRepositoryInterface $teacherRepository;
-    private SubjectRepositoryInterface $subjectRepository;
-    private GradeRepositoryInterface $gradeRepository;
-    private SectionResolverInterface $sectionResolver;
-
-    private LoggerInterface $logger;
-
     private array $gradeCache;
     private array $teacherCache;
     private array $roomCache;
     private array $subjectCache;
     private array $tuitionCache = [ ];
 
-    public function __construct(TimetableLessonRepositoryInterface $timetableRepository, TuitionRepositoryInterface $tuitionRepository,
-                                RoomRepositoryInterface $roomRepository, TeacherRepositoryInterface $teacherRepository,
-                                SubjectRepositoryInterface $substitutionRepository, GradeRepositoryInterface $gradeRepository,
-                                SectionResolverInterface $sectionResolver, LoggerInterface $logger) {
-        $this->timetableRepository = $timetableRepository;
-        $this->tuitionRepository = $tuitionRepository;
-        $this->roomRepository = $roomRepository;
-        $this->teacherRepository = $teacherRepository;
-        $this->subjectRepository = $substitutionRepository;
-        $this->gradeRepository = $gradeRepository;
-        $this->sectionResolver = $sectionResolver;
-        $this->logger = $logger;
+    public function __construct(private TimetableLessonRepositoryInterface $timetableRepository, private TuitionRepositoryInterface $tuitionRepository, private RoomRepositoryInterface $roomRepository, private TeacherRepositoryInterface $teacherRepository, private SubjectRepositoryInterface $subjectRepository, private GradeRepositoryInterface $gradeRepository, private SectionResolverInterface $sectionResolver, private LoggerInterface $logger)
+    {
     }
 
     public function initialize($requestData): void {
@@ -82,8 +62,6 @@ class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, 
     /**
      * @param string[] $grades
      * @param string[] $teachers
-     * @param string $subjectOrCourse
-     * @param Section $section
      * @return Tuition[]
      */
     private function findTuition(array $grades, array $teachers, string $subjectOrCourse, Section $section): array {
@@ -172,18 +150,14 @@ class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, 
             $entity->getGrades(),
             ArrayUtils::findAllWithKeys($this->gradeCache, $data->getGrades()),
             //$this->gradeRepository->findAllByExternalId($data->getGrades()),
-            function(Grade $grade) {
-                return $grade->getId();
-            }
+            fn(Grade $grade) => $grade->getId()
         );
 
         CollectionUtils::synchronize(
             $entity->getTeachers(),
             ArrayUtils::findAllWithKeys($this->teacherCache, $data->getTeachers()),
             //$teachers = $this->teacherRepository->findAllByExternalId($data->getTeachers()),
-            function(Teacher $teacher) {
-                return $teacher->getId();
-            }
+            fn(Teacher $teacher) => $teacher->getId()
         );
 
         $entity->setExternalId($data->getId());

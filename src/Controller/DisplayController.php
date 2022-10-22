@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Display\DisplayHelper;
 use App\Entity\Display;
 use App\Entity\DisplayTargetUserType;
@@ -18,17 +19,13 @@ use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/display")
- */
+#[Route(path: '/display')]
 class DisplayController extends AbstractController {
 
-    /**
-     * @Route("/{uuid}", name="show_display")
-     */
+    #[Route(path: '/{uuid}', name: 'show_display')]
     public function show(Display $display, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                          SubstitutionRepositoryInterface $substitutionRepository, AppointmentRepositoryInterface $appointmentRepository,
-                         DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper, ImportDateTypeRepositoryInterface  $importDateTymeRepository) {
+                         DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper, ImportDateTypeRepositoryInterface  $importDateTymeRepository): Response {
         $today = $dateHelper->getToday();
         $appointments = [ ];
         $groups = [ ];
@@ -48,7 +45,7 @@ class DisplayController extends AbstractController {
         $itemsCount = 0;
 
         foreach($groups as $group) {
-            $itemsCount += count($group->getItems());
+            $itemsCount += is_countable($group->getItems()) ? count($group->getItems()) : 0;
         }
 
         return $this->render('display/two_column_bottom.html.twig', [

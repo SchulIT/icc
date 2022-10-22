@@ -13,18 +13,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class StudentsType extends SortableEntityType {
 
-    private StudentStringConverter $studentConverter;
-    private StringStrategy $stringStrategy;
-    private StudentStrategy $studentStrategy;
-    private SectionResolverInterface $sectionResolver;
-
-    public function __construct(ManagerRegistry $registry, StudentStringConverter $studentConverter, StudentStrategy $studentStrategy,
-                                StringStrategy $stringStrategy, SectionResolverInterface $sectionResolver) {
+    public function __construct(ManagerRegistry $registry, private StudentStringConverter $studentConverter, private StudentStrategy $studentStrategy,
+                                private StringStrategy $stringStrategy, private SectionResolverInterface $sectionResolver) {
         parent::__construct($registry);
-        $this->studentConverter = $studentConverter;
-        $this->stringStrategy = $stringStrategy;
-        $this->studentStrategy = $studentStrategy;
-        $this->sectionResolver = $sectionResolver;
     }
 
     public function configureOptions(OptionsResolver $resolver) {
@@ -40,9 +31,7 @@ class StudentsType extends SortableEntityType {
                 ],
                 'class' => Student::class,
                 'multiple' => true,
-                'choice_label' => function(Student $student) use($section) {
-                    return $this->studentConverter->convert($student, true, $section);
-                },
+                'choice_label' => fn(Student $student) => $this->studentConverter->convert($student, true, $section),
                 'query_builder' => function(EntityRepository $repository) use($section) {
                     $qb = $repository
                         ->createQueryBuilder('s')

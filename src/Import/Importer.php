@@ -12,14 +12,8 @@ use Throwable;
 
 class Importer {
 
-    private $validator;
-    private $importDateTimeRepository;
-    private $logger;
-
-    public function __construct(ValidatorInterface $validator, ImportDateTypeRepositoryInterface $importDateTimeRepository, LoggerInterface $importLogger) {
-        $this->validator = $validator;
-        $this->importDateTimeRepository = $importDateTimeRepository;
-        $this->logger = $importLogger;
+    public function __construct(private ValidatorInterface $validator, private ImportDateTypeRepositoryInterface $importDateTimeRepository, private LoggerInterface $logger)
+    {
     }
 
     /**
@@ -40,8 +34,6 @@ class Importer {
 
     /**
      * @param object $data
-     * @param ImportStrategyInterface $strategy
-     * @return ImportResult
      * @throws ImportException
      * @throws ValidationFailedException
      */
@@ -118,8 +110,6 @@ class Importer {
 
     /**
      * @param object $data
-     * @param ReplaceImportStrategyInterface $strategy
-     * @return ImportResult
      * @throws ImportException
      */
     public function replaceImport($data, ReplaceImportStrategyInterface $strategy): ImportResult {

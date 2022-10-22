@@ -6,15 +6,11 @@ use App\Entity\Section;
 
 class SectionFilterView {
 
-    /** @var Section[] */
-    private $sections;
-
-    /** @var Section|null */
-    private $currentSection;
-
-    public function __construct(array $sections, ?Section $currentSection) {
-        $this->sections = $sections;
-        $this->currentSection = $currentSection;
+    /**
+     * @param Section[] $sections
+     */
+    public function __construct(private array $sections, private ?Section $currentSection)
+    {
     }
 
     /**
@@ -24,9 +20,6 @@ class SectionFilterView {
         return $this->sections;
     }
 
-    /**
-     * @return Section|null
-     */
     public function getCurrentSection(): ?Section {
         return $this->currentSection;
     }

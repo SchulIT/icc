@@ -15,170 +15,120 @@ class Appointment {
     /**
      * @Serializer\Type("string")
      * @Serializer\SerializedName("title")
-     * @var string
      */
-    private $title;
+    private ?string $title = null;
 
     /**
      * May be null
      *
      * @Serializer\Type("string")
      * @Serializer\SerializedName("content")
-     * @var string|null
      */
-    private $content;
+    private ?string $content = null;
 
     /**
      * @Serializer\Type("DateTime")
      * @Serializer\SerializedName("start")
-     * @var DateTime
      */
-    private $start;
+    private ?\DateTime $start = null;
 
     /**
      * @Serializer\Type("DateTime")
      * @Serializer\SerializedName("end")
-     * @var DateTime
      */
-    private $end;
+    private ?\DateTime $end = null;
 
     /**
      * May be null
      *
      * @Serializer\Type("string")
      * @Serializer\SerializedName("location")
-     * @var string|null
      */
-    private $location;
+    private ?string $location = null;
 
     /**
      * @Serializer\Type("bool")
      * @Serializer\SerializedName("all_day")
-     * @var bool
      */
-    private $allDay;
+    private ?bool $allDay = null;
 
     /**
      * @Serializer\Type("array<App\Response\Api\V1\StudyGroup>")
      * @Serializer\SerializedName("study_groups")
      * @var StudyGroup[]
      */
-    private $studyGroups;
+    private ?array $studyGroups = null;
 
     /**
      * @Serializer\Type("array<App\Response\Api\V1\Teacher>")
      * @Serializer\SerializedName("organizers")
      * @var Teacher[]
      */
-    private $organizers;
+    private ?array $organizers = null;
 
     /**
      * May be null
      *
      * @Serializer\Type("string")
      * @Serializer\SerializedName("external_organizers")
-     * @var string|null
      */
-    private $externalOrganizers;
+    private ?string $externalOrganizers = null;
 
     /**
      * @Serializer\Type("App\Response\Api\V1\AppointmentCategory")
      * @Serializer\SerializedName("category")
-     * @var AppointmentCategory
      */
-    private $category;
+    private ?AppointmentCategory $category = null;
 
-    /**
-     * @return string
-     */
     public function getTitle(): string {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     * @return Appointment
-     */
     public function setTitle(string $title): Appointment {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getContent(): ?string {
         return $this->content;
     }
 
-    /**
-     * @param string|null $content
-     * @return Appointment
-     */
     public function setContent(?string $content): Appointment {
         $this->content = $content;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getStart(): DateTime {
         return $this->start;
     }
 
-    /**
-     * @param DateTime $start
-     * @return Appointment
-     */
     public function setStart(DateTime $start): Appointment {
         $this->start = $start;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getEnd(): DateTime {
         return $this->end;
     }
 
-    /**
-     * @param DateTime $end
-     * @return Appointment
-     */
     public function setEnd(DateTime $end): Appointment {
         $this->end = $end;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLocation(): ?string {
         return $this->location;
     }
 
-    /**
-     * @param string|null $location
-     * @return Appointment
-     */
     public function setLocation(?string $location): Appointment {
         $this->location = $location;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isAllDay(): bool {
         return $this->allDay;
     }
 
-    /**
-     * @param bool $allDay
-     * @return Appointment
-     */
     public function setAllDay(bool $allDay): Appointment {
         $this->allDay = $allDay;
         return $this;
@@ -193,7 +143,6 @@ class Appointment {
 
     /**
      * @param StudyGroup[] $studyGroups
-     * @return Appointment
      */
     public function setStudyGroups(array $studyGroups): Appointment {
         $this->studyGroups = $studyGroups;
@@ -209,40 +158,25 @@ class Appointment {
 
     /**
      * @param Teacher[] $organizers
-     * @return Appointment
      */
     public function setOrganizers(array $organizers): Appointment {
         $this->organizers = $organizers;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getExternalOrganizers(): ?string {
         return $this->externalOrganizers;
     }
 
-    /**
-     * @param string|null $externalOrganizers
-     * @return Appointment
-     */
     public function setExternalOrganizers(?string $externalOrganizers): Appointment {
         $this->externalOrganizers = $externalOrganizers;
         return $this;
     }
 
-    /**
-     * @return AppointmentCategory
-     */
     public function getCategory(): AppointmentCategory {
         return $this->category;
     }
 
-    /**
-     * @param AppointmentCategory $category
-     * @return Appointment
-     */
     public function setCategory(AppointmentCategory $category): Appointment {
         $this->category = $category;
         return $this;
@@ -257,12 +191,8 @@ class Appointment {
             ->setEnd($entity->getEnd())
             ->setLocation($entity->getLocation())
             ->setAllDay($entity->isAllDay())
-            ->setStudyGroups(array_map(function(StudyGroupEntity $studyGroup) {
-                return StudyGroup::fromEntity($studyGroup);
-            }, $entity->getStudyGroups()->toArray()))
-            ->setOrganizers(array_map(function(TeacherEntity $teacher) {
-                return Teacher::fromEntity($teacher);
-            }, $entity->getOrganizers()->toArray()))
+            ->setStudyGroups(array_map(fn(StudyGroupEntity $studyGroup) => StudyGroup::fromEntity($studyGroup), $entity->getStudyGroups()->toArray()))
+            ->setOrganizers(array_map(fn(TeacherEntity $teacher) => Teacher::fromEntity($teacher), $entity->getOrganizers()->toArray()))
             ->setExternalOrganizers($entity->getExternalOrganizers())
             ->setCategory(AppointmentCategory::fromEntity($entity->getCategory()));
     }

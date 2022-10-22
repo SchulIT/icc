@@ -11,12 +11,8 @@ use App\Sorting\TuitionStrategy;
 use App\Utils\ArrayUtils;
 
 class StudentAwareTuitionFilter {
-    private $sorter;
-    private $repository;
-
-    public function __construct(TuitionRepositoryInterface $repository, Sorter $sorter) {
-        $this->repository = $repository;
-        $this->sorter = $sorter;
+    public function __construct(private TuitionRepositoryInterface $repository, private Sorter $sorter)
+    {
     }
 
     public function handle(?string $tuitionUuid, ?Section $section, ?Student $student): TuitionFilterView {
@@ -26,9 +22,7 @@ class StudentAwareTuitionFilter {
 
         $tuitions = ArrayUtils::createArrayWithKeys(
             $this->repository->findAllByStudents([$student], $section),
-            function (Tuition $tuition) {
-                return $tuition->getUuid()->toString();
-            }
+            fn(Tuition $tuition) => $tuition->getUuid()->toString()
         );
 
         $tuition = $tuitionUuid !== null ?

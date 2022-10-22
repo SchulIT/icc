@@ -16,14 +16,14 @@ class StudyGroupMembership {
     /**
      * @ORM\ManyToOne(targetEntity="StudyGroup", inversedBy="memberships")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var StudyGroup
+     * @var StudyGroup|null
      */
     private $studyGroup;
 
     /**
      * @ORM\ManyToOne(targetEntity="Student", inversedBy="studyGroupMemberships")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Student
+     * @var Student|null
      */
     private $student;
 

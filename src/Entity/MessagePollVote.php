@@ -19,13 +19,14 @@ class MessagePollVote {
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var User
+     * @var User|null
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity="Message", inversedBy="pollVotes")
-     * @var Message
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @var Message|null
      */
     private $message;
 

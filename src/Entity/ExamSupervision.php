@@ -19,14 +19,14 @@ class ExamSupervision {
     /**
      * @ORM\ManyToOne(targetEntity="Exam", inversedBy="supervisions", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Exam
+     * @var Exam|null
      */
     private $exam;
 
     /**
      * @ORM\ManyToOne(targetEntity="Teacher")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Teacher
+     * @var Teacher|null
      */
     private $teacher;
 

@@ -66,7 +66,7 @@ class RoomQueryBuilder {
                     $valueParam = sprintf('tag-%s-value', $tag->getUuid());
                     $value = $request->query->getInt($valueParam, 0);
 
-                    if(!empty($value) || $value == 0)  {
+                    if(!empty($value))  {
                         $query->addTagWithValue($tag, $value);
                     }
                 } else {

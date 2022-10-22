@@ -51,7 +51,7 @@ class StudentAbsence {
      * @ORM\JoinColumn()
      * @Assert\NotNull()
      */
-    private StudentAbsenceType $type;
+    private ?StudentAbsenceType $type;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -78,10 +78,10 @@ class StudentAbsence {
     /**
      * @Gedmo\Blameable(on="create")
      * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn()
-     * @var User
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @var User|null
      */
-    private User $createdBy;
+    private ?User $createdBy;
 
     /**
      * @ORM\Column(type="datetime")

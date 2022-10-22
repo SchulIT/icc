@@ -21,7 +21,7 @@ class MessageFile {
     /**
      * @ORM\ManyToOne(targetEntity="Message", inversedBy="files", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Message
+     * @var Message|null
      */
     private $message;
 

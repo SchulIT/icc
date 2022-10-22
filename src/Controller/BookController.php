@@ -313,7 +313,7 @@ class BookController extends AbstractController {
                             $excusesByStudent[$studentUuid] = $excuseNoteRepository->findByStudentsAndDate([$attendance->getStudent()], $day->getDate());
                         }
 
-                        /** @var ExcuseNote[] $excuseNote */
+                        /** @var ExcuseNote $excuseNote */
                         foreach($excusesByStudent[$studentUuid] as $excuseNote) {
                             if($attendance->getExcuseStatus() === LessonAttendanceExcuseStatus::NotSet && (new DateLesson())->setDate($day->getDate())->setLesson($lesson->getLessonNumber())->isBetween($excuseNote->getFrom(), $excuseNote->getUntil())) {
                                 $attendance->setExcuseStatus(LessonAttendanceExcuseStatus::Excused);

@@ -17,13 +17,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 class ResourceReservationType extends AbstractType {
 
     private ResourceStrategy $strategy;
-    private TeacherStrategy $teacherStrategy;
-    private TeacherStringConverter $teacherConverter;
 
-    public function __construct(ResourceStrategy $strategy, TeacherStrategy $teacherStrategy, TeacherStringConverter $teacherConverter) {
+    public function __construct(ResourceStrategy $strategy) {
         $this->strategy = $strategy;
-        $this->teacherStrategy = $teacherStrategy;
-        $this->teacherConverter = $teacherConverter;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {

@@ -39,7 +39,7 @@ class Document {
      * @ORM\ManyToOne(targetEntity="DocumentCategory", inversedBy="documents")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
-     * @var DocumentCategory
+     * @var DocumentCategory|null
      */
     private $category;
 

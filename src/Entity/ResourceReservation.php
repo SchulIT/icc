@@ -24,7 +24,7 @@ class ResourceReservation {
      * @ORM\ManyToOne(targetEntity="ResourceEntity")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
-     * @var ResourceEntity
+     * @var ResourceEntity|null
      */
     private $resource;
 
@@ -54,7 +54,7 @@ class ResourceReservation {
      * @ORM\ManyToOne(targetEntity="Teacher")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
-     * @var Teacher
+     * @var Teacher|null
      */
     private $teacher;
 

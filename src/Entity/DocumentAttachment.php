@@ -25,7 +25,7 @@ class DocumentAttachment {
     /**
      * @ORM\ManyToOne(targetEntity="Document", inversedBy="attachments")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Document
+     * @var Document|null
      */
     private $document;
 

@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use App\Entity\Student;
+use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -13,6 +14,7 @@ class StudyGroupHelper {
      * @return ArrayCollection
      */
     public function getStudyGroups(iterable $students): ArrayCollection {
+        /** @var ArrayCollection<StudyGroup> $studyGroups */
         $studyGroups = new ArrayCollection();
 
         foreach($students as $student) {
@@ -22,6 +24,7 @@ class StudyGroupHelper {
                     return $membership->getStudyGroup();
                 });
 
+            /** @var StudyGroup $studyGroup */
             foreach($studentStudyGroups as $studyGroup) {
                 if(!$studyGroups->contains($studyGroup)) {
                     $studyGroups->add($studyGroup);

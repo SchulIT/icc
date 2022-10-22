@@ -102,7 +102,7 @@ class Appointment {
      * @ORM\ManyToOne(targetEntity="AppointmentCategory")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Assert\NotNull()
-     * @var AppointmentCategory
+     * @var AppointmentCategory|null
      */
     private $category;
 

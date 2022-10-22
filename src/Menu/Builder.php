@@ -36,7 +36,6 @@ class Builder {
     private DateHelper $dateHelper;
     private TranslatorInterface $translator;
     private DarkModeManagerInterface $darkModeManager;
-    private NotificationSettings $notificationSettings;
     private StudentAbsenceSettings $studentAbsenceSettings;
     private SectionResolverInterface $sectionResolver;
 
@@ -46,7 +45,7 @@ class Builder {
                                 WikiArticleRepositoryInterface $wikiRepository, TimetableLessonRepositoryInterface $lessonRepository,
                                 TokenStorageInterface $tokenStorage, DateHelper $dateHelper,
                                 TranslatorInterface $translator, DarkModeManagerInterface $darkModeManager,
-                                NotificationSettings $notificationSettings, StudentAbsenceSettings $studentAbsenceSettings, SectionResolverInterface $sectionResolver, string $idpProfileUrl) {
+                                StudentAbsenceSettings $studentAbsenceSettings, SectionResolverInterface $sectionResolver, string $idpProfileUrl) {
         $this->factory = $factory;
         $this->authorizationChecker = $authorizationChecker;
         $this->wikiRepository = $wikiRepository;
@@ -56,7 +55,6 @@ class Builder {
         $this->translator = $translator;
         $this->darkModeManager = $darkModeManager;
         $this->idpProfileUrl = $idpProfileUrl;
-        $this->notificationSettings = $notificationSettings;
         $this->studentAbsenceSettings = $studentAbsenceSettings;
         $this->sectionResolver = $sectionResolver;
     }

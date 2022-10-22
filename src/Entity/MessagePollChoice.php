@@ -17,7 +17,7 @@ class MessagePollChoice {
     /**
      * @ORM\ManyToOne(targetEntity="Message", inversedBy="pollChoices")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Message
+     * @var Message|null
      */
     private $message;
 

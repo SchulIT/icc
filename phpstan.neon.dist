@@ -6,11 +6,6 @@ parameters:
 	inferPrivatePropertyTypeFromConstructor: true
 	ignoreErrors:
 	    - "~Parameter \\#1 \\$array of method App\\\\Sorting\\\\Sorter::sort\\(\\) is passed by reference, so it expects variables only\\.~"
-	    - "~Class FervoEnumBundle\\\\Generated\\\\Form\\\\[A-Za-z]+ not found\\.~"
-	    - "~(.*)\\$createdAt is never written, only read~"
-	    - "~(.*)\\$updatedAt is never written, only read~"
-	    - "~(.*)\\$createdBy is never written, only read~"
-	    - "~(.*)\\$updatedBy is never written, only read~"
 	excludePaths:
 		- '%rootDir%/../../../src/Markdown/*'
 		- '%rootDir%/../../../src/DataFixtures/*'

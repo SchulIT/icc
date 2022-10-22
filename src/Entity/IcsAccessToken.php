@@ -32,7 +32,7 @@ class IcsAccessToken implements UserInterface {
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var User
+     * @var User|null
      */
     private $user;
 

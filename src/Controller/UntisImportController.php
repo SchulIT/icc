@@ -305,9 +305,9 @@ class UntisImportController extends AbstractController {
             $start = $form->get('start')->getData();
             /** @var DateTime $end */
             $end = $form->get('end')->getData();
-            /** @var UploadedFile $grades */
+            /** @var UploadedFile|null $grades */
             $grades = $form->get('grades')->getData();
-            /** @var UploadedFile $subjects */
+            /** @var UploadedFile|null $subjects */
             $subjects = $form->get('subjects')->getData();
 
             try {

@@ -257,7 +257,7 @@ class StudentAbsenceController extends AbstractController {
 
         return $this->render('absences/show.html.twig', [
             'absence' => $absence,
-            'token_id' => static::CSRF_TOKEN_ID,
+            'token_id' => self::CSRF_TOKEN_ID,
             'form' => $form->createView()
         ]);
     }
@@ -268,10 +268,13 @@ class StudentAbsenceController extends AbstractController {
     public function approve(StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper) {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Approve, $absence);
 
-        if(!$this->isCsrfTokenValid(static::CSRF_TOKEN_ID, $request->query->get('_csrf_token'))) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if(!$this->isCsrfTokenValid(self::CSRF_TOKEN_ID, $request->query->get('_csrf_token'))) {
             $this->addFlash('error', 'CSRF token invalid.');
         } else {
-            $approvalHelper->setApprovalStatus($absence, true, $this->getUser());
+            $approvalHelper->setApprovalStatus($absence, true, $user);
             $this->addFlash('success', 'student_absences.approval.success');
         }
 
@@ -286,10 +289,13 @@ class StudentAbsenceController extends AbstractController {
     public function deny(StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper) {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Deny, $absence);
 
-        if(!$this->isCsrfTokenValid(static::CSRF_TOKEN_ID, $request->query->get('_csrf_token'))) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if(!$this->isCsrfTokenValid(self::CSRF_TOKEN_ID, $request->query->get('_csrf_token'))) {
             $this->addFlash('error', 'CSRF token invalid.');
         } else {
-            $approvalHelper->setApprovalStatus($absence, false, $this->getUser());
+            $approvalHelper->setApprovalStatus($absence, false, $user);
             $this->addFlash('success', 'student_absences.approval.success');
         }
 

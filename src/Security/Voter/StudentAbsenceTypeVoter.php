@@ -20,7 +20,7 @@ class StudentAbsenceTypeVoter extends Voter {
      * @param string $attribute
      * @param StudentAbsenceType $subject
      * @param TokenInterface $token
-     * @return false|void
+     * @return bool
      */
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token) {
         $user = $token->getUser();

@@ -23,7 +23,7 @@ class MessageAttachment {
     /**
      * @ORM\ManyToOne(targetEntity="Message", inversedBy="attachments")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var Message
+     * @var Message|null
      */
     private $message;
 

@@ -19,9 +19,9 @@ class StudentAbsenceMessage {
     /**
      * @ORM\ManyToOne(targetEntity="StudentAbsence", inversedBy="messages")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var StudentAbsence
+     * @var StudentAbsence|null
      */
-    private StudentAbsence $absence;
+    private ?StudentAbsence $absence;
 
     /**
      * @ORM\Column(type="text")
@@ -33,10 +33,10 @@ class StudentAbsenceMessage {
     /**
      * @Gedmo\Blameable(on="create")
      * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn()
-     * @var User
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @var User|null
      */
-    private User $createdBy;
+    private ?User $createdBy;
 
     /**
      * @ORM\Column(type="datetime")

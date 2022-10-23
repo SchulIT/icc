@@ -6,24 +6,19 @@ use App\Event\MessageCreatedEvent;
 use App\Notification\NotificationService;
 use App\Repository\MessageRepositoryInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
-use Shapecode\Bundle\CronBundle\Annotation\CronJob;
+use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-/**
- * @CronJob("*\/5 * * * *")
- */
+#[AsCronJob('*\/5 * * * *')]
+#[AsCommand('app:notifications:send', 'Sends notifications for messages which did not push any notification yet.')]
 class SendPushNotifications extends Command {
 
-    protected static $defaultName = 'app:notifications:send';
     public function __construct(private DateHelper $dateHelper, private NotificationService $notificationService, private MessageRepositoryInterface $messageRepository, string $name = null) {
         parent::__construct($name);
-    }
-
-    public function configure() {
-        $this->setDescription('Sends notifications for messages which did not push any notification yet.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

@@ -5,25 +5,20 @@ namespace App\Command;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use SchulIT\CommonBundle\Entity\IdEntity;
-use Shapecode\Bundle\CronBundle\Annotation\CronJob;
+use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-/**
- * @CronJob("@daily")
- */
+#[AsCronJob('@monthly')]
+#[AsCommand('app:saml:remove_ids', 'Removes old SAML _InResponse IDs.')]
 class RemoveOldSamlIdsCommand extends Command {
-    protected static $defaultName = 'app:saml:remove_ids';
     private const Days = 30;
 
     public function __construct(private EntityManagerInterface $em, string $name = null) {
         parent::__construct($name);
-    }
-
-    public function configure() {
-        $this->setDescription('Removes old SAML _InResponse IDs.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

@@ -3,24 +3,18 @@
 namespace App\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Shapecode\Bundle\CronBundle\Annotation\CronJob;
+use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-/**
- * @CronJob("@monthly")
- */
+#[AsCronJob('@monthly')]
+#[AsCommand('app:db:optimize', 'Optimizes all database tables using an OPTIMIZE query.')]
 class OptimizeDatabaseCommand extends Command {
-    protected static $defaultName = 'app:db:optimize';
-
     public function __construct(private EntityManagerInterface $em, string $name = null) {
         parent::__construct($name);
-    }
-
-    public function configure() {
-        $this->setDescription('Optimizes all database tables using an OPTIMIZE query.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

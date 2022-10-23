@@ -292,3 +292,8 @@ services:
     App\Untis\Html\Substitution\SubstitutionReader:
         arguments:
             $infotextReader: !tagged app.untis.import.infotext_reader
+
+    # MISC
+    App\EventSubscriber\LoadMessengerCronJobs:
+        arguments:
+            $command: '@console.command.messenger_consume_messages'

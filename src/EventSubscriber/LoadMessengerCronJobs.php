@@ -3,13 +3,18 @@
 namespace App\EventSubscriber;
 
 use Shapecode\Bundle\CronBundle\Event\LoadJobsEvent;
-use Shapecode\Bundle\CronBundle\Model\CronJobMetadata;
+use Shapecode\Bundle\CronBundle\Domain\CronJobMetadata;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Messenger\Command\ConsumeMessagesCommand;
 
 class LoadMessengerCronJobs implements EventSubscriberInterface {
 
+    public function __construct(private ConsumeMessagesCommand $command) {
+
+    }
+
     public function onLoadJobs(LoadJobsEvent $event) {
-        $event->addJob(new CronJobMetadata('*/1 * * * *', 'messenger:consume', 'async -vv --time-limit=20 --limit=25'));
+        $event->addJob(CronJobMetadata::createByCommand('*/1 * * * *', $this->command, 'async -vv --time-limit=20 --limit=25'));
     }
 
     /**
@@ -17,7 +22,7 @@ class LoadMessengerCronJobs implements EventSubscriberInterface {
      */
     public static function getSubscribedEvents(): array {
         return [
-            LoadJobsEvent::NAME => 'onLoadJobs',
+            LoadJobsEvent::class => 'onLoadJobs',
         ];
     }
 }

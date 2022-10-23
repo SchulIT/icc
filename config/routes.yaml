@@ -42,11 +42,6 @@ composer:
     type: annotation
     prefix: /dependencies
 
-easy_admin_bundle:
-    resource: '@EasyAdminBundle/Controller/EasyAdminController.php'
-    prefix: /admin/ea
-    type: annotation
-
 dh_doctrine_audit:
     resource: "@DHAuditorBundle/Controller/"
     type: annotation

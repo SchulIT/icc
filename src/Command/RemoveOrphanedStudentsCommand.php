@@ -3,28 +3,19 @@
 namespace App\Command;
 
 use App\Repository\StudentRepositoryInterface;
-use App\Repository\UserRepositoryInterface;
-use Shapecode\Bundle\CronBundle\Annotation\CronJob;
+use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-/**
- * @CronJob("@daily")
- */
+#[AsCronJob('@daily')]
+#[AsCommand('app:students:remove_orphaned', 'Removes students without any linked grade or section.')]
 class RemoveOrphanedStudentsCommand extends Command {
 
-    protected static $defaultName = 'app:students:remove_orphaned';
-
-    public function __construct(private StudentRepositoryInterface $studentRepository, string $name = null) {
+    public function __construct(private readonly StudentRepositoryInterface $studentRepository, string $name = null) {
         parent::__construct($name);
-    }
-
-    public function configure() {
-        parent::configure();
-
-        $this->setDescription('Removes students without any linked grade or section.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

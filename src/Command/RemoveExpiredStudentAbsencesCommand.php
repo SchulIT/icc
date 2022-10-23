@@ -7,26 +7,21 @@ use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Settings\StudentAbsenceSettings;
 use League\Flysystem\Filesystem;
 use SchulIT\CommonBundle\Helper\DateHelper;
-use Shapecode\Bundle\CronBundle\Annotation\CronJob;
+use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-/**
- * @CronJob("@daily")
- */
+#[AsCronJob('@monthly')]
+#[AsCommand('app:absences:cleanup', 'Cleans up expired absences.')]
 class RemoveExpiredStudentAbsencesCommand extends Command {
 
-    protected static $defaultName = 'app:absences:cleanup';
     public function __construct(private StudentAbsenceSettings $settings, private StudentAbsenceRepositoryInterface $repository,
                                 private StudentAbsenceAttachmentRepositoryInterface $attachmentRepository, private Filesystem $filesystem,
                                 private DateHelper $dateHelper, string $name = null) {
         parent::__construct($name);
-    }
-
-    public function configure() {
-        $this->setDescription('Cleans up expired absences.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

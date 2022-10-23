@@ -3,12 +3,11 @@
 namespace App\Command;
 
 use App\Entity\Gender;
-use App\Entity\Teacher;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Faker\Generator;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,15 +15,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use function Symfony\Component\String\u;
 
+#[AsCommand('app:anonymize', 'Anatomizes all students and teachers.')]
 class AnonymizeDatabaseCommand extends Command {
-    protected static $defaultName = 'app:anonymize';
-    public function __construct(private StudentRepositoryInterface $studentRepository, private TeacherRepositoryInterface $teacherRepository,
-                                private UserRepositoryInterface $userRepository, private SluggerInterface $slugger, private Generator $faker, string $name = null) {
-        parent::__construct($name);
-    }
 
-    public function configure() {
-        $this->setDescription('Anomyizes all students and teachers.');
+    public function __construct(private readonly StudentRepositoryInterface $studentRepository, private readonly TeacherRepositoryInterface $teacherRepository,
+                                private readonly UserRepositoryInterface    $userRepository, private readonly SluggerInterface $slugger, private readonly Generator $faker, string $name = null) {
+        parent::__construct($name);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int {

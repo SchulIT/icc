@@ -11,15 +11,15 @@ security:
     providers:
         database:
             entity:
-                class: App:User
+                class: App\Entity\User
                 property: idpId
         database_with_username:
             entity:
-                class: App:User
+                class: App\Entity\User
                 property: username
         oauth2:
             entity:
-                class: App:User
+                class: App\Entity\User
                 property: username
         cron:
             id: App\Security\CronUserProvider

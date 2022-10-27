@@ -1345,7 +1345,6 @@ student_absences:
     retention: Abwesenheitsmeldungen werden automatisch %count% Tage nach dem Ablauf gelöscht.
     add:
         label: Neue Abwesenheitsmeldung
-        success: Abwesenheitsmeldung erfolgreich hinzugefügt
         info: Hier besteht die Möglichkeit, eine Abwesenheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.
         privacy:
             info: Die hier erhobenen Daten werden entsprechend der aktuellen Datenschutzrichtlinie der Schule gespeichert und verarbeitet.

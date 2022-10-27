@@ -49,3 +49,4 @@ dh_doctrine_audit:
 
 _bazinga_jstranslation:
     resource: "@BazingaJsTranslationBundle/Resources/config/routing/routing.yml"
+

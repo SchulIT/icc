@@ -30,7 +30,7 @@ class DashboardController extends AbstractDashboardController
 {
     #[Route(path: '/admin/ea')]
     public function index(): Response {
-        return parent::index();
+        return $this->render('admin/ea/index.html.twig');
     }
 
     public function configureDashboard(): Dashboard
@@ -46,24 +46,24 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToCrud('Absence', 'fas fa-folder-open', Absence::class);
-        yield MenuItem::linkToCrud('Exam', 'fas fa-folder-open', Exam::class);
-        yield MenuItem::linkToCrud('FreeTimespan', 'fas fa-folder-open', FreeTimespan::class);
-        yield MenuItem::linkToCrud('Grade', 'fas fa-folder-open', Grade::class);
-        yield MenuItem::linkToCrud('GradeTeacher', 'fas fa-folder-open', GradeTeacher::class);
-        yield MenuItem::linkToCrud('GradeMembership', 'fas fa-folder-open', GradeMembership::class);
-        yield MenuItem::linkToCrud('Infotext', 'fas fa-folder-open', Infotext::class);
-        yield MenuItem::linkToCrud('Room', 'fas fa-folder-open', Room::class);
-        yield MenuItem::linkToCrud('Student', 'fas fa-folder-open', Student::class);
-        yield MenuItem::linkToCrud('StudentAbsence', 'fas fa-folder-open', StudentAbsence::class);
-        yield MenuItem::linkToCrud('StudyGroup', 'fas fa-folder-open', StudyGroup::class);
-        yield MenuItem::linkToCrud('StudyGroupMembership', 'fas fa-folder-open', StudyGroupMembership::class);
-        yield MenuItem::linkToCrud('Substitution', 'fas fa-folder-open', Substitution::class);
-        yield MenuItem::linkToCrud('TimetableLesson', 'fas fa-folder-open', TimetableLesson::class);
-        yield MenuItem::linkToCrud('TimetableSupervision', 'fas fa-folder-open', TimetableSupervision::class);
-        yield MenuItem::linkToCrud('Tuition', 'fas fa-folder-open', Tuition::class);
-        yield MenuItem::linkToCrud('User', 'fas fa-folder-open', User::class);
-
-
+        return [
+            MenuItem::linkToCrud('Absence', 'fas fa-folder-open', Absence::class),
+            MenuItem::linkToCrud('Exam', 'fas fa-folder-open', Exam::class),
+            MenuItem::linkToCrud('FreeTimespan', 'fas fa-folder-open', FreeTimespan::class),
+            MenuItem::linkToCrud('Grade', 'fas fa-folder-open', Grade::class),
+            MenuItem::linkToCrud('GradeTeacher', 'fas fa-folder-open', GradeTeacher::class),
+            MenuItem::linkToCrud('GradeMembership', 'fas fa-folder-open', GradeMembership::class),
+            MenuItem::linkToCrud('Infotext', 'fas fa-folder-open', Infotext::class),
+            MenuItem::linkToCrud('Room', 'fas fa-folder-open', Room::class),
+            MenuItem::linkToCrud('Student', 'fas fa-folder-open', Student::class),
+            MenuItem::linkToCrud('StudentAbsence', 'fas fa-folder-open', StudentAbsence::class),
+            MenuItem::linkToCrud('StudyGroup', 'fas fa-folder-open', StudyGroup::class),
+            MenuItem::linkToCrud('StudyGroupMembership', 'fas fa-folder-open', StudyGroupMembership::class),
+            MenuItem::linkToCrud('Substitution', 'fas fa-folder-open', Substitution::class),
+            MenuItem::linkToCrud('TimetableLesson', 'fas fa-folder-open', TimetableLesson::class),
+            MenuItem::linkToCrud('TimetableSupervision', 'fas fa-folder-open', TimetableSupervision::class),
+            MenuItem::linkToCrud('Tuition', 'fas fa-folder-open', Tuition::class),
+            MenuItem::linkToCrud('User', 'fas fa-folder-open', User::class),
+        ];
     }
 }

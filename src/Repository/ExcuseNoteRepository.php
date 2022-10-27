@@ -23,8 +23,8 @@ class ExcuseNoteRepository extends AbstractRepository implements ExcuseNoteRepos
         $qb->select(['n', 's'])
             ->from(ExcuseNote::class, 'n')
             ->leftJoin('n.student', 's')
-            ->where('n.from.date >= :date')
-            ->andWhere('n.until.date <= :date')
+            ->where('n.from.date <= :date')
+            ->andWhere('n.until.date >= :date')
             ->andWhere(
                 $qb->expr()->in('s.id', ':ids')
             )

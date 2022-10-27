@@ -5,3 +5,5 @@ parameters:
         intern: Intern
         student: Student
         staff: Staff
+        facilitymanagement: Staff
+        secretary: Staff

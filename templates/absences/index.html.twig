@@ -131,6 +131,12 @@
                                                 <a href="{{ path('show_absence', { uuid: absence.uuid }) }}" class="btn btn-primary btn-sm">
                                                     <i class="fas fa-info-circle"></i>
                                                 </a>
+
+                                                {% if is_granted('edit', absence) %}
+                                                    <a href="{{ path('edit_absence', { uuid: absence.uuid }) }}" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                {% endif %}
                                             </td>
                                         </tr>
                                     {% endfor %}

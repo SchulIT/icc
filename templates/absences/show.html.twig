@@ -95,6 +95,16 @@
             </div>
 
             <div class="col-md-3">
+                {% if is_granted('edit', absence) %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            <a href="{{ path('edit_absence', { uuid: absence.uuid }) }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-edit"></i> {{ 'student_absences.edit.label'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
                 {% if absence.type.mustApprove %}
                     <div class="card">
                         <div class="card-body">

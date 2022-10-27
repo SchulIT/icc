@@ -23,6 +23,7 @@ class StudentAbsenceVoter extends Voter {
 
     public const Approve = 'approve';
     public const Deny = 'deny';
+    public const Edit = 'edit';
 
     public function __construct(private DateHelper $dateHelper, private SectionResolverInterface $sectionResolver, private AccessDecisionManagerInterface $accessDecisionManager)
     {
@@ -34,7 +35,7 @@ class StudentAbsenceVoter extends Voter {
     protected function supports($attribute, $subject): bool {
         return $attribute === self::New
             || $attribute === self::CanViewAny
-            || (in_array($attribute, [ self::View, self::Approve, self::Deny ]) && $subject instanceof StudentAbsence);
+            || (in_array($attribute, [ self::Edit, self::View, self::Approve, self::Deny ]) && $subject instanceof StudentAbsence);
     }
 
     /**
@@ -45,6 +46,7 @@ class StudentAbsenceVoter extends Voter {
         return match ($attribute) {
             self::New => $this->canCreate($token),
             self::View => $this->canView($token, $subject),
+            self::Edit => $this->canEdit($token, $subject),
             self::CanViewAny => $this->canViewAny($token),
             self::Approve, self::Deny => $this->canApproveOrDeny($token, $subject),
             default => throw new LogicException('This code should not be reached.'),
@@ -105,6 +107,20 @@ class StudentAbsenceVoter extends Voter {
         }
 
         return false;
+    }
+
+    private function canEdit(TokenInterface $token, StudentAbsence $absence): bool {
+        if($this->accessDecisionManager->decide($token, ['ROLE_STUDENT_ABSENCE_VIEWER'])) {
+            return true;
+        }
+
+        $user = $token->getUser();
+
+        if(!$user instanceof User) {
+            return false;
+        }
+
+        return $absence->getCreatedBy()->getId() === $user->getId();
     }
 
     private function canApproveOrDeny(TokenInterface $token, StudentAbsence $absence): bool {

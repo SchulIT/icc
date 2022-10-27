@@ -67,27 +67,12 @@ class StudentAbsenceController extends AbstractController {
 
         $students = [ ];
 
-        /** @var User $user */
-        $user = $this->getUser();
-
-        if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]) || $user->getStudents()->count() > 0) {
-            $students = $user->getStudents()->toArray();
-
-            if($user->getUserType()->equals(UserType::Student())) {
-                $students = [ array_shift($students) ];
-            }
-        } else {
-            $students = $studentRepository->findAll();
-        }
-
         $note = new StudentAbsence();
         $note->setFrom($timeHelper->getLessonDateForDateTime($this->getTodayOrNextDay($dateHelper, $settings->getNextDayThresholdTime())));
         $note->setUntil(new DateLesson());
         $note->getUntil()->setLesson($timetableSettings->getMaxLessons());
 
-        $form = $this->createForm(StudentAbsenceType::class, $note, [
-            'students' => $students
-        ]);
+        $form = $this->createForm(StudentAbsenceType::class, $note);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
@@ -99,8 +84,31 @@ class StudentAbsenceController extends AbstractController {
 
         return $this->render('absences/add.html.twig', [
             'form' => $form->createView(),
-            'settings' => $settings,
-            'sick_notes' => $repository->findByStudents($user->getStudents()->toArray())
+            'settings' => $settings
+        ]);
+    }
+
+    #[Route(path: '/{uuid}/edit', name: 'edit_absence')]
+    public function edit(StudentAbsence $absence, Request $request, StudentAbsenceSettings $settings, StudentAbsenceRepositoryInterface $repository): Response {
+        $this->denyAccessUnlessGranted(StudentAbsenceVoter::New);
+
+        if($settings->isEnabled() !== true) {
+            throw new NotFoundHttpException();
+        }
+
+        $form = $this->createForm(StudentAbsenceType::class, $absence);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $repository->persist($absence);
+
+            $this->addFlash('success', 'student_absences.edit.success');
+            return $this->redirectToRoute('absences');
+        }
+
+        return $this->render('absences/edit.html.twig', [
+            'form' => $form->createView(),
+            'settings' => $settings
         ]);
     }
 

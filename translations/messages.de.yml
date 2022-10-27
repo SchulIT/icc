@@ -1345,6 +1345,7 @@ student_absences:
     retention: Abwesenheitsmeldungen werden automatisch %count% Tage nach dem Ablauf gelöscht.
     add:
         label: Neue Abwesenheitsmeldung
+        success: Abwesenheitsmeldung erfolgreich hinzugefügt
         info: Hier besteht die Möglichkeit, eine Abwesenheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.
         privacy:
             info: Die hier erhobenen Daten werden entsprechend der aktuellen Datenschutzrichtlinie der Schule gespeichert und verarbeitet.
@@ -1364,6 +1365,12 @@ student_absences:
         must_approve:
             label: muss genehmigt werden
             help: Bei genehmigungspflichtigen Absenzen entscheidet die Klassenleitung, ob diese genehmigt wird oder nicht. Nur bei vorliegender Genehmigung ist die Schülerin oder der Schüler vom Unterricht befreit.
+    edit:
+        label: Abwesenheitsmeldung bearbeiten
+        success: Abwesenheitsmeldung erfolgreich aktualisiert
+        from_date: 'Das Startdatum wurde von %oldDate% (%oldLesson%. Stunde) auf %newDate% (%newLesson%. Stunde) geändert.'
+        until_date: 'Das Enddatum wurde von %oldDate% (%oldLesson%. Stunde) auf %newDate% (%newLesson%. Stunde) geändert.'
+
     show:
         label: Abwesenheitsmeldung
         header: "Abwesenheitsmeldung von %student%"

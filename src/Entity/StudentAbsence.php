@@ -32,7 +32,7 @@ class StudentAbsence {
 
     /**
      * @ORM\Embedded(class="DateLesson")
-     * @DateLessonNotInPast(exceptions={"ROLE_STUDENT_ABSENCE_CREATOR"})
+     * @DateLessonNotInPast(exceptions={"ROLE_STUDENT_ABSENCE_CREATOR"}, propertyName="from")
      * @var DateLesson|null
      */
     #[Assert\NotNull]

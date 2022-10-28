@@ -103,22 +103,10 @@ class ExcuseNote {
      * Check if excuse note applies to a given lesson on a given day.
      */
     public function appliesToLesson(DateTime $dateTime, int $lesson): bool {
-        if($dateTime < $this->getFrom()->getDate() || $dateTime > $this->getUntil()->getDate()) {
-            return false;
-        }
+        $dateLesson = (new DateLesson())
+            ->setDate((clone $dateTime)->setTime(0,0,0))
+            ->setLesson($lesson);
 
-        if($this->getFrom()->getDate() < $dateTime && $dateTime < $this->getUntil()->getDate()) {
-            return true;
-        }
-
-        if($this->getFrom()->getDate() == $dateTime && $this->getFrom()->getLesson() <= $lesson) {
-            return true;
-        }
-
-        if($this->getUntil()->getDate() == $dateTime && $this->getUntil()->getLesson() >= $lesson) {
-            return true;
-        }
-
-        return false;
+        return $dateLesson->isBetween($this->getFrom(), $this->getUntil());
     }
 }

@@ -48,6 +48,11 @@ class DateLesson {
             return false;
         }
 
+        if($start->getDate() == $this->getDate() && $end->getDate() == $this->getDate()) {
+            return $start->getLesson() <= $this->getLesson()
+                && $this->getLesson() <= $end->getLesson();
+        }
+
         if ($start->getDate() == $this->getDate()) {
             return $start->getLesson() <= $this->getLesson();
         }

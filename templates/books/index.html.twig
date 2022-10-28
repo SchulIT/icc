@@ -14,8 +14,6 @@
         {{ tuition.displayName|upper }}
     {% elseif show_coursename(tuition.studyGroup.grades) %}
         {{ tuition.studyGroup.name|upper }}
-    {% elseif tuition.subject.replaceSubjectAbbreviation %}
-        {{ tuition.subject.name|upper }}
     {% else %}
         {{ tuition.subject.abbreviation|upper }}
     {% endif %}
@@ -273,15 +271,18 @@
 
                                             <div class="ml-2">
                                                 <i class="fas fa-users"></i>
+                                                {% set grades = [ ] %}
                                                 {% for grade in lesson.lesson.tuition.studyGroup.grades %}
-                                                    {{ grade.name }}{% if not loop.last %}, {% endif %}
+                                                    {% set grades = grades|merge([grade]) %}
                                                 {% endfor %}
+
+                                                {{ grades|grades }}
                                             </div>
 
                                             {% for teacher in lesson.lesson.tuition.teachers %}
                                                 <div class="ml-2">
                                                     <i class="fas fa-chalkboard-teacher"></i>
-                                                    {{ teacher|teacher }}
+                                                    {{ teacher.acronym }}
                                                 </div>
                                             {% endfor %}
 

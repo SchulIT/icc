@@ -38,7 +38,7 @@ abstract class AbstractResolver {
                     $key = sprintf('%s-%d', $date->format('Y-m-d'), $lesson);
 
                     if(!isset($collection[$key])) {
-                        $collection[$key] = new ExcuseCollection($date, $lesson);
+                        $collection[$key] = new ExcuseCollection(clone $date, $lesson);
                     }
 
                     $collection[$key]->add($excuseNote);

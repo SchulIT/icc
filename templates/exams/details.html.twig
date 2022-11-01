@@ -33,7 +33,13 @@
                     {% for student in students %}
                         <tr>
                             <td>{{ student.lastname }}</td>
-                            <td>{{ student.firstname }}</td>
+                            <td>
+                                {{ student.firstname }}
+
+                                {% if absentStudents[student.uuid.toString] is defined %}
+                                    <span class="badge badge-warning">{{ 'book.attendance.type.absent'|trans }}</span>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

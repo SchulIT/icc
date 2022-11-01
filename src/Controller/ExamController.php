@@ -2,6 +2,11 @@
 
 namespace App\Controller;
 
+use App\Dashboard\Absence\AbsenceResolver;
+use App\Dashboard\Absence\ExamStudentsResolver;
+use App\Dashboard\AbsentStudent;
+use App\Security\Voter\StudentAbsenceVoter;
+use App\Utils\ArrayUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Closure;
 use App\Entity\Exam;
@@ -251,7 +256,7 @@ class ExamController extends AbstractControllerWithMessages {
     }
 
     #[Route(path: '/{uuid}', name: 'show_exam', requirements: ['id' => '\d+'])]
-    public function show(Exam $exam): Response {
+    public function show(Exam $exam, AbsenceResolver $absenceResolver): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Show, $exam);
 
         $studyGroups = [ ];
@@ -260,10 +265,26 @@ class ExamController extends AbstractControllerWithMessages {
 
         $this->sorter->sort($students, StudentStrategy::class);
 
+        $absentStudents = [ ];
+        if($this->isGranted(StudentAbsenceVoter::CanViewAny)) {
+            $absentStudents = ArrayUtils::createArrayWithKeys(
+                $absenceResolver->resolve(
+                    $exam->getDate(),
+                    $exam->getLessonStart(),
+                    $exam->getStudents()->toArray(),
+                    [
+                        ExamStudentsResolver::class
+                    ]
+                ),
+                fn(AbsentStudent $student) => $student->getStudent()->getUuid()->toString()
+            );
+        }
+
         return $this->renderWithMessages('exams/details.html.twig', [
             'exam' => $exam,
             'students' => $students,
             'studyGroups' => $studyGroups,
+            'absentStudents' => $absentStudents,
             'last_import' => $this->importDateTypeRepository->findOneByEntityClass(Exam::class)
         ]);
     }

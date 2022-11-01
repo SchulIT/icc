@@ -449,8 +449,6 @@ export default {
       let students = { };
 
       this.students.forEach(function(student) {
-        console.log(student);
-
         students[student.uuid] = {
           uuid: student.uuid,
           firstname: student.firstname,

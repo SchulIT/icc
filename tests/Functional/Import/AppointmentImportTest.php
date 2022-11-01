@@ -25,8 +25,7 @@ class AppointmentImportTest extends WebTestCase {
             "category": "category-id",
             "is_all_day": false,
             "study_groups": [ ],
-            "organizers": [ ],
-            "mark_students_absent": false
+            "organizers": [ ]
         }
     ]
 }
@@ -74,6 +73,5 @@ JSON;
         $this->assertNotNull($appointment);
         $this->assertEquals(new DateTime('2020-05-28T10:00:00'), $appointment->getStart());
         $this->assertEquals(new DateTime('2020-05-28T12:00:00'), $appointment->getEnd());
-        $this->assertFalse($appointment->isMarkStudentsAbsent());
     }
 }

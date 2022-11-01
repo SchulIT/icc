@@ -70,11 +70,6 @@ class Appointment {
     private $studyGroups;
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private bool $markStudentsAbsent = true;
-
-    /**
      * @ORM\ManyToMany(targetEntity="Teacher", cascade={"persist"})
      * @ORM\JoinTable(name="appointment_organizers",
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
@@ -255,15 +250,6 @@ class Appointment {
      */
     public function getStudyGroups() {
         return $this->studyGroups;
-    }
-
-    public function isMarkStudentsAbsent(): bool {
-        return $this->markStudentsAbsent;
-    }
-
-    public function setMarkStudentsAbsent(bool $markStudentsAbsent): Appointment {
-        $this->markStudentsAbsent = $markStudentsAbsent;
-        return $this;
     }
 
     public function addVisibility(UserTypeEntity $visibility) {

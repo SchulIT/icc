@@ -83,6 +83,7 @@ class AppointmentData {
     private array $studyGroups;
 
     /**
+     * @deprecated This property is ignored when importing
      * @Serializer\Type("bool")
      * @Serializer\SerializedName("mark_students_absent")
      * Whether or not to mark students absent during this appointment

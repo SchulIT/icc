@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Book\Lesson\LessonCancelHelper;
+use App\Book\Student\AbsenceExcuseResolver;
 use App\Dashboard\Absence\AbsenceResolver;
 use App\Dashboard\AbsenceReason;
 use App\Dashboard\AbsentStudentWithAbsenceNote;
@@ -176,7 +177,7 @@ class BookXhrController extends AbstractController {
     #[Route(path: '/entry', name: 'xhr_lesson_entry', methods: ['GET'])]
     public function entry(Request $request, AbsenceResolver $absenceResolver, TimetableLessonRepositoryInterface $lessonRepository,
                           LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
-                          SerializerInterface $serializer, SectionResolverInterface $sectionResolver): Response {
+                          SerializerInterface $serializer, SectionResolverInterface $sectionResolver, AbsenceExcuseResolver $excuseResolver): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $lesson = $lessonRepository->findOneByUuid($request->query->get('lesson'));
@@ -209,12 +210,16 @@ class BookXhrController extends AbstractController {
             $attendances = [ ];
             /** @var LessonAttendance $attendance */
             foreach($entry->getAttendances() as $attendance) {
+                $excuseInfo = $excuseResolver->resolve($attendance->getStudent(), [ $entry->getTuition() ]);
+                $excuses = $excuseInfo->getExcuseCollectionForLesson($attendance);
+
                 $attendances[] = [
                     'student' => Student::fromEntity($attendance->getStudent()),
                     'minutes' => $attendance->getLateMinutes(),
                     'lessons' => $attendance->getAbsentLessons(),
                     'comment' => $attendance->getComment(),
                     'excuse_status' => $attendance->getExcuseStatus(),
+                    'has_excuses' => $excuses->count() > 0,
                     'type' => $attendance->getType()
                 ];
             }

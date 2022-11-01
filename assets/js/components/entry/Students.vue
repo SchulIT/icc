@@ -184,19 +184,21 @@
                    v-if="attendance.type === 0">
                 <button class="btn btn-outline-danger btn-sm"
                         :title="$trans('book.students.not_set')"
-                        :class="{ active: attendance.excuse_status === 0}"
+                        :class="{ active: attendance.excuse_status === 0 && !attendance.has_excuses}"
+                        :disabled="attendance.has_excuses"
                         @click.prevent="setExcuseStatus(attendance, 0)">
                   <i class="fas fa-question"></i>
                 </button>
                 <button class="btn btn-outline-danger btn-sm"
                         :title="$trans('book.students.excused')"
-                        :class="{ active: attendance.excuse_status === 1}"
+                        :class="{ active: attendance.excuse_status === 1 || attendance.has_excuses}"
                         @click.prevent="setExcuseStatus(attendance, 1)">
                   <i class="fas fa-check"></i>
                 </button>
                 <button class="btn btn-outline-danger btn-sm"
                         :title="$trans('book.students.not_excused')"
-                        :class="{ active: attendance.excuse_status === 2}"
+                        :class="{ active: attendance.excuse_status === 2 && !attendance.has_excuses}"
+                        :disabled="attendance.has_excuses"
                         @click.prevent="setExcuseStatus(attendance, 2)">
                   <i class="fas fa-times"></i>
                 </button>
@@ -447,6 +449,8 @@ export default {
       let students = { };
 
       this.students.forEach(function(student) {
+        console.log(student);
+
         students[student.uuid] = {
           uuid: student.uuid,
           firstname: student.firstname,

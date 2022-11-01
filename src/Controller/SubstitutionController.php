@@ -120,6 +120,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
             'absentTeachers' => $absentTeachers,
             'absentStudyGroups' => $absentStudyGroups,
             'counts' => $counts,
+            'skipWeekends' => $substitutionSettings->skipWeekends(),
             'last_import' => $importDateTypeRepository->findOneByEntityClass(Substitution::class)
         ]);
     }

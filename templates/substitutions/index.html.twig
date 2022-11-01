@@ -27,7 +27,7 @@
                 <div class="card">
                     <div class="card-header border-bottom-0">
                         <ul class="nav nav-pills card-header-pills" data-trigger="resize-hide">
-                            {% set previousDate = selectedDate|previous_date %}
+                            {% set previousDate = selectedDate|previous_date(skipWeekends) %}
                             {% set canNavigatePrevious = is_in_datetime_array(previousDate, days) %}
                             <li class="nav-item" data-resize="show">
                                 <a class="nav-link {% if not canNavigatePrevious %}disabled{% endif %}" {% if canNavigatePrevious %}href="{{ path('substitutions', currentFilter|merge({ date: previousDate|date('Y-m-d') })) }}" {% endif %}>
@@ -43,7 +43,7 @@
                                 </li>
                             {% endfor %}
 
-                            {% set nextDate = selectedDate|next_date %}
+                            {% set nextDate = selectedDate|next_date(skipWeekends) %}
                             {% set canNavigateNext = is_in_datetime_array(nextDate, days) %}
                             <li class="nav-item" data-resize="show">
                                 <a class="nav-link {% if not canNavigateNext %}disabled{% endif %}" {% if canNavigateNext %}href="{{ path('substitutions', currentFilter|merge({ date: nextDate|date('Y-m-d') })) }}" {% endif %}>

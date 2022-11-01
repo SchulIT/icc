@@ -150,6 +150,11 @@
                 </div>
             </div>
         </div>
+
+        {% set id = item.exams|map(e => e.uuid.toString )|join('-') ~ '-' ~ lesson %}
+        {% set count = item.exams|map(e => e.students|length)|reduce((c, v) => c+v) %}
+
+        {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, id, count) }}
     </div>
 {% endmacro %}
 

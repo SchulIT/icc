@@ -321,7 +321,7 @@ class DashboardViewHelper {
                     }
 
                     if(isset($supervisions[$lesson]) && $supervisions[$lesson] === $teacher->getId()) {
-                        $dashboardView->addItem($lesson, new ExamSupervisionViewItem($exam));
+                        $dashboardView->addItem($lesson, new ExamSupervisionViewItem($exam, $absentStudents));
                     }
                 } else {
                     $dashboardView->addItem($lesson, new ExamViewItem($exam, $absentStudents));

@@ -3,16 +3,20 @@
 namespace App\Dashboard;
 
 use App\Entity\Exam;
+use App\Grouping\AbsentStudentGroup;
 
-class ExamSupervisionViewItem extends AbstractViewItem {
+class ExamSupervisionViewItem extends AbsenceAwareViewItem {
 
     /** @var Exam[] */
     private array $exams = [ ];
 
     /**
      * @param Exam|Exam[] $examOrExams
+     * @param AbsentStudentGroup[] $absentStudentGroups
      */
-    public function __construct($examOrExams) {
+    public function __construct($examOrExams, array $absentStudentGroups) {
+        parent::__construct($absentStudentGroups);
+
         if(is_array($examOrExams)) {
             $this->exams = $examOrExams;
         } else {

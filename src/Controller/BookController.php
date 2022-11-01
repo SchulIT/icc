@@ -262,41 +262,45 @@ class BookController extends AbstractController {
         $lateStudentsByLesson = [ ];
         $absentStudentsByLesson = [ ];
 
-        foreach($overview->getDays() as $day) {
-            $excusesByStudent = [ ];
+        if($overview !== null) {
+            foreach ($overview->getDays() as $day) {
+                $excusesByStudent = [];
 
-            foreach($day->getLessons() as $lesson) {
-                if($lesson->getEntry() === null) {
-                    continue;
-                }
+                foreach ($day->getLessons() as $lesson) {
+                    if ($lesson->getEntry() === null) {
+                        continue;
+                    }
 
-                $uuid = $lesson->getEntry()->getUuid()->toString();
-                $lateStudentsByLesson[$uuid] = [];
-                $absentStudentsByLesson[$uuid] = [];
+                    $uuid = $lesson->getEntry()->getUuid()->toString();
+                    $lateStudentsByLesson[$uuid] = [];
+                    $absentStudentsByLesson[$uuid] = [];
 
-                if($lesson->getAbsentCount() === 0 && $lesson->getLateCount() === 0) {
-                    continue;
-                }
+                    if ($lesson->getAbsentCount() === 0 && $lesson->getLateCount() === 0) {
+                        continue;
+                    }
 
-                /** @var LessonAttendance $attendance */
-                foreach($lesson->getEntry()->getAttendances() as $attendance) {
-                    if($attendance->getType() === LessonAttendanceType::Late) {
-                        $lateStudentsByLesson[$uuid][] = $attendance;
-                    } else if($attendance->getType() === LessonAttendanceType::Absent) {
-                        $studentUuid = $attendance->getStudent()->getUuid()->toString();
+                    /** @var LessonAttendance $attendance */
+                    foreach ($lesson->getEntry()->getAttendances() as $attendance) {
+                        if ($attendance->getType() === LessonAttendanceType::Late) {
+                            $lateStudentsByLesson[$uuid][] = $attendance;
+                        } else {
+                            if ($attendance->getType() === LessonAttendanceType::Absent) {
+                                $studentUuid = $attendance->getStudent()->getUuid()->toString();
 
-                        if(!isset($excusesByStudent[$studentUuid])) {
-                            $excusesByStudent[$studentUuid] = $excuseNoteRepository->findByStudentsAndDate([$attendance->getStudent()], $day->getDate());
-                        }
+                                if (!isset($excusesByStudent[$studentUuid])) {
+                                    $excusesByStudent[$studentUuid] = $excuseNoteRepository->findByStudentsAndDate([$attendance->getStudent()], $day->getDate());
+                                }
 
-                        /** @var ExcuseNote $excuseNote */
-                        foreach($excusesByStudent[$studentUuid] as $excuseNote) {
-                            if($attendance->getExcuseStatus() === LessonAttendanceExcuseStatus::NotSet && (new DateLesson())->setDate($day->getDate())->setLesson($lesson->getLessonNumber())->isBetween($excuseNote->getFrom(), $excuseNote->getUntil())) {
-                                $attendance->setExcuseStatus(LessonAttendanceExcuseStatus::Excused);
+                                /** @var ExcuseNote $excuseNote */
+                                foreach ($excusesByStudent[$studentUuid] as $excuseNote) {
+                                    if ($attendance->getExcuseStatus() === LessonAttendanceExcuseStatus::NotSet && (new DateLesson())->setDate($day->getDate())->setLesson($lesson->getLessonNumber())->isBetween($excuseNote->getFrom(), $excuseNote->getUntil())) {
+                                        $attendance->setExcuseStatus(LessonAttendanceExcuseStatus::Excused);
+                                    }
+                                }
+
+                                $absentStudentsByLesson[$uuid][] = $attendance;
                             }
                         }
-
-                        $absentStudentsByLesson[$uuid][] = $attendance;
                     }
                 }
             }

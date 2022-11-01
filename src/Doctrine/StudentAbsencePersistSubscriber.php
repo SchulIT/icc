@@ -29,8 +29,6 @@ class StudentAbsencePersistSubscriber implements EventSubscriber {
             $changeset = $eventArgs->getEntityManager()->getUnitOfWork()
                 ->getEntityChangeSet($entity);
 
-            dump($changeset);
-
             // Step 1: fix the fact that the date object seems to marked as "changed"
             if(array_key_exists(self::FromDateProperty, $changeset) && $changeset[self::FromDateProperty][0] == $changeset[self::FromDateProperty][1]) {
                 unset($changeset[self::FromDateProperty]);
@@ -43,6 +41,11 @@ class StudentAbsencePersistSubscriber implements EventSubscriber {
             $message = (new StudentAbsenceMessage())
                 ->setAbsence($entity);
             $translationKey = null;
+
+            $oldDate = null;
+            $newDate = null;
+            $oldLesson = 0;
+            $newLesson = 0;
 
             // Step 2: detect change
             if(array_key_exists(self::FromDateProperty, $changeset) || array_key_exists(self::FromLessonProperty, $changeset)) {

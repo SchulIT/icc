@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity()
  */
 #[UniqueEntity(fields: ['username'])]
-class User implements UserInterface, Serializable, Stringable {
+class User implements UserInterface, Stringable {
 
     use IdTrait;
     use UuidTrait;
@@ -299,21 +299,16 @@ class User implements UserInterface, Serializable, Stringable {
         return $this->getUsername();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function serialize() {
-        return serialize([
-            $this->getId(),
-            $this->getUsername()
-        ]);
+    public function __serialize(): array {
+        return [
+            'id' => $this->getId(),
+            'username' => $this->getUsername()
+        ];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function unserialize($serialized) {
-        [$this->id, $this->username] = unserialize($serialized);
+    public function __unserialize(array $serialized) {
+        $this->id = $serialized['id'];
+        $this->username = $serialized['username'];
     }
 
     public function __toString(): string {

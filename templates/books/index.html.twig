@@ -296,6 +296,7 @@
                                                        url="{{ path('xhr_lesson_entry', { start: lesson.lessonNumber, lesson: lesson.lesson.uuid.toString }) }}"
                                                        csrfname="_token"
                                                        :lesson-number="{{ lesson.lessonNumber }}"
+                                                       {% if app.user.teacher is not null %}teacher="{{ app.user.teacher.acronym }}"{% endif %}
                                                        csrftoken="{{ csrfToken }}"
                                                        create-action="{{ path('add_entry', { uuid: lesson.lesson.uuid }) }}"
                                                        edit-action=""

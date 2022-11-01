@@ -234,6 +234,7 @@ export default {
     url: String,
     studentsUrl: String,
     teachersUrl: String,
+    teacher: String,
     csrftoken: String,
     csrfname: String,
     createAction: String,
@@ -397,11 +398,22 @@ export default {
               }
             ];
 
+            let autoSelectTeacher = null;
+            let tuitionTeachers = $this.tuition.teachers.map(function(teacher) { return teacher.acronym; });
+
+            if($this.teacher !== null && !tuitionTeachers.includes($this.teacher) && $this.entry.uuid === null) {
+              autoSelectTeacher = $this.teacher;
+            }
+
+            if($this.entry.replacementTeacher !== null) {
+              autoSelectTeacher = $this.entry.replacementTeacher.acronym;
+            }
+
             response.data.forEach(function(teacher) {
               choices.push({
                 label: teacher.acronym,
                 value: teacher.uuid,
-                selected: $this.entry.replacementTeacher !== null && $this.entry.replacementTeacher.uuid === teacher.uuid
+                selected: teacher.acronym === autoSelectTeacher
               });
             });
             

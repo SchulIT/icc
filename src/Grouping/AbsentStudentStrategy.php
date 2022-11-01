@@ -19,10 +19,6 @@ class AbsentStudentStrategy implements GroupingStrategyInterface {
             return $object->getExam();
         }
 
-        if($object instanceof AbsentAppointmentStudent) {
-            return $object->getAppointment();
-        }
-
         return null;
     }
 

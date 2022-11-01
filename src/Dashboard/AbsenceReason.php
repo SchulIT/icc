@@ -12,7 +12,6 @@ use MyCLabs\Enum\Enum;
  */
 class AbsenceReason extends Enum {
     public const Exam = 'exam';
-    public const Appointment = 'appointment';
     public const Absence = 'absence';
     public const Other = 'other';
 }

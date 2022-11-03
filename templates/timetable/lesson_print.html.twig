@@ -32,6 +32,10 @@
             {%- endif -%}
         </strong>
 
+        {% if subjectFilter.currentSubjects|length > 0 %}
+            {{ lesson.grades|grades }}
+        {% endif %}
+
         {% if teachersFilter.currentTeachers|length > 0 %}
             {{ lesson.grades|grades }}
         {% endif %}
@@ -42,7 +46,7 @@
         {% endif %}
 
         {% if roomFilter.currentRoom != null %}
-            ({{ grades|grades }})
+            ({{ lesson.grades|grades }})
         {% elseif not lesson.room is null %}
             ({{ lesson.room.name }})
         {% endif %}

@@ -72,9 +72,9 @@ class TimetableController extends AbstractControllerWithMessages {
         $sectionFilterView = $sectionFilter->handle($request->query->get('section', null));
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
         $roomFilterView = $roomFilter->handle($request->query->get('room', null), $user);
-        $subjectFilterView = $subjectFilter->handle($this->getArrayOrNull($request->query->get('subjects')), $user);
+        $subjectFilterView = $subjectFilter->handle($this->getArrayOrNull($request->query->all('subjects')), $user);
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && (is_countable($subjectFilterView->getCurrentSubjects()) ? count($subjectFilterView->getCurrentSubjects()) : 0) === 0);
-        $teachersFilterView = $teachersFilter->handle($this->getArrayOrNull($request->query->get('teachers')), $sectionFilterView->getCurrentSection(), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && (is_countable($subjectFilterView->getCurrentSubjects()) ? count($subjectFilterView->getCurrentSubjects()) : 0) === 0);
+        $teachersFilterView = $teachersFilter->handle($this->getArrayOrNull($request->query->all('teachers')), $sectionFilterView->getCurrentSection(), $user, $studentFilterView->getCurrentStudent() === null && $gradeFilterView->getCurrentGrade() === null && $roomFilterView->getCurrentRoom() === null && (is_countable($subjectFilterView->getCurrentSubjects()) ? count($subjectFilterView->getCurrentSubjects()) : 0) === 0);
 
         $selectedDate = $this->resolveSelectedDate($request, $sectionFilterView->getCurrentSection(), $this->dateHelper);
 

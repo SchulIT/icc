@@ -23,7 +23,7 @@ class DatabaseHandler extends AbstractProcessingHandler {
             'level' => $record['level'],
             'message' => $record['formatted'],
             'time' => $record['datetime'],
-            'details' => json_encode($record['extra'])
+            'details' => json_encode($record['extra'], JSON_PRETTY_PRINT)
         ];
 
         try {

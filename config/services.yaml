@@ -281,7 +281,7 @@ services:
     # MONOLOG
     App\Monolog\DatabaseHandler:
         arguments:
-            $connection: '@doctrine.dbal.default_connection'
+            $connection: '@doctrine.dbal.logger_connection'
         calls:
             - setFormatter: [ '@App\Monolog\LineFormatter']
     #App\Monolog\UsernameProcessor:
@@ -300,3 +300,4 @@ services:
     App\EventSubscriber\LoadMessengerCronJobs:
         arguments:
             $command: '@console.command.messenger_consume_messages'
+

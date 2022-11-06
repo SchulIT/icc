@@ -8,8 +8,6 @@ use Throwable;
 class ExceptionProcessor implements ProcessorInterface {
 
     public function __invoke(array $records): array {
-        $records['extra']['foo'] = 'bla';
-
         if(isset($records['context']['exception']) && $records['context']['exception'] instanceof Throwable) {
             $records['extra']['exception'] = [
                 'class' => get_class($records['context']['exception']),

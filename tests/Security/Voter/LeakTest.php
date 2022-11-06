@@ -20,15 +20,23 @@ class LeakTest extends KernelTestCase {
      * @param KernelInterface $kernel
      */
     private function login(User $user, KernelInterface $kernel) {
-        $session = $kernel->getContainer()->get('session');
         $firewallName = 'secured';
         $firewallContext = $firewallName;
 
-        $token = new UsernamePasswordToken($user, null, $firewallName, $user->getRoles());
+        $container = $kernel->getContainer()->get('test.service_container');
+
+        $token = new UsernamePasswordToken($user, $firewallName, $user->getRoles());
+        $container->get('test.service_container')->get('security.untracked_token_storage')->setToken($token);
+
+        if(!$container->has('session.factory')) {
+            return;
+        }
+
+        $session = $container->get('session.factory')->createSession();
         $session->set('_security_'.$firewallContext, serialize($token));
         $session->save();
 
-        $tokenStorage = $kernel->getContainer()->get('security.token_storage');
+        $tokenStorage = $container->get('security.token_storage');
         $tokenStorage->setToken($token);
     }
 
@@ -43,7 +51,7 @@ class LeakTest extends KernelTestCase {
             $user->setRoles(['ROLE_USER']);
             $this->login($user, $kernel);
 
-            $authorizationChecker = $kernel->getContainer()->get('security.authorization_checker');
+            $authorizationChecker = $kernel->getContainer()->get('test.service_container')->get('security.authorization_checker');
             $this->assertFalse($authorizationChecker->isGranted('ROLE_ADMIN'), sprintf('Ensure user of type %s does not have ROLE_ADMIN.', $type->getValue()));
         }
     }

@@ -7,6 +7,7 @@ use App\Grouping\AppointmentDateGroup;
 use App\Grouping\AppointmentExpirationGroup;
 use App\Grouping\AppointmentExpirationStrategy;
 use App\Grouping\Grouper;
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -43,6 +44,9 @@ class AppointmentExpirationStrategyTest extends TestCase {
         $dateHelper
             ->method('getNow')
             ->willReturn(new \DateTime('2019-02-01 10:00'));
+        $dateHelper
+            ->method('getToday')
+            ->willReturn(new DateTime('2019-02-01'));
 
         $strategy = new AppointmentExpirationStrategy($dateHelper);
         $grouper = new Grouper([$strategy]);
@@ -64,6 +68,9 @@ class AppointmentExpirationStrategyTest extends TestCase {
         $dateHelper
             ->method('getNow')
             ->willReturn(new \DateTime('2019-02-01 10:00'));
+        $dateHelper
+            ->method('getToday')
+            ->willReturn(new DateTime('2019-02-01'));
 
         $strategy = new AppointmentExpirationStrategy($dateHelper);
         $grouper = new Grouper([$strategy]);

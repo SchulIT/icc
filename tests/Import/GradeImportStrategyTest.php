@@ -46,7 +46,7 @@ class GradeImportStrategyTest extends WebTestCase {
 
         $strategy = new GradesImportStrategy($repository, $sectionRepository);
         $dateTimeRepository = new ImportDateTypeRepository($kernel->getContainer()->get('doctrine')->getManager());
-        $importer = new Importer($kernel->getContainer()->get('validator'), $dateTimeRepository, new NullLogger());
+        $importer = new Importer($kernel->getContainer()->get('test.service_container')->get('validator'), $dateTimeRepository, new NullLogger());
         $result = $importer->import((new GradesData())->setGrades($gradeData), $strategy);
 
         $this->assertNotNull($result);

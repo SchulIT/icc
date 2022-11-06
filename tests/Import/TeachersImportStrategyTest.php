@@ -30,6 +30,7 @@ class TeachersImportStrategyTest extends WebTestCase {
 
         $this->validator = $kernel
             ->getContainer()
+            ->get('test.service_container')
             ->get('validator');
 
         $this->em = $kernel

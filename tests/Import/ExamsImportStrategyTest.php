@@ -48,6 +48,7 @@ class ExamsImportStrategyTest extends WebTestCase {
 
         $this->validator = $kernel
             ->getContainer()
+            ->get('test.service_container')
             ->get('validator');
 
         $section = (new Section())

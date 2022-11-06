@@ -92,7 +92,7 @@ class EntryOverviewHelper {
         $timetableLessons = $this->lessonRepository->findAllByTuitions($start, $end, $tuitions);
 
         $current = clone $start;
-        while($current < $end) {
+        while($current <= $end) {
             $dailyLessons = array_filter($timetableLessons, fn(TimetableLesson $lesson) => $lesson->getDate() == $current);
 
             foreach($dailyLessons as $dailyLesson) {

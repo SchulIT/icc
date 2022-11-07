@@ -2,6 +2,12 @@
 
 namespace App\Controller;
 
+use App\Converter\StudyGroupStringConverter;
+use App\Entity\Student;
+use App\Form\Model\BulkStudentAbsence;
+use App\Form\StudentAbsenceBulkType;
+use App\Repository\StudyGroupRepositoryInterface;
+use App\Sorting\StudyGroupStrategy;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\DateLesson;
 use App\Entity\StudentAbsence;
@@ -85,6 +91,66 @@ class StudentAbsenceController extends AbstractController {
         return $this->render('absences/add.html.twig', [
             'form' => $form->createView(),
             'settings' => $settings
+        ]);
+    }
+
+    #[Route(path: '/add_bulk', name: 'add_absence_bulk')]
+    public function addBulk(Request $request, StudentAbsenceSettings $settings, SectionResolverInterface $sectionResolver,
+                            StudentAbsenceRepositoryInterface $repository, StudyGroupRepositoryInterface $studyGroupRepository,
+                            TimetableTimeHelper $timeHelper, TimetableSettings $timetableSettings, DateHelper $dateHelper,
+                            Sorter $sorter, StudyGroupStringConverter $studyGroupStringConverter): Response {
+        $this->denyAccessUnlessGranted(StudentAbsenceVoter::Bulk);
+
+        if($settings->isEnabled() !== true) {
+            throw new NotFoundHttpException();
+        }
+
+        $students = [ ];
+
+        $note = new BulkStudentAbsence();
+        $note->setFrom($timeHelper->getLessonDateForDateTime($this->getTodayOrNextDay($dateHelper, $settings->getNextDayThresholdTime())));
+        $note->setUntil(new DateLesson());
+        $note->getUntil()->setLesson($timetableSettings->getMaxLessons());
+
+        $form = $this->createForm(StudentAbsenceBulkType::class, $note);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            // Create absence for each student
+            /** @var Student $student */
+            foreach($note->getStudents() as $student) {
+                $studentAbsence = (new StudentAbsence())
+                    ->setStudent($student)
+                    ->setFrom($note->getFrom())
+                    ->setUntil($note->getUntil())
+                    ->setType($note->getType())
+                    ->setMessage($note->getMessage())
+                    ->setEmail($note->getEmail())
+                    ->setPhone($note->getPhone());
+
+                $repository->persist($studentAbsence);
+            }
+
+            $this->addFlash('success', 'student_absences.bulk.success');
+            return $this->redirectToRoute('absences');
+        }
+
+        $studyGroupsData = [ ];
+
+        $studyGroups = $studyGroupRepository->findAllBySection($sectionResolver->getCurrentSection());
+        $sorter->sort($studyGroups, StudyGroupStrategy::class);
+
+        foreach($studyGroups as $studyGroup) {
+            $studyGroupsData[] = [
+                'label' => $studyGroupStringConverter->convert($studyGroup, false, true),
+                'students' => $studyGroup->getMemberships()->map(fn(StudyGroupMembership $m) => $m->getStudent()->getId())->toArray()
+            ];
+        }
+
+        return $this->render('absences/add_bulk.html.twig', [
+            'form' => $form->createView(),
+            'settings' => $settings,
+            'studyGroupsData' => $studyGroupsData
         ]);
     }
 

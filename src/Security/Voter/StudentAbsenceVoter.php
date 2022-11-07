@@ -20,6 +20,7 @@ class StudentAbsenceVoter extends Voter {
     public const New = 'new-absence';
     public const View = 'view';
     public const CanViewAny = 'view-any-absence';
+    public const Bulk = 'new-absence-bulk';
 
     public const Approve = 'approve';
     public const Deny = 'deny';
@@ -35,6 +36,7 @@ class StudentAbsenceVoter extends Voter {
     protected function supports($attribute, $subject): bool {
         return $attribute === self::New
             || $attribute === self::CanViewAny
+            || $attribute === self::Bulk
             || (in_array($attribute, [ self::Edit, self::View, self::Approve, self::Deny ]) && $subject instanceof StudentAbsence);
     }
 
@@ -45,6 +47,7 @@ class StudentAbsenceVoter extends Voter {
     {
         return match ($attribute) {
             self::New => $this->canCreate($token),
+            self::Bulk => $this->canCreateBulk($token),
             self::View => $this->canView($token, $subject),
             self::Edit => $this->canEdit($token, $subject),
             self::CanViewAny => $this->canViewAny($token),
@@ -83,6 +86,10 @@ class StudentAbsenceVoter extends Voter {
         }
 
         return false;
+    }
+
+    private function canCreateBulk(TokenInterface $token): bool {
+        return $this->accessDecisionManager->decide($token, ['ROLE_STUDENT_ABSENCE_CREATOR']) === true || $this->accessDecisionManager->decide($token, ['ROLE_ADMIN']);
     }
 
     private function canViewAny(TokenInterface $token): bool {

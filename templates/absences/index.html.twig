@@ -163,6 +163,11 @@
                                 <i class="fa fa-plus"></i> {{ 'student_absences.add.label'|trans }}
                             </a>
                         {% endif %}
+                        {% if is_granted('new-absence-bulk') %}
+                            <a href="{{ path('add_absence_bulk') }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-plus"></i> {{ 'student_absences.add_bulk.label'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
 

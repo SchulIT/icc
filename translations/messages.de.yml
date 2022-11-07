@@ -1364,6 +1364,12 @@ student_absences:
         must_approve:
             label: muss genehmigt werden
             help: Bei genehmigungspflichtigen Absenzen entscheidet die Klassenleitung, ob diese genehmigt wird oder nicht. Nur bei vorliegender Genehmigung ist die Schülerin oder der Schüler vom Unterricht befreit.
+    add_bulk:
+        label: Neue Massen-Abwesenheitsmeldung
+        info: Hier besteht die Möglichkeit, eine Abwesenheitsmeldung für mehrere Lernenden anzulegen. Das System erstellt im Anschluss für jeden Lernenden eine separate Abwesenheitsmeldung.
+        success: Die Abwesenheitsmeldungen wurden erfolgreich angelegt.
+        attachments: Anhänge sind bei Massen-Abwesenheitsmeldungen nicht möglich.
+
     edit:
         label: Abwesenheitsmeldung bearbeiten
         success: Abwesenheitsmeldung erfolgreich aktualisiert

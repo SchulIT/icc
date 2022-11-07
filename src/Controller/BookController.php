@@ -180,24 +180,19 @@ class BookController extends AbstractController {
                 $overview = $entryOverviewHelper->computeOverviewForGrade($gradeFilterView->getCurrentGrade(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
 
                 $students = $gradeFilterView->getCurrentGrade()->getMemberships()->filter(fn(GradeMembership $membership) => $membership->getSection()->getId() === $sectionFilterView->getCurrentSection()->getId())->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
-
-                foreach($students as $student) {
-                    $info[] = $absenceExcuseResolver->resolve($student);
-                }
+                $info = $absenceExcuseResolver->resolveBulk($students);
             } else if ($tuitionFilterView->getCurrentTuition() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition(), $selectedDate, (clone $selectedDate)->modify('+1 month')->modify('-1 day'));
 
                 $students = $tuitionFilterView->getCurrentTuition()->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent());
-
-                foreach($students as $student) {
-                    $info[] = $absenceExcuseResolver->resolve($student, [$tuitionFilterView->getCurrentTuition()]);
-                }
+                $info = $absenceExcuseResolver->resolveBulk($students->toArray(), [ $tuitionFilterView->getCurrentTuition() ]);
             } else if($teacherFilterView->getCurrentTeacher() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForTeacher($teacherFilterView->getCurrentTeacher(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
                 $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
 
                 // IDs of already handled students
                 $studentIds = [ ];
+                $students = [ ];
 
                 foreach($tuitions as $tuition) {
                     /** @var StudyGroupMembership $membership */
@@ -208,10 +203,12 @@ class BookController extends AbstractController {
                             continue;
                         }
 
-                        $info[] = $absenceExcuseResolver->resolve($student, $tuitions);
                         $studentIds[] = $student->getId();
+                        $students[] = $student;
                     }
                 }
+
+                $info = $absenceExcuseResolver->resolveBulk($students, $tuitions);
             }
         }
 

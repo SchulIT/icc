@@ -30,13 +30,19 @@ interface LessonAttendanceRepositoryInterface {
      */
     public function findAbsentByStudent(Student $student, array $tuitions): array;
 
+    /**
+     * @param Student[] $student
+     * @param Tuition[] $tuitions
+     * @return LessonAttendance[]
+     */
+    public function findAbsentByStudents(array $students, array $tuitions): array;
 
     /**
      * @param Student[] $students
      * @param DateTime $dateTime
      * @return LessonAttendance[]
      */
-    public function findAbsentByStudents(array $students, DateTime $dateTime): array;
+    public function findAbsentByStudentsAndDate(array $students, DateTime $dateTime): array;
 
     public function persist(LessonAttendance $attendance): void;
 

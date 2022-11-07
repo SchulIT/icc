@@ -32,6 +32,12 @@ interface ExcuseNoteRepositoryInterface {
      */
     public function findByStudent(Student $student): array;
 
+    /**
+     * @param Student[] $students
+     * @return ExcuseNote[]
+     */
+    public function findByStudents(array $students): array;
+
     public function persist(ExcuseNote $note): void;
 
     public function remove(ExcuseNote $note): void;

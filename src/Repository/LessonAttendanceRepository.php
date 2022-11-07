@@ -2,8 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Attendance;
-use App\Entity\AttendanceType;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonAttendanceType;
 use App\Entity\LessonEntry;
@@ -14,7 +12,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class LessonAttendanceRepository extends AbstractRepository implements LessonAttendanceRepositoryInterface {
 
-    public function findAbsentByStudents(array $students, DateTime $dateTime): array {
+    public function findAbsentByStudentsAndDate(array $students, DateTime $dateTime): array {
         $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->em->createQueryBuilder();
@@ -120,6 +118,21 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->where('s.id = :student')
             ->andWhere('a.type = :type')
             ->setParameter('student', $student)
+            ->setParameter('type', LessonAttendanceType::Absent);
+        $this->applyTuition($qb, $tuitions);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAbsentByStudents(array $students, array $tuitions): array {
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
+
+        $qb = $this->getDefaultQueryBuilder();
+
+        $qb
+            ->where($qb->expr()->in('s.id', ':students'))
+            ->andWhere('a.type = :type')
+            ->setParameter('students', $studentIds)
             ->setParameter('type', LessonAttendanceType::Absent);
         $this->applyTuition($qb, $tuitions);
 

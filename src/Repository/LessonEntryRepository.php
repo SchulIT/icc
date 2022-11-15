@@ -14,15 +14,15 @@ class LessonEntryRepository extends AbstractRepository implements LessonEntryRep
     private function createDefaultQueryBuilder(): QueryBuilder {
         return $this->em
             ->createQueryBuilder()
-            ->select(['e', 't', 'tt'])
+            ->select(['e', 't', 'tt', 'l'])
             ->from(LessonEntry::class, 'e')
             ->leftJoin('e.teacher', 't')
-            ->leftJoin('e.tuition', 'tt');
+            ->leftJoin('e.tuition', 'tt')
+            ->leftJoin('e.lesson', 'l');
     }
 
     private function applyStartEnd(QueryBuilder $qb, DateTime $start, DateTime $end): QueryBuilder {
         return $qb
-            ->leftJoin('e.lesson', 'l')
             ->andWhere('l.date >= :start')
             ->andWhere('l.date <= :end')
             ->setParameter('start', $start)

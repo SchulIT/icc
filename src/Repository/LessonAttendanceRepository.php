@@ -17,7 +17,7 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
         $qb = $this->em->createQueryBuilder();
 
-        $qb->select(['a', 's', 'e'])
+        $qb->select(['a', 's', 'e', 'l'])
             ->from(LessonAttendance::class, 'a')
             ->leftJoin('a.student', 's')
             ->leftJoin('a.entry', 'e')
@@ -71,10 +71,11 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
     private function getDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
-            ->select(['a'])
+            ->select(['a', 'e', 'l'])
             ->from(LessonAttendance::class, 'a')
             ->leftJoin('a.entry', 'e')
-            ->leftJoin('a.student', 's');
+            ->leftJoin('a.student', 's')
+            ->leftJoin('e.lesson', 'l');
     }
 
     private function applyTuition(QueryBuilder $queryBuilder, array $tuitions): QueryBuilder {

@@ -1370,6 +1370,10 @@ student_absences:
         success: Die Abwesenheitsmeldungen wurden erfolgreich angelegt.
         attachments: Anhänge sind bei Massen-Abwesenheitsmeldungen nicht möglich.
 
+        choice:
+            placeholder: Lernende aus Lerngruppe übernehmen
+            apply: übernehmen
+
     edit:
         label: Abwesenheitsmeldung bearbeiten
         success: Abwesenheitsmeldung erfolgreich aktualisiert

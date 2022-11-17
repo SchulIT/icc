@@ -245,3 +245,22 @@
         </div>
     </div>
 {% endblock %}
+
+{% block students_widget %}
+    {{ form_widget(form) }}
+
+    {% if form.vars.apply_from_studygroups %}
+        <div class="input-group mt-2 apply-studygroup-container">
+            <select data-choice="true" data-apply-studygroup-target="#{{ form.vars.id }}">
+                <option value="">{{ 'student_absences.add_bulk.choice.placeholder'|trans }}</option>
+                {% for studygroup in form.vars.studygroups %}
+                    <option value="{{ studygroup.students|join(',') }}">{{ studygroup.label }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="input-group-append">
+                <button type="button" class="btn btn-outline-primary">{{ 'student_absences.add_bulk.choice.apply'|trans }}</button>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -450,5 +450,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     hideElementsIfNotEnoughSpace();
+
+    document.querySelectorAll('[data-apply-studygroup-target]').forEach(function(element) {
+        element.closest('.apply-studygroup-container').querySelector('button').addEventListener('click', function(e) {
+            let choicesElId = element.getAttribute('data-apply-studygroup-target');
+            let choicesEl = document.querySelector(choicesElId);
+
+            if(choicesEl === null) {
+                console.error('Did not find choice with id ' + choicesElId);
+                return;
+            }
+
+            element.value.split(',').forEach(function(value) {
+                choicesEl.choices.setChoiceByValue("" + value);
+            });
+        });
+    });
 });
 

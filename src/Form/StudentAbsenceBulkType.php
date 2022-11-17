@@ -30,27 +30,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudentAbsenceBulkType extends AbstractType {
 
-    public function __construct(private StudentStringConverter $studentConverter, private StudentStrategy $studentStrategy,
-                                private TranslatorInterface $translator, private AuthorizationCheckerInterface $authorizationChecker,
-                                private StudentRepositoryInterface $studentRepository)
+    public function __construct(private StudentStringConverter $studentConverter, private TranslatorInterface $translator,
+                                private AuthorizationCheckerInterface $authorizationChecker)
     {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $students = $this->studentRepository->findAll();
-
         $builder
-            ->add('students', SortableChoiceType::class, [
-                'choices' => $students,
+            ->add('students', StudentsType::class, [
                 'choice_label' => fn(Student $student) => $this->studentConverter->convert($student, true),
                 'placeholder' => 'label.select.students',
-                'attr' => [
-                    'data-choice' => 'true',
-                    'class' => 'custom-select'
-                ],
-                'sort_by' => $this->studentStrategy,
-                'label' => 'label.students_simple',
-                'multiple' => true
+                'multiple' => true,
+                'apply_from_studygroups' => true,
+                'label' => 'label.students_simple'
             ])
             ->add('type', EntityType::class, [
                 'expanded' => true,

@@ -327,50 +327,51 @@
             {{ _self.show_warning(hasWarning) }}
 
             <div class="align-self-center d-flex w-100">
-                <span class="badge my-1 mr-3 {% if item.isFreeLesson %}badge-light badge-card{% else %}badge-warning{% endif%} align-self-center">
-                    {% if substitution.type is not empty %}
-                        {{ substitution.type|upper }}
-                    {% else %}
-                        {{ 'dashboard.substitution'|trans|upper }}
-                    {% endif %}
-                </span>
-
-                <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
-                    {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
-                        <span>
-                            {{ _macro.replacement(substitution.subject, substitution.replacementSubject) }}
-                            <span class="mx-1"></span>
-                        </span>
-                    {% endif %}
-
-                    {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 or substitution.replacementGrades|length > 0 %}
-                        <span>
-                            <i class="fa fa-users"></i> {{ _macro.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
-                            {% if substitution.replacementGrades|length > 0 %}
-                                {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
-                                    ⟶
-                                {% endif %}
-                                {% for grade in substitution.replacementGrades %}
-                                    {{ grade.name }}{% if not loop.last %}, {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                            <span class="mx-1"></span>
-                        </span>
-                    {% endif %}
-
-                    <span>
-                        <i class="fa fa-graduation-cap"></i> {{ _macro.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
-                        <span class="mx-1"></span>
+                <div class="align-self-center d-flex flex-wrap mr-auto">
+                    <span class="align-self-center badge {% if item.isFreeLesson %}badge-light badge-card{% else %}badge-warning{% endif%} my-1 mr-3">
+                        {% if substitution.type is not empty %}
+                            {{ substitution.type|upper }}
+                        {% else %}
+                            {{ 'dashboard.substitution'|trans|upper }}
+                        {% endif %}
                     </span>
 
-                    {% if substitution.roomsAsString is not empty or substitution.replacementRoomsAsString is not empty %}
+                    <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
+                        {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
+                            <span>
+                                {{ _macro.replacement(substitution.subject, substitution.replacementSubject) }}
+                                <span class="mx-1"></span>
+                            </span>
+                        {% endif %}
+
+                        {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 or substitution.replacementGrades|length > 0 %}
+                            <span>
+                                <i class="fa fa-users"></i> {{ _macro.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups) }}
+                                {% if substitution.replacementGrades|length > 0 %}
+                                    {% if substitution.studyGroups|length > 0 or substitution.replacementStudyGroups|length > 0 %}
+                                        ⟶
+                                    {% endif %}
+                                    {% for grade in substitution.replacementGrades %}
+                                        {{ grade.name }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                <span class="mx-1"></span>
+                            </span>
+                        {% endif %}
+
                         <span>
-                            <i class="fa fa-door-open"></i> {{ _macro.replacement(substitution.roomsAsString, substitution.replacementRoomsAsString) }}
+                            <i class="fa fa-graduation-cap"></i> {{ _macro.replacement(substitution.teachers|teachers, substitution.replacementTeachers|teachers) }}
                             <span class="mx-1"></span>
                         </span>
-                    {% endif %}
-                </div>
 
+                        {% if substitution.roomsAsString is not empty or substitution.replacementRoomsAsString is not empty %}
+                            <span>
+                                <i class="fa fa-door-open"></i> {{ _macro.replacement(substitution.roomsAsString, substitution.replacementRoomsAsString) }}
+                                <span class="mx-1"></span>
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
                 {% set timetableLesson = item.timetableLesson %}
                 {% if timetableLesson is not null and timetableLesson.tuition is not null and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
                     {% set editAction = null %}

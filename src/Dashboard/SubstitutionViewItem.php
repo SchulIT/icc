@@ -4,10 +4,11 @@ namespace App\Dashboard;
 
 use App\Entity\Student;
 use App\Entity\Substitution;
+use App\Entity\TimetableLesson;
 
 class SubstitutionViewItem extends AbsenceAwareViewItem {
 
-    public function __construct(private Substitution $substitution, private bool $isFreeLessonType, private array $students, array $absentStudentGroups) {
+    public function __construct(private Substitution $substitution, private bool $isFreeLessonType, private array $students, array $absentStudentGroups, private readonly ?TimetableLesson $lesson) {
         parent::__construct($absentStudentGroups);
     }
 
@@ -17,6 +18,10 @@ class SubstitutionViewItem extends AbsenceAwareViewItem {
 
     public function getSubstitution(): Substitution {
         return $this->substitution;
+    }
+
+    public function getTimetableLesson(): TimetableLesson {
+        return $this->lesson;
     }
 
     /**

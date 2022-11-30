@@ -253,6 +253,7 @@
                                    teachers-url="{{ url('xhr_teachers') }}"
                                    url="{{ path('xhr_lesson_entry', { start: lessonNumber, lesson: lesson.uuid.toString }) }}"
                                    :lesson-number="{{ lessonNumber }}"
+                                   {% if app.user.teacher is not null %}teacher="{{ app.user.teacher.acronym }}"{% endif %}
                                    csrfname="_token"
                                    csrftoken="{{ csrf_token('book_entry') }}"
                                    create-action="{{ path('add_entry', { uuid: lesson.uuid }) }}"
@@ -325,7 +326,7 @@
             {% endif %}
             {{ _self.show_warning(hasWarning) }}
 
-            <div class="align-self-center d-flex flex-wrap">
+            <div class="align-self-center d-flex w-100">
                 <span class="badge my-1 mr-3 {% if item.isFreeLesson %}badge-light badge-card{% else %}badge-warning{% endif%} align-self-center">
                     {% if substitution.type is not empty %}
                         {{ substitution.type|upper }}
@@ -369,6 +370,29 @@
                         </span>
                     {% endif %}
                 </div>
+
+                {% set timetableLesson = item.timetableLesson %}
+                {% if timetableLesson is not null and timetableLesson.tuition is not null and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                    {% set editAction = null %}
+
+                    {% for entry in timetableLesson.entries %}
+                        {% if entry.lessonStart <= lesson and lesson <= entry.lessonEnd %}
+                            {% set editAction = path('edit_entry', { uuid: entry.uuid }) %}
+                        {% endif %}
+                    {% endfor %}
+                    <div class="align-self-center px-3">
+                        <entry students-url="{{ url('xhr_students') }}"
+                               teachers-url="{{ url('xhr_teachers') }}"
+                               {% if app.user.teacher is not null %}teacher="{{ app.user.teacher.acronym }}"{% endif %}
+                               url="{{ path('xhr_lesson_entry', { start: lesson, lesson: timetableLesson.uuid.toString }) }}"
+                               :lesson-number="{{ lesson }}"
+                               csrfname="_token"
+                               csrftoken="{{ csrf_token('book_entry') }}"
+                               create-action="{{ path('add_entry', { uuid: timetableLesson.uuid }) }}"
+                               edit-action="{{ editAction }}"
+                               cancel-action="{{ path('cancel_lesson', { uuid: timetableLesson.uuid }) }}"></entry>
+                    </div>
+                {% endif %}
             </div>
         </div>
 

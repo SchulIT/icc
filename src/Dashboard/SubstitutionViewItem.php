@@ -20,7 +20,7 @@ class SubstitutionViewItem extends AbsenceAwareViewItem {
         return $this->substitution;
     }
 
-    public function getTimetableLesson(): TimetableLesson {
+    public function getTimetableLesson(): ?TimetableLesson {
         return $this->lesson;
     }
 

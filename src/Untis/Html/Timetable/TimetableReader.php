@@ -20,11 +20,11 @@ class TimetableReader extends AbstractHtmlReader {
 
     public function __construct() {
         $this->gradeCellInformation = [
-            CellInformationType::Weeks(), CellInformationType::Subject(), CellInformationType::Teacher(), CellInformationType::Room()
+            CellInformationType::Weeks, CellInformationType::Subject, CellInformationType::Teacher, CellInformationType::Room
         ];
 
         $this->subjectCellInformation = [
-            CellInformationType::Weeks(), CellInformationType::Teacher(), CellInformationType::Room()
+            CellInformationType::Weeks, CellInformationType::Teacher, CellInformationType::Room
         ];
     }
 
@@ -230,13 +230,13 @@ class TimetableReader extends AbstractHtmlReader {
                 $value = trim($tdNodes->item($nodeIdx)->nodeValue);
                 $property = $cellTypes[$useWeeks ? $nodeIdx : $nodeIdx + 1];
 
-                if($property->equals(CellInformationType::Room())) {
+                if($property === CellInformationType::Room) {
                     $lesson->setRoom($value);
-                } else if($property->equals(CellInformationType::Subject())) {
+                } else if($property === CellInformationType::Subject) {
                     $lesson->setSubject($value);
-                } else if($property->equals(CellInformationType::Teacher())) {
+                } else if($property === CellInformationType::Teacher) {
                     $lesson->setTeacher($value);
-                } else if($property->equals(CellInformationType::Weeks())) {
+                } else if($property === CellInformationType::Weeks) {
                     $lesson->setWeeks(explode(',', $value));
                 }
             }

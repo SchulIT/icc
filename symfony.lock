@@ -260,18 +260,6 @@
     "nikic/php-parser": {
         "version": "v4.12.0"
     },
-    "nyholm/psr7": {
-        "version": "1.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "1.0",
-            "ref": "0cd4d2d0e7f646fda75f9944f747a56e6ed13d4c"
-        },
-        "files": [
-            "./config/packages/nyholm_psr7.yaml"
-        ]
-    },
     "oneup/flysystem-bundle": {
         "version": "4.4",
         "recipe": {
@@ -289,9 +277,6 @@
     },
     "phar-io/version": {
         "version": "3.1.0"
-    },
-    "php-http/message-factory": {
-        "version": "v1.0.2"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"

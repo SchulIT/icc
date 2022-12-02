@@ -7,6 +7,10 @@ class FreeLessonsInfotextReader implements InfotextReaderInterface {
     public const ItemSeparator = ',';
 
     public function canHandle(?string $identifier): bool {
+        if($identifier === null) {
+            return false;
+        }
+
         return trim($identifier) === 'Unterrichtsfrei';
     }
 

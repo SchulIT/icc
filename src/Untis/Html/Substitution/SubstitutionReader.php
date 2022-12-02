@@ -115,7 +115,8 @@ class SubstitutionReader extends AbstractHtmlReader {
             $substitution->setGrades($this->tableCellParser->parseMultiStringColumn($node->childNodes[$order->getGradesColumn()]->nodeValue));
             $substitution->setReplacementGrades($this->tableCellParser->parseMultiStringColumn($node->childNodes[$order->getReplacementGradesColumn()]->nodeValue));
 
-            $isCancelled = trim($this->tableCellParser->parseStringOrNullColumn($node->childNodes[$order->getIsCancelledColumn()]->nodeValue)) === 'x';
+            $isCancelledValue = $this->tableCellParser->parseStringOrNullColumn($node->childNodes[$order->getIsCancelledColumn()]->nodeValue);
+            $isCancelled = $isCancelledValue !== null && trim($isCancelledValue) === 'x';
 
             if($isCancelled === true) {
                 $substitution->setReplacementGrades([]);

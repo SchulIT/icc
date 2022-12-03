@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d8fc1a6a8974350dd2535e32a5e3687d",
+    "content-hash": "1adb8e37b9a8a9ebbfd94ce9bcec4289",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -243,16 +243,16 @@
         },
         {
             "name": "damienharper/auditor",
-            "version": "2.3.0",
+            "version": "2.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DamienHarper/auditor.git",
-                "reference": "142ca8ca1fb81f0ca2e31fd3f022ca8f7830743a"
+                "reference": "b92f19f05bd188fad52b1ed6043f67a9d0dc3656"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DamienHarper/auditor/zipball/142ca8ca1fb81f0ca2e31fd3f022ca8f7830743a",
-                "reference": "142ca8ca1fb81f0ca2e31fd3f022ca8f7830743a",
+                "url": "https://api.github.com/repos/DamienHarper/auditor/zipball/b92f19f05bd188fad52b1ed6043f67a9d0dc3656",
+                "reference": "b92f19f05bd188fad52b1ed6043f67a9d0dc3656",
                 "shasum": ""
             },
             "require": {
@@ -308,9 +308,9 @@
             ],
             "support": {
                 "issues": "https://github.com/DamienHarper/auditor/issues",
-                "source": "https://github.com/DamienHarper/auditor/tree/2.3.0"
+                "source": "https://github.com/DamienHarper/auditor/tree/2.3.2"
             },
-            "time": "2022-11-24T15:26:04+00:00"
+            "time": "2022-12-02T20:10:43+00:00"
         },
         {
             "name": "damienharper/auditor-bundle",
@@ -3688,16 +3688,16 @@
         },
         {
             "name": "lightsaml2/lightsaml",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lightsaml2/lightSAML.git",
-                "reference": "3c10262b85945c50c97f01f82e3dc4ba3987af3b"
+                "reference": "f070bb747df5d9f4885d0d64f17ed4656d78965f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lightsaml2/lightSAML/zipball/3c10262b85945c50c97f01f82e3dc4ba3987af3b",
-                "reference": "3c10262b85945c50c97f01f82e3dc4ba3987af3b",
+                "url": "https://api.github.com/repos/lightsaml2/lightSAML/zipball/f070bb747df5d9f4885d0d64f17ed4656d78965f",
+                "reference": "f070bb747df5d9f4885d0d64f17ed4656d78965f",
                 "shasum": ""
             },
             "require": {
@@ -3751,7 +3751,7 @@
                 "issues": "https://github.com/lightsaml2/lightsaml/issues",
                 "source": "https://github.com/lightSAML2/lightSAML"
             },
-            "time": "2022-06-25T15:11:12+00:00"
+            "time": "2022-12-03T19:38:16+00:00"
         },
         {
             "name": "lightsaml2/sp-bundle",

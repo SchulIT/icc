@@ -19,7 +19,7 @@ class Display {
     private ?string $name = null;
 
     #[Assert\NotNull]
-    #[ORM\Column(type: 'display_target_user_type')]
+    #[ORM\Column(type: 'string', enumType: DisplayTargetUserType::class)]
     private ?DisplayTargetUserType $targetUserType = null;
 
     #[Assert\GreaterThan(0)]

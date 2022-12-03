@@ -30,11 +30,11 @@ class DisplayController extends AbstractController {
         $appointments = [ ];
         $groups = [ ];
 
-        if($display->getTargetUserType()->equals(DisplayTargetUserType::Students())) {
+        if($display->getTargetUserType() === DisplayTargetUserType::Students) {
             $groups = $displayHelper->getStudentsItems($today);
 
             $appointments = $appointmentRepository->findAllForAllStudents($today);
-        } else if($display->getTargetUserType()->equals(DisplayTargetUserType::Teachers())) {
+        } else if($display->getTargetUserType() === DisplayTargetUserType::Teachers) {
             $groups = $displayHelper->getTeachersItems($today);
 
             $appointments = $appointmentRepository->findAll([], null, $today);
@@ -58,7 +58,7 @@ class DisplayController extends AbstractController {
             'count' => $itemsCount,
             'last_update' => $importDateTymeRepository->findOneByEntityClass(Substitution::class),
             'day' => $today,
-            'is_teachersview' => $display->getTargetUserType()->equals(DisplayTargetUserType::Teachers())
+            'is_teachersview' => $display->getTargetUserType() === DisplayTargetUserType::Teachers
         ]);
     }
 }

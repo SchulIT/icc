@@ -2,25 +2,36 @@
 
 namespace App\Form;
 
-use FervoEnumBundle\Generated\Form\DisplayTargetUserTypeType;
+use App\Entity\DisplayTargetUserType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DisplayType extends AbstractType {
+
+    public function __construct(private readonly TranslatorInterface $translator) {
+
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add('name', TextType::class, [
                 'label' => 'label.name'
             ])
-            ->add('targetUserType', DisplayTargetUserTypeType::class, [
+            ->add('targetUserType', EnumType::class, [
+                'class' => DisplayTargetUserType::class,
                 'label' => 'label.usertype',
                 'expanded' => true,
                 'label_attr' => [
                     'class' => 'radio-custom'
-                ]
+                ],
+                'choice_label' => function(DisplayTargetUserType $targetUserType) {
+                    return $this->translator->trans('display_target_user_type.' . $targetUserType->value, [], 'enums');
+                }
             ])
             ->add('refreshTime', IntegerType::class, [
                 'label' => 'label.refresh_time.label',

@@ -2,14 +2,8 @@
 
 namespace App\Entity;
 
-use MyCLabs\Enum\Enum;
+enum DisplayTargetUserType: string {
+    case Students = 'students';
 
-/**
- * @method static DisplayTargetUserType Students()
- * @method static DisplayTargetUserType Teachers()
- */
-class DisplayTargetUserType extends Enum {
-    private const Students = 'students';
-
-    private const Teachers = 'teachers';
+    case Teachers = 'teachers';
 }

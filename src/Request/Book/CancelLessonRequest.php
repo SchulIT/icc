@@ -11,8 +11,8 @@ class CancelLessonRequest {
     /**
      * @Serializer\SerializedName("_token")
      * @Serializer\Type("string")
-     * @CsrfToken(id="cancel_lesson")
      */
+    #[CsrfToken(id: 'cancel_lesson')]
     #[Assert\NotBlank]
     private ?string $csrfToken = null;
 

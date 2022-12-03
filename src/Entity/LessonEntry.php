@@ -13,8 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  * @Auditable()
- * @UniqueLessonEntry(groups={"Default", "cancel"})
  */
+#[UniqueLessonEntry(groups: ['Default', 'cancel'])]
 class LessonEntry {
 
     use IdTrait;

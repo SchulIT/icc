@@ -2,7 +2,6 @@
 
 namespace App\Request\Data;
 
-use App\Validator\NullOrNotBlank;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -22,8 +21,8 @@ class PrivacyCategoryData {
 
     /**
      * @Serializer\Type("string")
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     private ?string $description = null;
 
     public function setId(string $id): PrivacyCategoryData {

@@ -2,11 +2,10 @@
 
 namespace App\Validator;
 
+use Attribute;
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[Attribute]
 class DateIsNotInPast extends Constraint {
     public string $message = 'This value must not be in the past.';
 }

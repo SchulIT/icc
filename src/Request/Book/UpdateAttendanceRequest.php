@@ -10,9 +10,9 @@ class UpdateAttendanceRequest {
     /**
      * @Serializer\SerializedName("_token")
      * @Serializer\Type("string")
-     * @CsrfToken(id="update_attendance")
      * @var string|null
      */
+    #[CsrfToken(id: 'update_attendance')]
     #[Assert\NotBlank]
     private ?string $csrfToken = null;
 

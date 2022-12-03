@@ -4,7 +4,6 @@ namespace App\Tests\Validator;
 
 use App\Validator\Color;
 use App\Validator\ColorValidator;
-use App\Validator\NullOrNotBlank;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;

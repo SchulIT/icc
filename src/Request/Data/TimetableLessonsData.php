@@ -31,9 +31,9 @@ class TimetableLessonsData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\TimetableLessonData>")
-     * @UniqueId(propertyPath="id")
      * @var TimetableLessonData[]
      */
+    #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
     private array $lessons = [ ];
 

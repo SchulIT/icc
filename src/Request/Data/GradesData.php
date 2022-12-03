@@ -9,9 +9,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class GradesData {
     /**
      * @Serializer\Type("array<App\Request\Data\GradeData>")
-     * @UniqueId(propertyPath="id")
      * @var GradeData[]
      */
+    #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
     private array $grades = [ ];
 

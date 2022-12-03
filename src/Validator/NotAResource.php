@@ -2,12 +2,10 @@
 
 namespace App\Validator;
 
+use Attribute;
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- * @Target({"CLASS", "ANNOTATION"})
- */
+#[Attribute(Attribute::TARGET_CLASS)]
 class NotAResource extends Constraint {
     public string $message = 'This room cannot be created as a resource with the same name ({{ name }}) already exists.';
 

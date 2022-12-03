@@ -33,8 +33,8 @@ class AppointmentCategory {
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Color()
      */
+    #[Color]
     #[Assert\NotNull]
     #[Assert\NotBlank]
     private ?string $color = null;

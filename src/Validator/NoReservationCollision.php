@@ -2,12 +2,10 @@
 
 namespace App\Validator;
 
+use Attribute;
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- * @Target({"CLASS", "ANNOTATION"})
- */
+#[Attribute(Attribute::TARGET_CLASS)]
 class NoReservationCollision extends Constraint {
     public string $messageReservation = 'This room reservation collides with an existing reservation by {{ teacher }} in lesson {{ lessonNumber }}.';
     public string $messageTimetable = 'This room reservation collides with an existing timetable lesson {{ tuition }} ({{ teacher }}) in lesson {{ lessonNumber }}.';

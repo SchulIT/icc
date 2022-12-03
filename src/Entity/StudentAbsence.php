@@ -32,17 +32,17 @@ class StudentAbsence {
 
     /**
      * @ORM\Embedded(class="DateLesson")
-     * @DateLessonNotInPast(exceptions={"ROLE_STUDENT_ABSENCE_CREATOR"}, propertyName="from")
      * @var DateLesson|null
      */
+    #[DateLessonNotInPast(exceptions: ['ROLE_STUDENT_ABSENCE_CREATOR'], propertyName: 'from')]
     #[Assert\NotNull]
     private ?DateLesson $from = null;
 
     /**
      * @ORM\Embedded(class="DateLesson")
-     * @DateLessonGreaterThan(propertyPath="from")
      * @var DateLesson|null
      */
+    #[DateLessonGreaterThan(propertyPath: 'from')]
     #[Assert\NotNull]
     private ?DateLesson $until = null;
 

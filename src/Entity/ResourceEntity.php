@@ -2,11 +2,10 @@
 
 namespace App\Entity;
 
-use Stringable;
-use App\Validator\NullOrNotBlank;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
+use Stringable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -36,8 +35,8 @@ class ResourceEntity implements Stringable {
 
     /**
      * @ORM\Column(type="text", name="`description`", nullable=true)
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     private $description;
 
     /**

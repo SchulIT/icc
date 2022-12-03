@@ -10,9 +10,9 @@ class AppointmentCategoriesData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\AppointmentCategoryData>")
-     * @UniqueId(propertyPath="id")
      * @var AppointmentCategoryData[]
      */
+    #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
     private array $categories = [ ];
 

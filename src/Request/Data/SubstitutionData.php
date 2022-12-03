@@ -3,7 +3,6 @@
 namespace App\Request\Data;
 
 use DateTime;
-use App\Validator\NullOrNotBlank;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -41,20 +40,20 @@ class SubstitutionData {
 
     /**
      * @Serializer\Type("string")
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     private ?string $type = null;
 
     /**
      * @Serializer\Type("string")
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     private ?string $subject = null;
 
     /**
      * @Serializer\Type("string")
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     private ?string $replacementSubject = null;
 
     /**
@@ -83,8 +82,8 @@ class SubstitutionData {
 
     /**
      * @Serializer\Type("string")
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     private ?string $text = null;
 
     /**

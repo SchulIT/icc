@@ -39,8 +39,8 @@ class TeacherTag {
 
     /**
      * @ORM\Column(type="string", length=7)
-     * @Color()
      */
+    #[Color]
     #[Assert\NotBlank]
     private $color;
 

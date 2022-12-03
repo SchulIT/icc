@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use Stringable;
-use App\Validator\NullOrNotBlank;
 use DateTime;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Ramsey\Uuid\Uuid;
+use Stringable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -55,8 +54,8 @@ class Student implements JsonSerializable, Stringable {
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     #[Assert\Email]
     private ?string $email = null;
 

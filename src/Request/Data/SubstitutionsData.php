@@ -13,9 +13,9 @@ class SubstitutionsData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\SubstitutionData>")
-     * @UniqueId(propertyPath="id")
      * @var SubstitutionData[]
      */
+    #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
     private array $substitutions = [ ];
 

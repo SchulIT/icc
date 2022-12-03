@@ -33,9 +33,9 @@ class ExamsData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\ExamData>")
-     * @UniqueId(propertyPath="id")
      * @var ExamData[]
      */
+    #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
     private array $exams = [ ];
 

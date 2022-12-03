@@ -61,9 +61,9 @@ class Message implements Stringable {
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
-     * @CollectionNotEmpty(propertyPath="visibilities")
      * @var Collection<StudyGroup>
      */
+    #[CollectionNotEmpty(propertyPath: 'visibilities')]
     private $studyGroups;
 
     /**
@@ -127,9 +127,9 @@ class Message implements Stringable {
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
-     * @SubsetOf(propertyPath="visibilities")
      * @var Collection<UserTypeEntity>
      */
+    #[SubsetOf(propertyPath: 'visibilities')]
     private $downloadEnabledUserTypes;
 
     /**
@@ -139,9 +139,9 @@ class Message implements Stringable {
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
-     * @SubsetOf(propertyPath="studyGroups")
      * @var Collection<StudyGroup>
      */
+    #[SubsetOf(propertyPath: 'studyGroups')]
     private $downloadEnabledStudyGroups;
 
     /**
@@ -155,9 +155,9 @@ class Message implements Stringable {
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
-     * @SubsetOf(propertyPath="visibilities")
      * @var Collection<UserTypeEntity>
      */
+    #[SubsetOf(propertyPath: 'visibilities')]
     private $uploadEnabledUserTypes;
 
     /**
@@ -167,9 +167,9 @@ class Message implements Stringable {
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
-     * @SubsetOf(propertyPath="studyGroups")
      * @var Collection<StudyGroup>
      */
+    #[SubsetOf(propertyPath: 'studyGroups')]
     private $uploadEnabledStudyGroups;
 
     /**
@@ -205,9 +205,9 @@ class Message implements Stringable {
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
-     * @SubsetOf(propertyPath="visibilities")
      * @var Collection<UserTypeEntity>
      */
+    #[SubsetOf(propertyPath: 'visibilities')]
     private $confirmationRequiredUserTypes;
 
     /**
@@ -217,9 +217,9 @@ class Message implements Stringable {
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
-     * @SubsetOf(propertyPath="studyGroups")
      * @var Collection<StudyGroup>
      */
+    #[SubsetOf(propertyPath: 'studyGroups')]
     private $confirmationRequiredStudyGroups;
 
     /**
@@ -255,9 +255,9 @@ class Message implements Stringable {
      *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
-     * @SubsetOf(propertyPath="visibilities")
      * @var Collection<UserTypeEntity>
      */
+    #[SubsetOf(propertyPath: 'visibilities')]
     private $pollUserTypes;
 
     /**
@@ -267,9 +267,9 @@ class Message implements Stringable {
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
-     * @SubsetOf(propertyPath="studyGroups")
      * @var Collection<StudyGroup>
      */
+    #[SubsetOf(propertyPath: 'studyGroups')]
     private $pollStudyGroups;
 
     /**

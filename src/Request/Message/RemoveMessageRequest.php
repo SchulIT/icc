@@ -11,8 +11,8 @@ class RemoveMessageRequest {
     /**
      * @Serializer\SerializedName("_token")
      * @Serializer\Type("string")
-     * @CsrfToken(id="remove_message")
      */
+    #[CsrfToken(id: 'remove_message')]
     #[Assert\NotBlank]
     private ?string $csrfToken = null;
 

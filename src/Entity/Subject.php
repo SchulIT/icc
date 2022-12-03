@@ -82,9 +82,9 @@ class Subject implements Stringable {
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Color()
      * @Serializer\Exclude()
      */
+    #[Color]
     #[Assert\Length(min: 7, max: 7)]
     private ?string $color = null;
 

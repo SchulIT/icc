@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Validator\DateIsNotInPast;
 use App\Validator\DateLessonGreaterThan;
 use DateTime;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
@@ -33,8 +34,8 @@ class ExcuseNote {
 
     /**
      * @ORM\Embedded(class="DateLesson")
-     * @DateLessonGreaterThan(propertyPath="from")
      */
+    #[DateLessonGreaterThan(propertyPath: 'from')]
     #[Assert\NotNull]
     private ?DateLesson $until = null;
 

@@ -6,9 +6,7 @@ use App\Validator\NotAResource;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @NotAResource()
- */
+#[NotAResource]
 class RoomData {
 
     /**

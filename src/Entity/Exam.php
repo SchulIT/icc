@@ -17,10 +17,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  * @Auditable()
- * @NotTooManyExamsPerWeek()
- * @NotTooManyExamsPerDay()
- * @NoReservationCollision()
  */
+#[NotTooManyExamsPerDay]
+#[NotTooManyExamsPerWeek]
+#[NoReservationCollision]
 class Exam {
 
     use IdTrait;
@@ -34,8 +34,8 @@ class Exam {
 
     /**
      * @ORM\Column(type="date", nullable=true)
-     * @DateInActiveSection()
      */
+    #[DateInActiveSection]
     #[Assert\NotNull]
     private ?\DateTime $date = null;
 

@@ -56,8 +56,8 @@ class Teacher implements Stringable {
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     #[Assert\Email]
     private ?string $email = null;
 

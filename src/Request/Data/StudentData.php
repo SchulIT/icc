@@ -3,7 +3,6 @@
 namespace App\Request\Data;
 
 use App\Entity\Gender;
-use App\Validator\NullOrNotBlank;
 use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -30,8 +29,8 @@ class StudentData {
 
     /**
      * @Serializer\Type("string")
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     private ?string $email = null;
 
     /**
@@ -44,8 +43,8 @@ class StudentData {
 
     /**
      * @Serializer\Type("string")
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     private ?string $status = null;
 
     /**

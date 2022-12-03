@@ -2,11 +2,10 @@
 
 namespace App\Entity;
 
-use Stringable;
-use App\Validator\NullOrNotBlank;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
+use Stringable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -20,8 +19,8 @@ class PrivacyCategory implements Stringable {
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     private ?string $externalId = null;
 
     /**

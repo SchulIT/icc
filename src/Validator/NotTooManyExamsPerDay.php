@@ -2,12 +2,10 @@
 
 namespace App\Validator;
 
+use Attribute;
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- * @Target({"CLASS", "ANNOTATION"})
- */
+#[Attribute(Attribute::TARGET_CLASS)]
 class NotTooManyExamsPerDay extends Constraint {
     public string $message = 'Only {{ maxNumber }} exam(s) per day are allowed. Got {{ number }}.';
 

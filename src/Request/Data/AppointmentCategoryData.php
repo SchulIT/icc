@@ -2,7 +2,6 @@
 
 namespace App\Request\Data;
 
-use App\Validator\NullOrNotBlank;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -24,8 +23,8 @@ class AppointmentCategoryData {
      * Hex color string without leading hashtag. Note: abbreviated values (e.g. 000, fff, ...) are not allowed.
      *
      * @Serializer\Type("string")
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     private ?string $color = null;
 
     /**

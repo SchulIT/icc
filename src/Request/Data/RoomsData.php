@@ -11,9 +11,9 @@ class RoomsData {
     /**
      * @Serializer\Type("array<App\Request\Data\RoomData>")
      * @Serializer\SerializedName("rooms")
-     * @UniqueId(propertyPath="id")
      * @var RoomData[]
      */
+    #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
     private array $rooms = [ ];
 

@@ -10,9 +10,9 @@ class SubjectsData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\SubjectData>")
-     * @UniqueId(propertyPath="id")
      * @var SubjectData[]
      */
+    #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
     private array $subjects = [ ];
 

@@ -20,9 +20,9 @@ class TuitionsData {
 
     /**
      * @Serializer\Type("array<App\Request\Data\TuitionData>")
-     * @UniqueId(propertyPath="id")
      * @var TuitionData[]
      */
+    #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
     private array $tuitions = [ ];
 

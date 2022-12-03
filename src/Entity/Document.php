@@ -57,9 +57,9 @@ class Document {
      *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
      * )
      * @ORM\OrderBy({"name" = "ASC"})
-     * @CollectionNotEmpty(propertyPath="visibilities")
      * @var Collection<Grade>
      */
+    #[CollectionNotEmpty(propertyPath: 'visibilities')]
     private $grades;
 
     /**

@@ -3,7 +3,6 @@
 namespace App\Request\Data;
 
 use DateTime;
-use App\Validator\NullOrNotBlank;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -40,8 +39,8 @@ class ExamData {
      * Optional description of the exam
      *
      * @Serializer\Type("string")
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     private ?string $description = null;
 
     /**

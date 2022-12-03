@@ -2,7 +2,6 @@
 
 namespace App\Request\Data;
 
-use App\Validator\NullOrNotBlank;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -27,8 +26,8 @@ class StudyGroupMembershipData {
     /**
      * Type of the membership.
      * @Serializer\Type("string")
-     * @NullOrNotBlank()
      */
+    #[Assert\NotBlank(allowNull: true)]
     private ?string $type = null;
 
     public function getStudent(): ?string {

@@ -13,8 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity()
  * @Auditable()
- * @NoReservationCollision(groups={"Default", "collision"})
  */
+#[NoReservationCollision(groups: ['Default', 'collision'])]
 class ResourceReservation {
 
     use IdTrait;
@@ -29,8 +29,8 @@ class ResourceReservation {
 
     /**
      * @ORM\Column(type="date")
-     * @DateIsNotInPast()
      */
+    #[DateIsNotInPast]
     #[Assert\NotNull]
     private ?\DateTime $date = null;
 

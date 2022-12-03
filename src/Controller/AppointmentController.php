@@ -284,7 +284,7 @@ class AppointmentController extends AbstractControllerWithMessages {
         $user = $this->getUser();
 
         $deviceToken = (new IcsAccessToken())
-            ->setType(IcsAccessTokenType::Calendar())
+            ->setType(IcsAccessTokenType::Calendar)
             ->setUser($user);
 
         $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);

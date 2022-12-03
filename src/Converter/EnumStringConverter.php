@@ -11,9 +11,14 @@ class EnumStringConverter {
     {
     }
 
-    public function convert(Enum $enum): string {
+    public function convert($enum): string {
         $prefix = $this->enumFormKeyMapping[$enum::class];
-        $key = sprintf('%s.%s', $prefix, $enum->getValue());
+
+        if(enum_exists($enum::class)) {
+            $key = sprintf('%s.%s', $prefix, $enum->value);
+        } else {
+            $key = sprintf('%s.%s', $prefix, $enum->getValue());
+        }
 
         return $this->translator->trans($key, [], 'enums');
     }

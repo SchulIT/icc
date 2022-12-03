@@ -226,7 +226,7 @@ class ExamController extends AbstractControllerWithMessages {
         $user = $this->getUser();
 
         $deviceToken = (new IcsAccessToken())
-            ->setType(IcsAccessTokenType::Exams())
+            ->setType(IcsAccessTokenType::Exams)
             ->setUser($user);
 
         $form = $this->createForm(DeviceTokenTypeForm::class, $deviceToken);

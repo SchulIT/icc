@@ -18,7 +18,7 @@ class IcsAccessToken implements UserInterface {
     #[ORM\Column(type: 'string', length: 128, unique: true)]
     private ?string $token = null;
 
-    #[ORM\Column(type: 'ics_access_token_type')]
+    #[ORM\Column(type: 'string', enumType: IcsAccessTokenType::class)]
     private ?IcsAccessTokenType $type = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -53,7 +53,7 @@ class IcsAccessToken implements UserInterface {
     }
 
     /**
-     * @return IcsAccessTokenType
+     * @return IcsAccessTokenType|null
      */
     public function getType(): ?IcsAccessTokenType {
         return $this->type;

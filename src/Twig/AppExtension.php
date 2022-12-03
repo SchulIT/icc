@@ -101,7 +101,7 @@ class AppExtension extends AbstractExtension {
         return $this->timestampConverter->convert($timestamp);
     }
 
-    public function enum(Enum $enum): string {
+    public function enum($enum): string {
         return $this->enumStringConverter->convert($enum);
     }
 

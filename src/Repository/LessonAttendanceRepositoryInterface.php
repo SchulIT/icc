@@ -32,8 +32,8 @@ interface LessonAttendanceRepositoryInterface {
 
     /**
      * @param Student[] $students
-     * @param Tuition $tuitions
-     * @return LessonAttendance
+     * @param Tuition[] $tuitions
+     * @return LessonAttendance[]
      */
     public function findAbsentByStudents(array $students, array $tuitions): array;
 

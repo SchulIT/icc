@@ -9,39 +9,31 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class MessageFile {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Message", inversedBy="files", cascade={"persist"})
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: Message::class, cascade: ['persist'], inversedBy: 'files')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Message $message = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
     #[Assert\NotNull]
+    #[ORM\Column(type: 'string')]
     private ?string $label = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
     #[Assert\NotNull]
+    #[ORM\Column(type: 'string')]
     private ?string $extension = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="MessageFileUpload", mappedBy="messageFile")
      * @var Collection<MessageFileUpload>
      */
+    #[ORM\OneToMany(targetEntity: MessageFileUpload::class, mappedBy: 'messageFile')]
     private $uploads;
 
     public function __construct() {

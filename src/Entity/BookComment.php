@@ -11,54 +11,41 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class BookComment {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="text")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'text')]
     private ?string $text = null;
 
-    /**
-     * @ORM\Column(type="date")
-     */
     #[Assert\NotNull]
-    private ?\DateTime $date = null;
+    #[ORM\Column(type: 'date')]
+    private ?DateTime $date = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumn()
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Teacher::class)]
+    #[ORM\JoinColumn]
     private ?Teacher $teacher = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Student")
-     * @ORM\JoinTable("book_comment_student",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn()}
-     * )
      * @var Collection<Student>
      */
+    #[ORM\JoinTable('book_comment_student')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn]
+    #[ORM\ManyToMany(targetEntity: Student::class)]
     private $students;
 
-    /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
-     */
-    private ?\DateTime $createdAt = null;
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTime $createdAt = null;
 
-    /**
-     * @Gedmo\Blameable(on="create")
-     * @ORM\Column(type="string")
-     */
+    #[Gedmo\Blameable(on: 'create')]
+    #[ORM\Column(type: 'string')]
     private ?string $createdBy = null;
 
     public function __construct() {

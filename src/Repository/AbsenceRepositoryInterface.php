@@ -15,7 +15,7 @@ interface AbsenceRepositoryInterface extends TransactionalRepositoryInterface {
      * @param \DateTime $date
      * @return Absence[]
      */
-    public function findAllTeachers(\DateTime $date): array;
+    public function findAllTeachers(DateTime $date): array;
 
     /**
      * Returns absent study groups for the given date.
@@ -23,13 +23,13 @@ interface AbsenceRepositoryInterface extends TransactionalRepositoryInterface {
      * @param \DateTime $date
      * @return Absence[]
      */
-    public function findAllStudyGroups(\DateTime $date): array;
+    public function findAllStudyGroups(DateTime $date): array;
 
     /**
      * @param Student[] $students
      * @return Student[]
      */
-    public function findAllStudentsByDateAndLesson(\DateTime $dateTime, array $students, int $lesson);
+    public function findAllStudentsByDateAndLesson(DateTime $dateTime, array $students, int $lesson);
 
     public function persist(Absence $person): void;
 

@@ -16,7 +16,7 @@ class Substitution {
      * @Serializer\SerializedName("date")
      * @Serializer\Type("DateTime")
      */
-    private ?\DateTimeInterface $date = null;
+    private ?DateTimeInterface $date = null;
 
     /**
      * @Serializer\SerializedName("lesson_start")

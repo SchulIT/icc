@@ -8,41 +8,33 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity]
 class StudentAbsenceMessage {
 
     use IdTrait;
     use UuidTrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity="StudentAbsence", inversedBy="messages")
-     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var StudentAbsence|null
      */
+    #[ORM\ManyToOne(targetEntity: StudentAbsence::class, inversedBy: 'messages')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?StudentAbsence $absence = null;
 
     /**
-     * @ORM\Column(type="text")
      * @var string|null
      */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'text')]
     private ?string $message = null;
 
-    /**
-     * @Gedmo\Blameable(on="create")
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var User|null
-     */
+    #[Gedmo\Blameable(on: 'create')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?User $createdBy = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Gedmo\Timestampable(on="create")
-     * @var DateTime|null
-     */
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(type: 'datetime')]
     private ?DateTime $createdAt = null;
 
     public function __construct() {

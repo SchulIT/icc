@@ -10,47 +10,35 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
 #[NoReservationCollision(groups: ['Default', 'collision'])]
+#[ORM\Entity]
 class ResourceReservation {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="ResourceEntity")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: ResourceEntity::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?ResourceEntity $resource = null;
 
-    /**
-     * @ORM\Column(type="date")
-     */
     #[DateIsNotInPast]
     #[Assert\NotNull]
-    private ?\DateTime $date = null;
+    #[ORM\Column(type: 'date')]
+    private ?DateTime $date = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\GreaterThan(0)]
+    #[ORM\Column(type: 'integer')]
     private int $lessonStart = 0;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart')]
+    #[ORM\Column(type: 'integer')]
     private int $lessonEnd = 0;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Teacher::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Teacher $teacher = null;
 
     public function __construct() {

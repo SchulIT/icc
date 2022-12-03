@@ -10,52 +10,48 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- * @Vich\Uploadable()
- */
+#[Vich\Uploadable]
+#[Auditable]
+#[ORM\Entity]
 class StudentAbsenceAttachment {
 
     use IdTrait;
     use UuidTrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity="StudentAbsence", inversedBy="attachments")
-     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var StudentAbsence|null
      */
+    #[ORM\ManyToOne(targetEntity: StudentAbsence::class, inversedBy: 'attachments')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?StudentAbsence $absence = null;
 
-    /**
-     * @Vich\UploadableField(mapping="student_absence", fileNameProperty="path", originalName="filename", size="size")
-     */
+    #[Vich\UploadableField(mapping: 'student_absence', fileNameProperty: 'path', size: 'size', originalName: 'filename')]
     #[Assert\File(maxSize: '5M', mimeTypes: ['application/pdf', 'image/png', 'image/jpg', 'image/jpeg'])]
     private ?File $file = null;
 
     /**
-     * @ORM\Column(type="string")
      * @var string
      */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private string $filename;
 
     /**
-     * @ORM\Column(type="string")
      * @var string
      */
+    #[ORM\Column(type: 'string')]
     private string $path;
 
     /**
-     * @ORM\Column(type="integer")
      * @var int
      */
+    #[ORM\Column(type: 'integer')]
     private int $size;
 
     /**
-     * @ORM\Column(type="datetime")
      * @var DateTime
      */
+    #[ORM\Column(type: 'datetime')]
     private DateTime $updatedAt;
 
     public function __construct() {

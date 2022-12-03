@@ -9,47 +9,44 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity]
 class StudentAbsenceType implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
     /**
-     * @ORM\Column(type="string")
      * @var string|null
      */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
     /**
-     * @ORM\Column(type="boolean")
      * @var bool
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $mustApprove = false;
 
     /**
-     * @ORM\Column(type="boolean")
      * @var bool
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $isTypeWithZeroAbsenceLessons = false;
 
     /**
-     * @ORM\Column(type="boolean")
      * @var bool
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $isAlwaysExcused = false;
 
     /**
-     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="student_absence_type_allowed_usertypes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<UserTypeEntity>
      */
+    #[ORM\JoinTable(name: 'student_absence_type_allowed_usertypes')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
     private Collection $allowedUserTypes;
 
     public function __construct() {

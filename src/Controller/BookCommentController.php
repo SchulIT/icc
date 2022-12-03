@@ -17,10 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @IsGranted("ROLE_BOOK_ENTRY_CREATOR")
- */
 #[Route(path: '/book/comment')]
+#[IsGranted('ROLE_BOOK_ENTRY_CREATOR')]
 class BookCommentController extends AbstractController {
 
     public function __construct(private BookCommentRepositoryInterface $repository, private SectionResolverInterface $sectionResolver, RefererHelper $redirectHelper) {

@@ -9,41 +9,32 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
 #[UniqueEntity(fields: ['externalId'])]
+#[ORM\Entity]
 class AppointmentCategory {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", unique=true, nullable=true)
-     */
+    #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $externalId = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
     #[Assert\NotNull]
+    #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[Color]
     #[Assert\NotNull]
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $color = null;
 
     /**
      * Determines whether non-admin users can add appointments in this category
-     *
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $usersCanCreateAppointments = false;
 
     public function __construct() {

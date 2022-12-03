@@ -8,10 +8,8 @@ use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Security("is_granted('ROLE_ADMIN')")
- */
 #[Route(path: '/admin/timetable')]
+#[Security("is_granted('ROLE_ADMIN')")]
 class TimetableAdminController extends AbstractController {
 
     public function __construct(private TimetableWeekRepositoryInterface $weekRepository, RefererHelper $refererHelper) {

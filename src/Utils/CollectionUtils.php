@@ -24,7 +24,7 @@ class CollectionUtils {
     /**
      * Synchronises a Collection with $targetEntities based on the given $idSelector.
      */
-    public static function synchronize(Collection $collection, array $targetEntities, \Closure $idSelector) {
+    public static function synchronize(Collection $collection, array $targetEntities, Closure $idSelector) {
         $currentCollection = clone $collection;
         $currentIds = array_map($idSelector, $collection->toArray());
 

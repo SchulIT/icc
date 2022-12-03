@@ -30,13 +30,13 @@ class Book {
      * @Serializer\Type("DateTime")
      * @Serializer\SerializedName("start")
      */
-    private ?\DateTime $start = null;
+    private ?DateTime $start = null;
 
     /**
      * @Serializer\Type("DateTime")
      * @Serializer\SerializedName("end")
      */
-    private ?\DateTime $end = null;
+    private ?DateTime $end = null;
 
     /**
      * @Serializer\Type("array<App\Book\Export\StudentSummary>")

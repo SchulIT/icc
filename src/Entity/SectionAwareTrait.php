@@ -8,11 +8,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 trait SectionAwareTrait {
 
     /**
-     * @ORM\ManyToOne(targetEntity="Section")
-     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Section|null
      */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Section::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private $section;
 
     public function getSection(): ?Section {

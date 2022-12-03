@@ -19,7 +19,7 @@ class InfotextRepository extends AbstractTransactionalRepository implements Info
     /**
      * @inheritDoc
      */
-    public function findAllByDate(\DateTime $dateTime): array {
+    public function findAllByDate(DateTime $dateTime): array {
         return $this->em
             ->getRepository(Infotext::class)
             ->findBy([

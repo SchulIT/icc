@@ -7,31 +7,23 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class ExamSupervision {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Exam", inversedBy="supervisions", cascade={"persist"})
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: Exam::class, cascade: ['persist'], inversedBy: 'supervisions')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Exam $exam = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: Teacher::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Teacher $teacher = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\GreaterThan(0)]
+    #[ORM\Column(type: 'integer')]
     private ?int $lesson = null;
 
     public function __construct() {

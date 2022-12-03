@@ -36,10 +36,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use ZipArchive;
 
-/**
- * @IsGranted("ROLE_IMPORTER")
- */
 #[Route(path: '/import')]
+#[IsGranted('ROLE_IMPORTER')]
 class UntisImportController extends AbstractController {
 
     #[Route(path: '/settings', name: 'import_untis_settings')]

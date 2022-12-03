@@ -8,29 +8,23 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class Room extends ResourceEntity {
 
-    /**
-     * @ORM\Column(type="string", unique=true, nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $externalId = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
     #[Assert\GreaterThanOrEqual(0)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $capacity;
 
     /**
-     * @ORM\OneToMany(targetEntity="RoomTagInfo", mappedBy="room", cascade={"persist"}, orphanRemoval=true)
      * @var Collection<RoomTagInfo>
      */
+    #[ORM\OneToMany(mappedBy: 'room', targetEntity: RoomTagInfo::class, cascade: ['persist'], orphanRemoval: true)]
     private $tags;
 
     public function __construct() {

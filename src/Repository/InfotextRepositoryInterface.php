@@ -16,7 +16,7 @@ interface InfotextRepositoryInterface extends TransactionalRepositoryInterface {
      * @param \DateTime $dateTime
      * @return Infotext[]
      */
-    public function findAllByDate(\DateTime $dateTime): array;
+    public function findAllByDate(DateTime $dateTime): array;
 
     /**
      * @param Infotext $infotext

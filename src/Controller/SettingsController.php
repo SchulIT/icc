@@ -48,10 +48,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Security("is_granted('ROLE_ADMIN')")
- */
 #[Route(path: '/admin/settings')]
+#[Security("is_granted('ROLE_ADMIN')")]
 class SettingsController extends AbstractController {
 
     #[Route(path: '', name: 'admin_settings')]

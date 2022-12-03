@@ -8,30 +8,22 @@ use Ramsey\Uuid\Uuid;
 use Stringable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class PrivacyCategory implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", unique=true, nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $externalId = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private string $label;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
     public function __construct() {

@@ -5,28 +5,20 @@ namespace App\Entity;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(name="room_roomtags")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'room_roomtags')]
 class RoomTagInfo {
-    /**
-     * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="Room", inversedBy="tags")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: Room::class, inversedBy: 'tags')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private $room;
 
-    /**
-     * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="RoomTag")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: RoomTag::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private $tag;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $value;
 
     /**

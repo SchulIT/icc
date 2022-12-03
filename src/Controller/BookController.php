@@ -450,10 +450,8 @@ class BookController extends AbstractController {
         ]);
     }
 
-    /**
-     * @ParamConverter("student", class="App\Entity\Student", options={"mapping": {"student": "uuid"}})
-     */
     #[Route(path: '/student/{student}', name: 'book_student')]
+    #[ParamConverter('student', class: Student::class, options: ['mapping' => ['student' => 'uuid']])]
     public function student(Student $student, SectionFilter $sectionFilter, StudentAwareTuitionFilter $tuitionFilter,
                             StudentAwareGradeFilter $gradeFilter, TeacherFilter  $teacherFilter, Request $request,
                             StudentInfoResolver $infoResolver, TuitionRepositoryInterface $tuitionRepository,
@@ -506,44 +504,36 @@ class BookController extends AbstractController {
         return $response;
     }
 
-    /**
-     * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
-     * @ParamConverter("tuition", class="App\Entity\Tuition", options={"mapping": {"tuition": "uuid"}})
-     */
     #[Route(path: '/{section}/t/{tuition}/export/json', name: 'book_export_tuition_json')]
+    #[ParamConverter('section', class: Section::class, options: ['mapping' => ['section' => 'uuid']])]
+    #[ParamConverter('tuition', class: Tuition::class, options: ['mapping' => ['tuition' => 'uuid']])]
     public function exportTutionJson(Tuition $tuition, Section $section, BookExporter $exporter): Response {
         $filename = sprintf('%s-%d-%d.json', $tuition->getName(), $section->getYear(), $section->getNumber());
         $json = $exporter->exportTuitionJson($tuition, $section);
         return $this->createResponse($json, 'application/json', $filename);
     }
 
-    /**
-     * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
-     * @ParamConverter("tuition", class="App\Entity\Tuition", options={"mapping": {"tuition": "uuid"}})
-     */
     #[Route(path: '/{section}/t/{tuition}/export/xml', name: 'book_export_tuition_xml')]
+    #[ParamConverter('section', class: Section::class, options: ['mapping' => ['section' => 'uuid']])]
+    #[ParamConverter('tuition', class: Tuition::class, options: ['mapping' => ['tuition' => 'uuid']])]
     public function exportTuitionXml(Tuition $tuition, Section $section, BookExporter $exporter): Response {
         $filename = sprintf('%s-%d-%d.xml', $tuition->getName(), $section->getYear(), $section->getNumber());
         $xml = $exporter->exportTuitionXml($tuition, $section);
         return $this->createResponse($xml, 'application/xml', $filename);
     }
 
-    /**
-     * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
-     * @ParamConverter("grade", class="App\Entity\Grade", options={"mapping": {"grade": "uuid"}})
-     */
     #[Route(path: '/{section}/g/{grade}/export/json', name: 'book_export_grade_json')]
+    #[ParamConverter('section', class: Section::class, options: ['mapping' => ['section' => 'uuid']])]
+    #[ParamConverter('grade', class: Grade::class, options: ['mapping' => ['grade' => 'uuid']])]
     public function exportGradeJson(Grade $grade, Section $section, BookExporter $exporter): Response {
         $filename = sprintf('%s-%d-%d.json', $grade->getName(), $section->getYear(), $section->getNumber());
         $json = $exporter->exportGradeJson($grade, $section);
         return $this->createResponse($json, 'application/json', $filename);
     }
 
-    /**
-     * @ParamConverter("section", class="App\Entity\Section", options={"mapping": {"section": "uuid"}})
-     * @ParamConverter("grade", class="App\Entity\Grade", options={"mapping": {"grade": "uuid"}})
-     */
     #[Route(path: '/{section}/g/{grade}/export/xml', name: 'book_export_grade_xml')]
+    #[ParamConverter('section', class: Section::class, options: ['mapping' => ['section' => 'uuid']])]
+    #[ParamConverter('grade', class: Grade::class, options: ['mapping' => ['grade' => 'uuid']])]
     public function exportGradeXml(Grade $grade, Section $section, BookExporter $exporter): Response {
         $filename = sprintf('%s-%d-%d.xml', $grade->getName(), $section->getYear(), $section->getNumber());
         $xml = $exporter->exportGradeXml($grade, $section);

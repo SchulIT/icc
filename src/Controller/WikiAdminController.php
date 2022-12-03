@@ -24,10 +24,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Security("is_granted('ROLE_WIKI_ADMIN')")
- */
 #[Route(path: '/admin/wiki')]
+#[Security("is_granted('ROLE_WIKI_ADMIN')")]
 class WikiAdminController extends AbstractController {
 
     private const VersionParam = '_version';

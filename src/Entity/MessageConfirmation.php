@@ -7,30 +7,22 @@ use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity]
 class MessageConfirmation {
 
-    /**
-     * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="Message", inversedBy="confirmations")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: Message::class, inversedBy: 'confirmations')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Message $message = null;
 
-    /**
-     * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?User $user = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Gedmo\Timestampable(on="create")
-     */
-    private \DateTime $createdAt;
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(type: 'datetime')]
+    private DateTime $createdAt;
 
     public function getMessage(): Message {
         return $this->message;

@@ -9,54 +9,52 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class TimetableSupervision {
 
     use IdTrait;
     use UuidTrait;
 
     /**
-     * @ORM\Column(type="string", unique=true)
      * @var string|null
      */
+    #[ORM\Column(type: 'string', unique: true)]
     private ?string $externalId = null;
 
     /**
-     * @ORM\Column(type="datetime")
      * @var DateTime|null
      */
     #[Assert\NotNull]
+    #[ORM\Column(type: 'datetime')]
     private ?DateTime $date = null;
 
     /**
-     * @ORM\Column(type="integer")
      * @var int
      */
     #[Assert\GreaterThan(0)]
+    #[ORM\Column(type: 'integer')]
     private int $lesson;
 
     /**
-     * @ORM\Column(type="boolean")
      * @var bool
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $isBefore = true;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Teacher|null
      */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Teacher::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Teacher $teacher = null;
 
     /**
-     * @ORM\Column(type="string")
      * @var string|null
      */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $location = null;
 
     public function __construct() {

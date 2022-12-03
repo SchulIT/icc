@@ -8,9 +8,9 @@ class Substitution {
 
     private ?int $id = null;
 
-    private ?\DateTime $date = null;
+    private ?DateTime $date = null;
 
-    private ?\DateTime $lastChange = null;
+    private ?DateTime $lastChange = null;
 
     private ?int $lesson = null;
 

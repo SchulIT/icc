@@ -12,88 +12,73 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- * @ORM\Table(
- *     indexes={
- *          @ORM\Index(columns={"title"}, flags={"fulltext"}),
- *          @ORM\Index(columns={"content"}, flags={"fulltext"})
- *     }
- * )
- * @Gedmo\Loggable()
- */
+#[Auditable]
+#[Gedmo\Loggable]
+#[ORM\Entity]
+#[ORM\Index(columns: ['title'], flags: ['fulltext'])]
+#[ORM\Index(columns: ['content'], flags: ['fulltext'])]
 class Document {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Gedmo\Versioned()
-     */
+    #[Gedmo\Versioned]
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $title = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="DocumentCategory", inversedBy="documents")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: DocumentCategory::class, inversedBy: 'documents')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?DocumentCategory $category = null;
 
-    /**
-     * @ORM\Column(type="text")
-     * @Gedmo\Versioned()
-     */
+    #[Gedmo\Versioned]
     #[Assert\NotNull]
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'text')]
     private ?string $content = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Grade")
-     * @ORM\JoinTable(name="document_grades",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
-     * @ORM\OrderBy({"name" = "ASC"})
      * @var Collection<Grade>
      */
-    #[CollectionNotEmpty(propertyPath: 'visibilities')]
+    #[ORM\JoinTable(name: 'document_grades')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Grade::class)]
+    #[ORM\OrderBy(['name' => 'ASC'])]
     private $grades;
 
     /**
-     * @ORM\OneToMany(targetEntity="DocumentAttachment", mappedBy="document", cascade={"persist"})
-     * @ORM\OrderBy({"filename"="asc"})
      * @var Collection<DocumentAttachment>
      */
+    #[ORM\OneToMany(mappedBy: 'document', targetEntity: DocumentAttachment::class, cascade: ['persist'])]
+    #[ORM\OrderBy(['filename' => 'asc'])]
     private $attachments;
 
     /**
-     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="document_visibilities",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<UserTypeEntity>
      */
+    #[ORM\JoinTable(name: 'document_visibilities')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
     private $visibilities;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Gedmo\Timestampable(on="update")
-     * @Gedmo\Timestampable(on="create")
-     */
-    private $updatedAt;
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(type: 'datetime')]
+    private DateTime $createdAt;
+
+    #[Gedmo\Timestampable(on: 'update')]
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTime $updatedAt;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User")
-     * @ORM\JoinTable(name="document_authors",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<User>
      */
+    #[ORM\JoinTable(name: 'document_authors')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: User::class)]
     private $authors;
 
     public function __construct() {

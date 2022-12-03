@@ -7,7 +7,7 @@ use Closure;
 
 class ArrayUtils {
 
-    public static function apply(iterable &$items, \Closure $closure): void {
+    public static function apply(iterable &$items, Closure $closure): void {
         foreach($items as $item) {
             $closure($item);
         }
@@ -41,7 +41,7 @@ class ArrayUtils {
         return $array;
     }
 
-    public static function createArrayWithKeys(iterable $items, \Closure $keyFunc, bool $multiValue = false): array {
+    public static function createArrayWithKeys(iterable $items, Closure $keyFunc, bool $multiValue = false): array {
         $array = [ ];
 
         foreach($items as $item) {
@@ -67,7 +67,7 @@ class ArrayUtils {
         return $array;
     }
 
-    public static function createArrayWithKeysAndValues(iterable $items, \Closure $keyFunc, \Closure $valueFunc): array {
+    public static function createArrayWithKeysAndValues(iterable $items, Closure $keyFunc, Closure $valueFunc): array {
         $array = [ ];
 
         foreach($items as $item) {

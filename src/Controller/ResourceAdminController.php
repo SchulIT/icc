@@ -17,10 +17,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Security("is_granted('ROLE_ADMIN')")
- */
 #[Route(path: '/admin/resources')]
+#[Security("is_granted('ROLE_ADMIN')")]
 class ResourceAdminController extends AbstractController {
 
     public function __construct(private ResourceRepositoryInterface $repository, RefererHelper $redirectHelper) {

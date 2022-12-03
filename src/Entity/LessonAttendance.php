@@ -9,56 +9,40 @@ use JsonSerializable;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class LessonAttendance implements JsonSerializable, Stringable {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private int $type = LessonAttendanceType::Absent;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="LessonEntry", inversedBy="attendances")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: LessonEntry::class, inversedBy: 'attendances')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?LessonEntry $entry = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Student")
-     * @ORM\JoinColumn()
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Student::class)]
+    #[ORM\JoinColumn]
     private ?Student $student = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\GreaterThanOrEqual(0)]
+    #[ORM\Column(type: 'integer')]
     private int $lateMinutes = 0;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\GreaterThanOrEqual(0)]
+    #[ORM\Column(type: 'integer')]
     private ?int $absentLessons = 0;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\Choice(choices: [0, 1, 2])]
+    #[ORM\Column(type: 'integer')]
     private int $excuseStatus = LessonAttendanceExcuseStatus::NotSet;
 
     public function __construct() {

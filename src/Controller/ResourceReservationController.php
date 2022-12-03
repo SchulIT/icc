@@ -36,10 +36,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Security("is_granted('view-reservations')")
- */
 #[Route(path: '/reservations')]
+#[Security("is_granted('view-reservations')")]
 class ResourceReservationController extends AbstractController {
 
     public function __construct(private ResourceReservationRepositoryInterface $repository, RefererHelper $redirectHelper) {

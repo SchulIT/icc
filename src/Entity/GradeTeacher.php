@@ -6,38 +6,34 @@ use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(uniqueConstraints={
- *      @ORM\UniqueConstraint(fields={"section", "grade", "teacher"})
- * })
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
+#[ORM\UniqueConstraint(fields: ['section', 'grade', 'teacher'])]
 class GradeTeacher {
 
     use IdTrait;
     use SectionAwareTrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Teacher", inversedBy="grades")
-     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Teacher|null
      */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Teacher::class, inversedBy: 'grades')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Teacher $teacher = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Grade", inversedBy="teachers")
-     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Grade|null
      */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Grade::class, inversedBy: 'teachers')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Grade $grade = null;
 
     /**
-     * @ORM\Column(type="grade_teacher_type")
      * @var GradeTeacherType
      */
+    #[ORM\Column(type: 'grade_teacher_type')]
     private GradeTeacherType $type;
 
     public function __construct() {

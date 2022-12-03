@@ -13,7 +13,7 @@ class FreeLessonTimespanData {
      * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      */
     #[Assert\NotNull]
-    private ?\DateTime $date = null;
+    private ?DateTime $date = null;
 
     /**
      * @Serializer\SerializedName("start")

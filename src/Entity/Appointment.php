@@ -11,108 +11,83 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class Appointment {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", unique=true, nullable=true)
-     */
+    #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $externalId = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotNull]
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $title = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
     #[Assert\NotNull]
-    private ?\DateTime $start = null;
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTime $start = null;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
     #[Assert\GreaterThan(propertyPath: 'start')]
-    private ?\DateTime $end = null;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?DateTime $end = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $location = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $allDay = true;
 
     /**
-     * @ORM\ManyToMany(targetEntity="StudyGroup", cascade={"persist"})
-     * @ORM\JoinTable(name="appointment_studygroups",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var ArrayCollection<StudyGroup>
      */
+    #[ORM\JoinTable(name: 'appointment_studygroups')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: StudyGroup::class, cascade: ['persist'])]
     private $studyGroups;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Teacher", cascade={"persist"})
-     * @ORM\JoinTable(name="appointment_organizers",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var ArrayCollection<Teacher>
      */
+    #[ORM\JoinTable(name: 'appointment_organizers')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Teacher::class, cascade: ['persist'])]
     private $organizers;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $externalOrganizers = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="AppointmentCategory")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: AppointmentCategory::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?AppointmentCategory $category = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="appointment_visibilities",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var ArrayCollection<UserTypeEntity>
      */
+    #[ORM\JoinTable(name: 'appointment_visibilities')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
     private $visibilities;
 
-    /**
-     * @ORM\Column(type="boolean", options={"default": true})
-     */
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
     private bool $isConfirmed = true;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(nullable=true)
      *
      * Note: we cannot use the Blameable() listener here as it would break when importing appointments
      * from API
      */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $createdBy = null;
 
     public function __construct() {

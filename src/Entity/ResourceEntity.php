@@ -9,46 +9,35 @@ use Stringable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="resource")
- * @ORM\InheritanceType("JOINED")
- * @ORM\DiscriminatorColumn(name="class", type="string")
- * @ORM\DiscriminatorMap({
- *      "resource"="ResourceEntity",
- *      "room"="Room"
- * })
- * @Auditable()
- */
-#[UniqueEntity(fields: ['name'])]
+#[Auditable]
+#[ORM\Entity]
+#[ORM\Table(name: 'resource')]
+#[ORM\InheritanceType("JOINED")]
+#[ORM\DiscriminatorColumn(name: 'class', type: 'string')]
+#[ORM\DiscriminatorMap([
+    'resource' => ResourceEntity::class,
+    'room' => Room::class
+])]
 class ResourceEntity implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", length=16, unique=true)
-     */
     #[Assert\NotNull]
     #[Assert\Length(max: 16)]
+    #[ORM\Column(type: 'string', length: 16, unique: true)]
     private $name;
 
-    /**
-     * @ORM\Column(type="text", name="`description`", nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private $description;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $isReservationEnabled = true;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="ResourceType", inversedBy="resources")
-     * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: ResourceType::class, inversedBy: 'resources')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?ResourceType $type = null;
 
     public function __construct() {

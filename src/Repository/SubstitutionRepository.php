@@ -81,7 +81,7 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
     /**
      * @inheritDoc
      */
-    public function findAllForStudyGroups(array $studyGroups, ?\DateTime $date = null) {
+    public function findAllForStudyGroups(array $studyGroups, ?DateTime $date = null) {
         $ids = array_map(fn(StudyGroup $studyGroup) => $studyGroup->getId(), $studyGroups);
 
         /** @var StudyGroup|null $gradeStudyGroup */
@@ -130,7 +130,7 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
     /**
      * @inheritDoc
      */
-    public function findAllForTeacher(Teacher $teacher, ?\DateTime $date = null) {
+    public function findAllForTeacher(Teacher $teacher, ?DateTime $date = null) {
         $qbInner = $this->em->createQueryBuilder();
         $qbInner->select('sInner.id')
             ->from(Substitution::class, 'sInner')
@@ -160,7 +160,7 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
     /**
      * @inheritDoc
      */
-    public function findAllForGrade(Grade $grade, ?\DateTime $date = null) {
+    public function findAllForGrade(Grade $grade, ?DateTime $date = null) {
         $qbInner = $this->em->createQueryBuilder();
         $qbInner->select('sInner.id')
             ->from(Substitution::class, 'sInner')
@@ -207,7 +207,7 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
         return $qb->getQuery()->getResult();
     }
 
-    private function getDefaultQueryBuilder(\DateTime $date = null): QueryBuilder {
+    private function getDefaultQueryBuilder(DateTime $date = null): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
 
         $qb->select(['s', 't', 'rt', 'sg', 'rsg', 'rg'])

@@ -9,26 +9,22 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class DocumentCategory {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
     #[Assert\NotNull]
+    #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="Document", mappedBy="category")
      * @var ArrayCollection<Document>
      */
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Document::class)]
     private $documents;
 
     public function __construct() {

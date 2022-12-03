@@ -10,99 +10,95 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class TimetableLesson {
 
     use IdTrait;
     use UuidTrait;
 
     /**
-     * @ORM\Column(type="string", unique=true)
      * @var string|null
      */
+    #[ORM\Column(type: 'string', unique: true)]
     private ?string $externalId = null;
 
     /**
-     * @ORM\Column(type="date")
      * @var DateTime|null
      */
     #[Assert\NotNull]
+    #[ORM\Column(type: 'date')]
     private ?DateTime $date = null;
 
     /**
-     * @ORM\Column(type="integer")
      * @var int
      */
+    #[ORM\Column(type: 'integer')]
     private int $lessonStart;
 
     /**
-     * @ORM\Column(type="integer")
      * @var int
      */
     #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart')]
+    #[ORM\Column(type: 'integer')]
     private int $lessonEnd;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Tuition")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=true, onDelete="SET NULL")
      * @var Tuition|null
      */
+    #[ORM\ManyToOne(targetEntity: Tuition::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Tuition $tuition = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Room")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @var Room|null
      */
+    #[ORM\ManyToOne(targetEntity: Room::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Room $room = null;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
      * @var string|null
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $location = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Subject")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @var Subject|null
      */
+    #[ORM\ManyToOne(targetEntity: Subject::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Subject $subject = null;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
      * @var string|null
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $subjectName = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Teacher")
-     * @ORM\JoinTable(name="timetable_lesson_teachers",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<Teacher>
      */
+    #[ORM\JoinTable(name: 'timetable_lesson_teachers')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Teacher::class)]
     private Collection $teachers;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Grade")
-     * @ORM\JoinTable(name="timetable_lesson_grades",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<Grade>
      */
+    #[ORM\JoinTable(name: 'timetable_lesson_grades')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Grade::class)]
     private Collection $grades;
 
     /**
-     * @ORM\OneToMany(targetEntity="LessonEntry", mappedBy="lesson", cascade={"persist"})
      * @var Collection<LessonEntry>
      */
+    #[ORM\OneToMany(mappedBy: 'lesson', targetEntity: LessonEntry::class, cascade: ['persist'])]
     private $entries;
 
     public function __construct() {

@@ -11,7 +11,7 @@ class Comment {
      * @Serializer\Type("DateTime")
      * @Serializer\SerializedName("date")
      */
-    private ?\DateTime $date = null;
+    private ?DateTime $date = null;
 
     /**
      * @Serializer\Type("App\Book\Export\Teacher")

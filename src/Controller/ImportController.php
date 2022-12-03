@@ -55,10 +55,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Security("is_granted('ROLE_IMPORT')")
- */
 #[Route(path: '/api/import')]
+#[Security("is_granted('ROLE_IMPORT')")]
 class ImportController extends AbstractController {
 
     public function __construct(private Importer $importer, private SerializerInterface $serializer, RefererHelper $refererHelper) {

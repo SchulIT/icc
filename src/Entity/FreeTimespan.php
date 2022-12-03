@@ -7,30 +7,22 @@ use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class FreeTimespan {
 
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
     #[Assert\NotNull]
-    private ?\DateTime $date = null;
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTime $date = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\GreaterThan(0)]
+    #[ORM\Column(type: 'integer')]
     private int $start = 1;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\GreaterThanOrEqual(propertyPath: 'start')]
+    #[ORM\Column(type: 'integer')]
     private int $end = 1;
 
     public function getDate(): ?DateTime {

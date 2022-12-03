@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use Stringable;
-use App\Validator\NullOrNotBlank;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,89 +11,70 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
 #[UniqueEntity(fields: ['acronym'])]
+#[ORM\Entity]
 class Teacher implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", unique=true)
-     */
+    #[ORM\Column(type: 'string', unique: true)]
     private ?string $externalId = null;
 
-    /**
-     * @ORM\Column(type="string", unique=true)
-     */
+    #[ORM\Column(type: 'string', unique: true)]
     private ?string $acronym = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $title = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $firstname = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $lastname = null;
 
-    /**
-     * @ORM\Column(type="gender")
-     */
+    #[ORM\Column(type: 'gender')]
     private Gender $gender;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
     #[Assert\Email]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $email = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Subject", inversedBy="teachers")
-     * @ORM\JoinTable(name="teacher_subjects",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<Subject>
      */
+    #[ORM\JoinTable(name: 'teacher_subjects')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Subject::class, inversedBy: 'teachers')]
     private $subjects;
 
     /**
-     * @ORM\OneToMany(targetEntity="GradeTeacher", mappedBy="teacher")
      * @var Collection<GradeTeacher>
      */
+    #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: GradeTeacher::class)]
     private $grades;
 
     /**
-     * @ORM\ManyToMany(targetEntity="TeacherTag", cascade={"persist"})
-     * @ORM\JoinTable(name="teacher_tags",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<TeacherTag>
      */
+    #[ORM\JoinTable(name: 'teacher_tags')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: TeacherTag::class, cascade: ['persist'])]
     private $tags;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Section")
-     * @ORM\JoinTable(name="teacher_sections",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<Section>
      */
+    #[ORM\JoinTable(name: 'teacher_sections')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Section::class)]
     private $sections;
 
     public function __construct() {

@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\Doctrine\Set\DoctrineSetList;
 use Rector\Php70\Rector\FuncCall\NonVariableToVariableOnFunctionCallRector;
 use Rector\Php74\Rector\Property\TypedPropertyRector;
 use Rector\Set\ValueObject\LevelSetList;
+use Rector\Symfony\Set\SensiolabsSetList;
 use Rector\Symfony\Set\SymfonySetList;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -32,6 +34,12 @@ return static function (RectorConfig $rectorConfig): void {
         SymfonySetList::SYMFONY_60,
         SymfonySetList::SYMFONY_CODE_QUALITY,
         SymfonySetList::SYMFONY_CONSTRUCTOR_INJECTION,
+    ]);
+
+    $rectorConfig->sets([
+        DoctrineSetList::ANNOTATIONS_TO_ATTRIBUTES,
+        SymfonySetList::ANNOTATIONS_TO_ATTRIBUTES,
+        SensiolabsSetList::ANNOTATIONS_TO_ATTRIBUTES
     ]);
 
     $rectorConfig->skip([

@@ -10,57 +10,46 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(uniqueConstraints={
- *      @ORM\UniqueConstraint(fields={"section", "externalId"})
- * })
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
+#[ORM\UniqueConstraint(fields: ['section', 'externalId'])]
 class StudyGroup implements Stringable {
 
     use IdTrait;
     use UuidTrait;
     use SectionAwareTrait;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string')]
     private ?string $externalId = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="study_group_type")
-     */
     #[Assert\NotNull]
+    #[ORM\Column(type: 'study_group_type')]
     private StudyGroupType $type;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Grade")
-     * @ORM\JoinTable(name="study_group_grades",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn()}
-     * )
      * @var Collection<Grade>
      */
+    #[ORM\JoinTable(name: 'study_group_grades')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn]
+    #[ORM\ManyToMany(targetEntity: Grade::class)]
     private $grades;
 
     /**
-     * @ORM\OneToMany(targetEntity="StudyGroupMembership", mappedBy="studyGroup")
      * @var Collection<StudyGroupMembership>
      */
+    #[ORM\OneToMany(mappedBy: 'studyGroup', targetEntity: StudyGroupMembership::class)]
     private $memberships;
 
     /**
-     * @ORM\OneToMany(targetEntity="Tuition", mappedBy="studyGroup")
      * @var Collection<Tuition>
      */
+    #[ORM\OneToMany(mappedBy: 'studyGroup', targetEntity: Tuition::class)]
     private $tuitions;
 
     public function __construct() {

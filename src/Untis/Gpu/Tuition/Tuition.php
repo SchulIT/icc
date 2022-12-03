@@ -20,9 +20,9 @@ class Tuition {
 
     private ?string $group = null;
 
-    private ?\DateTime $validFrom = null;
+    private ?DateTime $validFrom = null;
 
-    private ?\DateTime $validTo = null;
+    private ?DateTime $validTo = null;
 
     public function getId(): int {
         return $this->id;

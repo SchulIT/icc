@@ -11,57 +11,43 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
 #[UniqueEntity(fields: ['section', 'externalId'])]
+#[ORM\Entity]
 class Tuition implements Stringable {
 
     use IdTrait;
     use UuidTrait;
     use SectionAwareTrait;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column(type: 'string')]
     private ?string $externalId = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     *
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $displayName = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Subject")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Subject::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Subject $subject = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Teacher")
-     * @ORM\JoinTable(name="tuition_teachers",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<Teacher>
      */
+    #[ORM\JoinTable(name: 'tuition_teachers')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Teacher::class)]
     private $teachers;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="StudyGroup", inversedBy="tuitions")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: StudyGroup::class, inversedBy: 'tuitions')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?StudyGroup $studyGroup = null;
 
     public function __construct() {

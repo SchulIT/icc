@@ -7,36 +7,26 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class RoomTag {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", length=64)
-     */
     #[Assert\NotBlank]
     #[Assert\Length(max: 64)]
+    #[ORM\Column(type: 'string', length: 64)]
     private $name;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $description;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $hasValue = false;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $icons = null;
 
     public function __construct() {

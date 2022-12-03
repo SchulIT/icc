@@ -10,116 +10,114 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
 #[UniqueLessonEntry(groups: ['Default', 'cancel'])]
+#[ORM\Entity]
 class LessonEntry {
 
     use IdTrait;
     use UuidTrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity="TimetableLesson", inversedBy="entries")
-     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var TimetableLesson|null
      */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: TimetableLesson::class, inversedBy: 'entries')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?TimetableLesson $lesson = null;
 
     /**
-     * @ORM\Column(type="integer")
      * @var int
      */
     #[Assert\GreaterThanOrEqual(propertyPath: 'lesson.lessonStart', groups: ['Default', 'cancel'])]
+    #[ORM\Column(type: 'integer')]
     private int $lessonStart = 1;
 
     /**
-     * @ORM\Column(type="integer")
      * @var int
      */
     #[Assert\LessThanOrEqual(propertyPath: 'lesson.lessonEnd', groups: ['Default', 'cancel'])]
     #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart', groups: ['Default', 'cancel'])]
+    #[ORM\Column(type: 'integer')]
     private int $lessonEnd = 1;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Tuition")
-     * @ORM\JoinColumn()
      * @var Tuition|null
      */
     #[Assert\NotNull(groups: ['Default', 'cancel'])]
+    #[ORM\ManyToOne(targetEntity: Tuition::class)]
+    #[ORM\JoinColumn]
     private ?Tuition $tuition = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Subject")
-     * @ORM\JoinColumn()
      * @var Subject|null
      */
     #[Assert\NotNull(groups: ['Default', 'cancel'])]
+    #[ORM\ManyToOne(targetEntity: Subject::class)]
+    #[ORM\JoinColumn]
     private ?Subject $subject = null;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
      * @var string|null
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $replacementSubject = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumn()
      * @var Teacher|null
      */
     #[Assert\NotNull(groups: ['Default', 'cancel'])]
+    #[ORM\ManyToOne(targetEntity: Teacher::class)]
+    #[ORM\JoinColumn]
     private ?Teacher $teacher = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumn()
      * @var Teacher|null
      */
+    #[ORM\ManyToOne(targetEntity: Teacher::class)]
+    #[ORM\JoinColumn]
     private ?Teacher $replacementTeacher = null;
 
     /**
-     * @ORM\Column(type="string", nullable=true);
      * @var string|null
      */
     #[Assert\NotBlank(groups: ['Default'])]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $topic = null;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
      * @var string|null
      */
     #[Assert\NotBlank(allowNull: true, groups: ['Default'])]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $exercises = null;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
      * @var string|null
      */
     #[Assert\NotBlank(allowNull: true, groups: ['Default'])]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="LessonAttendance", mappedBy="entry", cascade={"persist"})
      * @var Collection<LessonAttendance>
      */
     #[Assert\Valid(groups: ['Default'])]
+    #[ORM\OneToMany(mappedBy: 'entry', targetEntity: LessonAttendance::class, cascade: ['persist'])]
     private Collection $attendances;
 
     /**
-     * @ORM\Column(type="boolean")
      * @var bool
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $isCancelled = false;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
      * @var string|null
      */
     #[Assert\NotBlank(groups: ['cancel'])]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $cancelReason = null;
 
     public function __construct() {

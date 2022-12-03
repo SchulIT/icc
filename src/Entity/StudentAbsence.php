@@ -13,113 +13,103 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class StudentAbsence {
 
     use IdTrait;
     use UuidTrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Student")
-     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var Student|null
      */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Student::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Student $student = null;
 
     /**
-     * @ORM\Embedded(class="DateLesson")
      * @var DateLesson|null
      */
     #[DateLessonNotInPast(exceptions: ['ROLE_STUDENT_ABSENCE_CREATOR'], propertyName: 'from')]
     #[Assert\NotNull]
+    #[ORM\Embedded(class: DateLesson::class)]
     private ?DateLesson $from = null;
 
     /**
-     * @ORM\Embedded(class="DateLesson")
      * @var DateLesson|null
      */
     #[DateLessonGreaterThan(propertyPath: 'from')]
     #[Assert\NotNull]
+    #[ORM\Embedded(class: DateLesson::class)]
     private ?DateLesson $until = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="StudentAbsenceType")
-     * @ORM\JoinColumn()
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: StudentAbsenceType::class)]
+    #[ORM\JoinColumn]
     private ?StudentAbsenceType $type = null;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
      * @var string|null
      */
     #[Assert\NotBlank(allowNull: true)]
     #[Assert\Email]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $email = null;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
      * @var string|null
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $phone = null;
 
     /**
-     * @ORM\Column(type="text")
      * @var string|null
      */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'text')]
     private ?string $message = null;
 
-    /**
-     * @Gedmo\Blameable(on="create")
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var User|null
-     */
+    #[Gedmo\Blameable(on: 'create')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?User $createdBy = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Gedmo\Timestampable(on="create")
-     * @var DateTime|null
-     */
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(type: 'datetime')]
     private ?DateTime $createdAt = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(onDelete="SET NULL")
      * @var User|null
      */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $approvedBy = null;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
      * @var DateTime|null
      */
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private ?DateTime $approvedAt = null;
 
     /**
-     * @ORM\Column(type="boolean")
      * @var bool
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $isApproved = false;
 
     /**
-     * @ORM\OneToMany(targetEntity="StudentAbsenceAttachment", mappedBy="absence", cascade={"persist"})
-     * @ORM\OrderBy({"filename"="asc"})
      * @var Collection<StudentAbsenceAttachment>
      */
+    #[ORM\OneToMany(mappedBy: 'absence', targetEntity: StudentAbsenceAttachment::class, cascade: ['persist'])]
+    #[ORM\OrderBy(['filename' => 'asc'])]
     private Collection $attachments;
 
     /**
-     * @ORM\OneToMany(targetEntity="StudentAbsenceMessage", mappedBy="absence", cascade={"persist"})
      * @var Collection<StudentAbsenceMessage>
      */
+    #[ORM\OneToMany(mappedBy: 'absence', targetEntity: StudentAbsenceMessage::class, cascade: ['persist'])]
     private Collection $messages;
 
     public function __construct() {

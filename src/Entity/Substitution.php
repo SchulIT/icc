@@ -7,158 +7,124 @@ use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use EasyCorp\Bundle\EasyAdminBundle\EventListener\RequestPostInitializeListener;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
 #[UniqueEntity(fields: ['externalId'])]
+#[ORM\Entity]
 class Substitution {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", unique=true)
-     */
+    #[ORM\Column(type: 'string', unique: true)]
     private ?string $externalId = null;
 
-    /**
-     * @ORM\Column(type="date")
-     */
     #[Assert\NotNull]
-    private ?\DateTime $date = null;
+    #[ORM\Column(type: 'date')]
+    private ?DateTime $date = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\GreaterThan(0)]
+    #[ORM\Column(type: 'integer')]
     private int $lessonStart = 0;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\GreaterThan(0)]
     #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart')]
+    #[ORM\Column(type: 'integer')]
     private int $lessonEnd = 0;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $startsBefore = false;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $type = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $subject = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $replacementSubject = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Teacher")
-     * @ORM\JoinTable(name="substitution_teachers",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<Teacher>
      */
+    #[ORM\JoinTable(name: 'substitution_teachers')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Teacher::class)]
     private $teachers;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Teacher")
-     * @ORM\JoinTable(name="substitution_replacement_teachers",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<Teacher>
      */
+    #[ORM\JoinTable(name: 'substitution_replacement_teachers')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Teacher::class)]
     private $replacementTeachers;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Room")
-     * @ORM\JoinTable(name="substitution_rooms",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
-     * @ORM\OrderBy({"name"="asc"})
      * @var Collection<Room>
      */
+    #[ORM\JoinTable(name: 'substitution_rooms')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Room::class)]
+    #[ORM\OrderBy(['name' => 'asc'])]
     private $rooms;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Room")
-     * @ORM\JoinTable(name="substitution_replacement_rooms",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
-     * @ORM\OrderBy({"name"="asc"})
      * @var Collection<Room>
      */
+    #[ORM\JoinTable(name: 'substitution_replacement_rooms')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Room::class)]
+    #[ORM\OrderBy(['name' => 'asc'])]
     private $replacementRooms;
 
-    /**
-     * @ORM\Column(type="string", nullable=true, options={"comment": "Plain room name in case room resolve is not possible when importing substitutions."})
-     */
+    #[ORM\Column(type: 'string', nullable: true, options: ['comment' => 'Plain room name in case room resolve is not possible when importing substitutions.'])]
     private ?string $roomName = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true, options={"comment": "Plain room name in case room resolve is not possible when importing substitutions."})
-     */
+    #[ORM\Column(type: 'string', nullable: true, options: ['comment' => 'Plain room name in case room resolve is not possible when importing substitutions.'])]
     private ?string $replacementRoomName = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $remark = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(name="substitution_studygroups",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var ArrayCollection<StudyGroup>
      */
+    #[ORM\JoinTable(name: 'substitution_studygroups')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
     private $studyGroups;
 
     /**
-     * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(name="substitution_replacement_studygroups",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var ArrayCollection<StudyGroup>
      */
+    #[ORM\JoinTable(name: 'substitution_replacement_studygroups')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
     private $replacementStudyGroups;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Grade")
-     * @ORM\JoinTable(name="substitution_replacement_grades",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var ArrayCollection<Grade>
      */
+    #[ORM\JoinTable(name: 'substitution_replacement_grades')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Grade::class)]
     private $replacementGrades;
 
-    /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
-     */
-    private \DateTime $createdAt;
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(type: 'datetime')]
+    private DateTime $createdAt;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();

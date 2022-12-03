@@ -13,10 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Security("is_granted('ROLE_ADMIN')")
- */
 #[Route(path: '/admin/absence_types')]
+#[Security("is_granted('ROLE_ADMIN')")]
 class StudentAbsenceTypeAdminController extends AbstractController {
     public function __construct(private StudentAbsenceTypeRepositoryInterface $repository)
     {

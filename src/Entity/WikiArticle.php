@@ -7,112 +7,84 @@ use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Loggable\Loggable;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- * @ORM\Table(
- *     name="wiki",
- *     indexes={
- *         @ORM\Index(columns={"title"}, flags={"fulltext"}),
- *         @ORM\Index(columns={"content"}, flags={"fulltext"})
- *     }
- * )
- * @Gedmo\Tree(type="nested")
- * @Gedmo\Loggable()
- */
+#[Auditable]
+#[Gedmo\Tree(type: 'nested')]
+#[Gedmo\Loggable]
+#[ORM\Entity]
+#[ORM\Table(name: 'wiki')]
+#[ORM\Index(columns: ['title'], flags: ['fulltext'])]
+#[ORM\Index(columns: ['content'], flags: ['fulltext'])]
 class WikiArticle {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Gedmo\Versioned()
-     */
+    #[Gedmo\Versioned]
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $title = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $icon = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $isOnline = true;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Gedmo\Timestampable(on="create")
-     */
-    private ?\DateTime $createdAt = null;
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTime $createdAt = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Gedmo\Timestampable(on="update")
-     */
-    private ?\DateTime $updatedAt = null;
+    #[Gedmo\Timestampable(on: 'update')]
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTime $updatedAt = null;
 
-    /**
-     * @ORM\Column(type="text")
-     * @Gedmo\Versioned()
-     */
+    #[Gedmo\Versioned]
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'text')]
     private ?string $content = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="wiki_article_visibilities",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var ArrayCollection<UserTypeEntity>
      */
+    #[ORM\JoinTable(name: 'wiki_article_visibilities')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
     private $visibilities;
 
-    /**
-     * @Gedmo\TreeLeft()
-     * @ORM\Column(type="integer", name="`left`")
-     */
+    #[Gedmo\TreeLeft]
+    #[ORM\Column(type: 'integer')]
     private int $left;
 
-    /**
-     * @Gedmo\TreeLevel()
-     * @ORM\Column(type="integer")
-     */
+    #[Gedmo\TreeLevel]
+    #[ORM\Column(type: 'integer')]
     private int $level;
 
-    /**
-     * @Gedmo\TreeRight()
-     * @ORM\Column(type="integer", name="`right`")
-     */
+    #[Gedmo\TreeRight]
+    #[ORM\Column(type: 'integer')]
     private int $right;
 
-    /**
-     * @Gedmo\TreeRoot()
-     * @ORM\ManyToOne(targetEntity="WikiArticle")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
-    private ?\App\Entity\WikiArticle $root = null;
+    #[Gedmo\TreeRoot]
+    #[ORM\ManyToOne(targetEntity: WikiArticle::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    private ?WikiArticle $root = null;
+
+    #[Gedmo\TreeParent]
+    #[ORM\ManyToOne(targetEntity: WikiArticle::class, inversedBy: 'children')]
+    #[ORM\JoinColumn(name: 'parent', onDelete: 'CASCADE')]
+    private ?WikiArticle $parent = null;
 
     /**
-     * @Gedmo\TreeParent()
-     * @ORM\ManyToOne(targetEntity="WikiArticle", inversedBy="children")
-     * @ORM\JoinColumn(name="`parent`", onDelete="CASCADE")
-     */
-    private ?\App\Entity\WikiArticle $parent = null;
-
-    /**
-     * @ORM\OneToMany(targetEntity="WikiArticle", mappedBy="parent")
-     * @ORM\OrderBy({"title" = "ASC"})
      * @var Collection<WikiArticle>
      */
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: WikiArticle::class)]
+    #[ORM\OrderBy(['title' => 'ASC'])]
     private $children;
 
     public function __construct() {

@@ -6,20 +6,14 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Embeddable()
- */
+#[ORM\Embeddable]
 class DateLesson {
-    /**
-     * @ORM\Column(type="date")
-     */
     #[Assert\NotNull]
-    private ?\DateTime $date = null;
+    #[ORM\Column(type: 'date')]
+    private ?DateTime $date = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\NotNull]
+    #[ORM\Column(type: 'integer')]
     private ?int $lesson = null;
 
     public function getDate(): ?DateTime {

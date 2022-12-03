@@ -30,13 +30,13 @@ class Message {
      * @Serializer\SerializedName("start_date")
      * @Serializer\Type("DateTime")
      */
-    private ?\DateTime $startDate = null;
+    private ?DateTime $startDate = null;
 
     /**
      * @Serializer\SerializedName("expire_date")
      * @Serializer\Type("DateTime")
      */
-    private ?\DateTime $expireDate = null;
+    private ?DateTime $expireDate = null;
 
     /**
      * @Serializer\SerializedName("study_groups")
@@ -78,13 +78,13 @@ class Message {
      * @Serializer\SerializedName("created_at")
      * @Serializer\Type("DateTime")
      */
-    private ?\DateTime $createdAt = null;
+    private ?DateTime $createdAt = null;
 
     /**
      * @Serializer\SerializedName("updated_at")
      * @Serializer\Type("DateTime")
      */
-    private ?\DateTime $updatedAt = null;
+    private ?DateTime $updatedAt = null;
 
     /**
      * @Serializer\SerializedName("downloads_enabled")

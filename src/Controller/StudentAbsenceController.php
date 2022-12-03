@@ -49,10 +49,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Security("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-absence')")
- */
 #[Route(path: '/absences')]
+#[Security("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-absence')")]
 class StudentAbsenceController extends AbstractController {
 
     public const ITEMS_PER_PAGE = 25;

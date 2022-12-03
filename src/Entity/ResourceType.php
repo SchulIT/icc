@@ -10,31 +10,25 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class ResourceType implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $icon = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="ResourceEntity", mappedBy="type", fetch="EXTRA_LAZY")
      * @var Collection<ResourceEntity>
      */
+    #[ORM\OneToMany(mappedBy: 'type', targetEntity: ResourceEntity::class, fetch: 'EXTRA_LAZY')]
     private $resources;
 
     public function __construct() {

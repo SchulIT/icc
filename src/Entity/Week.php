@@ -5,22 +5,16 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity]
 class Week {
 
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="integer", unique=true)
-     */
+    #[ORM\Column(type: 'integer', unique: true)]
     private int $number = 0;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="TimetableWeek", inversedBy="weeks")
-     * @ORM\JoinColumn(onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: TimetableWeek::class, inversedBy: 'weeks')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?TimetableWeek $timetableWeek = null;
 
     #[Assert\GreaterThan(0)]

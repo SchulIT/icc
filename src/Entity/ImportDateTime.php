@@ -6,23 +6,17 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity]
 class ImportDateTime {
 
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="string", unique=true)
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', unique: true)]
     private ?string $entityClass = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private ?\DateTime $updatedAt = null;
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTime $updatedAt = null;
 
     public function getEntityClass(): string {
         return $this->entityClass;

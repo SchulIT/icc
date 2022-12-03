@@ -10,45 +10,33 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class ExcuseNote {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Student")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Student::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Student $student = null;
 
-    /**
-     * @ORM\Embedded(class="DateLesson")
-     */
     #[Assert\NotNull]
+    #[ORM\Embedded(class: DateLesson::class)]
     private ?DateLesson $from = null;
 
-    /**
-     * @ORM\Embedded(class="DateLesson")
-     */
     #[DateLessonGreaterThan(propertyPath: 'from')]
     #[Assert\NotNull]
+    #[ORM\Embedded(class: DateLesson::class)]
     private ?DateLesson $until = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumn()
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Teacher::class)]
+    #[ORM\JoinColumn]
     private ?Teacher $excusedBy = null;
 
     public function __construct() {

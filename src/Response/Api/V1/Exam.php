@@ -17,7 +17,7 @@ class Exam {
      * @Serializer\SerializedName("date")
      * @Serializer\Type("DateTime")
      */
-    private ?\DateTime $date = null;
+    private ?DateTime $date = null;
 
     /**
      * @Serializer\SerializedName("lesson_start")

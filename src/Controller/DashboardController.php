@@ -62,7 +62,7 @@ class DashboardController extends AbstractController {
         $selectedDate = null;
         try {
             if($request->query->has('date')) {
-                $selectedDate = new \DateTime($request->query->get('date', null));
+                $selectedDate = new DateTime($request->query->get('date', null));
                 $selectedDate->setTime(0, 0, 0);
             }
         } catch (\Exception) {
@@ -175,7 +175,7 @@ class DashboardController extends AbstractController {
     /**
      * @return \DateTime[]
      */
-    private function getListOfSurroundingDays(\DateTime $dateTime, int $daysInFuture, int $daysInPast, bool $skipWeekends): array {
+    private function getListOfSurroundingDays(DateTime $dateTime, int $daysInFuture, int $daysInPast, bool $skipWeekends): array {
         $days = [ ];
 
         for($i = $daysInPast; $i > 0; $i--) {

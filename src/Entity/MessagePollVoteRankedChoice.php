@@ -5,30 +5,22 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity]
 class MessagePollVoteRankedChoice {
 
     use IdTrait;
 
-    /**
-     * @Gedmo\SortableGroup()
-     * @ORM\ManyToOne(targetEntity="MessagePollVote", inversedBy="choices")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[Gedmo\SortableGroup]
+    #[ORM\ManyToOne(targetEntity: MessagePollVote::class, inversedBy: 'choices')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?MessagePollVote $vote = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="MessagePollChoice")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: MessagePollChoice::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?MessagePollChoice $choice = null;
 
-    /**
-     * @Gedmo\SortablePosition()
-     * @ORM\Column(type="integer")
-     */
+    #[Gedmo\SortablePosition]
+    #[ORM\Column(type: 'integer')]
     private int $rank = 1;
 
     public function getVote(): ?MessagePollVote {

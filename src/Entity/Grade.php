@@ -10,43 +10,35 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class Grade implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $externalId = null;
 
-    /**
-     * @ORM\Column(type="string", unique=true)
-     */
     #[Assert\NotNull]
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', unique: true)]
     private ?string $name = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="GradeMembership", mappedBy="grade")
      * @var ArrayCollection<GradeMembership>
      */
+    #[ORM\OneToMany(mappedBy: 'grade', targetEntity: GradeMembership::class)]
     private $memberships;
 
     /**
-     * @ORM\OneToMany(targetEntity="GradeTeacher", mappedBy="grade", cascade={"persist"})
      * @var ArrayCollection<GradeTeacher>
      */
+    #[ORM\OneToMany(mappedBy: 'grade', targetEntity: GradeTeacher::class, cascade: ['persist'])]
     private $teachers;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $allowCollapse = true;
 
     public function __construct() {

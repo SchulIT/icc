@@ -27,7 +27,7 @@ class MessageAttachment {
      * @Serializer\SerializedName("updated_at")
      * @Serializer\Type("DateTimeImmutable")
      */
-    private ?\DateTime $updatedAt = null;
+    private ?DateTime $updatedAt = null;
 
     public function getFilename(): string {
         return $this->filename;

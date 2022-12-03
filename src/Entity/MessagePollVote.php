@@ -9,41 +9,31 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class MessagePollVote {
     use IdTrait;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?User $user = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Message", inversedBy="pollVotes")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: Message::class, inversedBy: 'pollVotes')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Message $message = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="MessagePollVoteRankedChoice", cascade={"persist"}, orphanRemoval=true, mappedBy="vote")
      * @var Collection<MessagePollVoteRankedChoice>
      */
+    #[ORM\OneToMany(mappedBy: 'vote', targetEntity: MessagePollVoteRankedChoice::class, cascade: ['persist'], orphanRemoval: true)]
     private $choices;
 
-    /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
-     */
-    private \DateTime $createdAt;
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(type: 'datetime')]
+    private DateTime $createdAt;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="MessagePollChoice")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: MessagePollChoice::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?MessagePollChoice $assignedChoice = null;
 
     public function __construct() {

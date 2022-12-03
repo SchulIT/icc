@@ -6,29 +6,21 @@ use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(uniqueConstraints={
- *      @ORM\UniqueConstraint(fields={"section", "grade", "student"})
- * })
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
+#[ORM\UniqueConstraint(fields: ['section', 'grade', 'student'])]
 class GradeMembership {
 
     use IdTrait;
     use SectionAwareTrait;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Student", inversedBy="gradeMemberships")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Student::class, inversedBy: 'gradeMemberships')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Student $student = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Grade", inversedBy="memberships")
-     */
     #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Grade::class, inversedBy: 'memberships')]
     private ?Grade $grade = null;
 
     public function getStudent(): ?Student {

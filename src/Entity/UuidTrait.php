@@ -8,9 +8,9 @@ use Ramsey\Uuid\UuidInterface;
 trait UuidTrait {
 
     /**
-     * @ORM\Column(type="uuid")
      * @var UuidInterface
      */
+    #[ORM\Column(type: 'uuid')]
     private $uuid;
 
     public function getUuid(): UuidInterface {

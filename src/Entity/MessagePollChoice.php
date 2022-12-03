@@ -6,42 +6,30 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity]
 class MessagePollChoice {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Message", inversedBy="pollChoices")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: Message::class, inversedBy: 'pollChoices')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Message $message = null;
 
-    /**
-     * @ORM\Column(type="string", name="label")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $label = null;
 
-    /**
-     * @ORM\Column(type="text", name="description", nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    /**
-     * @ORM\Column(type="integer", name="mininum")
-     */
     #[Assert\GreaterThanOrEqual(0)]
+    #[ORM\Column(type: 'integer')]
     private int $minimum = 0;
 
-    /**
-     * @ORM\Column(type="integer", name="maximum")
-     */
     #[Assert\GreaterThanOrEqual(propertyPath: 'minimum')]
+    #[ORM\Column(type: 'integer')]
     private int $maximum = 0;
 
     public function __construct() {

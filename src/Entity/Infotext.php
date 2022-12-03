@@ -8,24 +8,18 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
 class Infotext {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="date")
-     */
     #[Assert\NotNull]
-    private ?\DateTime $date = null;
+    #[ORM\Column(type: 'date')]
+    private ?DateTime $date = null;
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: 'text')]
     private ?string $content = null;
 
     public function __construct() {

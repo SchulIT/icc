@@ -10,47 +10,33 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- * @Vich\Uploadable()
- */
+#[Vich\Uploadable]
+#[Auditable]
+#[ORM\Entity]
 class DocumentAttachment {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Document", inversedBy="attachments")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: Document::class, inversedBy: 'attachments')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Document $document = null;
 
-    /**
-     * @Vich\UploadableField(mapping="documents", fileNameProperty="path", originalName="filename", size="size")
-     */
+    #[Vich\UploadableField(mapping: 'documents', fileNameProperty: 'path', size: 'size', originalName: 'filename')]
     private $file;
 
-    /**
-     * @ORM\Column(type="text")
-     */
     #[Assert\NotNull]
+    #[ORM\Column(type: 'text')]
     private ?string $filename = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column(type: 'string')]
     private ?string $path = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private ?int $size = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private ?\DateTime $updatedAt = null;
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTime $updatedAt = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();

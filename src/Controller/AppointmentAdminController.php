@@ -26,10 +26,8 @@ use App\Sorting\AppointmentDateStrategy as AppointmentSortingStrategy;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Security("is_granted('ROLE_APPOINTMENT_CREATOR')")
- */
 #[Route(path: '/admin/appointments')]
+#[Security("is_granted('ROLE_APPOINTMENT_CREATOR')")]
 class AppointmentAdminController extends AbstractController {
 
     private const NumberOfAppointments = 25;

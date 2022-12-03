@@ -91,10 +91,8 @@ class ProfileController extends AbstractController {
         return $this->redirectToRoute('profile_apps');
     }
 
-    /**
-     * @Security("is_granted('ROLE_ALLOWED_TO_SWITCH')")
-     */
     #[Route(path: '/switch', name: 'switch_user')]
+    #[Security("is_granted('ROLE_ALLOWED_TO_SWITCH')")]
     public function switchUser(Grouper $grouper, Sorter $sorter, UserRepositoryInterface $userRepository, SectionResolverInterface $sectionResolver): Response {
         $users = $userRepository->findAll();
         $groups = $grouper->group($users, UserTypeAndGradeStrategy::class, ['section' => $sectionResolver->getCurrentSection()]);

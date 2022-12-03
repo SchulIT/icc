@@ -14,85 +14,67 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
 #[NotTooManyExamsPerDay]
 #[NotTooManyExamsPerWeek]
 #[NoReservationCollision]
+#[ORM\Entity]
 class Exam {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", unique=true, nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $externalId = null;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
     #[DateInActiveSection]
     #[Assert\NotNull]
-    private ?\DateTime $date = null;
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?DateTime $date = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\GreaterThan(0)]
+    #[ORM\Column(type: 'integer')]
     private int $lessonStart = 0;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\GreaterThan(0)]
     #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart')]
+    #[ORM\Column(type: 'integer')]
     private int $lessonEnd = 0;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $description = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $tuitionTeachersCanEditExam = true;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Tuition")
-     * @ORM\JoinTable(name="exam_tuitions",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<Tuition>
      */
+    #[ORM\JoinTable(name: 'exam_tuitions')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Tuition::class)]
     private $tuitions;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Student", cascade={"persist"})
-     * @ORM\JoinTable(name="exam_students",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<Student>
      */
+    #[ORM\JoinTable(name: 'exam_students')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Student::class, cascade: ['persist'])]
     private $students;
 
     /**
-     * @ORM\OneToMany(targetEntity="ExamSupervision", mappedBy="exam", cascade={"persist"}, orphanRemoval=true)
-     * @ORM\OrderBy({"lesson" = "asc"})
      * @var Collection<ExamSupervision>
      */
+    #[ORM\OneToMany(mappedBy: 'exam', targetEntity: ExamSupervision::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['lesson' => 'asc'])]
     private $supervisions;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Room")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: Room::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Room $room = null;
 
     public function __construct() {

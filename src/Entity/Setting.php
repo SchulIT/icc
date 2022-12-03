@@ -7,24 +7,20 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
 #[UniqueEntity(fields: ['key'])]
+#[ORM\Entity]
 class Setting {
 
-    /**
-     * @ORM\Id()
-     * @ORM\Column(name="`key`", type="string", unique=true)
-     */
     #[Assert\NotBlank]
+    #[ORM\Id]
+    #[ORM\Column(name: '`key`', type: 'string', unique: true)]
     private ?string $key = null;
 
     /**
-     * @ORM\Column(type="object")
      * @var mixed
      */
+    #[ORM\Column(type: 'object')]
     private $value = null;
 
     public function getKey(): string {

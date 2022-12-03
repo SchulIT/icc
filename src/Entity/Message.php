@@ -14,274 +14,209 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(
- *     indexes={
- *          @ORM\Index(columns={"title"}, flags={"fulltext"}),
- *          @ORM\Index(columns={"content"}, flags={"fulltext"})
- *     }
- * )
- * @Auditable()
- */
+#[Auditable]
+#[ORM\Entity]
+#[ORM\Index(columns: ['title'], flags: ['fulltext'])]
+#[ORM\Index(columns: ['content'], flags: ['fulltext'])]
 class Message implements Stringable {
 
    use IdTrait;
    use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $title = null;
 
-    /**
-     * @ORM\Column(type="text")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'text')]
     private ?string $content = null;
 
-    /**
-     * @ORM\Column(type="datetime", name="start_date")
-     */
     #[Assert\NotNull]
-    private ?\DateTime $startDate = null;
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTime $startDate = null;
 
-    /**
-     * @ORM\Column(type="datetime", name="expire_date")
-     */
     #[Assert\GreaterThan(propertyPath: 'startDate')]
     #[Assert\NotNull]
-    private ?\DateTime $expireDate = null;
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTime $expireDate = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(name="message_studygroups",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
-     * @ORM\OrderBy({"name" = "ASC"})
      * @var Collection<StudyGroup>
      */
-    #[CollectionNotEmpty(propertyPath: 'visibilities')]
+    #[ORM\JoinTable(name: 'message_studygroups')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
+    #[ORM\OrderBy(['name' => 'ASC'])]
     private $studyGroups;
 
     /**
-     * @ORM\OneToMany(targetEntity="MessageAttachment", mappedBy="message", cascade={"persist"})
-     * @ORM\OrderBy({"filename"="asc"})
      * @var ArrayCollection<MessageAttachment>
      */
+    #[ORM\OneToMany(mappedBy: 'message', targetEntity: MessageAttachment::class, cascade: ['persist'])]
+    #[ORM\OrderBy(['filename' => 'asc'])]
     private $attachments;
 
     /**
-     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="message_visibilities",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<UserTypeEntity>
      */
+    #[ORM\JoinTable(name: 'message_visibilities')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
     private $visibilities;
 
-    /**
-     * @ORM\Column(type="message_scope")
-     */
+    #[ORM\Column(type: 'message_scope')]
     private MessageScope $scope;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(onDelete="SET NULL")
-     * @Gedmo\Blameable(on="create")
-     */
+    #[Gedmo\Blameable(on: 'create')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $createdBy = null;
 
-    /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
-     */
-    private \DateTime $createdAt;
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(type: 'datetime')]
+    private DateTime $createdAt;
 
-    /**
-     * @Gedmo\Timestampable(on="create")
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime")
-     */
-    private \DateTime $updatedAt;
+    #[Gedmo\Timestampable(on: 'update')]
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?DateTime $updatedAt;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(onDelete="SET NULL")
-     * @Gedmo\Blameable(on="update")
-     * @Gedmo\Blameable(on="create")
-     */
+    #[Gedmo\Blameable(on: 'update')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $updatedBy = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $isDownloadsEnabled = false;
 
     /**
-     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="message_download_usertypes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<UserTypeEntity>
      */
-    #[SubsetOf(propertyPath: 'visibilities')]
+    #[ORM\JoinTable(name: 'message_download_usertypes')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
     private $downloadEnabledUserTypes;
 
     /**
-     * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(name="message_download_studygroups",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
-     * @ORM\OrderBy({"name" = "ASC"})
      * @var Collection<StudyGroup>
      */
-    #[SubsetOf(propertyPath: 'studyGroups')]
+    #[ORM\JoinTable(name: 'message_download_studygroups')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
+    #[ORM\OrderBy(['name' => 'ASC'])]
     private $downloadEnabledStudyGroups;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $isUploadsEnabled = false;
 
     /**
-     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="message_upload_usertypes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<UserTypeEntity>
      */
-    #[SubsetOf(propertyPath: 'visibilities')]
+    #[ORM\JoinTable(name: 'message_upload_usertypes')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
     private $uploadEnabledUserTypes;
 
     /**
-     * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(name="message_upload_studygroups",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
-     * @ORM\OrderBy({"name" = "ASC"})
      * @var Collection<StudyGroup>
      */
-    #[SubsetOf(propertyPath: 'studyGroups')]
+    #[ORM\JoinTable(name: 'message_upload_studygroups')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
+    #[ORM\OrderBy(['name' => 'ASC'])]
     private $uploadEnabledStudyGroups;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $uploadDescription = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="MessageFile", mappedBy="message", cascade={"persist"})
      * @var Collection<MessageFile>
      */
     #[Assert\Valid]
+    #[ORM\OneToMany(mappedBy: 'message', targetEntity: MessageFile::class, cascade: ['persist'])]
     private $files;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $isEmailNotificationSent = false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $isPushNotificationSent = false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $mustConfirm = false;
 
     /**
-     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="message_confirmation_usertypes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<UserTypeEntity>
      */
-    #[SubsetOf(propertyPath: 'visibilities')]
+    #[ORM\JoinTable(name: 'message_confirmation_usertypes')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
     private $confirmationRequiredUserTypes;
 
     /**
-     * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(name="message_confirmation_studygroups",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
-     * @ORM\OrderBy({"name" = "ASC"})
      * @var Collection<StudyGroup>
      */
-    #[SubsetOf(propertyPath: 'studyGroups')]
+    #[ORM\JoinTable(name: 'message_confirmation_studygroups')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
+    #[ORM\OrderBy(['name' => 'ASC'])]
     private $confirmationRequiredStudyGroups;
 
     /**
-     * @ORM\OneToMany(targetEntity="MessageConfirmation", mappedBy="message")
      * @var Collection<MessageConfirmation>
      */
+    #[ORM\OneToMany(mappedBy: 'message', targetEntity: MessageConfirmation::class)]
     private $confirmations;
 
-    /**
-     * @ORM\Column(type="message_priority")
-     */
+    #[ORM\Column(type: 'message_priority')]
     private MessagePriority $priority;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $isPollEnabled = false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $allowPollRevote = true;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Assert\GreaterThanOrEqual(1)]
+    #[ORM\Column(type: 'integer')]
     private int $pollNumChoices = 1;
 
     /**
-     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="message_poll_usertypes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<UserTypeEntity>
      */
-    #[SubsetOf(propertyPath: 'visibilities')]
+    #[ORM\JoinTable(name: 'message_poll_usertypes')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
     private $pollUserTypes;
 
     /**
-     * @ORM\ManyToMany(targetEntity="StudyGroup")
-     * @ORM\JoinTable(name="message_poll_studygroups",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
-     * @ORM\OrderBy({"name" = "ASC"})
      * @var Collection<StudyGroup>
      */
-    #[SubsetOf(propertyPath: 'studyGroups')]
+    #[ORM\JoinTable(name: 'message_poll_studygroups')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
+    #[ORM\OrderBy(['name' => 'ASC'])]
     private $pollStudyGroups;
 
     /**
-     * @ORM\OneToMany(targetEntity="MessagePollChoice", mappedBy="message", cascade={"persist"}, orphanRemoval=true)
      * @var Collection<MessagePollChoice>
      */
+    #[ORM\OneToMany(mappedBy: 'message', targetEntity: MessagePollChoice::class, cascade: ['persist'], orphanRemoval: true)]
     private $pollChoices;
 
     /**
-     * @ORM\OneToMany(targetEntity="MessagePollVote", mappedBy="message")
      * @var Collection<MessagePollVote>
      */
+    #[ORM\OneToMany(mappedBy: 'message', targetEntity: MessagePollVote::class)]
     private $pollVotes;
 
     public function __construct() {
@@ -601,10 +536,18 @@ class Message implements Stringable {
     }
 
     public function getUpdatedAt(): DateTime {
+        if($this->updatedAt === null) {
+            return $this->getCreatedAt();
+        }
+
         return $this->updatedAt;
     }
 
     public function getUpdatedBy(): ?User {
+        if($this->updatedBy === null) {
+            return $this->getCreatedBy();
+        }
+
         return $this->updatedBy;
     }
 

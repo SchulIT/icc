@@ -50,7 +50,7 @@ class HelperExtension extends AbstractExtension {
         ];
     }
 
-    public function getPreviousDate(\DateTime $dateTime, bool $skipWeekends = false): DateTime {
+    public function getPreviousDate(DateTime $dateTime, bool $skipWeekends = false): DateTime {
         $previous = (clone $dateTime)->sub(new DateInterval('P1D'));
 
         while($skipWeekends === true && $previous->format('N') > 5) {
@@ -60,7 +60,7 @@ class HelperExtension extends AbstractExtension {
         return $previous;
     }
 
-    public function getNextDate(\DateTime $dateTime, bool $skipWeekends = false): DateTime {
+    public function getNextDate(DateTime $dateTime, bool $skipWeekends = false): DateTime {
         $next = (clone $dateTime)->add(new DateInterval('P1D'));
 
         while($skipWeekends === true && $next->format('N') > 5) {
@@ -74,7 +74,7 @@ class HelperExtension extends AbstractExtension {
         return clone $object;
     }
 
-    public function isInDateTimeArray(\DateTime $dateTime, array $dateTimes): bool {
+    public function isInDateTimeArray(DateTime $dateTime, array $dateTimes): bool {
         foreach($dateTimes as $item) {
             if($item == $dateTime) {
                 return true;

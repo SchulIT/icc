@@ -13,10 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Security("is_granted('ROLE_ADMIN')")
- */
 #[Route(path: '/admin/teachers/tags')]
+#[Security("is_granted('ROLE_ADMIN')")]
 class TeacherTagAdminController extends AbstractController {
 
     public function __construct(private TeacherTagRepositoryInterface $repository, RefererHelper $redirectHelper) {

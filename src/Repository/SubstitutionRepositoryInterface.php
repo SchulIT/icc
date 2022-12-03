@@ -38,21 +38,21 @@ interface SubstitutionRepositoryInterface extends TransactionalRepositoryInterfa
     /**
      * @return Substitution[]
      */
-    public function findAllForStudyGroups(array $studyGroups, ?\DateTime $date = null);
+    public function findAllForStudyGroups(array $studyGroups, ?DateTime $date = null);
 
     public function countAllForStudyGroups(array $studyGroups, ?DateTime $date = null): int;
 
     /**
      * @return Substitution[]
      */
-    public function findAllForTeacher(Teacher $teacher, ?\DateTime $date = null);
+    public function findAllForTeacher(Teacher $teacher, ?DateTime $date = null);
 
     public function countAllForTeacher(Teacher $teacher, ?DateTime $date = null): int;
 
     /**
      * @return Substitution[]
      */
-    public function findAllForGrade(Grade $grade, ?\DateTime $date = null);
+    public function findAllForGrade(Grade $grade, ?DateTime $date = null);
 
     public function countAllForGrade(Grade $grade, ?DateTime $date = null): int;
 

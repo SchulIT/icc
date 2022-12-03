@@ -262,21 +262,17 @@ class MessageAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @ParamConverter("message", class="App\Entity\Message", options={"mapping": { "message" = "uuid"}})
-     * @ParamConverter("user", class="App\Entity\User", options={"mapping": {"user" = "uuid"}})
-     */
     #[Route(path: '/{message}/downloads/{user}/{filename}/download', name: 'download_message_download')]
+    #[ParamConverter('message', class: Message::class, options: ['mapping' => ['message' => 'uuid']])]
+    #[ParamConverter('user', class: User::class, options: ['mapping' => ['user' => 'uuid']])]
     public function downloadDownload(Message $message, User $user, string $filename, MessageFilesystem $messageFilesystem): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
         return $messageFilesystem->getMessageUserFileDownloadResponse($message, $user, $filename);
     }
 
-    /**
-     * @ParamConverter("message", class="App\Entity\Message", options={"mapping": { "message" = "uuid"}})
-     * @ParamConverter("user", class="App\Entity\User", options={"mapping": {"user" = "uuid"}})
-     */
     #[Route(path: '/{message}/downloads/{user}/{filename}/remove', name: 'remove_message_download')]
+    #[ParamConverter('message', class: Message::class, options: ['mapping' => ['message' => 'uuid']])]
+    #[ParamConverter('user', class: User::class, options: ['mapping' => ['user' => 'uuid']])]
     public function removeDownload(Message $message, User $user, string $filename, MessageFilesystem $messageFilesystem, Request $request): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
@@ -306,11 +302,9 @@ class MessageAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @ParamConverter("message", class="App\Entity\Message", options={"mapping": { "message" = "uuid"}})
-     * @ParamConverter("user", class="App\Entity\User", options={"mapping": {"user" = "uuid"}})
-     */
     #[Route(path: '/{message}/downloads/upload/{user}', name: 'upload_message_download')]
+    #[ParamConverter('message', class: Message::class, options: ['mapping' => ['message' => 'uuid']])]
+    #[ParamConverter('user', class: User::class, options: ['mapping' => ['user' => 'uuid']])]
     public function uploadDownload(Message $message, User $user, Request $request, MessageFilesystem $filesystem, UserRepositoryInterface $userRepository): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);
 
@@ -420,12 +414,10 @@ class MessageAdminController extends AbstractController {
         ]);
     }
 
-    /**
-     * @ParamConverter("message", class="App\Entity\Message", options={"mapping": { "message" = "uuid"}})
-     * @ParamConverter("file", class="App\Entity\MessageFile", options={"mapping": {"file" = "uuid"}})
-     * @ParamConverter("user", class="App\Entity\User", options={"mapping": {"user" = "uuid"}})
-     */
     #[Route(path: '/{message}/uploads/download/{file}/{user}', name: 'download_message_upload')]
+    #[ParamConverter('message', class: Message::class, options: ['mapping' => ['message' => 'uuid']])]
+    #[ParamConverter('file', class: MessageFile::class, options: ['mapping' => ['file' => 'uuid']])]
+    #[ParamConverter('user', class: User::class, options: ['mapping' => ['user' => 'uuid']])]
     public function downloadUploads(Message $message, MessageFile $file, User $user,
                                     MessageFilesystem $filesystem, MessageFileUploadRepositoryInterface $fileUploadRepository): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Edit, $message);

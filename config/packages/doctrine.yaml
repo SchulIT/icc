@@ -36,8 +36,9 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+                type: attribute
             gedmo_loggable:
-                type: annotation
+                type: attribute
                 prefix: Gedmo\Loggable\Entity
                 dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Loggable/Entity"
                 alias: GedmoLoggable # (optional) it will default to the name set for the mapping

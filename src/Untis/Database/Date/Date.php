@@ -8,7 +8,7 @@ class Date {
 
     private ?int $calendarWeek = null;
 
-    private ?\DateTime $startDate = null;
+    private ?DateTime $startDate = null;
 
     private ?int $schoolWeek = null;
 

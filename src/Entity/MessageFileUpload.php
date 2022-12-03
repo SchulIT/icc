@@ -8,50 +8,34 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-/**
- * @ORM\Entity()
- * @Vich\Uploadable()
- */
+#[Vich\Uploadable]
+#[ORM\Entity]
 class MessageFileUpload {
 
-    /**
-     * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="MessageFile", inversedBy="uploads")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: MessageFile::class, inversedBy: 'uploads')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?MessageFile $messageFile = null;
 
-    /**
-     * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?User $user = null;
 
-    /**
-     * @Vich\UploadableField(mapping="messages", fileNameProperty="path", originalName="filename", size="size")
-     */
+    #[Vich\UploadableField(mapping: 'messages', fileNameProperty: 'path', size: 'size', originalName: 'filename')]
     private $file;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $filename = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $path = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $size = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private ?\DateTime $updatedAt = null;
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTime $updatedAt = null;
 
     public function getMessageFile(): MessageFile {
         return $this->messageFile;

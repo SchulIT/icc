@@ -12,7 +12,7 @@ class Exam {
 
     private ?string $text = null;
 
-    private ?\DateTime $date = null;
+    private ?DateTime $date = null;
 
     private ?int $lessonStart = null;
 

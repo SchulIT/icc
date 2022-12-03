@@ -51,7 +51,7 @@ class StudentData {
      * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      */
     #[Assert\NotNull]
-    private ?\DateTime $birthday = null;
+    private ?DateTime $birthday = null;
 
     /**
      * @Serializer\Type("array<string>")

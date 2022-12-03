@@ -11,11 +11,9 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
 #[UniqueEntity(fields: ['externalId'])]
+#[ORM\Entity]
 class TeacherTag {
 
     public const GradeTeacherTagUuid = '89274ce2-3f85-48c8-890e-1aea0e08d21d';
@@ -24,34 +22,27 @@ class TeacherTag {
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", unique=true, length=32)
-     */
     #[Assert\NotBlank]
     #[Assert\Length(max: 32)]
+    #[ORM\Column(type: 'string', length: 32, unique: true)]
     private $externalId;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private $name;
 
-    /**
-     * @ORM\Column(type="string", length=7)
-     */
     #[Color]
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', length: 7)]
     private $color;
 
     /**
-     * @ORM\ManyToMany(targetEntity="UserTypeEntity")
-     * @ORM\JoinTable(name="teacher_tag_visibilities",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var ArrayCollection<UserTypeEntity>
      */
+    #[ORM\JoinTable(name: 'teacher_tag_visibilities')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
     private $visibilities;
 
     public function __construct() {

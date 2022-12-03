@@ -13,92 +13,72 @@ use Stringable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
 #[UniqueEntity(fields: ['externalId'])]
+#[ORM\Entity]
 class Student implements JsonSerializable, Stringable {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", unique=true)
-     */
     #[Assert\NotNull]
+    #[ORM\Column(type: 'string', unique: true)]
     private ?string $externalId = null;
 
-    /**
-     * @ORM\Column(type="string", unique=true)
-     */
     #[Assert\NotNull]
+    #[ORM\Column(type: 'string', unique: true)]
     private ?string $uniqueIdentifier = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $firstname = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private ?string $lastname = null;
 
-    /**
-     * @ORM\Column(type="gender")
-     */
+    #[ORM\Column(type: 'gender')]
     private ?Gender $gender;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
     #[Assert\Email]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $email = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $status = null;
 
-    /**
-     * @ORM\Column(type="date")
-     */
-    private ?\DateTime $birthday = null;
+    #[ORM\Column(type: 'date')]
+    private ?DateTime $birthday = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="GradeMembership", mappedBy="student", cascade={"persist"}, orphanRemoval=true)
      * @var Collection<GradeMembership>
      */
+    #[ORM\OneToMany(mappedBy: 'student', targetEntity: GradeMembership::class, cascade: ['persist'], orphanRemoval: true)]
     private $gradeMemberships;
 
     /**
-     * @ORM\OneToMany(targetEntity="StudyGroupMembership", mappedBy="student", cascade={"persist"}, orphanRemoval=true)
      * @var Collection<StudyGroupMembership>
      */
+    #[ORM\OneToMany(mappedBy: 'student', targetEntity: StudyGroupMembership::class, cascade: ['persist'], orphanRemoval: true)]
     private $studyGroupMemberships;
 
     /**
-     * @ORM\ManyToMany(targetEntity="PrivacyCategory")
-     * @ORM\JoinTable(name="student_approved_privacy_categories",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<PrivacyCategory>
      */
+    #[ORM\JoinTable(name: 'student_approved_privacy_categories')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: PrivacyCategory::class)]
     private $approvedPrivacyCategories;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Section", cascade={"persist"})
-     * @ORM\JoinTable(name="student_sections",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<Section>
      */
+    #[ORM\JoinTable(name: 'student_sections')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Section::class, cascade: ['persist'])]
     private $sections;
 
     public function __construct() {

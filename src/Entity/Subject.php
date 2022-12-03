@@ -12,86 +12,76 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
 #[UniqueEntity(fields: ['abbreviation'])]
+#[ORM\Entity]
 class Subject implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", unique=true, nullable=true)
-     */
+    #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $externalId = null;
 
-    /**
-     * @ORM\Column(type="string", unique=true)
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', unique: true)]
     private ?string $abbreviation = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotNull]
+    #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $replaceSubjectAbbreviation = true;
 
     /**
-     * @ORM\Column(type="boolean")
      * @Serializer\Exclude()
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $isVisibleGrades = true;
 
     /**
-     * @ORM\Column(type="boolean")
      * @Serializer\Exclude()
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $isVisibleStudents = true;
 
     /**
-     * @ORM\Column(type="boolean")
      * @Serializer\Exclude()
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $isVisibleTeachers = true;
 
     /**
-     * @ORM\Column(type="boolean")
      * @Serializer\Exclude()
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $isVisibleRooms = true;
 
     /**
-     * @ORM\Column(type="boolean")
      * @Serializer\Exclude()
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $isVisibleSubjects = true;
 
     /**
-     * @ORM\Column(type="boolean")
      * @Serializer\Exclude()
      */
+    #[ORM\Column(type: 'boolean')]
     private bool $isVisibleLists = true;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
      * @Serializer\Exclude()
      */
     #[Color]
     #[Assert\Length(min: 7, max: 7)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $color = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Teacher", mappedBy="subjects")
      * @var ArrayCollection<Teacher>
      */
+    #[ORM\ManyToMany(targetEntity: Teacher::class, mappedBy: 'subjects')]
     private $teachers;
 
     public function __construct() {

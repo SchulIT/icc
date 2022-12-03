@@ -63,7 +63,7 @@ trait DateTimeHelperTrait {
     /**
      * @param \DateTime[] $dateTimes
      */
-    private function getCurrentDate(array $dateTimes, ?string $date): ?\DateTime {
+    private function getCurrentDate(array $dateTimes, ?string $date): ?DateTime {
         if(count($dateTimes) === 0) {
             return null;
         }
@@ -72,7 +72,7 @@ trait DateTimeHelperTrait {
             return $dateTimes[0];
         }
 
-        $selectedDateTime = new \DateTime($date);
+        $selectedDateTime = new DateTime($date);
 
         foreach($dateTimes as $dateTime) {
             if($dateTime == $selectedDateTime) {

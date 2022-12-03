@@ -15,7 +15,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ExamRepository extends AbstractTransactionalRepository implements ExamRepositoryInterface {
 
-    private function getDefaultQueryBuilder(\DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true): QueryBuilder {
+    private function getDefaultQueryBuilder(DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
 
         $qb
@@ -81,7 +81,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByTuitions(array $tuitions, ?\DateTime $today = null, bool $onlyPlanned = true) {
+    public function findAllByTuitions(array $tuitions, ?DateTime $today = null, bool $onlyPlanned = true) {
         $qb = $this->getDefaultQueryBuilder($today, false, $onlyPlanned);
 
         $qbInner = $this->em->createQueryBuilder()
@@ -139,7 +139,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByTeacher(Teacher $teacher, ?\DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
+    public function findAllByTeacher(Teacher $teacher, ?DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
         $qb = $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned);
 
         $qbInner = $this->em->createQueryBuilder()
@@ -193,7 +193,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByStudents(array $students, ?\DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
+    public function findAllByStudents(array $students, ?DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
         $qb = $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned);
 
         $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
@@ -241,7 +241,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByGrade(Grade $grade, ?\DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
+    public function findAllByGrade(Grade $grade, ?DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
         $qb = $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned);
 
         $qbInner = $this->em->createQueryBuilder()
@@ -293,7 +293,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllByDateAndLesson(\DateTime $today, int $lesson): array {
+    public function findAllByDateAndLesson(DateTime $today, int $lesson): array {
         $qb = $this->getDefaultQueryBuilder($today, true);
 
         $qb
@@ -334,7 +334,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAll(?\DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
+    public function findAll(?DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true) {
         return $this->getDefaultQueryBuilder($today, $onlyToday, $onlyPlanned)
             ->getQuery()
             ->getResult();
@@ -343,7 +343,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllDates(?\DateTime $today = null, bool $onlyPlanned = true) {
+    public function findAllDates(?DateTime $today = null, bool $onlyPlanned = true) {
         return $this->getDefaultQueryBuilder($today, false, $onlyPlanned)
             ->select(['e.date', 'COUNT(DISTINCT e.id) AS count'])
             ->groupBy('e.date')
@@ -354,7 +354,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllExternal(\DateTime $today = null) {
+    public function findAllExternal(DateTime $today = null) {
         $qb = $this->getDefaultQueryBuilder($today);
 
         return $qb->andWhere($qb->expr()->isNotNull('e.externalId'))

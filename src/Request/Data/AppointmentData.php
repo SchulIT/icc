@@ -42,7 +42,7 @@ class AppointmentData {
      * @Serializer\Type("DateTime")
      */
     #[Assert\NotNull]
-    private \DateTime $start;
+    private DateTime $start;
 
     /**
      * End of the appointment. Note: this value is exclusive which means that an all day appointment on April 30, 2020
@@ -51,7 +51,7 @@ class AppointmentData {
      * @Serializer\Type("DateTime")
      */
     #[Assert\NotNull]
-    private \DateTime $end;
+    private DateTime $end;
 
     /**
      * Location of the appointment - must not be empty but may be null.

@@ -13,105 +13,79 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- */
 #[UniqueEntity(fields: ['username'])]
+#[ORM\Entity]
 class User implements UserInterface, Stringable {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="uuid")
-     */
+    #[ORM\Column(type: 'uuid')]
     private ?UuidInterface $idpId = null;
 
-    /**
-     * @ORM\Column(type="string", unique=true)
-     */
+    #[ORM\Column(type: 'string', unique: true)]
     private ?string $username = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $firstname = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $lastname = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[Assert\Email]
     #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $email = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumn(onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: Teacher::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Teacher $teacher = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Student")
-     * @ORM\JoinTable(name="user_students",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var Collection<Student>
      */
+    #[ORM\JoinTable(name: 'user_students')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Student::class)]
     private $students;
 
     /**
-     * @ORM\Column(type="json")
      * @var string[]
      */
+    #[ORM\Column(type: 'json')]
     private array $roles = ['ROLE_USER'];
 
-    /**
-     * @ORM\Column(type="user_type")
-     */
+    #[ORM\Column(type: 'user_type')]
     private ?UserType $userType = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Message")
-     * @ORM\JoinTable(name="user_dismissed_messages",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
-     * )
      * @var ArrayCollection<Message>
      */
+    #[ORM\JoinTable(name: 'user_dismissed_messages')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Message::class)]
     private $dismissedMessages;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $isSubstitutionNotificationsEnabled = false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $isExamNotificationsEnabled = false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $isMessageNotificationsEnabled = false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $isEmailNotificationsEnabled = false;
 
     /**
-     * @ORM\Column(type="json")
      * @var string[]
      */
+    #[ORM\Column(type: 'json')]
     private array $data = [ ];
 
     public function __construct() {

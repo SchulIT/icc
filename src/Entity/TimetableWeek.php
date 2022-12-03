@@ -11,32 +11,26 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @Auditable()
- */
+#[Auditable]
 #[UniqueEntity(fields: ['key'])]
+#[ORM\Entity]
 class TimetableWeek implements Stringable {
 
     use IdTrait;
     use UuidTrait;
 
-    /**
-     * @ORM\Column(type="string", unique=true, name="`key`")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', unique: true)]
     private string $key;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     private string $displayName;
 
     /**
-     * @ORM\OneToMany(targetEntity="Week", mappedBy="timetableWeek", cascade={"persist", "remove", "refresh"})
      * @var Collection<Week>
      */
+    #[ORM\OneToMany(mappedBy: 'timetableWeek', targetEntity: Week::class, cascade: ['persist', 'remove', 'refresh'])]
     private $weeks;
 
     public function __construct() {

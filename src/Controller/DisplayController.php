@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\TimetableWeekRepositoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use App\Display\DisplayHelper;
 use App\Entity\Display;
@@ -24,7 +25,7 @@ class DisplayController extends AbstractController {
 
     #[Route(path: '/{uuid}', name: 'show_display')]
     public function show(Display $display, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
-                         SubstitutionRepositoryInterface $substitutionRepository, AppointmentRepositoryInterface $appointmentRepository,
+                         TimetableWeekRepositoryInterface $timetableWeekRepository, AppointmentRepositoryInterface $appointmentRepository,
                          DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper, ImportDateTypeRepositoryInterface  $importDateTymeRepository): Response {
         $today = $dateHelper->getToday();
         $appointments = [ ];
@@ -48,6 +49,8 @@ class DisplayController extends AbstractController {
             $itemsCount += is_countable($group->getItems()) ? count($group->getItems()) : 0;
         }
 
+        $week = $timetableWeekRepository->findOneByWeekNumber((int)$today->format('W'));
+
         return $this->render('display/two_column_bottom.html.twig', [
             'display' => $display,
             'infotexts' => $infotextRepository->findAllByDate($today),
@@ -58,6 +61,7 @@ class DisplayController extends AbstractController {
             'count' => $itemsCount,
             'last_update' => $importDateTymeRepository->findOneByEntityClass(Substitution::class),
             'day' => $today,
+            'week' => $week,
             'is_teachersview' => $display->getTargetUserType() === DisplayTargetUserType::Teachers
         ]);
     }

@@ -213,11 +213,9 @@ class ListController extends AbstractControllerWithMessages {
         }
 
         if($grade !== null) {
-            $gradeTeachers = array_map(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getTeacher(), array_filter($grade->getTeachers()->toArray(), fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getType()->equals(GradeTeacherType::Primary()))
-            );
+            $gradeTeachers = array_map(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getTeacher(), array_filter($grade->getTeachers()->toArray(), fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getType() === GradeTeacherType::Primary));
 
-            $substitutionalGradeTeachers = array_map(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getTeacher(), array_filter($grade->getTeachers()->toArray(), fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getType()->equals(GradeTeacherType::Substitute()))
-            );
+            $substitutionalGradeTeachers = array_map(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getTeacher(), array_filter($grade->getTeachers()->toArray(), fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getType() === GradeTeacherType::Substitute));
         }
 
         $tuitions = [ ];
@@ -292,11 +290,11 @@ class ListController extends AbstractControllerWithMessages {
         return array_filter($teachers, function(Teacher $teacher) use ($tag) {
             /** @var GradeTeacher $gradeTeacher */
             foreach($teacher->getGrades() as $gradeTeacher) {
-                if($gradeTeacher->getType()->equals(GradeTeacherType::Primary()) && $tag->getUuid()->toString() === TeacherTag::GradeTeacherTagUuid) {
+                if($gradeTeacher->getType() === GradeTeacherType::Primary && $tag->getUuid()->toString() === TeacherTag::GradeTeacherTagUuid) {
                     return true;
                 }
 
-                if($gradeTeacher->getType()->equals(GradeTeacherType::Substitute()) && $tag->getUuid()->toString() === TeacherTag::SubstituteGradeTeacherTagUuid) {
+                if($gradeTeacher->getType() === GradeTeacherType::Substitute && $tag->getUuid()->toString() === TeacherTag::SubstituteGradeTeacherTagUuid) {
                     return true;
                 }
             }

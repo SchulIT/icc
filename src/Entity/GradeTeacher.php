@@ -33,11 +33,11 @@ class GradeTeacher {
     /**
      * @var GradeTeacherType
      */
-    #[ORM\Column(type: 'grade_teacher_type')]
+    #[ORM\Column(type: 'string', enumType: GradeTeacherType::class)]
     private GradeTeacherType $type;
 
     public function __construct() {
-        $this->type = GradeTeacherType::Primary();
+        $this->type = GradeTeacherType::Primary;
     }
 
     public function getTeacher(): ?Teacher {

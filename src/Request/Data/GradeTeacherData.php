@@ -56,6 +56,6 @@ class GradeTeacherData {
     }
 
     public static function getGradeTeacherTypes() {
-        return array_values(GradeTeacherType::toArray());
+        return array_map(fn(GradeTeacherType $type) => $type->value, GradeTeacherType::cases());
     }
 }

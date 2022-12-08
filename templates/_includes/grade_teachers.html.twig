@@ -1,6 +1,6 @@
 {%- if section is not null -%}
 {%- for t in grade.teachers|only_section(section)|sort_gradeteachers %}
-{{- t.teacher|teacher(false) -}}{%- if t.type == 'substitute' %} <span class="text-muted" title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{%- endif -%}
+{{- t.teacher|teacher(false) -}}{%- if t.type.value == 'substitute' %} <span class="text-muted" title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{%- endif -%}
 {% if not loop.last %}, {% endif -%}
 {%- endfor -%}
 {%- endif -%}

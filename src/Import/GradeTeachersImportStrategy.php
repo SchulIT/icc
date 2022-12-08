@@ -66,7 +66,7 @@ class GradeTeachersImportStrategy implements ReplaceImportStrategyInterface {
         $gradeTeacher = (new GradeTeacher())
             ->setTeacher($teacher)
             ->setGrade($grade)
-            ->setType(new GradeTeacherType($data->getType()))
+            ->setType(GradeTeacherType::from($data->getType()))
             ->setSection($section);
 
         $this->gradeTeacherRepository->persist($gradeTeacher);

@@ -45,7 +45,7 @@ abstract class AbstractGradeFilter {
                 if($gradeTeacher->getSection() === $section) {
                     if($defaultGrade === null) {
                         $defaultGrade = $gradeTeacher->getGrade();
-                    } else if($gradeTeacher->getType()->equals(GradeTeacherType::Primary())) {
+                    } else if($gradeTeacher->getType() === GradeTeacherType::Primary) {
                         $defaultGrade = $gradeTeacher->getGrade();
                     }
                 }

@@ -16,8 +16,8 @@ class GradeTeacherStrategy implements SortingStrategyInterface {
      * @param GradeTeacher $objectB
      */
     public function compare($objectA, $objectB): int {
-        $typeA = $objectA->getType()->equals(GradeTeacherType::Primary()) ? 1 : 0;
-        $typeB = $objectB->getType()->equals(GradeTeacherType::Primary()) ? 1 : 0;
+        $typeA = $objectA->getType() === GradeTeacherType::Primary ? 1 : 0;
+        $typeB = $objectB->getType() === GradeTeacherType::Primary ? 1 : 0;
 
         if($typeA === $typeB) {
             return $this->teacherStrategy->compare($objectA->getTeacher(), $objectB->getTeacher());

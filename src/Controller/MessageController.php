@@ -50,7 +50,7 @@ class MessageController extends AbstractController {
     }
 
     protected function getMessageScope(): MessageScope {
-        return MessageScope::Messages();
+        return MessageScope::Messages;
     }
 
     #[Route(path: '', name: 'messages')]
@@ -79,7 +79,7 @@ class MessageController extends AbstractController {
         $paginator = $messageRepository->getPaginator(
             self::MessagesPerPage,
             $page,
-            MessageScope::Messages(),
+            MessageScope::Messages,
             $userTypeFilterView->getCurrentType(),
             null,
             $studyGroups,

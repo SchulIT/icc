@@ -102,11 +102,11 @@ class DashboardViewHelper {
             /** @var GradeTeacher $gradeTeacher */
             foreach($teacher->getGrades() as $gradeTeacher) {
                 $studyGroups = $this->studyGroupRepository->findAllByGrades($gradeTeacher->getGrade(), $section);
-                $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages(), UserType::Student(), $dateTime, $studyGroups));
+                $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages, UserType::Student(), $dateTime, $studyGroups));
             }
         }
 
-        $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages(), UserType::Teacher(), $dateTime));
+        $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages, UserType::Teacher(), $dateTime));
 
         $messages = ArrayUtils::createArrayWithKeys($messages, fn(Message $message) => $message->getId());
 
@@ -140,7 +140,7 @@ class DashboardViewHelper {
 
         $section = $this->sectionResolver->getSectionForDate($dateTime);
 
-        $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $userType, $dateTime, $studyGroups), $view);
+        $this->addMessages($this->messageRepository->findBy(MessageScope::Messages, $userType, $dateTime, $studyGroups), $view);
         $this->addSubstitutions($this->filterSubstitutionsByGrade($this->substitutionRepository->findAllForStudyGroups($studyGroups, $dateTime), $student->getGrade($section)), $view, false);
         $this->addExams($this->examRepository->findAllByStudents([$student], $dateTime, true), $view, null, false);
         $this->addInfotexts($dateTime, $view);
@@ -156,7 +156,7 @@ class DashboardViewHelper {
     public function createViewForUser(User $user, DateTime $dateTime): DashboardView {
         $view = new DashboardView($dateTime);
 
-        $this->addMessages($this->messageRepository->findBy(MessageScope::Messages(), $user->getUserType(), $dateTime), $view);
+        $this->addMessages($this->messageRepository->findBy(MessageScope::Messages, $user->getUserType(), $dateTime), $view);
         $this->setCurrentLesson($view);
 
         return $view;

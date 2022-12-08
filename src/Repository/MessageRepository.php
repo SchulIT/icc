@@ -69,7 +69,7 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
 
         $qb
             ->where($qb->expr()->in('m.id', $qbInner->getDQL()))
-            ->setParameter('scope', $scope->getValue())
+            ->setParameter('scope', $scope)
             ->setParameter('userType', $userType->getValue());
 
         return $qb;

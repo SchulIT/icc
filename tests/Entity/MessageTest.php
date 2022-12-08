@@ -30,7 +30,7 @@ class MessageTest extends TestCase {
         $message->setExpireDate($end);
         $this->assertEquals($end, $message->getExpireDate());
 
-        $scope = MessageScope::Appointments();
+        $scope = MessageScope::Appointments;
         $message->setScope($scope);
         $this->assertEquals($scope, $message->getScope());
 

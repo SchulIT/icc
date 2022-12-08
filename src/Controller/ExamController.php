@@ -252,7 +252,7 @@ class ExamController extends AbstractControllerWithMessages {
     }
 
     protected function getMessageScope(): MessageScope {
-        return MessageScope::Exams();
+        return MessageScope::Exams;
     }
 
     #[Route(path: '/{uuid}', name: 'show_exam', requirements: ['id' => '\d+'])]

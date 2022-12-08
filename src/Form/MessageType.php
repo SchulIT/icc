@@ -2,9 +2,8 @@
 
 namespace App\Form;
 
+use App\Entity\DisplayTargetUserType;
 use App\Entity\MessageScope;
-use App\Security\Voter\MessageScopeVoter;
-use App\Utils\ArrayUtils;
 use Doctrine\ORM\EntityRepository;
 use FervoEnumBundle\Generated\Form\MessagePriorityType;
 use FervoEnumBundle\Generated\Form\MessageScopeType;
@@ -14,16 +13,18 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MessageType extends AbstractType {
 
     private const YearsDelta = 1;
 
-    public function __construct(private DateHelper $dateHelper, private AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(private DateHelper $dateHelper, private AuthorizationCheckerInterface $authorizationChecker, private readonly TranslatorInterface $translator)
     {
     }
 
@@ -44,8 +45,12 @@ class MessageType extends AbstractType {
                         ->add('title', TextType::class, [
                             'label' => 'label.title'
                         ])
-                        ->add('scope', MessageScopeType::class, [
-                            'label' => 'label.scope'
+                        ->add('scope', EnumType::class, [
+                            'class' => MessageScope::class,
+                            'label' => 'label.scope',
+                            'choice_label' => function(MessageScope $scope) {
+                                return $this->translator->trans('message_scope.' . $scope->value, [], 'enums');
+                            }
                         ])
                         ->add('visibilities', UserTypeEntityType::class, [
                             'label' => 'label.visibility',

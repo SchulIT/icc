@@ -43,7 +43,7 @@ class MessageConfirmationTest extends WebTestCase {
             ->setContent('content')
             ->setStartDate(new \DateTime('2019-01-01'))
             ->setExpireDate(new \DateTime('2019-01-03'))
-            ->setScope(MessageScope::Appointments())
+            ->setScope(MessageScope::Appointments)
             ->setCreatedBy($user);
 
         $confirmation = (new MessageConfirmation())

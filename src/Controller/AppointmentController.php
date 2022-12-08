@@ -310,6 +310,6 @@ class AppointmentController extends AbstractControllerWithMessages {
     }
 
     protected function getMessageScope(): MessageScope {
-        return MessageScope::Appointments();
+        return MessageScope::Appointments;
     }
 }

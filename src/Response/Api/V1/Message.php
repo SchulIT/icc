@@ -426,7 +426,7 @@ class Message {
             ->setStudyGroups(array_map(fn(StudyGroupEntity $studyGroupEntity) => StudyGroup::fromEntity($studyGroupEntity), $messageEntity->getStudyGroups()->toArray()))
             ->setAttachments(array_map(fn(MessageAttachmentEntity $attachmentEntity) => MessageAttachment::fromEntity($attachmentEntity), $messageEntity->getAttachments()->toArray()))
             ->setVisibilities(array_map(fn(UserTypeEntity $userTypeEntity) => $userTypeEntity->getUserType()->getValue(), $messageEntity->getVisibilities()->toArray()))
-            ->setScope($messageEntity->getScope()->getValue())
+            ->setScope($messageEntity->getScope()->value)
             ->setCreatedBy(User::fromEntity($messageEntity->getCreatedBy()))
             ->setCreatedAt($messageEntity->getCreatedAt())
             ->setUpdatedAt($messageEntity->getUpdatedAt())

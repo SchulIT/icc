@@ -31,6 +31,6 @@ class MessageScopeVoter extends Voter {
             return true;
         }
 
-        return MessageScope::Messages()->equals($subject);
+        return MessageScope::Messages === $subject;
     }
 }

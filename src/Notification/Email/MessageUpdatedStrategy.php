@@ -83,7 +83,7 @@ class MessageUpdatedStrategy implements EmailStrategyInterface, PostEmailSendAct
      */
     public function supports($objective): bool {
         return $objective instanceof MessageUpdatedEvent
-            && $objective->getMessage()->getScope()->equals(MessageScope::Messages())
+            && $objective->getMessage()->getScope() === MessageScope::Messages
             && $objective->getMessage()->getStartDate() <= $this->dateHelper->getToday();
     }
 }

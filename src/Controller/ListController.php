@@ -60,7 +60,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     protected function getMessageScope(): MessageScope {
-        return MessageScope::Lists();
+        return MessageScope::Lists;
     }
 
     #[Route(path: '/tuitions', name: 'list_tuitions')]

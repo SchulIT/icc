@@ -66,7 +66,7 @@ class Message implements Stringable {
     #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
     private $visibilities;
 
-    #[ORM\Column(type: 'message_scope')]
+    #[ORM\Column(type: 'string', enumType: MessageScope::class)]
     private MessageScope $scope;
 
     #[Gedmo\Blameable(on: 'create')]
@@ -238,7 +238,7 @@ class Message implements Stringable {
         $this->pollChoices = new ArrayCollection();
         $this->pollVotes = new ArrayCollection();
 
-        $this->scope = MessageScope::Messages();
+        $this->scope = MessageScope::Messages;
         $this->priority = MessagePriority::Normal();
     }
 

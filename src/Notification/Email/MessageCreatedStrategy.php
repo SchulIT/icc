@@ -72,7 +72,7 @@ class MessageCreatedStrategy implements EmailStrategyInterface, PostEmailSendAct
      */
     public function supports($objective): bool {
         return $objective instanceof MessageCreatedEvent
-            && $objective->getMessage()->getScope()->equals(MessageScope::Messages())
+            && $objective->getMessage()->getScope() === MessageScope::Messages
             && $objective->getMessage()->isEmailNotificationSent() === false
             && $objective->getMessage()->getStartDate() <= $this->dateHelper->getToday();
     }

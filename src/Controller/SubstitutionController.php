@@ -126,6 +126,6 @@ class SubstitutionController extends AbstractControllerWithMessages {
     }
 
     protected function getMessageScope(): MessageScope {
-        return MessageScope::Substitutions();
+        return MessageScope::Substitutions;
     }
 }

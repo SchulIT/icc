@@ -243,6 +243,6 @@ class TimetableController extends AbstractControllerWithMessages {
     }
 
     protected function getMessageScope(): MessageScope {
-        return MessageScope::Timetable();
+        return MessageScope::Timetable;
     }
 }

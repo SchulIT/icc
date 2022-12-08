@@ -17,7 +17,7 @@ class StudyGroupStringConverter {
 
         $type = $this->translator->trans('studygroup.type.grade');
 
-        if($group->getType()->equals(StudyGroupType::Course())) {
+        if($group->getType() === StudyGroupType::Course) {
             $type = $this->translator->trans('studygroup.type.course');
         }
 
@@ -28,7 +28,7 @@ class StudyGroupStringConverter {
             ]);
         }
 
-        if($includeGrades === true && $group->getType()->equals(StudyGroupType::Grade()) === false) {
+        if($includeGrades === true && $group->getType() !== StudyGroupType::Grade) {
             return sprintf('%s (%s)', $name, $this->gradeConverter->convert($group->getGrades()->toArray()));
         }
 

@@ -65,12 +65,12 @@ class StudyGroupType extends SortableEntityType {
         foreach($choices as $choice) {
             if($choice instanceof ChoiceGroupView) {
                 foreach($choice->choices as $innerChoice) {
-                    if($innerChoice->data instanceof StudyGroup && $innerChoice->data->getType()->equals(StudyGroupEntityType::Grade())) {
+                    if($innerChoice->data instanceof StudyGroup && $innerChoice->data->getType() === StudyGroupEntityType::Grade) {
                         $gradeIds[] = $innerChoice->data->getId();
                     }
                 }
             } else {
-                if($choice->data instanceof StudyGroup && $choice->data->getType()->equals(StudyGroupEntityType::Grade())) {
+                if($choice->data instanceof StudyGroup && $choice->data->getType() === StudyGroupEntityType::Grade) {
                     $gradeIds[] = $choice->data->getId();
                 }
             }

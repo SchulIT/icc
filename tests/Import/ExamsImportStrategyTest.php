@@ -94,7 +94,7 @@ class ExamsImportStrategyTest extends WebTestCase {
             ->setExternalId('TEST')
             ->setName('Testgruppe')
             ->setSection($section)
-            ->setType(StudyGroupType::Course());
+            ->setType(StudyGroupType::Course);
         $studyGroup->addGrade($grade);
         $this->em->persist($studyGroup);
 

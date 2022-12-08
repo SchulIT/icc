@@ -40,14 +40,14 @@ class StudyGroupsGradeStringConverter {
         $output = [ ];
 
         // First: Grades
-        $grades = array_filter($studyGroups, fn(StudyGroup $group) => $group->getType()->equals(StudyGroupType::Grade()));
+        $grades = array_filter($studyGroups, fn(StudyGroup $group) => $group->getType() === StudyGroupType::Grade);
 
         $output = $this->gradeConverter->convert(
             array_map(fn(StudyGroup $group) => $group->getGrades()->first(), $grades)
         );
 
         // Second: Individual groups
-        $studyGroups = array_filter($studyGroups, fn(StudyGroup $group) => $group->getType()->equals(StudyGroupType::Grade()) === false);
+        $studyGroups = array_filter($studyGroups, fn(StudyGroup $group) => $group->getType() !== StudyGroupType::Grade);
 
         $output += array_map(fn(StudyGroup $studyGroup) => $this->translator->trans('studygroup.string', [
             '%name%' => $studyGroup->getName(),

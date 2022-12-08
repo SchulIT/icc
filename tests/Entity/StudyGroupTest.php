@@ -20,7 +20,7 @@ class StudyGroupTest extends TestCase {
         $studyGroup->setName('name');
         $this->assertEquals('name', $studyGroup->getName());
 
-        $type = StudyGroupType::Grade();
+        $type = StudyGroupType::Grade;
         $studyGroup->setType($type);
         $this->assertEquals($type, $studyGroup->getType());
 

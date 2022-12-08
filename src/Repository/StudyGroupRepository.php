@@ -57,7 +57,7 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
             ->andWhere('g.id = :grade')
             ->andWhere('s.id = :section')
             ->setParameter('grade', $grade->getId())
-            ->setParameter('type', StudyGroupType::Grade())
+            ->setParameter('type', StudyGroupType::Grade)
             ->setParameter('section', $section->getId())
             ->setMaxResults(1)
             ->setFirstResult(0);
@@ -80,7 +80,7 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
             ->andWhere('g.name = :name')
             ->andWhere('s.id = :section')
             ->setParameter('name', $name)
-            ->setParameter('type', StudyGroupType::Grade())
+            ->setParameter('type', StudyGroupType::Grade)
             ->setParameter('section', $section->getId())
             ->setMaxResults(1)
             ->setFirstResult(0);

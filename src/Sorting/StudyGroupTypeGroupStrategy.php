@@ -12,10 +12,10 @@ class StudyGroupTypeGroupStrategy implements SortingStrategyInterface {
      * @param StudyGroupTypeGroup $objectB
      */
     public function compare($objectA, $objectB): int {
-        if ($objectA->getType()->equals($objectB->getType())) {
+        if ($objectA->getType() === $objectB->getType()) {
             return 0;
         } else {
-            if ($objectA->getType()->equals(StudyGroupType::Grade())) {
+            if ($objectA->getType() === StudyGroupType::Grade) {
                 return -1;
             } else {
                 return 1;

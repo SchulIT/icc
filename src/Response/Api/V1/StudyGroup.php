@@ -51,7 +51,7 @@ class StudyGroup {
     }
 
     public function getTypeString(): string {
-        return $this->type->getValue();
+        return $this->type->value;
     }
 
     /**

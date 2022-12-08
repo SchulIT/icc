@@ -205,7 +205,7 @@ class ListController extends AbstractControllerWithMessages {
         $gradeTeachers = [ ];
         $substitutionalGradeTeachers = [ ];
 
-        if($studyGroupFilterView->getCurrentStudyGroup() !== null && $studyGroupFilterView->getCurrentStudyGroup()->getType()->equals(StudyGroupType::Grade())) {
+        if($studyGroupFilterView->getCurrentStudyGroup() !== null && $studyGroupFilterView->getCurrentStudyGroup()->getType() === StudyGroupType::Grade) {
             /** @var Grade $grade */
             $grade = $studyGroupFilterView->getCurrentStudyGroup()->getGrades()->first();
         } else if($studentFilterView->getCurrentStudent() !== null && $sectionFilterView->getCurrentSection() !== null) {
@@ -221,7 +221,7 @@ class ListController extends AbstractControllerWithMessages {
         $tuitions = [ ];
 
         if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
-            if($studyGroupFilterView->getCurrentStudyGroup()->getType()->equals(StudyGroupType::Grade())) {
+            if($studyGroupFilterView->getCurrentStudyGroup()->getType() === StudyGroupType::Grade) {
                 $tuitions = $tuitionRepository->findAllByGrades($studyGroupFilterView->getCurrentStudyGroup()->getGrades()->toArray());
             } else {
                 $tuitions = $studyGroupFilterView->getCurrentStudyGroup()->getTuitions()->toArray();

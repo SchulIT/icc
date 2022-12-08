@@ -41,13 +41,13 @@ class MessageRecipientResolverTest extends TestCase {
 
         $this->studyGroupEF = (new StudyGroup())
             ->setName('EF')
-            ->setType(StudyGroupType::Grade());
+            ->setType(StudyGroupType::Grade);
 
         $property->setValue($this->studyGroupEF, 1);
 
         $this->studyGroupIFGK = (new StudyGroup())
             ->setName('IF-GK1')
-            ->setType(StudyGroupType::Course());
+            ->setType(StudyGroupType::Course);
 
         $property->setValue($this->studyGroupIFGK, 2);
 

@@ -34,7 +34,7 @@ class StudyGroupFixtures extends Fixture implements DependentFixtureInterface {
         $studyGroup = (new StudyGroup())
             ->setName('Informatik AG')
             ->setExternalId('AG-IF')
-            ->setType(StudyGroupType::Course());
+            ->setType(StudyGroupType::Course);
 
         $grades = GradeFixtures::getSekIGradeNames();
         $agGrades = array_filter($grades, fn(string $name) => str_starts_with($name, '5'));
@@ -94,7 +94,7 @@ class StudyGroupFixtures extends Fixture implements DependentFixtureInterface {
                 $studyGroup = (new StudyGroup())
                     ->setName($name)
                     ->setExternalId($id)
-                    ->setType(StudyGroupType::Course());
+                    ->setType(StudyGroupType::Course);
 
                 $studyGroup->addGrade($grade);
 
@@ -147,7 +147,7 @@ class StudyGroupFixtures extends Fixture implements DependentFixtureInterface {
                 $studyGroup = (new StudyGroup())
                     ->setExternalId($id)
                     ->setName($name)
-                    ->setType(StudyGroupType::Course());
+                    ->setType(StudyGroupType::Course);
                 $studyGroup->addGrade($grade);
 
                 $studyGroups[$id] = $studyGroup;
@@ -168,7 +168,7 @@ class StudyGroupFixtures extends Fixture implements DependentFixtureInterface {
                 $studyGroup = (new StudyGroup())
                     ->setExternalId($id)
                     ->setName($name)
-                    ->setType(StudyGroupType::Course());
+                    ->setType(StudyGroupType::Course);
                 $studyGroup->addGrade($grade);
 
                 $studyGroups[$id] = $studyGroup;
@@ -247,7 +247,7 @@ class StudyGroupFixtures extends Fixture implements DependentFixtureInterface {
         foreach($grades as $id => $name) {
             $studyGroup = (new StudyGroup())
                 ->setName($name)
-                ->setType(StudyGroupType::Grade())
+                ->setType(StudyGroupType::Grade)
                 ->setExternalId($id);
 
             // Grade

@@ -28,7 +28,7 @@ class StudyGroup implements Stringable {
     private ?string $name = null;
 
     #[Assert\NotNull]
-    #[ORM\Column(type: 'study_group_type')]
+    #[ORM\Column(type: 'string', enumType: StudyGroupType::class)]
     private StudyGroupType $type;
 
     /**
@@ -54,7 +54,7 @@ class StudyGroup implements Stringable {
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
-        $this->type = StudyGroupType::Course();
+        $this->type = StudyGroupType::Course;
         $this->grades = new ArrayCollection();
         $this->memberships = new ArrayCollection();
         $this->tuitions = new ArrayCollection();

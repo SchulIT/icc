@@ -76,7 +76,7 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
      */
     public function updateEntity($entity, $data, $requestData): void {
         $entity->setName($data->getName());
-        $entity->setType(new StudyGroupType($data->getType()));
+        $entity->setType(StudyGroupType::from($data->getType()));
 
         $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
         $entity->setSection($section);

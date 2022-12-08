@@ -85,7 +85,7 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
         $ids = array_map(fn(StudyGroup $studyGroup) => $studyGroup->getId(), $studyGroups);
 
         /** @var StudyGroup|null $gradeStudyGroup */
-        $gradeStudyGroup = ArrayUtils::first($studyGroups, fn(StudyGroup $studyGroup) => $studyGroup->getType()->equals(StudyGroupType::Grade()));
+        $gradeStudyGroup = ArrayUtils::first($studyGroups, fn(StudyGroup $studyGroup) => $studyGroup->getType() === StudyGroupType::Grade);
         /** @var Grade|null $grade */
         $grade = $gradeStudyGroup != null ? $gradeStudyGroup->getGrades()->first() : null;
         $gradeId = $grade !== null ? $grade->getId() : null;

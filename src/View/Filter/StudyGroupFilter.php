@@ -53,7 +53,7 @@ class StudyGroupFilter {
         }
 
         if($onlyGrades === true) {
-            $studyGroups = array_filter($studyGroups, fn(StudyGroup $studyGroup) => $studyGroup->getType()->equals(StudyGroupType::Grade()));
+            $studyGroups = array_filter($studyGroups, fn(StudyGroup $studyGroup) => $studyGroup->getType() === StudyGroupType::Grade);
         }
 
         $studyGroups = ArrayUtils::createArrayWithKeys(

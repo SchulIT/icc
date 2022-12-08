@@ -87,7 +87,7 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
 
         $entity->setFirstname($data->getFirstname());
         $entity->setLastname($data->getLastname());
-        $entity->setGender(new Gender($data->getGender()));
+        $entity->setGender(Gender::from($data->getGender()));
         $entity->setBirthday($data->getBirthday());
         $entity->setStatus($data->getStatus());
         $entity->setEmail($data->getEmail());

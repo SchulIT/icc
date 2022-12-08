@@ -65,7 +65,7 @@ class TeachersImportStrategyTest extends WebTestCase {
             ->setAcronym('AB')
             ->setFirstname('Firstname')
             ->setLastname('Lastname')
-            ->setGender(Gender::Female());
+            ->setGender(Gender::Female);
         $teacher1->addSection($section);
 
         $this->em->persist($teacher1);
@@ -74,7 +74,7 @@ class TeachersImportStrategyTest extends WebTestCase {
             ->setAcronym('AC')
             ->setFirstname('Firstname')
             ->setLastname('Lastname')
-            ->setGender(Gender::Male());
+            ->setGender(Gender::Male);
         $teacher->addTag($tag1);
         $teacher->addSection($section);
         $this->em->persist($teacher);

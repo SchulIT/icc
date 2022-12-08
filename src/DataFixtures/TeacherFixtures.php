@@ -28,8 +28,8 @@ class TeacherFixtures extends Fixture implements DependentFixtureInterface {
             $firstname = $this->generator->firstName;
             $lastname = $this->generator->lastName;
             $gender = $this->generator->boolean ?
-                Gender::Female() :
-                Gender::Male();
+                Gender::Female :
+                Gender::Male;
             $acronym = $this->generateAcronym($firstname, $lastname);
 
             if(in_array($acronym, $acronyms)) {

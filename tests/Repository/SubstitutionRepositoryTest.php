@@ -43,7 +43,7 @@ class SubstitutionRepositoryTest extends KernelTestCase {
 
         $this->teacher = (new Teacher())
             ->setExternalId('A')
-            ->setGender(Gender::X())
+            ->setGender(Gender::X)
             ->setEmail('a@example.com')
             ->setFirstname('Helen')
             ->setLastname('Doe')

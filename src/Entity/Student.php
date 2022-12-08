@@ -37,7 +37,7 @@ class Student implements JsonSerializable, Stringable {
     #[ORM\Column(type: 'string')]
     private ?string $lastname = null;
 
-    #[ORM\Column(type: 'gender')]
+    #[ORM\Column(type: 'string', enumType: Gender::class)]
     private ?Gender $gender;
 
     #[Assert\NotBlank(allowNull: true)]
@@ -84,7 +84,7 @@ class Student implements JsonSerializable, Stringable {
     public function __construct() {
         $this->uuid = Uuid::uuid4();
 
-        $this->gender = Gender::X();
+        $this->gender = Gender::X;
         $this->studyGroupMemberships = new ArrayCollection();
         $this->approvedPrivacyCategories = new ArrayCollection();
         $this->sections = new ArrayCollection();

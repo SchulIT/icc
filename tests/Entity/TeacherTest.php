@@ -22,7 +22,7 @@ class TeacherTest extends TestCase {
         $teacher->setLastname('lastname');
         $this->assertEquals('lastname', $teacher->getLastname());
 
-        $gender = Gender::Female();
+        $gender = Gender::Female;
         $teacher->setGender($gender);
         $this->assertEquals($gender, $teacher->getGender());
 

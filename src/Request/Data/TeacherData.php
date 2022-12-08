@@ -168,6 +168,6 @@ class TeacherData {
     }
 
     public static function getGenders() {
-        return array_values(Gender::toArray());
+        return array_map(fn(Gender $gender) => $gender->value, Gender::cases());
     }
 }

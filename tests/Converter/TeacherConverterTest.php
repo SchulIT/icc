@@ -22,7 +22,7 @@ class TeacherConverterTest extends WebTestCase {
     public function testMale() {
         $teacher = (new Teacher())
             ->setAcronym('MUSM')
-            ->setGender(Gender::Male())
+            ->setGender(Gender::Male)
             ->setFirstname('Max')
             ->setLastname('Mustermann')
             ->setTitle(null);
@@ -33,7 +33,7 @@ class TeacherConverterTest extends WebTestCase {
     public function testFemale() {
         $teacher = (new Teacher())
             ->setAcronym('MUSF')
-            ->setGender(Gender::Female())
+            ->setGender(Gender::Female)
             ->setFirstname('Erika')
             ->setLastname('Musterfrau')
             ->setTitle('Dr.');
@@ -44,7 +44,7 @@ class TeacherConverterTest extends WebTestCase {
     public function testX() {
         $teacher = (new Teacher())
             ->setAcronym('DOEX')
-            ->setGender(Gender::X())
+            ->setGender(Gender::X)
             ->setLastname('Doe');
         $converter = new TeacherStringConverter($this->getTranslator());
         $this->assertEquals('[DOEX] Doe', $converter->convert($teacher, true));

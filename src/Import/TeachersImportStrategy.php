@@ -73,7 +73,7 @@ class TeachersImportStrategy implements ImportStrategyInterface {
     public function updateEntity($entity, $data, $requestData): void {
         $entity->setAcronym($data->getAcronym());
         $entity->setTitle($data->getTitle());
-        $entity->setGender(new Gender($data->getGender()));
+        $entity->setGender(Gender::from($data->getGender()));
         $entity->setFirstname($data->getFirstname());
         $entity->setLastname($data->getLastname());
         $entity->setEmail($data->getEmail());

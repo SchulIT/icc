@@ -36,7 +36,7 @@ class Teacher implements Stringable {
     #[ORM\Column(type: 'string')]
     private ?string $lastname = null;
 
-    #[ORM\Column(type: 'gender')]
+    #[ORM\Column(type: 'string', enumType: Gender::class)]
     private Gender $gender;
 
     #[Assert\NotBlank(allowNull: true)]
@@ -79,7 +79,7 @@ class Teacher implements Stringable {
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
-        $this->setGender(Gender::X());
+        $this->setGender(Gender::X);
 
         $this->subjects = new ArrayCollection();
         $this->grades = new ArrayCollection();

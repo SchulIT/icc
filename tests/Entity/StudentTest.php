@@ -26,7 +26,7 @@ class StudentTest extends TestCase {
         $student->setStatus(null);
         $this->assertNull($student->getStatus());
 
-        $gender = Gender::X();
+        $gender = Gender::X;
         $student->setGender($gender);
         $this->assertEquals($gender, $student->getGender());
     }

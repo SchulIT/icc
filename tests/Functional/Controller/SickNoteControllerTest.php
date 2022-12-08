@@ -59,7 +59,7 @@ class SickNoteControllerTest extends AbstractControllerTest {
             ->setLastname($faker->lastName)
             ->setExternalId('TEST1')
             ->setEmail($faker->email)
-            ->setGender(Gender::X())
+            ->setGender(Gender::X)
             ->setBirthday(new DateTime('1990-01-01'));
         $this->fullAgedStudent->addSection($section);
         $this->fullAgedStudent->addGradeMembership(
@@ -75,7 +75,7 @@ class SickNoteControllerTest extends AbstractControllerTest {
             ->setLastname($faker->lastName)
             ->setExternalId('TEST2')
             ->setEmail($faker->email)
-            ->setGender(Gender::X())
+            ->setGender(Gender::X)
             ->setBirthday((new DateTime())->modify('-10 year'));
         $this->nonFullAgedStudent->addSection($section);
         $this->nonFullAgedStudent->addGradeMembership(

@@ -90,7 +90,7 @@ class Teacher {
     }
 
     public function getGenderString(): string {
-        return $this->gender->getValue();
+        return $this->gender->value;
     }
 
     public function setGender(Gender $gender): Teacher {

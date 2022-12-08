@@ -83,7 +83,7 @@ class Student {
     }
 
     public function getGenderString(): string {
-        return $this->gender->getValue();
+        return $this->gender->value;
     }
 
     public function getEmail(): string {

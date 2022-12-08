@@ -29,7 +29,7 @@ class AnonymizeDatabaseCommand extends Command {
         $style->section('Anomyize teachers');
         $this->teacherRepository->beginTransaction();
         foreach($this->teacherRepository->findAll() as $teacher) {
-            $teacher->setFirstname($this->faker->firstName($teacher->getGender()->equals(Gender::Male()) ? 'male' : 'female'));
+            $teacher->setFirstname($this->faker->firstName($teacher->getGender() === Gender::Male ? 'male' : 'female'));
             $teacher->setLastname($this->faker->lastName);
             $teacher->setEmail($this->generateEmail($teacher->getFirstname(), $teacher->getLastname(), 't.schulit.dev'));
 
@@ -42,7 +42,7 @@ class AnonymizeDatabaseCommand extends Command {
         $style->section('Anonymize students');
         $this->studentRepository->beginTransaction();;
         foreach($this->studentRepository->findAll() as $student) {
-            $student->setFirstname($this->faker->firstName($student->getGender()->equals(Gender::Male()) ? 'male' : 'female'));
+            $student->setFirstname($this->faker->firstName($student->getGender()== Gender::Male ? 'male' : 'female'));
             $student->setLastname($this->faker->lastName);
             $student->setEmail($this->generateEmail($student->getFirstname(), $student->getLastname(), 's.schulit.dev'));
 

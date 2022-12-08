@@ -79,8 +79,8 @@ class StudentFixtures extends Fixture implements DependentFixtureInterface {
 
     private function getStudentFromObject($isSekII = false) {
         $gender = $this->generator->boolean ?
-            Gender::Male() :
-            Gender::Female();
+            Gender::Male :
+            Gender::Female;
 
         $isFullAged = $isSekII && $this->generator->boolean;
         $firstname = $this->generator->firstName;

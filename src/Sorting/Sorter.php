@@ -45,7 +45,7 @@ class Sorter {
             usort($array, [$strategy, 'compare']);
         }
 
-        if(SortDirection::Descending()->equals($direction)) {
+        if(SortDirection::Descending === $direction) {
             $array = array_reverse($array);
         }
     }

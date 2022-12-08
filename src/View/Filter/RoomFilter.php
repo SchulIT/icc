@@ -27,7 +27,7 @@ class RoomFilter {
             );
         }
 
-        $this->sorter->sort($rooms, RoomNameStrategy::class, SortDirection::Ascending(), true);
+        $this->sorter->sort($rooms, RoomNameStrategy::class, SortDirection::Ascending, true);
 
         $room = $roomUuid !== null ?
             $rooms[$roomUuid] ?? null : null;

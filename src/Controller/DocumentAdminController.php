@@ -99,7 +99,7 @@ class DocumentAdminController extends AbstractController {
         $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
 
         $logs = $logRepository->getLogEntries($document);
-        $sorter->sort($logs, LogEntryStrategy::class, SortDirection::Descending());
+        $sorter->sort($logs, LogEntryStrategy::class, SortDirection::Descending);
 
         return $this->render('admin/documents/versions.html.twig', [
             'document' => $document,

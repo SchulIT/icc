@@ -97,7 +97,7 @@ class MessageController extends AbstractController {
         $pages = ceil((double)$paginator->count() / self::MessagesPerPage);
 
         $groups = $grouper->group($messages, MessageWeekStrategy::class);
-        $this->sorter->sort($groups, MessageWeekGroupStrategy::class, SortDirection::Descending());
+        $this->sorter->sort($groups, MessageWeekGroupStrategy::class, SortDirection::Descending);
         $this->sorter->sortGroupItems($groups, MessageStrategy::class);
 
         return $this->render('messages/index.html.twig', [

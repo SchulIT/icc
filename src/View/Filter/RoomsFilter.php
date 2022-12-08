@@ -19,7 +19,7 @@ class RoomsFilter {
             $this->roomRepository->findAll(),
             fn(Room $room) => (string)$room->getUuid()
         );
-        $this->sorter->sort($rooms, RoomNameStrategy::class, SortDirection::Ascending(), true);
+        $this->sorter->sort($rooms, RoomNameStrategy::class, SortDirection::Ascending, true);
 
         $selectedRooms = [ ];
 

@@ -371,7 +371,7 @@ class BookController extends AbstractController {
         }
 
         $groups = $grouper->group($missing, LessonDayStrategy::class);
-        $sorter->sort($groups, LessonDayGroupStrategy::class, SortDirection::Descending());
+        $sorter->sort($groups, LessonDayGroupStrategy::class, SortDirection::Descending);
         $sorter->sortGroupItems($groups, LessonStrategy::class);
 
         $ownGradesMissingCounts = [];
@@ -482,7 +482,7 @@ class BookController extends AbstractController {
                 'group_class' => LessonAttendanceCommentsGroup::class
         ]);
 
-        $sorter->sort($groups, LessonAttendanceGroupStrategy::class, SortDirection::Descending());
+        $sorter->sort($groups, LessonAttendanceGroupStrategy::class, SortDirection::Descending);
         $sorter->sortGroupItems($groups, LessonAttendanceStrategy::class);
 
         return $this->render('books/student.html.twig', [

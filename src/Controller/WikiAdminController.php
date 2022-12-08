@@ -82,7 +82,7 @@ class WikiAdminController extends AbstractController {
         $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
 
         $logs = $logRepository->getLogEntries($article);
-        $sorter->sort($logs, LogEntryStrategy::class, SortDirection::Descending());
+        $sorter->sort($logs, LogEntryStrategy::class, SortDirection::Descending);
 
         return $this->render('admin/wiki/versions.html.twig', [
             'article' => $article,

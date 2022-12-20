@@ -17,11 +17,11 @@ class UserMapperTest extends TestCase {
 
     private function getTypesMap() {
         return [
-            'parent' => 'Parent',
-            'teacher' => 'Teacher',
-            'intern' => 'Intern',
-            'student' => 'Student',
-            'secretary' => 'Staff'
+            'parent' => 'parent',
+            'teacher' => 'teacher',
+            'intern' => 'intern',
+            'student' => 'student',
+            'secretary' => 'staff'
         ];
     }
 

@@ -25,13 +25,15 @@ class UserMapper extends AbstractUserMapper {
     }
 
     private function getUserType(string $type): UserType {
-        if(!array_key_exists($type, $this->typesMap) || !in_array($type, UserType::cases())) {
-            $this->logger
-                ->notice(sprintf('User type "%s" is not a valid UserType. Setting type "user"', $type));
-            return UserType::User;
+        $mappedType = $this->typesMap[$type] ?? UserType::User->value;
+
+        if(in_array($mappedType, array_map(fn(UserType $type) => $type->value, UserType::cases()))) {
+            return UserType::from($mappedType);
         }
 
-        return UserType::from($type);
+        $this->logger
+            ->notice(sprintf('User type "%s" is not a valid UserType. Setting type "user"', $type));
+        return UserType::User;
     }
 
     /**

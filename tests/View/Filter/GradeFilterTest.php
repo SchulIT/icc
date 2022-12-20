@@ -81,8 +81,12 @@ class GradeFilterTest extends TestCase {
             ->willReturn($this->createGrade(Uuid::fromString('cbd7de3d-fd46-457e-93d3-dc94acd82ae4'), 'EF'));
 
         $user
-            ->method('getUserType')
-            ->willReturn(UserType::Student);
+            ->method('isStudent')
+            ->willReturn(true);
+
+        $user
+            ->method('isStudentOrParent')
+            ->willReturn(true);
 
         $user
             ->method('getStudents')

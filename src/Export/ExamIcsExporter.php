@@ -2,19 +2,18 @@
 
 namespace App\Export;
 
-use DateTime;
 use App\Entity\Exam;
 use App\Entity\ExamSupervision;
 use App\Entity\Grade;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use App\Entity\User;
-use App\Entity\UserType;
 use App\Ics\IcsHelper;
 use App\Repository\ExamRepositoryInterface;
 use App\Security\Voter\ExamVoter;
 use App\Settings\ExamSettings;
 use App\Timetable\TimetableTimeHelper;
+use DateTime;
 use Jsvrcek\ICS\Model\CalendarEvent;
 use Jsvrcek\ICS\Model\Description\Location;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,9 +44,9 @@ class ExamIcsExporter {
 
         $exams = [ ];
 
-        if($user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent())) {
+        if($user->isStudentOrParent()) {
             $exams = $this->examRepository->findAllByStudents($user->getStudents()->toArray(), null, false, true);
-        } else if($user->getUserType()->equals(UserType::Teacher())) {
+        } else if($user->isTeacher()) {
             $exams = $this->examRepository->findAllByTeacher($user->getTeacher(), null, false, true);
         }
 
@@ -66,7 +65,7 @@ class ExamIcsExporter {
      * @return CalendarEvent[]
      */
     private function makeIcsItems(Exam $exam, User $user) {
-        if($user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent())) {
+        if($user->isStudentOrParent()) {
             return [ $this->makeIcsItem($exam) ];
         }
 

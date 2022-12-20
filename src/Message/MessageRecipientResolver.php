@@ -7,10 +7,9 @@ use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use App\Entity\User;
-use App\Entity\UserType;
 use App\Entity\UserTypeEntity;
 use App\Repository\UserRepositoryInterface;
-use App\Utils\EnumArrayUtils;
+use App\Utils\ArrayUtils;
 
 class MessageRecipientResolver {
 
@@ -32,12 +31,12 @@ class MessageRecipientResolver {
             $users,
             function(User $user) use($userTypes, $studyGroupIds) {
                 // Filter users that matches message visibility
-                if(EnumArrayUtils::inArray($user->getUserType(), $userTypes) === false) {
+                if(ArrayUtils::inArray($user->getUserType(), $userTypes) === false) {
                     return false;
                 }
 
                 // We only need further checks for students and parents
-                if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent()]) === false) {
+                if($user->isStudentOrParent() === false) {
                     return true;
                 }
 

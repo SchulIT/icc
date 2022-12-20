@@ -36,7 +36,7 @@ class MessageConfirmationTest extends WebTestCase {
             ->setLastname('lastname')
             ->setUsername('username')
             ->setEmail('username@school.it')
-            ->setUserType(UserType::Teacher());
+            ->setUserType(UserType::Teacher);
 
         $message = (new Message())
             ->setTitle('subject')

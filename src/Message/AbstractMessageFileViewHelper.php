@@ -12,7 +12,6 @@ use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Utils\ArrayUtils;
-use App\Utils\EnumArrayUtils;
 use Doctrine\Common\Collections\Collection;
 
 abstract class AbstractMessageFileViewHelper {
@@ -30,7 +29,7 @@ abstract class AbstractMessageFileViewHelper {
         $teachers = [ ];
         $teacherUsersLookup = [ ];
 
-        if(EnumArrayUtils::inArray(UserType::Teacher(), $visibilities)) {
+        if(ArrayUtils::inArray(UserType::Teacher, $visibilities)) {
             $teachers = $this->teacherRepository->findAll();
             $teacherUsersLookup = ArrayUtils::createArrayWithKeys(
                 $this->userRepository->findAllTeachers($teachers),
@@ -39,7 +38,7 @@ abstract class AbstractMessageFileViewHelper {
             );
         }
 
-        if(EnumArrayUtils::inArray(UserType::Student(), $visibilities) || EnumArrayUtils::inArray(UserType::Parent(), $visibilities)) {
+        if(ArrayUtils::inArray(UserType::Student, $visibilities) || ArrayUtils::inArray(UserType::Parent, $visibilities)) {
             $students = $this->studentRepository->findAllByStudyGroups($this->getStudyGroups($message)->toArray());
 
             $studentUsersLookup = ArrayUtils::createArrayWithKeys(
@@ -56,11 +55,11 @@ abstract class AbstractMessageFileViewHelper {
         }
 
         /** @var UserType[] $remainingUserTypes */
-        $remainingUserTypes = EnumArrayUtils::remove($visibilities,
+        $remainingUserTypes = ArrayUtils::remove($visibilities,
             [
-                UserType::Student(),
-                UserType::Teacher(),
-                UserType::Parent()
+                UserType::Student,
+                UserType::Teacher,
+                UserType::Parent
             ]);
 
         $users = ArrayUtils::createArrayWithKeys(

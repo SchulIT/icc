@@ -137,7 +137,7 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
 
         CollectionUtils::synchronize(
             $entity->getVisibilities(),
-            array_filter($this->visibilities, fn(UserTypeEntity $visibility) => in_array($visibility->getUserType()->getValue(), $data->getVisibilities())),
+            array_filter($this->visibilities, fn(UserTypeEntity $visibility) => in_array($visibility->getUserType()->value, $data->getVisibilities())),
             fn(UserTypeEntity $visibility) => $visibility->getId()
         );
     }

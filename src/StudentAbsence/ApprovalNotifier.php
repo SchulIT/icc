@@ -15,7 +15,7 @@ class ApprovalNotifier extends AbstractNotifier implements EventSubscriberInterf
         $absence = $event->getAbsence();
 
         $exclude = [ ];
-        if(UserType::Teacher()->equals($absence->getApprovedBy()->getUserType())) {
+        if($absence->getApprovedBy()->isTeacher()) {
             $exclude[] = $absence->getApprovedBy()->getTeacher()->getEmail();
         }
 

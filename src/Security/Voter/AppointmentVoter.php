@@ -2,7 +2,6 @@
 
 namespace App\Security\Voter;
 
-use LogicException;
 use App\Entity\Appointment;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
@@ -10,7 +9,7 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Settings\AppointmentsSettings;
-use App\Utils\EnumArrayUtils;
+use LogicException;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -105,7 +104,7 @@ class AppointmentVoter extends Voter {
             return false;
         }
 
-        $isStudentOrParent = EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]);
+        $isStudentOrParent = $user->isStudentOrParent();
 
         if($isStudentOrParent !== true) {
             // Everyone but students and parents may pass
@@ -146,7 +145,7 @@ class AppointmentVoter extends Voter {
 
     private function checkVisibility(Appointment $appointment, UserType $userType): bool {
         foreach($appointment->getVisibilities() as $visibility) {
-            if($visibility->getUserType()->equals($userType)) {
+            if($visibility->getUserType() === $userType) {
                 return true;
             }
         }

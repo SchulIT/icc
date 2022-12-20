@@ -5,7 +5,6 @@ namespace App\View\Filter;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\User;
-use App\Entity\UserType;
 use App\Grouping\Grouper;
 use App\Grouping\StudentGradeStrategy;
 use App\Repository\StudentRepositoryInterface;
@@ -21,7 +20,7 @@ class StudentFilter {
     }
 
     public function handle(?string $studentUuid, ?Section $section, User $user, bool $setDefaultStudent = true): StudentFilterView {
-        $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
+        $isStudentOrParent = $user->isStudentOrParent();
 
         if($isStudentOrParent) {
             $students = $user->getStudents()->toArray();

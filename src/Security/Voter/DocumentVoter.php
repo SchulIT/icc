@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Utils\ArrayUtils;
 use LogicException;
 use App\Entity\Document;
 use App\Entity\GradeMembership;
@@ -93,7 +94,7 @@ class DocumentVoter extends Voter {
         $user = $token->getUser();
         $section = $this->sectionResolver->getCurrentSection();
 
-        if (EnumArrayUtils::inArray($user->getUserType(), [UserType::Student(), UserType::Parent(), UserType::Intern()]) !== true) {
+        if (ArrayUtils::inArray($user->getUserType(), [UserType::Student, UserType::Parent, UserType::Intern]) !== true) {
             // Non students/parents/intern can view any student documents
             return true;
         }
@@ -104,8 +105,8 @@ class DocumentVoter extends Voter {
 
         /** @var UserTypeEntity $visibility */
         foreach ($document->getVisibilities() as $visibility) {
-            if ($user->getUserType()->equals($visibility->getUserType())) {
-                if ($visibility->getUserType()->equals(UserType::Intern()) !== true) {
+            if ($user->getUserType() === $visibility->getUserType()) {
+                if ($visibility->getUserType() !== UserType::Intern) {
                     // Check grade memberships for students/parents
                     $studentIds = $user->getStudents()->map(fn(Student $student) => $student->getId())->toArray();
 
@@ -134,9 +135,7 @@ class DocumentVoter extends Voter {
     private function canViewOtherDocuments(TokenInterface $token): bool {
         /** @var User $user */
         $user = $token->getUser();
-
-        $isTeacher = $user->getUserType()->equals(UserType::Teacher());
-        return $isTeacher || $this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']);
+        return $user->isTeacher() || $this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']);
     }
 
     private function canViewAdminOverview(TokenInterface $token): bool {

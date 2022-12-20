@@ -2,7 +2,6 @@
 
 namespace App\StudentAbsence;
 
-use App\Entity\UserType;
 use App\Event\StudentAbsenceMessageCreatedEvent;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -18,7 +17,7 @@ class MessageNotifier extends AbstractNotifier implements EventSubscriberInterfa
         $absence = $event->getAbsence();
 
         $exclude = [ ];
-        if(UserType::Teacher()->equals($event->getMessage()->getCreatedBy()->getUserType())) {
+        if($event->getMessage()->getCreatedBy()->isTeacher()) {
            $exclude[] = $event->getMessage()->getCreatedBy()->getTeacher()->getEmail();
         }
 

@@ -85,8 +85,8 @@ class DashboardViewHelper {
     public function createViewForTeacher(Teacher $teacher, DateTime $dateTime, bool $includeGradeMessages = false): DashboardView {
         $view = new DashboardView($dateTime);
 
-        $start = $this->timetableSettings->getStartDate(UserType::Teacher());
-        $end = $this->timetableSettings->getEndDate(UserType::Teacher());
+        $start = $this->timetableSettings->getStartDate(UserType::Teacher);
+        $end = $this->timetableSettings->getEndDate(UserType::Teacher);
 
         if($start !== null && $end !== null && $this->dateHelper->isBetween($dateTime, $start, $end)) {
             $this->addTimetableLessons($this->timetableRepository->findAllByTeacher($dateTime, $dateTime, $teacher), $dateTime, $view, true);
@@ -102,11 +102,11 @@ class DashboardViewHelper {
             /** @var GradeTeacher $gradeTeacher */
             foreach($teacher->getGrades() as $gradeTeacher) {
                 $studyGroups = $this->studyGroupRepository->findAllByGrades($gradeTeacher->getGrade(), $section);
-                $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages, UserType::Student(), $dateTime, $studyGroups));
+                $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages, UserType::Student, $dateTime, $studyGroups));
             }
         }
 
-        $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages, UserType::Teacher(), $dateTime));
+        $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages, UserType::Teacher, $dateTime));
 
         $messages = ArrayUtils::createArrayWithKeys($messages, fn(Message $message) => $message->getId());
 

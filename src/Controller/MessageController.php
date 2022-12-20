@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Message;
 use App\Entity\MessageAttachment;
 use App\Entity\MessageConfirmation;
@@ -28,8 +27,7 @@ use App\Sorting\MessageStrategy;
 use App\Sorting\MessageWeekGroupStrategy;
 use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
-use App\Utils\EnumArrayUtils;
-use App\View\Filter\SectionFilter;
+use App\Utils\ArrayUtils;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,6 +35,7 @@ use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -61,14 +60,14 @@ class MessageController extends AbstractController {
 
         $query = $request->query->get('q');
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionResolver->getCurrentSection(), $user);
-        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]));
+        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, $user->isStudentOrParent());
 
-        if($studentFilterView->getCurrentStudent() !== null && EnumArrayUtils::inArray($userTypeFilterView->getCurrentType(), [ UserType::Student(), UserType::Parent() ]) === false) {
-            $userTypeFilterView->setCurrentType(UserType::Student());
+        if($studentFilterView->getCurrentStudent() !== null && ArrayUtils::inArray($userTypeFilterView->getCurrentType(), [ UserType::Student, UserType::Parent ]) === false) {
+            $userTypeFilterView->setCurrentType(UserType::Student);
         }
 
         $studyGroups = [ ];
-        if($userTypeFilterView->getCurrentType()->equals(UserType::Student()) || $userTypeFilterView->getCurrentType()->equals(UserType::Parent())) {
+        if($userTypeFilterView->getCurrentType() === UserType::Student || $userTypeFilterView->getCurrentType() === UserType::Parent) {
             if($studentFilterView->getCurrentStudent() !== null) {
                 $studyGroups = $studentFilterView->getCurrentStudent()->getStudyGroupMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudyGroup())->toArray();
             }

@@ -21,7 +21,7 @@ class SubjectsFilter {
 
         $subjects = [ ];
 
-        if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent()]) === false) {
+        if($user->isStudentOrParent() === false) {
             $subjects = $this->subjectRepository->findAll();
         }
         $this->sorter->sort($subjects, SubjectNameStrategy::class);

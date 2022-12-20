@@ -66,7 +66,7 @@ class GradeFilterTest extends TestCase {
 
         $user
             ->method('getUserType')
-            ->willReturn(UserType::Teacher());
+            ->willReturn(UserType::Teacher);
 
         return  $user;
     }
@@ -82,7 +82,7 @@ class GradeFilterTest extends TestCase {
 
         $user
             ->method('getUserType')
-            ->willReturn(UserType::Student());
+            ->willReturn(UserType::Student);
 
         $user
             ->method('getStudents')

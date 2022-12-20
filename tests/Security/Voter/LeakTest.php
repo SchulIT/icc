@@ -41,7 +41,7 @@ class LeakTest extends KernelTestCase {
     }
 
     public function testUsersWithoutAdminRolesDoNotHaveAdminRoleExposed() {
-        $types = UserType::values();
+        $types = UserType::cases();
 
         foreach($types as $type) {
             $kernel = static::bootKernel();
@@ -52,7 +52,7 @@ class LeakTest extends KernelTestCase {
             $this->login($user, $kernel);
 
             $authorizationChecker = $kernel->getContainer()->get('test.service_container')->get('security.authorization_checker');
-            $this->assertFalse($authorizationChecker->isGranted('ROLE_ADMIN'), sprintf('Ensure user of type %s does not have ROLE_ADMIN.', $type->getValue()));
+            $this->assertFalse($authorizationChecker->isGranted('ROLE_ADMIN'), sprintf('Ensure user of type %s does not have ROLE_ADMIN.', $type->value));
         }
     }
 

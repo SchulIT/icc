@@ -209,9 +209,9 @@ class SettingsController extends AbstractController {
         $builder = $this->createFormBuilder();
         $builder
             ->add('email_enabled', ChoiceType::class, [
-                'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
+                'choices' => ArrayUtils::createArray(array_map(fn(UserType $case) => $case->name, UserType::cases()), UserType::cases()),
                 'choice_label' => fn(UserType $userType) => $enumStringConverter->convert($userType),
-                'choice_value' => fn(UserType $userType) => $userType->getValue(),
+                'choice_value' => fn(UserType $userType) => $userType->value,
                 'expanded' => true,
                 'multiple' => true,
                 'label' => 'admin.settings.notifications.email.label',
@@ -342,9 +342,9 @@ class SettingsController extends AbstractController {
         $builder = $this->createFormBuilder();
         $builder
             ->add('visibility', ChoiceType::class, [
-                'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
+                'choices' => ArrayUtils::createArray(array_map(fn(UserType $case) => $case->name, UserType::cases()), UserType::cases()),
                 'choice_label' => fn(UserType $userType) => $enumStringConverter->convert($userType),
-                'choice_value' => fn(UserType $userType) => $userType->getValue(),
+                'choice_value' => fn(UserType $userType) => $userType->value,
                 'expanded' => true,
                 'multiple' => true,
                 'label' => 'label.visibility',
@@ -546,7 +546,7 @@ class SettingsController extends AbstractController {
                 'data' => $timetableSettings->getGradeIdsWithMembershipTypes()
             ]);
 
-        $userTypes = UserType::values();
+        $userTypes = UserType::cases();
 
         foreach($userTypes as $name => $userType) {
             $builder
@@ -706,9 +706,9 @@ class SettingsController extends AbstractController {
                 ]
             ])
             ->add('absence_visibility', ChoiceType::class, [
-                'choices' => ArrayUtils::createArray(UserType::keys(), UserType::values()),
+                'choices' => ArrayUtils::createArray(array_map(fn(UserType $case) => $case->name, UserType::cases()), UserType::cases()),
                 'choice_label' => fn(UserType $userType) => $enumStringConverter->convert($userType),
-                'choice_value' => fn(UserType $userType) => $userType->getValue(),
+                'choice_value' => fn(UserType $userType) => $userType->value,
                 'expanded' => true,
                 'multiple' => true,
                 'label' => 'label.absence_visibility',
@@ -782,7 +782,7 @@ class SettingsController extends AbstractController {
     #[Route(path: '/appointments', name: 'admin_settings_appointments')]
     public function appointments(Request $request, AppointmentsSettings $appointmentsSettings, EnumStringConverter $enumStringConverter): Response {
         $builder = $this->createFormBuilder();
-        $userTypes = UserType::values();
+        $userTypes = UserType::cases();
 
         foreach($userTypes as $name => $userType) {
             $builder

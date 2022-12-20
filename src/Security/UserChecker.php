@@ -32,15 +32,15 @@ class UserChecker implements EventSubscriberInterface {
             return;
         }
 
-        if($user->getUserType()->equals(UserType::Teacher()) && $user->getTeacher() === null) {
+        if($user->isTeacher() && $user->getTeacher() === null) {
             throw new InvalidAccountException('invalid_account.teacher');
         }
 
-        if($user->getUserType()->equals(UserType::Student()) && $user->getStudents()->count() !== 1) {
+        if($user->isStudent() && $user->getStudents()->count() !== 1) {
             throw new InvalidAccountException('invalid_account.student');
         }
 
-        if($user->getUserType()->equals(UserType::Parent()) && $user->getStudents()->count() === 0) {
+        if($user->isParent() && $user->getStudents()->count() === 0) {
             throw new InvalidAccountException('invalid_account.parent');
         }
     }

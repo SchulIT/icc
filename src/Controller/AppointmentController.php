@@ -77,8 +77,8 @@ class AppointmentController extends AbstractControllerWithMessages {
                              AppointmentsSettings $appointmentsSettings, TimetableTimeHelper $timetableTimeHelper, UserStringConverter $userStringConverter, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
-        $isStudent = $user->getUserType()->equals(UserType::Student());
-        $isParent = $user->getUserType()->equals(UserType::Parent());
+        $isStudent = $user->isStudent();
+        $isParent = $user->isParent();
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $showAll = $request->query->getBoolean('all', false);

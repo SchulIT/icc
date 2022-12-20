@@ -25,7 +25,7 @@ class StudyGroupFilter {
     }
 
     public function handle(?string $studyGroupUuid, ?Section $section, User $user, bool $onlyGrades = false) {
-        $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
+        $isStudentOrParent = $user->isStudentOrParent();
 
         $studyGroups = [ ];
 

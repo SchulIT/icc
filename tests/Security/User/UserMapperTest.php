@@ -96,7 +96,7 @@ class UserMapperTest extends TestCase {
         $this->assertEquals('Nachname', $user->getLastname());
         $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
-        $this->assertTrue($user->getUserType()->equals(UserType::Teacher()));
+        $this->assertTrue($user->isTeacher());
         $this->assertNotNull($user->getTeacher());
         $this->assertEquals('TEST', $user->getTeacher()->getExternalId());
     }
@@ -126,7 +126,7 @@ class UserMapperTest extends TestCase {
         $this->assertEquals('Nachname', $user->getLastname());
         $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
-        $this->assertTrue($user->getUserType()->equals(UserType::Teacher()));
+        $this->assertTrue($user->isTeacher());
         $this->assertNull($user->getTeacher());
     }
 
@@ -155,7 +155,7 @@ class UserMapperTest extends TestCase {
         $this->assertEquals('Nachname', $user->getLastname());
         $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
-        $this->assertTrue($user->getUserType()->equals(UserType::Student()));
+        $this->assertTrue($user->isStudent());
         $this->assertEquals(1, $user->getStudents()->count());
         $this->assertEquals('1234', $user->getStudents()->first()->getExternalId());
     }
@@ -185,7 +185,7 @@ class UserMapperTest extends TestCase {
         $this->assertEquals('Nachname', $user->getLastname());
         $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
-        $this->assertTrue($user->getUserType()->equals(UserType::Student()));
+        $this->assertTrue($user->isStudent());
         $this->assertEquals(0, $user->getStudents()->count());
     }
 
@@ -214,7 +214,7 @@ class UserMapperTest extends TestCase {
         $this->assertEquals('Nachname', $user->getLastname());
         $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
-        $this->assertTrue($user->getUserType()->equals(UserType::Parent()));
+        $this->assertTrue($user->isParent());
         $this->assertEquals(2, $user->getStudents()->count());
         $this->assertEquals(['1234', '9876'], $user->getStudents()->map(function(Student $student) { return $student->getExternalId(); })->toArray());
     }
@@ -244,7 +244,7 @@ class UserMapperTest extends TestCase {
         $this->assertEquals('Nachname', $user->getLastname());
         $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
-        $this->assertTrue($user->getUserType()->equals(UserType::Parent()));
+        $this->assertTrue($user->isParent());
         $this->assertEquals(0, $user->getStudents()->count());
     }
 

@@ -30,9 +30,7 @@ class GroupByParameter {
     }
 
     public function canGroup(User $user): bool {
-        $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
-
-        return $isStudentOrParent === false;
+        return $user->isStudentOrParent() === false;
     }
 
     public function getGroupingStrategyClassName(?string $grouping, User $user, string $sectionKey): string {

@@ -5,7 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\TeacherTag;
 use App\Entity\User;
 use App\Entity\UserTypeEntity;
-use App\Utils\EnumArrayUtils;
+use App\Utils\ArrayUtils;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -39,6 +39,6 @@ class TeacherTagVoter extends Voter {
             return false;
         }
 
-        return EnumArrayUtils::inArray($user->getUserType(), $tag->getVisibilities()->map(fn(UserTypeEntity $entity) => $entity->getUserType()));
+        return ArrayUtils::inArray($user->getUserType(), $tag->getVisibilities()->map(fn(UserTypeEntity $entity) => $entity->getUserType()));
     }
 }

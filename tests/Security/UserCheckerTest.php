@@ -28,7 +28,7 @@ class UserCheckerTest extends TestCase {
     public function testValidTeacher() {
         $user = (new User())
             ->setTeacher(new Teacher())
-            ->setUserType(UserType::Teacher());
+            ->setUserType(UserType::Teacher);
 
         $checker = new UserChecker();
         $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
@@ -40,7 +40,7 @@ class UserCheckerTest extends TestCase {
         $this->expectException(InvalidAccountException::class);
         $user = (new User())
             ->setTeacher(null)
-            ->setUserType(UserType::Teacher());
+            ->setUserType(UserType::Teacher);
 
         $checker = new UserChecker();
         $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
@@ -48,7 +48,7 @@ class UserCheckerTest extends TestCase {
 
     public function testValidStudent() {
         $user = (new User())
-            ->setUserType(UserType::Student());
+            ->setUserType(UserType::Student);
         $user->addStudent(new Student());
 
         $checker = new UserChecker();
@@ -60,7 +60,7 @@ class UserCheckerTest extends TestCase {
     public function testInvalidStudentEmptyStudents() {
         $this->expectException(InvalidAccountException::class);
         $user = (new User())
-            ->setUserType(UserType::Student());
+            ->setUserType(UserType::Student);
 
         $checker = new UserChecker();
         $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
@@ -69,7 +69,7 @@ class UserCheckerTest extends TestCase {
     public function testInvalidStudentTwoStudents() {
         $this->expectException(InvalidAccountException::class);
         $user = (new User())
-            ->setUserType(UserType::Student());
+            ->setUserType(UserType::Student);
         $user->addStudent(new Student());
         $user->addStudent(new Student());
 
@@ -79,7 +79,7 @@ class UserCheckerTest extends TestCase {
 
     public function testValidParent() {
         $user = (new User())
-            ->setUserType(UserType::Parent());
+            ->setUserType(UserType::Parent);
         $user->addStudent(new Student());
 
         $checker = new UserChecker();
@@ -91,7 +91,7 @@ class UserCheckerTest extends TestCase {
     public function testInvalidParent() {
         $this->expectException(InvalidAccountException::class);
         $user = (new User())
-            ->setUserType(UserType::Parent());
+            ->setUserType(UserType::Parent);
 
         $checker = new UserChecker();
         $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));

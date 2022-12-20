@@ -21,7 +21,7 @@ class MessageVisibilityStrategy implements GroupingStrategyInterface {
      * @param UserType $keyB
      */
     public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
-        return $keyA->equals($keyB);
+        return $keyA === $keyB;
     }
 
     /**

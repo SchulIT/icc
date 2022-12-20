@@ -13,7 +13,7 @@ class UserTypeFixtures extends Fixture {
      * @inheritDoc
      */
     public function load(ObjectManager $manager) {
-        foreach(UserType::values() as $type) {
+        foreach(UserType::cases() as $type) {
             $manager->persist((new UserTypeEntity())->setUserType($type));
         }
         $manager->flush();

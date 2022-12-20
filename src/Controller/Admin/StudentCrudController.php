@@ -3,15 +3,15 @@
 namespace App\Controller\Admin;
 
 use App\Controller\Admin\Field\EnumField;
+use App\Entity\Gender;
 use App\Entity\Student;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use FervoEnumBundle\Generated\Form\GenderType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
 class StudentCrudController extends AbstractCrudController
 {
@@ -33,7 +33,9 @@ class StudentCrudController extends AbstractCrudController
         $externalId = TextField::new('externalId');
         $firstname = TextField::new('firstname');
         $lastname = TextField::new('lastname');
-        $gender = EnumField::new('gender')->setFormType(GenderType::class);
+        $gender = EnumField::new('gender')
+            ->setFormType(EnumType::class)
+            ->setFormTypeOption('class', Gender::class);
         $email = TextField::new('email');
         $status = TextField::new('status');
         $birthday = DateField::new('birthday')->hideOnIndex();

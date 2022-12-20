@@ -10,7 +10,7 @@ class UserTypeEntity implements Stringable {
 
     use IdTrait;
 
-    #[ORM\Column(type: 'user_type', unique: true)]
+    #[ORM\Column(type: 'string', unique: true, enumType: UserType::class)]
     private ?UserType $userType = null;
 
     public function getUserType(): UserType {
@@ -23,6 +23,6 @@ class UserTypeEntity implements Stringable {
     }
 
     public function __toString(): string {
-        return $this->getUserType()->getKey();
+        return $this->getUserType()->name;
     }
 }

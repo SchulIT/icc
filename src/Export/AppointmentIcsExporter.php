@@ -30,8 +30,8 @@ class AppointmentIcsExporter {
      * @return CalendarEvent[]
      */
     private function getEvents(User $user): array {
-        $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
-        $isTeacher = $user->getUserType()->equals(UserType::Teacher());
+        $isStudentOrParent = $user->isStudentOrParent();
+        $isTeacher = $user->isTeacher();
 
         $appointments = [ ];
 

@@ -25,7 +25,7 @@ abstract class AbstractGradeFilter {
      * @return Grade[]
      */
     protected function getGrades(User $user, ?Section $section, &$defaultGrade): array {
-        $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
+        $isStudentOrParent = $user->isStudentOrParent();
         $defaultGrade = null;
 
         if($isStudentOrParent) {

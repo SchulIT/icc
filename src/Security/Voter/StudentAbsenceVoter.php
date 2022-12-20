@@ -67,8 +67,8 @@ class StudentAbsenceVoter extends Voter {
             return false;
         }
 
-        $isStudent = $user->getUserType()->equals(UserType::Student());
-        $isParent = $user->getUserType()->equals(UserType::Parent());
+        $isStudent = $user->isStudent();
+        $isParent = $user->isParent();
 
         if($isParent === true) {
             return true;
@@ -141,7 +141,7 @@ class StudentAbsenceVoter extends Voter {
             return false;
         }
 
-        if(!UserType::Teacher()->equals($user->getUserType()) || $user->getTeacher() === null) {
+        if($user->isTeacher() === false || $user->getTeacher() === null) {
             return false;
         }
 

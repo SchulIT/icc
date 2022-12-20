@@ -171,19 +171,19 @@ class TimetableSettings extends AbstractSettings {
     }
 
     public function getStartDate(UserType $userType): ?DateTime {
-        return $this->getValue(sprintf(static::TimetableStartKey, $userType->getValue()));
+        return $this->getValue(sprintf(static::TimetableStartKey, $userType->value));
     }
 
     public function setStartDate(UserType $userType, ?DateTime $date): void {
-        $this->setValue(sprintf(static::TimetableStartKey, $userType->getValue()), $date);
+        $this->setValue(sprintf(static::TimetableStartKey, $userType->value), $date);
     }
 
     public function getEndDate(UserType $userType): ?DateTime {
-        return $this->getValue(sprintf(static::TimetableEndKey, $userType->getValue()));
+        return $this->getValue(sprintf(static::TimetableEndKey, $userType->value));
     }
 
     public function setEndDate(UserType $userType, ?DateTime $date): void {
-        $this->setValue(sprintf(static::TimetableEndKey, $userType->getValue()), $date);
+        $this->setValue(sprintf(static::TimetableEndKey, $userType->value), $date);
     }
 
 

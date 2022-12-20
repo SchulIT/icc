@@ -59,7 +59,7 @@ class BookCommentVoter extends Voter {
         /** @var User $user */
         $user = $token->getUser();
 
-        if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ])) {
+        if($user->isStudentOrParent()) {
             $userStudentIds = $user->getStudents()->map(fn(Student $student) => $student->getId())->toArray();
 
             $commentStudentIds = $comment->getStudents()->map(fn(Student $student) => $student->getId())->toArray();

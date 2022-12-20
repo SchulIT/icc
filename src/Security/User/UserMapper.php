@@ -25,13 +25,13 @@ class UserMapper extends AbstractUserMapper {
     }
 
     private function getUserType(string $type): UserType {
-        if(!array_key_exists($type, $this->typesMap) || !in_array($type, UserType::values())) {
+        if(!array_key_exists($type, $this->typesMap) || !in_array($type, UserType::cases())) {
             $this->logger
                 ->notice(sprintf('User type "%s" is not a valid UserType. Setting type "user"', $type));
-            return UserType::User();
+            return UserType::User;
         }
 
-        return new UserType($type);
+        return UserType::from($type);
     }
 
     /**
@@ -91,7 +91,7 @@ class UserMapper extends AbstractUserMapper {
             ->setUserType($type)
             ->setRoles($roles);
 
-        if(UserType::Teacher()->equals($type)) {
+        if(UserType::Teacher === $type) {
             $externalId = $data[SamlClaimTypes::EXTERNAL_ID];
 
             if($externalId !== null) {
@@ -111,7 +111,7 @@ class UserMapper extends AbstractUserMapper {
                 $this->logger
                     ->notice(sprintf('Cannot map teacher with username "%s" as his/her internal ID is not set.', $user->getUsername()));
             }
-        } else if(UserType::Student()->equals($type)) {
+        } else if(UserType::Student === $type) {
             $studentId = $data[SamlClaimTypes::EXTERNAL_ID];
 
             if($studentId !== null) {
@@ -131,7 +131,7 @@ class UserMapper extends AbstractUserMapper {
                 $this->logger
                     ->notice(sprintf('Cannot map student with username "%s" as his/her internal ID is not set.', $user->getUsername()));
             }
-        } else if(UserType::Parent()->equals($type)) {
+        } else if(UserType::Parent === $type) {
             $rawStudentIds = $data[SamlClaimTypes::EXTERNAL_ID];
 
             if($rawStudentIds !== null) {

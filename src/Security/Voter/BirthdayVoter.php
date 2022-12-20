@@ -4,9 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Student;
 use App\Entity\User;
-use App\Entity\UserType;
 use App\Exception\UnexpectedTypeException;
-use App\Utils\EnumArrayUtils;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -49,7 +47,7 @@ class BirthdayVoter extends Voter {
             return false;
         }
 
-        if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ])) {
+        if($user->isStudentOrParent()) {
             return $user->getStudents()->contains($subject);
         }
 

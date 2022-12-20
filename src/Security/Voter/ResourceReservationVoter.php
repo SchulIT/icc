@@ -64,7 +64,7 @@ class ResourceReservationVoter extends Voter {
             return false;
         }
 
-        return EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]) === false;
+        return $user->isStudentOrParent() === false;
     }
 
     private function canCreate(TokenInterface $token): bool {

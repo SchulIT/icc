@@ -23,7 +23,7 @@ class TeachersFilter {
             $teacherUuids = [ ];
         }
 
-        $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
+        $isStudentOrParent = $user->isStudentOrParent();
         $teachers = [ ];
 
         if($isStudentOrParent !== true && $section !== null) {

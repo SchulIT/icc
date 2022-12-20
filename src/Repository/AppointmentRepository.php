@@ -180,7 +180,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
                 'vInner.userType = :type'
             );
 
-        return $this->getAppointments($qbAppointments, ['type' => UserType::Student() ], $today)
+        return $this->getAppointments($qbAppointments, ['type' => UserType::Student ], $today)
             ->getQuery()->getResult();
     }
 
@@ -223,7 +223,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
 
         return $this->getAppointments($qbAppointments, [
             'teacherId' => $teacher->getId(),
-            'userType' => UserType::Teacher()
+            'userType' => UserType::Teacher
         ], $today)
             ->getQuery()->getResult();
     }

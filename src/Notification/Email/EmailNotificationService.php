@@ -3,7 +3,7 @@
 namespace App\Notification\Email;
 
 use App\Settings\NotificationSettings;
-use App\Utils\EnumArrayUtils;
+use App\Utils\ArrayUtils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -40,7 +40,7 @@ class EmailNotificationService {
         }
 
         foreach($strategy->getRecipients($objective) as $recipient) {
-            if(EnumArrayUtils::inArray($recipient->getUserType(), $this->settings->getEmailEnabledUserTypes()) !== true) {
+            if(ArrayUtils::inArray($recipient->getUserType(), $this->settings->getEmailEnabledUserTypes()) !== true) {
                 continue;
             }
 

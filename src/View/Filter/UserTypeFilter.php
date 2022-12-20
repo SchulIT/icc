@@ -15,7 +15,7 @@ class UserTypeFilter {
     private array $types;
 
     public function __construct(private Sorter $sorter) {
-        $this->types = UserType::values();
+        $this->types = UserType::cases();
     }
 
     /**
@@ -34,12 +34,12 @@ class UserTypeFilter {
             $enums = $onlyTypes;
         }
 
-        $types = ArrayUtils::createArrayWithKeys($enums, fn(UserType $type) => $type->getValue());
+        $types = ArrayUtils::createArrayWithKeys($enums, fn(UserType $type) => $type->value);
 
         if($user === null) {
             $fallbackUserType = null;
         } else {
-            $fallbackUserType = $types[$user->getUserType()->getValue()] ?? null;
+            $fallbackUserType = $types[$user->getUserType()->value] ?? null;
         }
 
         if($user !== null) {

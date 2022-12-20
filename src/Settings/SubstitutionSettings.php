@@ -59,7 +59,7 @@ class SubstitutionSettings extends AbstractSettings {
 
     public function areAbsencesVisibleFor(UserType $type) {
         foreach($this->getAbsenceVisibility() as $visibleUserType) {
-            if($type->equals($visibleUserType)) {
+            if($type === $visibleUserType) {
                 return true;
             }
         }

@@ -2,9 +2,7 @@
 
 namespace App\Security\Voter;
 
-use LogicException;
 use App\Entity\Message;
-use App\Entity\MessagePriority;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
@@ -12,8 +10,9 @@ use App\Entity\User;
 use App\Entity\UserType;
 use App\Entity\UserTypeEntity;
 use App\Message\MessageConfirmationHelper;
-use App\Utils\EnumArrayUtils;
+use App\Utils\ArrayUtils;
 use Doctrine\Common\Collections\Collection;
+use LogicException;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -91,7 +90,7 @@ class MessageVoter extends Voter {
         }
 
         // Teachers can see all messages
-        if($user->getUserType()->equals(UserType::Teacher())) {
+        if($user->isTeacher()) {
             return true;
         }
 
@@ -104,7 +103,7 @@ class MessageVoter extends Voter {
             return true;
         }
 
-        if($user->getUserType()->equals(UserType::Student()) !== true && $user->getUserType()->equals(UserType::Parent()) !== true) {
+        if($user->isStudentOrParent() === false) {
             // all checks passed for non-student/-parent users
             return true;
         }
@@ -195,11 +194,11 @@ class MessageVoter extends Voter {
      * @param UserType[] $allowedUserTypes
      */
     private function checkUserType(array $allowedUserTypes, UserType $userType, bool $strict = true): bool {
-        if(EnumArrayUtils::inArray($userType, $allowedUserTypes)) {
+        if(ArrayUtils::inArray($userType, $allowedUserTypes)) {
             return true;
         }
 
-        if($strict === false && $userType->equals(UserType::Parent()) && EnumArrayUtils::inArray(UserType::Student(), $allowedUserTypes))  {
+        if($strict === false && $userType === UserType::Parent && ArrayUtils::inArray(UserType::Student, $allowedUserTypes))  {
             return true;
         }
 
@@ -236,7 +235,7 @@ class MessageVoter extends Voter {
             return false;
         }
 
-        if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]) && $this->isMemberOfStudyGroups($studyGroups, $user->getStudents()->toArray()) !== true) {
+        if($user->isStudentOrParent() && $this->isMemberOfStudyGroups($studyGroups, $user->getStudents()->toArray()) !== true) {
             return false;
         }
 

@@ -14,8 +14,8 @@ class AcronymHelperTest extends TestCase {
 
     private function getTeachers() {
         $teachers = [
-            (new Teacher())->setAcronym('DOE')->setGender(Gender::Male())->setLastname('Doe')->setFirstname('John'),
-            (new Teacher())->setAcronym('MUE')->setGender(Gender::Female())->setLastname('Mueller')->setFirstname('Laura')
+            (new Teacher())->setAcronym('DOE')->setGender(Gender::Male)->setLastname('Doe')->setFirstname('John'),
+            (new Teacher())->setAcronym('MUE')->setGender(Gender::Female)->setLastname('Mueller')->setFirstname('Laura')
         ];
 
         return $teachers;
@@ -41,7 +41,7 @@ class TeacherStringConverter extends OriginalTeacherStringConverter {
     }
 
     public function convert(?Teacher $teacher, bool $includeAcronym = false): string {
-        if($teacher->getGender()->equals(Gender::Male())) {
+        if($teacher->getGender() === Gender::Male) {
             return sprintf('Mr. %s', $teacher->getLastname());
         }
 

@@ -193,7 +193,7 @@ class StudentAbsenceController extends AbstractController {
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
 
-        if($user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent())) {
+        if($user->isStudentOrParent()) {
             $gradeFilterView = new GradeFilterView([], null);
         }
 

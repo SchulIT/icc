@@ -2,11 +2,10 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Student;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
-use App\Utils\EnumArrayUtils;
+use App\Utils\ArrayUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -32,10 +31,10 @@ class TuitionVoter extends Voter {
         }
 
         $blocked = [
-            UserType::Student(),
-            UserType::Parent()
+            UserType::Student,
+            UserType::Parent
         ];
 
-        return EnumArrayUtils::inArray($user->getUserType(), $blocked) === false;
+        return ArrayUtils::inArray($user->getUserType(), $blocked) === false;
     }
 }

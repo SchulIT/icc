@@ -20,7 +20,7 @@ class RoomFilter {
     public function handle(?string $roomUuid, User $user) {
         $rooms = [ ];
 
-        if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent()]) === false) {
+        if($user->isStudentOrParent() === false) {
             $rooms = ArrayUtils::createArrayWithKeys(
                 $this->roomRepository->findAll(),
                 fn(Room $room) => (string)$room->getUuid()

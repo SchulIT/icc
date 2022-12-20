@@ -71,7 +71,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
             ->leftJoin('u.students', 's')
             ->where($qb->expr()->in('u.id', $qbInner->getDQL()))
             ->setParameter('students', $studentIds)
-            ->setParameter('type', UserType::Parent());
+            ->setParameter('type', UserType::Parent);
 
         return $qb->getQuery()->getResult();
     }
@@ -97,7 +97,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
             ->leftJoin('u.students', 's')
             ->where($qb->expr()->in('u.id', $qbInner->getDQL()))
             ->setParameter('students', $studentIds)
-            ->setParameter('type', UserType::Student());
+            ->setParameter('type', UserType::Student);
 
         return $qb->getQuery()->getResult();
     }
@@ -123,7 +123,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
             ->leftJoin('u.teacher', 't')
             ->where($qb->expr()->in('u.id', $qbInner->getDQL()))
             ->setParameter('teachers', $teacherIds)
-            ->setParameter('type', UserType::Teacher());
+            ->setParameter('type', UserType::Teacher);
 
         return $qb->getQuery()->getResult();
     }
@@ -188,7 +188,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
      * @inheritDoc
      */
     public function findAllByUserTypes(array $types): array {
-        $typeNames = array_map(fn(UserType $type) => $type->getValue(), $types);
+        $typeNames = array_map(fn(UserType $type) => $type->value, $types);
 
         $qb = $this->em->createQueryBuilder();
 
@@ -221,7 +221,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
             ->where(
                 $qb->expr()->in('user.id', $qbOrphaned->getDQL())
             )
-            ->setParameter('types', [ UserType::Teacher()->getValue(), UserType::Student()->getValue(), UserType::Parent()->getValue() ])
+            ->setParameter('types', [ UserType::Teacher, UserType::Student, UserType::Parent ])
             ->getQuery()
             ->execute();
     }

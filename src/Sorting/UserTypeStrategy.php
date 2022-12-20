@@ -10,6 +10,6 @@ class UserTypeStrategy extends AbstractStringPropertyStrategy {
      * @param UserType $object
      */
     protected function getValue($object): string {
-        return $object->getValue();
+        return $object->value;
     }
 }

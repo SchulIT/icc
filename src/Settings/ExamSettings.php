@@ -21,7 +21,7 @@ class ExamSettings extends AbstractSettings {
 
     public function isVisibileFor(UserType $type) {
         foreach($this->getVisibility() as $visibleUserType) {
-            if($type->equals($visibleUserType)) {
+            if($type === $visibleUserType) {
                 return true;
             }
         }

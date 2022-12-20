@@ -5,7 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\User;
 use App\Entity\UserTypeEntity;
 use App\Entity\WikiArticle;
-use App\Utils\EnumArrayUtils;
+use App\Utils\ArrayUtils;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -69,7 +69,7 @@ class WikiVoter extends Voter {
                 ->map(fn(UserTypeEntity $visibility) => $visibility->getUserType())
                 ->toArray();
 
-            if(count($visibilities) > 0 && EnumArrayUtils::inArray($user->getUserType(), $visibilities) !== true) {
+            if(count($visibilities) > 0 && ArrayUtils::inArray($user->getUserType(), $visibilities) !== true) {
                 return false;
             }
 

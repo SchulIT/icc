@@ -100,7 +100,7 @@ class DocumentType extends AbstractType {
                                 'query_builder' => fn(EntityRepository $repository) => $repository->createQueryBuilder('u')
                                     ->select('u')
                                     ->where('u.userType = :userType')
-                                    ->setParameter('userType', UserType::Teacher()),
+                                    ->setParameter('userType', UserType::Teacher),
                                 'choice_label' => fn(User $user) => $this->userConverter->convert($user),
                                 'sort_by' => $this->userStrategy,
                                 'multiple' => true,

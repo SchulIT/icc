@@ -49,10 +49,10 @@ class StudentAbsenceType extends AbstractType {
             return;
         }
 
-        if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]) || $user->getStudents()->count() > 0) {
+        if($user->isStudentOrParent() || $user->getStudents()->count() > 0) {
             $students = $user->getStudents()->toArray();
 
-            if($user->getUserType()->equals(UserType::Student())) {
+            if($user->isStudent()) {
                 $students = [ array_shift($students) ];
             }
         } else {
@@ -146,7 +146,7 @@ class StudentAbsenceType extends AbstractType {
                             'disabled' => true
                         ]);
 
-                    if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ])) {
+                    if($user->isStudentOrParent()) {
                         // Students and parents are not allowed to change absence type
                         $form
                             ->add('type', EntityType::class, [

@@ -2,11 +2,10 @@
 
 namespace App\Security\Voter;
 
-use LogicException;
 use App\Entity\User;
 use App\Entity\UserType;
-use App\Utils\EnumArrayUtils;
-use phpDocumentor\Reflection\Utils;
+use App\Utils\ArrayUtils;
+use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -65,10 +64,10 @@ class ListsVoter extends Voter {
             return false;
         }
 
-        return EnumArrayUtils::inArray($user->getUserType(), [
-            UserType::Student(),
-            UserType::Parent(),
-            UserType::Intern()
+        return ArrayUtils::inArray($user->getUserType(), [
+            UserType::Student,
+            UserType::Parent,
+            UserType::Intern
         ]) !== true; // Everyone but students/parents/interns are allowed to view lists
     }
 }

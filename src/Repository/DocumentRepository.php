@@ -96,7 +96,7 @@ class DocumentRepository extends AbstractRepository implements DocumentRepositor
             ->leftJoin('dInner.visibilities', 'vInner')
             ->where('vInner.userType = :type');
 
-        $qb->setParameter('type', $type->getValue());
+        $qb->setParameter('type', $type->value);
 
         if($grade !== null) {
             $qbInner->andWhere('gInner.id = :grade');

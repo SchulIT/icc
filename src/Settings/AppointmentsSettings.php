@@ -14,7 +14,7 @@ class AppointmentsSettings extends AbstractSettings {
     }
 
     public function getKeyName(UserType $userType, $settingsType) {
-        return sprintf('appointments.%s.%s', strtolower($userType->getValue()), strtolower($settingsType));
+        return sprintf('appointments.%s.%s', strtolower($userType->value), strtolower($settingsType));
     }
 
     public function getStart(UserType $userType) {

@@ -10,7 +10,7 @@ class DocumentVisibilityTest extends TestCase {
     public function testGettersSetters() {
         $visibility = new UserTypeEntity();
 
-        $type = UserType::Teacher();
+        $type = UserType::Teacher;
         $visibility->setUserType($type);
         $this->assertEquals($type, $visibility->getUserType());
     }

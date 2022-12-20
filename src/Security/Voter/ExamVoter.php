@@ -75,13 +75,13 @@ class ExamVoter extends Voter {
     }
 
     private function isStudentOrParent(TokenInterface $token): bool {
-        $userType = $this->getUserType($token);
+        $user = $token->getUser();
 
-        if($userType === null) {
+        if(!$user instanceof User) {
             return false;
         }
 
-        return $userType->equals(UserType::Student()) || $userType->equals(UserType::Parent());
+        return $user->isStudentOrParent();
     }
 
     public function canAdd(TokenInterface $token): bool {

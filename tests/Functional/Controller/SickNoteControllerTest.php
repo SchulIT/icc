@@ -86,7 +86,7 @@ class SickNoteControllerTest extends AbstractControllerTest {
         );
 
         $this->parent = (new User())
-            ->setUserType(UserType::Parent())
+            ->setUserType(UserType::Parent)
             ->setEmail($faker->email)
             ->setUsername($faker->email)
             ->setIdpId(Uuid::fromString($faker->uuid));
@@ -94,7 +94,7 @@ class SickNoteControllerTest extends AbstractControllerTest {
         $this->parent->addStudent($this->nonFullAgedStudent);
 
         $this->studentUser = (new User())
-            ->setUserType(UserType::Student())
+            ->setUserType(UserType::Student)
             ->setEmail($faker->email)
             ->setUsername($faker->email)
             ->setIdpId(Uuid::fromString($faker->uuid));
@@ -102,7 +102,7 @@ class SickNoteControllerTest extends AbstractControllerTest {
         $this->studentUser->addStudent($this->fullAgedStudent);
 
         $this->nonFullAgedStudentUser = (new User())
-            ->setUserType(UserType::Student())
+            ->setUserType(UserType::Student)
             ->setEmail($faker->email)
             ->setUsername($faker->email)
             ->setIdpId(Uuid::fromString($faker->uuid));
@@ -110,14 +110,14 @@ class SickNoteControllerTest extends AbstractControllerTest {
         $this->nonFullAgedStudentUser->addStudent($this->nonFullAgedStudent);
 
         $this->viewerUser = (new User())
-            ->setUserType(UserType::User())
+            ->setUserType(UserType::User)
             ->setEmail($faker->email)
             ->setUsername($faker->email)
             ->setIdpId(Uuid::fromString($faker->uuid));
         $this->viewerUser->setRoles(['ROLE_USER', 'ROLE_STUDENT_ABSENCE_VIEWER']);
 
         $this->creatorUser = (new User())
-            ->setUserType(UserType::User())
+            ->setUserType(UserType::User)
             ->setEmail($faker->email)
             ->setUsername($faker->email)
             ->setIdpId(Uuid::fromString($faker->uuid));

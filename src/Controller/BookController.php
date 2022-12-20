@@ -22,7 +22,6 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
 use App\Entity\User;
-use App\Entity\UserType;
 use App\Grouping\GenericDateStrategy;
 use App\Grouping\Grouper;
 use App\Grouping\LessonAttendanceCommentsGroup;
@@ -41,7 +40,6 @@ use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\Utils\ArrayUtils;
-use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentAwareGradeFilter;
@@ -117,9 +115,9 @@ class BookController extends AbstractController {
             return [ ];
         }
 
-        if (EnumArrayUtils::inArray($user->getUserType(), [UserType::Student(), UserType::Parent()])) {
+        if ($user->isStudentOrParent()) {
             return $tuitionRepository->findAllByStudents($user->getStudents()->toArray(), $currentSection);
-        } else if ($user->getUserType()->equals(UserType::Teacher())) {
+        } else if ($user->isTeacher()) {
             return $tuitionRepository->findAllByTeacher($user->getTeacher(), $currentSection);
         }
 
@@ -134,11 +132,11 @@ class BookController extends AbstractController {
             return [ ];
         }
 
-        if (EnumArrayUtils::inArray($user->getUserType(), [UserType::Student(), UserType::Parent()])) {
+        if ($user->isStudentOrParent()) {
             return ArrayUtils::unique(
                 $user->getStudents()->map(fn(Student $student) => $student->getGrade($currentSection))
             );
-        } else if ($user->getUserType()->equals(UserType::Teacher())) {
+        } else if ($user->isTeacher()) {
             return $user->getTeacher()->getGrades()->
                 filter(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getSection() === $currentSection)
                 ->map(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getGrade())

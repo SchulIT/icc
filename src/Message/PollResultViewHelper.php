@@ -8,10 +8,7 @@ use App\Entity\UserType;
 use App\Entity\UserTypeEntity;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
-use App\Sorting\Sorter;
-use App\Sorting\StudentStrategy;
 use App\Utils\ArrayUtils;
-use App\Utils\EnumArrayUtils;
 
 class PollResultViewHelper {
 
@@ -26,11 +23,11 @@ class PollResultViewHelper {
         $students = [ ];
         $teachers = [ ];
 
-        if(EnumArrayUtils::inArray(UserType::Teacher(), $visibilities)) {
+        if(ArrayUtils::inArray(UserType::Teacher, $visibilities)) {
             $teachers = $this->teacherRepository->findAll();
         }
 
-        if(EnumArrayUtils::inArray(UserType::Student(), $visibilities) || EnumArrayUtils::inArray(UserType::Parent(), $visibilities)) {
+        if(ArrayUtils::inArray(UserType::Student, $visibilities) || ArrayUtils::inArray(UserType::Parent, $visibilities)) {
             $students = $this->studentRepository->findAllByStudyGroups($message->getPollStudyGroups()->toArray());
         }
 
@@ -49,7 +46,7 @@ class PollResultViewHelper {
      */
     private function getStudentVotes(Message $message): array {
         $votes = $message->getPollVotes()
-            ->filter(fn(MessagePollVote $vote) => $vote->getUser()->getUserType()->equals(UserType::Student()) && $vote->getUser()->getStudents()->first() !== null)->toArray();
+            ->filter(fn(MessagePollVote $vote) => $vote->getUser()->isStudent() && $vote->getUser()->getStudents()->first() !== null)->toArray();
 
         return ArrayUtils::createArrayWithKeys($votes, fn(MessagePollVote $vote) => $vote->getUser()->getStudents()->first()->getId());
     }
@@ -61,7 +58,7 @@ class PollResultViewHelper {
      */
     private function getTeacherVotes(Message $message): array {
         $votes = $message->getPollVotes()
-            ->filter(fn(MessagePollVote $vote) => $vote->getUser()->getUserType()->equals(UserType::Teacher()) && $vote->getUser()->getTeacher() !== null)->toArray();
+            ->filter(fn(MessagePollVote $vote) => $vote->getUser()->isTeacher() && $vote->getUser()->getTeacher() !== null)->toArray();
 
         return ArrayUtils::createArrayWithKeys($votes, fn(MessagePollVote $vote) => $vote->getUser()->getTeacher()->getId());
     }

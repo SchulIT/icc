@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use Serializable;
-use Stringable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Stringable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -58,7 +57,7 @@ class User implements UserInterface, Stringable {
     #[ORM\Column(type: 'json')]
     private array $roles = ['ROLE_USER'];
 
-    #[ORM\Column(type: 'user_type')]
+    #[ORM\Column(type: 'string', enumType: UserType::class)]
     private ?UserType $userType = null;
 
     /**
@@ -287,5 +286,21 @@ class User implements UserInterface, Stringable {
 
     public function __toString(): string {
         return sprintf('%s, %s (%s)', $this->getLastname(), $this->getFirstname(), $this->getUsername());
+    }
+
+    public function isStudent(): bool {
+        return $this->getUserType() === UserType::Student;
+    }
+
+    public function isParent(): bool {
+        return $this->getUserType() === UserType::Parent;
+    }
+
+    public function isStudentOrParent(): bool {
+        return $this->isStudent() || $this->isParent();
+    }
+
+    public function isTeacher(): bool {
+        return $this->getUserType() === UserType::Teacher;
     }
 }

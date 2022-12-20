@@ -28,7 +28,7 @@ class StudentAbsenceTypeVoter extends Voter {
 
         /** @var UserTypeEntity $allowedUserType */
         foreach($subject->getAllowedUserTypes() as $allowedUserType) {
-            if($allowedUserType->getUserType()->equals($user->getUserType())) {
+            if($allowedUserType->getUserType() === $user->getUserType()) {
                 return true;
             }
         }

@@ -10,7 +10,7 @@ class MessageVisibilityTest extends TestCase {
     public function testGettersSetters() {
         $visibility = new UserTypeEntity();
 
-        $type = UserType::Intern();
+        $type = UserType::Intern;
         $visibility->setUserType($type);
         $this->assertEquals($type, $visibility->getUserType());
     }

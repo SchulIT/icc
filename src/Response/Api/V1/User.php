@@ -128,7 +128,7 @@ class User {
     }
 
     public function getTypeString(): string {
-        return $this->type->getValue();
+        return $this->type->value;
     }
 
     public static function fromEntity(?UserEntity $userEntity, ?Section $section = null): ?self {

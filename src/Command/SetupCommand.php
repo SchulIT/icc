@@ -33,16 +33,16 @@ class SetupCommand extends Command {
 
     private function addMissingUserTypeEntities(SymfonyStyle $style) {
         /** @var UserType[] $types */
-        $types = UserType::values();
+        $types = UserType::cases();
         $existingTypes = ArrayUtils::createArrayWithKeys(
             $this->userTypeEntityRepository->findAll(),
-            fn(UserTypeEntity $userType) => $userType->getUserType()->getValue());
+            fn(UserTypeEntity $userType) => $userType->getUserType()->value);
 
         foreach($types as $type) {
-            if(array_key_exists($type->getValue(), $existingTypes)) {
-                $style->text(sprintf('%s user type already exists', $type->getValue()));
+            if(array_key_exists($type->value, $existingTypes)) {
+                $style->text(sprintf('%s user type already exists', $type->value));
             } else {
-                $style->text(sprintf('%s user type added', $type->getValue()));
+                $style->text(sprintf('%s user type added', $type->value));
                 $this->userTypeEntityRepository->persist((new UserTypeEntity())->setUserType($type));
             }
         }

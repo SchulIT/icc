@@ -24,7 +24,7 @@ class TuitionFilter {
 
         $keyFunc = fn(Tuition $tuition) => $tuition->getUuid()->toString();
 
-        if($user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent())) {
+        if($user->isStudentOrParent()) {
             $tuitions = ArrayUtils::createArrayWithKeys(
                 $this->repository->findAllByStudents($user->getStudents()->toArray(), $section),
                 $keyFunc

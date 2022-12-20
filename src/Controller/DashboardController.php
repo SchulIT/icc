@@ -85,13 +85,13 @@ class DashboardController extends AbstractController {
         $roomFilterView = $roomFilter->handle($request->query->get('room', null), $user);
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $section, $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $section, $user, $studentFilterView->getCurrentStudent() === null && $roomFilterView->getCurrentRoom() === null);
-        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent() ]), UserType::Student(), [ UserType::Student(), UserType::Parent() ]);
+        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, $user->isStudentOrParent(), UserType::Student, [ UserType::Student, UserType::Parent ]);
 
         $includeGradeMessages = $user->getData(self::IncludeGradeMessagesKey, false);
 
         if($studentFilterView->getCurrentStudent() !== null) {
             if($userTypeFilterView->getCurrentType() === null) {
-                $userTypeFilterView->setCurrentType(UserType::Student());
+                $userTypeFilterView->setCurrentType(UserType::Student);
             }
             $view = $dashboardViewHelper->createViewForStudentOrParent($studentFilterView->getCurrentStudent(), $selectedDate, $userTypeFilterView->getCurrentType());
         } else if($teacherFilterView->getCurrentTeacher() !== null) {

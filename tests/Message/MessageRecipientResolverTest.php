@@ -28,11 +28,11 @@ class MessageRecipientResolverTest extends TestCase {
 
     public function setUp(): void {
         $this->teacherWithoutEmail = (new User())
-            ->setUserType(UserType::Teacher());
+            ->setUserType(UserType::Teacher);
 
         $this->teacherUser = (new User())
             ->setEmail('teacher@test.org')
-            ->setUserType(UserType::Teacher())
+            ->setUserType(UserType::Teacher)
             ->setIsEmailNotificationsEnabled(true);
 
         $reflectionClass = new ReflectionClass(StudyGroup::class);
@@ -53,7 +53,7 @@ class MessageRecipientResolverTest extends TestCase {
 
         $this->studentUser = (new User())
             ->setEmail('student@test.org')
-            ->setUserType(UserType::Student())
+            ->setUserType(UserType::Student)
             ->setIsEmailNotificationsEnabled(true);
 
         $this->student = (new Student());
@@ -81,7 +81,7 @@ class MessageRecipientResolverTest extends TestCase {
 
     public function testNoMatchingUserType() {
         $visibility = (new UserTypeEntity())
-            ->setUserType(UserType::User());
+            ->setUserType(UserType::User);
         $message = (new Message());
         $message->addVisibility($visibility);
 
@@ -93,7 +93,7 @@ class MessageRecipientResolverTest extends TestCase {
 
     public function testNotReceivingForeignMessages() {
         $visibility = (new UserTypeEntity())
-            ->setUserType(UserType::Teacher());
+            ->setUserType(UserType::Teacher);
         $message = (new Message());
         $message->addVisibility($visibility);
 
@@ -107,9 +107,9 @@ class MessageRecipientResolverTest extends TestCase {
     public function testCorrectStudyGroup() {
         $message = (new Message());
         $message->addVisibility((new UserTypeEntity())
-            ->setUserType(UserType::Teacher()));
+            ->setUserType(UserType::Teacher));
         $message->addVisibility((new UserTypeEntity())
-            ->setUserType(UserType::Student()));
+            ->setUserType(UserType::Student));
         $message->addStudyGroup($this->studyGroupIFGK);
 
         $resolver = new MessageRecipientResolver($this->getUserRepository());

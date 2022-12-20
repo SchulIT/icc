@@ -162,4 +162,25 @@ class ArrayUtils {
 
         return $result;
     }
+
+    public static function inArray(mixed $needle, iterable $haystack): bool {
+        return in_array($needle, self::iterableToArray($haystack), true);
+    }
+
+    public static function remove(iterable $original, iterable $remove) {
+        $result = [ ];
+
+        foreach($original as $enum) {
+            foreach($remove as $excludeEnum) {
+                if($enum === $excludeEnum) {
+                    // exclude $enum from result
+                    continue 2;
+                }
+            }
+
+            $result[] = $enum;
+        }
+
+        return $result;
+    }
 }

@@ -5,10 +5,7 @@ namespace App\Controller;
 use App\Dashboard\Absence\AbsenceResolver;
 use App\Dashboard\Absence\ExamStudentsResolver;
 use App\Dashboard\AbsentStudent;
-use App\Security\Voter\StudentAbsenceVoter;
-use App\Utils\ArrayUtils;
-use Symfony\Component\HttpFoundation\Response;
-use Closure;
+use App\Date\WeekOfYear;
 use App\Entity\Exam;
 use App\Entity\IcsAccessToken;
 use App\Entity\IcsAccessTokenType;
@@ -16,34 +13,36 @@ use App\Entity\MessageScope;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\User;
-use App\Entity\UserType;
 use App\Export\ExamIcsExporter;
 use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
 use App\Grouping\ExamWeekGroup;
 use App\Grouping\ExamWeekStrategy;
 use App\Grouping\Grouper;
-use App\Date\WeekOfYear;
 use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Security\IcsAccessToken\IcsAccessTokenManager;
 use App\Security\Voter\ExamVoter;
+use App\Security\Voter\StudentAbsenceVoter;
 use App\Settings\ExamSettings;
 use App\Sorting\ExamDateLessonStrategy as ExamDateSortingStrategy;
 use App\Sorting\ExamWeekGroupStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
+use App\Utils\ArrayUtils;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\TeacherFilter;
+use Closure;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
@@ -134,7 +133,7 @@ class ExamController extends AbstractControllerWithMessages {
     }
 
     private function isVisibleForGrade(User $user, ExamSettings $examSettings, Section $section) {
-        if(EnumArrayUtils::inArray($user->getUserType(), [ UserType::Student(), UserType::Parent()]) === false) {
+        if($user->isStudentOrParent() === false) {
             return true;
         }
 
@@ -151,73 +150,6 @@ class ExamController extends AbstractControllerWithMessages {
         }
 
         return count(array_intersect($visibleGradeIds, $gradeIds)) > 0;
-    }
-
-    private function getExams(?ExamWeekGroup $group, Closure $repositoryCall) {
-        if($group === null) {
-            return [];
-        }
-
-        $date = clone $group->getWeekOfYear()->getFirstDay();
-        $exams = [ ];
-
-        while($date <= $group->getWeekOfYear()->getLastDay()) {
-            $exams = array_merge($exams, $repositoryCall($date));
-
-            $date = $date->modify('+1 day');
-        }
-
-        return $exams;
-    }
-
-    /**
-     * @param ExamWeekGroup[] $groups
-     */
-    private function getCurrentGroup(array $groups, ?int $year, ?int $weekNumber, DateHelper $dateHelper): ?ExamWeekGroup {
-        if ($year === null || $weekNumber === null) {
-            $today = $dateHelper->getToday();
-            $weekNumber = (int)$today->format('W');
-            $year = (int)$today->format('Y');
-        }
-
-        $currentGroup = null;
-
-        foreach ($groups as $group) {
-            if ($group->getWeekOfYear()->getYear() >= $year && $group->getWeekOfYear()->getWeekNumber() >= $weekNumber) {
-                $currentGroup = $group;
-
-                if ($group->getWeekOfYear()->getYear() === $year && $group->getWeekOfYear()->getWeekNumber() === $weekNumber) {
-                    break;
-                }
-            }
-        }
-
-        return $currentGroup;
-    }
-
-    private function computeGroups(array $examInfo) {
-        $groups = [ ];
-
-        foreach($examInfo as $info) {
-            $date = new DateTime($info['date']);
-            $count = intval($info['count']);
-
-            $weekNumber = (int)$date->format('W');
-            $year = (int)$date->format('Y');
-
-            $key = sprintf('%d-%d', $year, $weekNumber);
-
-            if(!array_key_exists($key, $groups)) {
-                $groups[$key] = new ExamWeekGroup(new WeekOfYear($year, $weekNumber));
-            }
-
-            // Add fake counter
-            for($i = 0; $i < $count; $i++) {
-                $groups[$key]->addItem(new Exam());
-            }
-        }
-
-        return array_values($groups);
     }
 
     #[Route(path: '/export', name: 'exams_export')]

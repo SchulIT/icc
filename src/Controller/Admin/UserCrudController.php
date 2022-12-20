@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Controller\Admin\Field\EnumField;
 use App\Entity\User;
+use App\Entity\UserType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -12,7 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use FervoEnumBundle\Generated\Form\UserTypeType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
 class UserCrudController extends AbstractCrudController
 {
@@ -41,7 +42,7 @@ class UserCrudController extends AbstractCrudController
         $firstname = TextField::new('firstname');
         $lastname = TextField::new('lastname');
         $email = TextField::new('email');
-        $userType = EnumField::new('userType')->setFormType(UserTypeType::class);
+        $userType = EnumField::new('userType')->setFormType(EnumType::class)->setFormTypeOption('class', UserType::class);
         $teacher = AssociationField::new('teacher')->hideOnIndex();
         $students = AssociationField::new('students')->hideOnIndex();
         $idpId = TextField::new('idpId');

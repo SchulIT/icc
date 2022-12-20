@@ -20,7 +20,7 @@ class UserTypeAndGradeStrategy implements GroupingStrategyInterface, OptionsAwar
      * @return string[]|string|null
      */
     public function computeKey($object, array $options = [ ]) {
-        if($object->getUserType()->equals(UserType::Student()) || $object->getUserType()->equals(UserType::Parent())) {
+        if($object->isStudentOrParent()) {
             if($object->getStudents()->count() === 0) {
                 return null;
             }

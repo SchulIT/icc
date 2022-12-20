@@ -27,7 +27,7 @@ class UserTest extends WebTestCase {
         $user->setEmail('username@school.it');
         $this->assertEquals('username@school.it', $user->getEmail());
 
-        $type = UserType::Student();
+        $type = UserType::Student;
         $user->setUserType($type);
         $this->assertEquals($type, $user->getUserType());
 

@@ -19,7 +19,7 @@ class TeacherFilter {
     }
 
     public function handle(?string $uuid, ?Section $section, User $user, bool $setDefaultTeacher): TeacherFilterView {
-        $isStudentOrParent = $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent());
+        $isStudentOrParent = $user->isStudentOrParent();
 
         $teachers = [ ];
 

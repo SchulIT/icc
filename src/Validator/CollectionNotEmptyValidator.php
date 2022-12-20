@@ -4,7 +4,7 @@ namespace App\Validator;
 
 use App\Entity\UserType;
 use App\Entity\UserTypeEntity;
-use App\Utils\EnumArrayUtils;
+use App\Utils\ArrayUtils;
 use Countable;
 use InvalidArgumentException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -45,7 +45,7 @@ class CollectionNotEmptyValidator extends ConstraintValidator {
                 throw new UnexpectedTypeException($userType, UserTypeEntity::class);
             }
 
-            if(EnumArrayUtils::inArray($userType->getUserType(), [ UserType::Student(), UserType::Parent()] ) && count($value) === 0) {
+            if(ArrayUtils::inArray($userType->getUserType(), [ UserType::Student, UserType::Parent] ) && count($value) === 0) {
                 $this->context
                     ->buildViolation($constraint->message)
                     ->addViolation();

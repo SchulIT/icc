@@ -40,7 +40,7 @@ class DocumentsController extends AbstractController {
 
         $q = $request->query->get('q', null);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionResolver->getCurrentSection(), $user);
-        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, $user->getUserType()->equals(UserType::Student()) || $user->getUserType()->equals(UserType::Parent()), $user->getUserType());
+        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null), $user, $user->isStudentOrParent(), $user->getUserType());
 
         $documents = $documentRepository->findAllFor($userTypeFilterView->getCurrentType(), $gradeFilterView->getCurrentGrade(), $q);
         $documents = array_filter($documents, fn(Document $document) => $this->isGranted(DocumentVoter::View, $document));

@@ -3,10 +3,9 @@
 namespace App\Security\Voter;
 
 use App\Entity\ResourceEntity;
-use App\Entity\Room;
 use App\Entity\User;
 use App\Entity\UserType;
-use App\Utils\EnumArrayUtils;
+use App\Utils\ArrayUtils;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -75,9 +74,9 @@ class ResourceVoter extends Voter {
         /** @var User $user */
         $user = $token->getUser();
 
-        return EnumArrayUtils::inArray($user->getUserType(), [
-                UserType::Student(),
-                UserType::Parent()
+        return ArrayUtils::inArray($user->getUserType(), [
+                UserType::Student,
+                UserType::Parent
             ]) !== true; // Everyone but students/parents are allowed to view lists
     }
 }

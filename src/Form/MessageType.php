@@ -2,11 +2,11 @@
 
 namespace App\Form;
 
+use App\Converter\EnumStringConverter;
 use App\Entity\DisplayTargetUserType;
+use App\Entity\MessagePriority;
 use App\Entity\MessageScope;
 use Doctrine\ORM\EntityRepository;
-use FervoEnumBundle\Generated\Form\MessagePriorityType;
-use FervoEnumBundle\Generated\Form\MessageScopeType;
 use SchulIT\CommonBundle\Form\FieldsetType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Form\AbstractType;
@@ -24,7 +24,7 @@ class MessageType extends AbstractType {
 
     private const YearsDelta = 1;
 
-    public function __construct(private DateHelper $dateHelper, private AuthorizationCheckerInterface $authorizationChecker, private readonly TranslatorInterface $translator)
+    public function __construct(private DateHelper $dateHelper, private AuthorizationCheckerInterface $authorizationChecker, private readonly TranslatorInterface $translator, private readonly EnumStringConverter $enumStringConverter)
     {
     }
 
@@ -96,12 +96,14 @@ class MessageType extends AbstractType {
                 ->add('group_priority', FieldsetType::class, [
                     'legend' => 'label.priority',
                     'fields' => function (FormBuilderInterface $builder) {
-                        $builder->add('priority', MessagePriorityType::class, [
+                        $builder->add('priority', EnumType::class, [
+                            'class' => MessagePriority::class,
                             'label' => 'label.priority',
                             'attr' => [
                                 'data-choice' => 'true'
                             ],
-                            'help' => 'help.priority'
+                            'help' => $this->translator->trans('help.priority', [], 'enums'),
+                            'choice_label' => fn(MessagePriority $priority) => $this->enumStringConverter->convert($priority)
                         ]);
                     }
                 ]);

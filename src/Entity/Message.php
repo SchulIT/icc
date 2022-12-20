@@ -175,7 +175,7 @@ class Message implements Stringable {
     #[ORM\OneToMany(mappedBy: 'message', targetEntity: MessageConfirmation::class)]
     private $confirmations;
 
-    #[ORM\Column(type: 'message_priority')]
+    #[ORM\Column(type: 'string', enumType: MessagePriority::class)]
     private MessagePriority $priority;
 
     #[ORM\Column(type: 'boolean')]
@@ -239,7 +239,7 @@ class Message implements Stringable {
         $this->pollVotes = new ArrayCollection();
 
         $this->scope = MessageScope::Messages;
-        $this->priority = MessagePriority::Normal();
+        $this->priority = MessagePriority::Normal;
     }
 
     /**

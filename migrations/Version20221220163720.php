@@ -38,6 +38,7 @@ final class Version20221220163720 extends AbstractMigration
         $this->addSql('ALTER TABLE grade_teacher CHANGE type type VARCHAR(255) NOT NULL');
         $this->addSql('ALTER TABLE ics_access_token CHANGE type type VARCHAR(255) NOT NULL');
         $this->addSql('ALTER TABLE message CHANGE scope scope VARCHAR(255) NOT NULL');
+        $this->addSql('ALTER TABLE message CHANGE priority priority VARCHAR(255) NOT NULL');
         $this->addSql('ALTER TABLE student CHANGE gender gender VARCHAR(255) NOT NULL');
         $this->addSql('ALTER TABLE study_group CHANGE type type VARCHAR(255) NOT NULL');
         $this->addSql('ALTER TABLE teacher CHANGE gender gender VARCHAR(255) NOT NULL');
@@ -54,11 +55,13 @@ final class Version20221220163720 extends AbstractMigration
         $this->addSql('ALTER TABLE grade_teacher CHANGE type type VARCHAR(255) NOT NULL COMMENT \'(DC2Type:grade_teacher_type)\'');
         $this->addSql('ALTER TABLE ics_access_token CHANGE type type VARCHAR(255) NOT NULL COMMENT \'(DC2Type:ics_access_token_type)\'');
         $this->addSql('ALTER TABLE message CHANGE scope scope VARCHAR(255) NOT NULL COMMENT \'(DC2Type:message_scope)\'');
+        $this->addSql('ALTER TABLE message CHANGE priority priority VARCHAR(255) NOT NULL COMMENT \'(DC2Type:message_priority)\'');
         $this->addSql('ALTER TABLE student CHANGE gender gender VARCHAR(255) NOT NULL COMMENT \'(DC2Type:gender)\'');
         $this->addSql('ALTER TABLE study_group CHANGE type type VARCHAR(255) NOT NULL COMMENT \'(DC2Type:study_group_type)\'');
         $this->addSql('ALTER TABLE teacher CHANGE gender gender VARCHAR(255) NOT NULL COMMENT \'(DC2Type:gender)\'');
         $this->addSql('ALTER TABLE user CHANGE user_type user_type VARCHAR(255) NOT NULL COMMENT \'(DC2Type:user_type)\'');
         $this->addSql('ALTER TABLE user_type_entity CHANGE user_type user_type VARCHAR(255) NOT NULL COMMENT \'(DC2Type:user_type)\'');
+
 
         $this->removeSettings();
     }

@@ -9,9 +9,9 @@ class MessageStrategy implements SortingStrategyInterface {
 
     private function getPriorityMap() {
         return [
-            MessagePriority::Normal()->getValue() => 3,
-            MessagePriority::Important()->getValue() => 2,
-            MessagePriority::Emergency()->getValue() => 1
+            MessagePriority::Normal->value => 3,
+            MessagePriority::Important->value => 2,
+            MessagePriority::Emergency->value => 1
         ];
     }
 
@@ -20,10 +20,10 @@ class MessageStrategy implements SortingStrategyInterface {
      * @param Message $objectB
      */
     public function compare($objectA, $objectB): int {
-        if($objectA->getPriority()->equals($objectB->getPriority()) !== true) {
+        if($objectA->getPriority() !== $objectB->getPriority()) {
             $map = $this->getPriorityMap();
 
-            return $map[$objectA->getPriority()->getValue()] - $map[$objectB->getPriority()->getValue()];
+            return $map[$objectA->getPriority()->value] - $map[$objectB->getPriority()->value];
         }
 
         return $objectA->getExpireDate()->getTimestamp() - $objectB->getExpireDate()->getTimestamp();

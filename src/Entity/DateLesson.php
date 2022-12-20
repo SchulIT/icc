@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Validator\DateInActiveSection;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -10,8 +11,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class DateLesson {
     #[Assert\NotNull]
     #[ORM\Column(type: 'date')]
+    #[Assert\NotNull]
+    #[DateInActiveSection]
     private ?DateTime $date = null;
 
+    #[Assert\NotNull]
     #[Assert\NotNull]
     #[ORM\Column(type: 'integer')]
     private ?int $lesson = null;

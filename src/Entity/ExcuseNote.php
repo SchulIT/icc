@@ -23,11 +23,13 @@ class ExcuseNote {
     private ?Student $student = null;
 
     #[Assert\NotNull]
+    #[Assert\Valid]
     #[ORM\Embedded(class: DateLesson::class)]
     private ?DateLesson $from = null;
 
     #[DateLessonGreaterThan(propertyPath: 'from')]
     #[Assert\NotNull]
+    #[Assert\Valid]
     #[ORM\Embedded(class: DateLesson::class)]
     private ?DateLesson $until = null;
 

@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\DateLesson;
+use App\Settings\TimetableSettings;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\ExcuseNote;
 use App\Entity\User;
@@ -61,11 +63,13 @@ class ExcuseNoteController extends AbstractController {
     }
 
     #[Route(path: '/add', name: 'add_excuse')]
-    public function add(Request $request): Response {
+    public function add(Request $request, TimetableSettings $timetableSettings): Response {
         /** @var User $user */
         $user = $this->getUser();
 
         $excuse = new ExcuseNote();
+        $excuse->setUntil(new DateLesson());
+        $excuse->getUntil()->setLesson($timetableSettings->getMaxLessons());
 
         if($user->getTeacher() !== null) {
             $excuse->setExcusedBy($user->getTeacher());

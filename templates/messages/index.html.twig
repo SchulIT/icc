@@ -34,7 +34,7 @@
                             {% set userDownloads = message_downloads(message) %}
                             {% set hasPoll = message.pollEnabled and is_granted('poll', message) %}
 
-                            <a class="d-flex align-items-center list-group-item list-group-item-action {% if message.priority == 'emergency' %}list-group-item-danger{% elseif message.priority == 'important' %}list-group-item-warning{% endif %}" href="{{ path('show_message', { uuid: message.uuid }) }}">
+                            <a class="d-flex align-items-center list-group-item list-group-item-action {% if message.priority.value == 'emergency' %}list-group-item-danger{% elseif message.priority.value == 'important' %}list-group-item-warning{% endif %}" href="{{ path('show_message', { uuid: message.uuid }) }}">
                                 <div class="flex-fill">
                                     {{ message.title }}
                                 </div>

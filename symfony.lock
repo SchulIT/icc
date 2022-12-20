@@ -164,9 +164,6 @@
     "frostiede/composer-dependency-list-bundle": {
         "version": "2.0.2"
     },
-    "frostiede/enum-bundle": {
-        "version": "3.0.0"
-    },
     "guzzlehttp/guzzle": {
         "version": "7.3.0"
     },

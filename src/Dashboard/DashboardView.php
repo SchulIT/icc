@@ -132,7 +132,7 @@ class DashboardView {
     }
 
     public function addMessage(Message $message): void {
-        if($message->getPriority()->equals(MessagePriority::Normal())) {
+        if($message->getPriority() === MessagePriority::Normal) {
             $this->messages[] = $message;
         } else {
             $this->priorityMessages[] = $message;

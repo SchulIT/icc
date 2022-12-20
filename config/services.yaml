@@ -220,7 +220,17 @@ services:
     # CONVERTER
     App\Converter\EnumStringConverter:
         bind:
-            $enumFormKeyMapping: '%fervo_enum.enum_map%'
+            $enumFormKeyMapping:
+                gender: App\Entity\Gender
+                grade_teacher_type: App\Entity\GradeTeacherType
+                message_scope: App\Entity\MessageScope
+                message_priority: App\Entity\MessagePriority
+                study_group_type: App\Entity\StudyGroupType
+                user_type: App\Entity\UserType
+                ics_access_token_type: App\Entity\IcsAccessTokenType
+                display_target_user_type: App\Entity\DisplayTargetUserType
+                absence_reason: App\Dashboard\AbsenceReason
+                sick_reason: App\Entity\SickNoteReason
 
     # DOCTRINE:
     Doctrine\Persistence\ManagerRegistry:

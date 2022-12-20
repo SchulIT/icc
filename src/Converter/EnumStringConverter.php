@@ -9,6 +9,7 @@ class EnumStringConverter {
 
     public function __construct(private TranslatorInterface $translator, private array $enumFormKeyMapping)
     {
+        $this->enumFormKeyMapping = array_flip($this->enumFormKeyMapping);
     }
 
     public function convert($enum): string {
@@ -17,7 +18,7 @@ class EnumStringConverter {
         if(enum_exists($enum::class)) {
             $key = sprintf('%s.%s', $prefix, $enum->value);
         } else {
-            $key = sprintf('%s.%s', $prefix, $enum->getValue());
+            $key = '';
         }
 
         return $this->translator->trans($key, [], 'enums');

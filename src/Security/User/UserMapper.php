@@ -12,7 +12,6 @@ use LightSaml\ClaimTypes;
 use LightSaml\Model\Protocol\Response;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Ramsey\Uuid\Uuid;
 use SchulIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
 use SchulIT\CommonBundle\Security\User\AbstractUserMapper;
 
@@ -20,7 +19,7 @@ class UserMapper extends AbstractUserMapper {
     public const ROLES_ASSERTION_NAME = 'urn:roles';
     private LoggerInterface $logger;
 
-    public function __construct(private array $typesMap, private TeacherRepositoryInterface $teacherRepository, private StudentRepositoryInterface $studentRepository, LoggerInterface $logger = null) {
+    public function __construct(private readonly array $typesMap, private readonly TeacherRepositoryInterface $teacherRepository, private readonly StudentRepositoryInterface $studentRepository, LoggerInterface $logger = null) {
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -94,30 +93,22 @@ class UserMapper extends AbstractUserMapper {
             ->setRoles($roles);
 
         if(UserType::Teacher === $type) {
-            $externalId = $data[SamlClaimTypes::EXTERNAL_ID];
-
-            if($externalId !== null) {
-                $teacher = $this->teacherRepository->findOneByExternalId($externalId);
-
-                if($teacher === null) {
-                    $teacher = $this->teacherRepository->findOneByAcronym($externalId);
-                }
+            if($email !== null) {
+                $teacher = $this->teacherRepository->findOneByEmailAddress($email);
 
                 if ($teacher !== null) {
                     $user->setTeacher($teacher);
                 } else {
                     $this->logger
-                        ->notice(sprintf('Cannot map teacher with internal ID "%s" as such teacher does not exist.', $externalId));
+                        ->notice(sprintf('Cannot map teacher with email address "%s" as such teacher does not exist.', $email));
                 }
             } else {
                 $this->logger
-                    ->notice(sprintf('Cannot map teacher with username "%s" as his/her internal ID is not set.', $user->getUsername()));
+                    ->notice(sprintf('Cannot map teacher with username "%s" as his/her email address is not set.', $user->getUsername()));
             }
         } else if(UserType::Student === $type) {
-            $studentId = $data[SamlClaimTypes::EXTERNAL_ID];
-
-            if($studentId !== null) {
-                $student = $this->studentRepository->findOneByExternalId($studentId);
+            if($email!== null) {
+                $student = $this->studentRepository->findOneByEmailAddress($email);
 
                 if ($student !== null) {
                     CollectionUtils::synchronize(
@@ -127,18 +118,18 @@ class UserMapper extends AbstractUserMapper {
                     );
                 } else {
                     $this->logger
-                        ->notice(sprintf('Cannot map student with student ID "%s" as such student does not exist.', $studentId));
+                        ->notice(sprintf('Cannot map student with email address "%s" as such student does not exist.', $email));
                 }
             } else {
                 $this->logger
-                    ->notice(sprintf('Cannot map student with username "%s" as his/her internal ID is not set.', $user->getUsername()));
+                    ->notice(sprintf('Cannot map student with username "%s" as his/her email address is not set.', $user->getUsername()));
             }
         } else if(UserType::Parent === $type) {
-            $rawStudentIds = $data[SamlClaimTypes::EXTERNAL_ID];
+            $rawStudentEmailAddresses = $data[SamlClaimTypes::EXTERNAL_ID];
 
-            if($rawStudentIds !== null) {
-                $studentIds = explode(',', $rawStudentIds);
-                $students = $this->studentRepository->findAllByExternalId($studentIds);
+            if($rawStudentEmailAddresses !== null) {
+                $emailAddresses = explode(',', $rawStudentEmailAddresses);
+                $students = $this->studentRepository->findAllByEmailAddresses($emailAddresses);
 
                 CollectionUtils::synchronize(
                     $user->getStudents(),
@@ -147,7 +138,7 @@ class UserMapper extends AbstractUserMapper {
                 );
             } else {
                 $this->logger
-                    ->notice(sprintf('Cannot map parent with username "%s" as his/her internal ID is not set.', $user->getUsername()));
+                    ->notice(sprintf('Cannot map parent with username "%s" as his/her external id attribute is not set.', $user->getUsername()));
             }
         }
 

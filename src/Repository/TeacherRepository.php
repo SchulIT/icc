@@ -75,6 +75,16 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    public function findOneByEmailAddress(string $email): ?Teacher {
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qb->where('t.email = :email')
+            ->setParameter('email', $email)
+            ->setMaxResults(1) ;
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
     /**
      * @inheritDoc
      */

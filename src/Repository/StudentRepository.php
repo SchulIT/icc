@@ -59,6 +59,14 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
             ->getOneOrNullResult();
     }
 
+    public function findOneByEmailAddress(string $email): ?Student {
+        return $this->getDefaultQueryBuilder()
+            ->andWhere('s.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     /**
      * @inheritDoc
      */
@@ -140,6 +148,14 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
         $qb
             ->andWhere($qb->expr()->in('s.id', $qbInner->getDQL()))
             ->setParameter('externalIds', $externalIds);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAllByEmailAddresses(array $emailAddresses): array {
+        $qb = $this->getDefaultQueryBuilder()
+            ->andWhere('s.email IN (:emails)')
+            ->setParameter('emails', $emailAddresses);
 
         return $qb->getQuery()->getResult();
     }

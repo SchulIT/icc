@@ -34,6 +34,12 @@ interface TeacherRepositoryInterface extends TransactionalRepositoryInterface {
     public function findOneByExternalId(string $externalId): ?Teacher;
 
     /**
+     * @param string $email
+     * @return Teacher|null
+     */
+    public function findOneByEmailAddress(string $email): ?Teacher;
+
+    /**
      * @param string[] $acronyms
      * @return Teacher[]
      */

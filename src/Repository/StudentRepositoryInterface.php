@@ -31,10 +31,22 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
     public function findOneByExternalId(string $externalId): ?Student;
 
     /**
+     * @param string $email
+     * @return Student|null
+     */
+    public function findOneByEmailAddress(string $email): ?Student;
+
+    /**
      * @param string[] $externalIds
      * @return Student[]
      */
     public function findAllByExternalId(array $externalIds): array;
+
+    /**
+     * @param string[] $emailAddresses
+     * @return Student[]
+     */
+    public function findAllByEmailAddresses(array $emailAddresses): array;
 
     /**
      * @param Grade $grade

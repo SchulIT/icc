@@ -440,7 +440,7 @@ class Message {
             ->setMustConfirm($messageEntity->mustConfirm())
             ->setConfirmationRequiredUserTypes(array_map(fn(UserTypeEntity $userTypeEntity) => $userTypeEntity->getUserType()->value, $messageEntity->getConfirmationRequiredUserTypes()->toArray()))
             ->setConfirmationRequiredStudyGroups(array_map(fn(StudyGroupEntity $studyGroupEntity) => StudyGroup::fromEntity($studyGroupEntity), $messageEntity->getConfirmationRequiredStudyGroups()->toArray()))
-            ->setPriority($messageEntity->getPriority()->getValue());
+            ->setPriority($messageEntity->getPriority()->value);
 
     }
 }

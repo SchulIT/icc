@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\DateLesson;
 use App\Settings\TimetableSettings;
+use ArrayIterator;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\ExcuseNote;
 use App\Entity\User;
@@ -48,7 +49,9 @@ class ExcuseNoteController extends AbstractController {
                 $sectionFilterView->getCurrentSection()->getEnd()
             );
 
-            $notes = $paginator->getIterator()->getArrayCopy();
+            /** @var ArrayIterator $iterator */
+            $iterator = $paginator->getIterator();
+            $notes = $iterator->getArrayCopy();
             $count = $paginator->count();
             $pages = ceil((float)$count / self::ItemsPerPage);
         }

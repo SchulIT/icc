@@ -297,10 +297,10 @@ class UntisImportController extends AbstractController {
                 $result = $roomImporter->import(Reader::createFromPath($roomsFile->getRealPath()));
 
                 $this->addFlash('success', $translator->trans('import.rooms.result', [
-                    '%added%' => is_countable($result->getAdded()) ? count($result->getAdded()) : 0,
-                    '%ignored%' => is_countable($result->getIgnored()) ? count($result->getIgnored()) : 0,
-                    '%updated%' => is_countable($result->getUpdated()) ? count($result->getUpdated()) : 0,
-                    '%removed%' => is_countable($result->getRemoved()) ? count($result->getRemoved()) : 0
+                    '%added%' => count($result->getAdded()),
+                    '%ignored%' => count($result->getIgnored()),
+                    '%updated%' => count($result->getUpdated()),
+                    '%removed%' => count($result->getRemoved())
                 ]));
 
                 return $this->redirectToRoute('import_untis_rooms');

@@ -19,7 +19,7 @@ interface ResourceRepositoryInterface {
 
     /**
      * @param RoomQuery $query
-     * @return Room[]
+     * @return ResourceEntity[]
      */
     public function findAllByQuery(RoomQuery $query): array;
 

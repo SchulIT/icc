@@ -30,7 +30,7 @@ class TimetableImporter {
         $lessons = [ ];
 
         foreach($gradeLessonsHtml as $html) {
-            $result = $this->reader->readHtml($html, TimetableType::Grade());
+            $result = $this->reader->readHtml($html, TimetableType::Grade);
             $lessons = array_merge(
                 $lessons,
                 $this->lessonCombiner->combine($result->getLessons())
@@ -38,7 +38,7 @@ class TimetableImporter {
         }
 
         foreach($subjectLessonsHtml as $html) {
-            $result = $this->reader->readHtml($html, TimetableType::Subject());
+            $result = $this->reader->readHtml($html, TimetableType::Subject);
             $lessons = array_merge($lessons,
                 $this->lessonCombiner->combine($result->getLessons())
             );

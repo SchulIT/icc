@@ -60,7 +60,7 @@ class SubstitutionImporter {
                 ->setLessonStart($absence->getLessonStart())
                 ->setLessonEnd($absence->getLessonEnd())
                 ->setObjective($absence->getObjective())
-                ->setType($absence->getObjectiveType()->getValue());
+                ->setType($absence->getObjectiveType()->value);
         }
 
         $data->setAbsences($absences);

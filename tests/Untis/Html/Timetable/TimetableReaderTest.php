@@ -13,7 +13,7 @@ class TimetableReaderTest extends TestCase {
         $html = file_get_contents($file);
 
         $reader = new TimetableReader();
-        $result = $reader->readHtml($html, TimetableType::Subject());
+        $result = $reader->readHtml($html, TimetableType::Subject);
         $lessons = $result->getLessons();
 
         $this->assertEquals('Berei', $result->getObjective());
@@ -41,7 +41,7 @@ class TimetableReaderTest extends TestCase {
         $html = file_get_contents($file);
 
         $reader = new TimetableReader();
-        $result = $reader->readHtml($html, TimetableType::Grade());
+        $result = $reader->readHtml($html, TimetableType::Grade);
         $lessons = $result->getLessons();
 
         $this->assertEquals('05A', $result->getObjective());

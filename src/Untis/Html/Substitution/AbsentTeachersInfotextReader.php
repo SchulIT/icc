@@ -9,6 +9,6 @@ class AbsentTeachersInfotextReader extends AbsentObjectiveInfotextReader {
     }
 
     protected function createAbsence(string $objective, ?int $lessonStart, ?int $lessonEnd): Absence {
-        return new Absence(AbsenceObjectiveType::Teacher(), $objective, $lessonStart, $lessonEnd);
+        return new Absence(AbsenceObjectiveType::Teacher, $objective, $lessonStart, $lessonEnd);
     }
 }

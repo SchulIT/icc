@@ -36,11 +36,11 @@ class TimetableReader extends AbstractHtmlReader {
         $objective = $this->parseObjective($xpath);
         $lessons = $this->parseLessons($xpath, $type);
 
-        if($type->equals(TimetableType::Grade())) {
+        if($type === TimetableType::Grade) {
             foreach($lessons as $lesson) {
                 $lesson->setGrade($objective);
             }
-        } else if($type->equals(TimetableType::Subject())) {
+        } else if($type === TimetableType::Subject) {
             foreach($lessons as $lesson) {
                 $lesson->setSubject($objective);
             }
@@ -83,7 +83,7 @@ class TimetableReader extends AbstractHtmlReader {
         $trNodes = $xpath->query('./tr', $table);
         $currentLesson = 0;
 
-        $cellTypes = $type->equals(TimetableType::Grade()) ? $this->gradeCellInformation : $this->subjectCellInformation;
+        $cellTypes = $type === TimetableType::Grade ? $this->gradeCellInformation : $this->subjectCellInformation;
 
         for($idx = 1; $idx < $trNodes->count(); $idx++) {
             $trNode = $trNodes->item($idx);

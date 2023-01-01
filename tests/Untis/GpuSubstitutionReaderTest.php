@@ -38,7 +38,7 @@ GPU;
         $this->assertSame(['8a'], $current->getGrades());
         $this->assertSame(['8a'], $current->getReplacementGrades());
         $this->assertNotNull($current->getType());
-        $this->assertTrue($current->getType()->equals(SubstitutionType::Supervision()));
+        $this->assertTrue($current->getType() === SubstitutionType::Supervision);
         $this->assertNull($current->getRemark());
 
         $current = $substitutions[1];
@@ -69,7 +69,7 @@ GPU;
         $this->assertSame(['2. M1', '2. M1+S', '2. M2'], $current->getGrades());
         $this->assertSame(['2. M1', '2. M1+S', '2. M2'], $current->getReplacementGrades());
         $this->assertNotNull($current->getType());
-        $this->assertTrue($current->getType()->equals(SubstitutionType::Supervision()));
+        $this->assertTrue($current->getType() === SubstitutionType::Supervision);
         $this->assertEquals("Urlaub", $current->getRemark());
     }
 }

@@ -149,8 +149,8 @@ class SubstitutionImporter {
             'E' => 'Klausur'
         ];
 
-        if($substitution->getType() !== null && array_key_exists($substitution->getType()->getValue(), $map)) {
-            return $map[$substitution->getType()->getValue()];
+        if($substitution->getType() !== null && array_key_exists($substitution->getType()->value, $map)) {
+            return $map[$substitution->getType()->value];
         }
 
         $map = [
@@ -203,7 +203,7 @@ class SubstitutionImporter {
             && $first->getTeacher() === $second->getTeacher()
             && $first->getReplacementTeacher() === $second->getReplacementTeacher()
             && $first->getFlags() === $second->getFlags()
-            && (($first->getType() === null && $second->getType() === null) || $first->getType()->equals($second->getType()))
+            && (($first->getType() === null && $second->getType() === null) || $first->getType() === $second->getType())
             && $first->getRemark() === $second->getRemark();
     }
 }

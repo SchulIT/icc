@@ -3,10 +3,8 @@
 namespace App\Untis\Gpu\Substitution;
 
 use App\Untis\Gpu\AbstractGpuReader;
-use App\Untis\Gpu\Substitution\Substitution;
-use App\Untis\Gpu\Substitution\SubstitutionType;
 use League\Csv\Reader;
-use UnexpectedValueException;
+use ValueError;
 
 class SubstitutionReader extends AbstractGpuReader {
     private function convertType(string $value): ?SubstitutionType {
@@ -14,7 +12,7 @@ class SubstitutionReader extends AbstractGpuReader {
 
         try {
             return SubstitutionType::from($value);
-        } catch (UnexpectedValueException) { }
+        } catch (ValueError) { }
 
         return null;
     }

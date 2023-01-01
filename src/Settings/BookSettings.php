@@ -31,4 +31,12 @@ class BookSettings extends AbstractSettings {
     public function setGradesTuitionTeacherExcuses(array $ids): void {
         $this->setValue('book.excuses.grades_tuition_teacher_excuses', $ids);
     }
+
+    public function getExcludeStudentsStatus(): array {
+        return $this->getValue('book.exclude_students_status', [ ]);
+    }
+
+    public function setExcludeStudentsStatus(array $status): void {
+        $this->setValue('book.exclude_students_status', $status);
+    }
 }

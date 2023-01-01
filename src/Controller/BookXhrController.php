@@ -27,6 +27,7 @@ use App\Response\Api\V1\Tuition as TuitionResponse;
 use App\Response\ViolationList;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\LessonEntryVoter;
+use App\Settings\BookSettings;
 use DateTime;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -177,7 +178,7 @@ class BookXhrController extends AbstractController {
     #[Route(path: '/entry', name: 'xhr_lesson_entry', methods: ['GET'])]
     public function entry(Request $request, AbsenceResolver $absenceResolver, TimetableLessonRepositoryInterface $lessonRepository,
                           LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
-                          SerializerInterface $serializer, SectionResolverInterface $sectionResolver, AbsenceExcuseResolver $excuseResolver): Response {
+                          SerializerInterface $serializer, SectionResolverInterface $sectionResolver, AbsenceExcuseResolver $excuseResolver, BookSettings $settings): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $lesson = $lessonRepository->findOneByUuid($request->query->get('lesson'));
@@ -243,6 +244,11 @@ class BookXhrController extends AbstractController {
 
         $students = [ ];
         foreach($lesson->getTuition()->getStudyGroup()->getMemberships() as $membership) {
+            if(in_array($membership->getStudent()->getStatus(), $settings->getExcludeStudentsStatus())) {
+                // skip student
+                continue;
+            }
+
             $students[] = Student::fromEntity($membership->getStudent());
         }
 

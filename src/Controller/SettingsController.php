@@ -925,6 +925,12 @@ class SettingsController extends AbstractController {
                     'size' => 10
                 ],
                 'data' => $settings->getGradesTuitionTeacherExcuses()
+            ])
+            ->add('exclude_student_status', TextType::class, [
+                'label' => 'admin.settings.book.exclude_student_status.label',
+                'help' => 'admin.settings.book.exclude_student_status.help',
+                'required' => false,
+                'data' => implode(',', $settings->getExcludeStudentsStatus())
             ]);
         $form = $builder->getForm();
         $form->handleRequest($request);
@@ -936,6 +942,15 @@ class SettingsController extends AbstractController {
                 },
                 'grades_tuition_teacher_excuses' => function(array $ids) use($settings) {
                     $settings->setGradesTuitionTeacherExcuses($ids);
+                },
+                'exclude_student_status' => function(?string $status) use($settings) {
+                    if(empty($status)) {
+                        $settings->setExcludeStudentsStatus([]);
+                    } else {
+                        $settings->setExcludeStudentsStatus(
+                            array_map(fn($status) => trim($status), explode(',', $status))
+                        );
+                    }
                 }
             ];
 

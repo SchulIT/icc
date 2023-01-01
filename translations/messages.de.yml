@@ -1585,6 +1585,11 @@ import:
         caution: Da sich Unterrichtsnummern insbesondere über Halbjahre hinweg ändern können, muss der Import stets auf Halbjahre beschränkt werden.
         result: '%added% neue Klausur(en), %ignored% nicht importiert, %updated% aktualisiert, %removed% gelöscht'
 
+    rooms:
+        label: Räume
+        info: Hier kann die GPU005.txt importiert werden. Diese muss als UTF-8 mit Semikolon (;) als Trennzeichen exportiert werden. Es werden der Name, der Langname sowie die Kapazität der Räume (falls angegeben) importiert.
+        result: '%added% neue Räume(e), %ignored% nicht importiert, %updated% aktualisiert, %removed% gelöscht'
+
     timetable:
         help: Start- und Enddatum geben an, für welchen Zeitraum der Stundenplan importiert werden soll.
         caution: Das Startdatum muss zwingend in der Zukunft liegen, da es anderenfalls zu Datenverlust beim Unterrichtsbuch kommt.

@@ -16,6 +16,14 @@ abstract class AbstractReader {
         return intval($value);
     }
 
+    public function getIntOrNull(?string $value): ?int {
+        if(empty($value)) {
+            return null;
+        }
+
+        return intval($value);
+    }
+
     protected function getStringOrNull(?string $value): ?string {
         if(empty($value)) {
             return null;

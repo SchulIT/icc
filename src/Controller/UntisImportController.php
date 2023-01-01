@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Form\Import\Untis\RoomImportType;
+use App\Untis\Gpu\Room\RoomImporter;
 use Symfony\Component\HttpFoundation\Response;
 use App\Form\Import\Untis\CalendarWeekSchoolWeekType;
 use App\Form\Import\Untis\ExamImportType;
@@ -278,6 +280,36 @@ class UntisImportController extends AbstractController {
         }
 
         return $this->render('import/exams.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    #[Route('/rooms', name: 'import_untis_rooms')]
+    public function rooms(Request $request, RoomImporter $roomImporter, TranslatorInterface $translator): Response {
+        $form = $this->createForm(RoomImportType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $roomsFile */
+            $roomsFile = $form->get('importFile')->getData();
+
+            try {
+                $result = $roomImporter->import(Reader::createFromPath($roomsFile->getRealPath()));
+
+                $this->addFlash('success', $translator->trans('import.rooms.result', [
+                    '%added%' => is_countable($result->getAdded()) ? count($result->getAdded()) : 0,
+                    '%ignored%' => is_countable($result->getIgnored()) ? count($result->getIgnored()) : 0,
+                    '%updated%' => is_countable($result->getUpdated()) ? count($result->getUpdated()) : 0,
+                    '%removed%' => is_countable($result->getRemoved()) ? count($result->getRemoved()) : 0
+                ]));
+
+                return $this->redirectToRoute('import_untis_rooms');
+            } catch (ImportException $exception) {
+                $this->addFlash('error', $exception->getMessage());
+            }
+        }
+
+        return $this->render('import/rooms.html.twig', [
             'form' => $form->createView()
         ]);
     }

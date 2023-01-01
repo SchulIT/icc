@@ -1,0 +1,31 @@
+{% extends "import/_import.html.twig" %}
+
+{% block title %}{{ 'import.rooms.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'import.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block import_content %}
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                <p>{{ 'import.rooms.info'|trans }}</p>
+            </div>
+
+            {{ form_widget(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block import_card_footer %}
+    <button type="submit" class="btn btn-primary btn-sm">
+        <i class="fa fa-upload"></i> {{ 'actions.upload'|trans }}
+    </button>
+{% endblock %}

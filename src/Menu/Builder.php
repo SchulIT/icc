@@ -450,6 +450,11 @@ class Builder {
             ])
                 ->setExtra('icon', 'fas fa-eye');
 
+            $menu->addChild('import.rooms.label', [
+                'route' => 'import_untis_rooms'
+            ])
+                ->setExtra('icon', 'fas fa-door-open');
+
             $menu->addChild('import.timetable.html.label', [
                 'route' => 'import_untis_timetable_html'
             ])

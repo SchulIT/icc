@@ -8,7 +8,7 @@ use App\Entity\Student;
 class AbsentExamStudent extends AbsentStudent {
 
     public function __construct(Student $student, private Exam $exam) {
-        parent::__construct($student, AbsenceReason::Exam());
+        parent::__construct($student, AbsenceReason::Exam);
     }
 
     public function getExam(): Exam {

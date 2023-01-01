@@ -23,7 +23,7 @@ class AbsentStudyGroupResolver implements AbsenceResolveStrategyInterface {
      */
     public function resolveAbsentStudents(DateTime $dateTime, int $lesson, iterable $students): array {
         return array_map(
-            fn(Student $student) => new AbsentStudent($student, AbsenceReason::Other()),
+            fn(Student $student) => new AbsentStudent($student, AbsenceReason::Other),
             $this->absenceRepository->findAllStudentsByDateAndLesson($dateTime, ArrayUtils::iterableToArray($students), $lesson)
         );
     }

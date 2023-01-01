@@ -84,14 +84,14 @@ class BookXhrController extends AbstractController {
             $zeroAbsentLessons = ($absentStudent instanceof  AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons());
             $excuseStatus = ($absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isAlwaysExcused()) ? LessonAttendanceExcuseStatus::Excused : LessonAttendanceExcuseStatus::NotSet;
 
-            if($absentStudent->getReason()->equals(AbsenceReason::Exam())) {
+            if($absentStudent->getReason() === AbsenceReason::Exam) {
                 $zeroAbsentLessons = true;
                 $excuseStatus = LessonAttendanceExcuseStatus::Excused;
             }
 
             $absences[] = [
                 'student' => Student::fromEntity($absentStudent->getStudent(), $sectionResolver->getCurrentSection()),
-                'reason' => $absentStudent->getReason()->getValue(),
+                'reason' => $absentStudent->getReason()->value,
                 'label' => ($absentStudent instanceof AbsentStudentWithAbsenceNote ? $absentStudent->getAbsence()->getType()->getName() : null),
                 'zero_absent_lessons' => $zeroAbsentLessons,
                 'excuse_status' => $excuseStatus

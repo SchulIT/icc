@@ -238,9 +238,6 @@
     "myclabs/deep-copy": {
         "version": "1.10.2"
     },
-    "myclabs/php-enum": {
-        "version": "1.8.3"
-    },
     "nelmio/api-doc-bundle": {
         "version": "3.0",
         "recipe": {

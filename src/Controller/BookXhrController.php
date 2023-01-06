@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Book\AbsenceSuggestion\SuggestionResolver;
 use App\Book\Lesson\LessonCancelHelper;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Dashboard\Absence\AbsenceResolver;
@@ -66,61 +67,10 @@ class BookXhrController extends AbstractController {
         return $this->returnJson(TuitionResponse::fromEntity($tuition), $serializer);
     }
 
-    private function possiblyAbsentStudents(Tuition $tuition, DateTime $date, int $lesson, AbsenceResolver $absenceResolver,
-                                            LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
-                                            SectionResolverInterface $sectionResolver) {
+    private function possiblyAbsentStudents(Tuition $tuition, DateTime $date, int $lesson, SuggestionResolver $suggestionResolver) {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
-        $students = [ ];
-
-        /** @var StudyGroupMembership $membership */
-        foreach($tuition->getStudyGroup()->getMemberships() as $membership) {
-            $students[] = $membership->getStudent();
-        }
-
-        $absences = [ ];
-
-        foreach($absenceResolver->resolve($date, $lesson, $students) as $absentStudent) {
-            $zeroAbsentLessons = ($absentStudent instanceof  AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons());
-            $excuseStatus = ($absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isAlwaysExcused()) ? LessonAttendanceExcuseStatus::Excused : LessonAttendanceExcuseStatus::NotSet;
-
-            if($absentStudent->getReason() === AbsenceReason::Exam) {
-                $zeroAbsentLessons = true;
-                $excuseStatus = LessonAttendanceExcuseStatus::Excused;
-            }
-
-            $absences[] = [
-                'student' => Student::fromEntity($absentStudent->getStudent(), $sectionResolver->getCurrentSection()),
-                'reason' => $absentStudent->getReason()->value,
-                'label' => ($absentStudent instanceof AbsentStudentWithAbsenceNote ? $absentStudent->getAbsence()->getType()->getName() : null),
-                'zero_absent_lessons' => $zeroAbsentLessons,
-                'excuse_status' => $excuseStatus
-            ];
-        }
-
-        foreach($excuseNoteRepository->findByStudentsAndDate($students, $date) as $note) {
-            if($note->appliesToLesson($date, $lesson)) {
-                $absences[] = [
-                    'student' => Student::fromEntity($note->getStudent(), $sectionResolver->getCurrentSection()),
-                    'reason' => 'excuse',
-                    'excuse_status' => LessonAttendanceExcuseStatus::Excused
-                ];
-            }
-        }
-
-        if(empty($absences)) {
-            foreach ($attendanceRepository->findAbsentByStudentsAndDate($students, $date) as $attendance) {
-                if ($attendance->getEntry()->getLessonEnd() < $lesson) {
-                    $absences[] = [
-                        'student' => Student::fromEntity($attendance->getStudent(), $sectionResolver->getCurrentSection()),
-                        'reason' => 'absent_before'
-                    ];
-                    break; // only show this absence once
-                }
-            }
-        }
-
-        return $absences;
+        return $suggestionResolver->resolve($tuition, $date, $lesson);
     }
 
     #[Route(path: '/attendances/{uuid}', name: 'xhr_entry_attendances')]
@@ -176,9 +126,8 @@ class BookXhrController extends AbstractController {
      * )
      */
     #[Route(path: '/entry', name: 'xhr_lesson_entry', methods: ['GET'])]
-    public function entry(Request $request, AbsenceResolver $absenceResolver, TimetableLessonRepositoryInterface $lessonRepository,
-                          LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
-                          SerializerInterface $serializer, SectionResolverInterface $sectionResolver, AbsenceExcuseResolver $excuseResolver, BookSettings $settings): Response {
+    public function entry(Request $request, TimetableLessonRepositoryInterface $lessonRepository, SuggestionResolver $suggestionResolver,
+                          SerializerInterface $serializer, AbsenceExcuseResolver $excuseResolver, BookSettings $settings): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $lesson = $lessonRepository->findOneByUuid($request->query->get('lesson'));
@@ -260,7 +209,7 @@ class BookXhrController extends AbstractController {
                 'lesson_end' => $lesson->getLessonEnd(),
                 'tuition' => TuitionResponse::fromEntity($lesson->getTuition())
             ],
-            'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $start, $absenceResolver, $attendanceRepository, $excuseNoteRepository, $sectionResolver),
+            'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $start, $suggestionResolver),
             'entry' => $entryJson,
             'students' => $students,
             'has_other_entries' => count($lesson->getEntries()) > 0

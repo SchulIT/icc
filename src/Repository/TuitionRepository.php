@@ -131,10 +131,11 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
-    public function findAllByGrades(array $grades): array {
+    public function findAllByGrades(array $grades, Section $section): array {
         $gradeIds = array_map(fn(Grade $grade) => $grade->getId(), $grades);
 
         $qb = $this->em->createQueryBuilder();
+        $qb = $this->filterSection($qb, $section);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('tInner.id')

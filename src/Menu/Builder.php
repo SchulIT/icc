@@ -169,6 +169,11 @@ class Builder {
         ])
             ->setExtra('icon', 'fas fa-pen-alt');
 
+        $book->addChild('book.export.label', [
+            'route' => 'book_export'
+        ])
+            ->setExtra('icon', 'fas fa-download');
+
         return $book;
     }
 

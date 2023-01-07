@@ -190,8 +190,18 @@ class EntryOverviewHelper {
     }
 
     public function computeOverviewForGrade(Grade $grade, DateTime $start, DateTime $end): EntryOverview {
+        $section = $this->sectionResolver->getSectionForDate($start);
+
+        if($section === null) {
+            return new EntryOverview($start, $end, [ ], [ ], [ ]);
+        }
+
+        if($end > $section->getEnd()) {
+            $end = $section->getEnd();
+        }
+
         $entries = $this->entryRepository->findAllByGrade($grade, $start, $end);
-        $tuitions = $this->tuitionRepository->findAllByGrades([$grade]);
+        $tuitions = $this->tuitionRepository->findAllByGrades([$grade], $section);
 
         $comments = [ ];
         $section = $this->sectionResolver->getSectionForDate($start);

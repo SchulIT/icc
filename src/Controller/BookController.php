@@ -26,6 +26,8 @@ use App\Grouping\GenericDateStrategy;
 use App\Grouping\Grouper;
 use App\Grouping\LessonAttendanceCommentsGroup;
 use App\Grouping\LessonDayStrategy;
+use App\Grouping\TuitionGradeGroup;
+use App\Grouping\TuitionGradeStrategy;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
@@ -38,7 +40,9 @@ use App\Sorting\LessonDayGroupStrategy;
 use App\Sorting\LessonStrategy;
 use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
+use App\Sorting\StringGroupStrategy;
 use App\Sorting\StudentStrategy;
+use App\Sorting\TuitionStrategy;
 use App\Utils\ArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
@@ -418,7 +422,7 @@ class BookController extends AbstractController {
         $students = [ ];
         $tuitions = [ ];
         if($gradeFilterView->getCurrentGrade() !== null && $sectionFilterView->getCurrentSection() !== null) {
-            $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()]);
+            $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()], $sectionFilterView->getCurrentSection());
             $students = $studentRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
         } else if($tuitionFilterView->getCurrentTuition() !== null) {
             $tuitions = [ $tuitionFilterView->getCurrentTuition() ];
@@ -500,6 +504,55 @@ class BookController extends AbstractController {
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, transliterator_transliterate('Latin-ASCII', $filename)));
 
         return $response;
+    }
+
+    #[Route(path: '/export', name: 'book_export')]
+    public function export(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter,
+                           TuitionRepositoryInterface $tuitionRepository, TimetableLessonRepositoryInterface $lessonRepository,
+                           Request $request, Grouper $grouper, Sorter $sorter, DateHelper $dateHelper) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher'), $sectionFilterView->getCurrentSection(), $user, $request->query->get('teacher') !== '✗' && $gradeFilterView->getCurrentGrade() === null);
+
+        if($gradeFilterView->getCurrentGrade() !== null) {
+            $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()], $sectionFilterView->getCurrentSection());
+        } else if($teacherFilterView->getCurrentTeacher() !== null) {
+            $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
+        } else {
+            $tuitions = []; // $tuitionRepository->findAllBySection($sectionFilterView->getCurrentSection());
+        }
+
+        $holtCounts = [ ];
+        $missingCounts = [ ];
+
+        foreach($tuitions as $tuition) {
+            $holtCounts[$tuition->getId()] = $lessonRepository->countHoldLessons([$tuition], null);
+            $missingCounts[$tuition->getId()] = $lessonRepository->countMissingByTuition(
+                $tuition,
+                $sectionFilterView->getCurrentSection()->getStart(),
+                min($dateHelper->getToday(), $sectionFilterView->getCurrentSection()->getEnd())
+            );
+        }
+
+        $groups = $grouper->group($tuitions, TuitionGradeStrategy::class);
+        $sorter->sort($groups, StringGroupStrategy::class);
+        $sorter->sortGroupItems($groups, TuitionStrategy::class);
+
+        if($gradeFilterView->getCurrentGrade() !== null) {
+            $groups = array_filter($groups, fn(TuitionGradeGroup $group) => $group->getGrade()->getId() === $gradeFilterView->getCurrentGrade()->getId());
+        }
+
+        return $this->render('books/export.html.twig', [
+            'groups' => $groups,
+            'sectionFilter' => $sectionFilterView,
+            'gradeFilter' => $gradeFilterView,
+            'teacherFilter' => $teacherFilterView,
+            'holdCounts' => $holtCounts,
+            'missingCounts' => $missingCounts
+        ]);
     }
 
     #[Route(path: '/{section}/t/{tuition}/export/json', name: 'book_export_tuition_json')]

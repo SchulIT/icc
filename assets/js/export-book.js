@@ -355,27 +355,37 @@ document.addEventListener('DOMContentLoaded', function(event) {
         }
     }
 
-    document.querySelector('[data-export-url]').addEventListener('click', function(event) {
-        event.preventDefault();
-        modal.show();
+    document.querySelectorAll('[data-export-url]').forEach(function(element) {
+        element.addEventListener('click', function(event) {
+            event.preventDefault();
+            modal.show();
 
-        let $el = this;
+            let $el = this;
 
-        axios.get($el.getAttribute('data-export-url'))
-            .then(function(response) {
-                createPdf(response.data)
-                    .then(pdf => {
-                        modalEl.querySelector('.generating').classList.add('hide');
-                        modalEl.querySelector('.completed').classList.remove('hide');
+            modalEl.querySelector('.generating').classList.remove('hide');
+            modalEl.querySelector('.completed').classList.add('hide');
 
-                        let downloadButton = modalEl.querySelector('.download');
-                        downloadButton.classList.remove('disabled');
-                        downloadButton.href = pdf.output('bloburi', {filename: 'export.pdf'});
+            let downloadButton = modalEl.querySelector('.download');
+            downloadButton.classList.add('disabled');
+            downloadButton.href = '#';
 
-                        downloadButton.addEventListener('click', function() {
-                            modal.hide();
+            axios.get($el.getAttribute('data-export-url'))
+                .then(function(response) {
+                    createPdf(response.data)
+                        .then(pdf => {
+                            modalEl.querySelector('.generating').classList.add('hide');
+                            modalEl.querySelector('.completed').classList.remove('hide');
+
+                            let downloadButton = modalEl.querySelector('.download');
+                            downloadButton.classList.remove('disabled');
+                            downloadButton.href = pdf.output('bloburi', {filename: 'export.pdf'});
+
+                            downloadButton.addEventListener('click', function() {
+                                modal.hide();
+                            });
                         });
-                    });
-            });
+                });
+        });
     });
+
 });

@@ -89,7 +89,7 @@ class ListController extends AbstractControllerWithMessages {
                 $memberships[$tuition->getExternalId()] = $membership->getType();
             }
         } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()]);
+            $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection()]);
         } else if($teacherFilterView->getCurrentTeacher() !== null && $sectionFilterView->getCurrentSection() !== null) {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
         }
@@ -222,7 +222,7 @@ class ListController extends AbstractControllerWithMessages {
 
         if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
             if($studyGroupFilterView->getCurrentStudyGroup()->getType() === StudyGroupType::Grade) {
-                $tuitions = $tuitionRepository->findAllByGrades($studyGroupFilterView->getCurrentStudyGroup()->getGrades()->toArray());
+                $tuitions = $tuitionRepository->findAllByGrades($studyGroupFilterView->getCurrentStudyGroup()->getGrades()->toArray(), $sectionFilterView->getCurrentSection());
             } else {
                 $tuitions = $studyGroupFilterView->getCurrentStudyGroup()->getTuitions()->toArray();
             }

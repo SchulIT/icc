@@ -555,11 +555,25 @@ class BookController extends AbstractController {
         ]);
     }
 
+    private function computeFileName(Tuition $tuition, Section $section, string $extension): string {
+        $grades = $tuition->getStudyGroup()->getGrades()->map(fn(Grade $grade) => $grade->getName())->toArray();
+        usort($grades, 'strnatcasecmp');
+
+        return sprintf(
+            '%d-%d-%s-%s.%s',
+            $section->getYear(),
+            $section->getNumber(),
+            implode('-', $grades),
+            $tuition->getName(),
+            $extension
+        );
+    }
+
     #[Route(path: '/{section}/t/{tuition}/export/json', name: 'book_export_tuition_json')]
     #[ParamConverter('section', class: Section::class, options: ['mapping' => ['section' => 'uuid']])]
     #[ParamConverter('tuition', class: Tuition::class, options: ['mapping' => ['tuition' => 'uuid']])]
     public function exportTutionJson(Tuition $tuition, Section $section, BookExporter $exporter): Response {
-        $filename = sprintf('%s-%d-%d.json', $tuition->getName(), $section->getYear(), $section->getNumber());
+        $filename = $this->computeFileName($tuition, $section, 'json');
         $json = $exporter->exportTuitionJson($tuition, $section);
         return $this->createResponse($json, 'application/json', $filename);
     }
@@ -568,7 +582,7 @@ class BookController extends AbstractController {
     #[ParamConverter('section', class: Section::class, options: ['mapping' => ['section' => 'uuid']])]
     #[ParamConverter('tuition', class: Tuition::class, options: ['mapping' => ['tuition' => 'uuid']])]
     public function exportTuitionXml(Tuition $tuition, Section $section, BookExporter $exporter): Response {
-        $filename = sprintf('%s-%d-%d.xml', $tuition->getName(), $section->getYear(), $section->getNumber());
+        $filename = $this->computeFileName($tuition, $section, 'xml');
         $xml = $exporter->exportTuitionXml($tuition, $section);
         return $this->createResponse($xml, 'application/xml', $filename);
     }

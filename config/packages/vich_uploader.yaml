@@ -2,6 +2,9 @@ vich_uploader:
     db_driver: orm
     storage: flysystem
 
+    metadata:
+        type: attribute
+
     mappings:
         messages:
             upload_destination: oneup_flysystem.messages_filesystem

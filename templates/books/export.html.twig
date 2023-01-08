@@ -65,11 +65,11 @@
                                             {{ missing }} / {{ holt }}
                                         </td>
                                         <td>
-                                            <a href="{{ path('book_export_grade_json', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.export.xml.label'|trans }}">
+                                            <a href="{{ path('book_export_grade_json', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.export.json.label'|trans }}">
                                                 <i class="far fa-file-code"></i>
                                             </a>
 
-                                            <a href="{{ path('book_export_grade_xml', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.export.json.label'|trans }}">
+                                            <a href="{{ path('book_export_grade_xml', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.export.xml.label'|trans }}">
                                                 <i class="far fa-file-code"></i>
                                             </a>
 
@@ -100,11 +100,11 @@
                                         </td>
                                         <td>
                                             {% if holdCounts[tuition.id] is defined and holdCounts[tuition.id] > 0 %}
-                                                <a href="{{ path('book_export_tuition_xml', { tuition: tuition.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.export.xml.label'|trans }}">
+                                                <a href="{{ path('book_export_tuition_json', { tuition: tuition.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.export.json.label'|trans }}">
                                                     <i class="far fa-file-code"></i>
                                                 </a>
 
-                                                <a href="{{ path('book_export_tuition_json', { tuition: tuition.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.export.xml.label'|trans }}">
+                                                <a href="{{ path('book_export_tuition_xml', { tuition: tuition.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.export.xml.label'|trans }}">
                                                     <i class="far fa-file-code"></i>
                                                 </a>
 

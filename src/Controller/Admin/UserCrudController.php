@@ -43,7 +43,7 @@ class UserCrudController extends AbstractCrudController
         $lastname = TextField::new('lastname');
         $email = TextField::new('email');
         $userType = EnumField::new('userType')->setFormType(EnumType::class)->setFormTypeOption('class', UserType::class);
-        $teacher = AssociationField::new('teacher')->hideOnIndex();
+        $teacher = AssociationField::new('teacher')->hideOnIndex()->setFormTypeOption('required', false);
         $students = AssociationField::new('students')->hideOnIndex();
         $idpId = TextField::new('idpId');
         $roles = ArrayField::new('roles')->hideOnIndex();

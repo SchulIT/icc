@@ -32,6 +32,7 @@ security:
     access_control:
         - { path: ^/logout/success, roles: PUBLIC_ACCESS }
         - { path: ^/saml/(login|discovery|metadata.xml)$, roles: PUBLIC_ACCESS }
+        - { path: ^/auth/error, roles: PUBLIC_ACCESS }
         - { path: ^/display/, roles: PUBLIC_ACCESS }
         - { path: ^/admin/ea/, roles: ROLE_SUPER_ADMIN }
         - { path: ^/admin/audit/, roles: ROLE_SUPER_ADMIN }
@@ -157,6 +158,7 @@ security:
                 check_path: /saml/login_check
                 attribute_mapper: App\Security\User\AttributeMapper
                 failure_path: /auth/error
+            user_checker: App\Security\UserChecker
             logout:
                 path: /logout
                 target: /logout/success

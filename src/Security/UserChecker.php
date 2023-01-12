@@ -7,6 +7,9 @@ use App\Entity\User;
 use App\Entity\UserType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
+use Symfony\Component\Security\Core\Exception\AccountStatusException;
+use Symfony\Component\Security\Core\User\UserCheckerInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Checks whether the user meets certain critiera or sends
@@ -16,14 +19,13 @@ use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
  * - parents must have at least one associated student
  * - teachers must have one associated teacher
  */
-class UserChecker implements EventSubscriberInterface {
+class UserChecker implements UserCheckerInterface {
 
-    /**
-     * @throws InvalidAccountException
-     */
-    public function onAuthenticationSuccess(AuthenticationSuccessEvent $event) {
-        $user = $event->getAuthenticationToken()->getUser();
+    public function checkPreAuth(UserInterface $user) {
+        
+    }
 
+    public function checkPostAuth(UserInterface $user) {
         if($user instanceof IcsAccessToken) {
             $user = $user->getUser();
         }
@@ -43,14 +45,5 @@ class UserChecker implements EventSubscriberInterface {
         if($user->isParent() && $user->getStudents()->count() === 0) {
             throw new InvalidAccountException('invalid_account.parent');
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getSubscribedEvents(): array {
-        return [
-            AuthenticationSuccessEvent::class => 'onAuthenticationSuccess'
-        ];
     }
 }

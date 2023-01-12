@@ -18,6 +18,10 @@ class AuthenticationController extends AbstractController {
             return $this->redirectToRoute('lightsaml_sp.login');
         }
 
+        if($exception->getPrevious() !== null) {
+            $exception = $exception->getPrevious();
+        }
+
         $exceptionType = $exception::class;
         $messageKey = $exception->getMessageKey();
 

@@ -17,10 +17,8 @@ use SchulIT\CommonBundle\Security\User\AbstractUserMapper;
 
 class UserMapper extends AbstractUserMapper {
     public const ROLES_ASSERTION_NAME = 'urn:roles';
-    private LoggerInterface $logger;
 
-    public function __construct(private readonly array $typesMap, private readonly TeacherRepositoryInterface $teacherRepository, private readonly StudentRepositoryInterface $studentRepository, LoggerInterface $logger = null) {
-        $this->logger = $logger ?? new NullLogger();
+    public function __construct(private readonly array $typesMap, private readonly TeacherRepositoryInterface $teacherRepository, private readonly StudentRepositoryInterface $studentRepository, private readonly LoggerInterface $logger) {
     }
 
     private function getUserType(string $type): UserType {

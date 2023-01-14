@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
         keyboard: false
     });
 
-    const weekdays = [ 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+    const weekdays = [ 'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
 
     function createPdf(response) {
         return new Promise(resolve => {

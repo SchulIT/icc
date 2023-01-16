@@ -47,6 +47,62 @@ document.addEventListener('DOMContentLoaded', function(event) {
                 body: summary
             })
 
+            // Notenübersicht
+            if(response.tuition !== null) {
+                pdf.addPage();
+
+                let scores = [];
+                for (let idx = 0; idx < response.students_summary.length; idx++) {
+                    let student = response.students_summary[idx];
+                    scores.push([
+                        student.student.lastname,
+                        student.student.firstname,
+                        ' ', // SoMi E
+                        ' ', // SoMi E
+                        ' ', // SoMi G
+                        ' ', // Klausur E
+                        ' ', // Klausur E
+                        ' ', // Klausur E
+                        ' ', // Klausur G
+                        ' ', // Zensur
+                        ' ', // Punkte
+                    ]);
+                }
+
+                pdf.text('Notenübersicht', 15, 25);
+                pdf.autoTable({
+                    startY: 30,
+                    theme: 'grid',
+                    margin: {
+                        top: 25,
+                        bottom: 25
+                    },
+                    head: [
+                        [
+                            '',
+                            '',
+                            { content: 'Sonstige Mitarbeit', colSpan: 3, styles: { halign: 'center'}},
+                            { content: 'Klausuren', colSpan: 4, styles: { halign: 'center'} },
+                            { content: 'Zensur', styles: { halign: 'center'}},
+                            { content: 'Punkte', styles: { halign: 'center'}}
+                        ],
+                        [
+                            'Nachname',
+                            'Vorname',
+                            { content: 'E', styles: { halign: 'center' }},
+                            { content: 'E', styles: { halign: 'center' }},
+                            { content: 'G', styles: { halign: 'center' }},
+                            { content: 'E', styles: { halign: 'center' }},
+                            { content: 'E', styles: { halign: 'center' }},
+                            { content: 'E', styles: { halign: 'center' }},
+                            { content: 'G', styles: { halign: 'center' }},
+                            '',
+                            '' ]
+                    ],
+                    body: scores
+                })
+            }
+
             // Stundenübersicht
             pdf.addPage('a4', 'landscape');
 

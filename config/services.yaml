@@ -293,7 +293,19 @@ services:
         arguments:
             $connection: '@doctrine.dbal.logger_connection'
         calls:
-            - setFormatter: [ '@App\Monolog\LineFormatter']
+            - setFormatter: [ '@SchulIT\CommonBundle\Monolog\LineFormatter']
+
+    SchulIT\CommonBundle\Monolog\UsernameProcessor:
+        tags:
+            - { name: monolog.processor }
+    SchulIT\CommonBundle\Monolog\LineFormatter: ~
+    SchulIT\CommonBundle\Monolog\RequestProcessor:
+        tags:
+            - { name: monolog.processor }
+    SchulIT\CommonBundle\Monolog\ExceptionProcessor:
+        tags:
+            - { name: monolog.processor }
+
     #App\Monolog\UsernameProcessor:
     #    tags:
     #        - { name: monolog.processor }

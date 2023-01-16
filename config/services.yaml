@@ -289,7 +289,7 @@ services:
         alias: App\Section\CachedSectionResolver
 
     # MONOLOG
-    App\Monolog\DatabaseHandler:
+    SchulIT\CommonBundle\Monolog\DatabaseHandler:
         arguments:
             $connection: '@doctrine.dbal.logger_connection'
         calls:

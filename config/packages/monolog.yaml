@@ -49,7 +49,7 @@ when@prod:
                 buffer_size: 50 # How many messages should be saved? Prevent memory leaks
             nested:
                 type: service
-                id: App\Monolog\DatabaseHandler
+                id: SchulIT\CommonBundle\Monolog\DatabaseHandler
                 level: debug
             console:
                 type: console

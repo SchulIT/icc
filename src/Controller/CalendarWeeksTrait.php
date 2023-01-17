@@ -51,7 +51,11 @@ trait CalendarWeeksTrait {
         }
 
         if($selectedDate !== null && $currentSection !== null && $dateHelper->isBetween($selectedDate, $currentSection->getStart(), $currentSection->getEnd()) !== true) {
-            $selectedDate = $this->getClosestWeekStart($currentSection->getEnd());
+            if($selectedDate < $currentSection->getStart()) {
+                $selectedDate = $this->getClosestWeekStart($currentSection->getStart());
+            } else {
+                $selectedDate = $this->getClosestWeekStart($currentSection->getEnd());
+            }
         }
 
         return $selectedDate;

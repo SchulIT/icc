@@ -8,6 +8,7 @@ use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\TimetableSupervisionData;
 use App\Request\Data\TimetableSupervisionsData;
+use Exception;
 use Ramsey\Uuid\Uuid;
 
 class TimetableSupervisionsImportStrategy implements ReplaceImportStrategyInterface {
@@ -54,13 +55,19 @@ class TimetableSupervisionsImportStrategy implements ReplaceImportStrategyInterf
             return;
         }
 
+        $teacher = $this->teacherRepository->findOneByAcronym($data->getTeacher());
+
+        if($teacher === null) {
+            throw new Exception(sprintf('Lehrer %s nicht gefunden', $data->getTeacher()));
+        }
+
         $supervision = (new TimetableSupervision())
             ->setExternalId($data->getId() ?? Uuid::uuid4()->toString())
             ->setDate($data->getDate())
             ->setIsBefore($data->isBefore())
             ->setLesson($data->getLesson())
             ->setLocation($data->getLocation())
-            ->setTeacher($this->teacherRepository->findOneByAcronym($data->getTeacher()));
+            ->setTeacher($teacher);
 
         $this->supervisionRepository->persist($supervision);
     }

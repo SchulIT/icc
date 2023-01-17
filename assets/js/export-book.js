@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
             // Notenübersicht
             if(response.tuition !== null) {
-                pdf.addPage();
+                pdf.addPage('a4', 'landscape');
 
                 let scores = [];
                 for (let idx = 0; idx < response.students_summary.length; idx++) {
@@ -57,15 +57,15 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     scores.push([
                         student.student.lastname,
                         student.student.firstname,
-                        ' ', // SoMi E
-                        ' ', // SoMi E
-                        ' ', // SoMi G
-                        ' ', // Klausur E
                         ' ', // Klausur E
                         ' ', // Klausur E
                         ' ', // Klausur G
+                        ' ', // SoMi E
+                        ' ', // SoMi E
+                        ' ', // SoMi G
                         ' ', // Zensur
                         ' ', // Punkte
+                        ' ', // Bemerkung
                     ]);
                 }
 
@@ -81,27 +81,41 @@ document.addEventListener('DOMContentLoaded', function(event) {
                         [
                             '',
                             '',
+                            { content: 'Klausuren', colSpan: 3, styles: { halign: 'center'} },
                             { content: 'Sonstige Mitarbeit', colSpan: 3, styles: { halign: 'center'}},
-                            { content: 'Klausuren', colSpan: 4, styles: { halign: 'center'} },
-                            { content: 'Zensur', styles: { halign: 'center'}},
-                            { content: 'Punkte', styles: { halign: 'center'}}
+                            { content: 'Zensur', styles: { halign: 'center', cellWidth: 20 }},
+                            { content: 'Punkte', styles: { halign: 'center', cellWidth: 20 }},
+                            { content: 'Bemerkung', styles: { halign: 'center' }}
                         ],
                         [
-                            'Nachname',
-                            'Vorname',
-                            { content: 'E', styles: { halign: 'center' }},
-                            { content: 'E', styles: { halign: 'center' }},
-                            { content: 'G', styles: { halign: 'center' }},
-                            { content: 'E', styles: { halign: 'center' }},
-                            { content: 'E', styles: { halign: 'center' }},
-                            { content: 'E', styles: { halign: 'center' }},
-                            { content: 'G', styles: { halign: 'center' }},
+                            { content: 'Nachname', styles: { cellWidth: 35 }},
+                            { content: 'Vorname', styles: { cellWidth: 35 }},
+                            { content: 'E', styles: { halign: 'center', cellWidth: 10 }},
+                            { content: 'E', styles: { halign: 'center', cellWidth: 10 }},
+                            { content: 'G', styles: { halign: 'center', cellWidth: 10 }},
+                            { content: 'E', styles: { halign: 'center', cellWidth: 10 }},
+                            { content: 'E', styles: { halign: 'center', cellWidth: 10 }},
+                            { content: 'G', styles: { halign: 'center', cellWidth: 10 }},
                             '',
-                            '' ]
+                            '',
+                            ''
+                        ]
                     ],
                     body: scores
-                })
+                });
+
+                pdf.autoTable({
+                    theme: 'plain',
+                    body: [
+                        [' '],
+                        [' '],
+                        [ '_________________________________' ],
+                        [ 'Datum, Unterschrift Fachlehrkraft' ]
+                    ]
+                });
             }
+
+            pdf.text('Unterschrift der Fachlehrkraft', 0, 0);
 
             // Stundenübersicht
             pdf.addPage('a4', 'landscape');
@@ -387,7 +401,14 @@ document.addEventListener('DOMContentLoaded', function(event) {
         let header = grades.map(x => x.name).join(', ');
 
         if(tuition !== null) {
-            header = tuition.name + ' - ' + header;
+            header = tuition.name + ' - ' + header + ' - ' + tuition.teachers.map(x => x.acronym).join(', ');
+        } else {
+            let teachers = [ ];
+            grades.forEach(function(grade) {
+                teachers = teachers.concat(grade.teachers);
+            });
+
+            header = header + ' - ' + teachers.map(x => x.acronym).join(', ')
         }
 
         for(let pageNumber = 1; pageNumber <= count; pageNumber++) {

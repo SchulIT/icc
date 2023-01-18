@@ -46,6 +46,7 @@ class Document {
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: Grade::class)]
     #[ORM\OrderBy(['name' => 'ASC'])]
+    #[CollectionNotEmpty(propertyPath: 'visibilities')]
     private $grades;
 
     /**

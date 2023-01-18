@@ -48,6 +48,7 @@ class Message implements Stringable {
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
     #[ORM\OrderBy(['name' => 'ASC'])]
+    #[CollectionNotEmpty(propertyPath: 'visibilities')]
     private $studyGroups;
 
     /**
@@ -97,6 +98,7 @@ class Message implements Stringable {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
+    #[SubsetOf(propertyPath: 'visibilities')]
     private $downloadEnabledUserTypes;
 
     /**
@@ -107,6 +109,7 @@ class Message implements Stringable {
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
     #[ORM\OrderBy(['name' => 'ASC'])]
+    #[SubsetOf(propertyPath: 'studyGroups')]
     private $downloadEnabledStudyGroups;
 
     #[ORM\Column(type: 'boolean')]
@@ -119,6 +122,7 @@ class Message implements Stringable {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
+    #[SubsetOf(propertyPath: 'visibilities')]
     private $uploadEnabledUserTypes;
 
     /**
@@ -129,6 +133,7 @@ class Message implements Stringable {
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
     #[ORM\OrderBy(['name' => 'ASC'])]
+    #[SubsetOf(propertyPath: 'studyGroups')]
     private $uploadEnabledStudyGroups;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -157,6 +162,7 @@ class Message implements Stringable {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
+    #[SubsetOf(propertyPath: 'visibilities')]
     private $confirmationRequiredUserTypes;
 
     /**
@@ -167,6 +173,7 @@ class Message implements Stringable {
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
     #[ORM\OrderBy(['name' => 'ASC'])]
+    #[SubsetOf(propertyPath: 'studyGroups')]
     private $confirmationRequiredStudyGroups;
 
     /**
@@ -195,6 +202,7 @@ class Message implements Stringable {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: UserTypeEntity::class)]
+    #[SubsetOf(propertyPath: 'visibilities')]
     private $pollUserTypes;
 
     /**
@@ -205,6 +213,7 @@ class Message implements Stringable {
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
     #[ORM\OrderBy(['name' => 'ASC'])]
+    #[SubsetOf(propertyPath: 'studyGroups')]
     private $pollStudyGroups;
 
     /**

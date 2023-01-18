@@ -254,6 +254,7 @@ actions:
     show_all: Alles ausklappen
     play: abspielen
     apply: übernehmen
+    submit: abschicken
 
 clipboard:
     copy: In die Zwischenablage kopieren
@@ -1235,6 +1236,18 @@ admin:
             confirm: 'Soll die Abwesenheitsart "%type%" wirklich gelöscht werden?'
             error: Abwesenheitsart kann nicht gelöscht werden, da es noch Abwesenheiten mit dieser Art gibt.
             success: Abwesenheitsart erfolgreich gelöscht
+
+tools:
+    label: Tools
+
+    grade_teacher_intersection:
+        label: Fachlehrer-Schnittmenge
+        info: Mit diesem Tool kann die Schnittmenge der Fachlehrkräfte zwischen mehreren Klassen berechnet werden.
+        left_grades: Klassen (links)
+        right_grades: Klassen (rechts)
+        intersection: Gemeinsame Lehrkräfte
+
+
 
 versions:
     label: Versionen

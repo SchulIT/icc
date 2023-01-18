@@ -131,7 +131,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     /**
      * @inheritDoc
      */
-    public function findAllByGrades(array $grades, Section $section): array {
+    public function findAllByGrades(array $grades, Section $section, bool $lazy = false): array {
         $gradeIds = array_map(fn(Grade $grade) => $grade->getId(), $grades);
 
         $qb = $this->em->createQueryBuilder();
@@ -144,7 +144,7 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
             ->leftJoin('sgInner.grades', 'gInner')
             ->where($qb->expr()->in('gInner.id', ':grades'));
 
-        $qb = $this->getDefaultQueryBuilder()
+        $qb = $this->getDefaultQueryBuilder($lazy)
             ->where($qb->expr()->in('t.id', $qbInner->getDQL()))
             ->setParameter('grades', $gradeIds);
 

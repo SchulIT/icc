@@ -141,6 +141,7 @@ services:
             - { name: knp_menu.menu_builder, method: systemMenu, alias: systemMenu }
             - { name: knp_menu.menu_builder, method: dataMenu, alias: dataMenu }
             - { name: knp_menu.menu_builder, method: importMenu, alias: importMenu }
+            - { name: knp_menu.menu_builder, method: toolsMenu, alias: toolsMenu }
 
     SchulIT\CommonBundle\Menu\Voter:
         tags:

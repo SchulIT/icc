@@ -2,9 +2,7 @@
 
 namespace App\Menu;
 
-use App\Converter\UserStringConverter;
 use App\Entity\User;
-use App\Repository\MessageRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Section\SectionResolverInterface;
@@ -13,9 +11,7 @@ use App\Security\Voter\ListsVoter;
 use App\Security\Voter\ResourceReservationVoter;
 use App\Security\Voter\StudentAbsenceVoter;
 use App\Security\Voter\WikiVoter;
-use App\Settings\NotificationSettings;
 use App\Settings\StudentAbsenceSettings;
-use App\Utils\EnumArrayUtils;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use LightSaml\SpBundle\Security\Http\Authenticator\SamlToken;
@@ -327,6 +323,17 @@ class Builder {
         return $root;
     }
 
+    public function toolsMenu(array $options = [ ]): ItemInterface {
+        $root = $this->factory->createItem('root');
+
+        $root->addChild('tools.grade_teacher_intersection.label', [
+            'route' => 'grade_tuition_teachers_intersection'
+        ])
+            ->setExtra('icon', 'fas fa-random');
+
+        return $root;
+    }
+
     public function adminMenu(array $options): ItemInterface {
         $root = $this->factory->createItem('root')
             ->setChildrenAttributes([
@@ -361,6 +368,17 @@ class Builder {
                 'uri' => $first->getUri()
             ])
                 ->setExtra('icon', 'fas fa-school');
+        }
+
+        $toolsMenu = $this->toolsMenu();
+        if($toolsMenu->count() > 0) {
+            $firstKey = array_key_first($toolsMenu->getChildren());
+            $first = $toolsMenu->getChildren()[$firstKey];
+
+            $menu->addChild('tools.label', [
+                'uri' => $first->getUri()
+            ])
+                ->setExtra('icon', 'fas fa-toolbox');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {

@@ -12,6 +12,7 @@ use App\Security\Voter\ResourceReservationVoter;
 use App\Security\Voter\StudentAbsenceVoter;
 use App\Security\Voter\WikiVoter;
 use App\Settings\StudentAbsenceSettings;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemInterface;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use LightSaml\SpBundle\Security\Http\Authenticator\SamlToken;
@@ -563,8 +564,11 @@ class Builder {
         ])
             ->setExtra('icon', 'fas fa-envelope-open-text');
 
-        $this->plansMenu($menu);
-        $this->listsMenu($menu);
+        $plansMenu = $this->plansMenu($menu);
+        $this->setFirstChildAsUri($plansMenu);
+        $listsMenu = $this->listsMenu($menu);
+        $this->setFirstChildAsUri($listsMenu);
+
 
         $menu->addChild('documents.label', [
             'route' => 'documents'
@@ -620,6 +624,19 @@ class Builder {
                 }
             }
         }
+
+        return $root;
+    }
+
+    private function setFirstChildAsUri(ItemInterface $root): ItemInterface {
+        if(count($root->getChildren()) === 0) {
+            return $root;
+        }
+
+        $firstKey = array_key_first($root->getChildren());
+        $firstItem = $root->getChildren()[$firstKey];
+
+        $root->setUri($firstItem->getUri());
 
         return $root;
     }

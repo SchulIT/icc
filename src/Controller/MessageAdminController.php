@@ -73,13 +73,16 @@ class MessageAdminController extends AbstractController {
 
         $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null));
         $userTypeFilterView->setHandleNull(true);
+        $onlyOwn = $request->query->get('all') !== '✓';
 
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), null, $user);
 
         if($userTypeFilterView->getCurrentType() !== null) {
-            $messages = $this->repository->findAllByUserType($userTypeFilterView->getCurrentType());
+            $messages = $this->repository->findAllByUserType($userTypeFilterView->getCurrentType(), $onlyOwn ? $user : null);
         } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $messages = $this->repository->findAllByGrade($gradeFilterView->getCurrentGrade());
+            $messages = $this->repository->findAllByGrade($gradeFilterView->getCurrentGrade(), $onlyOwn ? $user : null);
+        } else if($onlyOwn === true) {
+            $messages = $this->repository->findAllByAuthor($user);
         } else {
             $messages = $this->repository->findAll();
         }
@@ -92,7 +95,8 @@ class MessageAdminController extends AbstractController {
         return $this->render('admin/messages/index.html.twig', [
             'groups' => $groups,
             'userTypeFilter' => $userTypeFilterView,
-            'gradeFilter' => $gradeFilterView
+            'gradeFilter' => $gradeFilterView,
+            'onlyOwn' => $onlyOwn
         ]);
     }
 

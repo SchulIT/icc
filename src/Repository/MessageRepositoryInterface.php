@@ -51,12 +51,18 @@ interface MessageRepositoryInterface {
     /**
      * @return Message[]
      */
-    public function findAllByUserType(UserType $userType);
+    public function findAllByUserType(UserType $userType, ?User $author = null): array;
 
     /**
      * @return Message[]
      */
-    public function findAllByGrade(Grade $grade);
+    public function findAllByGrade(Grade $grade, ?User $author = null): array;
+
+    /**
+     * @param User $user
+     * @return Message[]
+     */
+    public function findAllByAuthor(User $user): array;
 
     /**
      * @return Message[]

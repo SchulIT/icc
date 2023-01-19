@@ -7,6 +7,7 @@ use App\Entity\Message;
 use App\Entity\MessageFile;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroup;
+use App\Entity\User;
 use App\Entity\UserType;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
@@ -104,7 +105,7 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
     /**
      * @return Message[]
      */
-    public function findAllByUserType(UserType $userType) {
+    public function findAllByUserType(UserType $userType, ?User $author = null): array {
         $qb = $this->createDefaultQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
@@ -117,13 +118,18 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
             ->where($qb->expr()->in('m.id', $qbInner->getDQL()))
             ->setParameter('userType', $userType->value);
 
+        if($author !== null) {
+            $qb->andWhere('m.createdBy = :user')
+                ->setParameter('user', $author->getId());
+        }
+
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @inheritDoc
      */
-    public function findAllByGrade(Grade $grade) {
+    public function findAllByGrade(Grade $grade, ?User $author = null): array {
         $qb = $this->createDefaultQueryBuilder();
 
         $qbStudyGroups = $this->em->createQueryBuilder()
@@ -142,6 +148,20 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
 
         $qb
             ->where($qb->expr()->in('m.id', $qbInner->getDQL()));
+
+        if($author !== null) {
+            $qb->andWhere('m.createdBy = :user')
+                ->setParameter('user', $author->getId());
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAllByAuthor(User $user): array {
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qb->andWhere('m.createdBy = :user')
+            ->setParameter('user', $user->getId());
 
         return $qb->getQuery()->getResult();
     }

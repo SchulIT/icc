@@ -149,9 +149,23 @@
 
                 <div class="card">
                     <div class="card-body">
-                        {% include "_filter/grade.html.twig" %}
+                        {% include "_filter/grade.html.twig" with { params: { own: onlyOwn }} %}
 
-                        {% include "_filter/user_type.html.twig" with { class: 'mb-0'} %}
+                        {% include "_filter/user_type.html.twig" with { params: { own: onlyOwn }} %}
+
+                        <form role="form" method="get" class="form">
+                            <div class="form-group mb-0">
+                                {% include "_filter/_params.html.twig" with { params: {
+                                    grade: gradeFilter.currentGrade is not null ? gradeFilter.currentGrade.uuid : null,
+                                    type: userTypeFilter.currentType is not null ? userTypeFilter.currentType.uuid : null
+                                }  } %}
+
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="all" data-trigger="submit" name="all" value="✓" {% if not onlyOwn %} checked="checked"{% endif %}>
+                                    <label class="custom-control-label" for="all">{{ 'label.show_all'|trans }}</label>
+                                </div>
+                            </div>
+                        </form>
                     </div>
 
                     <div class="card-footer">

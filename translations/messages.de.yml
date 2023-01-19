@@ -226,6 +226,7 @@ label:
     always_excused:
         label: immer entschuldigt
         help: Abwesenheiten mit dieser Art setzt die Fehlstunde bei Übernahme ins Unterrichtsbuch auf entschuldigt.
+    show_all: Alle anzeigen
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

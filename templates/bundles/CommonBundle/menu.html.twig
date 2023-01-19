@@ -1,0 +1,192 @@
+{% extends 'knp_menu.html.twig' %}
+
+{% import "knp_menu.html.twig" as macros %}
+
+{% block item %}
+    {% if item.displayed %}
+        {%- set attributes = item.attributes %}
+        {%- set is_dropdown = item.children|length > 0 %}
+        {%- set divider_prepend = attributes.divider_prepend|default(false) %}
+        {%- set divider_append = attributes.divider_append|default(false) %}
+
+        {# unset bootstrap specific attributes #}
+        {%- set attributes = attributes|merge({'dropdown': null, 'divider_prepend': null, 'divider_append': null }) %}
+
+        {%- if divider_prepend %}
+            {{ block('dividerElement') }}
+        {%- endif %}
+
+        {# building the class of the item #}
+        {%- set classes = item.attribute('class') is not empty ? [item.attribute('class')] : [] %}
+
+        {% if item.level < 2 %}
+            {%- set classes = classes|merge(['nav-item']) -%}
+        {% endif %}
+        {%- if matcher.isCurrent(item) %}
+            {%- set classes = classes|merge([options.currentClass, 'open']) %}
+        {%- elseif matcher.isAncestor(item, options.depth) %}
+            {%- set classes = classes|merge([options.ancestorClass, 'open']) %}
+        {%- endif %}
+        {%- if item.actsLikeFirst %}
+            {%- set classes = classes|merge([options.firstClass]) %}
+        {%- endif %}
+        {%- if item.actsLikeLast %}
+            {%- set classes = classes|merge([options.lastClass]) %}
+        {%- endif %}
+
+        {# adding classes for dropdown #}
+        {%- if is_dropdown %}
+            {%- set classes = classes|merge(['dropdown']) %}
+        {%- endif %}
+
+        {# building the class of the children #}
+        {%- set childrenClasses = item.childrenAttribute('class') is not empty ? [item.childrenAttribute('class')] : [] %}
+        {%- set childrenClasses = childrenClasses|merge(['menu_level_' ~ item.level]) %}
+
+        {# putting classes together #}
+        {%- if classes is not empty %}
+            {%- set attributes = attributes|merge({'class': classes|join(' '), }) %}
+        {%- endif %}
+        {%- set listAttributes = item.childrenAttributes|merge({'class': childrenClasses|join(' ') }) %}
+
+        {%- set originalItem = item -%}
+
+        {# displaying the item #}
+        <li{{ macros.attributes(attributes) }}>
+            {%- if is_dropdown %}
+                {{ block('dropdownElement') }}
+            {%- elseif item.uri is not empty and (not item.current or options.currentAsLink) %}
+                {{ block('linkElement') }}
+            {%- else %}
+                {{ block('spanElement') }}
+            {%- endif %}
+            {# render the list of children #}
+            {% if is_dropdown %}
+                {% set listAttributes = listAttributes|merge({ class: 'dropdown-menu', role: 'menu' }) %}
+
+                <ul{{ macros.attributes(listAttributes) }}>
+                    {% for item in originalItem.children %}
+                        {{ block('item') }}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+
+        {%- set item = originalItem -%}
+
+        {%- if divider_append %}
+            {{ block('dividerElement') }}
+        {%- endif %}
+    {% endif %}
+{% endblock %}
+
+{% block dividerElement %}
+    {% if item.level == 1 %}
+        <li class="divider-vertical"></li>
+    {% else %}
+        <li class="divider"></li>
+    {% endif %}
+{% endblock %}
+
+{% block linkElement %}
+    {%- set linkAttributes = item.linkAttributes %}
+    {%- set classes = linkAttributes.class is defined and linkAttributes.class is not empty ? [linkAttributes.attribute('class')] : [] %}
+    {% if item.level > 1 %}
+        {%- set classes = classes|merge(['dropdown-item', 'text-nowrap']) %}
+    {% else %}
+        {%- set classes = classes|merge(['nav-link', 'text-nowrap']) %}
+    {% endif %}
+    {% if item.extras['menu-id'] is defined %}
+        {%- set linkAttributes = linkAttributes|merge({'data-menu': item.extras['menu-id']}) -%}
+    {% endif %}
+    {%- if matcher.isCurrent(item) %}
+        {%- set classes = classes|merge([options.currentClass]) %}
+    {%- endif  %}
+    {%- set linkAttributes = linkAttributes|merge({'class': classes|join(' ')}) %}
+
+    <a href="{{ item.uri }}"{{ macros.attributes(linkAttributes) }}>
+        {% if item.extra('icon') is not empty %}
+            <i class="{{ item.extra('icon') }}"></i>
+            <span class="is-collapsible">{{ block('label') }}</span>
+            {{ block('badge') }}
+        {% else %}
+            <span class="not-collapsible">{{ block('label') }}</span>
+            {{ block('badge') }}
+        {% endif %}
+    </a>
+{% endblock %}
+
+{% block dropdownItem %}
+    {%- set linkAttributes = item.linkAttributes %}
+    {%- set classes = linkAttributes.class is defined and linkAttributes.class is not empty ? [linkAttributes.attribute('class')] : [] %}
+    {%- set classes = classes|merge(['nav-link', 'text-nowrap']) %}
+    {%- if matcher.isCurrent(item) %}
+        {%- set classes = classes|merge([options.currentClass]) %}
+    {%- endif  %}
+    {%- set linkAttributes = linkAttributes|merge({'class': classes|join(' ')}) %}
+
+    <a href="{{ item.uri }}"{{ macros.attributes(linkAttributes) }}>
+        {% if item.extra('icon') is not empty %}
+            <i class="{{ item.extra('icon') }}"></i>
+            <span class="is-collapsible">{{ block('label') }}</span>
+            {{ block('badge') }}
+        {% else %}
+            <span class="not-collapsible">{{ block('label') }}</span>
+            {{ block('badge') }}
+        {% endif %}
+    </a>
+{% endblock %}
+
+{% block spanElement %}
+    {%- set labelAttributes = item.labelAttributes %}
+    {%- set classes = labelAttributes.class is defined and linkAttributes.class is not empty ? [linkAttributes.attribute('class')] : [] %}
+    {%- set classes = classes|merge(['navbar-text', 'text-nowrap']) %}
+    {%- set labelAttributes = labelAttributes|merge({'class': classes|join(' ')}) %}
+
+    <span{{ macros.attributes(labelAttributes) }}>
+        {% if item.extra('icon') is not empty %}
+            <i class="{{ item.extra('icon') }}"></i>
+            <span class="is-collapsible">{{ block('label') }}</span>
+            {{ block('badge') }}
+        {% else %}
+            <span class="not-collapsible">{{ block('label') }}</span>
+            {{ block('badge') }}
+        {% endif %}
+	</span>
+{% endblock %}
+
+{% block badge %}
+    {% if item.extra('count') is not empty %}
+        <span class="d-md-inline-block d-sm-none badge badge-pill badge-primary{%- if matcher.isCurrent(item) %} badge-light{% endif %}">{{ item.extra('count') }}</span>
+    {% endif %}
+{% endblock %}
+
+{% block dropdownElement %}
+    {%- set classes = (item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [])|merge(['nav-link dropdown', 'text-nowrap']) %}
+    {%- set attributes = item.linkAttributes %}
+    {%- set attributes = attributes|merge({'class': classes|join(' ')}) %}
+    {%- set attributes = attributes|merge({'data-toggle': 'dropdown', 'href': item.uri ?? '#' }) %}
+    {%- set isCurrent = matcher.isAncestor(item, options.depth) -%}
+
+    {% if (item.uri is empty or isCurrent) and item.extras['menu'] is defined %}
+        {% set attributes = attributes|merge({'data-menu': '#' ~ item.extras['menu']}) %}
+    {% endif %}
+    {% if (item.uri is empty or isCurrent) and item.extras['menu-container'] is defined %}
+        {% set attributes = attributes|merge({'data-menu-container': item.extras['menu-container']}) %}
+    {% endif %}
+
+    <a {{ macros.attributes(attributes) }}>
+        {% if item.extra('icon') is not empty %}
+            <i class="{{ item.extra('icon') }}"></i>
+            <span class="is-collapsible">{{ block('label') }}</span>
+            {{ block('badge') }}
+            <i class="fa fa-caret-down" aria-hidden="true"></i>
+        {% else %}
+            <span class="not-collapsible">{{ block('label') }}</span>
+            {{ block('badge') }}
+            <i class="fa fa-caret-down" aria-hidden="true"></i>
+        {% endif %}
+    </a>
+{% endblock %}
+
+{% block label %}{{ item.label|trans }}{% endblock %}

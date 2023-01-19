@@ -28,6 +28,22 @@ class SuggestionResolver {
 
         $absences = $this->absenceResolver->resolve($date, $lesson, $students);
 
+        foreach($this->filterAbsencesWithAreExcused($absences) as $absentStudent) {
+            if(array_key_exists($absentStudent->getStudent()->getId(), $suggestions)) {
+                continue; // prevent duplicates
+            }
+
+            $excuseStatus = ($absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isAlwaysExcused()) ? LessonAttendanceExcuseStatus::Excused : LessonAttendanceExcuseStatus::NotSet;
+
+            $suggestions[$absentStudent->getStudent()->getId()] = [
+                'student' => Student::fromEntity($absentStudent->getStudent(), $this->sectionResolver->getCurrentSection()),
+                'reason' => $absentStudent->getReason()->value,
+                'label' => $absentStudent->getAbsence()->getType()->getName(),
+                'zero_absent_lessons' => $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons(),
+                'excuse_status' => $excuseStatus
+            ];
+        }
+
         foreach($this->filterAbsencesWithoutZeroAbsenceLessons($absences) as $absentStudent) {
             if(array_key_exists($absentStudent->getStudent()->getId(), $suggestions)) {
                 continue; // prevent duplicates
@@ -133,5 +149,9 @@ class SuggestionResolver {
      */
     private function filterAbsencesWithZeroAbsenceLessons(array $students): array {
         return array_filter($students, fn(AbsentStudent $absentStudent) => ($absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons()));
+    }
+
+    private function filterAbsencesWithAreExcused(array $students): array {
+        return array_filter($students, fn(AbsentStudent $absentStudent) => $absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isAlwaysExcused());
     }
 }

@@ -173,7 +173,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     ['Datum, Unterschrift Fachlehrkraft']
                 ],
                 styles: {
-                    font: getFontName()
+                    font: getFontName(),
+                    fontSize: 8
                 }
             });
         }
@@ -311,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     let row = [
                         [ formatLessons(lesson.start, lesson.end) ],
                         [
-                            lesson.subject + (lesson.replacement_subject !== null ? ' >> ' + lesson.replacement_subject : '')
+                            lesson.subject + (lesson.replacement_subject !== null ? ' → ' + lesson.replacement_subject : '')
                         ]
                     ];
 
@@ -322,11 +323,11 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     }
                     row.push([ lesson.topic ]);
                     row.push([ lesson.exercises ]);
-                    row.push([ remarksAndAttendances.join(', ') ]);
+                    row.push([ remarksAndAttendances.join('\n') ]);
 
                     if(lesson.teacher !== null) {
                         row.push([
-                            lesson.teacher.acronym + (lesson.replacement_teacher !== null ? ' >> ' + lesson.replacement_teacher.acronym : '')
+                            lesson.teacher.acronym + (lesson.replacement_teacher !== null ? ' → ' + lesson.replacement_teacher.acronym : '')
                         ])
                     }
 
@@ -344,7 +345,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
             head: header,
             body: body,
             styles: {
-                font: getFontName()
+                font: getFontName(),
+                fontSize: 8
             }
         });
     }
@@ -412,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     }
                     row.push([ lesson.topic ]);
                     row.push([ lesson.exercises ]);
-                    row.push([ remarksAndAttendances.join(', ') ]);
+                    row.push([ remarksAndAttendances.join('\n') ]);
 
                     body.push(row);
                 });
@@ -428,7 +430,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
             head: header,
             body: body,
             styles: {
-                font: getFontName()
+                font: getFontName(),
+                fontSize: 8
             }
         });
     }

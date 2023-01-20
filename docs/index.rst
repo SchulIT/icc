@@ -30,6 +30,7 @@ zu Workflows.
    configure/notifications.rst
    configure/sections.rst
    configure/sick_notes.rst
+   configure/book.rst
    configure/auditlog.rst
    configure/import.rst
 

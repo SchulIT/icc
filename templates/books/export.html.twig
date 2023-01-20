@@ -74,7 +74,9 @@
                                             </a>
 
                                             <button type="button" class="btn btn-primary btn-sm" title="{{ 'book.export.pdf.label'|trans }}"
-                                                    data-export-url="{{ path('book_export_grade_json', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}">
+                                                    data-export-url="{{ path('book_export_grade_json', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}"
+                                                    data-regular-font-url="{{ path('xhr_font_regular') }}"
+                                                    data-bold-font-url="{{ path('xhr_font_bold') }}">
                                                 <i class="far fa-file-pdf"></i>
                                             </button>
                                         </td>
@@ -109,7 +111,9 @@
                                                 </a>
 
                                                 <button type="button" class="btn btn-primary btn-sm" title="{{ 'book.export.pdf.label'|trans }}"
-                                                        data-export-url="{{ path('book_export_tuition_json', { tuition: tuition.uuid, section: sectionFilter.currentSection.uuid }) }}">
+                                                        data-export-url="{{ path('book_export_tuition_json', { tuition: tuition.uuid, section: sectionFilter.currentSection.uuid }) }}"
+                                                        data-regular-font-url="{{ path('xhr_font_regular') }}"
+                                                        data-bold-font-url="{{ path('xhr_font_bold') }}">
                                                     <i class="far fa-file-pdf"></i>
                                                 </button>
                                             {% endif %}

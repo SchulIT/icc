@@ -29,6 +29,7 @@ use App\Response\ViolationList;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\LessonEntryVoter;
 use App\Settings\BookSettings;
+use App\Settings\SettingsManager;
 use DateTime;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -278,5 +279,27 @@ class BookXhrController extends AbstractController {
         return new Response('', Response::HTTP_OK, [
             'Content-Type' => 'application/json'
         ]);
+    }
+
+    #[Route(path: '/font/regular', name: 'xhr_font_regular')]
+    public function regularFont(BookSettings $bookSettings) {
+        $font = $bookSettings->getRegularFont();
+
+        if(empty($font)) {
+            throw new NotFoundHttpException();
+        }
+
+        return new Response($font);
+    }
+
+    #[Route(path: '/font/bold', name: 'xhr_font_bold')]
+    public function boldFont(BookSettings $bookSettings) {
+        $font = $bookSettings->getBoldFont();
+
+        if(empty($font)) {
+            throw new NotFoundHttpException();
+        }
+
+        return new Response($font);
     }
 }

@@ -443,7 +443,9 @@
                             </a>
 
                             <button type="button" class="list-group-item list-group-item-action"
-                                    data-export-url="{{ path('book_export_tuition_json', { tuition: tuitionFilter.currentTuition.uuid, section: sectionFilter.currentSection.uuid }) }}">
+                                    data-export-url="{{ path('book_export_tuition_json', { tuition: tuitionFilter.currentTuition.uuid, section: sectionFilter.currentSection.uuid }) }}"
+                                    data-regular-font-url="{{ path('xhr_font_regular') }}"
+                                    data-bold-font-url="{{ path('xhr_font_bold') }}">
                                 <i class="far fa-file-pdf"></i> {{ 'book.export.pdf.label'|trans }}
                             </button>
                         {% endif %}
@@ -458,7 +460,9 @@
                             </a>
 
                             <button type="button" class="list-group-item list-group-item-action"
-                                    data-export-url="{{ path('book_export_grade_json', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}">
+                                    data-export-url="{{ path('book_export_grade_json', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}"
+                                    data-regular-font-url="{{ path('xhr_font_regular') }}"
+                                    data-bold-font-url="{{ path('xhr_font_bold') }}">
                                 <i class="far fa-file-pdf"></i> {{ 'book.export.pdf.label'|trans }}
                             </button>
                         {% endif %}

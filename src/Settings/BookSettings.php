@@ -39,4 +39,20 @@ class BookSettings extends AbstractSettings {
     public function setExcludeStudentsStatus(array $status): void {
         $this->setValue('book.exclude_students_status', $status);
     }
+
+    public function setRegularFont(string $base64font): void {
+        $this->setValue('book.export.font.regular', $base64font);
+    }
+
+    public function getRegularFont(): ?string {
+        return $this->getValue('book.export.font.regular', null);
+    }
+
+    public function setBoldFont(string $base64font): void {
+        $this->setValue('book.export.font.bold', $base64font);
+    }
+
+    public function getBoldFont(): ?string {
+        return $this->getValue('book.export.font.bold', null);
+    }
 }

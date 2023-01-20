@@ -845,6 +845,13 @@ admin:
             exclude_student_status:
                 label: Lernende mit folgendem Status nicht berücksichtigen
                 help: Wenn diese (kommaseparierte) Liste leer ist, werden stets alle Lernenden im Unterrichtsbuch berücksichtigt. Möchte man jedoch inaktive Lernende im Unterrichtsbuch ausblenden, so können hier zu ignorierende Stati hinterlegt werden (kommasepariert). Nutzt man das ICC mit SchILD NRW, so können hier die entsprechenden Stati aus SchILD NRW genutzt werden.
+            font:
+                regular:
+                    label: Schriftart (normal)
+                    help: Hier kann eine TTF-Schriftart für die PDF-Datei hinterlegt werden. Leer lassen, wenn die Schriftart nicht geändert werden soll.
+                bold:
+                    label: Schriftart (fett)
+                    help: Hier kann eine TTF-Schriftart für die PDF-Datei hinterlegt werden. Leer lassen, wenn die Schriftart nicht geändert werden soll.
 
     timetable:
         label: Stundenplan

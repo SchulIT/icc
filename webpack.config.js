@@ -24,6 +24,11 @@ Encore
     .addStyleEntry('simple', './vendor/schulit/common-bundle/Resources/assets/css/simple.scss')
     .addStyleEntry('signin', './vendor/schulit/common-bundle/Resources/assets/css/signin.scss')
 
+    .configureBabel(() => {}, {
+        useBuiltIns: 'usage',
+        corejs: 3
+    })
+
     .disableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()
     .enableSourceMaps(!Encore.isProduction())

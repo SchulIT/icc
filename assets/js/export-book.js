@@ -3,6 +3,59 @@ import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 const axios = require('axios');
 
+let regularFont = null;
+let boldFont = null;
+let fontInitialized = false;
+
+function setFont(pdf, weight) {
+    if(regularFont === null || boldFont === null) {
+        pdf.setFont('Helvetica', weight);
+        return;
+    }
+
+    pdf.setFont('Custom', weight);
+}
+
+function getFontName() {
+    if(regularFont === null || boldFont === null) {
+        return 'helvetica';
+    }
+
+    return 'Custom';
+}
+
+async function initializeFont(regularUrl, boldUrl) {
+    if(fontInitialized) {
+        return;
+    }
+
+    if(regularFont !== null && boldFont !== null) {
+        return;
+    }
+
+    try {
+        regularFont = (await axios.get(regularUrl)).data;
+        boldFont = (await axios.get(boldUrl)).data;
+    } catch (e) {
+        console.error('Keine eigene Schrift hinterlegt, nutze Helventica (nur ASCII)');
+        regularFont = null;
+        boldFont = null;
+    } finally {
+        fontInitialized = true;
+    }
+}
+
+function addFont(pdf) {
+    if(regularFont === null || boldFont === null) {
+        return;
+    }
+
+    pdf.addFileToVFS('regular.ttf', regularFont);
+    pdf.addFileToVFS('bold.ttf', boldFont);
+    pdf.addFont('regular.ttf', 'Custom', 'normal');
+    pdf.addFont('bold.ttf', 'Custom', 'bold');
+}
+
 document.addEventListener('DOMContentLoaded', function(event) {
     let modalEl = document.querySelector('.modal#export-modal');
     let modal = new Modal(modalEl, {
@@ -13,27 +66,67 @@ document.addEventListener('DOMContentLoaded', function(event) {
     const weekdays = [ 'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
 
     function createPdf(response) {
-        return new Promise(resolve => {
-            let pdf = new jsPDF();
+        let pdf = new jsPDF();
+        addFont(pdf);
+        setFont(pdf, 'normal');
 
-            addTitlePage(pdf, response.section, response.tuition, response.grades);
+        addTitlePage(pdf, response.section, response.tuition, response.grades);
 
-            // Schülerübersicht
-            let summary = [ ];
-            for(let idx = 0; idx < response.students_summary.length; idx++) {
+        // Schülerübersicht
+        let summary = [];
+        for (let idx = 0; idx < response.students_summary.length; idx++) {
+            let student = response.students_summary[idx];
+            summary.push([
+                student.student.lastname,
+                student.student.firstname,
+                student.absent_lessons_count,
+                student.not_excused_absent_lessons_count + student.excuse_status_not_set_lessons_count,
+                student.late_minutes_count
+            ]);
+        }
+
+        pdf.addPage();
+
+        pdf.text('Übersicht', 15, 25);
+        pdf.autoTable({
+            startY: 30,
+            theme: 'grid',
+            margin: {
+                top: 25,
+                bottom: 25
+            },
+            head: [
+                ['Nachname', 'Vorname', 'FS (insg.)', 'FS (ue.)', 'Versp. (min)']
+            ],
+            body: summary,
+            styles: {
+                font: getFontName()
+            }
+        })
+
+        // Notenübersicht
+        if (response.tuition !== null) {
+            pdf.addPage('a4', 'landscape');
+
+            let scores = [];
+            for (let idx = 0; idx < response.students_summary.length; idx++) {
                 let student = response.students_summary[idx];
-                summary.push([
+                scores.push([
                     student.student.lastname,
                     student.student.firstname,
-                    student.absent_lessons_count,
-                    student.not_excused_absent_lessons_count + student.excuse_status_not_set_lessons_count,
-                    student.late_minutes_count
+                    ' ', // Klausur E
+                    ' ', // Klausur E
+                    ' ', // Klausur G
+                    ' ', // SoMi E
+                    ' ', // SoMi E
+                    ' ', // SoMi G
+                    ' ', // Zensur
+                    ' ', // Punkte
+                    ' ', // Bemerkung
                 ]);
             }
 
-            pdf.addPage();
-
-            pdf.text('Übersicht', 15, 25);
+            pdf.text('Notenübersicht', 15, 25);
             pdf.autoTable({
                 startY: 30,
                 theme: 'grid',
@@ -42,95 +135,64 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     bottom: 25
                 },
                 head: [
-                    ['Nachname', 'Vorname', 'FS (insg.)', 'FS (ue.)', 'Versp. (min)']
-                ],
-                body: summary
-            })
-
-            // Notenübersicht
-            if(response.tuition !== null) {
-                pdf.addPage('a4', 'landscape');
-
-                let scores = [];
-                for (let idx = 0; idx < response.students_summary.length; idx++) {
-                    let student = response.students_summary[idx];
-                    scores.push([
-                        student.student.lastname,
-                        student.student.firstname,
-                        ' ', // Klausur E
-                        ' ', // Klausur E
-                        ' ', // Klausur G
-                        ' ', // SoMi E
-                        ' ', // SoMi E
-                        ' ', // SoMi G
-                        ' ', // Zensur
-                        ' ', // Punkte
-                        ' ', // Bemerkung
-                    ]);
-                }
-
-                pdf.text('Notenübersicht', 15, 25);
-                pdf.autoTable({
-                    startY: 30,
-                    theme: 'grid',
-                    margin: {
-                        top: 25,
-                        bottom: 25
-                    },
-                    head: [
-                        [
-                            '',
-                            '',
-                            { content: 'Klausuren', colSpan: 3, styles: { halign: 'center'} },
-                            { content: 'Sonstige Mitarbeit', colSpan: 3, styles: { halign: 'center'}},
-                            { content: 'Zensur', styles: { halign: 'center', cellWidth: 20 }},
-                            { content: 'Punkte', styles: { halign: 'center', cellWidth: 20 }},
-                            { content: 'Bemerkung', styles: { halign: 'center' }}
-                        ],
-                        [
-                            { content: 'Nachname', styles: { cellWidth: 35 }},
-                            { content: 'Vorname', styles: { cellWidth: 35 }},
-                            { content: 'E', styles: { halign: 'center', cellWidth: 10 }},
-                            { content: 'E', styles: { halign: 'center', cellWidth: 10 }},
-                            { content: 'G', styles: { halign: 'center', cellWidth: 10 }},
-                            { content: 'E', styles: { halign: 'center', cellWidth: 10 }},
-                            { content: 'E', styles: { halign: 'center', cellWidth: 10 }},
-                            { content: 'G', styles: { halign: 'center', cellWidth: 10 }},
-                            '',
-                            '',
-                            ''
-                        ]
+                    [
+                        '',
+                        '',
+                        {content: 'Klausuren', colSpan: 3, styles: {halign: 'center'}},
+                        {content: 'Sonstige Mitarbeit', colSpan: 3, styles: {halign: 'center'}},
+                        {content: 'Zensur', styles: {halign: 'center', cellWidth: 20}},
+                        {content: 'Punkte', styles: {halign: 'center', cellWidth: 20}},
+                        {content: 'Bemerkung', styles: {halign: 'center'}}
                     ],
-                    body: scores
-                });
-
-                pdf.autoTable({
-                    theme: 'plain',
-                    body: [
-                        [' '],
-                        [' '],
-                        [ '_________________________________' ],
-                        [ 'Datum, Unterschrift Fachlehrkraft' ]
+                    [
+                        {content: 'Nachname', styles: {cellWidth: 35}},
+                        {content: 'Vorname', styles: {cellWidth: 35}},
+                        {content: 'E', styles: {halign: 'center', cellWidth: 10}},
+                        {content: 'E', styles: {halign: 'center', cellWidth: 10}},
+                        {content: 'G', styles: {halign: 'center', cellWidth: 10}},
+                        {content: 'E', styles: {halign: 'center', cellWidth: 10}},
+                        {content: 'E', styles: {halign: 'center', cellWidth: 10}},
+                        {content: 'G', styles: {halign: 'center', cellWidth: 10}},
+                        '',
+                        '',
+                        ''
                     ]
-                });
-            }
+                ],
+                body: scores,
+                styles: {
+                    font: getFontName()
+                }
+            });
 
-            pdf.text('Unterschrift der Fachlehrkraft', 0, 0);
+            pdf.autoTable({
+                theme: 'plain',
+                body: [
+                    [' '],
+                    [' '],
+                    ['_________________________________'],
+                    ['Datum, Unterschrift Fachlehrkraft']
+                ],
+                styles: {
+                    font: getFontName()
+                }
+            });
+        }
 
-            // Stundenübersicht
-            pdf.addPage('a4', 'landscape');
+        pdf.text('Unterschrift der Fachlehrkraft', 0, 0);
 
-            if(response.tuition !== null) {
-                addLessonsForTuition(pdf, response);
-            } else {
-                addLessonsForGrades(pdf, response);
-            }
+        // Stundenübersicht
+        pdf.addPage('a4', 'landscape');
 
-            addHeader(pdf, response.section, response.tuition, response.grades);
-            addFooter(pdf);
+        if (response.tuition !== null) {
+            addLessonsForTuition(pdf, response);
+        } else {
+            addLessonsForGrades(pdf, response);
+        }
 
-            resolve(pdf);
-        })
+        addHeader(pdf, response.section, response.tuition, response.grades);
+        addFooter(pdf);
+
+        return pdf;
     }
 
     function formatLessons(start, end) {
@@ -280,7 +342,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
             },
             theme: 'grid',
             head: header,
-            body: body
+            body: body,
+            styles: {
+                font: getFontName()
+            }
         });
     }
 
@@ -361,14 +426,17 @@ document.addEventListener('DOMContentLoaded', function(event) {
             },
             theme: 'grid',
             head: header,
-            body: body
+            body: body,
+            styles: {
+                font: getFontName()
+            }
         });
     }
 
     function addTitlePage(pdf, section, tuition, grades) {
         let originalFontSize = pdf.getFontSize();
         // Titelseite
-        pdf.setFont("Helvetica", "bold");
+        setFont(pdf, 'bold');
         pdf.setFontSize(20);
         pdf.text("Unterrichtsbuch", 15, 25);
         pdf.setFontSize(originalFontSize);
@@ -391,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
         // Schriftgröße zurücksetzen
         pdf.setFontSize(originalFontSize);
-        pdf.setFont("Helvetica", "normal");
+        setFont(pdf, 'normal');
     }
 
     function addHeader(pdf, section, tuition, grades) {
@@ -433,7 +501,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     }
 
     document.querySelectorAll('[data-export-url]').forEach(function(element) {
-        element.addEventListener('click', function(event) {
+        element.addEventListener('click', async function(event) {
             event.preventDefault();
             modal.show();
 
@@ -446,22 +514,19 @@ document.addEventListener('DOMContentLoaded', function(event) {
             downloadButton.classList.add('disabled');
             downloadButton.href = '#';
 
-            axios.get($el.getAttribute('data-export-url'))
-                .then(function(response) {
-                    createPdf(response.data)
-                        .then(pdf => {
-                            modalEl.querySelector('.generating').classList.add('hide');
-                            modalEl.querySelector('.completed').classList.remove('hide');
+            let response = await axios.get($el.getAttribute('data-export-url'));
+            await initializeFont($el.getAttribute('data-regular-font-url'), $el.getAttribute('data-bold-font-url'));
+            let pdf = await createPdf(response.data);
 
-                            let downloadButton = modalEl.querySelector('.download');
-                            downloadButton.classList.remove('disabled');
-                            downloadButton.href = pdf.output('bloburi', {filename: 'export.pdf'});
+            modalEl.querySelector('.generating').classList.add('hide');
+            modalEl.querySelector('.completed').classList.remove('hide');
 
-                            downloadButton.addEventListener('click', function() {
-                                modal.hide();
-                            });
-                        });
-                });
+            downloadButton.classList.remove('disabled');
+            downloadButton.href = pdf.output('bloburi', {filename: 'export.pdf'});
+
+            downloadButton.addEventListener('click', function() {
+                modal.hide();
+            });
         });
     });
 

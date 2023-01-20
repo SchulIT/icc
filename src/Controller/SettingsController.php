@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 use App\Converter\EnumStringConverter;
 use App\Entity\AppointmentCategory;
@@ -931,6 +933,16 @@ class SettingsController extends AbstractController {
                 'help' => 'admin.settings.book.exclude_student_status.help',
                 'required' => false,
                 'data' => implode(',', $settings->getExcludeStudentsStatus())
+            ])
+            ->add('regular_font', FileType::class, [
+                'required' => false,
+                'label' => 'admin.settings.book.font.regular.label',
+                'help' => 'admin.settings.book.font.regular.help'
+            ])
+            ->add('bold_font', FileType::class, [
+                'required' => false,
+                'label' => 'admin.settings.book.font.bold.label',
+                'help' => 'admin.settings.book.font.bold.help'
             ]);
         $form = $builder->getForm();
         $form->handleRequest($request);
@@ -957,6 +969,26 @@ class SettingsController extends AbstractController {
             foreach($map as $formKey => $callable) {
                 $value = $form->get($formKey)->getData();
                 $callable($value);
+            }
+
+            $map = [
+                'regular_font' => function(?string $font) use ($settings) {
+                    $settings->setRegularFont($font);
+                },
+                'bold_font' => function(?string $font) use ($settings) {
+                    $settings->setBoldFont($font);
+                }
+            ];
+
+            foreacH($map as $formKey => $callable) {
+                /** @var UploadedFile|null $file */
+                $file = $form->get($formKey)->getData();
+
+                if($file === null) {
+                    continue;
+                }
+
+                $callable(base64_encode($file->getContent()));
             }
 
             $this->addFlash('success', 'admin.settings.success');

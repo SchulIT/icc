@@ -8,6 +8,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "@babel/polyfill": "^7.12.1",
         "@fortawesome/fontawesome-free": "^5.9.0",
         "@fullcalendar/bootstrap": "^4.4.0",
         "@fullcalendar/core": "^4.4.0",

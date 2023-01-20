@@ -112,7 +112,6 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->em->createQueryBuilder();
-        $qb = $this->filterSection($qb, $section);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('tInner.id')
@@ -125,6 +124,8 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
             ->where($qb->expr()->in('t.id', $qbInner->getDQL()))
             ->setParameter('students', $studentIds);
 
+        $qb = $this->filterSection($qb, $section);
+
         return $qb->getQuery()->getResult();
     }
 
@@ -135,7 +136,6 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         $gradeIds = array_map(fn(Grade $grade) => $grade->getId(), $grades);
 
         $qb = $this->em->createQueryBuilder();
-        $qb = $this->filterSection($qb, $section);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('tInner.id')
@@ -147,6 +147,8 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         $qb = $this->getDefaultQueryBuilder($lazy)
             ->where($qb->expr()->in('t.id', $qbInner->getDQL()))
             ->setParameter('grades', $gradeIds);
+
+        $qb = $this->filterSection($qb, $section);
 
         return $qb->getQuery()->getResult();
     }

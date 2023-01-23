@@ -32,7 +32,11 @@ class ExamStudentsType extends AbstractType {
                 if($exam !== null) {
                     $studyGroups = $exam->getTuitions()->map(fn(Tuition $tuition) => $tuition->getStudyGroup())->toArray();
 
-                    $section = $this->sectionResolver->getSectionForDate($exam->getDate());
+                    if($exam->getDate() !== null) {
+                        $section = $this->sectionResolver->getSectionForDate($exam->getDate());
+                    } else {
+                        $section = $this->sectionResolver->getCurrentSection();
+                    }
 
                     $form
                         ->add('students', SortableEntityType::class, [

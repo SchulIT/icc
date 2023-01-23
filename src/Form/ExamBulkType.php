@@ -4,8 +4,10 @@ namespace App\Form;
 
 use App\Entity\Grade;
 use App\Entity\Tuition;
+use App\Section\SectionResolverInterface;
 use App\Sorting\StringStrategy;
 use App\Sorting\TuitionStrategy;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -14,7 +16,7 @@ use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 
 class ExamBulkType extends AbstractType {
 
-    public function __construct(private TuitionStrategy $tuitionStrategy, private StringStrategy $stringStrategy)
+    public function __construct(private TuitionStrategy $tuitionStrategy, private StringStrategy $stringStrategy, private readonly SectionResolverInterface $sectionResolver)
     {
     }
 
@@ -33,6 +35,15 @@ class ExamBulkType extends AbstractType {
                 ],
                 'multiple' => true,
                 'class' => Tuition::class,
+                'query_builder' => function(EntityRepository $repository) {
+                    if($this->sectionResolver->getCurrentSection() === null) {
+                        return $repository->createQueryBuilder('t');
+                    }
+
+                    return $repository->createQueryBuilder('t')
+                        ->where('t.section = :section')
+                        ->setParameter('section', $this->sectionResolver->getCurrentSection());
+                },
                 'choice_label' => function(Tuition $tuition) {
                     if($tuition->getName() === $tuition->getStudyGroup()->getName()) {
                         return sprintf('%s - %s', $tuition->getName(), $tuition->getSubject()->getName());

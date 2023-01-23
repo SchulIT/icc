@@ -57,7 +57,6 @@ class ExamBulkType extends AbstractType {
             ])
             ->add('add_students', CheckboxType::class, [
                 'required' => false,
-                'mapped' => false,
                 'label' => 'admin.exams.students.add_all',
                 'help' => 'admin.exams.students.info',
                 'label_attr' => [

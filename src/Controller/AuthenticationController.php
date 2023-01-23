@@ -23,9 +23,13 @@ class AuthenticationController extends AbstractController {
         }
 
         $exceptionType = $exception::class;
-        $messageKey = $exception->getMessageKey();
 
-        $message = $translator->trans($messageKey, [], 'security');
+        if(method_exists($exception, 'getMessageKey')) {
+            $messageKey = $exception->getMessageKey();
+            $message = $translator->trans($messageKey, [], 'security');
+        } else {
+            $message = $exception->getMessage();
+        }
 
         return $this->render('error/auth.html.twig', [
             'exception' => $exception,

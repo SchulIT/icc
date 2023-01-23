@@ -53,10 +53,10 @@ interface TuitionRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllByStudents(array $students, Section $section): array;
 
     /**
-     * @param Grade $grades
+     * @param Grade[] $grades
      * @param Section $section
      * @param bool $lazy
-     * @return Tuition
+     * @return Tuition[]
      */
     public function findAllByGrades(array $grades, Section $section, bool $lazy = false): array;
 

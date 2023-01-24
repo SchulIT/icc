@@ -24,7 +24,7 @@ class StudentAbsenceCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('StudentAbsence')
             ->setEntityLabelInPlural('StudentAbsences')
-            ->setSearchFields(['type', 'email', 'phone', 'message', 'id', 'uuid', 'from.lesson', 'until.lesson']);
+            ->setSearchFields(['type.name', 'email', 'phone', 'message', 'id', 'uuid', 'from.lesson', 'until.lesson']);
     }
 
     public function configureFields(string $pageName): iterable

@@ -1361,8 +1361,8 @@ caution: Achtung
 student_absences:
     label: Abwesenheitsmeldungen
     empty: Es liegen keine Abwesenheitsmeldungen vor.
-    created_at: abwesend am
-    created_by: gemeldet von
+    created_at: Gemeldet am
+    created_by: Gemeldet von
     until_short: 'vsl. bis %date% (%lesson%. Stunde)'
     active: aktiv
     teacher_info: Diese Ansicht zeigt die für den heutigen Tag vorliegenden Absenzmeldungen an. Vergangene Meldungen können über den Lernenden- oder Klassenfilter auf der rechten Seite abgerufen werden.

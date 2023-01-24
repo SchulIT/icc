@@ -116,6 +116,6 @@ class Tuition implements Stringable {
     }
 
     public function __toString(): string {
-        return sprintf('%s [%s]', $this->getStudyGroup(), $this->getSubject());
+        return sprintf('%s (%s) [%s]', $this->getStudyGroup(), $this->getSubject(), $this->getSection()->getDisplayName());
     }
 }

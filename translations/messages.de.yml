@@ -367,6 +367,8 @@ plans:
                 name_help: Unter diesem Namen kann in den Profil-Einstellungen der Zugriff wieder entzogen werden.
                 success_head: Erfolg
                 success: Den folgenden Link nun in Outlook oder Google Kalender eintragen, um die Synchronisation zu beginnen.
+        supervisions:
+            label: Aufsichtsplan
         today: heute
         upcoming: demnächst
         free: unterrichtsfrei

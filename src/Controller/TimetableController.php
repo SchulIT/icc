@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Security\Voter\TimetableVoter;
 use Symfony\Component\HttpFoundation\Response;
 use App\Date\WeekOfYear;
 use App\Entity\IcsAccessToken;
@@ -129,19 +130,7 @@ class TimetableController extends AbstractControllerWithMessages {
         if((is_countable($lessons) ? count($lessons) : 0) === 0 && count($supervisions) === 0) {
             $timetable = null;
         } else {
-            $weeks = [
-                (new WeekOfYear((int)$start->format('Y'), (int)$start->format('W'))),
-                (new WeekOfYear((int)$end->format('Y'), (int)$end->format('W')))
-            ];
-
-            if($weeks[0]->getWeekNumber() === $weeks[1]->getWeekNumber() && $weeks[0]->getYear() === $weeks[1]->getYear()) {
-                $weeks = [ $weeks[0] ];
-            }
-
-            if($user->getData(self::OnlyOneWeek, false) === true) {
-                $weeks = [ $weeks[0] ];
-            }
-
+            $weeks = $this->getWeeksToDisplay($start, $end, $user->getData(self::OnlyOneWeek, false));
             $timetable = $this->timetableHelper->makeTimetable($weeks, $lessons, $supervisions);
         }
 
@@ -209,6 +198,121 @@ class TimetableController extends AbstractControllerWithMessages {
             'weekStarts' => $weekStarts,
             'onlyOneWeek' => $user->getData(self::OnlyOneWeek, false)
         ]);
+    }
+
+    /**
+     * @param DateTime $start
+     * @param DateTime $end
+     * @param bool $onlyOneWeek
+     * @return WeekOfYear[]
+     */
+    private function getWeeksToDisplay(DateTime $start, DateTime $end, bool $onlyOneWeek): array {
+        $weeks = [
+            (new WeekOfYear((int)$start->format('Y'), (int)$start->format('W'))),
+            (new WeekOfYear((int)$end->format('Y'), (int)$end->format('W')))
+        ];
+
+        if($weeks[0]->getWeekNumber() === $weeks[1]->getWeekNumber() && $weeks[0]->getYear() === $weeks[1]->getYear()) {
+            $weeks = [ $weeks[0] ];
+        }
+
+        if($onlyOneWeek === true) {
+            $weeks = [ $weeks[0] ];
+        }
+
+        return $weeks;
+    }
+
+    #[Route(path: '/supervisions', name: 'timetable_supervisions')]
+    public function supervisions(TimetableSupervisionRepositoryInterface $supervisionRepository, TimetableFilter $timetableFilter, ImportDateTypeRepositoryInterface $importDateTypeRepository,
+                                 SectionFilter $sectionFilter, Request $request, UserRepositoryInterface $userRepository) {
+        $this->denyAccessUnlessGranted(TimetableVoter::Supervisions);
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if($request->isMethod('POST')) {
+            $onlyOneWeek = $request->request->getBoolean('only_one_week');
+            $user->setData(self::OnlyOneWeek, $onlyOneWeek);
+
+            $userRepository->persist($user);
+            return $this->redirectToRoute('timetable_supervisions', $request->query->all());
+        }
+
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section', null));
+        $selectedDate = $this->resolveSelectedDate($request, $sectionFilterView->getCurrentSection(), $this->dateHelper);
+
+        $start = max(
+            $selectedDate,
+            $startDate = $this->timetableSettings->getStartDate($user->getUserType())
+        );
+        $end = min(
+            (clone $start)->modify('+13 days'),
+            $endDate = $this->timetableSettings->getEndDate($user->getUserType())
+        );
+
+        $timetable = null;
+
+        if($start <= $end) {
+            $supervisions = $supervisionRepository->findAllByRange($start, $end);
+            $weeks = $this->getWeeksToDisplay($start, $end, $user->getData(self::OnlyOneWeek, false));
+
+            if(count($supervisions) > 0) {
+                $timetable = $this->timetableHelper->makeTimetable($weeks, [], $supervisions);
+            }
+        }
+
+        $startTimes = [ ];
+        $endTimes = [ ];
+
+        for($lesson = 1; $lesson <= $this->timetableSettings->getMaxLessons(); $lesson++) {
+            $startTimes[$lesson] = $this->timetableSettings->getStart($lesson);
+            $endTimes[$lesson] = $this->timetableSettings->getEnd($lesson);
+        }
+
+        $template = 'timetable/index.html.twig';
+
+        if($request->query->getBoolean('print', false) === true) {
+            $template = 'timetable/index_print.html.twig';
+
+            if($timetable === null) {
+                $query = $request->query->all();
+                unset($query['print']);
+                $this->addFlash('info', 'plans.timetable.print.empty');
+                return $this->redirectToRoute('timetable', $query);
+            }
+        }
+
+        $supervisionLabels = [ ];
+        for($i = 1; $i <= $this->timetableSettings->getMaxLessons(); $i++) {
+            $supervisionLabels[$i] = $this->timetableSettings->getDescriptionBeforeLesson($i);
+        }
+
+        $weekStarts = [ ];
+
+        if($startDate !== null && $endDate !== null && $sectionFilterView->getCurrentSection() !== null) {
+            $weekStarts = $this->listCalendarWeeks(
+                max($startDate, $sectionFilterView->getCurrentSection()->getStart()),
+                min($endDate, $sectionFilterView->getCurrentSection()->getEnd())
+            );
+        }
+
+        return $this->renderWithMessages('timetable/supervisions.html.twig', [
+            'timetable' => $timetable,
+            'sectionFilter' => $sectionFilterView,
+            'startTimes' => $startTimes,
+            'endTimes' => $endTimes,
+            'query' => $request->query->all(),
+            'supervisionLabels' => $supervisionLabels,
+            'supervisionSubject' => $this->timetableSettings->getSupervisionLabel(),
+            'supervisionColor' => $this->timetableSettings->getSupervisionColor(),
+            'last_import_lessons' => $importDateTypeRepository->findOneByEntityClass(TimetableLesson::class),
+            'last_import_supervisions' => $importDateTypeRepository->findOneByEntityClass(TimetableSupervision::class),
+            'selectedDate' => $selectedDate,
+            'weekStarts' => $weekStarts,
+            'onlyOneWeek' => $user->getData(self::OnlyOneWeek, false)
+        ]);
+
     }
 
     #[Route(path: '/export', name: 'timetable_export')]

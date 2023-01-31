@@ -24,6 +24,13 @@ interface TimetableSupervisionRepositoryInterface extends TransactionalRepositor
     public function findAllByTeacher(DateTime $startDate, DateTime $endDate, Teacher $teacher): array;
 
     /**
+     * @param DateTime $startDate
+     * @param DateTime $endDate
+     * @return TimetableSupervision[]
+     */
+    public function findAllByRange(DateTime $startDate, DateTime $endDate): array;
+
+    /**
      * @param TimetableSupervision $supervision
      */
     public function persist(TimetableSupervision $supervision): void;

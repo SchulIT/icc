@@ -4,11 +4,12 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('build/timetable.scss') }}" media="print" />
 {% endblock %}
 
-{% block title %}{{ 'plans.timetable.label'|trans }}{% endblock %}
+{% block title %}{{ 'plans.timetable.supervisions.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('timetable') }}">{{ 'plans.timetable.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -30,26 +31,8 @@
             {% else %}
                 <div class="card">
                     <div class="card-header">
-                        {% set urlSubjects = [ ] %}
-                        {% if subjectFilter.currentSubjects is not empty %}
-                            {% for subject in subjectFilter.currentSubjects %}
-                                {% set urlSubjects = urlSubjects|merge([subject.uuid.toString()]) %}
-                            {% endfor %}
-                        {% endif %}
-                        {% set urlTeachers = [ ] %}
-                        {% if teachersFilter.currentTeachers is not empty %}
-                            {% for teacher in teachersFilter.currentTeachers %}
-                                {% set urlTeachers = urlTeachers|merge([teacher.uuid.toString() ]) %}
-                            {% endfor %}
-                        {% endif %}
-
                         {% set currentFilter = {
-                            section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
-                            grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString() : null,
-                            student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString() : null,
-                            teachers: (urlTeachers is not empty ? urlTeachers : null),
-                            subjects: (urlSubjects is not empty ? urlSubjects : null),
-                            room: roomFilter.currentRoom ? roomFilter.currentRoom.uuid.toString() : null
+                            section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null
                         }
                         %}
 
@@ -60,7 +43,7 @@
                                 {% set previousDate = (selectedDate|clone).modify('-7 days') %}
                                 {% set canNavigatePrevious = is_in_datetime_array(previousDate, weekStarts) %}
                                 <li class="nav-item align-self-center" data-resize="show">
-                                    <a class="nav-link {% if not canNavigatePrevious %}disabled{% endif %}" href="{{ path('timetable', currentFilter|merge({'date': previousDate.format('Y-m-d')})) }}">
+                                    <a class="nav-link {% if not canNavigatePrevious %}disabled{% endif %}" href="{{ path('timetable_supervisions', currentFilter|merge({'date': previousDate.format('Y-m-d')})) }}">
                                         <i class="fas fa-chevron-left"></i>
                                     </a>
                                 </li>
@@ -68,7 +51,7 @@
 
                             {% for week, monday in weekStarts %}
                                 <li class="nav-item" {% if currentWeek == week %}data-resize="prevent"{% endif %}>
-                                    <a class="nav-link {% if currentWeek == week %}active{% endif %}" href="{{ path('timetable', currentFilter|merge({'date': monday.format('Y-m-d')})) }}">
+                                    <a class="nav-link {% if currentWeek == week %}active{% endif %}" href="{{ path('timetable_supervisions', currentFilter|merge({'date': monday.format('Y-m-d')})) }}">
                                         <div>
                                             <i class="fas fa-calendar-alt"></i> {{ 'admin.exams.week'|trans({'%week%': week}) }}
                                         </div>
@@ -83,7 +66,7 @@
                                 {% set nextDate = (selectedDate|clone).modify('+7 days') %}
                                 {% set canNavigateNext = is_in_datetime_array(nextDate, weekStarts) %}
                                 <li class="nav-item align-self-center" data-resize="show">
-                                    <a class="nav-link {% if not canNavigateNext %}disabled{% endif %}" href="{{ path('timetable', currentFilter|merge({'date': nextDate.format('Y-m-d')})) }}">
+                                    <a class="nav-link {% if not canNavigateNext %}disabled{% endif %}" href="{{ path('timetable_supervisions', currentFilter|merge({'date': nextDate.format('Y-m-d')})) }}">
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>
@@ -93,7 +76,7 @@
 
                     <div class="card-body">
                         <h5 class="card-title mb-0">
-                            {% include "timetable/_title.html.twig" %}
+                            {{ block('title') }}
                         </h5>
                     </div>
                 </div>
@@ -154,6 +137,10 @@
                                                     <td class="align-middle {% if day.isCurrentDay or day.isUpcomingDay %}current{% endif %} {% if day.isFree %}text-secondary{% endif %}" {% if background != null and lessons.beforeSupervisions|length > 0 %}style="background: {{ background }}; color: {{ foreground(background) }}"{% endif %}>
                                                         {% for supervision in lessons.beforeSupervisions %}
                                                             {% include 'timetable/supervision.html.twig' %}
+                                                            <br>
+                                                            {{ supervision.teacher|teacher }}
+
+                                                            {% if not loop.last %}<hr>{% endif %}
                                                         {% endfor %}
                                                     </td>
                                                 {% endfor %}
@@ -215,19 +202,9 @@
             <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="list-group list-group-flush">
-                        {% if timetable is not null %}
-                        <a href="{{ path('timetable', query|merge({'print': true})) }}" class="list-group-item list-group-item-action" target="_blank">
-                            <i class="fa fa-print"></i> {{ 'plans.timetable.print.label'|trans }}
+                        <a href="{{ path('timetable') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-arrow-left"></i> {{ 'actions.back'|trans }}
                         </a>
-                        {% endif %}
-                        <a href="{{ path('timetable_export') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-download"></i> {{ 'plans.timetable.export.label'|trans }}
-                        </a>
-                        {% if is_granted('view_supervisions') %}
-                            <a href="{{ path('timetable_supervisions') }}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-eye"></i> {{ 'plans.timetable.supervisions.label'|trans }}
-                            </a>
-                        {% endif %}
 
                         {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('admin_settings_timetable') }}" class="list-group-item list-group-item-action">
@@ -237,32 +214,10 @@
                     </div>
                 </div>
 
-                {% if contains_active_filters([teachersFilter, studentFilter, gradeFilter, subjectFilter, roomFilter]) %}
                 <div class="card">
                     <div class="card-body">
                         {% set params = { section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null, } %}
-
                         {% include "_filter/section.html.twig" %}
-
-                        {% if teachersFilter.teachers|length > 0 %}
-                            {% include "_filter/teachers.html.twig" with { canSwitch: true, params: params } %}
-                        {% endif %}
-
-                        {% if studentFilter.studentGradeGroups|length > 0 %}
-                            {% include "_filter/student.html.twig" with { params: params } %}
-                        {% endif %}
-
-                        {% if gradeFilter.grades|length > 0 %}
-                            {% include "_filter/grade.html.twig" with { params: params } %}
-                        {% endif %}
-
-                        {% if roomFilter.rooms|length > 0 %}
-                            {% include "_filter/room.html.twig" with { params: params } %}
-                        {% endif %}
-
-                        {% if subjectFilter.subjects|length > 0 %}
-                            {% include "_filter/subjects.html.twig" with { params: params } %}
-                        {% endif %}
 
                         <form role="form" method="get" class="form hidden-print">
                             {% include "_filter/_params.html.twig" with { params: params } %}
@@ -277,10 +232,9 @@
                     </div>
 
                     <div class="card-footer">
-                        <a href="{{ path('timetable') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
+                        <a href="{{ path('timetable_supervisions') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
                     </div>
                 </div>
-                {% endif %}
 
                 <form method="post">
                     <div class="card">

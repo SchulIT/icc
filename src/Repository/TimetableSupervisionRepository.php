@@ -36,6 +36,19 @@ class TimetableSupervisionRepository extends AbstractTransactionalRepository imp
             ->getResult();
     }
 
+    public function findAllByRange(DateTime $startDate, DateTime $endDate): array {
+        return $this->em->createQueryBuilder()
+            ->select(['s', 't'])
+            ->from(TimetableSupervision::class, 's')
+            ->leftJoin('s.teacher', 't')
+            ->andWhere('s.date >= :startDate')
+            ->andWhere('s.date <= :endDate')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * @inheritDoc
      */

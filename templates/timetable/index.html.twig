@@ -240,7 +240,11 @@
                 {% if contains_active_filters([teachersFilter, studentFilter, gradeFilter, subjectFilter, roomFilter]) %}
                 <div class="card">
                     <div class="card-body">
-                        {% set params = { section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null, } %}
+                        {% set params = {
+                            section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
+                            date: selectedDate.format('Y-m-d')
+                        }
+                        %}
 
                         {% include "_filter/section.html.twig" %}
 

@@ -101,7 +101,7 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if holdCounts[tuition.id] is defined and holdCounts[tuition.id] > 0 %}
+                                            {% if tuition.isBookEnabled and holdCounts[tuition.id] is defined and holdCounts[tuition.id] > 0 %}
                                                 <a href="{{ path('book_export_tuition_json', { tuition: tuition.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.export.json.label'|trans }}">
                                                     <i class="far fa-file-code"></i>
                                                 </a>

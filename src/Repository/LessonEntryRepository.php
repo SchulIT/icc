@@ -18,7 +18,8 @@ class LessonEntryRepository extends AbstractRepository implements LessonEntryRep
             ->from(LessonEntry::class, 'e')
             ->leftJoin('e.teacher', 't')
             ->leftJoin('e.tuition', 'tt')
-            ->leftJoin('e.lesson', 'l');
+            ->leftJoin('e.lesson', 'l')
+            ->andWhere('tt.isBookEnabled = true');
     }
 
     private function applyStartEnd(QueryBuilder $qb, DateTime $start, DateTime $end): QueryBuilder {
@@ -33,6 +34,10 @@ class LessonEntryRepository extends AbstractRepository implements LessonEntryRep
      * @inheritDoc
      */
     public function findAllByTuition(Tuition $tuition, DateTime $start, DateTime $end): array {
+        if($tuition->isBookEnabled() === false) {
+            return [ ];
+        }
+
         $qb = $this->createDefaultQueryBuilder();
         $qb = $this->applyStartEnd($qb, $start, $end);
 

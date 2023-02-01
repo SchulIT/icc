@@ -284,7 +284,9 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
             ->select('lIntern.id')
             ->from(TimetableLesson::class, 'lIntern')
             ->leftJoin('lIntern.entries', 'eIntern')
+            ->leftJoin('lIntern.tuition', 'tIntern')
             ->where('eIntern.id IS NOT NULL')
+            ->andWhere('tIntern.isBookEnabled = true')
             ->groupBy('lIntern.id, lIntern.lessonEnd, lIntern.lessonStart')
             ->having('SUM(eIntern.lessonEnd - eIntern.lessonStart + 1) != (lIntern.lessonEnd - lIntern.lessonStart + 1)');
 
@@ -294,7 +296,8 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
             ->from(TimetableLesson::class, 'l')
             ->leftJoin('l.entries', 'e')
             ->leftJoin('l.tuition', 't')
-            ->where(
+            ->where('t.isBookEnabled = true')
+            ->andWhere(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('e.id'),                    // lessons without any entries
                     $qb->expr()->in('l.id', $qbInner->getDQL())     // partly incomplete lessons

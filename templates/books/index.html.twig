@@ -290,6 +290,7 @@
                                                 <i class="fas fa-exclamation-triangle"></i> {{ 'book.entry.missing'|trans }}
                                             </div>
 
+                                            {% if lesson.lesson.tuition.isBookEnabled %}
                                             <div class="ml-2">
                                                 <entry students-url="{{ url('xhr_students') }}"
                                                        teachers-url="{{ url('xhr_teachers') }}"
@@ -302,6 +303,7 @@
                                                        edit-action=""
                                                        cancel-action="{{ path('cancel_lesson', { uuid: lesson.lesson.uuid }) }}"></entry>
                                             </div>
+                                            {% endif %}
                                         {% else %}
                                             <div class="flex-fill">
                                                 <div class="d-flex align-items-center">
@@ -391,7 +393,7 @@
                                                 </div>
                                             {% endif %}
 
-                                            {% if lesson.lesson != null %}
+                                            {% if lesson.lesson != null and lesson.lesson.tuition.isBookEnabled %}
                                             <div class="ml-2">
                                                 <entry students-url="{{ url('xhr_students') }}"
                                                        teachers-url="{{ url('xhr_teachers') }}"

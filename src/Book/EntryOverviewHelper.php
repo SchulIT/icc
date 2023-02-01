@@ -53,6 +53,8 @@ class EntryOverviewHelper {
             $end = $tmp;
         }
 
+        $tuitions = array_filter($tuitions, fn(Tuition $tuition) => $tuition->isBookEnabled());
+
         $lessons = [ ];
 
         foreach($entries as $entry) {

@@ -117,6 +117,6 @@ class StudyGroup implements Stringable {
     }
 
     public function __toString(): string {
-        return sprintf('%s: %s', implode(', ', $this->getGrades()->toArray()), $this->getName());
+        return sprintf('%s: %s (%s)', implode(', ', $this->getGrades()->toArray()), $this->getName(), $this->getSection()->getDisplayName());
     }
 }

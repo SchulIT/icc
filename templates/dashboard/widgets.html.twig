@@ -240,7 +240,7 @@
                         </div>
                     </div>
 
-                    {% if lesson.tuition is not null and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                    {% if lesson.tuition is not null and lesson.tuition.isBookEnabled and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
                         {% set editAction = null %}
 
                         {% for entry in lesson.entries %}
@@ -373,7 +373,7 @@
                     </div>
                 </div>
                 {% set timetableLesson = item.timetableLesson %}
-                {% if timetableLesson is not null and timetableLesson.tuition is not null and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                {% if timetableLesson is not null and timetableLesson.tuition is not null and timetableLesson.tuition.isBookEnabled and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
                     {% set editAction = null %}
 
                     {% for entry in timetableLesson.entries %}

@@ -31,6 +31,9 @@ class Tuition implements Stringable {
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $displayName = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isBookEnabled = true;
+
     #[Assert\NotNull]
     #[ORM\ManyToOne(targetEntity: Subject::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
@@ -49,7 +52,6 @@ class Tuition implements Stringable {
     #[ORM\ManyToOne(targetEntity: StudyGroup::class, inversedBy: 'tuitions')]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?StudyGroup $studyGroup = null;
-
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->teachers = new ArrayCollection();
@@ -79,6 +81,15 @@ class Tuition implements Stringable {
 
     public function setDisplayName(?string $displayName): Tuition {
         $this->displayName = $displayName;
+        return $this;
+    }
+
+    public function isBookEnabled(): bool {
+        return $this->isBookEnabled;
+    }
+
+    public function setIsBookEnabled(bool $isBookEnabled): Tuition {
+        $this->isBookEnabled = $isBookEnabled;
         return $this;
     }
 

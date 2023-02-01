@@ -510,6 +510,7 @@
                             </a>
                         {% endfor %}
                         {% for tuition in ownTuitions %}
+                            {% if tuition.isBookEnabled %}
                             <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString , tuition: tuition.uuid.toString }) }}" class="list-group-item list-group-item-action {% if tuitionFilter.currentTuition == tuition %}active{% endif %}">
                                 <i class="fas fa-chalkboard"></i>
                                 {% if tuition.displayName is not empty %}
@@ -519,6 +520,7 @@
                                 {% endif %}
                                 ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
                             </a>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>

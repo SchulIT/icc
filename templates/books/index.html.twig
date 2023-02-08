@@ -239,9 +239,8 @@
                                     </div>
                                 {% endfor %}
 
-                                {% set last_id = null %}
                                 {% for lesson in day.lessons %}
-                                    {% if lesson.entry is null or lesson.entry.id != last_id %}
+                                    {% if lesson.entry is empty or lesson.lessonNumber == lesson.lesson.lessonStart %}
                                     <div class="list-group-item d-flex align-items-center">
                                         <div class="book-lesson m-0 p-0">
                                             {% if lesson.entry is not null %}

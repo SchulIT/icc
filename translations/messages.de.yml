@@ -227,6 +227,8 @@ label:
         label: immer entschuldigt
         help: Abwesenheiten mit dieser Art setzt die Fehlstunde bei Übernahme ins Unterrichtsbuch auf entschuldigt.
     show_all: Alle anzeigen
+    task: Aufgabe
+    person: Person(en)
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -1556,6 +1558,23 @@ book:
             label: Entschuldigung löschen
             success: Entschuldigung erfolgreich gelöscht
             confirm: 'Soll die Entschuldigung für %lastname%, %firstname (%start_date% %start_lesson%. Stunde - %end_date% %end_lesson%. Stunde) wirklich gelöscht werden?'
+
+
+    responsibilities:
+        label: Aufgaben
+        empty: Hier können Aufgaben innerhalb der Klasse (bspw. Klassensprecher, Klassenpflegschaft etc.) festgehalten werden.
+        add:
+            label: Neue Aufgabe
+            success: Aufgabe erfolgreich hinzugefügt
+        edit:
+            label: Aufgabe bearbeiten
+            success: Aufgabe erfolgreich aktualisiert
+        remove:
+            label: Aufgabe löschen
+            success: Aufgabe erfolgreich gelöscht
+            confirm: 'Soll die Aufgabe %task% (%person%) für die Klasse %grade% wirklich gelöscht werden?'
+        from_last_section:
+            label: Aufgaben aus dem letzten Abschnitt übernehmen
 
 external:
     docs: Handbuch

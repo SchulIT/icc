@@ -107,28 +107,101 @@
                         </div>
                     </div>
 
-                    {% if missingExcusesCount > 0 and sectionFilter.currentSection is not null %}
-                    <div class="card border-warning">
-                        <div class="card-body">
-                            <h4 class="card-title">
-                                <i class="fas fa-user-times"></i>
-                                {{ 'book.open.label'|trans }}
-                                <span class="badge badge-danger badge-pill">{{ missingExcusesCount }}</span>
-                            </h4>
-                            <p>{{ 'book.open.status'|trans }}</p>
+                    {% set hasMissingExcuses = missingExcuses > 0 and sectionFilter.currentSection is not null %}
+                    {% set showResponsibilities = gradeFilter.currentGrade is not null or (tuitionFilter.currentTuition is not null and tuitionFilter.currentTuition.studyGroup.grades|length == 1) %}
+                    {% set showBoth = hasMissingExcuses and showResponsibilities %}
 
-                            <ul class="list-unstyled mb-0">
-                                {% for info in missingExcuses %}
-                                    <li>
-                                        <a href="{{ path('book_student', currentFilter|merge({ student: info.student.uuid.toString })) }}">
-                                            <i class="fas fa-user-graduate"></i> {{ info.student|student }}
-                                            <span class="badge badge-danger badge-pill">{{ info.notExcusedOrNotSetLessonsCount }}</span>
+                    {% if hasMissingExcuses or showResponsibilities %}
+                        <div class="row {% if showBoth %}row-cols-1 row-cols-md-2 {% endif%} mb-3">
+                        {% if missingExcusesCount > 0 and sectionFilter.currentSection is not null %}
+                            <div class="col">
+                                <div class="card border-warning h-100">
+                                    <div class="card-body">
+                                        <h4 class="card-title">
+                                            <i class="fas fa-user-times"></i>
+                                            {{ 'book.open.label'|trans }}
+                                            <span class="badge badge-danger badge-pill">{{ missingExcusesCount }}</span>
+                                        </h4>
+                                        <p>{{ 'book.open.status'|trans }}</p>
+
+                                        <ul class="list-unstyled mb-0">
+                                            {% for info in missingExcuses %}
+                                                <li>
+                                                    <a href="{{ path('book_student', currentFilter|merge({ student: info.student.uuid.toString })) }}">
+                                                        <i class="fas fa-user-graduate"></i> {{ info.student|student }}
+                                                        <span class="badge badge-danger badge-pill">{{ info.notExcusedOrNotSetLessonsCount }}</span>
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if showResponsibilities %}
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        {% set grade = gradeFilter.currentGrade %}
+                                        {% if tuitionFilter.currentTuition is not null %}
+                                            {% set grade = tuitionFilter.currentTuition.studyGroup.grades.first %}
+                                        {% endif %}
+
+                                        <h4 class="card-title">
+                                            <i class="fas fa-tasks"></i>
+                                            {{ 'book.responsibilities.label'|trans }}
+
+                                            {% if grade is not null %}
+                                                <span class="badge badge-primary">{{ grade.name }}</span>
+                                            {% endif %}
+                                        </h4>
+
+                                        <p>
+                                            <i class="fas fa-info-circle"></i> {{ 'book.responsibilities.empty'|trans }}
+                                        </p>
+                                    </div>
+
+                                    {% if responsibilities|length > 0 %}
+                                    <div class="list-group list-group-flush">
+                                        {% for resp in responsibilities %}
+                                            <div class="list-group-item d-flex py-2">
+                                                <div class="align-self-center flex-fill">
+                                                    {{ resp.task }}: {{ resp.person }}
+                                                </div>
+
+                                                <div class="dropdown d-inline">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a href="{{ path('edit_grade_responsibility', { uuid: resp.uuid })}}" class="dropdown-item">
+                                                            <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                                        </a>
+
+                                                        <a href="{{ path('remove_grade_responsibility', { uuid: resp.uuid })}}" class="dropdown-item text-danger">
+                                                            <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if gradeFilter.currentGrade is not null %}
+                                    <div class="card-footer">
+                                        <a href="{{ path('add_grade_responsibility', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-plus"></i> {{ 'book.responsibilities.add.label'|trans }}
                                         </a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+
                         </div>
-                    </div>
                     {% endif %}
 
                     {% for day in overview.days %}

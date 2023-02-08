@@ -12,6 +12,8 @@ interface SectionRepositoryInterface {
 
     public function findOneById(int $id): ?Section;
 
+    public function findOneByUuid(string $uuid): ?Section;
+
     /**
      * @return Section[]
      */

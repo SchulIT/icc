@@ -29,6 +29,7 @@ use App\Grouping\LessonDayStrategy;
 use App\Grouping\TuitionGradeGroup;
 use App\Grouping\TuitionGradeStrategy;
 use App\Repository\ExcuseNoteRepositoryInterface;
+use App\Repository\GradeResponsibilityRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
@@ -155,7 +156,7 @@ class BookController extends AbstractController {
     #[Route(path: '/entry', name: 'book')]
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                           TuitionRepositoryInterface $tuitionRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository, DateHelper $dateHelper, Request $request,
-                          EntryOverviewHelper $entryOverviewHelper, AbsenceExcuseResolver $absenceExcuseResolver, BookSettings $settings): Response {
+                          EntryOverviewHelper $entryOverviewHelper, AbsenceExcuseResolver $absenceExcuseResolver, BookSettings $settings, GradeResponsibilityRepositoryInterface $responsibilityRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -178,6 +179,7 @@ class BookController extends AbstractController {
         $overallOverview = null;
         $missingExcuseCount = 0;
         $info = [ ];
+        $responsibilities = [ ];
 
         if($selectedDate !== null) {
             if ($gradeFilterView->getCurrentGrade() !== null) {
@@ -185,11 +187,19 @@ class BookController extends AbstractController {
 
                 $students = $gradeFilterView->getCurrentGrade()->getMemberships()->filter(fn(GradeMembership $membership) => $membership->getSection()->getId() === $sectionFilterView->getCurrentSection()->getId())->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
                 $info = $absenceExcuseResolver->resolveBulk($students);
+
+                if($sectionFilterView->getCurrentSection() !== null) {
+                    $responsibilities = $responsibilityRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
+                }
             } else if ($tuitionFilterView->getCurrentTuition() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition(), $selectedDate, (clone $selectedDate)->modify('+1 month')->modify('-1 day'));
 
                 $students = $tuitionFilterView->getCurrentTuition()->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent());
                 $info = $absenceExcuseResolver->resolveBulk($students->toArray(), [ $tuitionFilterView->getCurrentTuition() ]);
+
+                if($sectionFilterView->getCurrentSection() !== null && $tuitionFilterView->getCurrentTuition()->getStudyGroup()->getGrades()->count() === 1) {
+                    $responsibilities = $responsibilityRepository->findAllByGrade($tuitionFilterView->getCurrentTuition()->getStudyGroup()->getGrades()->first(), $sectionFilterView->getCurrentSection());
+                }
             } else if($teacherFilterView->getCurrentTeacher() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForTeacher($teacherFilterView->getCurrentTeacher(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
                 $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
@@ -321,7 +331,8 @@ class BookController extends AbstractController {
             'missingExcuses' => $missingExcuses,
             'missingExcusesCount' => $missingExcuseCount,
             'absentStudentsByLesson' => $absentStudentsByLesson,
-            'lateStudentsByLesson' => $lateStudentsByLesson
+            'lateStudentsByLesson' => $lateStudentsByLesson,
+            'responsibilities' => $responsibilities
         ]);
     }
 

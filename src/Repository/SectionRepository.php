@@ -64,4 +64,11 @@ class SectionRepository extends AbstractRepository implements SectionRepositoryI
             ->getQuery()
             ->getResult();
     }
+
+    public function findOneByUuid(string $uuid): ?Section {
+        return $this->em->getRepository(Section::class)
+            ->findOneBy([
+                'uuid' => $uuid
+            ]);
+    }
 }

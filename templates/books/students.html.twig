@@ -61,6 +61,10 @@
                                         {% if sectionFilter.currentSection != null %}
                                             <a href="{{ path('book_student', { student: student.uuid, section: sectionFilter.currentSection.uuid.toString }) }}">
                                                 {{ student.lastname }}, {{ student.firstname }}
+
+                                                <span class="badge badge-primary">
+                                                    {{ student.grade(sectionFilter.currentSection) }}
+                                                </span>
                                             </a>
                                         {% else %}
                                             {{ student.lastname }}, {{ student.firstname }}
@@ -102,6 +106,14 @@
                         </table>
                     </div>
                 </div>
+
+                {% include '@Common/includes/pagination.html.twig' with {
+                    currentFilters: currentFilter,
+                    currentPage: page,
+                    paginationPath: 'book_students',
+                    lastPage: pages,
+                    showAlwaysFirstAndLast: true
+                } only %}
             </div>
 
             <div class="col-md-3">

@@ -9,6 +9,7 @@ use App\Entity\StudyGroup;
 use App\Sorting\StudentGroupMembershipStrategy;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
 
@@ -56,6 +57,13 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllByGrade(Grade $grade, Section $section): array;
 
     /**
+     * @param Grade $grade
+     * @param Section $section
+     * @return Paginator
+     */
+    public function getStudentsByGradePaginator(int $itemsPerPage, int &$page, Grade $grade, Section $section): Paginator;
+
+    /**
      * @param string $query
      * @return Student[]
      */
@@ -66,6 +74,12 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Student[]
      */
     public function findAllByStudyGroups(array $studyGroups): array;
+
+    /**
+     * @param StudyGroup[] $studyGroups
+     * @return Paginator
+     */
+    public function getStudentsByStudyGroupsPaginator(int $itemsPerPage, int &$page, array $studyGroups): Paginator;
 
     /**
      * @param StudyGroup[] $studyGroups

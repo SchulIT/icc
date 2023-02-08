@@ -9,6 +9,7 @@ use App\Entity\StudyGroup;
 use App\Entity\User;
 use App\Entity\UserType;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class StudentRepository extends AbstractTransactionalRepository implements StudentRepositoryInterface {
 
@@ -71,13 +72,17 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
      * @inheritDoc
      */
     public function findAllByGrade(Grade $grade, Section $section): array {
+        return $this->getQueryBuilderFindAllByGrade($grade, $section)
+            ->getQuery()
+            ->getResult();
+    }
+
+    private function getQueryBuilderFindAllByGrade(Grade $grade, Section $section): QueryBuilder {
         return $this->getDefaultQueryBuilder(true)
             ->andWhere('gm.grade = :grade')
             ->andWhere('gm.section = :section')
             ->setParameter('grade', $grade->getId())
-            ->setParameter('section', $section->getId())
-            ->getQuery()
-            ->getResult();
+            ->setParameter('section', $section->getId());
     }
 
     /**
@@ -209,5 +214,35 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
             )
             ->getQuery()
             ->execute();
+    }
+
+    public function getStudentsByGradePaginator(int $itemsPerPage, int &$page, Grade $grade, Section $section): Paginator {
+        if($page < 1) {
+            $page = 1;
+        }
+
+        $offset = ($page - 1) * $itemsPerPage;
+
+        $paginator = new Paginator($this->getQueryBuilderFindAllByGrade($grade, $section));
+        $paginator->getQuery()
+            ->setMaxResults($itemsPerPage)
+            ->setFirstResult($offset);
+
+        return $paginator;
+    }
+
+    public function getStudentsByStudyGroupsPaginator(int $itemsPerPage, int &$page, array $studyGroups): Paginator {
+        if($page < 1) {
+            $page = 1;
+        }
+
+        $offset = ($page - 1) * $itemsPerPage;
+
+        $paginator = new Paginator($this->getQueryBuilderFindAllByStudyGroups($studyGroups)->orderBy('s.lastname')->addOrderBy('s.firstname'));
+        $paginator->getQuery()
+            ->setMaxResults($itemsPerPage)
+            ->setFirstResult($offset);
+
+        return $paginator;
     }
 }

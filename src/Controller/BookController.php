@@ -66,6 +66,8 @@ class BookController extends AbstractController {
 
     private const ItemsPerPage = 25;
 
+    private const StudentsPerPage = 35;
+
     private function getClosestMonthStart(DateTime $dateTime): DateTime {
         $dateTime = clone $dateTime;
         $dateTime->setDate((int)$dateTime->format('Y'), (int)$dateTime->format('m'), 1);
@@ -419,20 +421,24 @@ class BookController extends AbstractController {
         $ownGrades = $this->resolveOwnGrades($sectionFilterView->getCurrentSection(), $user);
         $ownTuitions = $this->resolveOwnTuitions($sectionFilterView->getCurrentSection(), $user, $tuitionRepository);
 
-        $students = [ ];
+        $page = $request->query->getInt('page', 1);
+        $paginator = [ ];
         $tuitions = [ ];
         if($gradeFilterView->getCurrentGrade() !== null && $sectionFilterView->getCurrentSection() !== null) {
             $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()], $sectionFilterView->getCurrentSection());
-            $students = $studentRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
+            $paginator = $studentRepository->getStudentsByGradePaginator(self::StudentsPerPage, $page, $gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
         } else if($tuitionFilterView->getCurrentTuition() !== null) {
             $tuitions = [ $tuitionFilterView->getCurrentTuition() ];
-            $students = $studentRepository->findAllByStudyGroups([$tuitionFilterView->getCurrentTuition()->getStudyGroup()]);
+            $paginator = $studentRepository->getStudentsByStudyGroupsPaginator(self::StudentsPerPage, $page, [$tuitionFilterView->getCurrentTuition()->getStudyGroup()]);
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
             $studyGroups = array_map(fn(Tuition $tuition) => $tuition->getStudyGroup(), $tuitions);
 
-            $students = $studentRepository->findAllByStudyGroups($studyGroups);
+            $paginator = $studentRepository->getStudentsByStudyGroupsPaginator(self::StudentsPerPage, $page, $studyGroups);
         }
+
+        $students = iterator_to_array($paginator->getIterator());
+        $pages = ceil((float)$paginator->count() / self::StudentsPerPage);
 
         $sorter->sort($students, StudentStrategy::class);
         $info = [ ];
@@ -448,7 +454,9 @@ class BookController extends AbstractController {
             'teacherFilter' => $teacherFilterView,
             'ownGrades' => $ownGrades,
             'ownTuitions' => $ownTuitions,
-            'info' => $info
+            'info' => $info,
+            'page' => $page,
+            'pages' => $pages
         ]);
     }
 

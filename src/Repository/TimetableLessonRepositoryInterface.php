@@ -130,4 +130,10 @@ interface TimetableLessonRepositoryInterface extends TransactionalRepositoryInte
      * @return int
      */
     public function countHoldLessons(array $tuitions, ?Student $student): int;
+
+    /**
+     * @param DateTime $dateTime
+     * @return TimetableLesson[]
+     */
+    public function findAllByDate(DateTime $dateTime): array;
 }

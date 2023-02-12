@@ -218,7 +218,7 @@ class EntryOverviewHelper {
     /**
      * @return FreeTimespan[]
      */
-    private function computeFreeTimespans(DateTime $start, DateTime $end): array {
+    public function computeFreeTimespans(DateTime $start, DateTime $end): array {
         $result = [ ];
 
         $categories = array_map(fn(int $id) => $this->appointmentCategoryRepository->findOneById($id), $this->timetableSettings->getCategoryIds());

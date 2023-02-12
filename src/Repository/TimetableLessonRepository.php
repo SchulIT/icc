@@ -467,5 +467,10 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
             ->getSingleScalarResult();
     }
 
+    public function findAllByDate(DateTime $dateTime): array {
+        return $this->getDefaultQueryBuilder($dateTime, $dateTime)
+            ->getQuery()
+            ->getResult();
+    }
 
 }

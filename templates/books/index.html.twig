@@ -29,7 +29,7 @@
 
     {% set csrfToken = csrf_token('book_entry') %}
 
-    <div class="container-fluid px-0" id="app">
+    <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9">
                 {% if overview is null %}
@@ -204,6 +204,7 @@
                         </div>
                     {% endif %}
 
+                    <div id="app">
                     {% for day in overview.days %}
                         <div class="card">
                             <div class="card-header d-flex align-items-center">
@@ -492,6 +493,7 @@
                             </div>
                         </div>
                     {% endfor %}
+                    </div>
                 {% endif %}
             </div>
 

@@ -115,7 +115,7 @@
                         <div class="row {% if showBoth %}row-cols-1 row-cols-md-2 {% endif%} mb-3">
                         {% if missingExcusesCount > 0 and sectionFilter.currentSection is not null %}
                             <div class="col">
-                                <div class="card border-warning h-100">
+                                <div class="card border-warning h-100 mb-0">
                                     <div class="card-body">
                                         <h4 class="card-title">
                                             <i class="fas fa-user-times"></i>
@@ -141,7 +141,7 @@
 
                         {% if showResponsibilities %}
                             <div class="col">
-                                <div class="card h-100">
+                                <div class="card h-100 mb-0">
                                     <div class="card-body">
                                         {% set grade = gradeFilter.currentGrade %}
                                         {% if tuitionFilter.currentTuition is not null %}

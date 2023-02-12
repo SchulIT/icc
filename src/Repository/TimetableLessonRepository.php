@@ -17,7 +17,7 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
 
     private function getDefaultQueryBuilder(?DateTime $start = null, ?DateTime $end = null): QueryBuilder {
         $qb = $this->em->createQueryBuilder()
-            ->select(['l', 't', 'r', 't', 'sg', 'g'])
+            ->select(['l', 'r', 't', 'sg', 'g']) // do not hydrate the tuition as it may be null and get hydrated (https://github.com/doctrine/orm/issues/8446)
             ->from(TimetableLesson::class, 'l')
             ->leftJoin('l.tuition', 't')
             ->leftJoin('t.studyGroup', 'sg')

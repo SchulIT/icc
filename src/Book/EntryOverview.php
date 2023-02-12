@@ -32,7 +32,11 @@ class EntryOverview {
         return $this->days;
     }
 
-    public function getComments(DateTime $dateTime): array {
+    public function getComments(?DateTime $dateTime = null): array {
+        if($dateTime === null) {
+            return $this->comments;
+        }
+
         return array_filter($this->comments, fn(BookComment $comment) => $comment->getDate() == $dateTime);
     }
 

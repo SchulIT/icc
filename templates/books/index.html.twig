@@ -250,11 +250,11 @@
                                         </button>
 
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <a href="{{ path('edit_book_comment', { uuid: comment.uuid }) }}" class="dropdown-item" title="{{ 'book.comment.edit.label'|trans }}">
+                                            <a href="{{ path('edit_book_comment', { uuid: comment.uuid }) }}" class="dropdown-item">
                                                 <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
                                             </a>
 
-                                            <a href="{{ path('remove_book_student', { uuid: comment.uuid }) }}" class="dropdown-item" title="{{ 'book.comment.remove.label'|trans }}">
+                                            <a href="{{ path('remove_book_student', { uuid: comment.uuid }) }}" class="dropdown-item text-danger">
                                                 <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
                                             </a>
                                         </div>

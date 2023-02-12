@@ -107,7 +107,7 @@
                         </div>
                     </div>
 
-                    {% set hasMissingExcuses = missingExcuses > 0 and sectionFilter.currentSection is not null %}
+                    {% set hasMissingExcuses = missingExcusesCount > 0 and sectionFilter.currentSection is not null %}
                     {% set showResponsibilities = gradeFilter.currentGrade is not null or (tuitionFilter.currentTuition is not null and tuitionFilter.currentTuition.studyGroup.grades|length == 1) %}
                     {% set showBoth = hasMissingExcuses and showResponsibilities %}
 

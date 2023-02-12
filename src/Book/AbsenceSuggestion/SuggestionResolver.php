@@ -66,7 +66,7 @@ class SuggestionResolver {
                 continue; // prevent duplicates
             }
 
-            if($attendance->getEntry()->getLessonEnd() < $lesson) {
+            if($attendance->getEntry()->getLessonEnd() - 1 < $lesson) {
                 $suggestions[$attendance->getStudent()->getId()] = [
                     'student' => Student::fromEntity($attendance->getStudent(), $this->sectionResolver->getCurrentSection()),
                     'reason' => 'absent_before'

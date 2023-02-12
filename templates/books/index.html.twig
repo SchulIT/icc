@@ -506,42 +506,33 @@
                         <a href="{{ path('add_excuse') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-plus"></i> {{ 'book.excuse_note.add.label'|trans }}
                         </a>
-
-                        {% if tuitionFilter.currentTuition != null and sectionFilter.currentSection != null %}
-                            <a href="{{ path('book_export_tuition_json', { tuition: tuitionFilter.currentTuition.uuid, section: sectionFilter.currentSection.uuid }) }}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-download"></i> {{ 'book.export.json.label'|trans }}
-                            </a>
-
-                            <a href="{{ path('book_export_tuition_xml', { tuition: tuitionFilter.currentTuition.uuid, section: sectionFilter.currentSection.uuid }) }}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-download"></i> {{ 'book.export.xml.label'|trans }}
-                            </a>
-
-                            <button type="button" class="list-group-item list-group-item-action"
-                                    data-export-url="{{ path('book_export_tuition_json', { tuition: tuitionFilter.currentTuition.uuid, section: sectionFilter.currentSection.uuid }) }}"
-                                    data-regular-font-url="{{ path('xhr_font_regular') }}"
-                                    data-bold-font-url="{{ path('xhr_font_bold') }}">
-                                <i class="far fa-file-pdf"></i> {{ 'book.export.pdf.label'|trans }}
-                            </button>
-                        {% endif %}
-
-                        {% if gradeFilter.currentGrade != null and sectionFilter.currentSection != null %}
-                            <a href="{{ path('book_export_grade_json', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-download"></i> {{ 'book.export.json.label'|trans }}
-                            </a>
-
-                            <a href="{{ path('book_export_grade_xml', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-download"></i> {{ 'book.export.xml.label'|trans }}
-                            </a>
-
-                            <button type="button" class="list-group-item list-group-item-action"
-                                    data-export-url="{{ path('book_export_grade_json', { grade: gradeFilter.currentGrade.uuid, section: sectionFilter.currentSection.uuid }) }}"
-                                    data-regular-font-url="{{ path('xhr_font_regular') }}"
-                                    data-bold-font-url="{{ path('xhr_font_bold') }}">
-                                <i class="far fa-file-pdf"></i> {{ 'book.export.pdf.label'|trans }}
-                            </button>
-                        {% endif %}
                     </div>
                 </div>
+                {% endif %}
+
+                {% if ownGrades|length > 0 or ownTuitions|length > 0 %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            {% for grade in ownGrades %}
+                                <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString, grade: grade.uuid.toString }) }}" class="list-group-item list-group-item-action {% if gradeFilter.currentGrade == grade %}active{% endif %}">
+                                    <i class="fas fa-users"></i> {{ grade.name }}
+                                </a>
+                            {% endfor %}
+                            {% for tuition in ownTuitions %}
+                                {% if tuition.isBookEnabled %}
+                                    <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString , tuition: tuition.uuid.toString }) }}" class="list-group-item list-group-item-action {% if tuitionFilter.currentTuition == tuition %}active{% endif %}">
+                                        <i class="fas fa-chalkboard"></i>
+                                        {% if tuition.displayName is not empty %}
+                                            {{ tuition.displayName }}
+                                        {% else %}
+                                            {{ tuition.name }}
+                                        {% endif %}
+                                        ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
                 {% endif %}
 
                 <div class="card">
@@ -573,30 +564,7 @@
                     </div>
                 </div>
 
-                {% if ownGrades|length > 0 or ownTuitions|length > 0 %}
-                <div class="card">
-                    <div class="list-group list-group-flush">
-                        {% for grade in ownGrades %}
-                            <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString, grade: grade.uuid.toString }) }}" class="list-group-item list-group-item-action {% if gradeFilter.currentGrade == grade %}active{% endif %}">
-                                <i class="fas fa-users"></i> {{ grade.name }}
-                            </a>
-                        {% endfor %}
-                        {% for tuition in ownTuitions %}
-                            {% if tuition.isBookEnabled %}
-                            <a href="{{ path('book', { section: sectionFilter.currentSection.uuid.toString , tuition: tuition.uuid.toString }) }}" class="list-group-item list-group-item-action {% if tuitionFilter.currentTuition == tuition %}active{% endif %}">
-                                <i class="fas fa-chalkboard"></i>
-                                {% if tuition.displayName is not empty %}
-                                    {{ tuition.displayName }}
-                                {% else %}
-                                    {{ tuition.name }}
-                                {% endif %}
-                                ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
-                            </a>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
+
             </div>
         </div>
     </div>
@@ -604,40 +572,4 @@
 
 {% block post_javascript %}
     <script src="{{ asset('build/book.js') }}"></script>
-    <script src="{{ asset('build/export-book.js') }}"></script>
-
-    <div class="modal fade" id="export-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ 'book.export.pdf.label'|trans }}</h5>
-                </div>
-
-                <div class="modal-body generating">
-                    <p>
-                        {{ 'book.export.pdf.message'|trans }}
-                    </p>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
-                    </div>
-                </div>
-
-                <div class="modal-body completed d-flex align-items-center hide">
-                    <div>
-                        <i class="far fa-check-circle fa-3x text-success"></i>
-                    </div>
-
-                    <p class="mb-0 ml-2">
-                        {{ 'book.export.pdf.complete'|trans }}
-                    </p>
-                </div>
-
-                <div class="modal-footer">
-                    <a href="#" class="btn btn-primary download disabled" target="_blank">
-                        <i class="fas fa-download"></i> {{ 'book.export.pdf.download'|trans }}
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endblock %}

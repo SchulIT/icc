@@ -106,8 +106,11 @@
                         </div>
 
                         <div class="form-group">
-                          <label for="comment" class="control-label">{{ $trans('label.comment') }}</label>
+                          <label for="comment" class="control-label">{{ $trans('book.entry.comment.label') }}</label>
                           <textarea v-model="entry.comment" name="lesson_entry[comment]" class="form-control" id="comment"></textarea>
+                          <small class="form-text text-muted">
+                            {{ $trans('book.entry.comment.help')}}
+                          </small>
                         </div>
 
                         <div class="form-group">

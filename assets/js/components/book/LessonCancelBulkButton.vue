@@ -46,7 +46,7 @@
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $trans('action.cancel') }}</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $trans('actions.cancel') }}</button>
             <button type="button" class="btn btn-danger" @click.prevent="submit()" :disabled="!isValid || isLoading">
               <i class="fas fa-spinner fa-spin" v-if="isLoading"></i>
               {{ $trans('book.entry.propose_cancel.button')}}

@@ -89,8 +89,8 @@
             <input type="hidden" :name="'lesson_entry_cancel[' + csrfname + ']'" :value="csrftoken">
             <input type="hidden" name="_ref" :value="ref">
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $trans('action.cancel') }}</button>
-              <button type="button" class="btn btn-primary" @click.prevent="submit()" :disabled="!this.isValid">{{$trans('action.save')}}</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $trans('actions.cancel') }}</button>
+              <button type="button" class="btn btn-primary" @click.prevent="submit()" :disabled="!this.isValid">{{$trans('actions.save')}}</button>
             </div>
           </form>
         </div>

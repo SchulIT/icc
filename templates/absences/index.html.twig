@@ -86,7 +86,7 @@
                                     <tbody>
                                     {% for absence in group.absences %}
                                         <tr>
-                                            <td>
+                                            <td class="align-middle">
                                                 {{ absence.type.name }}
 
                                                 {% if absence.type.mustApprove %}
@@ -113,13 +113,13 @@
                                                     </span>
                                                 {% endif %}
                                             </td>
-                                            <td>{{ absence.student.lastname }}</td>
-                                            <td>{{ absence.student.firstname }}</td>
-                                            <td>{{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }})</td>
-                                            <td>{{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})</td>
-                                            <td>{{ absence.createdAt|format_datetime }}</td>
+                                            <td class="align-middle">{{ absence.student.lastname }}</td>
+                                            <td class="align-middle">{{ absence.student.firstname }}</td>
+                                            <td class="align-middle">{{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }})</td>
+                                            <td class="align-middle">{{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})</td>
+                                            <td class="align-middle">{{ absence.createdAt|format_datetime }}</td>
 
-                                            <td>
+                                            <td class="align-middle">
                                                 {% set grade = absence.student.grade(section) %}
                                                 {% if grade is not null %}
                                                     {{ grade.name }}
@@ -127,16 +127,34 @@
                                                     {{ 'label.not_available'|trans }}
                                                 {% endif %}
                                             </td>
-                                            <td>
-                                                <a href="{{ path('show_absence', { uuid: absence.uuid }) }}" class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-info-circle"></i>
-                                                </a>
+                                            <td class="align-middle">
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
 
-                                                {% if is_granted('edit', absence) %}
-                                                    <a href="{{ path('edit_absence', { uuid: absence.uuid }) }}" class="btn btn-primary btn-sm">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                {% endif %}
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a href="{{ path('show_absence', { uuid: absence.uuid }) }}" class="dropdown-item">
+                                                            <i class="fas fa-info-circle"></i> {{ 'actions.view'|trans }}
+                                                        </a>
+
+                                                        {% if is_granted('edit', absence) %}
+                                                            <a href="{{ path('edit_absence', { uuid: absence.uuid }) }}" class="dropdown-item">
+                                                                <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
+                                                            </a>
+                                                        {% endif %}
+
+                                                        {% if is_granted('remove', absence) %}
+                                                            <a href="{{ path('remove_absence', { uuid: absence.uuid}) }}" class="dropdown-item text-danger">
+                                                                <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+                                                            </a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+
+
+
+
                                             </td>
                                         </tr>
                                     {% endfor %}

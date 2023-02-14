@@ -1365,7 +1365,7 @@ caution: Achtung
 student_absences:
     label: Abwesenheitsmeldungen
     empty: Es liegen keine Abwesenheitsmeldungen vor.
-    created_at: abwesend am
+    created_at: gemeldet am
     created_by: gemeldet von
     until_short: 'vsl. bis %date% (%lesson%. Stunde)'
     active: aktiv
@@ -1407,6 +1407,11 @@ student_absences:
         success: Abwesenheitsmeldung erfolgreich aktualisiert
         from_date: 'Das Startdatum wurde von %oldDate% (%oldLesson%. Stunde) auf %newDate% (%newLesson%. Stunde) geändert.'
         until_date: 'Das Enddatum wurde von %oldDate% (%oldLesson%. Stunde) auf %newDate% (%newLesson%. Stunde) geändert.'
+
+    remove:
+        label: Abwesenheitsmeldung löschen
+        success: Abwesenheitsmeldung erfolgreich gelöscht
+        confirm: Soll die Abwesenheitsmeldung wirklich gelöscht werden?
 
     show:
         label: Abwesenheitsmeldung

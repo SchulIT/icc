@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Converter\StudentStringConverter;
 use App\Converter\StudyGroupStringConverter;
 use App\Entity\Student;
 use App\Form\Model\BulkStudentAbsence;
 use App\Form\StudentAbsenceBulkType;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Sorting\StudyGroupStrategy;
+use SchulIT\CommonBundle\Form\ConfirmType;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\DateLesson;
 use App\Entity\StudentAbsence;
@@ -48,6 +50,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/absences')]
 #[Security("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-absence')")]
@@ -385,5 +388,28 @@ class StudentAbsenceController extends AbstractController {
             $attachment->getFilename(),
             $mimeTypes->getMimeType($extension)
         );
+    }
+
+    #[Route('/{uuid}/remove', name: 'remove_absence')]
+    public function remove(StudentAbsence $absence, Request $request, StudentAbsenceRepositoryInterface $repository): Response {
+        $this->denyAccessUnlessGranted(StudentAbsenceVoter::Remove, $absence);
+
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'student_absences.remove.confirm'
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $repository->remove($absence);
+
+            $this->addFlash('success', 'student_absences.remove.success');
+
+            return $this->redirectToRoute('absences');
+        }
+
+        return $this->render('absences/remove.html.twig', [
+            'form' => $form->createView(),
+            'absence' => $absence
+        ]);
     }
 }

@@ -26,6 +26,8 @@ class StudentAbsenceVoter extends Voter {
     public const Deny = 'deny';
     public const Edit = 'edit';
 
+    public const Remove = 'remove';
+
     public function __construct(private DateHelper $dateHelper, private SectionResolverInterface $sectionResolver, private AccessDecisionManagerInterface $accessDecisionManager)
     {
     }
@@ -37,7 +39,7 @@ class StudentAbsenceVoter extends Voter {
         return $attribute === self::New
             || $attribute === self::CanViewAny
             || $attribute === self::Bulk
-            || (in_array($attribute, [ self::Edit, self::View, self::Approve, self::Deny ]) && $subject instanceof StudentAbsence);
+            || (in_array($attribute, [ self::Edit, self::View, self::Approve, self::Deny, self::Remove ]) && $subject instanceof StudentAbsence);
     }
 
     /**
@@ -50,12 +52,12 @@ class StudentAbsenceVoter extends Voter {
             self::Bulk => $this->canCreateBulk($token),
             self::View => $this->canView($token, $subject),
             self::Edit => $this->canEdit($token, $subject),
+            self::Remove => $this->canRemove($token, $subject),
             self::CanViewAny => $this->canViewAny($token),
             self::Approve, self::Deny => $this->canApproveOrDeny($token, $subject),
             default => throw new LogicException('This code should not be reached.'),
         };
     }
-
     private function canCreate(TokenInterface $token): bool {
         if($this->accessDecisionManager->decide($token, ['ROLE_STUDENT_ABSENCE_CREATOR']) === true || $this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) ) {
             return true;
@@ -128,6 +130,10 @@ class StudentAbsenceVoter extends Voter {
         }
 
         return $absence->getCreatedBy()->getId() === $user->getId();
+    }
+
+    private function canRemove(TokenInterface $token, StudentAbsence $absence): bool {
+        return $this->accessDecisionManager->decide($token, ['ROLE_STUDENT_ABSENCE_VIEWER']);
     }
 
     private function canApproveOrDeny(TokenInterface $token, StudentAbsence $absence): bool {

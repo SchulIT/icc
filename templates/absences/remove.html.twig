@@ -1,0 +1,50 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'student_absences.remove.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('absences') }}">{{ 'student_absences.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">{{ 'remove.header'|trans }}</div>
+
+        <div class="card-body">
+            <div class="card">
+                <div class="card-body">
+                    <p>
+                    <span class="badge badge-primary">{{ absence.type.name }}</span>
+
+                    <i class="fas fa-user-graduate"></i> {{ absence.student|student }}
+                    <i class="fas fa-calendar-alt"></i>
+                        {{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }})
+                        -
+                        {{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})
+                    </p>
+                    {{ absence.message|markdown }}
+                </div>
+            </div>
+
+            {{ form_widget(form.group_general.confirm) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fa fa-trash"></i> {{ 'remove.confirm'|trans }}
+        </button>
+
+        <a href="javascript:history.back()" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

@@ -72,7 +72,7 @@ Diese Rolle beinhaltet die Rolle ``ROLE_BOOK_VIEWER`` und erlaubt darüber hinau
 ROLE_STUDENT_ABSENCE_VIEWER
 ###########################
 
-Nutzer mit dieser Rolle haben lesenden Zugriff auf alle Abwesenheitsmeldungen.
+Nutzer mit dieser Rolle haben Zugriff auf alle Abwesenheitsmeldungen und können diese editieren und löschen.
 
 ROLE_STUDENT_ABSENCE_CREATOR
 ############################

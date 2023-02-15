@@ -4,8 +4,10 @@ namespace App\Controller\Admin;
 
 use App\Entity\Substitution;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -19,36 +21,75 @@ class SubstitutionCrudController extends AbstractCrudController
         return Substitution::class;
     }
 
+    public function configureFilters(Filters $filters): Filters {
+        return $filters
+            ->add('date')
+            ->add('type')
+            ->add('subject')
+            ->add('studyGroups')
+            ->add('replacementStudyGroups')
+            ->add('teachers')
+            ->add('replacementTeachers')
+            ->add('rooms')
+            ->add('replacementRooms')
+            ->add('replacementGrades')
+            ->add('remark');
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Substitution')
-            ->setEntityLabelInPlural('Substitution')
+            ->setEntityLabelInSingular('Vertretung')
+            ->setEntityLabelInPlural('Vertretungen')
             ->setSearchFields(['externalId', 'lessonStart', 'lessonEnd', 'type', 'subject', 'replacementSubject', 'roomName', 'replacementRoomName', 'remark', 'id', 'uuid']);
     }
 
     public function configureFields(string $pageName): iterable
     {
-        $externalId = TextField::new('externalId');
-        $date = DateField::new('date');
-        $lessonStart = IntegerField::new('lessonStart');
-        $lessonEnd = IntegerField::new('lessonEnd');
-        $startsBefore = Field::new('startsBefore');
-        $type = TextField::new('type');
-        $subject = TextField::new('subject');
-        $replacementSubject = TextField::new('replacementSubject')->hideOnIndex();
-        $rooms = AssociationField::new('rooms')->hideOnIndex();
-        $replacementRooms = AssociationField::new('replacementRooms')->hideOnIndex();
-        $remark = TextField::new('remark')->hideOnIndex();
-        $teachers = AssociationField::new('teachers')->hideOnIndex();
-        $replacementTeachers = AssociationField::new('replacementTeachers')->hideOnIndex();
-        $studyGroups = AssociationField::new('studyGroups')->hideOnIndex();
-        $replacementStudyGroups = AssociationField::new('replacementStudyGroups')->hideOnIndex();
-        $replacementGrades = AssociationField::new('replacementGrades')->hideOnIndex();
-        $roomName = TextField::new('roomName')->hideOnIndex();
-        $replacementRoomName = TextField::new('replacementRoomName')->hideOnIndex();
-        $id = IntegerField::new('id', 'ID')->hideOnForm();
-
-        return [$id, $externalId, $date, $lessonStart, $lessonEnd, $startsBefore, $type, $subject, $replacementSubject, $roomName, $replacementRoomName, $remark, $teachers, $replacementTeachers, $rooms, $replacementRooms, $studyGroups, $replacementStudyGroups, $replacementGrades];
+        return [
+            TextField::new('externalId')->setLabel('Externe ID'),
+            DateField::new('date')->setLabel('Datum'),
+            IntegerField::new('lessonStart')->setLabel('Beginn'),
+            IntegerField::new('lessonEnd')->setLabel('Ende'),
+            BooleanField::new('startsBefore')
+                ->setRequired(false)
+                ->setLabel('startet vor der Stunde')
+                ->setHelp('Gibt an, ob diese Vertretung vor der angegeben Stunde stattfindet (bspw. bei Pausenaufsichten).'),
+            TextField::new('type')->setLabel('Art'),
+            TextField::new('subject')->setLabel('Fach'),
+            TextField::new('replacementSubject')
+                ->setLabel('Vertretungsfach')
+                ->hideOnIndex(),
+            AssociationField::new('rooms')
+                ->setLabel('Räume')
+                ->hideOnIndex(),
+            AssociationField::new('replacementRooms')
+                ->setLabel('Vertretungsraum')
+                ->hideOnIndex(),
+            AssociationField::new('teachers')
+                ->setLabel('Lehrkräfte')
+                ->hideOnIndex(),
+            AssociationField::new('replacementTeachers')
+                ->setLabel('Vertretungslehrkräfte')
+                ->hideOnIndex(),
+            AssociationField::new('studyGroups')
+                ->setLabel('Lerngruppen')
+                ->hideOnIndex(),
+            AssociationField::new('replacementStudyGroups')
+                ->setLabel('Vertretungslerngruppen')
+                ->hideOnIndex(),
+            AssociationField::new('replacementGrades')
+                ->setLabel('Vertretungsklasse')
+                ->hideOnIndex(),
+            TextField::new('roomName')
+                ->setLabel('Raumname')
+                ->hideOnIndex(),
+            TextField::new('replacementRoomName')
+                ->setLabel('Vertretungsraumname')
+                ->hideOnIndex(),
+            TextField::new('remark')
+                ->setLabel('Bemerkung')
+                ->hideOnIndex()
+        ];
     }
 }

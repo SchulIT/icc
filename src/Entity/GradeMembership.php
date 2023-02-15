@@ -40,4 +40,8 @@ class GradeMembership {
         $this->grade = $grade;
         return $this;
     }
+
+    public function __toString(): string {
+        return sprintf('%s (%s)', $this->getStudent(), $this->getSection());
+    }
 }

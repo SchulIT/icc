@@ -7,9 +7,11 @@ use App\Entity\User;
 use App\Entity\UserType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -22,11 +24,18 @@ class UserCrudController extends AbstractCrudController
         return User::class;
     }
 
+    public function configureFilters(Filters $filters): Filters {
+        return $filters
+            ->add('userType')
+            ->add('teacher')
+            ->add('students');
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('User')
-            ->setEntityLabelInPlural('User')
+            ->setEntityLabelInSingular('Benutzer')
+            ->setEntityLabelInPlural('Benutzer')
             ->setSearchFields(['idpId', 'username', 'firstname', 'lastname', 'email', 'roles', 'userType', 'data', 'id', 'uuid']);
     }
 
@@ -38,21 +47,41 @@ class UserCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $username = TextField::new('username');
-        $firstname = TextField::new('firstname');
-        $lastname = TextField::new('lastname');
-        $email = TextField::new('email');
-        $userType = EnumField::new('userType')->setFormType(EnumType::class)->setFormTypeOption('class', UserType::class);
-        $teacher = AssociationField::new('teacher')->hideOnIndex()->setFormTypeOption('required', false);
-        $students = AssociationField::new('students')->hideOnIndex();
-        $idpId = TextField::new('idpId');
-        $roles = ArrayField::new('roles')->hideOnIndex();
-        $isSubstitutionNotificationsEnabled = Field::new('isSubstitutionNotificationsEnabled')->hideOnIndex();
-        $isExamNotificationsEnabled = Field::new('isExamNotificationsEnabled')->hideOnIndex();
-        $isMessageNotificationsEnabled = Field::new('isMessageNotificationsEnabled')->hideOnIndex();
-        $isEmailNotificationsEnabled = Field::new('isEmailNotificationsEnabled')->hideOnIndex();
-        $id = IntegerField::new('id', 'ID')->hideOnForm();
-
-        return [$id, $idpId, $username, $firstname, $lastname, $email, $roles, $userType, $isSubstitutionNotificationsEnabled, $isExamNotificationsEnabled, $isMessageNotificationsEnabled, $isEmailNotificationsEnabled, $teacher, $students];
+        return [
+            TextField::new('idpId')
+                ->setLabel('ID im Identity Provider')
+                ->setHelp('Diese ID wird verwenden, um Benutzer vom IDP wiederzuerkennen, auch wenn sich Stammdaten (bspw. Benutzername) ändern.')
+                ->hideOnIndex(),
+            TextField::new('username')->setLabel('Benutzername'),
+            TextField::new('firstname')->setLabel('Vorname'),
+            TextField::new('lastname')->setLabel('Nachname'),
+            EmailField::new('email')->setLabel('E-Mail-Adresse'),
+            EnumField::new('userType')
+                ->setLabel('Art')
+                ->setFormType(EnumType::class)
+                ->setFormTypeOption('class', UserType::class),
+            ArrayField::new('roles')
+                ->setLabel('Rollen')
+                ->hideOnIndex(),
+            AssociationField::new('teacher')
+                ->setLabel('Lehrkraft')
+                ->hideOnIndex()
+                ->setFormTypeOption('required', false),
+            AssociationField::new('students')
+                ->hideOnIndex()
+                ->setLabel('Lernende'),
+            Field::new('isSubstitutionNotificationsEnabled')
+                ->setLabel('Benachrichtigen bei neuem Vertretungsplan')
+                ->hideOnIndex(),
+            Field::new('isExamNotificationsEnabled')
+                ->setLabel('Benachrichtigen bei neuem Klausurplan')
+                ->hideOnIndex(),
+            Field::new('isMessageNotificationsEnabled')
+                ->setLabel('Benachrichtigen bei neuen Mitteilungen')
+                ->hideOnIndex(),
+            Field::new('isEmailNotificationsEnabled')
+                ->setLabel('Per E-Mail benachrichtigen')
+                ->hideOnIndex()
+        ];
     }
 }

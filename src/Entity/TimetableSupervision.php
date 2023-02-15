@@ -97,11 +97,11 @@ class TimetableSupervision {
         return $this;
     }
 
-    public function getTeacher(): Teacher {
+    public function getTeacher(): ?Teacher {
         return $this->teacher;
     }
 
-    public function setTeacher(Teacher $teacher): TimetableSupervision {
+    public function setTeacher(?Teacher $teacher): TimetableSupervision {
         $this->teacher = $teacher;
         return $this;
     }

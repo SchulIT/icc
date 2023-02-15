@@ -66,4 +66,8 @@ class GradeTeacher {
         $this->type = $type;
         return $this;
     }
+
+    public function __toString(): string {
+        return sprintf('%s (%s)', $this->getTeacher(), $this->getSection());
+    }
 }

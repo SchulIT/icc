@@ -4,8 +4,9 @@ namespace App\Controller\Admin;
 
 use App\Entity\FreeTimespan;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 
 class FreeTimespanCrudController extends AbstractCrudController
@@ -15,21 +16,25 @@ class FreeTimespanCrudController extends AbstractCrudController
         return FreeTimespan::class;
     }
 
+    public function configureFilters(Filters $filters): Filters {
+        return $filters
+            ->add('date');
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('FreeTimespan')
-            ->setEntityLabelInPlural('FreeTimespan')
+            ->setEntityLabelInSingular('Unterrichtsfreie Zeit')
+            ->setEntityLabelInPlural('Unterrichtsfreie Zeiten')
             ->setSearchFields(['start', 'end', 'id']);
     }
 
     public function configureFields(string $pageName): iterable
     {
-        $date = DateTimeField::new('date');
-        $start = IntegerField::new('start');
-        $end = IntegerField::new('end');
-        $id = IntegerField::new('id', 'ID')->hideOnForm();
-
-        return [$id, $date, $start, $end ];
+        return [
+            DateField::new('date')->setLabel('Datum'),
+            IntegerField::new('start')->setLabel('Beginn'),
+            IntegerField::new('end')->setLabel('Ende')
+        ];
     }
 }

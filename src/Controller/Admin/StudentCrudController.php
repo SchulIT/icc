@@ -7,10 +7,12 @@ use App\Entity\Gender;
 use App\Entity\Student;
 use App\Form\StudentLearningManagementSystemInformationType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -22,36 +24,57 @@ class StudentCrudController extends AbstractCrudController
         return Student::class;
     }
 
+    public function configureFilters(Filters $filters): Filters {
+        return $filters
+            ->add('externalId')
+            ->add('uuid')
+            ->add('firstname')
+            ->add('lastname')
+            ->add('gender')
+            ->add('status')
+            ->add('sections');
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Student')
-            ->setEntityLabelInPlural('Student')
+            ->setEntityLabelInSingular('Schülerin/Schüler')
+            ->setEntityLabelInPlural('Schülerinnen und Schüler')
             ->setSearchFields(['externalId', 'uniqueIdentifier', 'firstname', 'lastname', 'gender', 'email', 'status', 'id', 'uuid']);
     }
 
     public function configureFields(string $pageName): iterable
     {
-        $externalId = TextField::new('externalId');
-        $firstname = TextField::new('firstname');
-        $lastname = TextField::new('lastname');
-        $gender = EnumField::new('gender')
-            ->setFormType(EnumType::class)
-            ->setFormTypeOption('class', Gender::class);
-        $email = TextField::new('email');
-        $status = TextField::new('status');
-        $birthday = DateField::new('birthday')->hideOnIndex();
-        $approvedPrivacyCategories = AssociationField::new('approvedPrivacyCategories')->hideOnIndex();
-        $uniqueIdentifier = TextField::new('uniqueIdentifier')->hideOnIndex();
-        $id = IntegerField::new('id', 'ID')->hideOnForm();
-        $sections = AssociationField::new('sections')->hideOnIndex();
-        $lms = CollectionField::new('learningManagementSystems')
-            ->setEntryType(StudentLearningManagementSystemInformationType::class)
-            ->hideOnIndex()
-            ->allowAdd(true)
-            ->allowDelete(true)
-            ->setFormTypeOption('by_reference', false);
-
-        return [$id, $externalId, $uniqueIdentifier, $firstname, $lastname, $gender, $email, $status, $birthday, $approvedPrivacyCategories, $sections, $lms];
+        return [
+            TextField::new('externalId')->setLabel('Externe ID'),
+            TextField::new('uniqueIdentifier')
+                ->setLabel('Eindeutigen Identifizierer')
+                ->setHelp('Dieser Identifizierer kann zusätzlich zur externen ID gesetzt werden, um SuS wiederzuerkennen (hilfreich z.B. bei der Verwendung von SchILD und Untis).')
+                ->hideOnIndex(),
+            TextField::new('firstname')->setLabel('Vorname'),
+            TextField::new('lastname')->setLabel('Nachname'),
+            EnumField::new('gender')
+                ->setLabel('Geschlecht')
+                ->setFormType(EnumType::class)
+                ->setFormTypeOption('class', Gender::class),
+            EmailField::new('email')->setLabel('E-Mail-Adresse'),
+            TextField::new('status')->setLabel('Status'),
+            DateField::new('birthday')->setLabel('Geburtstag')->hideOnIndex(),
+            AssociationField::new('sections')
+                ->setLabel('Abschnitte')
+                ->setFormTypeOption('expanded', true)
+                ->hideOnIndex(),
+            AssociationField::new('approvedPrivacyCategories')
+                ->setLabel('Zugestimmte Datenschutzkategorien')
+                ->setFormTypeOption('expanded', true)
+                ->hideOnIndex(),
+            CollectionField::new('learningManagementSystems')
+                ->setLabel('Lernplattformen')
+                ->setEntryType(StudentLearningManagementSystemInformationType::class)
+                ->hideOnIndex()
+                ->allowAdd(true)
+                ->allowDelete(true)
+                ->setFormTypeOption('by_reference', false)
+        ];
     }
 }

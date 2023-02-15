@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Infotext;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -17,20 +18,23 @@ class InfotextCrudController extends AbstractCrudController
         return Infotext::class;
     }
 
+    public function configureFilters(Filters $filters): Filters {
+        return $filters->add('date');
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Infotext')
-            ->setEntityLabelInPlural('Infotext')
+            ->setEntityLabelInSingular('Tagestext')
+            ->setEntityLabelInPlural('Tagestexte')
             ->setSearchFields(['content', 'id', 'uuid']);
     }
 
     public function configureFields(string $pageName): iterable
     {
-        $date = DateField::new('date');
-        $content = TextareaField::new('content')->hideOnIndex();
-        $id = IntegerField::new('id', 'ID')->hideOnForm();
-
-        return [$id, $date, $content];
+        return [
+            DateField::new('date')->setLabel('Datum'),
+            TextareaField::new('content')->setLabel('Text')
+        ];
     }
 }

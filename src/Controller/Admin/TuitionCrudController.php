@@ -23,29 +23,30 @@ class TuitionCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Tuition')
-            ->setEntityLabelInPlural('Tuition')
+            ->setEntityLabelInSingular('Unterrichte')
+            ->setEntityLabelInPlural('Unterricht')
             ->setSearchFields(['externalId', 'name', 'displayName', 'id', 'uuid']);
     }
 
     public function configureFilters(Filters $filters): Filters {
         return $filters
             ->add('section')
+            ->add('subject')
             ->add(EntityFilter::new('studyGroup')->canSelectMultiple(true));
     }
 
     public function configureFields(string $pageName): iterable
     {
-        $externalId = TextField::new('externalId');
-        $name = TextField::new('name');
-        $displayName = TextField::new('displayName');
-        $subject = AssociationField::new('subject');
-        $teachers = AssociationField::new('teachers');
-        $studyGroup = AssociationField::new('studyGroup');
-        $id = IntegerField::new('id', 'ID')->hideOnForm();
-        $section = AssociationField::new('section');
-        $bookEnabled = BooleanField::new('isBookEnabled');
-
-        return [$id, $externalId, $name, $displayName, $subject, $teachers, $bookEnabled, $studyGroup, $section];
+        return [
+            TextField::new('externalId')->setLabel('Externe ID'),
+            TextField::new('name')->setLabel('Name'),
+            TextField::new('displayName')
+                ->setLabel('Anzeigename'),
+            AssociationField::new('subject')->setLabel('Fach'),
+            AssociationField::new('teachers')->setLabel('Lehrkräfte'),
+            AssociationField::new('studyGroup')->setLabel('Lerngruppe'),
+            AssociationField::new('section')->setLabel('Abschnitt')->setFormTypeOption('expanded', true),
+            BooleanField::new('isBookEnabled')->setLabel('Unterrichtsbuch aktiv')
+        ];
     }
 }

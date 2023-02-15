@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Absence;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -16,24 +17,34 @@ class AbsenceCrudController extends AbstractCrudController
         return Absence::class;
     }
 
+    public function configureFilters(Filters $filters): Filters {
+        return $filters
+            ->add('date')
+            ->add('teacher')
+            ->add('studyGroup')
+            ->add('room');
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Absence')
-            ->setEntityLabelInPlural('Absence')
+            ->setEntityLabelInSingular('Absenz')
+            ->setEntityLabelInPlural('Absenzen')
             ->setSearchFields(['lessonStart', 'lessonEnd', 'id']);
     }
 
     public function configureFields(string $pageName): iterable
     {
-        $date = DateField::new('date');
-        $lessonStart = IntegerField::new('lessonStart');
-        $lessonEnd = IntegerField::new('lessonEnd');
-        $teacher = AssociationField::new('teacher');
-        $studyGroup = AssociationField::new('studyGroup');
-        $id = IntegerField::new('id', 'ID')->hideOnForm();
-        $room = AssociationField::new('room');
-
-        return [$id, $date, $lessonStart, $lessonEnd, $teacher, $studyGroup, $room];
+        return [
+            DateField::new('date')->setLabel('Datum'),
+            IntegerField::new('lessonStart')->setLabel('Beginn'),
+            IntegerField::new('lessonEnd')->setLabel('Ende'),
+            AssociationField::new('teacher')->setLabel('Lehrkraft')
+                ->setRequired(false),
+            AssociationField::new('studyGroup')->setLabel('Lerngruppe')
+                ->setRequired(false),
+            AssociationField::new('room')->setLabel('Raum')
+                ->setRequired(false)
+        ];
     }
 }

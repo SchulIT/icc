@@ -5,9 +5,11 @@ namespace App\Controller\Admin;
 use App\Controller\Admin\Field\EnumField;
 use App\Entity\Gender;
 use App\Entity\Student;
+use App\Form\StudentLearningManagementSystemInformationType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -43,7 +45,13 @@ class StudentCrudController extends AbstractCrudController
         $uniqueIdentifier = TextField::new('uniqueIdentifier')->hideOnIndex();
         $id = IntegerField::new('id', 'ID')->hideOnForm();
         $sections = AssociationField::new('sections')->hideOnIndex();
+        $lms = CollectionField::new('learningManagementSystems')
+            ->setEntryType(StudentLearningManagementSystemInformationType::class)
+            ->hideOnIndex()
+            ->allowAdd(true)
+            ->allowDelete(true)
+            ->setFormTypeOption('by_reference', false);
 
-        return [$id, $externalId, $uniqueIdentifier, $firstname, $lastname, $gender, $email, $status, $birthday, $approvedPrivacyCategories, $sections];
+        return [$id, $externalId, $uniqueIdentifier, $firstname, $lastname, $gender, $email, $status, $birthday, $approvedPrivacyCategories, $sections, $lms];
     }
 }

@@ -9,9 +9,11 @@ use App\Entity\Grade;
 use App\Entity\GradeMembership;
 use App\Entity\GradeTeacher;
 use App\Entity\Infotext;
+use App\Entity\LearningManagementSystem;
 use App\Entity\Room;
 use App\Entity\StudentAbsence;
 use App\Entity\Student;
+use App\Entity\StudentLearningManagementSystemInformation;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Substitution;
@@ -64,6 +66,8 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud('TimetableSupervision', 'fas fa-folder-open', TimetableSupervision::class),
             MenuItem::linkToCrud('Tuition', 'fas fa-folder-open', Tuition::class),
             MenuItem::linkToCrud('User', 'fas fa-folder-open', User::class),
+            MenuItem::linkToCrud('Lernplattformen', '', LearningManagementSystem::class),
+            MenuItem::linkToCrud('Zustimmungen (SuS)', '', StudentLearningManagementSystemInformation::class)
         ];
     }
 }

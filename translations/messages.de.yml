@@ -229,6 +229,13 @@ label:
     show_all: Alle anzeigen
     task: Aufgabe
     person: Person(en)
+    consented: Nutzung eingewilligt
+    consent_obtained: Nutzung eingeholt
+    audio_consented: Audiokonferenz eingewilligt
+    video_consented: Videokonferenz eingewilligt
+    username: Benutzername
+    password: Passwort
+    lms: Lernplattform
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

@@ -14,8 +14,10 @@ use App\Import\Importer;
 use App\Import\ImportException;
 use App\Import\ImportResult;
 use App\Import\InfotextsImportStrategy;
+use App\Import\LearningManagementSystemsImportStrategy;
 use App\Import\PrivacyCategoryImportStrategy;
 use App\Import\RoomImportStrategy;
+use App\Import\StudentLearningManagementSystemInformationImportStrategy;
 use App\Import\StudentsImportStrategy;
 use App\Import\StudyGroupImportStrategy;
 use App\Import\StudyGroupMembershipImportStrategy;
@@ -34,8 +36,10 @@ use App\Request\Data\GradeMembershipsData;
 use App\Request\Data\GradesData;
 use App\Request\Data\GradeTeachersData;
 use App\Request\Data\InfotextsData;
+use App\Request\Data\LearningManagementSystemsData;
 use App\Request\Data\PrivacyCategoriesData;
 use App\Request\Data\RoomsData;
+use App\Request\Data\StudentLearningManagementSystemsData;
 use App\Request\Data\StudentsData;
 use App\Request\Data\StudyGroupMembershipsData;
 use App\Request\Data\StudyGroupsData;
@@ -573,6 +577,56 @@ class ImportController extends AbstractController {
     #[Route(path: '/free_lessons', methods: ['POST'])]
     public function freeLessons(FreeLessonTimespansData $timespansData, FreeTimespanImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($timespansData, $strategy);
+        return $this->fromResult($result);
+    }
+
+    /**
+     * Importiert Lernplattformen (SVWS NRW).
+     *
+     * @OA\Post(operationId="import_lms")
+     * @OA\RequestBody(
+     *     @Model(type=LearningManagementSystemsData::class)
+     * )
+     * @OA\Response(
+     *     response=200,
+     *     description="Import erfolgreich.",
+     *     @Model(type=ImportResponse::class)
+     * )
+     * @OA\Response(
+     *     response=400,
+     *     description="Fehler bei der Validierung.",
+     *     @Model(type=ErrorResponse::class)
+     * )
+     * @throws ImportException
+     */
+    #[Route(path: '/lms', methods: ['POST'])]
+    public function lms(LearningManagementSystemsData $learningManagementSystemsData, LearningManagementSystemsImportStrategy $strategy): Response {
+        $result = $this->importer->import($learningManagementSystemsData, $strategy);
+        return $this->fromResult($result);
+    }
+
+    /**
+     * Importiert Informationen zu Lernplattformzustimmungen von Schülerinnen und Schülern (SVWS NRW).
+     *
+     * @OA\Post(operationId="import_student_lms")
+     * @OA\RequestBody(
+     *     @Model(type=StudentLearningManagementSystemsData::class)
+     * )
+     * @OA\Response(
+     *     response=200,
+     *     description="Import erfolgreich.",
+     *     @Model(type=ImportResponse::class)
+     * )
+     * @OA\Response(
+     *     response=400,
+     *     description="Fehler bei der Validierung.",
+     *     @Model(type=ErrorResponse::class)
+     * )
+     * @throws ImportException
+     */
+    #[Route(path: '/lms/students', methods: ['POST'])]
+    public function lmsInfo(StudentLearningManagementSystemsData $data, StudentLearningManagementSystemInformationImportStrategy $strategy): Response {
+        $result = $this->importer->replaceImport($data, $strategy);
         return $this->fromResult($result);
     }
 }

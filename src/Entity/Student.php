@@ -81,6 +81,9 @@ class Student implements JsonSerializable, Stringable {
     #[ORM\ManyToMany(targetEntity: Section::class, cascade: ['persist'])]
     private $sections;
 
+    #[ORM\OneToMany(mappedBy: 'student', targetEntity: StudentLearningManagementSystemInformation::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $learningManagementSystems;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
 
@@ -89,6 +92,7 @@ class Student implements JsonSerializable, Stringable {
         $this->approvedPrivacyCategories = new ArrayCollection();
         $this->sections = new ArrayCollection();
         $this->gradeMemberships = new ArrayCollection();
+        $this->learningManagementSystems = new ArrayCollection();
     }
 
     public function getExternalId(): ?string {
@@ -231,6 +235,22 @@ class Student implements JsonSerializable, Stringable {
      */
     public function getSections(): Collection {
         return $this->sections;
+    }
+
+    public function addLearningManagementSystem(StudentLearningManagementSystemInformation $info): void {
+        $info->setStudent($this);
+        $this->learningManagementSystems->add($info);
+    }
+
+    public function removeLearningManagementSystem(StudentLearningManagementSystemInformation $info): void {
+        $this->learningManagementSystems->removeElement($info);
+    }
+
+    /**
+     * @return Collection<StudentLearningManagementSystemInformation>
+     */
+    public function getLearningManagementSystems(): Collection {
+        return $this->learningManagementSystems;
     }
 
     public function __toString(): string {

@@ -235,6 +235,9 @@ class EntryOverviewHelper {
             }
         }
 
+        // findAllStartEnd queries appointments which includes the end date - but that may cause issues when $start==$end, so manually filter
+        $result = array_filter($result, fn(FreeTimespan $timespan) => $timespan->getDate() >= $start && $timespan->getDate() <= $end);
+
         $current = clone $start;
         while($current <= $end) {
             $freeTimespans = $this->freeTimespanRepository->findAllByDate($current);

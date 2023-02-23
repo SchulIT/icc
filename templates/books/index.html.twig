@@ -342,7 +342,7 @@
                                 {% endif %}
 
                                 {% for lesson in day.lessons %}
-                                    {% if lesson.entry is empty or lesson.lessonNumber == lesson.lesson.lessonStart %}
+                                    {% if lesson.entry is empty or lesson.lessonNumber == lesson.entry.lessonStart %}
                                     <div class="list-group-item d-flex align-items-center">
                                         <div class="book-lesson m-0 p-0">
                                             {% if lesson.entry is not null %}

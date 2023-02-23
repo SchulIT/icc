@@ -2,22 +2,16 @@
 
 namespace App\Controller;
 
-use App\Converter\StudentStringConverter;
 use App\Converter\StudyGroupStringConverter;
-use App\Entity\Student;
-use App\Form\Model\BulkStudentAbsence;
-use App\Form\StudentAbsenceBulkType;
-use App\Repository\StudyGroupRepositoryInterface;
-use App\Sorting\StudyGroupStrategy;
-use SchulIT\CommonBundle\Form\ConfirmType;
-use Symfony\Component\HttpFoundation\Response;
 use App\Entity\DateLesson;
+use App\Entity\Student;
 use App\Entity\StudentAbsence;
 use App\Entity\StudentAbsenceAttachment;
 use App\Entity\StudentAbsenceMessage;
 use App\Entity\StudyGroupMembership;
 use App\Entity\User;
-use App\Entity\UserType;
+use App\Form\Model\BulkStudentAbsence;
+use App\Form\StudentAbsenceBulkType;
 use App\Form\StudentAbsenceMessageType;
 use App\Form\StudentAbsenceType;
 use App\Grouping\StudentAbsenceGenericGroup;
@@ -27,6 +21,7 @@ use App\Grouping\StudentAbsenceTuitionGroup;
 use App\Http\FlysystemFileResponse;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
+use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\StudentAbsenceVoter;
@@ -34,9 +29,9 @@ use App\Settings\StudentAbsenceSettings;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\StudentAbsenceTuitionGroupStrategy;
+use App\Sorting\StudyGroupStrategy;
 use App\StudentAbsence\ApprovalHelper;
 use App\Timetable\TimetableTimeHelper;
-use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\GradeFilterView;
 use App\View\Filter\SectionFilter;
@@ -45,14 +40,15 @@ use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use League\Flysystem\FilesystemOperator;
 use Mimey\MimeTypes;
+use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route(path: '/absences')]
+#[Route(path: '/absence/students')]
 #[Security("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-absence')")]
 class StudentAbsenceController extends AbstractController {
 

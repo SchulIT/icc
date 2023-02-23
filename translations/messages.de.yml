@@ -60,6 +60,7 @@ label:
         subject: Betreff
         start: Start-Datum
         expiry: Ablauf-Datum
+        label: Mitteilung
     content: Inhalt
     attachments: Anhänge
     file: Datei
@@ -236,6 +237,10 @@ label:
     username: Benutzername
     password: Passwort
     lms: Lernplattform
+    reason: Grund
+    from: Beginn
+    until: Ende
+    timetable_lesson: Unterrichtsstunde
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -807,6 +812,7 @@ admin:
 
         student_absences:
             label: Abwesenheitsmeldungen
+            header: Abwesenheitsmeldungen (Lernende)
             enabled: aktiviert
             recipient:
                 label: Empfänger
@@ -820,6 +826,17 @@ admin:
             introduction_text:
                 label: Hinweistext
                 help: Der Hinweistext wird oberhalb der Abwesenheitsmeldungsseite über der Information zum Datenschutz angezeigt.
+
+        teacher_absences:
+            header: Abwesenheitsmeldungen (Lehrkräfte)
+            enabled: aktiviert
+            recipients:
+                create:
+                    label: Empfänger (neue Meldung)
+                    help: Hier können E-Mail-Adressen angegeben werden, welche über eine neue Abwesenheitsmeldung informiert werden.
+                update:
+                    label: Empfänger (Meldung aktualisiert)
+                    help: Hier können E-Mail-Adressen angegeben werden, welche über Aktualisierung einer Abwesenheitsmeldung informiert werden.
 
         appointments:
             label: Terminplan
@@ -1369,72 +1386,116 @@ servicecenter:
 important: Wichtig
 caution: Achtung
 
-student_absences:
+absences:
     label: Abwesenheitsmeldungen
     empty: Es liegen keine Abwesenheitsmeldungen vor.
     created_at: gemeldet am
     created_by: gemeldet von
     until_short: 'vsl. bis %date% (%lesson%. Stunde)'
     active: aktiv
-    teacher_info: Diese Ansicht zeigt die für den heutigen Tag vorliegenden Absenzmeldungen an. Vergangene Meldungen können über den Lernenden- oder Klassenfilter auf der rechten Seite abgerufen werden.
-    retention: Abwesenheitsmeldungen werden automatisch %count% Tage nach dem Ablauf gelöscht.
-    add:
-        label: Neue Abwesenheitsmeldung
-        info: Hier besteht die Möglichkeit, eine Abwesenheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.
-        privacy:
-            info: Die hier erhobenen Daten werden entsprechend der aktuellen Datenschutzrichtlinie der Schule gespeichert und verarbeitet.
-            link: Datenschutzrichtlinie anzeigen
-        message: Mitteilung
-        attachments:
-            label: Anhänge
-            info: 'Hier können bis zu drei Dokumente (bspw. Attest, Meldung vom Gesundheitsamt,… ) angehangen werden. Gültige Dateitypen: PDF, PNG, JPG. Maximale Größe pro Datei: 5 MB'
-        absent_from: Abwesend ab
-        absent_until: Abwesend voraussichtlich bis
-        phone: Telefonnummer
-        contact:
-            label: Kontaktinformationen
-            info: Es besteht die Möglichkeit, eine Telefonnummer oder E-Mail-Adresse zu hinterlegen, die für Rückfragen genutzt werden kann. Bei Angabe einer E-Mail-Adresse werden Sie automatisch informiert, wenn eine Mitteilung der Klassen- oder Stufenleitung vorliegt.
-        send: absenden
-        success: Die Abwesenheitsmeldung wurde erfolgreich an die Schule übermittelt.
-        must_approve:
-            label: muss genehmigt werden
-            help: Bei genehmigungspflichtigen Absenzen entscheidet die Klassenleitung, ob diese genehmigt wird oder nicht. Nur bei vorliegender Genehmigung ist die Schülerin oder der Schüler vom Unterricht befreit.
-    add_bulk:
-        label: Neue Massen-Abwesenheitsmeldung
-        info: Hier besteht die Möglichkeit, eine Abwesenheitsmeldung für mehrere Lernenden anzulegen. Das System erstellt im Anschluss für jeden Lernenden eine separate Abwesenheitsmeldung.
-        success: Die Abwesenheitsmeldungen wurden erfolgreich angelegt.
-        attachments: Anhänge sind bei Massen-Abwesenheitsmeldungen nicht möglich.
+    teachers:
+        label: Lehrkräfte
+        empty: Aktuell liegen keine Abwesenheitsmeldungen vor.
+        processed:
+            label: eingearbeitet
+            header: Bearbeitungsstatus
+            not_processed: noch nicht eingearbeitet
+            button: als eingearbeitet markieren
+            success: Abwesenheitsmeldung wurde als eingearbeitet markiert
+        comment:
+            teacher: Kommentar für Vertretungslehrkraft
+            students: Kommentar für Lernende
+            label: Kommentar für Vertretungsplanung
+        add:
+            label: Neue Abwesenheitsmeldung
+            info: Hinweise zu den zu vertretenden Unterrichsstunden können angegeben werden, sobald die Abwesenheitsmeldung erstellt wurde.
+            success: Abwesenheitsmeldung erfolgreich erstellt
+        edit:
+            label: Abwesenheitsmeldung bearbeiten
+            success: Abwesenheitsmeldung erfolgreich bearbeitet
+            lessons:
+                label: Vertretungsinformationen
+                success: Vertretungsinformationen erfolgreich bearbeitet
+        remove:
+            label: Abwesenheitsmeldung löschen
+            confirm: 'Soll die Abwesenheitsmeldung für %start% bis %ende% wirklich gelöscht werden?'
+            success: Abwesenheitsmeldung erfolgreich gelöscht
+        show:
+            header: 'Abwesenheitsmeldung für %teacher%'
+            label: Abwesenheitsmeldung anzeigen
+            hide_processed: eingearbeitete Meldungen ausblenden
+            lessons:
+                header: Betroffene Unterrichtsstunden
+                unavailable: Aufgrund einer Stundenplanänderung muss diese Abwesenheitsinformation einer vorhandenen Stundenplanstunde zugewiesen werden. Bitte die Bearbeiten-Funktion verwenden, um die betroffene Stundenplanstunde auszuwählen.
+                todo: Für diese Stunde wurden noch keine Informationen hinterlegt. Bitte die Bearbeiten-Funktion verwenden, um Informationen für Vertretungsplaner, Vertretungslehrkraft und/oder Lernende zu hinterlegen.
+                add_missing:
+                    label: Fehlende Unterrichtsstunden ergänzen
+                    help: Ergänzt Unterrichtstunden, die in den Abwesenheitsbereich fallen und noch nicht hier hinterlegt sind.
+                remove_missing:
+                    label: Überflüssige Stunden entfernen
+                    help: Entfernt alle Unterrichtsstunden, die nicht mehr in den Abwesenheitsbereich fallen bzw. für die keine Stundenplanstunde hinterlegt ist.
 
-        choice:
-            placeholder: Lernende aus Lerngruppe übernehmen
-            apply: übernehmen
+    students:
+        label: Lernende
+        teacher_info: Diese Ansicht zeigt die für den heutigen Tag vorliegenden Absenzmeldungen an. Vergangene Meldungen können über den Lernenden- oder Klassenfilter auf der rechten Seite abgerufen werden.
+        retention: Abwesenheitsmeldungen werden automatisch %count% Tage nach dem Ablauf gelöscht.
+        add:
+            label: Neue Abwesenheitsmeldung
+            info: Hier besteht die Möglichkeit, eine Abwesenheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.
+            privacy:
+                info: Die hier erhobenen Daten werden entsprechend der aktuellen Datenschutzrichtlinie der Schule gespeichert und verarbeitet.
+                link: Datenschutzrichtlinie anzeigen
+            message: Mitteilung
+            attachments:
+                label: Anhänge
+                info: 'Hier können bis zu drei Dokumente (bspw. Attest, Meldung vom Gesundheitsamt,… ) angehangen werden. Gültige Dateitypen: PDF, PNG, JPG. Maximale Größe pro Datei: 5 MB'
+            absent_from: Abwesend ab
+            absent_until: Abwesend voraussichtlich bis
+            phone: Telefonnummer
+            contact:
+                label: Kontaktinformationen
+                info: Es besteht die Möglichkeit, eine Telefonnummer oder E-Mail-Adresse zu hinterlegen, die für Rückfragen genutzt werden kann. Bei Angabe einer E-Mail-Adresse werden Sie automatisch informiert, wenn eine Mitteilung der Klassen- oder Stufenleitung vorliegt.
+            send: absenden
+            success: Die Abwesenheitsmeldung wurde erfolgreich an die Schule übermittelt.
+            must_approve:
+                label: muss genehmigt werden
+                help: Bei genehmigungspflichtigen Absenzen entscheidet die Klassenleitung, ob diese genehmigt wird oder nicht. Nur bei vorliegender Genehmigung ist die Schülerin oder der Schüler vom Unterricht befreit.
+        add_bulk:
+            label: Neue Massen-Abwesenheitsmeldung
+            info: Hier besteht die Möglichkeit, eine Abwesenheitsmeldung für mehrere Lernenden anzulegen. Das System erstellt im Anschluss für jeden Lernenden eine separate Abwesenheitsmeldung.
+            success: Die Abwesenheitsmeldungen wurden erfolgreich angelegt.
+            attachments: Anhänge sind bei Massen-Abwesenheitsmeldungen nicht möglich.
 
-    edit:
-        label: Abwesenheitsmeldung bearbeiten
-        success: Abwesenheitsmeldung erfolgreich aktualisiert
-        from_date: 'Das Startdatum wurde von %oldDate% (%oldLesson%. Stunde) auf %newDate% (%newLesson%. Stunde) geändert.'
-        until_date: 'Das Enddatum wurde von %oldDate% (%oldLesson%. Stunde) auf %newDate% (%newLesson%. Stunde) geändert.'
+            choice:
+                placeholder: Lernende aus Lerngruppe übernehmen
+                apply: übernehmen
 
-    remove:
-        label: Abwesenheitsmeldung löschen
-        success: Abwesenheitsmeldung erfolgreich gelöscht
-        confirm: Soll die Abwesenheitsmeldung wirklich gelöscht werden?
+        edit:
+            label: Abwesenheitsmeldung bearbeiten
+            success: Abwesenheitsmeldung erfolgreich aktualisiert
+            from_date: 'Das Startdatum wurde von %oldDate% (%oldLesson%. Stunde) auf %newDate% (%newLesson%. Stunde) geändert.'
+            until_date: 'Das Enddatum wurde von %oldDate% (%oldLesson%. Stunde) auf %newDate% (%newLesson%. Stunde) geändert.'
 
-    show:
-        label: Abwesenheitsmeldung
-        header: "Abwesenheitsmeldung von %student%"
-        contact: Kontaktinformationen
-    message:
-        label: Neue Mitteilung
-        submit: abschicken
-    approval:
-        label: Genehmigungsstatus
-        approve: genehmigen
-        approved: genehmigt
-        not_approved: nicht genehmigt
-        deny: nicht genehmigen
-        pending: Genehmigung steht aus
-        success: Genehmigungsstatus erfolgreich geändert
+        remove:
+            label: Abwesenheitsmeldung löschen
+            success: Abwesenheitsmeldung erfolgreich gelöscht
+            confirm: Soll die Abwesenheitsmeldung wirklich gelöscht werden?
+
+        show:
+            label: Abwesenheitsmeldung
+            header: "Abwesenheitsmeldung von %student%"
+            contact: Kontaktinformationen
+        message:
+            label: Neue Mitteilung
+            submit: abschicken
+        approval:
+            label: Genehmigungsstatus
+            approve: genehmigen
+            approved: genehmigt
+            not_approved: nicht genehmigt
+            deny: nicht genehmigen
+            pending: Genehmigung steht aus
+            success: Genehmigungsstatus erfolgreich geändert
 
 
 

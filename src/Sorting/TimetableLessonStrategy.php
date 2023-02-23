@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Sorting;
+
+use App\Entity\TimetableLesson;
+
+class TimetableLessonStrategy implements SortingStrategyInterface {
+
+    public function __construct(private readonly DateStrategy $dateStrategy) { }
+
+    /**
+     * @param TimetableLesson $objectA
+     * @param TimetableLesson $objectB
+     * @return int
+     */
+    public function compare($objectA, $objectB): int {
+        $compareDate = $this->dateStrategy->compare($objectA->getDate(), $objectB->getDate());
+
+        if($compareDate === 0) {
+            return $objectA->getLessonStart() - $objectB->getLessonStart();
+        }
+
+        return $compareDate;
+    }
+}

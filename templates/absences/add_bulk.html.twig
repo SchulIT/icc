@@ -1,11 +1,11 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'student_absences.add.label'|trans }}{% endblock %}
+{% block title %}{{ 'absences.students.add.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('absences') }}">{{ 'student_absences.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('absences') }}">{{ 'absences.students.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -18,7 +18,7 @@
             <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
 
             <p>
-                {{ 'student_absences.add_bulk.info'|trans }}
+                {{ 'absences.students.add_bulk.info'|trans }}
             </p>
         </div>
     </div>
@@ -31,7 +31,7 @@
 
             <div class="bs-callout bs-callout-info">
                 <h4>{{ 'info.label'|trans }}</h4>
-                <p>{{ 'student_absences.add.must_approve.help'|trans }}</p>
+                <p>{{ 'absences.students.add.must_approve.help'|trans }}</p>
             </div>
 
             {{ form_row(form.from) }}
@@ -41,10 +41,10 @@
     </div>
 
     <div class="card">
-        <div class="card-header">{{ 'student_absences.add.contact.label'|trans }}</div>
+        <div class="card-header">{{ 'absences.students.add.contact.label'|trans }}</div>
         <div class="card-body">
             <div class="bs-callout bs-callout-info">
-                {{ 'student_absences.add.contact.info'|trans }}
+                {{ 'absences.students.add.contact.info'|trans }}
             </div>
 
             {{ form_row(form.phone) }}
@@ -53,17 +53,17 @@
     </div>
 
     <div class="card">
-        <div class="card-header">{{ 'student_absences.add.attachments.label'|trans }}</div>
+        <div class="card-header">{{ 'absences.students.add.attachments.label'|trans }}</div>
         <div class="card-body">
             <div class="bs-callout bs-callout-danger">
-                <p>{{ 'student_absences.add_bulk.attachments'|trans }}</p>
+                <p>{{ 'absences.students.add_bulk.attachments'|trans }}</p>
             </div>
         </div>
     </div>
 
     <div class="buttons">
         <button type="submit" class="btn btn-primary btn-sm">
-            <i class="fa fa-envelope"></i> {{ 'student_absences.add.send'|trans }}
+            <i class="fa fa-envelope"></i> {{ 'absences.students.add.send'|trans }}
         </button>
 
         <a href="{{ path('absences') }}" class="btn btn-secondary btn-sm">

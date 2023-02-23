@@ -56,3 +56,13 @@ student_absence:
     content: Es wurde eine neue Mitteilung zu einer Abwesenheitsmeldung erstellt.
   link: Zur Abwesenheitsmeldung
   no_reply: Dies ist eine automatisch versendete E-Mail. Bitte nicht antworten.
+
+teacher_absence:
+  create:
+    title: 'Neue Abwesenheitsmeldung (Lehrkraft)'
+    content: Es wurde eine neue Abwesenheitsmeldung (Lehrkraft) übermittelt.
+  update:
+    title: 'Abwesenheitsmeldung (Lehrkraft) aktualisiert'
+    content: Eine Abwesenheitsmeldung wurde aktualisiert.
+  link: Zur Abwesenheitsmeldung
+  reply: Auf diese E-Mail kann geantwortet werden. Die Antwort wird an die Lehrkraft versendet, die sich abwesend gemeldet hat.

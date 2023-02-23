@@ -1,11 +1,11 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'student_absences.show.label'|trans }}{% endblock %}
+{% block title %}{{ 'absences.students.show.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('absences') }}">{{ 'student_absences.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('absences') }}">{{ 'absences.students.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -21,7 +21,7 @@
                 <div class="card">
                     <div class="card-body flush-last-p">
                         <h4 class="card-title">
-                            {{ 'student_absences.show.header'|trans({'%student%': absence.student|student}) }}
+                            {{ 'absences.students.show.header'|trans({'%student%': absence.student|student}) }}
 
                             <span class="badge badge-primary">
                                 {{ absence.type.name }}
@@ -30,16 +30,16 @@
                             {% if absence.type.mustApprove %}
                                 {% if absence.approvedAt is null %}
                                     <span class="badge badge-warning">
-                                        {{ 'student_absences.approval.pending'|trans }}
+                                        {{ 'absences.students.approval.pending'|trans }}
                                     </span>
                                 {% else %}
                                     {% if absence.isApproved %}
                                         <span class="badge badge-success">
-                                            {{ 'student_absences.approval.approved'|trans }}
+                                            {{ 'absences.students.approval.approved'|trans }}
                                         </span>
                                     {% else %}
                                         <span class="badge badge-danger">
-                                            {{ 'student_absences.approval.not_approved'|trans }}
+                                            {{ 'absences.students.approval.not_approved'|trans }}
                                         </span>
                                     {% endif %}
                                 {% endif %}
@@ -79,7 +79,7 @@
 
                 {{ form_start(form) }}
                 <div class="card">
-                    <div class="card-header">{{ 'student_absences.message.label'|trans }}</div>
+                    <div class="card-header">{{ 'absences.students.message.label'|trans }}</div>
 
                     <div class="card-body">
                         {{ form_widget(form.message) }}
@@ -87,7 +87,7 @@
 
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="fas fa-paper-plane"></i> {{ 'student_absences.message.submit'|trans }}
+                            <i class="fas fa-paper-plane"></i> {{ 'absences.students.message.submit'|trans }}
                         </button>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                     <div class="card">
                         <div class="list-group list-group-flush">
                             <a href="{{ path('edit_absence', { uuid: absence.uuid }) }}" class="list-group-item list-group-item-action">
-                                <i class="fa fa-edit"></i> {{ 'student_absences.edit.label'|trans }}
+                                <i class="fa fa-edit"></i> {{ 'absences.students.edit.label'|trans }}
                             </a>
                         </div>
                     </div>
@@ -108,21 +108,21 @@
                 {% if absence.type.mustApprove %}
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">{{ 'student_absences.approval.label'|trans }}</h4>
+                            <h4 class="card-title">{{ 'absences.students.approval.label'|trans }}</h4>
 
                             <p>
                                 {% if absence.approvedAt is null %}
                                     <span class="badge badge-warning">
-                                        {{ 'student_absences.approval.pending'|trans }}
+                                        {{ 'absences.students.approval.pending'|trans }}
                                     </span>
                                 {% else %}
                                     {% if absence.isApproved %}
                                         <span class="badge badge-success">
-                                            {{ 'student_absences.approval.approved'|trans }}
+                                            {{ 'absences.students.approval.approved'|trans }}
                                         </span>
                                     {% else %}
                                         <span class="badge badge-danger">
-                                            {{ 'student_absences.approval.not_approved'|trans }}
+                                            {{ 'absences.students.approval.not_approved'|trans }}
                                         </span>
                                     {% endif %}
                                 {% endif %}
@@ -145,12 +145,12 @@
                             <div class="list-group list-group-flush">
                                 {% if is_granted('approve', absence) %}
                                     <a href="{{ path('approve_absence', { uuid: absence.uuid, '_csrf_token': csrf_token(token_id)}) }}" class="list-group-item list-group-item-action list-group-item-success">
-                                        <i class="fas fa-check-circle"></i> {{ 'student_absences.approval.approve'|trans }}
+                                        <i class="fas fa-check-circle"></i> {{ 'absences.students.approval.approve'|trans }}
                                     </a>
                                 {% endif %}
                                 {% if is_granted('deny', absence) %}
                                     <a href="{{ path('deny_absence', { uuid: absence.uuid, '_csrf_token': csrf_token(token_id)}) }}" class="list-group-item list-group-item-action list-group-item-danger">
-                                        <i class="fas fa-times-circle"></i> {{ 'student_absences.approval.deny'|trans }}
+                                        <i class="fas fa-times-circle"></i> {{ 'absences.students.approval.deny'|trans }}
                                     </a>
                                 {% endif %}
                             </div>
@@ -161,7 +161,7 @@
                 {% if absence.email is not empty or absence.phone is not empty %}
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">{{ 'student_absences.show.contact'|trans }}</h4>
+                            <h4 class="card-title">{{ 'absences.students.show.contact'|trans }}</h4>
 
                             {% if absence.email is not empty %}
                                 <p>
@@ -187,22 +187,22 @@
                 <div class="card">
                     <div class="card-body">
                         <p>
-                            <span class="text-muted">{{ 'student_absences.add.absent_from'|trans }}</span>
+                            <span class="text-muted">{{ 'absences.students.add.absent_from'|trans }}</span>
                             {{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }})
                         </p>
 
                         <p>
-                            <span class="text-muted">{{ 'student_absences.add.absent_until'|trans }}</span>
+                            <span class="text-muted">{{ 'absences.students.add.absent_until'|trans }}</span>
                             {{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})
                         </p>
 
                         <p>
-                            <span class="text-muted">{{ 'student_absences.created_by'|trans }}</span>
+                            <span class="text-muted">{{ 'absences.created_by'|trans }}</span>
                             {{ absence.createdBy|user }}
                         </p>
 
                         <p>
-                            <span class="text-muted">{{ 'student_absences.created_at'|trans }}</span>
+                            <span class="text-muted">{{ 'absences.created_at'|trans }}</span>
                             {{ absence.createdAt|format_datetime }}
                         </p>
                     </div>

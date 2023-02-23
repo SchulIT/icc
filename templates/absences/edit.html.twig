@@ -4,12 +4,12 @@
     <script src="{{ asset('build/collection.js') }}"></script>
 {% endblock %}
 
-{% block title %}{{ 'student_absences.edit.label'|trans }}{% endblock %}
+{% block title %}{{ 'absences.students.edit.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('absences') }}">{{ 'student_absences.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('absences') }}">{{ 'absences.students.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -25,7 +25,7 @@
 
             <div class="bs-callout bs-callout-info">
                 <h4>{{ 'info.label'|trans }}</h4>
-                <p>{{ 'student_absences.add.must_approve.help'|trans }}</p>
+                <p>{{ 'absences.students.add.must_approve.help'|trans }}</p>
             </div>
 
             {{ form_row(form.from) }}
@@ -35,10 +35,10 @@
     </div>
 
     <div class="card">
-        <div class="card-header">{{ 'student_absences.add.contact.label'|trans }}</div>
+        <div class="card-header">{{ 'absences.students.add.contact.label'|trans }}</div>
         <div class="card-body">
             <div class="bs-callout bs-callout-info">
-                {{ 'student_absences.add.contact.info'|trans }}
+                {{ 'absences.students.add.contact.info'|trans }}
             </div>
 
             {{ form_row(form.phone) }}
@@ -47,10 +47,10 @@
     </div>
 
     <div class="card">
-        <div class="card-header">{{ 'student_absences.add.attachments.label'|trans }}</div>
+        <div class="card-header">{{ 'absences.students.add.attachments.label'|trans }}</div>
         <div class="card-body">
             <div class="bs-callout bs-callout-info">
-                {{ 'student_absences.add.attachments.info'|trans }}
+                {{ 'absences.students.add.attachments.info'|trans }}
             </div>
 
             <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}">

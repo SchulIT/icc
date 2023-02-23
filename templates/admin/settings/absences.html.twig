@@ -4,6 +4,7 @@
 
 {% block post_javascript %}
     <script src="{{ asset('build/editor.js') }}"></script>
+    <script src="{{ asset('build/collection.js') }}"></script>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -16,7 +17,7 @@
 
 {% block settings_content %}
     <div class="card">
-        <div class="card-header">{{ 'label.general'|trans }}</div>
+        <div class="card-header">{{ 'admin.settings.student_absences.header'|trans }}</div>
 
         <div class="card-body">
             {{ form_row(form.enabled) }}
@@ -25,6 +26,54 @@
             {{ form_row(form.privacy_url) }}
             {{ form_row(form.retention_days) }}
             {{ form_row(form.next_day_threshold) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.teacher_absences.header'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_row(form.teacher_enabled) }}
+
+            <div class="form-group row">
+                {{ form_label(form.teacher_create_recipients) }}
+                <div class="col-md-10">
+                    <div class="create_recipients" data-collection="create_recipients" data-prototype="{{ form_widget(form.teacher_create_recipients.vars.prototype)|e('html_attr') }}">
+                        {% for recipient in form.teacher_create_recipients %}
+                            {{ form_widget(recipient) }}
+                        {% endfor %}
+                    </div>
+
+                    <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="create_recipients">
+                        <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+                    </button>
+
+                    {{ form_errors(form.teacher_create_recipients) }}
+                    {{ form_help(form.teacher_create_recipients) }}
+
+                    <!-- {{ form_end((form.teacher_create_recipients)) }} -->
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.teacher_update_recipients) }}
+                <div class="col-md-10">
+                    <div class="create_recipients" data-collection="update_recipients" data-prototype="{{ form_widget(form.teacher_update_recipients.vars.prototype)|e('html_attr') }}">
+                        {% for recipient in form.teacher_update_recipients %}
+                            {{ form_widget(recipient) }}
+                        {% endfor %}
+                    </div>
+
+                    <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="update_recipients">
+                        <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+                    </button>
+
+                    {{ form_errors(form.teacher_update_recipients) }}
+                    {{ form_help(form.teacher_update_recipients) }}
+
+                    <!-- {{ form_end((form.teacher_update_recipients)) }} -->
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

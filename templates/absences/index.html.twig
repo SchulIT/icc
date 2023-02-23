@@ -1,6 +1,6 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'student_absences.label'|trans }}{% endblock %}
+{% block title %}{{ 'absences.students.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -25,13 +25,13 @@
                     <div class="bs-callout bs-callout-info">
                         <h4>{{ 'info.label'|trans }}</h4>
 
-                        <p>{{ 'student_absences.empty'|trans }}</p>
+                        <p>{{ 'absences.students.empty'|trans }}</p>
                     </div>
                 {% else %}
                     {% if teacherFilter.currentTeacher is not null %}
                         <div class="bs-callout bs-callout-info">
                             <h4>{{ 'info.label'|trans }}</h4>
-                            <p>{{ 'student_absences.teacher_info'|trans }}</p>
+                            <p>{{ 'absences.students.teacher_info'|trans }}</p>
                         </div>
                     {% endif %}
 
@@ -75,9 +75,9 @@
                                         <th>{{ 'label.reason'|trans({}, 'enums') }}</th>
                                         <th>{{ 'label.lastname'|trans }}</th>
                                         <th>{{ 'label.firstname'|trans }}</th>
-                                        <th>{{ 'student_absences.add.absent_from'|trans }}</th>
-                                        <th>{{ 'student_absences.add.absent_until'|trans }}</th>
-                                        <th>{{ 'student_absences.created_at'|trans }}</th>
+                                        <th>{{ 'absences.students.add.absent_from'|trans }}</th>
+                                        <th>{{ 'absences.students.add.absent_until'|trans }}</th>
+                                        <th>{{ 'absences.created_at'|trans }}</th>
                                         <th>{{ 'label.grade'|trans }}</th>
                                         <th></th>
                                     </tr>
@@ -92,16 +92,16 @@
                                                 {% if absence.type.mustApprove %}
                                                     {% if absence.approvedAt is null %}
                                                         <span class="badge badge-warning">
-                                                            {{ 'student_absences.approval.pending'|trans }}
+                                                            {{ 'absences.students.approval.pending'|trans }}
                                                         </span>
                                                     {% else %}
                                                         {% if absence.isApproved %}
                                                             <span class="badge badge-success">
-                                                                {{ 'student_absences.approval.approved'|trans }}
+                                                                {{ 'absences.students.approval.approved'|trans }}
                                                             </span>
                                                         {% else %}
                                                             <span class="badge badge-danger">
-                                                                {{ 'student_absences.approval.not_approved'|trans }}
+                                                                {{ 'absences.students.approval.not_approved'|trans }}
                                                             </span>
                                                         {% endif %}
                                                     {% endif %}
@@ -109,7 +109,7 @@
 
                                                 {% if absence.until.date >= today %}
                                                     <span class="badge badge-primary">
-                                                        {{ 'student_absences.active'|trans }}
+                                                        {{ 'absences.active'|trans }}
                                                     </span>
                                                 {% endif %}
                                             </td>
@@ -178,12 +178,12 @@
                     <div class="list-group list-group-flush">
                         {% if is_granted('new-absence') %}
                             <a href="{{ path('add_absence') }}" class="list-group-item list-group-item-action">
-                                <i class="fa fa-plus"></i> {{ 'student_absences.add.label'|trans }}
+                                <i class="fa fa-plus"></i> {{ 'absences.students.add.label'|trans }}
                             </a>
                         {% endif %}
                         {% if is_granted('new-absence-bulk') %}
                             <a href="{{ path('add_absence_bulk') }}" class="list-group-item list-group-item-action">
-                                <i class="fa fa-plus"></i> {{ 'student_absences.add_bulk.label'|trans }}
+                                <i class="fa fa-plus"></i> {{ 'absences.students.add_bulk.label'|trans }}
                             </a>
                         {% endif %}
                     </div>

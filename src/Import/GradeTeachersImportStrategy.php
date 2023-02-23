@@ -45,7 +45,7 @@ class GradeTeachersImportStrategy implements ReplaceImportStrategyInterface {
      * @throws ImportException
      */
     public function persist($data, $requestData): void {
-        $teacher = $this->teacherRepository->findOneByExternalId($data->getTeacher());
+        $teacher = $this->teacherRepository->findOneByAcronym($data->getTeacher());
 
         if($teacher === null) {
             throw new ImportException(sprintf('Teacher with ID "%s" was not found.', $data->getTeacher()));

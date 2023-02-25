@@ -418,8 +418,13 @@
 
 {% macro absenceLesson(absenceLesson) %}
     {% if absenceLesson.commentStudents is not empty %}
-        <div class="card-footer">
-            <p class="text-muted"><i class="fas fa-info-circle"></i> {{ 'absences.teachers.comment.students'|trans }}</p>
+        <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#studentinfo-{{ absenceLesson.uuid }}">
+            <span class="mr-auto align-self-center">
+                <i class="fas fa-info-circle"></i> {{ 'absences.teachers.comment.students'|trans }}
+            </span>
+            <i class="fa indicator align-self-center fa-chevron-down"></i>
+        </div>
+        <div class="card-footer collapse border-top-0" id="studentinfo-{{ absenceLesson.uuid }}">
             {{ absenceLesson.commentStudents|markdown }}
         </div>
     {% endif %}

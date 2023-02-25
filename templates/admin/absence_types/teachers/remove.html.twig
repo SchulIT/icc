@@ -1,13 +1,12 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'admin.absence_types.edit.label'|trans }}{% endblock %}
+{% block title %}{{ 'admin.absence_types.remove.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('admin_absence_types') }}">{{ 'admin.absence_types.label'|trans }}</a></li>
-        <li class="breadcrumb-item">{{ absence_type.name }}</li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_teacher_absence_types') }}">{{ 'admin.absence_types.label_teachers'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -17,23 +16,24 @@
 
     {{ form_start(form) }}
 
-    <div class="card">
-        <div class="card-header">{{ 'label.general'|trans }}</div>
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">{{ 'remove.header'|trans }}</div>
 
         <div class="card-body">
-            {{ form_widget(form) }}
+            {{ form_widget(form.group_general.confirm) }}
         </div>
     </div>
 
     <div class="buttons">
-        <button type="submit" class="btn btn-primary btn-sm">
-            <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+        <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fa fa-trash"></i> {{ 'remove.confirm'|trans }}
         </button>
 
-        <a href="{{ path('admin_absence_types') }}" class="btn btn-secondary btn-sm">
+        <a href="{{ path('admin_teacher_absence_types')}}" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
         </a>
     </div>
 
     {{ form_end(form) }}
 {% endblock %}
+

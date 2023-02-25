@@ -298,8 +298,13 @@ class Builder {
             ])
                 ->setExtra('icon', 'fas fa-sort-alpha-down');
 
-            $root->addChild('admin.absence_types.label', [
+            $root->addChild('admin.absence_types.label_students', [
                 'route' => 'admin_absence_types'
+            ])
+                ->setExtra('icon', 'fas fa-user-times');
+
+            $root->addChild('admin.absence_types.label_teachers', [
+                'route' => 'admin_teacher_absence_types'
             ])
                 ->setExtra('icon', 'fas fa-user-times');
         }
@@ -602,7 +607,7 @@ class Builder {
             || $this->authorizationChecker->isGranted('ROLE_SICK_NOTE_CREATOR')
             || $this->authorizationChecker->isGranted(StudentAbsenceVoter::New)) {
             $plans->addChild('absences.students.label', [
-                'route' => 'absences'
+                'route' => 'student_absences'
             ])
                 ->setExtra('icon', 'fas fa-user-graduate');
         }

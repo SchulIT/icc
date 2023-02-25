@@ -27,9 +27,10 @@ class TeacherAbsence {
     #[ORM\Embedded(class: DateLesson::class)]
     private DateLesson $until;
 
-    #[ORM\Column(type: 'string')]
-    #[Assert\NotBlank]
-    private ?string $reason;
+    #[ORM\ManyToOne(targetEntity: TeacherAbsenceType::class)]
+    #[ORM\JoinColumn]
+    #[Assert\NotNull]
+    private ?TeacherAbsenceType $type;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $message;
@@ -102,18 +103,18 @@ class TeacherAbsence {
     }
 
     /**
-     * @return string|null
+     * @return TeacherAbsenceType|null
      */
-    public function getReason(): ?string {
-        return $this->reason;
+    public function getType(): ?TeacherAbsenceType {
+        return $this->type;
     }
 
     /**
-     * @param string|null $reason
+     * @param TeacherAbsenceType|null $type
      * @return TeacherAbsence
      */
-    public function setReason(?string $reason): TeacherAbsence {
-        $this->reason = $reason;
+    public function setType(?TeacherAbsenceType $type): TeacherAbsence {
+        $this->type = $type;
         return $this;
     }
 

@@ -69,7 +69,7 @@ class TeacherAbsenceController extends AbstractController {
         ]);
     }
 
-    #[Route('/add', name: 'new_teacher_absence')]
+    #[Route('/add', name: 'add_teacher_absence')]
     public function add(Request $request, TimetableLessonRepositoryInterface $timetableLessonRepository, Sorter $sorter,
                         TimetableSettings $timetableSettings, DateHelper $dateHelper, DashboardSettings $dashboardSettings, TimetableTimeHelper $timeHelper): Response {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::NewAbsence);

@@ -5,10 +5,10 @@ namespace App\Form;
 use App\Converter\TeacherStringConverter;
 use App\Entity\Teacher;
 use App\Entity\TeacherAbsence;
+use App\Entity\TeacherAbsenceType as TeacherAbsenceTypeEntity;
 use App\Sorting\TeacherStrategy;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -24,7 +24,11 @@ class TeacherAbsenceType extends AbstractType {
                 'label' => 'label.teacher',
                 'class' => Teacher::class,
                 'choice_label' => fn(Teacher $teacher) => $this->teacherStringConverter->convert($teacher),
-                'sort_by' => $this->teacherStrategy
+                'sort_by' => $this->teacherStrategy,
+                'attr' => [
+                    'data-choice' => 'true'
+                ],
+                'placeholder' => 'label.choose'
             ])
             ->add('from', DateLessonType::class, [
                 'label' => 'label.from'
@@ -32,8 +36,14 @@ class TeacherAbsenceType extends AbstractType {
             ->add('until', DateLessonType::class, [
                 'label' => 'label.until'
             ])
-            ->add('reason', TextType::class, [
-                'label' => 'label.reason'
+            ->add('type', EntityType::class, [
+                'label' => 'label.type',
+                'class' => TeacherAbsenceTypeEntity::class,
+                'choice_label' => fn(TeacherAbsenceTypeEntity $type) => $type->getName(),
+                'expanded' => true,
+                'label_attr' => [
+                    'class' => 'radio-custom'
+                ],
             ])
             ->add('message', MarkdownType::class, [
                 'label' => 'label.message.label',

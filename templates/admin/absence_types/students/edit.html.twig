@@ -1,37 +1,37 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'absences.teachers.edit.label'|trans }}{% endblock %}
-
-{% block post_javascript %}
-    <script src="{{ asset('build/editor.js') }}"></script>
-{% endblock %}
+{% block title %}{{ 'admin.absence_types.edit.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('teachers_absences') }}">{{ 'absences.teachers.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_absence_types') }}">{{ 'admin.absence_types.label_students'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ absence_type.name }}</li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
 
 {% block content %}
+    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+
     {{ form_start(form) }}
 
     <div class="card">
         <div class="card-header">{{ 'label.general'|trans }}</div>
+
         <div class="card-body">
             {{ form_widget(form) }}
         </div>
     </div>
-
 
     <div class="buttons">
         <button type="submit" class="btn btn-primary btn-sm">
             <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
         </button>
 
-        <a href="{{ path('teacher_absences') }}" class="btn btn-secondary btn-sm">
-            {{ 'actions.cancel'|trans }}
+        <a href="{{ path('admin_absence_types') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
         </a>
     </div>
 

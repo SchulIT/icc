@@ -1,6 +1,6 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'admin.absence_types.label'|trans }}{% endblock %}
+{% block title %}{{ 'admin.absence_types.label_teachers'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -9,14 +9,6 @@
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
-
-{% macro show_boolean(value, true_tooltip, false_tooltip) %}
-    {% if value %}
-        <i class="fa fa-check" title="{{ true_tooltip|trans }}"></i>
-    {% else %}
-        <i class="fa fa-times" title="{{ false_tooltip|trans }}"></i>
-    {% endif %}
-{% endmacro %}
 
 {% block content %}
     {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
@@ -36,14 +28,12 @@
                             <table class="table table-striped table-hover card-table">
                                 <colgroup>
                                     <col>
-                                    <col class="column-md">
                                     <col class="column-sm">
                                 </colgroup>
 
                                 <thead>
                                 <tr>
                                     <th>{{ 'label.name'|trans }}</th>
-                                    <th>{{ 'label.must_approve.label'|trans }}</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -55,20 +45,17 @@
                                             {{ type.name }}
                                         </td>
                                         <td>
-                                            {{ _self.show_boolean(type.mustApprove, 'label.must_approve.help', 'label.must_approve.help') }}
-                                        </td>
-                                        <td>
                                             <div class="dropdown d-inline">
                                                 <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
                                                     <i class="fas fa-ellipsis-v"></i>
                                                 </button>
 
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a href="{{ path('edit_absence_type', { uuid: type.uuid })}}" class="dropdown-item">
+                                                    <a href="{{ path('edit_teacher_absence_type', { uuid: type.uuid })}}" class="dropdown-item">
                                                         <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
                                                     </a>
 
-                                                    <a href="{{ path('remove_absence_type', { uuid: type.uuid })}}" class="dropdown-item text-danger">
+                                                    <a href="{{ path('remove_teacher_absence_type', { uuid: type.uuid })}}" class="dropdown-item text-danger">
                                                         <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
                                                     </a>
                                                 </div>
@@ -86,7 +73,7 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="list-group list-group-flush">
-                        <a href="{{ path('add_absence_type') }}" class="list-group-item list-group-item-action">
+                        <a href="{{ path('add_teacher_absence_type') }}" class="list-group-item list-group-item-action">
                             <i class="fa fa-plus"></i> {{ 'admin.absence_types.add.label'|trans }}
                         </a>
                     </div>

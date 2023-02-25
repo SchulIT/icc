@@ -1260,6 +1260,8 @@ admin:
 
     absence_types:
         label: Abwesenheitsart
+        label_students: Abwesenheitsart (Lernende)
+        label_teachers: Abwesenheitsart (Lehrkräfte)
         empty: Keine Abwesenheitsarten vorhanden
         add:
             label: Neue Abwesenheitsart
@@ -1269,7 +1271,7 @@ admin:
             success: Abwesenheitsart erfolgreich aktualisiert
         remove:
             label: Abwesenheitsart löschen
-            confirm: 'Soll die Abwesenheitsart "%type%" wirklich gelöscht werden?'
+            confirm: 'Soll die Abwesenheitsart "%name%" wirklich gelöscht werden?'
             error: Abwesenheitsart kann nicht gelöscht werden, da es noch Abwesenheiten mit dieser Art gibt.
             success: Abwesenheitsart erfolgreich gelöscht
 

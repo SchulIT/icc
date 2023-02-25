@@ -39,7 +39,7 @@
                                     
                                     <thead>
                                     <tr>
-                                        <th>{{ 'label.reason'|trans({}, 'enums') }}</th>
+                                        <th>{{ 'label.type'|trans({}, 'enums') }}</th>
                                         <th>{{ 'label.lastname'|trans }}</th>
                                         <th>{{ 'label.firstname'|trans }}</th>
                                         <th>{{ 'absences.students.add.absent_from'|trans }}</th>
@@ -53,7 +53,7 @@
                                     {% for absence in absences %}
                                         <tr>
                                             <td class="align-middle">
-                                                {{ absence.reason }}
+                                                {{ absence.type.name }}
 
                                                 {% if absence.processedAt is not null %}
                                                     <span class="badge badge-success">{{ 'absences.teachers.processed.label'|trans }}</span>
@@ -110,7 +110,7 @@
                 <div class="card">
                     <div class="list-group list-group-flush">
                         {% if is_granted('new-teacher-absence') %}
-                            <a href="{{ path('new_teacher_absence') }}" class="list-group-item list-group-item-action">
+                            <a href="{{ path('add_teacher_absence') }}" class="list-group-item list-group-item-action">
                                 <i class="fa fa-plus"></i> {{ 'absences.teachers.add.label'|trans }}
                             </a>
                         {% endif %}

@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Entity\UserType;
 use App\Repository\SectionRepositoryInterface;
 use App\Section\SectionResolverInterface;
+use App\Settings\StudentAbsenceSettings;
 use LogicException;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -28,7 +29,7 @@ class StudentAbsenceVoter extends Voter {
 
     public const Remove = 'remove';
 
-    public function __construct(private DateHelper $dateHelper, private SectionResolverInterface $sectionResolver, private AccessDecisionManagerInterface $accessDecisionManager)
+    public function __construct(private readonly DateHelper $dateHelper, private readonly SectionResolverInterface $sectionResolver, private readonly AccessDecisionManagerInterface $accessDecisionManager, private readonly StudentAbsenceSettings $settings)
     {
     }
 
@@ -47,6 +48,10 @@ class StudentAbsenceVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
+        if($this->settings->isEnabled() !== true) {
+            return false;
+        }
+
         return match ($attribute) {
             self::New => $this->canCreate($token),
             self::Bulk => $this->canCreateBulk($token),

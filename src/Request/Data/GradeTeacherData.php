@@ -15,6 +15,7 @@ class GradeTeacherData {
     private ?string $grade = null;
 
     /**
+     * Kürzel der Lehrkraft
      * @Serializer\Type("string")
      */
     #[Assert\NotBlank]

@@ -1,0 +1,195 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'absences.teachers.show.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('teacher_absences') }}">{{ 'absences.teachers.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/editor.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-body flush-last-p">
+                        <h4 class="card-title">
+                            {{ 'absences.teachers.show.header'|trans({'%teacher%': absence.teacher|teacher}) }}
+
+                            <span class="badge badge-primary">
+                                {{ absence.type.name }}
+                            </span>
+                        </h4>
+
+                        {% if absence.message is not empty %}
+                            {{ absence.message|markdown }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        {{ 'absences.teachers.show.lessons.header'|trans }}
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        {% for lesson in lessons %}
+                            <div class="list-group-item d-flex">
+                                <div class="flex-fill">
+                                    {% if lesson.lesson is not null %}
+                                        <div class="mb-2">
+                                            <i class="fas fa-calendar-alt"></i> {{ lesson.lesson.date|format_date }}
+                                            <i class="fas fa-clock"></i> {{ 'label.exam_lessons'|trans({
+                                                '%start%': lesson.lesson.lessonStart,
+                                                '%end%': lesson.lesson.lessonEnd,
+                                                '%count%': lesson.lesson.lessonEnd - lesson.lesson.lessonStart
+                                            }) }}
+                                            <span class="badge badge-primary">
+                                                {{ lesson.lesson.tuition.name }}
+                                            </span>
+
+                                            <i class="fas fa-users"></i> {{ lesson.lesson.tuition.studyGroup.grades|grades }}
+                                        </div>
+                                    {% else %}
+                                        <div class="bs-callout bs-callout-warning">
+                                            {{ 'absences.teachers.show.lessons.unavailable'|trans }}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if lesson.comment is not empty %}
+                                    <div>
+                                        <p class="text-muted">{{ 'absences.teachers.comment.label'|trans }}</p>
+
+                                        {{ lesson.comment|markdown }}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if lesson.commentTeacher is not empty %}
+                                        <div>
+                                            <p class="text-muted">{{ 'absences.teachers.comment.teacher'|trans }}</p>
+
+                                            {{ lesson.commentTeacher|markdown }}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if lesson.commentStudents is not empty %}
+                                        <div>
+                                            <p class="text-muted">{{ 'absences.teachers.comment.students'|trans }}</p>
+
+                                            {{ lesson.commentStudents|markdown }}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if lesson.comment is empty and lesson.commentTeacher is empty and lesson.commentStudents is empty %}
+                                        <div class="bs-callout bs-callout-info">
+                                            {{ 'absences.teachers.show.lessons.todo'|trans }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                {% if is_granted('edit', absence) %}
+                                <div class="ml-2">
+                                    <a href="{{ path('edit_teacher_absence_lesson', { uuid: lesson.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if is_granted('edit', absence) %}
+                    <div class="card-footer">
+                        <a href="{{ path('add_missing_absence_lessons', { uuid: absence.uuid, '_csrf_token': csrf_token('teacher_absence') }) }}" class="btn btn-outline-primary btn-sm" title="{{ 'absences.teachers.show.lessons.add_missing.help'|trans }}">
+                            <i class="fas fa-plus"></i> {{ 'absences.teachers.show.lessons.add_missing.label'|trans }}
+                        </a>
+
+                        <a href="{{ path('remove_missing_absence_lessons', { uuid: absence.uuid, '_csrf_token': csrf_token('teacher_absence') }) }}" class="btn btn-outline-danger btn-sm" title="{{ 'absences.teachers.show.lessons.remove_missing.help'|trans }}">
+                            <i class="fas fa-trash"></i> {{ 'absences.teachers.show.lessons.remove_missing.label'|trans }}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                {% if is_granted('edit', absence) or is_granted('remove', absence) %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            {% if is_granted('edit', absence) %}
+                            <a href="{{ path('edit_teacher_absence', { uuid: absence.uuid }) }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-edit"></i> {{ 'absences.teachers.edit.label'|trans }}
+                            </a>
+                            {% endif %}
+
+                            {% if is_granted('remove', absence) %}
+                            <a href="{{ path('remove_teacher_absence', { uuid: absence.uuid }) }}" class="list-group-item list-group-item-action list-group-item-danger">
+                                <i class="fas fa-trash"></i> {{ 'absences.teachers.remove.label'|trans }}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ 'absences.teachers.processed.header'|trans }}</h4>
+
+                        <p>
+                            {% if absence.processedAt is not null %}
+                                <span class="badge badge-success">{{ 'absences.teachers.processed.label'|trans }}</span>
+                            {% else %}
+                                <span class="badge badge-danger">{{ 'absences.teachers.processed.not_processed'|trans }}</span>
+                            {% endif %}
+                        </p>
+
+                        {% if absence.processedAt is not null %}
+                            <p>
+                                <i class="far fa-clock"></i> {{ absence.processedAt|format_datetime }}
+                            </p>
+                        {% endif %}
+
+                        {% if absence.processedBy is not null %}
+                            <p>
+                                <i class="fas fa-chalkboard-teacher"></i> {{ absence.processedBy|user(false) }}
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    {% if is_granted('process', absence) %}
+                        <div class="list-group list-group-flush">
+                            <a href="{{ path('mark_teacher_absence_processed', { uuid: absence.uuid, '_csrf_token': csrf_token('teacher_absence')}) }}" class="list-group-item list-group-item-action list-group-item-success">
+                                <i class="fas fa-check-circle"></i> {{ 'absences.teachers.processed.button'|trans }}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <p>
+                            <span class="text-muted">{{ 'absences.students.add.absent_from'|trans }}</span>
+                            {{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }})
+                        </p>
+
+                        <p>
+                            <span class="text-muted">{{ 'absences.students.add.absent_until'|trans }}</span>
+                            {{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})
+                        </p>
+
+                        <p>
+                            <span class="text-muted">{{ 'absences.created_at'|trans }}</span>
+                            {{ absence.createdAt|format_datetime }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

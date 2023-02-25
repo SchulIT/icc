@@ -1,0 +1,75 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'absences.students.add.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('student_absences') }}">{{ 'absences.students.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
+
+            <p>
+                {{ 'absences.students.add_bulk.info'|trans }}
+            </p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+        <div class="card-body">
+            {{ form_row(form.students) }}
+            {{ form_row(form.type)}}
+
+            <div class="bs-callout bs-callout-info">
+                <h4>{{ 'info.label'|trans }}</h4>
+                <p>{{ 'absences.students.add.must_approve.help'|trans }}</p>
+            </div>
+
+            {{ form_row(form.from) }}
+            {{ form_row(form.until) }}
+            {{ form_row(form.message) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'absences.students.add.contact.label'|trans }}</div>
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                {{ 'absences.students.add.contact.info'|trans }}
+            </div>
+
+            {{ form_row(form.phone) }}
+            {{ form_row(form.email) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'absences.students.add.attachments.label'|trans }}</div>
+        <div class="card-body">
+            <div class="bs-callout bs-callout-danger">
+                <p>{{ 'absences.students.add_bulk.attachments'|trans }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-envelope"></i> {{ 'absences.students.add.send'|trans }}
+        </button>
+
+        <a href="{{ path('student_absences') }}" class="btn btn-secondary btn-sm">
+            {{ 'actions.cancel'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

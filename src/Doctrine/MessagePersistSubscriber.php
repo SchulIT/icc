@@ -4,7 +4,6 @@ namespace App\Doctrine;
 
 use App\Entity\Message;
 use App\Event\MessageCreatedEvent;
-use App\Event\MessageUpdatedEvent;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;

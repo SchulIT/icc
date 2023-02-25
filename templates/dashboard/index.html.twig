@@ -262,8 +262,9 @@
                 {% set canCreateAbsence = is_granted('new-absence') %}
                 {% set canCreateReservation = is_granted('new-reservation') %}
                 {% set canCreateExcuseNote = is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                {% set canCreateTeacherAbsence = is_granted('new-teacher-absence') %}
 
-                {% if canCreateMessage or canCreateAbsence or canCreateReservation or canCreateExcuseNote %}
+                {% if canCreateMessage or canCreateAbsence or canCreateReservation or canCreateExcuseNote or canCreateTeacherAbsence %}
                     <div class="card">
                         <div class="list-group list-group-flush">
                             {% if canCreateMessage %}
@@ -276,9 +277,18 @@
                                     <i class="fas fa-plus"></i> {{ 'resources.reservations.add.label'|trans }}
                                 </a>
                             {% endif %}
+                            {% if canCreateTeacherAbsence %}
+                                <a href="{{ path('add_teacher_absence') }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-plus"></i> {{ 'absences.teachers.add.label'|trans }}
+                                    <span class="badge badge-primary">{{ 'label.teachers_simple'|trans }}</span>
+                                </a>
+                            {% endif %}
                             {% if canCreateAbsence %}
-                                <a href="{{ path('add_absence') }}" class="list-group-item list-group-item-action">
-                                    <i class="fas fa-plus"></i> {{ 'student_absences.add.label'|trans }}
+                                <a href="{{ path('add_student_absence') }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-plus"></i> {{ 'absences.students.add.label'|trans }}
+                                    {% if canCreateTeacherAbsence %}
+                                        <span class="badge badge-primary">{{ 'label.students_simple'|trans }}</span>
+                                    {% endif %}
                                 </a>
                             {% endif %}
                             {% if canCreateExcuseNote %}

@@ -1,0 +1,155 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'absences.students.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {% set currentFilter = {
+        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
+        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null
+    } %}
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if absences|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <h4>{{ 'info.label'|trans }}</h4>
+
+                        <p>{{ 'absences.teachers.empty'|trans }}</p>
+                    </div>
+                {% else %}
+                    <div class="card">
+                            <div class="table-responsive">
+                                <table class="table table-striped card-table border-top-0">
+                                    <colgroup>
+                                        <col class="column-lg">
+                                        <col>
+                                        <col>
+                                        <col class="column-lg">
+                                        <col class="column-lg">
+                                        <col class="column-sm">
+                                    </colgroup>
+                                    
+                                    <thead>
+                                    <tr>
+                                        <th>{{ 'label.type'|trans({}, 'enums') }}</th>
+                                        <th>{{ 'label.lastname'|trans }}</th>
+                                        <th>{{ 'label.firstname'|trans }}</th>
+                                        <th>{{ 'absences.students.add.absent_from'|trans }}</th>
+                                        <th>{{ 'absences.students.add.absent_until'|trans }}</th>
+                                        <th>{{ 'absences.created_at'|trans }}</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    {% for absence in absences %}
+                                        <tr>
+                                            <td class="align-middle">
+                                                {{ absence.type.name }}
+
+                                                {% if absence.processedAt is not null %}
+                                                    <span class="badge badge-success">{{ 'absences.teachers.processed.label'|trans }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="align-middle">{{ absence.teacher.lastname }}</td>
+                                            <td class="align-middle">{{ absence.teacher.firstname }}</td>
+                                            <td class="align-middle">{{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }})</td>
+                                            <td class="align-middle">{{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})</td>
+                                            <td class="align-middle">{{ absence.createdAt|format_datetime }}</td>
+
+                                            <td class="align-middle">
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a href="{{ path('show_teacher_absence', { uuid: absence.uuid }) }}" class="dropdown-item">
+                                                            <i class="fas fa-info-circle"></i> {{ 'actions.view'|trans }}
+                                                        </a>
+
+                                                        {% if is_granted('edit', absence) %}
+                                                            <a href="{{ path('edit_teacher_absence', { uuid: absence.uuid }) }}" class="dropdown-item">
+                                                                <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
+                                                            </a>
+                                                        {% endif %}
+
+                                                        {% if is_granted('remove', absence) %}
+                                                            <a href="{{ path('remove_teacher_absence', { uuid: absence.uuid}) }}" class="dropdown-item text-danger">
+                                                                <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+                                                            </a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                    </div>
+
+                    {% include '@Common/includes/pagination.html.twig' with {
+                        currentFilters: currentFilter,
+                        currentPage: page,
+                        paginationPath: 'teacher_absences',
+                        lastPage: pages,
+                        showAlwaysFirstAndLast: true
+                    } only %}
+                {% endif %}
+            </div>
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% if is_granted('new-teacher-absence') %}
+                            <a href="{{ path('add_teacher_absence') }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-plus"></i> {{ 'absences.teachers.add.label'|trans }}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+
+                        {% if is_granted('view-any-teacher-absence') %}
+                            {% include "_filter/teacher.html.twig" %}
+                        {% endif %}
+
+                        <form role="form" method="get" class="form">
+                            <div class="form-group mb-0">
+                                {% include "_filter/_params.html.twig" with { params: currentFilter } %}
+
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="hide-processed" data-trigger="submit" name="hide_processed" value="✓" {% if hideProcessed %}checked="checked"{% endif %}>
+                                    <label class="custom-control-label" for="hide-processed">{{ 'absences.teachers.show.hide_processed'|trans }}</label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('teacher_absences') }}" class="btn btn-primary btn-sm">
+                            {{ 'filter.reset'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

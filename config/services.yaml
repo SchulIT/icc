@@ -266,6 +266,11 @@ services:
             $appName: '%env(APP_NAME)%'
             $sender: '%env(MAILER_FROM)%'
 
+    App\TeacherAbsence\TeacherAbsenceNotifier:
+        arguments:
+            $appName: '%env(APP_NAME)%'
+            $sender: '%env(MAILER_FROM)%'
+
     # COMMANDS
     #SchulIT\CommonBundle\Command\SendMailsCommand:
     #    arguments:

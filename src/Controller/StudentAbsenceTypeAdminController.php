@@ -13,16 +13,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route(path: '/admin/absence_types')]
+#[Route(path: '/admin/absence_types/students')]
 #[Security("is_granted('ROLE_ADMIN')")]
 class StudentAbsenceTypeAdminController extends AbstractController {
-    public function __construct(private StudentAbsenceTypeRepositoryInterface $repository)
+    public function __construct(private readonly StudentAbsenceTypeRepositoryInterface $repository)
     {
     }
 
     #[Route(path: '', name: 'admin_absence_types')]
     public function index(): Response {
-        return $this->render('admin/absence_types/index.html.twig', [
+        return $this->render('admin/absence_types/students/index.html.twig', [
             'absence_types' => $this->repository->findAll()
         ]);
     }
@@ -39,7 +39,7 @@ class StudentAbsenceTypeAdminController extends AbstractController {
             return $this->redirectToRoute('admin_absence_types');
         }
 
-        return $this->render('admin/absence_types/add.html.twig', [
+        return $this->render('admin/absence_types/students/add.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -55,7 +55,7 @@ class StudentAbsenceTypeAdminController extends AbstractController {
             return $this->redirectToRoute('admin_absence_types');
         }
 
-        return $this->render('admin/absence_types/edit.html.twig', [
+        return $this->render('admin/absence_types/students/edit.html.twig', [
             'form' => $form->createView(),
             'absence_type' => $absenceType
         ]);
@@ -78,7 +78,7 @@ class StudentAbsenceTypeAdminController extends AbstractController {
             return $this->redirectToRoute('admin_absence_types');
         }
 
-        return $this->render('admin/absence_types/remove.html.twig', [
+        return $this->render('admin/absence_types/students/remove.html.twig', [
             'form' => $form->createView(),
             'absence_type' => $absenceType
         ]);

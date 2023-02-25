@@ -2,22 +2,16 @@
 
 namespace App\Controller;
 
-use App\Converter\StudentStringConverter;
 use App\Converter\StudyGroupStringConverter;
-use App\Entity\Student;
-use App\Form\Model\BulkStudentAbsence;
-use App\Form\StudentAbsenceBulkType;
-use App\Repository\StudyGroupRepositoryInterface;
-use App\Sorting\StudyGroupStrategy;
-use SchulIT\CommonBundle\Form\ConfirmType;
-use Symfony\Component\HttpFoundation\Response;
 use App\Entity\DateLesson;
+use App\Entity\Student;
 use App\Entity\StudentAbsence;
 use App\Entity\StudentAbsenceAttachment;
 use App\Entity\StudentAbsenceMessage;
 use App\Entity\StudyGroupMembership;
 use App\Entity\User;
-use App\Entity\UserType;
+use App\Form\Model\BulkStudentAbsence;
+use App\Form\StudentAbsenceBulkType;
 use App\Form\StudentAbsenceMessageType;
 use App\Form\StudentAbsenceType;
 use App\Grouping\StudentAbsenceGenericGroup;
@@ -27,6 +21,7 @@ use App\Grouping\StudentAbsenceTuitionGroup;
 use App\Http\FlysystemFileResponse;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
+use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\StudentAbsenceVoter;
@@ -34,9 +29,9 @@ use App\Settings\StudentAbsenceSettings;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\StudentAbsenceTuitionGroupStrategy;
+use App\Sorting\StudyGroupStrategy;
 use App\StudentAbsence\ApprovalHelper;
 use App\Timetable\TimetableTimeHelper;
-use App\Utils\EnumArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\GradeFilterView;
 use App\View\Filter\SectionFilter;
@@ -45,14 +40,15 @@ use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use League\Flysystem\FilesystemOperator;
 use Mimey\MimeTypes;
+use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route(path: '/absences')]
+#[Route(path: '/absence/students')]
 #[Security("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-absence')")]
 class StudentAbsenceController extends AbstractController {
 
@@ -62,7 +58,7 @@ class StudentAbsenceController extends AbstractController {
 
     use DateTimeHelperTrait;
 
-    #[Route(path: '/add', name: 'add_absence')]
+    #[Route(path: '/add', name: 'add_student_absence')]
     public function add(Request $request, StudentAbsenceSettings $settings,
                         StudentAbsenceRepositoryInterface $repository, StudentRepositoryInterface $studentRepository,
                         TimetableTimeHelper $timeHelper, TimetableSettings $timetableSettings, DateHelper $dateHelper): Response {
@@ -86,16 +82,16 @@ class StudentAbsenceController extends AbstractController {
             $repository->persist($note);
 
             $this->addFlash('success', 'student_absences.add.success');
-            return $this->redirectToRoute('absences');
+            return $this->redirectToRoute('student_absences');
         }
 
-        return $this->render('absences/add.html.twig', [
+        return $this->render('absences/students/add.html.twig', [
             'form' => $form->createView(),
             'settings' => $settings
         ]);
     }
 
-    #[Route(path: '/add_bulk', name: 'add_absence_bulk')]
+    #[Route(path: '/add_bulk', name: 'add_student_absence_bulk')]
     public function addBulk(Request $request, StudentAbsenceSettings $settings, SectionResolverInterface $sectionResolver,
                             StudentAbsenceRepositoryInterface $repository, StudyGroupRepositoryInterface $studyGroupRepository,
                             TimetableTimeHelper $timeHelper, TimetableSettings $timetableSettings, DateHelper $dateHelper,
@@ -133,7 +129,7 @@ class StudentAbsenceController extends AbstractController {
             }
 
             $this->addFlash('success', 'student_absences.bulk.success');
-            return $this->redirectToRoute('absences');
+            return $this->redirectToRoute('student_absences');
         }
 
         $studyGroupsData = [ ];
@@ -148,14 +144,14 @@ class StudentAbsenceController extends AbstractController {
             ];
         }
 
-        return $this->render('absences/add_bulk.html.twig', [
+        return $this->render('absences/students/add_bulk.html.twig', [
             'form' => $form->createView(),
             'settings' => $settings,
             'studyGroupsData' => $studyGroupsData
         ]);
     }
 
-    #[Route(path: '/{uuid}/edit', name: 'edit_absence')]
+    #[Route(path: '/{uuid}/edit', name: 'edit_student_absence')]
     public function edit(StudentAbsence $absence, Request $request, StudentAbsenceSettings $settings, StudentAbsenceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::New);
 
@@ -170,16 +166,16 @@ class StudentAbsenceController extends AbstractController {
             $repository->persist($absence);
 
             $this->addFlash('success', 'student_absences.edit.success');
-            return $this->redirectToRoute('absences');
+            return $this->redirectToRoute('student_absences');
         }
 
-        return $this->render('absences/edit.html.twig', [
+        return $this->render('absences/students/edit.html.twig', [
             'form' => $form->createView(),
             'settings' => $settings
         ]);
     }
 
-    #[Route(path: '', name: 'absences')]
+    #[Route(path: '', name: 'student_absences')]
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, StudentFilter $studentFilter,
                           StudentAbsenceTypeFilter $typeFilter, Request $request,
                           StudentAbsenceRepositoryInterface $absenceRepository, TuitionRepositoryInterface $tuitionRepository,
@@ -285,7 +281,7 @@ class StudentAbsenceController extends AbstractController {
             $pages = ceil((double)$paginator->count() / self::ITEMS_PER_PAGE);
         }
 
-        return $this->render('absences/index.html.twig', [
+        return $this->render('absences/students/index.html.twig', [
             'groups' => $groups,
             'sectionFilter' => $sectionFilterView,
             'gradeFilter' => $gradeFilterView,
@@ -300,7 +296,7 @@ class StudentAbsenceController extends AbstractController {
         ]);
     }
 
-    #[Route(path: '/{uuid}', name: 'show_absence')]
+    #[Route(path: '/{uuid}', name: 'show_student_absence')]
     public function show(StudentAbsence $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $absence);
 
@@ -318,19 +314,19 @@ class StudentAbsenceController extends AbstractController {
             $repository->persist($absence);
 
             $this->addFlash('success', 'student_absences.comment.success');
-            return $this->redirectToRoute('show_absence', [
+            return $this->redirectToRoute('show_student_absence', [
                 'uuid' => $absence->getUuid()
             ]);
         }
 
-        return $this->render('absences/show.html.twig', [
+        return $this->render('absences/students/show.html.twig', [
             'absence' => $absence,
             'token_id' => self::CSRF_TOKEN_ID,
             'form' => $form->createView()
         ]);
     }
 
-    #[Route(path: '/{uuid}/approve', name: 'approve_absence')]
+    #[Route(path: '/{uuid}/approve', name: 'approve_student_absence')]
     public function approve(StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Approve, $absence);
 
@@ -344,12 +340,12 @@ class StudentAbsenceController extends AbstractController {
             $this->addFlash('success', 'student_absences.approval.success');
         }
 
-        return $this->redirectToRoute('show_absence', [
+        return $this->redirectToRoute('show_student_absence', [
             'uuid' => $absence->getUuid()
         ]);
     }
 
-    #[Route(path: '/{uuid}/deny', name: 'deny_absence')]
+    #[Route(path: '/{uuid}/deny', name: 'deny_student_absence')]
     public function deny(StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Deny, $absence);
 
@@ -363,7 +359,7 @@ class StudentAbsenceController extends AbstractController {
             $this->addFlash('success', 'student_absences.approval.success');
         }
 
-        return $this->redirectToRoute('show_absence', [
+        return $this->redirectToRoute('show_student_absence', [
             'uuid' => $absence->getUuid()
         ]);
     }
@@ -390,24 +386,24 @@ class StudentAbsenceController extends AbstractController {
         );
     }
 
-    #[Route('/{uuid}/remove', name: 'remove_absence')]
+    #[Route('/{uuid}/remove', name: 'remove_student_absence')]
     public function remove(StudentAbsence $absence, Request $request, StudentAbsenceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Remove, $absence);
 
         $form = $this->createForm(ConfirmType::class, null, [
-            'message' => 'student_absences.remove.confirm'
+            'message' => 'absences.students.remove.confirm'
         ]);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
             $repository->remove($absence);
 
-            $this->addFlash('success', 'student_absences.remove.success');
+            $this->addFlash('success', 'absences.students.remove.success');
 
-            return $this->redirectToRoute('absences');
+            return $this->redirectToRoute('student_absences');
         }
 
-        return $this->render('absences/remove.html.twig', [
+        return $this->render('absences/students/remove.html.twig', [
             'form' => $form->createView(),
             'absence' => $absence
         ]);

@@ -10,9 +10,10 @@ use App\Security\Voter\ExamVoter;
 use App\Security\Voter\ListsVoter;
 use App\Security\Voter\ResourceReservationVoter;
 use App\Security\Voter\StudentAbsenceVoter;
+use App\Security\Voter\TeacherAbsenceVoter;
 use App\Security\Voter\WikiVoter;
 use App\Settings\StudentAbsenceSettings;
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemInterface;
+use App\Settings\TeacherAbsenceSettings;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use LightSaml\SpBundle\Security\Http\Authenticator\SamlToken;
@@ -23,7 +24,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Builder {
-    public function __construct(private FactoryInterface $factory, private AuthorizationCheckerInterface $authorizationChecker, private WikiArticleRepositoryInterface $wikiRepository, private TimetableLessonRepositoryInterface $lessonRepository, private TokenStorageInterface $tokenStorage, private DateHelper $dateHelper, private TranslatorInterface $translator, private DarkModeManagerInterface $darkModeManager, private StudentAbsenceSettings $studentAbsenceSettings, private SectionResolverInterface $sectionResolver, private string $idpProfileUrl)
+    public function __construct(private FactoryInterface $factory, private AuthorizationCheckerInterface $authorizationChecker, private WikiArticleRepositoryInterface $wikiRepository, private TimetableLessonRepositoryInterface $lessonRepository, private TokenStorageInterface $tokenStorage, private DateHelper $dateHelper, private TranslatorInterface $translator, private DarkModeManagerInterface $darkModeManager,
+                                private StudentAbsenceSettings $studentAbsenceSettings, private readonly TeacherAbsenceSettings $teacherAbsenceSettings,
+                                private SectionResolverInterface $sectionResolver, private string $idpProfileUrl)
     {
     }
 
@@ -295,8 +298,13 @@ class Builder {
             ])
                 ->setExtra('icon', 'fas fa-sort-alpha-down');
 
-            $root->addChild('admin.absence_types.label', [
+            $root->addChild('admin.absence_types.label_students', [
                 'route' => 'admin_absence_types'
+            ])
+                ->setExtra('icon', 'fas fa-user-times');
+
+            $root->addChild('admin.absence_types.label_teachers', [
+                'route' => 'admin_teacher_absence_types'
             ])
                 ->setExtra('icon', 'fas fa-user-times');
         }
@@ -577,15 +585,9 @@ class Builder {
 
         $this->wikiMenu($menu);
 
-        if($this->studentAbsenceSettings->isEnabled() === true) {
-            if($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_VIEWER')
-            || $this->authorizationChecker->isGranted('ROLE_SICK_NOTE_CREATOR')
-            || $this->authorizationChecker->isGranted(StudentAbsenceVoter::New)) {
-                $menu->addChild('student_absences.label', [
-                    'route' => 'absences'
-                ])
-                    ->setExtra('icon', 'fas fa-user-times');
-            }
+        if($this->studentAbsenceSettings->isEnabled() === true || $this->teacherAbsenceSettings->isEnabled() === true) {
+            $absenceMenu = $this->absencesMenu($menu);
+            $this->setFirstChildAsUri($absenceMenu);
         }
 
         if($this->authorizationChecker->isGranted('ROLE_BOOK_VIEWER')) {
@@ -593,6 +595,31 @@ class Builder {
         }
 
         return $menu;
+    }
+
+    public function absencesMenu(ItemInterface $menu): ItemInterface {
+        $plans = $menu->addChild('absences.label')
+            ->setExtra('menu', 'absences')
+            ->setExtra('menu-container', '#submenu')
+            ->setExtra('icon', 'fas fa-user-times');
+
+        if($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_VIEWER')
+            || $this->authorizationChecker->isGranted('ROLE_SICK_NOTE_CREATOR')
+            || $this->authorizationChecker->isGranted(StudentAbsenceVoter::New)) {
+            $plans->addChild('absences.students.label', [
+                'route' => 'student_absences'
+            ])
+                ->setExtra('icon', 'fas fa-user-graduate');
+        }
+
+        if($this->authorizationChecker->isGranted(TeacherAbsenceVoter::NewAbsence) || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::CanViewAny)) {
+            $plans->addChild('absences.teachers.label', [
+                'route' => 'teacher_absences'
+            ])
+                ->setExtra('icon', 'fas fa-chalkboard-teacher');
+        }
+
+        return $plans;
     }
 
     public function servicesMenu(): ItemInterface {

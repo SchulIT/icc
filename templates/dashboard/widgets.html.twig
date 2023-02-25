@@ -48,8 +48,13 @@
                     {% endif %}
                     <div class="d-block">
                         {% for absentStudent in group.students %}
-                            {% if absentStudent.reason.value == 'absence' %}<i class="fas fa-user-times" title="{{ 'student_absences.show.label'|trans }}"></i>{% endif %}
-                            {{ absentStudent.student|student }} {% if absentStudent.reason.value == 'absence' %}({{ 'student_absences.until_short'|trans({'%date%': absentStudent.absence.until.date|format_date, '%lesson%': absentStudent.absence.until.lesson }) }}){% endif %}{% if not loop.last %} – {% endif %}{% endfor %}
+                            {% if absentStudent.reason.value == 'absence' %}<i class="fas fa-user-times" title="{{ 'absences.students.show.label'|trans }}"></i>{% endif %}
+                            {% if absentStudent.absence is defined and is_granted('view', absentStudent.absence) %}
+                                <a href="{{ path('show_student_absence', { uuid: absentStudent.absence.uuid }) }}">{{ absentStudent.student|student }} ({{ 'absences.until_short'|trans({'%date%': absentStudent.absence.until.date|format_date, '%lesson%': absentStudent.absence.until.lesson }) }})</a>
+                            {% else %}
+                                {{ absentStudent.student|student }}
+                            {% endif %}
+                            {% if not loop.last %} – {% endif %}{% endfor %}
                     </div>
                 </div>
             {% endfor %}

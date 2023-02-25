@@ -14,11 +14,7 @@
         {% endif %}
     {% endblock %}
 
-    <div class="card">
-        <div class="card-header border-bottom-0">
-            {{ knp_menu_render('settingsMenu', {'currentClass': 'active', 'template': 'admin/settings/_menu.html.twig' }) }}
-        </div>
-    </div>
+    {{ knp_menu_render('settingsMenu', {'currentClass': 'active', 'template': 'admin/settings/_menu.html.twig' }) }}
 
     {% block settings_content %}{% endblock %}
 

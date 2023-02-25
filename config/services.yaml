@@ -130,17 +130,41 @@ services:
 
     # MENU
     App\Menu\Builder:
+        tags:
+            - { name: knp_menu.menu_builder, method: mainMenu, alias: mainMenu }
+
+    App\Menu\ServicesMenuBuilder:
+        tags:
+            - { name: knp_menu.menu_builder, method: servicesMenu, alias: servicesMenu }
+
+    App\Menu\ImportMenuBuilder:
+        tags:
+            - { name: knp_menu.menu_builder, method: importMenu, alias: importMenu }
+
+    App\Menu\UserMenuBuilder:
         arguments:
             $idpProfileUrl: '%env(IDP_PROFILE_URL)%'
         tags:
-            - { name: knp_menu.menu_builder, method: mainMenu, alias: mainMenu }
             - { name: knp_menu.menu_builder, method: userMenu, alias: userMenu }
-            - { name: knp_menu.menu_builder, method: adminMenu, alias: adminMenu }
-            - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
-            - { name: knp_menu.menu_builder, method: servicesMenu, alias: servicesMenu }
+
+    App\Menu\SystemMenuBuilder:
+        tags:
             - { name: knp_menu.menu_builder, method: systemMenu, alias: systemMenu }
+
+    App\Menu\AdminMenuBuilder:
+        tags:
+            - { name: knp_menu.menu_builder, method: adminMenu, alias: adminMenu }
+
+    App\Menu\AdminDataMenuBuilder:
+        tags:
             - { name: knp_menu.menu_builder, method: dataMenu, alias: dataMenu }
-            - { name: knp_menu.menu_builder, method: importMenu, alias: importMenu }
+
+    App\Menu\AdminSettingsMenuBuilder:
+        tags:
+            - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
+
+    App\Menu\AdminToolsMenuBuilder:
+        tags:
             - { name: knp_menu.menu_builder, method: toolsMenu, alias: toolsMenu }
 
     SchulIT\CommonBundle\Menu\Voter:

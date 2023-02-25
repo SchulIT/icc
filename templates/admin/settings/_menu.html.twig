@@ -1,14 +1,13 @@
 {% import "knp_menu.html.twig" as macros %}
 
-{% for rootItem in item %}
-    {% if rootItem.children|length > 0 %}
-        {% set isCurrent = false %}
-        {%- if matcher.isCurrent(rootItem) or matcher.isAncestor(rootItem) %}
-            {%- set isCurrent = true %}
-        {%- endif -%}
-
+<div class="card">
+    <div class="card-header border-bottom-0">
         <ul class="nav nav-pills card-header-pills">
-            {% for child in rootItem.children %}
+            {% for child in knp_menu_get('settingsMenu') %}
+                {% set isCurrent = false %}
+                {%- if matcher.isCurrent(child) or matcher.isAncestor(child) %}
+                    {%- set isCurrent = true %}
+                {%- endif -%}
                 <li class="nav-item">
                     <a href="{{ child.uri }}" class="nav-link {% if matcher.isCurrent(child) %}active{% endif %}" {{ macros.attributes(child.linkAttributes) }}>
                         {% if child.extras['icon'] is defined %}
@@ -21,5 +20,5 @@
                 </li>
             {% endfor %}
         </ul>
-    {% endif %}
-{% endfor %}
+    </div>
+</div>

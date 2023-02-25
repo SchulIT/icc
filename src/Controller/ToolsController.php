@@ -3,18 +3,18 @@
 namespace App\Controller;
 
 use App\Form\GradeTuitionTeachersIntersectionType;
-use App\Menu\Builder;
+use App\Menu\AdminToolsMenuBuilder;
 use App\Tools\GradeTuitionTeachersIntersectionInput;
 use App\Tools\GradeTuitionTeachersIntersectionTool;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/admin/tools')]
+#[Route('/tools')]
 class ToolsController extends AbstractController {
 
     #[Route('', name: 'tools')]
-    public function index(Builder $menuBuilder): Response {
+    public function index(AdminToolsMenuBuilder $menuBuilder): Response {
         $toolsMenu = $menuBuilder->toolsMenu([]);
 
         $firstKey = array_key_first($toolsMenu->getChildren());

@@ -2,23 +2,21 @@
 
 namespace App\Controller;
 
+use App\Menu\AdminDataMenuBuilder;
 use Symfony\Component\HttpFoundation\Response;
-use App\Menu\Builder;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route(path: '/admin')]
 class AdminController extends AbstractController {
     #[Route(path: '', name: 'admin')]
-    public function index(Builder $menuBuilder): Response {
-        $adminMenu = $menuBuilder->adminMenu([]);
+    public function index(AdminDataMenuBuilder $menuBuilder): Response {
+        $adminMenu = $menuBuilder->dataMenu([]);
 
-        if($adminMenu->hasChildren() === false || !isset($adminMenu['admin']) || $adminMenu['admin']->hasChildren() === false) {
+        if($adminMenu->hasChildren() === false) {
             throw new AccessDeniedHttpException();
         }
 
-        return $this->render('admin/index.html.twig', [
-            'menu' => $adminMenu->getChildren()
-        ]);
+        return $this->redirect($adminMenu->getFirstChild()->getUri());
     }
 }

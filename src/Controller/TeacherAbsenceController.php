@@ -221,7 +221,7 @@ class TeacherAbsenceController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             $this->repository->persist($lesson);
-            $this->addFlash('success', 'absences.teachers.edit.lesson.success');
+            $this->addFlash('success', 'absences.teachers.edit.lessons.success');
 
             return $this->redirectToRoute('show_teacher_absence', [
                 'uuid' => $lesson->getAbsence()->getUuid()

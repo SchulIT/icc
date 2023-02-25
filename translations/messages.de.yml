@@ -677,7 +677,7 @@ date:
         12: Dezember
 
 admin:
-    label: Verwaltung
+    label: Datenverwaltung
 
     ea:
         label: EasyAdmin

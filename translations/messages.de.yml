@@ -1420,7 +1420,7 @@ absences:
                 success: Vertretungsinformationen erfolgreich bearbeitet
         remove:
             label: Abwesenheitsmeldung löschen
-            confirm: 'Soll die Abwesenheitsmeldung für %start% bis %ende% wirklich gelöscht werden?'
+            confirm: 'Soll die Abwesenheitsmeldung wirklich gelöscht werden?'
             success: Abwesenheitsmeldung erfolgreich gelöscht
         show:
             header: 'Abwesenheitsmeldung für %teacher%'

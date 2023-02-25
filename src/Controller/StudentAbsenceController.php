@@ -391,14 +391,14 @@ class StudentAbsenceController extends AbstractController {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Remove, $absence);
 
         $form = $this->createForm(ConfirmType::class, null, [
-            'message' => 'student_absences.remove.confirm'
+            'message' => 'absences.students.remove.confirm'
         ]);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
             $repository->remove($absence);
 
-            $this->addFlash('success', 'student_absences.remove.success');
+            $this->addFlash('success', 'absences.students.remove.success');
 
             return $this->redirectToRoute('student_absences');
         }

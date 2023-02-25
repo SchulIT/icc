@@ -22,6 +22,7 @@ use App\Timetable\TimetableTimeHelper;
 use App\View\Filter\SectionFilter;
 use App\View\Filter\TeacherFilter;
 use DateTime;
+use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -237,5 +238,23 @@ class TeacherAbsenceController extends AbstractController {
     #[Route('/{uuid}/remove', name: 'remove_teacher_absence')]
     public function remove(TeacherAbsence $absence, Request $request): Response {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Remove, $absence);
+
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'absences.teachers.remove.confirm'
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($absence);
+
+            $this->addFlash('success', 'absences.teachers.remove.success');
+
+            return $this->redirectToRoute('teacher_absences');
+        }
+
+        return $this->render('absences/teachers/remove.html.twig', [
+            'form' => $form->createView(),
+            'absence' => $absence
+        ]);
     }
 }

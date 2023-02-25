@@ -10,7 +10,7 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('teacher_absences') }}">{{ 'absences.teachers.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('show_teacher_absence', { uuid: absence.uuid }) }}">{{ absence.reason }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_teacher_absence', { uuid: absence.uuid }) }}">{{ absence.type.name }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}

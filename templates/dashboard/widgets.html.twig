@@ -403,8 +403,32 @@
             </div>
         {% endif %}
 
+        {% if item.absenceLesson is not null %}
+            {{ _self.absenceLesson(item.absenceLesson) }}
+        {% endif %}
+
         {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, substitution.uuid ~ lesson, item.students|length ) }}
     </div>
+{% endmacro %}
+
+{% macro absenceLesson(absenceLesson) %}
+    {% if absenceLesson.commentStudents is not empty %}
+        <div class="card-footer">
+            <p class="text-muted"><i class="fas fa-info-circle"></i> {{ 'absences.teachers.comment.students'|trans }}</p>
+            {{ absenceLesson.commentStudents|markdown }}
+        </div>
+    {% endif %}
+    {% if absenceLesson.commentTeacher is not empty and app.user.isTeacher %}
+        <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#teacherinfo-{{ absenceLesson.uuid }}">
+            <span class="mr-auto align-self-center">
+                <i class="fas fa-info-circle"></i> {{ 'absences.teachers.comment.teacher'|trans }}
+            </span>
+            <i class="fa indicator align-self-center fa-chevron-down"></i>
+        </div>
+        <div class="card-footer collapse border-top-0" id="teacherinfo-{{ absenceLesson.uuid }}">
+            {{ absenceLesson.commentTeacher|markdown }}
+        </div>
+    {% endif %}
 {% endmacro %}
 
 {% macro appointment(appointment) %}

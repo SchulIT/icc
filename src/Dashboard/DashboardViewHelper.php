@@ -36,6 +36,7 @@ use App\Repository\MessageRepositoryInterface;
 use App\Repository\ResourceReservationRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
+use App\Repository\TeacherAbsenceLessonRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
@@ -63,7 +64,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DashboardViewHelper {
 
-    public function __construct(private SubstitutionRepositoryInterface $substitutionRepository, private ExamRepositoryInterface $examRepository, private TimetableLessonRepositoryInterface $timetableRepository, private TimetableSupervisionRepositoryInterface $supervisionRepository, private MessageRepositoryInterface $messageRepository, private InfotextRepositoryInterface $infotextRepository, private AbsenceRepositoryInterface $absenceRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private AppointmentRepositoryInterface $appointmentRepository, private ResourceReservationRepositoryInterface $roomReservationRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private StudyGroupHelper $studyGroupHelper, private TimetableTimeHelper $timetableTimeHelper, private Sorter $sorter, private Grouper $grouper, private TimetableSettings $timetableSettings, private DashboardSettings $dashboardSettings, private AuthorizationCheckerInterface $authorizationChecker, private ValidatorInterface $validator, private DateHelper $dateHelper, private AbsenceResolver $absenceResolver, private SectionResolverInterface $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository)
+    public function __construct(private SubstitutionRepositoryInterface $substitutionRepository, private ExamRepositoryInterface $examRepository, private TimetableLessonRepositoryInterface $timetableRepository,
+                                private TimetableSupervisionRepositoryInterface $supervisionRepository, private MessageRepositoryInterface $messageRepository, private InfotextRepositoryInterface $infotextRepository,
+                                private AbsenceRepositoryInterface $absenceRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private AppointmentRepositoryInterface $appointmentRepository,
+                                private ResourceReservationRepositoryInterface $roomReservationRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private StudyGroupHelper $studyGroupHelper,
+                                private TimetableTimeHelper $timetableTimeHelper, private Sorter $sorter, private Grouper $grouper, private TimetableSettings $timetableSettings, private DashboardSettings $dashboardSettings,
+                                private AuthorizationCheckerInterface $authorizationChecker, private ValidatorInterface $validator, private DateHelper $dateHelper, private AbsenceResolver $absenceResolver,
+                                private SectionResolverInterface $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly TeacherAbsenceLessonRepositoryInterface $absenceLessonRepository)
     {
     }
 
@@ -255,7 +262,7 @@ class DashboardViewHelper {
             $isFreeLesson = in_array($substitution->getType(), $freeTypes);
 
             if($substitution->startsBefore()) {
-                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution, $isFreeLesson, [ ], [ ], null));
+                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution, $isFreeLesson, [ ], [ ], null, null));
 
                 if($substitution->getLessonEnd() - $substitution->getLessonStart() === 0) {
                     // Do not expand more lessons when the end is the same lesson as the beginning
@@ -268,8 +275,13 @@ class DashboardViewHelper {
             for ($lesson = $substitution->getLessonStart(); $lesson <= $substitution->getLessonEnd(); $lesson++) {
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($students, $lesson, $substitution->getDate()) : [ ];
                 $timetableLesson = $this->findTimetableLesson($substitution, $lesson);
+                $absenceLesson = null;
 
-                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $timetableLesson));
+                if($timetableLesson !== null) {
+                    $absenceLesson = $this->absenceLessonRepository->findOneForLesson($timetableLesson);
+                }
+
+                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $timetableLesson, $absenceLesson));
             }
         }
     }

@@ -11,7 +11,8 @@ class AdminSettingsMenuBuilder extends AbstractMenuBuilder {
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $root->addChild('admin.settings.general.label', [
                 'route' => 'admin_settings_general'
-            ]);
+            ])
+                ->setExtra('icon', 'fas fa-wrench');
 
             $root->addChild('admin.settings.dashboard.label', [
                 'route' => 'admin_settings_dashboard'

@@ -2,6 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\LearningManagementSystem;
+use App\Export\LearningManagementSystemInfoCsvExporter;
+use App\Repository\StudyGroupMembershipRepositoryInterface;
+use App\View\Filter\LearningManagementSystemFilter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Exam;
 use App\Entity\Grade;
@@ -344,5 +350,39 @@ class ListController extends AbstractControllerWithMessages {
             'last_import_categories' => $this->importDateTimeRepository->findOneByEntityClass(PrivacyCategory::class),
             'last_import_students' => $this->importDateTimeRepository->findOneByEntityClass(Student::class)
         ]);
+    }
+
+    #[Route('/lms', name: 'list_lms')]
+    public function lms(Request $request, LearningManagementSystemFilter $lmsFilter, SectionResolverInterface $sectionResolver, StudyGroupFilter $studyGroupFilter, StudentRepositoryInterface $studentRepository) {
+        $this->denyAccessUnlessGranted(ListsVoter::LearningManagementSystems);
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $lmsFilterView = $lmsFilter->handle($request->query->get('lms'));
+        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group', null), $sectionResolver->getCurrentSection(), $user);
+
+        $students = [ ];
+
+        if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
+            $students = $studentRepository->findAllByStudyGroups([$studyGroupFilterView->getCurrentStudyGroup()]);
+        }
+
+        $this->sorter->sort($students, StudentStrategy::class);
+
+        return $this->render('lists/lms.html.twig', [
+            'students' => $students,
+            'lmsFilter' => $lmsFilterView,
+            'studyGroupFilter' => $studyGroupFilterView,
+            'last_import_lms' => $this->importDateTimeRepository->findOneByEntityClass(LearningManagementSystem::class),
+            'last_import_students' => $this->importDateTimeRepository->findOneByEntityClass(Student::class)
+        ]);
+    }
+
+    #[Route('/lms/{lms}/{studyGroup}/export', name: 'export_lms')]
+    #[ParamConverter('lms', options: ['mapping' => ['lms' => 'uuid']])]
+    #[ParamConverter('studyGroup', options: ['mapping' => ['studyGroup' => 'uuid']])]
+    public function exportLms(LearningManagementSystem $lms, StudyGroup $studyGroup, LearningManagementSystemInfoCsvExporter $exporter): Response {
+        return $exporter->getCsvResponse($lms, $studyGroup);
     }
 }

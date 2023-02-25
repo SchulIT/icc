@@ -143,6 +143,13 @@ class Builder {
                 ->setExtra('icon', 'fas fa-user-shield');
         }
 
+        if($this->authorizationChecker->isGranted(ListsVoter::LearningManagementSystems)) {
+            $lists->addChild('lists.lms.label', [
+                'route' => 'list_lms'
+            ])
+                ->setExtra('icon', 'fas fa-mail-bulk');
+        }
+
         return $lists;
     }
 

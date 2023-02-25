@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\LearningManagementSystemRepositoryInterface;
 use DateTime;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -251,6 +252,10 @@ class Student implements JsonSerializable, Stringable {
      */
     public function getLearningManagementSystems(): Collection {
         return $this->learningManagementSystems;
+    }
+
+    public function getLearningManagementSystemInfo(LearningManagementSystem $lms): ?StudentLearningManagementSystemInformation {
+        return $this->learningManagementSystems->findFirst(fn(int $idx, StudentLearningManagementSystemInformation $info) => $info->getLms()->getId() === $lms->getId());
     }
 
     public function __toString(): string {

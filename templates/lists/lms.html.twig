@@ -1,0 +1,142 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'lists.lms.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {% set currentFilter = {
+        study_group: studyGroupFilter.currentStudyGroup != null ? studyGroupFilter.currentStudyGroup.uuid : null,
+        lms: lmsFilter.currentLearningManagementSystem != null ? lmsFilter.currentLearningManagementSystem.uuid : null
+    } %}
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover card-table">
+                            <colgroup>
+                                <col>
+                                <col class="column-lg">
+                                <col class="column-md">
+                                <col class="column-sm">
+                                <col class="column-sm">
+                                <col class="column-sm">
+                                <col class="column-sm">
+                            </colgroup>
+
+                            <thead>
+                            <tr>
+                                <th class="text-center align-middle">{{ 'label.student'|trans }}</th>
+                                <th class="text-center align-middle">{{ 'label.username'|trans }}</th>
+                                <th class="text-center align-middle">{{ 'label.password'|trans }}</th>
+                                <th class="text-center align-middle">{{ 'lists.lms.is_consent_obtained'|trans }}</th>
+                                <th class="text-center align-middle">{{ 'lists.lms.is_consented'|trans }}</th>
+                                <th class="text-center align-middle">{{ 'lists.lms.is_audio_consented'|trans }}</th>
+                                <th class="text-center align-middle">{{ 'lists.lms.is_video_consented'|trans }}</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for student in students %}
+                                <tr>
+                                    <td class="align-middle">{{ student|student }}</td>
+
+                                    {% if lmsFilter.currentLearningManagementSystem == null %}
+                                        <td colspan="7" class="align-middle text-center">{{ 'lists.lms.no_lms'|trans }}</td>
+                                    {% else %}
+                                        {% set info = student.learningManagementSystemInfo(lmsFilter.currentLearningManagementSystem) %}
+
+                                        {% if info == null %}
+                                            <td colspan="7" class="align-middle text-center">{{ 'lists.lms.no_data'|trans }}</td>
+                                        {% else %}
+                                            <td>{{ info.username }}</td>
+                                            <td>{{ info.password }}</td>
+
+                                            {% for content in [ info.isConsentObtained, info.isConsented, info.isAudioConsented, info.isVideoConsented] %}
+                                            <td class="{% if content %}table-success{% else %}table-danger{% endif %}">
+                                                {% if content %}
+                                                    <i class="fas fa-check"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times"></i>
+                                                {% endif %}
+                                            </td>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% if students|length == 0 %}
+                        <div class="card-body">
+                            <p>{{ 'lists.lms.empty'|trans }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                {% if lmsFilter.currentLearningManagementSystem != null and studyGroupFilter.currentStudyGroup != null %}
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('export_lms', { lms: lmsFilter.currentLearningManagementSystem.uuid, studyGroup: studyGroupFilter.currentStudyGroup.uuid }) }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-download"></i> {{ 'lists.lms.export'|trans }}
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body pb-1">
+                        {% include "_filter/study_group.html.twig" with { params: currentFilter|merge({studyGroup: null }) } %}
+
+                        {% include "_filter/lms.html.twig" with { params: currentFilter|merge({lms: null}) } %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('list_lms') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa fa-info-circle"></i> {{ 'label.last_import'|trans }}</h5>
+                        <p class="mb-0">
+                            <span class="text-muted">{{ 'label.students_simple'|trans }}</span>
+
+                            {% if last_import_students is not null %}
+                                {{ last_import_students.updatedAt|format_datetime }}
+                            {% else %}
+                                {{ 'label.never'|trans }}
+                            {% endif %}
+                        </p>
+                        <p>
+                            <span class="text-muted">{{ 'label.lms'|trans }}</span>
+
+                            {% if last_import_lms is not null %}
+                                {{ last_import_lms.updatedAt|format_datetime }}
+                            {% else %}
+                                {{ 'label.never'|trans }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

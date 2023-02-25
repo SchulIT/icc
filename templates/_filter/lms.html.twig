@@ -1,0 +1,16 @@
+{% if isChoice is not defined %}
+    {% set isChoice = true %}
+{% endif %}
+<form role="form" method="get" class="form hidden-print">
+    {% include "_filter/_params.html.twig" %}
+
+    <div class="form-group {{ class|default('') }}">
+        <label for="lms">{{ 'label.lms'|trans }}:</label>
+        <select name="lms" id="lms" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="{{ isChoice ? 'true' : 'false' }}">
+            <option value="" placeholder>{{ 'label.select.lms'|trans }}</option>
+            {% for lms in lmsFilter.learningManagementSystems %}
+                <option value="{{ lms.uuid }}" {% if lmsFilter.currentLearningManagementSystem != null and lmsFilter.currentLearningManagementSystem.id == lms.id %}selected="selected"{% endif %}>{{ lms.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</form>

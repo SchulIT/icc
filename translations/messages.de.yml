@@ -520,6 +520,17 @@ lists:
         empty: Es wurden keine Lernenden gefunden, die der Suche entsprechen.
         start: Bitte eine Lerngruppe auswählen oder einen Lernenden suchen.
 
+    lms:
+        label: Lernplattformen
+        empty: Entweder wurde keine Lerngruppe bzw. Lernplattform ausgewählt oder es wurden keine Daten gefunden.
+        no_lms: Keine Lernplattform ausgewählt
+        no_data: Es stehen keine Daten zur Verfügung
+        is_consented: Nutzung zugestimmt
+        is_consent_obtained: Einwilligung abgefragt
+        is_audio_consented: Audiokonferenzen zugestimmt
+        is_video_consented: Videokonferenzen zugestimmt
+        export: Exportieren
+
 teachers:
     export:
         headings:

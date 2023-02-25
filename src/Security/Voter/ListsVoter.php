@@ -17,6 +17,8 @@ class ListsVoter extends Voter {
     public const Tuitions = 'tuitions';
     public const StudyGroups = 'studygroups';
     public const Privacy = 'privacy';
+
+    public const LearningManagementSystems = 'lms';
     public const ExportTeachers = 'export-teachers';
 
     public function __construct(private AccessDecisionManagerInterface $accessDecisionManager)
@@ -33,6 +35,7 @@ class ListsVoter extends Voter {
             self::Tuitions,
             self::StudyGroups,
             self::Privacy,
+            self::LearningManagementSystems,
             self::ExportTeachers
         ];
 
@@ -47,7 +50,7 @@ class ListsVoter extends Voter {
     {
         return match ($attribute) {
             self::Teachers => true,
-            self::Students, self::StudyGroups, self::Tuitions, self::Privacy, self::ExportTeachers => $this->canViewLists($token),
+            self::Students, self::StudyGroups, self::Tuitions, self::Privacy, self::ExportTeachers, self::LearningManagementSystems => $this->canViewLists($token),
             default => throw new LogicException('This code should not be reached.'),
         };
     }

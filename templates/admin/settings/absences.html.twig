@@ -51,7 +51,7 @@
                     {{ form_errors(form.teacher_create_recipients) }}
                     {{ form_help(form.teacher_create_recipients) }}
 
-                    <!-- {{ form_end((form.teacher_create_recipients)) }} -->
+                    {% do form.teacher_create_recipients.setRendered %}
                 </div>
             </div>
 
@@ -71,7 +71,7 @@
                     {{ form_errors(form.teacher_update_recipients) }}
                     {{ form_help(form.teacher_update_recipients) }}
 
-                    <!-- {{ form_end((form.teacher_update_recipients)) }} -->
+                    {% do form.teacher_update_recipients.setRendered %}
                 </div>
             </div>
         </div>

@@ -265,6 +265,11 @@
                 </div>
             {% endif %}
         </div>
+
+        {% if item.absenceLesson is not null %}
+            {{ _self.absenceLesson(item.absenceLesson) }}
+        {% endif %}
+
         {% if item.lesson is not null and item.lesson.tuition is not null and item.lesson.tuition.studyGroup is not null %}
             {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, item.lesson.uuid ~ lesson, item.lesson.tuition.studyGroup.memberships|length) }}
         {% endif %}

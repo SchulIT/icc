@@ -200,7 +200,8 @@ class DashboardViewHelper {
 
             for($lessonNumber = $lesson->getLessonStart(); $lessonNumber <= $lesson->getLessonEnd(); $lessonNumber++) {
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lessonStudents, $lessonNumber, $dateTime) : [ ];
-                $dashboardView->addItem($lessonNumber, new TimetableLessonViewItem($lesson, $absentStudents));
+                $absenceLesson = $this->absenceLessonRepository->findOneForLesson($lesson);
+                $dashboardView->addItem($lessonNumber, new TimetableLessonViewItem($lesson, $absentStudents, $absenceLesson));
             }
         }
     }
@@ -210,7 +211,7 @@ class DashboardViewHelper {
 
         for($i = 1; $i <= $numberOfLessons; $i++) {
             if(!in_array($i, $lessons)) {
-                $view->addItem($i, new TimetableLessonViewItem(null, []));
+                $view->addItem($i, new TimetableLessonViewItem(null, [], null));
             }
         }
 
@@ -230,7 +231,7 @@ class DashboardViewHelper {
             }
 
             if($hasLessonEntry === false) {
-                $view->addItem($lessonNumber, new TimetableLessonViewItem(null, []));
+                $view->addItem($lessonNumber, new TimetableLessonViewItem(null, [], null));
             }
         }
     }

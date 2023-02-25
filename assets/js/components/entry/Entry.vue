@@ -205,6 +205,11 @@
                 <input v-model="entry.topic" name="lesson_entry_cancel[cancelReason]" :class="'cancel_reason form-control ' + (validation.topic !== null ? 'is-invalid' : '')" id="topic">
                 <div class="invalid-feedback" v-show="validation.topic !== null">{{ validation.topic }}</div>
               </div>
+
+              <div class="form-group">
+                <label for="exercises" class="control-label">{{ $trans('label.exercises') }}</label>
+                <textarea v-model="entry.exercises" name="lesson_entry_cancel[exercises]" class="form-control" id="exercises"></textarea>
+              </div>
             </div>
 
             <div class="modal-footer">

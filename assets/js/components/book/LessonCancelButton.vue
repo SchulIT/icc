@@ -82,6 +82,11 @@
                 <input v-model="entry.reason" name="lesson_entry_cancel[cancelReason]" :class="'form-control ' + (validation.reason !== null ? 'is-invalid' : '')" id="reason">
                 <div class="invalid-feedback" v-show="validation.reason !== null">{{ validation.reason }}</div>
               </div>
+
+              <div class="form-group">
+                <label for="exercises" class="control-label">{{ $trans('label.exercises') }}</label>
+                <textarea v-model="entry.exercises" name="lesson_entry_cancel[exercises]" class="form-control" id="exercises"></textarea>
+              </div>
             </div>
 
             <input type="hidden" name="date" :value="date.toJSON()">
@@ -131,7 +136,8 @@ export default {
         start: this.start,
         end: this.end,
         date: this.date,
-        reason: null
+        reason: null,
+        exercises: null
       },
       ref: null
     }

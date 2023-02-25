@@ -3,18 +3,21 @@
 namespace App\Controller\Settings;
 
 use App\Entity\Grade;
+use App\Form\TextCollectionEntryType;
 use App\Repository\GradeRepositoryInterface;
 use App\Settings\BookSettings;
 use App\Utils\ArrayUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[Route(path: '/settings')]
 #[Security("is_granted('ROLE_ADMIN')")]
@@ -27,9 +30,8 @@ class BookSettingsController extends AbstractController {
             'help' => 'admin.settings.book.excuses.grades_grade_teacher_excuses.help',
             'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), fn(Grade $grade) => $grade->getName(), fn(Grade $grade) => $grade->getId()),
             'multiple' => true,
-            'expanded' => false,
             'attr' => [
-                'size' => 10
+                'data-choice' => 'true'
             ],
             'data' => $settings->getGradesGradeTeacherExcuses()
         ])
@@ -38,17 +40,22 @@ class BookSettingsController extends AbstractController {
                 'help' => 'admin.settings.book.excuses.grades_tuition_teacher_excuses.help',
                 'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), fn(Grade $grade) => $grade->getName(), fn(Grade $grade) => $grade->getId()),
                 'multiple' => true,
-                'expanded' => false,
                 'attr' => [
-                    'size' => 10
+                    'data-choice' => 'true'
                 ],
                 'data' => $settings->getGradesTuitionTeacherExcuses()
             ])
-            ->add('exclude_student_status', TextType::class, [
+            ->add('exclude_student_status', CollectionType::class, [
                 'label' => 'admin.settings.book.exclude_student_status.label',
                 'help' => 'admin.settings.book.exclude_student_status.help',
                 'required' => false,
-                'data' => implode(',', $settings->getExcludeStudentsStatus())
+                'data' => $settings->getExcludeStudentsStatus(),
+                'entry_type' => TextCollectionEntryType::class,
+                'entry_options' => [
+                    'constraints' => new NotBlank()
+                ],
+                'allow_add' => true,
+                'allow_delete' => true
             ])
             ->add('regular_font', FileType::class, [
                 'required' => false,
@@ -71,14 +78,8 @@ class BookSettingsController extends AbstractController {
                 'grades_tuition_teacher_excuses' => function(array $ids) use($settings) {
                     $settings->setGradesTuitionTeacherExcuses($ids);
                 },
-                'exclude_student_status' => function(?string $status) use($settings) {
-                    if(empty($status)) {
-                        $settings->setExcludeStudentsStatus([]);
-                    } else {
-                        $settings->setExcludeStudentsStatus(
-                            array_map(fn($status) => trim($status), explode(',', $status))
-                        );
-                    }
+                'exclude_student_status' => function(array $status) use($settings) {
+                    $settings->setExcludeStudentsStatus($status);
                 }
             ];
 

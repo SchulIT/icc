@@ -2,10 +2,12 @@
 
 namespace App\Controller\Settings;
 
+use App\Form\TextCollectionEntryType;
 use App\Settings\DashboardSettings;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
@@ -13,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[Route(path: '/settings')]
 #[Security("is_granted('ROLE_ADMIN')")]
@@ -21,23 +24,41 @@ class DashboardSettingsController extends AbstractController {
     public function dashboard(Request $request, DashboardSettings $dashboardSettings): Response {
         $builder = $this->createFormBuilder();
         $builder
-            ->add('removable_types', TextType::class, [
+            ->add('removable_types', CollectionType::class, [
                 'label' => 'admin.settings.dashboard.removable_substitutions.label',
                 'help' => 'admin.settings.dashboard.removable_substitutions.help',
-                'data' => implode(',', $dashboardSettings->getRemovableSubstitutionTypes()),
-                'required' => false
+                'data' => $dashboardSettings->getRemovableSubstitutionTypes(),
+                'required' => false,
+                'entry_type' => TextCollectionEntryType::class,
+                'entry_options' => [
+                    'constraints' => new NotBlank()
+                ],
+                'allow_add' => true,
+                'allow_delete' => true
             ])
-            ->add('additional_types', TextType::class, [
+            ->add('additional_types', CollectionType::class, [
                 'label' => 'admin.settings.dashboard.additional_substitutions.label',
                 'help' => 'admin.settings.dashboard.additional_substitutions.help',
-                'data' => implode(',', $dashboardSettings->getAdditionalSubstitutionTypes()),
-                'required' => false
+                'data' => $dashboardSettings->getAdditionalSubstitutionTypes(),
+                'required' => false,
+                'entry_type' => TextCollectionEntryType::class,
+                'entry_options' => [
+                    'constraints' => new NotBlank()
+                ],
+                'allow_add' => true,
+                'allow_delete' => true
             ])
-            ->add('free_lesson_types', TextType::class, [
+            ->add('free_lesson_types', CollectionType::class, [
                 'label' => 'admin.settings.dashboard.free_lesson_types.label',
                 'help' => 'admin.settings.dashboard.free_lesson_types.help',
-                'data' => implode(',', $dashboardSettings->getFreeLessonSubstitutionTypes()),
-                'required' => false
+                'data' => $dashboardSettings->getFreeLessonSubstitutionTypes(),
+                'required' => false,
+                'entry_type' => TextCollectionEntryType::class,
+                'entry_options' => [
+                    'constraints' => new NotBlank()
+                ],
+                'allow_add' => true,
+                'allow_delete' => true
             ])
             ->add('next_day_threshold', TimeType::class, [
                 'label' => 'admin.settings.dashboard.next_day_threshold.label',
@@ -82,13 +103,13 @@ class DashboardSettingsController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $map = [
                 'removable_types' => function($types) use ($dashboardSettings) {
-                    $dashboardSettings->setRemovableSubstitutionTypes(explode(',', $types));
+                    $dashboardSettings->setRemovableSubstitutionTypes($types);
                 },
                 'additional_types' => function($types) use ($dashboardSettings) {
-                    $dashboardSettings->setAdditionalSubstitutionTypes(explode(',', $types));
+                    $dashboardSettings->setAdditionalSubstitutionTypes($types);
                 },
                 'free_lesson_types' => function($types) use ($dashboardSettings) {
-                    $dashboardSettings->setFreeLessonSubstitutionTypes(explode(',', $types));
+                    $dashboardSettings->setFreeLessonSubstitutionTypes($types);
                 },
                 'next_day_threshold' => function($threshold) use ($dashboardSettings) {
                     $dashboardSettings->setNextDayThresholdTime($threshold);

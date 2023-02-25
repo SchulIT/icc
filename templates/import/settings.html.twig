@@ -31,6 +31,12 @@
             {{ form_row(form.exam_writers) }}
             {{ form_row(form.ignore_options_regexp) }}
         </div>
+
+        <div class="card-footer">
+            <a href="{{ path('admin_settings_import') }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                <i class="fas fa-external-link-alt"></i> {{ 'admin.settings.import.exam_rules.label'|trans }}
+            </a>
+        </div>
     </div>
 
     <div class="card">
@@ -86,6 +92,10 @@
             <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="weeks">
                 <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
             </button>
+
+            <a href="{{ path('admin_timetable') }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                <i class="fas fa-external-link-alt"></i> {{ 'admin.timetable.weeks.label'|trans }}
+            </a>
         </div>
     </div>
 {% endblock %}

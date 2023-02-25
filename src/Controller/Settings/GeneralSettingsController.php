@@ -35,7 +35,10 @@ class GeneralSettingsController extends AbstractController {
                 ),
                 'data' => $settings->getCurrentSectionId(),
                 'label' => 'admin.settings.general.current_section.label',
-                'help' => 'admin.settings.general.current_section.help'
+                'help' => 'admin.settings.general.current_section.help',
+                'attr' => [
+                    'data-choice' => 'true'
+                ]
             ]);
         $form = $builder->getForm();
         $form->handleRequest($request);

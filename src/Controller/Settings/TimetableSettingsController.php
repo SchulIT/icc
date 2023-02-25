@@ -70,6 +70,7 @@ class TimetableSettingsController extends AbstractController {
                 'required' => false,
                 'multiple' => true,
                 'data' => $timetableSettings->getCategoryIds(),
+                'expanded' => true,
                 'label_attr' => [
                     'class' => 'checkbox-custom'
                 ]
@@ -79,9 +80,8 @@ class TimetableSettingsController extends AbstractController {
                 'help' => 'admin.settings.timetable.grades_course_names.help',
                 'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), fn(Grade $grade) => $grade->getName(), fn(Grade $grade) => $grade->getId()),
                 'multiple' => true,
-                'expanded' => false,
                 'attr' => [
-                    'size' => 10
+                    'data-choice' => 'true'
                 ],
                 'data' => $timetableSettings->getGradeIdsWithCourseNames()
             ])
@@ -90,9 +90,8 @@ class TimetableSettingsController extends AbstractController {
                 'help' => 'admin.settings.timetable.grades_membership_types.help',
                 'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), fn(Grade $grade) => $grade->getName(), fn(Grade $grade) => $grade->getId()),
                 'multiple' => true,
-                'expanded' => false,
                 'attr' => [
-                    'size' => 10
+                    'data-choice' => 'true'
                 ],
                 'data' => $timetableSettings->getGradeIdsWithMembershipTypes()
             ]);

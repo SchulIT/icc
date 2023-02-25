@@ -2,6 +2,10 @@
 
 {% block title %}{{ 'admin.settings.book.label'|trans }}{% endblock %}
 
+{% block post_javascript %}
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}
+
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
@@ -17,7 +21,27 @@
         <div class="card-body">
             {{ form_row(form.grades_grade_teacher_excuses) }}
             {{ form_row(form.grades_tuition_teacher_excuses) }}
-            {{ form_row(form.exclude_student_status) }}
+
+            <div class="form-group row">
+                {{ form_label(form.exclude_student_status) }}
+                <div class="col-md-10">
+                    <div class="exclude_student_status" data-collection="exclude_student_status" data-prototype="{{ form_widget(form.exclude_student_status.vars.prototype)|e('html_attr') }}">
+                        {% for recipient in form.exclude_student_status %}
+                            {{ form_widget(recipient) }}
+                        {% endfor %}
+                    </div>
+
+                    <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="exclude_student_status">
+                        <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+                    </button>
+
+                    {{ form_errors(form.exclude_student_status) }}
+                    {{ form_help(form.exclude_student_status) }}
+
+                    {% do form.exclude_student_status.setRendered %}
+                </div>
+            </div>
+
             {{ form_row(form.regular_font) }}
             {{ form_row(form.bold_font) }}
         </div>

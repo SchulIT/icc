@@ -2,6 +2,10 @@
 
 {% block title %}{{ 'admin.settings.dashboard.label'|trans }}{% endblock %}
 
+{% block post_javascript %}
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}
+
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
@@ -15,9 +19,66 @@
         <div class="card-header">{{ 'plans.substitutions.label'|trans }}</div>
 
         <div class="card-body">
-            {{ form_row(form.removable_types) }}
-            {{ form_row(form.additional_types) }}
-            {{ form_row(form.free_lesson_types) }}
+            <div class="form-group row">
+                {{ form_label(form.removable_types) }}
+                <div class="col-md-10">
+                    <div class="removable_types" data-collection="removable_types" data-prototype="{{ form_widget(form.removable_types.vars.prototype)|e('html_attr') }}">
+                        {% for type in form.removable_types %}
+                            {{ form_widget(type) }}
+                        {% endfor %}
+                    </div>
+
+                    <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="removable_types">
+                        <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+                    </button>
+
+                    {{ form_errors(form.removable_types) }}
+                    {{ form_help(form.removable_types) }}
+                </div>
+
+                {% do form.removable_types.setRendered %}
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.additional_types) }}
+                <div class="col-md-10">
+                    <div class="additional_types" data-collection="additional_types" data-prototype="{{ form_widget(form.additional_types.vars.prototype)|e('html_attr') }}">
+                        {% for type in form.additional_types %}
+                            {{ form_widget(type) }}
+                        {% endfor %}
+                    </div>
+
+                    <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="additional_types">
+                        <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+                    </button>
+
+                    {{ form_errors(form.additional_types) }}
+                    {{ form_help(form.additional_types) }}
+                </div>
+
+                {% do form.additional_types.setRendered %}
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(form.free_lesson_types) }}
+                <div class="col-md-10">
+                    <div class="free_lesson_types" data-collection="free_lesson_types" data-prototype="{{ form_widget(form.free_lesson_types.vars.prototype)|e('html_attr') }}">
+                        {% for type in form.free_lesson_types %}
+                            {{ form_widget(type) }}
+                        {% endfor %}
+                    </div>
+
+                    <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="free_lesson_types">
+                        <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+                    </button>
+
+                    {{ form_errors(form.free_lesson_types) }}
+                    {{ form_help(form.free_lesson_types) }}
+                </div>
+
+                {% do form.free_lesson_types.setRendered %}
+            </div>
+
             {{ form_row(form.next_day_threshold) }}
             {{ form_row(form.skip_weekends) }}
             {{ form_row(form.past_days) }}

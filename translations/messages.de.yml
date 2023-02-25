@@ -790,13 +790,13 @@ admin:
             label: Dashboard
             removable_substitutions:
                 label: Vertretungsarten mit geringer Priorität
-                help: Kommaseparierte Liste von Vertretungsarten, welche bei mehreren Vertretungen automatisch ausgeblendet werden.
+                help: Liste von Vertretungsarten, welche bei mehreren Vertretungen automatisch ausgeblendet werden.
             additional_substitutions:
                 label: Ergänzende Vertretungsarten
-                help: Kommaseparierte Liste von Vertretungsarten, welche immer zusätzlich angezeigt werden.
+                help: Liste von Vertretungsarten, welche immer zusätzlich angezeigt werden.
             free_lesson_types:
                 label: Vertretungsarten Freistunden
-                help: Kommaseparierte Liste von Vertretungsarten, bei denen eine Vertretung als Freistunde angezeigt wird.
+                help: Liste von Vertretungsarten, bei denen eine Vertretung als Freistunde angezeigt wird.
             next_day_threshold:
                 label: Nächster Tag ab
                 help: Ab dieser Uhrzeit wird der nächste Tag automatisch ausgewählt. Ist dieser Wert nicht gesetzt, so wird stets der aktuelle Tag automatisch ausgewählt.
@@ -872,7 +872,7 @@ admin:
                     help: In diesen Klassen entschuldigt die Fachlehrkraft. In der Lehrkraft-Übersicht werden die offenen Fehlstunden nur angezeigt, wenn der Schüler oder die Schülerin in einer der genannten Klassen ist.
             exclude_student_status:
                 label: Lernende mit folgendem Status nicht berücksichtigen
-                help: Wenn diese (kommaseparierte) Liste leer ist, werden stets alle Lernenden im Unterrichtsbuch berücksichtigt. Möchte man jedoch inaktive Lernende im Unterrichtsbuch ausblenden, so können hier zu ignorierende Stati hinterlegt werden (kommasepariert). Nutzt man das ICC mit SchILD NRW, so können hier die entsprechenden Stati aus SchILD NRW genutzt werden.
+                help: Wenn diese Liste leer ist, werden stets alle Lernenden im Unterrichtsbuch berücksichtigt. Möchte man jedoch inaktive Lernende im Unterrichtsbuch ausblenden, so können hier zu ignorierende Stati hinterlegt werden (kommasepariert). Nutzt man das ICC mit SchILD NRW, so können hier die entsprechenden Stati aus SchILD NRW genutzt werden.
             font:
                 regular:
                     label: Schriftart (normal)

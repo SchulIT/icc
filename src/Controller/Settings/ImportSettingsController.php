@@ -38,6 +38,9 @@ class ImportSettingsController extends AbstractController {
                     fn(Section $section) => $section->getDisplayName(),
                     fn(Section $section) => $section->getId()
                 ),
+                'attr' => [
+                    'data-choice' => 'true'
+                ],
                 'data' => $settings->getFallbackSection()
             ]);
         $form = $builder->getForm();

@@ -93,9 +93,8 @@ class ExamSettingsController extends AbstractController {
                 'help' => 'admin.settings.exams.visible_grades.help',
                 'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), fn(Grade $grade) => $grade->getName(), fn(Grade $grade) => $grade->getId()),
                 'multiple' => true,
-                'expanded' => false,
                 'attr' => [
-                    'size' => 10
+                    'data-choice' => 'true'
                 ],
                 'data' => $examSettings->getVisibleGradeIds()
             ]);

@@ -1498,6 +1498,12 @@ absences:
             label: Abwesenheitsmeldung
             header: "Abwesenheitsmeldung von %student%"
             contact: Kontaktinformationen
+            affected_exams:
+                label: Betroffene Klausuren
+                empty: Laut aktuellem Stand sind keine Klausuren betroffen.
+            affected_appointments:
+                label: Betroffene Termine
+                empty: Laut aktuellem Stand sind keine Termine betroffen.
         message:
             label: Neue Mitteilung
             submit: abschicken

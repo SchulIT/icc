@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Converter\StudyGroupStringConverter;
 use App\Entity\DateLesson;
+use App\Entity\Exam;
 use App\Entity\Student;
 use App\Entity\StudentAbsence;
 use App\Entity\StudentAbsenceAttachment;
@@ -19,6 +20,8 @@ use App\Grouping\StudentAbsenceGradeGroup;
 use App\Grouping\StudentAbsenceStudentGroup;
 use App\Grouping\StudentAbsenceTuitionGroup;
 use App\Http\FlysystemFileResponse;
+use App\Repository\AppointmentRepositoryInterface;
+use App\Repository\ExamRepositoryInterface;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
@@ -27,6 +30,8 @@ use App\Section\SectionResolverInterface;
 use App\Security\Voter\StudentAbsenceVoter;
 use App\Settings\StudentAbsenceSettings;
 use App\Settings\TimetableSettings;
+use App\Sorting\AppointmentStrategy;
+use App\Sorting\ExamDateLessonStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentAbsenceTuitionGroupStrategy;
 use App\Sorting\StudyGroupStrategy;
@@ -297,7 +302,8 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_student_absence')]
-    public function show(StudentAbsence $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository): Response {
+    public function show(StudentAbsence $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository, ExamRepositoryInterface $examRepository,
+                         AppointmentRepositoryInterface $appointmentRepository, Sorter $sorter): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $absence);
 
         if($settings->isEnabled() !== true) {
@@ -319,10 +325,29 @@ class StudentAbsenceController extends AbstractController {
             ]);
         }
 
+        $exams = array_filter(
+            $examRepository->findAllByStudents([$absence->getStudent()]),
+            function(Exam $exam) use ($absence) {
+                for($lessonNumber = $exam->getLessonStart(); $lessonNumber <= $exam->getLessonEnd(); $lessonNumber++) {
+                    if((new DateLesson())->setDate(clone $exam->getDate())->setLesson($lessonNumber)->isBetween($absence->getFrom(), $absence->getUntil())) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        );
+        $sorter->sort($exams, ExamDateLessonStrategy::class);
+
+        $appointments = $appointmentRepository->findAllForStudentsAndTime([$absence->getStudent()], $absence->getFrom()->getDate(), $absence->getUntil()->getDate());
+        $sorter->sort($appointments, AppointmentStrategy::class);
+
         return $this->render('absences/students/show.html.twig', [
             'absence' => $absence,
             'token_id' => self::CSRF_TOKEN_ID,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'exams' => $exams,
+            'appointments' => $appointments
         ]);
     }
 

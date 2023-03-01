@@ -27,7 +27,7 @@ class ApprovalNotifier extends AbstractNotifier implements EventSubscriberInterf
 
         foreach($to as $recipient) {
             $email = (new TemplatedEmail())
-                ->subject($this->translator->trans('absences.students.approval.title', [], 'email'))
+                ->subject($this->translator->trans('student_absence.approval.title', [], 'email'))
                 ->from(new Address($this->sender, $this->appName))
                 ->sender(new Address($this->sender, $this->appName))
                 ->to($recipient)

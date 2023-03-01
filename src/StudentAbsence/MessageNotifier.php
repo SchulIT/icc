@@ -29,7 +29,7 @@ class MessageNotifier extends AbstractNotifier implements EventSubscriberInterfa
 
         foreach($to as $recipient) {
             $email = (new TemplatedEmail())
-                ->subject($this->translator->trans('absences.students.message.title', [], 'email'))
+                ->subject($this->translator->trans('student_absence.message.title', [], 'email'))
                 ->from(new Address($this->sender, $this->appName))
                 ->sender(new Address($this->sender, $this->appName))
                 ->to($recipient)

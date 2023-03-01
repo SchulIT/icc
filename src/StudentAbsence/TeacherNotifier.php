@@ -20,7 +20,7 @@ class TeacherNotifier extends AbstractNotifier implements EventSubscriberInterfa
         $to = $this->getTeacherRecipients($absence);
 
         $email = (new TemplatedEmail())
-            ->subject($this->translator->trans('absences.students.create.title', ['%type%' => $absence->getType()->getName()], 'email'))
+            ->subject($this->translator->trans('student_absence.create.title', ['%type%' => $absence->getType()->getName()], 'email'))
             ->from(new Address($this->sender, $this->appName))
             ->sender(new Address($this->sender, $this->appName))
             ->to(...$to)

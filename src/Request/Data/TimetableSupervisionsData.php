@@ -50,8 +50,9 @@ class TimetableSupervisionsData {
         return $this->endDate;
     }
 
-    public function setEndDate(?DateTime $endDate): void {
+    public function setEndDate(?DateTime $endDate): TimetableSupervisionsData {
         $this->endDate = $endDate;
+        return $this;
     }
 
     /**

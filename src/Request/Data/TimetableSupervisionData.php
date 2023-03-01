@@ -10,13 +10,14 @@ class TimetableSupervisionData {
 
     /**
      * @Serializer\Type("string")
+     * @Serializer\Accessor(getter="getId", setter="setId")
      */
+    #[Serializer\Accessor(getter: 'getId', setter: 'setId')]
     #[Assert\NotBlank]
     private ?string $id = null;
 
     /**
      * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     * @var DateTime
      */
     #[Assert\NotNull]
     private ?DateTime $date = null;
@@ -53,16 +54,10 @@ class TimetableSupervisionData {
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getDate(): ?DateTime {
         return $this->date;
     }
 
-    /**
-     * @param DateTime $date
-     */
     public function setDate(?DateTime $date): TimetableSupervisionData {
         $this->date = $date;
         return $this;

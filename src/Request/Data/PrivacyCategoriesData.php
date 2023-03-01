@@ -22,4 +22,13 @@ class PrivacyCategoriesData {
     public function getCategories() {
         return $this->categories;
     }
+
+    /**
+     * @param PrivacyCategoryData[] $categories
+     * @return $this
+     */
+    public function setCategories(array $categories): PrivacyCategoriesData {
+        $this->categories = $categories;
+        return $this;
+    }
 }

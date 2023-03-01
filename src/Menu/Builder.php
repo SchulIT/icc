@@ -59,7 +59,11 @@ class Builder {
 
         $this->wikiMenu($menu);
 
-        if($this->studentAbsenceSettings->isEnabled() === true || $this->teacherAbsenceSettings->isEnabled() === true) {
+        if($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_VIEWER')
+            || $this->authorizationChecker->isGranted('ROLE_SICK_NOTE_CREATOR')
+            || $this->authorizationChecker->isGranted(StudentAbsenceVoter::New)
+            || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::NewAbsence)
+            || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::CanViewAny)) {
             $absenceMenu = $this->absencesMenu($menu);
             $this->setFirstChildAsUri($absenceMenu);
         }

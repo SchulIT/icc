@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use function Symfony\Component\String\u;
 
-#[AsCommand('app:anonymize', 'Anatomizes all students and teachers.')]
+#[AsCommand('app:anonymize', 'Anonymisiert Lehrkräfte, Lernende und Benutzer.')]
 class AnonymizeDatabaseCommand extends Command {
 
     public function __construct(private readonly StudentRepositoryInterface $studentRepository, private readonly TeacherRepositoryInterface $teacherRepository,
@@ -26,31 +26,39 @@ class AnonymizeDatabaseCommand extends Command {
     public function execute(InputInterface $input, OutputInterface $output): int {
         $style = new SymfonyStyle($input, $output);
 
-        $style->section('Anomyize teachers');
+        $style->section('Lehrkräfte anonymisieren');
         $this->teacherRepository->beginTransaction();
         foreach($this->teacherRepository->findAll() as $teacher) {
             $teacher->setFirstname($this->faker->firstName($teacher->getGender() === Gender::Male ? 'male' : 'female'));
             $teacher->setLastname($this->faker->lastName);
-            $teacher->setEmail($this->generateEmail($teacher->getFirstname(), $teacher->getLastname(), 't.schulit.dev'));
+            $teacher->setEmail($this->generateEmail($teacher->getFirstname(), $teacher->getLastname(), 'schulit.dev'));
 
             $this->teacherRepository->persist($teacher);
         }
 
         $this->teacherRepository->commit();
-        $style->success('All teachers anonymized');
+        $style->success('Fertig');
 
-        $style->section('Anonymize students');
-        $this->studentRepository->beginTransaction();;
+        $style->section('Lernende anonymisieren');
+        $this->studentRepository->beginTransaction();
         foreach($this->studentRepository->findAll() as $student) {
             $student->setFirstname($this->faker->firstName($student->getGender()== Gender::Male ? 'male' : 'female'));
             $student->setLastname($this->faker->lastName);
             $student->setEmail($this->generateEmail($student->getFirstname(), $student->getLastname(), 's.schulit.dev'));
 
+            $modify = sprintf(
+                '%s%d days',
+                $this->faker->boolean ? '+' : '-',
+                $this->faker->numberBetween(-180, 180)
+            );
+            $student->setBirthday((clone $student->getBirthday())->modify($modify));
+
             $this->studentRepository->persist($student);
         }
         $this->studentRepository->commit();
+        $style->success('Fertig');
 
-        $style->section('Anonymize users');
+        $style->section('Benutzer anonymisieren');
         $this->userRepository->beginTransaction();
         foreach($this->userRepository->findAll() as $user) {
             $user->setFirstname($this->faker->firstName);
@@ -61,6 +69,7 @@ class AnonymizeDatabaseCommand extends Command {
             $this->userRepository->persist($user);
         }
         $this->userRepository->commit();
+        $style->success('Fertig');
 
         return 0;
     }

@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCronJob('@monthly')]
-#[AsCommand('app:absences:cleanup', 'Cleans up expired absences.')]
+#[AsCommand('app:absences:cleanup', 'Löscht abgelaufene Abwesenheitsmeldungen (Lernende).')]
 class RemoveExpiredStudentAbsencesCommand extends Command {
 
     public function __construct(private StudentAbsenceSettings $settings, private StudentAbsenceRepositoryInterface $repository,
@@ -30,21 +30,21 @@ class RemoveExpiredStudentAbsencesCommand extends Command {
         $days = $this->settings->getRetentionDays();
 
         if($days === 0) {
-            $style->success('Retention days is set to 0 - do not remove any.');
+            $style->success('Laut Einstellung sollen alle Abwesenheitsmeldungen behalten werden - lösche nichts.');
             return 0;
         }
 
         $threshold = $this->dateHelper->getToday()
             ->modify(sprintf('-%d days', $days));
 
-        $style->text(sprintf('Removing sick notes before %s', $threshold->format('r')));
+        $style->text(sprintf('Lösche Abwesenheitsmeldungen vor %s', $threshold->format('r')));
 
         $count = $this->repository->removeExpired($threshold);
 
-        $style->success(sprintf('%d sick note(s) removed.', $count));
+        $style->success(sprintf('%d Abwesenheitsmeldung(en) gelöscht', $count));
 
         // Remove unused attachments
-        $style->section('Check attachments');
+        $style->section('Anhänge prüfen');
 
         $exists = [ ];
         $count = 0;
@@ -57,7 +57,7 @@ class RemoveExpiredStudentAbsencesCommand extends Command {
             }
         }
 
-        $style->success(sprintf('%d orphaned attachment(s) removed from database.', $count));
+        $style->success(sprintf('%d verwaise Anhänge aus der Datenbank entfernt', $count));
 
         $count = 0;
         foreach($this->filesystem->listContents('/') as $content) {
@@ -67,7 +67,7 @@ class RemoveExpiredStudentAbsencesCommand extends Command {
             }
         }
 
-        $style->success(sprintf('%d orphaned attachment(s) removed from filesystem.', $count));
+        $style->success(sprintf('%d verwaiste Anhänge vom Datensystem gelöscht', $count));
 
         return 0;
     }

@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use function Symfony\Component\String\u;
 
-#[AsCommand('app:db:clear_audit', 'Clears the audit log.')]
+#[AsCommand('app:db:clear_audit', 'Leert das Audit-Log.')]
 class ClearAuditLogCommand extends Command {
 
     public function __construct(private EntityManagerInterface $em, string $name = null) {
@@ -26,14 +26,14 @@ class ClearAuditLogCommand extends Command {
             $this->em->getConnection()->createSchemaManager()->listTables(),
             fn(Table $table) => u($table->getName())->endsWith('_audit'));
 
-        $style->section(sprintf('Clear %d audit tables', count($tables)));
+        $style->section(sprintf('Leere %d Audit-Tabellen', count($tables)));
 
         foreach($tables as $table) {
-            $style->writeln('> Clear ' . $table->getName());
+            $style->writeln('> Leere ' . $table->getName());
             $this->em->getConnection()->executeQuery('DELETE FROM ' . $table->getName());
         }
 
-        $style->success('All audit logs cleared.');
+        $style->success('Fertig');
         return 0;
     }
 }

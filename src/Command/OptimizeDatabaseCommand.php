@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCronJob('@monthly')]
-#[AsCommand('app:db:optimize', 'Optimizes all database tables using an OPTIMIZE query.')]
+#[AsCommand('app:db:optimize', 'Optimiert alle Datenbanktabellen mit dem OPTIMIZE-Befehl (MariaDB)')]
 class OptimizeDatabaseCommand extends Command {
     public function __construct(private EntityManagerInterface $em, string $name = null) {
         parent::__construct($name);
@@ -22,14 +22,14 @@ class OptimizeDatabaseCommand extends Command {
 
         $tables = $this->em->getConnection()->createSchemaManager()->listTables();
 
-        $style->section(sprintf('Optimize %d tables', count($tables)));
+        $style->section(sprintf('Optimiere %d Tabellen', count($tables)));
 
         foreach($tables as $table) {
-            $style->writeln('> Optimize ' . $table->getName());
+            $style->writeln('> Optimiere ' . $table->getName());
             $this->em->getConnection()->executeQuery('OPTIMIZE TABLE ' . $table->getName());
         }
 
-        $style->success('All tables optimized.');
+        $style->success('Fertig');
         return 0;
     }
 }

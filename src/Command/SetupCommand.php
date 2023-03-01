@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 
-#[AsCommand('app:setup', 'Sets up the application.')]
+#[AsCommand('app:setup', 'Installiert die Anwendungen')]
 class SetupCommand extends Command {
 
     public function __construct(private UserTypeEntityRepositoryInterface $userTypeEntityRepository, private EntityManagerInterface $em, private PdoSessionHandler $pdoSessionHandler, string $name = null) {
@@ -40,14 +40,14 @@ class SetupCommand extends Command {
 
         foreach($types as $type) {
             if(array_key_exists($type->value, $existingTypes)) {
-                $style->text(sprintf('%s user type already exists', $type->value));
+                $style->text(sprintf('%s Benutzertyp existiert bereits', $type->value));
             } else {
-                $style->text(sprintf('%s user type added', $type->value));
+                $style->text(sprintf('%s Benutzertyp hinzugefügt', $type->value));
                 $this->userTypeEntityRepository->persist((new UserTypeEntity())->setUserType($type));
             }
         }
 
-        $style->success('Finished adding missing types.');
+        $style->success('Alle fehlenden Benutzertypen hinzugefügt');
     }
 
     private function setupSessions(SymfonyStyle $style) {
@@ -58,7 +58,7 @@ class SetupCommand extends Command {
             $this->pdoSessionHandler->createTable();
         }
 
-        $style->success('Sessions table ready.');
+        $style->success('Sessions-Tabelle erstellt');
     }
 
     private function addMissingWeeks(SymfonyStyle $style) {
@@ -73,7 +73,7 @@ class SetupCommand extends Command {
 
         foreach(range(1, 53) as $week) {
             if(in_array($week, $weeksInDatabase)) {
-                $style->text(sprintf('Week %d already exists', $week));
+                $style->text(sprintf('KW %d existiert bereits', $week));
                 continue;
             }
 
@@ -82,9 +82,9 @@ class SetupCommand extends Command {
             $stmt->bindValue(1, $week);
             $stmt->executeQuery();
 
-            $style->text(sprintf('Week %d added', $week));
+            $style->text(sprintf('KW %d hinzugefügt', $week));
         }
 
-        $style->success('Finished adding missing weeks.');
+        $style->success('Alle fehlenden KW hinzugefügt');
     }
 }

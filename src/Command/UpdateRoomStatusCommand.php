@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCronJob('*\/15 * * * *')]
-#[AsCommand('app:room:status:update', 'Updates the room status from ServiceCenter (if enabled).')]
+#[AsCommand('app:room:status:update', 'Aktualisiert den Raumstatus aus dem ServiceCenter (falls aktiviert)')]
 class UpdateRoomStatusCommand extends Command {
 
     public function __construct(private ServiceCenterRoomStatusHelper $statusHelper, string $name = null) {
@@ -23,7 +23,7 @@ class UpdateRoomStatusCommand extends Command {
 
         $this->statusHelper->retrieveFromRemote();
 
-        $style->success('Status updated.');
+        $style->success('Status aktualisiert');
         return 0;
     }
 }

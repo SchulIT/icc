@@ -14,8 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCronJob('*\/5 * * * *')]
-#[AsCommand('app:notifications:send', 'Sends notifications for messages which did not push any notification yet.')]
-class SendPushNotifications extends Command {
+#[AsCommand('app:notifications:send', 'Versendet E-Mail-Benachrichtigungen für Mitteilungen, für die noch keine Benachrichtigung versendet wurde (z.B. weil die Mitteilung für ein zukünftiges Datum erstellt wurde.')]
+class SendRemainingMessageNotifications extends Command {
 
     public function __construct(private DateHelper $dateHelper, private NotificationService $notificationService, private MessageRepositoryInterface $messageRepository, string $name = null) {
         parent::__construct($name);
@@ -29,12 +29,12 @@ class SendPushNotifications extends Command {
 
         if(count($messages) > 0) {
             $message = $messages[0];
-            $style->section(sprintf('Send notifications for message "%s"', $message->getTitle()));
+            $style->section(sprintf('Sende Benachrichtigungen für Mitteilung "%s"', $message->getTitle()));
 
             $this->notificationService->sendNotifications(new MessageCreatedEvent($message));
-            $style->success(sprintf('Done (%d still queued for sending notifications)', count($messages) - 1));
+            $style->success(sprintf('Fertig (%d Mitteilungen mit offenen Benachrichtigungen stehen noch aus)', count($messages) - 1));
         } else {
-            $style->success('No messages found with unsent notifications.');
+            $style->success('Keine Mitteilungen mit offenen Benachrichtigungen gefunden');
         }
 
         return 0;

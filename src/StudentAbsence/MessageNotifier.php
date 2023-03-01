@@ -29,14 +29,14 @@ class MessageNotifier extends AbstractNotifier implements EventSubscriberInterfa
 
         foreach($to as $recipient) {
             $email = (new TemplatedEmail())
-                ->subject($this->translator->trans('student_absence.message.title', [], 'email'))
+                ->subject($this->translator->trans('absences.students.message.title', [], 'email'))
                 ->from(new Address($this->sender, $this->appName))
                 ->sender(new Address($this->sender, $this->appName))
                 ->to($recipient)
                 ->htmlTemplate('email/new_absence_message.html.twig')
                 ->textTemplate('email/new_absence_message.txt.twig')
                 ->context([
-                    'link' => $this->urlGenerator->generate('show_absence', [ 'uuid' => $absence->getUuid() ], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'link' => $this->urlGenerator->generate('show_student_absence', [ 'uuid' => $absence->getUuid() ], UrlGeneratorInterface::ABSOLUTE_URL),
                     'type' => $absence->getType()->getName()
                 ]);
 

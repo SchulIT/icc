@@ -1515,6 +1515,8 @@ absences:
             deny: nicht genehmigen
             pending: Genehmigung steht aus
             success: Genehmigungsstatus erfolgreich geändert
+        comment:
+            success: Mitteilung erfolgreich erstellt
 
 
 

@@ -27,14 +27,14 @@ class ApprovalNotifier extends AbstractNotifier implements EventSubscriberInterf
 
         foreach($to as $recipient) {
             $email = (new TemplatedEmail())
-                ->subject($this->translator->trans('student_absence.approval.title', [], 'email'))
+                ->subject($this->translator->trans('absences.students.approval.title', [], 'email'))
                 ->from(new Address($this->sender, $this->appName))
                 ->sender(new Address($this->sender, $this->appName))
                 ->to($recipient)
                 ->htmlTemplate('email/absence_approval_changed.html.twig')
                 ->textTemplate('email/absence_approval_changed.txt.twig')
                 ->context([
-                    'link' => $this->urlGenerator->generate('show_absence', [ 'uuid' => $absence->getUuid() ], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'link' => $this->urlGenerator->generate('show_student_absence', [ 'uuid' => $absence->getUuid() ], UrlGeneratorInterface::ABSOLUTE_URL),
                     'type' => $absence->getType()->getName()
                 ]);
 

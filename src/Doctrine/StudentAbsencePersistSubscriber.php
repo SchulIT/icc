@@ -53,7 +53,7 @@ class StudentAbsencePersistSubscriber implements EventSubscriber {
                 $newDate = $this->getValueFromChangesetOrEntityValue($entity->getFrom()->getDate(), $changeset[self::FromDateProperty] ?? null, 1);;
                 $oldLesson = $this->getValueFromChangesetOrEntityValue($entity->getFrom()->getLesson(), $changeset[self::FromLessonProperty] ?? null, 0);
                 $newLesson = $this->getValueFromChangesetOrEntityValue($entity->getFrom()->getLesson(), $changeset[self::FromLessonProperty] ?? null, 1);
-                $translationKey = 'student_absences.edit.from_date';
+                $translationKey = 'absences.students.edit.from_date';
             }
 
             if(array_key_exists(self::UntilDateProperty, $changeset) || array_key_exists(self::UntilLessonProperty, $changeset)) {
@@ -61,7 +61,7 @@ class StudentAbsencePersistSubscriber implements EventSubscriber {
                 $newDate = $this->getValueFromChangesetOrEntityValue($entity->getUntil()->getDate(), $changeset[self::UntilDateProperty] ?? null, 1);;
                 $oldLesson = $this->getValueFromChangesetOrEntityValue($entity->getUntil()->getLesson(), $changeset[self::UntilLessonProperty] ?? null, 0);
                 $newLesson = $this->getValueFromChangesetOrEntityValue($entity->getUntil()->getLesson(), $changeset[self::UntilLessonProperty] ?? null, 1);
-                $translationKey = 'student_absences.edit.until_date';
+                $translationKey = 'absences.students.edit.until_date';
             }
 
             if($translationKey === null) {

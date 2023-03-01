@@ -86,7 +86,7 @@ class StudentAbsenceController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $repository->persist($note);
 
-            $this->addFlash('success', 'student_absences.add.success');
+            $this->addFlash('success', 'absences.students.add.success');
             return $this->redirectToRoute('student_absences');
         }
 
@@ -133,7 +133,7 @@ class StudentAbsenceController extends AbstractController {
                 $repository->persist($studentAbsence);
             }
 
-            $this->addFlash('success', 'student_absences.bulk.success');
+            $this->addFlash('success', 'absences.students.bulk.success');
             return $this->redirectToRoute('student_absences');
         }
 
@@ -170,7 +170,7 @@ class StudentAbsenceController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $repository->persist($absence);
 
-            $this->addFlash('success', 'student_absences.edit.success');
+            $this->addFlash('success', 'absences.students.edit.success');
             return $this->redirectToRoute('student_absences');
         }
 
@@ -319,7 +319,7 @@ class StudentAbsenceController extends AbstractController {
             $absence->addMessage($message);
             $repository->persist($absence);
 
-            $this->addFlash('success', 'student_absences.comment.success');
+            $this->addFlash('success', 'absences.students.comment.success');
             return $this->redirectToRoute('show_student_absence', [
                 'uuid' => $absence->getUuid()
             ]);
@@ -362,7 +362,7 @@ class StudentAbsenceController extends AbstractController {
             $this->addFlash('error', 'CSRF token invalid.');
         } else {
             $approvalHelper->setApprovalStatus($absence, true, $user);
-            $this->addFlash('success', 'student_absences.approval.success');
+            $this->addFlash('success', 'absences.students.approval.success');
         }
 
         return $this->redirectToRoute('show_student_absence', [
@@ -381,7 +381,7 @@ class StudentAbsenceController extends AbstractController {
             $this->addFlash('error', 'CSRF token invalid.');
         } else {
             $approvalHelper->setApprovalStatus($absence, false, $user);
-            $this->addFlash('success', 'student_absences.approval.success');
+            $this->addFlash('success', 'absences.students.approval.success');
         }
 
         return $this->redirectToRoute('show_student_absence', [

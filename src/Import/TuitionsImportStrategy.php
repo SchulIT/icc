@@ -46,7 +46,7 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
 
         $this->subjectCache = ArrayUtils::createArrayWithKeys(
             $this->subjectRepository->findAll(),
-            fn(Subject $subject) => $subject->getAbbreviation()
+            fn(Subject $subject) => [ $subject->getAbbreviation(), $subject->getExternalId() ]
         );
 
         $this->teacherCache = ArrayUtils::createArrayWithKeys(

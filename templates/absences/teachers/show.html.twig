@@ -51,11 +51,18 @@
                                                 '%end%': lesson.lesson.lessonEnd,
                                                 '%count%': lesson.lesson.lessonEnd - lesson.lesson.lessonStart
                                             }) }}
-                                            <span class="badge badge-primary">
-                                                {{ lesson.lesson.tuition.name }}
-                                            </span>
 
-                                            <i class="fas fa-users"></i> {{ lesson.lesson.tuition.studyGroup.grades|grades }}
+                                            {% if lesson.lesson.tuition is not null %}
+                                                <span class="badge badge-primary">
+                                                    {{ lesson.lesson.tuition.name }}
+                                                </span>
+
+                                                <i class="fas fa-users"></i> {{ lesson.lesson.tuition.studyGroup.grades|grades }}
+                                            {% else %}
+                                                <span class="badge badge-primary">
+                                                    {{ lesson.lesson.subjectName }}
+                                                </span>
+                                            {% endif %}
                                         </div>
                                     {% else %}
                                         <div class="bs-callout bs-callout-warning">

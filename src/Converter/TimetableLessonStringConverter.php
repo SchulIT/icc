@@ -18,6 +18,10 @@ class TimetableLessonStringConverter {
             '%count%' => $lesson->getLessonEnd() - $lesson->getLessonStart()
         ]);
 
+        if($lesson->getTuition() === null) {
+            return sprintf('%s - %s - %s - %s', $day, $date, $lessons, $lesson->getSubjectName());
+        }
+
         return sprintf('%s - %s - %s - %s - %s', $day, $date, $lessons, $lesson->getTuition()->getStudyGroup(), $lesson->getTuition()->getSubject());
     }
 }

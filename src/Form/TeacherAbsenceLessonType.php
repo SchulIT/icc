@@ -24,8 +24,7 @@ class TeacherAbsenceLessonType extends AbstractType {
                 'label' => 'label.timetable_lesson',
                 'choice_label' => fn(TimetableLesson $lesson) => $this->converter->convert($lesson),
                 'query_builder' => function(EntityRepository $repository) {
-                    return $repository->createQueryBuilder('l')
-                        ->where('l.tuition IS NOT NULL');
+                    return $repository->createQueryBuilder('l');
                 }
             ])
             ->add('commentTeacher', MarkdownType::class, [
@@ -45,6 +44,11 @@ class TeacherAbsenceLessonType extends AbstractType {
                     return;
                 }
 
+                if($lesson->getLesson()?->getTuition() === null) {
+                    $form->remove('commentTeacher')
+                        ->remove('commentStudents');
+                }
+
                 $form->add('lesson', EntityType::class, [
                     'class' => TimetableLesson::class,
                     'label' => 'label.timetable_lesson',
@@ -53,10 +57,15 @@ class TeacherAbsenceLessonType extends AbstractType {
                         return $repository->createQueryBuilder('l')
                             ->leftJoin('l.tuition', 't')
                             ->leftJoin('t.teachers', 'teachers')
-                            ->where('l.tuition IS NOT NULL')
+                            ->leftJoin('l.teachers', 'lTeachers')
                             ->andWhere('l.date >= :start')
                             ->andWhere('l.date <= :end')
-                            ->andWhere('teachers.id = :teacher')
+                            ->andWhere(
+                                $repository->createQueryBuilder('l')->expr()->orX(
+                                    'teachers.id = :teacher',
+                                    'lTeachers.id = :teacher'
+                                )
+                            )
                             ->setParameter('start', $lesson->getAbsence()->getFrom()->getDate())
                             ->setParameter('end', $lesson->getAbsence()->getUntil()->getDate())
                             ->setParameter('teacher', $lesson->getAbsence()->getTeacher())

@@ -14,24 +14,13 @@ use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 
 class UserCheckerTest extends TestCase {
 
-    private function getEvent($token) {
-        return new AuthenticationSuccessEvent($token);
-    }
-
-    private function getToken(?User $user) {
-        $mock = $this->createMock(TokenInterface::class);
-        $mock->method('getUser')->willReturn($user);
-
-        return $mock;
-    }
-
     public function testValidTeacher() {
         $user = (new User())
             ->setTeacher(new Teacher())
             ->setUserType(UserType::Teacher);
 
         $checker = new UserChecker();
-        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
+        $checker->checkPostAuth($user);
 
         $this->assertTrue(true);
     }
@@ -43,7 +32,7 @@ class UserCheckerTest extends TestCase {
             ->setUserType(UserType::Teacher);
 
         $checker = new UserChecker();
-        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
+        $checker->checkPostAuth($user);
     }
 
     public function testValidStudent() {
@@ -52,7 +41,7 @@ class UserCheckerTest extends TestCase {
         $user->addStudent(new Student());
 
         $checker = new UserChecker();
-        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
+        $checker->checkPostAuth($user);
 
         $this->assertTrue(true);
     }
@@ -63,7 +52,7 @@ class UserCheckerTest extends TestCase {
             ->setUserType(UserType::Student);
 
         $checker = new UserChecker();
-        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
+        $checker->checkPostAuth($user);
     }
 
     public function testInvalidStudentTwoStudents() {
@@ -74,7 +63,7 @@ class UserCheckerTest extends TestCase {
         $user->addStudent(new Student());
 
         $checker = new UserChecker();
-        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
+        $checker->checkPostAuth($user);
     }
 
     public function testValidParent() {
@@ -83,7 +72,7 @@ class UserCheckerTest extends TestCase {
         $user->addStudent(new Student());
 
         $checker = new UserChecker();
-        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
+        $checker->checkPostAuth($user);
 
         $this->assertTrue(true);
     }
@@ -94,6 +83,6 @@ class UserCheckerTest extends TestCase {
             ->setUserType(UserType::Parent);
 
         $checker = new UserChecker();
-        $checker->onAuthenticationSuccess($this->getEvent($this->getToken($user)));
+        $checker->checkPostAuth($user);
     }
 }

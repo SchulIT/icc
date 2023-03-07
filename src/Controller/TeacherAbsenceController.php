@@ -140,11 +140,14 @@ class TeacherAbsenceController extends AbstractController {
     public function markProcessed(TeacherAbsence $absence, Request $request): Response {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Process, $absence);
 
+        /** @var User $user */
+        $user = $this->getUser();
+
         if(!$this->isCsrfTokenValid(self::CSRF_TOKEN_ID, $request->query->get('_csrf_token'))) {
             $this->addFlash('error', 'CSRF token invalid.');
         } else {
             $absence->setProcessedAt(new DateTime());
-            $absence->setProcessedBy($this->getUser());
+            $absence->setProcessedBy($user);
             $this->repository->persist($absence);
         }
 

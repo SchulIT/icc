@@ -40,7 +40,7 @@ class TeacherAbsenceLessonType extends AbstractType {
                 $lesson = $event->getData();
                 $form = $event->getForm();
 
-                if(!$lesson instanceof TeacherAbsenceLesson || $lesson->getAbsence() === null) {
+                if(!$lesson instanceof TeacherAbsenceLesson) {
                     return;
                 }
 

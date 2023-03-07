@@ -131,7 +131,7 @@ class ExportDataCommand extends Command {
                 }
 
                 $students[$key][] = (new StudentData())
-                    ->setId($student->getId())
+                    ->setId($student->getExternalId())
                     ->setFirstname($student->getFirstname())
                     ->setLastname($student->getLastname())
                     ->setEmail($student->getEmail())
@@ -478,7 +478,7 @@ class ExportDataCommand extends Command {
                 ->setLessonEnd($exam->getLessonEnd())
                 ->setRooms(array_values(array_fill($exam->getLessonStart(), $exam->getLessonEnd(), $exam->getRoom())))
                 ->setStudents($exam->getStudents()->map(fn(Student $student) => $student->getExternalId())->toArray())
-                ->setTuitions($exam->getTuitions()->map(function(Tuition $tuition) use ($exam) {
+                ->setTuitions($exam->getTuitions()->map(function(Tuition $tuition) {
                     return (new ExamTuition())
                         ->setTeachers($tuition->getTeachers()->map(fn(Teacher $teacher) => $teacher->getExternalId())->toArray())
                         ->setGrades($tuition->getStudyGroup()->getGrades()->map(fn(Grade $grade) => $grade->getExternalId())->toArray())
@@ -551,7 +551,7 @@ class ExportDataCommand extends Command {
         /** @var TimetableLesson $lesson */
         foreach($this->em->getRepository(TimetableLesson::class)->findAll() as $lesson) {
             $timetable[] = (new TimetableLessonData())
-                ->setId($lesson->getId())
+                ->setId($lesson->getExternalId())
                 ->setDate($lesson->getDate())
                 ->setLessonStart($lesson->getLessonStart())
                 ->setLessonEnd($lesson->getLessonEnd())

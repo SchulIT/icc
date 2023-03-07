@@ -26,8 +26,6 @@ class Builder {
                                 private readonly TimetableLessonRepositoryInterface $lessonRepository,
                                 private readonly TokenStorageInterface $tokenStorage,
                                 private readonly DateHelper $dateHelper,
-                                private readonly StudentAbsenceSettings $studentAbsenceSettings,
-                                private readonly TeacherAbsenceSettings $teacherAbsenceSettings,
                                 private readonly SectionResolverInterface $sectionResolver)
     {
     }

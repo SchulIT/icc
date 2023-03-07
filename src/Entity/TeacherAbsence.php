@@ -35,6 +35,9 @@ class TeacherAbsence {
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $message;
 
+    /**
+     * @var Collection<TeacherAbsenceLesson>
+     */
     #[ORM\OneToMany(mappedBy: 'absence', targetEntity: TeacherAbsenceLesson::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $lessons;
 
@@ -140,7 +143,7 @@ class TeacherAbsence {
     }
 
     public function removeLesson(TeacherAbsenceLesson $lesson): void {
-        $this->lessons->remove($lesson);
+        $this->lessons->removeElement($lesson);
     }
 
     /**

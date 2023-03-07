@@ -19,7 +19,7 @@ class LearningManagementSystemInfoCsvExporter {
 
     /**
      * @param LearningManagementSystem $lms
-     * @param Student[] $students
+     * @param StudyGroup $studyGroup
      * @return string[][]
      */
     public function getRows(LearningManagementSystem $lms, StudyGroup $studyGroup) {

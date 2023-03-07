@@ -14,7 +14,7 @@ class TeacherAbsenceLesson {
     use UuidTrait;
 
     #[ORM\ManyToOne(targetEntity: TeacherAbsence::class, inversedBy: 'lessons')]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private TeacherAbsence $absence;
 
     #[ORM\ManyToOne(targetEntity: TimetableLesson::class)]

@@ -11,6 +11,7 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Security\User\UserMapper;
 use LightSaml\ClaimTypes;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use SchulIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
 
 class UserMapperTest extends TestCase {
@@ -29,12 +30,12 @@ class UserMapperTest extends TestCase {
         $repository = $this->createMock(TeacherRepositoryInterface::class);
 
         $map = [
-            [ 'TEST', (new Teacher())->setExternalId('TEST') ],
-            [ 'FOO', (new Teacher())->setExternalId('FOO') ]
+            [ 'test@schulit.de', (new Teacher())->setEmail('test@schulit.de') ],
+            [ 'foo@schulit.de', (new Teacher())->setEmail('foo@schulit.de') ]
         ];
 
         $repository
-            ->method('findOneByExternalId')
+            ->method('findOneByEmailAddress')
             ->willReturnMap($map);
 
         return $repository;
@@ -44,19 +45,19 @@ class UserMapperTest extends TestCase {
         $repository = $this->createMock(StudentRepositoryInterface::class);
 
         $map = [
-            [ '1234', (new Student())->setExternalId('1234') ],
-            [ '9876', (new Student())->setExternalId('9876') ]
+            [ 'student1@schulit.de', (new Student())->setEmail('student1@schulit.de') ],
+            [ 'student2@schulit.de', (new Student())->setEmail('student2@schulit.de') ]
         ];
 
         $repository
-            ->method('findOneByExternalId')
+            ->method('findOneByEmailAddress')
             ->willReturnMap($map);
 
         $repository
-            ->method('findAllByExternalId')
+            ->method('findAllByEmailAddresses')
             ->willReturnMap([
-                [['1234', '4567', '9876'], [ (new Student())->setExternalId('1234'), (new Student())->setExternalId('9876')]],
-                [ ['4567'], [ ]]
+                [['student1@schulit.de', 'student2@schulit.de', 'student3@schulit.de'], [ (new Student())->setEmail('student1@schulit.de'), (new Student())->setEmail('student2@schulit.de')]],
+                [ ['notexisting@schulit.de'], [ ]]
             ]);
 
         return $repository;
@@ -67,7 +68,7 @@ class UserMapperTest extends TestCase {
             $this->getTypesMap(),
             $this->getTeacherRepositoryMock(),
             $this->getStudentRepositoryMock(),
-            null
+            new NullLogger()
         );
     }
 
@@ -81,12 +82,11 @@ class UserMapperTest extends TestCase {
             ClaimTypes::COMMON_NAME => 'username',
             ClaimTypes::GIVEN_NAME => 'Vorname',
             ClaimTypes::SURNAME => 'Nachname',
-            ClaimTypes::EMAIL_ADDRESS => 'vorname.nachname@example.org',
+            ClaimTypes::EMAIL_ADDRESS => 'test@schulit.de',
             UserMapper::ROLES_ASSERTION_NAME => [
                 'ROLE_USER'
             ],
-            SamlClaimTypes::TYPE => 'teacher',
-            SamlClaimTypes::EXTERNAL_ID => 'TEST'
+            SamlClaimTypes::TYPE => 'teacher'
         ];
 
         $mapper->mapUser($user, $data);
@@ -94,11 +94,11 @@ class UserMapperTest extends TestCase {
         $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
-        $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
+        $this->assertEquals('test@schulit.de', $user->getEmail());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
         $this->assertTrue($user->isTeacher());
         $this->assertNotNull($user->getTeacher());
-        $this->assertEquals('TEST', $user->getTeacher()->getExternalId());
+        $this->assertEquals('test@schulit.de', $user->getTeacher()->getEmail());
     }
 
     public function testMapTeacherWithNonExistingTeacher() {
@@ -111,12 +111,11 @@ class UserMapperTest extends TestCase {
             ClaimTypes::COMMON_NAME => 'username',
             ClaimTypes::GIVEN_NAME => 'Vorname',
             ClaimTypes::SURNAME => 'Nachname',
-            ClaimTypes::EMAIL_ADDRESS => 'vorname.nachname@example.org',
+            ClaimTypes::EMAIL_ADDRESS => 'notexisting@schulit.de',
             UserMapper::ROLES_ASSERTION_NAME => [
                 'ROLE_USER'
             ],
-            SamlClaimTypes::TYPE => 'teacher',
-            SamlClaimTypes::EXTERNAL_ID => 'NOTEXISTING'
+            SamlClaimTypes::TYPE => 'teacher'
         ];
 
         $mapper->mapUser($user, $data);
@@ -124,7 +123,7 @@ class UserMapperTest extends TestCase {
         $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
-        $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
+        $this->assertEquals('notexisting@schulit.de', $user->getEmail());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
         $this->assertTrue($user->isTeacher());
         $this->assertNull($user->getTeacher());
@@ -140,12 +139,11 @@ class UserMapperTest extends TestCase {
             ClaimTypes::COMMON_NAME => 'username',
             ClaimTypes::GIVEN_NAME => 'Vorname',
             ClaimTypes::SURNAME => 'Nachname',
-            ClaimTypes::EMAIL_ADDRESS => 'vorname.nachname@example.org',
+            ClaimTypes::EMAIL_ADDRESS => 'student1@schulit.de',
             UserMapper::ROLES_ASSERTION_NAME => [
                 'ROLE_USER'
             ],
-            SamlClaimTypes::TYPE => 'student',
-            SamlClaimTypes::EXTERNAL_ID => '1234'
+            SamlClaimTypes::TYPE => 'student'
         ];
 
         $mapper->mapUser($user, $data);
@@ -153,11 +151,11 @@ class UserMapperTest extends TestCase {
         $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
-        $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
+        $this->assertEquals('student1@schulit.de', $user->getEmail());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
         $this->assertTrue($user->isStudent());
         $this->assertEquals(1, $user->getStudents()->count());
-        $this->assertEquals('1234', $user->getStudents()->first()->getExternalId());
+        $this->assertEquals('student1@schulit.de', $user->getStudents()->first()->getEmail());
     }
 
     public function testMapStudentWithNonExistingStudent() {
@@ -170,12 +168,11 @@ class UserMapperTest extends TestCase {
             ClaimTypes::COMMON_NAME => 'username',
             ClaimTypes::GIVEN_NAME => 'Vorname',
             ClaimTypes::SURNAME => 'Nachname',
-            ClaimTypes::EMAIL_ADDRESS => 'vorname.nachname@example.org',
+            ClaimTypes::EMAIL_ADDRESS => 'notexisting@schulit.de',
             UserMapper::ROLES_ASSERTION_NAME => [
                 'ROLE_USER'
             ],
-            SamlClaimTypes::TYPE => 'student',
-            SamlClaimTypes::EXTERNAL_ID => '4567'
+            SamlClaimTypes::TYPE => 'student'
         ];
 
         $mapper->mapUser($user, $data);
@@ -183,7 +180,7 @@ class UserMapperTest extends TestCase {
         $this->assertEquals('username', $user->getUsername());
         $this->assertEquals('Vorname', $user->getFirstname());
         $this->assertEquals('Nachname', $user->getLastname());
-        $this->assertEquals('vorname.nachname@example.org', $user->getEmail());
+        $this->assertEquals('notexisting@schulit.de', $user->getEmail());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
         $this->assertTrue($user->isStudent());
         $this->assertEquals(0, $user->getStudents()->count());
@@ -204,7 +201,7 @@ class UserMapperTest extends TestCase {
                 'ROLE_USER'
             ],
             SamlClaimTypes::TYPE => 'parent',
-            SamlClaimTypes::EXTERNAL_ID => '1234,4567,9876'
+            SamlClaimTypes::EXTERNAL_ID => 'student1@schulit.de,student2@schulit.de,student3@schulit.de'
         ];
 
         $mapper->mapUser($user, $data);
@@ -216,7 +213,7 @@ class UserMapperTest extends TestCase {
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
         $this->assertTrue($user->isParent());
         $this->assertEquals(2, $user->getStudents()->count());
-        $this->assertEquals(['1234', '9876'], $user->getStudents()->map(function(Student $student) { return $student->getExternalId(); })->toArray());
+        $this->assertEquals(['student1@schulit.de', 'student2@schulit.de'], $user->getStudents()->map(function(Student $student) { return $student->getEmail(); })->toArray());
     }
 
     public function mapParentWithNonExistingStudents() {
@@ -234,7 +231,7 @@ class UserMapperTest extends TestCase {
                 'ROLE_USER'
             ],
             SamlClaimTypes::TYPE => 'parent',
-            SamlClaimTypes::EXTERNAL_ID => '4567'
+            SamlClaimTypes::EXTERNAL_ID => 'student3@schulit.de'
         ];
 
         $mapper->mapUser($user, $data);

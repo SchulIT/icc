@@ -82,6 +82,9 @@ class Student implements JsonSerializable, Stringable {
     #[ORM\ManyToMany(targetEntity: Section::class, cascade: ['persist'])]
     private $sections;
 
+    /**
+     * @var Collection<StudentLearningManagementSystemInformation>
+     */
     #[ORM\OneToMany(mappedBy: 'student', targetEntity: StudentLearningManagementSystemInformation::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $learningManagementSystems;
 

@@ -38,6 +38,8 @@ services:
             tags: [ 'app.notifications.email_strategy' ]
         App\Untis\Html\Substitution\InfotextReaderInterface:
             tags: [ 'app.untis.import.infotext_reader' ]
+        App\Untis\StudentId\StudentIdGeneratorInterface:
+            tags: [ 'app.untis.student_id_generator' ]
         App\StudentAbsence\AbstractNotifier:
             bind:
                 $appName: '%env(APP_NAME)%'
@@ -256,6 +258,7 @@ services:
                 display_target_user_type: App\Entity\DisplayTargetUserType
                 absence_reason: App\Dashboard\AbsenceReason
                 sick_reason: App\Entity\SickNoteReason
+                student_id_format: App\Untis\StudentIdFormat
 
     # DOCTRINE:
     Doctrine\Persistence\ManagerRegistry:
@@ -347,6 +350,10 @@ services:
     App\Untis\Html\Substitution\SubstitutionReader:
         arguments:
             $infotextReader: !tagged app.untis.import.infotext_reader
+
+    App\Untis\StudentId\StudentIdGenerator:
+        arguments:
+            $generators: !tagged app.untis.student_id_generator
 
     # MISC
     App\EventSubscriber\LoadMessengerCronJobs:

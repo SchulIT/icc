@@ -38,7 +38,6 @@ class GradeTest extends WebTestCase {
             ->setEnd(new DateTime('2021-01-31'));
 
         $student = (new Student())
-            ->setUniqueIdentifier(md5(uniqid()))
             ->setGender(Gender::X)
             ->setStatus('active')
             ->setBirthday((new DateTime())->modify('-10 year'))

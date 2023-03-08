@@ -78,7 +78,6 @@ class ExamsImportStrategyTest extends WebTestCase {
 
         $this->em->persist(
             (new Student())
-                ->setUniqueIdentifier(md5(uniqid()))
                 ->setExternalId("1")
                 ->setFirstname('Test')
                 ->setLastname('Schülerin')

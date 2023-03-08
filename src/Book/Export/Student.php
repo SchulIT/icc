@@ -16,12 +16,6 @@ class Student {
 
     /**
      * @Serializer\Type("string")
-     * @Serializer\SerializedName("identifier")
-     */
-    private ?string $identifier = null;
-
-    /**
-     * @Serializer\Type("string")
      * @Serializer\SerializedName("firstname")
      */
     private ?string $firstname = null;
@@ -44,15 +38,6 @@ class Student {
 
     public function setId(string $id): Student {
         $this->id = $id;
-        return $this;
-    }
-
-    public function getIdentifier(): ?string {
-        return $this->identifier;
-    }
-
-    public function setIdentifier(?string $identifier): Student {
-        $this->identifier = $identifier;
         return $this;
     }
 

@@ -323,7 +323,6 @@ class BookExporter {
 
         return (new Student())
             ->setId($student->getExternalId())
-            ->setIdentifier($student->getUniqueIdentifier())
             ->setFirstname($student->getFirstname())
             ->setLastname($student->getLastname())
             ->setGrade($grade !== null ? $grade->getName() : null);

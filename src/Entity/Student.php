@@ -26,10 +26,6 @@ class Student implements JsonSerializable, Stringable {
     #[ORM\Column(type: 'string', unique: true)]
     private ?string $externalId = null;
 
-    #[Assert\NotNull]
-    #[ORM\Column(type: 'string', unique: true)]
-    private ?string $uniqueIdentifier = null;
-
     #[Assert\NotBlank]
     #[ORM\Column(type: 'string')]
     private ?string $firstname = null;
@@ -105,15 +101,6 @@ class Student implements JsonSerializable, Stringable {
 
     public function setExternalId(?string $externalId): Student {
         $this->externalId = $externalId;
-        return $this;
-    }
-
-    public function getUniqueIdentifier(): string {
-        return $this->uniqueIdentifier;
-    }
-
-    public function setUniqueIdentifier(string $uniqueIdentifier): Student {
-        $this->uniqueIdentifier = $uniqueIdentifier;
         return $this;
     }
 

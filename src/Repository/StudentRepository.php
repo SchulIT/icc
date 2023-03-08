@@ -54,7 +54,6 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
     public function findOneByExternalId(string $externalId): ?Student {
         return $this->getDefaultQueryBuilder()
             ->andWhere('s.externalId = :externalId')
-            ->orWhere('s.uniqueIdentifier = :externalId')
             ->setParameter('externalId', $externalId)
             ->getQuery()
             ->getOneOrNullResult();
@@ -147,8 +146,7 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
         $qbInner = $this->em->createQueryBuilder()
             ->select('sInner.id')
             ->from(Student::class, 'sInner')
-            ->where($qb->expr()->in('sInner.externalId', ':externalIds'))
-            ->orWhere($qb->expr()->in('sInner.uniqueIdentifier', ':externalIds'));
+            ->where($qb->expr()->in('sInner.externalId', ':externalIds'));
 
         $qb
             ->andWhere($qb->expr()->in('s.id', $qbInner->getDQL()))

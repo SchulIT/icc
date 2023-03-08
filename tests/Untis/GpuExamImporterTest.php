@@ -2,9 +2,11 @@
 
 namespace App\Tests\Untis;
 
+use App\Entity\Student;
 use App\Import\ExamsImportStrategy;
 use App\Import\Importer;
 use App\Import\ImportResult;
+use App\Repository\StudentRepositoryInterface;
 use App\Request\Data\ExamsData;
 use App\Settings\UntisSettings;
 use App\Untis\Gpu\Exam\Exam;
@@ -12,13 +14,46 @@ use App\Untis\Gpu\Exam\ExamImporter;
 use App\Untis\Gpu\Exam\ExamReader;
 use App\Untis\Gpu\Tuition\Tuition;
 use App\Untis\Gpu\Tuition\TuitionReader;
+use App\Untis\StudentId\StudentIdGenerator;
 use DateTime;
-use Hoa\File\Read;
 use League\Csv\Reader;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
 class GpuExamImporterTest extends TestCase {
+
+    private Student $student;
+
+    public function setUp(): void {
+        parent::setUp();
+
+        $this->student = (new Student())
+            ->setFirstname('Erika')
+            ->setLastname('Mustermann')
+            ->setBirthday(new DateTime('2000-01-03'))
+            ->setExternalId('ERIKA');
+    }
+
+    private function getStudentRepository(): StudentRepositoryInterface {
+        $repository = $this->getMockBuilder(StudentRepositoryInterface::class)->getMock();
+        $repository
+            ->method('findAll')
+            ->willReturn([
+                $this->student
+            ]);
+
+        return $repository;
+    }
+
+    private function getStudentIdGeneratorMock(): StudentIdGenerator {
+        $generator = $this->getMockBuilder(StudentIdGenerator::class)->disableOriginalConstructor()->getMock();
+        $generator->method('generate')
+            ->willReturnMap([
+                [ $this->student, 'Mustermann_Erika_20000103'],
+            ]);
+
+        return $generator;
+    }
 
     private function getExamReaderMock(): ExamReader {
         $examReader = $this->getMockBuilder(ExamReader::class)->getMock();
@@ -33,7 +68,7 @@ class GpuExamImporterTest extends TestCase {
                     ->setLessonEnd(2)
                     ->setSubjects(['IF-GK1'])
                     ->setStudents([
-                        'Mustermann_Max_20000101'
+                        'Mustermann_Erika_20000103'
                     ]),
                 (new Exam())
                     ->setId(2)
@@ -43,7 +78,7 @@ class GpuExamImporterTest extends TestCase {
                     ->setLessonEnd(2)
                     ->setSubjects(['IF-GK1'])
                     ->setStudents([
-                        'Mustermann_Max_20000101'
+                        'Mustermann_Erika_20000103'
                     ])
             ]);
 
@@ -78,13 +113,15 @@ class GpuExamImporterTest extends TestCase {
 
                 $examData = $data->getExams()[0];
                 $this->assertEquals(1, count($examData->getStudents()), 'Klausur 1 should contain students');
+                $this->assertEquals(['ERIKA'], $examData->getStudents());
                 $examData = $data->getExams()[1];
                 $this->assertEquals(1, count($examData->getStudents()), 'Klausur 2 should contain students');
+                $this->assertEquals(['ERIKA'], $examData->getStudents());
 
                 return new ImportResult([], [], [], [], new stdClass());
             }));
 
-        $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings);
+        $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings, $this->getStudentIdGeneratorMock(), $this->getStudentRepository());
         $gpuExamImporter->import(Reader::createFromString(''), Reader::createFromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
     }
 
@@ -108,11 +145,12 @@ class GpuExamImporterTest extends TestCase {
                 $this->assertEquals(0, count($examData->getStudents()), 'Klausur 1 should not contain any students');
                 $examData = $data->getExams()[1];
                 $this->assertEquals(1, count($examData->getStudents()), 'Klausur 2 should contain students');
+                $this->assertEquals(['ERIKA'], $examData->getStudents());
 
                 return new ImportResult([], [], [], [], new stdClass());
             }));
 
-        $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings);
+        $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings, $this->getStudentIdGeneratorMock(), $this->getStudentRepository());
         $gpuExamImporter->import(Reader::createFromString(''), Reader::createFromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
     }
 
@@ -140,7 +178,7 @@ class GpuExamImporterTest extends TestCase {
                 return new ImportResult([], [], [], [], new stdClass());
             }));
 
-        $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings);
+        $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings, $this->getStudentIdGeneratorMock(), $this->getStudentRepository());
         $gpuExamImporter->import(Reader::createFromString(''), Reader::createFromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
     }
 
@@ -162,13 +200,14 @@ class GpuExamImporterTest extends TestCase {
 
                 $examData = $data->getExams()[0];
                 $this->assertEquals(1, count($examData->getStudents()), 'Klausur 1 should contain students');
+                $this->assertEquals(['ERIKA'], $examData->getStudents());
                 $examData = $data->getExams()[1];
                 $this->assertEquals(0, count($examData->getStudents()), 'Klausur 2 should not contain any students');
 
                 return new ImportResult([], [], [], [], new stdClass());
             }));
 
-        $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings);
+        $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings, $this->getStudentIdGeneratorMock(), $this->getStudentRepository());
         $gpuExamImporter->import(Reader::createFromString(''), Reader::createFromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
     }
 

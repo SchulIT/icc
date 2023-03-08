@@ -1702,6 +1702,32 @@ import:
             ignore_options_regexp:
                 label: Ausnahmen (RegExp)
                 help: "Wenn in diesem Feld ein gültiger regulärer Ausdruck enthalten ist, wird der Klausurname mit diesem Ausdruck geprüft. Wenn er zutrifft, wird die Option 'Klausurschreiber importieren' umgekehrt."
+        students:
+            label: Lernende
+            info: 'Hier kann festgelegt werden, wie Lernende aus Untis mit dem ICC abgeglichen werden. Es handelt sich dabei um das Feld "Name" (bzw. Kurzname). Beim Import wird zum Abgleich für alle Lernenden diese Feld generiert und mit den Untisdaten abgeglichen.'
+            preview:
+                label: Vorschau
+                help: Vorschau wird erst nach dem Speichern aktualisiert
+            format:
+                label: Format
+                help: Legt das Format des Langnamen eines Lernenden in Untis fest.
+            firstname_letters:
+                label: Anzahl der Buchstaben (Vorname)
+                help: Gibt die Anzahl der Buchstaben vom Vornamen an. Wird kein Wert eingetragen, so wird der gesamte Vorname genutzt.
+            lastname_letters:
+                label: Anzahl der Buchstaben (Nachname)
+                help: Gibt die Anzahl der Buchstaben vom Vornamen an. Wird kein Wert eingetragen, so wird der gesamte Vorname genutzt.
+            birthday_format:
+                label: Format für Geburtstag
+                help: Gibt das Format für den Geburtstag an. Es gelten die PHP Formate für Datumsangaben.
+                url:
+                    label: Zur PHP-Dokumentation
+                    url: https://www.php.net/manual/de/datetime.format.php
+            separator:
+                label: Trennzeichen
+                help: Gibt das Trennzeichen zwischen Vor- und Nachname sowie dem Geburtstag (falls verwendet) an.
+
+
     substitutions:
         gpu:
             label: Vertretungen (GPU014)

@@ -54,7 +54,6 @@ class SickNoteControllerTest extends AbstractControllerTest {
         $this->em->persist($grade);
 
         $this->fullAgedStudent = (new Student())
-            ->setUniqueIdentifier(md5(uniqid()))
             ->setFirstname($faker->firstName)
             ->setLastname($faker->lastName)
             ->setExternalId('TEST1')
@@ -70,7 +69,6 @@ class SickNoteControllerTest extends AbstractControllerTest {
         );
 
         $this->nonFullAgedStudent = (new Student())
-            ->setUniqueIdentifier(md5(uniqid()))
             ->setFirstname($faker->firstName)
             ->setLastname($faker->lastName)
             ->setExternalId('TEST2')

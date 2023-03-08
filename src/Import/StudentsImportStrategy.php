@@ -91,7 +91,6 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
         $entity->setBirthday($data->getBirthday());
         $entity->setStatus($data->getStatus());
         $entity->setEmail($data->getEmail());
-        $entity->setUniqueIdentifier(sprintf('%s_%s_%s', $entity->getLastname(), $entity->getFirstname(), $entity->getBirthday()->format('Ymd')));
 
         if($entity->getSections()->contains($section) === false) {
             $entity->addSection($section);

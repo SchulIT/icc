@@ -63,3 +63,8 @@ sick_reason:
 grade_teacher_type:
   primary: Primäre Klassenleitung
   substitute: Vertretendende Klassenleitung
+
+student_id_format:
+  firstname_lastname: Vorname, Nachname
+  lastname_firstname: Nachname, Vorname
+  lastname_firstname_birthday: Nachname, Vorname, Geburtstag

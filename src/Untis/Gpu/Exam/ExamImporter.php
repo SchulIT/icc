@@ -4,17 +4,19 @@ namespace App\Untis\Gpu\Exam;
 
 use App\Import\ExamsImportStrategy;
 use App\Import\Importer;
+use App\Repository\StudentRepositoryInterface;
 use App\Request\Data\ExamData;
 use App\Request\Data\ExamsData;
 use App\Request\Data\ExamTuition;
 use App\Settings\UntisSettings;
 use App\Untis\Gpu\Tuition\Tuition;
 use App\Untis\Gpu\Tuition\TuitionReader;
+use App\Untis\StudentId\StudentIdGenerator;
 use DateTime;
 use League\Csv\Reader;
 
 class ExamImporter {
-    public function __construct(private Importer $importer, private ExamsImportStrategy $strategy, private ExamReader $examReader, private TuitionReader $tuitionReader, private UntisSettings $settings)
+    public function __construct(private readonly Importer $importer, private readonly ExamsImportStrategy $strategy, private readonly ExamReader $examReader, private readonly TuitionReader $tuitionReader, private readonly UntisSettings $settings, private readonly StudentIdGenerator $studentIdGenerator, private readonly StudentRepositoryInterface $studentRepository)
     {
     }
 
@@ -28,6 +30,8 @@ class ExamImporter {
         $data->setSuppressNotifications($suppressNotifications);
         $exams = [ ];
 
+        $studentsMap = $this->getStudentsMap();
+
         foreach($gpuExams as $gpuExam) {
             if($gpuExam->getDate() < $start || $gpuExam->getDate() > $end) {
                 continue;
@@ -39,7 +43,7 @@ class ExamImporter {
             $exam->setLessonStart($gpuExam->getLessonStart());
             $exam->setLessonEnd($gpuExam->getLessonEnd());
             $exam->setRooms($gpuExam->getRooms());
-            $exam->setStudents($gpuExam->getStudents());
+            $exam->setStudents($this->getStudents($studentsMap, $gpuExam->getStudents()));
             $exam->setSupervisions($gpuExam->getSupervisions());
             $exam->setDescription($gpuExam->getText());
 
@@ -68,6 +72,35 @@ class ExamImporter {
 
         $data->setExams($exams);
         return $this->importer->import($data, $this->strategy);
+    }
+
+    private function getStudents(array $map, array $studentIds) {
+        $students = [ ];
+
+        foreach($studentIds as $untisId) {
+            if(array_key_exists($untisId, $map)) {
+                $students[] = $map[$untisId];
+            }
+        }
+
+        return $students;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function getStudentsMap(): array {
+        $students = [ ];
+
+        foreach($this->studentRepository->findAll() as $student) {
+            $id = $this->studentIdGenerator->generate($student);
+
+            if($id !== null) {
+                $students[$id] = $student->getExternalId();
+            }
+        }
+
+        return $students;
     }
 
     private function clearStudentsIfNecessary(ExamData $data, ?string $name): ExamData {

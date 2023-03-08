@@ -2,7 +2,6 @@
 
 namespace App\Converter;
 
-use MyCLabs\Enum\Enum;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EnumStringConverter {

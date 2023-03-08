@@ -2,8 +2,14 @@
 
 namespace App\Controller;
 
+use App\Converter\EnumStringConverter;
+use App\Entity\Student;
 use App\Form\Import\Untis\RoomImportType;
 use App\Untis\Gpu\Room\RoomImporter;
+use App\Untis\StudentId\StudentIdGenerator;
+use App\Untis\StudentIdFormat;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Response;
 use App\Form\Import\Untis\CalendarWeekSchoolWeekType;
 use App\Form\Import\Untis\ExamImportType;
@@ -35,6 +41,8 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use ZipArchive;
 
@@ -43,7 +51,7 @@ use ZipArchive;
 class UntisImportController extends AbstractController {
 
     #[Route(path: '/settings', name: 'import_untis_settings')]
-    public function settings(UntisSettings $settings, Request $request, DateReader $reader): Response {
+    public function settings(UntisSettings $settings, Request $request, DateReader $reader, EnumStringConverter $enumStringConverter, StudentIdGenerator $studentIdGenerator): Response {
         $form = $this->createFormBuilder()
             ->add('overrides', CollectionType::class, [
                 'entry_type' => SubjectOverrideType::class,
@@ -92,6 +100,51 @@ class UntisImportController extends AbstractController {
                 'required' => false,
                 'data' => $settings->getIgnoreStudentOptionRegExp()
             ])
+            ->add('student_id_format', EnumType::class, [
+                'label' => 'import.settings.students.format.label',
+                'help' => 'import.settings.students.format.help',
+                'class' => StudentIdFormat::class,
+                'choice_label' => function(StudentIdFormat $format) use($enumStringConverter) {
+                    return $enumStringConverter->convert($format);
+                },
+                'data' => $settings->getStudentIdentifierFormat()
+            ])
+            ->add('student_id_firstname_letters', IntegerType::class, [
+                'label' => 'import.settings.students.firstname_letters.label',
+                'help' => 'import.settings.students.firstname_letters.help',
+                'required' => false,
+                'constraints' => [
+                    new GreaterThanOrEqual(0)
+                ],
+                'data' => $settings->getStudentIdentifierNumberOfLettersOfFirstname()
+            ])
+            ->add('student_id_lastname_letters', IntegerType::class, [
+                'label' => 'import.settings.students.lastname_letters.label',
+                'help' => 'import.settings.students.lastname_letters.help',
+                'required' => false,
+                'constraints' => [
+                    new GreaterThanOrEqual(0)
+                ],
+                'data' => $settings->getStudentIdentifierNumberOfLettersOfLastname()
+            ])
+            ->add('student_id_birthday_format', TextType::class, [
+                'label' => 'import.settings.students.birthday_format.label',
+                'help' => 'import.settings.students.birthday_format.help',
+                'required' => false,
+                'constraints' => [
+                    new NotBlank(allowNull: true)
+                ],
+                'data' => $settings->getStudentIdentifierBirthdayFormat()
+            ])
+            ->add('student_id_separator', TextType::class, [
+                'label' => 'import.settings.students.separator.label',
+                'help' => 'import.settings.students.separator.help',
+                'required' => false,
+                'constraints' => [
+                    new NotBlank(allowNull: true)
+                ],
+                'data' => $settings->getStudentIdentifierSeparator()
+            ])
             ->getForm();
         $form->handleRequest($request);
 
@@ -102,6 +155,11 @@ class UntisImportController extends AbstractController {
             $settings->setSubstitutionCollapsingEnabled($form->get('collapse_substitutions')->getData());
             $settings->setAlwaysImportExamWriters($form->get('exam_writers')->getData());
             $settings->setIgnoreStudentOptionRegExp($form->get('ignore_options_regexp')->getData());
+            $settings->setStudentIdentifierFormat($form->get('student_id_format')->getData());
+            $settings->setStudentIdentifierNumberOfLettersOfFirstname($form->get('student_id_firstname_letters')->getData());
+            $settings->setStudentIdentifierNumberOfLettersOfLastname($form->get('student_id_lastname_letters')->getData());
+            $settings->setStudentIdentifierBirthdayFormat($form->get('student_id_birthday_format')->getData());
+            $settings->setStudentIdentifierSeparator($form->get('student_id_separator')->getData());
 
             /** @var UploadedFile|null $file */
             $file = $form->get('import_weeks')->getData();
@@ -126,8 +184,16 @@ class UntisImportController extends AbstractController {
             return $this->redirectToRoute('import_untis_settings');
         }
 
+        $student = (new Student())
+            ->setFirstname('Erika')
+            ->setLastname('Musterfrau')
+            ->setBirthday((new DateTime())->setTime(0,0,0));
+
+        $preview = $studentIdGenerator->generate($student);
+
         return $this->render('import/settings.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'student_preview' => $preview
         ]);
     }
 

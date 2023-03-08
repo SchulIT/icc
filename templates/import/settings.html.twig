@@ -40,6 +40,39 @@
     </div>
 
     <div class="card">
+        <div class="card-header">{{ 'import.settings.students.label'|trans }}</div>
+
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                {{ 'import.settings.students.info'|trans }}
+            </div>
+
+            {{ form_row(form.student_id_format) }}
+            {{ form_row(form.student_id_firstname_letters) }}
+            {{ form_row(form.student_id_lastname_letters) }}
+            {{ form_row(form.student_id_birthday_format) }}
+
+            <div class="form-group row">
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <a href="{{ 'import.settings.students.birthday_format.url.url'|trans }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> {{ 'import.settings.students.birthday_format.url.label'|trans }}
+                    </a>
+                </div>
+            </div>
+
+            {{ form_row(form.student_id_separator) }}
+        </div>
+
+        <div class="card-footer">
+            <span class="badge badge-primary">{{ 'import.settings.students.preview.label'|trans }}</span>
+            {{ student_preview }}
+
+            <span class="text-muted">{{ 'import.settings.students.preview.help'|trans }}</span>
+        </div>
+    </div>
+
+    <div class="card">
         <div class="card-header">{{ 'import.settings.overrides.label'|trans }}</div>
 
         <div class="card-body">

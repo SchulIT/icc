@@ -7,7 +7,7 @@ use DateTime;
 
 class WeekOfYear {
 
-    public function __construct(private int $year, private int $weekNumber)
+    public function __construct(private readonly int $year, private readonly int $weekNumber)
     {
     }
 

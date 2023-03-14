@@ -1592,7 +1592,9 @@ book:
         not_excused: unentschuldigt
         excused: entschuldigt
         not_set: offen (unentschuldigt)
-        excuse_note_exists: Für diese Stunde liegt eine Entschuldigung vor.
+        excuse_note_exists: Für diese Stunde liegt eine Entschuldigung vor
+        overview:
+            info: Durch Anklicken einer Unterrichtsstunde kann die Anwesenheit eingesehen und bearbeitet werden. Ein Rechtsklick ändert den Entschuldigungsstatus. Liegt für die Stunde eine Entschuldigung vor, so kann der Status nicht geändert werden.
 
     excuse_status_short:
         excused: e

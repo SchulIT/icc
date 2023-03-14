@@ -5,8 +5,9 @@ namespace App\Book\Student;
 use App\Entity\LessonAttendance as LessonAttendanceEntity;
 use App\Entity\LessonAttendanceExcuseStatus;
 use DateTime;
+use JsonSerializable;
 
-class LessonAttendance {
+class LessonAttendance implements JsonSerializable {
 
     public function __construct(private DateTime $date, private int $lesson, private LessonAttendanceEntity $attendance, private ExcuseCollection $excuses)
     {
@@ -42,5 +43,22 @@ class LessonAttendance {
 
     public function getExcuses(): ExcuseCollection {
         return $this->excuses;
+    }
+
+    public function jsonSerialize(): array {
+        return [
+            'date' => $this->date->format('c'),
+            'lesson' => $this->getLesson(),
+            'has_excuses' => count($this->excuses) > 0,
+            'entry' => $this->attendance->getEntry()->getUuid()->toString(),
+            'attendance' => [
+                'uuid' => $this->attendance->getUuid()->toString(),
+                'type' => $this->attendance->getType(),
+                'late_minutes' => $this->attendance->getLateMinutes(),
+                'absent_lessons' => $this->attendance->getAbsentLessons(),
+                'comment' => $this->attendance->getComment(),
+                'excuse_status' => $this->attendance->getExcuseStatus()
+            ]
+        ];
     }
 }

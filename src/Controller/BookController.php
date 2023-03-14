@@ -16,12 +16,15 @@ use App\Entity\GradeTeacher;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonAttendanceExcuseStatus;
 use App\Entity\LessonAttendanceType;
+use App\Entity\LessonEntry;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
+use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
 use App\Entity\User;
+use App\Grouping\DateWeekOfYearStrategy;
 use App\Grouping\GenericDateStrategy;
 use App\Grouping\Grouper;
 use App\Grouping\LessonAttendanceCommentsGroup;
@@ -30,11 +33,15 @@ use App\Grouping\TuitionGradeGroup;
 use App\Grouping\TuitionGradeStrategy;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\GradeResponsibilityRepositoryInterface;
+use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Security\Voter\LessonEntryVoter;
 use App\Settings\BookSettings;
+use App\Settings\TimetableSettings;
+use App\Sorting\DateStrategy;
+use App\Sorting\DateWeekOfYearGroupStrategy;
 use App\Sorting\LessonAttendanceGroupStrategy;
 use App\Sorting\LessonAttendanceStrategy;
 use App\Sorting\LessonDayGroupStrategy;
@@ -476,7 +483,9 @@ class BookController extends AbstractController {
     public function student(Student $student, SectionFilter $sectionFilter, StudentAwareTuitionFilter $tuitionFilter,
                             StudentAwareGradeFilter $gradeFilter, TeacherFilter  $teacherFilter, Request $request,
                             StudentInfoResolver $infoResolver, TuitionRepositoryInterface $tuitionRepository,
-                            Sorter $sorter, Grouper $grouper): Response {
+                            Sorter $sorter, Grouper $grouper, DateHelper $dateHelper, TimetableSettings $timetableSettings,
+                            LessonEntryRepositoryInterface $entryRepository,
+                            TimetableLessonRepositoryInterface $timetableLessonRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -491,20 +500,86 @@ class BookController extends AbstractController {
             $tuitions[] = $tuitionFilterView->getCurrentTuition();
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
+        } else if($gradeFilterView->getCurrentGrade() !== null) {
+            $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()], $sectionFilterView->getCurrentSection());
+        }
+
+        // Filter tuitions which the student is a part of
+        $tuitions = array_filter($tuitions, function(Tuition $tuition) use ($student) {
+            foreach($tuition->getStudyGroup()->getMemberships() as $membership) {
+                if($membership->getStudent()->getId() === $student->getId()) {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        $min = $sectionFilterView->getCurrentSection()->getStart();
+        $max = min(
+            $dateHelper->getToday(),
+            $sectionFilterView->getCurrentSection()->getEnd()
+        );
+
+        $entries = [ ];
+        foreach($tuitions as $tuition) {
+            $entries = array_merge($entries, $entryRepository->findAllByTuition($tuition, $min, $max));
+        }
+
+        $entries = ArrayUtils::createArrayWithKeys(
+            $entries,
+            function(LessonEntry $entry) {
+                $keys = [ ];
+                for($lessonNumber = $entry->getLessonStart(); $lessonNumber <= $entry->getLessonEnd(); $lessonNumber++) {
+                    $keys[] = sprintf('%s_%d', $entry->getLesson()->getDate()->format('Ymd'), $lessonNumber);
+                }
+                return $keys;
+            }
+        );
+
+        /**
+         * @var string $key
+         * @var LessonEntry $entry
+         */
+        foreach($entries as $key => $entry) {
+            $lesson = null;
+
+            if($entry->getLesson() !== null) {
+                $lesson = [
+                    'uuid' => $entry->getLesson()->getUuid()->toString(),
+                    'date' => $entry->getLesson()->getDate()->format('c'),
+                    'start' => $entry->getLesson()->getLessonStart(),
+                    'end' => $entry->getLesson()->getLessonEnd(),
+                    'teachers' => $entry->getLesson()->getTeachers()->map(fn(Teacher $teacher) => $teacher->getAcronym())->toArray(),
+                    'subject' => $entry->getLesson()->getSubjectName()
+                ];
+            }
+
+            $entries[$key] = [
+                'uuid' => $entry->getUuid()->toString(),
+                'lesson' => $lesson,
+                'start' => $entry->getLessonStart(),
+                'end' => $entry->getLessonEnd(),
+                'is_cancelled' => $entry->isCancelled()
+            ];
         }
 
         $info = $infoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitions);
-        $groups = $grouper->group(
-            array_merge(
-                $info->getAbsentLessonAttendances(),
-                $info->getLateLessonAttendances(),
-                $info->getComments()
-            ), GenericDateStrategy::class, [
-                'group_class' => LessonAttendanceCommentsGroup::class
-        ]);
 
-        $sorter->sort($groups, LessonAttendanceGroupStrategy::class, SortDirection::Descending);
-        $sorter->sortGroupItems($groups, LessonAttendanceStrategy::class);
+        $days = $this->getListOfDays($min, $max, $timetableSettings->getDays());
+        $groups = $grouper->group($days, DateWeekOfYearStrategy::class);
+
+        $sorter->sort($groups, DateWeekOfYearGroupStrategy::class, SortDirection::Descending);
+        $sorter->sortGroupItems($groups, DateStrategy::class, SortDirection::Descending);
+
+        $comments = [ ];
+
+        foreach($info->getComments() as $comment) {
+            $comments[] = [
+                'date' => $comment->getDate()->format('c'),
+                'teacher' => $comment->getTeacher()->getAcronym(),
+                'comment' => $comment->getText()
+            ];
+        }
 
         return $this->render('books/student.html.twig', [
             'student' => $student,
@@ -514,7 +589,29 @@ class BookController extends AbstractController {
             'gradeFilter' => $gradeFilterView,
             'tuitionFilter' => $tuitionFilterView,
             'teacherFilter' => $teacherFilterView,
+            'numberOfLessons' => $timetableSettings->getMaxLessons(),
+            'entries' => $entries,
+            'comments' => $comments
         ]);
+    }
+
+    /**
+     * @param DateTime $min
+     * @param DateTime $max
+     * @param int[] $days
+     * @return DateTime[]
+     */
+    private function getListOfDays(DateTime $min, DateTime $max, array $days): array {
+        $result = [ ];
+        $current = clone $min;
+        while($current <= $max) {
+            if(in_array((int)$current->format('w'), $days)) {
+                $result[] = clone $current;
+            }
+            $current = $current->modify('+1 day');
+        }
+
+        return $result;
     }
 
     private function createResponse(string $content, string $contentType, string $filename): Response {

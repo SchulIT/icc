@@ -64,91 +64,17 @@
                     </div>
                 </div>
 
-                {% for group in groups %}
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-calendar-alt"></i>
-                            {{ group.date|format_date }}
-                            <span class="text-muted">{{ group.date.format('N')|weekday }}</span>
-                        </div>
-
-                        <div class="list-group list-group-flush">
-                        {% for comment in group.comments %}
-
-                            <div class="list-group-item d-flex align-items-center">
-                                <div class="book-lesson m-0 p-0">
-                                    <i class="far fa-comment-alt"></i>
-                                </div>
-
-                                <div class="flex-fill">
-                                    <div class="d-flex align-items-center mb-1">
-                                        <div>
-                                            <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
-                                        </div>
-
-                                        {% for student in comment.students %}
-                                            <div class="ml-2">
-                                                <i class="fas fa-user-graduate"></i> {{ student|student }}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-
-                                    <div>
-                                        {{ comment.text }}
-                                    </div>
-                                </div>
-
-                                {% if is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
-                                    <div class="ml-2">
-                                        <a href="{{ path('edit_book_comment', { uuid: comment.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'book.comment.edit.label'|trans }}">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                    </div>
-                                    <div class="ml-2">
-                                        <a href="{{ path('remove_book_student', { uuid: comment.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'book.comment.remove.label'|trans }}">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                        </div>
-
-                        <div class="list-group list-group-flush">
-                            {% set already_shown_attendances = [ ] %} {# just a temporary hack until we streamline all the book models #}
-
-                            {% for lesson_attendance in group.attendances %}
-                                {% set attendance = lesson_attendance.attendance %}
-                                {% set entry = attendance.entry %}
-                                {% set has_excuses = lesson_attendance.excuses|length > 0 %}
-
-                                {% if attendance.uuid.toString not in already_shown_attendances %}
-                                    <attendance uuid="{{ attendance.uuid.toString }}"
-                                                teacher="{{ entry.teacher|teacher }}"
-                                                tuition="{{ entry.tuition.name }}"
-                                                subject="{{ entry.subject }}"
-                                                comment="{{ attendance.comment }}"
-                                                :lesson-start="{{ entry.lessonStart }}"
-                                                :lesson-end="{{ entry.lessonEnd }}"
-                                                :absent-lessons="{{ attendance.absentLessons }}"
-                                                :late-minutes="{{ attendance.lateMinutes }}"
-                                                :excuse-status="{{ attendance.excuseStatus }}"
-                                                :type="{{ attendance.type }}"
-                                                :step="5"
-                                                :has-excuses="{% if has_excuses %}true{% else %}false{% endif %}"
-                                                csrftoken="{{ csrf_token('update_attendance') }}"
-                                                url="{{ path('xhr_update_attendance', { uuid: attendance.uuid.toString }) }}"
-                                    ></attendance>
-                                {% endif %}
-
-                                {% set already_shown_attendances = already_shown_attendances|merge([attendance.uuid.toString ]) %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endfor %}
+                <attendance-overview :entries="{{ entries|json_encode }}"
+                                     :comments="{{ comments|json_encode }}"
+                                     :late-attendances="{{ info.lateLessonAttendances|json_encode }}"
+                                     :absent-attendances="{{ info.absentLessonAttendances|json_encode}}"
+                                     :day-groups="{{ groups|json_encode }}"
+                                     url="{{ path('xhr_update_attendance', { uuid: 'uuid'}) }}"
+                                     csrftoken="{{ csrf_token('update_attendance') }}"
+                                     :max-lessons="{{ numberOfLessons }}" />
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">
@@ -175,6 +101,35 @@
                         {% include "_filter/grade.html.twig" with { params: currentFilter|merge({tuition: null, teacher: null}) } %}
 
                         {% include "_filter/tuition.html.twig" with { params: currentFilter|merge({grade: null, teacher: null}) } %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
+
+                        <p>{{ 'book.students.overview.info'|trans }}</p>
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item list-group-item-success">
+                            <i class="fas fa-user-check"></i> {{ 'book.attendance.type.present'|trans }}
+                        </div>
+                        <div class="list-group-item list-group-item-warning">
+                            <i class="fas fa-user-clock"></i> {{ 'book.attendance.type.late'|trans }}
+                        </div>
+                        <div class="list-group-item list-group-item-danger">
+                            <i class="fas fa-user-times"></i> {{ 'book.attendance.type.absent'|trans }}
+                        </div>
+                        <div class="list-group-item list-group-item-danger">
+                            <i class="fas fa-check"></i> {{ 'book.students.excused'|trans }}
+                        </div>
+                        <div class="list-group-item list-group-item-danger">
+                            <i class="fas fa-question"></i> {{ 'book.students.not_set'|trans }}
+                        </div>
+                        <div class="list-group-item list-group-item-danger">
+                            <i class="fas fa-times"></i> {{ 'book.students.not_excused'|trans }}
+                        </div>
                     </div>
                 </div>
             </div>

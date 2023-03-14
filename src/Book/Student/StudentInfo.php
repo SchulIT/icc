@@ -6,6 +6,7 @@ use App\Entity\BookComment;
 use App\Entity\LessonAttendanceExcuseStatus;
 use App\Entity\Student;
 use App\Entity\LessonAttendance as LessonAttendanceEntity;
+use DateTime;
 
 class StudentInfo {
 
@@ -86,6 +87,26 @@ class StudentInfo {
         }
 
         return new ExcuseCollection(clone $attendance->getEntry()->getLesson()->getDate(), $attendance->getEntry()->getLessonStart());
+    }
+
+    public function getAbsentAttendance(DateTime $dateTime, int $lessonNumber): ?LessonAttendance {
+        foreach($this->absentLessonAttendances as $attendance) {
+            if($attendance->getDate() == $dateTime && $attendance->getLesson() === $lessonNumber) {
+                return $attendance;
+            }
+        }
+
+        return null;
+    }
+
+    public function getLateAttendance(DateTime $dateTime, int $lessonNumber): ?LessonAttendance {
+        foreach($this->lateLessonAttendances as $attendance) {
+            if($attendance->getDate() == $dateTime && $attendance->getLesson() === $lessonNumber) {
+                return $attendance;
+            }
+        }
+
+        return null;
     }
 
     /**

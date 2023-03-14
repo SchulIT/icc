@@ -9,6 +9,7 @@ import LessonCancelBulkButton from "./components/book/LessonCancelBulkButton";
 import LessonAttendanceInfo from "./components/book/LessonAttendanceInfo";
 import Entry from "./components/entry/Entry";
 import Attendance from "./components/student/Attendance";
+import AttendanceOverview from "./components/student/AttendanceOverview.vue";
 
 const app = createApp({
     components: {
@@ -17,7 +18,8 @@ const app = createApp({
         LessonCreateEntryButton,
         LessonCancelBulkButton,
         LessonAttendanceInfo,
-        Attendance
+        Attendance,
+        AttendanceOverview
     },
     methods: { },
     data() {

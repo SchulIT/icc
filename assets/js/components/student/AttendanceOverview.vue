@@ -41,8 +41,8 @@
                       </span>
                     </div>
                     <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 0">
-                      <i class="fas fa-question" v-if="lesson.attendance.attendance.excuse_status === 0"></i>
-                      <i class="fas fa-check" v-if="lesson.attendance.attendance.excuse_status === 1"></i>
+                      <i class="fas fa-question" v-if="lesson.attendance.attendance.excuse_status === 0 && lesson.attendance.attendance.absent_lessons > 0"></i>
+                      <i class="fas fa-check" v-if="lesson.attendance.attendance.excuse_status === 1 || lesson.attendance.attendance.absent_lessons === 0"></i>
                       <i class="fas fa-times" v-if="lesson.attendance.attendance.excuse_status === 2"></i>
 
                       <span class="badge badge-info d-block" v-if="lesson.attendance.attendance.absent_lessons !== (lesson.entry.end - lesson.entry.start + 1)">

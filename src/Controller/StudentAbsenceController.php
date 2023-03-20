@@ -363,6 +363,8 @@ class StudentAbsenceController extends AbstractController {
 
         if($this->isCsrfTokenValid('excuse_note', $request->request->get('_csrf_token')) !== true) {
             $this->addFlash('error', 'CSRF token invalid.');
+        } else if($absence->getType()->isAlwaysExcused()) {
+            $this->addFlash('success', 'absences.students.show.create_excuse_note.not_necessary');
         } else {
             $excuseNote = (new ExcuseNote())
                 ->setStudent($absence->getStudent())

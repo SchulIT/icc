@@ -202,7 +202,7 @@
 
             <div class="col-md-3">
                 {% set canEdit = is_granted('edit', absence) %}
-                {% set canCreateExcuseNote = is_granted('new-excuse') %}
+                {% set canCreateExcuseNote = is_granted('new-excuse') and not absence.type.alwaysExcused %}
 
                 {% if canEdit or canCreateExcuseNote %}
                     {% if canCreateExcuseNote %}
@@ -219,7 +219,7 @@
                             {% endif %}
                             {% if canCreateExcuseNote %}
                                 <button type="submit" class="list-group-item list-group-item-action">
-                                    <i class="fas fa-pen-alt"></i> {{ 'absences.students.show.create_excuse_note'|trans }}
+                                    <i class="fas fa-pen-alt"></i> {{ 'absences.students.show.create_excuse_note.label'|trans }}
                                 </button>
                             {% endif %}
                         </div>

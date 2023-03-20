@@ -1504,6 +1504,7 @@ absences:
             affected_appointments:
                 label: Betroffene Termine
                 empty: Laut aktuellem Stand sind keine Termine betroffen.
+            create_excuse_note: Entschuldigung erstellen
         message:
             label: Neue Mitteilung
             submit: abschicken

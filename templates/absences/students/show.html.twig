@@ -201,14 +201,33 @@
             </div>
 
             <div class="col-md-3">
-                {% if is_granted('edit', absence) %}
+                {% set canEdit = is_granted('edit', absence) %}
+                {% set canCreateExcuseNote = is_granted('new-excuse') %}
+
+                {% if canEdit or canCreateExcuseNote %}
+                    {% if canCreateExcuseNote %}
+                        <form action="{{ path('add_excuse_note_from_absence', { uuid: absence.uuid }) }}" method="post">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('excuse_note') }}" />
+                    {% endif %}
+
                     <div class="card">
                         <div class="list-group list-group-flush">
+                            {% if canEdit %}
                             <a href="{{ path('edit_student_absence', { uuid: absence.uuid }) }}" class="list-group-item list-group-item-action">
                                 <i class="fa fa-edit"></i> {{ 'absences.students.edit.label'|trans }}
                             </a>
+                            {% endif %}
+                            {% if canCreateExcuseNote %}
+                                <button type="submit" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-pen-alt"></i> {{ 'absences.students.show.create_excuse_note'|trans }}
+                                </button>
+                            {% endif %}
                         </div>
                     </div>
+
+                    {% if canCreateExcuseNote %}
+                        </form>
+                    {% endif %}
                 {% endif %}
 
                 {% if absence.type.mustApprove %}

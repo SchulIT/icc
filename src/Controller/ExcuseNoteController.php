@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\DateLesson;
+use App\Security\Voter\ExcuseNoteVoter;
 use App\Settings\TimetableSettings;
 use ArrayIterator;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,7 @@ class ExcuseNoteController extends AbstractController {
 
     private const ItemsPerPage = 25;
 
-    public function __construct(private ExcuseNoteRepositoryInterface $repository)
+    public function __construct(private readonly ExcuseNoteRepositoryInterface $repository)
     {
     }
 
@@ -67,6 +68,8 @@ class ExcuseNoteController extends AbstractController {
 
     #[Route(path: '/add', name: 'add_excuse')]
     public function add(Request $request, TimetableSettings $timetableSettings): Response {
+        $this->denyAccessUnlessGranted(ExcuseNoteVoter::New);
+
         /** @var User $user */
         $user = $this->getUser();
 
@@ -95,6 +98,8 @@ class ExcuseNoteController extends AbstractController {
 
     #[Route(path: '/{uuid}/edit', name: 'edit_excuse')]
     public function edit(ExcuseNote $excuse, Request $request): Response {
+        $this->denyAccessUnlessGranted(ExcuseNoteVoter::Edit, $excuse);
+
         $form = $this->createForm(ExcuseType::class, $excuse);
         $form->handleRequest($request);
 
@@ -113,6 +118,8 @@ class ExcuseNoteController extends AbstractController {
 
     #[Route(path: '/{uuid}/remove', name: 'remove_excuse')]
     public function remove(ExcuseNote $excuse, Request $request, TranslatorInterface $translator): Response {
+        $this->denyAccessUnlessGranted(ExcuseNoteVoter::Remove, $excuse);
+
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'book.excuse_note.remove.confirm',
             'message_parameters' => [

@@ -336,16 +336,16 @@ export default {
       this.setType(2);
     },
     plusLesson() {
-      if(this.editAttendance.attendance === null || this.editAttendance.attendance !== 0) {
+      if(this.editAttendance.attendance === null) {
         return;
       }
 
-      if(this.editAttendance.attendance.absent_lessons <= (this.editLesson.end - this.editLesson.start)) {
+      if(this.editAttendance.attendance.absent_lessons <= (this.editLesson.entry.end - this.editLesson.entry.start)) {
         this.editAttendance.attendance.absent_lessons++;
       }
     },
     minusLesson() {
-      if(this.editAttendance.attendance === null || this.editAttendance.attendance !== 0) {
+      if(this.editAttendance.attendance === null) {
         return;
       }
 

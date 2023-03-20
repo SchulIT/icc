@@ -52,9 +52,14 @@ class Tuition implements Stringable {
     #[ORM\ManyToOne(targetEntity: StudyGroup::class, inversedBy: 'tuitions')]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?StudyGroup $studyGroup = null;
+
+    #[ORM\ManyToMany(targetEntity: TuitionGradeCategory::class, mappedBy: 'tuitions')]
+    private Collection $gradeCategories;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->teachers = new ArrayCollection();
+        $this->gradeCategories = new ArrayCollection();
     }
 
     public function getExternalId(): ?string {
@@ -124,6 +129,13 @@ class Tuition implements Stringable {
     public function setStudyGroup(?StudyGroup $studyGroup): Tuition {
         $this->studyGroup = $studyGroup;
         return $this;
+    }
+
+    /**
+     * @return Collection<TuitionGradeCategory>
+     */
+    public function getGradeCategories(): Collection {
+        return $this->gradeCategories;
     }
 
     public function __toString(): string {

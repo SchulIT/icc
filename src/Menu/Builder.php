@@ -214,6 +214,11 @@ class Builder {
         ])
             ->setExtra('icon', 'fas fa-users');
 
+        $book->addChild('book.grades.label', [
+            'route' => 'gradebook'
+        ])
+            ->setExtra('icon', 'fas fa-user-graduate');
+
         $book->addChild('book.excuse_note.label', [
             'route' => 'excuse_notes'
         ])

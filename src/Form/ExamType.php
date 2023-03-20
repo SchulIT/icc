@@ -2,13 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\Grade;
 use App\Entity\Room;
-use App\Entity\Tuition;
-use App\Section\SectionResolverInterface;
 use App\Sorting\RoomNameStrategy;
-use App\Sorting\StringStrategy;
-use App\Sorting\TuitionStrategy;
 use Doctrine\ORM\EntityRepository;
 use SchulIT\CommonBundle\Form\FieldsetType;
 use Symfony\Component\Form\AbstractType;
@@ -16,14 +11,12 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ExamType extends AbstractType {
 
-    public function __construct(private TuitionStrategy $tuitionStrategy, private StringStrategy $stringStrategy, private RoomNameStrategy $roomStrategy, private SectionResolverInterface $sectionResolver, private AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(private readonly RoomNameStrategy $roomStrategy, private readonly AuthorizationCheckerInterface $authorizationChecker)
     {
     }
 
@@ -79,41 +72,13 @@ class ExamType extends AbstractType {
                 'legend' => 'label.tuitions',
                 'fields' => function(FormBuilderInterface $builder) {
                     $builder
-                        ->add('tuitions', SortableEntityType::class, [
+                        ->add('tuitions', TuitionChoiceType::class, [
                             'attr' => [
                                 'size' => 10,
                                 'disabled' => $this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR') !== true
                             ],
                             'label' => 'label.tuitions',
                             'multiple' => true,
-                            'class' => Tuition::class,
-                            'query_builder' => function(EntityRepository $repository) {
-                                $section = $this->sectionResolver->getCurrentSection();
-
-                                $qb = $repository
-                                    ->createQueryBuilder('t')
-                                    ->select(['t', 's', 'sg', 'g']);
-
-                                if($section !== null) {
-                                    $qb->leftJoin('t.section', 's')
-                                        ->leftJoin('t.studyGroup', 'sg')
-                                        ->leftJoin('sg.grades', 'g')
-                                        ->where('s.id = :section')
-                                        ->setParameter('section', $section->getId());
-                                }
-
-                                return $qb;
-                            },
-                            'choice_label' => function(Tuition $tuition) {
-                                if($tuition->getName() === $tuition->getStudyGroup()->getName()) {
-                                    return sprintf('%s - %s', $tuition->getName(), $tuition->getSubject()->getName());
-                                }
-
-                                return sprintf('%s - %s - %s', $tuition->getName(), $tuition->getStudyGroup()->getName(), $tuition->getSubject()->getName());
-                            },
-                            'group_by' => fn(Tuition $tuition) => implode(', ', $tuition->getStudyGroup()->getGrades()->map(fn(Grade $grade) => $grade->getName())->toArray()),
-                            'sort_by' => $this->stringStrategy,
-                            'sort_items_by' => $this->tuitionStrategy,
                             'disabled' => $this->authorizationChecker->isGranted('ROLE_EXAMS_CREATOR') !== true
                         ]);
 

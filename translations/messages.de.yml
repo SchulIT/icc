@@ -241,6 +241,13 @@ label:
     from: Beginn
     until: Ende
     timetable_lesson: Unterrichtsstunde
+    position:
+        label: Laufende Nr.
+        help: Hiermit kann die Reihenfolge bei der Anzeige kontrolliert werden.
+    filter: Filter
+    grade_values:
+        label: Noten
+        help: Hier können die erlaubten Noten eingetragen werden (bspw. 1+, 1, ... oder 15, 14, ...)
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -1286,6 +1293,35 @@ admin:
             error: Abwesenheitsart kann nicht gelöscht werden, da es noch Abwesenheiten mit dieser Art gibt.
             success: Abwesenheitsart erfolgreich gelöscht
 
+    tuition_grades:
+        label: Notenmodul
+        add:
+            label: Neue Notenkategorie
+            success: Notenkategorie erfolgreich hinzugefügt
+        assign:
+            label: Notenkategorien zuweisen
+            success: Notenkategorien erfolgreich zugewiesen
+        edit:
+            label: Notenkategorie bearbeiten
+            success: Notenkategorie erfolgreich aktualisiert
+        remove:
+            label: Notenkategorie löschen
+            success: Notenkategorie erfolgreich gelöscht
+            error: Die Notenkategorie kann nicht gelöscht werden, weil Noten mit ihr verknüpft sind.
+
+    tuition_grade_types:
+        label: Notenkataloge
+        add:
+            label: Neuer Notenkatalog
+            success: Notenkatalog erfolgreich angelegt
+        edit:
+            label: Notenkatalog bearbeiten
+            success: Notenkatalog erfolgreich bearbeitet
+        remove:
+            label: Notenkatalog löschen
+            success: Notenkatalog erfolgreich gelöscht
+            error: Der Notenkatalog kann nicht gelöscht werden, weil er in einem Notenmodul verwendet wird.
+
 tools:
     label: Tools
 
@@ -1676,6 +1712,13 @@ book:
         from_last_section:
             label: Aufgaben aus dem letzten Abschnitt übernehmen
 
+    grades:
+        label: Noten
+        password:
+            title: Passwort
+            info: Noten werden verschlüsselt gespeichert. Zum Ver- und Entschlüsseln wird ein von der Schule verwendetes Passwort verwendet.
+
+
 external:
     docs: Handbuch
 
@@ -1775,7 +1818,6 @@ import:
             template:
                 info: Die Ausgabe muss ein bestimmtes Format einhalten, damit es eingelesen werden kann. Dieses kann in Untis über "Import/Export" > "Untis" > "Formate/Fenstergruppen/Ribbon" > "Eingabeformat Import" importiert werden.
                 download: Format herunterladen (Ziel speichern unter)
-
 
 experimental:
     label: experimentell

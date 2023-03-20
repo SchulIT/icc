@@ -88,6 +88,11 @@ class AdminDataMenuBuilder extends AbstractMenuBuilder {
                 'route' => 'admin_displays'
             ])
                 ->setExtra('icon', 'fas fa-tv');
+
+            $root->addChild('admin.tuition_grades.label', [
+                'route' => 'admin_tuition_grades'
+            ])
+                ->setExtra('icon', 'fas fa-user-graduate');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {

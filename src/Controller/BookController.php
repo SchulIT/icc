@@ -115,7 +115,16 @@ class BookController extends AbstractController {
         }
 
         if($selectedDate !== null && $currentSection !== null && $dateHelper->isBetween($selectedDate, $currentSection->getStart(), $currentSection->getEnd()) !== true) {
-            $selectedDate = $this->getClosestMonthStart($currentSection->getEnd());
+            // Additional check if maybe parts of the month are inside the selected section (at the beginning)
+            $start = clone $selectedDate;
+            $end = (clone $selectedDate)->modify('+1 month')->modify('-1 day');
+
+            // case 1: selected month is partially at the beginning of the section
+            if($dateHelper->isBetween($start, $currentSection->getStart(), $currentSection->getEnd()) === false && $dateHelper->isBetween($end, $currentSection->getStart(), $currentSection->getEnd())) {
+                $selectedDate = clone $currentSection->getStart();
+            } else {
+                $selectedDate = $this->getClosestMonthStart($currentSection->getEnd());
+            }
         }
 
         return $selectedDate;

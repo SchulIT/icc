@@ -177,6 +177,18 @@
                 <input type="text" v-model="editAttendance.attendance.comment" class="form-control" />
               </div>
             </div>
+
+            <div class="mt-2" v-if="absences.length > 0">
+              <div class="card" v-for="absence in absences">
+                <div class="card-header">{{ absence.type }}</div>
+                <div class="card-body" v-html="absence.html"></div>
+                <div class="card-footer">
+                  <a :href="absence.url" target="_blank" class="btn btn-primary btn-sm">
+                    <i class="fas fa-external-link-alt"></i> {{ $trans('absences.students.show.label')}}
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="modal-footer">
@@ -216,6 +228,7 @@ export default {
     dayGroups: Array,
     maxLessons: Number,
     url: String,
+    absencesUrl: String,
     csrftoken: String
   },
   data() {
@@ -229,7 +242,8 @@ export default {
         errorId: null
       },
       editAttendance: null,
-      editLesson: null
+      editLesson: null,
+      absences: [ ]
     }
   },
   mounted() {
@@ -297,6 +311,20 @@ export default {
       this.editAttendance = JSON.parse(JSON.stringify(lesson.attendance));
 
       this.modal.show();
+
+      this.absences = [ ];
+
+      if(lesson.attendance.attendance.type !== 1) {
+        let $this = this;
+        let url = this.absencesUrl.replace('lesson', lesson.entry.lesson.uuid);
+        this.$http.get(url)
+            .then(function(response) {
+              $this.absences = response.data;
+            })
+            .catch(function(error) {
+              console.error(error);
+            });
+      }
     },
     minusMinute() {
       if(this.editAttendance.attendance.late_minutes > 0) {

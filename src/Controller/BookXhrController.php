@@ -5,17 +5,15 @@ namespace App\Controller;
 use App\Book\AbsenceSuggestion\SuggestionResolver;
 use App\Book\Lesson\LessonCancelHelper;
 use App\Book\Student\AbsenceExcuseResolver;
-use App\Dashboard\Absence\AbsenceResolver;
-use App\Dashboard\AbsenceReason;
-use App\Dashboard\AbsentStudentWithAbsenceNote;
 use App\Entity\LessonAttendance;
-use App\Entity\LessonAttendanceExcuseStatus;
 use App\Entity\LessonEntry;
-use App\Entity\StudyGroupMembership;
+use App\Entity\Student as StudentEntity;
+use App\Entity\StudentAbsence;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
-use App\Repository\ExcuseNoteRepositoryInterface;
+use App\Markdown\Markdown;
 use App\Repository\LessonAttendanceRepositoryInterface;
+use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
@@ -29,16 +27,18 @@ use App\Response\ViolationList;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\LessonEntryVoter;
 use App\Settings\BookSettings;
-use App\Settings\SettingsManager;
+use App\Utils\ArrayUtils;
 use DateTime;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route(path: '/book/xhr')]
 class BookXhrController extends AbstractController {
@@ -106,6 +106,40 @@ class BookXhrController extends AbstractController {
         }
 
         return $this->returnJson($students, $serializer);
+    }
+
+    #[Route('/absence_note/{student}/{lesson}', name: 'xhr_student_absences')]
+    #[ParamConverter('student', options: [ 'mapping' => ['student' => 'uuid']])]
+    #[ParamConverter('lesson', options: [ 'mapping' => ['lesson' => 'uuid']])]
+    public function absenceNote(StudentEntity $student, TimetableLesson $lesson, StudentAbsenceRepositoryInterface $absenceRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, Markdown $markdown): Response {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::New);
+
+        $absences = [ ];
+        for($lessonNumber = $lesson->getLessonStart(); $lessonNumber <= $lesson->getLessonEnd(); $lessonNumber++) {
+            $absences = array_merge(
+                $absences,
+                $absenceRepository->findByStudents([$student], null, $lesson->getDate(), $lessonNumber)
+            );
+        }
+
+        $absences = ArrayUtils::unique($absences);
+        $json = array_map(fn(StudentAbsence $absence) => [
+            'uuid' => $absence->getUuid()->toString(),
+            'type' => $absence->getType()->getName(),
+            'from' => [
+                'date' => $absence->getFrom()->getDate()->format('Y-m-d'),
+                'lesson' => $absence->getFrom()->getLesson()
+            ],
+            'until' => [
+                'date' => $absence->getUntil()->getDate()->format('Y-m-d'),
+                'lesson' => $absence->getUntil()->getLesson()
+            ],
+            'message' => $absence->getMessage(),
+            'html' => $markdown->convertToHtml($absence->getMessage()),
+            'url' => $urlGenerator->generate('show_student_absence', [ 'uuid' => $absence->getUuid()->toString() ])
+        ], $absences);
+
+        return $this->returnJson($json, $serializer);
     }
 
     /**

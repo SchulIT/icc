@@ -26,11 +26,11 @@
                 <template v-for="lesson in days[day]">
                   <td v-if="lesson.colspan > 0"
                       :colspan="lesson.colspan"
-                      :class="lesson.cssClasses"
+                      :class="'text-center align-middle ' + (lesson.attendance !== null && lesson.attendance.attendance.type === 1 ? 'table-success text-success pointer' : '') + (lesson.attendance !== null && lesson.attendance.attendance.type === 0 ? 'table-danger text-danger pointer' : '') + (lesson.attendance !== null && lesson.attendance.attendance.type === 2 ? 'table-warning text-warning pointer' : '')"
                       @click="edit(lesson)"
                       @contextmenu.prevent="changeExcuseStatus(lesson)"
                       :title="lesson.entry !== null ? lesson.entry.lesson.subject + ' (' + lesson.entry.lesson.teachers.join(', ') + ')' : ''">
-                    <div v-if="lesson.entry !== null && lesson.attendance === null">
+                    <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 1">
                       <i class="fas fa-user-check"></i>
                     </div>
                     <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 2">
@@ -211,8 +211,7 @@ export default {
   name: 'attendance_overview',
   props: {
     entries: Object,
-    absentAttendances: Array,
-    lateAttendances: Array,
+    attendances: Array,
     comments: Array,
     dayGroups: Array,
     maxLessons: Number,
@@ -247,8 +246,7 @@ export default {
         lessonRange.forEach(function(lessonNumber) {
           let key = dateKey + '_' + lessonNumber;
           let entry = $this.entries[key] ?? null;
-          let absentAttendance = $this.absentAttendances.filter(a => a.date === day && a.lesson === lessonNumber)[0] ?? null;
-          let lateAttendance = $this.lateAttendances.filter(a => a.date === day && a.lesson === lessonNumber)[0] ?? null;
+          let attendance = $this.attendances.filter(a => a.date === day && a.lesson === lessonNumber)[0] ?? null;
 
           let colspan = 1;
 
@@ -260,24 +258,11 @@ export default {
             }
           }
 
-          let cssClasses = 'text-center align-middle';
-
-          if(entry !== null) {
-            if(absentAttendance !== null) {
-              cssClasses += ' table-danger text-danger pointer';
-            } else if(lateAttendance !== null) {
-              cssClasses += ' table-warning text-warning pointer';
-            } else {
-              cssClasses += ' table-success text-success';
-            }
-          }
-
           lessons[lessonNumber] = {
             'lesson': lessonNumber,
             'entry': entry,
-            'attendance': absentAttendance ?? lateAttendance,
-            'colspan': colspan,
-            'cssClasses': cssClasses
+            'attendance': attendance,
+            'colspan': colspan
           };
         });
 

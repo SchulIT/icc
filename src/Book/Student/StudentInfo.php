@@ -14,9 +14,10 @@ class StudentInfo {
     /**
      * @param LessonAttendance[] $lateLessonAttendances
      * @param LessonAttendance[] $absentLessonAttendances
+     * @param LessonAttendance[] $presentLessonAttendances
      * @param BookComment[] $comments
      */
-    public function __construct(private Student $student, private int $totalLessonsCount, private array $lateLessonAttendances, private array $absentLessonAttendances, private array $comments)
+    public function __construct(private readonly Student $student, private readonly int $totalLessonsCount, private readonly array $lateLessonAttendances, private readonly array $absentLessonAttendances, private readonly array $presentLessonAttendances, private readonly array $comments)
     {
     }
 
@@ -26,6 +27,13 @@ class StudentInfo {
 
     public function getTotalLessonsCount(): int {
         return $this->totalLessonsCount;
+    }
+
+    /**
+     * @return LessonAttendance[]
+     */
+    public function getPresentLessonAttendances(): array {
+        return $this->presentLessonAttendances;
     }
 
     /**

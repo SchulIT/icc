@@ -103,6 +103,15 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
         return $queryBuilder;
     }
 
+    public function findByStudent(Student $student, array $tuitions): array {
+        $qb = $this->getDefaultQueryBuilder()
+            ->where('s.id = :student')
+            ->setParameter('student', $student->getId());
+        $this->applyTuition($qb, $tuitions);
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function findLateByStudent(Student $student, array $tuitions): array {
         $qb = $this->getDefaultQueryBuilder()
             ->where('s.id = :student')

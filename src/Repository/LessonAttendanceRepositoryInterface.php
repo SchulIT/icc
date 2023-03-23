@@ -21,6 +21,13 @@ interface LessonAttendanceRepositoryInterface {
      * @param Tuition[] $tuitions
      * @return LessonAttendance[]
      */
+    public function findByStudent(Student $student, array $tuitions): array;
+
+    /**
+     * @param Student $student
+     * @param Tuition[] $tuitions
+     * @return LessonAttendance[]
+     */
     public function findLateByStudent(Student $student, array $tuitions): array;
 
     /**

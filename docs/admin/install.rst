@@ -30,6 +30,7 @@ Nun müssen noch die Assets installiert werden:
 
 .. code-block:: shell
 
+    $ php bin/console bazinga:js-translation:dump assets/js/ --merge-domains
     $ yarn encore production
 
 Möglichkeit 2: Installation ohne Git

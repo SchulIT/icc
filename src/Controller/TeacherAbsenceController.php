@@ -108,7 +108,15 @@ class TeacherAbsenceController extends AbstractController {
     private function addAbsenceLessons(TeacherAbsence $absence, TimetableLessonRepositoryInterface $timetableLessonRepository) {
         $lessons = array_filter(
             $timetableLessonRepository->findAllByTeacher($absence->getFrom()->getDate(), $absence->getUntil()->getDate(), $absence->getTeacher()),
-            fn(TimetableLesson $lesson) => (new DateLesson())->setLesson($lesson->getLessonStart())->setDate($lesson->getDate())->isBetween($absence->getFrom(), $absence->getUntil())
+            function(TimetableLesson $lesson) use ($absence) {
+                for($lessonNumber = $lesson->getLessonStart(); $lessonNumber <= $lesson->getLessonEnd(); $lessonNumber++) {
+                    if((new DateLesson())->setLesson($lessonNumber)->setDate($lesson->getDate())->isBetween($absence->getFrom(), $absence->getUntil())) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         );
 
         $existingLessons = $absence->getLessons()->map(fn(TeacherAbsenceLesson $lesson) => $lesson->getLesson()?->getUuid()->toString())->toArray();

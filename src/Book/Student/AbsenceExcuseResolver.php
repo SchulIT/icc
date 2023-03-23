@@ -20,7 +20,7 @@ class AbsenceExcuseResolver extends AbstractResolver {
         $excuseCollections = $this->computeExcuseCollections($excuseNotes);
         $absentAttendanceCollection = $this->computeAttendanceCollection($absent, $excuseCollections);
 
-        return new StudentInfo($student, 0, [], $absentAttendanceCollection, []);
+        return new StudentInfo($student, 0, [], $absentAttendanceCollection, [], []);
     }
 
     /**
@@ -46,7 +46,7 @@ class AbsenceExcuseResolver extends AbstractResolver {
             $excuseCollections = $this->computeExcuseCollections($excuseNotes[$student->getId()] ?? [ ]);
             $absentAttendanceCollection = $this->computeAttendanceCollection($absent[$student->getId()] ?? [ ], $excuseCollections);
 
-            $result[$student->getId()] = new StudentInfo($student, 0, [ ], $absentAttendanceCollection, []);
+            $result[$student->getId()] = new StudentInfo($student, 0, [ ], $absentAttendanceCollection, [], []);
         }
 
         return $result;

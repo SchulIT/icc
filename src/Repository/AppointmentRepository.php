@@ -285,7 +285,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
 
         return $this->getAppointments($qbIds->getDQL(), $params, null)
             ->andWhere('a.start <= :end')
-            ->andWhere('a.end >= :start')
+            ->andWhere('a.end > :start')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
             ->getQuery()->getResult();

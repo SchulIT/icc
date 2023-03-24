@@ -299,68 +299,14 @@ export default {
   },
   mounted() {
     let $this = this;
-    this.ref = window.location;
-    this.$http
-      .get(this.url)
-      .then(function(response) {
-        $this.lesson.uuid = response.data.lesson.uuid;
-        $this.lesson.date = new Date(response.data.lesson.date);
-        $this.lesson.lessonStart = response.data.lesson.lesson_start;
-        $this.lesson.lessonEnd = response.data.lesson.lesson_end;
-
-        if(response.data.has_other_entries) {
-          $this.lesson.lessonEnd = response.data.lesson.lesson_start;
-        }
-
-        $this.tuition.uuid = response.data.lesson.tuition.uuid;
-        $this.tuition.name = response.data.lesson.tuition.name;
-        $this.tuition.subject = response.data.lesson.tuition.subject;
-        $this.tuition.teachers = response.data.lesson.tuition.teachers;
-        $this.tuition.studyGroup.name = response.data.lesson.tuition.study_group.name;
-        $this.tuition.studyGroup.type = response.data.lesson.tuition.study_group.type;
-        $this.tuition.studyGroup.grades = response.data.lesson.tuition.study_group.grades.sort(function(a, b) {
-          return a.name.localeCompare(b.name, 'de', { sensitivity: 'base', numeric: true });
-        })
-
-        if(response.data.entry !== null) {
-          $this.entry.uuid = response.data.entry.uuid;
-          $this.entry.start = response.data.entry.start;
-          $this.entry.end = response.data.entry.end;
-          $this.entry.topic = response.data.entry.topic;
-          $this.entry.exercises = response.data.entry.exercises;
-          $this.entry.comment = response.data.entry.comment;
-          $this.entry.isCancelled = response.data.entry.is_cancelled;
-          if(response.data.entry.is_cancelled) {
-            $this.entry.topic = response.data.entry.cancel_reason;
-          }
-          $this.entry.attendances = response.data.entry.attendances;
-          $this.entry.replacementTeacher = response.data.entry.replacement_teacher;
-          $this.entry.replacementSubject = response.data.entry.replacement_subject;
-        }
-
-        $this.students = response.data.students.sort(function(a, b) {
-          let studentA = a.lastname + ", " + a.firstname;
-          let studentB = b.lastname + ", " + b.firstname;
-          return studentA.localeCompare(studentB, 'de', { sensitivity: 'base', numeric: true });
-        });
-
-        if($this.entry.uuid === null) {
-          new Dropdown($this.$el.querySelector('.dropdown'), { persist: false });
-        } else {
-          $this.action = $this.editAction;
-          $this.$el.querySelector('.dropdown > button').addEventListener('click', function() {
-            $this.show();
-          })
-        }
-
-        $this.absences = response.data.absences;
-        $this.isInitialized = true;
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-
-    this.teacherChoice = new Choices(this.$el.querySelector('#replacementTeacher'));
+    let observer = new IntersectionObserver(onIntersecting);
+    function onIntersecting(entries) {
+      if(entries[0].intersectionRatio > 0) {
+        $this.initialize();
+        observer.unobserve(entries[0].target);
+      }
+    };
+    observer.observe(this.$el);
   },
   watch: {
     entry: {
@@ -377,6 +323,72 @@ export default {
     }
   },
   methods: {
+    initialize() {
+      let $this = this;
+      this.ref = window.location;
+
+      this.$http
+          .get(this.url)
+          .then(function(response) {
+            $this.lesson.uuid = response.data.lesson.uuid;
+            $this.lesson.date = new Date(response.data.lesson.date);
+            $this.lesson.lessonStart = response.data.lesson.lesson_start;
+            $this.lesson.lessonEnd = response.data.lesson.lesson_end;
+
+            if(response.data.has_other_entries) {
+              $this.lesson.lessonEnd = response.data.lesson.lesson_start;
+            }
+
+            $this.tuition.uuid = response.data.lesson.tuition.uuid;
+            $this.tuition.name = response.data.lesson.tuition.name;
+            $this.tuition.subject = response.data.lesson.tuition.subject;
+            $this.tuition.teachers = response.data.lesson.tuition.teachers;
+            $this.tuition.studyGroup.name = response.data.lesson.tuition.study_group.name;
+            $this.tuition.studyGroup.type = response.data.lesson.tuition.study_group.type;
+            $this.tuition.studyGroup.grades = response.data.lesson.tuition.study_group.grades.sort(function(a, b) {
+              return a.name.localeCompare(b.name, 'de', { sensitivity: 'base', numeric: true });
+            })
+
+            if(response.data.entry !== null) {
+              $this.entry.uuid = response.data.entry.uuid;
+              $this.entry.start = response.data.entry.start;
+              $this.entry.end = response.data.entry.end;
+              $this.entry.topic = response.data.entry.topic;
+              $this.entry.exercises = response.data.entry.exercises;
+              $this.entry.comment = response.data.entry.comment;
+              $this.entry.isCancelled = response.data.entry.is_cancelled;
+              if(response.data.entry.is_cancelled) {
+                $this.entry.topic = response.data.entry.cancel_reason;
+              }
+              $this.entry.attendances = response.data.entry.attendances;
+              $this.entry.replacementTeacher = response.data.entry.replacement_teacher;
+              $this.entry.replacementSubject = response.data.entry.replacement_subject;
+            }
+
+            $this.students = response.data.students.sort(function(a, b) {
+              let studentA = a.lastname + ", " + a.firstname;
+              let studentB = b.lastname + ", " + b.firstname;
+              return studentA.localeCompare(studentB, 'de', { sensitivity: 'base', numeric: true });
+            });
+
+            if($this.entry.uuid === null) {
+              new Dropdown($this.$el.querySelector('.dropdown'), { persist: false });
+            } else {
+              $this.action = $this.editAction;
+              $this.$el.querySelector('.dropdown > button').addEventListener('click', function() {
+                $this.show();
+              })
+            }
+
+            $this.absences = response.data.absences;
+            $this.isInitialized = true;
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+
+      this.teacherChoice = new Choices(this.$el.querySelector('#replacementTeacher'));
+    },
     validate() {
       if(this.entry.topic === null || this.entry.topic.trim() === '') {
         this.validation.topic = this.$trans('This value should not be blank.', {}, 'validators');

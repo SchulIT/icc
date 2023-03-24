@@ -87,7 +87,12 @@ class BookEntryController extends AbstractController {
         ]);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
+        $cancelledForm = $this->createForm(LessonEntryCancelType::class, $entry, [
+            'csrf_token_id' => 'book_entry'
+        ]);
+        $cancelledForm->handleRequest($request);
+
+        if(($form->isSubmitted() && $form->isValid()) || ($cancelledForm->isSubmitted() && $cancelledForm->isValid())) {
             $this->repository->persist($entry);
             $this->addFlash('success', 'book.entry.edit.success');
 

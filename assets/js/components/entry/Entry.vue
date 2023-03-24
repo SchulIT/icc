@@ -2,8 +2,7 @@
   <div>
     <div class="dropdown">
       <button class="btn btn-primary btn-sm" type="button" data-toggle="dropdown"
-              :class="entry.uuid === null ? 'btn btn-primary btn-sm' : 'btn btn-success btn-sm'"
-              v-if="!isInitialized || entry.isCancelled === false">
+              :class="entry.uuid === null ? 'btn btn-primary btn-sm' : 'btn btn-success btn-sm'">
         <i class="fas fa-spinner fa-spin" v-if="!isInitialized"></i>
         <i class="fas fa-book-open" v-if="isInitialized"></i>
       </button>
@@ -158,7 +157,7 @@
     <div class="modal fade cancel">
       <div class="modal-dialog">
         <div class="modal-content">
-          <form :action="cancelAction" method="post">
+          <form :action="editAction !== '' ? editAction : cancelAction" method="post">
             <div class="modal-header">
               <h5 class="modal-title">{{ $trans('book.entry.cancel.label') }}</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -331,7 +330,9 @@ export default {
           $this.entry.exercises = response.data.entry.exercises;
           $this.entry.comment = response.data.entry.comment;
           $this.entry.isCancelled = response.data.entry.is_cancelled;
-          $this.entry.cancelReason = response.data.entry.cancel_reason;
+          if(response.data.entry.is_cancelled) {
+            $this.entry.topic = response.data.entry.cancel_reason;
+          }
           $this.entry.attendances = response.data.entry.attendances;
           $this.entry.replacementTeacher = response.data.entry.replacement_teacher;
           $this.entry.replacementSubject = response.data.entry.replacement_subject;
@@ -386,53 +387,68 @@ export default {
     show() {
       let $this = this;
 
-      if(this.modal.create === null) {
-        let modalEl = this.$el.querySelector('.modal.entry');
-        this.modal.create = new Modal(modalEl);
+      if(this.entry.isCancelled === true) {
+        if(this.modal.cancel === null) {
+          let modalEl = this.$el.querySelector('.modal.cancel');
+          this.modal.cancel = new Modal(modalEl);
 
-        modalEl.addEventListener('shown.bs.modal', function() {
-          modalEl.querySelector('input.topic').focus();
-        });
-      }
-
-      this.$http
-          .get(this.teachersUrl)
-          .then(function(response) {
-            let choices = [
-              {
-                label: $this.$trans('label.select.teacher'),
-                value: '',
-                selected: true
-              }
-            ];
-
-            let autoSelectTeacher = null;
-            let tuitionTeachers = $this.tuition.teachers.map(function(teacher) { return teacher.acronym; });
-
-            if($this.teacher !== null && !tuitionTeachers.includes($this.teacher) && $this.entry.uuid === null) {
-              autoSelectTeacher = $this.teacher;
-            }
-
-            if($this.entry.replacementTeacher !== null) {
-              autoSelectTeacher = $this.entry.replacementTeacher.acronym;
-            }
-
-            response.data.forEach(function(teacher) {
-              choices.push({
-                label: teacher.acronym,
-                value: teacher.uuid,
-                selected: teacher.acronym === autoSelectTeacher
-              });
-            });
-            
-            $this.teacherChoice.setChoices(choices, 'value', 'label', true);
-          })
-          .catch(function(error) {
-            console.log(error);
+          modalEl.addEventListener('shown.bs.modal', function () {
+            modalEl.querySelector('input.topic').focus();
           });
 
-      this.$refs.studentComponent.load();
-      this.modal.create.show();
+          this.modal.cancel.show();
+        }
+      } else {
+        if (this.modal.create === null) {
+          let modalEl = this.$el.querySelector('.modal.entry');
+          this.modal.create = new Modal(modalEl);
+
+          modalEl.addEventListener('shown.bs.modal', function () {
+            modalEl.querySelector('input.topic').focus();
+          });
+        }
+
+        this.$http
+            .get(this.teachersUrl)
+            .then(function (response) {
+              let choices = [
+                {
+                  label: $this.$trans('label.select.teacher'),
+                  value: '',
+                  selected: true
+                }
+              ];
+
+              let autoSelectTeacher = null;
+              let tuitionTeachers = $this.tuition.teachers.map(function (teacher) {
+                return teacher.acronym;
+              });
+
+              if ($this.teacher !== null && !tuitionTeachers.includes($this.teacher) && $this.entry.uuid === null) {
+                autoSelectTeacher = $this.teacher;
+              }
+
+              if ($this.entry.replacementTeacher !== null) {
+                autoSelectTeacher = $this.entry.replacementTeacher.acronym;
+              }
+
+              response.data.forEach(function (teacher) {
+                choices.push({
+                  label: teacher.acronym,
+                  value: teacher.uuid,
+                  selected: teacher.acronym === autoSelectTeacher
+                });
+              });
+
+              $this.teacherChoice.setChoices(choices, 'value', 'label', true);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+
+        this.$refs.studentComponent.load();
+        this.modal.create.show();
+      }
     },
 
     create(start, end) {

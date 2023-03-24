@@ -2,8 +2,7 @@
   <div>
     <div class="dropdown">
       <button class="btn btn-primary btn-sm" type="button" data-toggle="dropdown"
-              :class="entry.uuid === null ? 'btn btn-primary btn-sm' : 'btn btn-success btn-sm'"
-              v-if="!isInitialized || entry.isCancelled === false">
+              :class="entry.uuid === null ? 'btn btn-primary btn-sm' : 'btn btn-success btn-sm'">
         <i class="fas fa-spinner fa-spin" v-if="!isInitialized"></i>
         <i class="fas fa-book-open" v-if="isInitialized"></i>
       </button>
@@ -158,7 +157,7 @@
     <div class="modal fade cancel">
       <div class="modal-dialog">
         <div class="modal-content">
-          <form :action="cancelAction" method="post">
+          <form :action="editAction !== '' ? editAction : cancelAction" method="post">
             <div class="modal-header">
               <h5 class="modal-title">{{ $trans('book.entry.cancel.label') }}</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -300,66 +299,14 @@ export default {
   },
   mounted() {
     let $this = this;
-    this.ref = window.location;
-    this.$http
-      .get(this.url)
-      .then(function(response) {
-        $this.lesson.uuid = response.data.lesson.uuid;
-        $this.lesson.date = new Date(response.data.lesson.date);
-        $this.lesson.lessonStart = response.data.lesson.lesson_start;
-        $this.lesson.lessonEnd = response.data.lesson.lesson_end;
-
-        if(response.data.has_other_entries) {
-          $this.lesson.lessonEnd = response.data.lesson.lesson_start;
-        }
-
-        $this.tuition.uuid = response.data.lesson.tuition.uuid;
-        $this.tuition.name = response.data.lesson.tuition.name;
-        $this.tuition.subject = response.data.lesson.tuition.subject;
-        $this.tuition.teachers = response.data.lesson.tuition.teachers;
-        $this.tuition.studyGroup.name = response.data.lesson.tuition.study_group.name;
-        $this.tuition.studyGroup.type = response.data.lesson.tuition.study_group.type;
-        $this.tuition.studyGroup.grades = response.data.lesson.tuition.study_group.grades.sort(function(a, b) {
-          return a.name.localeCompare(b.name, 'de', { sensitivity: 'base', numeric: true });
-        })
-
-        if(response.data.entry !== null) {
-          $this.entry.uuid = response.data.entry.uuid;
-          $this.entry.start = response.data.entry.start;
-          $this.entry.end = response.data.entry.end;
-          $this.entry.topic = response.data.entry.topic;
-          $this.entry.exercises = response.data.entry.exercises;
-          $this.entry.comment = response.data.entry.comment;
-          $this.entry.isCancelled = response.data.entry.is_cancelled;
-          $this.entry.cancelReason = response.data.entry.cancel_reason;
-          $this.entry.attendances = response.data.entry.attendances;
-          $this.entry.replacementTeacher = response.data.entry.replacement_teacher;
-          $this.entry.replacementSubject = response.data.entry.replacement_subject;
-        }
-
-        $this.students = response.data.students.sort(function(a, b) {
-          let studentA = a.lastname + ", " + a.firstname;
-          let studentB = b.lastname + ", " + b.firstname;
-          return studentA.localeCompare(studentB, 'de', { sensitivity: 'base', numeric: true });
-        });
-
-        if($this.entry.uuid === null) {
-          new Dropdown($this.$el.querySelector('.dropdown'), { persist: false });
-        } else {
-          $this.action = $this.editAction;
-          $this.$el.querySelector('.dropdown > button').addEventListener('click', function() {
-            $this.show();
-          })
-        }
-
-        $this.absences = response.data.absences;
-        $this.isInitialized = true;
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-
-    this.teacherChoice = new Choices(this.$el.querySelector('#replacementTeacher'));
+    let observer = new IntersectionObserver(onIntersecting);
+    function onIntersecting(entries) {
+      if(entries[0].intersectionRatio > 0) {
+        $this.initialize();
+        observer.unobserve(entries[0].target);
+      }
+    };
+    observer.observe(this.$el);
   },
   watch: {
     entry: {
@@ -376,6 +323,72 @@ export default {
     }
   },
   methods: {
+    initialize() {
+      let $this = this;
+      this.ref = window.location;
+
+      this.$http
+          .get(this.url)
+          .then(function(response) {
+            $this.lesson.uuid = response.data.lesson.uuid;
+            $this.lesson.date = new Date(response.data.lesson.date);
+            $this.lesson.lessonStart = response.data.lesson.lesson_start;
+            $this.lesson.lessonEnd = response.data.lesson.lesson_end;
+
+            if(response.data.has_other_entries) {
+              $this.lesson.lessonEnd = response.data.lesson.lesson_start;
+            }
+
+            $this.tuition.uuid = response.data.lesson.tuition.uuid;
+            $this.tuition.name = response.data.lesson.tuition.name;
+            $this.tuition.subject = response.data.lesson.tuition.subject;
+            $this.tuition.teachers = response.data.lesson.tuition.teachers;
+            $this.tuition.studyGroup.name = response.data.lesson.tuition.study_group.name;
+            $this.tuition.studyGroup.type = response.data.lesson.tuition.study_group.type;
+            $this.tuition.studyGroup.grades = response.data.lesson.tuition.study_group.grades.sort(function(a, b) {
+              return a.name.localeCompare(b.name, 'de', { sensitivity: 'base', numeric: true });
+            })
+
+            if(response.data.entry !== null) {
+              $this.entry.uuid = response.data.entry.uuid;
+              $this.entry.start = response.data.entry.start;
+              $this.entry.end = response.data.entry.end;
+              $this.entry.topic = response.data.entry.topic;
+              $this.entry.exercises = response.data.entry.exercises;
+              $this.entry.comment = response.data.entry.comment;
+              $this.entry.isCancelled = response.data.entry.is_cancelled;
+              if(response.data.entry.is_cancelled) {
+                $this.entry.topic = response.data.entry.cancel_reason;
+              }
+              $this.entry.attendances = response.data.entry.attendances;
+              $this.entry.replacementTeacher = response.data.entry.replacement_teacher;
+              $this.entry.replacementSubject = response.data.entry.replacement_subject;
+            }
+
+            $this.students = response.data.students.sort(function(a, b) {
+              let studentA = a.lastname + ", " + a.firstname;
+              let studentB = b.lastname + ", " + b.firstname;
+              return studentA.localeCompare(studentB, 'de', { sensitivity: 'base', numeric: true });
+            });
+
+            if($this.entry.uuid === null) {
+              new Dropdown($this.$el.querySelector('.dropdown'), { persist: false });
+            } else {
+              $this.action = $this.editAction;
+              $this.$el.querySelector('.dropdown > button').addEventListener('click', function() {
+                $this.show();
+              })
+            }
+
+            $this.absences = response.data.absences;
+            $this.isInitialized = true;
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+
+      this.teacherChoice = new Choices(this.$el.querySelector('#replacementTeacher'));
+    },
     validate() {
       if(this.entry.topic === null || this.entry.topic.trim() === '') {
         this.validation.topic = this.$trans('This value should not be blank.', {}, 'validators');
@@ -386,53 +399,68 @@ export default {
     show() {
       let $this = this;
 
-      if(this.modal.create === null) {
-        let modalEl = this.$el.querySelector('.modal.entry');
-        this.modal.create = new Modal(modalEl);
+      if(this.entry.isCancelled === true) {
+        if(this.modal.cancel === null) {
+          let modalEl = this.$el.querySelector('.modal.cancel');
+          this.modal.cancel = new Modal(modalEl);
 
-        modalEl.addEventListener('shown.bs.modal', function() {
-          modalEl.querySelector('input.topic').focus();
-        });
-      }
-
-      this.$http
-          .get(this.teachersUrl)
-          .then(function(response) {
-            let choices = [
-              {
-                label: $this.$trans('label.select.teacher'),
-                value: '',
-                selected: true
-              }
-            ];
-
-            let autoSelectTeacher = null;
-            let tuitionTeachers = $this.tuition.teachers.map(function(teacher) { return teacher.acronym; });
-
-            if($this.teacher !== null && !tuitionTeachers.includes($this.teacher) && $this.entry.uuid === null) {
-              autoSelectTeacher = $this.teacher;
-            }
-
-            if($this.entry.replacementTeacher !== null) {
-              autoSelectTeacher = $this.entry.replacementTeacher.acronym;
-            }
-
-            response.data.forEach(function(teacher) {
-              choices.push({
-                label: teacher.acronym,
-                value: teacher.uuid,
-                selected: teacher.acronym === autoSelectTeacher
-              });
-            });
-            
-            $this.teacherChoice.setChoices(choices, 'value', 'label', true);
-          })
-          .catch(function(error) {
-            console.log(error);
+          modalEl.addEventListener('shown.bs.modal', function () {
+            modalEl.querySelector('input.topic').focus();
           });
 
-      this.$refs.studentComponent.load();
-      this.modal.create.show();
+          this.modal.cancel.show();
+        }
+      } else {
+        if (this.modal.create === null) {
+          let modalEl = this.$el.querySelector('.modal.entry');
+          this.modal.create = new Modal(modalEl);
+
+          modalEl.addEventListener('shown.bs.modal', function () {
+            modalEl.querySelector('input.topic').focus();
+          });
+        }
+
+        this.$http
+            .get(this.teachersUrl)
+            .then(function (response) {
+              let choices = [
+                {
+                  label: $this.$trans('label.select.teacher'),
+                  value: '',
+                  selected: true
+                }
+              ];
+
+              let autoSelectTeacher = null;
+              let tuitionTeachers = $this.tuition.teachers.map(function (teacher) {
+                return teacher.acronym;
+              });
+
+              if ($this.teacher !== null && !tuitionTeachers.includes($this.teacher) && $this.entry.uuid === null) {
+                autoSelectTeacher = $this.teacher;
+              }
+
+              if ($this.entry.replacementTeacher !== null) {
+                autoSelectTeacher = $this.entry.replacementTeacher.acronym;
+              }
+
+              response.data.forEach(function (teacher) {
+                choices.push({
+                  label: teacher.acronym,
+                  value: teacher.uuid,
+                  selected: teacher.acronym === autoSelectTeacher
+                });
+              });
+
+              $this.teacherChoice.setChoices(choices, 'value', 'label', true);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+
+        this.$refs.studentComponent.load();
+        this.modal.create.show();
+      }
     },
 
     create(start, end) {

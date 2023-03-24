@@ -47,21 +47,29 @@
                                     </td>
                                     <td class="align-middle">{{ note.excusedBy|teacher }}</td>
                                     <td class="align-middle">
+                                        {% set canEdit = is_granted('edit', note) %}
+                                        {% set canRemove = is_granted('remove', note) %}
+
+                                        {% if canEdit or canRemove %}
                                         <div class="dropdown d-inline">
                                             <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
 
                                             <div class="dropdown-menu dropdown-menu-right">
+                                                {% if canEdit %}
                                                 <a href="{{ path('edit_excuse', { uuid: note.uuid }) }}" class="dropdown-item">
                                                     <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
                                                 </a>
-
+                                                {% endif %}
+                                                {% if canRemove %}
                                                 <a href="{{ path('remove_excuse', { uuid: note.uuid }) }}" class="dropdown-item text-danger">
                                                     <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
                                                 </a>
+                                                {% endif %}
                                             </div>
                                         </div>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -82,6 +90,7 @@
                 } %}
             </div>
             <div class="col-md-3">
+                {% if is_granted('new-excuse') %}
                 <div class="card">
                     <div class="list-group list-group-flush">
                         <a href="{{ path('add_excuse') }}" class="list-group-item list-group-item-action">
@@ -89,6 +98,7 @@
                         </a>
                     </div>
                 </div>
+                {% endif %}
 
                 <div class="card">
                     <div class="card-body">

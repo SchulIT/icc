@@ -4,6 +4,7 @@ namespace App\Book\Student;
 
 use App\Entity\BookComment;
 use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\LessonAttendanceType;
 use App\Entity\Student;
 use App\Entity\LessonAttendance as LessonAttendanceEntity;
 use DateTime;
@@ -13,9 +14,10 @@ class StudentInfo {
     /**
      * @param LessonAttendance[] $lateLessonAttendances
      * @param LessonAttendance[] $absentLessonAttendances
+     * @param LessonAttendance[] $presentLessonAttendances
      * @param BookComment[] $comments
      */
-    public function __construct(private Student $student, private int $totalLessonsCount, private array $lateLessonAttendances, private array $absentLessonAttendances, private array $comments)
+    public function __construct(private readonly Student $student, private readonly int $totalLessonsCount, private readonly array $lateLessonAttendances, private readonly array $absentLessonAttendances, private readonly array $presentLessonAttendances, private readonly array $comments)
     {
     }
 
@@ -25,6 +27,13 @@ class StudentInfo {
 
     public function getTotalLessonsCount(): int {
         return $this->totalLessonsCount;
+    }
+
+    /**
+     * @return LessonAttendance[]
+     */
+    public function getPresentLessonAttendances(): array {
+        return $this->presentLessonAttendances;
     }
 
     /**
@@ -53,7 +62,9 @@ class StudentInfo {
     public function getAbsentLessonsCount(): int {
         return array_sum(
             array_map(
-                fn(LessonAttendance $attendance) => 1,
+                fn(LessonAttendance $attendance) => $attendance->getAttendance()->getType() === LessonAttendanceType::Absent
+                    && $attendance->getAttendance()->getAbsentLessons() > 0
+                    && ($attendance->getAttendance()->getEntry()->getLessonEnd() - $attendance->getAttendance()->getAbsentLessons()) < $attendance->getLesson() ? 1 : 0,
                 $this->getAbsentLessonAttendances()
             )
         );
@@ -63,7 +74,9 @@ class StudentInfo {
         return array_sum(
             array_map(
                 fn(LessonAttendance $attendance) => $attendance->getAttendance()->getExcuseStatus() === LessonAttendanceExcuseStatus::NotSet
-                    && $attendance->getExcuses()->count() === 0 ? 1 : 0,
+                    && $attendance->getExcuses()->count() === 0
+                    && $attendance->getAttendance()->getAbsentLessons() > 0
+                    && ($attendance->getAttendance()->getEntry()->getLessonEnd() - $attendance->getAttendance()->getAbsentLessons()) < $attendance->getLesson() ? 1 : 0,
                 $this->getAbsentLessonAttendances()
             )
         );

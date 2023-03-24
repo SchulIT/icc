@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Converter\StudyGroupStringConverter;
 use App\Entity\DateLesson;
 use App\Entity\Exam;
+use App\Entity\ExcuseNote;
 use App\Entity\Student;
 use App\Entity\StudentAbsence;
 use App\Entity\StudentAbsenceAttachment;
@@ -22,11 +23,13 @@ use App\Grouping\StudentAbsenceTuitionGroup;
 use App\Http\FlysystemFileResponse;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
+use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
+use App\Security\Voter\ExcuseNoteVoter;
 use App\Security\Voter\StudentAbsenceVoter;
 use App\Settings\StudentAbsenceSettings;
 use App\Settings\TimetableSettings;
@@ -348,6 +351,34 @@ class StudentAbsenceController extends AbstractController {
             'form' => $form->createView(),
             'exams' => $exams,
             'appointments' => $appointments
+        ]);
+    }
+
+    #[Route(path: '/{uuid}/excuse_note', name: 'add_excuse_note_from_absence')]
+    public function createExcuseNote(StudentAbsence $absence, Request $request, ExcuseNoteRepositoryInterface $excuseNoteRepository) {
+        $this->denyAccessUnlessGranted(ExcuseNoteVoter::New);
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if($this->isCsrfTokenValid('excuse_note', $request->request->get('_csrf_token')) !== true) {
+            $this->addFlash('error', 'CSRF token invalid.');
+        } else if($absence->getType()->isAlwaysExcused()) {
+            $this->addFlash('success', 'absences.students.show.create_excuse_note.not_necessary');
+        } else {
+            $excuseNote = (new ExcuseNote())
+                ->setStudent($absence->getStudent())
+                ->setFrom($absence->getFrom())
+                ->setUntil($absence->getUntil())
+                ->setExcusedBy($user->getTeacher())
+                ->setComment('student_absence:' . $absence->getUuid()->toString());
+
+            $excuseNoteRepository->persist($excuseNote);
+            $this->addFlash('success', 'book.excuse_note.add.success');
+        }
+
+        return $this->redirectToRoute('show_student_absence', [
+            'uuid' => $absence->getUuid()
         ]);
     }
 

@@ -66,10 +66,10 @@
 
                 <attendance-overview :entries="{{ entries|json_encode }}"
                                      :comments="{{ comments|json_encode }}"
-                                     :late-attendances="{{ info.lateLessonAttendances|json_encode }}"
-                                     :absent-attendances="{{ info.absentLessonAttendances|json_encode}}"
+                                     :attendances="{{ info.presentLessonAttendances|merge(info.lateLessonAttendances)|merge(info.absentLessonAttendances)|json_encode }}"
                                      :day-groups="{{ groups|json_encode }}"
                                      url="{{ path('xhr_update_attendance', { uuid: 'uuid'}) }}"
+                                     absences-url="{{ path('xhr_student_absences', { student: student.uuid, lesson: 'lesson'} ) }}"
                                      csrftoken="{{ csrf_token('update_attendance') }}"
                                      :max-lessons="{{ numberOfLessons }}" />
             </div>

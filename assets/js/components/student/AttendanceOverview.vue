@@ -26,11 +26,11 @@
                 <template v-for="lesson in days[day]">
                   <td v-if="lesson.colspan > 0"
                       :colspan="lesson.colspan"
-                      :class="lesson.cssClasses"
+                      :class="'text-center align-middle ' + (lesson.attendance !== null && lesson.attendance.attendance.type === 1 ? 'table-success text-success pointer' : '') + (lesson.attendance !== null && lesson.attendance.attendance.type === 0 ? 'table-danger text-danger pointer' : '') + (lesson.attendance !== null && lesson.attendance.attendance.type === 2 ? 'table-warning text-warning pointer' : '')"
                       @click="edit(lesson)"
                       @contextmenu.prevent="changeExcuseStatus(lesson)"
                       :title="lesson.entry !== null ? lesson.entry.lesson.subject + ' (' + lesson.entry.lesson.teachers.join(', ') + ')' : ''">
-                    <div v-if="lesson.entry !== null && lesson.attendance === null">
+                    <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 1">
                       <i class="fas fa-user-check"></i>
                     </div>
                     <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 2">
@@ -41,8 +41,8 @@
                       </span>
                     </div>
                     <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 0">
-                      <i class="fas fa-question" v-if="lesson.attendance.attendance.excuse_status === 0"></i>
-                      <i class="fas fa-check" v-if="lesson.attendance.attendance.excuse_status === 1"></i>
+                      <i class="fas fa-question" v-if="lesson.attendance.attendance.excuse_status === 0 && lesson.attendance.attendance.absent_lessons > 0"></i>
+                      <i class="fas fa-check" v-if="lesson.attendance.attendance.excuse_status === 1 || lesson.attendance.attendance.absent_lessons === 0"></i>
                       <i class="fas fa-times" v-if="lesson.attendance.attendance.excuse_status === 2"></i>
 
                       <span class="badge badge-info d-block" v-if="lesson.attendance.attendance.absent_lessons !== (lesson.entry.end - lesson.entry.start + 1)">
@@ -177,6 +177,18 @@
                 <input type="text" v-model="editAttendance.attendance.comment" class="form-control" />
               </div>
             </div>
+
+            <div class="mt-2" v-if="absences.length > 0">
+              <div class="card" v-for="absence in absences">
+                <div class="card-header">{{ absence.type }}</div>
+                <div class="card-body" v-html="absence.html"></div>
+                <div class="card-footer">
+                  <a :href="absence.url" target="_blank" class="btn btn-primary btn-sm">
+                    <i class="fas fa-external-link-alt"></i> {{ $trans('absences.students.show.label')}}
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="modal-footer">
@@ -211,12 +223,12 @@ export default {
   name: 'attendance_overview',
   props: {
     entries: Object,
-    absentAttendances: Array,
-    lateAttendances: Array,
+    attendances: Array,
     comments: Array,
     dayGroups: Array,
     maxLessons: Number,
     url: String,
+    absencesUrl: String,
     csrftoken: String
   },
   data() {
@@ -230,7 +242,8 @@ export default {
         errorId: null
       },
       editAttendance: null,
-      editLesson: null
+      editLesson: null,
+      absences: [ ]
     }
   },
   mounted() {
@@ -247,8 +260,7 @@ export default {
         lessonRange.forEach(function(lessonNumber) {
           let key = dateKey + '_' + lessonNumber;
           let entry = $this.entries[key] ?? null;
-          let absentAttendance = $this.absentAttendances.filter(a => a.date === day && a.lesson === lessonNumber)[0] ?? null;
-          let lateAttendance = $this.lateAttendances.filter(a => a.date === day && a.lesson === lessonNumber)[0] ?? null;
+          let attendance = $this.attendances.filter(a => a.date === day && a.lesson === lessonNumber)[0] ?? null;
 
           let colspan = 1;
 
@@ -260,24 +272,11 @@ export default {
             }
           }
 
-          let cssClasses = 'text-center align-middle';
-
-          if(entry !== null) {
-            if(absentAttendance !== null) {
-              cssClasses += ' table-danger text-danger pointer';
-            } else if(lateAttendance !== null) {
-              cssClasses += ' table-warning text-warning pointer';
-            } else {
-              cssClasses += ' table-success text-success';
-            }
-          }
-
           lessons[lessonNumber] = {
             'lesson': lessonNumber,
             'entry': entry,
-            'attendance': absentAttendance ?? lateAttendance,
-            'colspan': colspan,
-            'cssClasses': cssClasses
+            'attendance': attendance,
+            'colspan': colspan
           };
         });
 
@@ -312,6 +311,20 @@ export default {
       this.editAttendance = JSON.parse(JSON.stringify(lesson.attendance));
 
       this.modal.show();
+
+      this.absences = [ ];
+
+      if(lesson.attendance.attendance.type !== 1) {
+        let $this = this;
+        let url = this.absencesUrl.replace('lesson', lesson.entry.lesson.uuid);
+        this.$http.get(url)
+            .then(function(response) {
+              $this.absences = response.data;
+            })
+            .catch(function(error) {
+              console.error(error);
+            });
+      }
     },
     minusMinute() {
       if(this.editAttendance.attendance.late_minutes > 0) {
@@ -336,16 +349,16 @@ export default {
       this.setType(2);
     },
     plusLesson() {
-      if(this.editAttendance.attendance === null || this.editAttendance.attendance !== 0) {
+      if(this.editAttendance.attendance === null) {
         return;
       }
 
-      if(this.editAttendance.attendance.absent_lessons <= (this.editLesson.end - this.editLesson.start)) {
+      if(this.editAttendance.attendance.absent_lessons <= (this.editLesson.entry.end - this.editLesson.entry.start)) {
         this.editAttendance.attendance.absent_lessons++;
       }
     },
     minusLesson() {
-      if(this.editAttendance.attendance === null || this.editAttendance.attendance !== 0) {
+      if(this.editAttendance.attendance === null) {
         return;
       }
 

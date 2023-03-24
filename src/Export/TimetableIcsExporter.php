@@ -196,7 +196,7 @@ class TimetableIcsExporter {
         foreach($appointments as $appointment) {
             $current = (clone $appointment->getStart());
 
-            while($current <= $appointment->getEnd()) {
+            while($current < $appointment->getEnd()) {
                 $freeDays[] = $current;
                 $current = (clone $current)->modify('+1 day');
             }

@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import axios from 'axios'
 import VueAxios from "vue-axios";
+import {Dropdown} from "bootstrap.native";
 
 import Translations from "./plugins/trans";
 import LessonCancelButton from "./components/book/LessonCancelButton";
@@ -22,6 +23,11 @@ const app = createApp({
         AttendanceOverview
     },
     methods: { },
+    mounted() {
+        document.getElementById('app').querySelectorAll('[data-toggle=dropdown]').forEach(function(element) {
+            new Dropdown(element);
+        });
+    },
     data() {
         return { };
     }

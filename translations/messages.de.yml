@@ -331,6 +331,11 @@ dashboard:
         label: Einstellungen
         show_times: Uhrzeiten der Unterrichtsstunden anzeigen
         include_grade_messages: Mitteilungen der eigenen Klassen anzeigen
+    links:
+        header: Verknüpfungen
+        tuition: Zur Lernendenübersicht
+        book: Zum Unterrichtsbuch
+        gradebook: Zur Notenübersicht
 
 plans:
     label: Pläne

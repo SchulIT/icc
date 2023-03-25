@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="dropdown">
-      <button class="btn btn-primary btn-sm" type="button" data-toggle="dropdown"
+      <button class="btn btn-primary btn-sm" type="button"
               :class="entry.uuid === null ? 'btn btn-primary btn-sm' : 'btn btn-success btn-sm'">
         <i class="fas fa-spinner fa-spin" v-if="!isInitialized"></i>
         <i class="fas fa-book-open" v-if="isInitialized"></i>

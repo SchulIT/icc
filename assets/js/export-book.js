@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
         })
 
         // Notenübersicht
-        if (response.students_grades !== null && decryptedKey !== null) {
+        if (response.students_grades !== null && response.students_grades.categories !== undefined && response.students_grades.categories.length > 0 && decryptedKey !== null) {
             pdf.addPage('a4', 'landscape');
 
             let matrix = { };

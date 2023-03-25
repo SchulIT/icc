@@ -248,6 +248,10 @@ label:
     grade_values:
         label: Noten
         help: Hier können die erlaubten Noten eingetragen werden (bspw. 1+, 1, ... oder 15, 14, ...)
+    tuition_grade_type: Notenkatalog
+    exportable:
+        label: exportierbar
+        help: Wenn diese Option aktiv ist, werden Noten in dieser Kategorie exportiert (JSON, XML, PDF).
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

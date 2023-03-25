@@ -85,19 +85,23 @@ class BookExporter {
 
             $gradeOverview = $this->gradeOverviewHelper->computeOverviewForTuition($tuition);
             foreach($gradeOverview->getCategories() as $category) {
-                $studentGrades->addCategory(
-                    (new TuitionGradeCategory())
-                    ->setUuid($category->getUuid()->toString())
-                    ->setDisplayName($category->getDisplayName())
-                );
+                if ($category->isExportable()) {
+                    $studentGrades->addCategory(
+                        (new TuitionGradeCategory())
+                            ->setUuid($category->getUuid()->toString())
+                            ->setDisplayName($category->getDisplayName())
+                    );
+                }
             }
 
             foreach($gradeOverview->getRows() as $row) {
                 foreach($gradeOverview->getCategories() as $category) {
-                    $studentGrades->addGrade((new TuitionGrade())
-                        ->setStudent($row->getTuitionOrStudent()->getExternalId())
-                        ->setGradeCategory($category->getUuid()->toString())
-                        ->setEncryptedGrade($row->getGrade($category)?->getEncryptedGrade()));
+                    if($category->isExportable()) {
+                        $studentGrades->addGrade((new TuitionGrade())
+                            ->setStudent($row->getTuitionOrStudent()->getExternalId())
+                            ->setGradeCategory($category->getUuid()->toString())
+                            ->setEncryptedGrade($row->getGrade($category)?->getEncryptedGrade()));
+                    }
                 }
             }
 

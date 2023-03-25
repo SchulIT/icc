@@ -26,6 +26,9 @@ class TuitionGradeCategory {
     #[Gedmo\SortablePosition]
     private int $position;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isExportable = true;
+
     #[ORM\ManyToOne(targetEntity: TuitionGradeType::class)]
     #[ORM\JoinColumn]
     #[NotNull]
@@ -71,6 +74,22 @@ class TuitionGradeCategory {
      */
     public function setPosition(int $position): TuitionGradeCategory {
         $this->position = $position;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExportable(): bool {
+        return $this->isExportable;
+    }
+
+    /**
+     * @param bool $isExportable
+     * @return TuitionGradeCategory
+     */
+    public function setIsExportable(bool $isExportable): TuitionGradeCategory {
+        $this->isExportable = $isExportable;
         return $this;
     }
 

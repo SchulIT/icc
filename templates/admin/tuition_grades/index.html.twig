@@ -28,6 +28,7 @@
                             <table class="table table-striped table-hover card-table">
                                 <colgroup>
                                     <col>
+                                    <col class="column-lg">
                                     <col class="column-md">
                                     <col class="column-sm">
                                 </colgroup>
@@ -35,6 +36,7 @@
                                 <thead>
                                 <tr>
                                     <th>{{ 'label.display_name'|trans }}</th>
+                                    <th>{{ 'label.tuition_grade_type'|trans }}</th>
                                     <th>{{ 'label.position.label'|trans }}</th>
                                     <th></th>
                                 </tr>
@@ -49,6 +51,9 @@
                                             {% if category.comment is not null %}
                                                 <span class="text-muted">{{ category.comment }}</span>
                                             {% endif %}
+                                        </td>
+                                        <td class="align-middle">
+                                            {{ category.gradeType.displayName }}
                                         </td>
                                         <td class="align-middle">{{ category.position }}</td>
                                         <td class="align-middle">

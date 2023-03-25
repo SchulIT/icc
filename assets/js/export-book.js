@@ -2,10 +2,12 @@ import { Modal } from 'bootstrap.native';
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 const axios = require('axios');
+const crypto = require('easy-web-crypto');
 
 let regularFont = null;
 let boldFont = null;
 let fontInitialized = false;
+let decryptedKey = null;
 
 function setFont(pdf, weight) {
     if(regularFont === null || boldFont === null) {
@@ -65,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
     const weekdays = [ 'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
 
-    function createPdf(response) {
+    async function createPdf(response) {
         let pdf = new jsPDF();
         addFont(pdf);
         setFont(pdf, 'normal');
@@ -105,26 +107,50 @@ document.addEventListener('DOMContentLoaded', function(event) {
         })
 
         // Notenübersicht
-        if (response.tuition !== null) {
+        if (response.students_grades !== null && decryptedKey !== null) {
             pdf.addPage('a4', 'landscape');
 
-            let scores = [];
-            for (let idx = 0; idx < response.students_summary.length; idx++) {
-                let student = response.students_summary[idx];
-                scores.push([
-                    student.student.lastname,
-                    student.student.firstname,
-                    ' ', // Klausur E
-                    ' ', // Klausur E
-                    ' ', // Klausur G
-                    ' ', // SoMi E
-                    ' ', // SoMi E
-                    ' ', // SoMi G
-                    ' ', // Zensur
-                    ' ', // Punkte
-                    ' ', // Bemerkung
-                ]);
+            let matrix = { };
+            for(let grade of response.students_grades.grades) {
+                if(matrix[grade.student] === undefined) {
+                    matrix[grade.student] = { };
+                }
+
+                if(grade.encrypted_grade !== null && grade.encrypted_grade !== '') {
+                    matrix[grade.student][grade.grade_category] = await crypto.decrypt(decryptedKey, JSON.parse(grade.encrypted_grade));
+                } else {
+                    matrix[grade.student][grade.grade_category] = ' ';
+                }
             }
+
+            let scores = [];
+
+            for(let student of response.students_summary.map(x => x.student)) {
+                if(student === null || matrix[student.id] === undefined) {
+                    return;
+                }
+
+                let data = [ ];
+                data.push(student.lastname);
+                data.push(student.firstname);
+
+                let grades = matrix[student.id];
+
+                response.students_grades.categories.forEach(function(category) {
+                    if(grades[category.uuid] === undefined) {
+                        data.push(' ');
+                    } else {
+                        data.push(grades[category.uuid]);
+                    }
+                });
+
+                scores.push(data);
+            }
+
+            let header = [ 'Nachname', 'Vorname' ];
+            response.students_grades.categories.forEach(function(category) {
+                header.push(category.display_name);
+            });
 
             pdf.text('Notenübersicht', 15, 25);
             pdf.autoTable({
@@ -134,30 +160,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     top: 25,
                     bottom: 25
                 },
-                head: [
-                    [
-                        '',
-                        '',
-                        {content: 'Klausuren', colSpan: 3, styles: {halign: 'center'}},
-                        {content: 'Sonstige Mitarbeit', colSpan: 3, styles: {halign: 'center'}},
-                        {content: 'Zensur', styles: {halign: 'center', cellWidth: 20}},
-                        {content: 'Punkte', styles: {halign: 'center', cellWidth: 20}},
-                        {content: 'Bemerkung', styles: {halign: 'center'}}
-                    ],
-                    [
-                        {content: 'Nachname', styles: {cellWidth: 35}},
-                        {content: 'Vorname', styles: {cellWidth: 35}},
-                        {content: 'E', styles: {halign: 'center', cellWidth: 10}},
-                        {content: 'E', styles: {halign: 'center', cellWidth: 10}},
-                        {content: 'G', styles: {halign: 'center', cellWidth: 10}},
-                        {content: 'E', styles: {halign: 'center', cellWidth: 10}},
-                        {content: 'E', styles: {halign: 'center', cellWidth: 10}},
-                        {content: 'G', styles: {halign: 'center', cellWidth: 10}},
-                        '',
-                        '',
-                        ''
-                    ]
-                ],
+                head: [ header ],
                 body: scores,
                 styles: {
                     font: getFontName()
@@ -501,6 +504,26 @@ document.addEventListener('DOMContentLoaded', function(event) {
                 align: 'center'
             });
         }
+    }
+
+    if(document.getElementById('password_btn') !== null) {
+        document.getElementById('password_btn').addEventListener('click', async function(event) {
+            event.preventDefault();
+
+            let password = document.querySelector(this.getAttribute('data-passphrase')).value;
+            let encryptedKey = JSON.parse(document.querySelector(this.getAttribute('data-key')).innerHTML.trim());
+
+            try {
+                decryptedKey = await crypto.decryptMasterKey(password, encryptedKey);
+                document.querySelector(this.getAttribute('data-passphrase')).value = '';
+
+                this.closest('.card-body').querySelector('.bs-callout').classList.remove('hide');
+                this.closest('.input-group').remove();
+            } catch (e) {
+                alert('Falsches Passwort');
+                console.error(e);
+            }
+        });
     }
 
     document.querySelectorAll('[data-export-url]').forEach(function(element) {

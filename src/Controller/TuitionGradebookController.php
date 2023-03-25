@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Book\Grade\GradeOverviewHelper;
+use App\Book\Grade\GradePersister;
 use App\Entity\Section;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Repository\TuitionRepositoryInterface;
+use App\Settings\TuitionGradebookSettings;
 use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TuitionFilter;
@@ -21,32 +23,46 @@ class TuitionGradebookController extends AbstractController {
     #[Route('', name: 'gradebook')]
     public function index(Request $request, TuitionFilter $tuitionFilter, StudentFilter $studentFilter,
                           SectionFilter $sectionFilter, TuitionRepositoryInterface $tuitionRepository,
-                          GradeOverviewHelper $gradeOverviewHelper): Response {
+                          GradeOverviewHelper $gradeOverviewHelper, TuitionGradebookSettings $gradebookSettings, GradePersister $gradePersister): Response {
         /** @var User $user */
         $user = $this->getUser();
         
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $tuitionFilterView = $tuitionFilter->handle($request->query->get('tuition'), $sectionFilterView->getCurrentSection(), $user);
-        $studentFilterView = $studentFilter->handle($request->query->get('student'), $sectionFilterView->getCurrentSection(), $user, false);
-        
+        $studentFilterView = $studentFilter->handle($request->query->get('student'), $sectionFilterView->getCurrentSection(), $user, true);
+
         $ownTuitions = $this->resolveOwnTuitions($sectionFilterView->getCurrentSection(), $user, $tuitionRepository);
 
         $overview = null;
-        $template = 'books/grades/tuition.html.twig';
 
         if($tuitionFilterView->getCurrentTuition() !== null) {
             $overview = $gradeOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition());
         } else if($studentFilterView->getCurrentStudent() !== null) {
-            $template = 'books/grades/student.html.twig';
             $overview = $gradeOverviewHelper->computeOverviewForStudent($studentFilterView->getCurrentStudent(), $sectionFilterView->getCurrentSection());
         }
 
-        return $this->render($template, [
+        if($request->isMethod('POST')) {
+            if($this->isCsrfTokenValid('gradebook', $request->request->get('_csrf_token')) !== true) {
+                $this->addFlash('error', 'CSRF token invalid.');
+            } else {
+                if($tuitionFilterView->getCurrentTuition() !== null) {
+                    $gradePersister->persist($tuitionFilterView->getCurrentTuition(), $overview, $request->request->all('grades'));
+                } else if($studentFilterView->getCurrentStudent() !== null) {
+                    $gradePersister->persist($studentFilterView->getCurrentStudent(), $overview, $request->request->all('grades'));
+                }
+
+                $this->addFlash('success', 'book.grades.success');
+                return $this->redirectToRequestReferer('gradebook');
+            }
+        }
+
+        return $this->render('books/grades/overview.html.twig', [
             'sectionFilter' => $sectionFilterView,
             'tuitionFilter' => $tuitionFilterView,
             'studentFilter' => $studentFilterView,
             'ownTuitions' => $ownTuitions,
-            'overview' => $overview
+            'overview' => $overview,
+            'key' => $gradebookSettings->getEncryptedMasterKey()
         ]);
     }
 

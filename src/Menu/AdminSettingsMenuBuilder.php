@@ -54,6 +54,11 @@ class AdminSettingsMenuBuilder extends AbstractMenuBuilder {
             ])
                 ->setExtra('icon', 'fas fa-book-open');
 
+            $root->addChild('admin.settings.tuition_grades.label', [
+                'route' => 'admin_settings_gradebook'
+            ])
+                ->setExtra('icon', 'fas fa-user-graduate');
+
             $root->addChild('admin.settings.import.label', [
                 'route' => 'admin_settings_import'
             ])

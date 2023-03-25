@@ -30,8 +30,7 @@ class TuitionGrade {
     #[Assert\NotNull]
     private ?Student $student = null;
 
-    #[ORM\Column(type: 'text')]
-    #[Assert\NotBlank]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $encryptedGrade = null;
 
     public function __construct() {

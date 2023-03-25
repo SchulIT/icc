@@ -37,7 +37,7 @@
                                 <col class="column-md">
                                 <col class="column-md">
                                 <col class="column-md">
-                                <col class="column-sm">
+                                <col class="column-md">
                             </colgroup>
 
                             <thead>
@@ -95,9 +95,12 @@
 
                                     <td class="align-middle">
                                         {% if sectionFilter.currentSection != null %}
-                                        <a href="{{ path('book_student', { student: student.uuid }|merge(currentFilter)) }}" class="btn btn-primary btn-sm" title="{{ 'label.details'|trans }}">
-                                            <i class="fas fa-info-circle"></i>
-                                        </a>
+                                            <a href="{{ path('book_student', { student: student.uuid }|merge(currentFilter)) }}" class="btn btn-primary btn-sm" title="{{ 'label.details'|trans }}">
+                                                <i class="fas fa-info-circle"></i>
+                                            </a>
+                                            <a href="{{ path('gradebook', { section: sectionFilter.currentSection.uuid, student: student.uuid}) }}" class="btn btn-primary btn-sm" title="{{ 'book.grades.label'|trans }}">
+                                                <i class="fas fa-graduation-cap"></i>
+                                            </a>
                                         {% endif %}
                                     </td>
                                 </tr>

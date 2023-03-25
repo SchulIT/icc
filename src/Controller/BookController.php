@@ -40,6 +40,7 @@ use App\Repository\TuitionRepositoryInterface;
 use App\Security\Voter\LessonEntryVoter;
 use App\Settings\BookSettings;
 use App\Settings\TimetableSettings;
+use App\Settings\TuitionGradebookSettings;
 use App\Sorting\DateStrategy;
 use App\Sorting\DateWeekOfYearGroupStrategy;
 use App\Sorting\LessonAttendanceGroupStrategy;
@@ -634,7 +635,7 @@ class BookController extends AbstractController {
     #[Route(path: '/export', name: 'book_export')]
     public function export(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter,
                            TuitionRepositoryInterface $tuitionRepository, TimetableLessonRepositoryInterface $lessonRepository,
-                           Request $request, Grouper $grouper, Sorter $sorter, DateHelper $dateHelper) {
+                           Request $request, Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, TuitionGradebookSettings $gradebookSettings) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -676,7 +677,8 @@ class BookController extends AbstractController {
             'gradeFilter' => $gradeFilterView,
             'teacherFilter' => $teacherFilterView,
             'holdCounts' => $holtCounts,
-            'missingCounts' => $missingCounts
+            'missingCounts' => $missingCounts,
+            'key' => $gradebookSettings->getEncryptedMasterKey()
         ]);
     }
 

@@ -46,6 +46,12 @@ class Book {
     private ?array $studentSummaries = null;
 
     /**
+     * @Serializer\SerializedName("students_grades")
+     * @var StudentGrades|null
+     */
+    private ?StudentGrades $studentGrades = null;
+
+    /**
      * @Serializer\Type("array<App\Book\Export\Week>")
      * @Serializer\SerializedName("weeks")
      * @var Week[]
@@ -112,6 +118,22 @@ class Book {
      */
     public function getStudentSummaries(): array {
         return $this->studentSummaries;
+    }
+
+    /**
+     * @return StudentGrades|null
+     */
+    public function getStudentGrades(): ?StudentGrades {
+        return $this->studentGrades;
+    }
+
+    /**
+     * @param StudentGrades|null $studentGrades
+     * @return Book
+     */
+    public function setStudentGrades(?StudentGrades $studentGrades): Book {
+        $this->studentGrades = $studentGrades;
+        return $this;
     }
 
     public function addWeek(Week $week): void {

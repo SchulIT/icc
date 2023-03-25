@@ -137,6 +137,30 @@
                         {% include "_filter/grade.html.twig" with { params: currentFilter|merge({teacher: null}) } %}
                     </div>
                 </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-key"></i> {{ 'book.export.password.label'|trans }}</h5>
+                        <p>
+                            {{ 'book.export.password.info'|trans }}
+                        </p>
+
+                        <div id="key" class="hide">{{ key }}</div>
+
+                        <div class="input-group">
+                            <input type="password" id="passphrase" class="form-control" autocomplete="one-time-code" />
+                            <div class="input-group-append">
+                                <button type="button" id="password_btn" data-passphrase="#passphrase" data-key="#key" class="btn btn-outline-primary">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bs-callout bs-callout-success hide mb-0">
+                            {{ 'book.export.password.success'|trans }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

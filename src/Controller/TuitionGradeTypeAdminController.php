@@ -27,7 +27,19 @@ class TuitionGradeTypeAdminController extends AbstractController {
 
     #[Route('/add', name: 'add_tuition_grade_type')]
     public function add(Request $request): RedirectResponse|Response {
+        $preset = $request->query->get('preset');
+        $presets = [
+            'onetosix_notrend' => [ 1, 2, 3, 4, 5, 6 ],
+            'onetosix_trend' => ['1+', '1', '1-', '2+', '2', '2-', '3+', '3', '3-', '4+', '4', '4-', '5+', '5', '5-', '6' ],
+            'zerotofiveteen' => [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        ];
+
         $type = new TuitionGradeType();
+
+        if($preset !== null && isset($presets[$preset])) {
+            $type->setValues($presets[$preset]);
+        }
+
         $form = $this->createForm(TuitionGradeTypeType::class, $type);
         $form->handleRequest($request);
 

@@ -31,17 +31,21 @@ class GradeOverviewHelper {
 
         $grades = ArrayUtils::createArrayWithKeys(
             $this->tuitionGradeRepository->findAllByStudent($student, $section),
-            fn(TuitionGrade $grade) => sprintf('%s_%s', $grade->getStudent()->getId(), $grade->getCategory()->getId())
+            fn(TuitionGrade $grade) => sprintf('%s_%s', $grade->getTuition()->getId(), $grade->getCategory()->getId())
         );
 
         $this->sorter->sort($tuitions, TuitionStrategy::class);
 
         $rows = [ ];
         foreach($tuitions as $tuition) {
+            if($tuition->getGradeCategories()->count() === 0) {
+                continue;
+            }
+
             $data = [ ];
 
             foreach($tuition->getGradeCategories() as $category) {
-                $key = sprintf('%s_%s', $student->getId(), $category->getId());
+                $key = sprintf('%s_%s', $tuition->getId(), $category->getId());
                 $data[$category->getUuid()->toString()] = $grades[$key] ?? null;
             }
 
@@ -52,8 +56,12 @@ class GradeOverviewHelper {
         return new GradeOverview($categories, $rows);
     }
 
-    public function computeOverviewForTuition(Tuition $tuition): GradeOverview {
+    public function computeOverviewForTuition(Tuition $tuition): ?GradeOverview {
         $categories = $tuition->getGradeCategories()->toArray();
+
+        if(count($categories) === 0) {
+            return null;
+        }
 
         $grades = ArrayUtils::createArrayWithKeys(
             $this->tuitionGradeRepository->findAllByTuition($tuition),

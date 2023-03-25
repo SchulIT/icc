@@ -39,7 +39,8 @@ class TuitionGradeCategoryType extends AbstractType {
                     'size' => 10
                 ],
                 'label' => 'label.tuitions',
-                'multiple' => true
+                'multiple' => true,
+                'required' => false
             ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Book\Export;
 
 use App\Book\EntryOverview;
 use App\Book\EntryOverviewHelper;
+use App\Book\Grade\GradeOverviewHelper;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\LessonAttendance;
 use App\Book\Student\StudentInfo;
@@ -30,7 +31,7 @@ use JMS\Serializer\SerializerInterface;
 
 class BookExporter {
 
-    public function __construct(private EntryOverviewHelper $overviewHelper, private StudentInfoResolver $studentInfoResolver, private Sorter $sorter, private SerializerInterface $serializer)
+    public function __construct(private readonly EntryOverviewHelper $overviewHelper, private readonly StudentInfoResolver $studentInfoResolver, private readonly Sorter $sorter, private readonly SerializerInterface $serializer, private readonly GradeOverviewHelper $gradeOverviewHelper)
     {
     }
 
@@ -79,6 +80,28 @@ class BookExporter {
                 $grades[] = $exportGrade;
             }
             $book->setGrades($grades);
+
+            $studentGrades = new StudentGrades();
+
+            $gradeOverview = $this->gradeOverviewHelper->computeOverviewForTuition($tuition);
+            foreach($gradeOverview->getCategories() as $category) {
+                $studentGrades->addCategory(
+                    (new TuitionGradeCategory())
+                    ->setUuid($category->getUuid()->toString())
+                    ->setDisplayName($category->getDisplayName())
+                );
+            }
+
+            foreach($gradeOverview->getRows() as $row) {
+                foreach($gradeOverview->getCategories() as $category) {
+                    $studentGrades->addGrade((new TuitionGrade())
+                        ->setStudent($row->getTuitionOrStudent()->getExternalId())
+                        ->setGradeCategory($category->getUuid()->toString())
+                        ->setEncryptedGrade($row->getGrade($category)?->getEncryptedGrade()));
+                }
+            }
+
+            $book->setStudentGrades($studentGrades);
         }
 
         $this->sorter->sort($students, StudentStrategy::class);

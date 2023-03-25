@@ -80,6 +80,20 @@
                         </a>
                     </div>
                 </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'admin.tuition_grade_types.presets.label'|trans }}</h5>
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        {% for preset in ['onetosix_notrend', 'onetosix_trend', 'zerotofiveteen'] %}
+                            <a href="{{ path('add_tuition_grade_type', { preset: preset}) }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-plus"></i> {{ ('admin.tuition_grade_types.presets.'~preset)|trans }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

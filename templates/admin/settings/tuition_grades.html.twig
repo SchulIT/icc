@@ -1,0 +1,51 @@
+{% extends "admin/settings/_settings.html.twig" %}
+
+{% block title %}{{ 'admin.settings.tuition_grades.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'admin.settings.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/gradebook.js') }}"></script>
+{% endblock %}
+
+{% block settings_content %}
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+
+        <div class="card-body">
+            <div class="bs-callout bs-callout-danger">
+                <h4>{{ 'caution'|trans }}</h4>
+                <p>{{ 'admin.settings.tuition_grades.confirm.caution'|trans }}</p>
+            </div>
+
+            {{ form_row(form.confirm) }}
+            {{ form_row(form.masterKey) }}
+
+            <div class="bs-callout bs-callout-danger">
+                <h4>{{ 'caution'|trans }}</h4>
+                <p>{{ 'admin.settings.tuition_grades.masterkey.caution'|trans }}</p>
+            </div>
+
+            <div class="row mt-2">
+                <label for="passphrase" class="col-form-label col-sm-2">{{ 'admin.settings.tuition_grades.passphrase.label'|trans }}</label>
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <input type="password" id="passphrase" class="form-control">
+                        <div class="input-group-append">
+                            <button type="button" id="generatekey" data-passphrase="#passphrase" data-key="#form_masterKey" class="btn btn-outline-primary">
+                                {{ 'admin.settings.tuition_grades.passphrase.create'|trans }}
+                            </button>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted">{{'admin.settings.tuition_grades.passphrase.help'|trans}}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

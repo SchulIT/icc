@@ -899,6 +899,21 @@ admin:
                     label: Schriftart (fett)
                     help: Hier kann eine TTF-Schriftart für die PDF-Datei hinterlegt werden. Leer lassen, wenn die Schriftart nicht geändert werden soll.
 
+        tuition_grades:
+            label: Notenmodul
+            confirm:
+                label: Schlüsseländerung bestätigen
+                help: Der obige Hinweis wurde zur Kenntnis genommen.
+                caution: Beim Ändern des Hauptschlüssels werden alle bisher eingetragenen Noten unbrauchbar. Eine Wiederherstellung ist nicht möglich. Den aktuellen Schlüssel bitte vor dem Ändern an einem sicheren Ort abspeichern.
+            masterkey:
+                label: Hauptschlüssel
+                help: DIESES FELD NICHT HÄNDISCH EDITIEREN. ES KANN ZU DATENVERLUST KOMMEN. Mithilfe dieses Hauptschlüssels werden alle Noten verschlüsselt.
+                caution: Dieser Schlüssel sollte an einem sicheren Ort gesichert werden. Ohne diesen Schlüssel sind alle eingetragenen Noten solange unbrauchbar, bis er wieder eingetragen wird.
+            passphrase:
+                label: Passwort für Noten
+                help: Mit diesem Passwort werden alle Noten verschlüsselt. Es muss vor jeder Noten-Ein- und -Ausgabe eingegeben werden. Mithilfe dieses Passwortes wird
+                create: Hauptschlüssel erzeugen
+
     timetable:
         label: Stundenplan
         weeks:
@@ -1295,6 +1310,7 @@ admin:
 
     tuition_grades:
         label: Notenmodul
+        empty: Keine Notenkategorien vorhanden
         add:
             label: Neue Notenkategorie
             success: Notenkategorie erfolgreich hinzugefügt
@@ -1311,6 +1327,13 @@ admin:
 
     tuition_grade_types:
         label: Notenkataloge
+        empty: Keine Notenkataloge vorhanden
+        presets:
+            label: Vorlagen
+            onetosix_notrend: Notenkatalog 1 bis 6 (ohne Tendenzen) erzeugen
+            onetosix_trend: Notenkatalog 1+ bis 6 (mit Tendenzen) erzeugen
+            zerotofiveteen: Notentalaog 0 bis 15 Punkte erzeugen
+
         add:
             label: Neuer Notenkatalog
             success: Notenkatalog erfolgreich angelegt
@@ -1684,6 +1707,10 @@ book:
             message: Bitte warten, bis das PDF erzeugt ist. Dieser Vorgang kann einige Augenblicke in Anspruch nehmen. Sobald der Vorgang abgeschlossen ist, wird die PDF herunterladen.
             complete: Die PDF kann nun in einem neuen Tab geöffnet werden.
             download: PDF herunterladen
+        password:
+            label: Passwort
+            info: Da Noten verschlüssel abgespeichert werden, muss zunächst das Passwort eingegeben werden, damit diese im PDF Export aufgelistet werden. Wird kein Passwort eingegeben, bleibt die Notenübersicht leer. Im JSON- und XML-Export sind die Noten stets verschlüsselt.
+            success: Passwort erfolgreich angewendet, der PDF-Export enthält Noten.
 
     excuse_note:
         label: Entschuldigungen
@@ -1717,6 +1744,12 @@ book:
 
     grades:
         label: Noten
+        success: Noten erfolgreich gespeichert
+        none: Es wurde kein Unterricht bzw. kein Lernender ausgewählt. Bitte zunächst rechts auswählen.
+        not_enabled: Für den ausgewählten Unterricht wurden keine Noten festgelegt.
+        info:
+            foreign_tuition: Nur die Lehrkraft eines Unterrichtes kann Noten eintragen bzw. ändern.
+            no_edit_in_student_view: In der Lernenden-Ansicht sind Notenänderungen nicht möglich. Bitte den Unterricht rechts auswählen und die Note dort ändern.
         password:
             title: Passwort
             info: Noten werden verschlüsselt gespeichert. Zum Ver- und Entschlüsseln wird ein von der Schule verwendetes Passwort verwendet.

@@ -18,6 +18,10 @@ class TuitionGradeCategoryType extends AbstractType {
             ->add('displayName', TextType::class, [
                 'label' => 'label.display_name'
             ])
+            ->add('comment', TextType::class, [
+                'label' => 'label.comment',
+                'required' => false
+            ])
             ->add('position', IntegerType::class, [
                 'label' => 'label.position.label',
                 'help' => 'label.position.help'

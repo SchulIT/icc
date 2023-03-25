@@ -22,6 +22,10 @@ class TuitionGradeCategory {
     #[NotBlank]
     private ?string $displayName;
 
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[NotBlank(allowNull: true)]
+    private ?string $comment;
+
     #[ORM\Column(type: 'integer')]
     #[Gedmo\SortablePosition]
     private int $position;
@@ -58,6 +62,22 @@ class TuitionGradeCategory {
      */
     public function setDisplayName(?string $displayName): TuitionGradeCategory {
         $this->displayName = $displayName;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getComment(): ?string {
+        return $this->comment;
+    }
+
+    /**
+     * @param string|null $comment
+     * @return TuitionGradeCategory
+     */
+    public function setComment(?string $comment): TuitionGradeCategory {
+        $this->comment = $comment;
         return $this;
     }
 

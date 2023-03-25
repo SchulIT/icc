@@ -23,7 +23,7 @@ class AssignTuitionGradeCategoryType extends AbstractType {
                 ],
                 'placeholder' => 'label.select.category',
                 'multiple' => true,
-                'choice_label' => fn(TuitionGradeCategory $category) => $category->getDisplayName()
+                'choice_label' => fn(TuitionGradeCategory $category) => $category->getDisplayName() . (!empty($category->getComment()) ? ' [' . $category->getComment() . ']' : '')
             ])
             ->add('tuitions', TuitionChoiceType::class, [
                 'label' => 'label.tuitions',

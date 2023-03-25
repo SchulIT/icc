@@ -43,7 +43,13 @@
                                 <tbody>
                                 {% for category in categories %}
                                     <tr>
-                                        <td class="align-middle">{{ category.displayName }}</td>
+                                        <td class="align-middle">
+                                            {{ category.displayName }}
+
+                                            {% if category.comment is not null %}
+                                                <span class="text-muted">{{ category.comment }}</span>
+                                            {% endif %}
+                                        </td>
                                         <td class="align-middle">{{ category.position }}</td>
                                         <td class="align-middle">
                                             <div class="dropdown d-inline" >

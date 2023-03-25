@@ -53,7 +53,7 @@ class StudentAbsenceBulkType extends AbstractType {
                 'class' => StudentAbsenceTypeEntity::class,
                 'choice_label' => function(StudentAbsenceTypeEntity $type) {
                     if($type->isMustApprove()) {
-                        return sprintf('%s (%s)', $type->getName(), $this->translator->trans('student_absences.add.must_approve.label'));
+                        return sprintf('%s (%s)', $type->getName(), $this->translator->trans('absences.students.add.must_approve.label'));
                     }
 
                     return $type->getName();
@@ -67,20 +67,20 @@ class StudentAbsenceBulkType extends AbstractType {
                 }
             ])
             ->add('from', DateLessonType::class, [
-                'label' => 'student_absences.add.absent_from'
+                'label' => 'absences.students.add.absent_from'
             ])
             ->add('until', DateLessonType::class, [
-                'label' => 'student_absences.add.absent_until'
+                'label' => 'absences.students.add.absent_until'
             ])
             ->add('message', TextareaType::class, [
-                'label' => 'student_absences.add.message',
+                'label' => 'absences.students.add.message',
                 'attr' => [
                     'rows' => 5
                 ]
             ])
             ->add('phone', TextType::class, [
                 'required' => false,
-                'label' => 'student_absences.add.phone'
+                'label' => 'absences.students.add.phone'
             ])
             ->add('email', EmailType::class, [
                 'required' => false,

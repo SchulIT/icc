@@ -1864,6 +1864,10 @@ import:
                 info: Die Ausgabe muss ein bestimmtes Format einhalten, damit es eingelesen werden kann. Dieses kann in Untis über "Import/Export" > "Untis" > "Formate/Fenstergruppen/Ribbon" > "Eingabeformat Import" importiert werden.
                 download: Format herunterladen (Ziel speichern unter)
 
+comingsoon:
+    label: in Planung
+    info: Dieses Feature befindet sich derzeit in der Planung.
+
 experimental:
     label: experimentell
     info: Dieses Feature funktioniert möglichkerweise noch nicht so, wie erwartet. Es darf jedoch getestet werden.

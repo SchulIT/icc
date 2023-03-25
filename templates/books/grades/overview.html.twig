@@ -134,9 +134,18 @@
             </div>
 
             <div class="col-md-3 sticky-sidebar">
-                {% if ownTuitions|length > 0 %}
+                {% if ownTuitions|length > 0 or ownGrades|length > 0 %}
                     <div class="card">
                         <div class="list-group list-group-flush">
+                            {% for grade in ownGrades %}
+                                <div class="list-group-item">
+                                    <i class="fas fa-users"></i> {{ grade.name }}
+                                    <span class="badge badge-warning" title="{{ 'comingsoon.info'|trans }}">
+                                        {{ 'comingsoon.label'|trans }}
+                                    </span>
+                                </div>
+                            {% endfor %}
+
                             {% for tuition in ownTuitions %}
                                 {% if tuition.isBookEnabled %}
                                     <a href="{{ path('gradebook', { section: sectionFilter.currentSection.uuid.toString , tuition: tuition.uuid.toString }) }}" class="list-group-item list-group-item-action {% if tuitionFilter.currentTuition == tuition %}active{% endif %}">
@@ -161,6 +170,14 @@
                         {% include "_filter/tuition.html.twig" with { params: currentFilter|merge({student: null})} %}
 
                         {% include "_filter/student.html.twig" with { params: currentFilter|merge({tuition:null})} %}
+
+                        <div>
+                            <span class="badge badge-warning" title="{{ 'comingsoon.info'|trans }}">
+                                {{ 'comingsoon.label'|trans }}
+                            </span>
+                        </div>
+
+                        {% include "_filter/grade.html.twig" with { params: currentFilter|merge({grade:null})} %}
                     </div>
                 </div>
 

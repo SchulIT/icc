@@ -4,12 +4,17 @@ namespace App\Controller;
 
 use App\Book\Grade\GradeOverviewHelper;
 use App\Book\Grade\GradePersister;
+use App\Entity\Grade;
+use App\Entity\GradeTeacher;
 use App\Entity\Section;
+use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Repository\TuitionRepositoryInterface;
 use App\Settings\TuitionGradebookSettings;
+use App\Utils\ArrayUtils;
+use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TuitionFilter;
@@ -23,15 +28,18 @@ class TuitionGradebookController extends AbstractController {
     #[Route('', name: 'gradebook')]
     public function index(Request $request, TuitionFilter $tuitionFilter, StudentFilter $studentFilter,
                           SectionFilter $sectionFilter, TuitionRepositoryInterface $tuitionRepository,
-                          GradeOverviewHelper $gradeOverviewHelper, TuitionGradebookSettings $gradebookSettings, GradePersister $gradePersister): Response {
+                          GradeOverviewHelper $gradeOverviewHelper, TuitionGradebookSettings $gradebookSettings,
+                          GradePersister $gradePersister, GradeFilter $gradeFilter): Response {
         /** @var User $user */
         $user = $this->getUser();
         
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $tuitionFilterView = $tuitionFilter->handle($request->query->get('tuition'), $sectionFilterView->getCurrentSection(), $user);
         $studentFilterView = $studentFilter->handle($request->query->get('student'), $sectionFilterView->getCurrentSection(), $user, true);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user, true);
 
         $ownTuitions = $this->resolveOwnTuitions($sectionFilterView->getCurrentSection(), $user, $tuitionRepository);
+        $ownGrades = $this->resolveOwnGrades($sectionFilterView->getCurrentSection(), $user);
 
         $overview = null;
 
@@ -60,7 +68,9 @@ class TuitionGradebookController extends AbstractController {
             'sectionFilter' => $sectionFilterView,
             'tuitionFilter' => $tuitionFilterView,
             'studentFilter' => $studentFilterView,
+            'gradeFilter' => $gradeFilterView,
             'ownTuitions' => $ownTuitions,
+            'ownGrades' => $ownGrades,
             'overview' => $overview,
             'key' => $gradebookSettings->getEncryptedMasterKey()
         ]);
@@ -83,5 +93,27 @@ class TuitionGradebookController extends AbstractController {
         }
 
         return array_filter($tuitions, fn(Tuition $tuition) => $tuition->getGradeCategories()->count() > 0);
+    }
+
+    /**
+     * @return Grade[]
+     */
+    private function resolveOwnGrades(?Section $currentSection, User $user): array {
+        if($currentSection === null) {
+            return [ ];
+        }
+
+        if ($user->isStudentOrParent()) {
+            return ArrayUtils::unique(
+                $user->getStudents()->map(fn(Student $student) => $student->getGrade($currentSection))
+            );
+        } else if ($user->isTeacher()) {
+            return $user->getTeacher()->getGrades()->
+            filter(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getSection() === $currentSection)
+                ->map(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getGrade())
+                ->toArray();
+        }
+
+        return [ ];
     }
 }

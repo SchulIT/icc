@@ -14,7 +14,6 @@ use App\Grouping\Grouper;
 use App\Grouping\MessageExpirationGroup;
 use App\Grouping\MessageExpirationStrategy;
 use App\Grouping\StudentGradeStrategy;
-use App\Grouping\StudentStudyGroupStrategy;
 use App\Grouping\UserUserTypeStrategy;
 use App\Message\MessageConfirmationViewHelper;
 use App\Message\MessageDownloadView;
@@ -28,17 +27,15 @@ use App\Request\Message\RemoveMessageRequest;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\MessageVoter;
 use App\Sorting\MessageExpirationGroupStrategy;
-use App\Sorting\MessageStrategy;
+use App\Sorting\MessageExpiryDateStrategy;
 use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
 use App\Sorting\StudentGradeGroupStrategy;
 use App\Sorting\StudentStrategy;
-use App\Sorting\StudentStudyGroupGroupStrategy;
 use App\Sorting\TeacherStrategy;
 use App\Sorting\UserLastnameFirstnameStrategy;
 use App\Sorting\UserUserTypeGroupStrategy;
 use App\View\Filter\GradeFilter;
-use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\UserTypeFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use SchulIT\CommonBundle\Form\ConfirmType;
@@ -90,7 +87,7 @@ class MessageAdminController extends AbstractController {
         /** @var MessageExpirationGroup[] $groups */
         $groups = $this->grouper->group($messages, MessageExpirationStrategy::class);
         $this->sorter->sort($groups, MessageExpirationGroupStrategy::class);
-        $this->sorter->sortGroupItems($groups, MessageStrategy::class);
+        $this->sorter->sortGroupItems($groups, MessageExpiryDateStrategy::class, SortDirection::Descending);
 
         return $this->render('admin/messages/index.html.twig', [
             'groups' => $groups,

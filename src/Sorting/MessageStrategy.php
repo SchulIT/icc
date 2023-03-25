@@ -7,6 +7,8 @@ use App\Entity\MessagePriority;
 
 class MessageStrategy implements SortingStrategyInterface {
 
+    public function __construct(private readonly MessageExpiryDateStrategy $strategy) { }
+
     private function getPriorityMap() {
         return [
             MessagePriority::Normal->value => 3,
@@ -26,6 +28,6 @@ class MessageStrategy implements SortingStrategyInterface {
             return $map[$objectA->getPriority()->value] - $map[$objectB->getPriority()->value];
         }
 
-        return $objectA->getExpireDate()->getTimestamp() - $objectB->getExpireDate()->getTimestamp();
+        return $this->strategy->compare($objectA, $objectB);
     }
 }

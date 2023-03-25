@@ -290,6 +290,12 @@
                                         <span class="badge badge-primary">{{ 'label.students_simple'|trans }}</span>
                                     {% endif %}
                                 </a>
+                                <a href="{{ path('add_student_absence_bulk') }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-plus"></i> {{ 'absences.students.add_bulk.label'|trans }}
+                                    {% if canCreateTeacherAbsence %}
+                                        <span class="badge badge-primary">{{ 'label.students_simple'|trans }}</span>
+                                    {% endif %}
+                                </a>
                             {% endif %}
                             {% if canCreateExcuseNote %}
                                 <a href="{{ path('add_excuse') }}" class="list-group-item list-group-item-action">

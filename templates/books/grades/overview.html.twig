@@ -191,12 +191,16 @@
                         <div id="key" class="hide">{{ key }}</div>
 
                         <div class="input-group">
-                            <input type="password" id="passphrase" class="form-control" autocomplete="off" />
+                            <input type="password" id="passphrase" class="form-control" autocomplete="off" data-enter="#password_btn" />
                             <div class="input-group-append">
                                 <button type="button" id="password_btn" data-passphrase="#passphrase" data-key="#key" class="btn btn-outline-primary">
                                     <i class="fas fa-check"></i>
                                 </button>
                             </div>
+                        </div>
+
+                        <div class="bs-callout bs-callout-success hide mb-0">
+                            {{ 'book.grades.password.success'|trans }}
                         </div>
                     </div>
                 </div>

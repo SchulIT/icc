@@ -1762,6 +1762,7 @@ book:
         password:
             title: Passwort
             info: Noten werden verschlüsselt gespeichert. Zum Ver- und Entschlüsseln wird ein von der Schule verwendetes Passwort verwendet.
+            success: Noten wurden entschlüsselt.
 
 
 external:

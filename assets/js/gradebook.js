@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             try {
                 decryptedKey = await crypto.decryptMasterKey(password, encryptedKey);
+                this.closest('.card-body').querySelector('.bs-callout').classList.remove('hide');
                 this.closest('.input-group').remove();
             } catch (e) {
                 alert('Falsches Passwort');

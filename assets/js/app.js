@@ -466,5 +466,20 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    document.querySelectorAll('input[data-enter]').forEach(function(element) {
+        let targetEl = document.querySelector(element.getAttribute('data-enter'));
+
+        if(targetEl === null) {
+            console.error('Element was not found');
+            return;
+        }
+
+        element.addEventListener('keydown', function(event) {
+            if(event.key === 'Enter') {
+                targetEl.click();
+            }
+        });
+    });
 });
 

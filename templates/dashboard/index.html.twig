@@ -260,11 +260,12 @@
 
                 {% set canCreateMessage = is_granted('new-message') %}
                 {% set canCreateAbsence = is_granted('new-absence') %}
+                {% set canCreateBulkAbsence = is_granted('new-absence-bulk') %}
                 {% set canCreateReservation = is_granted('new-reservation') %}
                 {% set canCreateExcuseNote = is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
                 {% set canCreateTeacherAbsence = is_granted('new-teacher-absence') %}
 
-                {% if canCreateMessage or canCreateAbsence or canCreateReservation or canCreateExcuseNote or canCreateTeacherAbsence %}
+                {% if canCreateMessage or canCreateAbsence or canCreateBulkAbsence or canCreateReservation or canCreateExcuseNote or canCreateTeacherAbsence %}
                     <div class="card">
                         <div class="list-group list-group-flush">
                             {% if canCreateMessage %}
@@ -290,6 +291,8 @@
                                         <span class="badge badge-primary">{{ 'label.students_simple'|trans }}</span>
                                     {% endif %}
                                 </a>
+                            {% endif %}
+                            {% if canCreateBulkAbsence %}
                                 <a href="{{ path('add_student_absence_bulk') }}" class="list-group-item list-group-item-action">
                                     <i class="fas fa-plus"></i> {{ 'absences.students.add_bulk.label'|trans }}
                                     {% if canCreateTeacherAbsence %}

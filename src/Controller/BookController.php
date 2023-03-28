@@ -465,8 +465,8 @@ class BookController extends AbstractController {
             $paginator = $studentRepository->getStudentsByStudyGroupsPaginator(self::StudentsPerPage, $page, $studyGroups);
         }
 
-        $students = iterator_to_array($paginator->getIterator());
-        $pages = ceil((float)$paginator->count() / self::StudentsPerPage);
+        $students = !is_array($paginator) ? iterator_to_array($paginator->getIterator()) : $paginator;
+        $pages = ceil((float)count($paginator) / self::StudentsPerPage);
 
         $sorter->sort($students, StudentStrategy::class);
         $info = [ ];

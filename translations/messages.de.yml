@@ -1599,6 +1599,9 @@ choice:
 
 book:
     label: Unterrichtsbücher
+    empty:
+        default: Es wurde keine Klasse, kein Unterricht bzw. keine Lehrkraft ausgewählt. Bitte zunächst rechts auswählen.
+        no_timetable: Für den ausgewählten Unterricht gibt es keinen Stundenplan.
 
     entry:
         label: Eintrag
@@ -1700,6 +1703,7 @@ book:
 
     missing:
         label: Fehlende Einträge
+        empty: Hurra, alles ist vollständig.
 
     open:
         label: Offene Fehlstunden

@@ -80,6 +80,7 @@
                                                        :lesson-number="{{ lesson.lessonNumber }}"
                                                        csrftoken="{{ csrf_token('book_entry') }}"
                                                        create-action="{{ path('add_entry', { uuid: lesson.lesson.uuid }) }}"
+                                                       edit-action=""
                                                        cancel-action="{{ path('cancel_lesson', { uuid: lesson.lesson.uuid }) }}"></entry>
                                             </div>
                                     </div>

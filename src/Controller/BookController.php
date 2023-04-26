@@ -203,7 +203,8 @@ class BookController extends AbstractController {
                 $overview = $entryOverviewHelper->computeOverviewForGrade($gradeFilterView->getCurrentGrade(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
 
                 $students = $gradeFilterView->getCurrentGrade()->getMemberships()->filter(fn(GradeMembership $membership) => $membership->getSection()->getId() === $sectionFilterView->getCurrentSection()->getId())->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
-                $info = $absenceExcuseResolver->resolveBulk($students);
+                $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()], $sectionFilterView->getCurrentSection(), true);
+                $info = $absenceExcuseResolver->resolveBulk($students, $tuitions);
 
                 if($sectionFilterView->getCurrentSection() !== null) {
                     $responsibilities = $responsibilityRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());

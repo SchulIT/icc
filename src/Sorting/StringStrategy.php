@@ -27,7 +27,7 @@ class StringStrategy implements SortingStrategyInterface {
         $objectB = str_replace(
             array_keys(self::TransliterationMap),
             array_values(self::TransliterationMap),
-            (string)$objectA
+            (string)$objectB
         );
 
         return strnatcasecmp($objectA, $objectB);

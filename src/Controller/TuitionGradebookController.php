@@ -72,7 +72,8 @@ class TuitionGradebookController extends AbstractController {
             'ownTuitions' => $ownTuitions,
             'ownGrades' => $ownGrades,
             'overview' => $overview,
-            'key' => $gradebookSettings->getEncryptedMasterKey()
+            'key' => $gradebookSettings->getEncryptedMasterKey(),
+            'ttl' => $gradebookSettings->getTtlForSessionStorage()
         ]);
     }
 

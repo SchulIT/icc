@@ -32,7 +32,7 @@
                 <p>{{ 'admin.settings.tuition_grades.masterkey.caution'|trans }}</p>
             </div>
 
-            <div class="row mt-2">
+            <div class="row mt-2 mb-2">
                 <label for="passphrase" class="col-form-label col-sm-2">{{ 'admin.settings.tuition_grades.passphrase.label'|trans }}</label>
                 <div class="col-md-10">
                     <div class="input-group">
@@ -46,6 +46,8 @@
                     <small class="form-text text-muted">{{'admin.settings.tuition_grades.passphrase.help'|trans}}</small>
                 </div>
             </div>
+
+            {{ form_row(form.ttlSessionStorage) }}
         </div>
     </div>
 {% endblock %}

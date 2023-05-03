@@ -923,6 +923,10 @@ admin:
                 label: Passwort für Noten
                 help: Mit diesem Passwort werden alle Noten verschlüsselt. Es muss vor jeder Noten-Ein- und -Ausgabe eingegeben werden. Mithilfe dieses Passwortes wird
                 create: Hauptschlüssel erzeugen
+            ttl:
+                label: Schlüssel zwischenspeichern
+                help: Anzahl der Sekunden, die ein Benutzer das Passwort nicht erneut eingeben muss, um Noten einzusehen oder zu ändern. Diese Funktion nutzt das SessionStorage des Browsers.
+                button: Mehr zur Funktionsweise des SessionStorage
 
     timetable:
         label: Stundenplan
@@ -1772,6 +1776,7 @@ book:
             title: Passwort
             info: Noten werden verschlüsselt gespeichert. Zum Ver- und Entschlüsseln wird ein von der Schule verwendetes Passwort verwendet.
             success: Noten wurden entschlüsselt.
+            ttl: Das Passwort muss für die nächsten %seconds% Sekunden in diesem Tab nicht erneut eingegeben werden.
 
 
 external:

@@ -189,7 +189,7 @@
                             {{ 'book.grades.password.info'|trans }}
                         </p>
 
-                        <div id="key" class="hide">{{ key }}</div>
+                        <div id="key" class="hide" data-ttl="{{ ttl }}">{{ key }}</div>
 
                         <div class="input-group">
                             <input type="password" id="passphrase" class="form-control" autocomplete="off" data-enter="#password_btn" />
@@ -201,7 +201,11 @@
                         </div>
 
                         <div class="bs-callout bs-callout-success hide mb-0">
-                            {{ 'book.grades.password.success'|trans }}
+                            <p>{{ 'book.grades.password.success'|trans }}</p>
+
+                            {% if ttl > 0 %}
+                                <p>{{ 'book.grades.password.ttl'|trans({'%seconds%': ttl }) }}</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

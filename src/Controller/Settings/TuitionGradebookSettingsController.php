@@ -6,6 +6,7 @@ use App\Controller\AbstractController;
 use App\Settings\TuitionGradebookSettings;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,7 @@ class TuitionGradebookSettingsController extends AbstractController {
         $builder = $this->createFormBuilder();
         $builder
             ->add('confirm', CheckboxType::class, [
-                'required' => true,
+                'required' => false,
                 'label' => 'admin.settings.tuition_grades.confirm.label',
                 'help' => 'admin.settings.tuition_grades.confirm.help',
                 'label_attr' => [
@@ -32,14 +33,23 @@ class TuitionGradebookSettingsController extends AbstractController {
                 'data' => $settings->getEncryptedMasterKey(),
                 'label' => 'admin.settings.tuition_grades.masterkey.label',
                 'help' => 'admin.settings.tuition_grades.masterkey.help'
+            ])
+            ->add('ttlSessionStorage', IntegerType::class, [
+                'required' => true,
+                'data' => $settings->getTtlForSessionStorage(),
+                'label' => 'admin.settings.tuition_grades.ttl.label',
+                'help' => 'admin.settings.tuition_grades.ttl.help'
             ]);
 
         $form = $builder->getForm();
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $settings->setEncryptedMasterKey($form->get('masterKey')->getData());
+            if($form->get('confirm')->getData() === true) {
+                $settings->setEncryptedMasterKey($form->get('masterKey')->getData());
+            }
             $this->addFlash('success', 'admin.settings.success');
+            $settings->setTtlForSessionStorage($form->get('ttlSessionStorage')->getData());
 
             return $this->redirectToRoute('admin_settings_gradebook');
         }

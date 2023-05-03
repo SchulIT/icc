@@ -6,6 +6,7 @@ use App\Entity\Absence;
 use App\Entity\Appointment;
 use App\Entity\Exam;
 use App\Entity\Infotext;
+use App\Entity\LessonEntry;
 use App\Entity\Message;
 use App\Entity\MessagePriority;
 use App\Entity\Substitution;
@@ -42,6 +43,8 @@ class DashboardView {
 
     /** @var Appointment[] */
     private array $appointments = [ ];
+
+    private ?ExercisesView $exercises = null;
 
     public function __construct(private DateTime $dateTime)
     {
@@ -212,6 +215,20 @@ class DashboardView {
      */
     public function getAppointments(): array {
         return $this->appointments;
+    }
+
+    /**
+     * @return ExercisesView|null
+     */
+    public function getExercises(): ?ExercisesView {
+        return $this->exercises;
+    }
+
+    /**
+     * @param ExercisesView|null $exercises
+     */
+    public function setExercises(?ExercisesView $exercises): void {
+        $this->exercises = $exercises;
     }
 
     /**

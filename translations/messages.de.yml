@@ -315,6 +315,7 @@ dashboard:
     substitution: Vertretung
     substitution_mentions: Erwähnungen
     appointments: Termine
+    exercises: Aufgaben
     collision:
         hint: Bitte überprüfen und den entsprechenden Ansprechpartner kontaktieren.
         single_label: Mögliche Kollision gefunden.
@@ -1602,6 +1603,10 @@ book:
     empty:
         default: Es wurde keine Klasse, kein Unterricht bzw. keine Lehrkraft ausgewählt. Bitte zunächst rechts auswählen.
         no_timetable: Für den ausgewählten Unterricht gibt es keinen Stundenplan.
+
+    exercises:
+        label: Aufgaben
+        info: Hier werden die Aufgaben der letzten %days% Tage aufgelistet.
 
     entry:
         label: Eintrag

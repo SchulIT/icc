@@ -60,13 +60,7 @@ class LessonEntryRepository extends AbstractRepository implements LessonEntryRep
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function findAllByGrade(Grade $grade, DateTime $start, DateTime $end): array {
-        $qb = $this->createDefaultQueryBuilder();
-        $qb = $this->applyStartEnd($qb, $start, $end);
-
+    private function applyGrade($qb, Grade $grade): QueryBuilder {
         $qbInner = $this->em->createQueryBuilder()
             ->select('tInner.id')
             ->from(Tuition::class, 'tInner')
@@ -78,6 +72,29 @@ class LessonEntryRepository extends AbstractRepository implements LessonEntryRep
             $qb->expr()->in('tt.id', $qbInner->getDQL())
         )
             ->setParameter('grade', $grade->getId());
+
+        return $qb;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllByGrade(Grade $grade, DateTime $start, DateTime $end): array {
+        $qb = $this->createDefaultQueryBuilder();
+        $qb = $this->applyStartEnd($qb, $start, $end);
+        $qb = $this->applyGrade($qb, $grade);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAllByGradeWithExercises(Grade $grade, DateTime $start, DateTime $end): array {
+        $qb = $this->createDefaultQueryBuilder();
+        $qb = $this->applyStartEnd($qb, $start, $end);
+        $qb = $this->applyGrade($qb, $grade);
+
+        $qb->andWhere('e.exercises IS NOT NULL')
+            ->orderBy('l.date', 'desc')
+            ->addOrderBy('l.lessonStart', 'asc');
 
         return $qb->getQuery()->getResult();
     }

@@ -55,4 +55,12 @@ class BookSettings extends AbstractSettings {
     public function getBoldFont(): ?string {
         return $this->getValue('book.export.font.bold', null);
     }
+
+    public function getExercisesDays(): int {
+        return $this->getValue('book.exercises.days', 7);
+    }
+
+    public function setExercisesDays(int $homeworkDays): void {
+        $this->setValue('book.exercises.days', $homeworkDays);
+    }
 }

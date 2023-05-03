@@ -211,6 +211,44 @@
                         </div>
                     {% endif %}
 
+                    {% if entriesWithExercises is not empty %}
+                        <div class="card">
+                            <div class="card-body pointer" data-toggle="table-collapse" data-target="#exercises">
+                                <h4 class="card-title d-flex align-items-center">
+                                    <div class="mr-auto">
+                                        {{ 'book.exercises.label'|trans }}
+                                    </div>
+
+                                    <i class="fa fa-chevron-down indicator"></i>
+                                </h4>
+                                <p><i class="fa fa-info-circle"></i> {{ 'book.exercises.info'|trans({'%days%': exercisesDays}) }}</p>
+                            </div>
+
+                            <div class="list-group list-group-flush collapse" id="exercises">
+                                {% for entry in entriesWithExercises %}
+                                    <div class="list-group-item d-flex align-items-start">
+                                        <div class="badge badge-primary flex-shrink-0">
+                                            {{ _self.subject(entry.tuition) }}
+
+                                            {% if entry.replacementSubject is not empty %}
+                                                ⟶ {{ entry.replacementSubject|upper }}
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="ml-2 flex-shrink-0">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            {{ entry.lesson.date|format_date }}
+                                        </div>
+
+                                        <div class="ml-2 flex-grow">
+                                            {{ entry.exercises }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">

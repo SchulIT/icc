@@ -32,6 +32,7 @@ use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
+use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\ResourceReservationRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
@@ -47,6 +48,7 @@ use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\ResourceReservationVoter;
 use App\Security\Voter\SubstitutionVoter;
+use App\Settings\BookSettings;
 use App\Settings\DashboardSettings;
 use App\Settings\TimetableSettings;
 use App\Sorting\AbsentStudentStrategy;
@@ -70,7 +72,8 @@ class DashboardViewHelper {
                                 private ResourceReservationRepositoryInterface $roomReservationRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private StudyGroupHelper $studyGroupHelper,
                                 private TimetableTimeHelper $timetableTimeHelper, private Sorter $sorter, private Grouper $grouper, private TimetableSettings $timetableSettings, private DashboardSettings $dashboardSettings,
                                 private AuthorizationCheckerInterface $authorizationChecker, private ValidatorInterface $validator, private DateHelper $dateHelper, private AbsenceResolver $absenceResolver,
-                                private SectionResolverInterface $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly TeacherAbsenceLessonRepositoryInterface $absenceLessonRepository)
+                                private SectionResolverInterface $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly TeacherAbsenceLessonRepositoryInterface $absenceLessonRepository,
+                                private readonly BookSettings $bookSettings, private readonly LessonEntryRepositoryInterface $lessonEntryRepository)
     {
     }
 
@@ -157,6 +160,8 @@ class DashboardViewHelper {
         $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
         $this->setCurrentLesson($view);
 
+        $this->addExercises($view, $student, $dateTime);
+
         return $view;
     }
 
@@ -181,6 +186,20 @@ class DashboardViewHelper {
         }
     }
 
+    private function addExercises(DashboardView $view, Student $student, DateTime $date) {
+        $start = (clone $date)->modify(sprintf('-%d days', $this->bookSettings->getExercisesDays()));
+        $end = clone $date;
+        $section = $this->sectionResolver->getSectionForDate($date);
+        $grade = $student->getGrade($section);
+
+        if($grade === null) {
+            return;
+        }
+
+        $exerciseView = new ExercisesView($start, $end, $grade);
+        $exerciseView->setEntriesWithExercises($this->lessonEntryRepository->findAllByGradeWithExercises($grade, $start, $end));
+        $view->setExercises($exerciseView);
+    }
 
     /**
      * @param TimetableLesson[] $lessons

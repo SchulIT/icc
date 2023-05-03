@@ -173,7 +173,8 @@ class BookController extends AbstractController {
     #[Route(path: '/entry', name: 'book')]
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                           TuitionRepositoryInterface $tuitionRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository, DateHelper $dateHelper, Request $request,
-                          EntryOverviewHelper $entryOverviewHelper, AbsenceExcuseResolver $absenceExcuseResolver, BookSettings $settings, GradeResponsibilityRepositoryInterface $responsibilityRepository): Response {
+                          EntryOverviewHelper $entryOverviewHelper, AbsenceExcuseResolver $absenceExcuseResolver, BookSettings $settings,
+                          GradeResponsibilityRepositoryInterface $responsibilityRepository, LessonEntryRepositoryInterface $lessonEntryRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -197,6 +198,7 @@ class BookController extends AbstractController {
         $missingExcuseCount = 0;
         $info = [ ];
         $responsibilities = [ ];
+        $entriesWithExercises = [ ];
 
         if($selectedDate !== null) {
             if ($gradeFilterView->getCurrentGrade() !== null) {
@@ -209,6 +211,8 @@ class BookController extends AbstractController {
                 if($sectionFilterView->getCurrentSection() !== null) {
                     $responsibilities = $responsibilityRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
                 }
+
+                $entriesWithExercises = $lessonEntryRepository->findAllByGradeWithExercises($gradeFilterView->getCurrentGrade(), $dateHelper->getToday()->modify(sprintf('-%d days', $settings->getExercisesDays())), $dateHelper->getToday());
             } else if ($tuitionFilterView->getCurrentTuition() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition(), $selectedDate, (clone $selectedDate)->modify('+1 month')->modify('-1 day'));
 
@@ -350,7 +354,9 @@ class BookController extends AbstractController {
             'missingExcusesCount' => $missingExcuseCount,
             'absentStudentsByLesson' => $absentStudentsByLesson,
             'lateStudentsByLesson' => $lateStudentsByLesson,
-            'responsibilities' => $responsibilities
+            'responsibilities' => $responsibilities,
+            'entriesWithExercises' => $entriesWithExercises,
+            'exercisesDays' => $settings->getExercisesDays()
         ]);
     }
 

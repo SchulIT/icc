@@ -34,6 +34,14 @@ interface LessonEntryRepositoryInterface {
      */
     public function findAllByGrade(Grade $grade, DateTime $start, DateTime $end): array;
 
+    /**
+     * @param Grade $grade
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return LessonEntry[]
+     */
+    public function findAllByGradeWithExercises(Grade $grade, DateTime $start, DateTime $end): array;
+
     public function persist(LessonEntry $entry): void;
 
     public function remove(LessonEntry $entry): void;

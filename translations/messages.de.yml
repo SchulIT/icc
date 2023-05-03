@@ -1606,7 +1606,7 @@ book:
 
     exercises:
         label: Aufgaben
-        info: Hier werden die Aufgaben der letzten %days% Tage aufgelistet.
+        info: Hier werden die Aufgaben der letzten %days% Tage aufgelistet. Anklicken zum Anzeigen.
 
     entry:
         label: Eintrag

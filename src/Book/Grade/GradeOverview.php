@@ -6,13 +6,13 @@ use App\Entity\TuitionGradeCategory;
 
 class GradeOverview {
     public function __construct(
-        /** @var TuitionGradeCategory[] */
+        /** @var Category[] */
         private readonly array $categories,
         /** @var GradeRow[] */
         private readonly array $rows) { }
 
     /**
-     * @return TuitionGradeCategory[]
+     * @return Category[]
      */
     public function getCategories(): array {
         return $this->categories;

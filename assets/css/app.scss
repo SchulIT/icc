@@ -426,3 +426,12 @@ table.align-td-middle {
     }
   }
 }
+
+th.rotate-90 {
+  > div {
+    transform: rotate(180deg);
+    writing-mode: vertical-rl;
+    position: relative;
+    left: calc(50% - 0.75rem);
+  }
+}

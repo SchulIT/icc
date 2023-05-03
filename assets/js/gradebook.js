@@ -17,24 +17,31 @@ function decryptAll() {
 
         let encryptedValue = element.value;
 
-        if(select.getAttribute('data-readonly') === undefined || select.getAttribute('data-readonly') !== 'true') {
+        if(select.nodeName.toLowerCase() === 'select') {
             select.removeAttribute('disabled');
-        }
 
-        select.addEventListener('change', async function(element) {
-            let encryptedValue = '';
-            if(this.value !== '') {
-                encryptedValue = JSON.stringify(await crypto.encrypt(decryptedKey, this.value));
+            select.addEventListener('change', async function (element) {
+                let encryptedValue = '';
+                if (this.value !== '') {
+                    encryptedValue = JSON.stringify(await crypto.encrypt(decryptedKey, this.value));
+                }
+
+                input.value = encryptedValue;
+            });
+
+            if(encryptedValue === null || encryptedValue === '') {
+                return;
             }
 
-            input.value = encryptedValue;
-        });
+            select.value = await crypto.decrypt(decryptedKey, JSON.parse(encryptedValue));
+        } else {
+            if(encryptedValue === null || encryptedValue === '') {
+                select.innerHTML = '<span class="badge badge-secondary">N/A</span>';
+                return;
+            }
 
-        if(encryptedValue === null || encryptedValue === '') {
-            return;
+            select.innerHTML = await crypto.decrypt(decryptedKey, JSON.parse(encryptedValue));
         }
-
-        select.value = await crypto.decrypt(decryptedKey, JSON.parse(encryptedValue));
     });
 }
 

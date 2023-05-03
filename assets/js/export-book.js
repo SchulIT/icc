@@ -107,79 +107,92 @@ document.addEventListener('DOMContentLoaded', function(event) {
         })
 
         // Notenübersicht
-        if (response.students_grades !== null && response.students_grades.categories !== undefined && response.students_grades.categories.length > 0 && decryptedKey !== null) {
-            pdf.addPage('a4', 'landscape');
-
-            let matrix = { };
-            for(let grade of response.students_grades.grades) {
-                if(matrix[grade.student] === undefined) {
-                    matrix[grade.student] = { };
+        if (response.students_grades !== null && decryptedKey !== null) {
+            for (const students_grades of response.students_grades) {
+                if(students_grades.categories === undefined || students_grades.categories.length === 0) {
+                    continue;
                 }
 
-                if(grade.encrypted_grade !== null && grade.encrypted_grade !== '') {
-                    matrix[grade.student][grade.grade_category] = await crypto.decrypt(decryptedKey, JSON.parse(grade.encrypted_grade));
-                } else {
-                    matrix[grade.student][grade.grade_category] = ' ';
-                }
-            }
+                pdf.addPage('a4', 'landscape');
 
-            let scores = [];
+                let matrix = {};
+                for (let grade of students_grades.grades) {
+                    if (matrix[grade.student] === undefined) {
+                        matrix[grade.student] = {};
+                    }
 
-            for(let student of response.students_summary.map(x => x.student)) {
-                if(student === null || matrix[student.id] === undefined) {
-                    return;
-                }
-
-                let data = [ ];
-                data.push(student.lastname);
-                data.push(student.firstname);
-
-                let grades = matrix[student.id];
-
-                response.students_grades.categories.forEach(function(category) {
-                    if(grades[category.uuid] === undefined) {
-                        data.push(' ');
+                    if (grade.encrypted_grade !== null && grade.encrypted_grade !== '') {
+                        matrix[grade.student][grade.grade_category] = await crypto.decrypt(decryptedKey, JSON.parse(grade.encrypted_grade));
                     } else {
-                        data.push(grades[category.uuid]);
+                        matrix[grade.student][grade.grade_category] = ' ';
+                    }
+                }
+
+                let scores = [];
+
+                for (let student of response.students_summary.map(x => x.student)) {
+                    if (student === null || matrix[student.id] === undefined) {
+                        continue;
+                    }
+
+                    let data = [];
+                    data.push(student.lastname);
+                    data.push(student.firstname);
+
+                    let grades = matrix[student.id];
+
+                    students_grades.categories.forEach(function (category) {
+                        if (grades[category.uuid] === undefined) {
+                            data.push(' ');
+                        } else {
+                            data.push(grades[category.uuid]);
+                        }
+                    });
+
+                    scores.push(data);
+                }
+
+                let header = ['Nachname', 'Vorname'];
+                students_grades.categories.forEach(function (category) {
+                    header.push(category.display_name);
+                });
+
+                if(response.students_grades.length > 1) {
+                    pdf.text('Notenübersicht (' + students_grades.tuition.name + ')', 15, 25);
+                } else {
+                    pdf.text('Notenübersicht', 15, 25);
+                }
+                pdf.autoTable({
+                    startY: 30,
+                    theme: 'grid',
+                    margin: {
+                        top: 25,
+                        bottom: 25
+                    },
+                    head: [header],
+                    body: scores,
+                    styles: {
+                        font: getFontName(),
+                        fontSize: 8
                     }
                 });
 
-                scores.push(data);
+                if(response.students_grades.length === 1) {
+                    pdf.autoTable({
+                        theme: 'plain',
+                        body: [
+                            [' '],
+                            [' '],
+                            ['_________________________________'],
+                            ['Datum, Unterschrift Fachlehrkraft']
+                        ],
+                        styles: {
+                            font: getFontName(),
+                            fontSize: 8
+                        }
+                    });
+                }
             }
-
-            let header = [ 'Nachname', 'Vorname' ];
-            response.students_grades.categories.forEach(function(category) {
-                header.push(category.display_name);
-            });
-
-            pdf.text('Notenübersicht', 15, 25);
-            pdf.autoTable({
-                startY: 30,
-                theme: 'grid',
-                margin: {
-                    top: 25,
-                    bottom: 25
-                },
-                head: [ header ],
-                body: scores,
-                styles: {
-                    font: getFontName()
-                }
-            });
-
-            pdf.autoTable({
-                theme: 'plain',
-                body: [
-                    [' '],
-                    [' '],
-                    ['_________________________________'],
-                    ['Datum, Unterschrift Fachlehrkraft']
-                ],
-                styles: {
-                    font: getFontName(),
-                    fontSize: 8
-                }
-            });
         }
 
         pdf.text('Unterschrift der Fachlehrkraft', 0, 0);

@@ -36,7 +36,7 @@ class TuitionGradebookController extends AbstractController {
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $tuitionFilterView = $tuitionFilter->handle($request->query->get('tuition'), $sectionFilterView->getCurrentSection(), $user);
         $studentFilterView = $studentFilter->handle($request->query->get('student'), $sectionFilterView->getCurrentSection(), $user, true);
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user, true);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user, false);
 
         $ownTuitions = $this->resolveOwnTuitions($sectionFilterView->getCurrentSection(), $user, $tuitionRepository);
         $ownGrades = $this->resolveOwnGrades($sectionFilterView->getCurrentSection(), $user);
@@ -47,6 +47,8 @@ class TuitionGradebookController extends AbstractController {
             $overview = $gradeOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition());
         } else if($studentFilterView->getCurrentStudent() !== null) {
             $overview = $gradeOverviewHelper->computeOverviewForStudent($studentFilterView->getCurrentStudent(), $sectionFilterView->getCurrentSection());
+        } else if($gradeFilterView->getCurrentGrade() !== null) {
+            $overview = $gradeOverviewHelper->computeForGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
         }
 
         if($request->isMethod('POST')) {

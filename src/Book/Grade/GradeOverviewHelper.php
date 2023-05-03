@@ -2,11 +2,14 @@
 
 namespace App\Book\Grade;
 
+use App\Entity\Grade;
+use App\Entity\GradeMembership;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Entity\TuitionGrade;
+use App\Entity\TuitionGradeCategory;
 use App\Repository\TuitionGradeRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Sorting\Sorter;
@@ -24,8 +27,11 @@ class GradeOverviewHelper {
         $categories = [ ];
 
         foreach($tuitions as $tuition) {
-            foreach($tuition->getGradeCategories() as $category) {
-                $categories[$category->getId()] = $category;
+            $gradeCategories = $tuition->getGradeCategories()->toArray();
+            $this->sorter->sort($gradeCategories, TuitionGradeCategoryStrategy::class);
+
+            foreach($gradeCategories as $category) {
+                $categories[$category->getId()] = new Category($tuition, $category);
             }
         }
 
@@ -46,13 +52,12 @@ class GradeOverviewHelper {
 
             foreach($tuition->getGradeCategories() as $category) {
                 $key = sprintf('%s_%s', $tuition->getId(), $category->getId());
-                $data[$category->getUuid()->toString()] = $grades[$key] ?? null;
+                $data[sprintf('%s_%s', $tuition->getUuid()->toString(), $category->getUuid()->toString())] = $grades[$key] ?? null;
             }
 
             $rows[] = new GradeRow($tuition, $data);
         }
 
-        $this->sorter->sort($categories, TuitionGradeCategoryStrategy::class);
         return new GradeOverview($categories, $rows);
     }
 
@@ -79,13 +84,61 @@ class GradeOverviewHelper {
 
             foreach($categories as $category) {
                 $key = sprintf('%s_%s', $student->getId(), $category->getId());
-                $data[$category->getUuid()->toString()] = $grades[$key] ?? null;
+                $data[sprintf('%s_%s', $tuition->getUuid()->toString(), $category->getUuid()->toString())] = $grades[$key] ?? null;
             }
 
             $rows[] = new GradeRow($student, $data);
         }
 
         $this->sorter->sort($categories, TuitionGradeCategoryStrategy::class);
+        $categories = array_map(fn(TuitionGradeCategory $category) => new Category($tuition, $category), $categories);
+
+        return new GradeOverview($categories, $rows);
+    }
+
+    public function computeForGrade(Grade $grade, Section $section): GradeOverview {
+        $tuitions = $this->tuitionRepository->findAllByGrades([$grade], $section);
+        $students = $grade->getMemberships()
+            ->filter(fn(GradeMembership $membership) => $membership->getSection()->getId() === $section->getId())
+            ->map(fn(GradeMembership $membership) => $membership->getStudent())
+            ->toArray();
+        $categories = [ ];
+
+        foreach($tuitions as $tuition) {
+            $gradeCategories = $tuition->getGradeCategories()->toArray();
+            $this->sorter->sort($gradeCategories, TuitionGradeCategoryStrategy::class);
+
+            foreach($gradeCategories as $category) {
+                $categories[sprintf('%d-%d', $tuition->getId(), $category->getId())] = new Category($tuition, $category);
+            }
+        }
+
+        $this->sorter->sort($tuitions, TuitionStrategy::class);
+        $this->sorter->sort($students, StudentStrategy::class);
+
+        $rows = [ ];
+        foreach($students as $student) {
+            $grades = ArrayUtils::createArrayWithKeys(
+                $this->tuitionGradeRepository->findAllByStudent($student, $section),
+                fn(TuitionGrade $grade) => sprintf('%s_%s', $grade->getTuition()->getId(), $grade->getCategory()->getId())
+            );
+
+            $data = [ ];
+
+            foreach($tuitions as $tuition) {
+                if($tuition->getGradeCategories()->count() === 0) {
+                    continue;
+                }
+
+                foreach($tuition->getGradeCategories() as $category) {
+                    $key = sprintf('%s_%s', $tuition->getId(), $category->getId());
+                    $data[sprintf('%s_%s', $tuition->getUuid()->toString(), $category->getUuid()->toString())] = $grades[$key] ?? null;
+                }
+            }
+
+            $rows[] = new GradeRow($student, $data);
+        }
+
         return new GradeOverview($categories, $rows);
     }
 }

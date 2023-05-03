@@ -20,11 +20,11 @@ class GradePersister {
         foreach($overview->getRows() as $row) {
             foreach($overview->getCategories() as $category) {
                 $subject = $row->getTuitionOrStudent();
-                $grade = $row->getGrade($category);
+                $grade = $row->getGrade($category->getTuition(), $category->getCategory());
 
                 if($grade === null) {
                     $grade = (new TuitionGrade())
-                        ->setCategory($category);
+                        ->setCategory($category->getCategory());
 
                     if($tuitionOrStudent instanceof Tuition) {
                         $grade->setTuition($tuitionOrStudent);
@@ -39,8 +39,8 @@ class GradePersister {
                     }
                 }
 
-                if(isset($grades[$subject->getUuid()->toString()][$category->getUuid()->toString()])) {
-                    $encryptedGrade = $grades[$subject->getUuid()->toString()][$category->getUuid()->toString()];
+                if(isset($grades[$subject->getUuid()->toString()][$category->getCategory()->getUuid()->toString()][$category->getTuition()->getUuid()->toString()])) {
+                    $encryptedGrade = $grades[$subject->getUuid()->toString()][$category->getCategory()->getUuid()->toString()][$category->getTuition()->getUuid()->toString()];
 
                     if(empty($encryptedGrade)) {
                         $grade->setEncryptedGrade(null);

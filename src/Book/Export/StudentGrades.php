@@ -3,9 +3,27 @@
 namespace App\Book\Export;
 
 class StudentGrades {
+    private Tuition $tuition;
+
     private array $categories;
 
     private array $grades;
+
+    /**
+     * @return Tuition
+     */
+    public function getTuition(): Tuition {
+        return $this->tuition;
+    }
+
+    /**
+     * @param Tuition $tuition
+     * @return StudentGrades
+     */
+    public function setTuition(Tuition $tuition): StudentGrades {
+        $this->tuition = $tuition;
+        return $this;
+    }
 
     public function addCategory(TuitionGradeCategory $category): self {
         $this->categories[] = $category;

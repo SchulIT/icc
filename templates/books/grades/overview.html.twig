@@ -20,9 +20,11 @@
         section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
         student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null,
         tuition: tuitionFilter.currentTuition ? tuitionFilter.currentTuition.uuid.toString : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null
     } %}
 
     {% set isStudentsView = studentFilter.currentStudent != null %}
+    {% set isGradeView = gradeFilter.currentGrade != null %}
     {% set isForeignTuition = true %}
 
     {% if tuitionFilter.currentTuition is not null %}
@@ -69,7 +71,7 @@
                                     <colgroup>
                                         <col>
                                         {% for category in overview.categories %}
-                                        <col class="column-md">
+                                        <col class="{% if isGradeView or isStudentsView %}column-sm{% else %}column-md{% endif %}">
                                         {% endfor %}
                                     </colgroup>
 
@@ -81,7 +83,11 @@
                                             <th>{{ 'label.student'|trans }}</th>
                                         {% endif %}
                                         {% for category in overview.categories %}
-                                            <th>{{ category.displayName }}</th>
+                                            <th class="{% if isGradeView or isStudentsView %}rotate-90{% else %}text-center{% endif %}">
+                                                <div>
+                                                    {% if isGradeView %}<span class="badge badge-primary">{{ category.tuition.name }}</span>{% endif%} {{ category.category.displayName }}
+                                                </div>
+                                            </th>
                                         {% endfor %}
                                     </tr>
                                     </thead>
@@ -100,19 +106,29 @@
                                                 {% endif %}
                                             </td>
                                             {% for category in overview.categories %}
-                                                <td class="align-middle">
-                                                    {% set grade = row.grade(category) %}
-                                                    {% set name = 'grades[' ~ row.tuitionOrStudent.uuid ~ '][' ~ category.uuid ~ ']' %}
+                                                <td class="align-middle text-center">
+                                                    {% if isStudentsView %}
+                                                        {% set grade = row.grade(row.tuitionOrStudent, category.category) %}
+                                                    {% else %}
+                                                        {% set grade = row.grade(category.tuition, category.category) %}
+                                                    {% endif %}
+                                                    {% set name = 'grades[' ~ row.tuitionOrStudent.uuid ~ '][' ~ category.category.uuid ~ ']' ~ '[' ~ category.tuition.uuid ~ ']' %}
+
                                                     {% set id = name|replace({'[': '_', ']': '_'}) %}
+                                                    {% set isReadonly = isStudentsView or isForeignTuition %}
 
                                                     <input type="hidden" data-encrypted="{{ grade != null ? grade.encryptedGrade|e('html_attr') : '' }}" value="{{ grade != null ? grade.encryptedGrade|e('html_attr') : '' }}" data-select="#{{ id }}" name="{{ name }}">
 
-                                                    <select class="custom-select" tabindex="{{ tabindex + (rowCount*loop.index0) + rowIdx }}" disabled="disabled" id="{{ id }}" data-readonly="{{ isStudentsView or isForeignTuition ? 'true' : 'false' }}">
-                                                        <option value=""></option>
-                                                        {% for value in category.gradeType.values %}
-                                                            <option value="{{ value }}">{{ value }}</option>
-                                                        {% endfor %}
-                                                    </select>
+                                                    {% if isReadonly %}
+                                                        <span id="{{ id }}"><i class="fas fa-lock"></i></span>
+                                                    {% else %}
+                                                        <select class="custom-select" tabindex="{{ tabindex + (rowCount*loop.index0) + rowIdx }}" disabled="disabled" id="{{ id }}">
+                                                            <option value=""></option>
+                                                            {% for value in category.category.gradeType.values %}
+                                                                <option value="{{ value }}">{{ value }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    {% endif %}
                                                 </td>
                                             {% endfor %}
                                         </tr>
@@ -138,12 +154,9 @@
                     <div class="card">
                         <div class="list-group list-group-flush">
                             {% for grade in ownGrades %}
-                                <div class="list-group-item">
+                                <a href="{{ path('gradebook', { section: sectionFilter.currentSection.uuid.toString , grade: grade.uuid.toString }) }}" class="list-group-item list-group-item-action {% if gradeFilter.currentGrade == grade %}active{% endif %}">
                                     <i class="fas fa-users"></i> {{ grade.name }}
-                                    <span class="badge badge-warning" title="{{ 'comingsoon.info'|trans }}">
-                                        {{ 'comingsoon.label'|trans }}
-                                    </span>
-                                </div>
+                                </a>
                             {% endfor %}
 
                             {% for tuition in ownTuitions %}
@@ -167,17 +180,11 @@
                     <div class="card-body">
                         {% include "_filter/section.html.twig" %}
 
-                        {% include "_filter/tuition.html.twig" with { params: currentFilter|merge({student: null})} %}
+                        {% include "_filter/tuition.html.twig" with { params: currentFilter|merge({student: null, null: null})} %}
 
-                        {% include "_filter/student.html.twig" with { params: currentFilter|merge({tuition:null})} %}
+                        {% include "_filter/student.html.twig" with { params: currentFilter|merge({tuition:null, grade: null})} %}
 
-                        <div>
-                            <span class="badge badge-warning" title="{{ 'comingsoon.info'|trans }}">
-                                {{ 'comingsoon.label'|trans }}
-                            </span>
-                        </div>
-
-                        {% include "_filter/grade.html.twig" with { params: currentFilter|merge({grade:null})} %}
+                        {% include "_filter/grade.html.twig" with { params: currentFilter|merge({student: null, tuition: null})} %}
                     </div>
                 </div>
 

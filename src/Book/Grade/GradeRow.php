@@ -15,7 +15,7 @@ class GradeRow {
         return $this->tuitionOrStudent;
     }
 
-    public function getGrade(TuitionGradeCategory $category): ?TuitionGrade {
-        return $this->grades[$category->getUuid()->toString()] ?? null;
+    public function getGrade(Tuition $tuition, TuitionGradeCategory $category): ?TuitionGrade {
+        return $this->grades[sprintf('%s_%s', $tuition->getUuid()->toString(), $category->getUuid()->toString())] ?? null;
     }
 }

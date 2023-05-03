@@ -38,7 +38,7 @@ class BookExporter {
     /**
      * @param StudentEntity[] $students
      */
-    private function export(Book $book, array $students, ?TuitionEntity $tuition, SectionEntity $section, EntryOverview $overview): Book {
+    private function export(Book $book, array $students, ?TuitionEntity $tuition, ?GradeEntity $grade, SectionEntity $section, EntryOverview $overview): Book {
         $book
             ->setStart($section->getStart())
             ->setEnd($section->getEnd())
@@ -61,12 +61,12 @@ class BookExporter {
         if($tuition !== null) {
             $grades = [];
 
-            foreach ($tuition->getStudyGroup()->getGrades() as $grade) {
+            foreach ($tuition->getStudyGroup()->getGrades() as $tuitionGrade) {
                 $exportGrade = (new Grade())
-                    ->setName($grade->getName());
+                    ->setName($tuitionGrade->getName());
 
                 /** @var GradeTeacher $teacher */
-                foreach ($grade->getTeachers() as $teacher) {
+                foreach ($tuitionGrade->getTeachers() as $teacher) {
                     $exportGrade->addTeacher(
                         (new Teacher())
                             ->setAcronym($teacher->getTeacher()->getAcronym())
@@ -80,32 +80,57 @@ class BookExporter {
                 $grades[] = $exportGrade;
             }
             $book->setGrades($grades);
+        }
 
-            $studentGrades = new StudentGrades();
+        $gradeOverview = null;
+        $tuitions = [ ];
 
+        if($tuition !== null) {
+            $tuitions = [ $tuition ];
             $gradeOverview = $this->gradeOverviewHelper->computeOverviewForTuition($tuition);
+        } else if($grade !== null) {
+            $gradeOverview = $this->gradeOverviewHelper->computeForGrade($grade, $section);
             foreach($gradeOverview->getCategories() as $category) {
-                if ($category->isExportable()) {
-                    $studentGrades->addCategory(
-                        (new TuitionGradeCategory())
-                            ->setUuid($category->getUuid()->toString())
-                            ->setDisplayName($category->getDisplayName())
-                    );
-                }
+                $tuitions[$category->getTuition()->getId()] = $category->getTuition();
             }
+        }
 
-            foreach($gradeOverview->getRows() as $row) {
-                foreach($gradeOverview->getCategories() as $category) {
-                    if($category->isExportable()) {
-                        $studentGrades->addGrade((new TuitionGrade())
-                            ->setStudent($row->getTuitionOrStudent()->getExternalId())
-                            ->setGradeCategory($category->getUuid()->toString())
-                            ->setEncryptedGrade($row->getGrade($category)?->getEncryptedGrade()));
+        if($gradeOverview !== null) {
+            foreach($tuitions as $tuition) {
+                $studentGrades = new StudentGrades();
+                $studentGrades->setTuition($this->castTuition($tuition));
+
+                foreach ($gradeOverview->getCategories() as $category) {
+                    if($category->getTuition() !== $tuition) {
+                        continue;
+                    }
+
+                    if ($category->getCategory()->isExportable()) {
+                        $studentGrades->addCategory(
+                            (new TuitionGradeCategory())
+                                ->setUuid($category->getCategory()->getUuid()->toString())
+                                ->setDisplayName($category->getCategory()->getDisplayName())
+                        );
                     }
                 }
-            }
 
-            $book->setStudentGrades($studentGrades);
+                foreach ($gradeOverview->getRows() as $row) {
+                    foreach ($gradeOverview->getCategories() as $category) {
+                        if($category->getTuition() !== $tuition) {
+                            continue;
+                        }
+
+                        if ($category->getCategory()->isExportable()) {
+                            $studentGrades->addGrade((new TuitionGrade())
+                                ->setStudent($row->getTuitionOrStudent()->getExternalId())
+                                ->setGradeCategory($category->getCategory()->getUuid()->toString())
+                                ->setEncryptedGrade($row->getGrade($category->getTuition(), $category->getCategory())?->getEncryptedGrade()));
+                        }
+                    }
+                }
+
+                $book->addStudentGrades($studentGrades);
+            }
         }
 
         $this->sorter->sort($students, StudentStrategy::class);
@@ -174,7 +199,7 @@ class BookExporter {
         $students = $grade->getMemberships()->filter(fn(GradeMembership $membership) => $membership->getSection() === $section)->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
         $overview = $this->overviewHelper->computeOverviewForGrade($grade, $section->getStart(), $section->getEnd());
 
-        return $this->export($book, $students, null, $section, $overview);
+        return $this->export($book, $students, null, $grade, $section, $overview);
     }
 
     public function exportTuition(TuitionEntity $tuition, SectionEntity $section): Book {
@@ -185,7 +210,7 @@ class BookExporter {
 
         $overview = $this->overviewHelper->computeOverviewForTuition($tuition, $section->getStart(), $section->getEnd());
 
-        return $this->export($book, $students, $tuition, $section, $overview);
+        return $this->export($book, $students, $tuition, null, $section, $overview);
     }
 
     public function exportGradeXml(GradeEntity $grade, SectionEntity $section): string {

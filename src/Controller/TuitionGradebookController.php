@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Book\Grade\Category;
 use App\Book\Grade\GradeOverviewHelper;
 use App\Book\Grade\GradePersister;
 use App\Entity\Grade;
@@ -10,6 +11,7 @@ use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
+use App\Entity\TuitionGradeCategory;
 use App\Entity\User;
 use App\Repository\TuitionRepositoryInterface;
 use App\Settings\TuitionGradebookSettings;
@@ -66,6 +68,18 @@ class TuitionGradebookController extends AbstractController {
             }
         }
 
+        $categories = [ ];
+        $hiddenCategories = [ ];
+
+        if($overview !== null) {
+            $categories = ArrayUtils::createArrayWithKeys(
+                $overview->getCategories(),
+                fn(Category $category) => $category->getCategory()->getId()
+            );
+            $categories = array_map(fn(Category $category) => $category->getCategory(), $categories);
+            $hiddenCategories = $request->query->all('hide');
+        }
+
         return $this->render('books/grades/overview.html.twig', [
             'sectionFilter' => $sectionFilterView,
             'tuitionFilter' => $tuitionFilterView,
@@ -75,7 +89,9 @@ class TuitionGradebookController extends AbstractController {
             'ownGrades' => $ownGrades,
             'overview' => $overview,
             'key' => $gradebookSettings->getEncryptedMasterKey(),
-            'ttl' => $gradebookSettings->getTtlForSessionStorage()
+            'ttl' => $gradebookSettings->getTtlForSessionStorage(),
+            'categories' => $categories,
+            'hiddenCategories' => $hiddenCategories
         ]);
     }
 

@@ -1777,6 +1777,9 @@ book:
             info: Noten werden verschlüsselt gespeichert. Zum Ver- und Entschlüsseln wird ein von der Schule verwendetes Passwort verwendet.
             success: Noten wurden entschlüsselt.
             ttl: Das Passwort muss für die nächsten %seconds% Sekunden in diesem Tab nicht erneut eingegeben werden.
+        filter:
+            label: Noten ausblenden
+            info: Die ausgewählten Noten werden (für alle Unterrichte) ausgeblendet. So können individuelle Ansichten erstellt werden.
 
 
 external:

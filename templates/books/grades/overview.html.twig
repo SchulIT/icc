@@ -71,7 +71,9 @@
                                     <colgroup>
                                         <col>
                                         {% for category in overview.categories %}
+                                            {% if category.category.uuid.toString not in hiddenCategories %}
                                         <col class="{% if isGradeView or isStudentsView %}column-sm{% else %}column-md{% endif %}">
+                                            {% endif %}
                                         {% endfor %}
                                     </colgroup>
 
@@ -83,11 +85,13 @@
                                             <th>{{ 'label.student'|trans }}</th>
                                         {% endif %}
                                         {% for category in overview.categories %}
+                                            {% if category.category.uuid.toString not in hiddenCategories %}
                                             <th class="{% if isGradeView or isStudentsView %}rotate-90{% else %}text-center{% endif %}">
                                                 <div>
                                                     {% if isGradeView %}<span class="badge badge-primary">{{ category.tuition.name }}</span>{% endif%} {{ category.category.displayName }}
                                                 </div>
                                             </th>
+                                            {% endif %}
                                         {% endfor %}
                                     </tr>
                                     </thead>
@@ -106,6 +110,7 @@
                                                 {% endif %}
                                             </td>
                                             {% for category in overview.categories %}
+                                                {% if category.category.uuid.toString not in hiddenCategories %}
                                                 <td class="align-middle text-center">
                                                     {% if isStudentsView %}
                                                         {% set grade = row.grade(row.tuitionOrStudent, category.category) %}
@@ -130,6 +135,7 @@
                                                         </select>
                                                     {% endif %}
                                                 </td>
+                                                {% endif %}
                                             {% endfor %}
                                         </tr>
                                     {% endfor %}
@@ -216,6 +222,32 @@
                         </div>
                     </div>
                 </div>
+
+                <form method="get">
+                    {% include "_filter/_params.html.twig" with { params: currentFilter } %}
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ 'book.grades.filter.label'|trans }}</h5>
+                            <p>{{ 'book.grades.filter.info'|trans }}</p>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for category in categories %}
+                                <div class="list-group-item">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="{{ category.uuid }}" name="hide[]" value="{{ category.uuid }}" {% if category.uuid.toString in hiddenCategories %}checked="checked"{% endif %}>
+                                        <label class="custom-control-label" for="{{ category.uuid }}">{{ category.displayName }}</label>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-check"></i> {{ 'actions.apply'|trans }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
                 {% endif %}
             </div>
         </div>

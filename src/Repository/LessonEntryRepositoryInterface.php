@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Grade;
 use App\Entity\LessonEntry;
+use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use DateTime;
@@ -41,6 +42,14 @@ interface LessonEntryRepositoryInterface {
      * @return LessonEntry[]
      */
     public function findAllByGradeWithExercises(Grade $grade, DateTime $start, DateTime $end): array;
+
+    /**
+     * @param Student $student
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return LessonEntry[]
+     */
+    public function findAllByStudentWithExercises(Student $student, DateTime $start, DateTime $end): array;
 
     public function persist(LessonEntry $entry): void;
 

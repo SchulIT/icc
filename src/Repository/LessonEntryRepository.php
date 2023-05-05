@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Grade;
 use App\Entity\LessonEntry;
+use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use DateTime;
@@ -91,6 +92,29 @@ class LessonEntryRepository extends AbstractRepository implements LessonEntryRep
         $qb = $this->createDefaultQueryBuilder();
         $qb = $this->applyStartEnd($qb, $start, $end);
         $qb = $this->applyGrade($qb, $grade);
+
+        $qb->andWhere('e.exercises IS NOT NULL')
+            ->orderBy('l.date', 'desc')
+            ->addOrderBy('l.lessonStart', 'asc');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAllByStudentWithExercises(Student $student, DateTime $start, DateTime $end): array {
+        $qb = $this->createDefaultQueryBuilder();
+        $qb = $this->applyStartEnd($qb, $start, $end);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(Tuition::class, 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.memberships', 'sgmInner')
+            ->where('sgmInner.student = :student');
+
+        $qb->andWhere(
+            $qb->expr()->in('tt.id', $qbInner->getDQL())
+        )
+            ->setParameter('student', $student->getId());
 
         $qb->andWhere('e.exercises IS NOT NULL')
             ->orderBy('l.date', 'desc')

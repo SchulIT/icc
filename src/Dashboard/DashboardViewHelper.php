@@ -197,7 +197,7 @@ class DashboardViewHelper {
         }
 
         $exerciseView = new ExercisesView($start, $end, $grade);
-        $exerciseView->setEntriesWithExercises($this->lessonEntryRepository->findAllByGradeWithExercises($grade, $start, $end));
+        $exerciseView->setEntriesWithExercises($this->lessonEntryRepository->findAllByStudentWithExercises($student, $start, $end));
         $view->setExercises($exerciseView);
     }
 

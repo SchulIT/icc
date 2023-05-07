@@ -1,6 +1,7 @@
 const Encore = require('@symfony/webpack-encore');
 const CopyPlugin = require('copy-webpack-plugin');
 const GlobImporter = require('node-sass-glob-importer');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 Encore
     .setOutputPath('public/build/')
@@ -41,6 +42,8 @@ Encore
     .enableVueLoader()
     .enableVersioning(Encore.isProduction())
 
+    .addPlugin(new NodePolyfillPlugin())
+
     .addLoader(
         {
             test: /bootstrap\.native/,
@@ -52,3 +55,7 @@ Encore
 ;
 
 module.exports = Encore.getWebpackConfig();
+
+module.exports.resolve.fallback = {
+    fs: require.resolve('browserify-fs')
+};

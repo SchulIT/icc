@@ -1780,7 +1780,13 @@ book:
         filter:
             label: Noten ausblenden
             info: Die ausgewählten Noten werden (für alle Unterrichte) ausgeblendet. So können individuelle Ansichten erstellt werden.
+        export:
+            label: Excel-Datei
+            info: Die Excel-Datei ist mit demselben Passwort verschlüsselt, das auch hier eingegeben werden muss.
+            download: Download
 
+export:
+    caution: Ich bestätige, dass ich die Datei nur auf zugelassenen Endgeräten verarbeite. Die Datei darf nur lokal verarbeitet werden und nicht via E-Mail versendet oder auf Clouddiensten gespeichert werden.
 
 external:
     docs: Handbuch

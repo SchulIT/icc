@@ -1,6 +1,71 @@
 const crypto = require('easy-web-crypto');
+const xlsx = require('xlsx-populate');
 
 let decryptedKey = null;
+let keyPassword = null;
+
+async function exportXlsx() {
+    if(decryptedKey === null) {
+        return;
+    }
+
+    let $table = document.getElementById('grades');
+    let sheetName = $table.getAttribute('data-worksheet');
+    let workbook = await xlsx.fromBlankAsync();
+
+    let data = [ ];
+    let header = [ ];
+
+    $table.querySelector('thead').querySelectorAll('th').forEach(function($th) {
+        header.push($th.textContent.trim());
+    });
+
+    data.push(header);
+
+    for(const $tr of $table.querySelectorAll('tbody > tr')) {
+        let row = [ ];
+
+        for(const $td of $tr.querySelectorAll('td')) {
+            if($td.getAttribute('data-xlsx') === 'raw') {
+                row.push($td.innerText.trim());
+                continue;
+            }
+
+            if($td.getAttribute('data-xlsx') !== 'encrypted') {
+                continue;
+            }
+
+            let $encryptedInput = $td.querySelector('input[data-encrypted]');
+
+            if($encryptedInput === null) {
+                row.push('');
+                continue;
+            }
+
+            let encrypted = $encryptedInput.getAttribute('data-encrypted');
+            if(encrypted === null || encrypted === '') {
+                row.push('');
+                continue;
+            }
+
+            row.push(await crypto.decrypt(decryptedKey, JSON.parse(encrypted)));
+        }
+
+        data.push(row);
+    }
+
+    workbook.sheet(0).cell('A1').value(data);
+    workbook.sheet(0).name(sheetName);
+
+    let blob = await workbook.outputAsync({ type: 'base64', password: keyPassword });
+
+    let $a = document.createElement('a');
+    document.body.appendChild($a);
+    $a.href = "data:" + xlsx.MIME_TYPE + ";base64," + blob;
+    $a.download = sheetName + ".xlsx";
+    $a.click();
+    document.body.removeChild($a);
+}
 
 function decryptAll() {
     if(decryptedKey === null) {
@@ -73,6 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             try {
                 decryptedKey = await crypto.decryptMasterKey(password, encryptedKey);
+                keyPassword = password;
                 this.closest('.card-body').querySelector('.bs-callout').classList.remove('hide');
                 this.closest('.input-group').remove();
             } catch (e) {
@@ -107,4 +173,31 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
+
+    document.querySelector('#download_btn')?.addEventListener('click', async function(event) {
+        event.preventDefault();
+
+        if(decryptedKey === null) {
+            alert('Bitte zuerst das Passwort eingeben');
+            return;
+        }
+
+        let $caution = document.querySelector(this.getAttribute('data-caution'));
+        if($caution.checked !== true) {
+            alert('Bitte den Hinweis bestätigen');
+            $caution.focus();
+            return;
+        }
+
+        let $icon = this.querySelector('i');
+        $icon.classList.remove('fa-download');
+        $icon.classList.add('fa-spinner');
+        $icon.classList.add('fa-spin');
+
+        await exportXlsx();
+
+        $icon.classList.remove('fa-spinner');
+        $icon.classList.remove('fa-spin');
+        $icon.classList.add('fa-download');
+    });
 });

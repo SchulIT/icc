@@ -26,10 +26,13 @@
                 <template v-for="lesson in days[day]">
                   <td v-if="lesson.colspan > 0"
                       :colspan="lesson.colspan"
-                      :class="'text-center align-middle ' + (lesson.attendance !== null && lesson.attendance.attendance.type === 1 ? 'table-success text-success pointer' : '') + (lesson.attendance !== null && lesson.attendance.attendance.type === 0 ? 'table-danger text-danger pointer' : '') + (lesson.attendance !== null && lesson.attendance.attendance.type === 2 ? 'table-warning text-warning pointer' : '')"
+                      :class="'text-center align-middle ' + (lesson.attendance !== null && lesson.attendance.attendance.type === 1 ? 'table-success text-success pointer' : '') + (lesson.attendance !== null && lesson.attendance.attendance.type === 0 ? 'table-danger text-danger pointer' : '') + (lesson.attendance !== null && lesson.attendance.attendance.type === 2 ? 'table-warning text-warning pointer' : '') + (lesson.entry !== null && lesson.entry.is_cancelled ? 'table-secondary' : '')"
                       @click="edit(lesson)"
                       @contextmenu.prevent="changeExcuseStatus(lesson)"
-                      :title="lesson.entry !== null ? lesson.entry.lesson.subject + ' (' + lesson.entry.lesson.teachers.join(', ') + ')' : ''">
+                      :title="lesson.entry !== null ? lesson.entry.lesson.subject + ' (' + lesson.entry.lesson.teachers.join(', ') + ')' + (lesson.entry.is_cancelled ? ' [' + lesson.entry.cancel_reason + ']' : '') : ''">
+                    <div v-if="lesson.entry !== null && lesson.entry.is_cancelled">
+                        <i class="far fa-calendar-times"></i>
+                    </div>
                     <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 1">
                       <i class="fas fa-user-check"></i>
                     </div>

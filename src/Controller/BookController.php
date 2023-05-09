@@ -25,9 +25,7 @@ use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Grouping\DateWeekOfYearStrategy;
-use App\Grouping\GenericDateStrategy;
 use App\Grouping\Grouper;
-use App\Grouping\LessonAttendanceCommentsGroup;
 use App\Grouping\LessonDayStrategy;
 use App\Grouping\TuitionGradeGroup;
 use App\Grouping\TuitionGradeStrategy;
@@ -43,8 +41,6 @@ use App\Settings\TimetableSettings;
 use App\Settings\TuitionGradebookSettings;
 use App\Sorting\DateStrategy;
 use App\Sorting\DateWeekOfYearGroupStrategy;
-use App\Sorting\LessonAttendanceGroupStrategy;
-use App\Sorting\LessonAttendanceStrategy;
 use App\Sorting\LessonDayGroupStrategy;
 use App\Sorting\LessonStrategy;
 use App\Sorting\SortDirection;
@@ -578,6 +574,10 @@ class BookController extends AbstractController {
                 'end' => $entry->getLessonEnd(),
                 'is_cancelled' => $entry->isCancelled()
             ];
+
+            if($entry->isCancelled()) {
+                $entries[$key]['cancel_reason'] = $entry->getCancelReason();
+            }
         }
 
         $info = $infoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitions);

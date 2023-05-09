@@ -30,28 +30,30 @@
                       @click="edit(lesson)"
                       @contextmenu.prevent="changeExcuseStatus(lesson)"
                       :title="lesson.entry !== null ? lesson.entry.lesson.subject + ' (' + lesson.entry.lesson.teachers.join(', ') + ')' + (lesson.entry.is_cancelled ? ' [' + lesson.entry.cancel_reason + ']' : '') : ''">
-                    <div v-if="lesson.entry !== null && lesson.entry.is_cancelled">
-                        <i class="far fa-calendar-times"></i>
-                    </div>
-                    <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 1">
-                      <i class="fas fa-user-check"></i>
-                    </div>
-                    <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 2">
-                      <i class="fas fa-user-clock"></i>
+                      <div v-if="lesson.entry !== null">
+                        <div v-if="lesson.entry !== null && lesson.entry.is_cancelled">
+                            <i class="far fa-calendar-times"></i>
+                        </div>
+                        <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 1">
+                          <i class="fas fa-user-check"></i>
+                        </div>
+                        <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 2">
+                          <i class="fas fa-user-clock"></i>
 
-                      <span class="badge badge-info d-block">
-                        {{ $trans('book.attendance.late_minutes', { 'count': lesson.attendance.attendance.late_minutes}) }}
-                      </span>
-                    </div>
-                    <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 0">
-                      <i class="fas fa-question" v-if="lesson.attendance.attendance.excuse_status === 0 && lesson.attendance.attendance.absent_lessons > 0 && lesson.attendance.has_excuses === false"></i>
-                      <i class="fas fa-check" v-if="lesson.attendance.attendance.excuse_status === 1 || lesson.attendance.attendance.absent_lessons === 0 || lesson.attendance.has_excuses === true"></i>
-                      <i class="fas fa-times" v-if="lesson.attendance.attendance.excuse_status === 2"></i>
+                          <span class="badge badge-info d-block">
+                            {{ $trans('book.attendance.late_minutes', { 'count': lesson.attendance.attendance.late_minutes}) }}
+                          </span>
+                        </div>
+                        <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 0">
+                          <i class="fas fa-question" v-if="lesson.attendance.attendance.excuse_status === 0 && lesson.attendance.attendance.absent_lessons > 0 && lesson.attendance.has_excuses === false"></i>
+                          <i class="fas fa-check" v-if="lesson.attendance.attendance.excuse_status === 1 || lesson.attendance.attendance.absent_lessons === 0 || lesson.attendance.has_excuses === true"></i>
+                          <i class="fas fa-times" v-if="lesson.attendance.attendance.excuse_status === 2"></i>
 
-                      <span class="badge badge-info d-block" v-if="lesson.attendance.attendance.absent_lessons !== (lesson.entry.end - lesson.entry.start + 1)">
-                        {{ lesson.attendance.attendance.absent_lessons }} FS
-                      </span>
-                    </div>
+                          <span class="badge badge-info d-block" v-if="lesson.attendance.attendance.absent_lessons !== (lesson.entry.end - lesson.entry.start + 1)">
+                            {{ lesson.attendance.attendance.absent_lessons }} FS
+                          </span>
+                        </div>
+                      </div>
                   </td>
                 </template>
               </tr>
@@ -278,11 +280,10 @@ export default {
           lessons[lessonNumber] = {
             'lesson': lessonNumber,
             'entry': entry,
-            'attendance': attendance,
+            'attendance': entry !== null ? attendance : null,
             'colspan': colspan
           };
-
-          //console.log(lessons[lessonNumber]);
+          
         });
 
         $this.days[day] = lessons;

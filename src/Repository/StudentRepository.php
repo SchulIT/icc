@@ -80,6 +80,8 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
         return $this->getDefaultQueryBuilder(true)
             ->andWhere('gm.grade = :grade')
             ->andWhere('gm.section = :section')
+            ->orderBy('s.lastname')
+            ->addOrderBy('s.firstname')
             ->setParameter('grade', $grade->getId())
             ->setParameter('section', $section->getId());
     }

@@ -59,7 +59,7 @@
                                     <td class="align-middle">
                                         <i class="fas fa-user"></i>
                                         {% if sectionFilter.currentSection != null %}
-                                            <a href="{{ path('book_student', { student: student.uuid, section: sectionFilter.currentSection.uuid.toString }) }}">
+                                            <a href="{{ path('book_student', { student: student.uuid }|merge(currentFilter)) }}">
                                                 {{ student.lastname }}, {{ student.firstname }}
 
                                                 <span class="badge badge-primary">

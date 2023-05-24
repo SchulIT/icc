@@ -11,6 +11,7 @@
 "This room cannot be created as a resource with the same name ({{ name }}) already exists.": "Dieser Raum kann nicht erstellt werden, da es bereits eine Resource mit demselben Namen ({{ name }}) gibt."
 "At least one choice is selected more than once.": "Mindestens ein Element wurde doppelt ausgewählt."
 "This date must be inside the active section ({{ start }}-{{ end }}).": "Das Datum muss innerhalb des aktiven Abschnitts liegen ({{ start }}-{{ end }})."
+"This date must be inside a section ({{ sections }}).": "Das Datum muss innerhalb eines Abschnittes liegen ({{ sections }})."
 "There is already an existing lesson entry for this lesson.": "Es gibt bereits einen Eintrag für diese Stunde."
 "No matching timetable lesson found.": "Der Eintrag passt nicht zum Stundenplan."
 "Date must not be in the future.": "Das Datum darf nicht in der Zukunft liegen."

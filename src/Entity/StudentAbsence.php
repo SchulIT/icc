@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Validator\DateLessonGreaterThan;
+use App\Validator\DateLessonInSection;
 use App\Validator\DateLessonNotInPast;
 use DateTime;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
@@ -32,6 +33,7 @@ class StudentAbsence {
      * @var DateLesson|null
      */
     #[DateLessonNotInPast(exceptions: ['ROLE_STUDENT_ABSENCE_CREATOR'], propertyName: 'from')]
+    #[DateLessonInSection]
     #[Assert\NotNull]
     #[ORM\Embedded(class: DateLesson::class)]
     private ?DateLesson $from = null;
@@ -40,6 +42,7 @@ class StudentAbsence {
      * @var DateLesson|null
      */
     #[DateLessonGreaterThan(propertyPath: 'from')]
+    #[DateLessonInSection]
     #[Assert\NotNull]
     #[ORM\Embedded(class: DateLesson::class)]
     private ?DateLesson $until = null;

@@ -728,6 +728,9 @@ admin:
             exam_rules:
                 label: Regeln für Klausurschreibende
                 help: Mit diesen Regeln wird festgelegt, welche Lernende automatisch einer Klausur zugeordnet werden, wenn diese nicht beim Import angegeben werden.
+            subjects_without_tuition:
+                label: Fächer ohne Unterricht
+                help: Beim Import wird beim Import keine Fehlermeldung erzeugt, wenn der zugehörige Unterricht nicht gefunden wurde.
             fallback_section:
                 label: Fallback-Schuljahresabschnitt
                 help: Diese Option wird aktuell beim Import von Terminen verwendet. Wenn für zukünftige Schuljahresabschnitte noch keine Lerngruppendaten vorhanden, werden stattdessen die Lerngruppen im ausgewählten Abschnitt gesucht.
@@ -1881,6 +1884,10 @@ import:
     timetable:
         help: Start- und Enddatum geben an, für welchen Zeitraum der Stundenplan importiert werden soll.
         caution: Das Startdatum muss zwingend in der Zukunft liegen, da es anderenfalls zu Datenverlust beim Unterrichtsbuch kommt.
+        error:
+            label: Fehlerhafte Daten
+            message: Es wurden Fehler in den zu importierenden Daten entdeckt. Es wurden keine Stundenplanstunden importiert.
+            link: Zu ignorierende Fächer konfigurieren
 
         html:
             label: Stundenplan

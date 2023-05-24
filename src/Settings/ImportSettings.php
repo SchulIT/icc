@@ -18,4 +18,12 @@ class ImportSettings extends AbstractSettings {
     public function setFallbackSection(?int $sectionId): void {
         $this->setValue('import.fallback_section', $sectionId);
     }
+
+    public function getSubjectsWithoutTuition(): array {
+        return $this->getValue('import.subjects_without_tuition', [ ]);
+    }
+
+    public function setSubjectsWithoutTuition(array $subjects): void {
+        $this->setValue('import.subjects_without_tuition', $subjects);
+    }
 }

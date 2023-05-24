@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Converter\EnumStringConverter;
 use App\Entity\Student;
 use App\Form\Import\Untis\RoomImportType;
+use App\Request\ValidationFailedException;
 use App\Untis\Gpu\Room\RoomImporter;
 use App\Untis\StudentId\StudentIdGenerator;
 use App\Untis\StudentIdFormat;
@@ -385,6 +386,8 @@ class UntisImportController extends AbstractController {
         $form = $this->createForm(TimetableHtmlImportType::class);
         $form->handleRequest($request);
 
+        $violations = [ ];
+
         if($form->isSubmitted() && $form->isValid()) {
             /** @var DateTime $start */
             $start = $form->get('start')->getData();
@@ -406,13 +409,17 @@ class UntisImportController extends AbstractController {
                 ]));
 
                 return $this->redirectToRoute('import_untis_timetable_html');
-            } catch (HtmlParseException|ImportException $exception) {
+            } catch (ValidationFailedException $e) {
+                $violations = $e->getViolations();
+            }
+            catch (HtmlParseException|ImportException $exception) {
                 $this->addFlash('error', $exception->getMessage());
             }
         }
 
         return $this->render('import/timetable_html.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'violations' => $violations
         ]);
     }
 

@@ -14,3 +14,5 @@
 "There is already an existing lesson entry for this lesson.": "Es gibt bereits einen Eintrag für diese Stunde."
 "No matching timetable lesson found.": "Der Eintrag passt nicht zum Stundenplan."
 "Date must not be in the future.": "Das Datum darf nicht in der Zukunft liegen."
+"Lesson has no matching tuition (subject: {{ subject }}; teachers: {{ teachers }}; grades: {{ grades }}).": "Es gibt keinen Unterricht zur Stundenplanstunde (Fach: {{ subject }}; Lehrkräfte: {{ teachers }}; Klassen: {{ grades }})."
+"Ambiguous matching tuition (subject: {{ subject }}; teachers: {{ teachers }}; grades: {{ grades }}).": "Unterricht zur Stundenplanstunde (Fach: {{ subject }}; Lehrkräfte: {{ teachers }}; Klassen: {{ grades }}) kann nicht eindeutig aufgelöst werden."

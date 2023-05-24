@@ -2,10 +2,12 @@
 
 namespace App\Request\Data;
 
+use App\Validator\TuitionResolvable;
 use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[TuitionResolvable]
 class TimetableLessonData {
 
     /**

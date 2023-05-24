@@ -15,6 +15,24 @@
         <div class="card-header">{{ 'label.general'|trans }}</div>
 
         <div class="card-body">
+            {% if violations|length > 0 %}
+                <div class="bs-callout bs-callout-danger">
+                    <h4>{{ 'import.timetable.error.label'|trans }}</h4>
+
+                    <p>{{ 'import.timetable.error.message'|trans }}</p>
+
+                    <ul>
+                        {% for violation in violations %}
+                            <li>{{ violation.message }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <a href="{{ path('admin_settings_import') }}" class="btn btn-primary btn-sm" target="_blank">
+                        <i class="fas fa-cogs"></i> {{ 'import.timetable.error.link'|trans }}
+                    </a>
+                </div>
+            {% endif %}
+
             <div class="bs-callout bs-callout-info">
                 <p>{{ 'import.timetable.html.info'|trans }}</p>
             </div>

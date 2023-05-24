@@ -4,6 +4,7 @@ namespace App\Controller\Settings;
 
 use App\Entity\Section;
 use App\Form\ExamStudentRuleType;
+use App\Form\TextCollectionEntryType;
 use App\Repository\SectionRepositoryInterface;
 use App\Settings\ImportSettings;
 use App\Utils\ArrayUtils;
@@ -14,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[Route(path: '/settings')]
 #[Security("is_granted('ROLE_ADMIN')")]
@@ -29,6 +31,16 @@ class ImportSettingsController extends AbstractController {
                 'by_reference' => false,
                 'help' => 'label.comma_separated',
                 'data' => $settings->getExamRules()
+            ])
+            ->add('subjects_without_tuition', CollectionType::class, [
+                'entry_type' => TextCollectionEntryType::class,
+                'entry_options' => [
+                    'constraints' => [ new NotBlank() ]
+                ],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'required' => false,
+                'data' => $settings->getSubjectsWithoutTuition()
             ])
             ->add('fallback_section', ChoiceType::class, [
                 'label' => 'label.section',
@@ -50,6 +62,9 @@ class ImportSettingsController extends AbstractController {
             $map = [
                 'rules' => function(array $rules) use($settings) {
                     $settings->setExamRules($rules);
+                },
+                'subjects_without_tuition' => function(array $subjects) use ($settings) {
+                    $settings->setSubjectsWithoutTuition($subjects);
                 },
                 'fallback_section' => function(?int $sectionId) use($settings) {
                     $settings->setFallbackSection($sectionId);

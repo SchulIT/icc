@@ -10,7 +10,7 @@ class Notification {
     private DateTime $createdAt;
 
     public function __construct(private readonly User $recipient, private readonly string $subject, private readonly string $content,
-                                private ?string $link, private readonly ?string $linkText) {
+                                private ?string $link, private readonly ?string $linkText, private readonly bool $enforceDelivery = false) {
         $this->createdAt = new DateTime();
     }
 
@@ -41,5 +41,12 @@ class Notification {
 
     public function getCreatedAt(): DateTime {
         return $this->createdAt;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeliveryEnforced(): bool {
+        return $this->enforceDelivery;
     }
 }

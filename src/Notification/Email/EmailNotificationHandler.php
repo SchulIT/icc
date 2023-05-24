@@ -25,7 +25,7 @@ class EmailNotificationHandler implements NotificationHandlerInterface {
     }
 
     public function handle(Notification $notification): void {
-        if($notification->getRecipient()->isEmailNotificationsEnabled() === false) {
+        if($notification->getRecipient()->isEmailNotificationsEnabled() === false && $notification->isDeliveryEnforced() === false) {
             $this->logger->debug(sprintf('Empfänger %s hat E-Mail Benachrichtigungen deaktiviert, überspringe.', $notification->getRecipient()->getUsername()));
             return;
         }

@@ -39,8 +39,7 @@ class StudentAbsenceMessageCreatedEventSubscriber implements EventSubscriberInte
                 $this->translator->trans('student_absence.message.content', [], 'email'),
                 $this->urlGenerator->generate('show_student_absence', [ 'uuid' => $event->getAbsence()->getUuid()->toString()], UrlGeneratorInterface::ABSOLUTE_URL),
                 $this->translator->trans('student_absence.link', [], 'email'),
-                $event->getAbsence(),
-                sprintf('%s %s', $event->getMessage()->getCreatedBy()->getFirstname(), $event->getMessage()->getCreatedBy()->getLastname())
+                $event->getAbsence()
             );
 
             $this->notificationService->notify($notification);

@@ -22,6 +22,11 @@ class DatabaseNotificationHandler implements NotificationHandlerInterface {
     }
 
     public function handle(Notification $notification): void {
+        if($notification->getRecipient()->getId() === null) {
+            // seems to be a fake user...
+            return;
+        }
+
         $entity = (new NotificationEntity())
             ->setRecipient($notification->getRecipient())
             ->setSubject($notification->getSubject())

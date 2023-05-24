@@ -2,6 +2,7 @@
 
 namespace App\Notification\EventSubscriber;
 
+use App\Entity\User;
 use App\Event\StudentAbsenceMessageCreatedEvent;
 use App\Notification\NotificationService;
 use App\Notification\StudentAbsenceNotification;
@@ -23,6 +24,12 @@ class StudentAbsenceMessageCreatedEventSubscriber implements EventSubscriberInte
             if($event->getMessage()->getCreatedBy()->getId() !== $user->getId()) {
                 $recipients[] = $user;
             }
+        }
+
+        $emails = array_map(fn(User $user) => $user->getEmail(), $recipients);
+        if(!in_array($event->getAbsence()->getEmail(), $emails) && $event->getAbsence()->getCreatedBy()->getId() !== $event->getMessage()->getCreatedBy()->getId()) {
+            $recipients[] = (new User())
+                ->setEmail($event->getAbsence()->getEmail());
         }
 
         foreach($recipients as $recipient) {

@@ -2,6 +2,7 @@
 
 namespace App\Notification\EventSubscriber;
 
+use App\Entity\User;
 use App\Event\StudentAbsenceApprovalChangedEvent;
 use App\Notification\NotificationService;
 use App\Notification\StudentAbsenceNotification;
@@ -27,6 +28,12 @@ class StudentAbsenceApprovalChangedEventSubscriber implements EventSubscriberInt
             if($event->getAbsence()->getApprovedBy()->getId() !== $user->getId()) {
                 $recipients[] = $user;
             }
+        }
+
+        $emails = array_map(fn(User $user) => $user->getEmail(), $recipients);
+        if(!in_array($event->getAbsence()->getEmail(), $emails)) {
+            $recipients[] = (new User())
+                ->setEmail($event->getAbsence()->getEmail());
         }
 
         foreach($recipients as $recipient) {

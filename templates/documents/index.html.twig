@@ -29,7 +29,11 @@
                             <div class="card">
                                 <div class="card-header d-flex">
                                     <div class="flex-fill">
-                                        <i class="far fa-folder"></i> {{ group.category.name }}
+                                        {% if group.category.icon is not empty %}
+                                            <i class="{{ group.category.icon }}"></i>
+                                        {% else %}
+                                            <i class="far fa-folder"></i>
+                                        {% endif %}{{ group.category.name }}
                                     </div>
 
                                     <div class="flex-shrink-0">

@@ -46,7 +46,14 @@
                         <div class="tab-pane show active" id="documents">
                             {% for category in categories %}
                             <div class="card">
-                                <div class="card-header">{{ category.category.name }}</div>
+                                <div class="card-header">
+                                    {% if category.category.icon is not empty %}
+                                        <i class="{{ category.category.icon }}"></i>
+                                    {% else %}
+                                        <i class="far fa-folder"></i>
+                                    {% endif %}
+                                    {{ category.category.name }}
+                                </div>
                                 <div class="list-group list-group-flush">
                                     {% for document in category.documents %}
                                     <a href="#" data-insert-link="document:{{ document.uuid }}" class="list-group-item list-group-item-action">

@@ -66,7 +66,8 @@ class DocumentCategoryAdminController extends AbstractController {
         }
 
         return $this->render('admin/documents/categories/edit.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'category' => $documentCategory
         ]);
     }
 

@@ -21,6 +21,10 @@ class DocumentCategory {
     #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $icon = null;
+
     /**
      * @var ArrayCollection<Document>
      */
@@ -41,6 +45,22 @@ class DocumentCategory {
 
     public function setName(?string $name): DocumentCategory {
         $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getIcon(): ?string {
+        return $this->icon;
+    }
+
+    /**
+     * @param string|null $icon
+     * @return DocumentCategory
+     */
+    public function setIcon(?string $icon): DocumentCategory {
+        $this->icon = $icon;
         return $this;
     }
 

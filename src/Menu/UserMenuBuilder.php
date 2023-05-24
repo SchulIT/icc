@@ -3,6 +3,7 @@
 namespace App\Menu;
 
 use App\Entity\User;
+use App\Repository\NotificationRepositoryInterface;
 use ContainerCBwteQM\getDoctrine_Orm_DefaultEntityManager_PropertyInfoExtractorService;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
@@ -13,7 +14,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserMenuBuilder extends AbstractMenuBuilder {
 
-    public function __construct(private readonly string $idpProfileUrl, private readonly DarkModeManagerInterface $darkModeManager,  FactoryInterface $factory, TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authorizationChecker, TranslatorInterface $translator) {
+    public function __construct(private readonly string $idpProfileUrl, private readonly DarkModeManagerInterface $darkModeManager,
+                                private readonly NotificationRepositoryInterface $notificationRepository,
+                                FactoryInterface $factory, TokenStorageInterface $tokenStorage,
+                                AuthorizationCheckerInterface $authorizationChecker, TranslatorInterface $translator) {
         parent::__construct($factory, $tokenStorage, $authorizationChecker, $translator);
     }
 
@@ -66,6 +70,14 @@ class UserMenuBuilder extends AbstractMenuBuilder {
             'route' => 'toggle_darkmode'
         ])
             ->setExtra('icon', $icon);
+
+        // Notifications
+        $menu->addChild('label.notifications', [
+            'label' => '',
+            'route' => 'notifications'
+        ])
+            ->setExtra('icon', 'fas fa-bullhorn')
+            ->setExtra('count', $this->notificationRepository->countUnreadForUser($user));
 
         $menu->addChild('label.logout', [
             'route' => 'logout',

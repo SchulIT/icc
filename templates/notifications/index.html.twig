@@ -1,0 +1,87 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'notifications.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if notifications|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <h4>{{ 'info.label'|trans }}</h4>
+                        <p>{{ 'notifications.empty'|trans }}</p>
+                    </div>
+                {% else %}
+                    {% for notification in notifications %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    {% if not notification.isRead %}<i class="fas fa-dot-circle" title="{{ 'notifications.unread'|trans }}"></i>{% endif %}
+                                    <a href="{{ path('notification_redirect', { uuid: notification.uuid }) }}">
+                                        {{ notification.subject }}
+                                    </a>
+                                </h4>
+
+                                <p>
+                                    {{ notification.content }}
+                                </p>
+
+                                {% if notification.link is not empty %}
+                                        <a href="{{ url('notification_redirect', { uuid: notification.uuid }) }}" class="btn btn-primary btn-sm">
+                                            {% if notification.linkText is not empty %}
+                                                {{ notification.linkText }}
+                                            {% else %}
+                                                {{ 'label.details'|trans }}
+                                            {% endif %}
+                                        </a>
+                                {% endif %}
+                            </div>
+
+                            {#
+                            {% if notification.link is not empty %}
+                                <div class="card-footer">
+                                    <a href="{{ url('notification_redirect', { uuid: notification.uuid }) }}" class="btn btn-primary btn-sm">
+                                        {% if notification.linkText is not empty %}
+                                            {{ notification.linkText }}
+                                        {% else %}
+                                            {{ 'label.details'|trans }}
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            {% endif %}#}
+                        </div>
+                    {% endfor %}
+
+                    {% include '@Common/includes/pagination.html.twig' with {
+                        currentFilters: {},
+                        currentPage: page,
+                        paginationPath: 'notifications',
+                        lastPage: pages,
+                        showAlwaysFirstAndLast: true
+                    } only %}
+                {% endif %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('mark_notifications_read') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-check"></i> {{ 'notifications.mark_read.label'|trans }}
+                        </a>
+
+                        <a href="{{ path('profile_notifications') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-cogs"></i> {{ 'notifications.settings'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

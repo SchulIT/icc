@@ -1,0 +1,27 @@
+{{ 'greeting'|trans({}, 'email') }}
+
+{{ notification.content }}
+
+{% if notification.link is not empty -%}
+    {%- set text = notification.linkText -%}
+
+    {%- if text is empty -%}
+        {%- set text = 'notifications.link'|trans -%}
+    {%- endif -%}
+
+{{ text }}: {{ notification.link }}
+{% endif %}
+
+{{ 'farewell'|trans({}, 'email') }}
+{{ sender }}
+
+---
+{{ 'footer'|trans({}, 'email') }}
+---
+{% if replyTo is not empty %}
+{{ 'reply.to'|trans({'%address%': replyTo}, 'email') }}
+{% else %}
+{{ 'reply.no'|trans({}, 'email') }}
+{% endif %}
+---
+{{ 'unsubscribe'|trans({}, 'email') }}: {{ url('profile_notifications') }}

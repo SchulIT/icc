@@ -607,3 +607,18 @@
 {% block post_javascript %}
     <script src="{{ asset('build/book.js') }}"></script>
 {% endblock %}
+
+{% block notifications %}
+    {% if unreadNotificationsCount > 0 %}
+        <div class="bs-callout bs-callout-warning">
+            <div class="d-flex align-items-center">
+                <p class="mr-auto mb-0">{{ 'dashboard.notifications.unread'|trans({'%count%': unreadNotificationsCount}) }}</p>
+                <div>
+                    <a href="{{ path('notifications') }}" class="btn btn-outline-primary btn-sm">
+                        {{ 'dashboard.notifications.link'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

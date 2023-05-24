@@ -1,0 +1,50 @@
+{{ 'greeting'|trans({}, 'email') }}
+
+{{ notification.content }}
+
+{% if notification.link is not empty -%}
+    {%- set text = notification.linkText -%}
+
+    {%- if text is empty -%}
+        {%- set text = 'notifications.link'|trans -%}
+    {%- endif -%}
+
+{{ text }}: {{ notification.link }}
+{% endif %}
+
+{{ 'farewell'|trans({}, 'email') }}
+{{ sender }}
+
+---
+
+# {{ notification.message.title }}
+
+{{ notification.message.content }}
+
+---
+{% if notification.message.mustConfirm %}
+❗ {{ 'message.must_confirm'|trans({}, 'email') }}
+---
+{% endif %}
+{% if notification.message.attachments|length > 0 %}
+❗ {{ 'message.attachments'|trans({}, 'email') }}
+---
+{% endif %}
+{% if notification.message.isDownloadsEnabled %}
+❗ {{ 'message.has_downloads'|trans({}, 'email') }}
+---
+{% endif %}
+{% if notification.message.isUploadsEnabled %}
+❗ {{ 'message.has_uploads'|trans({}, 'email') }}
+---
+{% endif %}
+
+{{ 'footer'|trans({}, 'email') }}
+---
+{% if replyTo is not empty %}
+{{ 'reply.to'|trans({'%address%': replyTo}, 'email') }}
+{% else %}
+{{ 'reply.no'|trans({}, 'email') }}
+{% endif %}
+---
+{{ 'unsubscribe'|trans({}, 'email') }}: {{ url('profile_notifications') }}

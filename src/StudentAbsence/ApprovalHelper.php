@@ -10,7 +10,7 @@ use DateTime;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ApprovalHelper {
-    public function __construct(private StudentAbsenceRepositoryInterface $repository, private EventDispatcherInterface $eventDispatcher)
+    public function __construct(private readonly StudentAbsenceRepositoryInterface $repository, private readonly EventDispatcherInterface $eventDispatcher)
     {
     }
 

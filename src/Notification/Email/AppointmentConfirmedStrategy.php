@@ -4,60 +4,38 @@ namespace App\Notification\Email;
 
 use App\Converter\UserStringConverter;
 use App\Event\AppointmentConfirmedEvent;
+use App\Notification\AppointmentConfirmedNotification;
+use App\Notification\AppointmentNotification;
+use App\Notification\Notification;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AppointmentConfirmedStrategy implements EmailStrategyInterface {
 
-    public function __construct(private TranslatorInterface $translator, private UserStringConverter $converter)
-    {
+    public function supports(Notification $notification): bool {
+        return $notification instanceof AppointmentConfirmedNotification;
     }
 
     /**
-     * @inheritDoc
+     * @param AppointmentConfirmedNotification $notification
+     * @return string|null
      */
-    public function isEnabled(): bool {
-        return true;
+    public function getReplyTo(Notification $notification): ?string {
+        return $notification->getConfirmedBy()->getEmail();
     }
 
     /**
-     * @inheritDoc
+     * @param AppointmentConfirmedNotification $notification
+     * @return string
      */
-    public function supports($objective): bool {
-        return $objective instanceof AppointmentConfirmedEvent;
+    public function getSender(Notification $notification): string {
+        return sprintf('%s %s', $notification->getConfirmedBy()->getFirstname(), $notification->getConfirmedBy()->getLastname());
     }
 
-    /**
-     * @param AppointmentConfirmedEvent $objective
-     */
-    public function getReplyTo($objective): ?string {
-        return $objective->getConfirmedBy()->getEmail();
-    }
-
-    /**
-     * @param AppointmentConfirmedEvent $objective
-     */
-    public function getRecipients($objective): array {
-        return [ $objective->getAppointment()->getCreatedBy() ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getSubject($objective): string {
-        return $this->translator->trans('appointment.title', [], 'email');
-    }
-
-    /**
-     * @param AppointmentConfirmedEvent $objective
-     */
-    public function getSender($objective): string {
-        return $this->converter->convert($objective->getConfirmedBy(), false);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getTemplate(): string {
-        return 'email/appointment.html.twig';
+        return 'email/default.txt';
+    }
+
+    public function getHtmlTemplate(): ?string {
+        return 'email/default.html.twig';
     }
 }

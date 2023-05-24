@@ -36,14 +36,12 @@ services:
             tags: [ 'app.sorting_strategy' ]
         App\Notification\Email\EmailStrategyInterface:
             tags: [ 'app.notifications.email_strategy' ]
+        App\Notification\NotificationHandlerInterface:
+            tags: [ 'app.notifications.handler']
         App\Untis\Html\Substitution\InfotextReaderInterface:
             tags: [ 'app.untis.import.infotext_reader' ]
         App\Untis\StudentId\StudentIdGeneratorInterface:
             tags: [ 'app.untis.student_id_generator' ]
-        App\StudentAbsence\AbstractNotifier:
-            bind:
-                $appName: '%env(APP_NAME)%'
-                $sender: '%env(MAILER_FROM)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -280,18 +278,21 @@ services:
 
     App\Notification\NotificationService:
         arguments:
-            $emailStrategies: !tagged app.notifications.email_strategy
+            $handler: !tagged app.notifications.handler
 
-    App\Notification\Email\EmailNotificationService:
+    App\Notification\Email\EmailNotificationHandler:
         arguments:
-            $isEnabled: '%env(bool:NOTIFICATIONS_ENABLED)%'
+            $strategies: !tagged app.notifications.email_strategy
             $appName: '%env(APP_NAME)%'
             $sender: '%env(MAILER_FROM)%'
 
-    App\EventSubscriber\ReservationCheckerSubscriber:
+    App\Notification\Email\DefaultEmailStrategy:
+        arguments:
+            $sender: '%env(MAILER_FROM)%'
+
+    App\Notification\Email\ImportStrategy:
         arguments:
             $appName: '%env(APP_NAME)%'
-            $sender: '%env(MAILER_FROM)%'
 
     App\TeacherAbsence\TeacherAbsenceNotifier:
         arguments:

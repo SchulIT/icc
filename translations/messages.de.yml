@@ -328,6 +328,9 @@ dashboard:
     infotexts: Tagestexte
     daily_info: Informationen zum Tag
     agenda: Agenda
+    notifications:
+        unread: '{1}Es gibt %count% ungelesene Benachrichtigung|]1,Inf[ Es gibt %count% ungelesene Benachrichtigungen.'
+        link: anzeigen
     settings:
         label: Einstellungen
         show_times: Uhrzeiten der Unterrichtsstunden anzeigen
@@ -1895,3 +1898,12 @@ comingsoon:
 experimental:
     label: experimentell
     info: Dieses Feature funktioniert möglichkerweise noch nicht so, wie erwartet. Es darf jedoch getestet werden.
+
+notifications:
+    label: Benachrichtigungen
+    link: Details
+    unread: ungelesen
+    mark_read:
+        label: Alle Benachrichtigungen als gelesen markieren
+        success: Alle Benachrichtigungen als gelesen markiert
+    settings: Benachrichtigungseinstellungen

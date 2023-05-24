@@ -2,6 +2,7 @@
 
 {% block dashboard %}
     <div class="container-fluid px-0">
+        {{ block('notifications') }}
         {{ block('priority_messages') }}
 
         {{ block('daily_info') }}

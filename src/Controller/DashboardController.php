@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\NotificationRepositoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use App\Dashboard\DashboardViewHelper;
 use App\Dashboard\DashboardViewCollapseHelper;
@@ -43,7 +44,8 @@ class DashboardController extends AbstractController {
     public function dashboard(StudentFilter $studentFilter, TeacherFilter $teacherFilter, UserTypeFilter $userTypeFilter, RoomFilter $roomFilter,
                               DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper,
                               DateHelper $dateHelper, DashboardSettings $settings, TimetableSettings $timetableSettings, SectionRepositoryInterface $sectionRepository,
-                              UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository, Request $request): Response {
+                              UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository,
+                              NotificationRepositoryInterface $notificationRepository, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -150,7 +152,8 @@ class DashboardController extends AbstractController {
             'last_import' => $importDateTypeRepository->findOneByEntityClass(Substitution::class),
             'settings' => $settings,
             'section' => $section,
-            'dateHasSection' => $dateHasSection
+            'dateHasSection' => $dateHasSection,
+            'unreadNotificationsCount' => $notificationRepository->countUnreadForUser($user)
         ]);
     }
 

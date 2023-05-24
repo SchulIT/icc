@@ -11,37 +11,26 @@ use App\Notification\Email\EmailNotificationService;
 use App\Notification\Email\EmailStrategyInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class NotificationService implements EventSubscriberInterface {
+class NotificationService {
+    private readonly iterable $handler;
+
     /**
-     * @param EmailStrategyInterface[] $emailStrategies
+     * @param NotificationHandlerInterface[] $handler
      */
-    public function __construct(private EmailNotificationService $email, private iterable $emailStrategies)
-    {
+    public function __construct(iterable $handler) {
+        $this->handler = $handler;
     }
 
     /**
-     * Sends notifications based on the given objective.
-     *
-     * @param object $objective
+     * @param Notification $notification
+     * @param string[] $handlersToBeExecuted If specified, only the given handlers are executed (this is useful if a notification is only supposed to be delivered by email)
+     * @return void
      */
-    public function sendNotifications($objective) {
-        foreach($this->emailStrategies as $strategy) {
-            if($strategy->isEnabled() && $strategy->supports($objective)) {
-                $this->email->sendNotification($objective, $strategy);
+    public function notify(Notification $notification, array $handlersToBeExecuted = [ ]): void {
+        foreach($this->handler as $handler) {
+            if((empty($handlersToBeExecuted) || in_array($handler->getName(), $handlersToBeExecuted)) && $handler->canHandle($notification)) {
+                $handler->handle($notification);
             }
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getSubscribedEvents(): array {
-        return [
-            MessageCreatedEvent::class => 'sendNotifications',
-            MessageUpdatedEvent::class => 'sendNotifications',
-            ExamImportEvent::class => 'sendNotifications',
-            SubstitutionImportEvent::class => 'sendNotifications',
-            AppointmentConfirmedEvent::class => 'sendNotifications'
-        ];
     }
 }

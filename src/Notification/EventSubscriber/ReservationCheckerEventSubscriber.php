@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventSubscriber;
+namespace App\Notification\EventSubscriber;
 
 use App\Entity\Exam;
 use App\Entity\ResourceReservation;
@@ -8,8 +8,11 @@ use App\Entity\Substitution;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 use App\Event\SubstitutionImportEvent;
+use App\Notification\Notification;
+use App\Notification\NotificationService;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\ResourceReservationRepositoryInterface;
+use App\Repository\UserRepositoryInterface;
 use App\Rooms\Reservation\ResourceAvailabilityHelper;
 use App\Validator\NoReservationCollision;
 use DateTime;
@@ -18,6 +21,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -25,9 +29,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-class ReservationCheckerSubscriber implements EventSubscriberInterface {
+class ReservationCheckerEventSubscriber implements EventSubscriberInterface {
 
-    public function __construct(private string $appName, private string $sender, private ValidatorInterface $validator, private ResourceReservationRepositoryInterface $reservationRepository, private ExamRepositoryInterface $examRepository, private MailerInterface $mailer, private Environment $twig, private TranslatorInterface $translator, private DateHelper $dateHelper, private ResourceAvailabilityHelper $availabilityHelper)
+    public function __construct(private readonly ValidatorInterface $validator, private readonly ResourceReservationRepositoryInterface $reservationRepository,
+                                private readonly ExamRepositoryInterface $examRepository, private readonly TranslatorInterface $translator,
+                                private readonly DateHelper $dateHelper, private readonly ResourceAvailabilityHelper $availabilityHelper,
+                                private readonly UserRepositoryInterface $userRepository, private readonly NotificationService $notificationService,
+                                private readonly UrlGeneratorInterface $urlGenerator)
     {
     }
 
@@ -132,68 +140,90 @@ class ReservationCheckerSubscriber implements EventSubscriberInterface {
     }
 
     private function sendReservationRemovedEmail(ResourceReservation $reservation): void {
-        $content = $this->twig->render('email/reservation_removed.html.twig', [
-            'reservation' => $reservation,
-            'sender' => ''
-        ]);
+        if($reservation->getTeacher() === null) {
+            return;
+        }
 
-        $mail = (new Email())
-            ->from(new Address($this->sender, $this->appName))
-            ->sender(new Address($this->sender, $this->appName))
-            ->subject($this->translator->trans('reservation_removed.title', [],'email'))
-            ->to($reservation->getTeacher()->getEmail())
-            ->html($content);
+        foreach($this->userRepository->findAllTeachers([$reservation->getTeacher()]) as $recipient) {
+            $notification = new Notification(
+                $recipient,
+                $this->translator->trans('reservation_removed.title', [], 'email'),
+                $this->translator->trans('reservation_removed.content', [
+                    '%resource%' => $reservation->getResource()->getName(),
+                    '%date%' => $reservation->getDate()->format($this->translator->trans('date.format_short')),
+                    '%lesson%' => $this->translator->trans('label.substitution_lessons', [
+                        '%start%' => $reservation->getLessonStart(),
+                        '%end%' => $reservation->getLessonEnd(),
+                        '%count%' => ($reservation->getLessonEnd() - $reservation->getLessonStart())
+                    ])
+                ], 'email'),
+                $this->urlGenerator->generate('substitutions', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                $this->translator->trans('reservation_removed.link', [], 'email')
+            );
 
-        $this->mailer->send($mail);
+            $this->notificationService->notify($notification);
+        }
     }
 
     private function sendViolationsEmail(ResourceReservation $reservation, ConstraintViolationListInterface $violationList): void {
-        $content = $this->twig->render('email/reservation.html.twig', [
-            'reservation' => $reservation,
-            'validation_errors' => $violationList,
-            'sender' => ''
-        ]);
+        if($reservation->getTeacher() === null) {
+            return;
+        }
 
-        $mail = (new Email())
-            ->from(new Address($this->sender, $this->appName))
-            ->sender(new Address($this->sender, $this->appName))
-            ->subject($this->translator->trans('reservation.title', [],'email'))
-            ->to($reservation->getTeacher()->getEmail())
-            ->html($content);
+        foreach($this->userRepository->findAllTeachers([$reservation->getTeacher()]) as $recipient) {
+            $notification = new Notification(
+                $recipient,
+                $this->translator->trans('reservation.title', [], 'email'),
+                $this->translator->trans('reservation.content', [
+                    '%room%' => $reservation->getResource()->getName(),
+                    '%date%' => $reservation->getDate()->format($this->translator->trans('date.format_short')),
+                    '%lesson%' => $this->translator->trans('label.substitution_lessons', [
+                        '%start%' => $reservation->getLessonStart(),
+                        '%end%' => $reservation->getLessonEnd(),
+                        '%count%' => ($reservation->getLessonEnd() - $reservation->getLessonStart())
+                    ])
+                ], 'email'),
+                $this->urlGenerator->generate('edit_room_reservation', ['uuid' => $reservation->getUuid()->toString()], UrlGeneratorInterface::ABSOLUTE_URL),
+                $this->translator->trans('reservation.link', [], 'email')
+            );
 
-        $this->mailer->send($mail);
+            $this->notificationService->notify($notification);
+        }
     }
 
     /**
      * @param ConstraintViolationInterface[] $violationList
      */
     private function sendExamViolationsEmail(Exam $exam, array $violationList): void {
-        $content = $this->twig->render('email/exam_reservation.html.twig', [
-            'exam' => $exam,
-            'validation_errors' => $violationList,
-            'sender' => ''
-        ]);
-
-        $recipients = [ ];
+        $teachers = [ ];
 
         /** @var Tuition $tuition */
         foreach($exam->getTuitions() as $tuition) {
             foreach($tuition->getTeachers() as $teacher) {
-                if(!in_array($teacher, $recipients)) {
-                    $recipients[] = $teacher;
+                if(!in_array($teacher, $teachers)) {
+                    $teachers[] = $teacher;
                 }
             }
         }
 
-        foreach($recipients as $recipient) {
-            $mail = (new Email())
-                ->from(new Address($this->sender, $this->appName))
-                ->sender(new Address($this->sender, $this->appName))
-                ->subject($this->translator->trans('reservation.title', [],'email'))
-                ->to($recipient->getEmail())
-                ->html($content);
+        foreach($this->userRepository->findAllTeachers([$teachers]) as $recipient) {
+            $notification = new Notification(
+                $recipient,
+                $this->translator->trans('reservation.title', [], 'email'),
+                $this->translator->trans('reservation.content_exam', [
+                    '%room%' => $exam->getRoom()?->getName(),
+                    '%date%' => $exam->getDate()->format($this->translator->trans('date.format_short')),
+                    '%lesson%' => $this->translator->trans('label.substitution_lessons', [
+                        '%start%' => $exam->getLessonStart(),
+                        '%end%' => $exam->getLessonEnd(),
+                        '%count%' => ($exam->getLessonEnd() - $exam->getLessonStart())
+                    ])
+                ], 'email'),
+                $this->urlGenerator->generate('edit_exam', ['uuid' => $exam->getUuid()->toString()], UrlGeneratorInterface::ABSOLUTE_URL),
+                $this->translator->trans('reservation.link', [], 'email')
+            );
 
-            $this->mailer->send($mail);
+            $this->notificationService->notify($notification);
         }
     }
 

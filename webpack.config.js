@@ -25,6 +25,7 @@ Encore
     .addEntry('gradebook', './assets/js/gradebook.js')
     .addStyleEntry('simple', './vendor/schulit/common-bundle/Resources/assets/css/simple.scss')
     .addStyleEntry('signin', './vendor/schulit/common-bundle/Resources/assets/css/signin.scss')
+    .addStyleEntry('email', './assets/css/email.scss')
 
     .configureBabel(() => {}, {
         useBuiltIns: 'usage',

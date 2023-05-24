@@ -15,7 +15,7 @@
             <columns>
                 <spacer size="16"></spacer>
 
-                <h1>{{ notification.subject }}</h1>
+                <h1>{{ notification.title }}</h1>
 
                 <spacer size="16"></spacer>
 
@@ -44,27 +44,6 @@
 
                 <hr/>
 
-                {{ notification.message.content|markdown|raw }}
-
-                {% if notification.message.mustConfirm %}
-                    <p>❗ {{ 'message.must_confirm'|trans({}, 'email') }}</p>
-                    <hr />
-                {% endif %}
-                {% if notification.message.attachments|length > 0 %}
-                    <p>❗ {{ 'message.attachments'|trans({}, 'email') }}</p>
-                    <hr />
-                {% endif %}
-                {% if notification.message.isDownloadsEnabled %}
-                    <p>❗ {{ 'message.has_downloads'|trans({}, 'email') }}</p>
-                    <hr />
-                {% endif %}
-                {% if notification.message.isUploadsEnabled %}
-                    <p>❗ {{ 'message.has_uploads'|trans({}, 'email') }}</p>
-                    <hr />
-                {% endif %}
-
-                <hr />
-
                 <p>
                     <small>{{ 'footer'|trans({}, 'email') }}</small>
                 </p>
@@ -80,7 +59,7 @@
                 </p>
 
                 <p>
-                    <button class="small" href="{{ url('profile_notifications') }}">{{ 'unsubscribe'|trans({}, 'email') }}</button>
+                    <button class="small expanded" href="{{ url('profile_notifications') }}">{{ 'unsubscribe'|trans({}, 'email') }}</button>
                 </p>
             </columns>
         </row>

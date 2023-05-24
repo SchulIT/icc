@@ -1,6 +1,9 @@
-greeting: 'Hallo,'
+greeting: 'Hallo!'
 farewell: Gruß
-footer: 'Diese Nachricht wurde automatisch vom System versendet.'
+footer: Diese Nachricht wurde automatisch vom System versendet.
+reply:
+  no: "Auf diese E-Mail kann *nicht* geantwortet werden."
+  to: Antworten auf diese E-Mail werden an %address% gesendet.
 unsubscribe: Benachrichtigungen deaktivieren
 
 substitution:
@@ -12,16 +15,16 @@ substitution:
 exam:
   title: Neuer Klausurplan
   content: es wurde ein neuer Klausurplan hochgeladen.
-  link: Klausur anzeigen
+  link: Klausurplan anzeigen
 
 message:
   create:
     title: "Neue Mitteilung: %title%"
-    content: 'es wurde eine neue Mitteilung <strong>%title%</strong> erstellt. Eine Kopie der Nachricht ist unten angehangen.'
+    content: Es wurde eine neue Mitteilung %title% erstellt.
     link: Mitteilung anzeigen
   update:
     title: "Mitteilung aktualisiert: %title%"
-    content: 'es wurde eine neue Mitteilung <strong>%title%</strong> aktualisiert. Eine Kopie der Nachricht ist unten angehangen.'
+    content: Die Mitteilung %title% wurde aktualisiert.
     link: Mitteilung anzeigen
   attachments: Diese Mitteilung hat Anhänge. Diese werden nur auf dem ICC angezeigt.
   must_confirm: Diese Mitteilung muss bestätigt werden.
@@ -30,18 +33,18 @@ message:
 
 reservation:
   title: Konflikt bei Raum-Reservierung
-  content: 'bei der Raumreservierung für %room% am %date% (%lesson%) ist es zu einem Konflikt gekommen.'
-  content_exam: 'bei der Raumreservierung für eine Klausur in %room% am %date% (%lesson%) ist es zu einem Konflikt gekommen.'
+  content: 'Bei der Raumreservierung für %room% am %date% (%lesson%) ist es zu einem Konflikt gekommen.'
+  content_exam: 'Bei der Raumreservierung für eine Klausur in %room% am %date% (%lesson%) ist es zu einem Konflikt gekommen.'
   link: Reservierung anzeigen
 
 reservation_removed:
   title: Reservierung gelöscht
-  content: 'beim Import des Stundenplans wurde die Reservierung für %resource% am %date% (%lesson%) entfernt, da diese nun durch den Vertretungsplan abgedeckt ist.'
+  content: 'Beim Import des Stundenplans wurde die Reservierung für %resource% am %date% (%lesson%) entfernt, da diese nun durch den Vertretungsplan abgedeckt ist.'
   link: Vertretungsplan anzeigen
 
 appointment:
   title: Termin bestätigt
-  content: 'der Termin %name% wurde von %user% bestätigt und ist nun im ICC für die festgelegten Zielgruppen sichtbar.'
+  content: 'Der Termin %name% wurde von %user% bestätigt und ist nun im ICC für die festgelegten Zielgruppen sichtbar.'
   link: Terminplan anzeigen
 
 student_absence:

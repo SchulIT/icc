@@ -45,7 +45,7 @@ class LinkProcessor {
                     if ($document !== null) {
                         $url = $this->urlGenerator->generate('show_document', [
                             'uuid' => $document->getUuid()
-                        ]);
+                        ], UrlGeneratorInterface::ABSOLUTE_URL);
                         $node->setUrl($url);
                         $this->prependIcon($node, 'fas fa-arrow-right');
                     } else {
@@ -63,7 +63,7 @@ class LinkProcessor {
                     if ($article !== null) {
                         $url = $this->urlGenerator->generate('show_wiki_article', [
                             'uuid' => $article->getUuid()
-                        ]);
+                        ], UrlGeneratorInterface::ABSOLUTE_URL);
                         $node->setUrl($url);
                         $this->prependIcon($node, 'fas fa-arrow-right');
                     } else {

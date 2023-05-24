@@ -95,6 +95,9 @@ class Grade implements Stringable {
         $this->teachers->removeElement($teacher);
     }
 
+    /**
+     * @return Collection<GradeTeacher>
+     */
     public function getTeachers(): Collection {
         return $this->teachers;
     }

@@ -73,8 +73,8 @@ class AppExtension extends AbstractExtension {
         }, $teachers));
     }
 
-    public function student(Student $student): string {
-        return $this->studentConverter->convert($student);
+    public function student(Student $student, bool $includeGrade = false): string {
+        return $this->studentConverter->convert($student, $includeGrade);
     }
 
     public function user(User $user, bool $includeUsername = true): string {

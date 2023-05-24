@@ -69,3 +69,12 @@ teacher_absence:
     content: Eine Abwesenheitsmeldung wurde aktualisiert.
   link: Zur Abwesenheitsmeldung
   reply: Auf diese E-Mail kann geantwortet werden. Die Antwort wird an die Lehrkraft versendet, die sich abwesend gemeldet hat.
+
+book_comment:
+  create:
+    title: Neuer Kommentar im Unterrichtsbuch
+    content: Es wurde ein neuer Kommentar im Unterrichtsbuch erstellt.
+  update:
+    title: Kommentar im Unterrichtsbuch aktualisiert
+    content: Ein Kommentar im Unterrichtsbuch wurde aktualisiert.
+  link: Zum Kommentar

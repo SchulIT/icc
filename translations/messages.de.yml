@@ -1657,6 +1657,8 @@ book:
         add:
             label: Neuer Kommentar
             success: Kommentar erfolgreich angelegt
+        show:
+            label: Kommentar anzeigen
         edit:
             label: Kommentar bearbeiten
             success: Kommentar erfolgreich aktualisiert

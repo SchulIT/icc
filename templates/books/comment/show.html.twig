@@ -1,0 +1,57 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.comment.show.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-body">
+                        {{ comment.text|markdown }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('edit_book_comment', { uuid: comment.uuid }) }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-edit"></i> {{ 'book.comment.edit.label'|trans }}
+                        </a>
+
+                        <a href="{{ path('remove_book_student', { uuid: comment.uuid}) }}" class="list-group-item list-group-item-action list-group-item-danger">
+                            <i class="fas fa-trash"></i> {{ 'book.comment.remove.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ 'label.details'|trans }}</h4>
+
+                        <p>
+                            <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
+                        </p>
+                        <p>
+                            <i class="fas fa-calendar-alt"></i> {{ comment.date|format_date }}
+                        </p>
+                        <p>
+                            {% for student in comment.students %}
+                            <i class="fas fa-user-graduate"></i> {{ student|student(true) }} <br>
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

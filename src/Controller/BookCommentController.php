@@ -66,6 +66,13 @@ class BookCommentController extends AbstractController {
         ]);
     }
 
+    #[Route('/{uuid}', name: 'show_book_comment')]
+    public function show(BookComment $comment): Response {
+        return $this->render('books/comment/show.html.twig', [
+            'comment' => $comment
+        ]);
+    }
+
     #[Route(path: '/{uuid}/edit', name: 'edit_book_comment')]
     public function edit(BookComment $comment, Request $request): Response {
         $form = $this->createForm(BookCommentType::class, $comment);

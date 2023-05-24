@@ -15,6 +15,7 @@ class TeacherAbsenceVoter extends Voter {
     public const NewAbsence = 'new-teacher-absence';
 
     public const CanViewAny = 'view-any-teacher-absence';
+    public const Index = 'index';
     public const Edit = 'edit';
     public const Show = 'show';
     public const Remove = 'remove';
@@ -26,6 +27,7 @@ class TeacherAbsenceVoter extends Voter {
     protected function supports(string $attribute, mixed $subject): bool {
         return $attribute === self::NewAbsence
             || $attribute === self::CanViewAny
+            || $attribute === self::Index
             || ($subject instanceof TeacherAbsence && in_array($attribute, [ self::Edit, self::Show, self::Remove, self::Process ]));
     }
 
@@ -35,6 +37,9 @@ class TeacherAbsenceVoter extends Voter {
         }
 
         switch($attribute) {
+            case self::Index:
+                return $this->canCreate($token) || $this->canViewAny($token);
+
             case self::NewAbsence:
                 return $this->canCreate($token);
 

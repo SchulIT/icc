@@ -247,6 +247,13 @@ class Builder {
                 ->setExtra('icon', 'fas fa-user-graduate');
         }
 
+        if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $plans->addChild('absences.students.export.label', [
+                'route' => 'export_student_absences'
+            ])
+                ->setExtra('icon', 'fas fa-download');
+        }
+
         if($this->authorizationChecker->isGranted(TeacherAbsenceVoter::NewAbsence) || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::CanViewAny)) {
             $plans->addChild('absences.teachers.label', [
                 'route' => 'teacher_absences'

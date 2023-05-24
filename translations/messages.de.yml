@@ -1594,11 +1594,30 @@ absences:
             approve: genehmigen
             approved: genehmigt
             not_approved: nicht genehmigt
+            approved_by: genehmigt von
+            approved_at: genehmigt am
             deny: nicht genehmigen
             pending: Genehmigung steht aus
             success: Genehmigungsstatus erfolgreich geändert
         comment:
             success: Mitteilung erfolgreich erstellt
+        export:
+            label: Export (Lernende)
+            range:
+                label: Zeitbereich auswählen
+                button: Weiter
+            error:
+                select_range: Bitte zunächst den Datumsbereich auswählen
+                start_greater_than_end: Das Startdatum muss vor dem Enddatum liegen
+            generate:
+                start: 'Es werden %count% Abwesenheitsmeldungen exportiert.'
+                button: ZIP-Datei generieren
+                progress: '%current%/%count% Meldungen exportiert'
+                zip: 'Erzeuge ZIP-Datei'
+                please_wait: Bitte warten, der Vorgang dauert einige Zeit.
+            download:
+                button: ZIP-Datei herunterladen
+
 
 
 

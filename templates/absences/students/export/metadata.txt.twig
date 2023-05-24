@@ -1,0 +1,32 @@
+{{ 'label.type'|trans }}: {{ absence.type.name }}
+{{ 'label.student'|trans }}: {{ absence.student|student(true) }}
+---
+{{ 'absences.students.add.absent_from'|trans }}: {{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }})
+{{ 'absences.students.add.absent_until'|trans }}: {{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})
+{{ 'absences.created_by'|trans }}: {{ absence.createdBy|user }}
+{{ 'absences.created_at'|trans }}: {{ absence.createdAt|format_datetime }}
+---
+{{ 'absences.students.add.phone'|trans }}: {{ absence.phone }}
+{{ 'label.email'|trans }}: {{ absence.email }}
+---
+{% if absence.type.mustApprove -%}
+{{ 'label.status'|trans }}: {% if absence.approvedAt is not null %}{{ 'absences.students.approval.approved'|trans }}{% else %}{{ 'absences.students.approval.not_approved'|trans }}{% endif %}
+{% if absence.approvedAt is not null -%}
+{{ 'absences.students.approval.approved_at'|trans }}: {{ absence.approvedAt|format_datetime }}
+{% endif -%}
+{% if absence.approvedBy is not null -%}
+{{ 'absences.students.approval.approved_by'|trans }}: {{ absence.approvedBy|user(false)}}
+{% endif %}
+---
+{% endif %}
+
+{{ absence.message }}
+
+---
+{% for message in absence.messages %}
+{{ message.createdBy|user }}
+{{ message.createdAt|format_datetime }}
+
+{{ message.message }}
+---
+{% endfor %}

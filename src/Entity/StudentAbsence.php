@@ -168,6 +168,9 @@ class StudentAbsence {
         $this->attachments->removeElement($attachment);
     }
 
+    /**
+     * @return Collection<StudentAbsenceAttachment>
+     */
     public function getAttachments(): Collection {
         return $this->attachments;
     }

@@ -97,6 +97,22 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
         return $qb->getQuery()->getResult();
     }
 
+    public function findAllUuids(DateTime $start, DateTime $end): array {
+        return
+            array_map(
+                fn($row) => $row['uuid'],
+                $this->em->createQueryBuilder()
+                ->select('a.uuid')
+                ->from(StudentAbsence::class, 'a')
+                ->where('a.from.date >= :start')
+                ->andWhere('a.until.date <= :end')
+                ->setParameter('start', $start)
+                ->setParameter('end', $end)
+                ->getQuery()
+                ->getScalarResult()
+            );
+    }
+
     private function applyDate(QueryBuilder $qb, DateTime $date) {
         $qb->andWhere('sn.from.date <= :date');
         $qb->andWhere('sn.until.date >= :date');

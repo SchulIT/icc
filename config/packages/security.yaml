@@ -43,6 +43,7 @@ security:
         - { path: ^/admin$, roles: ROLE_USER }
         - { path: ^/admin/, roles: ROLE_ADMIN }
         - { path: ^/api/import, roles: ROLE_IMPORT }
+        - { path: ^/absence/export, roles: ROLE_ADMIN }
         - { path: ^/book/, roles: ROLE_BOOK_VIEWER }
         - { path: ^/authorize, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/cron, roles: ROLE_CRON }

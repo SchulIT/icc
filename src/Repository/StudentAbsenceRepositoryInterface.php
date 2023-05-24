@@ -42,6 +42,13 @@ interface StudentAbsenceRepositoryInterface {
     public function getPaginator(?StudentAbsenceType $type, int $itemsPerPage, int &$page): Paginator;
 
     /**
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return string[]
+     */
+    public function findAllUuids(DateTime $start, DateTime $end): array;
+
+    /**
      * @param DateTime $threshold
      * @return int Number of removed sick notes
      */

@@ -1,0 +1,90 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'absences.students.export.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'absences.label'|trans }}</li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-6">
+                <form method="get">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="title">{{ 'absences.students.export.range.label'|trans }}</h4>
+
+                            <div class="form-group">
+                                <label for="start">{{ 'label.start'|trans }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                    <input class="form-control" type="date" name="start" id="start" pattern="\d{4}-\d{2}-\d{2}" value="{% if start is not null %}{{ start.format('Y-m-d') }}{% endif %}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="end">{{ 'label.end'|trans }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                    <input class="form-control" type="date" name="end" id="end" pattern="\d{4}-\d{2}-\d{2}" value="{% if end is not null %}{{ end.format('Y-m-d') }}{% endif %}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-right"></i> {{ 'absences.students.export.range.button'|trans }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        {% if start is null or end is null %}
+                            <p>{{ 'absences.students.export.error.select_range'|trans }}</p>
+                        {% elseif start >= end %}
+                            <p>{{ 'absences.students.export.error.start_greater_than_end'|trans }}</p>
+                        {% else %}
+                            <p>{{ 'absences.students.export.generate.start'|trans({'%count%': uuids|length}) }}</p>
+                        {% endif %}
+
+                        <div class="zip-progress hide">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 0"></div>
+                            </div>
+
+                            <p class="progress-text" data-template="{{ 'absences.students.export.generate.progress'|trans }}" data-template-zip="{{ 'absences.students.export.generate.zip'|trans }}"></p>
+
+                            <p>{{ 'absences.students.export.generate.please_wait'|trans }}</p>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button class="btn btn-primary btn-sm {% if uuids|length == 0 %}disabled{% endif %}" id="download"
+                                data-uuids="{{ uuids|json_encode|e('html_attr') }}"
+                                data-absence-url="{{ path('export_student_absence', { uuid: 'uuid'}) }}"
+                                data-attachment-url="{{ path('export_student_absence_attachment', { uuid: 'uuid'}) }}">
+                            <i class="fas fa-arrow-right"></i> {{ 'absences.students.export.generate.button'|trans }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/export-student-absences.js') }}"></script>
+{% endblock %}

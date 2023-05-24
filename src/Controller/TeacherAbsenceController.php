@@ -44,6 +44,8 @@ class TeacherAbsenceController extends AbstractController {
 
     #[Route('', name: 'teacher_absences')]
     public function index(TeacherFilter $teacherFilter, Request $request, SectionFilter $sectionFilter) {
+        $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Index);
+
         /** @var User $user */
         $user = $this->getUser();
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));

@@ -8,41 +8,28 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class TimetableSupervisionData {
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\Accessor(getter="getId", setter="setId")
-     */
     #[Serializer\Accessor(getter: 'getId', setter: 'setId')]
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $id = null;
 
-    /**
-     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     */
     #[Assert\NotNull]
+    #[Serializer\Type("DateTime<'Y-m-d\\TH:i:s'>")]
     private ?DateTime $date = null;
 
-    /**
-     * @Serializer\Type("boolean")
-     */
+    #[Serializer\Type('boolean')]
     private bool $isBefore = false;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $teacher = null;
 
-    /**
-     * @Serializer\Type("int")
-     */
     #[Assert\GreaterThan(0)]
+    #[Serializer\Type('int')]
     private ?int $lesson = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $location = null;
 
     public function getId(): ?string {

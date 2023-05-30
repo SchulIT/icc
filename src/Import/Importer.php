@@ -99,7 +99,7 @@ class Importer {
 
             return $result;
         } catch (Throwable $e) {
-            $this->logger->error('Import failed.', [
+            $this->logger->error('Import fehlgeschagen.', [
                 'exception' => $e
             ]);
             throw new ImportException($e->getMessage(), $e->getCode(), $e);

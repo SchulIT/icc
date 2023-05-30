@@ -14,17 +14,10 @@ class StudentLearningManagementSystemsData {
     #[Assert\Valid]
     private array $consents = [ ];
 
-    /**
-     * @return array
-     */
     public function getConsents(): array {
         return $this->consents;
     }
 
-    /**
-     * @param array $consents
-     * @return StudentLearningManagementSystemsData
-     */
     public function setConsents(array $consents): StudentLearningManagementSystemsData {
         $this->consents = $consents;
         return $this;

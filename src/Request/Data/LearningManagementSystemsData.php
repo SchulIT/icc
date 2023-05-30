@@ -18,10 +18,6 @@ class LearningManagementSystemsData {
         return $this->lms;
     }
 
-    /**
-     * @param array $lms
-     * @return LearningManagementSystemsData
-     */
     public function setLms(array $lms): LearningManagementSystemsData {
         $this->lms = $lms;
         return $this;

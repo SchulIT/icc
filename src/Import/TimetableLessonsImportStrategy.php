@@ -98,7 +98,7 @@ class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, 
         $section = $this->sectionResolver->getSectionForDate($data->getDate());
 
         if($section === null) {
-            throw new ImportException(sprintf('No section found for date "%s"', $data->getDate()->format('Y-m-d')));
+            throw new SectionNotResolvableException($data->getDate());
         }
 
         if(!empty($data->getSubject()) && count($data->getGrades()) > 0 && count($data->getTeachers()) > 0) {
@@ -139,7 +139,7 @@ class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, 
 
         if($entity->getTuition() === null && $entity->getSubject() === null) {
             $this->logger->info(sprintf(
-                'Cannot resolve timetable lesson for subject "%s", teachers "%s" and grades "%s"',
+                'Kein Unterricht für die Stundenplanstunde mit dem Fach "%s", den Lehrkräften "%s" und Klasse(n) "%s" gefunden.',
                 $data->getSubject(),
                 implode(',', $data->getTeachers()),
                 implode(',', $data->getGrades())

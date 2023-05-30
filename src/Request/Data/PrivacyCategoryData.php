@@ -7,22 +7,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class PrivacyCategoryData {
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $id = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $label = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $description = null;
 
     public function setId(string $id): PrivacyCategoryData {
@@ -54,10 +48,7 @@ class PrivacyCategoryData {
         return $this->label;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDescription() {
+    public function getDescription(): ?string {
         return $this->description;
     }
 }

@@ -15,28 +15,28 @@ class ExamsData {
      * This date controls at which date the imported exams begin. Only exams starting from this date (inclusive) will
      * be considered on import.
      *
-     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      * @var DateTime|null
      */
     #[Assert\NotNull]
+    #[Serializer\Type("DateTime<'Y-m-d\\TH:i:s'>")]
     private ?DateTime $startDate = null;
 
     /**
      * This date controls at which date the imported exams end. Only exams before this date (inclusive) will
      * be considered on import.
      *
-     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      * @var DateTime|null
      */
     #[Assert\NotNull]
+    #[Serializer\Type("DateTime<'Y-m-d\\TH:i:s'>")]
     private ?DateTime $endDate = null;
 
     /**
-     * @Serializer\Type("array<App\Request\Data\ExamData>")
      * @var ExamData[]
      */
     #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
+    #[Serializer\Type('array<App\Request\Data\ExamData>')]
     private array $exams = [ ];
 
     public function getStartDate(): ?DateTime {

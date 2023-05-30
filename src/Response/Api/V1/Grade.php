@@ -9,10 +9,8 @@ class Grade {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\SerializedName("name")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('name')]
+    #[Serializer\Type('string')]
     private ?string $name = null;
 
     public function getName(): string {

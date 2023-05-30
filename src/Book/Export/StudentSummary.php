@@ -6,34 +6,24 @@ use JMS\Serializer\Annotation as Serializer;
 
 class StudentSummary {
 
-    /**
-     * @Serializer\Type("App\Book\Export\Student")
-     * @Serializer\SerializedName("student")
-     */
+    #[Serializer\Type(Student::class)]
+    #[Serializer\SerializedName('student')]
     private ?Student $student = null;
 
-    /**
-     * @Serializer\SerializedName("absent_lessons_count")
-     * @Serializer\Type("integer")
-     */
+    #[Serializer\SerializedName('absent_lessons_count')]
+    #[Serializer\Type('integer')]
     private int $absentLessonsCount = 0;
 
-    /**
-     * @Serializer\SerializedName("not_excused_absent_lessons_count")
-     * @Serializer\Type("integer")
-     */
+    #[Serializer\SerializedName('not_excused_absent_lessons_count')]
+    #[Serializer\Type('integer')]
     private int $notExcusedAbsentLessonCount = 0;
 
-    /**
-     * @Serializer\SerializedName("excuse_status_not_set_lessons_count")
-     * @Serializer\Type("integer")
-     */
+    #[Serializer\SerializedName('excuse_status_not_set_lessons_count')]
+    #[Serializer\Type('integer')]
     private int $excuseStatusNotSetLessonCount = 0;
 
-    /**
-     * @Serializer\SerializedName("late_minutes_count")
-     * @Serializer\Type("integer")
-     */
+    #[Serializer\SerializedName('late_minutes_count')]
+    #[Serializer\Type('integer')]
     private int $lateMinutesCount = 0;
 
     public function getStudent(): Student {

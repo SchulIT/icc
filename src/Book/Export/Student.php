@@ -8,28 +8,21 @@ class Student {
 
     /**
      * The ID which is specified as ID when importing students.
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("id")
      */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('id')]
     private ?string $id = null;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("firstname")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('firstname')]
     private ?string $firstname = null;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("lastname")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('lastname')]
     private ?string $lastname = null;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("grade")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('grade')]
     private ?string $grade = null;
 
     public function getId(): string {

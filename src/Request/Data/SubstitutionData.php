@@ -8,94 +8,76 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SubstitutionData {
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $id = null;
 
-    /**
-     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     */
     #[Assert\NotNull]
+    #[Serializer\Type("DateTime<'Y-m-d\\TH:i:s'>")]
     private ?DateTime $date = null;
 
-    /**
-     * @Serializer\Type("int")
-     */
     #[Assert\GreaterThan(0)]
+    #[Serializer\Type('int')]
     private ?int $lessonStart = null;
 
-    /**
-     * @Serializer\Type("int")
-     */
     #[Assert\GreaterThan(0)]
     #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart')]
+    #[Serializer\Type('int')]
     private ?int $lessonEnd = null;
 
-    /**
-     * @Serializer\Type("boolean")
-     */
+    #[Serializer\Type('boolean')]
     private ?bool $startsBefore = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $type = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $subject = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $replacementSubject = null;
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private ?array $teachers = null;
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private ?array $replacementTeachers = null;
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private ?array $rooms = null;
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private ?array $replacementRooms = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $text = null;
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private ?array $grades = null;
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private ?array $replacementGrades = null;
 
     public function getId(): ?string {

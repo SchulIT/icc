@@ -12,72 +12,59 @@ class Appointment {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("title")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('title')]
     private ?string $title = null;
 
     /**
      * May be null
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("content")
      */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('content')]
     private ?string $content = null;
 
-    /**
-     * @Serializer\Type("DateTime")
-     * @Serializer\SerializedName("start")
-     */
+    #[Serializer\Type('DateTime')]
+    #[Serializer\SerializedName('start')]
     private ?DateTime $start = null;
 
-    /**
-     * @Serializer\Type("DateTime")
-     * @Serializer\SerializedName("end")
-     */
+    #[Serializer\Type('DateTime')]
+    #[Serializer\SerializedName('end')]
     private ?DateTime $end = null;
 
     /**
      * May be null
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("location")
      */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('location')]
     private ?string $location = null;
 
-    /**
-     * @Serializer\Type("bool")
-     * @Serializer\SerializedName("all_day")
-     */
+    #[Serializer\Type('bool')]
+    #[Serializer\SerializedName('all_day')]
     private ?bool $allDay = null;
 
     /**
-     * @Serializer\Type("array<App\Response\Api\V1\StudyGroup>")
-     * @Serializer\SerializedName("study_groups")
      * @var StudyGroup[]
      */
+    #[Serializer\Type('array<App\Response\Api\V1\StudyGroup>')]
+    #[Serializer\SerializedName('study_groups')]
     private ?array $studyGroups = null;
 
     /**
-     * @Serializer\Type("array<App\Response\Api\V1\Teacher>")
-     * @Serializer\SerializedName("organizers")
      * @var Teacher[]
      */
+    #[Serializer\Type('array<App\Response\Api\V1\Teacher>')]
+    #[Serializer\SerializedName('organizers')]
     private ?array $organizers = null;
 
     /**
      * May be null
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("external_organizers")
      */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('external_organizers')]
     private ?string $externalOrganizers = null;
 
-    /**
-     * @Serializer\Type("App\Response\Api\V1\AppointmentCategory")
-     * @Serializer\SerializedName("category")
-     */
+    #[Serializer\Type(AppointmentCategory::class)]
+    #[Serializer\SerializedName('category')]
     private ?AppointmentCategory $category = null;
 
     public function getTitle(): string {

@@ -11,48 +11,34 @@ class Student {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\SerializedName("firstname")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('firstname')]
+    #[Serializer\Type('string')]
     private ?string $firstname = null;
 
-    /**
-     * @Serializer\SerializedName("lastname")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('lastname')]
+    #[Serializer\Type('string')]
     private ?string $lastname = null;
 
-    /**
-     * @Serializer\SerializedName("gender")
-     * @Serializer\Type("string")
-     * @Serializer\ReadOnly()
-     * @Serializer\Accessor("getGenderString")
-     */
+    #[Serializer\SerializedName('gender')]
+    #[Serializer\Type('string')]
+    #[Serializer\ReadOnly]
+    #[Serializer\Accessor('getGenderString')]
     private ?Gender $gender = null;
 
-    /**
-     * @Serializer\SerializedName("email")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('email')]
+    #[Serializer\Type('string')]
     private ?string $email = null;
 
-    /**
-     * @Serializer\SerializedName("status")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('status')]
+    #[Serializer\Type('string')]
     private ?string $status = null;
 
-    /**
-     * @Serializer\SerializedName("is_full_aged")
-     * @Serializer\Type("bool")
-     */
+    #[Serializer\SerializedName('is_full_aged')]
+    #[Serializer\Type('bool')]
     private ?bool $isFullAged = null;
 
-    /**
-     * @Serializer\SerializedName("grade")
-     * @Serializer\Type("App\Response\Api\V1\Grade")
-     */
+    #[Serializer\SerializedName('grade')]
+    #[Serializer\Type(Grade::class)]
     private ?Grade $grade = null;
 
     public function getFirstname(): string {

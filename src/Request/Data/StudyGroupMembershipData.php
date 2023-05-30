@@ -9,25 +9,23 @@ class StudyGroupMembershipData {
 
     /**
      * Student ID.
-     *
-     * @Serializer\Type("string")
      */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $student = null;
 
     /**
      * External study group ID which the student belongs to.
-     *
-     * @Serializer\Type("string")
      */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $studyGroup = null;
 
     /**
      * Type of the membership.
-     * @Serializer\Type("string")
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $type = null;
 
     public function getStudent(): ?string {

@@ -2,14 +2,16 @@
 
 namespace App\Response\Api\V1;
 
+use JMS\Serializer\Annotation as Serializer;
+
 class StudyGroupMembershipList {
 
     /**
-     * @Serializer\SerializedName("memberships")
-     * @Serializer\Type("array<App\Response\Api\V1\StudyGroupMembership>")
      *
      * @var StudyGroupMembership[]
      */
+    #[Serializer\SerializedName('memberships')]
+    #[Serializer\Type('array<App\Response\Api\V1\StudyGroupMembership>')]
     private ?array $memberships = null;
 
     /**

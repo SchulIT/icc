@@ -8,25 +8,23 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class GradeTeacherData {
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $grade = null;
 
     /**
      * Kürzel der Lehrkraft
-     * @Serializer\Type("string")
      */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $teacher = null;
 
     /**
-     * @Serializer\Type("string")
      * @see GradeTeacherType
      */
     #[Assert\NotBlank]
     #[Assert\Choice(callback: 'getGradeTeacherTypes')]
+    #[Serializer\Type('string')]
     private ?string $type = null;
 
     public function getGrade(): ?string {

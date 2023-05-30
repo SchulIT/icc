@@ -8,19 +8,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CancelLessonRequest {
 
-    /**
-     * @Serializer\SerializedName("_token")
-     * @Serializer\Type("string")
-     */
     #[CsrfToken(id: 'cancel_lesson')]
     #[Assert\NotBlank]
+    #[Serializer\SerializedName('_token')]
+    #[Serializer\Type('string')]
     private ?string $csrfToken = null;
 
-    /**
-     * @Serializer\SerializedName("reason")
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\SerializedName('reason')]
+    #[Serializer\Type('string')]
     private ?string $reason = null;
 
     public function getCsrfToken(): ?string {

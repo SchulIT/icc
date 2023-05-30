@@ -8,12 +8,12 @@ use Ramsey\Uuid\UuidInterface;
 trait UuidTrait {
 
     /**
-     * @Serializer\SerializedName("uuid")
-     * @Serializer\ReadOnly()
-     * @Serializer\Type("string")
-     * @Serializer\Accessor(getter="getUuidString")
      * @var UuidInterface
      */
+    #[Serializer\SerializedName('uuid')]
+    #[Serializer\ReadOnly]
+    #[Serializer\Type('string')]
+    #[Serializer\Accessor(getter: 'getUuidString')]
     private $uuid;
 
     public function getUuid(): UuidInterface {

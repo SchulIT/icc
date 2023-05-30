@@ -58,7 +58,7 @@ class TimetableSupervisionsImportStrategy implements ReplaceImportStrategyInterf
         $teacher = $this->teacherRepository->findOneByAcronym($data->getTeacher());
 
         if($teacher === null) {
-            throw new Exception(sprintf('Lehrer %s nicht gefunden', $data->getTeacher()));
+            throw new Exception(sprintf('Lehrkraft %s nicht gefunden', $data->getTeacher()));
         }
 
         $supervision = (new TimetableSupervision())

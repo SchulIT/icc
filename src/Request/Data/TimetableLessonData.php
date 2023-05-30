@@ -11,58 +11,58 @@ use Symfony\Component\Validator\Constraints as Assert;
 class TimetableLessonData {
 
     /**
-     * @Serializer\Type("string")
      * @var string
      */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private string $id;
 
     /**
-     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      * @var DateTime|null
      */
     #[Assert\NotNull]
+    #[Serializer\Type("DateTime<'Y-m-d\\TH:i:s'>")]
     private ?DateTime $date = null;
 
     /**
-     * @Serializer\Type("int")
      * @var int
      */
     #[Assert\NotNull]
     #[Assert\GreaterThan(0)]
+    #[Serializer\Type('int')]
     private int $lessonStart;
 
     /**
-     * @Serializer\Type("int")
      * @var int
      */
     #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart')]
+    #[Serializer\Type('int')]
     private int $lessonEnd;
 
     /**
-     * @Serializer\Type("string")
      * @var string|null
      */
+    #[Serializer\Type('string')]
     private ?string $room = null;
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private array $teachers = [ ];
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private array $grades = [ ];
 
 
     /**
-     * @Serializer\Type("string")
      * @var string|null
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $subject = null;
 
     public function getId(): ?string {

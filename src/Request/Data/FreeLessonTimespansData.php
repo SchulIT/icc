@@ -10,11 +10,11 @@ class FreeLessonTimespansData {
     use ContextTrait;
 
     /**
-     * @Serializer\SerializedName("free_lessons")
-     * @Serializer\Type("array<App\Request\Data\FreeLessonTimespanData>")
      * @var FreeLessonTimespanData[]
      */
     #[Assert\Valid]
+    #[Serializer\SerializedName('free_lessons')]
+    #[Serializer\Type('array<App\Request\Data\FreeLessonTimespanData>')]
     private array $freeLessons = [ ];
 
     /**

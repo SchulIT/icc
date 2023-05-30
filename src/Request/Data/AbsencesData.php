@@ -11,10 +11,10 @@ class AbsencesData {
     use ContextTrait;
 
     /**
-     * @Serializer\Type("array<App\Request\Data\AbsenceData>")
      * @var AbsenceData[]
      */
     #[Assert\Valid]
+    #[Serializer\Type('array<App\Request\Data\AbsenceData>')]
     private array $absences = [ ];
 
     /**

@@ -6,22 +6,16 @@ use JMS\Serializer\Annotation as Serializer;
 
 class Section {
 
-    /**
-     * @Serializer\Type("integer")
-     * @Serializer\SerializedName("year")
-     */
+    #[Serializer\Type('integer')]
+    #[Serializer\SerializedName('year')]
     private int $year = 0;
 
-    /**
-     * @Serializer\Type("integer")
-     * @Serializer\SerializedName("number")
-     */
+    #[Serializer\Type('integer')]
+    #[Serializer\SerializedName('number')]
     private int $number = 0;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("name")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('name')]
     private ?string $name = null;
 
     public function getYear(): int {

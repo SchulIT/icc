@@ -8,12 +8,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class RemoveMessageRequest {
 
-    /**
-     * @Serializer\SerializedName("_token")
-     * @Serializer\Type("string")
-     */
     #[CsrfToken(id: 'remove_message')]
     #[Assert\NotBlank]
+    #[Serializer\SerializedName('_token')]
+    #[Serializer\Type('string')]
     private ?string $csrfToken = null;
 
     public function getCsrfToken(): ?string {

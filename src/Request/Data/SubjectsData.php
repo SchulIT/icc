@@ -9,11 +9,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SubjectsData {
 
     /**
-     * @Serializer\Type("array<App\Request\Data\SubjectData>")
      * @var SubjectData[]
      */
     #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
+    #[Serializer\Type('array<App\Request\Data\SubjectData>')]
     private array $subjects = [ ];
 
     /**

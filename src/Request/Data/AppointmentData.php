@@ -10,100 +10,87 @@ class AppointmentData {
 
     /**
      * Your ID which is used to update existing appointments.
-     *
-     * @Serializer\Type("string")
      */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private string $id;
 
     /**
      * The key of the category which the appointment belongs to.
-     *
-     * @Serializer\Type("string")
      */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private string $category;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private string $subject;
 
     /**
      * Content of the appointment - must not be empty but may be null.
-     *
-     * @Serializer\Type("string")
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $content = null;
 
-    /**
-     * @Serializer\Type("DateTime")
-     */
     #[Assert\NotNull]
+    #[Serializer\Type('DateTime')]
     private DateTime $start;
 
     /**
      * End of the appointment. Note: this value is exclusive which means that an all day appointment on April 30, 2020
      * has a start date of "2020-04-30T00:00:00" and end date of "2020-05-01T00:00:00".
-     *
-     * @Serializer\Type("DateTime")
      */
     #[Assert\NotNull]
+    #[Serializer\Type('DateTime')]
     private DateTime $end;
 
     /**
      * Location of the appointment - must not be empty but may be null.
-     *
-     * @Serializer\Type("string")
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $location = null;
 
-    /**
-     * @Serializer\Type("boolean")
-     */
+    #[Serializer\Type('boolean')]
     private bool $isAllDay;
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
     #[Assert\Type('array')]
     #[Assert\Choice(['student', 'parent', 'teacher'], multiple: true)]
+    #[Serializer\Type('array<string>')]
     private ?array $visibilities = null;
 
     /**
      * List of external study group IDs, which this appointment belongs to. May be empty.
      *
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private array $studyGroups;
 
     /**
      * @deprecated This property is ignored when importing
-     * @Serializer\Type("bool")
-     * @Serializer\SerializedName("mark_students_absent")
-     * Whether or not to mark students absent during this appointment
      */
+    #[Serializer\Type('bool')]
+    #[Serializer\SerializedName('mark_students_absent')]
     private bool $markStudentsAbsent = true;
 
     /**
      * List of teachers (their acronyms) which attend this appointment.
      *
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private array $organizers;
 
     /**
      * List of external organizers - must not be empty but may be null.
-     *
-     * @Serializer\Type("string")
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $externalOrganizers = null;
 
     /**
@@ -190,17 +177,11 @@ class AppointmentData {
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getLocation() {
+    public function getLocation(): ?string {
         return $this->location;
     }
 
-    /**
-     * @param string|null $location
-     */
-    public function setLocation($location): AppointmentData {
+    public function setLocation(?string $location): AppointmentData {
         $this->location = $location;
         return $this;
     }
@@ -274,17 +255,11 @@ class AppointmentData {
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getExternalOrganizers() {
+    public function getExternalOrganizers(): ?string {
         return $this->externalOrganizers;
     }
 
-    /**
-     * @param string|null $externalOrganizers
-     */
-    public function setExternalOrganizers($externalOrganizers): AppointmentData {
+    public function setExternalOrganizers(?string $externalOrganizers): AppointmentData {
         $this->externalOrganizers = $externalOrganizers;
         return $this;
     }

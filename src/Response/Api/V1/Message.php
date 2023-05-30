@@ -14,154 +14,128 @@ class Message {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\SerializedName("title")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('title')]
+    #[Serializer\Type('string')]
     private ?string $title = null;
 
-    /**
-     * @Serializer\SerializedName("title")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('title')]
+    #[Serializer\Type('string')]
     private ?string $content = null;
 
-    /**
-     * @Serializer\SerializedName("start_date")
-     * @Serializer\Type("DateTime")
-     */
+    #[Serializer\SerializedName('start_date')]
+    #[Serializer\Type('DateTime')]
     private ?DateTime $startDate = null;
 
-    /**
-     * @Serializer\SerializedName("expire_date")
-     * @Serializer\Type("DateTime")
-     */
+    #[Serializer\SerializedName('expire_date')]
+    #[Serializer\Type('DateTime')]
     private ?DateTime $expireDate = null;
 
     /**
-     * @Serializer\SerializedName("study_groups")
-     * @Serializer\Type("array<App\Response\Api\V1\StudyGroup>")
      *
      * @var StudyGroup[]
      */
+    #[Serializer\SerializedName('study_groups')]
+    #[Serializer\Type('array<App\Response\Api\V1\StudyGroup>')]
     private ?array $studyGroups = null;
 
     /**
-     * @Serializer\SerializedName("attachments")
-     * @Serializer\Type("array<App\Response\Api\V1\MessageAttachment>")
      *
      * @var MessageAttachment[]
      */
+    #[Serializer\SerializedName('attachments')]
+    #[Serializer\Type('array<App\Response\Api\V1\MessageAttachment>')]
     private ?array $attachments = null;
 
     /**
-     * @Serializer\SerializedName("visibilities")
-     * @Serializer\Type("array<string>")
      *
      * @var string[]
      */
+    #[Serializer\SerializedName('visibilities')]
+    #[Serializer\Type('array<string>')]
     private ?array $visibilities = null;
 
-    /**
-     * @Serializer\SerializedName("scope")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('scope')]
+    #[Serializer\Type('string')]
     private ?string $scope = null;
 
-    /**
-     * @Serializer\SerializedName("created_by")
-     * @Serializer\Type("App\Response\Api\V1\User")
-     */
+    #[Serializer\SerializedName('created_by')]
+    #[Serializer\Type(\App\Response\Api\V1\User::class)]
     private ?\App\Response\Api\V1\User $createdBy = null;
 
-    /**
-     * @Serializer\SerializedName("created_at")
-     * @Serializer\Type("DateTime")
-     */
+    #[Serializer\SerializedName('created_at')]
+    #[Serializer\Type('DateTime')]
     private ?DateTime $createdAt = null;
 
-    /**
-     * @Serializer\SerializedName("updated_at")
-     * @Serializer\Type("DateTime")
-     */
+    #[Serializer\SerializedName('updated_at')]
+    #[Serializer\Type('DateTime')]
     private ?DateTime $updatedAt = null;
 
-    /**
-     * @Serializer\SerializedName("downloads_enabled")
-     * @Serializer\Type("bool")
-     */
+    #[Serializer\SerializedName('downloads_enabled')]
+    #[Serializer\Type('bool')]
     private ?bool $isDownloadsEnabled = null;
 
     /**
-     * @Serializer\SerializedName("download_user_types")
-     * @Serializer\Type("array<string>")
      *
      * @var string[]
      */
+    #[Serializer\SerializedName('download_user_types')]
+    #[Serializer\Type('array<string>')]
     private ?array $downloadEnabledUserTypes = null;
 
     /**
-     * @Serializer\SerializedName("download_study_groups")
-     * @Serializer\Type("array<App\Response\Api\V1\StudyGroup>")
      *
      * @var StudyGroup[]
      */
+    #[Serializer\SerializedName('download_study_groups')]
+    #[Serializer\Type('array<App\Response\Api\V1\StudyGroup>')]
     private ?array $downloadEnabledStudyGroups = null;
 
-    /**
-     * @Serializer\SerializedName("uploads_enabled")
-     * @Serializer\Type("bool")
-     */
+    #[Serializer\SerializedName('uploads_enabled')]
+    #[Serializer\Type('bool')]
     private ?bool $isUploadEnabled = null;
 
     /**
-     * @Serializer\SerializedName("upload_user_types")
-     * @Serializer\Type("array<string>")
      *
      * @var string[]
      */
+    #[Serializer\SerializedName('upload_user_types')]
+    #[Serializer\Type('array<string>')]
     private ?array $uploadEnabledUserTypes = null;
 
     /**
-     * @Serializer\SerializedName("upload_study_groups")
-     * @Serializer\Type("array<App\Response\Api\V1\StudyGroup>")
      *
      * @var StudyGroup[]
      */
+    #[Serializer\SerializedName('upload_study_groups')]
+    #[Serializer\Type('array<App\Response\Api\V1\StudyGroup>')]
     private ?array $uploadEnabledStudyGroups = null;
 
-    /**
-     * @Serializer\SerializedName("upload_description")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('upload_description')]
+    #[Serializer\Type('string')]
     private ?string $uploadDescription = null;
 
-    /**
-     * @Serializer\SerializedName("must_confirm")
-     * @Serializer\Type("bool")
-     */
+    #[Serializer\SerializedName('must_confirm')]
+    #[Serializer\Type('bool')]
     private ?bool $mustConfirm = null;
 
     /**
-     * @Serializer\SerializedName("confirmation_user_types")
-     * @Serializer\Type("array<string>")
      *
      * @var string[]
      */
+    #[Serializer\SerializedName('confirmation_user_types')]
+    #[Serializer\Type('array<string>')]
     private ?array $confirmationRequiredUserTypes = null;
 
     /**
-     * @Serializer\SerializedName("confirmation_study_groups")
-     * @Serializer\Type("array<App\Response\Api\V1\StudyGroup>")
      *
      * @var StudyGroup[]
      */
+    #[Serializer\SerializedName('confirmation_study_groups')]
+    #[Serializer\Type('array<App\Response\Api\V1\StudyGroup>')]
     private ?array $confirmationRequiredStudyGroups = null;
 
-    /**
-     * @Serializer\SerializedName("priority")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('priority')]
+    #[Serializer\Type('string')]
     private ?string $priority = null;
 
     public function getTitle(): string {

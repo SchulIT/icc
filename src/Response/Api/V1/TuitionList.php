@@ -7,11 +7,11 @@ use JMS\Serializer\Annotation as Serializer;
 class TuitionList {
 
     /**
-     * @Serializer\SerializedName("tuitions")
-     * @Serializer\Type("array<App\Response\Api\V1\Tuition>")
      *
      * @var Tuition[]
      */
+    #[Serializer\SerializedName('tuitions')]
+    #[Serializer\Type('array<App\Response\Api\V1\Tuition>')]
     private ?array $tuitions = null;
 
     /**

@@ -127,7 +127,7 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
 
         foreach($grades as $grade) {
             if(!in_array($grade, $foundIds)) {
-                throw new ImportException(sprintf('Grade "%s" was not found on study group ID "%s"', $grade, $studyGroupExternalId));
+                throw new ImportException(sprintf('Klasse "%s" ist nicht mit Lerngruppe "%s" assoziiert.', $grade, $studyGroupExternalId));
             }
         }
     }

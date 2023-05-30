@@ -13,51 +13,43 @@ class Exam {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\SerializedName("date")
-     * @Serializer\Type("DateTime")
-     */
+    #[Serializer\SerializedName('date')]
+    #[Serializer\Type('DateTime')]
     private ?DateTime $date = null;
 
-    /**
-     * @Serializer\SerializedName("lesson_start")
-     * @Serializer\Type("integer")
-     */
+    #[Serializer\SerializedName('lesson_start')]
+    #[Serializer\Type('integer')]
     private ?int $lessonStart = null;
 
-    /**
-     * @Serializer\SerializedName("lesson_end")
-     * @Serializer\Type("integer")
-     */
+    #[Serializer\SerializedName('lesson_end')]
+    #[Serializer\Type('integer')]
     private ?int $lessonEnd = null;
 
-    /**
-     * @Serializer\SerializedName("description")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('description')]
+    #[Serializer\Type('string')]
     private ?string $description = null;
 
     /**
-     * @Serializer\SerializedName("tuitions")
-     * @Serializer\Type("array<App\Response\Api\V1\Tuition>")
      * @var Tuition[]
      */
+    #[Serializer\SerializedName('tuitions')]
+    #[Serializer\Type('array<App\Response\Api\V1\Tuition>')]
     private ?array $tuitions = null;
 
     /**
-     * @Serializer\SerializedName("supervisions")
-     * @Serializer\Type("array<App\Response\Api\V1\ExamSupervision>")
      *
      * @var ExamSupervision[]
      */
+    #[Serializer\SerializedName('supervisions')]
+    #[Serializer\Type('array<App\Response\Api\V1\ExamSupervision>')]
     private ?array $supervisions = null;
 
     /**
-     * @Serializer\SerializedName("rooms")
-     * @Serializer\Type("array<string>")
      *
      * @var string[]
      */
+    #[Serializer\SerializedName('rooms')]
+    #[Serializer\Type('array<string>')]
     private ?array $rooms = null;
 
     public function getUuid(): UuidInterface {

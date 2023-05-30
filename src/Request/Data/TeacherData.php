@@ -8,63 +8,51 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class TeacherData {
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotNull]
+    #[Serializer\Type('string')]
     private ?string $id = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $acronym = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $firstname = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $lastname = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $title = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank(allowNull: true)]
     #[Assert\Email]
+    #[Serializer\Type('string')]
     private ?string $email = null;
 
     /**
-     * @Serializer\Type("string")
      * @see Gender
      */
     #[Assert\NotBlank]
     #[Assert\Choice(callback: 'getGenders')]
+    #[Serializer\Type('string')]
     private ?string $gender = null;
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private array $subjects = [ ];
 
     /**
      * List of external IDs of tags which are added to the user. Note: tags are not synchronized but only added if not present. You have to remove them by hand using the UI.
      *
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private array $tags = [ ];
 
     public function getId(): ?string {
@@ -112,18 +100,14 @@ class TeacherData {
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getEmail() {
+    public function getEmail(): ?string {
         return $this->email;
     }
 
     /**
-     * @param string|null $email
      * @return TeacherData
      */
-    public function setEmail($email) {
+    public function setEmail(?string $email) {
         $this->email = $email;
         return $this;
     }

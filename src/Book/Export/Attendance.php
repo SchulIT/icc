@@ -6,40 +6,28 @@ use JMS\Serializer\Annotation as Serializer;
 
 class Attendance {
 
-    /**
-     * @Serializer\Type("App\Book\Export\Student")
-     * @Serializer\SerializedName("student")
-     */
+    #[Serializer\Type(Student::class)]
+    #[Serializer\SerializedName('student')]
     private ?Student $student = null;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("type")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('type')]
     private ?string $type = null;
 
-    /**
-     * @Serializer\Type("integer")
-     * @Serializer\SerializedName("absent_lesson_count")
-     */
+    #[Serializer\Type('integer')]
+    #[Serializer\SerializedName('absent_lesson_count')]
     private int $absentLessonCount = 0;
 
-    /**
-     * @Serializer\Type("integer")
-     * @Serializer\SerializedName("late_minutes_count")
-     */
+    #[Serializer\Type('integer')]
+    #[Serializer\SerializedName('late_minutes_count')]
     private int $lateMinutesCount = 0;
 
-    /**
-     * @Serializer\Type("boolean")
-     * @Serializer\SerializedName("is_excused")
-     */
+    #[Serializer\Type('boolean')]
+    #[Serializer\SerializedName('is_excused')]
     private bool $isExcused = false;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("comment")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('comment')]
     private ?string $comment = null;
 
     public function getStudent(): Student {

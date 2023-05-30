@@ -11,25 +11,21 @@ class StudyGroup {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\SerializedName("name")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('name')]
+    #[Serializer\Type('string')]
     private ?string $name = null;
 
-    /**
-     * @Serializer\SerializedName("type")
-     * @Serializer\Type("string")
-     * @Serializer\ReadOnly()
-     * @Serializer\Accessor(getter="getTypeString")
-     */
+    #[Serializer\SerializedName('type')]
+    #[Serializer\Type('string')]
+    #[Serializer\ReadOnly]
+    #[Serializer\Accessor(getter: 'getTypeString')]
     private ?StudyGroupType $type = null;
 
     /**
-     * @Serializer\SerializedName("grades")
-     * @Serializer\Type("array<App\Response\Api\V1\Grade>")
      * @var Grade[]
      */
+    #[Serializer\SerializedName('grades')]
+    #[Serializer\Type('array<App\Response\Api\V1\Grade>')]
     private ?array $grades = null;
 
     public function getName(): string {

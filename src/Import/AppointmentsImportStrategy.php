@@ -106,7 +106,7 @@ class AppointmentsImportStrategy implements ImportStrategyInterface {
         $category = $this->appointmentCategoryRepository->findOneByExternalId($data->getCategory());
 
         if($category === null) {
-            throw new ImportException(sprintf('Category "%s" on appointment "%s" (ID: %s) was not found.', $data->getCategory(), $data->getSubject(), $data->getId()));
+            throw new ImportException(sprintf('Terminkategorie "%s" von Termin "%s" (ID: %s) wurde nicht gefunden.', $data->getCategory(), $data->getSubject(), $data->getId()));
         }
 
         $entity->setCategory($category);

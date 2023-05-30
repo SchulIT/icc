@@ -10,10 +10,10 @@ class InfotextsData {
     use ContextTrait;
 
     /**
-     * @Serializer\Type("array<App\Request\Data\InfotextData>")
      * @var InfotextData[]
      */
     #[Assert\Valid]
+    #[Serializer\Type('array<App\Request\Data\InfotextData>')]
     private array $infotexts = [ ];
 
     /**

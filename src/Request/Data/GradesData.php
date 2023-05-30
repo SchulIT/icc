@@ -8,11 +8,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class GradesData {
     /**
-     * @Serializer\Type("array<App\Request\Data\GradeData>")
      * @var GradeData[]
      */
     #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
+    #[Serializer\Type('array<App\Request\Data\GradeData>')]
     private array $grades = [ ];
 
     /**

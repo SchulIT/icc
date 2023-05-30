@@ -8,22 +8,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class TuitionsData {
 
-    /**
-     * @Serializer\Type("int")
-     */
+    #[Serializer\Type('int')]
     private ?int $year = null;
 
-    /**
-     * @Serializer\Type("int")
-     */
+    #[Serializer\Type('int')]
     private ?int $section = null;
 
     /**
-     * @Serializer\Type("array<App\Request\Data\TuitionData>")
      * @var TuitionData[]
      */
     #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
+    #[Serializer\Type('array<App\Request\Data\TuitionData>')]
     private array $tuitions = [ ];
 
     /**

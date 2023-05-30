@@ -6,17 +6,15 @@ use JMS\Serializer\Annotation as Serializer;
 
 class Grade {
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("name")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('name')]
     private ?string $name = null;
 
     /**
-     * @Serializer\Type("array<App\Book\Export\Teacher>")
-     * @Serializer\SerializedName("teachers")
      * @var Teacher[]
      */
+    #[Serializer\Type('array<App\Book\Export\Teacher>')]
+    #[Serializer\SerializedName('teachers')]
     private array $teachers = [ ];
 
     public function getName(): string {

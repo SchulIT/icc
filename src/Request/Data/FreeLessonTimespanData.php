@@ -8,27 +8,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class FreeLessonTimespanData {
 
-    /**
-     * @Serializer\SerializedName("date")
-     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     */
     #[Assert\NotNull]
+    #[Serializer\SerializedName('date')]
+    #[Serializer\Type("DateTime<'Y-m-d\\TH:i:s'>")]
     private ?DateTime $date = null;
 
-    /**
-     * @Serializer\SerializedName("start")
-     * @Serializer\Type("int")
-     */
     #[Assert\GreaterThanOrEqual(0)]
     #[Assert\NotNull]
+    #[Serializer\SerializedName('start')]
+    #[Serializer\Type('int')]
     private ?int $start = null;
 
-    /**
-     * @Serializer\SerializedName("end")
-     * @Serializer\Type("int")
-     */
     #[Assert\GreaterThanOrEqual(propertyPath: 'start')]
     #[Assert\NotNull]
+    #[Serializer\SerializedName('end')]
+    #[Serializer\Type('int')]
     private ?int $end = null;
 
     public function setDate(?DateTime $date): FreeLessonTimespanData {

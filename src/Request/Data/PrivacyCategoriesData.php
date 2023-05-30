@@ -9,11 +9,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class PrivacyCategoriesData {
 
     /**
-     * @Serializer\Type("array<App\Request\Data\PrivacyCategoryData>")
      * @var PrivacyCategoryData[]
      */
     #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
+    #[Serializer\Type('array<App\Request\Data\PrivacyCategoryData>')]
     private array $categories = [ ];
 
     /**
@@ -25,7 +25,6 @@ class PrivacyCategoriesData {
 
     /**
      * @param PrivacyCategoryData[] $categories
-     * @return $this
      */
     public function setCategories(array $categories): PrivacyCategoriesData {
         $this->categories = $categories;

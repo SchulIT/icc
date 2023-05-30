@@ -12,96 +12,76 @@ class Substitution {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\SerializedName("date")
-     * @Serializer\Type("DateTime")
-     */
+    #[Serializer\SerializedName('date')]
+    #[Serializer\Type('DateTime')]
     private ?DateTimeInterface $date = null;
 
-    /**
-     * @Serializer\SerializedName("lesson_start")
-     * @Serializer\Type("int")
-     */
+    #[Serializer\SerializedName('lesson_start')]
+    #[Serializer\Type('int')]
     private ?int $lessonStart = null;
 
-    /**
-     * @Serializer\SerializedName("lesson_end")
-     * @Serializer\Type("int")
-     */
+    #[Serializer\SerializedName('lesson_end')]
+    #[Serializer\Type('int')]
     private ?int $lessonEnd = null;
 
-    /**
-     * @Serializer\SerializedName("starts_before")
-     * @Serializer\Type("bool")
-     */
+    #[Serializer\SerializedName('starts_before')]
+    #[Serializer\Type('bool')]
     private ?bool $startsBefore = null;
 
-    /**
-     * @Serializer\SerializedName("type")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('type')]
+    #[Serializer\Type('string')]
     private ?string $type = null;
 
-    /**
-     * @Serializer\SerializedName("subject")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('subject')]
+    #[Serializer\Type('string')]
     private ?string $subject = null;
 
-    /**
-     * @Serializer\SerializedName("replacement_subject")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('replacement_subject')]
+    #[Serializer\Type('string')]
     private ?string $replacementSubject = null;
 
     /**
-     * @Serializer\SerializedName("teachers")
-     * @Serializer\Type("array<App\Response\Api\V1\Teacher>")
      *
      * @var Teacher[]
      */
+    #[Serializer\SerializedName('teachers')]
+    #[Serializer\Type('array<App\Response\Api\V1\Teacher>')]
     private ?array $teachers = null;
 
     /**
-     * @Serializer\SerializedName("replacement_teachers")
-     * @Serializer\Type("array<App\Response\Api\V1\Teacher>")
      *
      * @var Teacher[]
      */
+    #[Serializer\SerializedName('replacement_teachers')]
+    #[Serializer\Type('array<App\Response\Api\V1\Teacher>')]
     private ?array $replacementTeachers = null;
 
-    /**
-     * @Serializer\SerializedName("room")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('room')]
+    #[Serializer\Type('string')]
     private ?string $room = null;
 
-    /**
-     * @Serializer\SerializedName("replacement_room")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('replacement_room')]
+    #[Serializer\Type('string')]
     private ?string $replacementRoom = null;
 
-    /**
-     * @Serializer\SerializedName("remark")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('remark')]
+    #[Serializer\Type('string')]
     private ?string $remark = null;
 
     /**
-     * @Serializer\SerializedName("study_groups")
-     * @Serializer\Type("array<App\Response\Api\V1\StudyGroup>")
      *
      * @var StudyGroup[]
      */
+    #[Serializer\SerializedName('study_groups')]
+    #[Serializer\Type('array<App\Response\Api\V1\StudyGroup>')]
     private ?array $studyGroups = null;
 
     /**
-     * @Serializer\SerializedName("replacement_study_groups")
-     * @Serializer\Type("array<App\Response\Api\V1\StudyGroup>")
      *
      * @var StudyGroup[]
      */
+    #[Serializer\SerializedName('replacement_study_groups')]
+    #[Serializer\Type('array<App\Response\Api\V1\StudyGroup>')]
     private ?array $replacementStudyGroups = null;
 
     public function getDate(): DateTimeInterface {

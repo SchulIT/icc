@@ -13,28 +13,28 @@ class TimetableSupervisionsData {
      * This date controls at which date the imported timetable supervisions begin. All existing entries starting this date
      * will be removed from the system and replaced by the ones provided by this import.
      *
-     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      * @var DateTime|null
      */
     #[Assert\NotNull]
+    #[Serializer\Type("DateTime<'Y-m-d\\TH:i:s'>")]
     private ?DateTime $startDate = null;
 
     /**
      * This date controls at which date the imported timetable supervisions ends. All existing entries before (and including) this date
      * will be removed from the system and replaced by the ones provided by this import.
      *
-     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      * @var DateTime|null
      */
     #[Assert\NotNull]
+    #[Serializer\Type("DateTime<'Y-m-d\\TH:i:s'>")]
     private ?DateTime $endDate = null;
 
     /**
-     * @Serializer\Type("array<App\Request\Data\TimetableSupervisionData>")
      * @var TimetableSupervisionData[]
      */
     #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
+    #[Serializer\Type('array<App\Request\Data\TimetableSupervisionData>')]
     private array $supervisions = [ ];
 
     public function getStartDate(): ?DateTime {

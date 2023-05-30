@@ -7,29 +7,23 @@ use JMS\Serializer\Annotation as Serializer;
 
 class Comment {
 
-    /**
-     * @Serializer\Type("DateTime")
-     * @Serializer\SerializedName("date")
-     */
+    #[Serializer\Type('DateTime')]
+    #[Serializer\SerializedName('date')]
     private ?DateTime $date = null;
 
-    /**
-     * @Serializer\Type("App\Book\Export\Teacher")
-     * @Serializer\SerializedName("teacher")
-     */
+    #[Serializer\Type(Teacher::class)]
+    #[Serializer\SerializedName('teacher')]
     private ?Teacher $teacher = null;
 
     /**
-     * @Serializer\Type("array<App\Book\Export\Student>")
-     * @Serializer\SerializedName("students")
      * @var Student[]
      */
+    #[Serializer\Type('array<App\Book\Export\Student>')]
+    #[Serializer\SerializedName('students')]
     private ?array $students = null;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("comment")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('comment')]
     private ?string $comment = null;
 
     public function getDate(): DateTime {

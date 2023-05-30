@@ -7,56 +7,48 @@ use JMS\Serializer\Annotation as Serializer;
 
 class Book {
 
-    /**
-     * @Serializer\Type("App\Book\Export\Section")
-     * @Serializer\SerializedName("section")
-     */
+    #[Serializer\Type(Section::class)]
+    #[Serializer\SerializedName('section')]
     private ?Section $section = null;
 
     /**
-     * @Serializer\Type("array<App\Book\Export\Grade>")
-     * @Serializer\SerializedName("grades")
      * @var Grade[]
      */
+    #[Serializer\Type('array<App\Book\Export\Grade>')]
+    #[Serializer\SerializedName('grades')]
     private array $grades = [];
 
-    /**
-     * @Serializer\Type("App\Book\Export\Tuition")
-     * @Serializer\SerializedName("tuition")
-     */
+    #[Serializer\Type(Tuition::class)]
+    #[Serializer\SerializedName('tuition')]
     private ?Tuition $tuition = null;
 
-    /**
-     * @Serializer\Type("DateTime")
-     * @Serializer\SerializedName("start")
-     */
+    #[Serializer\Type('DateTime')]
+    #[Serializer\SerializedName('start')]
     private ?DateTime $start = null;
 
-    /**
-     * @Serializer\Type("DateTime")
-     * @Serializer\SerializedName("end")
-     */
+    #[Serializer\Type('DateTime')]
+    #[Serializer\SerializedName('end')]
     private ?DateTime $end = null;
 
     /**
-     * @Serializer\Type("array<App\Book\Export\StudentSummary>")
-     * @Serializer\SerializedName("students_summary")
      * @var StudentSummary[]
      */
+    #[Serializer\Type('array<App\Book\Export\StudentSummary>')]
+    #[Serializer\SerializedName('students_summary')]
     private ?array $studentSummaries = null;
 
     /**
-     * @Serializer\Type("array<App\Book\Export\StudentGrades>")
-     * @Serializer\SerializedName("students_grades")
      * @var StudentGrades[]
      */
+    #[Serializer\Type('array<App\Book\Export\StudentGrades>')]
+    #[Serializer\SerializedName('students_grades')]
     private array $studentGrades = [ ];
 
     /**
-     * @Serializer\Type("array<App\Book\Export\Week>")
-     * @Serializer\SerializedName("weeks")
      * @var Week[]
      */
+    #[Serializer\Type('array<App\Book\Export\Week>')]
+    #[Serializer\SerializedName('weeks')]
     private ?array $weeks = null;
 
     public function getSection(): Section {
@@ -128,10 +120,6 @@ class Book {
         return $this->studentGrades;
     }
 
-    /**
-     * @param StudentGrades $studentGrades
-     * @return Book
-     */
     public function addStudentGrades(StudentGrades $studentGrades): Book {
         $this->studentGrades[] = $studentGrades;
         return $this;

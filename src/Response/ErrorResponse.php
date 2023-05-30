@@ -10,17 +10,14 @@ use JMS\Serializer\Annotation as Serializer;
 class ErrorResponse {
 
     public function __construct(
-        /**
-         * @Serializer\SerializedName("message")
-         * @Serializer\Type("string")
-         */
+        #[Serializer\SerializedName('message')]
+        #[Serializer\Type('string')]
         private string $message,
         /**
          * Type of exception (optional).
-         *
-         * @Serializer\Type("string")
-         * @Serializer\SerializedName("type")
          */
+        #[Serializer\Type('string')]
+        #[Serializer\SerializedName('type')]
         private ?string $type = null
     )
     {

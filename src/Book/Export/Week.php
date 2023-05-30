@@ -7,29 +7,23 @@ use JMS\Serializer\Annotation as Serializer;
 
 class Week {
 
-    /**
-     * @Serializer\Type("integer")
-     * @Serializer\SerializedName("week_number")
-     */
+    #[Serializer\Type('integer')]
+    #[Serializer\SerializedName('week_number')]
     private int $weekNumber = 0;
 
-    /**
-     * @Serializer\Type("DateTime")
-     * @Serializer\SerializedName("start")
-     */
+    #[Serializer\Type('DateTime')]
+    #[Serializer\SerializedName('start')]
     private ?DateTime $start = null;
 
-    /**
-     * @Serializer\Type("DateTime")
-     * @Serializer\SerializedName("end")
-     */
+    #[Serializer\Type('DateTime')]
+    #[Serializer\SerializedName('end')]
     private ?DateTime $end = null;
 
     /**
-     * @Serializer\Type("array<App\Book\Export\Day>")
-     * @Serializer\SerializedName("days")
      * @var Day[]
      */
+    #[Serializer\Type('array<App\Book\Export\Day>')]
+    #[Serializer\SerializedName('days')]
     private ?array $days = null;
 
     public function getWeekNumber(): int {

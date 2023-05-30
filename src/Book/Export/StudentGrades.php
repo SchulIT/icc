@@ -9,17 +9,10 @@ class StudentGrades {
 
     private array $grades;
 
-    /**
-     * @return Tuition
-     */
     public function getTuition(): Tuition {
         return $this->tuition;
     }
 
-    /**
-     * @param Tuition $tuition
-     * @return StudentGrades
-     */
     public function setTuition(Tuition $tuition): StudentGrades {
         $this->tuition = $tuition;
         return $this;

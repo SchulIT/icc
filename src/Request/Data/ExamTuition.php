@@ -6,24 +6,22 @@ use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ExamTuition {
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $subjectOrCourse = null;
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
     #[Assert\Count(min: 1)]
+    #[Serializer\Type('array<string>')]
     private array $grades = [ ];
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
     #[Assert\Count(min: 1)]
+    #[Serializer\Type('array<string>')]
     private array $teachers = [ ];
 
     public function getSubjectOrCourse(): ?string {

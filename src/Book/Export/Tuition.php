@@ -8,29 +8,24 @@ class Tuition {
 
     /**
      * The ID which is specified as ID when importing students.
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("id")
      */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('id')]
     private ?string $id = null;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("name")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('name')]
     private ?string $name = null;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("subject")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('subject')]
     private ?string $subject = null;
 
     /**
-     * @Serializer\Type("array<App\Book\Export\Teacher>")
-     * @Serializer\SerializedName("teachers")
      * @var Teacher[]
      */
+    #[Serializer\Type('array<App\Book\Export\Teacher>')]
+    #[Serializer\SerializedName('teachers')]
     private array $teachers = [ ];
 
     public function getId(): string {

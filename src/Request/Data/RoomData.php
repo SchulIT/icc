@@ -9,28 +9,20 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[NotAResource]
 class RoomData {
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $id = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $name = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
+    #[Serializer\Type('string')]
     private ?string $description = null;
 
-    /**
-     * @Serializer\Type("int")
-     */
     #[Assert\NotBlank(allowNull: true)]
     #[Assert\GreaterThanOrEqual(0)]
+    #[Serializer\Type('int')]
     private ?int $capacity = null;
 
     public function getId(): ?string {

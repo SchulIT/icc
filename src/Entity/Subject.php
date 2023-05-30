@@ -34,45 +34,24 @@ class Subject implements Stringable {
     #[ORM\Column(type: 'boolean')]
     private bool $replaceSubjectAbbreviation = true;
 
-    /**
-     * @Serializer\Exclude()
-     */
     #[ORM\Column(type: 'boolean')]
     private bool $isVisibleGrades = true;
 
-    /**
-     * @Serializer\Exclude()
-     */
     #[ORM\Column(type: 'boolean')]
     private bool $isVisibleStudents = true;
 
-    /**
-     * @Serializer\Exclude()
-     */
     #[ORM\Column(type: 'boolean')]
     private bool $isVisibleTeachers = true;
 
-    /**
-     * @Serializer\Exclude()
-     */
     #[ORM\Column(type: 'boolean')]
     private bool $isVisibleRooms = true;
 
-    /**
-     * @Serializer\Exclude()
-     */
     #[ORM\Column(type: 'boolean')]
     private bool $isVisibleSubjects = true;
 
-    /**
-     * @Serializer\Exclude()
-     */
     #[ORM\Column(type: 'boolean')]
     private bool $isVisibleLists = true;
 
-    /**
-     * @Serializer\Exclude()
-     */
     #[Color]
     #[Assert\Length(min: 7, max: 7)]
     #[ORM\Column(type: 'string', nullable: true)]

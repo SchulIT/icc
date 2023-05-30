@@ -7,41 +7,31 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class TuitionData {
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $id = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $name = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $displayName = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $subject = null;
 
     /**
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private ?array $teachers = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
     #[Assert\NotNull]
+    #[Serializer\Type('string')]
     private ?string $studyGroup = null;
 
     public function getId(): ?string {

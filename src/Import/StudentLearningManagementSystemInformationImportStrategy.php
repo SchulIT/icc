@@ -62,7 +62,7 @@ class StudentLearningManagementSystemInformationImportStrategy implements Replac
         $student = $this->students[$data->getStudent()] ?? null;
 
         if($student === null) {
-            throw new EntityIgnoredException($data, sprintf('Schüler mit der ID "%s" nicht gefunden.', $data->getStudent()));
+            throw new EntityIgnoredException($data, sprintf('Kind mit der ID "%s" nicht gefunden.', $data->getStudent()));
         }
 
         $lms = $this->lms[$data->getLms()] ?? null;

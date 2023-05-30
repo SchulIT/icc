@@ -10,29 +10,23 @@ class Tuition {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\SerializedName("name")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('name')]
+    #[Serializer\Type('string')]
     private ?string $name = null;
 
-    /**
-     * @Serializer\SerializedName("subject")
-     * @Serializer\Type("App\Response\Api\V1\Subject")
-     */
+    #[Serializer\SerializedName('subject')]
+    #[Serializer\Type(Subject::class)]
     private ?Subject $subject = null;
 
     /**
-     * @Serializer\SerializedName("teachers")
-     * @Serializer\Type("array<App\Response\Api\V1\Teacher>")
      * @var Teacher[]
      */
+    #[Serializer\SerializedName('teachers')]
+    #[Serializer\Type('array<App\Response\Api\V1\Teacher>')]
     private ?array $teachers = null;
 
-    /**
-     * @Serializer\SerializedName("study_group")
-     * @Serializer\Type("App\Response\Api\V1\StudyGroup")
-     */
+    #[Serializer\SerializedName('study_group')]
+    #[Serializer\Type(StudyGroup::class)]
     private ?StudyGroup $studyGroup = null;
 
     public function getName(): string {

@@ -11,42 +11,30 @@ class Teacher {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\SerializedName("acronym")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('acronym')]
+    #[Serializer\Type('string')]
     private ?string $acronym = null;
 
-    /**
-     * @Serializer\SerializedName("title")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('title')]
+    #[Serializer\Type('string')]
     private ?string $title = null;
 
-    /**
-     * @Serializer\SerializedName("firstname")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('firstname')]
+    #[Serializer\Type('string')]
     private ?string $firstname = null;
 
-    /**
-     * @Serializer\SerializedName("lastname")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('lastname')]
+    #[Serializer\Type('string')]
     private ?string $lastname = null;
 
-    /**
-     * @Serializer\SerializedName("gender")
-     * @Serializer\Type("string")
-     * @Serializer\ReadOnly()
-     * @Serializer\Accessor(getter="getGenderString")
-     */
+    #[Serializer\SerializedName('gender')]
+    #[Serializer\Type('string')]
+    #[Serializer\ReadOnly]
+    #[Serializer\Accessor(getter: 'getGenderString')]
     private ?Gender $gender = null;
 
-    /**
-     * @Serializer\SerializedName("email")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('email')]
+    #[Serializer\Type('string')]
     private ?string $email = null;
 
     public function getAcronym(): string {

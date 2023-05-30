@@ -9,39 +9,25 @@ class LearningManagementSystemData {
 
     #[Serializer\Type('string')]
     #[Assert\NotBlank]
-    private ?string $id;
+    private ?string $id = null;
 
     #[Serializer\Type('string')]
     #[Assert\NotBlank]
-    private ?string $name;
+    private ?string $name = null;
 
-    /**
-     * @return string|null
-     */
     public function getId(): ?string {
         return $this->id;
     }
 
-    /**
-     * @param string|null $id
-     * @return LearningManagementSystemData
-     */
     public function setId(?string $id): LearningManagementSystemData {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     * @return LearningManagementSystemData
-     */
     public function setName(?string $name): LearningManagementSystemData {
         $this->name = $name;
         return $this;

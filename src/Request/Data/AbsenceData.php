@@ -8,34 +8,24 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class AbsenceData {
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $objective = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
     #[Assert\Choice(['study_group', 'teacher', 'room'])]
+    #[Serializer\Type('string')]
     private ?string $type = null;
 
-    /**
-     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     */
     #[Assert\NotNull]
+    #[Serializer\Type("DateTime<'Y-m-d\\TH:i:s'>")]
     private ?DateTime $date = null;
 
-    /**
-     * @Serializer\Type("int")
-     */
+    #[Serializer\Type('int')]
     private ?int $lessonStart = null;
 
-    /**
-     * @Serializer\Type("int")
-     */
     #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart')]
+    #[Serializer\Type('int')]
     private ?int $lessonEnd = null;
 
     public function getObjective(): string {

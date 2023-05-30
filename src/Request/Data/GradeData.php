@@ -7,16 +7,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class GradeData {
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $id = null;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $name = null;
 
     public function setId(?string $id): GradeData {

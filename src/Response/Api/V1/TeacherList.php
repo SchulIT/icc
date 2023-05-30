@@ -2,14 +2,16 @@
 
 namespace App\Response\Api\V1;
 
+use JMS\Serializer\Annotation as Serializer;
+
 class TeacherList {
 
     /**
-     * @Serializer\SerializedName("teachers")
-     * @Serializer\Type("array<App\Response\Api\V1\Teacher>")
      *
      * @var Teacher[]
      */
+    #[Serializer\SerializedName('teachers')]
+    #[Serializer\Type('array<App\Response\Api\V1\Teacher>')]
     private ?array $teachers = null;
 
     /**

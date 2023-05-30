@@ -122,7 +122,7 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
         $subject = $this->subjectCache[$data->getSubject()] ?? null;
 
         if($subject === null) {
-            throw new ImportException(sprintf('Subject "%s" was not found on tuition with ID "%s"', $data->getSubject(), $data->getId()));
+            throw new ImportException(sprintf('Fach "%s" bei Unterricht "%s" wurde nicht gefunden.', $data->getSubject(), $data->getId()));
         }
 
         $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
@@ -142,7 +142,7 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
         $studyGroup = $this->studyGroupCache[$data->getStudyGroup()] ?? null;
 
         if($studyGroup === null) {
-            throw new ImportException(sprintf('Study group with ID "%s" was not found on tuition with ID "%s"', $data->getStudyGroup(), $data->getId()));
+            throw new ImportException(sprintf('Lerngruppe mit der ID "%s" beim Unterricht "%s" wurde nicht gefunden.', $data->getStudyGroup(), $data->getId()));
         }
 
         $entity->setSubject($subject);
@@ -189,7 +189,7 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
 
         foreach($teachers as $teacher) {
             if(!in_array($teachers, $foundTeacherAcronyms)) {
-                throw new ImportException(sprintf('Additional teacher "%s" was not found on tuition with ID "%s"', $teacher, $tuitionExternalId));
+                throw new ImportException(sprintf('Lehrkraft "%s" bei Unterricht "%s" wurde nicht gefunden.', $teacher, $tuitionExternalId));
             }
         }
     }

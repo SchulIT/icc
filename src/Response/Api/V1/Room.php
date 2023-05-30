@@ -9,10 +9,8 @@ class Room {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("name")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('name')]
     private ?string $name = null;
 
     public function getName(): string {

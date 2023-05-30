@@ -13,7 +13,7 @@ trait ContextAwareTrait {
         $dateTime = DateTime::createFromFormat('Y-m-d', $requestData->getContext());
 
         if($dateTime === false) {
-            throw new ImportException(sprintf('Context "%s" cannot be parsed as date of format (YYYY-MM-DD)', $requestData->getContext()));
+            throw new ImportException(sprintf('Kontext "%s" hat das falsche Format (erwartet: YYYY-MM-DD).', $requestData->getContext()));
         }
 
         $dateTime->setTime(0,0,0);

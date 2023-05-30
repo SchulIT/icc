@@ -8,22 +8,16 @@ use App\Entity\StudyGroupMembership as StudyGroupMembershipEntity;
 
 class StudyGroupMembership {
 
-    /**
-     * @Serializer\SerializedName("study_group")
-     * @Serializer\Type("App\Response\Api\V1\StudyGroup")
-     */
+    #[Serializer\SerializedName('study_group')]
+    #[Serializer\Type(StudyGroup::class)]
     private ?StudyGroup $studyGroup = null;
 
-    /**
-     * @Serializer\SerializedName("student")
-     * @Serializer\Type("App\Response\Api\V1\Student")
-     */
+    #[Serializer\SerializedName('student')]
+    #[Serializer\Type(Student::class)]
     private ?Student $student = null;
 
-    /**
-     * @Serializer\SerializedName("type")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('type')]
+    #[Serializer\Type('string')]
     private ?string $type = null;
 
     public function getStudyGroup(): StudyGroup {

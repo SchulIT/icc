@@ -11,22 +11,16 @@ class MessageAttachment {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\SerializedName("filename")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('filename')]
+    #[Serializer\Type('string')]
     private ?string $filename = null;
 
-    /**
-     * @Serializer\SerializedName("size")
-     * @Serializer\Type("int")
-     */
+    #[Serializer\SerializedName('size')]
+    #[Serializer\Type('int')]
     private ?int $size = null;
 
-    /**
-     * @Serializer\SerializedName("updated_at")
-     * @Serializer\Type("DateTimeImmutable")
-     */
+    #[Serializer\SerializedName('updated_at')]
+    #[Serializer\Type('DateTimeImmutable')]
     private ?DateTime $updatedAt = null;
 
     public function getFilename(): string {

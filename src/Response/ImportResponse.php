@@ -11,29 +11,26 @@ class ImportResponse {
 
     /**
      * Number of added entities.
-     *
-     * @Serializer\Type("int")
      */
+    #[Serializer\Type('int')]
     private int $addedCount;
 
     /**
      * Number of updated entities.
-     *
-     * @Serializer\Type("int")
      */
+    #[Serializer\Type('int')]
     private int $updatedCount;
 
     /**
      * Number of removed entities.
-     *
-     * @Serializer\Type("int")
      */
+    #[Serializer\Type('int')]
     private int $removedCount;
 
     /**
      * Number of ignored entities.
-     * @Serializer\Type("int")
      */
+    #[Serializer\Type('int')]
     private int $ignoredCount;
 
     /**
@@ -44,16 +41,16 @@ class ImportResponse {
      */
     public function __construct(/**
      * Added entities.
-     * @Serializer\Exclude()
      */
+    #[Serializer\Exclude]
     private array $added, /**
      * Updated entities.
-     * @Serializer\Exclude()
      */
+    #[Serializer\Exclude]
     private array $updated, /**
      * Removed entities.
-     * @Serializer\Exclude()
      */
+    #[Serializer\Exclude]
     private array $removed, /**
      * Ignored entities.
      */

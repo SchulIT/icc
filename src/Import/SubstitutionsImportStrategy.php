@@ -210,7 +210,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
                 $studyGroup = $this->studyGroupRepository->findOneByGradeName($grade, $section);
 
                 if($studyGroup === null) {
-                    throw new ImportException(sprintf('Study group for grade "%s" on substitution ID "%s" was not found.', $grade, $id));
+                    throw new ImportException(sprintf('Lerngruppe für die Klasse "%s" bei der Vertretung mit ID "%s" wurde nicht gefunden.', $grade, $id));
                 }
 
                 $result[] = $studyGroup;
@@ -260,7 +260,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
 
         foreach($teachers as $teacher) {
             if(!in_array($teacher, $foundTeacherExternalIds)) {
-                throw new ImportException(sprintf('Teacher "%s" on substitution ID "%s" was not found.', $teacher, $substitutionId));
+                throw new ImportException(sprintf('Lehrkraft "%s" bei Vertretung "%s" wurde nicht gefunden.', $teacher, $substitutionId));
             }
         }
     }
@@ -275,7 +275,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
 
         foreach($grades as $grade) {
             if(!in_array($grade, $foundGradeExternalIds)) {
-                throw new ImportException(sprintf('Grade "%s" on substitution ID "%s" was not found.', $grade, $substitutionId));
+                throw new ImportException(sprintf('Klasse "%s" bei Vertretung "%s" wurde nicht gefunden.', $grade, $substitutionId));
             }
         }
     }

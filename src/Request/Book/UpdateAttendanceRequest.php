@@ -8,49 +8,49 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class UpdateAttendanceRequest {
     /**
-     * @Serializer\SerializedName("_token")
-     * @Serializer\Type("string")
      * @var string|null
      */
     #[CsrfToken(id: 'update_attendance')]
     #[Assert\NotBlank]
+    #[Serializer\SerializedName('_token')]
+    #[Serializer\Type('string')]
     private ?string $csrfToken = null;
 
     /**
-     * @Serializer\SerializedName("type")
-     * @Serializer\Type("int")
      * @var int
      */
     #[Assert\Choice(choices: [0, 1, 2])]
+    #[Serializer\SerializedName('type')]
+    #[Serializer\Type('int')]
     private int $type;
 
     /**
-     * @Serializer\SerializedName("absent_lessons")
-     * @Serializer\Type("int")
      * @var int
      */
+    #[Serializer\SerializedName('absent_lessons')]
+    #[Serializer\Type('int')]
     private int $absentLessons;
 
     /**
-     * @Serializer\SerializedName("late_minutes")
-     * @Serializer\Type("int")
      * @var int
      */
+    #[Serializer\SerializedName('late_minutes')]
+    #[Serializer\Type('int')]
     private int $lateMinutes;
 
     /**
-     * @Serializer\SerializedName("excuse_status")
-     * @Serializer\Type("int")
      * @var int
      */
+    #[Serializer\SerializedName('excuse_status')]
+    #[Serializer\Type('int')]
     private int $excuseStatus;
 
     /**
-     * @Serializer\SerializedName("comment")
-     * @Serializer\Type("string")
      * @var string|null
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\SerializedName('comment')]
+    #[Serializer\Type('string')]
     private ?string $comment = null;
 
     public function getCsrfToken(): ?string {

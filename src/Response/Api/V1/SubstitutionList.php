@@ -7,11 +7,11 @@ use JMS\Serializer\Annotation as Serializer;
 class SubstitutionList {
 
     /**
-     * @Serializer\SerializedName("substitutions")
-     * @Serializer\Type("array<App\Response\Api\V1\Substitution>")
      *
      * @var Substitution[]
      */
+    #[Serializer\SerializedName('substitutions')]
+    #[Serializer\Type('array<App\Response\Api\V1\Substitution>')]
     private ?array $substitutions = null;
 
     /**

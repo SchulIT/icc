@@ -12,50 +12,38 @@ class User {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\SerializedName("username")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('username')]
+    #[Serializer\Type('string')]
     private ?string $username = null;
 
-    /**
-     * @Serializer\SerializedName("firstname")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('firstname')]
+    #[Serializer\Type('string')]
     private ?string $firstname = null;
 
-    /**
-     * @Serializer\SerializedName("lastname")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('lastname')]
+    #[Serializer\Type('string')]
     private ?string $lastname = null;
 
-    /**
-     * @Serializer\SerializedName("email")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('email')]
+    #[Serializer\Type('string')]
     private ?string $email = null;
 
-    /**
-     * @Serializer\SerializedName("teacher")
-     * @Serializer\Type("App\Response\Api\V1\Teacher")
-     */
+    #[Serializer\SerializedName('teacher')]
+    #[Serializer\Type(Teacher::class)]
     private ?Teacher $teacher = null;
 
     /**
-     * @Serializer\SerializedName("students")
-     * @Serializer\Type("array<App\Response\Api\V1\Student>")
      *
      * @var Student[]
      */
+    #[Serializer\SerializedName('students')]
+    #[Serializer\Type('array<App\Response\Api\V1\Student>')]
     private ?array $students = null;
 
-    /**
-     * @Serializer\SerializedName("type")
-     * @Serializer\Type("string")
-     * @Serializer\ReadOnly()
-     * @Serializer\Accessor(getter="getTypeString")
-     */
+    #[Serializer\SerializedName('type')]
+    #[Serializer\Type('string')]
+    #[Serializer\ReadOnly]
+    #[Serializer\Accessor(getter: 'getTypeString')]
     private ?UserType $type = null;
 
     public function getUsername(): string {

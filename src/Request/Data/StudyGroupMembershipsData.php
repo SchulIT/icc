@@ -7,21 +7,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class StudyGroupMembershipsData {
 
-    /**
-     * @Serializer\Type("int")
-     */
+    #[Serializer\Type('int')]
     private ?int $year = null;
 
-    /**
-     * @Serializer\Type("int")
-     */
+    #[Serializer\Type('int')]
     private ?int $section = null;
 
     /**
-     * @Serializer\Type("array<App\Request\Data\StudyGroupMembershipData>")
      * @var StudyGroupMembershipData[]
      */
     #[Assert\Valid]
+    #[Serializer\Type('array<App\Request\Data\StudyGroupMembershipData>')]
     private array $memberships = [ ];
 
     /**

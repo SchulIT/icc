@@ -11,9 +11,9 @@ class ViolationList extends ErrorResponse {
      */
     public function __construct(/**
      * List of violations
-     * @Serializer\Type("array<App\Response\Violation>")
-     * @Serializer\SerializedName("violations")
      */
+    #[Serializer\Type('array<App\Response\Violation>')]
+    #[Serializer\SerializedName('violations')]
     private array $violations) {
         parent::__construct('Validation failed.');
     }

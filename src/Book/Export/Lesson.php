@@ -6,77 +6,55 @@ use JMS\Serializer\Annotation as Serializer;
 
 class Lesson {
 
-    /**
-     * @Serializer\Type("boolean")
-     * @Serializer\SerializedName("is_missing")
-     */
+    #[Serializer\Type('boolean')]
+    #[Serializer\SerializedName('is_missing')]
     private bool $isMissing = true;
 
-    /**
-     * @Serializer\Type("boolean")
-     * @Serializer\SerializedName("was_cancelled")
-     */
+    #[Serializer\Type('boolean')]
+    #[Serializer\SerializedName('was_cancelled')]
     private bool $wasCancelled = false;
 
-    /**
-     * @Serializer\Type("integer")
-     * @Serializer\SerializedName("start")
-     */
+    #[Serializer\Type('integer')]
+    #[Serializer\SerializedName('start')]
     private int $start = 0;
 
-    /**
-     * @Serializer\Type("integer")
-     * @Serializer\SerializedName("end")
-     */
+    #[Serializer\Type('integer')]
+    #[Serializer\SerializedName('end')]
     private int $end = 0;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("subject")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('subject')]
     private ?string $subject = null;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("replacement_subject")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('replacement_subject')]
     private ?string $replacementSubject = null;
 
-    /**
-     * @Serializer\Type("App\Book\Export\Teacher")
-     * @Serializer\SerializedName("teacher")
-     */
+    #[Serializer\Type(Teacher::class)]
+    #[Serializer\SerializedName('teacher')]
     private ?Teacher $teacher = null;
 
-    /**
-     * @Serializer\Type("App\Book\Export\Teacher")
-     * @Serializer\SerializedName("replacement_teacher")
-     */
+    #[Serializer\Type(Teacher::class)]
+    #[Serializer\SerializedName('replacement_teacher')]
     private ?Teacher $replacementTeacher = null;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("topic")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('topic')]
     private ?string $topic = null;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("comment")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('comment')]
     private ?string $comment = null;
 
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("exercises")
-     */
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('exercises')]
     private ?string $exercises = null;
 
     /**
-     * @Serializer\Type("array<App\Book\Export\Attendance>")
-     * @Serializer\SerializedName("attendances")
      * @var Attendance[]
      */
+    #[Serializer\Type('array<App\Book\Export\Attendance>')]
+    #[Serializer\SerializedName('attendances')]
     private array $attendances = [ ];
 
     public function isMissing(): bool {

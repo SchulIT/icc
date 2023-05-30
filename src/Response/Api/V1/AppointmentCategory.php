@@ -9,18 +9,15 @@ class AppointmentCategory {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\SerializedName("name")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('name')]
+    #[Serializer\Type('string')]
     private ?string $name = null;
 
     /**
      * HTML Hex-Color, e.g. #AB00A1 (case might be mixed)
-     *
-     * @Serializer\SerializedName("color")
-     * @Serializer\Type("string")
      */
+    #[Serializer\SerializedName('color')]
+    #[Serializer\Type('string')]
     private ?string $color = null;
 
     public function getName(): string {

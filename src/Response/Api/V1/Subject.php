@@ -9,16 +9,12 @@ class Subject {
 
     use UuidTrait;
 
-    /**
-     * @Serializer\SerializedName("abbreviation")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('abbreviation')]
+    #[Serializer\Type('string')]
     private ?string $abbreviation = null;
 
-    /**
-     * @Serializer\SerializedName("name")
-     * @Serializer\Type("string")
-     */
+    #[Serializer\SerializedName('name')]
+    #[Serializer\Type('string')]
     private ?string $name = null;
 
     public function getAbbreviation(): string {

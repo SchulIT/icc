@@ -10,69 +10,61 @@ class ExamData {
 
     /**
      * Your ID which is used to update existing exams.
-     *
-     * @Serializer\Type("string")
      */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private ?string $id = null;
 
-    /**
-     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
-     */
     #[Assert\NotNull]
+    #[Serializer\Type("DateTime<'Y-m-d\\TH:i:s'>")]
     private ?DateTime $date = null;
 
-    /**
-     * @Serializer\Type("int")
-     */
     #[Assert\GreaterThan(0)]
+    #[Serializer\Type('int')]
     private ?int $lessonStart = null;
 
-    /**
-     * @Serializer\Type("int")
-     */
     #[Assert\GreaterThan(0)]
     #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart')]
+    #[Serializer\Type('int')]
     private ?int $lessonEnd = null;
 
     /**
      * Optional description of the exam
-     *
-     * @Serializer\Type("string")
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $description = null;
 
     /**
      * List of external tuition which are related to this exam.
      *
-     * @Serializer\Type("array<App\Request\Data\ExamTuition>")
      * @var ExamTuition[]
      */
+    #[Serializer\Type('array<App\Request\Data\ExamTuition>')]
     private ?array $tuitions = null;
 
     /**
      * List of external student IDs which attend this exam.
      *
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private ?array $students = null;
 
     /**
      * Acronyms of the teachers (their acronyms) which supervise the exam.
      *
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private ?array $supervisions = null;
 
     /**
      * List of rooms, in which the exam takes place.
      *
-     * @Serializer\Type("array<string>")
      * @var string[]
      */
+    #[Serializer\Type('array<string>')]
     private ?array $rooms = null;
 
     public function getId(): string {

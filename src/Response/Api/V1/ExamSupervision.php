@@ -7,16 +7,12 @@ use JMS\Serializer\Annotation as Serializer;
 
 class ExamSupervision {
 
-    /**
-     * @Serializer\SerializedName("lesson")
-     * @Serializer\Type("int")
-     */
+    #[Serializer\SerializedName('lesson')]
+    #[Serializer\Type('int')]
     private ?int $lesson = null;
 
-    /**
-     * @Serializer\SerializedName("teacher")
-     * @Serializer\Type("App\Response\Api\V1\Teacher")
-     */
+    #[Serializer\SerializedName('teacher')]
+    #[Serializer\Type(Teacher::class)]
     private ?Teacher $teacher = null;
 
     public function getLesson(): int {

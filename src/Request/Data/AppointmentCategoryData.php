@@ -7,24 +7,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class AppointmentCategoryData {
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private string $id;
 
-    /**
-     * @Serializer\Type("string")
-     */
     #[Assert\NotBlank]
+    #[Serializer\Type('string')]
     private string $name;
 
     /**
      * Hex color string without leading hashtag. Note: abbreviated values (e.g. 000, fff, ...) are not allowed.
-     *
-     * @Serializer\Type("string")
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Serializer\Type('string')]
     private ?string $color = null;
 
     /**
@@ -57,17 +52,11 @@ class AppointmentCategoryData {
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getColor() {
+    public function getColor(): ?string {
         return $this->color;
     }
 
-    /**
-     * @param string|null $color
-     */
-    public function setColor($color): AppointmentCategoryData {
+    public function setColor(?string $color): AppointmentCategoryData {
         $this->color = $color;
         return $this;
     }

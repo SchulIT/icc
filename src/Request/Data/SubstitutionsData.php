@@ -12,11 +12,11 @@ class SubstitutionsData {
     use ContextTrait;
 
     /**
-     * @Serializer\Type("array<App\Request\Data\SubstitutionData>")
      * @var SubstitutionData[]
      */
     #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
+    #[Serializer\Type('array<App\Request\Data\SubstitutionData>')]
     private array $substitutions = [ ];
 
     /**

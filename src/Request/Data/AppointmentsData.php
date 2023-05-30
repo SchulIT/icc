@@ -9,11 +9,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class AppointmentsData {
 
     /**
-     * @Serializer\Type("array<App\Request\Data\AppointmentData>")
      * @var AppointmentData[]
      */
     #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
+    #[Serializer\Type('array<App\Request\Data\AppointmentData>')]
     private array $appointments = [ ];
 
     /**

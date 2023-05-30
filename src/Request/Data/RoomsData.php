@@ -9,12 +9,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 class RoomsData {
 
     /**
-     * @Serializer\Type("array<App\Request\Data\RoomData>")
-     * @Serializer\SerializedName("rooms")
      * @var RoomData[]
      */
     #[UniqueId(propertyPath: 'id')]
     #[Assert\Valid]
+    #[Serializer\Type('array<App\Request\Data\RoomData>')]
+    #[Serializer\SerializedName('rooms')]
     private array $rooms = [ ];
 
     /**

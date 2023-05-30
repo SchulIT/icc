@@ -16,7 +16,7 @@ class Notification {
     use UuidTrait;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private User $recipient;
 
     #[ORM\Column(type: 'string')]

@@ -38,6 +38,9 @@ class TuitionGradeCategory {
     #[NotNull]
     private ?TuitionGradeType $gradeType;
 
+    /**
+     * @var Collection<Tuition>
+     */
     #[ORM\ManyToMany(targetEntity: Tuition::class, inversedBy: 'gradeCategories')]
     #[ORM\JoinTable]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]

@@ -9,7 +9,7 @@ class DefaultEmailStrategy implements EmailStrategyInterface {
     public function __construct(private readonly string $sender) { }
 
     public function supports(Notification $notification): bool {
-        return !is_subclass_of($notification, Notification::class);
+        return get_class($notification) === Notification::class;
     }
 
     public function getReplyTo(Notification $notification): ?string {

@@ -53,6 +53,9 @@ class Tuition implements Stringable {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?StudyGroup $studyGroup = null;
 
+    /**
+     * @var Collection<TuitionGradeCategory>
+     */
     #[ORM\ManyToMany(targetEntity: TuitionGradeCategory::class, mappedBy: 'tuitions')]
     private Collection $gradeCategories;
 

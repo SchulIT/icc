@@ -16,10 +16,6 @@ class SupervisionReader extends AbstractGpuReader {
         $supervisions = [ ];
 
         foreach($reader->getRecords() as $record) {
-            if((is_countable($record) ? count($record) : 0) < 6) {
-                continue;
-            }
-
             $supervision = new Supervision();
             $supervision->setCorridor($record[0]);
             $supervision->setTeacher($record[1]);

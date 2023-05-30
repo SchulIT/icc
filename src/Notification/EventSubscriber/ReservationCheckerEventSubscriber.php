@@ -206,7 +206,7 @@ class ReservationCheckerEventSubscriber implements EventSubscriberInterface {
             }
         }
 
-        foreach($this->userRepository->findAllTeachers([$teachers]) as $recipient) {
+        foreach($this->userRepository->findAllTeachers($teachers) as $recipient) {
             $notification = new Notification(
                 $recipient,
                 $this->translator->trans('reservation.title', [], 'email'),

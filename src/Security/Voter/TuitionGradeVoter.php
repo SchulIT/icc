@@ -32,7 +32,7 @@ class TuitionGradeVoter extends Voter {
             return false;
         }
 
-        if(!$subject->getTuition() === null) {
+        if($subject->getTuition() === null) {
             return false;
         }
 

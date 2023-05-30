@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\ExcuseNote;
 use App\Entity\User;
+use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -35,5 +36,7 @@ class ExcuseNoteVoter extends Voter {
             case self::Remove:
                 return $this->accessDecisionManager->decide($token, [ 'ROLE_BOOK_VIEWER']) && $user->getTeacher() !== null;
         }
+
+        throw new LogicException('This code should not be reached.');
     }
 }

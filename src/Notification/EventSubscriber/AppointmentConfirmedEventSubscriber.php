@@ -33,6 +33,7 @@ class AppointmentConfirmedEventSubscriber implements EventSubscriberInterface {
                 '%user%' => $this->userStringConverter->convert($event->getConfirmedBy())
             ], 'email'),
             $this->urlGenerator->generate('appointments', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            $this->translator->trans('appointment.link', [], 'email'),
             $event->getAppointment(),
             $event->getConfirmedBy()
         );

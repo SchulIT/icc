@@ -11,13 +11,11 @@ use App\Form\TeacherAbsenceLessonType;
 use App\Form\TeacherAbsenceType;
 use App\Repository\TeacherAbsenceRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
-use App\Section\SectionResolverInterface;
 use App\Security\Voter\TeacherAbsenceVoter;
 use App\Settings\DashboardSettings;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TeacherAbsenceLessonStrategy;
-use App\Sorting\TimetableLessonStrategy;
 use App\Timetable\TimetableTimeHelper;
 use App\View\Filter\SectionFilter;
 use App\View\Filter\TeacherFilter;
@@ -27,9 +25,7 @@ use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/absence/teachers')]
 class TeacherAbsenceController extends AbstractController {
@@ -47,8 +43,6 @@ class TeacherAbsenceController extends AbstractController {
     #[Route('', name: 'teacher_absences')]
     public function index(TeacherFilter $teacherFilter, Request $request, SectionFilter $sectionFilter) {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Index);
-
-        throw new AccessDeniedHttpException();
 
         /** @var User $user */
         $user = $this->getUser();

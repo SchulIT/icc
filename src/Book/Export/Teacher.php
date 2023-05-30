@@ -6,6 +6,8 @@ use JMS\Serializer\Annotation as Serializer;
 
 class Teacher {
 
+    use UuidTrait;
+
     /**
      * The ID which is specified as ID when importing students.
      */

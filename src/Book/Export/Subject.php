@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Response\Api\V1;
+namespace App\Book\Export;
 
-use App\Entity\Subject as SubjectEntity;
 use JMS\Serializer\Annotation as Serializer;
 
 class Subject {
-
     use UuidTrait;
 
     #[Serializer\SerializedName('abbreviation')]
@@ -33,16 +31,5 @@ class Subject {
     public function setName(string $name): Subject {
         $this->name = $name;
         return $this;
-    }
-
-    public static function fromEntity(?SubjectEntity $subjectEntity): ?self {
-        if($subjectEntity === null) {
-            return null;
-        }
-
-        return (new self())
-            ->setName($subjectEntity->getName())
-            ->setUuid($subjectEntity->getUuid())
-            ->setAbbreviation($subjectEntity->getAbbreviation());
     }
 }

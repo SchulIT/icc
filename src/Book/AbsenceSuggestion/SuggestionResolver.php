@@ -7,21 +7,28 @@ use App\Dashboard\AbsentExamStudent;
 use App\Dashboard\AbsentStudent;
 use App\Dashboard\AbsentStudentWithAbsenceNote;
 use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\Student as StudentEntity;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
-use App\Response\Api\V1\Student;
-use App\Section\SectionResolverInterface;
+use App\Response\Book\AbsenceSuggestion;
+use App\Response\Book\Student;
 use DateTime;
 
 class SuggestionResolver {
     public function __construct(private readonly AbsenceResolver $absenceResolver, private readonly LessonAttendanceRepositoryInterface $attendanceRepository,
-                                private readonly ExcuseNoteRepositoryInterface $excuseNoteRepository, private readonly SectionResolverInterface $sectionResolver) {
+                                private readonly ExcuseNoteRepositoryInterface $excuseNoteRepository) {
 
     }
 
-    public function resolve(Tuition $tuition, DateTime $date, int $lesson) {
+    /**
+     * @param Tuition $tuition
+     * @param DateTime $date
+     * @param int $lesson
+     * @return AbsenceSuggestion[]
+     */
+    public function resolve(Tuition $tuition, DateTime $date, int $lesson): array {
         $students = $tuition->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
 
         $suggestions = [ ];
@@ -35,13 +42,13 @@ class SuggestionResolver {
 
             $excuseStatus = ($absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isAlwaysExcused()) ? LessonAttendanceExcuseStatus::Excused : LessonAttendanceExcuseStatus::NotSet;
 
-            $suggestions[$absentStudent->getStudent()->getId()] = [
-                'student' => Student::fromEntity($absentStudent->getStudent(), $this->sectionResolver->getCurrentSection()),
-                'reason' => $absentStudent->getReason()->value,
-                'label' => $absentStudent->getAbsence()->getType()->getName(),
-                'zero_absent_lessons' => $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons(),
-                'excuse_status' => $excuseStatus
-            ];
+            $suggestions[$absentStudent->getStudent()->getId()] = new AbsenceSuggestion(
+                $this->getStudent($absentStudent->getStudent()),
+                $absentStudent->getReason()->value,
+                $absentStudent->getAbsence()->getType()->getName(),
+                $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons(),
+                $excuseStatus
+            );
         }
 
         foreach($this->filterAbsencesWithoutZeroAbsenceLessons($absences) as $absentStudent) {
@@ -51,13 +58,13 @@ class SuggestionResolver {
 
             $excuseStatus = ($absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isAlwaysExcused()) ? LessonAttendanceExcuseStatus::Excused : LessonAttendanceExcuseStatus::NotSet;
 
-            $suggestions[$absentStudent->getStudent()->getId()] = [
-                'student' => Student::fromEntity($absentStudent->getStudent(), $this->sectionResolver->getCurrentSection()),
-                'reason' => $absentStudent->getReason()->value,
-                'label' => $absentStudent->getAbsence()->getType()->getName(),
-                'zero_absent_lessons' => false,
-                'excuse_status' => $excuseStatus
-            ];
+            $suggestions[$absentStudent->getStudent()->getId()] = new AbsenceSuggestion(
+                $this->getStudent($absentStudent->getStudent()),
+                $absentStudent->getReason()->value,
+                $absentStudent->getAbsence()->getType()->getName(),
+                false,
+                $excuseStatus
+            );
         }
 
         // Absence in previous lesson
@@ -67,10 +74,10 @@ class SuggestionResolver {
             }
 
             if($attendance->getEntry()->getLessonEnd() === $lesson - 1) {
-                $suggestions[$attendance->getStudent()->getId()] = [
-                    'student' => Student::fromEntity($attendance->getStudent(), $this->sectionResolver->getCurrentSection()),
-                    'reason' => 'absent_before'
-                ];
+                $suggestions[$attendance->getStudent()->getId()] = new AbsenceSuggestion(
+                    $this->getStudent($attendance->getStudent()),
+                    'absent_before'
+                );
             }
         }
 
@@ -84,12 +91,13 @@ class SuggestionResolver {
                 continue; // do not show exam of current tuition
             }
 
-            $suggestions[$absentExamStudent->getStudent()->getId()] = [
-                'student' => Student::fromEntity($absentExamStudent->getStudent(), $this->sectionResolver->getCurrentSection()),
-                'reason' => $absentExamStudent->getReason()->value,
-                'zero_absent_lessons' => true,
-                'excuse_status' => LessonAttendanceExcuseStatus::Excused
-            ];
+            $suggestions[$absentExamStudent->getStudent()->getId()] = new AbsenceSuggestion(
+                $this->getStudent($absentExamStudent->getStudent()),
+                $absentExamStudent->getReason()->value,
+                null,
+                true,
+                LessonAttendanceExcuseStatus::Excused
+            );
         }
 
         // Absences with zero absent lessons
@@ -100,13 +108,13 @@ class SuggestionResolver {
 
             $excuseStatus = ($absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isAlwaysExcused()) ? LessonAttendanceExcuseStatus::Excused : LessonAttendanceExcuseStatus::NotSet;
 
-            $suggestions[$absentStudent->getStudent()->getId()] = [
-                'student' => Student::fromEntity($absentStudent->getStudent(), $this->sectionResolver->getCurrentSection()),
-                'reason' => $absentStudent->getReason()->value,
-                'label' => $absentStudent->getAbsence()->getType()->getName(),
-                'zero_absent_lessons' => true,
-                'excuse_status' => $excuseStatus
-            ];
+            $suggestions[$absentStudent->getStudent()->getId()] = new AbsenceSuggestion(
+                $this->getStudent($absentStudent->getStudent()),
+                $absentStudent->getReason()->value,
+                $absentStudent->getAbsence()->getType()->getName(),
+                true,
+                $excuseStatus
+            );
         }
 
         // Excuse
@@ -116,11 +124,13 @@ class SuggestionResolver {
             }
 
             if($note->appliesToLesson($date, $lesson)) {
-                $suggestions[$note->getStudent()->getId()] = [
-                    'student' => Student::fromEntity($note->getStudent(), $this->sectionResolver->getCurrentSection()),
-                    'reason' => 'excuse',
-                    'excuse_status' => LessonAttendanceExcuseStatus::Excused
-                ];
+                $suggestions[$note->getStudent()->getId()] = new AbsenceSuggestion(
+                    $this->getStudent($note->getStudent()),
+                    'excuse',
+                    null,
+                    false,
+                    LessonAttendanceExcuseStatus::Excused
+                );
             }
         }
 
@@ -153,5 +163,9 @@ class SuggestionResolver {
 
     private function filterAbsencesWithAreExcused(array $students): array {
         return array_filter($students, fn(AbsentStudent $absentStudent) => $absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isAlwaysExcused());
+    }
+
+    private function getStudent(StudentEntity $entity): Student {
+        return new Student($entity->getUuid()->toString(), $entity->getFirstname(), $entity->getLastname());
     }
 }

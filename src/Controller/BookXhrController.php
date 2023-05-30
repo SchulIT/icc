@@ -5,10 +5,15 @@ namespace App\Controller;
 use App\Book\AbsenceSuggestion\SuggestionResolver;
 use App\Book\Lesson\LessonCancelHelper;
 use App\Book\Student\AbsenceExcuseResolver;
+use App\Entity\Grade;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonEntry;
-use App\Entity\Student as StudentEntity;
+use App\Entity\Section;
+use App\Entity\Student;
 use App\Entity\StudentAbsence;
+use App\Entity\StudyGroup;
+use App\Entity\Subject;
+use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
 use App\Markdown\Markdown;
@@ -19,10 +24,13 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Request\Book\CancelLessonRequest;
 use App\Request\Book\UpdateAttendanceRequest;
-use App\Response\Api\V1\Student;
-use App\Response\Api\V1\Subject;
-use App\Response\Api\V1\Teacher;
-use App\Response\Api\V1\Tuition as TuitionResponse;
+use App\Response\Book\AbsenceSuggestion;
+use App\Response\Book\Student as StudentResponse;
+use App\Response\Book\Teacher as TeacherResponse;
+use App\Response\Book\Subject as SubjectResponse;
+use App\Response\Book\Tuition as TuitionResponse;
+use App\Response\Book\Grade as GradeResponse;
+use App\Response\Book\StudyGroup as StudyGroupResponse;
 use App\Response\ViolationList;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\LessonEntryVoter;
@@ -57,7 +65,7 @@ class BookXhrController extends AbstractController {
         $teachers = [];
 
         foreach($teacherRepository->findAll() as $teacher) {
-            $teachers[] = Teacher::fromEntity($teacher);
+            $teachers[] = $this->getTeacher($teacher);
         }
 
         return $this->returnJson($teachers, $serializer);
@@ -65,10 +73,17 @@ class BookXhrController extends AbstractController {
 
     #[Route(path: '/tuition/{uuid}', name: 'xhr_tuition')]
     public function tuition(Tuition $tuition, SerializerInterface $serializer): Response {
-        return $this->returnJson(TuitionResponse::fromEntity($tuition), $serializer);
+        return $this->returnJson($this->getTuition($tuition), $serializer);
     }
 
-    private function possiblyAbsentStudents(Tuition $tuition, DateTime $date, int $lesson, SuggestionResolver $suggestionResolver) {
+    /**
+     * @param Tuition $tuition
+     * @param DateTime $date
+     * @param int $lesson
+     * @param SuggestionResolver $suggestionResolver
+     * @return AbsenceSuggestion[]
+     */
+    private function possiblyAbsentStudents(Tuition $tuition, DateTime $date, int $lesson, SuggestionResolver $suggestionResolver): array {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         return $suggestionResolver->resolve($tuition, $date, $lesson);
@@ -85,7 +100,7 @@ class BookXhrController extends AbstractController {
         foreach($entry->getAttendances() as $attendance) {
             if($filter === null || intval($filter) === $attendance->getType()) {
                 $data[] = [
-                    'student' => Student::fromEntity($attendance->getStudent(), $sectionResolver->getCurrentSection()),
+                    'student' => $this->getStudent($attendance->getStudent(), $sectionResolver->getSectionForDate($entry->getLesson()->getDate())),
                     'type' => $attendance->getType()
                 ];
             }
@@ -102,7 +117,7 @@ class BookXhrController extends AbstractController {
         $section = $sectionResolver->getCurrentSection();
 
         foreach($studentRepository->findAllBySection($section) as $studentEntity) {
-            $students[] = Student::fromEntity($studentEntity, $section);
+            $students[] = $this->getStudent($studentEntity, $section);
         }
 
         return $this->returnJson($students, $serializer);
@@ -111,7 +126,7 @@ class BookXhrController extends AbstractController {
     #[Route('/absence_note/{student}/{lesson}', name: 'xhr_student_absences')]
     #[ParamConverter('student', options: [ 'mapping' => ['student' => 'uuid']])]
     #[ParamConverter('lesson', options: [ 'mapping' => ['lesson' => 'uuid']])]
-    public function absenceNote(StudentEntity $student, TimetableLesson $lesson, StudentAbsenceRepositoryInterface $absenceRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, Markdown $markdown): Response {
+    public function absenceNote(Student $student, TimetableLesson $lesson, StudentAbsenceRepositoryInterface $absenceRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, Markdown $markdown): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $absences = [ ];
@@ -185,7 +200,7 @@ class BookXhrController extends AbstractController {
                 $excuses = $excuseInfo->getExcuseCollectionForLesson($attendance);
 
                 $attendances[] = [
-                    'student' => Student::fromEntity($attendance->getStudent()),
+                    'student' => $this->getStudent($attendance->getStudent()),
                     'minutes' => $attendance->getLateMinutes(),
                     'lessons' => $attendance->getAbsentLessons(),
                     'comment' => $attendance->getComment(),
@@ -199,10 +214,10 @@ class BookXhrController extends AbstractController {
                 'uuid' => $entry->getUuid()->toString(),
                 'start' => $entry->getLessonStart(),
                 'end' => $entry->getLessonEnd(),
-                'subject' => Subject::fromEntity($entry->getSubject()),
+                'subject' => $this->getSubject($entry->getSubject()),
                 'replacement_subject' => $entry->getReplacementSubject(),
-                'teacher' => Teacher::fromEntity($entry->getTeacher()),
-                'replacement_teacher' => Teacher::fromEntity($entry->getReplacementTeacher()),
+                'teacher' => $this->getTeacher($entry->getTeacher()),
+                'replacement_teacher' => $this->getTeacher($entry->getReplacementTeacher()),
                 'topic' => $entry->getTopic(),
                 'exercises' => $entry->getExercises(),
                 'comment' => $entry->getComment(),
@@ -219,7 +234,7 @@ class BookXhrController extends AbstractController {
                 continue;
             }
 
-            $students[] = Student::fromEntity($membership->getStudent());
+            $students[] = $this->getStudent($membership->getStudent());
         }
 
         $response = [
@@ -228,7 +243,7 @@ class BookXhrController extends AbstractController {
                 'date' => $lesson->getDate()->format('Y-m-d'),
                 'lesson_start' => $lesson->getLessonStart(),
                 'lesson_end' => $lesson->getLessonEnd(),
-                'tuition' => TuitionResponse::fromEntity($lesson->getTuition())
+                'tuition' => $this->getTuition($lesson->getTuition())
             ],
             'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $start, $suggestionResolver),
             'entry' => $entryJson,
@@ -296,5 +311,56 @@ class BookXhrController extends AbstractController {
         }
 
         return new Response($font);
+    }
+
+    private function getStudent(Student $student, ?Section $section = null): StudentResponse {
+        $grade = null;
+
+        if($section !== null && ($gradeEntity = $student->getGrade($section)) !== null) {
+            $grade = new GradeResponse($gradeEntity->getUuid()->toString(), $gradeEntity->getName());
+        }
+
+        return new StudentResponse(
+            $student->getUuid()->toString(),
+            $student->getFirstname(),
+            $student->getLastname(),
+            $grade
+        );
+    }
+
+    private function getTeacher(Teacher $teacher): TeacherResponse {
+        return new TeacherResponse(
+            $teacher->getUuid()->toString(),
+            $teacher->getAcronym(),
+            $teacher->getFirstname(),
+            $teacher->getLastname(),
+            $teacher->getTitle());
+    }
+
+    private function getSubject(Subject $subject): SubjectResponse {
+        return new SubjectResponse(
+            $subject->getUuid()->toString(),
+            $subject->getName(),
+            $subject->getAbbreviation()
+        );
+    }
+
+    private function getStudyGroup(StudyGroup $studyGroup): StudyGroupResponse {
+        return new StudyGroupResponse(
+            $studyGroup->getUuid()->toString(),
+            $studyGroup->getName(),
+            $studyGroup->getType()->value,
+            array_map(fn(Grade $grade) => new GradeResponse($grade->getUuid()->toString(), $grade->getName()), $studyGroup->getGrades()->toArray())
+        );
+    }
+
+    private function getTuition(Tuition $tuition): TuitionResponse {
+        return new TuitionResponse(
+            $tuition->getUuid()->toString(),
+            $tuition->getName(),
+            $this->getSubject($tuition->getSubject()),
+            $this->getStudyGroup($tuition->getStudyGroup()),
+            array_map(fn(Teacher $teacher) => $this->getTeacher($teacher), $tuition->getTeachers()->toArray())
+        );
     }
 }

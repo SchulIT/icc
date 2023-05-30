@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\TuitionGradeType;
 use App\Form\TuitionGradeTypeType;
+use App\Repository\TuitionGradeCategoryRepositoryInterface;
 use App\Repository\TuitionGradeTypeRepositoryInterface;
+use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,7 +75,34 @@ class TuitionGradeTypeAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_tuition_grade_type')]
-    public function remove(): RedirectResponse|Response {
+    public function remove(TuitionGradeType $type, Request $request, TuitionGradeCategoryRepositoryInterface $tuitionGradeCategoryRepository): RedirectResponse|Response {
+        $categories = $tuitionGradeCategoryRepository->findAllByGradeType($type);
+
+        if(count($categories) > 0) {
+            $this->addFlash('error', 'admin.tuition_grade_types.remove.error');
+            return $this->redirectToRoute('admin_tuition_grade_types');
+        }
+
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'admin.tuition_grade_types.remove.confirm',
+            'message_parameters' => [
+                '%name%' => $type->getDisplayName()
+            ]
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($type);
+            $this->addFlash('success', 'admin.tuition_grade_types.remove.success');
+
+            return $this->redirectToRoute('admin_tuition_grade_types');
+        }
+
+        return $this->render('admin/tuition_grades/types/remove.html.twig', [
+            'form' => $form->createView(),
+            'type' => $type
+        ]);
+
 
     }
 }

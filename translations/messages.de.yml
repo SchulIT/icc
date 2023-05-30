@@ -1343,6 +1343,7 @@ admin:
         remove:
             label: Notenkategorie löschen
             success: Notenkategorie erfolgreich gelöscht
+            confirm: 'Soll die Notenkategorie %name% wirklich gelöscht werden? Die Kategorie ist aktuell keiner Note zugeordnet, daher kommt es nicht zu Datenverlust.'
             error: Die Notenkategorie kann nicht gelöscht werden, weil Noten mit ihr verknüpft sind.
 
     tuition_grade_types:
@@ -1363,6 +1364,7 @@ admin:
         remove:
             label: Notenkatalog löschen
             success: Notenkatalog erfolgreich gelöscht
+            confirm: 'Soll der Notenkatalog %name% wirklich gelöscht werden? Der Katalog ist aktuell nicht zugeordnet und kann daher gefahrlos gelöscht werden.'
             error: Der Notenkatalog kann nicht gelöscht werden, weil er in einem Notenmodul verwendet wird.
 
 tools:

@@ -6,6 +6,7 @@ use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\Tuition;
 use App\Entity\TuitionGrade;
+use App\Entity\TuitionGradeCategory;
 use Doctrine\ORM\QueryBuilder;
 
 class TuitionGradeRepository extends AbstractTransactionalRepository implements TuitionGradeRepositoryInterface {
@@ -36,6 +37,17 @@ class TuitionGradeRepository extends AbstractTransactionalRepository implements 
             ->setParameter('section', $section->getId())
             ->getQuery()
             ->getResult();
+    }
+
+    public function countByTuitionGradeCategory(TuitionGradeCategory $category): int {
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(DISTINCT g.id)')
+            ->from(TuitionGrade::class, 'g')
+            ->leftJoin('g.category', 'c')
+            ->where('c.id = :category')
+            ->setParameter('category', $category->getId())
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function persist(TuitionGrade $grade): void {

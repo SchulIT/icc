@@ -1308,6 +1308,7 @@ admin:
                 tuition: Unterrichte dieses Abschnittes
                 study_groups: Lerngruppen (inkl. Mitgliedschaften) dieses Abschnittes
                 book: Alle Einträge in den Unterrichtsbüchern dieses Abschnittes
+                grades: Alle Noten werden dieses Abschnittes
 
             success: Abschnitt erfolgreich gelöscht
 

@@ -16,4 +16,6 @@ interface TuitionGradeRepositoryInterface extends TransactionalRepositoryInterfa
     public function countByTuitionGradeCategory(TuitionGradeCategory $category): int;
 
     public function persist(TuitionGrade $grade): void;
+
+    public function removeForSection(Section $section): int;
 }

@@ -54,4 +54,19 @@ class TuitionGradeRepository extends AbstractTransactionalRepository implements 
         $this->em->persist($grade);
         $this->flushIfNotInTransaction();
     }
+
+    public function removeForSection(Section $section): int {
+        $qb = $this->em->createQueryBuilder()
+            ->delete(TuitionGrade::class, 'g');
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(Tuition::class, 'tInner')
+            ->where('tInner.section = :section');
+
+        $qb->where($qb->expr()->in('g.tuition', $qbInner->getDQL()))
+            ->setParameter('section', $section->getId());
+
+        return $qb->getQuery()->execute();
+    }
 }

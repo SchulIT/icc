@@ -27,7 +27,9 @@ use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/absence/teachers')]
 class TeacherAbsenceController extends AbstractController {
@@ -45,6 +47,8 @@ class TeacherAbsenceController extends AbstractController {
     #[Route('', name: 'teacher_absences')]
     public function index(TeacherFilter $teacherFilter, Request $request, SectionFilter $sectionFilter) {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Index);
+
+        throw new AccessDeniedHttpException();
 
         /** @var User $user */
         $user = $this->getUser();

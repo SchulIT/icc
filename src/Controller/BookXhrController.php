@@ -31,7 +31,7 @@ use App\Utils\ArrayUtils;
 use DateTime;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use OpenApi\Annotations as OA;
+use OpenApi\Attributes as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -142,24 +142,10 @@ class BookXhrController extends AbstractController {
         return $this->returnJson($json, $serializer);
     }
 
-    /**
-     * @OA\Get()
-     * @OA\Parameter(
-     *     name="lesson",
-     *     in="query",
-     *     description="UUID of the lesson"
-     * )
-     * @OA\Parameter(
-     *     name="start",
-     *     in="query",
-     *     description="Start lesson number"
-     * )
-     * @OA\Parameter(
-     *     name="end",
-     *     in="path",
-     *     description="End lesson number"
-     * )
-     */
+    #[OA\Get]
+    #[OA\Parameter(name: 'lesson', description: 'UUID der Stundenplanstunde', in: 'query')]
+    #[OA\Parameter(name: 'start', description: 'Start der Unterrichtsstunde', in: 'query')]
+    #[OA\Parameter(name: 'end', description: 'Ende der Unterrichtsstunde', in: 'query')]
     #[Route(path: '/entry', name: 'xhr_lesson_entry', methods: ['GET'])]
     public function entry(Request $request, TimetableLessonRepositoryInterface $lessonRepository, SuggestionResolver $suggestionResolver,
                           SerializerInterface $serializer, AbsenceExcuseResolver $excuseResolver, BookSettings $settings): Response {
@@ -253,23 +239,10 @@ class BookXhrController extends AbstractController {
         return $this->returnJson($response, $serializer);
     }
 
-    /**
-     * @OA\Post()
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
-     *     @Model(type=CancelLessonRequest::class)
-     * )
-     * @OA\Response(
-     *     response="201",
-     *     description="Lessons are cancelled successfully. Empty content."
-     * )
-     * @OA\Response(
-     *     response="403",
-     *     description="Bad request.",
-     *     @Model(type=ViolationList::class)
-     * )
-     */
+    #[OA\Post]
+    #[OA\RequestBody(content: new Model(type: CancelLessonRequest::class))]
+    #[OA\Response(response: '201', description: 'Unterrichtsstunden erfolgreich als Entfall markiert.')]
+    #[OA\Response(response: '400', description: 'Fehlerhafte Anfrage.', content: new Model(type: ViolationList::class))]
     #[Route(path: '/cancel/{uuid}', name: 'xhr_cancel_lesson', methods: ['POST'])]
     public function cancelLesson(TimetableLesson $lesson, CancelLessonRequest $request, LessonCancelHelper $lessonCancelHelper): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
@@ -281,23 +254,11 @@ class BookXhrController extends AbstractController {
         ]);
     }
 
-    /**
-     * @OA\Put()
-     * @OA\Parameter(
-     *     name="payload",
-     *     in="body",
-     *     @Model(type=UpdateAttendanceRequest::class)
-     * )
-     * @OA\Response(
-     *     response="200",
-     *     description="Attendance successfully updated"
-     * )
-     * @OA\Response(
-     *     response="403",
-     *     description="Bad request.",
-     *     @Model(type=ViolationList::class)
-     * )
-     */
+
+    #[OA\Put]
+    #[OA\RequestBody(content: new Model(type: UpdateAttendanceRequest::class))]
+    #[OA\Response(response: '200', description: 'Anwesenheit erfolgreich aktualisiert.')]
+    #[OA\Response(response: '400', description: 'Fehlerhafte Anfrage.', content: new Model(type: ViolationList::class))]
     #[Route(path: '/attendance/{uuid}', name: 'xhr_update_attendance', methods: ['PUT'])]
     public function updateAttendance(LessonAttendance $attendance, UpdateAttendanceRequest $request, LessonAttendanceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $attendance->getEntry());

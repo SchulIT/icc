@@ -328,7 +328,11 @@ class BookXhrController extends AbstractController {
         );
     }
 
-    private function getTeacher(Teacher $teacher): TeacherResponse {
+    private function getTeacher(?Teacher $teacher): ?TeacherResponse {
+        if($teacher === null) {
+            return null;
+        }
+
         return new TeacherResponse(
             $teacher->getUuid()->toString(),
             $teacher->getAcronym(),

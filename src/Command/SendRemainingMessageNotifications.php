@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Event\MessageCreatedEvent;
-use App\Notification\NotificationService;
+use App\Notification\EventSubscriber\MessageCreatedEventSubscriber;
 use App\Repository\MessageRepositoryInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
@@ -17,7 +17,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand('app:notifications:send', 'Versendet E-Mail-Benachrichtigungen für Mitteilungen, für die noch keine Benachrichtigung versendet wurde (z.B. weil die Mitteilung für ein zukünftiges Datum erstellt wurde.')]
 class SendRemainingMessageNotifications extends Command {
 
-    public function __construct(private DateHelper $dateHelper, private NotificationService $notificationService, private MessageRepositoryInterface $messageRepository, string $name = null) {
+    public function __construct(private readonly DateHelper $dateHelper, private readonly MessageCreatedEventSubscriber $eventSubscriber,
+                                private readonly MessageRepositoryInterface $messageRepository, string $name = null) {
         parent::__construct($name);
     }
 
@@ -31,7 +32,7 @@ class SendRemainingMessageNotifications extends Command {
             $message = $messages[0];
             $style->section(sprintf('Sende Benachrichtigungen für Mitteilung "%s"', $message->getTitle()));
 
-            $this->notificationService->sendNotifications(new MessageCreatedEvent($message));
+            $this->eventSubscriber->onMessageCreated(new MessageCreatedEvent($message));
             $style->success(sprintf('Fertig (%d Mitteilungen mit offenen Benachrichtigungen stehen noch aus)', count($messages) - 1));
         } else {
             $style->success('Keine Mitteilungen mit offenen Benachrichtigungen gefunden');

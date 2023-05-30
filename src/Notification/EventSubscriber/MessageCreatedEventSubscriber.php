@@ -6,6 +6,8 @@ use App\Event\MessageCreatedEvent;
 use App\Message\MessageRecipientResolver;
 use App\Notification\MessageNotification;
 use App\Notification\NotificationService;
+use App\Repository\MessageRepositoryInterface;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -18,9 +20,19 @@ class MessageCreatedEventSubscriber implements EventSubscriberInterface {
     public function __construct(private readonly MessageRecipientResolver $recipientResolver,
                                 private readonly TranslatorInterface $translator,
                                 private readonly UrlGeneratorInterface $urlGenerator,
-                                private readonly NotificationService $notificationService) {    }
+                                private readonly NotificationService $notificationService,
+                                private readonly DateHelper $dateHelper,
+                                private readonly MessageRepositoryInterface $messageRepository) {    }
 
     public function onMessageCreated(MessageCreatedEvent $event): void {
+        if($event->getMessage()->isEmailNotificationSent() === true) {
+            return;
+        }
+
+        if($this->dateHelper->getToday() < $event->getMessage()->getStartDate()) {
+            return;
+        }
+
         foreach ($this->recipientResolver->resolveRecipients($event->getMessage()) as $recipient) {
             $notification = new MessageNotification(
                 $recipient,
@@ -37,6 +49,10 @@ class MessageCreatedEventSubscriber implements EventSubscriberInterface {
 
             $this->notificationService->notify($notification);
         }
+
+        $message = $event->getMessage();
+        $message->setIsEmailNotificationSent(true);
+        $this->messageRepository->persist($message);
     }
 
     public static function getSubscribedEvents(): array {

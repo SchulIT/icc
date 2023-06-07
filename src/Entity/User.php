@@ -81,6 +81,9 @@ class User implements UserInterface, Stringable {
     #[ORM\Column(type: 'boolean')]
     private bool $isEmailNotificationsEnabled = false;
 
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $pushoverToken = null;
+
     /**
      * @var string[]
      */
@@ -238,6 +241,22 @@ class User implements UserInterface, Stringable {
 
     public function setIsEmailNotificationsEnabled(bool $isEmailNotificationsEnabled): User {
         $this->isEmailNotificationsEnabled = $isEmailNotificationsEnabled;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPushoverToken(): ?string {
+        return $this->pushoverToken;
+    }
+
+    /**
+     * @param string|null $pushoverToken
+     * @return User
+     */
+    public function setPushoverToken(?string $pushoverToken): User {
+        $this->pushoverToken = $pushoverToken;
         return $this;
     }
 

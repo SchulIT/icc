@@ -888,9 +888,13 @@ admin:
 
         notifications:
             label: Benachrichtigungen
-            push:
-                label: Push-Benachrichtigungen aktiviert für
-                help: Schaltet Push-Benachrichtigungen für diese Benutzergruppen frei oder sperrt sie.
+            pushover:
+                user_types:
+                    label: Pushover-Benachrichtigungen aktiviert für
+                    help: Schaltet Benachrichtigungen über die Pushover-App für diese Benutzergruppen frei oder sperrt sie.
+                token:
+                    label: Pushover API-Token
+                    help: Das API-Token, um sich gegenüber der API zu authentifizieren. Dieses muss über die Pushover-Website ausgestellt werden.
             email:
                 label: E-Mail Benachrichtigungen aktiviert für
                 help: Schaltet E-Mail-Benachrichtigungen für diese Benutzergruppen frei oder sperrt sie.
@@ -1424,6 +1428,18 @@ profile:
             label_short: E-Mail Benachrichtigungen
             label: E-Mail Benachrichtigungen aktiviert
             help: Wenn diese Option aktiv ist, werden Benachrichtigungen per E-Mail versendet.
+        pushover:
+            label: Pushover Benutzer-Token
+            help: Hier kann das Benutzertoken von Pushover eingetragen werden.
+            info:
+                label: Pushover-App
+                description: Pushover ist ein Dienst, um Pushbenachrichtigungen z.B. auf das Smartphone oder Tablet zu erhalten. Es handelt sich dabei um einen externen Anbieter.
+                privacy:
+                    label: Datenschutzeinwilligung
+                    description: Mit dem Eintragen eines Tokens wird eingewilligt, dass über den Dienst Benachrichtigungen versendet werden dürfen. Benachrichtigungen enthalten nur die nötigsten Informationen. Klarnamen werden nicht versendet. Die Einwilligung kann jederzeit widerrufen werden, indem das Token geleert wird.
+                link:
+                    label: Zum Anbieter
+                    url: https://pushover.net/
 
     apps:
         label: Verbundene Apps

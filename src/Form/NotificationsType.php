@@ -11,7 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class NotificationsType extends AbstractType {
 
     public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setDefault('allow_email', false);
+        $resolver->setDefault('allow_email', false)
+            ->setDefault('allow_pushover', false);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -55,6 +56,15 @@ class NotificationsType extends AbstractType {
                         'class' => 'checkbox-custom'
                     ],
                     'required' => false
+                ]);
+        }
+
+        if($options['allow_pushover']) {
+            $builder
+                ->add('pushoverToken', TextType::class, [
+                    'required' => false,
+                    'label' => 'profile.notifications.pushover.label',
+                    'help' => 'profile.notifications.pushover.help'
                 ]);
         }
     }

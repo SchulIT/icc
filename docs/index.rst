@@ -49,7 +49,8 @@ zu Workflows.
    tutorials/display.rst
    tutorials/kiosk.rst
    tutorials/exam-planning.rst
-   tutorials/new-school-year
+   tutorials/new-school-year.rst
+   tutorials/pushover.rst
 
 .. toctree::
    :caption: Benutzer-Handbuch

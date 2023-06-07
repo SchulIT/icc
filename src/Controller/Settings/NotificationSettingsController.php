@@ -9,6 +9,7 @@ use App\Utils\ArrayUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,6 +33,26 @@ class NotificationSettingsController extends AbstractController {
                 'label_attr' => [
                     'class' => 'checkbox-custom'
                 ]
+            ])
+            ->add('pushover_enabled', ChoiceType::class, [
+                'choices' => ArrayUtils::createArray(array_map(fn(UserType $case) => $case->name, UserType::cases()), UserType::cases()),
+                'choice_label' => fn(UserType $userType) => $enumStringConverter->convert($userType),
+                'choice_value' => fn(UserType $userType) => $userType->value,
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'admin.settings.notifications.pushover.user_types.label',
+                'help' => 'admin.settings.notifications.pushover.user_types.help',
+                'data' => $notificationSettings->getPushoverEnabledUserTypes(),
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
+            ])
+            ->add('pushover_token', TextType::class, [
+                'label' => 'admin.settings.notifications.pushover.token.label',
+                'help' => 'admin.settings.notifications.pushover.token.help',
+                'required' => false,
+                'mapped' => false,
+                'data' => $notificationSettings->getPushoverApiToken()
             ]);
 
         $form = $builder->getForm();
@@ -41,6 +62,12 @@ class NotificationSettingsController extends AbstractController {
             $map = [
                 'email_enabled' => function($types) use ($notificationSettings) {
                     $notificationSettings->setEmailEnabledUserTypes($types);
+                },
+                'pushover_enabled' => function($types) use($notificationSettings) {
+                    $notificationSettings->setPushoverEnabledUserTypes($types);
+                },
+                'pushover_token' => function($token) use($notificationSettings) {
+                    $notificationSettings->setPushoverApiToken($token);
                 }
             ];
 

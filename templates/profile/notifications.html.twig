@@ -26,6 +26,21 @@
             {% endif %}
         {% endfor %}
 
+        {% if is_pushover_allowed %}
+        <div class="bs-callout bs-callout-info">
+            <h4>{{ 'profile.notifications.pushover.info.label'|trans }}</h4>
+            <p>{{ 'profile.notifications.pushover.info.description'|trans }}</p>
+            <a href="{{ 'profile.notifications.pushover.info.link.url'|trans }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                <i class="fas fa-external-link-alt"></i> {{ 'profile.notifications.pushover.info.link.label'|trans }}
+            </a>
+
+            <div class="mb-4"></div>
+
+            <h4>{{ 'profile.notifications.pushover.info.privacy.label'|trans }}</h4>
+            <p>{{ 'profile.notifications.pushover.info.privacy.description'|trans }}</p>
+        </div>
+        {% endif %}
+
         <button type="submit" class="btn btn-primary btn-sm">
             <i class="fas fa-save"> </i> {{ 'actions.save'|trans }}
         </button>

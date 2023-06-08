@@ -1950,6 +1950,7 @@ notifications:
     label: Benachrichtigungen
     link: Details
     unread: ungelesen
+    empty: Es gibt keine Benachrichtigungen.
     mark_read:
         label: Alle Benachrichtigungen als gelesen markieren
         success: Alle Benachrichtigungen als gelesen markiert

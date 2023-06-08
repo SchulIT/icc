@@ -4,11 +4,17 @@ namespace App\Notification\Email;
 
 use App\Notification\MessageNotification;
 use App\Notification\Notification;
+use App\Settings\NotificationSettings;
+use App\Utils\ArrayUtils;
 
 class MessageStrategy implements EmailStrategyInterface {
 
+    public function __construct(private readonly NotificationSettings $notificationSettings) { }
+
     public function supports(Notification $notification): bool {
-        return $notification instanceof MessageNotification;
+        return $notification instanceof MessageNotification
+            // Da es sich um eine Massen-Benachrichtigung handelt, sind nur ausgewählte Benutzertypen erlaubt
+            && ArrayUtils::inArray($notification->getRecipient()->getUserType(), $this->notificationSettings->getEmailEnabledUserTypes()) !== false;
     }
 
     /**

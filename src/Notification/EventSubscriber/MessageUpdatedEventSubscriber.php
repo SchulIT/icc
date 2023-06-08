@@ -19,6 +19,10 @@ class MessageUpdatedEventSubscriber implements EventSubscriberInterface {
 
     public function onMessageUpdated(MessageUpdatedEvent $event): void {
         foreach ($this->recipientResolver->resolveRecipients($event->getMessage()) as $recipient) {
+            if($recipient->isMessageNotificationsEnabled() !== true) {
+                continue;
+            }
+
             $notification = new MessageNotification(
                 $recipient,
                 $this->translator->trans('message.update.title', [

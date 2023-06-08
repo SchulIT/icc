@@ -34,6 +34,10 @@ class MessageCreatedEventSubscriber implements EventSubscriberInterface {
         }
 
         foreach ($this->recipientResolver->resolveRecipients($event->getMessage()) as $recipient) {
+            if($recipient->isMessageNotificationsEnabled() !== true) {
+                continue;
+            }
+
             $notification = new MessageNotification(
                 $recipient,
                 $this->translator->trans('message.create.title', [

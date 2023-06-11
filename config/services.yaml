@@ -361,3 +361,7 @@ services:
         arguments:
             $command: '@console.command.messenger_consume_messages'
 
+    # TWIG
+    App\Twig\WebpackEntryCssSourceExtension:
+        bind:
+            $publicDir: '%kernel.project_dir%/public'

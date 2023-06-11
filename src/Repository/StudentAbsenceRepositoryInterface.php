@@ -54,6 +54,15 @@ interface StudentAbsenceRepositoryInterface {
      */
     public function removeExpired(DateTime $threshold): int;
 
+    /**
+     * Removes all absences within the given timespan (start and end inclusive)
+     *
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return int Number of removed absences
+     */
+    public function removeRange(DateTime $start, DateTime $end): int;
+
     public function persist(StudentAbsence $note): void;
 
     public function remove(StudentAbsence $note): void;

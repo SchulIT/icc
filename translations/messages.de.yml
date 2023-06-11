@@ -1313,6 +1313,7 @@ admin:
                 study_groups: Lerngruppen (inkl. Mitgliedschaften) dieses Abschnittes
                 book: Alle Einträge in den Unterrichtsbüchern dieses Abschnittes
                 grades: Alle Noten werden dieses Abschnittes
+                absences: Alle Abwesenheitsmeldungen im Zeitraum des Abschnittes (Lernende und Lehrkräfte) - es werden alle Meldungen gelöscht, deren ENDE im Abschnitt liegen
 
             success: Abschnitt erfolgreich gelöscht
 

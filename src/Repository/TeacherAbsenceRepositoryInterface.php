@@ -14,4 +14,13 @@ interface TeacherAbsenceRepositoryInterface {
     public function persist(TeacherAbsence|TeacherAbsenceLesson $absenceOrLesson): void;
 
     public function remove(TeacherAbsence|TeacherAbsenceLesson $absenceOrLesson): void;
+
+    /**
+     * Removes all absences within the given timespan (start and end inclusive)
+     *
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return int Number of removed absences
+     */
+    public function removeRange(DateTime $start, DateTime $end): int;
 }

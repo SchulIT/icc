@@ -55,4 +55,15 @@ class TeacherAbsenceRepository extends AbstractRepository implements TeacherAbse
         $this->em->remove($absenceOrLesson);
         $this->em->flush();
     }
+
+    public function removeRange(DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->delete(TeacherAbsence::class, 't')
+            ->where('t.until.date >= :start')
+            ->andWhere('t.until.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
+    }
 }

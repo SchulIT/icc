@@ -35,6 +35,17 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
             ->execute();
     }
 
+    public function removeRange(DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->delete(StudentAbsence::class, 's')
+            ->where('s.until.date >= :start')
+            ->andWhere('s.until.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
+    }
+
     /**
      * @inheritDoc
      */

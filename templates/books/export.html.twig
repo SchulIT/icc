@@ -177,29 +177,13 @@
                     <h5 class="modal-title">{{ 'book.export.pdf.label'|trans }}</h5>
                 </div>
 
-                <div class="modal-body generating">
+                <div class="modal-body">
                     <p>
                         {{ 'book.export.pdf.message'|trans }}
                     </p>
                     <div class="progress">
                         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
                     </div>
-                </div>
-
-                <div class="modal-body completed d-flex align-items-center hide">
-                    <div>
-                        <i class="far fa-check-circle fa-3x text-success"></i>
-                    </div>
-
-                    <p class="mb-0 ml-2">
-                        {{ 'book.export.pdf.complete'|trans }}
-                    </p>
-                </div>
-
-                <div class="modal-footer">
-                    <a href="#" class="btn btn-primary download disabled" target="_blank">
-                        <i class="fas fa-download"></i> {{ 'book.export.pdf.download'|trans }}
-                    </a>
                 </div>
             </div>
         </div>

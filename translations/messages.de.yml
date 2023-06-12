@@ -1774,7 +1774,7 @@ book:
         pdf:
             label: Exportieren (PDF)
             message: Bitte warten, bis das PDF erzeugt ist. Dieser Vorgang kann einige Augenblicke in Anspruch nehmen. Sobald der Vorgang abgeschlossen ist, wird die PDF herunterladen.
-            complete: Die PDF kann nun in einem neuen Tab geöffnet werden.
+            complete: Die PDF-Datei
             download: PDF herunterladen
         password:
             label: Passwort

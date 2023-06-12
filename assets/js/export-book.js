@@ -546,26 +546,35 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
             let $el = this;
 
-            modalEl.querySelector('.generating').classList.remove('hide');
-            modalEl.querySelector('.completed').classList.add('hide');
-
-            let downloadButton = modalEl.querySelector('.download');
-            downloadButton.classList.add('disabled');
-            downloadButton.href = '#';
-
             let response = await axios.get($el.getAttribute('data-export-url'));
             await initializeFont($el.getAttribute('data-regular-font-url'), $el.getAttribute('data-bold-font-url'));
             let pdf = await createPdf(response.data);
 
-            modalEl.querySelector('.generating').classList.add('hide');
-            modalEl.querySelector('.completed').classList.remove('hide');
+            let parts = [ ];
+            parts.push(response.data.section.year);
+            parts.push(response.data.section.number);
 
-            downloadButton.classList.remove('disabled');
-            downloadButton.href = pdf.output('bloburi', {filename: 'export.pdf'});
+            for(let grade of response.data.grades) {
+                parts.push(grade.name);
+            }
 
-            downloadButton.addEventListener('click', function() {
-                modal.hide();
-            });
+            if(response.data.tuition !== null) {
+                parts.push(response.data.tuition.name);
+
+                for(let teacher of response.data.tuition.teachers) {
+                    parts.push(teacher.acronym);
+                }
+            } else if(response.data.grades.length === 1) {
+                for(let teacher of response.data.grades[0].teachers) {
+                    parts.push(teacher.acronym);
+                }
+            }
+
+            let filename = parts.join('-') + ".pdf";
+
+            pdf.save(filename);
+
+            modal.hide();
         });
     });
 

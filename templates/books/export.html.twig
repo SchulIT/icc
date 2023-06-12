@@ -20,6 +20,10 @@
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9">
+                <div class="bs-callout bs-callout-warning" id="pending">
+                    <p>{{ 'book.export.password.pending'|trans }}</p>
+                </div>
+
                 {% for group in groups %}
                     <div class="card">
                         <div class="card-header">{{ group.key }}</div>
@@ -145,7 +149,7 @@
                             {{ 'book.export.password.info'|trans }}
                         </p>
 
-                        <div id="key" class="hide">{{ key }}</div>
+                        <div id="key" class="hide" data-ttl="{{ ttl }}">{{ key }}</div>
 
                         <div class="input-group">
                             <input type="password" id="passphrase" class="form-control" autocomplete="one-time-code" />
@@ -157,7 +161,11 @@
                         </div>
 
                         <div class="bs-callout bs-callout-success hide mb-0">
-                            {{ 'book.export.password.success'|trans }}
+                            <p>{{ 'book.export.password.success'|trans }}</p>
+
+                            {% if ttl > 0 %}
+                                <p>{{ 'book.grades.password.ttl'|trans({'%seconds%': ttl }) }}</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

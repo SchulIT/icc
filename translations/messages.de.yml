@@ -1780,6 +1780,7 @@ book:
             label: Passwort
             info: Da Noten verschlüssel abgespeichert werden, muss zunächst das Passwort eingegeben werden, damit diese im PDF Export aufgelistet werden. Wird kein Passwort eingegeben, bleibt die Notenübersicht leer. Im JSON- und XML-Export sind die Noten stets verschlüsselt.
             success: Passwort erfolgreich angewendet, der PDF-Export enthält Noten.
+            pending: Es wurde noch kein Passwort für die Noten eingetragen. Der PDF-Export enthält keine Noten.
 
     excuse_note:
         label: Entschuldigungen

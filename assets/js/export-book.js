@@ -525,6 +525,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
             let password = document.querySelector(this.getAttribute('data-passphrase')).value;
             let encryptedKey = JSON.parse(document.querySelector(this.getAttribute('data-key')).innerHTML.trim());
+            let ttl = parseInt(document.querySelector(this.getAttribute('data-key')).getAttribute('data-ttl'));
 
             try {
                 decryptedKey = await crypto.decryptMasterKey(password, encryptedKey);
@@ -532,11 +533,34 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
                 this.closest('.card-body').querySelector('.bs-callout').classList.remove('hide');
                 this.closest('.input-group').remove();
+                document.getElementById('pending').remove();
             } catch (e) {
                 alert('Falsches Passwort');
                 console.error(e);
             }
+
+            if(window.sessionStorage.getItem('gradebook.psk') === null && ttl > 0) {
+                let expireDate = new Date((new Date).getTime() + ttl * 1000);
+                let data = {
+                    password: password,
+                    expireDate: expireDate
+                };
+
+                window.sessionStorage.setItem('gradebook.psk', JSON.stringify(data));
+            }
         });
+
+        if(window.sessionStorage.getItem('gradebook.psk') !== null) {
+            let data = JSON.parse(window.sessionStorage.getItem('gradebook.psk'));
+            let expireDate = new Date(data.expireDate);
+
+            if(expireDate.getTime() >= (new Date()).getTime()) {
+                document.querySelector(document.getElementById('password_btn').getAttribute('data-passphrase')).value = data.password;
+                document.getElementById('password_btn').click();
+            } else {
+                window.sessionStorage.removeItem('gradebook.psk');
+            }
+        }
     }
 
     document.querySelectorAll('[data-export-url]').forEach(function(element) {

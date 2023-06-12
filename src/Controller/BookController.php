@@ -685,7 +685,8 @@ class BookController extends AbstractController {
             'teacherFilter' => $teacherFilterView,
             'holdCounts' => $holtCounts,
             'missingCounts' => $missingCounts,
-            'key' => $gradebookSettings->getEncryptedMasterKey()
+            'key' => $gradebookSettings->getEncryptedMasterKey(),
+            'ttl' => $gradebookSettings->getTtlForSessionStorage()
         ]);
     }
 

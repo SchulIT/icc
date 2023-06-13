@@ -23,6 +23,7 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\Teacher as TeacherEntity;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition as TuitionEntity;
+use App\Repository\TuitionRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\Utils\ArrayUtils;
@@ -31,7 +32,9 @@ use JMS\Serializer\SerializerInterface;
 
 class BookExporter {
 
-    public function __construct(private readonly EntryOverviewHelper $overviewHelper, private readonly StudentInfoResolver $studentInfoResolver, private readonly Sorter $sorter, private readonly SerializerInterface $serializer, private readonly GradeOverviewHelper $gradeOverviewHelper)
+    public function __construct(private readonly EntryOverviewHelper $overviewHelper, private readonly StudentInfoResolver $studentInfoResolver,
+                                private readonly Sorter $sorter, private readonly SerializerInterface $serializer,
+                                private readonly GradeOverviewHelper $gradeOverviewHelper, private readonly TuitionRepositoryInterface $tuitionRepository)
     {
     }
 
@@ -96,12 +99,12 @@ class BookExporter {
         }
 
         if($gradeOverview !== null) {
-            foreach($tuitions as $tuition) {
+            foreach($tuitions as $gradeTuition) {
                 $studentGrades = new StudentGrades();
-                $studentGrades->setTuition($this->castTuition($tuition));
+                $studentGrades->setTuition($this->castTuition($gradeTuition));
 
                 foreach ($gradeOverview->getCategories() as $category) {
-                    if($category->getTuition() !== $tuition) {
+                    if($category->getTuition() !== $gradeTuition) {
                         continue;
                     }
 
@@ -116,7 +119,7 @@ class BookExporter {
 
                 foreach ($gradeOverview->getRows() as $row) {
                     foreach ($gradeOverview->getCategories() as $category) {
-                        if($category->getTuition() !== $tuition) {
+                        if($category->getTuition() !== $gradeTuition) {
                             continue;
                         }
 
@@ -136,9 +139,10 @@ class BookExporter {
         $this->sorter->sort($students, StudentStrategy::class);
 
         $studentInfo = [ ];
+        $tuitionsToConsider = $tuition !== null ? [ $tuition ] : $this->tuitionRepository->findAllByGrades([$grade], $section);
 
         foreach($students as $student) {
-            $info = $this->studentInfoResolver->resolveStudentInfo($student, $section, $tuition !== null ? [ $tuition ] : [ ]);
+            $info = $this->studentInfoResolver->resolveStudentInfo($student, $section, $tuitionsToConsider);
             $studentInfo[$student->getId()] = $info;
             $book->addStudentSummary(
                 (new StudentSummary())

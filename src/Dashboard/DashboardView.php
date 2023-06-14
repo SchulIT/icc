@@ -9,7 +9,9 @@ use App\Entity\Infotext;
 use App\Entity\LessonEntry;
 use App\Entity\Message;
 use App\Entity\MessagePriority;
+use App\Entity\Student;
 use App\Entity\Substitution;
+use App\Entity\Teacher;
 use DateTime;
 
 class DashboardView {
@@ -43,6 +45,10 @@ class DashboardView {
 
     /** @var Appointment[] */
     private array $appointments = [ ];
+
+    private array $teacherBirthdays = [ ];
+
+    private array $studentBirthdays = [ ];
 
     private ?ExercisesView $exercises = null;
 
@@ -253,6 +259,28 @@ class DashboardView {
         }
     }
 
+    public function addStudentBirthday(Student $student): void {
+        $this->studentBirthdays[] = $student;
+    }
+
+    /**
+     * @return Student[]
+     */
+    public function getStudentBirthdays(): array {
+        return $this->studentBirthdays;
+    }
+
+    public function addTeacherBirthday(Teacher $teacher): void {
+        $this->teacherBirthdays[] = $teacher;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTeacherBirthdays(): array {
+        return $this->teacherBirthdays;
+    }
+
     public function isEmpty(): bool {
         return count($this->messages) === 0
             && count($this->infotexts) === 0
@@ -262,6 +290,8 @@ class DashboardView {
             && count($this->absentTeachers) === 0
             && count($this->priorityMessages) === 0
             && count($this->exams) === 0
-            && count($this->appointments) === 0;
+            && count($this->appointments) === 0
+            && count($this->teacherBirthdays) === 0
+            && count($this->studentBirthdays) === 0;
     }
 }

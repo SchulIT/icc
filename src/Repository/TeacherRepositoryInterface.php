@@ -6,6 +6,7 @@ use App\Entity\Section;
 use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TeacherTag;
+use DateTime;
 
 interface TeacherRepositoryInterface extends TransactionalRepositoryInterface {
 
@@ -50,6 +51,14 @@ interface TeacherRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Teacher[]
      */
     public function findAllByExternalId(array $externalIds): array;
+
+    /**
+     * Finds teachers with the given birthday (year is ignored) AND with the flag "showBirthday" set to true.
+     *
+     * @param DateTime $date
+     * @return Teacher[]
+     */
+    public function findAllByBirthday(DateTime $date): array;
 
     /**
      * @param Subject|null $subject

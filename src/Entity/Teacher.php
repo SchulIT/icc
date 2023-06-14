@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Stringable;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -43,6 +44,12 @@ class Teacher implements Stringable {
     #[Assert\Email]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $email = null;
+
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?DateTime $birthday = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $showBirthday = false;
 
     /**
      * @var Collection<Subject>
@@ -148,6 +155,38 @@ class Teacher implements Stringable {
 
     public function getEmail(): ?string {
         return $this->email;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getBirthday(): ?DateTime {
+        return $this->birthday;
+    }
+
+    /**
+     * @param DateTime|null $birthday
+     * @return Teacher
+     */
+    public function setBirthday(?DateTime $birthday): Teacher {
+        $this->birthday = $birthday;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShowBirthday(): bool {
+        return $this->showBirthday;
+    }
+
+    /**
+     * @param bool $showBirthday
+     * @return Teacher
+     */
+    public function setShowBirthday(bool $showBirthday): Teacher {
+        $this->showBirthday = $showBirthday;
+        return $this;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Student;
+use App\Entity\Teacher;
 use App\Entity\User;
 use App\Exception\UnexpectedTypeException;
 use LogicException;
@@ -43,11 +44,11 @@ class BirthdayVoter extends Voter {
             return false;
         }
 
-        if(!$subject instanceof Student) {
+        if($subject instanceof Teacher && ($subject->getBirthday() === null || $subject->isShowBirthday() !== true)) {
             return false;
         }
 
-        if($user->isStudentOrParent()) {
+        if($subject instanceof Student && $user->isStudentOrParent()) {
             return $user->getStudents()->contains($subject);
         }
 

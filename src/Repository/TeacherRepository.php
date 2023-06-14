@@ -6,6 +6,7 @@ use App\Entity\Section;
 use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TeacherTag;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
 class TeacherRepository extends AbstractTransactionalRepository implements TeacherRepositoryInterface {
@@ -109,6 +110,15 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
             ->setParameter('externalIds', $externalIds);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findAllByBirthday(DateTime $date): array {
+        return $this->createDefaultQueryBuilder()
+            ->where('t.birthday LIKE :date')
+            ->andWhere('t.showBirthday = true')
+            ->setParameter('date', $date->format('%-m-d'))
+            ->getQuery()
+            ->getResult();
     }
 
     /**

@@ -82,6 +82,13 @@
                 </a>
             </li>
         {% endif %}
+        {% if view.teacherBirthdays|length > 0 or view.studentBirthdays|length > 0 %}
+            <li class="nav-item">
+                <a href="#birthdays" class="nav-link" data-trigger="scroll" title="{{ 'dashboard.birthdays'|trans }}">
+                    <i class="fas fa-birthday-cake"></i> {{ (view.teacherBirthdays|length + view.studentBirthdays|length) }}
+                </a>
+            </li>
+        {% endif %}
 
         <li class="nav-item pull-right d-md-none d-lg-none d-xl-none">
             <a href="#filter" class="nav-link" data-trigger="scroll">
@@ -170,6 +177,25 @@
 
         {# Absences #}
         {% include "_includes/absences.html.twig" with {absentTeachers: view.absentTeachers, absentStudyGroups: view.absentStudyGroups} only %}
+
+        {# Birthdays #}
+        {% if view.teacherBirthdays|length > 0 or view.studentBirthdays|length > 0 %}
+            <div class="card">
+                <div class="card-body mb-n2">
+                    {% for teacher in view.teacherBirthdays %}
+                        <div class="mb-2">
+                            <i class="fa fa-birthday-cake align-self-baseline mr-2"></i> {{ teacher|teacher }}
+                        </div>
+                    {% endfor %}
+
+                    {% for student in view.studentBirthdays %}
+                        <div class="mb-2">
+                            <i class="fa fa-birthday-cake align-self-baseline mr-2"></i> {{ student|student(true) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
     {% endif %}
 {% endblock %}
 
@@ -514,6 +540,12 @@
                                     </a>{%- if not loop.last %}, {% endif %}
                                 {% endfor %}
                             </p>
+
+                            {% if is_granted('show-birthday', teacher) %}
+                                <p>
+                                    <i class="fas fa-birthday-cake" title="{{ 'label.birthday'|trans }}"></i> {{ teacher.birthday|format_date }}
+                                </p>
+                            {% endif %}
 
                             {% set showTags = false %}
                             {% for tag in teacher.tags %}

@@ -35,9 +35,11 @@ use App\Repository\InfotextRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\ResourceReservationRepositoryInterface;
+use App\Repository\StudentRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TeacherAbsenceLessonRepositoryInterface;
+use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
@@ -73,7 +75,7 @@ class DashboardViewHelper {
                                 private TimetableTimeHelper $timetableTimeHelper, private Sorter $sorter, private Grouper $grouper, private TimetableSettings $timetableSettings, private DashboardSettings $dashboardSettings,
                                 private AuthorizationCheckerInterface $authorizationChecker, private ValidatorInterface $validator, private DateHelper $dateHelper, private AbsenceResolver $absenceResolver,
                                 private SectionResolverInterface $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly TeacherAbsenceLessonRepositoryInterface $absenceLessonRepository,
-                                private readonly BookSettings $bookSettings, private readonly LessonEntryRepositoryInterface $lessonEntryRepository)
+                                private readonly BookSettings $bookSettings, private readonly LessonEntryRepositoryInterface $lessonEntryRepository, private readonly TeacherRepositoryInterface $teacherRepository, private readonly StudentRepositoryInterface $studentRepository)
     {
     }
 
@@ -131,6 +133,7 @@ class DashboardViewHelper {
         $this->addRoomReservations($this->roomReservationRepository->findAllByTeacherAndDate($teacher, $dateTime), $view);
         $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
         $this->setCurrentLesson($view);
+        $this->addBirthdays($view, $dateTime);
 
         return $view;
     }
@@ -170,6 +173,23 @@ class DashboardViewHelper {
 
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages, $user->getUserType(), $dateTime), $view);
         $this->setCurrentLesson($view);
+        $this->addBirthdays($view, $dateTime);
+
+        return $view;
+    }
+
+    private function addBirthdays(DashboardView $view, DateTime $dateTime): DashboardView {
+        foreach($this->teacherRepository->findAllByBirthday($dateTime) as $birthdayTeacher) {
+            if($this->authorizationChecker->isGranted('ROLE_SHOW_BIRTHDAY', $birthdayTeacher)) {
+                $view->addTeacherBirthday($birthdayTeacher);
+            }
+        }
+
+        foreach($this->studentRepository->findAllByBirthday($dateTime) as $birthdayStudent) {
+            if($this->authorizationChecker->isGranted('ROLE_SHOW_BIRTHDAY', $birthdayStudent)) {
+                $view->addStudentBirthday($birthdayStudent);
+            }
+        }
 
         return $view;
     }

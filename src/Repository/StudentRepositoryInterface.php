@@ -57,6 +57,14 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllByGrade(Grade $grade, Section $section): array;
 
     /**
+     * Finds all students with the given birthday (year is ignored).
+     *
+     * @param DateTime $date
+     * @return Student[]
+     */
+    public function findAllByBirthday(DateTime $date): array;
+
+    /**
      * @param Grade $grade
      * @param Section $section
      * @return Paginator

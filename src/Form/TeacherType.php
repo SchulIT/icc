@@ -7,6 +7,10 @@ use App\Entity\TeacherTag;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\DataMapper\CheckboxListMapper;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -48,6 +52,19 @@ class TeacherType extends AbstractType {
             ])
             ->add('email', EmailType::class, [
                 'label' => 'label.email'
+            ])
+            ->add('birthday', DateType::class, [
+                'label' => 'label.birthday',
+                'required' => false,
+                'widget' => 'single_text'
+            ])
+            ->add('showBirthday', CheckboxType::class, [
+                'label' => 'label.show_birthday.label',
+                'help' => 'label.show_birthday.help',
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'checkbox-custom'
+                ]
             ])
             ->add('tags', EntityType::class, [
                 'class' => TeacherTag::class,

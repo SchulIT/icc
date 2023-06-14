@@ -8,6 +8,7 @@ use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\User;
 use App\Entity\UserType;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -170,6 +171,14 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
      */
     public function findAllByStudyGroups(array $studyGroups): array {
         return $this->getQueryBuilderFindAllByStudyGroups($studyGroups)->getQuery()->getResult();
+    }
+
+    public function findAllByBirthday(DateTime $date): array {
+        return $this->getDefaultQueryBuilder(true)
+            ->where('s.birthday LIKE :date')
+            ->setParameter('date', $date->format('%s-m-d'))
+            ->getQuery()
+            ->getResult();
     }
 
     /**

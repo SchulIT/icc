@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use App\Display\DisplayHelper;
@@ -26,7 +27,8 @@ class DisplayController extends AbstractController {
     #[Route(path: '/{uuid}', name: 'show_display')]
     public function show(Display $display, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                          TimetableWeekRepositoryInterface $timetableWeekRepository, AppointmentRepositoryInterface $appointmentRepository,
-                         DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper, ImportDateTypeRepositoryInterface  $importDateTymeRepository): Response {
+                         DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper,
+                         ImportDateTypeRepositoryInterface  $importDateTymeRepository, TeacherRepositoryInterface $teacherRepository): Response {
         $today = $dateHelper->getToday();
         $appointments = [ ];
         $groups = [ ];
@@ -51,6 +53,11 @@ class DisplayController extends AbstractController {
 
         $week = $timetableWeekRepository->findOneByWeekNumber((int)$today->format('W'));
 
+        $birthdays = [ ];
+        if($display->getTargetUserType() === DisplayTargetUserType::Teachers) {
+            $birthdays = $teacherRepository->findAllByBirthday($today);
+        }
+
         return $this->render('display/two_column_bottom.html.twig', [
             'display' => $display,
             'infotexts' => $infotextRepository->findAllByDate($today),
@@ -62,7 +69,8 @@ class DisplayController extends AbstractController {
             'last_update' => $importDateTymeRepository->findOneByEntityClass(Substitution::class),
             'day' => $today,
             'week' => $week,
-            'is_teachersview' => $display->getTargetUserType() === DisplayTargetUserType::Teachers
+            'is_teachersview' => $display->getTargetUserType() === DisplayTargetUserType::Teachers,
+            'teacher_birthdays' => $birthdays
         ]);
     }
 }

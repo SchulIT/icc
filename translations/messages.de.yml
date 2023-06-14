@@ -252,6 +252,9 @@ label:
     exportable:
         label: exportierbar
         help: Wenn diese Option aktiv ist, werden Noten in dieser Kategorie exportiert (JSON, XML, PDF).
+    show_birthday:
+        label: Geburtstag anzeigen
+        help: Wenn diese Option aktiv ist, wird das Geburtsdatum öffentlich angezeigt (Public Display und Übersichtsseite)
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -316,6 +319,7 @@ dashboard:
     substitution_mentions: Erwähnungen
     appointments: Termine
     exercises: Aufgaben
+    birthdays: Geburtstage
     collision:
         hint: Bitte überprüfen und den entsprechenden Ansprechpartner kontaktieren.
         single_label: Mögliche Kollision gefunden.

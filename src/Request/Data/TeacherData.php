@@ -3,6 +3,7 @@
 namespace App\Request\Data;
 
 use App\Entity\Gender;
+use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -40,6 +41,9 @@ class TeacherData {
     #[Assert\Choice(callback: 'getGenders')]
     #[Serializer\Type('string')]
     private ?string $gender = null;
+
+    #[Serializer\Type("DateTime<'Y-m-d\\TH:i:s'>")]
+    private ?DateTime $birthday = null;
 
     /**
      * @var string[]
@@ -118,6 +122,15 @@ class TeacherData {
 
     public function setGender(?string $gender): TeacherData {
         $this->gender = $gender;
+        return $this;
+    }
+
+    public function getBirthday(): ?DateTime {
+        return $this->birthday;
+    }
+
+    public function setBirthday(?DateTime $birthday): TeacherData {
+        $this->birthday = $birthday;
         return $this;
     }
 

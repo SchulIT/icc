@@ -78,6 +78,10 @@ class TeachersImportStrategy implements ImportStrategyInterface {
         $entity->setLastname($data->getLastname());
         $entity->setEmail($data->getEmail());
 
+        if($data->getBirthday() !== null) {
+            $entity->setBirthday($data->getBirthday());
+        }
+
         $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
 
         if($section === null) {

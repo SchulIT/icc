@@ -118,7 +118,7 @@
                     {% set type = item.blockName %}
 
                     {% if type == 'supervision' %}
-                        {{ dashboard.supervision(item, lessonNumber, null, null, lesson.warning, supervisionLabels) }}
+                        {{ dashboard.supervision(item, lessonNumber, null, null, lesson.warning, false, supervisionLabels) }}
                     {% elseif type == 'substitution' %}
                         {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning) }}
                     {% endif %}
@@ -137,7 +137,7 @@
                     {% elseif type == 'free_lesson' %}
                         {{ dashboard.free_lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
                     {% elseif type == 'supervision' %}
-                        {{ dashboard.supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent, supervisionLabels) }}
+                        {{ dashboard.supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, false, supervisionLabels) }}
                     {% elseif type == 'substitution' %}
                         {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
                     {% elseif type == 'appointment' %}

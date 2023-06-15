@@ -3,7 +3,7 @@
     <div class="card-body {{ bodyClasses|default('') }}">
         {% if absentTeachers|length > 0 %}
         <div class="d-flex align-items-baseline flex-wrap {% if absentStudyGroups|length > 0 %}mb-2{% endif %}">
-            <span class="mr-1"><i class="fa fa-graduation-cap"></i> {{ 'plans.substitutions.absence.teacher'|trans }}:</span>
+            <span class="me-1"><i class="fa fa-graduation-cap"></i> {{ 'plans.substitutions.absence.teacher'|trans }}:</span>
             <span>
                 {% for absence in absentTeachers -%}
                     {{ absence.teacher|teacher }}
@@ -18,7 +18,7 @@
 
         {% if absentStudyGroups|length > 0 %}
         <div class="d-flex align-items-baseline flex-wrap">
-            <span class="mr-1"><i class="fa fa-users"></i> {{ 'plans.substitutions.absence.study_groups'|trans }}:</span>
+            <span class="me-1"><i class="fa fa-users"></i> {{ 'plans.substitutions.absence.study_groups'|trans }}:</span>
             <span>
                 {% for absence in absentStudyGroups -%}
                     {{ absence.studyGroup|studygroup(true) }}

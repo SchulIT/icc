@@ -23,7 +23,7 @@
             <div class="card {% if mustConfirm %}border-warning{% endif %}">
                 <div class="card-body">
                     <div class="d-flex align-items-center flex-wrap {% if not is_dismissed(message) %}mb-2{% endif %}">
-                        <h5 class="card-title mr-auto mb-0 mr-2">{{ message.title }}</h5>
+                        <h5 class="card-title me-auto mb-0 me-2">{{ message.title }}</h5>
 
                         <div class="flex-shrink-0">
                             {% if message.mustConfirm and is_granted('confirm', message) %}
@@ -77,12 +77,12 @@
                             {{ 'messages.uploads.label'|trans }}
 
                             {% if missing|length > 0 %}
-                                <span class="badge badge-warning">
+                                <span class="badge text-bg-warning">
                                     {{ 'messages.uploads.status.missing'|trans({'%count%': missing|length})}}
                                 </span>
                             </span>
                             {% else %}
-                                <span class="badge badge-success">
+                                <span class="badge text-bg-success">
                                     {{ 'messages.uploads.status.good'|trans()}}
                                 </span>
                             {% endif %}
@@ -100,18 +100,18 @@
 
                             {%  set upload = item.vars.data %}
 
-                            <div class="form-group row">
+                            <div class="mb-3 row">
                                 <div class="col-sm-2"></div>
                                 <div class="col-sm-10">
-                                    <div class="bs-callout {% if not upload.uploaded %}bs-callout-warning{% else %}bs-callout-success{% endif %} mr-0 pr-0" role="alert">
+                                    <div class="bs-callout {% if not upload.uploaded %}bs-callout-warning{% else %}bs-callout-success{% endif %} pe-0 pe-0" role="alert">
                                     {% if upload.uploaded %}
-                                        <div class="d-flex pr-3">
-                                            <span class="mr-auto align-self-center">
+                                        <div class="d-flex pe-3">
+                                            <span class="me-auto align-self-center">
                                                 <i class="fa fa-check-circle"></i> {{ upload.filename }}
                                                 <span class="text-muted">{{ upload.size|filesize }} <i class="fa fa-calendar"></i> {{ upload.updatedAt|format_datetime }}</span>
                                             </span>
 
-                                            <a href="{{ path('download_uploaded_user_file', { message: message.uuid, uuid: upload.messageFile.uuid }) }}" class="btn btn-primary btn-sm align-self-center mr-2"><i class="fa fa-download"></i></a>
+                                            <a href="{{ path('download_uploaded_user_file', { message: message.uuid, uuid: upload.messageFile.uuid }) }}" class="btn btn-primary btn-sm align-self-center me-2"><i class="fa fa-download"></i></a>
                                             <a href="{{ path('remove_uploaded_user_file', { message: message.uuid, uuid: upload.messageFile.uuid }) }}" class="btn btn-danger btn-sm align-self-center"><i class="fa fa-trash"></i></a>
                                         </div>
                                     {% else %}
@@ -275,7 +275,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ 'messages.uploads.confirm.title'|trans }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -283,7 +283,7 @@
                     <p>{{ 'messages.uploads.confirm.message'|trans }}</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
                     <button type="button" class="btn btn-primary confirm">{{ 'messages.uploads.confirm.button'|trans }}</button>
                 </div>
             </div>

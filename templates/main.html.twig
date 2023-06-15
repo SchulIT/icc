@@ -30,7 +30,6 @@
     {{ knp_menu_render('userMenu', {'currentClass': 'active', 'template': '@Common/submenu.html.twig' }) }}
 {% endblock %}
 
-
 {% block container %}
     <div class="d-none d-md-block">
         {% block breadcrumb %}{% endblock %}
@@ -38,21 +37,21 @@
 
     {% for msg in app.session.flashbag.get('error') %}
         <div class="bs-callout bs-callout-danger">
-            <h4>{{ 'error.label'|trans }}</h4>
+            <h5><i class="fas fa-info-circle"></i> {{ 'error.label'|trans }}</h5>
             <p>{{ msg|trans }}</p>
         </div>
     {% endfor %}
 
     {% for msg in app.session.flashbag.get('info') %}
         <div class="bs-callout bs-callout-info">
-            <h4>{{ 'info.label'|trans }}</h4>
+            <h5><i class="fas fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
             <p>{{ msg|trans }}</p>
         </div>
     {% endfor %}
 
     {% for msg in app.session.flashbag.get('success') %}
         <div class="bs-callout bs-callout-success">
-            <h4>{{ 'success.label'|trans }}</h4>
+            <h5><i class="fas fa-info-circle"></i> {{ 'success.label'|trans }}</h5>
             <p>{{ msg|trans }}</p>
         </div>
     {% endfor %}
@@ -65,7 +64,7 @@
                 {{ 'profile.switch.active.message'|trans({'%user%': app.user|user})|raw }}
             </p>
 
-            <a href="{{ path('dashboard') }}?_switch_user=_exit" class="btn btn-primary btn-sm">
+            <a href="?_switch_user=_exit" class="btn btn-primary btn-sm">
                 <i class="fa fa-sign-out-alt"></i> {{ 'profile.switch.exit'|trans }}
             </a>
         </div>
@@ -73,7 +72,7 @@
 
     {% block content %}{% endblock %}
 
-    <div class="d-show d-md-none mt-3">
+    <div class="d-show d-md-none">
         {{ block('breadcrumb') }}
     </div>
 {% endblock %}
@@ -84,9 +83,9 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{{ asset('build/app.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ preload(asset('build/app.css')) }}" type="text/css" >
 {% endblock %}
 
 {% block javascript %}
-    <script src="{{ asset('build/app.js') }}"></script>
+<script src="{{ preload(asset('build/app.js')) }}"></script>
 {% endblock %}

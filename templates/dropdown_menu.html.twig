@@ -109,7 +109,7 @@
 
 {% block badge %}
     {% if item.attribute('count') is not empty %}
-        <span class="badge badge-pill badge-primary{%- if matcher.isCurrent(item) %} badge-light{% endif %}">{{ item.attribute('count') }}</span>
+        <span class="badge rounded-pill badge-primary{%- if matcher.isCurrent(item) %} badge-light{% endif %}">{{ item.attribute('count') }}</span>
     {% endif %}
 {% endblock %}
 

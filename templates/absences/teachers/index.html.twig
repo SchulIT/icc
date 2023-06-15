@@ -56,7 +56,7 @@
                                                 {{ absence.type.name }}
 
                                                 {% if absence.processedAt is not null %}
-                                                    <span class="badge badge-success">{{ 'absences.teachers.processed.label'|trans }}</span>
+                                                    <span class="badge text-bg-success">{{ 'absences.teachers.processed.label'|trans }}</span>
                                                 {% endif %}
                                             </td>
                                             <td class="align-middle">{{ absence.teacher.lastname }}</td>
@@ -67,11 +67,11 @@
 
                                             <td class="align-middle">
                                                 <div class="dropdown">
-                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
 
-                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                    <div class="dropdown-menu dropdown-menu-end">
                                                         <a href="{{ path('show_teacher_absence', { uuid: absence.uuid }) }}" class="dropdown-item">
                                                             <i class="fas fa-info-circle"></i> {{ 'actions.view'|trans }}
                                                         </a>
@@ -126,12 +126,12 @@
                         {% endif %}
 
                         <form role="form" method="get" class="form">
-                            <div class="form-group mb-0">
+                            <div class="mb-3 mb-0">
                                 {% include "_filter/_params.html.twig" with { params: currentFilter } %}
 
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="hide-processed" data-trigger="submit" name="hide_processed" value="✓" {% if hideProcessed %}checked="checked"{% endif %}>
-                                    <label class="custom-control-label" for="hide-processed">{{ 'absences.teachers.show.hide_processed'|trans }}</label>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="hide-processed" data-trigger="submit" name="hide_processed" value="✓" {% if hideProcessed %}checked="checked"{% endif %}>
+                                    <label class="form-check-label" for="hide-processed">{{ 'absences.teachers.show.hide_processed'|trans }}</label>
                                 </div>
                             </div>
                         </form>

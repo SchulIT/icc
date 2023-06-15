@@ -8,8 +8,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 import deLocale from '@fullcalendar/core/locales/de';
 import Choices from "choices.js";
-let bsn = require('bootstrap.native');
-
+import {Popover} from "bootstrap";
 
 require('@fullcalendar/core/locales-all');
 
@@ -74,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 '<div class="popover-body">';
 
             if(confirmation_status !== null) {
-                template += '<span class="badge badge-danger"><i class="fa fa-information-circle"></i> ' + confirmation_status + '</span>';
+                template += '<span class="badge text-bg-danger"><i class="fa fa-information-circle"></i> ' + confirmation_status + '</span>';
             }
 
             if(content !== null) {
@@ -87,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             template += '</div></div>';
 
-            let popover = new bsn.Popover(info.el, {
+            let popover = new Popover(info.el, {
                 placement: 'right',
                 template: template,
                 trigger: 'focus',

@@ -16,19 +16,12 @@
                                 <span class="d-none d-xs-none d-sm-none d-md-none d-lg-block d-xl-block">
                                     <i class="{{ child.extras['icon'] }}"></i>
                                     {{ child.label|trans }}
-
-                                    {% if child.extras['count'] is defined %}
-                                    <span class="badge badge-primary badge-pill">{{ child.extras['count'] }}</span>
-                                    {% endif %}
                                 </span>
                                 <span class="d-block d-xs-block d-sm-block d-md-block d-lg-none d-xl-none">
                                     <i class="{{ child.extras['icon'] }}"></i>
                                 </span>
                             {% else %}
                                 {{ child.label|trans }}
-                                {% if child.extras['count'] is defined %}
-                                    <span class="badge badge-pill">{{ child.extras['count'] }}</span>
-                                {% endif %}
                             {% endif %}
                         </a>
                     </li>

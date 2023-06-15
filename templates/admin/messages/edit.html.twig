@@ -37,7 +37,7 @@
             <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}">
                 {% for attachment in form.group_attachments.attachments %}
                     {% if attachment.vars.value is not null and attachment.vars.value.id is not null %}
-                        <div class="form-group row">
+                        <div class="mb-3 row">
                             <div class="col-sm-2">  </div>
                             <div class="col-sm-10">
                                 <i class="fa fa-file"></i> {{ attachment.vars.value.filename }}
@@ -71,7 +71,7 @@
 
     <div class="card mb-3 {% if not form.group_confirmations.vars.valid %}border-danger{% endif %}">
         <div class="card-header {% if not form.group_confirmations.vars.valid %}bg-danger text-white{% endif%} pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#container-confirmations">
-            <span class="mr-auto align-self-center">{{ 'admin.messages.confirmations.label'|trans }}</span>
+            <span class="me-auto align-self-center">{{ 'admin.messages.confirmations.label'|trans }}</span>
 
             <i class="fa fa-chevron-{% if not form.group_confirmations.vars.valid %}up{% else %}down{% endif%} indicator align-self-center"></i>
         </div>
@@ -85,7 +85,7 @@
 
     <div class="card mb-3 {% if not form.group_download.vars.valid %}border-danger{% endif %}">
         <div class="card-header {% if not form.group_download.vars.valid %}bg-danger text-white{% endif%} pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#container-downloads">
-            <span class="mr-auto align-self-center">{{ 'label.messages_files.label'|trans }} <span class="text-secondary">{{ 'label.messages_files.badge_download'|trans }}</span></span>
+            <span class="me-auto align-self-center">{{ 'label.messages_files.label'|trans }} <span class="text-secondary">{{ 'label.messages_files.badge_download'|trans }}</span></span>
 
             <i class="fa fa-chevron-{% if not form.group_download.vars.valid %}up{% else %}down{% endif%} indicator align-self-center"></i>
         </div>
@@ -99,7 +99,7 @@
 
     <div class="card mb-3">
         <div class="card-header {% if not form.group_upload.vars.valid %}bg-danger text-white{% endif%} pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#container-uploads">
-            <span class="mr-auto align-self-center">{{ 'label.messages_files.label'|trans }} <span class="text-secondary">{{ 'label.messages_files.badge_upload'|trans }}</span> </span>
+            <span class="me-auto align-self-center">{{ 'label.messages_files.label'|trans }} <span class="text-secondary">{{ 'label.messages_files.badge_upload'|trans }}</span> </span>
 
             <i class="fa fa-chevron-{% if not form.group_upload.vars.valid %}up{% else %}down{% endif%} indicator align-self-center"></i>
         </div>
@@ -128,7 +128,7 @@
 
     <div class="card mb-3">
         <div class="card-header {% if not form.group_poll.vars.valid %}bg-danger text-white{% endif%} pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#container-poll">
-            <span class="mr-auto align-self-center">{{ 'label.messages_poll.label'|trans }} <span class="text-secondary">{{ 'label.messages_poll.badge'|trans }}</span> </span>
+            <span class="me-auto align-self-center">{{ 'label.messages_poll.label'|trans }} <span class="text-secondary">{{ 'label.messages_poll.badge'|trans }}</span> </span>
 
             <i class="fa fa-chevron-{% if not form.group_poll.vars.valid %}up{% else %}down{% endif%} indicator align-self-center"></i>
         </div>

@@ -49,9 +49,7 @@
 
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" value="{{ url('exams_ics_token', { token: token.token }) }}" disabled="disabled">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" data-toggle="tooltip" data-clipboard-text="{{ url('exams_ics_token', { token: token.token }) }}" title="{{ 'clipboard.copy'|trans }}"><i class="fa fa-copy"></i></button>
-                    </div>
+                    <button class="btn btn-outline-secondary" type="button" data-toggle="tooltip" data-clipboard-text="{{ url('exams_ics_token', { token: token.token }) }}" title="{{ 'clipboard.copy'|trans }}"><i class="fa fa-copy"></i></button>
                 </div>
             {% endif %}
         </div>

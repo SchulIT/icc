@@ -1,6 +1,5 @@
 import EasyMDE from 'easymde';
-
-let bsn = require("bootstrap.native");
+import {Modal} from "bootstrap";
 
 require('../../node_modules/inline-attachment/src/inline-attachment');
 require('../../node_modules/inline-attachment/src/codemirror-4.inline-attachment');
@@ -140,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     name: 'internal-link',
                     action: function(editor) {
                         if(modalSelector !== null && linkUrl !== null) {
-                            let modal = new bsn.Modal(modalSelector);
+                            let modal = new Modal(modalSelector);
                             modal.show();
                             let modalEl = document.querySelector(modalSelector);
 

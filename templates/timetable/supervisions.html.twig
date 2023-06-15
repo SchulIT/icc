@@ -85,11 +85,11 @@
                         <div class="card-header">
                             {{ week.label }}
 
-                            <span class="badge badge-secondary">
+                            <span class="badge text-bg-secondary">
                                 {{ 'admin.exams.week'|trans({'%week%': week.week}) }}
                             </span>
 
-                            <span class="badge badge-primary">
+                            <span class="badge text-bg-primary">
                                 {{ week.startDate|format_date }}-{{ week.endDate|format_date }}
                             </span>
                         </div>
@@ -109,13 +109,13 @@
                                     <th{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %}>
                                         {{ day.date.format('w')|weekday }}
                                         {% if day.isCurrentDay %}
-                                            <span class="badge badge-secondary">{{ 'plans.timetable.today'|trans }}</span>
+                                            <span class="badge text-bg-secondary">{{ 'plans.timetable.today'|trans }}</span>
                                         {% endif %}
                                         {% if day.isUpcomingDay %}
-                                            <span class="badge badge-secondary">{{ 'plans.timetable.upcoming'|trans }}</span>
+                                            <span class="badge text-bg-secondary">{{ 'plans.timetable.upcoming'|trans }}</span>
                                         {% endif %}
                                         {% if day.isFree %}
-                                            <span class="badge badge-secondary">{{ 'plans.timetable.free'|trans }}</span>
+                                            <span class="badge text-bg-secondary">{{ 'plans.timetable.free'|trans }}</span>
                                         {% endif %}
                                     </th>
                                 {% endfor %}
@@ -223,9 +223,7 @@
                             {% include "_filter/_params.html.twig" with { params: params } %}
 
                             <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                </div>
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{% if selectedDate != null %}{{ selectedDate.format('Y-m-d') }}{% endif %}">
                             </div>
                         </form>
@@ -241,10 +239,10 @@
                         <div class="card-body">
                             <h5 class="card-title"><i class="fas fa-users-cog"></i> {{ 'dashboard.settings.label'|trans }}</h5>
 
-                            <div class="form-group">
-                                <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" type="checkbox" value="true" id="only_one_week" name="only_one_week" {% if onlyOneWeek %}checked="checked"{% endif %}>
-                                    <label for="only_one_week" class="custom-control-label">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="true" id="only_one_week" name="only_one_week" {% if onlyOneWeek %}checked="checked"{% endif %}>
+                                    <label for="only_one_week" class="form-check-label">
                                         {{ 'plans.timetable.only_one_week'|trans }}
                                     </label>
                                 </div>

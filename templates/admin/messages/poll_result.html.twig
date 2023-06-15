@@ -50,7 +50,7 @@
                                                 {% if vote is not null %}
                                                     {% set choice = vote.getChoice(i - 1) %}
                                                     {% if choice is null %}
-                                                        <span class="badge badge-primary">{{ 'label.not_available'|trans }}</span>
+                                                        <span class="badge text-bg-primary">{{ 'label.not_available'|trans }}</span>
                                                     {% else %}
                                                         {{ choice.choice.label }}
                                                     {% endif %}
@@ -100,7 +100,7 @@
                                             {% if vote is not null %}
                                                 {% set choice = vote.getChoice(i - 1) %}
                                                 {% if choice is null %}
-                                                    <span class="badge badge-primary">{{ 'label.not_available'|trans }}</span>
+                                                    <span class="badge text-bg-primary">{{ 'label.not_available'|trans }}</span>
                                                 {% else %}
                                                     {{ choice.choice.label }}
                                                 {% endif %}

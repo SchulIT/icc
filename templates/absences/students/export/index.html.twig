@@ -19,18 +19,16 @@
                         <div class="card-body">
                             <h4 class="title">{{ 'absences.students.export.range.label'|trans }}</h4>
 
-                            <div class="form-group">
-                                <label for="start">{{ 'label.start'|trans }}</label>
+                            <div class="mb-3">
+                                <label for="start" class="form-label">{{ 'label.start'|trans }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                    </div>
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     <input class="form-control" type="date" name="start" id="start" pattern="\d{4}-\d{2}-\d{2}" value="{% if start is not null %}{{ start.format('Y-m-d') }}{% endif %}">
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="end">{{ 'label.end'|trans }}</label>
+                            <div class="mb-3">
+                                <label for="end" class="form-label">{{ 'label.end'|trans }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>

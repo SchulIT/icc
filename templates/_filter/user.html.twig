@@ -1,8 +1,8 @@
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
-    <div class="form-group {{ class|default('') }}">
-        <label for="user">{{ 'label.user'|trans }}:</label>
+    <div class="mb-3 {{ class|default('') }}">
+        <label for="user" class="form-label">{{ 'label.user'|trans }}:</label>
         <select name="user" id="user" class="form-control" data-trigger="submit" data-choice="true">
             {% for group in userFilter.groups %}
                 <optgroup label="{{ group.key }}">

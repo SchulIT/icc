@@ -10,30 +10,30 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">{{ $trans('book.entry.cancel.label') }}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
 
           <div class="modal-body">
             <div class="form-group d-flex align-items-center" v-for="tuition in tuitions">
-              <span class="badge badge-secondary" v-if="tuition !== null">{{ tuition.subject.name.toUpperCase() }}</span>
+              <span class="badge text-bg-secondary" v-if="tuition !== null">{{ tuition.subject.name.toUpperCase() }}</span>
 
-              <div class="ml-2" v-if="tuition !== null">
+              <div class="ms-2" v-if="tuition !== null">
                 {{ tuition.name }}
               </div>
 
-              <div class="ml-2" v-if="tuition !== null" v-for="grade in tuition.study_group.grades">
+              <div class="ms-2" v-if="tuition !== null" v-for="grade in tuition.study_group.grades">
                 <i class="fas fa-users"></i>
                 {{ grade.name }}
               </div>
 
-              <div class="ml-2" v-for="teacher in tuition.teachers" v-if="tuition !== null">
+              <div class="ms-2" v-for="teacher in tuition.teachers" v-if="tuition !== null">
                 <i class="fas fa-chalkboard-teacher"></i>
                 {{ teacher.acronym }}
               </div>
 
-              <div class="ml-2">
+              <div class="ms-2">
                 <i class="fas fa-calendar-alt"></i> {{ date.toLocaleDateString() }}
               </div>
             </div>
@@ -46,7 +46,7 @@
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $trans('actions.cancel') }}</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ $trans('actions.cancel') }}</button>
             <button type="button" class="btn btn-danger" @click.prevent="submit()" :disabled="!isValid || isLoading">
               <i class="fas fa-spinner fa-spin" v-if="isLoading"></i>
               {{ $trans('book.entry.propose_cancel.button')}}
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { Modal } from 'bootstrap.native';
+import Modal from 'bootstrap/js/dist/modal';
 
 export default {
   name: 'lesson_cancel_bulk_button',
@@ -69,13 +69,13 @@ export default {
     actions: Array,
     date: Date,
     button: String,
-    reason: String
+    prefillreason: String
   },
   data() {
     return {
       isLoading: false,
       progress: 0,
-      //reason: null,
+      reason: null,
       tuitions: [ ],
       validation: {
         reason: null
@@ -97,6 +97,9 @@ export default {
   mounted() {
     let modalEl = this.$el.querySelector('.modal');
     this.modal = new Modal(modalEl);
+    if(this.prefillreason !== null && this.reason === null) {
+      this.reason = this.prefillreason;
+    }
 
     modalEl.addEventListener('shown.bs.modal', function() {
       modalEl.querySelector('input').focus();

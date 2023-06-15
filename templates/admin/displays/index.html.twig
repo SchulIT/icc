@@ -52,17 +52,17 @@
                                         <td>
                                             {{ display.name }}
 
-                                            <span class="badge badge-secondary">
+                                            <span class="badge text-bg-secondary">
                                                 {{ url('show_display', { uuid: display.uuid }) }}
                                             </span>
                                         </td>
                                         <td>
                                             <div class="dropdown d-inline">
-                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                                     <i class="fas fa-ellipsis-v"></i>
                                                 </button>
 
-                                                <div class="dropdown-menu dropdown-menu-right">
+                                                <div class="dropdown-menu dropdown-menu-end">
                                                     <a href="{{ path('show_display', { uuid: display.uuid }) }}" class="dropdown-item" target="_blank">
                                                         <i class="fa fa-play"></i> {{ 'actions.play'|trans }}
                                                     </a>

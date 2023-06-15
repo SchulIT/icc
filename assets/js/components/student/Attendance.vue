@@ -7,12 +7,12 @@
 
     <div class="d-flex align-items-center flex-fill">
       <div class="flex-fill">
-        <span class="badge badge-primary">{{ tuition }}</span>
+        <span class="badge text-bg-primary">{{ tuition }}</span>
         {{ teacher }}
       </div>
       <div class="flex-fill text-right">
         <div>
-        <div class="btn-group d-inline-flex align-items-center ml-1"
+        <div class="btn-group d-inline-flex align-items-center ms-1"
              :title="$trans('book.attendance.late')"
              v-if="attendance.type === 2">
           <button class="btn btn-outline-warning btn-sm"
@@ -28,7 +28,7 @@
           </button>
         </div>
 
-        <div class="btn-group d-inline-flex align-items-center ml-1"
+        <div class="btn-group d-inline-flex align-items-center ms-1"
              :title="$trans('book.attendance.absent_lessons')"
              v-if="attendance.type === 0">
           <button class="btn btn-outline-danger btn-sm"
@@ -44,7 +44,7 @@
           </button>
         </div>
 
-        <div class="btn-group d-inline-flex align-items-center ml-1"
+        <div class="btn-group d-inline-flex align-items-center ms-1"
              v-if="attendance.type === 0">
           <button class="btn btn-outline-danger btn-sm"
                   :title="hasExcuses ? $trans('book.students.excuse_note_exists') : $trans('book.students.not_set')"
@@ -77,14 +77,14 @@
         </div>
       </div>
 
-      <div class="ml-2">
+      <div class="ms-2">
         <button type="button" class="btn btn-primary btn-sm" @click.prevent="save">
           <i class="fas fa-save" v-if="!isSaving && !isSaved"></i>
           <i class="fas fa-spinner fa-spin" v-if="isSaving"></i>
           <i class="fas fa-check" v-if="isSaved"></i>
         </button>
       </div>
-      <div class="ml-2">
+      <div class="ms-2">
         <button type="button" class="btn btn-primary btn-sm" title="coming soon 😉" disabled>
           <i class="fas fa-book-open"></i>
         </button>

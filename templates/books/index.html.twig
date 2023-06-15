@@ -127,7 +127,7 @@
                                         <h4 class="card-title">
                                             <i class="fas fa-user-times"></i>
                                             {{ 'book.open.label'|trans }}
-                                            <span class="badge badge-danger badge-pill">{{ missingExcusesCount }}</span>
+                                            <span class="badge text-bg-danger rounded-pill">{{ missingExcusesCount }}</span>
                                         </h4>
                                         <p>{{ 'book.open.status'|trans }}</p>
 
@@ -136,7 +136,7 @@
                                                 <li>
                                                     <a href="{{ path('book_student', currentFilter|merge({ student: info.student.uuid.toString })) }}">
                                                         <i class="fas fa-user-graduate"></i> {{ info.student|student }}
-                                                        <span class="badge badge-danger badge-pill">{{ info.notExcusedOrNotSetLessonsCount }}</span>
+                                                        <span class="badge text-bg-danger rounded-pill">{{ info.notExcusedOrNotSetLessonsCount }}</span>
                                                     </a>
                                                 </li>
                                             {% endfor %}
@@ -160,7 +160,7 @@
                                             {{ 'book.responsibilities.label'|trans }}
 
                                             {% if grade is not null %}
-                                                <span class="badge badge-primary">{{ grade.name }}</span>
+                                                <span class="badge text-bg-primary">{{ grade.name }}</span>
                                             {% endif %}
                                         </h4>
 
@@ -178,11 +178,11 @@
                                                 </div>
 
                                                 <div class="dropdown d-inline">
-                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
 
-                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                    <div class="dropdown-menu dropdown-menu-end">
                                                         <a href="{{ path('edit_grade_responsibility', { uuid: resp.uuid })}}" class="dropdown-item">
                                                             <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
                                                         </a>
@@ -215,9 +215,9 @@
                         <div class="card">
                             <div class="card-body pointer" data-toggle="table-collapse" data-target="#exercises">
                                 <h4 class="card-title d-flex align-items-center">
-                                    <div class="mr-auto">
+                                    <div class="me-auto">
                                         {{ 'book.exercises.label'|trans }}
-                                        <span class="badge badge-primary badge-pill">{{ entriesWithExercises|length }}</span>
+                                        <span class="badge text-bg-primary rounded-pill">{{ entriesWithExercises|length }}</span>
                                     </div>
 
                                     <i class="fa fa-chevron-down indicator"></i>
@@ -228,7 +228,7 @@
                             <div class="list-group list-group-flush collapse" id="exercises">
                                 {% for entry in entriesWithExercises %}
                                     <div class="list-group-item d-flex align-items-start">
-                                        <div class="badge badge-primary flex-shrink-0">
+                                        <div class="badge text-bg-primary flex-shrink-0">
                                             {{ _self.subject(entry.tuition) }}
 
                                             {% if entry.replacementSubject is not empty %}
@@ -236,12 +236,12 @@
                                             {% endif %}
                                         </div>
 
-                                        <div class="ml-2 flex-shrink-0">
+                                        <div class="ms-2 flex-shrink-0">
                                             <i class="fas fa-calendar-alt"></i>
                                             {{ entry.lesson.date|format_date }}
                                         </div>
 
-                                        <div class="ml-2 flex-grow">
+                                        <div class="ms-2 flex-grow">
                                             {{ entry.exercises }}
                                         </div>
                                     </div>
@@ -273,12 +273,12 @@
                                             <i class="fas fa-calendar-alt"></i> {{ comment.date|format_date }}
                                         </div>
 
-                                        <div class="ml-2">
+                                        <div class="ms-2">
                                             <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
                                         </div>
 
                                         {% for student in comment.students %}
-                                            <div class="ml-2">
+                                            <div class="ms-2">
                                                 <i class="fas fa-user-graduate"></i> {{ student|student }}
                                             </div>
                                         {% endfor %}
@@ -291,11 +291,11 @@
 
                                 {% if is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
                                     <div class="dropdown d-inline">
-                                        <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                             <i class="fas fa-ellipsis-v"></i>
                                         </button>
 
-                                        <div class="dropdown-menu dropdown-menu-right">
+                                        <div class="dropdown-menu dropdown-menu-end">
                                             <a href="{{ path('edit_book_comment', { uuid: comment.uuid }) }}" class="dropdown-item">
                                                 <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
                                             </a>
@@ -349,13 +349,13 @@
                             <div class="list-group list-group-flush">
                                 {% if overview.hasLessonsWithinFreeTimespans(day.date) %}
                                     {% for timespan in overview.freeTimespans(day.date) %}
-                                        <div class="list-group-item d-flex align-items-center bg-primary-light">
+                                        <div class="list-group-item d-flex align-items-center bg-primary-subtle">
                                             <div class="book-lesson m-0 p-0">
                                                 <i class="far fa-lightbulb"></i>
                                             </div>
 
                                             <div class="d-flex align-items-center flex-fill">
-                                                <div class="badge badge-secondary">
+                                                <div class="badge text-bg-secondary">
                                                     {{ 'book.entry.propose_cancel.label'|trans|upper }}
                                                 </div>
 
@@ -363,7 +363,7 @@
                                                     '%lessons%': 'label.exam_lessons'|trans({'%start%': timespan.lessonStart, '%end%': timespan.lessonEnd, '%count%': timespan.lessonEnd - timespan.lessonStart}),
                                                     '%reason%': timespan.reason
                                                 }) %}
-                                                <div class="ml-2 flex-fill">
+                                                <div class="ms-2 flex-fill">
                                                     {{ reason }}
                                                 </div>
 
@@ -380,7 +380,7 @@
                                                                            :actions="{{ actions|json_encode }}"
                                                                            :tuition-urls="{{ tuitionUrls|json_encode }}"
                                                                            :date="new Date('{{ timespan.date.format('Y-m-d') }}')"
-                                                                           reason="{{ timespan.reason }}"
+                                                                           prefillreason="{{ timespan.reason }}"
                                                                            button="{{ 'book.entry.cancel.lessons'|trans({'%lessons%': 'label.exam_lessons'|trans({'%start%': timespan.lessonStart, '%end%': timespan.lessonEnd, '%count%': timespan.lessonEnd - timespan.lessonStart})}) }}"></lesson-cancel-bulk-button>
                                             </div>
                                         </div>
@@ -406,17 +406,17 @@
                                         </div>
                                         <div class="d-flex align-items-center flex-fill">
                                         {% if lesson.entry is null %}
-                                            <div class="badge badge-secondary">
+                                            <div class="badge text-bg-secondary">
                                                 {{ _self.subject(lesson.lesson.tuition) }}
                                             </div>
 
                                             {% if lesson.substitution is not null %}
-                                                <div class="ml-2">
+                                                <div class="ms-2">
                                                     <i class="fas fa-random" title="{{ 'book.entry.substitution'|trans }}"></i>
                                                 </div>
                                             {% endif %}
 
-                                            <div class="ml-2">
+                                            <div class="ms-2">
                                                 <i class="fas fa-users"></i>
                                                 {% set grades = [ ] %}
                                                 {% for grade in lesson.lesson.tuition.studyGroup.grades %}
@@ -427,18 +427,18 @@
                                             </div>
 
                                             {% for teacher in lesson.lesson.tuition.teachers %}
-                                                <div class="ml-2">
+                                                <div class="ms-2">
                                                     <i class="fas fa-chalkboard-teacher"></i>
                                                     {{ teacher.acronym }}
                                                 </div>
                                             {% endfor %}
 
-                                            <div class="ml-2 text-danger flex-fill">
+                                            <div class="ms-2 text-danger flex-fill">
                                                 <i class="fas fa-exclamation-triangle"></i> {{ 'book.entry.missing'|trans }}
                                             </div>
 
                                             {% if lesson.lesson.tuition.isBookEnabled %}
-                                            <div class="ml-2">
+                                            <div class="ms-2">
                                                 <entry students-url="{{ url('xhr_students') }}"
                                                        teachers-url="{{ url('xhr_teachers') }}"
                                                        url="{{ path('xhr_lesson_entry', { start: lesson.lessonNumber, lesson: lesson.lesson.uuid.toString }) }}"
@@ -454,7 +454,7 @@
                                         {% else %}
                                             <div class="flex-fill">
                                                 <div class="d-flex align-items-center">
-                                                    <div class="badge badge-primary">
+                                                    <div class="badge text-bg-primary">
                                                         {{ _self.subject(lesson.entry.tuition) }}
 
                                                         {% if lesson.entry.replacementSubject is not empty %}
@@ -462,14 +462,14 @@
                                                         {% endif %}
                                                     </div>
 
-                                                    <div class="ml-2">
+                                                    <div class="ms-2">
                                                         <i class="fas fa-users"></i>
                                                         {% for grade in lesson.entry.tuition.studyGroup.grades %}
                                                             {{ grade.name }}{% if not loop.last %}, {% endif %}
                                                         {% endfor %}
                                                     </div>
 
-                                                    <div class="ml-2">
+                                                    <div class="ms-2">
                                                         <i class="fas fa-chalkboard-teacher"></i>
                                                         {{ lesson.entry.teacher|teacher }}
 
@@ -481,14 +481,14 @@
                                                 {% if lesson.entry.isCancelled %}
                                                     <div class="mt-1 d-flex align-items-baseline">
                                                         <i class="fas fa-times"></i>
-                                                        <p class="mb-0 ml-1">
+                                                        <p class="mb-0 ms-1">
                                                             {{ 'book.entry.cancel_reason'|trans({ '%reason%': lesson.entry.cancelReason}) }}
                                                         </p>
                                                     </div>
                                                 {% else %}
                                                     <div class="mt-1 d-flex align-items-baseline">
                                                         <i class="fas fa-info-circle"></i>
-                                                        <p class="mb-0 ml-1">
+                                                        <p class="mb-0 ms-1">
                                                             {{ lesson.entry.topic }}
                                                         </p>
                                                     </div>
@@ -497,7 +497,7 @@
                                                 {% if lesson.entry.exercises is not empty %}
                                                     <div class="mt-1 d-flex align-items-baseline">
                                                         <i class="fas fa-tasks"></i>
-                                                        <p class="mb-0 ml-1">
+                                                        <p class="mb-0 ms-1">
                                                             {{ lesson.entry.exercises }}
                                                         </p>
                                                     </div>
@@ -505,7 +505,7 @@
                                                 {% if lesson.entry.comment is not empty %}
                                                     <div class="mt-1 d-flex align-items-baseline">
                                                         <i class="far fa-comment-alt"></i>
-                                                        <p class="mb-0 ml-1">
+                                                        <p class="mb-0 ms-1">
                                                             {{ lesson.entry.comment }}
                                                         </p>
                                                     </div>
@@ -513,25 +513,25 @@
                                             </div>
 
                                             {% if absentStudentsByLesson[lesson.entry.uuid.toString] is defined or lateStudentsByLesson[lesson.entry.uuid.toString] is defined %}
-                                                <div class="ml-2" style="min-width: 20%">
+                                                <div class="ms-2" style="min-width: 20%">
                                                     <ul class="list-unstyled mb-0">
                                                         {% for attendance in lateStudentsByLesson[lesson.entry.uuid.toString] %}
-                                                            <li><i class="fa fa-user-clock"></i> {{ attendance.student|student }} <span class="badge badge-primary">{{ 'book.attendance.late_minutes'|trans({'%count%': attendance.lateMinutes}) }}</span> </li>
+                                                            <li><i class="fa fa-user-clock"></i> {{ attendance.student|student }} <span class="badge text-bg-primary">{{ 'book.attendance.late_minutes'|trans({'%count%': attendance.lateMinutes}) }}</span> </li>
                                                         {% endfor %}
 
                                                         {% for attendance in absentStudentsByLesson[lesson.entry.uuid.toString] %}
                                                             <li><i class="fa fa-user-times"></i> {{ attendance.student|student }}
                                                                 {% if attendance.absentLessons == 0 %}
-                                                                    <span class="badge badge-info">0 FS</span>
+                                                                    <span class="badge text-bg-info">0 FS</span>
                                                                 {% endif %}
 
                                                                 {% if attendance.absentLessons > 0 %}
                                                                     {% if attendance.excuseStatus == 2 %}
-                                                                        <span class="badge badge-danger">{{ 'book.excuse_status_short.not_excused'|trans }}</span>
+                                                                        <span class="badge text-bg-danger">{{ 'book.excuse_status_short.not_excused'|trans }}</span>
                                                                     {% elseif attendance.excuseStatus == 1 %}
-                                                                        <span class="badge badge-success">{{ 'book.excuse_status_short.excused'|trans }}</span>
+                                                                        <span class="badge text-bg-success">{{ 'book.excuse_status_short.excused'|trans }}</span>
                                                                     {% else %}
-                                                                        <span class="badge badge-warning">{{ 'book.excuse_status_short.not_set'|trans }}</span>
+                                                                        <span class="badge text-bg-warning">{{ 'book.excuse_status_short.not_set'|trans }}</span>
                                                                     {% endif %}
                                                                 {% endif %}
                                                             </li>
@@ -541,7 +541,7 @@
                                             {% endif %}
 
                                             {% if lesson.lesson != null and lesson.lesson.tuition.isBookEnabled %}
-                                            <div class="ml-2">
+                                            <div class="ms-2">
                                                 <entry students-url="{{ url('xhr_students') }}"
                                                        teachers-url="{{ url('xhr_teachers') }}"
                                                        url="{{ path('xhr_lesson_entry', { start: lesson.lessonNumber, lesson: lesson.lesson.uuid.toString }) }}"
@@ -553,7 +553,7 @@
                                                        cancel-action="{{ path('cancel_lesson', { uuid: lesson.lesson.uuid }) }}"></entry>
                                             </div>
 
-                                            <div class="ml-2">
+                                            <div class="ms-2">
                                                 <a href="{{ path('remove_entry', { uuid: lesson.entry.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'book.entry.remove.label'|trans }}">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
@@ -625,9 +625,7 @@
                             {% include "_filter/_params.html.twig" with { params: currentFilter } %}
 
                             <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                </div>
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{% if selectedDate != null %}{{ selectedDate.format('Y-m-d') }}{% endif %}">
                             </div>
                         </form>

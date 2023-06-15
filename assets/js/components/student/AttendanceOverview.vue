@@ -40,7 +40,7 @@
                         <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 2">
                           <i class="fas fa-user-clock"></i>
 
-                          <span class="badge badge-info d-block">
+                          <span class="badge text-bg-info d-block">
                             {{ $trans('book.attendance.late_minutes', { 'count': lesson.attendance.attendance.late_minutes}) }}
                           </span>
                         </div>
@@ -49,7 +49,7 @@
                           <i class="fas fa-check" v-if="lesson.attendance.attendance.excuse_status === 1 || lesson.attendance.attendance.absent_lessons === 0 || lesson.attendance.has_excuses === true"></i>
                           <i class="fas fa-times" v-if="lesson.attendance.attendance.excuse_status === 2"></i>
 
-                          <span class="badge badge-info d-block" v-if="lesson.attendance.attendance.absent_lessons !== (lesson.entry.end - lesson.entry.start + 1)">
+                          <span class="badge text-bg-info d-block" v-if="lesson.attendance.attendance.absent_lessons !== (lesson.entry.end - lesson.entry.start + 1)">
                             {{ lesson.attendance.attendance.absent_lessons }} FS
                           </span>
                         </div>
@@ -68,29 +68,29 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">{{ $trans('book.attendance.label') }}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
 
           <div class="modal-body" v-if="editAttendance !== null && editLesson !== null">
             <div class="d-flex" v-if="editLesson !== null">
-              <span class="badge badge-primary">
+              <span class="badge text-bg-primary">
                 {{ editLesson.entry.lesson.subject }}
               </span>
 
-              <div class="ml-2" v-for="teacher in editLesson.entry.lesson.teachers">
+              <div class="ms-2" v-for="teacher in editLesson.entry.lesson.teachers">
                 <i class="fas fa-chalkboard-teacher"></i>
                 {{ teacher }}
               </div>
 
-              <div class="ml-2">
+              <div class="ms-2">
                 <i class="fas fa-calendar-alt"></i>
 
                 {{ date(editLesson.entry.lesson.date) }}
               </div>
 
-              <div class="ml-2">
+              <div class="ms-2">
                 <i class="fas fa-clock"></i>
 
                 {{ $transChoice('label.exam_lessons', editLesson.entry.end - editLesson.entry.start, { 'start': editLesson.entry.start, 'end': editLesson.entry.end}) }}
@@ -103,13 +103,13 @@
                       :title="$trans('book.attendance.type.present')"
                       :class="{ active: editAttendance.attendance.type === 1}"> <i class="fas fa-user-check"></i>
               </button>
-              <button class="btn btn-outline-warning btn-sm ml-1"
+              <button class="btn btn-outline-warning btn-sm ms-1"
                       :class="{ active: editAttendance.attendance.type === 2}"
                       :title="$trans('book.attendance.type.late')"
                       @click.prevent="late()">
                 <i class="fas fa-user-clock"></i>
               </button>
-              <div class="btn-group d-inline-flex align-items-center ml-1"
+              <div class="btn-group d-inline-flex align-items-center ms-1"
                    :title="$trans('book.attendance.late')"
                    v-if="editAttendance.attendance.type === 2">
                 <button class="btn btn-outline-warning btn-sm"
@@ -124,14 +124,14 @@
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
-              <button class="btn btn-outline-danger btn-sm ml-1 d-inline-block"
+              <button class="btn btn-outline-danger btn-sm ms-1 d-inline-block"
                       :class="{ active: editAttendance.attendance.type === 0}"
                       :title="$trans('book.attendance.type.absent')"
                       @click.prevent="absent()">
                 <i class="fas fa-user-times"></i>
               </button>
 
-              <div class="btn-group d-inline-flex align-items-center ml-1"
+              <div class="btn-group d-inline-flex align-items-center ms-1"
                    :title="$trans('book.attendance.absent_lessons')"
                    v-if="editAttendance.attendance.type === 0">
                 <button class="btn btn-outline-danger btn-sm"
@@ -147,7 +147,7 @@
                 </button>
               </div>
 
-              <div class="btn-group d-inline-flex align-items-center ml-1"
+              <div class="btn-group d-inline-flex align-items-center ms-1"
                    v-if="editAttendance.attendance.type === 0">
                 <button class="btn btn-outline-danger btn-sm"
                         :title="$trans('book.students.not_set')"
@@ -197,7 +197,7 @@
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $trans('actions.cancel')}}</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ $trans('actions.cancel')}}</button>
             <button type="button" class="btn btn-primary" @click.prevent="save()"><i class="fas fa-save"></i> {{ $trans('actions.save')}}</button>
           </div>
         </div>
@@ -222,7 +222,7 @@
 
 <script>
 
-import {Modal, Toast } from "bootstrap.native";
+import Modal from 'bootstrap/js/dist/modal';
 
 export default {
   name: 'attendance_overview',

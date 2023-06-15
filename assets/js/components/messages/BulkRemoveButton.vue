@@ -10,7 +10,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">{{ $trans('admin.messages.bulk_remove.label') }}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -26,7 +26,7 @@
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $trans('action.cancel') }}</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ $trans('action.cancel') }}</button>
             <button type="button" class="btn btn-danger" @click.prevent="submit()" :disabled="isLoading">
               <i class="fas fa-spinner fa-spin" v-if="isLoading"></i>
               {{ $trans('actions.remove')}}
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { Modal } from 'bootstrap.native';
+import Modal from 'bootstrap/js/dist/modal';
 
 export default {
   name: 'bulk_remove_button',

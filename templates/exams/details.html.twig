@@ -14,7 +14,7 @@
     {% include "_includes/exam.html.twig" with { exam: exam, hideDetails: true, showDate: true, header: 'plans.exam.label' } %}
 
     <div class="card">
-        <div class="card-header">{{ 'plans.exam.students'|trans }} <span class="badge badge-primary badge-pill">{{ exam.students|length }}</span></div>
+        <div class="card-header">{{ 'plans.exam.students'|trans }} <span class="badge text-bg-primary rounded-pill">{{ exam.students|length }}</span></div>
 
         <div class="table-responsive">
             <table class="table table-striped table-hover table-bordered card-table">
@@ -37,7 +37,7 @@
                                 {{ student.firstname }}
 
                                 {% if absentStudents[student.uuid.toString] is defined %}
-                                    <span class="badge badge-warning">{{ 'book.attendance.type.absent'|trans }}</span>
+                                    <span class="badge text-bg-warning">{{ 'book.attendance.type.absent'|trans }}</span>
                                 {% endif %}
                             </td>
                         </tr>

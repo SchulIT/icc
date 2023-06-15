@@ -85,18 +85,18 @@
                                         </td>
                                         <td class="align-middle">
                                             <div class="d-flex align-items-center">
-                                                <span class="mr-1 flex-fill">
+                                                <span class="me-1 flex-fill">
                                                     <strong>{{ resource.name }}</strong>
 
-                                                    <span class="text-muted mr-2">{{ resource.description }}</span>
+                                                    <span class="text-muted me-2">{{ resource.description }}</span>
                                                 </span>
 
                                                 {% if status[resource.id] is defined and status[resource.id] is not null %}
                                                     {% set roomStatus = status[resource.id] %}
                                                     {% for badge in roomStatus.badges %}
-                                                        <a href="{{ roomStatus.link }}" target="_blank" class="mr-2 btn btn-sm btn-outline-{% if badge.counter > 0 %}danger{% else %}success{% endif %}" title="{{ badge.label|trans }}">
+                                                        <a href="{{ roomStatus.link }}" target="_blank" class="me-2 btn btn-sm btn-outline-{% if badge.counter > 0 %}danger{% else %}success{% endif %}" title="{{ badge.label|trans }}">
                                                             {%- if badge.icon is not null -%}<i class="{{ badge.icon }}"></i>{%- endif -%}
-                                                            <span class="badge badge-pill">{{ badge.counter }}</span>
+                                                            <span class="badge rounded-pill">{{ badge.counter }}</span>
                                                         </a>
                                                     {% endfor %}
                                                 {% endif %}
@@ -105,14 +105,14 @@
 
                                             <p class="text-larger">
                                                 {% if resource.capacity is defined and resource.capacity is not null%}
-                                                    <span class="badge badge-primary">
+                                                    <span class="badge text-bg-primary">
                                                             <i class="fas fa-chair"></i> {{ resource.capacity }}
                                                         </span>
                                                 {% endif %}
 
                                                 {% if resource.tags is defined %}
                                                     {% for tagInfo in resource.tags %}
-                                                        <span class="badge badge-secondary" title="{{ tagInfo.tag.name }}">
+                                                        <span class="badge text-bg-secondary" title="{{ tagInfo.tag.name }}">
                                                             {% if tagInfo.tag.icons is not empty %}
                                                                 {% for icon in tagInfo.tag.icons|split(',') %}
                                                                     <i class="{{ icon }}"></i>
@@ -182,9 +182,7 @@
                             {% include "_filter/_params.html.twig" with { params: currentFilter|merge({date: null}) } %}
 
                             <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                </div>
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
                             </div>
                         </form>
@@ -215,23 +213,19 @@
 
                         <form method="get" role="form">
                             <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <div class="custom-control custom-checkbox">
-                                            <input class="mr-1 custom-control-input" value="✓" type="checkbox" id="check-seats" name="seats" {% if query.hasSeats() %} checked{% endif %}>
-                                            <label for="check-seats" class="custom-control-label">
-                                                {{ 'resources.seats'|trans }}
-                                            </label>
-                                        </div>
+                                <div class="input-group-text">
+                                    <div class="form-check">
+                                        <input class="me-1 form-check-input" value="✓" type="checkbox" id="check-seats" name="seats" {% if query.hasSeats() %} checked{% endif %}>
+                                        <label for="check-seats" class="form-check-label">
+                                            {{ 'resources.seats'|trans }}
+                                        </label>
                                     </div>
                                 </div>
 
                                 <input type="number" min="0" name="seats-value" class="form-control input-sm" value="{{ query.getSeatsValueOrDefault() }}" data-enable="#check-seats">
 
-                                <div class="input-group-append">
-                                    <div class="input-group-text">
-                                        <i class="fa fa-info-circle" title="{{ 'resources.filter.seats.help'|trans }}" data-toggle="tooltip"></i>
-                                    </div>
+                                <div class="input-group-text">
+                                    <i class="fa fa-info-circle" title="{{ 'resources.filter.seats.help'|trans }}" data-toggle="tooltip"></i>
                                 </div>
                             </div>
 
@@ -239,9 +233,9 @@
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend {% if not tag.hasValue() %}flex-fill{% endif %}">
                                         <div class="input-group-text {% if not tag.hasValue() %}w-100{% endif %}">
-                                            <div class="custom-control custom-checkbox">
-                                                <input class="mr-1 custom-control-input" type="checkbox" id="check-tag-{{ tag.uuid }}" name="tag-{{ tag.uuid }}" value="✓" {% if query.hasTag(tag) %} checked{% endif %}>
-                                                <label for="check-tag-{{ tag.uuid }}" class="custom-control-label">
+                                            <div class="form-check">
+                                                <input class="me-1 form-check-input" type="checkbox" id="check-tag-{{ tag.uuid }}" name="tag-{{ tag.uuid }}" value="✓" {% if query.hasTag(tag) %} checked{% endif %}>
+                                                <label for="check-tag-{{ tag.uuid }}" class="form-check-label">
                                                     {{ tag.name }}
                                                 </label>
                                             </div>

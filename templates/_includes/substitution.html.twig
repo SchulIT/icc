@@ -22,7 +22,7 @@
             </div>
 
             <div class="align-self-center d-flex flex-wrap">
-                <span class="align-self-center badge badge-primary my-1 mr-3">
+                <span class="align-self-center badge text-bg-primary my-1 me-3">
                     {% if substitution.type is not empty %}
                         {{ substitution.type|upper }}
                     {% else %}
@@ -30,7 +30,7 @@
                     {% endif %}
                 </span>
 
-                <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
+                <div class="card-body align-self-center ps-0 py-1 py-sm-1 d-flex flex-wrap">
                     {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
                         <span>
                             {{ _macro.replacement(substitution.subject, substitution.replacementSubject) }}

@@ -101,7 +101,7 @@ function decryptAll() {
             select.value = await crypto.decrypt(decryptedKey, JSON.parse(encryptedValue));
         } else {
             if(encryptedValue === null || encryptedValue === '') {
-                select.innerHTML = '<span class="badge badge-secondary">N/A</span>';
+                select.innerHTML = '<span class="badge text-bg-secondary">N/A</span>';
                 return;
             }
 

@@ -47,7 +47,7 @@
                                         {{ tuition.name }}
                                     {% endif %} ({{ tuition.subject.name }})
 
-                                    {% for grade in tuition.studyGroup.grades %}<span class="badge badge-primary">{{ grade.name }}</span> {% endfor %}
+                                    {% for grade in tuition.studyGroup.grades %}<span class="badge text-bg-primary">{{ grade.name }}</span> {% endfor %}
                                 {% elseif group.student is defined and group.student is instanceof('App\\Entity\\Student') %}
                                     {{ group.student|student }}
                                 {% elseif group.grade is defined and group.grade is instanceof('App\\Entity\\Grade') %}
@@ -91,16 +91,16 @@
 
                                                 {% if absence.type.mustApprove %}
                                                     {% if absence.approvedAt is null %}
-                                                        <span class="badge badge-warning">
+                                                        <span class="badge text-bg-warning">
                                                             {{ 'absences.students.approval.pending'|trans }}
                                                         </span>
                                                     {% else %}
                                                         {% if absence.isApproved %}
-                                                            <span class="badge badge-success">
+                                                            <span class="badge text-bg-success">
                                                                 {{ 'absences.students.approval.approved'|trans }}
                                                             </span>
                                                         {% else %}
-                                                            <span class="badge badge-danger">
+                                                            <span class="badge text-bg-danger">
                                                                 {{ 'absences.students.approval.not_approved'|trans }}
                                                             </span>
                                                         {% endif %}
@@ -108,7 +108,7 @@
                                                 {% endif %}
 
                                                 {% if absence.until.date >= today %}
-                                                    <span class="badge badge-primary">
+                                                    <span class="badge text-bg-primary">
                                                         {{ 'absences.active'|trans }}
                                                     </span>
                                                 {% endif %}
@@ -129,11 +129,11 @@
                                             </td>
                                             <td class="align-middle">
                                                 <div class="dropdown">
-                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
 
-                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                    <div class="dropdown-menu dropdown-menu-end">
                                                         <a href="{{ path('show_student_absence', { uuid: absence.uuid }) }}" class="dropdown-item">
                                                             <i class="fas fa-info-circle"></i> {{ 'actions.view'|trans }}
                                                         </a>
@@ -206,8 +206,8 @@
                         <form role="form" method="get" class="form hidden-print">
                             {% include "_filter/_params.html.twig" with { params: currentFilter|merge({reason: null}) } %}
 
-                            <div class="form-group">
-                                <label for="type" class="control-label">{{ 'label.type'|trans }}</label>
+                            <div class="mb-3">
+                                <label for="type" class="form-label">{{ 'label.type'|trans }}</label>
                                 <select name="type" id="type" class="form-control" data-trigger="submit" data-choice="true">
                                     <option value="" placeholder>{{ 'label.all'|trans() }}</option>
                                     {% for type in typeFilter.types %}

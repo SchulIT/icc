@@ -1,8 +1,8 @@
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
-    <div class="form-group {{ class|default('') }}">
-        <label for="grade" class="control-label">{{ 'label.grade'|trans }}:</label>
+    <div class="mb-3 {{ class|default('') }}">
+        <label for="grade" class="form-label">{{ 'label.grade'|trans }}:</label>
 
         {% if gradeFilter.grades|length == 1 %}
             {% set grade = gradeFilter.grades|first %}

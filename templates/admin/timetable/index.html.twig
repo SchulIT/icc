@@ -51,7 +51,7 @@
                                 {% for week in weeks %}
                                     <tr>
                                         <td class="align-middle">
-                                            {{ week.displayName }} <span class="badge badge-secondary">{{ week.key }}</span>
+                                            {{ week.displayName }} <span class="badge text-bg-secondary">{{ week.key }}</span>
                                         </td>
                                         <td class="align-middle">
                                             {% for calendarWeek in week.weeks %}
@@ -60,11 +60,11 @@
                                         </td>
                                         <td class="align-middle">
                                             <div class="dropdown d-inline">
-                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                                     <i class="fas fa-ellipsis-v"></i>
                                                 </button>
 
-                                                <div class="dropdown-menu dropdown-menu-right">
+                                                <div class="dropdown-menu dropdown-menu-end">
                                                     <a href="{{ path('admin_edit_timetable_week', { uuid: week.uuid }) }}" class="dropdown-item">
                                                         <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
                                                     </a>

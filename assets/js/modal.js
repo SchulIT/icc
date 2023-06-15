@@ -1,4 +1,4 @@
-var bsn = require('bootstrap.native');
+import {Modal} from "bootstrap";
 
 document.addEventListener('DOMContentLoaded', function(event) {
     document.querySelectorAll('[data-toggle=modal]').forEach(function(el) {
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                 form.value = formValue;
             }
 
-            let modal = new bsn.Modal(target);
+            let modal = new Modal(target);
             modal.show();
         });
     });

@@ -4,7 +4,7 @@ import VueAxios from "vue-axios";
 
 import Translations from "./plugins/trans";
 import BulkRemoveButton from "./components/messages/BulkRemoveButton";
-import { Dropdown } from 'bootstrap.native';
+import { Dropdown } from 'bootstrap';
 
 const app = createApp({
     components: {

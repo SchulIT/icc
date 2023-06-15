@@ -2,21 +2,22 @@
   <div>
     <div class="dropdown">
       <button class="btn btn-primary btn-sm" type="button"
+              :data-bs-toggle="entry.uuid === null ? 'dropdown' : ''"
               :class="entry.uuid === null ? 'btn btn-primary btn-sm' : 'btn btn-success btn-sm'">
         <i class="fas fa-spinner fa-spin" v-if="!isInitialized"></i>
         <i class="fas fa-book-open" v-if="isInitialized"></i>
       </button>
-      <div class="dropdown-menu dropdown-menu-right" v-if="entry.uuid === null">
+      <div class="dropdown-menu dropdown-menu-end" v-if="entry.uuid === null">
         <div class="dropdown-header">{{ $trans('book.entry.add.label')}}</div>
         <button class="dropdown-item"
                 @click="create(lessonNumber, lessonNumber)">
-          <span class="badge badge-primary">{{ lessonNumber }}.</span>
+          <span class="badge text-bg-primary">{{ lessonNumber }}.</span>
           {{ $trans('book.entry.add.single') }}
         </button>
         <button class="dropdown-item"
                 @click="create(lesson.lessonStart, lesson.lessonEnd)"
                 v-if="lesson.lessonStart !== lesson.lessonEnd">
-          <span class="badge badge-primary">{{ lesson.lessonStart }}./{{ lesson.lessonEnd }}.</span>
+          <span class="badge text-bg-primary">{{ lesson.lessonStart }}./{{ lesson.lessonEnd }}.</span>
           {{ $trans('book.entry.add.double') }}
         </button>
 
@@ -24,13 +25,13 @@
 
         <button class="dropdown-item"
                 @click="cancel(lessonNumber, lessonNumber)">
-          <span class="badge badge-primary">{{ lessonNumber }}.</span>
+          <span class="badge text-bg-primary">{{ lessonNumber }}.</span>
           {{ $trans('book.entry.cancel.single') }}
         </button>
         <button class="dropdown-item"
                 @click="cancel(lesson.lessonStart, lesson.lessonEnd)"
                 v-if="lesson.lessonStart !== lesson.lessonEnd">
-          <span class="badge badge-primary">{{ lesson.lessonStart }}./{{ lesson.lessonEnd }}.</span>
+          <span class="badge text-bg-primary">{{ lesson.lessonStart }}./{{ lesson.lessonEnd }}.</span>
           {{ $trans('book.entry.cancel.double') }}
         </button>
       </div>
@@ -41,13 +42,13 @@
         <div class="modal-content">
           <form :action="action" method="post">
             <div class="modal-header">
-              <h5 class="modal-title mr-auto">{{ $trans('book.entry.label') }}</h5>
+              <h5 class="modal-title me-auto">{{ $trans('book.entry.label') }}</h5>
 
               <button type="submit" class="btn btn-primary" :disabled="!isValid || !isInitialized">
                 <i class="fas fa-save"></i> {{ $trans('actions.save')}}
               </button>
 
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -58,22 +59,22 @@
                     <div class="card">
                       <div class="card-header">
                         <div class="d-flex align-items-center">
-                          <span class="badge badge-secondary" v-if="tuition.subject !== null">{{ tuition.subject.name.toUpperCase() }}</span>
-                          <div class="ml-2">
+                          <span class="badge text-bg-secondary" v-if="tuition.subject !== null">{{ tuition.subject.name.toUpperCase() }}</span>
+                          <div class="ms-2">
                             {{ tuition.name }}
                           </div>
 
-                          <div class="ml-2" v-if="tuition.studyGroup !== null" v-for="grade in tuition.studyGroup.grades">
+                          <div class="ms-2" v-if="tuition.studyGroup !== null" v-for="grade in tuition.studyGroup.grades">
                             <i class="fas fa-users"></i>
                             {{ grade.name }}
                           </div>
 
-                          <div class="ml-2" v-for="teacher in tuition.teachers">
+                          <div class="ms-2" v-for="teacher in tuition.teachers">
                             <i class="fas fa-chalkboard-teacher"></i>
                             {{ teacher.acronym }}
                           </div>
 
-                          <div class="ml-2" v-if="lesson.date !== null">
+                          <div class="ms-2" v-if="lesson.date !== null">
                             <i class="fas fa-calendar-alt"></i> {{ lesson.date.toLocaleDateString() }}
                           </div>
                         </div>
@@ -160,28 +161,26 @@
           <form :action="editAction !== '' ? editAction : cancelAction" method="post">
             <div class="modal-header">
               <h5 class="modal-title">{{ $trans('book.entry.cancel.label') }}</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <div class="d-flex align-items-center">
-                <span class="badge badge-secondary" v-if="tuition.subject !== null">{{ tuition.subject.name.toUpperCase() }}</span>
-                <div class="ml-2">
+                <span class="badge text-bg-secondary" v-if="tuition.subject !== null">{{ tuition.subject.name.toUpperCase() }}</span>
+                <div class="ms-2">
                   {{ tuition.name }}
                 </div>
 
-                <div class="ml-2" v-if="tuition.studyGroup !== null" v-for="grade in tuition.studyGroup.grades">
+                <div class="ms-2" v-if="tuition.studyGroup !== null" v-for="grade in tuition.studyGroup.grades">
                   <i class="fas fa-users"></i>
                   {{ grade.name }}
                 </div>
 
-                <div class="ml-2" v-for="teacher in tuition.teachers">
+                <div class="ms-2" v-for="teacher in tuition.teachers">
                   <i class="fas fa-chalkboard-teacher"></i>
                   {{ teacher.acronym }}
                 </div>
 
-                <div class="ml-2" v-if="lesson.date !== null">
+                <div class="ms-2" v-if="lesson.date !== null">
                   <i class="fas fa-calendar-alt"></i> {{ lesson.date.toLocaleDateString() }}
                 </div>
               </div>
@@ -229,7 +228,7 @@
 </template>
 
 <script>
-import { Dropdown, Modal } from 'bootstrap.native';
+import Modal from 'bootstrap/js/dist/modal';
 import NumberInput from "../NumberInput";
 import Students from "../entry/Students";
 import Choices from "choices.js";
@@ -372,7 +371,7 @@ export default {
             });
 
             if($this.entry.uuid === null) {
-              new Dropdown($this.$el.querySelector('.dropdown'), { persist: false });
+
             } else {
               $this.action = $this.editAction;
               $this.$el.querySelector('.dropdown > button').addEventListener('click', function() {
@@ -405,7 +404,7 @@ export default {
           this.modal.cancel = new Modal(modalEl);
 
           modalEl.addEventListener('shown.bs.modal', function () {
-            modalEl.querySelector('input.topic').focus();
+            modalEl.querySelector('input.cancel_reason').focus();
           });
 
           this.modal.cancel.show();

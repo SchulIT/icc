@@ -37,7 +37,7 @@
                                 {% else %}
                                     {{ 'admin.messages.overview.active'|trans }}
                                 {% endif %}
-                                <span class="badge badge-pill badge-primary">{{ group.messages|length }}</span>
+                                <span class="badge rounded-pill badge-primary">{{ group.messages|length }}</span>
                             </div>
 
                             {% set actions = [ ] %}
@@ -82,11 +82,11 @@
                                         <td class="align-middle">{% include "_includes/study_groups.html.twig" with { studyGroups: message.studyGroups, id: message.uuid } only %}</td>
                                         <td class="align-middle">
                                             <div class="dropdown d-inline">
-                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                                     <i class="fas fa-ellipsis-v"></i>
                                                 </button>
 
-                                                <div class="dropdown-menu dropdown-menu-right">
+                                                <div class="dropdown-menu dropdown-menu-end">
                                                     {% if is_granted('view', message) %}
                                                         <a href="{{ path('show_message', { uuid: message.uuid }) }}" class="dropdown-item">
                                                             <i class="fas fa-envelope-open-text"></i> {{ 'actions.view'|trans }}
@@ -154,15 +154,15 @@
                         {% include "_filter/user_type.html.twig" with { params: { own: onlyOwn }} %}
 
                         <form role="form" method="get" class="form">
-                            <div class="form-group mb-0">
+                            <div class="mb-3 mb-0">
                                 {% include "_filter/_params.html.twig" with { params: {
                                     grade: gradeFilter.currentGrade is not null ? gradeFilter.currentGrade.uuid : null,
                                     type: userTypeFilter.currentType is not null ? userTypeFilter.currentType.uuid : null
                                 }  } %}
 
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="all" data-trigger="submit" name="all" value="✓" {% if not onlyOwn %} checked="checked"{% endif %}>
-                                    <label class="custom-control-label" for="all">{{ 'label.show_all'|trans }}</label>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="all" data-trigger="submit" name="all" value="✓" {% if not onlyOwn %} checked="checked"{% endif %}>
+                                    <label class="form-check-label" for="all">{{ 'label.show_all'|trans }}</label>
                                 </div>
                             </div>
                         </form>

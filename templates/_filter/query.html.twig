@@ -1,18 +1,16 @@
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
-    <div class="form-group {{ class|default('') }}">
-        <label for="q">{{ 'label.query'|trans }}:</label>
+    <div class="mb-3 {{ class|default('') }}">
+        <label for="q" class="form-label">{{ 'label.query'|trans }}:</label>
         <div class="input-group">
             <input name="q" type="text" value="{{ q }}" class="form-control">
-            <div class="input-group-append">
-                <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i></button>
-                {% if q is not null and q is not empty %}
-                    <a href="{{ path(route, params|merge({q: null})) }}" class="btn btn-outline-primary">
-                        <i class="fa fa-times"></i>
-                    </a>
-                {% endif %}
-            </div>
+            <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i></button>
+            {% if q is not null and q is not empty %}
+                <a href="{{ path(route, params|merge({q: null})) }}" class="btn btn-outline-primary">
+                    <i class="fa fa-times"></i>
+                </a>
+            {% endif %}
         </div>
     </div>
 </form>

@@ -22,7 +22,7 @@
             {{ form_row(form.grades_grade_teacher_excuses) }}
             {{ form_row(form.grades_tuition_teacher_excuses) }}
 
-            <div class="form-group row">
+            <div class="mb-3 row">
                 {{ form_label(form.exclude_student_status) }}
                 <div class="col-md-10">
                     <div class="exclude_student_status" data-collection="exclude_student_status" data-prototype="{{ form_widget(form.exclude_student_status.vars.prototype)|e('html_attr') }}">

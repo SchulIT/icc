@@ -140,7 +140,7 @@
                                 <span class="text-muted">{{ 'label.visibility'|trans }}</span>
                                 {% for visibility in visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
 
-                                {% if article.visibilities|length == 0 %}<span class="badge badge-info">{{ 'wiki.inherited'|trans }}</span>{% endif %}
+                                {% if article.visibilities|length == 0 %}<span class="badge text-bg-info">{{ 'wiki.inherited'|trans }}</span>{% endif %}
                             </p>
                         </div>
                     </div>
@@ -154,9 +154,7 @@
                             <div class="input-group">
                                 <input type="text" name="q" class="form-control">
 
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i></button>
-                                </div>
+                                <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i></button>
                             </div>
                         </form>
                     </div>

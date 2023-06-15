@@ -36,7 +36,7 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="list-group list-group-flush">
-                        <a href="#" data-toggle="modal" data-target="#restore-modal" class="list-group-item list-group-item-action">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#restore-modal" class="list-group-item list-group-item-action">
                             <i class="fa fa-trash-restore"></i> {{ 'versions.restore.button'|trans }}
                         </a>
                     </div>
@@ -59,7 +59,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">{{ 'versions.restore.label'|trans }}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -67,7 +67,7 @@
                         {{ 'versions.restore.confirm'|trans({'%date%': entry.loggedAt|format_datetime}) }}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
                         <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-trash-restore"></i> {{ 'versions.restore.button'|trans }}</button>
                     </div>
                 </div>

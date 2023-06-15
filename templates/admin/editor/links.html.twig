@@ -4,9 +4,9 @@
         <span class="d-block">
             {{ prefix }}<strong>{{ article.title }}</strong>
             {% if article.isOnline %}
-                <span class="badge badge-success">{{ 'label.online'|trans }}</span>
+                <span class="badge text-bg-success">{{ 'label.online'|trans }}</span>
             {% else %}
-                <span class="badge badge-danger">{{ 'label.offline'|trans }}</span>
+                <span class="badge text-bg-danger">{{ 'label.offline'|trans }}</span>
             {% endif %}
         </span>
         <span class="d-block small text-muted">

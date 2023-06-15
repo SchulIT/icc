@@ -15,9 +15,9 @@
         <td class="align-middle"><span style="padding-left: {{ paddingLeft }}px;"></span> {% if paddingLeft > 0 %}┗{% endif %} {{ article.title }}</td>
         <td class="align-middle">
             {% if article.isOnline %}
-                <span class="badge badge-success">{{ 'label.online'|trans }}</span>
+                <span class="badge text-bg-success">{{ 'label.online'|trans }}</span>
             {% else %}
-                <span class="badge badge-danger">{{ 'label.offline'|trans }}</span>
+                <span class="badge text-bg-danger">{{ 'label.offline'|trans }}</span>
             {% endif %}
         </td>
         <td class="align-middle">
@@ -25,11 +25,11 @@
         </td>
         <td class="align-middle">
             <div class="dropdown d-inline">
-                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                     <i class="fas fa-ellipsis-v"></i>
                 </button>
 
-                <div class="dropdown-menu dropdown-menu-right">
+                <div class="dropdown-menu dropdown-menu-end">
                     <a href="{{ path('edit_wiki_article', { uuid: article.uuid }) }}" class="dropdown-item">
                         <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
                     </a>

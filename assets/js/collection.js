@@ -1,5 +1,3 @@
-let bsCustomFileInput = require('bs-custom-file-input');
-
 document.addEventListener('DOMContentLoaded', function() {
     function deleteOption() {
         console.log(this);
@@ -38,9 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
             el.removeEventListener('click', deleteOption, false);
             el.addEventListener('click', deleteOption);
         });
-
-        bsCustomFileInput.destroy();
-        bsCustomFileInput.init();
     }
 
     function onButtonAddClick(event) {

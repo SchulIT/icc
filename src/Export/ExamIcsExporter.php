@@ -81,7 +81,7 @@ class ExamIcsExporter {
 
             foreach($supervisions as $supervision) {
                 if($supervision->getTeacher()->getId() === $user->getTeacher()->getId()) {
-                    $items[] = $this->makeIcsItemSupervision($exam,$exam->getLessonStart() + $supervision->getLesson() - 1);
+                    $items[] = $this->makeIcsItemSupervision($exam,$supervision->getLesson());
                 }
             }
         }

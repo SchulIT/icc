@@ -5,10 +5,10 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
-import bootstrapPlugin from '@fullcalendar/bootstrap';
+import bootstrapPlugin from '@fullcalendar/bootstrap5';
 import deLocale from '@fullcalendar/core/locales/de';
 import Choices from "choices.js";
-import {Popover} from "bootstrap";
+import Popover from "bootstrap/js/dist/popover";
 
 require('@fullcalendar/core/locales-all');
 
@@ -41,13 +41,17 @@ document.addEventListener('DOMContentLoaded', function () {
             interactionPlugin,
             bootstrapPlugin
         ],
-        header: {
-            left: 'prev,next today',
+        headerToolbar: {
+            start: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+            end: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        },
+        buttonIcons: {
+            prev: ' fa fa-chevron-left',
+            next: ' fa fa-chevron-right'
         },
         weekNumbers: true,
-        themeSystem: 'bootstrap',
+        themeSystem: 'bootstrap5',
         locales: [ deLocale ],
         locale: 'de',
         eventSources: [
@@ -68,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
             let confirmation_status = event.extendedProps.confirmation_status;
 
             let template = '<div class="popover" role="tooltip">' +
-                '<div class="arrow"></div>' +
+                '<div class="popover-arrow"></div>' +
                 '<h3 class="popover-header">' + title + ' <span class="badge" style="background: ' + event.backgroundColor + '; color: ' + event.textColor + '">' + event.extendedProps.category + '</span></h3>' +
                 '<div class="popover-body">';
 
@@ -89,12 +93,15 @@ document.addEventListener('DOMContentLoaded', function () {
             let popover = new Popover(info.el, {
                 placement: 'right',
                 template: template,
-                trigger: 'focus',
+                trigger: 'manual',
                 dismissible: true,
-                animation: 'none',
-                delay: 1 // 0 is not sufficient enough, probably bsn thinks, that delay is not set if set to 0?!
+                animation: false,
+                html: true,
+                container: 'body'
             });
             popover.show();
+
+            console.log(popover);
 
             let eventId = event.id;
             popovers[eventId] = popover;
@@ -106,12 +113,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         },
         loading: function(isLoading) {
-            if(isLoading) {
-                document.getElementById('loading-indicator')?.classList.remove('hide');
-            } else {
-                document.getElementById('loading-indicator')?.classList.add('hide');
-            }
-
             [studentChoice, studyGroupChoice, teacherChoice, categoriesChoice, examGradesChoice ].forEach(function(choices) {
                 if(choices === null) {
                     return;
@@ -174,10 +175,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     calendar.render();
-
-    // Insert loading indicator
-    let heading = calendarEl.querySelector('.fc-center h2');
-    heading.innerHTML = heading.innerHTML + " <i class=\"fas fa-spinner fa-pulse hide\" id=\"loading-indicator\"></i>";
 
     loadEvents(null);
 });

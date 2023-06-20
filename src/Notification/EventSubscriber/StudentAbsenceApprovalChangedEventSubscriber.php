@@ -33,7 +33,8 @@ class StudentAbsenceApprovalChangedEventSubscriber implements EventSubscriberInt
         $emails = array_map(fn(User $user) => $user->getEmail(), $recipients);
         if(!in_array($event->getAbsence()->getEmail(), $emails)) {
             $recipients[] = (new User())
-                ->setEmail($event->getAbsence()->getEmail());
+                ->setEmail($event->getAbsence()->getEmail())
+                ->setUsername($event->getAbsence()->getEmail());
         }
 
         foreach($recipients as $recipient) {

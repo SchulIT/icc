@@ -29,7 +29,8 @@ class StudentAbsenceMessageCreatedEventSubscriber implements EventSubscriberInte
         $emails = array_map(fn(User $user) => $user->getEmail(), $recipients);
         if(!in_array($event->getAbsence()->getEmail(), $emails) && $event->getAbsence()->getCreatedBy()->getId() !== $event->getMessage()->getCreatedBy()->getId()) {
             $recipients[] = (new User())
-                ->setEmail($event->getAbsence()->getEmail());
+                ->setEmail($event->getAbsence()->getEmail())
+                ->setUsername($event->getAbsence()->getEmail());
         }
 
         foreach($recipients as $recipient) {

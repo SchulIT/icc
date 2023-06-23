@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Exam;
 use App\Entity\Notification;
 use App\Entity\User;
+use DateTime;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class NotificationRepository extends AbstractRepository implements NotificationRepositoryInterface {
@@ -70,5 +72,16 @@ class NotificationRepository extends AbstractRepository implements NotificationR
     public function remove(Notification $notification): void {
         $this->em->remove($notification);
         $this->em->flush();
+    }
+
+    public function removeBetween(DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->delete(Notification::class, 'n')
+            ->where('n.createdAt >= :start')
+            ->andWhere('n.createdAt <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
     }
 }

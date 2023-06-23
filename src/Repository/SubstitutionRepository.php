@@ -78,6 +78,17 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
         $this->flushIfNotInTransaction();
     }
 
+    public function removeBetween(DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->delete(Substitution::class, 's')
+            ->where('s.date >= :start')
+            ->andWhere('s.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
+    }
+
     /**
      * @inheritDoc
      */

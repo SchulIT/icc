@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Notification;
 use App\Entity\User;
+use DateTime;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 interface NotificationRepositoryInterface {
@@ -29,4 +30,6 @@ interface NotificationRepositoryInterface {
     public function persist(Notification $notification): void;
 
     public function remove(Notification $notification): void;
+
+    public function removeBetween(DateTime $start, DateTime $end): int;
 }

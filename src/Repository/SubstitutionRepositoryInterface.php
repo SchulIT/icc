@@ -72,4 +72,6 @@ interface SubstitutionRepositoryInterface extends TransactionalRepositoryInterfa
      * @param Substitution $substitution
      */
     public function remove(Substitution $substitution): void;
+
+    public function removeBetween(DateTime $start, DateTime $end): int;
 }

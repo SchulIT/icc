@@ -169,6 +169,8 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
      */
     public function remove(Exam $exam): void;
 
+    public function removeBetween(DateTime $start, DateTime $end): int;
+
     /**
      * @param int $itemsPerPage
      * @param int $page

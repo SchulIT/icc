@@ -1318,6 +1318,9 @@ admin:
                 book: Alle Einträge in den Unterrichtsbüchern dieses Abschnittes
                 grades: Alle Noten werden dieses Abschnittes
                 absences: Alle Abwesenheitsmeldungen im Zeitraum des Abschnittes (Lernende und Lehrkräfte) - es werden alle Meldungen gelöscht, deren ENDE im Abschnitt liegen
+                timetable: Stundenplan inkl. Aufsichten des Abschnittes
+                exams: Alle Klausuren in diesem Abschnitt
+                notifications: Alle Benachrichtigungen im Zeitraum des Abschnittes
 
             success: Abschnitt erfolgreich gelöscht
 

@@ -384,6 +384,16 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         $this->flushIfNotInTransaction();
     }
 
+    public function removeBetween(DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->delete(Exam::class, 'e')
+            ->where('e.date >= :start')
+            ->andWhere('e.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
+    }
 
     /**
      * @inheritDoc

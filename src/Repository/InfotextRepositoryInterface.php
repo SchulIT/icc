@@ -24,4 +24,6 @@ interface InfotextRepositoryInterface extends TransactionalRepositoryInterface {
     public function persist(Infotext $infotext): void;
 
     public function removeAll(?DateTime $dateTime = null): void;
+
+    public function removeBetween(DateTime $start, DateTime $end): int;
 }

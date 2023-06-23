@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Absence;
 use App\Entity\Infotext;
 use DateTime;
 
@@ -48,5 +49,16 @@ class InfotextRepository extends AbstractTransactionalRepository implements Info
             ->execute();
 
         $this->flushIfNotInTransaction();
+    }
+
+    public function removeBetween(DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->delete(Infotext::class, 'i')
+            ->where('i.date >= :start')
+            ->andWhere('i.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
     }
 }

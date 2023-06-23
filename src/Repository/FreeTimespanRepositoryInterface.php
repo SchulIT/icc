@@ -21,4 +21,6 @@ interface FreeTimespanRepositoryInterface extends TransactionalRepositoryInterfa
     public function persist(FreeTimespan $timespan): void;
 
     public function removeAll(?DateTime $dateTime): void;
+
+    public function removeBetween(DateTime $start, DateTime $end): int;
 }

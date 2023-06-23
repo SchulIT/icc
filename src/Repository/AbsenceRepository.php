@@ -107,4 +107,15 @@ class AbsenceRepository extends AbstractTransactionalRepository implements Absen
         $this->flushIfNotInTransaction();
     }
 
+    public function removeBetween(DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->delete(Absence::class, 'a')
+            ->where('a.date >= :start')
+            ->andWhere('a.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
+    }
+
 }

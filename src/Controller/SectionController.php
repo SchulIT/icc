@@ -2,8 +2,12 @@
 
 namespace App\Controller;
 
+use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
+use App\Repository\FreeTimespanRepositoryInterface;
+use App\Repository\InfotextRepositoryInterface;
 use App\Repository\NotificationRepositoryInterface;
+use App\Repository\ResourceReservationRepositoryInterface;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TeacherAbsenceRepositoryInterface;
@@ -73,7 +77,9 @@ class SectionController extends AbstractController {
     public function remove(Section $section, Request $request, TimetableLessonRepositoryInterface $lessonRepository,
                            TuitionGradeRepositoryInterface $gradeRepository, StudentAbsenceRepositoryInterface $studentAbsenceRepository,
                            TeacherAbsenceRepositoryInterface $teacherAbsenceRepository, TimetableSupervisionRepositoryInterface $supervisionRepository,
-                           ExamRepositoryInterface $examRepository, SubstitutionRepositoryInterface $substitutionRepository, NotificationRepositoryInterface $notificationRepository): Response {
+                           ExamRepositoryInterface $examRepository, SubstitutionRepositoryInterface $substitutionRepository,
+                           NotificationRepositoryInterface $notificationRepository, ResourceReservationRepositoryInterface $reservationRepository,
+                           AbsenceRepositoryInterface $absenceRepository, FreeTimespanRepositoryInterface $freeTimespanRepository, InfotextRepositoryInterface $infotextRepository): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.sections.remove.confirm',
             'message_parameters' => [
@@ -88,6 +94,10 @@ class SectionController extends AbstractController {
             $examRepository->removeBetween($section->getStart(), $section->getEnd());
             $substitutionRepository->removeBetween($section->getStart(), $section->getEnd());
             $notificationRepository->removeBetween($section->getStart(), $section->getEnd());
+            $reservationRepository->removeBetween($section->getStart(), $section->getEnd());
+            $freeTimespanRepository->removeBetween($section->getStart(), $section->getEnd());
+            $absenceRepository->removeBetween($section->getStart(), $section->getEnd());
+            $infotextRepository->removeBetween($section->getStart(), $section->getEnd());
             $gradeRepository->removeForSection($section);
             $studentAbsenceRepository->removeRange($section->getStart(), $section->getEnd());
             $teacherAbsenceRepository->removeRange($section->getStart(), $section->getEnd());

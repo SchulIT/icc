@@ -1321,6 +1321,7 @@ admin:
                 timetable: Stundenplan inkl. Aufsichten des Abschnittes
                 exams: Alle Klausuren in diesem Abschnitt
                 notifications: Alle Benachrichtigungen im Zeitraum des Abschnittes
+                substitutions: Alle Vertretungen in diesem Abschnitt (inkl. Absenzen, unterrichtsfreie Zeiten und Tagestexte)
 
             success: Abschnitt erfolgreich gelöscht
 

@@ -34,4 +34,6 @@ interface AbsenceRepositoryInterface extends TransactionalRepositoryInterface {
     public function persist(Absence $person): void;
 
     public function removeAll(?DateTime $dateTime = null): void;
+
+    public function removeBetween(DateTime $start, DateTime $end): int;
 }

@@ -54,4 +54,6 @@ interface ResourceReservationRepositoryInterface {
     public function persist(ResourceReservation $reservation): void;
 
     public function remove(ResourceReservation $reservation): void;
+
+    public function removeBetween(DateTime $start, DateTime $end): int;
 }

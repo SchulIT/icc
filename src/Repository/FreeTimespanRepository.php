@@ -45,4 +45,15 @@ class FreeTimespanRepository extends AbstractTransactionalRepository implements 
 
         $this->flushIfNotInTransaction();
     }
+
+    public function removeBetween(DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->delete(FreeTimespan::class, 't')
+            ->where('t.date >= :start')
+            ->andWhere('t.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
+    }
 }

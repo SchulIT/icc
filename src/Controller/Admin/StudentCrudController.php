@@ -40,17 +40,13 @@ class StudentCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Schülerin/Schüler')
             ->setEntityLabelInPlural('Schülerinnen und Schüler')
-            ->setSearchFields(['externalId', 'uniqueIdentifier', 'firstname', 'lastname', 'gender', 'email', 'status', 'id', 'uuid']);
+            ->setSearchFields(['externalId', 'firstname', 'lastname', 'gender', 'email', 'status', 'id', 'uuid']);
     }
 
     public function configureFields(string $pageName): iterable
     {
         return [
             TextField::new('externalId')->setLabel('Externe ID'),
-            TextField::new('uniqueIdentifier')
-                ->setLabel('Eindeutigen Identifizierer')
-                ->setHelp('Dieser Identifizierer kann zusätzlich zur externen ID gesetzt werden, um SuS wiederzuerkennen (hilfreich z.B. bei der Verwendung von SchILD und Untis).')
-                ->hideOnIndex(),
             TextField::new('firstname')->setLabel('Vorname'),
             TextField::new('lastname')->setLabel('Nachname'),
             EnumField::new('gender')

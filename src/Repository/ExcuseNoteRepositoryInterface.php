@@ -41,4 +41,6 @@ interface ExcuseNoteRepositoryInterface {
     public function persist(ExcuseNote $note): void;
 
     public function remove(ExcuseNote $note): void;
+
+    public function removeBetween(DateTime $start, DateTime $end): int;
 }

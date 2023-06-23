@@ -40,4 +40,6 @@ interface BookCommentRepositoryInterface {
 
     public function remove(BookComment $comment): void;
 
+    public function removeRange(DateTime $start, DateTime $end): int;
+
 }

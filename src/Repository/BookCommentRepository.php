@@ -109,5 +109,14 @@ class BookCommentRepository extends AbstractRepository implements BookCommentRep
         $this->em->flush();
     }
 
-
+    public function removeRange(DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->delete(BookComment::class, 'c')
+            ->where('c.date >= :start')
+            ->andWhere('c.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
+    }
 }

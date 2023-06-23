@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
+use App\Repository\BookCommentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
+use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\NotificationRepositoryInterface;
@@ -81,7 +83,8 @@ class SectionController extends AbstractController {
                            ExamRepositoryInterface $examRepository, SubstitutionRepositoryInterface $substitutionRepository,
                            NotificationRepositoryInterface $notificationRepository, ResourceReservationRepositoryInterface $reservationRepository,
                            AbsenceRepositoryInterface $absenceRepository, FreeTimespanRepositoryInterface $freeTimespanRepository,
-                           InfotextRepositoryInterface $infotextRepository, AppointmentRepositoryInterface $appointmentRepository): Response {
+                           InfotextRepositoryInterface $infotextRepository, AppointmentRepositoryInterface $appointmentRepository,
+                           ExcuseNoteRepositoryInterface $excuseNoteRepository, BookCommentRepositoryInterface $bookCommentRepository): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.sections.remove.confirm',
             'message_parameters' => [
@@ -101,6 +104,8 @@ class SectionController extends AbstractController {
             $absenceRepository->removeBetween($section->getStart(), $section->getEnd());
             $infotextRepository->removeBetween($section->getStart(), $section->getEnd());
             $appointmentRepository->removeBetween($section->getStart(), $section->getEnd());
+            $excuseNoteRepository->removeBetween($section->getStart(), $section->getEnd());
+            $bookCommentRepository->removeRange($section->getStart(), $section->getEnd());
             $gradeRepository->removeForSection($section);
             $studentAbsenceRepository->removeRange($section->getStart(), $section->getEnd());
             $teacherAbsenceRepository->removeRange($section->getStart(), $section->getEnd());

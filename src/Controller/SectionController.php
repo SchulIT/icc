@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Repository\TeacherAbsenceRepositoryInterface;
+use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TuitionGradeRepositoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Section;
@@ -68,7 +69,7 @@ class SectionController extends AbstractController {
     #[Route(path: '/{uuid}/remove', name: 'remove_section')]
     public function remove(Section $section, Request $request, TimetableLessonRepositoryInterface $lessonRepository,
                            TuitionGradeRepositoryInterface $gradeRepository, StudentAbsenceRepositoryInterface $studentAbsenceRepository,
-                           TeacherAbsenceRepositoryInterface $teacherAbsenceRepository): Response {
+                           TeacherAbsenceRepositoryInterface $teacherAbsenceRepository, TimetableSupervisionRepositoryInterface $supervisionRepository): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.sections.remove.confirm',
             'message_parameters' => [
@@ -79,6 +80,7 @@ class SectionController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             $lessonRepository->removeRange($section->getStart(), $section->getEnd());
+            $supervisionRepository->removeBetween($section->getStart(), $section->getEnd());
             $gradeRepository->removeForSection($section);
             $studentAbsenceRepository->removeRange($section->getStart(), $section->getEnd());
             $teacherAbsenceRepository->removeRange($section->getStart(), $section->getEnd());

@@ -72,5 +72,7 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
 
     public function remove(Appointment $appointment): void;
 
+    public function removeBetween(DateTime $start, DateTime $end): int;
+
     public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null, ?User $createdBy = null, ?bool $confirmed = null): Paginator;
 }

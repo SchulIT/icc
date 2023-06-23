@@ -1322,6 +1322,7 @@ admin:
                 exams: Alle Klausuren in diesem Abschnitt
                 notifications: Alle Benachrichtigungen im Zeitraum des Abschnittes
                 substitutions: Alle Vertretungen in diesem Abschnitt (inkl. Absenzen, unterrichtsfreie Zeiten und Tagestexte)
+                appointments: Alle Termine in diesem Abschnitt - es werden alle Termine gelöscht, deren Startdatum im Abschnitt liegt
 
             success: Abschnitt erfolgreich gelöscht
 

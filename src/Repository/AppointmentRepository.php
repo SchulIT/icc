@@ -366,4 +366,15 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
         $this->em->remove($appointment);
         $this->flushIfNotInTransaction();
     }
+
+    public function removeBetween(DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->delete(Appointment::class, 'a')
+            ->where('a.start >= :start')
+            ->andWhere('a.start <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
+    }
 }

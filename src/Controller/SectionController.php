@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\AbsenceRepositoryInterface;
+use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
@@ -79,7 +80,8 @@ class SectionController extends AbstractController {
                            TeacherAbsenceRepositoryInterface $teacherAbsenceRepository, TimetableSupervisionRepositoryInterface $supervisionRepository,
                            ExamRepositoryInterface $examRepository, SubstitutionRepositoryInterface $substitutionRepository,
                            NotificationRepositoryInterface $notificationRepository, ResourceReservationRepositoryInterface $reservationRepository,
-                           AbsenceRepositoryInterface $absenceRepository, FreeTimespanRepositoryInterface $freeTimespanRepository, InfotextRepositoryInterface $infotextRepository): Response {
+                           AbsenceRepositoryInterface $absenceRepository, FreeTimespanRepositoryInterface $freeTimespanRepository,
+                           InfotextRepositoryInterface $infotextRepository, AppointmentRepositoryInterface $appointmentRepository): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.sections.remove.confirm',
             'message_parameters' => [
@@ -98,6 +100,7 @@ class SectionController extends AbstractController {
             $freeTimespanRepository->removeBetween($section->getStart(), $section->getEnd());
             $absenceRepository->removeBetween($section->getStart(), $section->getEnd());
             $infotextRepository->removeBetween($section->getStart(), $section->getEnd());
+            $appointmentRepository->removeBetween($section->getStart(), $section->getEnd());
             $gradeRepository->removeForSection($section);
             $studentAbsenceRepository->removeRange($section->getStart(), $section->getEnd());
             $teacherAbsenceRepository->removeRange($section->getStart(), $section->getEnd());

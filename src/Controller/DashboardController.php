@@ -167,9 +167,21 @@ class DashboardController extends AbstractController {
 
             if(count($sections) === 0) {
                 return null;
-            } else {
-                return $sections[count($sections) - 1];
             }
+
+            $nearestSection = $sections[0];
+            $min = $dateTime->diff($sections[0]->getStart())->format('%a');
+
+            foreach($sections as $section) {
+                $diff = $dateTime->diff($section->getStart())->format('%a');
+
+                if($diff < $min) {
+                    $min = $diff;
+                    $nearestSection = $section;
+                }
+            }
+
+            return $nearestSection;
         }
 
         return $section;

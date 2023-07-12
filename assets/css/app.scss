@@ -397,3 +397,25 @@ table {
     }
   }
 }
+
+.card-body {
+  > .bs-callout:first-child {
+    margin-top: 0;
+  }
+}
+
+.bs-callout {
+  > h4::before {
+    @extend .fas;
+    @extend .fa-circle-info;
+    margin-right: 0.25rem;
+  }
+
+  &.bs-callout-success > h4::before {
+    @extend .fa-circle-check;
+  }
+
+  &.bs-callout-danger > h4::before {
+    @extend .fa-circle-exclamation;
+  }
+}

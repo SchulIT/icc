@@ -37,7 +37,7 @@
 
     {% for msg in app.session.flashbag.get('error') %}
         <div class="bs-callout bs-callout-danger">
-            <h5><i class="fas fa-info-circle"></i> {{ 'error.label'|trans }}</h5>
+            <h5><i class="fas fa-circle-exclamation"></i> {{ 'error.label'|trans }}</h5>
             <p>{{ msg|trans }}</p>
         </div>
     {% endfor %}
@@ -58,7 +58,7 @@
 
     {% if is_granted('IS_IMPERSONATOR') %}
         <div class="bs-callout bs-callout-warning">
-            <h4>{{ 'profile.switch.active.title'|trans }}</h4>
+            <h5>{{ 'profile.switch.active.title'|trans }}</h5>
 
             <p>
                 {{ 'profile.switch.active.message'|trans({'%user%': app.user|user})|raw }}

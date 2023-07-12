@@ -16,7 +16,7 @@
 
             <div class="flex-shrink-0">
                 {% if is_dismissed(message) and (message.attachments|length > 0 or userDownloads|length > 0) %}
-                    <div class="dropdown d-inline ms-1">
+                    <div class="dropdown ms-1">
                         <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa fa-download"></i>
                         </button>
@@ -62,7 +62,7 @@
                     </div>
                 {% endif %}
 
-                <div class="dropdown d-inline ms-1">
+                <div class="dropdown ms-1">
                     <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-ellipsis-v"></i>
                     </button>

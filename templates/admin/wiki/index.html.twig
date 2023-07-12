@@ -24,7 +24,7 @@
             {% for visibility in article.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
         </td>
         <td class="align-middle">
-            <div class="dropdown d-inline">
+            <div class="dropdown">
                 <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                     <i class="fas fa-ellipsis-v"></i>
                 </button>

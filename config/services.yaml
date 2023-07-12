@@ -147,10 +147,6 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: userMenu, alias: userMenu }
 
-    App\Menu\SystemMenuBuilder:
-        tags:
-            - { name: knp_menu.menu_builder, method: systemMenu, alias: systemMenu }
-
     App\Menu\AdminMenuBuilder:
         tags:
             - { name: knp_menu.menu_builder, method: adminMenu, alias: adminMenu }

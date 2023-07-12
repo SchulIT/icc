@@ -24,7 +24,7 @@
         "autoprefixer": "^10.4.13",
         "axios": "^0.21.1",
         "bazinga-translator": "^4.0.1",
-        "bootstrap": "5.3.0-alpha3",
+        "bootstrap": "5.3.0",
         "browserify-fs": "^1.0.0",
         "choices.js": "^9.0.0",
         "clipboard": "^2.0.4",
@@ -67,6 +67,5 @@
         "Safari >= 9",
         "Android >= 4.4",
         "Opera >= 30"
-    ],
-    "packageManager": "yarn@1.22.19"
+    ]
 }

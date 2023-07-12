@@ -58,6 +58,11 @@ trait CalendarWeeksTrait {
             }
         }
 
+        if($selectedDate === null) {
+            $selectedDate = $dateHelper->getToday();
+            $selectedDate->setTime(0,0,0);
+        }
+
         return $selectedDate;
     }
 }

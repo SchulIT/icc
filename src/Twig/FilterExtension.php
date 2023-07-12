@@ -19,8 +19,12 @@ class FilterExtension extends AbstractExtension {
         ];
     }
 
-    public function filterCurrentSection(iterable $collection, Section $section): array {
+    public function filterCurrentSection(iterable $collection, ?Section $section): array {
         $result = [ ];
+
+        if($section === null) {
+            return $result;
+        }
 
         foreach($collection as $item) {
             if($this->propertyAccessor->getValue($item, 'section') === $section) {

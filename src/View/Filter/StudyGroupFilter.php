@@ -48,7 +48,7 @@ class StudyGroupFilter {
 
                 return $studyGroup->getSection() === $section;
             });
-        } else {
+        } else if($section !== null) {
             $studyGroups = $this->studyGroupRepository->findAllBySection($section);
         }
 

@@ -132,9 +132,13 @@ class ExamController extends AbstractControllerWithMessages {
         ]);
     }
 
-    private function isVisibleForGrade(User $user, ExamSettings $examSettings, Section $section) {
+    private function isVisibleForGrade(User $user, ExamSettings $examSettings, ?Section $section): bool {
         if($user->isStudentOrParent() === false) {
             return true;
+        }
+
+        if($section === null) {
+            return false;
         }
 
         $visibleGradeIds = $examSettings->getVisibleGradeIds();

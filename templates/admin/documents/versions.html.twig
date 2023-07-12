@@ -46,7 +46,7 @@
                                 <i class="fa fa-eye"></i> {{ 'versions.show.button'|trans }}
                             </a>
 
-                            <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#restore-modal" data-modal-content="{{ 'versions.restore.confirm'|trans({'%date%': entry.loggedAt|format_datetime}) }}" data-entity-target="input[name={{ version_param }}]" data-entity-id="{{ entry.id }}">
+                            <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#restore-modal" data-modal-content="{{ 'versions.restore.confirm'|trans({'%date%': entry.loggedAt|format_datetime}) }}" data-entity-target="input[name={{ version_param }}]" data-entity-id="{{ entry.id }}">
                                 <i class="fa fa-trash-restore"></i> {{ 'versions.restore.button'|trans }}
                             </a>
                         </td>

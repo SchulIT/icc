@@ -404,6 +404,10 @@ table {
   }
 }
 
+.col-md-9 > .bs-callout:first-child {
+  margin-top: 0;
+}
+
 .bs-callout {
   > h4::before {
     @extend .fas;

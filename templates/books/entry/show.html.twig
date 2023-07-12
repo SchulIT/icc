@@ -13,7 +13,7 @@
         <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
         <li class="breadcrumb-item">
             {% for grade in entry.tuition.studyGroup.grades %}
-                <a href="{{ path('book', { grade: grade.uuid.toString }) }}">{{ grade.name }}</a>{% if not loop.last %}<span class="mr-1">, </span>{% endif %}
+                <a href="{{ path('book', { grade: grade.uuid.toString }) }}">{{ grade.name }}</a>{% if not loop.last %}<span class="me-1">, </span>{% endif %}
             {% endfor %}
         </li>
         <li class="breadcrumb-item">
@@ -43,14 +43,14 @@
                         {{ entry.tuition.subject }}
 
                         {% for grade in entry.tuition.studyGroup.grades %}
-                            <span class="badge badge-primary mr-1">
+                            <span class="badge text-bg-primary me-1">
                                 {{ grade.name }}
                             </span>
                         {% endfor %}
 
 
                         {% for teacher in entry.tuition.teachers %}
-                            <span class="ml-1">
+                            <span class="ms-1">
                                 <i class="fa fa-chalkboard-teacher"></i> {{ teacher|teacher }}
                             </span>
                         {% endfor %}
@@ -58,13 +58,13 @@
 
                     <div class="card-body no-columns">
                         <div class="d-flex mb-3">
-                            <div class="mr-1 mt-n2 flex-fill">
+                            <div class="me-1 mt-n2 flex-fill">
                                 <div class="row">
                                     {{ form_label(form.lessonStart) }}
                                 </div>
                                 {{ form_widget(form.lessonStart)}}
                             </div>
-                            <div class="ml-1 mt-n2 flex-fill">
+                            <div class="ms-1 mt-n2 flex-fill">
                                 <div class="row">
                                     {{ form_label(form.lessonEnd) }}
                                 </div>

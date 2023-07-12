@@ -44,12 +44,12 @@
                                     </td>
                                     <td>{{ type.name }}</td>
                                     <td>
-                                        <div class="dropdown d-inline">
-                                            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                        <div class="dropdown">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
 
-                                            <div class="dropdown-menu dropdown-menu-right">
+                                            <div class="dropdown-menu dropdown-menu-end">
                                                 {% if is_granted('edit', type) %}
                                                 <a href="{{ path('edit_resource_type', { uuid: type.uuid }) }}" class="dropdown-item">
                                                     <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}

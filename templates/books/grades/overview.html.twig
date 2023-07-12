@@ -93,7 +93,7 @@
                                             {% if category.category.uuid.toString not in hiddenCategories %}
                                             <th class="{% if isGradeView or isStudentsView %}rotate-90{% else %}text-center{% endif %}">
                                                 <div>
-                                                    {% if isGradeView %}<span class="badge badge-primary">{{ category.tuition.name }}</span>{% endif%} {{ category.category.displayName }}
+                                                    {% if isGradeView %}<span class="badge text-bg-primary">{{ category.tuition.name }}</span>{% endif%} {{ category.category.displayName }}
                                                 </div>
                                             </th>
                                             {% endif %}
@@ -216,11 +216,9 @@
 
                         <div class="input-group">
                             <input type="password" id="passphrase" class="form-control" autocomplete="off" data-enter="#password_btn" />
-                            <div class="input-group-append">
-                                <button type="button" id="password_btn" data-passphrase="#passphrase" data-key="#key" class="btn btn-outline-primary">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                            </div>
+                            <button type="button" id="password_btn" data-passphrase="#passphrase" data-key="#key" class="btn btn-outline-primary">
+                                <i class="fas fa-check"></i>
+                            </button>
                         </div>
 
                         <div class="bs-callout bs-callout-success hide mb-0">
@@ -244,9 +242,9 @@
                         <div class="list-group list-group-flush">
                             {% for category in categories %}
                                 <div class="list-group-item">
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="{{ category.uuid }}" name="hide[]" value="{{ category.uuid }}" {% if category.uuid.toString in hiddenCategories %}checked="checked"{% endif %}>
-                                        <label class="custom-control-label" for="{{ category.uuid }}">{{ category.displayName }}</label>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="{{ category.uuid }}" name="hide[]" value="{{ category.uuid }}" {% if category.uuid.toString in hiddenCategories %}checked="checked"{% endif %}>
+                                        <label class="form-check-label" for="{{ category.uuid }}">{{ category.displayName }}</label>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -264,9 +262,9 @@
                         <h4 class="card-title"><i class="fas fa-file-excel"></i> {{ 'book.grades.export.label'|trans }}</h4>
                         <p>{{ 'book.grades.export.info'|trans }}</p>
 
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="export-caution" required="required">
-                            <label class="custom-control-label" for="export-caution">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="export-caution" required="required">
+                            <label class="form-check-label" for="export-caution">
                                 {{ 'export.caution'|trans }}
                             </label>
                         </div>

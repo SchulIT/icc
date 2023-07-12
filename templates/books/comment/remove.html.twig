@@ -23,14 +23,14 @@
                         <i class="far fa-comment-alt"></i>
                     </div>
 
-                    <div class="ml-2 flex-fill">
+                    <div class="ms-2 flex-fill">
                         <div class="d-flex align-items-center mb-1">
                             <div>
                                 <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
                             </div>
 
                             {% for student in comment.students %}
-                                <div class="ml-2">
+                                <div class="ms-2">
                                     <i class="fas fa-user-graduate"></i> {{ student|student }}
                                 </div>
                             {% endfor %}

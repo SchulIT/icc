@@ -42,7 +42,7 @@
                                 {% for lesson in group.lessons %}
                                     <div class="list-group-item d-flex align-items-center">
                                         <div class="book-lesson m-0 p-0">{{ lesson.lessonNumber }}</div>
-                                        <div class="badge badge-secondary">
+                                        <div class="badge text-bg-secondary">
                                             {% set subject = null %}
                                             {%- if lesson.lesson is not null -%}
                                                 {% if lesson.lesson.tuition.displayName is not empty %}
@@ -57,7 +57,7 @@
                                             {{ subject }}
                                         </div>
 
-                                        <div class="ml-2">
+                                        <div class="ms-2">
                                             <i class="fas fa-users"></i>
                                             {% for grade in lesson.lesson.tuition.studyGroup.grades %}
                                                 {{ grade.name }}{% if not loop.last %}, {% endif %}
@@ -65,17 +65,17 @@
                                         </div>
 
                                         {% for teacher in lesson.lesson.tuition.teachers %}
-                                            <div class="ml-2">
+                                            <div class="ms-2">
                                                 <i class="fas fa-chalkboard-teacher"></i>
                                                 {{ teacher|teacher }}
                                             </div>
                                         {% endfor %}
 
-                                            <div class="ml-2 text-danger flex-fill">
+                                            <div class="ms-2 text-danger flex-fill">
                                                 <i class="fas fa-exclamation-triangle"></i> {{ 'book.entry.missing'|trans }}
                                             </div>
 
-                                            <div class="ml-2">
+                                            <div class="ms-2">
                                                 <entry students-url="{{ url('xhr_students') }}"
                                                        teachers-url="{{ url('xhr_teachers') }}"
                                                        url="{{ path('xhr_lesson_entry', { start: lesson.lessonNumber, lesson: lesson.lesson.uuid.toString }) }}"
@@ -138,7 +138,7 @@
                             <a href="{{ path('missing_book_entries', { section: sectionFilter.currentSection.uuid.toString, grade: grade.uuid.toString }) }}" class="list-group-item list-group-item-action {% if gradeFilter.currentGrade == grade %}active{% endif %}">
                                 <i class="fas fa-users"></i> {{ grade.name }}
                                 {% if ownGradesMissingCounts[grade.id] is defined %}
-                                    <span class="badge badge-primary badge-pill">{{ ownGradesMissingCounts[grade.id] }}</span>
+                                    <span class="badge text-bg-primary rounded-pill">{{ ownGradesMissingCounts[grade.id] }}</span>
                                 {% endif %}
                             </a>
                         {% endfor %}
@@ -154,7 +154,7 @@
                                 ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
 
                                 {% if ownTuitionsMissingCounts[tuition.id] is defined %}
-                                    <span class="badge badge-primary badge-pill">{{ ownTuitionsMissingCounts[tuition.id] }}</span>
+                                    <span class="badge text-bg-primary rounded-pill">{{ ownTuitionsMissingCounts[tuition.id] }}</span>
                                 {% endif %}
                             </a>
                             {% endif %}

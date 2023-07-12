@@ -1,8 +1,8 @@
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
-    <div class="form-group {{ class|default('') }}">
-        <label for="rooms">{{ 'label.rooms'|trans }}:</label>
+    <div class="mb-3 {{ class|default('') }}">
+        <label for="rooms" class="form-label">{{ 'label.rooms'|trans }}:</label>
         <select name="rooms[]" id="rooms" multiple="multiple" class="form-control" data-trigger="submit" data-choice="true">
             <option value="">{{ 'label.select.rooms'|trans }}</option>
             {% for r in roomsFilter.rooms %}

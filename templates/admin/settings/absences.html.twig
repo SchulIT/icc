@@ -35,7 +35,7 @@
         <div class="card-body">
             {{ form_row(form.teacher_enabled) }}
 
-            <div class="form-group row">
+            <div class="mb-3 row">
                 {{ form_label(form.teacher_create_recipients) }}
                 <div class="col-md-10">
                     <div class="create_recipients" data-collection="create_recipients" data-prototype="{{ form_widget(form.teacher_create_recipients.vars.prototype)|e('html_attr') }}">
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <div class="form-group row">
+            <div class="mb-3 row">
                 {{ form_label(form.teacher_update_recipients) }}
                 <div class="col-md-10">
                     <div class="create_recipients" data-collection="update_recipients" data-prototype="{{ form_widget(form.teacher_update_recipients.vars.prototype)|e('html_attr') }}">

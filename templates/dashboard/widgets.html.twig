@@ -18,7 +18,7 @@
 
 {% macro show_warning(hasWarning) %}
     {% if hasWarning|default(false) %}
-        <div class="align-self-center text-center pr-3 text-danger">
+        <div class="align-self-center text-center pe-3 text-danger">
             <i class="fa fa-exclamation-triangle" title="{{ 'dashboard.collision.single_label'|trans }} {{ 'dashboard.collision.hint'|trans }}"></i>
         </div>
     {% endif %}
@@ -27,8 +27,8 @@
 {% macro absences(groups, count, id, totalStudents) %}
     {% if groups|length > 0 %}
         <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#absences-{{ id }}">
-                <span class="mr-auto align-self-center">
-                    <strong>{{ 'dashboard.absent_students'|trans }} <span class="badge badge-warning">{{ count }} / {{ totalStudents }}</span></strong>
+                <span class="me-auto align-self-center">
+                    <strong>{{ 'dashboard.absent_students'|trans }} <span class="badge text-bg-warning">{{ count }} / {{ totalStudents }}</span></strong>
                 </span>
             <i class="fa indicator align-self-center fa-chevron-down"></i>
         </div>
@@ -74,13 +74,13 @@
             {% endif %}
             {{ _self.show_warning(hasWarning) }}
 
-            <div class="card-body align-self-center d-flex align-items-sm-center pl-0">
-                <div class="mr-auto align-self-center d-flex flex-wrap">
+            <div class="card-body align-self-center d-flex align-items-sm-center ps-0">
+                <div class="me-auto align-self-center d-flex flex-wrap">
                     <span class="d-flex flex-wrap align-self-center mb-1">
                         {% for tuition in exam.tuitions %}
 
                             <span>
-                                <span class="badge badge-primary">{{ tuition.name|upper }}</span>
+                                <span class="badge text-bg-primary">{{ tuition.name|upper }}</span>
                                 <span class="mx-1"></span>
                             </span>
                             <span>
@@ -112,22 +112,22 @@
 {% endmacro %}
 
 {% macro exam_supervision(item, lesson, start, end, hasWarning, isCurrent) %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %} {% if isCurrent %}border-right-3{% endif %}">
+    <div class="card {% if hasWarning %}border-danger bg-danger-subtle{% else %}border-warning{% endif %} {% if isCurrent %}border-right-3{% endif %}">
         <div class="d-flex">
             {{ _self.show_lesson(lesson, start, end) }}
             {{ _self.show_warning(hasWarning) }}
 
             <div class="align-self-center d-flex flex-wrap w-100">
-                <span class="align-self-center badge badge-warning my-1 mr-3">{{ 'dashboard.exam_supervision'|trans|upper }}</span>
+                <span class="align-self-center badge text-bg-warning my-1 me-3">{{ 'dashboard.exam_supervision'|trans|upper }}</span>
 
-                <div class="card-body pl-0 py-0 d-flex align-self-center align-items-center flex-column">
+                <div class="card-body ps-0 py-0 d-flex align-self-center align-items-center flex-column">
                     {% for exam in item.exams %}
                         <div class="d-block d-flex my-1 w-100">
-                            <span class="mr-auto align-self-center">
+                            <span class="me-auto align-self-center">
                                 <span class="d-flex flex-wrap align-self-center mb-1">
                                     {% for tuition in exam.tuitions %}
                                         <span>
-                                            <span class="badge badge-primary">{{ tuition.name|upper }}</span>
+                                            <span class="badge text-bg-primary">{{ tuition.name|upper }}</span>
                                             <span class="mx-1"></span>
                                         </span>
                                         <span>
@@ -164,7 +164,7 @@
 {% endmacro %}
 
 {% macro lesson(item, lesson, start, end, hasWarning, isCurrent, gradesWithCourseNames) %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% elseif item.lesson is not null %}border-primary{% endif %} {% if isCurrent %}border-right-3{% endif %}">
+    <div class="card {% if hasWarning %}border-danger bg-danger-subtle{% elseif item.lesson is not null %}border-primary{% endif %} {% if isCurrent %}border-right-3{% endif %}">
         <div class="d-flex">
             {{ _self.show_lesson(lesson, start, end) }}
             {{ _self.show_warning(hasWarning) }}
@@ -192,8 +192,8 @@
                     {%- if lesson.room is not null -%}
                         {%- set room = lesson.room.name -%}
                     {%- endif -%}
-                    <div class="align-self-center d-flex flex-wrap mr-auto">
-                        <span class="align-self-center badge badge-primary mr-3">
+                    <div class="align-self-center d-flex flex-wrap me-auto">
+                        <span class="align-self-center badge text-bg-primary me-3">
                             {% if tuition is not null %}
                                 {% if tuition.displayName is not empty -%}
                                     {{ tuition.displayName|upper }}
@@ -217,7 +217,7 @@
                             {% endif %}
                         </span>
 
-                        <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
+                        <div class="card-body align-self-center ps-0 py-1 py-sm-1 d-flex flex-wrap">
                             {% if lesson.grades|length > 0 %}
                             <span>
                                 <i class="fa fa-users"></i>
@@ -253,7 +253,7 @@
                                 {% set editAction = path('edit_entry', { uuid: entry.uuid }) %}
                             {% endif %}
                         {% endfor %}
-                        <div class="align-self-center pl-3">
+                        <div class="align-self-center ps-3">
                                 <entry students-url="{{ url('xhr_students') }}"
                                        teachers-url="{{ url('xhr_teachers') }}"
                                        url="{{ path('xhr_lesson_entry', { start: lessonNumber, lesson: lesson.uuid.toString }) }}"
@@ -272,12 +272,12 @@
                         {% set openGradebook = is_granted('ROLE_BOOK_ENTRY_CREATOR') and lesson.tuition.gradeCategories.count > 0 %}
 
                         {% if openLists or openBook or openGradebook %}
-                            <div class="align-self-center pr-3">
-                                <div class="dropdown d-inline ml-1">
-                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                            <div class="align-self-center pe-3">
+                                <div class="dropdown ms-1">
+                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fas fa-ellipsis-v"></i>
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-right">
+                                    <div class="dropdown-menu dropdown-menu-end">
                                         <div class="dropdown-header">{{ 'dashboard.links.header'|trans }}</div>
                                         {% if openLists %}
                                             <a href="{{ path('list_tuition', { uuid: lesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
@@ -315,18 +315,18 @@
 {% endmacro %}
 
 {% macro free_lesson(item, lesson, start, end, hasWarning, isCurrent) %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %} {% if isCurrent %}border-right-3{% endif %}">
+    <div class="card {% if hasWarning %}border-danger bg-danger-subtle{% else %}border-warning{% endif %} {% if isCurrent %}border-right-3{% endif %}">
         <div class="d-flex">
             {{ _self.show_lesson(lesson, start, end) }}
             {{ _self.show_warning(hasWarning) }}
 
-            <span class="align-self-center badge badge-warning badge-card">{{ 'dashboard.free_lesson'|trans|upper }}</span>
+            <span class="align-self-center badge text-bg-warning badge-card">{{ 'dashboard.free_lesson'|trans|upper }}</span>
         </div>
     </div>
 {% endmacro %}
 
 {% macro supervision(item, lesson, start, end, hasWarning, isCurrent, supervisionLabels) %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-primary{% endif %} {% if isCurrent %}border-right-3{% endif %}">
+    <div class="card {% if hasWarning %}border-danger bg-danger-subtle{% else %}border-primary{% endif %} {% if isCurrent %}border-right-3{% endif %}">
         <div class="d-flex">
             {% if not item.supervision.isBefore %}
                 {{ _self.show_lesson(lesson, start, end) }}
@@ -337,7 +337,7 @@
             {{ _self.show_warning(hasWarning) }}
 
             <div class="align-self-center d-flex flex-wrap">
-                <span class="align-self-center badge badge-primary mr-3">
+                <span class="align-self-center badge text-bg-primary me-3">
                     {% if supervisionLabels[lesson] is defined and supervisionLabels[lesson] is not empty %}
                         {{ supervisionLabels[lesson]|upper }}
                     {% else %}
@@ -345,7 +345,7 @@
                     {% endif %}
                 </span>
 
-                <div class="card-body pl-0 py-1 py-sm-1">
+                <div class="card-body ps-0 py-1 py-sm-1">
                      <i class="fas fa-map-marker-alt"></i> {{ item.supervision.location }}
                 </div>
             </div>
@@ -357,7 +357,7 @@
     {% import "_macros/replacement.html.twig" as _macro %}
 
     {% set substitution = item.substitution %}
-    <div class="card {% if hasWarning %}border-danger bg-danger-light{% else %}border-warning{% endif %} {% if item.isFreeLesson %}text-black-50{% endif %} {% if isCurrent %}border-right-3{% endif %}">
+    <div class="card {% if hasWarning %}border-danger bg-danger-subtle{% else %}border-warning{% endif %} {% if item.isFreeLesson %}text-black-50{% endif %} {% if isCurrent %}border-right-3{% endif %}">
         <div class="d-flex">
             {% if not substitution.startsBefore %}
                 {% if lesson is null %}
@@ -370,8 +370,8 @@
             {{ _self.show_warning(hasWarning) }}
 
             <div class="align-self-center d-flex w-100">
-                <div class="align-self-center d-flex flex-wrap mr-auto">
-                    <span class="align-self-center badge {% if item.isFreeLesson %}badge-light badge-card{% else %}badge-warning{% endif%} my-1 mr-3">
+                <div class="align-self-center d-flex flex-wrap me-auto">
+                    <span class="align-self-center badge {% if item.isFreeLesson %}badge-light badge-card{% else %}badge-warning{% endif%} my-1 me-3">
                         {% if substitution.type is not empty %}
                             {{ substitution.type|upper }}
                         {% else %}
@@ -379,7 +379,7 @@
                         {% endif %}
                     </span>
 
-                    <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
+                    <div class="card-body align-self-center ps-0 py-1 py-sm-1 d-flex flex-wrap">
                         {% if (substitution.subject is not empty or substitution.replacementSubject is not empty) %}
                             <span>
                                 {{ _macro.replacement(substitution.subject, substitution.replacementSubject) }}
@@ -457,7 +457,7 @@
 {% macro absenceLesson(absenceLesson) %}
     {% if absenceLesson.commentStudents is not empty %}
         <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#studentinfo-{{ absenceLesson.uuid }}">
-            <span class="mr-auto align-self-center">
+            <span class="me-auto align-self-center">
                 <i class="fas fa-info-circle"></i> {{ 'absences.teachers.comment.students'|trans }}
             </span>
             <i class="fa indicator align-self-center fa-chevron-down"></i>
@@ -468,7 +468,7 @@
     {% endif %}
     {% if absenceLesson.commentTeacher is not empty and app.user.isTeacher %}
         <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#teacherinfo-{{ absenceLesson.uuid }}">
-            <span class="mr-auto align-self-center">
+            <span class="me-auto align-self-center">
                 <i class="fas fa-info-circle"></i> {{ 'absences.teachers.comment.teacher'|trans }}
             </span>
             <i class="fa indicator align-self-center fa-chevron-down"></i>
@@ -487,11 +487,11 @@
             </div>
 
             <div class="align-self-center d-flex flex-wrap">
-                <span class="align-self-center badge mr-3 my-1" style="background: {{ appointment.category.color }}; color: {{ foreground(appointment.category.color) }}">
+                <span class="align-self-center badge me-3 my-1" style="background: {{ appointment.category.color }}; color: {{ foreground(appointment.category.color) }}">
                     {{ appointment.category.name|upper }}
                 </span>
 
-                <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
+                <div class="card-body align-self-center ps-0 py-1 py-sm-1 d-flex flex-wrap">
                     {% set icon = "fa-calendar-alt" %}
                     {% if appointment.isAllDay %}
                         {% set start = appointment.start|format_date %}
@@ -569,17 +569,17 @@
             {{ _self.show_lesson(lesson) }}
 
             {% for error in violations %}
-                <div class="align-self-center text-center pr-3 text-danger">
+                <div class="align-self-center text-center pe-3 text-danger">
                     <i class="fa fa-exclamation-triangle" title="{{ error.message|trans(error.parameters, 'validators') }}"></i>
                 </div>
             {% endfor %}
 
             <div class="align-self-center d-flex flex-wrap">
-                <span class="badge mr-3 my-1 {% if violations|length == 0 %}badge-light badge-card{% else %}badge-warning{% endif%} align-self-center">
+                <span class="badge me-3 my-1 {% if violations|length == 0 %}badge-light badge-card{% else %}badge-warning{% endif%} align-self-center">
                     {{ 'dashboard.reservation'|trans|upper }}
                 </span>
 
-                <div class="card-body align-self-center pl-0 py-1 py-sm-1 d-flex flex-wrap">
+                <div class="card-body align-self-center ps-0 py-1 py-sm-1 d-flex flex-wrap">
                     <span>{{ reservation.resource.name }}</span>
                     <span class="mx-1"></span>
                     <span class="text-muted">{{ reservation.resource.description }}</span>

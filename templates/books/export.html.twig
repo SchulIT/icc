@@ -61,7 +61,7 @@
                                         <td class="align-middle">
                                             {{ gradeFilter.currentGrade.name }}
                                             <br>
-                                            <span class="badge badge-primary">
+                                            <span class="badge text-bg-primary">
                                                 {% include "_includes/grade_teachers.html.twig" with { section: sectionFilter.currentSection, grade: gradeFilter.currentGrade } only %}
                                             </span>
                                         </td>
@@ -94,7 +94,7 @@
 
                                             {% if tuition.teachers is not empty %}
                                             <br>
-                                            <span class="badge badge-primary">
+                                            <span class="badge text-bg-primary">
                                                 {{ tuition.teachers|teachers }}
                                             </span>
                                             {% endif %}
@@ -153,11 +153,9 @@
 
                         <div class="input-group">
                             <input type="password" id="passphrase" class="form-control" autocomplete="one-time-code" />
-                            <div class="input-group-append">
-                                <button type="button" id="password_btn" data-passphrase="#passphrase" data-key="#key" class="btn btn-outline-primary">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                            </div>
+                            <button type="button" id="password_btn" data-passphrase="#passphrase" data-key="#key" class="btn btn-outline-primary">
+                                <i class="fas fa-check"></i>
+                            </button>
                         </div>
 
                         <div class="bs-callout bs-callout-success hide mb-0">

@@ -184,13 +184,13 @@
                 <div class="card-body mb-n2">
                     {% for teacher in view.teacherBirthdays %}
                         <div class="mb-2">
-                            <i class="fa fa-birthday-cake align-self-baseline mr-2"></i> {{ teacher|teacher }}
+                            <i class="fa fa-birthday-cake align-self-baseline me-2"></i> {{ teacher|teacher }}
                         </div>
                     {% endfor %}
 
                     {% for student in view.studentBirthdays %}
                         <div class="mb-2">
-                            <i class="fa fa-birthday-cake align-self-baseline mr-2"></i> {{ student|student(true) }}
+                            <i class="fa fa-birthday-cake align-self-baseline me-2"></i> {{ student|student(true) }}
                         </div>
                     {% endfor %}
                 </div>
@@ -229,7 +229,7 @@
             <span>
                 <a id="exercises"></a>
                 <i class="fas fa-tasks"></i> {{ 'dashboard.exercises'|trans }}
-                <span class="badge badge-secondary">{{ view.exercises.grade.name }}</span>
+                <span class="badge text-bg-secondary">{{ view.exercises.grade.name }}</span>
             </span>
         </div>
 
@@ -241,7 +241,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="mb-2">
-                        <span class="badge badge-primary">
+                        <span class="badge text-bg-primary">
                             {{ _self.subject(entry.tuition) }}
 
                             {% if entry.replacementSubject is not empty %}
@@ -326,7 +326,7 @@
                 {% set collisions = view.numberOfCollisions %}
                 {% if collisions > 0 %}
                     <div class="alert alert-danger border-danger d-flex">
-                        <span class="align-self-center mr-2">
+                        <span class="align-self-center me-2">
                             <i class="fa fa-exclamation-triangle"></i>
                         </span>
 
@@ -363,14 +363,14 @@
                             {% if canCreateTeacherAbsence %}
                                 <a href="{{ path('add_teacher_absence') }}" class="list-group-item list-group-item-action">
                                     <i class="fas fa-plus"></i> {{ 'absences.teachers.add.label'|trans }}
-                                    <span class="badge badge-primary">{{ 'label.teachers_simple'|trans }}</span>
+                                    <span class="badge text-bg-primary">{{ 'label.teachers_simple'|trans }}</span>
                                 </a>
                             {% endif %}
                             {% if canCreateAbsence %}
                                 <a href="{{ path('add_student_absence') }}" class="list-group-item list-group-item-action">
                                     <i class="fas fa-plus"></i> {{ 'absences.students.add.label'|trans }}
                                     {% if canCreateTeacherAbsence %}
-                                        <span class="badge badge-primary">{{ 'label.students_simple'|trans }}</span>
+                                        <span class="badge text-bg-primary">{{ 'label.students_simple'|trans }}</span>
                                     {% endif %}
                                 </a>
                             {% endif %}
@@ -378,7 +378,7 @@
                                 <a href="{{ path('add_student_absence_bulk') }}" class="list-group-item list-group-item-action">
                                     <i class="fas fa-plus"></i> {{ 'absences.students.add_bulk.label'|trans }}
                                     {% if canCreateTeacherAbsence %}
-                                        <span class="badge badge-primary">{{ 'label.students_simple'|trans }}</span>
+                                        <span class="badge text-bg-primary">{{ 'label.students_simple'|trans }}</span>
                                     {% endif %}
                                 </a>
                             {% endif %}
@@ -417,9 +417,7 @@
                             {% include "_filter/_params.html.twig" with { params: currentFilter } %}
 
                             <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                </div>
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                 <input class="form-control" type="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{{ dateParam }}">
                             </div>
                         </form>
@@ -472,11 +470,11 @@
 
                                     {% set params = { '%date%': selectedDate|format_date } %}
                                     {% if student.isFullAged(selectedDate) %}
-                                        <span class="badge badge-primary" title="{{ 'label.full_aged.hint_dashboard'|trans(params) }}">
+                                        <span class="badge text-bg-primary" title="{{ 'label.full_aged.hint_dashboard'|trans(params) }}">
                                         {{ 'label.full_aged.label'|trans }}
                                     </span>
                                     {% else %}
-                                        <span class="badge badge-primary" title="{{ 'label.not_full_aged.hint_dashboard'|trans(params) }}">
+                                        <span class="badge text-bg-primary" title="{{ 'label.not_full_aged.hint_dashboard'|trans(params) }}">
                                         {{ 'label.not_full_aged.label'|trans }}
                                     </span>
                                     {% endif %}
@@ -585,20 +583,20 @@
                             <h5 class="card-title"><i class="fas fa-users-cog"></i> {{ 'dashboard.settings.label'|trans }}</h5>
 
                             {% if canIncludeGradeMessages %}
-                            <div class="form-group">
-                                <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" type="checkbox" value="true" id="include_grade_messages" name="include_grade_messages" {% if includeGradeMessages %} checked="checked"{% endif %}>
-                                    <label for="include_grade_messages" class="custom-control-label">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="true" id="include_grade_messages" name="include_grade_messages" {% if includeGradeMessages %} checked="checked"{% endif %}>
+                                    <label for="include_grade_messages" class="form-check-label">
                                         {{ 'dashboard.settings.include_grade_messages'|trans }}
                                     </label>
                                 </div>
                             </div>
                             {% endif %}
 
-                            <div class="form-group mb-0">
-                                <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" type="checkbox" value="true" id="show_times" name="show_times" {% if showTimes %} checked="checked"{% endif %}>
-                                    <label for="show_times" class="custom-control-label">
+                            <div class="mb-0">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="true" id="show_times" name="show_times" {% if showTimes %} checked="checked"{% endif %}>
+                                    <label for="show_times" class="form-check-label">
                                         {{ 'dashboard.settings.show_times'|trans }}
                                     </label>
                                 </div>
@@ -644,7 +642,7 @@
     {% if unreadNotificationsCount > 0 %}
         <div class="bs-callout bs-callout-warning">
             <div class="d-flex align-items-center">
-                <p class="mr-auto mb-0">{{ 'dashboard.notifications.unread'|trans({'%count%': unreadNotificationsCount}) }}</p>
+                <p class="me-auto mb-0">{{ 'dashboard.notifications.unread'|trans({'%count%': unreadNotificationsCount}) }}</p>
                 <div>
                     <a href="{{ path('notifications') }}" class="btn btn-outline-primary btn-sm">
                         {{ 'dashboard.notifications.link'|trans }}

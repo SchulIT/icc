@@ -8,7 +8,7 @@
         <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
         <li class="breadcrumb-item">
             {% for grade in entry.tuition.studyGroup.grades %}
-                <a href="{{ path('book', { grade: grade.uuid.toString }) }}">{{ grade.name }}</a>{% if not loop.last %}<span class="mr-1">, </span>{% endif %}
+                <a href="{{ path('book', { grade: grade.uuid.toString }) }}">{{ grade.name }}</a>{% if not loop.last %}<span class="me-1">, </span>{% endif %}
             {% endfor %}
         </li>
         <li class="breadcrumb-item">
@@ -36,11 +36,11 @@
                         {{ 'label.substitution_lessons'|trans({'%start%': entry.lessonStart, '%end%': entry.lessonEnd, '%count%': entry.lessonEnd - entry.lessonStart}) }}
                     </div>
 
-                    <div class="ml-2">
+                    <div class="ms-2">
                         <i class="fas fa-calendar-alt"></i> {{ entry.lesson.date|format_date }}
                     </div>
 
-                    <div class="badge badge-primary ml-2">
+                    <div class="badge text-bg-primary ms-2">
                         {{ entry.subject.name|upper }}
 
                         {% if entry.replacementSubject is not empty %}
@@ -48,7 +48,7 @@
                         {% endif %}
                     </div>
 
-                    <div class="ml-2">
+                    <div class="ms-2">
                         <i class="fas fa-chalkboard-teacher"></i>
                         {{ entry.teacher|teacher }}
 
@@ -57,7 +57,7 @@
                         {% endif %}
                     </div>
 
-                    <div class="ml-2">
+                    <div class="ms-2">
                         <i class="fas fa-user-graduate"></i>
                         {{ attendance.student|student }}
                     </div>

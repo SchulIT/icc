@@ -1,4 +1,4 @@
-import { Modal } from 'bootstrap.native';
+import { Modal } from 'bootstrap';
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 const axios = require('axios');

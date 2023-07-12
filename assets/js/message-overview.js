@@ -4,7 +4,6 @@ import VueAxios from "vue-axios";
 
 import Translations from "./plugins/trans";
 import BulkRemoveButton from "./components/messages/BulkRemoveButton";
-import { Dropdown } from 'bootstrap.native';
 
 const app = createApp({
     components: {
@@ -13,11 +12,6 @@ const app = createApp({
     methods: { },
     data() {
         return { };
-    },
-    mounted() {
-        this.$el.querySelectorAll('[data-toggle=dropdown]').forEach(function(el) {
-            new Dropdown(el);
-        });
     }
 });
 

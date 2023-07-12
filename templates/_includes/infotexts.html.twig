@@ -3,7 +3,7 @@
     <div class="card-body">
         {% for infotext in infotexts %}
             <div class="d-flex {% if not loop.last %}mb-2{% endif %}">
-                <i class="fa fa-info-circle align-self-baseline mr-2"></i>
+                <i class="fa fa-info-circle align-self-baseline me-2"></i>
                 <span class="align-self-baseline">{{ infotext.content }}</span>
             </div>
         {% endfor %}

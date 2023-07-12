@@ -32,7 +32,7 @@ class Builder {
 
     public function mainMenu(array $options) {
         $menu = $this->factory->createItem('root')
-            ->setChildrenAttribute('class', 'navbar-nav mr-auto');
+            ->setChildrenAttribute('class', 'navbar-nav me-auto');
 
         $menu->addChild('dashboard.label', [
             'route' => 'dashboard'

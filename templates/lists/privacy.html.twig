@@ -75,7 +75,7 @@
                     {% for category in categories %}
                         <div class="card mb-0">
                             <div class="card-header pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#category-{{ category.uuid }}">
-                                <span class="mr-auto align-self-center">{{ category.label }}</span>
+                                <span class="me-auto align-self-center">{{ category.label }}</span>
 
                                 <i class="fa fa-chevron-down indicator align-self-center"></i>
                             </div>
@@ -103,11 +103,11 @@
                                 q : q
                             }} %}
 
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {% for category in categories %}
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="filter-category-{{ category.uuid }}" data-trigger="submit" name="{{ category.uuid }}" value="✓" {% if category.uuid.toString in filteredCategories %}checked="checked"{% endif %}>
-                                        <label class="custom-control-label" for="filter-category-{{ category.uuid }}">{{ category.label }}</label>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="filter-category-{{ category.uuid }}" data-trigger="submit" name="{{ category.uuid }}" value="✓" {% if category.uuid.toString in filteredCategories %}checked="checked"{% endif %}>
+                                        <label class="form-check-label" for="filter-category-{{ category.uuid }}">{{ category.label }}</label>
                                     </div>
                                 {% endfor %}
                             </div>

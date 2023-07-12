@@ -62,7 +62,7 @@
                                         {% if exam.date is not null %}
                                             {{ exam.date|format_date }}
                                         {% else %}
-                                            <span class="badge badge-danger">{{ 'plans.exams.not_planned'|trans }}</span>
+                                            <span class="badge text-bg-danger">{{ 'plans.exams.not_planned'|trans }}</span>
                                         {% endif %}
 
 
@@ -74,7 +74,7 @@
                                         {% if exam.lessonStart > 0 and exam.lessonEnd > 0 %}
                                             {{ 'label.exam_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
                                         {% else %}
-                                            <span class="badge badge-danger">{{ 'plans.exams.not_planned'|trans }}</span>
+                                            <span class="badge text-bg-danger">{{ 'plans.exams.not_planned'|trans }}</span>
                                         {% endif %}
                                     </td>
                                     <td class="align-middle">
@@ -91,12 +91,12 @@
                                         {{ exam.students|length }}
                                     </td>
                                     <td class="align-middle">
-                                        <div class="dropdown d-inline">
-                                            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                        <div class="dropdown">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
 
-                                            <div class="dropdown-menu dropdown-menu-right">
+                                            <div class="dropdown-menu dropdown-menu-end">
                                                 {% if is_granted('edit', exam) %}
                                                     <a href="{{ path('edit_exam', { uuid: exam.uuid }) }}" class="dropdown-item">
                                                         <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}

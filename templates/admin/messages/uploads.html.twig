@@ -17,11 +17,11 @@
 {% endblock %}
 
 {% macro progressBar(progressView) %}
-    <span class="float-right mr-2 align-self-center">
+    <span class="float-right me-2 align-self-center">
         {{ 'progress.status'|trans({'%current%': progressView.current, '%total%': progressView.total }) }}
     </span>
 
-    <div class="progress float-right mr-2 bg-danger align-self-center" style="width: 50px;">
+    <div class="progress float-right me-2 bg-danger align-self-center" style="width: 50px;">
         <div class="progress-bar bg-success" role="progressbar" style="width: {{ progressView.percentage }}%"></div>
     </div>
 {% endmacro %}
@@ -32,7 +32,7 @@
             <td colspan="4">
                 <div class="d-flex">
                     <div class="flex-fill align-self-center">
-                        <i class="fa fa-user mr-1"></i> {{ backup }}
+                        <i class="fa fa-user me-1"></i> {{ backup }}
                     </div>
                     <div class="align-self-center">
                         <i class="fa fa-exclamation-triangle"></i> {{ 'messages.downloads.user_missing'|trans }}
@@ -47,7 +47,7 @@
         <tr class="pointer {% if completed %}table-success{% else %}table-warning{% endif %}" data-toggle="table-collapse" data-target=".file-{{ user.uuid }}">
             <td colspan="4">
                 <div class="d-flex">
-                    <span class="mr-auto align-self-center"><i class="fa fa-user"></i> {{ user|user }}</span>
+                    <span class="me-auto align-self-center"><i class="fa fa-user"></i> {{ user|user }}</span>
 
                     <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                 </div>
@@ -83,14 +83,14 @@
                 {% for grade in grades %}
                     <div class="card">
                         <div class="card-header d-flex pointer" data-toggle="table-collapse" data-target="#uploads-{{ grade.grade.uuid }}">
-                            <span class="mr-auto align-self-center">{{ grade.grade.name }}</span>
+                            <span class="me-auto align-self-center">{{ grade.grade.name }}</span>
 
                             <i class="fa fa-chevron-up float-right indicator align-self-center"></i>
                         </div>
 
                         <div id="uploads-{{ grade.grade.uuid }}">
                             <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-students-{{ grade.grade.uuid }}">
-                                <span class="mr-auto align-self-center">{{ 'user_type.student'|trans({}, 'enums') }}</span>
+                                <span class="me-auto align-self-center">{{ 'user_type.student'|trans({}, 'enums') }}</span>
 
                                 {{ _self.progressBar(view.studentProgress(grade.students, message.files)) }}
                                 <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
@@ -123,7 +123,7 @@
                             </div>
 
                             <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-parents-{{ grade.grade.uuid }}">
-                                <span class="mr-auto align-self-center">{{ 'user_type.parent'|trans({}, 'enums') }}</span>
+                                <span class="me-auto align-self-center">{{ 'user_type.parent'|trans({}, 'enums') }}</span>
 
                                 {{ _self.progressBar(view.parentProgress(grade.students, message.files)) }}
                                 <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
@@ -161,7 +161,7 @@
                 {% if teachers|length > 0 %}
                     <div class="card">
                         <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-teachers">
-                            <span class="mr-auto align-self-center">{{ 'user_type.teacher'|trans({}, 'enums') }}</span>
+                            <span class="me-auto align-self-center">{{ 'user_type.teacher'|trans({}, 'enums') }}</span>
 
                             {{ _self.progressBar(view.teacherProgress(teachers, message.files)) }}
                             <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
@@ -199,7 +199,7 @@
                 {% for group in userGroups %}
                     <div class="card">
                         <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-users">
-                            <span class="mr-auto align-self-center">{{ group.userType|enum }}</span>
+                            <span class="me-auto align-self-center">{{ group.userType|enum }}</span>
 
                             {{ _self.progressBar(view.progress(group.users, message.files)) }}
                             <i class="fa fa-chevron-down float-right indicator align-self-center"></i>

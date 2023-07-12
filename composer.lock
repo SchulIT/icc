@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b3c9dc8c9f05ae93818878456e8b12ee",
+    "content-hash": "6161f8d5d1d31501fa8736a48ad850a6",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -5205,16 +5205,16 @@
         },
         {
             "name": "schulit/common-bundle",
-            "version": "3.0.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SchulIT/common-bundle.git",
-                "reference": "a6df40e06a87d3e7f5be41da510dd3fcb3caa01c"
+                "reference": "3c9a516d97114e3b79901517e7e006db0cca2be9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/a6df40e06a87d3e7f5be41da510dd3fcb3caa01c",
-                "reference": "a6df40e06a87d3e7f5be41da510dd3fcb3caa01c",
+                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/3c9a516d97114e3b79901517e7e006db0cca2be9",
+                "reference": "3c9a516d97114e3b79901517e7e006db0cca2be9",
                 "shasum": ""
             },
             "require": {
@@ -5241,6 +5241,7 @@
                 "shapecode/cron-bundle": "",
                 "symfony/doctrine-messenger": ""
             },
+            "default-branch": true,
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
@@ -5253,9 +5254,9 @@
             ],
             "support": {
                 "issues": "https://github.com/SchulIT/common-bundle/issues",
-                "source": "https://github.com/SchulIT/common-bundle/tree/3.0.2"
+                "source": "https://github.com/SchulIT/common-bundle/tree/4.0.1"
             },
-            "time": "2023-01-17T17:31:23+00:00"
+            "time": "2023-07-12T08:24:21+00:00"
         },
         {
             "name": "sensio/framework-extra-bundle",
@@ -14546,7 +14547,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "schulit/common-bundle": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

@@ -1,8 +1,8 @@
 <form role="form" method="get" class="form">
     {% include "_filter/_params.html.twig" %}
 
-    <div class="form-group {{ class|default('') }}">
-        <label for="tuition" class="control-label">{{ 'label.tuition'|trans }}:</label>
+    <div class="mb-3 {{ class|default('') }}">
+        <label for="tuition" class="form-label">{{ 'label.tuition'|trans }}:</label>
         <select name="tuition" id="tuition" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="true">
             <option value="" placeholder>{{ 'label.select.tuition'|trans }}</option>
             {% for tuition in tuitionFilter.tuitions %}

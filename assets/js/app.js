@@ -3,10 +3,9 @@ require('../css/app.scss');
 import Choices from "choices.js";
 import { v4 as uuidv4 } from 'uuid';
 import { DataTable } from "simple-datatables";
+import { Modal, Tooltip, Popover } from "bootstrap";
 
-let bsCustomFileInput = require('bs-custom-file-input');
 let ClipboardJS = require('clipboard');
-let bsn = require('bootstrap.native');
 
 require('../../vendor/schulit/common-bundle/Resources/assets/js/polyfill');
 require('../../vendor/schulit/common-bundle/Resources/assets/js/menu');
@@ -14,7 +13,6 @@ require('../../vendor/schulit/common-bundle/Resources/assets/js/icon-picker');
 require('../../vendor/schulit/common-bundle/Resources/assets/js/dropdown-polyfill');
 
 document.addEventListener('DOMContentLoaded', function() {
-    bsCustomFileInput.init();
 
     var clipboard = new ClipboardJS('[data-clipboard-text]');
     clipboard.on('success', function(e) {
@@ -76,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             let modalEl = document.querySelector(confirmModalSelector);
-            let modal = new bsn.Modal(modalEl);
+            let modal = new Modal(modalEl);
             modal.show();
 
             let confirmBtn = modalEl.querySelector('.confirm');
@@ -195,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.querySelectorAll('[title]').forEach(function(el) {
-        new bsn.Tooltip(el, {
+        new Tooltip(el, {
             placement: 'bottom'
         });
     });
@@ -214,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
             spinner +
             '</div></div>';
 
-        new bsn.Popover(el, {
+        new Popover(el, {
             placement: 'bottom',
             template: template,
             trigger: 'hover',
@@ -267,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
              content +
             '</div></div>';
 
-        new bsn.Popover(el, {
+        new Popover(el, {
             placement: 'bottom',
             template: template,
             trigger: 'hover',

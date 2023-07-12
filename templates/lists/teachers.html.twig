@@ -107,8 +107,8 @@
                         <form role="form" method="get" class="form hidden-print">
                             {% include "_filter/_params.html.twig" with { params: { subject: subjectFilter.currentSubject ? subjectFilter.currentSubject.uuid : null } } %}
 
-                            <div class="form-group {{ class|default('') }}">
-                                <label for="tag">{{ 'label.tag'|trans }}:</label>
+                            <div class="mb-3 {{ class|default('') }}">
+                                <label for="tag" class="form-label">{{ 'label.tag'|trans }}:</label>
                                 <select name="tag" id="tag" class="form-control" data-trigger="submit" data-choice="true">
                                     <option value="" placeholder>{{ 'label.select.tag'|trans }}</option>
                                     {% for t in tagFilter.tags %}

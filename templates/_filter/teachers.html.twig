@@ -9,8 +9,8 @@
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
-    <div class="form-group {{ class|default('') }}">
-        <label for="teachers">
+    <div class="mb-3 {{ class|default('') }}">
+        <label for="teachers" class="form-label">
             {% if canSwitch %}
                 {{ 'label.teacher'|trans }}:
             {% else %}
@@ -25,9 +25,9 @@
         </select>
 
         {% if canSwitch %}
-            <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" id="toggle-multiple-teacher" data-toggle="multiple-choice" data-target="#teachers" {% if isMultiple %}checked disabled{% endif %}>
-                <label class="custom-control-label" for="toggle-multiple-teacher">{{ 'label.toggle_multiple'|trans }}</label>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="toggle-multiple-teacher" data-toggle="multiple-choice" data-target="#teachers" {% if isMultiple %}checked disabled{% endif %}>
+                <label class="form-check-label" for="toggle-multiple-teacher">{{ 'label.toggle_multiple'|trans }}</label>
             </div>
 
         {% endif %}

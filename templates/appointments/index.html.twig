@@ -76,8 +76,8 @@
                         {% endif %}
 
                         <form role="form" method="get" class="form hidden-print mb-2">
-                            <div class="form-group">
-                                <label for="categories" class="control-label">{{ 'label.categories'|trans }}:</label>
+                            <div class="mb-3">
+                                <label for="categories" class="form-label">{{ 'label.categories'|trans }}:</label>
                                 <select name="categories" multiple="multiple" id="categories" class="form-control">
                                     <option value="">{{ 'label.select.category'|trans }}</option>
                                     {% for c in categoryFilter.categories %}
@@ -88,8 +88,8 @@
                         </form>
 
                         <form role="form" method="get">
-                            <div class="form-group mb-0">
-                                <label for="exam_grades" class="control-label">{{ 'plans.appointments.filter.exam_grades.label'|trans }}:</label>
+                            <div class="mb-3 mb-0">
+                                <label for="exam_grades" class="form-label">{{ 'plans.appointments.filter.exam_grades.label'|trans }}:</label>
                                 <select name="exam_grades" multiple="multiple" id="exam_grades" class="form-control">
                                     <option value="">{{ 'plans.appointments.filter.exam_grades.placeholder'|trans }}</option>
                                     {% for g in examGradesFilter.grades %}

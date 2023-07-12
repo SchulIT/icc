@@ -5,10 +5,10 @@
 {% set userDownloads = message_downloads(message) %}
 {% set hasPoll = message.pollEnabled and is_granted('poll', message) %}
 
-<div class="card {% if mustConfirm or mustUpload %}border-warning{% endif %} {% if message.priority.value == 'emergency' %}message-danger{% elseif message.priority.value == 'important' %}message-warning{% endif %}">
+<div class="card {% if mustConfirm or mustUpload %}border-warning{% endif %} {% if message.priority.value == 'emergency' %}border-danger bg-danger-subtle{% elseif message.priority.value == 'important' %}border-warning bg-warning-subtle{% endif %}">
     <div class="card-body">
         <div class="d-flex align-items-top flex-nowrap {% if not is_dismissed(message) %}mb-2{% endif %}">
-            <h5 class="card-title mr-auto mb-0 mr-2">
+            <h5 class="card-title me-auto mb-0 me-2">
                 <a href="{{ path('show_message', { uuid: message.uuid }) }}">
                     {{ message.title }}
                 </a>
@@ -16,12 +16,12 @@
 
             <div class="flex-shrink-0">
                 {% if is_dismissed(message) and (message.attachments|length > 0 or userDownloads|length > 0) %}
-                    <div class="dropdown d-inline ml-1">
-                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                    <div class="dropdown ms-1">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa fa-download"></i>
                         </button>
 
-                        <div class="dropdown-menu dropdown-menu-right">
+                        <div class="dropdown-menu dropdown-menu-end">
                             {% for attachment in message.attachments %}
                                 <a class="dropdown-item" href="{{ path('download_message_attachment', { uuid: attachment.uuid, message: message.uuid }) }}">{{ attachment.filename }}</a>
                             {% endfor %}
@@ -36,18 +36,18 @@
 
                 {% if message.mustConfirm and is_granted('confirm', message) %}
                     {% if not is_confirmed(message) and is_granted('confirm', message) %}
-                        <a href="{{ path('confirm_message', { uuid: message.uuid }) }}" class="btn btn-warning btn-sm ml-1" title="{{ 'actions.confirm'|trans }}">
+                        <a href="{{ path('confirm_message', { uuid: message.uuid }) }}" class="btn btn-warning btn-sm ms-1" title="{{ 'actions.confirm'|trans }}">
                             <i class="fa fa-check"></i>
                         </a>
                     {% else %}
-                        <button type="button" class="btn btn-success btn-sm mr-1" title="{{ 'messages.confirm.confirmed'|trans }}">
+                        <button type="button" class="btn btn-success btn-sm me-1" title="{{ 'messages.confirm.confirmed'|trans }}">
                             <i class="fa fa-check"></i>
                         </button>
                     {% endif %}
                 {% endif %}
 
                 {% if message.uploadsEnabled and is_granted('upload', message) %}
-                    <div class="btn-group ml-1" role="group">
+                    <div class="btn-group ms-1" role="group">
                         <a href="{{ path('show_message', { uuid: message.uuid }) }}" class="btn {% if missingUploads|length > 0 %}btn-warning{% else %}btn-success{% endif %} btn-sm" title="{{ 'messages.uploads.info'|trans }}">
                             <i class="fa fa-upload"></i>
                         </a>
@@ -55,19 +55,19 @@
                 {% endif %}
 
                 {% if hasPoll %}
-                    <div class="btn-group mr-1" role="group">
+                    <div class="btn-group me-1" role="group">
                         <a href="{{ path('show_message', { uuid: message.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.poll.info'|trans }}">
                             <i class="fas fa-poll"></i>
                         </a>
                     </div>
                 {% endif %}
 
-                <div class="dropdown d-inline ml-1">
-                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                <div class="dropdown ms-1">
+                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-ellipsis-v"></i>
                     </button>
 
-                    <div class="dropdown-menu dropdown-menu-right">
+                    <div class="dropdown-menu dropdown-menu-end">
                         {% set showDivider = false %}
                         {% if is_granted('dismiss', message) %}
                             {% set showDivider = true %}

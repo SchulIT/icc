@@ -105,7 +105,7 @@
                                                 <a href="{{ path('list_tuitions', { teacher: teacher.uuid.toString }) }}">{{ teacher|teacher }}</a>{% if not loop.last %}, {% endif %}
                                             {% endfor %}
                                         {% else %}
-                                            <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
+                                            <span class="badge text-bg-secondary">{{ 'label.nobody'|trans }}</span>
                                         {% endif %}
                                     </td>
                                     {% endif %}
@@ -114,14 +114,14 @@
                                             {% if tuition.studyGroup is not null %}
                                                 <a href="{{ path('list_studygroups', { study_group: tuition.studyGroup.uuid.toString() }) }}">{{ tuition.studyGroup|studygroup(true, true) }}</a>
                                             {% else %}
-                                                <span class="badge badge-secondary">{{ 'label.none'|trans }}</span>
+                                                <span class="badge text-bg-secondary">{{ 'label.none'|trans }}</span>
                                             {% endif %}
                                         </td>
                                         <td>
                                             {% if tuition.studyGroup is not null %}
                                                 {{ tuition.studyGroup.memberships|length }}
                                             {% else %}
-                                                <span class="badge badge-secondary">{{ 'label.nobody'|trans }}</span>
+                                                <span class="badge text-bg-secondary">{{ 'label.nobody'|trans }}</span>
                                             {% endif %}
                                         </td>
                                     {% else %}

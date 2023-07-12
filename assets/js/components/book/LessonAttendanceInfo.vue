@@ -1,6 +1,6 @@
 <template>
   <div class="dropdown">
-    <button type="button" data-toggle="dropdown" :class="this.class" :title="title">
+    <button type="button" data-bs-toggle="dropdown" :class="this.class" :title="title">
       <span v-if="isLoading">
         <i class="fas fa-spinner fa-spin"></i>
       </span>
@@ -9,7 +9,7 @@
       </span>
     </button>
 
-    <div class="dropdown-menu dropdown-menu-right">
+    <div class="dropdown-menu dropdown-menu-end">
       <span class="dropdown-item-text" v-for="attendance in attendances">
         {{ attendance.student.lastname }}, {{ attendance.student.firstname }}
       </span>
@@ -18,8 +18,6 @@
 </template>
 
 <script>
-import { Dropdown } from 'bootstrap.native';
-
 export default {
   name: 'lesson_attendance_info',
   props: {
@@ -40,9 +38,6 @@ export default {
         .get(this.url)
         .then(function(response) {
           $this.attendances = response.data;
-          new Dropdown(
-              $this.$el.querySelector('button')
-          );
         })
         .catch(function(error) {
             console.error(error);

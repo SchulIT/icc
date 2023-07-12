@@ -51,12 +51,12 @@
                                         {% set canRemove = is_granted('remove', note) %}
 
                                         {% if canEdit or canRemove %}
-                                        <div class="dropdown d-inline">
-                                            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                        <div class="dropdown">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
 
-                                            <div class="dropdown-menu dropdown-menu-right">
+                                            <div class="dropdown-menu dropdown-menu-end">
                                                 {% if canEdit %}
                                                 <a href="{{ path('edit_excuse', { uuid: note.uuid }) }}" class="dropdown-item">
                                                     <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}

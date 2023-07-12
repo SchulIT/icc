@@ -23,7 +23,7 @@
                         <h4 class="card-title">
                             {{ 'absences.teachers.show.header'|trans({'%teacher%': absence.teacher|teacher}) }}
 
-                            <span class="badge badge-primary">
+                            <span class="badge text-bg-primary">
                                 {{ absence.type.name }}
                             </span>
                         </h4>
@@ -53,13 +53,13 @@
                                             }) }}
 
                                             {% if lesson.lesson.tuition is not null %}
-                                                <span class="badge badge-primary">
+                                                <span class="badge text-bg-primary">
                                                     {{ lesson.lesson.tuition.name }}
                                                 </span>
 
                                                 <i class="fas fa-users"></i> {{ lesson.lesson.tuition.studyGroup.grades|grades }}
                                             {% else %}
-                                                <span class="badge badge-primary">
+                                                <span class="badge text-bg-primary">
                                                     {{ lesson.lesson.subjectName }}
                                                 </span>
                                             {% endif %}
@@ -101,7 +101,7 @@
                                     {% endif %}
                                 </div>
                                 {% if is_granted('edit', absence) %}
-                                <div class="ml-2">
+                                <div class="ms-2">
                                     <a href="{{ path('edit_teacher_absence_lesson', { uuid: lesson.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'actions.edit'|trans }}">
                                         <i class="fas fa-edit"></i>
                                     </a>
@@ -150,9 +150,9 @@
 
                         <p>
                             {% if absence.processedAt is not null %}
-                                <span class="badge badge-success">{{ 'absences.teachers.processed.label'|trans }}</span>
+                                <span class="badge text-bg-success">{{ 'absences.teachers.processed.label'|trans }}</span>
                             {% else %}
-                                <span class="badge badge-danger">{{ 'absences.teachers.processed.not_processed'|trans }}</span>
+                                <span class="badge text-bg-danger">{{ 'absences.teachers.processed.not_processed'|trans }}</span>
                             {% endif %}
                         </p>
 

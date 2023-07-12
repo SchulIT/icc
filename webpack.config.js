@@ -1,5 +1,4 @@
 const Encore = require('@symfony/webpack-encore');
-const CopyPlugin = require('copy-webpack-plugin');
 const GlobImporter = require('node-sass-glob-importer');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
@@ -23,8 +22,6 @@ Encore
     .addEntry('export-book', './assets/js/export-book.js')
     .addEntry('close-confirm', './assets/js/close-confirm.js')
     .addEntry('gradebook', './assets/js/gradebook.js')
-    .addStyleEntry('simple', './vendor/schulit/common-bundle/Resources/assets/css/simple.scss')
-    .addStyleEntry('signin', './vendor/schulit/common-bundle/Resources/assets/css/signin.scss')
     .addStyleEntry('email', './assets/css/email.scss')
     .addEntry('export-student-absences', './assets/js/export-student-absences.js')
 
@@ -45,15 +42,6 @@ Encore
     .enableVersioning(Encore.isProduction())
 
     .addPlugin(new NodePolyfillPlugin())
-
-    .addLoader(
-        {
-            test: /bootstrap\.native/,
-            use: {
-                loader: 'bootstrap.native-loader'
-            }
-        }
-    )
 ;
 
 module.exports = Encore.getWebpackConfig();

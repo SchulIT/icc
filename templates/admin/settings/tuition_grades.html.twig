@@ -37,11 +37,9 @@
                 <div class="col-md-10">
                     <div class="input-group">
                         <input type="password" id="passphrase" class="form-control">
-                        <div class="input-group-append">
-                            <button type="button" id="generatekey" data-passphrase="#passphrase" data-key="#form_masterKey" class="btn btn-outline-primary">
-                                {{ 'admin.settings.tuition_grades.passphrase.create'|trans }}
-                            </button>
-                        </div>
+                        <button type="button" id="generatekey" data-passphrase="#passphrase" data-key="#form_masterKey" class="btn btn-outline-primary">
+                            {{ 'admin.settings.tuition_grades.passphrase.create'|trans }}
+                        </button>
                     </div>
                     <small class="form-text text-muted">{{'admin.settings.tuition_grades.passphrase.help'|trans}}</small>
                 </div>

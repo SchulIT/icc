@@ -6,19 +6,19 @@
         </div>
 
         <div>
-          <button class="btn btn-success btn-sm ml-1"
+          <button class="btn btn-success btn-sm ms-1"
                   @click.prevent="present(attendances)"
                   :title="$trans('book.attendance.all')">
             <i class="fas fa-check-double"></i>
           </button>
 
-          <button class="btn btn-primary btn-sm ml-1"
+          <button class="btn btn-primary btn-sm ms-1"
                   :class="{ 'btn-danger': isDirty }"
                   v-if="showSaveButton"
                   id="attendance_submit"
                   type="submit">
             <i class="fa fa-save"></i> {{ $trans('actions.save')}}
-            <i class="fa fa-exclamation-triangle ml-1" v-if="isDirty"></i>
+            <i class="fa fa-exclamation-triangle ms-1" v-if="isDirty"></i>
           </button>
         </div>
       </div>
@@ -36,9 +36,9 @@
               <div>
                 {{ absence.lastname }}, {{ absence.firstname }}
               </div>
-              <span v-for="reason in absence.reasons" class="badge badge-primary">{{ reason }}</span>
+              <span v-for="reason in absence.reasons" class="badge text-bg-primary">{{ reason }}</span>
 
-              <span v-if="absence.zero_absent_lessons" class="badge badge-info ml-1">0 FS</span>
+              <span v-if="absence.zero_absent_lessons" class="badge text-bg-info ms-1">0 FS</span>
             </div>
             <button type="button"
                     @click="applyAbsence(absence)"
@@ -52,7 +52,7 @@
           <div class="flex-fill">
             <select id="add_student"></select>
           </div>
-          <button type="button" class="btn btn-outline-primary btn-sm ml-2" @click="onAddStudent()">
+          <button type="button" class="btn btn-outline-primary btn-sm ms-2" @click="onAddStudent()">
             <i class="fas fa-user-plus"></i>
             {{ $trans('book.entry.add_student.label')}}
           </button>
@@ -61,25 +61,25 @@
 
       <div class="card-footer d-flex align-items-center" v-if="selectedAttendances.length > 0">
         <div class="flex-fill">
-          <span class="badge badge-primary">
+          <span class="badge text-bg-primary">
             {{ $trans('book.attendance.selected', { number: selectedAttendances.length })}}
           </span>
         </div>
         <div>
-          <button class="btn btn-outline-primary btn-sm ml-1 d-inline-block"
+          <button class="btn btn-outline-primary btn-sm ms-1 d-inline-block"
                   @click.prevent="unselect()">
             <i class="far fa-check-square"></i>
           </button>
 
-          <button class="btn btn-outline-success btn-sm ml-1 d-inline-block"
+          <button class="btn btn-outline-success btn-sm ms-1 d-inline-block"
                   @click.prevent="present(selectedAttendances)">
             <i class="fas fa-user-check"></i>
           </button>
-          <button class="btn btn-outline-warning btn-sm ml-1"
+          <button class="btn btn-outline-warning btn-sm ms-1"
                   @click.prevent="late(selectedAttendances)">
             <i class="fas fa-user-clock"></i>
           </button>
-          <div class="btn-group d-inline-flex align-items-center ml-1">
+          <div class="btn-group d-inline-flex align-items-center ms-1">
             <button class="btn btn-outline-warning btn-sm"
                     @click.prevent="plusMinute(selectedAttendances)">
               <i class="fa fa-plus"></i>
@@ -89,11 +89,11 @@
               <i class="fa fa-minus"></i>
             </button>
           </div>
-          <button class="btn btn-outline-danger btn-sm ml-1  d-inline-block"
+          <button class="btn btn-outline-danger btn-sm ms-1  d-inline-block"
                   @click.prevent="absent(selectedAttendances)">
             <i class="fas fa-user-times"></i>
           </button>
-          <div class="btn-group d-inline-flex align-items-center ml-1">
+          <div class="btn-group d-inline-flex align-items-center ms-1">
             <button class="btn btn-outline-danger btn-sm"
                     @click.prevent="plusLesson(selectedAttendances)">
               <i class="fa fa-plus"></i>
@@ -123,26 +123,26 @@
                  @click="select(attendance)">
               <i class="fa fa-user"></i> {{ attendance.student.lastname }}, {{ attendance.student.firstname }}
             </div>
-            <div class="align-self-center text-right mr-3 flex-shrink-1">
-              <button class="btn btn-outline-primary btn-sm ml-1 d-inline-block"
+            <div class="align-self-center text-right me-3 flex-shrink-1">
+              <button class="btn btn-outline-primary btn-sm ms-1 d-inline-block"
                       v-if="attendance.type !== 1"
                       @click.prevent="attendance.showComment !== true ? attendance.showComment = true : attendance.showComment = false"
                       :title="$trans('label.comment')">
                 <i class="far fa-comment-alt"></i>
               </button>
 
-              <button class="btn btn-outline-success btn-sm ml-1 d-inline-block"
+              <button class="btn btn-outline-success btn-sm ms-1 d-inline-block"
                       @click.prevent="present(attendance)"
                       :title="$trans('book.attendance.type.present')"
                       :class="{ active: attendance.type === 1}"> <i class="fas fa-user-check"></i>
               </button>
-              <button class="btn btn-outline-warning btn-sm ml-1"
+              <button class="btn btn-outline-warning btn-sm ms-1"
                       :class="{ active: attendance.type === 2}"
                       :title="$trans('book.attendance.type.late')"
                       @click.prevent="late(attendance)">
                 <i class="fas fa-user-clock"></i>
               </button>
-              <div class="btn-group d-inline-flex align-items-center ml-1"
+              <div class="btn-group d-inline-flex align-items-center ms-1"
                    :title="$trans('book.attendance.late')"
                    v-if="attendance.type === 2">
                 <button class="btn btn-outline-warning btn-sm"
@@ -157,14 +157,14 @@
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
-              <button class="btn btn-outline-danger btn-sm ml-1 d-inline-block"
+              <button class="btn btn-outline-danger btn-sm ms-1 d-inline-block"
                      :class="{ active: attendance.type === 0}"
                      :title="$trans('book.attendance.type.absent')"
                      @click.prevent="absent(attendance)">
                 <i class="fas fa-user-times"></i>
               </button>
 
-              <div class="btn-group d-inline-flex align-items-center ml-1"
+              <div class="btn-group d-inline-flex align-items-center ms-1"
                    :title="$trans('book.attendance.absent_lessons')"
                    v-if="attendance.type === 0">
                 <button class="btn btn-outline-danger btn-sm"
@@ -180,7 +180,7 @@
                 </button>
               </div>
 
-              <div class="btn-group d-inline-flex align-items-center ml-1"
+              <div class="btn-group d-inline-flex align-items-center ms-1"
                    v-if="attendance.type === 0">
                 <button class="btn btn-outline-danger btn-sm"
                         :title="$trans('book.students.not_set')"

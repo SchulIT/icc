@@ -21,7 +21,7 @@
         <div class="table-row">
             <div class="table-col fill table-warning">
                 <div class="flex-fill align-self-center">
-                    <i class="fa fa-user mr-1"></i> {{ backup }}
+                    <i class="fa fa-user me-1"></i> {{ backup }}
                 </div>
                 <div class="align-self-center">
                     <i class="fa fa-exclamation-triangle"></i> {{ 'messages.downloads.user_missing'|trans }}
@@ -33,7 +33,7 @@
     {% for user in users %}
         <div class="table-row pointer" data-toggle="table-collapse" data-target=".file-{{ user.uuid }}">
             <div class="table-col fill dropzone no-min-height hide-dz-default no-background border-0 rounded-0" data-area="dropzone" data-url="{{ path('upload_message_download', { message: message.uuid, user: user.uuid}) }}" data-preview="#preview-{{ user.uuid }}" data-preview-container="#preview-container-{{ user.uuid }}" data-insert="#finished-container-{{ user.uuid }}" data-csrf-token="{{ csrf_token(csrf_token_id) }}" data-csrf-token-name="{{ csrf_token_name }}">
-                <span class="mr-auto align-self-center"><i class="fa fa-user"></i> {{ user|user }}</span>
+                <span class="me-auto align-self-center"><i class="fa fa-user"></i> {{ user|user }}</span>
 
                 <i class="fa fa-chevron-down indicator align-self-center"></i>
             </div>
@@ -56,8 +56,8 @@
         {% for file in view.userDownloads(user) %}
             <div class="table-row collapse file-{{ user.uuid }}">
                 <div class="table-col fill">
-                    <a href="{{ path('download_message_download', { message: message.uuid, user: user.uuid, filename: file.basename }) }}" class="btn btn-primary btn-sm mr-2"><i class="fa fa-download"></i></a>
-                    <a href="{{ path('remove_message_download', { message: message.uuid, user: user.uuid, filename: file.basename }) }}" class="btn btn-danger btn-sm mr-2"><i class="fa fa-trash"></i></a>
+                    <a href="{{ path('download_message_download', { message: message.uuid, user: user.uuid, filename: file.basename }) }}" class="btn btn-primary btn-sm me-2"><i class="fa fa-download"></i></a>
+                    <a href="{{ path('remove_message_download', { message: message.uuid, user: user.uuid, filename: file.basename }) }}" class="btn btn-danger btn-sm me-2"><i class="fa fa-trash"></i></a>
                     {{ file.basename }}
                 </div>
 
@@ -82,13 +82,13 @@
                 {% for grade in grades %}
                     <div class="card">
                         <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-{{ grade.grade.uuid }}">
-                            <span class="mr-auto align-self-center">{{ grade.grade.name }}</span>
+                            <span class="me-auto align-self-center">{{ grade.grade.name }}</span>
                             <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                         </div>
 
                         <div id="downloads-{{ grade.grade.uuid }}">
                             <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-students-{{ grade.grade.uuid }}">
-                                <span class="mr-auto align-self-center">{{ 'user_type.student'|trans({}, 'enums') }}</span>
+                                <span class="me-auto align-self-center">{{ 'user_type.student'|trans({}, 'enums') }}</span>
                                 <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                             </div>
 
@@ -106,7 +106,7 @@
                             </div>
 
                             <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-parents-{{ grade.grade.uuid }}">
-                                <span class="mr-auto align-self-center">{{ 'user_type.parent'|trans({}, 'enums') }}</span>
+                                <span class="me-auto align-self-center">{{ 'user_type.parent'|trans({}, 'enums') }}</span>
                                 <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                             </div>
 
@@ -129,7 +129,7 @@
                 {% if teachers|length > 0 %}
                     <div class="card">
                         <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-teachers">
-                            <span class="mr-auto align-self-center">{{ 'user_type.teacher'|trans({}, 'enums') }}</span>
+                            <span class="me-auto align-self-center">{{ 'user_type.teacher'|trans({}, 'enums') }}</span>
                             <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                         </div>
 
@@ -152,7 +152,7 @@
                 {% for group in userGroups %}
                     <div class="card">
                         <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-users">
-                            <span class="mr-auto align-self-center">{{ group.userType|enum }}</span>
+                            <span class="me-auto align-self-center">{{ group.userType|enum }}</span>
                             <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                         </div>
 

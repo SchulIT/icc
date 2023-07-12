@@ -62,7 +62,7 @@
                     <div class="spacer">
                         <span>
                             {{ 'admin.exams.week'|trans({'%week%': group.weekOfYear.weekNumber }) }}
-                            <span class="badge badge-primary badge-pill">{{ group.exams|length }}</span>
+                            <span class="badge text-bg-primary rounded-pill">{{ group.exams|length }}</span>
                         </span>
                     </div>
 
@@ -123,12 +123,12 @@
                         {% endif %}
 
                         <form role="form" method="get" class="form">
-                            <div class="form-group mb-0">
+                            <div class="mb-3 mb-0">
                                 {% include "_filter/_params.html.twig" with { params: currentFilter } %}
 
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="include-past" data-trigger="submit" name="past" value="1" {% if includePastExams %}checked="checked"{% endif %}>
-                                    <label class="custom-control-label" for="include-past">{{ 'plans.exams.include_past'|trans }}</label>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="include-past" data-trigger="submit" name="past" value="1" {% if includePastExams %}checked="checked"{% endif %}>
+                                    <label class="form-check-label" for="include-past">{{ 'plans.exams.include_past'|trans }}</label>
                                 </div>
                             </div>
                         </form>

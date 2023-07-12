@@ -1,20 +1,20 @@
 <template>
   <div>
     <div class="dropdown" v-if="start !== end">
-      <button class="btn btn-primary btn-sm" type="button" data-toggle="dropdown" :title="$trans('book.entry.cancel.label')">
+      <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="dropdown" :title="$trans('book.entry.cancel.label')">
         <i class="fa fa-times"></i>
       </button>
-      <div class="dropdown-menu dropdown-menu-right">
+      <div class="dropdown-menu dropdown-menu-end">
         <button class="dropdown-item"
                 @click="cancel(lesson, lesson)">
-          <span class="badge badge-primary">
+          <span class="badge text-bg-primary">
             {{ lesson }}.
           </span>
           {{ $trans('book.entry.cancel.single') }}
         </button>
         <button class="dropdown-item"
                 @click="cancel(start, end)">
-          <span class="badge badge-primary">
+          <span class="badge text-bg-primary">
             {{ start }}./{{ end }}.
           </span>
           {{ $trans('book.entry.cancel.double') }}
@@ -23,7 +23,7 @@
     </div>
 
     <button class="btn btn-primary btn-sm"
-            type="button" data-toggle="dropdown"
+            type="button" data-bs-toggle="dropdown"
             :title="$trans('book.entry.cancel.label')"
             @click="cancel(lesson, lesson)"
             v-if="start === end">
@@ -36,7 +36,7 @@
           <form :action="action" method="post">
             <div class="modal-header">
               <h5 class="modal-title">{{ $trans('book.entry.cancel.label') }}</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -44,23 +44,23 @@
               <div class="form-group d-flex align-items-center">
                 <i class="fas fa-spinner fa-spin" v-if="isLoadingTuition"></i>
 
-                <span class="badge badge-secondary" v-if="tuition !== null">{{ tuition.subject.name.toUpperCase() }}</span>
+                <span class="badge text-bg-secondary" v-if="tuition !== null">{{ tuition.subject.name.toUpperCase() }}</span>
 
-                <div class="ml-2" v-if="tuition !== null">
+                <div class="ms-2" v-if="tuition !== null">
                   {{ tuition.name }}
                 </div>
 
-                <div class="ml-2" v-if="tuition !== null" v-for="grade in tuition.study_group.grades">
+                <div class="ms-2" v-if="tuition !== null" v-for="grade in tuition.study_group.grades">
                   <i class="fas fa-users"></i>
                   {{ grade.name }}
                 </div>
 
-                <div class="ml-2" v-for="teacher in tuition.teachers" v-if="tuition !== null">
+                <div class="ms-2" v-for="teacher in tuition.teachers" v-if="tuition !== null">
                   <i class="fas fa-chalkboard-teacher"></i>
                   {{ teacher.acronym }}
                 </div>
 
-                <div class="ml-2">
+                <div class="ms-2">
                   <i class="fas fa-calendar-alt"></i> {{ date.toLocaleDateString() }}
                 </div>
               </div>
@@ -94,7 +94,7 @@
             <input type="hidden" :name="'lesson_entry_cancel[' + csrfname + ']'" :value="csrftoken">
             <input type="hidden" name="_ref" :value="ref">
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $trans('actions.cancel') }}</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ $trans('actions.cancel') }}</button>
               <button type="button" class="btn btn-primary" @click.prevent="submit()" :disabled="!this.isValid">{{$trans('actions.save')}}</button>
             </div>
           </form>
@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import { Dropdown, Modal } from 'bootstrap.native';
+import Modal from 'bootstrap/js/dist/modal';
 import NumberInput from "../NumberInput";
 
 export default {
@@ -150,12 +150,6 @@ export default {
     }
   },
   mounted() {
-    let dropdownElement = this.$el.querySelector('.dropdown');
-
-    if(dropdownElement !== null) {
-      this.dropdown = new Dropdown(dropdownElement, {persist: false});
-    }
-
     this.ref = window.location;
   },
   watch: {

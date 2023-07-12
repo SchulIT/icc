@@ -24,7 +24,7 @@
             <s>
             {% endif %}
 
-            <span class="badge badge-primary">
+            <span class="badge text-bg-primary">
                 {% if lesson.tuition is not null %}
                     {% if lesson.tuition.subject.replaceSubjectAbbreviation %}
                         {{ lesson.tuition.subject.name|upper }}
@@ -60,7 +60,7 @@
         <div class="d-block">
             {% set substitution = availability.substitution %}
 
-            <span class="badge badge-primary align-self-center">
+            <span class="badge text-bg-primary align-self-center">
                 {% if substitution.type is not empty %}
                     {{ substitution.type|upper }}
                 {% else %}
@@ -95,8 +95,8 @@
     {% if availability.exams is not empty %}
         {% for exam in availability.exams %}
             <div class="d-block">
-                <div class="mr-auto align-self-center d-flex flex-wrap">
-                    <span class="badge badge-primary align-self-center mb-1 mr-1">
+                <div class="me-auto align-self-center d-flex flex-wrap">
+                    <span class="badge text-bg-primary align-self-center mb-1 me-1">
                         {{ 'label.exam'|trans|upper }}
                     </span>
 
@@ -124,7 +124,7 @@
     {% if availability.reservation is not null %}
         <div class="d-block">
             {% set reservation = availability.reservation %}
-            <span class="badge badge-primary">
+            <span class="badge text-bg-primary">
                 {{ 'resources.reservations.reservation'|trans|upper }}
             </span>
 

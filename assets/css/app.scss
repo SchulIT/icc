@@ -1,10 +1,10 @@
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
-
 // Import SCSS from custom
 @import "custom/*.scss";
 
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
+
 // Import Bootstrap
-@import '../../node_modules/bootstrap/scss/bootstrap';
+@import '~bootstrap/scss/bootstrap';
 
 // Import FontAwesome
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome';
@@ -14,22 +14,15 @@
 
 // Import SchulIT design
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/layout.scss';
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/additions.scss';
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/callouts.scss';
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/div-tables.scss';
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/swagger.scss';
-@import '../../node_modules/bootstrap-darkmode/darktheme';
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/dark/variables.scss';
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/dark/layout';
 
 // Import editor
 @import '../../node_modules/easymde/src/css/easymde.css';
 @import '../../node_modules/codemirror/lib/codemirror.css';
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/editor';
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/dark/editor';
-
-// Import Bootstrap 4 Card Tables
-@import '../../node_modules/bootstrap4-card-tables/src/bootstrap4-card-tables';
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/nested-card-tables.scss';
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/dark/editor.scss';
 
 // Import choices.js
 @import '../../node_modules/choices.js/src/styles/choices';
@@ -145,7 +138,7 @@
 
   &.dz-drag-hover {
     border-color: $primary;
-    background: $breadcrumb-background;
+    background: $breadcrumb-bg;
   }
 
   &.no-min-height {
@@ -157,16 +150,6 @@
       display: none;
     }
   }
-}
-
-.message-danger {
-  border-color: $danger;
-  background-color: theme-color-level("danger", $alert-bg-level)
-}
-
-.message-warning {
-  border-color: $warning;
-  background: mix(#fff, $warning, 90);
 }
 
 [data-theme=dark] {
@@ -254,33 +237,9 @@
   min-width: 55px;
 }
 
-.bg-primary-light {
-  background-color: theme-color-level("primary", $alert-bg-level)
-}
-
-.bg-secondary-light {
-  background-color: theme-color-level("secondary", $alert-bg-level)
-}
-
-.bg-info-light {
-  background-color: theme-color-level("info", $alert-bg-level)
-}
-
-.bg-danger-light {
-  background-color: theme-color-level("danger", $alert-bg-level)
-}
-
-.bg-warning-light {
-  background-color: theme-color-level("warning", $alert-bg-level)
-}
-
-.bg-success-light {
-  background-color: theme-color-level("success", $alert-bg-level)
-}
-
 [data-theme=dark] {
   .border-primary {
-    border-color: $default-border !important;
+    border-color: $border-color !important;
   }
 
   .text-black-50 {
@@ -400,19 +359,6 @@
   background: lighten($primary, 80%);
 }
 
-.btn-like {
-  display: inline-block;
-  font-family: $btn-font-family;
-  font-weight: $btn-font-weight;
-  color: $body-color;
-  text-align: center;
-  white-space: $btn-white-space;
-  vertical-align: middle;
-  background-color: transparent;
-  border: $btn-border-width solid transparent;
-  @include button-size($btn-padding-y-sm, $btn-padding-x-sm, $btn-font-size-sm, $btn-line-height-sm, $btn-border-radius-sm);
-}
-
 table.align-td-middle {
   td {
     @extend .align-middle;
@@ -433,5 +379,47 @@ th.rotate-90 {
     writing-mode: vertical-rl;
     position: relative;
     left: calc(50% - 0.75rem);
+  }
+}
+
+table {
+  &.table-bordered {
+    thead {
+      tr {
+        th:first-child {
+          border-left: 0;
+        }
+
+        th:last-child {
+          border-right: 0;
+        }
+      }
+    }
+  }
+}
+
+.card-body {
+  > .bs-callout:first-child {
+    margin-top: 0;
+  }
+}
+
+.col-md-9 > .bs-callout:first-child {
+  margin-top: 0;
+}
+
+.bs-callout {
+  > h4::before {
+    @extend .fas;
+    @extend .fa-circle-info;
+    margin-right: 0.25rem;
+  }
+
+  &.bs-callout-success > h4::before {
+    @extend .fa-circle-check;
+  }
+
+  &.bs-callout-danger > h4::before {
+    @extend .fa-circle-exclamation;
   }
 }

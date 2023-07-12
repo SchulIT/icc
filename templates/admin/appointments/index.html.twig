@@ -42,7 +42,7 @@
                 {% else %}
                     {% for group in groups %}
                         <div class="card">
-                            <div class="card-header">{{ ('date.months.' ~ group.month)|trans }} {{ group.year }} <span class="badge badge-pill badge-primary">{{ group.appointments|length }}</span> </div>
+                            <div class="card-header">{{ ('date.months.' ~ group.month)|trans }} {{ group.year }} <span class="badge rounded-pill badge-primary">{{ group.appointments|length }}</span> </div>
 
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover card-table">
@@ -104,12 +104,12 @@
                                                 {% endif %}
                                             </td>
                                             <td class="align-middle">
-                                                <div class="dropdown d-inline">
-                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
 
-                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                    <div class="dropdown-menu dropdown-menu-end">
                                                         {% if is_granted('edit', appointment) %}
                                                             <a href="{{ path('edit_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item">
                                                                 <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
@@ -168,8 +168,8 @@
                         <form role="form" method="get" class="form hidden-print">
                             {% include "_filter/_params.html.twig" with { params: currentFilter } %}
 
-                            <div class="form-group">
-                                <label for="category" class="control-label">{{ 'label.category'|trans }}:</label>
+                            <div class="mb-3">
+                                <label for="category" class="form-label">{{ 'label.category'|trans }}:</label>
                                 <select name="category" id="category" class="form-control" data-trigger="submit" data-choice="true">
                                     <option value="" placeholder>{{ 'label.select.category'|trans }}</option>
                                     {% for c in categoryFilter.categories %}
@@ -184,7 +184,7 @@
                         <form role="form" method="get" class="form hidden-print">
                             {% include "_filter/_params.html.twig" with { params: currentFilter|merge({confirmed: null}) } %}
 
-                            <div class="form-group mb-0">
+                            <div class="mb-3 mb-0">
                                 <div class="btn-group" role="group" aria-label="Ansicht" data-original-title="Ansicht">
                                     <button name="confirmed" value="" class="btn btn-outline-secondary {% if confirmed is null %}active{% endif %}">
                                         {{ 'label.all'|trans }}

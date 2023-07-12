@@ -18,12 +18,12 @@
             {{ 'label.substitution_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
         </div>
 
-        <div class="card-body align-self-center d-flex align-items-sm-center pl-0">
-            <div class="mr-auto align-self-center d-flex flex-wrap">
+        <div class="card-body align-self-center d-flex align-items-sm-center ps-0">
+            <div class="me-auto align-self-center d-flex flex-wrap">
                 {% for tuition in exam.tuitions %}
                     <span class="d-flex flex-wrap align-self-center mb-1">
                         <span>
-                            <span class="badge badge-primary">{{ tuition.name|upper }}</span>
+                            <span class="badge text-bg-primary">{{ tuition.name|upper }}</span>
                             <span class="mx-1"></span>
                         </span>
                         <span>

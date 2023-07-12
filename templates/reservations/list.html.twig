@@ -69,12 +69,12 @@
                                         </td>
                                         <td class="align-middle">
                                             {% if is_granted('edit', reservation) or is_granted('remove', reservation) %}
-                                                <div class="dropdown d-inline">
-                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
 
-                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                    <div class="dropdown-menu dropdown-menu-end">
                                                         {% if is_granted('edit', reservation) %}
                                                             <a href="{{ path('edit_room_reservation', { uuid: reservation.uuid }) }}" class="dropdown-item">
                                                                 <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
@@ -122,12 +122,12 @@
                         <form role="form" method="get" class="form hidden-print">
                             {% include "_filter/_params.html.twig" with { params: { teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid : null, room: roomFilter.currentRoom ? roomFilter.currentRoom.uuid : null } } %}
 
-                            <label class="control-label">{{ 'label.options'|trans }}:</label>
-                            <div class="form-group mb-0">
-                                <div class="custom-control custom-checkbox">
+                            <label class="form-label">{{ 'label.options'|trans }}:</label>
+                            <div class="mb-3 mb-0">
+                                <div class="form-check">
 
-                                    <input class="custom-control-input" data-trigger="submit" type="checkbox" value="✓" id="all" name="all" {% if all %} checked="checked"{% endif %}>
-                                    <label for="all" class="custom-control-label">
+                                    <input class="form-check-input" data-trigger="submit" type="checkbox" value="✓" id="all" name="all" {% if all %} checked="checked"{% endif %}>
+                                    <label for="all" class="form-check-label">
                                         {{ 'messages.overview.archive'|trans }}
                                     </label>
                                 </div>

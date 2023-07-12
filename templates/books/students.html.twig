@@ -62,7 +62,7 @@
                                             <a href="{{ path('book_student', { student: student.uuid }|merge(currentFilter)) }}">
                                                 {{ student.lastname }}, {{ student.firstname }}
 
-                                                <span class="badge badge-primary">
+                                                <span class="badge text-bg-primary">
                                                     {{ student.grade(sectionFilter.currentSection) }}
                                                 </span>
                                             </a>

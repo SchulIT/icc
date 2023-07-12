@@ -4,8 +4,8 @@
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
-    <div class="form-group {{ class|default('') }}">
-        <label for="student">{{ 'label.student'|trans }}:</label>
+    <div class="mb-3 {{ class|default('') }}">
+        <label for="student" class="form-label">{{ 'label.student'|trans }}:</label>
         <select name="student" id="student" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="{{ isChoice ? 'true' : 'false' }}">
             <option value="" placeholder>{{ 'label.select.student'|trans }}</option>
             {% for group in studentFilter.studentGradeGroups %}

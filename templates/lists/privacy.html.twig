@@ -67,14 +67,14 @@
                     {% endif %}
                 </div>
 
-                <div class="accordion mb-2" id="privacy-explanations">
+                <div class="custom-accordion mb-2" id="privacy-explanations">
                     <div class="card mb-0">
                         <div class="card-header">{{ 'lists.privacy.explanations'|trans }}</div>
                     </div>
 
                     {% for category in categories %}
                         <div class="card mb-0">
-                            <div class="card-header pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#category-{{ category.uuid }}">
+                            <div class="card-header pointer d-flex align-items-center" data-toggle="table-collapse" data-is-collapsed="true" data-target="#category-{{ category.uuid }}">
                                 <span class="me-auto align-self-center">{{ category.label }}</span>
 
                                 <i class="fa fa-chevron-down indicator align-self-center"></i>

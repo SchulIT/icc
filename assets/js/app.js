@@ -309,6 +309,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let indicator = el.querySelector('.indicator');
 
+        el.setAttribute('data-is-collapsed', collapsed);
+
         if(indicator === null) {
             targets.forEach(function (target) {
                 if (collapsed === false) {

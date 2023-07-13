@@ -421,3 +421,29 @@ table {
     @extend .fa-circle-exclamation;
   }
 }
+
+.custom-accordion {
+  .card:first-child {
+    border-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .card:not(:first-child) {
+    border-radius: 0;
+    border-bottom: 0;
+    border-top: 0;
+  }
+
+  .card > div:not(.collapse) > .card-body {
+    border-bottom: var(--bs-card-border-width) solid var(--bs-card-border-color);
+  }
+
+  .card:last-child,
+  .card:last-child > div:not(.card-header),
+  .card:last-child .card-body,
+  .card:last-child > .card-header[data-is-collapsed="true"] {
+    border-bottom-left-radius: var(--bs-card-border-radius);
+    border-bottom-right-radius: var(--bs-card-border-radius);
+  }
+}

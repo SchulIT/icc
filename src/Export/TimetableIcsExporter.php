@@ -16,6 +16,7 @@ use App\Settings\TimetableSettings;
 use App\Sorting\GradeNameStrategy;
 use App\Sorting\Sorter;
 use App\Timetable\TimetableTimeHelper;
+use App\Tools\CountdownCalculator;
 use App\Utils\ArrayUtils;
 use DateTime;
 use Jsvrcek\ICS\Model\CalendarEvent;
@@ -27,7 +28,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TimetableIcsExporter {
 
-    public function __construct(private Sorter $sorter, private TranslatorInterface $translator, private TimetableSettings $timetableSettings, private TimetableLessonRepositoryInterface $lessonRepository, private TimetableSupervisionRepositoryInterface $supervisionRepository, private AppointmentRepositoryInterface $appointmentRepository, private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, private IcsHelper $icsHelper, private TimetableTimeHelper $timetableTimeHelper)
+    public function __construct(private readonly Sorter $sorter, private readonly TranslatorInterface $translator, private readonly TimetableSettings $timetableSettings, private readonly TimetableLessonRepositoryInterface $lessonRepository,
+                                private readonly TimetableSupervisionRepositoryInterface $supervisionRepository, private readonly IcsHelper $icsHelper, private readonly TimetableTimeHelper $timetableTimeHelper, private readonly CountdownCalculator $countdownCalculator)
     {
     }
 
@@ -178,30 +180,6 @@ class TimetableIcsExporter {
      * @return DateTime[]
      */
     private function getFreeDays(): array {
-        $freeDays = [ ];
-
-        $ids = $this->timetableSettings->getCategoryIds();
-        $categories = [ ];
-
-        foreach($this->timetableSettings->getCategoryIds() as $id) {
-            $category = $this->appointmentCategoryRepository->findOneById($id);
-
-            if($category !== null) {
-                $categories[] = $category;
-            }
-        }
-
-        $appointments = $this->appointmentRepository->findAll($categories);
-
-        foreach($appointments as $appointment) {
-            $current = (clone $appointment->getStart());
-
-            while($current < $appointment->getEnd()) {
-                $freeDays[] = $current;
-                $current = (clone $current)->modify('+1 day');
-            }
-        }
-
-        return ArrayUtils::unique($freeDays);
+        return $this->countdownCalculator->getFreeDays();
     }
 }

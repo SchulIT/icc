@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
+use App\Tools\CountdownCalculator;
 use Symfony\Component\HttpFoundation\Response;
 use App\Display\DisplayHelper;
 use App\Entity\Display;
@@ -28,7 +29,8 @@ class DisplayController extends AbstractController {
     public function show(Display $display, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                          TimetableWeekRepositoryInterface $timetableWeekRepository, AppointmentRepositoryInterface $appointmentRepository,
                          DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper,
-                         ImportDateTypeRepositoryInterface  $importDateTymeRepository, TeacherRepositoryInterface $teacherRepository): Response {
+                         ImportDateTypeRepositoryInterface  $importDateTymeRepository, TeacherRepositoryInterface $teacherRepository, CountdownCalculator $countdownCalculator): Response {
+        $dateHelper->setToday(new DateTime('2023-06-01'));
         $today = $dateHelper->getToday();
         $appointments = [ ];
         $groups = [ ];
@@ -58,6 +60,12 @@ class DisplayController extends AbstractController {
             $birthdays = $teacherRepository->findAllByBirthday($today);
         }
 
+        $countdownDays = null;
+
+        if($display->getCountdownDate() !== null) {
+            $countdownDays = $countdownCalculator->computeSchoolDaysUntis($display->getCountdownDate());
+        }
+
         return $this->render('display/two_column_bottom.html.twig', [
             'display' => $display,
             'infotexts' => $infotextRepository->findAllByDate($today),
@@ -70,7 +78,12 @@ class DisplayController extends AbstractController {
             'day' => $today,
             'week' => $week,
             'is_teachersview' => $display->getTargetUserType() === DisplayTargetUserType::Teachers,
-            'teacher_birthdays' => $birthdays
+            'teacher_birthdays' => $birthdays,
+            'countdown' => $countdownDays
         ]);
+    }
+
+    private function countdown(DateTime $today, DateTime $target) {
+
     }
 }

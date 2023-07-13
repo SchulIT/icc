@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
@@ -47,6 +48,12 @@ class Display {
 
     #[ORM\Column(type: 'boolean')]
     private bool $showExams = true;
+
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?DateTime $countdownDate = null;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $countdownText = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -142,4 +149,35 @@ class Display {
         return $this;
     }
 
+    /**
+     * @return DateTime|null
+     */
+    public function getCountdownDate(): ?DateTime {
+        return $this->countdownDate;
+    }
+
+    /**
+     * @param DateTime|null $countdownDate
+     * @return Display
+     */
+    public function setCountdownDate(?DateTime $countdownDate): Display {
+        $this->countdownDate = $countdownDate;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCountdownText(): ?string {
+        return $this->countdownText;
+    }
+
+    /**
+     * @param string|null $countdownText
+     * @return Display
+     */
+    public function setCountdownText(?string $countdownText): Display {
+        $this->countdownText = $countdownText;
+        return $this;
+    }
 }

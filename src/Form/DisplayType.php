@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\DisplayTargetUserType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -82,6 +83,18 @@ class DisplayType extends AbstractType {
                 'label_attr' => [
                     'class' => 'checkbox-custom'
                 ]
-            ]);
+            ])
+            ->add('countdownDate', DateType::class, [
+                'label' => 'label.countdown.date.label',
+                'help' => 'label.countdown.date.help',
+                'required' => false,
+                'widget' => 'single_text'
+            ])
+            ->add('countdownText', TextType::class, [
+                'label' => 'label.countdown.text.label',
+                'help' => 'label.countdown.text.help',
+                'required' => false
+            ])
+        ;
     }
 }

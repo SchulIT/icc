@@ -256,6 +256,13 @@ label:
     show_birthday:
         label: Geburtstag anzeigen
         help: Wenn diese Option aktiv ist, wird das Geburtsdatum öffentlich angezeigt (Public Display und Übersichtsseite)
+    countdown:
+        date:
+            label: Countdown-Datum
+            help: Wird ein Datum festgelegt, so wird auf dem Bildschirm die Anzahl der (nicht unterrichtsfreien) Tage angezeigt bis zu diesem Tag.
+        text:
+            label: Countdown-Text
+            help: Dieser Text wird über dem Tages-Countdown angezeigt.
 
 markdown:
     link_broken: Dieser Verweis ist defekt.
@@ -1500,6 +1507,7 @@ cron:
 display:
     last_update: Letzte Aktualisierung
     empty: Heute gibt es keine Vertretungen.
+    countdown: '{0} %count% Tage|{1} %count% Tag|]1,Inf[ %count% Tage'
 
 servicecenter:
     problem: Anzahl der Probleme in diesem Raum

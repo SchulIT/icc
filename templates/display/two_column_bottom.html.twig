@@ -266,6 +266,17 @@
                         </div>
                     </div>
                 {% endif %}
+
+                {% if display.countdownDate is not null %}
+                <div class="col h-100">
+                    <div class="card h-100 d-flex">
+                        <div class="my-auto text-center">
+                            <p class="fs-2 mb-0">{{ 'display.countdown'|trans({'%count%': countdown}) }}</p>
+                            <p class="mb-0">{{ display.countdownText}}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
 

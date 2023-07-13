@@ -50,6 +50,7 @@ label:
         tag: Tag auswählen
         section: Abschnitt auswählen
         tuition: Unterricht auswählen
+        lms: Lernplattform auswählen
     search:
         student: Lernenden suchen
     scope: Bereich

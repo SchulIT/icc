@@ -384,15 +384,13 @@ th.rotate-90 {
 
 table {
   &.table-bordered {
-    thead {
-      tr {
-        th:first-child {
-          border-left: 0;
-        }
+    tr {
+      th:first-child {
+        border-left: 0;
+      }
 
-        th:last-child {
-          border-right: 0;
-        }
+      th:last-child {
+        border-right: 0;
       }
     }
   }

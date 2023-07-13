@@ -45,9 +45,14 @@
                           </span>
                         </div>
                         <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 0">
-                          <i class="fas fa-question" v-if="lesson.attendance.attendance.excuse_status === 0 && lesson.attendance.attendance.absent_lessons > 0 && lesson.attendance.has_excuses === false"></i>
-                          <i class="fas fa-check" v-if="lesson.attendance.attendance.excuse_status === 1 || lesson.attendance.attendance.absent_lessons === 0 || lesson.attendance.has_excuses === true"></i>
-                          <i class="fas fa-times" v-if="lesson.attendance.attendance.excuse_status === 2 && lesson.attendance.has_excueses === false"></i>
+                          <div v-if="lesson.attendance.has_excuses === true">
+                            <i class="fas fa-check"></i>
+                          </div>
+                          <div v-if="lesson.attendance.has_excuses === false">
+                            <i class="fas fa-question" v-if="lesson.attendance.attendance.excuse_status === 0 && lesson.attendance.attendance.absent_lessons > 0"></i>
+                            <i class="fas fa-check" v-if="lesson.attendance.attendance.excuse_status === 1 || lesson.attendance.attendance.absent_lessons === 0"></i>
+                            <i class="fas fa-times" v-if="lesson.attendance.attendance.excuse_status === 2"></i>
+                          </div>
 
                           <span class="badge text-bg-info d-block" v-if="lesson.attendance.attendance.absent_lessons !== (lesson.entry.end - lesson.entry.start + 1)">
                             {{ lesson.attendance.attendance.absent_lessons }} FS
@@ -176,6 +181,12 @@
                 </span>
 
                 <input type="text" v-model="editAttendance.attendance.comment" class="form-control" />
+              </div>
+            </div>
+
+            <div class="mt-2" v-if="editAttendance.has_excuses">
+              <div class="bs-callout bs-callout-success my-0">
+                <p><i class="fas fa-circle-check"></i> {{ $trans('book.attendance.absence_reason.excuse')}}</p>
               </div>
             </div>
 
@@ -429,6 +440,11 @@ export default {
       if(lesson.entry === null || lesson.attendance === null || lesson.attendance.attendance.type !== 0) {
         return;
       }
+
+      if(lesson.attendance.has_excuses === true) {
+        return;
+      }
+
       lesson.attendance.attendance.excuse_status = (lesson.attendance.attendance.excuse_status + 1) % 3;
       this.uploadData(lesson, function() { });
     }

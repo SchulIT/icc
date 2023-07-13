@@ -22,7 +22,7 @@
                 {% if studentFilter.currentStudent == null and gradeFilter.currentGrade == null and teacherFilter.currentTeacher == null %}
                 {% elseif tuitions|length == 0 %}
                     <div class="bs-callout bs-callout-info">
-                        <h4>{{ 'info.label'|trans }}</h4>
+                        <h5>{{ 'info.label'|trans }}</h5>
 
                         <p>{{ 'lists.tuitions.empty'|trans }}</p>
                     </div>

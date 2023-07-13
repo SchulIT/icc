@@ -40,19 +40,19 @@
 
                 {% if not isVisible %}
                     <div class="bs-callout bs-callout-info">
-                        <h4>{{ 'info.label'|trans }}</h4>
+                        <h5{{ 'info.label'|trans }}</h4>
 
                         <p>{{ 'plans.exams.not_visible'|trans }}</p>
                     </div>
                 {% elseif isVisibleAdmin %}
                     <div class="bs-callout bs-callout-info">
-                        <h4>{{ 'info.label'|trans }}</h4>
+                        <h5>{{ 'info.label'|trans }}</h5>
 
                         <p>{{ 'plans.exams.visible_admin'|trans({'%type%': app.user.userType|enum }) }}</p>
                     </div>
                 {% elseif examWeekGroups|length == 0 %}
                     <div class="bs-callout bs-callout-info">
-                        <h4>{{ 'info.label'|trans }}</h4>
+                        <h5>{{ 'info.label'|trans }}</h5>
 
                         <p>{{ 'plans.exams.empty'|trans }}</p>
                     </div>

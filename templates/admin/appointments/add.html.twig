@@ -21,13 +21,13 @@
 
     {% if not is_granted('ROLE_APPOINTMENTS_ADMIN') %}
         <div class="bs-callout bs-callout-warning">
-            <h4>{{ 'important'|trans }}</h4>
+            <h5>{{ 'important'|trans }}</h5>
 
             <p>{{ 'admin.appointments.add.confirmation_info'|trans }}</p>
         </div>
 
         <div class="bs-callout bs-callout-danger">
-            <h4>{{ 'caution'|trans }}</h4>
+            <h5>{{ 'caution'|trans }}</h5>
 
             <p>{{ 'admin.appointments.add.workflow_info'|trans }}</p>
         </div>

@@ -407,17 +407,17 @@ table {
 }
 
 .bs-callout {
-  > h4::before {
+  > h5:not(.no-icon)::before {
     @extend .fas;
     @extend .fa-circle-info;
     margin-right: 0.25rem;
   }
 
-  &.bs-callout-success > h4::before {
+  &.bs-callout-success > h5:not(.no-icon)::before {
     @extend .fa-circle-check;
   }
 
-  &.bs-callout-danger > h4::before {
+  &.bs-callout-danger > h5:not(.no-icon)::before {
     @extend .fa-circle-exclamation;
   }
 }

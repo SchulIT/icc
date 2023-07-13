@@ -40,7 +40,7 @@
             <div class="col-md-9">
                 {% if overview == null %}
                     <div class="bs-callout bs-callout-info">
-                        <h4>{{ 'info.label'|trans }}</h4>
+                        <h5>{{ 'info.label'|trans }}</h5>
                         {% if tuitionFilter.currentTuition is not null %}
                             <p>{{ 'book.grades.not_enabled'|trans }}</p>
                         {% else %}
@@ -50,13 +50,13 @@
                 {% else %}
                     {% if isStudentsView %}
                         <div class="bs-callout bs-callout-info">
-                            <h4>{{ 'info.label'|trans }}</h4>
+                            <h5>{{ 'info.label'|trans }}</h5>
                             <p>{{ 'book.grades.info.no_edit_in_student_view'|trans }}</p>
                         </div>
                     {% elseif tuitionFilter.currentTuition is not null %}
                         {% if isForeignTuition %}
                             <div class="bs-callout bs-callout-info">
-                                <h4>{{ 'info.label'|trans }}</h4>
+                                <h5>{{ 'info.label'|trans }}</h5>
                                 <p>{{ 'book.grades.info.foreign_tuition'|trans }}</p>
                             </div>
                         {% endif %}

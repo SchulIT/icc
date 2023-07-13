@@ -28,7 +28,7 @@
 
         {% if is_pushover_allowed %}
         <div class="bs-callout bs-callout-info">
-            <h4>{{ 'profile.notifications.pushover.info.label'|trans }}</h4>
+            <h5 class="no-icon"><i class="fas fa-mobile-screen-button"></i> {{ 'profile.notifications.pushover.info.label'|trans }}</h5>
             <p>{{ 'profile.notifications.pushover.info.description'|trans }}</p>
             <a href="{{ 'profile.notifications.pushover.info.link.url'|trans }}" class="btn btn-outline-primary btn-sm" target="_blank">
                 <i class="fas fa-external-link-alt"></i> {{ 'profile.notifications.pushover.info.link.label'|trans }}
@@ -36,7 +36,7 @@
 
             <div class="mb-4"></div>
 
-            <h4>{{ 'profile.notifications.pushover.info.privacy.label'|trans }}</h4>
+            <h5 class="no-icon"><i class="fas fa-user-shield"></i> {{ 'profile.notifications.pushover.info.privacy.label'|trans }}</h5>
             <p>{{ 'profile.notifications.pushover.info.privacy.description'|trans }}</p>
         </div>
         {% endif %}
@@ -48,7 +48,7 @@
         {{ form_end(form) }}
     {% else %}
         <div class="bs-callout bs-callout-info mb-0">
-            <h4>{{ 'info.label'|trans }}</h4>
+            <h5>{{ 'info.label'|trans }}</h5>
             <p>{{ 'profile.notifications.not_allowed'|trans }}</p>
         </div>
     {% endif %}

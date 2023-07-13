@@ -23,14 +23,14 @@
             <div class="col-md-9">
                 {% if groups|length == 0 %}
                     <div class="bs-callout bs-callout-info">
-                        <h4>{{ 'info.label'|trans }}</h4>
+                        <h5>{{ 'info.label'|trans }}</h5>
 
                         <p>{{ 'absences.students.empty'|trans }}</p>
                     </div>
                 {% else %}
                     {% if teacherFilter.currentTeacher is not null %}
                         <div class="bs-callout bs-callout-info">
-                            <h4>{{ 'info.label'|trans }}</h4>
+                            <h5>{{ 'info.label'|trans }}</h5>
                             <p>{{ 'absences.students.teacher_info'|trans }}</p>
                         </div>
                     {% endif %}

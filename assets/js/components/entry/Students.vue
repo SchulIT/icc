@@ -209,9 +209,7 @@
           <div class="d-flex px-3 pb-3" v-if="attendance.type !== 1 && (attendance.comment !== null || attendance.showComment === true)">
             <div class="w-100">
               <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
-                </div>
+                <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
                 <input type="text" v-model="attendance.comment" class="form-control" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][comment]'">
               </div>
             </div>

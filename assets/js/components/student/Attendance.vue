@@ -70,9 +70,7 @@
         </div>
 
         <div class="input-group input-group-sm d-inline-flex mt-1 w-auto">
-          <div class="input-group-prepend">
-            <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
-          </div>
+          <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
           <input type="text" v-model="attendance.comment" class="form-control">
         </div>
       </div>

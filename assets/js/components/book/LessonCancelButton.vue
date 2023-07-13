@@ -39,7 +39,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <div class="form-group d-flex align-items-center">
+              <div class="mb-3 d-flex align-items-center">
                 <i class="fas fa-spinner fa-spin" v-if="isLoadingTuition"></i>
 
                 <span class="badge text-bg-secondary" v-if="tuition !== null">{{ tuition.subject.name.toUpperCase() }}</span>
@@ -63,25 +63,25 @@
                 </div>
               </div>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="start" class="control-label">{{ $trans('label.start')}}</label>
                 <number-input v-model="entry.start" name="lesson_entry_cancel[lessonStart]" :min="start" :max="end" id="start" :class="validation.start !== null ? 'is-invalid' : ''"></number-input>
                 <div class="invalid-feedback" v-show="validation.start !== null">{{ validation.start }}</div>
               </div>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="end" class="control-label">{{ $trans('label.end')}}</label>
                 <number-input v-model="entry.end" name="lesson_entry_cancel[lessonEnd]" :min="start" :max="end" id="end" :class="validation.end !== null ? 'is-invalid' : ''"></number-input>
                 <div class="invalid-feedback" v-show="validation.end !== null">{{ validation.end }}</div>
               </div>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="reason" class="control-label">{{ $trans('book.entry.cancel.reason' )}}</label>
                 <input v-model="entry.reason" name="lesson_entry_cancel[cancelReason]" :class="'form-control ' + (validation.reason !== null ? 'is-invalid' : '')" id="reason">
                 <div class="invalid-feedback" v-show="validation.reason !== null">{{ validation.reason }}</div>
               </div>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="exercises" class="control-label">{{ $trans('label.exercises') }}</label>
                 <textarea v-model="entry.exercises" name="lesson_entry_cancel[exercises]" class="form-control" id="exercises"></textarea>
               </div>

@@ -47,7 +47,7 @@
                         <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 0">
                           <i class="fas fa-question" v-if="lesson.attendance.attendance.excuse_status === 0 && lesson.attendance.attendance.absent_lessons > 0 && lesson.attendance.has_excuses === false"></i>
                           <i class="fas fa-check" v-if="lesson.attendance.attendance.excuse_status === 1 || lesson.attendance.attendance.absent_lessons === 0 || lesson.attendance.has_excuses === true"></i>
-                          <i class="fas fa-times" v-if="lesson.attendance.attendance.excuse_status === 2"></i>
+                          <i class="fas fa-times" v-if="lesson.attendance.attendance.excuse_status === 2 && lesson.attendance.has_excueses === false"></i>
 
                           <span class="badge text-bg-info d-block" v-if="lesson.attendance.attendance.absent_lessons !== (lesson.entry.end - lesson.entry.start + 1)">
                             {{ lesson.attendance.attendance.absent_lessons }} FS
@@ -171,11 +171,9 @@
             </div>
             <div class="mt-2">
               <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">
-                    <i class="fas fa-comment"></i>
-                  </span>
-                </div>
+                <span class="input-group-text">
+                  <i class="fas fa-comment"></i>
+                </span>
 
                 <input type="text" v-model="editAttendance.attendance.comment" class="form-control" />
               </div>
@@ -202,14 +200,14 @@
       </div>
     </div>
 
-    <div class="position-fixed bottom-0 right-0 p-3" style="z-index: 5; right:0; bottom:0">
-      <div class="toast border-success bg-success text-white" role="alert" aria-live="polite" aria-atomic="true" id="successToast">
+    <div class="toast-container position-fixed bottom-0 end p-3" style="z-index: 5; right:0; bottom:0">
+      <div class="toast bg-success text-bg-success" role="alert" aria-live="polite" aria-atomic="true" id="successToast">
         <div class="toast-body">
           <i class="fas fa-check-circle"></i> Erfolgreich gespeichert
         </div>
       </div>
 
-      <div class="toast border-danger bg-danger text-white" role="alert" aria-live="polite" aria-atomic="true" id="errorToast">
+      <div class="toast bg-danger text-bg-danger" role="alert" aria-live="polite" aria-atomic="true" id="errorToast">
         <div class="toast-body">
           <i class="fas fa-exclamation-triangle"></i> Fehler beim Speichern
         </div>
@@ -221,6 +219,7 @@
 <script>
 
 import Modal from 'bootstrap/js/dist/modal';
+import Toast from 'bootstrap/js/dist/toast';
 
 export default {
   name: 'attendance_overview',
@@ -414,36 +413,12 @@ export default {
       this.$http
           .put(url, request)
           .then(function() {
-            if($this.toasts.success === null) {
-              $this.toasts.success = $this.$el.querySelector('#successToast');
-            }
-
-            if($this.toasts.successId !== null) {
-              clearTimeout($this.toasts.successId);
-            }
-
-            $this.toasts.success.classList.add('showing');
-
-            $this.toasts.successId = setTimeout(function() {
-              $this.toasts.success.classList.remove('showing');
-              $this.toasts.successId = null;
-            }, 2000);
+            let successToast = Toast.getOrCreateInstance($this.$el.querySelector('#successToast'));
+            successToast.show();
           })
           .catch(function(e) {
-            if($this.toasts.error === null) {
-              $this.toasts.error = $this.$el.querySelector('#errorToast');
-            }
-
-            if($this.toasts.errorId !== null) {
-              clearTimeout($this.toasts.errorId);
-            }
-
-            $this.toasts.error.classList.add('showing');
-
-            $this.toasts.errorId = setTimeout(function() {
-              $this.toasts.error.classList.remove('showing');
-              $this.toasts.errorId = null;
-            }, 2000);
+            let errorToast = Toast.getOrCreateInstance($this.$el.querySelector('#errorToast'));
+            errorToast.show();
 
             console.error(e);
           });
@@ -454,7 +429,6 @@ export default {
       if(lesson.entry === null || lesson.attendance === null || lesson.attendance.attendance.type !== 0) {
         return;
       }
-
       lesson.attendance.attendance.excuse_status = (lesson.attendance.attendance.excuse_status + 1) % 3;
       this.uploadData(lesson, function() { });
     }

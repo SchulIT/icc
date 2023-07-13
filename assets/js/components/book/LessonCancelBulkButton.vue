@@ -14,7 +14,7 @@
           </div>
 
           <div class="modal-body">
-            <div class="form-group d-flex align-items-center" v-for="tuition in tuitions">
+            <div class="mb-3 d-flex align-items-center" v-for="tuition in tuitions">
               <span class="badge text-bg-secondary" v-if="tuition !== null">{{ tuition.subject.name.toUpperCase() }}</span>
 
               <div class="ms-2" v-if="tuition !== null">
@@ -36,7 +36,7 @@
               </div>
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
               <label for="reason" class="control-label">{{ $trans('book.entry.cancel.reason' )}} </label>
               <input v-model="reason" :class="'form-control ' + (validation.reason !== null ? 'is-invalid' : '')" id="reason">
               <div class="invalid-feedback" v-show="validation.reason !== null">{{ validation.reason }}</div>

@@ -6,7 +6,7 @@
 
         {% if gradeFilter.grades|length == 1 %}
             {% set grade = gradeFilter.grades|first %}
-            <button type="submit" name="grade" id="grade" value="{{ grade.uuid }}" class="btn btn-outline-secondary btn-block text-left {% if gradeFilter.currentGrade != null and gradeFilter.currentGrade.id == grade.id %}active{% endif %}">
+            <button type="submit" name="grade" id="grade" value="{{ grade.uuid }}" class="btn btn-outline-secondary w-100 text-start {% if gradeFilter.currentGrade != null and gradeFilter.currentGrade.id == grade.id %}active{% endif %}">
                 {{ grade.name }}
 
                 {% set teachers = [] %}

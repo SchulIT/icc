@@ -79,7 +79,7 @@
                       </div>
 
                       <div class="card-body">
-                        <div class="form-group row">
+                        <div class="mb-3 row">
                           <div class="col-6">
                             <label for="start" class="control-label">{{ $trans('label.start')}}</label>
                             <number-input v-model="entry.start" name="lesson_entry[lessonStart]" :min="lesson.lessonStart" :max="lesson.lessonEnd" id="start" :class="validation.start !== null ? 'is-invalid' : ''"></number-input>
@@ -92,18 +92,18 @@
                           </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="topic" class="control-label">{{ $trans('label.topic') }}</label>
                           <input v-model="entry.topic" name="lesson_entry[topic]" :class="'topic form-control ' + (validation.topic !== null ? 'is-invalid' : '')" id="topic">
                           <div class="invalid-feedback" v-show="validation.topic !== null">{{ validation.topic }}</div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="exercises" class="control-label">{{ $trans('label.exercises') }}</label>
                           <textarea v-model="entry.exercises" name="lesson_entry[exercises]" class="form-control" id="exercises"></textarea>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="comment" class="control-label">{{ $trans('book.entry.comment.label') }}</label>
                           <textarea v-model="entry.comment" name="lesson_entry[comment]" class="form-control" id="comment"></textarea>
                           <small class="form-text text-muted">
@@ -111,12 +111,12 @@
                           </small>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="replacementSubject" class="control-label">{{ $trans('label.replacement_subject') }}</label>
                           <input v-model="entry.replacementSubject" name="lesson_entry[replacementSubject]" class="form-control" id="replacementSubject">
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="replacementTeacher" class="control-label">{{ $trans('label.replacement_teacher') }}</label>
                           <select name="lesson_entry[replacementTeacher]" class="form-control" id="replacementTeacher"></select>
                         </div>
@@ -183,7 +183,7 @@
                 </div>
               </div>
 
-              <div class="form-group row">
+              <div class="mb-3 row">
                 <div class="col-6">
                   <label for="start" class="control-label">{{ $trans('label.start')}}</label>
                   <number-input v-model="entry.start" name="lesson_entry_cancel[lessonStart]" :min="lesson.lessonStart" :max="lesson.lessonEnd" id="start" :class="validation.start !== null ? 'is-invalid' : ''"></number-input>
@@ -196,13 +196,13 @@
                 </div>
               </div>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="topic" class="control-label">{{ $trans('book.entry.cancel.reason') }}</label>
                 <input v-model="entry.topic" name="lesson_entry_cancel[cancelReason]" :class="'cancel_reason form-control ' + (validation.topic !== null ? 'is-invalid' : '')" id="topic">
                 <div class="invalid-feedback" v-show="validation.topic !== null">{{ validation.topic }}</div>
               </div>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="exercises" class="control-label">{{ $trans('label.exercises') }}</label>
                 <textarea v-model="entry.exercises" name="lesson_entry_cancel[exercises]" class="form-control" id="exercises"></textarea>
               </div>

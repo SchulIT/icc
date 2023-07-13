@@ -1,17 +1,13 @@
 <template>
   <div class="input-group">
-    <div class="input-group-prepend">
-      <button class="btn btn-outline-secondary" type="button" @click.prevent="minus()">
-        <i class="fas fa-minus"></i>
-      </button>
-    </div>
+    <button class="btn btn-outline-secondary" type="button" @click.prevent="minus()">
+      <i class="fas fa-minus"></i>
+    </button>
     <input type="text" :name="name" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" :class="'form-control ' + this.class" :id="id">
 
-    <div class="input-group-append">
-      <button class="btn btn-outline-secondary" type="button" @click.prevent="plus()">
-        <i class="fas fa-plus"></i>
-      </button>
-    </div>
+    <button class="btn btn-outline-secondary" type="button" @click.prevent="plus()">
+      <i class="fas fa-plus"></i>
+    </button>
   </div>
 </template>
 

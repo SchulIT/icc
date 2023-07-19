@@ -14,7 +14,7 @@
                 </a>
             </h5>
 
-            <div class="flex-shrink-0">
+            <div class="flex-shrink-0 d-flex">
                 {% if is_dismissed(message) and (message.attachments|length > 0 or userDownloads|length > 0) %}
                     <div class="dropdown ms-1">
                         <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -40,7 +40,7 @@
                             <i class="fa fa-check"></i>
                         </a>
                     {% else %}
-                        <button type="button" class="btn btn-success btn-sm me-1" title="{{ 'messages.confirm.confirmed'|trans }}">
+                        <button type="button" class="btn btn-success btn-sm ms-1" title="{{ 'messages.confirm.confirmed'|trans }}">
                             <i class="fa fa-check"></i>
                         </button>
                     {% endif %}
@@ -55,7 +55,7 @@
                 {% endif %}
 
                 {% if hasPoll %}
-                    <div class="btn-group me-1" role="group">
+                    <div class="btn-group ms-1" role="group">
                         <a href="{{ path('show_message', { uuid: message.uuid }) }}" class="btn btn-primary btn-sm" title="{{ 'messages.poll.info'|trans }}">
                             <i class="fas fa-poll"></i>
                         </a>

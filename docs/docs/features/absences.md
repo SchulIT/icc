@@ -1,0 +1,7 @@
+
+# Abwesenheitsmeldungen
+
+## Lernende
+
+## Lehrkräfte
+

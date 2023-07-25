@@ -44,10 +44,8 @@ class Builder {
         ])
             ->setExtra('icon', 'fas fa-envelope-open-text');
 
-        $plansMenu = $this->plansMenu($menu);
-        $this->setFirstChildAsUri($plansMenu);
-        $listsMenu = $this->listsMenu($menu);
-        $this->setFirstChildAsUri($listsMenu);
+        $this->plansMenu($menu);
+        $this->listsMenu($menu);
 
 
         $menu->addChild('documents.label', [
@@ -62,8 +60,7 @@ class Builder {
             || $this->authorizationChecker->isGranted(StudentAbsenceVoter::New)
             || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::NewAbsence)
             || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::CanViewAny)) {
-            $absenceMenu = $this->absencesMenu($menu);
-            $this->setFirstChildAsUri($absenceMenu);
+            $this->absencesMenu($menu);
         }
 
         if($this->authorizationChecker->isGranted('ROLE_BOOK_VIEWER')) {
@@ -151,6 +148,8 @@ class Builder {
             ])
                 ->setExtra('icon', 'fas fa-mail-bulk');
         }
+
+        $this->replaceWithFirstItem($menu, $lists, false, false);
 
         return $lists;
     }
@@ -261,18 +260,28 @@ class Builder {
                 ->setExtra('icon', 'fas fa-chalkboard-teacher');
         }
 
+        $this->replaceWithFirstItem($menu, $plans, true, true);
+
         return $plans;
     }
 
-    private function setFirstChildAsUri(ItemInterface $root): void {
-        if(count($root->getChildren()) === 0) {
+    private function replaceWithFirstItem(ItemInterface $menu, ItemInterface &$item, bool $keepParentIcon, bool $keepParentLabel): void {
+        if(count($item->getChildren()) !== 1) {
             return;
         }
 
-        $firstKey = array_key_first($root->getChildren());
-        $firstItem = $root->getChildren()[$firstKey];
+        $firstItem = $item->getFirstChild();
+        $firstItem->setParent(null);
 
-        $root->setUri($firstItem->getUri());
+        if($keepParentIcon === true) {
+            $firstItem->setExtra('icon', $item->getExtra('icon'));
+        }
 
+        if($keepParentLabel === true) {
+            $firstItem->setLabel($item->getLabel());
+        }
+
+        $menu->removeChild($item);
+        $menu->addChild($firstItem);
     }
 }

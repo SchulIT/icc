@@ -1,0 +1,100 @@
+name: PHP
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: "PHP ${{ matrix.php-versions }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php-versions:
+          - 8.2
+    services:
+      mariadb:
+        image: mariadb:latest
+        ports:
+          - 3306/tcp
+        env:
+          MYSQL_ALLOT_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: symfony
+          MYSQL_DATABASE: symfony
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@verbose
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: gd, iconv, json, openssl, xsl, pdo, mbstring
+          coverage: xdebug
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Replace environment (to dev)
+        run: sed -i 's/APP_ENV=prod/APP_ENV=dev/' .env
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-progress --no-scripts
+
+      - name: NPM install
+        run: npm install
+
+      - name: NPM build
+        run: npm run build
+
+      - name: Run cache:clear
+        run: php bin/console cache:clear
+
+      - name: Run assets:install
+        run: php bin/console assets:install
+
+      - name: Create SAML certificate
+        run: php bin/console app:create-certificate --type saml -c DE -s Nordrhein-Westfalen -l Aachen -o SchulIT --organizationalUnitName="SchulIT IT" --commonName=schulit.de --emailAddress=admin@schulit.de
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyze ./src --level 5 --memory-limit 1G
+
+      - name: Run PHP Unit
+        run: vendor/bin/phpunit --coverage-clover clover.xml
+        env:
+          DATABASE_URL: mysql://root:symfony@127.0.0.1:${{ job.services.mariadb.ports['3306'] }}/symfony
+          ADAUTH_ENABLED: false
+          MAILER_DSN: null://null
+          KERNEL_CLASS: 'App\Kernel'
+          APP_SECRET: 's$cretf0rt3st'
+          SYMFONY_DEPRECATIONS_HELPER: 9999999
+
+      - name: Cache Node packages
+        id: node-cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Save log to artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: log
+          path: var/log/*.log

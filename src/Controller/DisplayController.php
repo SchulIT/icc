@@ -82,8 +82,4 @@ class DisplayController extends AbstractController {
             'countdown' => $countdownDays
         ]);
     }
-
-    private function countdown(DateTime $today, DateTime $target) {
-
-    }
 }

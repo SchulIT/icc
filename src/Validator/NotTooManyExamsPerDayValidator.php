@@ -28,7 +28,7 @@ class NotTooManyExamsPerDayValidator extends AbstractExamConstraintValidator {
 
         if($value->getDate() === null || $value->getTuitions()->count() === 0) {
             // Planned exams are fine
-            return true;
+            return;
         }
 
         $exams = $this->findAllByStudents($value->getStudents()->toArray());

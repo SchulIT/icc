@@ -31,7 +31,7 @@ class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
 
         if($value->getDate() === null || $value->getTuitions()->count() === 0) {
             // Planned exams are fine
-            return true;
+            return;
         }
 
         $examWeek = $value->getDate()->format('W');

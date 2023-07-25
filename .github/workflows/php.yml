@@ -55,20 +55,23 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --prefer-dist --no-progress --no-scripts
 
+      - name: Run cache:clear
+        run: php bin/console cache:clear
+
+      - name: Create translation files
+        run: php bin/console bazinga:js-translation:dump assets/js/ --merge-domains
+
+      - name: Create SAML certificate
+        run: php bin/console app:create-certificate --type saml -c DE -s Nordrhein-Westfalen -l Aachen -o SchulIT --organizationalUnitName="SchulIT IT" --commonName=schulit.de --emailAddress=admin@schulit.de
+
       - name: NPM install
         run: npm install
 
       - name: NPM build
         run: npm run build
 
-      - name: Run cache:clear
-        run: php bin/console cache:clear
-
       - name: Run assets:install
         run: php bin/console assets:install
-
-      - name: Create SAML certificate
-        run: php bin/console app:create-certificate --type saml -c DE -s Nordrhein-Westfalen -l Aachen -o SchulIT --organizationalUnitName="SchulIT IT" --commonName=schulit.de --emailAddress=admin@schulit.de
 
       - name: Run PHPStan
         run: vendor/bin/phpstan analyze ./src --level 5 --memory-limit 1G

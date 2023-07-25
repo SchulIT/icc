@@ -23,6 +23,7 @@ Encore
     .addEntry('close-confirm', './assets/js/close-confirm.js')
     .addEntry('gradebook', './assets/js/gradebook.js')
     .addStyleEntry('email', './assets/css/email.scss')
+    .addStyleEntry('simple', './assets/css/simple.scss')
     .addEntry('export-student-absences', './assets/js/export-student-absences.js')
 
     .configureBabel(() => {}, {

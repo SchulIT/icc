@@ -24,5 +24,5 @@ Das Audit-Log befindet sich im Menü *Verwaltung* und ist für Benutzer mit der 
 
 ## Auditierung aktivieren/deaktivieren
 
-Über die [Konfigurationsdatei](../install/configuration) `.env.local` kann gesteuert werden, ob die Auditierung aktiviert
+Über die [Konfigurationsdatei](../admin/install/configuration) `.env.local` kann gesteuert werden, ob die Auditierung aktiviert
 ist oder nicht. Dazu muss der Parameter `AUDIT_ENABLED` entsprechend auf `true` oder `false` gesetzt werden.

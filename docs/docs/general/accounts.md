@@ -47,5 +47,5 @@ wenn sie keinem Abschnitt zugeordnet sind.
 :::
 
 :::warning Wichtig
-Das Löschen setzt voraus, dass [Cronjobs](../maintenance/cronjobs) konfiguriert sind.
+Das Löschen setzt voraus, dass [Cronjobs](../admin/maintenance/cronjobs) konfiguriert sind.
 :::

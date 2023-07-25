@@ -79,7 +79,7 @@ Die Anzahl an E-Mails, die maximal pro Minute versendet werden darf. Das ist wic
 
 #### CRON_PASSWORD
 
-Das Passwort für den Cronjob-Benutzer, sofern Cronjobs via HTTPs ausgeführt werden. Details siehe [Cronjobs](../guides/cronjobs).
+Das Passwort für den Cronjob-Benutzer, sofern Cronjobs via HTTPs ausgeführt werden. Details siehe [Cronjobs](../maintenance/cronjobs).
 
 :::info
 Der Konfigurationsparameter können zunächst übersprungen werden und zu einem späteren Zeitpunkt konfiguriert werden.
@@ -95,7 +95,7 @@ Gibt an, ob das Benachrichtigungssystem grundsätzlich aktiviert (`true`) ist od
 
 #### ROOM_STATUS
 
-Gibt an, ob der Raumstatus aus dem ServiceCenter abgerufen werden soll (`true`) oder nicht (`false`). Siehe [Raumstatus abfragen](../features/roomstatus).
+Gibt an, ob der Raumstatus aus dem ServiceCenter abgerufen werden soll (`true`) oder nicht (`false`). Siehe [Raum- & Ressourcenreservierung](../../features/reservations).
 
 #### SERVICECENTER_URL
 
@@ -109,7 +109,7 @@ ist, ignoriert.
 
 #### AUDIT_ENABLED
 
-Gibt an, ob der Auditierungsmechanismus aktiviert ist (`true`) oder nicht (`false`). Mehr unter [Auditierung](../features/auditierung).
+Gibt an, ob der Auditierungsmechanismus aktiviert ist (`true`) oder nicht (`false`). Mehr unter [Auditierung](../../features/audit).
 
 ### Datenbank
 

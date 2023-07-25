@@ -38,4 +38,4 @@ eine E-Mail aus. Dies führt bei vielen E-Mail-Diensten (wie bspw. Microsoft 365
 Als Alternative zum E-Mail-Versand von Benachrichtigungen bietet das ICC den Versand über den externen (und kostenpflichten)
 Dienst [Pushover](https://www.pushover.net) an. Dieser eignet sich auch zum Versenden von Massen-Benachrichtigungen.
 
-Eine Anleitung zur Konfiguration gibt es [hier](../guides/pushover).
+Eine Anleitung zur Konfiguration gibt es [hier](../admin/guides/pushover).

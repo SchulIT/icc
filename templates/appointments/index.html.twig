@@ -64,7 +64,7 @@
                         {% include "_filter/section.html.twig" with { isChoice: false } %}
 
                         {% if studentFilter.studentGradeGroups|length > 0 %}
-                            {% include "_filter/student.html.twig" with { trigger: 'none', isChoice: false } %}
+                            {% include "_filter/student.html.twig" with { trigger: 'none', isChoice: false, forceChoice: true } %}
                         {% endif %}
 
                         {% if studyGroupFilter.studyGroupGroups|length > 0 %}

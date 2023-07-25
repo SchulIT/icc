@@ -1,13 +1,16 @@
 {% if isChoice is not defined %}
     {% set isChoice = true %}
 {% endif %}
+{% if forceChoice is not defined %}
+    {% set forceChoice = false %}
+{% endif %}
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
     <div class="mb-3 {{ class|default('') }}">
         <label for="student" class="form-label">{{ 'label.student'|trans }}:</label>
 
-        {% if studentFilter.studentCount < 10 %}
+        {% if studentFilter.studentCount < 10 and not forceChoice %}
             <div class="btn-group-vertical w-100 filter" role="group">
                 {% for group in studentFilter.studentGradeGroups %}
                     {% for s in group.students %}

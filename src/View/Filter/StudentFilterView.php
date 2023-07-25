@@ -10,7 +10,7 @@ class StudentFilterView implements FilterViewInterface {
     /**
      * @param StudentGradeGroup[] $studentGradeGroups
      */
-    public function __construct(private array $studentGradeGroups, private ?Student $currentStudent)
+    public function __construct(private array $studentGradeGroups, private ?Student $currentStudent, private int $studentCount)
     {
     }
 
@@ -23,6 +23,10 @@ class StudentFilterView implements FilterViewInterface {
 
     public function getCurrentStudent(): ?Student {
         return $this->currentStudent;
+    }
+
+    public function getStudentCount(): int {
+        return $this->studentCount;
     }
 
     public function isEnabled(): bool {

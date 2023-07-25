@@ -55,6 +55,6 @@ class StudentFilter {
             $groups = [ ];
         }
 
-        return new StudentFilterView($groups, $student);
+        return new StudentFilterView($groups, $student, count($students));
     }
 }

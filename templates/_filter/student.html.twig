@@ -6,6 +6,18 @@
 
     <div class="mb-3 {{ class|default('') }}">
         <label for="student" class="form-label">{{ 'label.student'|trans }}:</label>
+
+        {% if studentFilter.studentCount < 10 %}
+            <div class="btn-group-vertical w-100 filter" role="group">
+                {% for group in studentFilter.studentGradeGroups %}
+                    {% for s in group.students %}
+                        <button type="submit" name="student" value="{{ s.uuid }}" class="btn btn-outline-secondary text-start {% if studentFilter.currentStudent != null and studentFilter.currentStudent.id == s.id %}active{% endif%} {% if not loop.last %}border-bottom-0{% endif %}">
+                            {{ s|student }} {% if group.grade is not null %}<span class="badge bg-primary">{{ group.grade.name }}</span>{% endif %}
+                        </button>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% else %}
         <select name="student" id="student" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="{{ isChoice ? 'true' : 'false' }}">
             <option value="" placeholder>{{ 'label.select.student'|trans }}</option>
             {% for group in studentFilter.studentGradeGroups %}
@@ -16,5 +28,6 @@
                 </optgroup>
             {% endfor %}
         </select>
+        {% endif %}
     </div>
 </form>

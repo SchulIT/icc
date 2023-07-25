@@ -30,6 +30,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudentAbsenceType extends AbstractType {
 
+    private const ShowComboboxThreshold = 10;
+
     public function __construct(private StudentStringConverter $studentConverter, private StudentStrategy $studentStrategy,
                                 private TranslatorInterface $translator, private AuthorizationCheckerInterface $authorizationChecker,
                                 private TokenStorageInterface $tokenStorage, private StudentRepositoryInterface $studentRepository)
@@ -69,7 +71,8 @@ class StudentAbsenceType extends AbstractType {
                     'class' => 'custom-select'
                 ],
                 'sort_by' => $this->studentStrategy,
-                'label' => 'label.student'
+                'label' => 'label.student',
+                'expanded' => count($students) < self::ShowComboboxThreshold
             ])
             ->add('type', EntityType::class, [
                 'expanded' => true,

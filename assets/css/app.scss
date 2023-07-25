@@ -447,3 +447,35 @@ table {
     border-bottom-right-radius: var(--bs-card-border-radius);
   }
 }
+
+.btn-group-vertical.filter {
+  .btn {
+    border-color: $input-border-color;
+    color: $input-color;
+
+    &.active,
+    &:hover {
+      background: $input-border-color;
+      color: $input-color;
+    }
+  }
+}
+
+[data-theme=dark] {
+  .btn-group-vertical.filter {
+    .btn {
+      border-color: $input-border-color;
+      color: $input-color;
+
+      &.active,
+      &:hover {
+        background: $input-border-color;
+        color: $input-color;
+      }
+    }
+  }
+}
+
+.#{$choices-selector}__list--single {
+  padding: 1px 16px 0 0 !important;
+}

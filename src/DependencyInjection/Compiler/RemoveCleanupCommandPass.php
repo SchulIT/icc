@@ -11,7 +11,7 @@ class RemoveCleanupCommandPass implements CompilerPassInterface {
     /**
      * @inheritDoc
      */
-    public function process(ContainerBuilder $container) {
+    public function process(ContainerBuilder $container): void {
         $container->removeDefinition(PruneCronjobResultsCommand::class);
     }
 }

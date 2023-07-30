@@ -13,7 +13,7 @@ class RemoveDumpCommandPass implements CompilerPassInterface {
     /**
      * @inheritDoc
      */
-    public function process(ContainerBuilder $container) {
+    public function process(ContainerBuilder $container): void {
         $container->removeDefinition('nelmio_api_doc.command.dump');
     }
 }

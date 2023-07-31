@@ -24,14 +24,22 @@
                 <table class="table table-striped table-bordered card-table ">
                     <colgroup>
                         <col>
+                        {% if studentsRequired %}
                         <col class="column-lg">
+                        {% endif %}
+                        {% if parentsRequired %}
                         <col class="column-lg">
+                        {% endif %}
                     </colgroup>
                     <thead>
                     <tr>
                         <th>{{ 'label.name'|trans }}</th>
+                        {% if studentsRequired %}
                         <th>{{ 'label.student'|trans }}</th>
+                        {% endif %}
+                        {% if parentsRequired %}
                         <th>{{ 'user_type.parent'|trans({}, 'enums') }}</th>
+                        {% endif %}
                     </tr>
                     </thead>
 
@@ -40,14 +48,15 @@
                         {% set studentConfirmation = view.studentConfirmation(student) %}
                         {% set parentConfirmation = view.parentConfirmation(student) %}
                         {% set class = "table-danger" %}
-                        {% if studentConfirmation is not null and parentConfirmation is not null %}
+                        {% if (studentConfirmation is not null or not studentsRequired) and (parentConfirmation is not null or not parentsRequired) %}
                             {% set class = "table-success" %}
-                        {% elseif studentConfirmation is not null or parentConfirmation is not null %}
+                        {% elseif (studentConfirmation is not null and studentsRequired) or (parentConfirmation is not null and parentsRequired) %}
                             {% set class = "table-warning" %}
                         {% endif %}
 
                         <tr class="{{ class }}">
                             <td>{{ 'user.display_name'|trans({'%firstname%': student.firstname, '%lastname%': student.lastname}) }}</td>
+                            {% if studentsRequired %}
                             <td>
                                 {% if studentConfirmation is not null %}
                                     <i class="fa fa-check-circle"></i> {{ studentConfirmation.createdAt|format_datetime }}
@@ -55,6 +64,8 @@
                                     <i class="fa fa-times-circle"></i>
                                 {% endif %}
                             </td>
+                            {% endif %}
+                            {% if parentsRequired %}
                             <td>
                                 {% if parentConfirmation is not null %}
                                     <i class="fa fa-check-circle"></i> {{ parentConfirmation.createdAt|format_datetime }}
@@ -62,6 +73,7 @@
                                     <i class="fa fa-times-circle"></i>
                                 {% endif %}
                             </td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                     </tbody>

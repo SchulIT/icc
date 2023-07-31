@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Message;
 use App\Entity\MessageFile;
 use App\Entity\User;
+use App\Entity\UserType;
 use App\Event\MessageUpdatedEvent;
 use App\Export\PollResultCsvExporter;
 use App\Filesystem\FileNotFoundException;
@@ -207,8 +208,23 @@ class MessageAdminController extends AbstractController {
         $this->sorter->sort($userGroups, UserUserTypeGroupStrategy::class);
         $this->sorter->sortGroupItems($userGroups, UserLastnameFirstnameStrategy::class);
 
+        $studentsRequired = false;
+        $parentsRequired = false;
+
+        foreach($message->getConfirmationRequiredUserTypes() as $userTypeEntity) {
+            if($userTypeEntity->getUserType() === UserType::Student) {
+                $studentsRequired = true;
+            }
+
+            if($userTypeEntity->getUserType() === UserType::Parent) {
+                $parentsRequired = true;
+            }
+        }
+
         return $this->render('messages/confirmations.html.twig', [
             'message' => $message,
+            'studentsRequired' => $studentsRequired,
+            'parentsRequired' => $parentsRequired,
             'teachers' => $teachers,
             'userGroups' => $userGroups,
             'grades' => $gradeGroups,

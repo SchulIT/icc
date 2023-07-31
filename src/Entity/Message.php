@@ -467,6 +467,9 @@ class Message implements Stringable {
         return $this->uploadEnabledStudyGroups;
     }
 
+    /**
+     * @return Collection<UserTypeEntity>
+     */
     public function getConfirmationRequiredUserTypes(): Collection {
         return $this->confirmationRequiredUserTypes;
     }

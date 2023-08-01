@@ -191,9 +191,7 @@
                             {% include "_filter/_params.html.twig" with { params: currentFilter } %}
 
                             <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa fa-clock"></i></span>
-                                </div>
+                                <span class="input-group-text"><i class="fa fa-clock"></i></span>
                                 <input class="form-control" type="number" name="start" data-trigger="submit" value="{{ lesson_start }}" placeholder="{{ 'label.start'|trans }}">
                                 <input class="form-control" type="number" name="end" data-trigger="submit" value="{{ lesson_end }}" placeholder="{{ 'label.end'|trans }}">
                             </div>
@@ -231,14 +229,12 @@
 
                             {% for tag in tags %}
                                 <div class="input-group mb-3">
-                                    <div class="input-group-prepend {% if not tag.hasValue() %}flex-fill{% endif %}">
-                                        <div class="input-group-text {% if not tag.hasValue() %}w-100{% endif %}">
-                                            <div class="form-check">
-                                                <input class="me-1 form-check-input" type="checkbox" id="check-tag-{{ tag.uuid }}" name="tag-{{ tag.uuid }}" value="✓" {% if query.hasTag(tag) %} checked{% endif %}>
-                                                <label for="check-tag-{{ tag.uuid }}" class="form-check-label">
-                                                    {{ tag.name }}
-                                                </label>
-                                            </div>
+                                    <div class="input-group-text {% if not tag.hasValue() %}flex-fill{% endif %}">
+                                        <div class="form-check">
+                                            <input class="me-1 form-check-input" type="checkbox" id="check-tag-{{ tag.uuid }}" name="tag-{{ tag.uuid }}" value="✓" {% if query.hasTag(tag) %} checked{% endif %}>
+                                            <label for="check-tag-{{ tag.uuid }}" class="form-check-label">
+                                                {{ tag.name }}
+                                            </label>
                                         </div>
                                     </div>
 
@@ -247,10 +243,8 @@
                                     {% endif %}
 
                                     {% if not tag.description is empty %}
-                                        <div class="input-group-append">
-                                            <div class="input-group-text">
-                                                <i class="fa fa-info-circle" title="{{ tag.description }}" data-toggle="tooltip"></i>
-                                            </div>
+                                        <div class="input-group-text">
+                                            <i class="fa fa-info-circle" title="{{ tag.description }}" data-toggle="tooltip"></i>
                                         </div>
                                     {% endif %}
                                 </div>

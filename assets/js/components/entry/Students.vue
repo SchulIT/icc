@@ -125,7 +125,6 @@
             </div>
             <div class="align-self-center text-right me-3 flex-shrink-1">
               <button class="btn btn-outline-primary btn-sm ms-1 d-inline-block"
-                      v-if="attendance.type !== 1"
                       @click.prevent="attendance.showComment !== true ? attendance.showComment = true : attendance.showComment = false"
                       :title="$trans('label.comment')">
                 <i class="far fa-comment-alt"></i>
@@ -206,7 +205,7 @@
             </div>
           </div>
 
-          <div class="d-flex px-3 pb-3" v-if="attendance.type !== 1 && (attendance.comment !== null || attendance.showComment === true)">
+          <div class="d-flex px-3 pb-3" v-if="(attendance.comment !== null || attendance.showComment === true)">
             <div class="w-100">
               <div class="input-group">
                 <span class="input-group-text"><i class="far fa-comment-alt"></i></span>

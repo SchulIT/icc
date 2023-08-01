@@ -285,8 +285,6 @@ export default {
             }
           }
 
-          console.log(attendance);
-
           lessons[lessonNumber] = {
             'lesson': lessonNumber,
             'entry': entry,

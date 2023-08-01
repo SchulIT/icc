@@ -185,11 +185,9 @@
         {{ form_widget(form.untis) }}
         {{ form_widget(form.override) }}
 
-        <div class="input-group-append">
-            <button type="button" class="btn btn-danger btn-sm btn-delete float-right" data-selector=".input-group">
-                <i class="fa fa-trash"></i>
-            </button>
-        </div>
+        <button type="button" class="btn btn-danger btn-sm btn-delete float-right" data-selector=".input-group">
+            <i class="fa fa-trash"></i>
+        </button>
     </div>
 {%- endblock -%}
 
@@ -223,19 +221,15 @@
     <div class="input-group mb-2">
         {{ form_widget(form) }}
 
-        <div class="input-group-append">
-            <button type="button" class="btn btn-danger btn-sm btn-delete float-right" data-selector=".input-group">
-                <i class="fa fa-trash"></i>
-            </button>
-        </div>
+        <button type="button" class="btn btn-danger btn-sm btn-delete float-right" data-selector=".input-group">
+            <i class="fa fa-trash"></i>
+        </button>
     </div>
 {% endblock %}
 
 {% block reg_exp_widget %}
     <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text">~</span>
-        </div>
+        <span class="input-group-text">~</span>
 
         {{ form_widget(form) }}
 
@@ -255,9 +249,7 @@
                 {% endfor %}
             </select>
 
-            <div class="input-group-append">
-                <button type="button" class="btn btn-outline-primary">{{ 'absences.students.add_bulk.choice.apply'|trans }}</button>
-            </div>
+            <button type="button" class="btn btn-outline-primary">{{ 'absences.students.add_bulk.choice.apply'|trans }}</button>
         </div>
     {% endif %}
 {% endblock %}

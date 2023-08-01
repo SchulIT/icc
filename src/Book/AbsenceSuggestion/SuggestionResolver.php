@@ -15,10 +15,11 @@ use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Response\Book\AbsenceSuggestion;
 use App\Response\Book\Student;
 use DateTime;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuggestionResolver {
     public function __construct(private readonly AbsenceResolver $absenceResolver, private readonly LessonAttendanceRepositoryInterface $attendanceRepository,
-                                private readonly ExcuseNoteRepositoryInterface $excuseNoteRepository) {
+                                private readonly ExcuseNoteRepositoryInterface $excuseNoteRepository, private readonly UrlGeneratorInterface $urlGenerator) {
 
     }
 
@@ -47,7 +48,8 @@ class SuggestionResolver {
                 $absentStudent->getReason()->value,
                 $absentStudent->getAbsence()->getType()->getName(),
                 $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons(),
-                $excuseStatus
+                $excuseStatus,
+                $this->urlGenerator->generate('show_student_absence', [ 'uuid' => $absentStudent->getAbsence()->getUuid() ], UrlGeneratorInterface::ABSOLUTE_URL)
             );
         }
 
@@ -63,7 +65,8 @@ class SuggestionResolver {
                 $absentStudent->getReason()->value,
                 $absentStudent->getAbsence()->getType()->getName(),
                 false,
-                $excuseStatus
+                $excuseStatus,
+                $this->urlGenerator->generate('show_student_absence', [ 'uuid' => $absentStudent->getAbsence()->getUuid() ], UrlGeneratorInterface::ABSOLUTE_URL)
             );
         }
 
@@ -113,7 +116,8 @@ class SuggestionResolver {
                 $absentStudent->getReason()->value,
                 $absentStudent->getAbsence()->getType()->getName(),
                 true,
-                $excuseStatus
+                $excuseStatus,
+                $this->urlGenerator->generate('show_student_absence', [ 'uuid' => $absentStudent->getAbsence()->getUuid() ], UrlGeneratorInterface::ABSOLUTE_URL)
             );
         }
 
@@ -161,6 +165,10 @@ class SuggestionResolver {
         return array_filter($students, fn(AbsentStudent $absentStudent) => ($absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons()));
     }
 
+    /**
+     * @param AbsentStudent[] $students
+     * @return AbsentStudentWithAbsenceNote[]
+     */
     private function filterAbsencesWithAreExcused(array $students): array {
         return array_filter($students, fn(AbsentStudent $absentStudent) => $absentStudent instanceof AbsentStudentWithAbsenceNote && $absentStudent->getAbsence()->getType()->isAlwaysExcused());
     }

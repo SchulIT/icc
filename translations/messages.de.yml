@@ -292,6 +292,7 @@ actions:
     play: abspielen
     apply: übernehmen
     submit: abschicken
+    show: anzeigen
 
 clipboard:
     copy: In die Zwischenablage kopieren

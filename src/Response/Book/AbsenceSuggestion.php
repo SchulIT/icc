@@ -32,12 +32,18 @@ class AbsenceSuggestion {
     #[Serializer\ReadOnlyProperty]
     private readonly int $excuseStatus;
 
-    public function __construct(Student $student, string $reason, ?string $label = null, bool $isZeroAbsentLessons = false, int $excuseStatus = LessonAttendanceExcuseStatus::NotSet) {
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('absence_url')]
+    #[Serializer\ReadOnlyProperty]
+    private readonly ?string $absenceUrl;
+
+    public function __construct(Student $student, string $reason, ?string $label = null, bool $isZeroAbsentLessons = false, int $excuseStatus = LessonAttendanceExcuseStatus::NotSet, ?string $absenceUrl = null) {
         $this->student = $student;
         $this->reason = $reason;
         $this->label = $label;
         $this->isZeroAbsentLessons = $isZeroAbsentLessons;
         $this->excuseStatus = $excuseStatus;
+        $this->absenceUrl = $absenceUrl;
     }
 
     /**
@@ -73,5 +79,12 @@ class AbsenceSuggestion {
      */
     public function getExcuseStatus(): int {
         return $this->excuseStatus;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAbsenceUrl(): ?string {
+        return $this->absenceUrl;
     }
 }

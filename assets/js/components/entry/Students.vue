@@ -40,6 +40,11 @@
 
               <span v-if="absence.zero_absent_lessons" class="badge text-bg-info ms-1">0 FS</span>
             </div>
+            <a :href="absence.absence_url"
+               v-if="absence.absence_url !== null"
+               target="_blank"
+               class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-external-link"></i> {{ $trans('actions.show')}}</a>
+
             <button type="button"
                     @click="applyAbsence(absence)"
                     class="btn btn-sm btn-outline-primary">{{ $trans('actions.apply')}}</button>
@@ -452,7 +457,8 @@ export default {
           lastname: student.lastname,
           reasons: [ ],
           zero_absent_lessons: false,
-          status: 0
+          status: 0,
+          absence_url: null
         };
 
         if($this.attendances.filter(x => x.student.uuid === student.uuid).length === 0) {
@@ -466,6 +472,10 @@ export default {
             students[absence.student.uuid].reasons.push(absence.label);
           } else {
             students[absence.student.uuid].reasons.push($this.$trans('book.attendance.absence_reason.' + absence.reason));
+          }
+
+          if(absence.absence_url !== null) {
+            students[absence.student.uuid].absence_url = absence.absence_url;
           }
 
           if(absence.excuse_status) {

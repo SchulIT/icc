@@ -96,7 +96,7 @@
                                                     {% for badge in roomStatus.badges %}
                                                         <a href="{{ roomStatus.link }}" target="_blank" class="me-2 btn btn-sm btn-outline-{% if badge.counter > 0 %}danger{% else %}success{% endif %}" title="{{ badge.label|trans }}">
                                                             {%- if badge.icon is not null -%}<i class="{{ badge.icon }}"></i>{%- endif -%}
-                                                            <span class="badge rounded-pill">{{ badge.counter }}</span>
+                                                            <span class="ms-1 fw-bold" style="font-size: 90%">{{ badge.counter }}</span>
                                                         </a>
                                                     {% endfor %}
                                                 {% endif %}

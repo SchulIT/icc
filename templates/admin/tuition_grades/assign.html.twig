@@ -23,32 +23,31 @@
                     return;
                 }
 
-                // Reset all items
-                select.children.forEach(function(optgroup) {
+                for(const optgroup of select.children) {
                     optgroup.classList.remove('hide');
 
-                    optgroup.children.forEach(function(option) {
+                    for(const option of optgroup.children) {
                         option.classList.remove('hide');
-                    });
-                })
+                    }
+                }
 
                 if(value === null || value === '') {
                     return;
                 }
 
-                select.children.forEach(function(optgroup) {
+                for(const optgroup of select.children) {
                     let hidden = 0;
-                    optgroup.children.forEach(function(option) {
+                    for(const option of optgroup.children) {
                         if(!option.text.includes(value)) {
                             option.classList.add('hide');
                             hidden++;
                         }
-                    });
+                    }
 
                     if(optgroup.children.length === hidden) {
                         optgroup.classList.add('hide');
                     }
-                });
+                }
             });
         });
     </script>

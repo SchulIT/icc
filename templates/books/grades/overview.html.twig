@@ -137,7 +137,7 @@
                                                     {% if isReadonly %}
                                                         <span id="{{ id }}"><i class="fas fa-lock"></i></span>
                                                     {% else %}
-                                                        <select class="custom-select" tabindex="{{ tabindex + (rowCount*loop.index0) + rowIdx }}" disabled="disabled" id="{{ id }}">
+                                                        <select class="form-select" tabindex="{{ tabindex + (rowCount*loop.index0) + rowIdx }}" disabled="disabled" id="{{ id }}">
                                                             <option value=""></option>
                                                             {% for value in category.category.gradeType.values %}
                                                                 <option value="{{ value }}">{{ value }}</option>

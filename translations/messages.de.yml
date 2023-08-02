@@ -1704,6 +1704,9 @@ book:
         add_student:
             label: Lernenden hinzufügen
             success: Lernenden erfolgreich hinzugefügt
+        add_studygroup:
+            label: Lerngruppe hinzufügen
+            success: Lerngruppe erfolgreich hinzugefügt
         propose_cancel:
             label: Entfall-Vorschlag
             message: 'Die %lessons% fällt aus: %reason%'

@@ -58,8 +58,20 @@
             <select id="add_student"></select>
           </div>
           <button type="button" class="btn btn-outline-primary btn-sm ms-2" @click="onAddStudent()">
-            <i class="fas fa-user-plus"></i>
+            <i class="fas fa-plus"></i>
             {{ $trans('book.entry.add_student.label')}}
+          </button>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="d-flex align-items-stretch">
+          <div class="flex-fill">
+            <select id="add_studygroup"></select>
+          </div>
+          <button type="button" class="btn btn-outline-primary btn-sm ms-2" @click="onAddStudyGroup()">
+            <i class="fas fa-user-plus"></i>
+            {{ $trans('book.entry.add_studygroup.label')}}
           </button>
         </div>
       </div>
@@ -236,6 +248,7 @@ export default {
     start: Number,
     end: Number,
     listStudentsUrl: String,
+    listStudyGroupsUrl: String,
     showSaveButton: Boolean
   },
   data() {
@@ -273,6 +286,7 @@ export default {
   },
   mounted() {
     this.studentChoice = new Choices(this.$el.querySelector('#add_student'));
+    this.studyGroupChoice = new Choices(this.$el.querySelector('#add_studygroup'));
   },
   computed: {
     allPresent() {
@@ -408,7 +422,14 @@ export default {
         attendance.excuse_status = status;
       });
     },
-    addStudent(uuid, firstname, lastname, email) {
+    addStudent(uuid, firstname, lastname) {
+      // only add if not already present!
+      for(let attendance of this.attendances) {
+        if(attendance.student.uuid === uuid) {
+          return;
+        }
+      }
+
       let attendance = {
         uuid: '',
         comment: null,
@@ -419,8 +440,7 @@ export default {
         student: {
           uuid: uuid,
           firstname: firstname,
-          lastname: lastname,
-          email: email
+          lastname: lastname
         }
       };
 
@@ -428,7 +448,18 @@ export default {
     },
     onAddStudent() {
       let student = this.studentChoice.getValue();
-      this.addStudent(student.value, student.customProperties.firstname, student.customProperties.lastname, student.customProperties.email);
+      this.addStudent(student.value, student.customProperties.firstname, student.customProperties.lastname);
+    },
+    onAddStudyGroup() {
+      let studyGroup = this.studyGroupChoice.getValue();
+
+      if(studyGroup === null) {
+        return;
+      }
+
+      for(const student of studyGroup.customProperties.students) {
+        this.addStudent(student.uuid, student.firstname, student.lastname);
+      }
     },
     preventReload(event) {
       if(this.showSaveButton === false) {
@@ -462,7 +493,7 @@ export default {
         };
 
         if($this.attendances.filter(x => x.student.uuid === student.uuid).length === 0) {
-          $this.addStudent(student.uuid, student.firstname, student.lastname, student.email);
+          $this.addStudent(student.uuid, student.firstname, student.lastname);
         }
       });
 
@@ -523,7 +554,6 @@ export default {
                 customProperties: {
                   firstname: student.firstname,
                   lastname: student.lastname,
-                  email: student.email
                 }
               });
             });
@@ -531,6 +561,52 @@ export default {
             $this.studentChoice.setChoices(choices, 'value', 'label', true);
           })
           .catch(function(error) {
+            console.error(error);
+          });
+
+      console.log(this.listStudyGroupsUrl);
+
+      this.$http.get(this.listStudyGroupsUrl)
+          .then(function(response) {
+            let choices = [
+              {
+                label: $this.$trans('label.select.study_group'),
+                value: '',
+                selected: true
+              }
+            ];
+
+            for(const detail of response.data) {
+              let grades = [ ];
+
+              for(const grade of detail.study_group.grades) {
+                grades.push(grade.name);
+              }
+
+              let students = [ ];
+
+              for(const student of detail.students) {
+                students.push({
+                  uuid: student.uuid,
+                  firstname: student.firstname,
+                  lastname: student.lastname,
+                });
+              }
+
+              let type = $this.$trans('studygroup.type.' + detail.study_group.type);
+              let name = detail.study_group.name + ' [' + type + '] ' + '(' + grades.join(', ') + ')';
+
+              choices.push({
+                label: name,
+                value: detail.study_group.uuid,
+                customProperties: {
+                  students: students
+                }
+              });
+            }
+
+            $this.studyGroupChoice.setChoices(choices, 'value', 'label', true);
+          }).catch(function(error) {
             console.error(error);
           });
     }

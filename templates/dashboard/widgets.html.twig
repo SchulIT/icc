@@ -256,6 +256,7 @@
                         <div class="align-self-center ps-3">
                                 <entry students-url="{{ url('xhr_students') }}"
                                        teachers-url="{{ url('xhr_teachers') }}"
+                                       study-groups-url="{{ url('xhr_studygroups') }}"
                                        url="{{ path('xhr_lesson_entry', { start: lessonNumber, lesson: lesson.uuid.toString }) }}"
                                        :lesson-number="{{ lessonNumber }}"
                                        {% if app.user.teacher is not null %}teacher="{{ app.user.teacher.acronym }}"{% endif %}
@@ -427,6 +428,7 @@
                     <div class="align-self-center px-3">
                         <entry students-url="{{ url('xhr_students') }}"
                                teachers-url="{{ url('xhr_teachers') }}"
+                               study-groups-url="{{ url('xhr_studygroups') }}"
                                {% if app.user.teacher is not null %}teacher="{{ app.user.teacher.acronym }}"{% endif %}
                                url="{{ path('xhr_lesson_entry', { start: lesson, lesson: timetableLesson.uuid.toString }) }}"
                                :lesson-number="{{ lesson }}"

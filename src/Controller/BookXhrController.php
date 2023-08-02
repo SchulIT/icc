@@ -12,6 +12,7 @@ use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudentAbsence;
 use App\Entity\StudyGroup;
+use App\Entity\StudyGroupMembership;
 use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
@@ -20,12 +21,14 @@ use App\Markdown\Markdown;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
+use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Request\Book\CancelLessonRequest;
 use App\Request\Book\UpdateAttendanceRequest;
 use App\Response\Book\AbsenceSuggestion;
 use App\Response\Book\Student as StudentResponse;
+use App\Response\Book\StudyGroupStudents;
 use App\Response\Book\Teacher as TeacherResponse;
 use App\Response\Book\Subject as SubjectResponse;
 use App\Response\Book\Tuition as TuitionResponse;
@@ -35,6 +38,8 @@ use App\Response\ViolationList;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\LessonEntryVoter;
 use App\Settings\BookSettings;
+use App\Sorting\Sorter;
+use App\Sorting\StudyGroupStrategy;
 use App\Utils\ArrayUtils;
 use DateTime;
 use JMS\Serializer\SerializerInterface;
@@ -118,6 +123,26 @@ class BookXhrController extends AbstractController {
 
         foreach($studentRepository->findAllBySection($section) as $studentEntity) {
             $students[] = $this->getStudent($studentEntity, $section);
+        }
+
+        return $this->returnJson($students, $serializer);
+    }
+
+    #[Route(path: '/studygroups', name: 'xhr_studygroups')]
+    public function studyGroups(StudyGroupRepositoryInterface $studyGroupRepository, SectionResolverInterface $sectionResolver, SerializerInterface $serializer, Sorter $sorter): Response {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::New);
+
+        $section = $sectionResolver->getCurrentSection();
+        $studyGroups = $studyGroupRepository->findAllBySection($section);
+        $sorter->sort($studyGroups, StudyGroupStrategy::class);
+
+        $students = [ ];
+
+        foreach($studyGroups as $studyGroup) {
+            $students[] = new StudyGroupStudents(
+                $this->getStudyGroup($studyGroup),
+                $this->getStudyGroupStudents($studyGroup)
+            );
         }
 
         return $this->returnJson($students, $serializer);
@@ -356,6 +381,14 @@ class BookXhrController extends AbstractController {
             $studyGroup->getType()->value,
             array_map(fn(Grade $grade) => new GradeResponse($grade->getUuid()->toString(), $grade->getName()), $studyGroup->getGrades()->toArray())
         );
+    }
+
+    /**
+     * @param StudyGroup $studyGroup
+     * @return StudentResponse[]
+     */
+    private function getStudyGroupStudents(StudyGroup $studyGroup): array {
+        return array_map(fn(StudyGroupMembership $membership) => $this->getStudent($membership->getStudent(), $studyGroup->getSection()), $studyGroup->getMemberships()->toArray());
     }
 
     private function getTuition(Tuition $tuition): TuitionResponse {

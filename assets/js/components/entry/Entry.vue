@@ -130,6 +130,7 @@
                               :students="students"
                               :step="1"
                               :list-students-url="studentsUrl"
+                              :list-study-groups-url="studyGroupsUrl"
                               :start="entry.start"
                               :end="entry.end"
                               :show-save-button="false"
@@ -238,6 +239,7 @@ export default {
     url: String,
     studentsUrl: String,
     teachersUrl: String,
+    studyGroupsUrl: String,
     teacher: String,
     csrftoken: String,
     csrfname: String,

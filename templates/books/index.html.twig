@@ -441,6 +441,7 @@
                                             <div class="ms-2">
                                                 <entry students-url="{{ url('xhr_students') }}"
                                                        teachers-url="{{ url('xhr_teachers') }}"
+                                                       study-groups-url="{{ url('xhr_studygroups') }}"
                                                        url="{{ path('xhr_lesson_entry', { start: lesson.lessonNumber, lesson: lesson.lesson.uuid.toString }) }}"
                                                        csrfname="_token"
                                                        :lesson-number="{{ lesson.lessonNumber }}"
@@ -544,6 +545,7 @@
                                             <div class="ms-2">
                                                 <entry students-url="{{ url('xhr_students') }}"
                                                        teachers-url="{{ url('xhr_teachers') }}"
+                                                       study-groups-url="{{ url('xhr_studygroups') }}"
                                                        url="{{ path('xhr_lesson_entry', { start: lesson.lessonNumber, lesson: lesson.lesson.uuid.toString }) }}"
                                                        :lesson-number="{{ lesson.lessonNumber }}"
                                                        csrfname="_token"

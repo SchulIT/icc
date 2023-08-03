@@ -59,7 +59,7 @@ class WikiArticle {
     private $visibilities;
 
     #[Gedmo\TreeLeft]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', name: '`left`')]
     private int $left;
 
     #[Gedmo\TreeLevel]
@@ -67,7 +67,7 @@ class WikiArticle {
     private int $level;
 
     #[Gedmo\TreeRight]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', name: '`right`')]
     private int $right;
 
     #[Gedmo\TreeRoot]

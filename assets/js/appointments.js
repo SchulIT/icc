@@ -71,37 +71,35 @@ document.addEventListener('DOMContentLoaded', function () {
             let view = event.extendedProps.view;
             let confirmation_status = event.extendedProps.confirmation_status;
 
-            let template = '<div class="popover" role="tooltip">' +
-                '<div class="popover-arrow"></div>' +
-                '<h3 class="popover-header">' + title + ' <span class="badge" style="background: ' + event.backgroundColor + '; color: ' + event.textColor + '">' + event.extendedProps.category + '</span></h3>' +
-                '<div class="popover-body">';
+            let titleHtml = title + ' <span class="badge" style="background: ' + event.backgroundColor + '; color: ' + event.textColor + ';">' + event.extendedProps.category + '</span>';
+            let contentHtml = '';
+
+            console.log(titleHtml);
 
             if(confirmation_status !== null) {
-                template += '<span class="badge text-bg-danger"><i class="fa fa-information-circle"></i> ' + confirmation_status + '</span>';
+                contentHtml += '<span class="badge text-bg-danger"><i class="fa fa-information-circle"></i> ' + confirmation_status + '</span>';
             }
 
             if(content !== null) {
-                template += '<p>' + content + '</p>';
+                contentHtml += '<p>' + content + '</p>';
             }
 
             view.forEach(function(viewItem) {
-                template += '<p><span class="text-muted">' + viewItem.label + '</span> ' + viewItem.content + '</p>';
+                contentHtml += '<p><span class="text-muted">' + viewItem.label + '</span> ' + viewItem.content + '</p>';
             });
-
-            template += '</div></div>';
 
             let popover = new Popover(info.el, {
                 placement: 'right',
-                template: template,
                 trigger: 'manual',
                 dismissible: true,
                 animation: false,
                 html: true,
-                container: 'body'
+                container: 'body',
+                title: titleHtml,
+                content: contentHtml,
+                sanitize: false
             });
             popover.show();
-
-            console.log(popover);
 
             let eventId = event.id;
             popovers[eventId] = popover;

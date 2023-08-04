@@ -170,7 +170,7 @@
             {{ _self.show_warning(hasWarning) }}
 
             {% if item.lesson is null %}
-                <span class="align-self-center badge badge-light badge-card">{{ 'dashboard.free_hour'|trans|upper }}</span>
+                <span class="align-self-center badge text-bg-light badge-card">{{ 'dashboard.free_hour'|trans|upper }}</span>
             {% else %}
             <div class="align-self-center w-100 d-flex">
                 {% set lessonNumber = lesson %}
@@ -372,7 +372,7 @@
 
             <div class="align-self-center d-flex w-100">
                 <div class="align-self-center d-flex flex-wrap me-auto">
-                    <span class="align-self-center badge {% if item.isFreeLesson %}badge-light badge-card{% else %}badge-warning{% endif%} my-1 me-3">
+                    <span class="align-self-center badge {% if item.isFreeLesson %}text-bg-light badge-card{% else %}text-bg-warning{% endif%} my-1 me-3">
                         {% if substitution.type is not empty %}
                             {{ substitution.type|upper }}
                         {% else %}
@@ -577,7 +577,7 @@
             {% endfor %}
 
             <div class="align-self-center d-flex flex-wrap">
-                <span class="badge me-3 my-1 {% if violations|length == 0 %}badge-light badge-card{% else %}badge-warning{% endif%} align-self-center">
+                <span class="badge me-3 my-1 {% if violations|length == 0 %}text-bg-light badge-card{% else %}text-bg-warning{% endif%} align-self-center">
                     {{ 'dashboard.reservation'|trans|upper }}
                 </span>
 

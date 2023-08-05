@@ -4,8 +4,6 @@ namespace App\Dashboard;
 
 use App\Entity\Teacher;
 use App\Settings\DashboardSettings;
-use App\Sorting\Sorter;
-use App\Sorting\SubstitutionViewItemStrategy;
 use App\Utils\ArrayUtils;
 use InvalidArgumentException;
 
@@ -18,7 +16,7 @@ class DashboardViewCollapseHelper {
     {
     }
 
-    public function collapseView(DashboardView $view, ?Teacher $teacher) {
+    public function collapseView(DashboardView $view, ?Teacher $teacher): void {
         foreach($view->getLessons() as $lesson) {
             $this->collapseLesson($lesson, $view, $teacher);
         }
@@ -53,7 +51,7 @@ class DashboardViewCollapseHelper {
         }
     }
 
-    private function validateTimetableSupervisionsAndExamSupervisions(DashboardView $view) {
+    private function validateTimetableSupervisionsAndExamSupervisions(DashboardView $view): void {
         $lessonNumbers = $view->getLessonNumbers();
 
         foreach($lessonNumbers as $lessonNumber) {
@@ -153,7 +151,7 @@ class DashboardViewCollapseHelper {
 
         // Further classication
         /** @var SubstitutionViewItem[] $additionalSubstitutions */
-        $additionalSubstitutions = array_values(array_filter($substitutions, [ $this, 'isAdditionalSubstitution']));
+        $additionalSubstitutions = array_values(array_filter($substitutions, fn(SubstitutionViewItem $viewItem) => $this->isAdditionalSubstitution($viewItem)));
         /** @var SubstitutionViewItem[] $removableSubstitutions */
         $removableSubstitutions = array_values(array_filter($substitutions, fn(SubstitutionViewItem $viewItem) => $this->isRemovableSubstitution($viewItem, $teacher)));
         /** @var SubstitutionViewItem[] $defaultSubstitutions */
@@ -255,7 +253,7 @@ class DashboardViewCollapseHelper {
      * @param TimetableLessonViewItem[] $lessonViews
      * @return boolean
      */
-    private function canMergeTimetableLessons(array $lessonViews) {
+    private function canMergeTimetableLessons(array $lessonViews): bool {
         $rooms = [ ];
         $locations = [ ];
 
@@ -377,7 +375,7 @@ class DashboardViewCollapseHelper {
      * @param SubstitutionViewItem[] $substitutions
      * @return SubstitutionViewItem[]
      */
-    private function mergeSubstitutions(array $substitutions) {
+    private function mergeSubstitutions(array $substitutions): array {
         /** @var SubstitutionViewItem[] $merged */
         $merged = [ ];
 

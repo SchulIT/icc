@@ -107,6 +107,11 @@ class SubstitutionImporter {
             $substitution->setReplacementTeachers($htmlSubstitution->getReplacementTeachers());
             $substitution->setSubject($this->getSubject($htmlSubstitution->getSubject(), $overrideMap));
             $substitution->setReplacementSubject($this->getSubject($htmlSubstitution->getReplacementSubject(), $overrideMap));
+
+            if(empty($substitution->getReplacementSubject())) {
+                $substitution->setReplacementSubject($substitution->getSubject());
+            }
+
             $substitution->setGrades($htmlSubstitution->getGrades());
             $substitution->setReplacementGrades($htmlSubstitution->getReplacementGrades());
             $substitution->setType($htmlSubstitution->getType());

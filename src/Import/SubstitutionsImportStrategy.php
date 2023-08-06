@@ -194,6 +194,10 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
         } else {
             $entity->getReplacementGrades()->clear();
         }
+
+        if($entity->getReplacementStudyGroups()->count() > 0) {
+            $entity->getReplacementGrades()->clear();
+        }
     }
 
     /**

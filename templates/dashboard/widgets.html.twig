@@ -1,5 +1,5 @@
 {% macro show_lesson(lesson, start, end, warning, large) %}
-    <div class="align-self-center text-center p-3 dashboard-lesson {% if large|default(false) %}dashboard-lesson-large{% endif%} text-black-50">
+    <div class="align-self-center text-center p-3 dashboard-lesson {% if large|default(false) %}dashboard-lesson-large{% endif%} text-body-tertiary">
         {% if start is not empty %}
             <div class="d-block lesson-time">
                 {{ start }}
@@ -170,7 +170,7 @@
             {{ _self.show_warning(hasWarning) }}
 
             {% if item.lesson is null %}
-                <span class="align-self-center badge text-bg-light badge-card">{{ 'dashboard.free_hour'|trans|upper }}</span>
+                <span class="align-self-center badge freelesson badge-card">{{ 'dashboard.free_hour'|trans|upper }}</span>
             {% else %}
             <div class="align-self-center w-100 d-flex">
                 {% set lessonNumber = lesson %}
@@ -372,7 +372,7 @@
 
             <div class="align-self-center d-flex w-100">
                 <div class="align-self-center d-flex flex-wrap me-auto">
-                    <span class="align-self-center badge {% if item.isFreeLesson %}text-bg-light badge-card{% else %}text-bg-warning{% endif%} my-1 me-3">
+                    <span class="align-self-center badge {% if item.isFreeLesson %}freelesson badge-card{% else %}text-bg-warning{% endif%} my-1 me-3">
                         {% if substitution.type is not empty %}
                             {{ substitution.type|upper }}
                         {% else %}

@@ -479,3 +479,7 @@ table {
 .#{$choices-selector}__list--single {
   padding: 1px 16px 0 0 !important;
 }
+
+.badge.freelesson {
+  background-color: var(--bs-tertiary-color);
+}

@@ -30,7 +30,6 @@ class DisplayController extends AbstractController {
                          TimetableWeekRepositoryInterface $timetableWeekRepository, AppointmentRepositoryInterface $appointmentRepository,
                          DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper,
                          ImportDateTypeRepositoryInterface  $importDateTymeRepository, TeacherRepositoryInterface $teacherRepository, CountdownCalculator $countdownCalculator): Response {
-        $dateHelper->setToday(new DateTime('2023-06-01'));
         $today = $dateHelper->getToday();
         $appointments = [ ];
         $groups = [ ];

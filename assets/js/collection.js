@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     function deleteOption() {
-        console.log(this);
-        let selector = this.getAttribute('data-selector') ?? '.form-group';
+        let selector = this.getAttribute('data-selector') ?? '.mb-3';
         this.closest(selector).remove();
     }
 

@@ -483,3 +483,7 @@ table {
 .badge.freelesson {
   background-color: var(--bs-tertiary-color);
 }
+
+img, svg {
+  max-width: 100%;
+}

@@ -409,12 +409,22 @@ export default {
     },
     uploadData(lesson, callback) {
       let url = this.url.replace('uuid', lesson.attendance.attendance.uuid);
+      let comment = lesson.attendance.attendance.comment;
+
+      if(comment !== null) {
+        comment = comment.trim();
+
+        if(comment === '') {
+          comment = null;
+        }
+      }
+
       let request = {
         '_token': this.csrftoken,
         'type': lesson.attendance.attendance.type,
         'absent_lessons': lesson.attendance.attendance.absent_lessons,
         'late_minutes': lesson.attendance.attendance.late_minutes,
-        'comment': lesson.attendance.attendance.comment,
+        'comment': comment,
         'excuse_status': lesson.attendance.attendance.excuse_status
       };
 

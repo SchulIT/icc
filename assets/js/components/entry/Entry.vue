@@ -127,6 +127,7 @@
                   <div class="col-lg-6">
                     <students :attendances="entry.attendances"
                               :possible-absences="absences"
+                              :suggested-removals="removals"
                               :students="students"
                               :step="1"
                               :list-students-url="studentsUrl"
@@ -284,6 +285,7 @@ export default {
       },
       students: [ ],
       absences: [ ],
+      removals: [ ],
       validation: {
         topic: null,
         start: null,
@@ -380,6 +382,7 @@ export default {
             }
 
             $this.absences = response.data.absences;
+            $this.removals = response.data.removals;
             $this.isInitialized = true;
           })
           .catch(function(error) {

@@ -2,7 +2,8 @@
 
 namespace App\Controller;
 
-use App\Book\AbsenceSuggestion\SuggestionResolver;
+use App\Book\AttendanceSuggestion\AbsenceSuggestionResolver;
+use App\Book\AttendanceSuggestion\RemoveSuggestionResolver;
 use App\Book\Lesson\LessonCancelHelper;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Entity\Grade;
@@ -27,6 +28,7 @@ use App\Repository\TimetableLessonRepositoryInterface;
 use App\Request\Book\CancelLessonRequest;
 use App\Request\Book\UpdateAttendanceRequest;
 use App\Response\Book\AbsenceSuggestion;
+use App\Response\Book\RemoveSuggestion;
 use App\Response\Book\Student as StudentResponse;
 use App\Response\Book\StudyGroupStudents;
 use App\Response\Book\Teacher as TeacherResponse;
@@ -85,13 +87,25 @@ class BookXhrController extends AbstractController {
      * @param Tuition $tuition
      * @param DateTime $date
      * @param int $lesson
-     * @param SuggestionResolver $suggestionResolver
+     * @param AbsenceSuggestionResolver $suggestionResolver
      * @return AbsenceSuggestion[]
      */
-    private function possiblyAbsentStudents(Tuition $tuition, DateTime $date, int $lesson, SuggestionResolver $suggestionResolver): array {
+    private function possiblyAbsentStudents(Tuition $tuition, DateTime $date, int $lesson, AbsenceSuggestionResolver $suggestionResolver): array {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         return $suggestionResolver->resolve($tuition, $date, $lesson);
+    }
+
+    /**
+     * @param Tuition $tuition
+     * @param DateTime $date
+     * @param int $lesson
+     * @param RemoveSuggestionResolver $removeSuggestionResolver
+     * @return RemoveSuggestion[]
+     */
+    private function removeSuggestions(Tuition $tuition, DateTime $date, int $lesson, RemoveSuggestionResolver $removeSuggestionResolver): array {
+        $this->denyAccessUnlessGranted(LessonEntryVoter::New);
+        return $removeSuggestionResolver->resolve($tuition, $date, $lesson);
     }
 
     #[Route(path: '/attendances/{uuid}', name: 'xhr_entry_attendances')]
@@ -187,8 +201,8 @@ class BookXhrController extends AbstractController {
     #[OA\Parameter(name: 'start', description: 'Start der Unterrichtsstunde', in: 'query')]
     #[OA\Parameter(name: 'end', description: 'Ende der Unterrichtsstunde', in: 'query')]
     #[Route(path: '/entry', name: 'xhr_lesson_entry', methods: ['GET'])]
-    public function entry(Request $request, TimetableLessonRepositoryInterface $lessonRepository, SuggestionResolver $suggestionResolver,
-                          SerializerInterface $serializer, AbsenceExcuseResolver $excuseResolver, BookSettings $settings): Response {
+    public function entry(Request $request, TimetableLessonRepositoryInterface $lessonRepository, AbsenceSuggestionResolver $suggestionResolver,
+                          SerializerInterface $serializer, AbsenceExcuseResolver $excuseResolver, BookSettings $settings, RemoveSuggestionResolver $removeSuggestionResolver): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $lesson = $lessonRepository->findOneByUuid($request->query->get('lesson'));
@@ -271,6 +285,7 @@ class BookXhrController extends AbstractController {
                 'tuition' => $this->getTuition($lesson->getTuition())
             ],
             'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $start, $suggestionResolver),
+            'removals' => $this->removeSuggestions($lesson->getTuition(), $lesson->getDate(), $start, $removeSuggestionResolver),
             'entry' => $entryJson,
             'students' => $students,
             'has_other_entries' => count($lesson->getEntries()) > 0

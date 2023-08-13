@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Book\AbsenceSuggestion;
+namespace App\Book\AttendanceSuggestion;
 
 use App\Dashboard\Absence\AbsenceResolver;
 use App\Dashboard\AbsentExamStudent;
@@ -17,7 +17,7 @@ use App\Response\Book\Student;
 use DateTime;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SuggestionResolver {
+class AbsenceSuggestionResolver {
     public function __construct(private readonly AbsenceResolver $absenceResolver, private readonly LessonAttendanceRepositoryInterface $attendanceRepository,
                                 private readonly ExcuseNoteRepositoryInterface $excuseNoteRepository, private readonly UrlGeneratorInterface $urlGenerator) {
 

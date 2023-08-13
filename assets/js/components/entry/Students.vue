@@ -29,6 +29,22 @@
         <i class="fa fa-times"></i> {{ $trans('book.attendance.overview.absent', { 'number': numAbsent })}}
       </div>
 
+      <div class="card-body border-top" v-if="removals.length > 0">
+        <ul class="list-unstyled mb-0">
+          <li v-for="removal in removals" class="d-flex align-items-start">
+            <div class="flex-fill">
+              <div>
+                {{ removal.student.lastname }}, {{ removal.student.firstname }}
+              </div>
+              <span class="badge text-bg-primary">{{ removal.reason }}</span>
+            </div>
+            <button type="button"
+                    @click="removeBySuggestion(removal)"
+                    class="btn btn-sm btn-outline-primary ms-1">{{ $trans('book.attendance.remove.label') }}</button>
+          </li>
+        </ul>
+      </div>
+
       <div class="card-body border-top" v-if="absences.length > 0">
         <ul class="list-unstyled mb-0">
           <li v-for="absence in absences" class="d-flex align-items-start">
@@ -243,12 +259,14 @@
 
 <script>
 import Choices from "choices.js";
+import attendanceOverview from "../student/AttendanceOverview.vue";
 
 export default {
   name: 'attendances',
   props: {
     students: Array,
     possibleAbsences: Array,
+    suggestedRemovals: Array,
     attendances: Array,
     step: Number,
     start: Number,
@@ -263,7 +281,8 @@ export default {
       //originalAttendances: this.attendancedata.slice(0, this.attendancedata.length),
       //attendances: this.attendancedata,
       selectedAttendances: [ ],
-      absences: [ ]
+      absences: [ ],
+      removals: [ ]
     }
   },
   watch: {
@@ -433,6 +452,21 @@ export default {
         this.attendances.splice(this.attendances.indexOf(attendance), 1);
       }
     },
+    removeBySuggestion(suggestion) {
+      let attendanceToRemove = null;
+
+      for(let attendance of this.attendances) {
+        if(attendance.student.uuid === suggestion.student.uuid) {
+          attendanceToRemove = attendance;
+          break;
+        }
+      }
+
+      if(attendanceToRemove !== null) {
+        this.remove(attendanceToRemove);
+        this.removals.splice(this.removals.indexOf(suggestion), 1);
+      }
+    },
     addStudent(uuid, firstname, lastname) {
       // only add if not already present!
       for(let attendance of this.attendances) {
@@ -542,6 +576,11 @@ export default {
         }
       }
 
+      $this.removals = [ ];
+      for(let suggestion of $this.suggestedRemovals) {
+        $this.removals.push(suggestion);
+      }
+
       this.$http.get(this.listStudentsUrl)
           .then(function(response) {
             let choices = [
@@ -574,8 +613,6 @@ export default {
           .catch(function(error) {
             console.error(error);
           });
-
-      console.log(this.listStudyGroupsUrl);
 
       this.$http.get(this.listStudyGroupsUrl)
           .then(function(response) {

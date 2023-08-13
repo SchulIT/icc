@@ -1764,7 +1764,7 @@ book:
         absent_lessons: Anzahl Fehlstunden
         late: Verspätung
         remove:
-            label: Lernenden aus Liste löschen
+            label: Aus Liste löschen
         type:
             present: anwesend
             late: verspätet

@@ -63,6 +63,7 @@ use App\Utils\ArrayUtils;
 use App\Utils\StudyGroupHelper;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -75,15 +76,41 @@ class DashboardViewHelper {
                                 private TimetableTimeHelper $timetableTimeHelper, private Sorter $sorter, private Grouper $grouper, private TimetableSettings $timetableSettings, private DashboardSettings $dashboardSettings,
                                 private AuthorizationCheckerInterface $authorizationChecker, private ValidatorInterface $validator, private DateHelper $dateHelper, private AbsenceResolver $absenceResolver,
                                 private SectionResolverInterface $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly TeacherAbsenceLessonRepositoryInterface $absenceLessonRepository,
-                                private readonly BookSettings $bookSettings, private readonly LessonEntryRepositoryInterface $lessonEntryRepository, private readonly TeacherRepositoryInterface $teacherRepository, private readonly StudentRepositoryInterface $studentRepository)
+                                private readonly BookSettings $bookSettings, private readonly LessonEntryRepositoryInterface $lessonEntryRepository, private readonly TeacherRepositoryInterface $teacherRepository,
+                                private readonly StudentRepositoryInterface $studentRepository, private readonly TokenStorageInterface $tokenStorage)
     {
+    }
+
+    private function getTimetableStartDate(): ?DateTime {
+        $user = $this->tokenStorage->getToken()?->getUser();
+
+        if(!$user instanceof User) {
+            return null;
+        }
+
+        return $this->timetableSettings->getStartDate($user->getUserType());
+    }
+
+    private function getTimetableEndDate(): ?DateTime {
+        $user = $this->tokenStorage->getToken()?->getUser();
+
+        if(!$user instanceof User) {
+            return null;
+        }
+
+        return $this->timetableSettings->getEndDate($user->getUserType());
     }
 
     public function createViewForRoom(Room $room, DateTime $dateTime): DashboardView {
         $view = new DashboardView($dateTime);
 
-        $this->addTimetableLessons($this->timetableRepository->findAllByRoom($dateTime, $dateTime, $room), $dateTime, $view, true);
-        $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
+        $start = $this->getTimetableStartDate();
+        $end = $this->getTimetableEndDate();
+
+        if($start !== null && $end !== null && $this->dateHelper->isBetween($dateTime, $start, $end)) {
+            $this->addTimetableLessons($this->timetableRepository->findAllByRoom($dateTime, $dateTime, $room), $dateTime, $view, true);
+            $this->addEmptyTimetableLessons($view, $this->timetableSettings->getMaxLessons());
+        }
 
         $this->addSubstitutions($this->substitutionRepository->findAllForRooms([ $room ], $dateTime), $view, true);
         $this->addExams($exams = $this->examRepository->findAllByRoomAndDate($room, $dateTime), $view, null, true);
@@ -97,8 +124,8 @@ class DashboardViewHelper {
     public function createViewForTeacher(Teacher $teacher, DateTime $dateTime, bool $includeGradeMessages = false): DashboardView {
         $view = new DashboardView($dateTime);
 
-        $start = $this->timetableSettings->getStartDate(UserType::Teacher);
-        $end = $this->timetableSettings->getEndDate(UserType::Teacher);
+        $start = $this->getTimetableStartDate();
+        $end = $this->getTimetableEndDate();
 
         if($start !== null && $end !== null && $this->dateHelper->isBetween($dateTime, $start, $end)) {
             $this->addTimetableLessons($this->timetableRepository->findAllByTeacher($dateTime, $dateTime, $teacher), $dateTime, $view, true);
@@ -143,8 +170,8 @@ class DashboardViewHelper {
 
         $studyGroups = $this->studyGroupHelper->getStudyGroups([$student])->toArray();
 
-        $start = $this->timetableSettings->getStartDate($userType);
-        $end = $this->timetableSettings->getEndDate($userType);
+        $start = $this->getTimetableStartDate();
+        $end = $this->getTimetableEndDate();
 
         if($start !== null && $end !== null && $this->dateHelper->isBetween($dateTime, $start, $end)) {
             $this->addTimetableLessons($this->timetableRepository->findAllByStudent($dateTime, $dateTime, $student), $dateTime, $view, false);

@@ -17,6 +17,13 @@ interface ExcuseNoteRepositoryInterface {
     public function findByStudentsAndDate(array $students, DateTime $date): array;
 
     /**
+     * @param Student $student
+     * @param string $comment
+     * @return ExcuseNote[]
+     */
+    public function findByStudentAndComment(Student $student, string $comment): array;
+
+    /**
      * @param int $itemsPerPage
      * @param int $page
      * @param Student|null $student

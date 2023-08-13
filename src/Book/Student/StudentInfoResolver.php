@@ -16,9 +16,9 @@ use App\Sorting\Sorter;
 class StudentInfoResolver extends AbstractResolver {
 
     public function __construct(LessonAttendanceRepositoryInterface $attendanceRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository,
-                                TimetableSettings $timetableSettings, private readonly BookCommentRepositoryInterface $commentRepository, private readonly TimetableLessonRepositoryInterface $lessonRepository,
+                                ExcuseCollectionResolver $excuseCollectionResolver, private readonly BookCommentRepositoryInterface $commentRepository, private readonly TimetableLessonRepositoryInterface $lessonRepository,
                                 private readonly Sorter $sorter) {
-        parent::__construct($attendanceRepository, $excuseNoteRepository, $timetableSettings);
+        parent::__construct($attendanceRepository, $excuseNoteRepository, $excuseCollectionResolver);
     }
 
     public function resolveStudentInfo(Student $student, ?Section $section, array $tuitions = []): StudentInfo {

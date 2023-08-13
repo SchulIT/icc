@@ -9,7 +9,7 @@ use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Settings\TimetableSettings;
 
 abstract class AbstractResolver {
-    public function __construct(private LessonAttendanceRepositoryInterface $attendanceRepository, private ExcuseNoteRepositoryInterface $excuseNoteRepository, private TimetableSettings $timetableSettings)
+    public function __construct(private readonly LessonAttendanceRepositoryInterface $attendanceRepository, private readonly ExcuseNoteRepositoryInterface $excuseNoteRepository, private readonly ExcuseCollectionResolver $excuseCollectionResolver)
     {
     }
 
@@ -26,27 +26,8 @@ abstract class AbstractResolver {
      * @return ExcuseCollection[]
      */
     protected function computeExcuseCollections(array $excuseNotes): array {
-        /** @var ExcuseCollection[] $collection */
-        $collection = [ ];
-
-        foreach($excuseNotes as $excuseNote) {
-            for($date = clone $excuseNote->getFrom()->getDate(); $date <= $excuseNote->getUntil()->getDate(); $date->modify('+1 day')) {
-                for($lesson = ($date == $excuseNote->getFrom()->getDate() ? $excuseNote->getFrom()->getLesson() : 1);
-                    $lesson <= ($date == $excuseNote->getUntil()->getDate() ? $excuseNote->getUntil()->getLesson() : $this->timetableSettings->getMaxLessons());
-                    $lesson++
-                ) {
-                    $key = sprintf('%s-%d', $date->format('Y-m-d'), $lesson);
-
-                    if(!isset($collection[$key])) {
-                        $collection[$key] = new ExcuseCollection(clone $date, $lesson);
-                    }
-
-                    $collection[$key]->add($excuseNote);
-                }
-            }
-        }
-
-        return $collection;
+        // for compatibility reasons only -> merge with subclasses!
+        return $this->excuseCollectionResolver->resolve($excuseNotes);
     }
 
     /**

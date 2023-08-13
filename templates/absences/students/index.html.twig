@@ -67,6 +67,7 @@
                                         <col class="column-lg">
 
                                         <col class="column-md">
+                                        <col class="column-md">
                                         <col class="column-sm">
                                     </colgroup>
                                     
@@ -78,6 +79,7 @@
                                         <th>{{ 'absences.students.add.absent_from'|trans }}</th>
                                         <th>{{ 'absences.students.add.absent_until'|trans }}</th>
                                         <th>{{ 'absences.created_at'|trans }}</th>
+                                        <th>{{ 'absences.students.excuse_status.label'|trans }}</th>
                                         <th>{{ 'label.grade'|trans }}</th>
                                         <th></th>
                                     </tr>
@@ -118,6 +120,17 @@
                                             <td class="align-middle">{{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }})</td>
                                             <td class="align-middle">{{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})</td>
                                             <td class="align-middle">{{ absence.createdAt|format_datetime }}</td>
+
+                                            <td class="align-middle">
+                                                {% set status = excuseStatus[absence.uuid.toString]|default(null) %}
+                                                {% if status is not null %}
+                                                    {% if status.isCompletelyExcused %}
+                                                        <span class="badge text-bg-success">{{ 'absences.students.excuse_status.excused'|trans }}</span>
+                                                    {% else %}
+                                                        <span class="badge text-bg-warning">{{ 'absences.students.excuse_status.not_excused'|trans }}</span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </td>
 
                                             <td class="align-middle">
                                                 {% set grade = absence.student.grade(section) %}

@@ -49,6 +49,14 @@ class ExcuseNoteRepository extends AbstractRepository implements ExcuseNoteRepos
         return $qb->getQuery()->getResult();
     }
 
+    public function findByStudentAndComment(Student $student, string $comment): array {
+        return $this->em->getRepository(ExcuseNote::class)
+            ->findBy([
+                'student' => $student,
+                'comment' => $comment
+            ]);
+    }
+
     public function persist(ExcuseNote $note): void {
         $this->em->persist($note);
         $this->em->flush();

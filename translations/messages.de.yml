@@ -1613,6 +1613,12 @@ absences:
             success: Abwesenheitsmeldung erfolgreich gelöscht
             confirm: Soll die Abwesenheitsmeldung wirklich gelöscht werden?
 
+        excuse_status:
+            label: Entschuldigungsstatus
+            link: Zur Entschuldigung
+            excused: vollständig entschuldigt
+            not_excused: nicht vollständig entschuldigt
+
         show:
             label: Abwesenheitsmeldung
             header: "Abwesenheitsmeldung von %student%"

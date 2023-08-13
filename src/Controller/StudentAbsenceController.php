@@ -39,6 +39,7 @@ use App\Sorting\Sorter;
 use App\Sorting\StudentAbsenceTuitionGroupStrategy;
 use App\Sorting\StudyGroupStrategy;
 use App\StudentAbsence\ApprovalHelper;
+use App\StudentAbsence\ExcuseNoteStatusResolver;
 use App\Timetable\TimetableTimeHelper;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\GradeFilterView;
@@ -187,7 +188,7 @@ class StudentAbsenceController extends AbstractController {
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, StudentFilter $studentFilter,
                           StudentAbsenceTypeFilter $typeFilter, Request $request,
                           StudentAbsenceRepositoryInterface $absenceRepository, TuitionRepositoryInterface $tuitionRepository,
-                          SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Sorter $sorter, StudentAbsenceSettings $settings): Response {
+                          SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Sorter $sorter, StudentAbsenceSettings $settings, ExcuseNoteStatusResolver $excuseNoteStatusResolver): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::CanViewAny);
 
         if($settings->isEnabled() !== true) {
@@ -289,6 +290,14 @@ class StudentAbsenceController extends AbstractController {
             $pages = ceil((double)$paginator->count() / self::ITEMS_PER_PAGE);
         }
 
+        $excuseStatus = [ ];
+        foreach($groups as $group) {
+            /** @var StudentAbsence[] $absence */
+            foreach($group->getAbsences() as $absence) {
+                $excuseStatus[$absence->getUuid()->toString()] = $excuseNoteStatusResolver->getStatus($absence);
+            }
+        }
+
         return $this->render('absences/students/index.html.twig', [
             'groups' => $groups,
             'sectionFilter' => $sectionFilterView,
@@ -300,13 +309,14 @@ class StudentAbsenceController extends AbstractController {
             'section' => $sectionResolver->getCurrentSection(),
             'pages' => $pages,
             'page' => $page,
-            'isTeacherX' => $request->query->get('teacher') === '✗'
+            'isTeacherX' => $request->query->get('teacher') === '✗',
+            'excuseStatus' => $excuseStatus
         ]);
     }
 
     #[Route(path: '/{uuid}', name: 'show_student_absence')]
     public function show(StudentAbsence $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository, ExamRepositoryInterface $examRepository,
-                         AppointmentRepositoryInterface $appointmentRepository, Sorter $sorter): Response {
+                         AppointmentRepositoryInterface $appointmentRepository, Sorter $sorter, ExcuseNoteStatusResolver $excuseNoteStatusResolver): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $absence);
 
         if($settings->isEnabled() !== true) {
@@ -350,7 +360,8 @@ class StudentAbsenceController extends AbstractController {
             'token_id' => self::CSRF_TOKEN_ID,
             'form' => $form->createView(),
             'exams' => $exams,
-            'appointments' => $appointments
+            'appointments' => $appointments,
+            'excuseStatus' => $excuseNoteStatusResolver->getStatus($absence)
         ]);
     }
 
@@ -366,12 +377,21 @@ class StudentAbsenceController extends AbstractController {
         } else if($absence->getType()->isAlwaysExcused()) {
             $this->addFlash('success', 'absences.students.show.create_excuse_note.not_necessary');
         } else {
-            $excuseNote = (new ExcuseNote())
-                ->setStudent($absence->getStudent())
+            $comment = 'student_absence:' . $absence->getUuid()->toString();
+            $existingNotes = $excuseNoteRepository->findByStudentAndComment($absence->getStudent(), $comment);
+
+            if(count($existingNotes) === 0) {
+                $excuseNote = (new ExcuseNote())
+                    ->setStudent($absence->getStudent())
+                    ->setComment($comment);
+            } else {
+                $excuseNote = array_shift($existingNotes);
+            }
+
+            $excuseNote
                 ->setFrom($absence->getFrom())
                 ->setUntil($absence->getUntil())
-                ->setExcusedBy($user->getTeacher())
-                ->setComment('student_absence:' . $absence->getUuid()->toString());
+                ->setExcusedBy($user->getTeacher());
 
             $excuseNoteRepository->persist($excuseNote);
             $this->addFlash('success', 'book.excuse_note.add.success');

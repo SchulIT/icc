@@ -202,7 +202,7 @@
 
             <div class="col-md-3">
                 {% set canEdit = is_granted('edit', absence) %}
-                {% set canCreateExcuseNote = is_granted('new-excuse') and not absence.type.alwaysExcused %}
+                {% set canCreateExcuseNote = is_granted('new-excuse') and not absence.type.alwaysExcused and not excuseStatus.completelyExcused %}
 
                 {% if canEdit or canCreateExcuseNote %}
                     {% if canCreateExcuseNote %}
@@ -330,6 +330,32 @@
                             <span class="text-muted">{{ 'absences.created_at'|trans }}</span>
                             {{ absence.createdAt|format_datetime }}
                         </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        {{ 'absences.students.excuse_status.label'|trans }}
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        {% for item in excuseStatus.items %}
+                            <div class="list-group-item d-flex">
+                                <div class="me-auto my-auto">
+                                    {{ item.dateLesson.date|format_date }} {{ 'label.substitution_lessons'|trans({'%start%': item.dateLesson.lesson, '%end%': item.dateLesson.lesson, '%count%': 0}) }}
+                                </div>
+
+                                <div class="ms-2">
+                                    {% if item.collection|length > 0 %}
+                                        {% for excuse in item.collection %}
+                                            <a class="btn btn-outline-primary btn-sm" target="_blank" href="{{ path('edit_excuse', { uuid: excuse.uuid }) }}">{{ 'absences.students.excuse_status.link'|trans }} <i class="fa fa-external-link"></i></a>{% if not loop.last %}<br>{% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="badge text-bg-warning">{{ 'absences.students.excuse_status.not_excused'|trans }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

@@ -61,4 +61,10 @@ class DateLesson {
 
         return true;
     }
+
+    public function clone(): DateLesson {
+        return (new DateLesson())
+            ->setDate(clone $this->getDate())
+            ->setLesson($this->getLesson());
+    }
 }

@@ -219,6 +219,12 @@
                   <i class="fas fa-times"></i>
                 </button>
               </div>
+
+              <div class="btn-group align-items-center d-inline-flex ms-1">
+                <button type="button" class="btn btn-outline-danger btn-sm" :title="$trans('book.attendance.remove.label')" @click.prevent="remove(attendance)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -421,6 +427,11 @@ export default {
       this.apply(attendanceOrAttendances, function(attendance) {
         attendance.excuse_status = status;
       });
+    },
+    remove(attendance) {
+      if(this.attendances.indexOf(attendance) !== -1) {
+        this.attendances.splice(this.attendances.indexOf(attendance), 1);
+      }
     },
     addStudent(uuid, firstname, lastname) {
       // only add if not already present!

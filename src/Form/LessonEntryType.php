@@ -77,6 +77,7 @@ class LessonEntryType extends AbstractType {
             ->add('attendances', CollectionType::class, [
                 'entry_type' => LessonAttendanceType::class,
                 'allow_add' => true,
+                'allow_delete' => true,
                 'by_reference' => false
             ]);
 

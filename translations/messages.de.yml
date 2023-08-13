@@ -1763,6 +1763,8 @@ book:
         late_minutes: "%count% min"
         absent_lessons: Anzahl Fehlstunden
         late: Verspätung
+        remove:
+            label: Lernenden aus Liste löschen
         type:
             present: anwesend
             late: verspätet
@@ -1779,6 +1781,8 @@ book:
             exam: Klausur
             absent_before: Abwesenheit in vorheriger Stunde
             excuse: Entschuldigung liegt vor
+        remove_reason:
+            timetable: '%student% besucht %tuition% bei %teacher%'
 
     missing:
         label: Fehlende Einträge

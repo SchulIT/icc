@@ -9,8 +9,9 @@ class GradeFilterView implements FilterViewInterface {
     /**
      * GradeFilterView constructor.
      * @param Grade[] $grades
+     * @param Grade[] $ownGrades
      */
-    public function __construct(private array $grades, private ?Grade $currentGrade)
+    public function __construct(private readonly array $grades, private readonly ?Grade $currentGrade, private readonly array $ownGrades)
     {
     }
 
@@ -23,6 +24,10 @@ class GradeFilterView implements FilterViewInterface {
 
     public function getCurrentGrade(): ?Grade {
         return $this->currentGrade;
+    }
+
+    public function getOwnGrades(): array {
+        return $this->ownGrades;
     }
 
     public function isEnabled(): bool {

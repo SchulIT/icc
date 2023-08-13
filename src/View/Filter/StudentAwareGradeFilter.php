@@ -8,7 +8,7 @@ use App\Entity\Student;
 class StudentAwareGradeFilter {
     public function handle(?string $gradeUuid, ?Section $section, ?Student $student): GradeFilterView {
         if($section === null || $student === null) {
-            return new GradeFilterView([], null);
+            return new GradeFilterView([], null, []);
         }
 
         $grade = $student->getGrade($section);
@@ -21,6 +21,6 @@ class StudentAwareGradeFilter {
             }
         }
 
-        return new GradeFilterView($grades, $grade);
+        return new GradeFilterView($grades, $grade, []);
     }
 }

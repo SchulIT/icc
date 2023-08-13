@@ -201,7 +201,7 @@ class StudentAbsenceController extends AbstractController {
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
 
         if($user->isStudentOrParent()) {
-            $gradeFilterView = new GradeFilterView([], null);
+            $gradeFilterView = new GradeFilterView([], null, []);
         }
 
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user);

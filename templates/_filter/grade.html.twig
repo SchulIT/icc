@@ -22,22 +22,44 @@
                 </button>
             </div>
         {% else %}
-        <select name="grade" id="grade" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="true">
-            <option value="" placeholder>{{ 'label.select.grade'|trans }}</option>
-            {% for g in gradeFilter.grades %}
-                <option value="{{ g.uuid }}" {% if gradeFilter.currentGrade != null and gradeFilter.currentGrade.uuid == g.uuid %}selected="selected"{% endif %}>
-                    {{ g.getName() }}
+            <select name="grade" id="grade" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="true">
+                <option value="" placeholder>{{ 'label.select.grade'|trans }}</option>
+                {% for g in gradeFilter.grades %}
+                    <option value="{{ g.uuid }}" {% if gradeFilter.currentGrade != null and gradeFilter.currentGrade.uuid == g.uuid %}selected="selected"{% endif %}>
+                        {{ g.getName() }}
 
-                    {% set teachers = [] %}
-                    {%- for t in g.teachers|sort_gradeteachers -%}
-                        {%- if sectionFilter is defined and sectionFilter.currentSection == t.section -%}
-                            {% set teachers = teachers|merge([t.teacher.acronym]) %}
-                        {%- endif -%}
-                    {%- endfor -%}
-                    {% if teachers|length > 0 %}({{ teachers|join(', ') }}){% endif %}
-                </option>
-            {% endfor %}
-        </select>
+                        {% set teachers = [] %}
+                        {%- for t in g.teachers|sort_gradeteachers -%}
+                            {%- if sectionFilter is defined and sectionFilter.currentSection == t.section -%}
+                                {% set teachers = teachers|merge([t.teacher.acronym]) %}
+                            {%- endif -%}
+                        {%- endfor -%}
+                        {% if teachers|length > 0 %}({{ teachers|join(', ') }}){% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+
+            {% if gradeFilter.ownGrades|length > 0 %}
+                <div class="list-group list-group-flush mt-2">
+                    {% for grade in gradeFilter.ownGrades %}
+                    <button type="submit" name="grade" id="grade" value="{{ grade.uuid }}" class="btn btn-outline-secondary w-100 text-start {% if gradeFilter.currentGrade != null and gradeFilter.currentGrade.id == grade.id %}active{% endif %}">
+                        {{ grade.name }}
+
+                        {% set teachers = [] %}
+                        {%- for t in grade.teachers|sort_gradeteachers -%}
+                            {%- if sectionFilter is defined and sectionFilter.currentSection == t.section -%}
+                                {% set teachers = teachers|merge([t.teacher.acronym]) %}
+                            {%- endif -%}
+                        {%- endfor -%}
+                        {% for teacher in teachers %}
+                            <span class="badge bg-primary">{{ teacher }}</span>
+                        {% endfor %}
+                    </button>
+                    {% endfor %}
+                </div>
+            {% endif %}
         {% endif %}
+
+
     </div>
 </form>

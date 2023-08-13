@@ -493,6 +493,11 @@ export default {
     },
     onAddStudent() {
       let student = this.studentChoice.getValue();
+
+      if(student.value === '') {
+        return;
+      }
+
       this.addStudent(student.value, student.customProperties.firstname, student.customProperties.lastname);
     },
     onAddStudyGroup() {

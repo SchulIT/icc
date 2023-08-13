@@ -292,7 +292,7 @@ class StudentAbsenceController extends AbstractController {
 
         $excuseStatus = [ ];
         foreach($groups as $group) {
-            /** @var StudentAbsence[] $absence */
+            /** @var StudentAbsence $absence */
             foreach($group->getAbsences() as $absence) {
                 $excuseStatus[$absence->getUuid()->toString()] = $excuseNoteStatusResolver->getStatus($absence);
             }

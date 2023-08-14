@@ -125,8 +125,8 @@ class AbsenceCleanerTest extends TestCase {
         $this->assertCount(1, $absences);
 
         $first = $absences[0];
-        $this->assertEquals(1, $first->getLessonStart());
-        $this->assertEquals(8, $first->getLessonEnd());
+        $this->assertNull($first->getLessonStart());
+        $this->assertNull($first->getLessonEnd());
     }
 
     public function testRemoveAbsenceOnEvent() {

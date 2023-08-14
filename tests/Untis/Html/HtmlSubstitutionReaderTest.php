@@ -40,7 +40,7 @@ class HtmlSubstitutionReaderTest extends TestCase {
         $this->assertEquals(2, count($result->getFreeLessons()));
         $this->assertEquals(8, count($result->getAbsences()));
 
-        $this->assertEquals(7, count($result->getSubstitutions()));
+        $this->assertEquals(9, count($result->getSubstitutions()));
 
         $firstSubstitution = $result->getSubstitutions()[0];
         $this->assertEquals(1, $firstSubstitution->getId());

@@ -21,6 +21,30 @@
         <div class="card-body">
             {{ form_row(form.substitution_days) }}
             {{ form_row(form.collapse_substitutions) }}
+
+            <div class="mb-3 row">
+                {{ form_label(form.ignored_substitution_types) }}
+
+                <div class="col-sm-10">
+                    <div class="rules" data-collection="ignored_substitution_types" data-prototype="{{ form_widget(form.ignored_substitution_types.vars.prototype)|e('html_attr') }}">
+                        {% for type in form.ignored_substitution_types %}
+                            {{ form_widget(type) }}
+                        {% endfor %}
+                    </div>
+
+                    {{ form_errors(form.ignored_substitution_types) }}
+                    {{ form_help(form.ignored_substitution_types) }}
+
+                    {% do form.ignored_substitution_types.setRendered(true) %}
+
+                    <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="ignored_substitution_types">
+                        <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+                    </button>
+                </div>
+            </div>
+
+            {{ form_row(form.events_type) }}
+            {{ form_row(form.remove_absences_on_event) }}
         </div>
     </div>
 

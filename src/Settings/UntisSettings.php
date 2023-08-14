@@ -33,6 +33,30 @@ class UntisSettings extends AbstractSettings {
         return $this->getValue('untis.import.substitution.collapse', true);
     }
 
+    public function getIgnoredSubstitutionTypes(): array {
+        return $this->getValue('untis.import.substitution.ignored_types', [ 'Klausur' ]);
+    }
+
+    public function setIgnoredSubstitutionTypes(array $types): void {
+        $this->setValue('untis.import.substitution.ignored_types', $types);
+    }
+
+    public function getEventsType(): ?string {
+        return $this->getValue('untis.import.substitution.events.type', 'Veranst.');
+    }
+
+    public function setEventsType(?string $type): void {
+        $this->setValue('untis.import.substitution.events.type', $type);
+    }
+
+    public function isRemoveAbsenceOnEventEnabled(): bool {
+        return $this->getValue('untis.import.substitution.events.remove_absence', true);
+    }
+
+    public function setRemoveAbsenceOnEventEnabled(bool $isEnabled): void {
+        $this->setValue('untis.import.substitution.events.remove_absence', $isEnabled);
+    }
+
     public function setSubstitutionCollapsingEnabled(bool $value) {
         $this->setValue('untis.import.substitution.collapse', $value);
     }

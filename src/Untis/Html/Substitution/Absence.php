@@ -14,6 +14,14 @@ class Absence {
         return $this->objective;
     }
 
+    public function setLessonStart(?int $lessonStart): void {
+        $this->lessonStart = $lessonStart;
+    }
+
+    public function setLessonEnd(?int $lessonEnd): void {
+        $this->lessonEnd = $lessonEnd;
+    }
+
     public function getLessonStart(): ?int {
         return $this->lessonStart;
     }

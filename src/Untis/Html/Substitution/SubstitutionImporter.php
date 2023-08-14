@@ -18,7 +18,17 @@ use App\Request\Data\SubstitutionsData;
 use App\Settings\UntisSettings;
 
 class SubstitutionImporter {
-    public function __construct(private Importer                   $importer, private SubstitutionsImportStrategy $substitutionStrategy, private InfotextsImportStrategy $infotextStrategy, private FreeTimespanImportStrategy $freeTimespanStrategy, private AbsencesImportStrategy $absenceStrategy, private SubstitutionReader $reader, private UntisSettings              $untisSettings)
+
+    private const EventsPrefix = 'V';
+
+    public function __construct(private readonly Importer $importer,
+                                private readonly SubstitutionsImportStrategy $substitutionStrategy,
+                                private readonly InfotextsImportStrategy $infotextStrategy,
+                                private readonly FreeTimespanImportStrategy $freeTimespanStrategy,
+                                private readonly AbsencesImportStrategy $absenceStrategy,
+                                private readonly SubstitutionReader $reader,
+                                private readonly UntisSettings $untisSettings,
+                                private readonly AbsenceCleaner $absenceCleaner)
     {
     }
 
@@ -54,7 +64,7 @@ class SubstitutionImporter {
 
         $absences = [ ];
 
-        foreach($result->getAbsences() as $absence) {
+        foreach($this->absenceCleaner->getCleanedAbsences($result) as $absence) {
             $absences[] = (new AbsenceData())
                 ->setDate($result->getDateTime())
                 ->setLessonStart($absence->getLessonStart())
@@ -94,6 +104,10 @@ class SubstitutionImporter {
         $overrideMap = $this->getSubjectOverrideMap();
 
         foreach($result->getSubstitutions() as $htmlSubstitution) {
+            if($htmlSubstitution->getType() !== null && in_array($htmlSubstitution->getType(), $this->untisSettings->getIgnoredSubstitutionTypes())) {
+                continue;
+            }
+
             $substitution = new SubstitutionData();
 
             $substitution->setId((string)$htmlSubstitution->getId());
@@ -116,6 +130,11 @@ class SubstitutionImporter {
             $substitution->setReplacementGrades($htmlSubstitution->getReplacementGrades());
             $substitution->setType($htmlSubstitution->getType());
             $substitution->setText($htmlSubstitution->getRemark());
+
+            if($this->untisSettings->getEventsType() !== null && $htmlSubstitution->getType() === $this->untisSettings->getEventsType() && $substitution->getId() !== null) {
+                // Unfortunately Untis exports the event ID as substitution ID in the HTML, so we need to prefix it to prevent clashes :)
+                $substitution->setId(self::EventsPrefix . $substitution->getId());
+            }
 
             $substitutions[] = $substitution;
         }

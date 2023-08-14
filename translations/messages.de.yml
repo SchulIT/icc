@@ -1890,6 +1890,17 @@ import:
             collapse:
                 label: Vertretungen zusammenfassen
                 help: Standardmäßig werden Vertretungen pro Stunde exportiert. Wenn diese Option aktiv ist, werden Doppelstunden-Vertretungen erkannt und nicht einzeln im System importiert (erhöht die Lesbarkeit des Vertretungsplans).
+            ignored_types:
+                label: Ignorierte Vertretungsarten
+                help: Vertretungen mit dieser Vertretungsart werden beim Import ignoriert und verworfen.
+            events:
+                type:
+                    label: Vertretungsart für Veranstaltungen
+                    help: Die von Untis exportierte Vertretungsart, welche eine Veranstaltung angibt. Dieses Feld sollte nicht leer sein, da es beim HTML-Import anderenfalls zu Fehlern kommt.
+                remove_absence:
+                    label: Absenzen löschen bei Veranstaltungen
+                    help: Standardmäßig wird bei Veranstaltungen auch eine entsprechende Absenz der Klasse(n) erzeugt. Um Anzeigefehler zu vermeiden, können bei aktivierter Option Absenzen automatisch gelöscht werden, wenn zeitgleich eine Veranstaltung für die Klasse(n) stattfindet.
+
         exams:
             include_students:
                 label: Klausurschreibende immer aus Untis importieren

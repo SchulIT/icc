@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Converter\EnumStringConverter;
 use App\Entity\Student;
 use App\Form\Import\Untis\RoomImportType;
+use App\Form\TextCollectionEntryType;
 use App\Request\ValidationFailedException;
 use App\Untis\Gpu\Room\RoomImporter;
 use App\Untis\StudentId\StudentIdGenerator;
@@ -86,6 +87,26 @@ class UntisImportController extends AbstractController {
                 ],
                 'data' => $settings->isSubstitutionCollapsingEnabled()
             ])
+            ->add('ignored_substitution_types', CollectionType::class, [
+                'entry_type' => TextCollectionEntryType::class,
+                'label' => 'import.settings.substitutions.ignored_types.label',
+                'help' => 'import.settings.substitutions.ignored_types.help',
+                'allow_add' => true,
+                'allow_delete' => true,
+                'data' => $settings->getIgnoredSubstitutionTypes()
+            ])
+            ->add('events_type', TextType::class, [
+                'label' => 'import.settings.substitutions.events.type.label',
+                'help' => 'import.settings.substitutions.events.type.help',
+                'required' => false,
+                'data' => $settings->getEventsType()
+            ])
+            ->add('remove_absences_on_event', CheckboxType::class, [
+                'label' => 'import.settings.substitutions.events.remove_absence.label',
+                'help' => 'import.settings.substitutions.events.remove_absence.help',
+                'required' => false,
+                'data' => $settings->isRemoveAbsenceOnEventEnabled()
+            ])
             ->add('exam_writers', CheckboxType::class, [
                 'label' => 'import.settings.exams.include_students.label',
                 'help' => 'import.settings.exams.include_students.help',
@@ -161,6 +182,9 @@ class UntisImportController extends AbstractController {
             $settings->setStudentIdentifierNumberOfLettersOfLastname($form->get('student_id_lastname_letters')->getData());
             $settings->setStudentIdentifierBirthdayFormat($form->get('student_id_birthday_format')->getData());
             $settings->setStudentIdentifierSeparator($form->get('student_id_separator')->getData());
+            $settings->setEventsType($form->get('events_type')->getData());
+            $settings->setIgnoredSubstitutionTypes($form->get('ignored_substitution_types')->getData());
+            $settings->setRemoveAbsenceOnEventEnabled($form->get('remove_absences_on_event')->getData());
 
             /** @var UploadedFile|null $file */
             $file = $form->get('import_weeks')->getData();

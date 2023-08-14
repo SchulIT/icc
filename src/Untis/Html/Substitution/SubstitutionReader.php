@@ -19,12 +19,10 @@ class SubstitutionReader extends AbstractHtmlReader {
     private const SubstitutionsTableSelectorClass = 'mon_list';
     private const SubstitutionEntryClass = 'list';
 
-    private const IgnoredSubstitutionTypes = [ 'Veranst.', 'Klausur' ];
-
     /**
      * @param InfotextReaderInterface[] $infotextReader
      */
-    public function __construct(private iterable $infotextReader, private TableCellParser $tableCellParser, private UntisHtmlSettings $settings)
+    public function __construct(private readonly iterable $infotextReader, private readonly TableCellParser $tableCellParser, private readonly UntisHtmlSettings $settings)
     {
     }
 
@@ -125,9 +123,7 @@ class SubstitutionReader extends AbstractHtmlReader {
                 $substitution->setReplacementRooms([]);
             }
 
-            if(!in_array($substitution->getType(), self::IgnoredSubstitutionTypes)) {
-                $result->addSubstitution($substitution);
-            }
+            $result->addSubstitution($substitution);
         }
     }
 

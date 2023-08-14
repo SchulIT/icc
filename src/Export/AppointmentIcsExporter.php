@@ -99,7 +99,7 @@ class AppointmentIcsExporter {
             $description[] = $this->translator->trans('plans.appointments.export.category', ['%name%' => $appointment->getCategory()->getName() ]);
         }
 
-        if($appointment->getOrganizers()->count() > 0 || !empty($appointment->getExternalOrganizers())) {
+        /*if($appointment->getOrganizers()->count() > 0 || !empty($appointment->getExternalOrganizers())) {
             $organizers = $appointment->getOrganizers()->map(fn(Teacher $teacher) => $this->teacherConverter->convert($teacher))->toArray();
             $organizers[] = $appointment->getExternalOrganizers();
 
@@ -107,7 +107,7 @@ class AppointmentIcsExporter {
                 '%count%' => count($organizers),
                 '%name%' => implode(', ', $organizers)
             ]);
-        }
+        }*/
 
         return implode('\n', $description);
     }

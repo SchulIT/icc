@@ -44,7 +44,7 @@ class ExcuseStatusItem {
             return true;
         }
 
-        if($this->excuseCollection !== null && count($this->excuseCollection) > 1) {
+        if($this->excuseCollection !== null && count($this->excuseCollection) > 0) {
             return true;
         }
 

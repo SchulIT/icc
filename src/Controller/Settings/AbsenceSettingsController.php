@@ -35,12 +35,6 @@ class AbsenceSettingsController extends AbstractController {
                     'class' => 'checkbox-custom'
                 ]
             ])
-            ->add('recipient', EmailType::class, [
-                'required' => false,
-                'data' => $studentAbsenceSettings->getRecipient(),
-                'label' => 'admin.settings.student_absences.recipient.label',
-                'help' => 'admin.settings.student_absences.recipient.help'
-            ])
             ->add('introduction_text', MarkdownType::class, [
                 'required' => false,
                 'data' => $studentAbsenceSettings->getIntroductionText(),
@@ -113,9 +107,6 @@ class AbsenceSettingsController extends AbstractController {
             $map = [
                 'enabled' => function($enabled) use ($studentAbsenceSettings) {
                     $studentAbsenceSettings->setEnabled($enabled);
-                },
-                'recipient' => function($recipient) use ($studentAbsenceSettings) {
-                    $studentAbsenceSettings->setRecipient($recipient);
                 },
                 'privacy_url' => function($url) use ($studentAbsenceSettings) {
                     $studentAbsenceSettings->setPrivacyUrl($url);

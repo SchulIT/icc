@@ -14,14 +14,6 @@ class StudentAbsenceSettings extends AbstractSettings {
         $this->setValue('student_absences.enabled', $enabled);
     }
 
-    public function getRecipient(): ?string {
-        return $this->getValue('student_absences.recipient', null);
-    }
-
-    public function setRecipient(?string $recipient): void {
-        $this->setValue('student_absences.recipient', $recipient);
-    }
-
     public function getPrivacyUrl(): ?string {
         return $this->getValue('student_absences.privacy_url', null);
     }

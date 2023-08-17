@@ -205,18 +205,12 @@ document.addEventListener('DOMContentLoaded', function() {
         let spinner = '<i class="fas fa-spinner fa-pulse"></i>';
         let initialized = false;
 
-        let template = '<div class="popover" role="tooltip">' +
-            '<div class="arrow"></div>' +
-            '<h3 class="popover-header">' + title + '</h3>' +
-            '<div class="popover-body" id="' + contentId +'">' +
-            spinner +
-            '</div></div>';
-
-        new Popover(el, {
+        let popover = new Popover(el, {
             placement: 'bottom',
-            template: template,
-            trigger: 'hover',
-            animation: 'none'
+            title: title,
+            content: spinner,
+            html: true,
+            trigger: 'hover'
         });
 
         el.addEventListener('shown.bs.popover', function(event) {
@@ -234,13 +228,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         contentElement.innerHTML = xhr.responseText;
                     }
 
-                    el.Popover.template = '<div class="popover" role="tooltip">' +
-                        '<div class="arrow"></div>' +
-                        '<h3 class="popover-header">' + title + '</h3>' +
-                        '<div class="popover-body" id="' + contentId +'">' +
-                            xhr.responseText +
-                        '</div></div>';
-
+                    popover.setContent({
+                        '.popover-body': xhr.responseText
+                    });
                     initialized = true;
                 } else {
                     console.error('XMLHttpRequest error');

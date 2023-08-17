@@ -24,27 +24,29 @@
                         {% endif %}
                     </div>
                 {% else %}
-                    <div class="card-columns">
+                    <div class="row" data-masonry='{"percentPosition": true }'>
                         {% for group in categories %}
-                            <div class="card">
-                                <div class="card-header d-flex">
-                                    <div class="flex-fill">
-                                        {% if group.category.icon is not empty %}
-                                            <i class="{{ group.category.icon }}"></i>
-                                        {% else %}
-                                            <i class="far fa-folder"></i>
-                                        {% endif %}{{ group.category.name }}
+                            <div class="col-sm-6 col-lg-4 col-xl-3">
+                                <div class="card">
+                                    <div class="card-header d-flex">
+                                        <div class="flex-fill">
+                                            {% if group.category.icon is not empty %}
+                                                <i class="{{ group.category.icon }}"></i>
+                                            {% else %}
+                                                <i class="far fa-folder"></i>
+                                            {% endif %}{{ group.category.name }}
+                                        </div>
+
+                                        <div class="flex-shrink-0">
+                                            <i class="far fa-copy"></i> {{ group.documents|length }}
+                                        </div>
                                     </div>
 
-                                    <div class="flex-shrink-0">
-                                        <i class="far fa-copy"></i> {{ group.documents|length }}
+                                    <div class="list-group list-group-flush">
+                                        {% for document in group.documents %}
+                                            <a href="{{ path('show_document', { uuid: document.uuid }) }}" class="list-group-item list-group-item-action"><i class="far fa-file"></i> {{ document.title }}</a>
+                                        {% endfor %}
                                     </div>
-                                </div>
-
-                                <div class="list-group list-group-flush">
-                                    {% for document in group.documents %}
-                                        <a href="{{ path('show_document', { uuid: document.uuid }) }}" class="list-group-item list-group-item-action"><i class="far fa-file"></i> {{ document.title }}</a>
-                                    {% endfor %}
                                 </div>
                             </div>
                         {% endfor %}

@@ -6,6 +6,7 @@ use App\Book\Student\ExcuseCollection;
 use App\Entity\DateLesson;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\LessonAttendanceType;
 
 class ExcuseStatusItem {
 
@@ -37,6 +38,10 @@ class ExcuseStatusItem {
     public function isExcused(): bool {
         if($this->attendance !== null && $this->attendance->getExcuseStatus() === LessonAttendanceExcuseStatus::NotExcused) {
             return false;
+        }
+
+        if($this->attendance !== null && $this->attendance->getType() !== LessonAttendanceType::Absent) {
+            return true;
         }
 
         if($this->excuseCollection !== null && count($this->excuseCollection) > 1) {

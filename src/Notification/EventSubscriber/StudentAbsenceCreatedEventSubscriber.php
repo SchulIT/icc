@@ -2,6 +2,7 @@
 
 namespace App\Notification\EventSubscriber;
 
+use App\Entity\User;
 use App\Event\StudentAbsenceCreatedEvent;
 use App\Notification\NotificationService;
 use App\Notification\StudentAbsenceNotification;
@@ -23,6 +24,12 @@ class StudentAbsenceCreatedEventSubscriber implements EventSubscriberInterface {
             if($event->getAbsence()->getCreatedBy()->getId() !== $user->getId()) {
                 $recipients[] = $user;
             }
+        }
+
+        foreach($event->getAbsence()->getType()->getAdditionalRecipients() as $additionalRecipient) {
+            $recipients[] = (new User())
+                ->setEmail($additionalRecipient)
+                ->setUsername($additionalRecipient);
         }
 
         foreach($recipients as $recipient) {

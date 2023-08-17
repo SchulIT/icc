@@ -40,6 +40,13 @@ class StudentAbsenceType implements Stringable {
     #[ORM\Column(type: 'boolean')]
     private bool $isAlwaysExcused = false;
 
+    #[ORM\Column(type: 'json')]
+    #[Assert\All([
+        new Assert\NotBlank(),
+        new Assert\Email()
+    ])]
+    private array $additionalRecipients = [ ];
+
     /**
      * @var Collection<UserTypeEntity>
      */
@@ -100,6 +107,20 @@ class StudentAbsenceType implements Stringable {
 
     public function getAllowedUserTypes(): Collection {
         return $this->allowedUserTypes;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getAdditionalRecipients(): array {
+        return $this->additionalRecipients;
+    }
+
+    /**
+     * @param string[] $additionalRecipients
+     */
+    public function setAdditionalRecipients(array $additionalRecipients): void {
+        $this->additionalRecipients = $additionalRecipients;
     }
 
     public function __toString(): string {

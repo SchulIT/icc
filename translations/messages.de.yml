@@ -263,6 +263,9 @@ label:
         text:
             label: Countdown-Text
             help: Dieser Text wird über dem Tages-Countdown angezeigt.
+    additional_recipients:
+        label: Zusätzliche Empfänger
+        help: Beim Erstellen wird zusätzlich eine E-Mail an die folgenden Empfänger versendet.
 
 markdown:
     link_broken: Dieser Verweis ist defekt.

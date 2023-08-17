@@ -16,12 +16,12 @@ class ExcuseStatusResolver {
     }
 
     public function getStatus(StudentAbsence $absence): ExcuseStatus {
-        if($absence->getType()->isMustApprove()) {
-            return new ExcuseStatus([], $absence->isApproved());
+        if($absence->getType()->isMustApprove() && $absence->isApproved()) {
+            return new ExcuseStatus([]);
         }
 
         if($absence->getType()->isAlwaysExcused()) {
-            return new ExcuseStatus([], true);
+            return new ExcuseStatus([]);
         }
 
         $lessonsToExcuse = $this->expandRangeToDateLessons($absence->getFrom(), $absence->getUntil());

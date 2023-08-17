@@ -39,7 +39,7 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
             ->select('mInner.id')
             ->from(Message::class, 'mInner')
             ->leftJoin('mInner.visibilities', 'vInner')
-            ->where('vInner.userType = :userType')
+            ->where('vInner.userType IN(:userTypes)')
             ->andWhere('mInner.scope = :scope');
 
         if($today !== null) {
@@ -70,8 +70,13 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
 
         $qb
             ->where($qb->expr()->in('m.id', $qbInner->getDQL()))
-            ->setParameter('scope', $scope)
-            ->setParameter('userType', $userType->value);
+            ->setParameter('scope', $scope);
+
+        if($userType === UserType::Parent) {
+            $qb->setParameter('userTypes', [ $userType->value, UserType::Student->value ]);
+        } else {
+            $qb->setParameter('userTypes', [$userType->value]);
+        }
 
         return $qb;
     }

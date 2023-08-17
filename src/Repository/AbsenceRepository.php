@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Absence;
+use App\Entity\Room;
 use App\Entity\Student;
 use DateTime;
 
@@ -29,6 +30,21 @@ class AbsenceRepository extends AbstractTransactionalRepository implements Absen
             ->setParameter('date', $date);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findAllRoomsByDate(Room $room, DateTime $dateTime): array {
+        $qb = $this->em->createQueryBuilder();
+
+        return $this->em->createQueryBuilder()
+            ->select(['p', 'r'])
+            ->from(Absence::class, 'p')
+            ->leftJoin('p.room', 'r')
+            ->where('r.id = :room')
+            ->andWhere('p.date = :date')
+            ->setParameter('room', $room->getId())
+            ->setParameter('date', $dateTime)
+            ->getQuery()
+            ->getResult();
     }
 
     /**

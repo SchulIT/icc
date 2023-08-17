@@ -7,6 +7,18 @@
         {{ 'resources.reservations.available'|trans }}
     {% endif %}
 
+    {% for absence in availability.absences %}
+        <div class="d-block">
+            <span class="badge text-bg-primary">{{ 'resources.reservations.room_absent'|trans|upper }}</span>
+
+            {%- if absence.lessonStart is not null and absence.lessonEnd is not null %}
+                ({{ 'label.substitution_lessons'|trans({'%start%': absence.lessonStart, '%end%': absence.lessonEnd, '%count%': (absence.lessonEnd - absence.lessonStart)}) }})
+            {%- else -%}
+
+            {% endif %}
+        </div>
+    {% endfor %}
+
     {% if availability.timetableLesson is not null %}
         <div class="d-block">
             {%- set lesson = availability.timetableLesson -%}

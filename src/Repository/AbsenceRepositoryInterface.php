@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Absence;
+use App\Entity\Room;
 use App\Entity\Student;
 use DateTime;
 
@@ -24,6 +25,13 @@ interface AbsenceRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Absence[]
      */
     public function findAllStudyGroups(DateTime $date): array;
+
+    /**
+     * @param Room $room
+     * @param DateTime $dateTime
+     * @return Absence[]
+     */
+    public function findAllRoomsByDate(Room $room, DateTime $dateTime): array;
 
     /**
      * @param Student[] $students

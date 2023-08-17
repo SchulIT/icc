@@ -487,6 +487,7 @@ resources:
         info: Informationen
         available: Der Raum ist nicht belegt und kann reserviert werden.
         not_available: Der Raumbelegplan kann nicht angezeigt werden, da dem ausgewählten Datum keine Periode oder Woche zugeordnet werden kann.
+        room_absent: Raum gesperrt
         reservation: Reservierung
         add:
             label: Neue Reservierung

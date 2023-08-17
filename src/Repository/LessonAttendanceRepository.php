@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\DateLesson;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonAttendanceType;
 use App\Entity\LessonEntry;
@@ -145,6 +146,19 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->setParameter('students', $studentIds)
             ->setParameter('type', LessonAttendanceType::Absent);
         $this->applyTuition($qb, $tuitions);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findByStudentAndDateRange(Student $student, DateTime $start, DateTime $end): array {
+        $qb = $this->getDefaultQueryBuilder();
+
+        $qb->andWhere('s.id = :student')
+            ->setParameter('student', $student->getId())
+            ->andWhere('l.date >= :start')
+            ->setParameter('start', $start)
+            ->andWhere('l.date <= :end')
+            ->setParameter('end', $end);
 
         return $qb->getQuery()->getResult();
     }

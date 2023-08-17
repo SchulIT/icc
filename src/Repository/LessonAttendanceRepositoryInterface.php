@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\DateLesson;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
@@ -50,6 +51,14 @@ interface LessonAttendanceRepositoryInterface {
      * @return LessonAttendance[]
      */
     public function findAbsentByStudentsAndDate(array $students, DateTime $dateTime): array;
+
+    /**
+     * @param Student $student
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return LessonAttendance[]
+     */
+    public function findByStudentAndDateRange(Student $student, DateTime $start, DateTime $end): array;
 
     public function persist(LessonAttendance $attendance): void;
 

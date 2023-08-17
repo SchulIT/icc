@@ -39,7 +39,7 @@ use App\Sorting\Sorter;
 use App\Sorting\StudentAbsenceTuitionGroupStrategy;
 use App\Sorting\StudyGroupStrategy;
 use App\StudentAbsence\ApprovalHelper;
-use App\StudentAbsence\ExcuseNoteStatusResolver;
+use App\StudentAbsence\ExcuseStatusResolver;
 use App\Timetable\TimetableTimeHelper;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\GradeFilterView;
@@ -185,10 +185,10 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '', name: 'student_absences')]
-    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, StudentFilter $studentFilter,
-                          StudentAbsenceTypeFilter $typeFilter, Request $request,
+    public function index(SectionFilter                     $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, StudentFilter $studentFilter,
+                          StudentAbsenceTypeFilter          $typeFilter, Request $request,
                           StudentAbsenceRepositoryInterface $absenceRepository, TuitionRepositoryInterface $tuitionRepository,
-                          SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Sorter $sorter, StudentAbsenceSettings $settings, ExcuseNoteStatusResolver $excuseNoteStatusResolver): Response {
+                          SectionResolverInterface          $sectionResolver, DateHelper $dateHelper, Sorter $sorter, StudentAbsenceSettings $settings, ExcuseStatusResolver $excuseNoteStatusResolver): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::CanViewAny);
 
         if($settings->isEnabled() !== true) {
@@ -315,8 +315,8 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_student_absence')]
-    public function show(StudentAbsence $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository, ExamRepositoryInterface $examRepository,
-                         AppointmentRepositoryInterface $appointmentRepository, Sorter $sorter, ExcuseNoteStatusResolver $excuseNoteStatusResolver): Response {
+    public function show(StudentAbsence                 $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository, ExamRepositoryInterface $examRepository,
+                         AppointmentRepositoryInterface $appointmentRepository, Sorter $sorter, ExcuseStatusResolver $excuseNoteStatusResolver): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $absence);
 
         if($settings->isEnabled() !== true) {

@@ -35,6 +35,10 @@ class ExcuseStatusItem {
     }
 
     public function isExcused(): bool {
+        if($this->attendance !== null && $this->attendance->getExcuseStatus() === LessonAttendanceExcuseStatus::NotExcused) {
+            return false;
+        }
+
         if($this->excuseCollection !== null && count($this->excuseCollection) > 1) {
             return true;
         }

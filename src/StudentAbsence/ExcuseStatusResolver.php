@@ -62,7 +62,7 @@ class ExcuseStatusResolver {
         $current = $start->clone();
         $dateLessons = [ ];
 
-        while($current->getDate()->format('Y-m-d') !== $end->getDate()->format('Y-m-d') || $current->getLesson() != $end->getLesson()) {
+        while($current->getDate()->format('Y-m-d') < $end->getDate()->format('Y-m-d') || ($current->getDate()->format('Y-m-d') === $end->getDate()->format('Y-m-d') && $current->getLesson() <= $end->getLesson())) {
             $dateLessons[] = $current;
 
             $current = $current->clone();

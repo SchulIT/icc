@@ -310,6 +310,10 @@ class BookController extends AbstractController {
 
                     /** @var LessonAttendance $attendance */
                     foreach ($lesson->getEntry()->getAttendances() as $attendance) {
+                        if($gradeFilterView->getCurrentGrade() !== null && $attendance->getStudent()->getGrade($sectionFilterView->getCurrentSection())?->getId() !== $gradeFilterView->getCurrentGrade()->getId()) {
+                            continue;
+                        }
+
                         if ($attendance->getType() === LessonAttendanceType::Late) {
                             $lateStudentsByLesson[$uuid][] = $attendance;
                         } else {

@@ -326,7 +326,7 @@ class BookController extends AbstractController {
 
                                 /** @var ExcuseNote $excuseNote */
                                 foreach ($excusesByStudent[$studentUuid] as $excuseNote) {
-                                    if ($attendance->getExcuseStatus() === LessonAttendanceExcuseStatus::NotSet && (new DateLesson())->setDate($day->getDate())->setLesson($lesson->getLessonNumber())->isBetween($excuseNote->getFrom(), $excuseNote->getUntil())) {
+                                    if ((new DateLesson())->setDate($day->getDate())->setLesson($lesson->getLessonNumber())->isBetween($excuseNote->getFrom(), $excuseNote->getUntil())) {
                                         $attendance->setExcuseStatus(LessonAttendanceExcuseStatus::Excused);
                                     }
                                 }

@@ -32,9 +32,19 @@ class AbsenceRepository extends AbstractTransactionalRepository implements Absen
         return $qb->getQuery()->getResult();
     }
 
-    public function findAllRoomsByDate(Room $room, DateTime $dateTime): array {
-        $qb = $this->em->createQueryBuilder();
+    public function findAllRooms(DateTime $dateTime): array {
+        return $this->em->createQueryBuilder()
+            ->select(['p', 'r'])
+            ->from(Absence::class, 'p')
+            ->leftJoin('p.room', 'r')
+            ->where('r.id IS NOT NULL')
+            ->andWhere('p.date = :date')
+            ->setParameter('date', $dateTime)
+            ->getQuery()
+            ->getResult();
+    }
 
+    public function findAllByRoomAndDate(Room $room, DateTime $dateTime): array {
         return $this->em->createQueryBuilder()
             ->select(['p', 'r'])
             ->from(Absence::class, 'p')

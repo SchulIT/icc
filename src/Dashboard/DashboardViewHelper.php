@@ -53,6 +53,7 @@ use App\Security\Voter\SubstitutionVoter;
 use App\Settings\BookSettings;
 use App\Settings\DashboardSettings;
 use App\Settings\TimetableSettings;
+use App\Sorting\AbsentRoomStrategy;
 use App\Sorting\AbsentStudentStrategy;
 use App\Sorting\AbsentStudyGroupStrategy;
 use App\Sorting\AbsentTeacherStrategy;
@@ -156,6 +157,7 @@ class DashboardViewHelper {
         $this->addInfotexts($dateTime, $view);
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
+        $this->addAbsentRooms($this->absenceRepository->findAllRooms($dateTime), $view);
         $this->addAppointments($this->appointmentRepository->findAllForTeacher($teacher, $dateTime), $view);
         $this->addRoomReservations($this->roomReservationRepository->findAllByTeacherAndDate($teacher, $dateTime), $view);
         $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
@@ -440,6 +442,15 @@ class DashboardViewHelper {
 
     private function addAbsentTeachers(array $absences, DashboardView $view): void {
         $this->sorter->sort($absences, AbsentTeacherStrategy::class);
+        foreach($absences as $absence) {
+            if($this->authorizationChecker->isGranted(AbsenceVoter::View, $absence)) {
+                $view->addAbsence($absence);
+            }
+        }
+    }
+
+    private function addAbsentRooms(array $absences, DashboardView $view): void {
+        $this->sorter->sort($absences, AbsentRoomStrategy::class);
         foreach($absences as $absence) {
             if($this->authorizationChecker->isGranted(AbsenceVoter::View, $absence)) {
                 $view->addAbsence($absence);

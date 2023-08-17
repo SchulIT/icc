@@ -28,6 +28,9 @@ class DashboardView {
     /** @var Absence[] */
     private array $absentStudyGroups = [ ];
 
+    /** @var Absence[] */
+    private array $absentRooms = [ ];
+
     /** @var DashboardLesson[] */
     private array $lessons = [ ];
 
@@ -124,6 +127,13 @@ class DashboardView {
         return $this->absentStudyGroups;
     }
 
+    /**
+     * @return Absence[]
+     */
+    public function getAbsentRooms(): array {
+        return $this->absentRooms;
+    }
+
     public function addItem(int $lessonNumber, AbstractViewItem $item): void {
         if(!isset($this->lessons[$lessonNumber])) {
             $this->lessons[$lessonNumber] = new DashboardLesson($lessonNumber, false);
@@ -157,6 +167,8 @@ class DashboardView {
             $this->absentStudyGroups[] = $absence;
         } else if($absence->getTeacher() !== null) {
             $this->absentTeachers[] = $absence;
+        } else if($absence->getRoom() !== null) {
+            $this->absentRooms[] = $absence;
         }
     }
 
@@ -288,6 +300,7 @@ class DashboardView {
             && count($this->beforeLessons) === 0
             && count($this->absentStudyGroups) === 0
             && count($this->absentTeachers) === 0
+            && count($this->absentRooms) === 0
             && count($this->priorityMessages) === 0
             && count($this->exams) === 0
             && count($this->appointments) === 0

@@ -90,7 +90,7 @@ class ResourceAvailabilityHelper {
             $lesson = $this->timetableRepository->findOneByDateAndRoomAndLesson($date, $resource, $lessonNumber);
             $substitutions = $this->substitutionRepository->findAllForRooms([$resource], $date);
             $absences = array_filter(
-                $this->absenceRepository->findAllRoomsByDate($resource, $date),
+                $this->absenceRepository->findAllByRoomAndDate($resource, $date),
                 fn(Absence $absence) => $absence->getLessonStart() === null || $absence->getLessonEnd() === null || ($absence->getLessonStart() <= $lessonNumber && $lessonNumber <= $absence->getLessonEnd())
             );
             $conflictingSubstitution = $this->getConflictingSubstitution($substitutions, $resource, $lessonNumber);
@@ -126,7 +126,7 @@ class ResourceAvailabilityHelper {
             $absences = [ ];
 
             if($resource instanceof Room) {
-                $absences = $this->absenceRepository->findAllRoomsByDate($resource, $date);
+                $absences = $this->absenceRepository->findAllByRoomAndDate($resource, $date);
             }
 
             $roomLessons = array_filter($lessons, fn(TimetableLesson $lesson) => $lesson->getRoom() !== null && $lesson->getRoom()->getId() === $resource->getId());

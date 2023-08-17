@@ -1,4 +1,4 @@
-{% if absentTeachers|length > 0 or absentStudyGroups|length > 0 %}
+{% if absentTeachers|length > 0 or absentStudyGroups|length > 0 or absentRooms|length > 0 %}
 <div class="card {{ classes|default('') }}">
     <div class="card-body {{ bodyClasses|default('') }}">
         {% if absentTeachers|length > 0 %}
@@ -17,9 +17,9 @@
         {% endif %}
 
         {% if absentStudyGroups|length > 0 %}
-        <div class="d-flex align-items-baseline flex-wrap">
-            <span class="me-1"><i class="fa fa-users"></i> {{ 'plans.substitutions.absence.study_groups'|trans }}:</span>
-            <span>
+            <div class="d-flex align-items-baseline flex-wrap">
+                <span class="me-1"><i class="fa fa-users"></i> {{ 'plans.substitutions.absence.study_groups'|trans }}:</span>
+                <span>
                 {% for absence in absentStudyGroups -%}
                     {{ absence.studyGroup|studygroup(true) }}
                     {%- if absence.lessonStart is not null and absence.lessonEnd is not null %}
@@ -28,7 +28,22 @@
                     {%- if not loop.last -%}, {%- endif %}
                 {% endfor %}
             </span>
-        </div>
+            </div>
+        {% endif %}
+
+        {% if absentRooms|length > 0 %}
+            <div class="d-flex align-items-baseline flex-wrap">
+                <span class="me-1"><i class="fa fa-door-open"></i> {{ 'plans.substitutions.absence.rooms'|trans }}:</span>
+                <span>
+                {% for absence in absentRooms -%}
+                    {{ absence.room.name }}
+                    {%- if absence.lessonStart is not null and absence.lessonEnd is not null %}
+                        ({{ 'label.substitution_lessons'|trans({'%start%': absence.lessonStart, '%end%': absence.lessonEnd, '%count%': (absence.lessonEnd - absence.lessonStart)}) }})
+                    {%- endif -%}
+                    {%- if not loop.last -%}, {%- endif %}
+                {% endfor %}
+            </span>
+            </div>
         {% endif %}
     </div>
 </div>

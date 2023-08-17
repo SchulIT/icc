@@ -176,7 +176,7 @@
         {% include "_includes/infotexts.html.twig" with { infotexts: view.infotexts } only %}
 
         {# Absences #}
-        {% include "_includes/absences.html.twig" with {absentTeachers: view.absentTeachers, absentStudyGroups: view.absentStudyGroups} only %}
+        {% include "_includes/absences.html.twig" with {absentTeachers: view.absentTeachers, absentStudyGroups: view.absentStudyGroups, absentRooms: view.absentRooms} only %}
 
         {# Birthdays #}
         {% if view.teacherBirthdays|length > 0 or view.studentBirthdays|length > 0 %}

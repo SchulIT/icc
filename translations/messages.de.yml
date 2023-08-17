@@ -438,6 +438,7 @@ plans:
         absence:
             teacher: Abwesende Lehrkräfte
             study_groups: Abwesende Lerngruppen
+            rooms: Gesperrte Räume
 
     appointments:
         label: Terminplan

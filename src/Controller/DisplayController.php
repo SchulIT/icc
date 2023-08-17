@@ -70,6 +70,7 @@ class DisplayController extends AbstractController {
             'infotexts' => $infotextRepository->findAllByDate($today),
             'absent_studygroups' => $absenceRepository->findAllStudyGroups($today),
             'absent_teachers' => $absenceRepository->findAllTeachers($today),
+            'absent_rooms' => $absenceRepository->findAllRooms($today),
             'groups' => $groups,
             'appointments' => $appointments,
             'count' => $itemsCount,

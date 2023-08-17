@@ -17,16 +17,11 @@ final class Version20230817151226 extends AbstractMigration
         return '';
     }
 
-    public function postUp(Schema $schema): void {
-        parent::postUp($schema);
-
-        $this->addSql("UPDATE student_absence_type SET additional_recipients = '[]'");
-    }
-
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE student_absence_type ADD additional_recipients LONGTEXT NOT NULL COMMENT \'(DC2Type:json)\'');
+        $this->addSql("UPDATE student_absence_type SET additional_recipients = '[]'");
     }
 
     public function down(Schema $schema): void

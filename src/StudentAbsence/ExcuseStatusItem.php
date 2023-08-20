@@ -7,10 +7,11 @@ use App\Entity\DateLesson;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonAttendanceExcuseStatus;
 use App\Entity\LessonAttendanceType;
+use App\Entity\StudentAbsence;
 
 class ExcuseStatusItem {
 
-    public function __construct(private readonly DateLesson $dateLesson, private readonly ?ExcuseCollection $excuseCollection, private readonly ?LessonAttendance $attendance) {
+    public function __construct(private readonly DateLesson $dateLesson, private readonly ?ExcuseCollection $excuseCollection, private readonly ?LessonAttendance $attendance, private readonly ?StudentAbsence $absence) {
 
     }
 
@@ -35,7 +36,19 @@ class ExcuseStatusItem {
         return $this->attendance;
     }
 
+    public function getAbsence(): ?StudentAbsence {
+        return $this->absence;
+    }
+
     public function isExcused(): bool {
+        if($this->absence->getType()->isMustApprove()) {
+            return $this->absence->isApproved();
+        }
+
+        if($this->absence->getType()->isAlwaysExcused()) {
+            return true;
+        }
+
         if($this->excuseCollection !== null && count($this->excuseCollection) > 0) {
             return true;
         }

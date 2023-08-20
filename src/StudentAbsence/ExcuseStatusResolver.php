@@ -16,18 +16,12 @@ class ExcuseStatusResolver {
     }
 
     public function getStatus(StudentAbsence $absence): ExcuseStatus {
-        if($absence->getType()->isMustApprove() && $absence->isApproved()) {
-            return new ExcuseStatus([]);
-        }
-
-        if($absence->getType()->isAlwaysExcused()) {
-            return new ExcuseStatus([]);
-        }
-
         $lessonsToExcuse = $this->expandRangeToDateLessons($absence->getFrom(), $absence->getUntil());
         $collection = $this->excuseCollectionResolver->resolve($this->excuseNoteRepository->findByStudent($absence->getStudent()));
 
         $items = [ ];
+
+
 
         /** @var LessonAttendance[] $attendances */
         $attendances = ArrayUtils::createArrayWithKeys(
@@ -47,7 +41,7 @@ class ExcuseStatusResolver {
             $excuses = $collection[$key] ?? null;
             $attendance = $attendances[$key] ?? null;
 
-            $items[] = new ExcuseStatusItem($dateLesson, $excuses, $attendance);
+            $items[] = new ExcuseStatusItem($dateLesson, $excuses, $attendance, $absence);
         }
 
         return new ExcuseStatus($items);

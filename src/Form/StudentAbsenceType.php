@@ -82,10 +82,6 @@ class StudentAbsenceType extends AbstractType {
                 'label' => 'label.type',
                 'class' => StudentAbsenceTypeEntity::class,
                 'choice_label' => function(StudentAbsenceTypeEntity $type) {
-                    if($type->isMustApprove()) {
-                        return sprintf('%s (%s)', $type->getName(), $this->translator->trans('absences.students.add.must_approve.label'));
-                    }
-
                     return $type->getName();
                 },
                 'choice_filter' => function(?StudentAbsenceTypeEntity $type) {

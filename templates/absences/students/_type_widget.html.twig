@@ -1,0 +1,25 @@
+<div class="mb-2 row">
+    {{ form_label(form.type) }}
+    <div class="col-md-10">
+        {% for choice in form.type %}
+            <div class="form-check">
+                <input type="radio" id="{{ choice.vars.id }}" name="{{ choice.vars.full_name }}" class="form-check-input" value="{{ choice.vars.value }}" {% if choice.vars.checked %} checked{% endif %}{% if choice.vars.required %} required="required"{% endif %}>
+                <div class="label">
+                    <label class="form-check-label {% if choice.vars.required %}required{% endif %}" for="{{ choice.vars.id }}">{{ choice.vars.label }}</label>
+
+                    {% set type = choice.parent.vars.choices[choice.vars.value].data %}
+
+                    {% if type.details is not empty %}
+                        <p class="mb-0 text-muted">{{ type.details }}</p>
+                    {% endif %}
+
+                    {% if type.mustApprove %}
+                        <span class="badge text-bg-warning">{{ 'label.must_approve.label'|trans }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% do form.type.setRendered %}
+</div>

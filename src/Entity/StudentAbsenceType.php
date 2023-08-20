@@ -22,6 +22,10 @@ class StudentAbsenceType implements Stringable {
     #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
+    #[Assert\NotBlank(allowNull: true)]
+    #[ORM\Column(type: 'string')]
+    private ?string $details = null;
+
     /**
      * @var bool
      */
@@ -67,6 +71,15 @@ class StudentAbsenceType implements Stringable {
 
     public function setName(?string $name): StudentAbsenceType {
         $this->name = $name;
+        return $this;
+    }
+
+    public function getDetails(): ?string {
+        return $this->details;
+    }
+
+    public function setDetails(?string $details): StudentAbsenceType {
+        $this->details = $details;
         return $this;
     }
 

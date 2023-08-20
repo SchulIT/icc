@@ -47,7 +47,8 @@
         <div class="card-header">{{ 'label.general'|trans }}</div>
         <div class="card-body">
             {{ form_row(form.student) }}
-            {{ form_row(form.type)}}
+
+            {% include "absences/students/_type_widget.html.twig" %}
 
             <div class="bs-callout bs-callout-info">
                 <h5>{{ 'info.label'|trans }}</h5>

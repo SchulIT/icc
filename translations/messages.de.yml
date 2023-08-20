@@ -1609,6 +1609,7 @@ absences:
 
         edit:
             label: Abwesenheitsmeldung bearbeiten
+            label_help: Zeitbereich oder Art ändern, Kontaktinformationen bearbeiten, Anhänge hinzufügen oder löschen
             success: Abwesenheitsmeldung erfolgreich aktualisiert
             from_date: 'Das Startdatum wurde von %oldDate% (%oldLesson%. Stunde) auf %newDate% (%newLesson%. Stunde) geändert.'
             until_date: 'Das Enddatum wurde von %oldDate% (%oldLesson%. Stunde) auf %newDate% (%newLesson%. Stunde) geändert.'

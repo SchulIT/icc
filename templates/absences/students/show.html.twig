@@ -214,7 +214,9 @@
                         <div class="list-group list-group-flush">
                             {% if canEdit %}
                             <a href="{{ path('edit_student_absence', { uuid: absence.uuid }) }}" class="list-group-item list-group-item-action">
-                                <i class="fa fa-edit"></i> {{ 'absences.students.edit.label'|trans }}
+                                <i class="fa fa-edit"></i>
+                                {{ 'absences.students.edit.label'|trans }}<br>
+                                <span class="text-muted">{{ 'absences.students.edit.label_help'|trans }}</span>
                             </a>
                             {% endif %}
                             {% if canCreateExcuseNote %}

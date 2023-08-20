@@ -1638,6 +1638,9 @@ absences:
             create_excuse_note:
                 label: Entschuldigung erstellen
                 not_necessary: Aufgrund der Abwesenheitsart sind betroffene Unterrichtsstunden automatisch entschuldigt. Eine separate Entschuldigung wurde daher nicht angelegt.
+            attachments:
+                empty: Keine Anhänge vorhanden.
+                add: Anhang hinzufügen
         message:
             label: Neue Mitteilung
             submit: abschicken

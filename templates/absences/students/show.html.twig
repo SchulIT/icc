@@ -46,11 +46,22 @@
                             {% endif %}
                         </h4>
 
+                        <div class="mb-2">
+                            <i class="fas fa-calendar"></i> {{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }}) - {{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})
+                        </div>
+
                         {{ absence.message|markdown }}
                     </div>
 
-                    {% if absence.attachments|length > 0 %}
-                        <div class="card-footer">
+                    <div class="card-footer">
+                        {% if absence.attachments|length == 0 %}
+                            <div class="d-flex align-items-baseline">
+                                <span class="text-muted me-2">{{ 'absences.students.show.attachments.empty'|trans }}</span>
+                                <a href="{{ path('edit_student_absence', { 'uuid': absence.uuid}) }}#attachments" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-plus"></i> {{ 'absences.students.show.attachments.add'|trans }}
+                                </a>
+                            </div>
+                        {% else %}
                             <ul class="nav nav-pills card-header-pills">
                                 {% for attachment in absence.attachments %}
                                     <li class="nav-item">
@@ -60,8 +71,8 @@
                                     </li>
                                 {% endfor %}
                             </ul>
-                        </div>
-                    {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
 
                 {% if exams|length > 0 %}
@@ -313,16 +324,6 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <p>
-                            <span class="text-muted">{{ 'absences.students.add.absent_from'|trans }}</span>
-                            {{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }})
-                        </p>
-
-                        <p>
-                            <span class="text-muted">{{ 'absences.students.add.absent_until'|trans }}</span>
-                            {{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})
-                        </p>
-
                         <p>
                             <span class="text-muted">{{ 'absences.created_by'|trans }}</span>
                             {{ absence.createdBy|user }}

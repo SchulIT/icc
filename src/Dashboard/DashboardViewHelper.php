@@ -142,7 +142,7 @@ class DashboardViewHelper {
             /** @var GradeTeacher $gradeTeacher */
             foreach($teacher->getGrades() as $gradeTeacher) {
                 $studyGroups = $this->studyGroupRepository->findAllByGrades($gradeTeacher->getGrade(), $section);
-                $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages, UserType::Student, $dateTime, $studyGroups));
+                $messages = array_merge($messages, $this->messageRepository->findBy(MessageScope::Messages, UserType::Parent, $dateTime, $studyGroups));
             }
         }
 

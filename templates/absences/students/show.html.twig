@@ -214,8 +214,9 @@
             <div class="col-md-3">
                 {% set canEdit = is_granted('edit', absence) %}
                 {% set canCreateExcuseNote = is_granted('new-excuse') and not absence.type.alwaysExcused and not excuseStatus.completelyExcused %}
+                {% set canDelete = is_granted('remove', absence) %}
 
-                {% if canEdit or canCreateExcuseNote %}
+                {% if canEdit or canCreateExcuseNote or canDelete %}
                     {% if canCreateExcuseNote %}
                         <form action="{{ path('add_excuse_note_from_absence', { uuid: absence.uuid }) }}" method="post">
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('excuse_note') }}" />
@@ -234,6 +235,11 @@
                                 <button type="submit" class="list-group-item list-group-item-action">
                                     <i class="fas fa-pen-alt"></i> {{ 'absences.students.show.create_excuse_note.label'|trans }}
                                 </button>
+                            {% endif %}
+                            {% if canDelete %}
+                                <a href="{{ path('remove_student_absence', { uuid: absence.uuid }) }}" class="list-group-item list-group-item-action list-group-item-danger">
+                                    <i class="fas fa-trash"></i> {{ 'absences.students.remove.label'|trans }}
+                                </a>
                             {% endif %}
                         </div>
                     </div>

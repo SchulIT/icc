@@ -23,6 +23,15 @@
                         <h4 class="card-title">
                             {{ 'absences.students.show.header'|trans({'%student%': absence.student|student}) }}
 
+                            {% if section is not null %}
+                                {% set grade = absence.student.grade(section) %}
+                                {% if grade is not null %}
+                                    <span class="badge text-bg-secondary">{{ grade.name }}</span>
+                                {% else %}
+                                    <span class="badge text-bg-warning">{{ 'label.not_available'|trans }}</span>
+                                {% endif %}
+                            {% endif %}
+
                             <span class="badge text-bg-primary">
                                 {{ absence.type.name }}
                             </span>

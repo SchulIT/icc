@@ -315,8 +315,8 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_student_absence')]
-    public function show(StudentAbsence                 $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository, ExamRepositoryInterface $examRepository,
-                         AppointmentRepositoryInterface $appointmentRepository, Sorter $sorter, ExcuseStatusResolver $excuseNoteStatusResolver): Response {
+    public function show(StudentAbsence $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository, ExamRepositoryInterface $examRepository,
+                         AppointmentRepositoryInterface $appointmentRepository, Sorter $sorter, ExcuseStatusResolver $excuseNoteStatusResolver, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $absence);
 
         if($settings->isEnabled() !== true) {
@@ -361,7 +361,8 @@ class StudentAbsenceController extends AbstractController {
             'form' => $form->createView(),
             'exams' => $exams,
             'appointments' => $appointments,
-            'excuseStatus' => $excuseNoteStatusResolver->getStatus($absence)
+            'excuseStatus' => $excuseNoteStatusResolver->getStatus($absence),
+            'section' => $sectionResolver->getSectionForDate($absence->getFrom()->getDate())
         ]);
     }
 

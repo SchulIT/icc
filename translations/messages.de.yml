@@ -1433,6 +1433,10 @@ forms:
 profile:
     overview:
         label: Profil
+        empty_mail: Dem Benutzer ist keine E-Mail-Adresse zugeordnet. Es wird empfohlen, eine E-Mail-Adresse zu hinterlegen.
+        change:
+            link: Profildaten ändern
+            help: Die Profildaten werden aus dem Single-Sign-On übertragen und müssen dort geändert werden. Damit die geänderten Daten nach der Änderung übertragen werden, bitte einmal am ICC abmelden und wieder anmelden.
 
     notifications:
         label: Benachrichtigungen

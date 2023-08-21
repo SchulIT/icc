@@ -6,6 +6,11 @@
 
 {% block profile_content %}
     <div class="card-text mb-3">
+        <div class="bs-callout bs-callout-warning">
+            <p>{{ 'profile.overview.change.help'|trans }}</p>
+            <a href="{{ profile_url }}" target="_blank" class="btn btn-outline-primary btn-sm"><i class="fas fa-external-link"></i> {{ 'profile.overview.change.link'|trans }}</a>
+        </div>
+
         <p>
             <span class="text-muted">{{ 'label.firstname'|trans }}</span> {{ app.user.firstname }}
         </p>

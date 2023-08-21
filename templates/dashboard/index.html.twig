@@ -339,6 +339,16 @@
                 {% block dashboard %}{% endblock %}
             </div>
             <div class="col-md-3 sticky-sidebar">
+                {% if app.user.email is empty %}
+                    <div class="bs-callout bs-callout-warning mt-0">
+                        <p>{{ 'profile.overview.empty_mail'|trans }}</p>
+
+                        <a href="{{ profile_url }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                            <i class="fas fa-external-link"></i> {{ 'profile.overview.change.link'|trans }}
+                        </a>
+                    </div>
+                {% endif %}
+
 
                 {% set canCreateMessage = is_granted('new-message') %}
                 {% set canCreateAbsence = is_granted('new-absence') %}

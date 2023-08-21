@@ -26,39 +26,47 @@
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9" id="app">
-                <div class="card-deck mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="counter">
-                                <i class="fas fa-comments"></i>
-                                {{ info.comments|length }}
+                <div class="row row-cols-4 g-2 mb-3">
+                    <div class="col">
+                        <div class="card mb-0">
+                            <div class="card-body">
+                                <div class="counter">
+                                    <i class="fas fa-comments"></i>
+                                    {{ info.comments|length }}
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card {% if info.lateMinutesCount > 0 %}border-warning{% endif %}">
-                        <div class="card-body">
-                            <div class="counter">
-                                <i class="fas fa-clock"></i>
-                                {{ 'book.attendance.late_minutes'|trans({'%count%': info.lateMinutesCount }) }}
+                    <div class="col">
+                        <div class="card mb-0 {% if info.lateMinutesCount > 0 %}border-warning{% endif %}">
+                            <div class="card-body">
+                                <div class="counter">
+                                    <i class="fas fa-clock"></i>
+                                    {{ 'book.attendance.late_minutes'|trans({'%count%': info.lateMinutesCount }) }}
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="counter">
-                                <i class="fas fa-user-times"></i>
-                                {{ info.absentLessonsCount }}
+                    <div class="col">
+                        <div class="card mb-0">
+                            <div class="card-body">
+                                <div class="counter">
+                                    <i class="fas fa-user-times"></i>
+                                    {{ info.absentLessonsCount }}
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card {% if info.notExcusedAbsentLessonsCount > 0 %}bg-danger text-white{% endif %}">
-                        <div class="card-body">
-                            <div class="counter">
-                                <i class="fas fa-exclamation-circle"></i>
-                                {{ info.notExcusedAbsentLessonsCount }}
+                    <div class="col">
+                        <div class="card mb-0 {% if info.notExcusedAbsentLessonsCount > 0 %}bg-danger text-white{% endif %}">
+                            <div class="card-body">
+                                <div class="counter">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ info.notExcusedAbsentLessonsCount }}
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -332,7 +332,10 @@ services:
     SchulIT\CommonBundle\Monolog\RequestProcessor:
         tags:
             - { name: monolog.processor }
-    SchulIT\CommonBundle\Monolog\ExceptionProcessor:
+    #SchulIT\CommonBundle\Monolog\ExceptionProcessor:
+    #    tags:
+    #        - { name: monolog.processor }
+    App\Monolog\SqlAwareExceptionProcessor:
         tags:
             - { name: monolog.processor }
 

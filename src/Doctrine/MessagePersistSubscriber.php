@@ -23,7 +23,7 @@ class MessagePersistSubscriber implements EventSubscriber {
         $entity = $eventArgs->getEntity();
 
         if($entity instanceof Message) {
-            $this->dispatcher->dispatch(new MessageCreatedEvent($entity));
+            $this->dispatcher->dispatch(new MessageCreatedEvent($entity, true));
         }
     }
 

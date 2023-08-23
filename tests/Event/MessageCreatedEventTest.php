@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 class MessageCreatedEventTest extends TestCase {
     public function testConstructor() {
         $message = new Message();
-        $event = new MessageCreatedEvent($message);
+        $event = new MessageCreatedEvent($message, true);
 
         $this->assertEquals($message, $event->getMessage());
     }

@@ -213,10 +213,7 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
 
         $qb->where(
             $qb->expr()->andX(
-                $qb->expr()->orX(
-                    'm.isEmailNotificationSent = false',
-                    'm.isPushNotificationSent = false'
-                ),
+                'm.isEmailNotificationSent = false',
                 'm.startDate <= :date'
             )
         )

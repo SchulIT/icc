@@ -25,6 +25,10 @@ class MessageCreatedEventSubscriber implements EventSubscriberInterface {
                                 private readonly MessageRepositoryInterface $messageRepository) {    }
 
     public function onMessageCreated(MessageCreatedEvent $event): void {
+        if($event->preventDatabaseActions() === true) {
+            return;
+        }
+
         if($event->getMessage()->isEmailNotificationSent() === true) {
             return;
         }

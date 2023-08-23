@@ -32,7 +32,7 @@ class SendRemainingMessageNotifications extends Command {
             $message = $messages[0];
             $style->section(sprintf('Sende Benachrichtigungen für Mitteilung "%s"', $message->getTitle()));
 
-            $this->eventSubscriber->onMessageCreated(new MessageCreatedEvent($message));
+            $this->eventSubscriber->onMessageCreated(new MessageCreatedEvent($message, false));
             $style->success(sprintf('Fertig (%d Mitteilungen mit offenen Benachrichtigungen stehen noch aus)', count($messages) - 1));
         } else {
             $style->success('Keine Mitteilungen mit offenen Benachrichtigungen gefunden');

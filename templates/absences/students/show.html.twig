@@ -368,6 +368,20 @@
                                         {{ item.attendance.entry.tuition.name }}
                                         <i class="fas fa-chalkboard-teacher"></i> {{ item.attendance.entry.teacher.acronym }}
                                     </div>
+                                    {% elseif item.entry is not null %}
+                                        <div class="ms-2">
+                                            {{ item.entry.tuition.name }}
+                                            <i class="fas fa-chalkboard-teacher"></i> {{ item.entry.teacher.acronym }}
+                                        </div>
+                                    {% elseif item.timetableLesson is not null %}
+                                        <div class="ms-2">
+                                            {{ item.timetableLesson.tuition.name }}
+                                            <i class="fas fa-chalkboard-teacher"></i> {{ item.timetableLesson.teacher.acronym }}
+                                        </div>
+                                    {% elseif item.timetableLesson is null %}
+                                        <div class="ms-2">
+                                            {{ 'dashboard.free_hour'|trans }}
+                                        </div>
                                     {% endif %}
                                 </div>
 

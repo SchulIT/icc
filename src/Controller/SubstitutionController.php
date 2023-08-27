@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Sorting\AbsentRoomStrategy;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\MessageScope;
 use App\Entity\StudyGroupMembership;
@@ -98,13 +99,16 @@ class SubstitutionController extends AbstractControllerWithMessages {
 
         $absentTeachers = [ ];
         $absentStudyGroups = [ ];
+        $absentRooms = [ ];
 
         if($substitutionSettings->areAbsencesVisibleFor($user->getUserType())) {
             $absentTeachers = $absenceRepository->findAllTeachers($selectedDate);
             $absentStudyGroups = $absenceRepository->findAllStudyGroups($selectedDate);
+            $absentRooms = $absenceRepository->findAllRooms($selectedDate);
 
             $sorter->sort($absentTeachers, AbsentTeacherStrategy::class);
             $sorter->sort($absentStudyGroups, AbsentStudyGroupStrategy::class);
+            $sorter->sort($absentRooms, AbsentRoomStrategy::class);
         }
 
         return $this->renderWithMessages('substitutions/table.html.twig', [
@@ -119,6 +123,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
             'canGroup' => $groupByParameter->canGroup($user),
             'absentTeachers' => $absentTeachers,
             'absentStudyGroups' => $absentStudyGroups,
+            'absentRooms' => $absentRooms,
             'counts' => $counts,
             'skipWeekends' => $substitutionSettings->skipWeekends(),
             'last_import' => $importDateTypeRepository->findOneByEntityClass(Substitution::class)

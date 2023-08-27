@@ -69,6 +69,17 @@
             </div>
 
             {{ form_row(form.phone) }}
+
+            {% if app.user.email is not empty %}
+                <div class="bs-callout bs-callout-success">
+                    {{ 'absences.students.add.email_address.provided'|trans({'%address%': app.user.email })|raw }}
+                </div>
+            {% else %}
+                <div class="bs-callout bs-callout-warning">
+                    {{ 'absences.students.add.email_address.not_provided'|trans }}
+                </div>
+            {% endif %}
+
             {{ form_row(form.email) }}
         </div>
     </div>

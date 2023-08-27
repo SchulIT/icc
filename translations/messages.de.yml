@@ -1601,6 +1601,9 @@ absences:
             must_approve:
                 label: muss genehmigt werden
                 help: Bei genehmigungspflichtigen Absenzen entscheidet die Klassenleitung, ob diese genehmigt wird oder nicht. Nur bei vorliegender Genehmigung ist die Schülerin oder der Schüler vom Unterricht befreit.
+            email_address:
+                provided: Die E-Mail-Adresse <strong>%address%</strong> ist im Benutzerprofil hinterlegt und wird automatisch für Benachrichtigungen verwendet. Sie muss daher nicht erneut eingetragen werden. Wenn eine zusätzliche E-Mail-Adresse für Benachrichtigungen gewünscht ist, kann diese hier eingetragen werden.
+                not_provided: Da keine E-Mail-Adresse im Benutzerprofil hinterlegt ist, sollte eine E-Mail-Adresse zwecks Benachrichtigung hinterlegt werden. Dies ist jedoch optional.
         add_bulk:
             label: Neue Massen-Abwesenheitsmeldung
             info: Hier besteht die Möglichkeit, eine Abwesenheitsmeldung für mehrere Lernenden anzulegen. Das System erstellt im Anschluss für jeden Lernenden eine separate Abwesenheitsmeldung.

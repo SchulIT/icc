@@ -9,14 +9,16 @@ use App\Entity\UserType;
 use App\Grouping\Grouper;
 use App\Grouping\StudentGradeStrategy;
 use App\Repository\StudentRepositoryInterface;
+use App\Repository\UserRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\StudentGradeGroupStrategy;
 use App\Sorting\StudentStrategy;
 use App\Utils\ArrayUtils;
+use Ramsey\Uuid\Uuid;
 
 class StudentFilter {
 
-    public function __construct(private Sorter $sorter, private Grouper $grouper, private StudentRepositoryInterface $studentRepository)
+    public function __construct(private readonly Sorter $sorter, private readonly Grouper $grouper, private readonly StudentRepositoryInterface $studentRepository, private readonly UserRepositoryInterface $userRepository)
     {
     }
 
@@ -39,8 +41,17 @@ class StudentFilter {
         $student = $studentUuid !== null ?
             $students[$studentUuid] ?? null : null;
 
+        if($user->getStudents()->count() > 0 && !empty($studentUuid) && Uuid::isValid($studentUuid)) {
+            $user->setData('filter.student.last', $studentUuid);
+            $this->userRepository->persist($user);
+        }
+
         if($student === null && $user->getStudents()->count() > 0) {
             $student = $user->getStudents()->first();
+
+            if(($lastStudent = $user->getData('filter.student.last')) !== null && is_string($lastStudent) && Uuid::isValid($lastStudent) && isset($students[$lastStudent])) {
+                $student = $students[$lastStudent];
+            }
         }
 
         if($setDefaultStudent === false) {

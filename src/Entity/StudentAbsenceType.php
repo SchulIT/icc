@@ -23,7 +23,7 @@ class StudentAbsenceType implements Stringable {
     private ?string $name = null;
 
     #[Assert\NotBlank(allowNull: true)]
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $details = null;
 
     /**

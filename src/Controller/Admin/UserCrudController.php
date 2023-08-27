@@ -51,6 +51,7 @@ class UserCrudController extends AbstractCrudController
             TextField::new('idpId')
                 ->setLabel('ID im Identity Provider')
                 ->setHelp('Diese ID wird verwenden, um Benutzer vom IDP wiederzuerkennen, auch wenn sich Stammdaten (bspw. Benutzername) ändern.')
+                ->setDisabled(true)
                 ->hideOnIndex(),
             TextField::new('username')->setLabel('Benutzername'),
             TextField::new('firstname')->setLabel('Vorname'),

@@ -93,6 +93,7 @@ class ResourceAvailabilityHelper {
                 $this->absenceRepository->findAllByRoomAndDate($resource, $date),
                 fn(Absence $absence) => $absence->getLessonStart() === null || $absence->getLessonEnd() === null || ($absence->getLessonStart() <= $lessonNumber && $lessonNumber <= $absence->getLessonEnd())
             );
+
             $conflictingSubstitution = $this->getConflictingSubstitution($substitutions, $resource, $lessonNumber);
 
             $conflictingExams = $this->examRepository->findAllByRoomAndDateAndLesson($resource, $date, $lessonNumber);
@@ -141,15 +142,21 @@ class ResourceAvailabilityHelper {
 
                 $substitution = null;
                 $collidingExams = [ ];
+                $collidingAbsences = [ ];
 
                 if($resource instanceof Room) {
                     $substitution = $this->getConflictingSubstitution($roomSubstitutions, $resource, $lessonNumber);
 
                     $collidingExams = array_filter($exams, fn(Exam $exam) => $exam->getRoom() != null && $exam->getRoom()->getId() === $resource->getId()
                         && $exam->getLessonStart() <= $lessonNumber && $lessonNumber <= $exam->getLessonEnd());
+
+                    $collidingAbsences = array_filter(
+                        $absences,
+                        fn(Absence $absence) => $absence->getLessonStart() === null || $absence->getLessonEnd() === null || ($absence->getLessonStart() <= $lessonNumber && $lessonNumber <= $absence->getLessonEnd())
+                    );
                 }
 
-                $availability = new ResourceAvailability($reservation, $lesson, $substitution, $collidingExams, $absences);
+                $availability = new ResourceAvailability($reservation, $lesson, $substitution, $collidingExams, $collidingAbsences);
 
                 if($resource instanceof Room && $this->isTimetableLessonCancelled($roomSubstitutions, $resource, $lessonNumber)) {
                     $availability->setTimetableLessonCancelled();

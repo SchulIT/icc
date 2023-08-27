@@ -56,7 +56,7 @@ class ListsVoter extends Voter {
     }
 
     private function canViewLists(TokenInterface $token): bool {
-        if($this->accessDecisionManager->decide($token, [ 'ROLE_ADMIN' ]) || $this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
+        if($this->accessDecisionManager->decide($token, [ 'ROLE_ADMIN' ])) {
             return true;
         }
 
@@ -67,10 +67,14 @@ class ListsVoter extends Voter {
             return false;
         }
 
-        return ArrayUtils::inArray($user->getUserType(), [
+        if(ArrayUtils::inArray($user->getUserType(), [
             UserType::Student,
             UserType::Parent,
             UserType::Intern
-        ]) !== true; // Everyone but students/parents/interns are allowed to view lists
+        ]) === true) {
+            return false;
+        }
+
+        return $this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ]);
     }
 }

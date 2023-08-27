@@ -13,6 +13,7 @@
 {% block content %}
     {% include "_includes/exam.html.twig" with { exam: exam, hideDetails: true, showDate: true, header: 'plans.exam.label' } %}
 
+    {% if is_granted('details', exam) %}
     <div class="card">
         <div class="card-header">{{ 'plans.exam.students'|trans }} <span class="badge text-bg-primary rounded-pill">{{ exam.students|length }}</span></div>
 
@@ -46,6 +47,7 @@
             </table>
         </div>
     </div>
+    {% endif %}
 
     <div class="buttons">
         <a href="javascript: history.back();" class="btn btn-primary btn-sm">

@@ -84,6 +84,16 @@ class ExamVoter extends Voter {
         return $user->isStudentOrParent();
     }
 
+    private function isIntern(TokenInterface $token): bool {
+        $user = $token->getUser();
+
+        if(!$user instanceof User) {
+            return false;
+        }
+
+        return $user->getUserType() === UserType::Intern;
+    }
+
     public function canAdd(TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, [ 'ROLE_EXAMS_CREATOR' ]);
     }
@@ -229,6 +239,13 @@ class ExamVoter extends Voter {
     }
 
     private function canViewDetails(Exam $exam, TokenInterface $token): bool {
-        return $this->isStudentOrParent($token) === false;
+        $user = $token->getUser();
+
+        if(!$user instanceof User) {
+            return false;
+        }
+
+        return $this->isStudentOrParent($token) === false
+            && $this->isIntern($token) === false;
     }
 }

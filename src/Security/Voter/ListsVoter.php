@@ -75,6 +75,10 @@ class ListsVoter extends Voter {
             return false;
         }
 
+        if($user->isTeacher()) {
+            return true; // all teachers should be able to view lists
+        }
+
         return $this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ]);
     }
 }

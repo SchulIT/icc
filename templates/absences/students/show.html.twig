@@ -376,7 +376,7 @@
                                     {% elseif item.timetableLesson is not null %}
                                         <div class="ms-2">
                                             {{ item.timetableLesson.tuition.name }}
-                                            <i class="fas fa-chalkboard-teacher"></i> {{ item.timetableLesson.teacher.acronym }}
+                                            <i class="fas fa-chalkboard-teacher"></i> {{ item.timetableLesson.teachers|teachers(true, true) }}
                                         </div>
                                     {% elseif item.timetableLesson is null %}
                                         <div class="ms-2">

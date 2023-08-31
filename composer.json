@@ -72,7 +72,7 @@
         "twig/cssinliner-extra": "^3.6",
         "twig/extra-bundle": "^3.6",
         "twig/inky-extra": "^3.6",
-        "vich/uploader-bundle": "^1.9",
+        "vich/uploader-bundle": "^2.0",
         "willdurand/js-translation-bundle": "^5.0",
         "xantios/mimey": "^2.1"
     },

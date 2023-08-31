@@ -10,7 +10,7 @@ use Twig\TwigFunction;
 
 class MarkdownExtension extends AbstractExtension {
 
-    public function __construct(private Markdown $markdown, private TableOfContentsHelper $tocHelper)
+    public function __construct(private readonly Markdown $markdown, private readonly TableOfContentsHelper $tocHelper)
     {
     }
 
@@ -26,7 +26,11 @@ class MarkdownExtension extends AbstractExtension {
         ];
     }
 
-    public function markdown(string $string): string {
+    public function markdown(?string $string): string {
+        if(empty($string)) {
+            return '';
+        }
+
         return $this->markdown->convertToHtml($string);
     }
 

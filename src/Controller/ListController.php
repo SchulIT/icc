@@ -70,7 +70,8 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     #[Route(path: '/tuitions', name: 'list_tuitions')]
-    public function tuitions(SectionFilter $sectionFilter, GradeFilter $gradeFilter, StudentFilter $studentFilter, TeacherFilter $teacherFilter, TuitionRepositoryInterface $tuitionRepository, Request $request): Response {
+    public function tuitions(SectionFilter $sectionFilter, GradeFilter $gradeFilter, StudentFilter $studentFilter, TeacherFilter $teacherFilter, SubjectFilter $subjectFilter,
+                             TuitionRepositoryInterface $tuitionRepository, Request $request): Response {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
 
         /** @var User $user */
@@ -78,6 +79,7 @@ class ListController extends AbstractControllerWithMessages {
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
+        $subjectFilterView = $subjectFilter->handle($request->query->get('subject', null), false);
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $studentFilterView->getCurrentStudent() === null);
 
@@ -98,6 +100,8 @@ class ListController extends AbstractControllerWithMessages {
             $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()], $sectionFilterView->getCurrentSection());
         } else if($teacherFilterView->getCurrentTeacher() !== null && $sectionFilterView->getCurrentSection() !== null) {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
+        } else if($subjectFilterView->getCurrentSubject() !== null && $sectionFilterView->getCurrentSection() !== null) {
+            $tuitions = $tuitionRepository->findAllBySubjects([$subjectFilterView->getCurrentSubject()], $sectionFilterView->getCurrentSection());
         }
 
         if($studentFilterView->getCurrentStudent() !== null || $gradeFilterView->getCurrentGrade() !== null) {
@@ -121,6 +125,7 @@ class ListController extends AbstractControllerWithMessages {
             'gradeFilter' => $gradeFilterView,
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
+            'subjectFilter' => $subjectFilterView,
             'tuitions' => $tuitions,
             'memberships' => $memberships,
             'teacherMailAddresses' => $teacherMailAddresses,

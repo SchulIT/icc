@@ -12,14 +12,14 @@
 {% block content %}
     <div class="container-fluid px-0">
         <div class="row">
-            {% if studentFilter.currentStudent == null and gradeFilter.currentGrade == null and teacherFilter.currentTeacher == null %}
+            {% if studentFilter.currentStudent == null and gradeFilter.currentGrade == null and teacherFilter.currentTeacher == null and subjectFilter.currentSubject == null %}
             <div class="col-md-12">
             {% else %}
             <div class="col-md-9">
             {% endif %}
                 {% include "_messages.html.twig" %}
 
-                {% if studentFilter.currentStudent == null and gradeFilter.currentGrade == null and teacherFilter.currentTeacher == null %}
+                {% if studentFilter.currentStudent == null and gradeFilter.currentGrade == null and teacherFilter.currentTeacher == null and subjectFilter.currentSubject == null %}
                 {% elseif tuitions|length == 0 %}
                     <div class="bs-callout bs-callout-info">
                         <h5>{{ 'info.label'|trans }}</h5>
@@ -138,7 +138,7 @@
                 </div>
                 {% endif %}
 
-            {% if studentFilter.currentStudent == null and gradeFilter.currentGrade == null and teacherFilter.currentTeacher == null %}
+            {% if studentFilter.currentStudent == null and gradeFilter.currentGrade == null and teacherFilter.currentTeacher == null and subjectFilter.currentSubject == null %}
             {% else %}
             </div>
             <div class="col-md-3 sticky-sidebar">
@@ -170,6 +170,8 @@
                         {% include "_filter/grade.html.twig" with { params: params } %}
 
                         {% include "_filter/teacher.html.twig" with { params: params } %}
+
+                        {% include "_filter/subject.html.twig" with { params: params } %}
 
                         {% include "_filter/student.html.twig" with { params: params } %}
                     </div>

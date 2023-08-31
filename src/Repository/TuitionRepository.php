@@ -154,9 +154,11 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
     }
 
     /**
+     * @param array $subjects
+     * @param Section|null $section
      * @inheritDoc
      */
-    public function findAllBySubjects(array $subjects): array {
+    public function findAllBySubjects(array $subjects, ?Section $section = null): array {
         $subjectIds = array_map(fn(Subject $subject) => $subject->getId(), $subjects);
 
         $qb = $this->em->createQueryBuilder();
@@ -172,6 +174,10 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         $qb = $this->getDefaultQueryBuilder()
             ->where($qb->expr()->in('t.id', $qbInner->getDQL()))
             ->setParameter('subjects', $subjectIds);
+
+        if($section !== null) {
+            $qb = $this->filterSection($qb, $section);
+        }
 
         return $qb->getQuery()->getResult();
     }

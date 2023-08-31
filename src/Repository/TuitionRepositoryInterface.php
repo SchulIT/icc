@@ -62,9 +62,10 @@ interface TuitionRepositoryInterface extends TransactionalRepositoryInterface {
 
     /**
      * @param Subject[] $subjects
+     * @param Section|null $section If not null, only tuitions with the given subject of the given section are returned
      * @return Tuition[]
      */
-    public function findAllBySubjects(array $subjects): array;
+    public function findAllBySubjects(array $subjects, ?Section $section = null): array;
 
     /**
      * @param string[] $grades

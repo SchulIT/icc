@@ -27,6 +27,8 @@ interface NotificationRepositoryInterface {
 
     public function markAllReadForUser(User $user): int;
 
+    public function markAllReadForUserAndLink(User $user, string $link): int;
+
     public function persist(Notification $notification): void;
 
     public function remove(Notification $notification): void;

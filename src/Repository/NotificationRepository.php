@@ -64,6 +64,18 @@ class NotificationRepository extends AbstractRepository implements NotificationR
             ->getSingleScalarResult();
     }
 
+    public function markAllReadForUserAndLink(User $user, string $link): int {
+        return $this->em->createQueryBuilder()
+            ->update(Notification::class, 'n')
+            ->set('n.isRead', true)
+            ->where('n.recipient = :user')
+            ->andWhere('n.link = :link')
+            ->setParameter('user', $user->getId())
+            ->setParameter('link', $link)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function persist(Notification $notification): void {
         $this->em->persist($notification);
         $this->em->flush();

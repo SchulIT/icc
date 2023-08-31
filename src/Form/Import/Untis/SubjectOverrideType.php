@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class SubjectOverrideType extends AbstractType {
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('untis', TextType::class, [
                 'attr' => [

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0c9c5bac02a83b11b33470d8460b1ca0",
+    "content-hash": "39d1ab16ed838ee98524676828cf9e3e",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -2267,16 +2267,16 @@
         },
         {
             "name": "frostiede/composer-dependency-list-bundle",
-            "version": "3.0.0",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/frostieDE/composer-dependency-list-bundle.git",
-                "reference": "cf5b7a329243b6c62909ad92fc66a209d9c2d5ca"
+                "reference": "44a187014dc38b79f1285ec704997d9720a84fea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/frostieDE/composer-dependency-list-bundle/zipball/cf5b7a329243b6c62909ad92fc66a209d9c2d5ca",
-                "reference": "cf5b7a329243b6c62909ad92fc66a209d9c2d5ca",
+                "url": "https://api.github.com/repos/frostieDE/composer-dependency-list-bundle/zipball/44a187014dc38b79f1285ec704997d9720a84fea",
+                "reference": "44a187014dc38b79f1285ec704997d9720a84fea",
                 "shasum": ""
             },
             "require": {
@@ -2303,9 +2303,9 @@
             ],
             "support": {
                 "issues": "https://github.com/frostieDE/composer-dependency-list-bundle/issues",
-                "source": "https://github.com/frostieDE/composer-dependency-list-bundle/tree/3.0.0"
+                "source": "https://github.com/frostieDE/composer-dependency-list-bundle/tree/3.0.1"
             },
-            "time": "2021-12-31T11:44:12+00:00"
+            "time": "2023-08-31T17:36:30+00:00"
         },
         {
             "name": "gedmo/doctrine-extensions",
@@ -5231,16 +5231,16 @@
         },
         {
             "name": "schulit/common-bundle",
-            "version": "4.0.8",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SchulIT/common-bundle.git",
-                "reference": "b4d9193decadbab9114aa0d0ed5602f4064a0c28"
+                "reference": "ca2f1ca2ea7694c75079ab23fb13c474b252e581"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/b4d9193decadbab9114aa0d0ed5602f4064a0c28",
-                "reference": "b4d9193decadbab9114aa0d0ed5602f4064a0c28",
+                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/ca2f1ca2ea7694c75079ab23fb13c474b252e581",
+                "reference": "ca2f1ca2ea7694c75079ab23fb13c474b252e581",
                 "shasum": ""
             },
             "require": {
@@ -5264,6 +5264,7 @@
                 "knplabs/knp-menu-bundle": "",
                 "knplabs/knp-time-bundle": "",
                 "lightsaml/lightsaml": "",
+                "scienta/doctrine-json-functions": "",
                 "shapecode/cron-bundle": "",
                 "symfony/doctrine-messenger": ""
             },
@@ -5279,9 +5280,77 @@
             ],
             "support": {
                 "issues": "https://github.com/SchulIT/common-bundle/issues",
-                "source": "https://github.com/SchulIT/common-bundle/tree/4.0.8"
+                "source": "https://github.com/SchulIT/common-bundle/tree/4.1.0"
             },
-            "time": "2023-08-21T15:19:28+00:00"
+            "time": "2023-08-31T17:29:55+00:00"
+        },
+        {
+            "name": "scienta/doctrine-json-functions",
+            "version": "5.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ScientaNL/DoctrineJsonFunctions.git",
+                "reference": "0c1aa4f8ecd96608ee5f4c9cbb33f687d15c6b8c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ScientaNL/DoctrineJsonFunctions/zipball/0c1aa4f8ecd96608ee5f4c9cbb33f687d15c6b8c",
+                "reference": "0c1aa4f8ecd96608ee5f4c9cbb33f687d15c6b8c",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "^3.0",
+                "doctrine/orm": "^2.0",
+                "ext-pdo": "*",
+                "php": "^7.3 || ^8.0"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^1.13",
+                "doctrine/coding-standard": "^8.0 || ^9.0",
+                "phpunit/phpunit": "^8.0 || ^9.0"
+            },
+            "suggest": {
+                "dunglas/doctrine-json-odm": "To serialize / deserialize objects as JSON documents."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Scienta\\DoctrineJsonFunctions\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Doctrine Json Functions Contributors",
+                    "homepage": "https://github.com/ScientaNL/DoctrineJsonFunctions/contributors"
+                }
+            ],
+            "description": "A set of extensions to Doctrine 2 that add support for json query functions.",
+            "keywords": [
+                "database",
+                "doctrine",
+                "dql",
+                "json",
+                "mariadb",
+                "mysql",
+                "orm",
+                "postgres",
+                "postgresql",
+                "sqlite"
+            ],
+            "support": {
+                "issues": "https://github.com/ScientaNL/DoctrineJsonFunctions/issues",
+                "source": "https://github.com/ScientaNL/DoctrineJsonFunctions/tree/5.3.0"
+            },
+            "time": "2023-03-20T12:05:26+00:00"
         },
         {
             "name": "sensio/framework-extra-bundle",
@@ -11723,16 +11792,16 @@
         },
         {
             "name": "zircote/swagger-php",
-            "version": "4.7.11",
+            "version": "4.7.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zircote/swagger-php.git",
-                "reference": "f01574d1ac55cb0bf31a8dd80525ad58eef83afc"
+                "reference": "e1062da5b47d3a97ee9910301f902b0f5b408340"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/f01574d1ac55cb0bf31a8dd80525ad58eef83afc",
-                "reference": "f01574d1ac55cb0bf31a8dd80525ad58eef83afc",
+                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/e1062da5b47d3a97ee9910301f902b0f5b408340",
+                "reference": "e1062da5b47d3a97ee9910301f902b0f5b408340",
                 "shasum": ""
             },
             "require": {
@@ -11795,9 +11864,9 @@
             ],
             "support": {
                 "issues": "https://github.com/zircote/swagger-php/issues",
-                "source": "https://github.com/zircote/swagger-php/tree/4.7.11"
+                "source": "https://github.com/zircote/swagger-php/tree/4.7.13"
             },
-            "time": "2023-08-03T21:23:48+00:00"
+            "time": "2023-08-30T23:32:39+00:00"
         }
     ],
     "packages-dev": [

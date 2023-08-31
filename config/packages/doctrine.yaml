@@ -47,6 +47,7 @@ doctrine:
             string_functions:
                 match: DoctrineExtensions\Query\Mysql\MatchAgainst
                 regexp: DoctrineExtensions\Query\Mysql\Regexp
+                JSON_VALUE: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mariadb\JsonValue
 
 #when@test:
 #    doctrine:

@@ -132,6 +132,17 @@
 {%- block markdown_widget -%}
     {{ block('textarea_widget') }}
 
+    <div class="mt-1 text-muted">
+        <i class="fa-brands fa-markdown"></i>
+
+        {{ 'markdown.editor'|trans }}
+
+        <i class="fa-brands fa-wikipedia-w"></i>
+        <a href="{{ 'markdown.link.url'|trans }}" target="_blank" class="text-muted">
+             {{ 'markdown.link.label'|trans }} <i class="fas fa-external-link"></i>
+        </a>
+    </div>
+
     <div class="modal fade bd-example-modal-xl" id="modal-{{ form.vars.id }}" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content"></div>

@@ -268,7 +268,13 @@ label:
         help: Beim Erstellen wird zusätzlich eine E-Mail an die folgenden Empfänger versendet.
 
 markdown:
+    label: Markdown
+    editor: Dieser Editor unterstützt Markdown.
+    link:
+        label: Syntax-Beispiele auf Wikipedia
+        url: https://de.wikipedia.org/wiki/Markdown#Auszeichnungsbeispiele
     link_broken: Dieser Verweis ist defekt.
+
 
 filter:
     label: Filter

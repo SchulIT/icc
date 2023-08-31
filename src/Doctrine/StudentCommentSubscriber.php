@@ -5,14 +5,16 @@ namespace App\Doctrine;
 use App\Entity\BookComment;
 use App\Event\BookCommentCreatedEvent;
 use App\Event\BookCommentUpdatedEvent;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-
-class StudentCommentSubscriber implements EventSubscriber {
+#[AsDoctrineListener(event: Events::postPersist)]
+#[AsDoctrineListener(event: Events::postUpdate)]
+class StudentCommentSubscriber {
 
     public function __construct(private readonly EventDispatcherInterface $dispatcher) { }
 
@@ -30,12 +32,5 @@ class StudentCommentSubscriber implements EventSubscriber {
         if($entity instanceof BookComment) {
             $this->dispatcher->dispatch(new BookCommentUpdatedEvent($entity));
         }
-    }
-
-    public function getSubscribedEvents(): array {
-        return [
-            Events::postPersist,
-            Events::postUpdate
-        ];
     }
 }

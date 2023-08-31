@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class DocumentAttachmentType extends AbstractType {
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('file', VichFileType::class, [
                 'label' => 'label.file',
@@ -20,7 +20,7 @@ class DocumentAttachmentType extends AbstractType {
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         $resolver->setDefault('data_class', DocumentAttachment::class);
     }
 }

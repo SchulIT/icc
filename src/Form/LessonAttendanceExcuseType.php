@@ -10,13 +10,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LessonAttendanceExcuseType extends AbstractType {
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         parent::configureOptions($resolver);
         $resolver->setDefault('csrf_field_name', '_token');
         $resolver->setDefault('csrf_token_id', 'lesson_attendance_excuse_status');
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('excuseStatus', ChoiceType::class, [
                 'choices' => [

@@ -30,12 +30,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudentAbsenceBulkType extends AbstractType {
 
-    public function __construct(private StudentStringConverter $studentConverter, private TranslatorInterface $translator,
-                                private AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(private readonly StudentStringConverter $studentConverter, private readonly TranslatorInterface $translator,
+                                private readonly AuthorizationCheckerInterface $authorizationChecker)
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('students', StudentsType::class, [
                 'choice_label' => fn(Student $student) => $this->studentConverter->convert($student, true),

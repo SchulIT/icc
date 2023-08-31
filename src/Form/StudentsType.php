@@ -22,12 +22,12 @@ class StudentsType extends SortableEntityType {
 
     public function __construct(ManagerRegistry $registry, private readonly StudyGroupRepositoryInterface $studyGroupRepository,
                                 private readonly Sorter $sorter, private readonly StudyGroupStringConverter $studyGroupStringConverter,
-                                private StudentStringConverter $studentConverter, private StudentStrategy $studentStrategy,
-                                private StringStrategy $stringStrategy, private SectionResolverInterface $sectionResolver) {
+                                private readonly StudentStringConverter $studentConverter, private readonly StudentStrategy $studentStrategy,
+                                private readonly StringStrategy $stringStrategy, private readonly SectionResolverInterface $sectionResolver) {
         parent::__construct($registry);
     }
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         parent::configureOptions($resolver);
 
         $section = $this->sectionResolver->getCurrentSection();
@@ -71,7 +71,7 @@ class StudentsType extends SortableEntityType {
             ]);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options) {
+    public function buildView(FormView $view, FormInterface $form, array $options): void {
         parent::buildView($view, $form, $options);
 
         $view->vars['apply_from_studygroups'] = $options['apply_from_studygroups'];

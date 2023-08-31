@@ -10,12 +10,12 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class LessonEntryAddStudent extends AbstractType {
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         $resolver->setDefault('csrf_field_name', '_token');
         $resolver->setDefault('csrf_token_id', 'lesson_entry_add_student');
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('student', StudentsType::class, [
                 'label' => 'label.student',

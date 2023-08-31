@@ -24,11 +24,11 @@ class MessageType extends AbstractType {
 
     private const YearsDelta = 1;
 
-    public function __construct(private DateHelper $dateHelper, private AuthorizationCheckerInterface $authorizationChecker, private readonly TranslatorInterface $translator, private readonly EnumStringConverter $enumStringConverter)
+    public function __construct(private readonly DateHelper $dateHelper, private readonly AuthorizationCheckerInterface $authorizationChecker, private readonly TranslatorInterface $translator, private readonly EnumStringConverter $enumStringConverter)
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('group_general', FieldsetType::class, [
                 'legend' => 'label.general',

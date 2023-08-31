@@ -10,12 +10,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LessonEntryCancelType extends AbstractType {
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         $resolver->setDefault('validation_groups', [ 'cancel']);
         $resolver->setDefault('csrf_field_name', '_token');
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('lessonStart', IntegerType::class, [
                 'label' => 'label.start'

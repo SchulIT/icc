@@ -20,11 +20,11 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DocumentType extends AbstractType {
 
-    public function __construct(private DocumentCategoryNameStrategy $documentCategoryNameStrategy, private UserStringConverter $userConverter, private UserUsernameStrategy $userStrategy, private AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(private readonly DocumentCategoryNameStrategy $documentCategoryNameStrategy, private readonly UserStringConverter $userConverter, private readonly UserUsernameStrategy $userStrategy, private readonly AuthorizationCheckerInterface $authorizationChecker)
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $isRestrictedView = $this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN') !== true;
 
         $builder

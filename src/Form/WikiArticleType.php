@@ -17,11 +17,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class WikiArticleType extends AbstractType {
 
-    public function __construct(private TreeHelper $treeHelper, private WikiArticleRepositoryInterface $wikiRepository, private UrlGeneratorInterface $urlGenerator)
+    public function __construct(private readonly TreeHelper $treeHelper, private readonly WikiArticleRepositoryInterface $wikiRepository, private readonly UrlGeneratorInterface $urlGenerator)
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $articles = $this->wikiRepository->findAll();
 
         $builder

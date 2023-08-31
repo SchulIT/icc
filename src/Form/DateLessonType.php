@@ -15,18 +15,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DateLessonType extends AbstractType implements DataMapperInterface {
 
-    public function __construct(private TimetableSettings $timetableSettings, private TranslatorInterface $translator)
+    public function __construct(private readonly TimetableSettings $timetableSettings, private readonly TranslatorInterface $translator)
     {
     }
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         parent::configureOptions($resolver);
 
         $resolver->setDefault('compound', true);
         $resolver->setDefault('error_bubbling', false);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('date', DateType::class, [
                 'widget' => 'single_text',

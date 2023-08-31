@@ -5,28 +5,33 @@ namespace App\Doctrine;
 use App\Entity\StudentAbsence;
 use App\Entity\StudentAbsenceMessage;
 use App\Event\StudentAbsenceCreatedEvent;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostPersistEventArgs;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class StudentAbsencePersistSubscriber implements EventSubscriber {
+#[AsDoctrineListener(event: Events::postPersist)]
+#[AsDoctrineListener(event: Events::postUpdate)]
+class StudentAbsencePersistSubscriber {
 
     private const FromDateProperty = 'from.date';
     private const FromLessonProperty = 'from.lesson';
     private const UntilDateProperty = 'until.date';
     private const UntilLessonProperty = 'until.lesson';
 
-    public function __construct(private EventDispatcherInterface $dispatcher, private TranslatorInterface $translator)
+    public function __construct(private readonly EventDispatcherInterface $dispatcher, private readonly TranslatorInterface $translator)
     {
     }
 
-    public function postUpdate(LifecycleEventArgs $eventArgs) {
-        $entity = $eventArgs->getEntity();
+    public function postUpdate(PostUpdateEventArgs $eventArgs): void {
+        $entity = $eventArgs->getObject();
 
         if($entity instanceof StudentAbsence) {
-            $changeset = $eventArgs->getEntityManager()->getUnitOfWork()
+            $changeset = $eventArgs->getObjectManager()->getUnitOfWork()
                 ->getEntityChangeSet($entity);
 
             // Step 1: fix the fact that the date object seems to marked as "changed"
@@ -77,8 +82,8 @@ class StudentAbsencePersistSubscriber implements EventSubscriber {
                 ])
             );
 
-            $eventArgs->getEntityManager()->persist($message);
-            $eventArgs->getEntityManager()->flush();
+            $eventArgs->getObjectManager()->persist($message);
+            $eventArgs->getObjectManager()->flush();
         }
     }
 
@@ -90,21 +95,11 @@ class StudentAbsencePersistSubscriber implements EventSubscriber {
         return $changeset[$index];
     }
 
-    public function postPersist(LifecycleEventArgs $eventArgs) {
-        $entity = $eventArgs->getEntity();
+    public function postPersist(PostPersistEventArgs $eventArgs): void {
+        $entity = $eventArgs->getObject();
 
         if($entity instanceof StudentAbsence) {
             $this->dispatcher->dispatch(new StudentAbsenceCreatedEvent($entity));
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getSubscribedEvents(): array {
-        return [
-            Events::postPersist,
-            Events::postUpdate
-        ];
     }
 }

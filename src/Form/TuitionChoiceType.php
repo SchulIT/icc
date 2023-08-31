@@ -18,7 +18,7 @@ class TuitionChoiceType extends SortableEntityType {
         parent::__construct($registry);
     }
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         parent::configureOptions($resolver);
 
         $resolver->setDefault('class', Tuition::class);

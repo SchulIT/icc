@@ -7,12 +7,9 @@ use App\Entity\Student;
 use App\Entity\StudentAbsence;
 use App\Entity\StudentAbsenceType as StudentAbsenceTypeEntity;
 use App\Entity\User;
-use App\Entity\UserType;
 use App\Repository\StudentRepositoryInterface;
 use App\Security\Voter\StudentAbsenceTypeVoter;
-use App\Security\Voter\StudentAbsenceVoter;
 use App\Sorting\StudentStrategy;
-use App\Utils\EnumArrayUtils;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -22,9 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -32,13 +27,13 @@ class StudentAbsenceType extends AbstractType {
 
     private const ShowComboboxThreshold = 10;
 
-    public function __construct(private StudentStringConverter $studentConverter, private StudentStrategy $studentStrategy,
-                                private TranslatorInterface $translator, private AuthorizationCheckerInterface $authorizationChecker,
-                                private TokenStorageInterface $tokenStorage, private StudentRepositoryInterface $studentRepository)
+    public function __construct(private readonly StudentStringConverter $studentConverter, private readonly StudentStrategy $studentStrategy,
+                                private readonly TranslatorInterface $translator, private readonly AuthorizationCheckerInterface $authorizationChecker,
+                                private readonly TokenStorageInterface $tokenStorage, private readonly StudentRepositoryInterface $studentRepository)
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $token = $this->tokenStorage->getToken();
 
         if($token === null) {

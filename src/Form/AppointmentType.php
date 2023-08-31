@@ -19,11 +19,11 @@ use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AppointmentType extends AbstractType {
-    public function __construct(private TeacherStringConverter $teacherConverter, private TeacherStrategy $teacherStrategy, private AppointmentCategoryStrategy $appointmentCategoryStrategy, private AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(private readonly TeacherStringConverter $teacherConverter, private readonly TeacherStrategy $teacherStrategy, private readonly AppointmentCategoryStrategy $appointmentCategoryStrategy, private readonly AuthorizationCheckerInterface $authorizationChecker)
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('group_general', FieldsetType::class, [
                 'legend' =>  'label.general',

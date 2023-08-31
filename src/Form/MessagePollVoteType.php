@@ -10,13 +10,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MessagePollVoteType extends AbstractType {
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         $resolver->setRequired('num_choices');
         $resolver->setRequired('choices');
         $resolver->setRequired('allow_vote');
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $choices = ArrayUtils::createArrayWithKeys($options['choices'], fn(MessagePollChoice $choice) => $choice->getLabel());
 
         for($i = 1; $i <= $options['num_choices']; $i++) {

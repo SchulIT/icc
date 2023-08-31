@@ -10,11 +10,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WeekType extends EntityType {
-    public function __construct(private TranslatorInterface $translator, ManagerRegistry $registry) {
+    public function __construct(private readonly TranslatorInterface $translator, ManagerRegistry $registry) {
         parent::__construct($registry);
     }
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         parent::configureOptions($resolver);
 
         $resolver->setDefault('class', Week::class);

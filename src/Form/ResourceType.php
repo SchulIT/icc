@@ -19,11 +19,11 @@ use Symfony\Component\Form\FormEvents;
 
 class ResourceType extends AbstractType {
 
-    public function __construct(private ResourceTypeStrategy $sortingStrategy)
+    public function __construct(private readonly ResourceTypeStrategy $sortingStrategy)
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event) {
             $form = $event->getForm();
             $data = $event->getData();

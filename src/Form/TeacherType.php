@@ -21,7 +21,7 @@ class TeacherType extends AbstractType {
 
     public function __construct(private readonly TranslatorInterface $translator) { }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('externalId', TextType::class, [
                 'label' => 'label.external_id'

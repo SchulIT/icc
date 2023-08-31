@@ -18,11 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LessonEntryType extends AbstractType {
 
-    public function configureOptions(OptionsResolver $resolver) {
-
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('lessonStart', IntegerType::class, [
                 'label' => 'label.start',

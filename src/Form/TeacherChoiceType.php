@@ -10,11 +10,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TeacherChoiceType extends SortableEntityType {
 
-    public function __construct(private TeacherStrategy $teacherStrategy, private TeacherStringConverter $teacherConverter, ManagerRegistry $registry) {
+    public function __construct(private readonly TeacherStrategy $teacherStrategy, private readonly TeacherStringConverter $teacherConverter, ManagerRegistry $registry) {
         parent::__construct($registry);
     }
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([

@@ -14,7 +14,7 @@ class GradeTuitionTeachersIntersectionType extends AbstractType {
 
     public function __construct(private readonly SubjectNameStrategy $subjectNameStrategy, private readonly SectionDateStrategy $sectionDateStrategy) {}
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('leftGrades', GradeChoiceType::class, [
                 'label' => 'tools.grade_teacher_intersection.left_grades',

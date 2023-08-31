@@ -5,17 +5,20 @@ namespace App\Doctrine;
 use App\Entity\TeacherAbsence;
 use App\Event\TeacherAbsenceCreatedEvent;
 use App\Event\TeacherAbsenceUpdatedEvent;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class TeacherAbsencePersistSubscriber implements EventSubscriber {
+#[AsDoctrineListener(event: Events::postPersist)]
+#[AsDoctrineListener(event: Events::postUpdate)]
+class TeacherAbsencePersistSubscriber {
 
     public function __construct(private readonly EventDispatcherInterface $dispatcher) { }
 
-    public function postPersist(PostPersistEventArgs $eventArgs) {
+    public function postPersist(PostPersistEventArgs $eventArgs): void {
         $entity = $eventArgs->getObject();
 
         if($entity instanceof TeacherAbsence) {
@@ -23,7 +26,7 @@ class TeacherAbsencePersistSubscriber implements EventSubscriber {
         }
     }
 
-    public function postUpdate(PostUpdateEventArgs $eventArgs) {
+    public function postUpdate(PostUpdateEventArgs $eventArgs): void {
         $entity = $eventArgs->getObject();
 
         if($entity instanceof TeacherAbsence) {
@@ -38,12 +41,5 @@ class TeacherAbsencePersistSubscriber implements EventSubscriber {
                 $this->dispatcher->dispatch(new TeacherAbsenceUpdatedEvent($entity));
             }
         }
-    }
-
-    public function getSubscribedEvents(): array {
-        return [
-            Events::postPersist,
-            Events::postUpdate
-        ];
     }
 }

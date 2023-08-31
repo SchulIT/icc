@@ -14,7 +14,7 @@ class GradeResponsibilityType extends AbstractType {
 
     public function __construct(private readonly GradeNameStrategy $gradeNameStrategy, private readonly SectionDateStrategy $sectionDateStrategy) { }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('grade', SortableEntityType::class, [
                 'label' => 'label.grade',

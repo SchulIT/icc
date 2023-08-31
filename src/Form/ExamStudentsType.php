@@ -18,11 +18,11 @@ use Symfony\Component\Form\FormEvents;
 
 class ExamStudentsType extends AbstractType {
 
-    public function __construct(private StudentStringConverter $studentConverter, private StudentStrategy $studentStrategy, private StringStrategy $stringStrategy, private StudentRepositoryInterface $studentRepository, private SectionResolverInterface $sectionResolver)
+    public function __construct(private readonly StudentStringConverter $studentConverter, private readonly StudentStrategy $studentStrategy, private readonly StringStrategy $stringStrategy, private readonly StudentRepositoryInterface $studentRepository, private readonly SectionResolverInterface $sectionResolver)
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event) {
                 $form = $event->getForm();

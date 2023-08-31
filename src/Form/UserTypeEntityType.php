@@ -11,11 +11,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserTypeEntityType extends EntityType {
 
-    public function __construct(ManagerRegistry $registry, private EnumStringConverter $enumStringConverter) {
+    public function __construct(ManagerRegistry $registry, private readonly EnumStringConverter $enumStringConverter) {
         parent::__construct($registry);
     }
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         parent::configureOptions($resolver);
 
         $resolver

@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class MessageUploadType extends AbstractType {
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('uploads', CollectionType::class, [
                 'entry_type' => MessageFileUploadType::class,

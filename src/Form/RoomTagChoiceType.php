@@ -15,11 +15,11 @@ use Symfony\Component\Form\FormInterface;
 
 class RoomTagChoiceType extends AbstractType implements DataMapperInterface {
 
-    public function __construct(private RoomTagRepositoryInterface $tagRepository)
+    public function __construct(private readonly RoomTagRepositoryInterface $tagRepository)
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         foreach($this->tagRepository->findAll() as $tag) {
             $builder
                 ->add(sprintf('tag-%s', $tag->getId()), CheckboxType::class, [
@@ -47,7 +47,7 @@ class RoomTagChoiceType extends AbstractType implements DataMapperInterface {
     /**
      * @inheritDoc
      */
-    public function mapDataToForms($viewData, $forms) {
+    public function mapDataToForms($viewData, $forms): void {
         if(!is_iterable($viewData)) {
             throw new UnexpectedTypeException($viewData, 'array');
         }
@@ -78,7 +78,7 @@ class RoomTagChoiceType extends AbstractType implements DataMapperInterface {
     /**
      * @inheritDoc
      */
-    public function mapFormsToData($forms, &$viewData) {
+    public function mapFormsToData($forms, &$viewData): void {
         /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
 

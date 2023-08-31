@@ -16,11 +16,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ResourceReservationType extends AbstractType {
 
-    public function __construct(private ResourceStrategy $strategy)
+    public function __construct(private readonly ResourceStrategy $strategy)
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('resource', SortableEntityType::class, [
                 'label' => 'label.resource',

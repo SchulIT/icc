@@ -10,12 +10,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NotificationsType extends AbstractType {
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         $resolver->setDefault('allow_email', false)
             ->setDefault('allow_pushover', false);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('isSubstitutionNotificationsEnabled', CheckboxType::class, [
                 'label' => 'profile.notifications.substitutions.label',

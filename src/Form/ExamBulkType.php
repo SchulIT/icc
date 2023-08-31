@@ -16,11 +16,11 @@ use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 
 class ExamBulkType extends AbstractType {
 
-    public function __construct(private TuitionStrategy $tuitionStrategy, private StringStrategy $stringStrategy, private readonly SectionResolverInterface $sectionResolver)
+    public function __construct(private readonly TuitionStrategy $tuitionStrategy, private readonly StringStrategy $stringStrategy, private readonly SectionResolverInterface $sectionResolver)
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('number', IntegerType::class, [
                 'label' => 'admin.exams.bulk.number_of_exams',

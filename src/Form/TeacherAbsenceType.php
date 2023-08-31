@@ -18,7 +18,7 @@ class TeacherAbsenceType extends AbstractType {
 
     public function __construct(private readonly TeacherStringConverter $teacherStringConverter, private readonly TeacherStrategy $teacherStrategy) { }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('teacher', SortableEntityType::class, [
                 'label' => 'label.teacher',

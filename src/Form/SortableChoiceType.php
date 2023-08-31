@@ -12,14 +12,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SortableChoiceType extends ChoiceType {
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         parent::configureOptions($resolver);
 
         $resolver->setDefault('sort_by', null);
         $resolver->setDefault('sort_items_by', null);
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options) {
+    public function finishView(FormView $view, FormInterface $form, array $options): void {
         parent::finishView($view, $form, $options);
 
         $sortingStrategy = $options['sort_by'];

@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class TuitionGradeCategoryType extends AbstractType {
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('displayName', TextType::class, [
                 'label' => 'label.display_name'

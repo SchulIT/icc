@@ -18,13 +18,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class StudyGroupType extends SortableEntityType {
 
-    public function __construct(ManagerRegistry $registry, private StudyGroupStringConverter $studyGroupConverter,
-                                private StringStrategy $stringStrategy, private StudyGroupStrategy $studyGroupStrategy,
-                                private EnumStringConverter $enumStringConverter, private SectionResolverInterface $sectionResolver) {
+    public function __construct(ManagerRegistry $registry, private readonly StudyGroupStringConverter $studyGroupConverter,
+                                private readonly StringStrategy $stringStrategy, private readonly StudyGroupStrategy $studyGroupStrategy,
+                                private readonly EnumStringConverter $enumStringConverter, private readonly SectionResolverInterface $sectionResolver) {
         parent::__construct($registry);
     }
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         parent::configureOptions($resolver);
 
         $resolver
@@ -52,8 +52,7 @@ class StudyGroupType extends SortableEntityType {
 
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
+    public function finishView(FormView $view, FormInterface $form, array $options): void {
         parent::finishView($view, $form, $options);
 
         $gradeIds = [ ]; // List of grade ids

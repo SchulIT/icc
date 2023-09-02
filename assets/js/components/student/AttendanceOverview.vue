@@ -235,6 +235,7 @@ import Toast from 'bootstrap/js/dist/toast';
 export default {
   name: 'attendance_overview',
   props: {
+    readonly: Boolean,
     entries: Object,
     attendances: Array,
     comments: Array,
@@ -313,6 +314,10 @@ export default {
       return this.comments.filter(c => c.date === dateAsString);
     },
     edit(lesson) {
+      if(this.readonly === true) {
+        return;
+      }
+
       if(lesson.entry === null || lesson.attendance === null) {
         return;
       }
@@ -408,6 +413,10 @@ export default {
       });
     },
     uploadData(lesson, callback) {
+      if(this.readonly === true) {
+        return;
+      }
+
       let url = this.url.replace('uuid', lesson.attendance.attendance.uuid);
       let comment = lesson.attendance.attendance.comment;
 
@@ -447,6 +456,10 @@ export default {
       callback();
     },
     changeExcuseStatus(lesson) {
+      if(this.readonly === true) {
+        return;
+      }
+
       if(lesson.entry === null || lesson.attendance === null || lesson.attendance.attendance.type !== 0) {
         return;
       }

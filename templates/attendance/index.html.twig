@@ -1,0 +1,144 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'attendance.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    {% set currentFilter = {
+        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
+        student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null
+    } %}
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9" id="app">
+                {% if info is not null and groups is not empty %}
+                    <div class="bs-callout bs-callout-info">
+                        <p>{{ 'attendance.info'|trans }}</p>
+                    </div>
+
+                <div class="row row-cols-3 g-2 mb-3">
+                    <div class="col">
+                        <div class="card mb-0 {% if info.lateMinutesCount > 0 %}border-warning{% endif %}">
+                            <div class="card-body">
+                                <div class="counter">
+                                    <i class="fas fa-clock"></i>
+                                    {{ 'book.attendance.late_minutes'|trans({'%count%': info.lateMinutesCount }) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="card mb-0">
+                            <div class="card-body">
+                                <div class="counter">
+                                    <i class="fas fa-user-times"></i>
+                                    {{ info.absentLessonsCount }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="card mb-0 {% if info.notExcusedAbsentLessonsCount > 0 %}bg-danger text-white{% endif %}">
+                            <div class="card-body">
+                                <div class="counter">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ info.notExcusedAbsentLessonsCount }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <attendance-overview :entries="{{ entries|json_encode }}"
+                                     :comments="[]"
+                                     :readonly="true"
+                                     :attendances="{{ info.presentLessonAttendances|merge(info.lateLessonAttendances)|merge(info.absentLessonAttendances)|json_encode }}"
+                                     :day-groups="{{ groups|json_encode }}"
+                                     url="null"
+                                     absences-url="null"
+                                     csrftoken="null"
+                                     :max-lessons="{{ numberOfLessons }}" />
+
+                {% else %}
+                    <div class="bs-callout bs-callout-info">
+                        <h5>{{ 'info.label'|trans }}</h5>
+                        <p>{{ 'attendance.empty'|trans }}</p>
+                    </div>
+
+                {% endif %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+
+                        {% include "_filter/student.html.twig" with { params: currentFilter|merge({student: null}) } %}
+                    </div>
+                </div>
+
+                {% if studentFilter.currentStudent is not null %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="far fa-id-card"></i> {{ studentFilter.currentStudent.lastname }}, {{ studentFilter.currentStudent.firstname }}
+                            </h5>
+
+                            <p>
+                                <i class="fas fa-envelope"></i> <a href="mailto:{{ studentFilter.currentStudent.email }}">{{ studentFilter.currentStudent.email }}</a>
+                            </p>
+
+                            <p>
+                                <i class="fas fa-graduation-cap"></i>
+                                {% include "_includes/grade_teachers.html.twig" with { grade: studentFilter.currentStudent.grade(sectionFilter.currentSection), section: sectionFilter.currentSection } %}
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
+
+                        <p>{{ 'book.students.overview.info'|trans }}</p>
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item list-group-item-success">
+                            <i class="fas fa-user-check"></i> {{ 'book.attendance.type.present'|trans }}
+                        </div>
+                        <div class="list-group-item list-group-item-warning">
+                            <i class="fas fa-user-clock"></i> {{ 'book.attendance.type.late'|trans }}
+                        </div>
+                        <div class="list-group-item list-group-item-danger">
+                            <i class="fas fa-check"></i> {{ 'book.students.excused'|trans }}
+                        </div>
+                        <div class="list-group-item list-group-item-danger">
+                            <i class="fas fa-question"></i> {{ 'book.students.not_set'|trans }}
+                        </div>
+                        <div class="list-group-item list-group-item-danger">
+                            <i class="fas fa-times"></i> {{ 'book.students.not_excused'|trans }}
+                        </div>
+                        <div class="list-group-item list-group-item-secondary">
+                            <i class="far fa-calendar-times"></i> {{ 'book.entry.cancel.label'|trans }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/book.js') }}"></script>
+{% endblock %}

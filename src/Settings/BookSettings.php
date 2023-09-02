@@ -63,4 +63,12 @@ class BookSettings extends AbstractSettings {
     public function setExercisesDays(int $homeworkDays): void {
         $this->setValue('book.exercises.days', $homeworkDays);
     }
+
+    public function isAttendanceVisibleForStudentsAndParentsEnabled(): bool {
+        return $this->getValue('book.attendance.visible_for_students_and_parents', false);
+    }
+
+    public function setAttendanceVisibleForStudentsAndParentsEnabled(bool $isEnabled): void {
+        $this->setValue('book.attendance.visible_for_students_and_parents', $isEnabled);
+    }
 }

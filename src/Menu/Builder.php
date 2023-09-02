@@ -63,6 +63,15 @@ class Builder {
             $this->absencesMenu($menu);
         }
 
+        $user = $this->tokenStorage->getToken()?->getUser();
+
+        if($user instanceof User && $user->isStudentOrParent()) {
+            $menu->addChild('attendance.label', [
+                'route' => 'student_attendance'
+            ])
+                ->setExtra('icon', 'fa-solid fa-chalkboard-user');
+        }
+
         if($this->authorizationChecker->isGranted('ROLE_BOOK_VIEWER')) {
             $this->bookMenu($menu);
         }

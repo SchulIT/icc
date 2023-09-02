@@ -9,6 +9,7 @@ use App\Settings\BookSettings;
 use App\Utils\ArrayUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -66,6 +67,12 @@ class BookSettingsController extends AbstractController {
                 'required' => false,
                 'label' => 'admin.settings.book.font.bold.label',
                 'help' => 'admin.settings.book.font.bold.help'
+            ])
+            ->add('attendances_visible_for_students_and_parents', CheckboxType::class, [
+                'required' => false,
+                'label' => 'admin.settings.book.attendances_visible_for_students_and_parents.label',
+                'help' => 'admin.settings.book.attendances_visible_for_students_and_parents.help',
+                'data' => $settings->isAttendanceVisibleForStudentsAndParentsEnabled()
             ]);
         $form = $builder->getForm();
         $form->handleRequest($request);
@@ -80,6 +87,9 @@ class BookSettingsController extends AbstractController {
                 },
                 'exclude_student_status' => function(array $status) use($settings) {
                     $settings->setExcludeStudentsStatus($status);
+                },
+                'attendances_visible_for_students_and_parents' => function(bool $isEnabled) use($settings) {
+                    $settings->setAttendanceVisibleForStudentsAndParentsEnabled($isEnabled);
                 }
             ];
 

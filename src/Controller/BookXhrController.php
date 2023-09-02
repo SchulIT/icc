@@ -267,13 +267,20 @@ class BookXhrController extends AbstractController {
         }
 
         $students = [ ];
-        foreach($lesson->getTuition()->getStudyGroup()->getMemberships() as $membership) {
-            if(in_array($membership->getStudent()->getStatus(), $settings->getExcludeStudentsStatus())) {
-                // skip student
-                continue;
-            }
 
-            $students[] = $this->getStudent($membership->getStudent());
+        if($entry === null) {
+            foreach ($lesson->getTuition()->getStudyGroup()->getMemberships() as $membership) {
+                if (in_array($membership->getStudent()->getStatus(), $settings->getExcludeStudentsStatus())) {
+                    // skip student
+                    continue;
+                }
+
+                $students[] = $this->getStudent($membership->getStudent());
+            }
+        } else {
+            foreach($entry->getAttendances() as $attendance) {
+                $students[] = $this->getStudent($attendance->getStudent());
+            }
         }
 
         $response = [

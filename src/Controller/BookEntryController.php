@@ -120,22 +120,6 @@ class BookEntryController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $students = $lesson->getTuition()->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent());
-
-            $alreadyAddedStudents = array_map(fn(LessonAttendance $attendance) => $attendance->getStudent()->getUuid()->toString(), $entry->getAttendances()->toArray());
-
-            /** @var Student $student */
-            foreach($students as $student) {
-                if(!in_array($student->getUuid()->toString(), $alreadyAddedStudents)) {
-                    $entry->addAttendance(
-                        (new LessonAttendance())
-                            ->setStudent($student)
-                            ->setType(LessonAttendanceType::Present)
-                            ->setEntry($entry)
-                    );
-                }
-            }
-
             $this->repository->persist($entry);
             $this->addFlash('success', 'book.entry.add.success');
 

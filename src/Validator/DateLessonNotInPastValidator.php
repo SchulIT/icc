@@ -13,15 +13,15 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class DateLessonNotInPastValidator extends ConstraintValidator {
 
-    public function __construct(private AuthorizationCheckerInterface $authorizationChecker, private DateHelper $dateHelper,
-                                private EntityManagerInterface $em)
+    public function __construct(private readonly AuthorizationCheckerInterface $authorizationChecker, private readonly DateHelper $dateHelper,
+                                private readonly EntityManagerInterface $em)
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function validate($value, Constraint $constraint) {
+    public function validate($value, Constraint $constraint): void {
         if(!$value instanceof DateLesson) {
             throw new UnexpectedTypeException($value, DateLesson::class);
         }

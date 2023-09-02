@@ -10,14 +10,14 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class DateIsNotInPastValidator extends ConstraintValidator {
 
-    public function __construct(private DateHelper $dateHelper)
+    public function __construct(private readonly DateHelper $dateHelper)
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function validate($value, Constraint $constraint) {
+    public function validate($value, Constraint $constraint): void {
         if(!$constraint instanceof DateIsNotInPast) {
             throw new UnexpectedTypeException($constraint, DateIsNotInPast::class);
         }

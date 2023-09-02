@@ -64,7 +64,7 @@ class DateLessonType extends AbstractType implements DataMapperInterface {
     /**
      * @inheritDoc
      */
-    public function mapDataToForms($viewData, $forms) {
+    public function mapDataToForms($viewData, $forms): void {
         if($viewData === null) {
             return;
         }
@@ -82,7 +82,7 @@ class DateLessonType extends AbstractType implements DataMapperInterface {
     /**
      * @inheritDoc
      */
-    public function mapFormsToData($forms, &$viewData) {
+    public function mapFormsToData($forms, &$viewData): void {
         $forms = iterator_to_array($forms);
 
         $viewData = new DateLesson();

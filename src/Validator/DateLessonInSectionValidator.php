@@ -15,7 +15,7 @@ class DateLessonInSectionValidator extends ConstraintValidator {
 
     public function __construct(private readonly SectionResolverInterface $sectionResolver, private readonly SectionRepositoryInterface $sectionRepository) { }
 
-    public function validate(mixed $value, Constraint $constraint) {#
+    public function validate(mixed $value, Constraint $constraint): void {
         if(!$value instanceof DateLesson) {
             throw new UnexpectedTypeException($value, DateLesson::class);
         }

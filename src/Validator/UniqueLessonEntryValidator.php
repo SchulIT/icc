@@ -12,7 +12,7 @@ class UniqueLessonEntryValidator extends ConstraintValidator {
     /**
      * @inheritDoc
      */
-    public function validate($value, Constraint $constraint) {
+    public function validate($value, Constraint $constraint): void {
         if(!$constraint instanceof UniqueLessonEntry) {
             throw new UnexpectedTypeException($value, UniqueLessonEntry::class);
         }

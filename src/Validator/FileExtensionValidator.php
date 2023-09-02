@@ -12,7 +12,7 @@ class FileExtensionValidator extends ConstraintValidator {
     /**
      * @inheritDoc
      */
-    public function validate($value, Constraint $constraint) {
+    public function validate($value, Constraint $constraint): void {
         if(!$constraint instanceof FileExtension) {
             throw new UnexpectedTypeException($constraint, FileExtension::class);
         }

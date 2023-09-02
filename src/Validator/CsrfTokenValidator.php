@@ -9,14 +9,14 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class CsrfTokenValidator extends ConstraintValidator {
 
-    public function __construct(private CsrfTokenManagerInterface $tokenManager)
+    public function __construct(private readonly CsrfTokenManagerInterface $tokenManager)
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function validate($value, Constraint $constraint) {
+    public function validate($value, Constraint $constraint): void {
         if(!$constraint instanceof CsrfToken) {
             throw new UnexpectedTypeException($constraint, CsrfToken::class);
         }

@@ -13,7 +13,7 @@ class ColorValidator extends ConstraintValidator {
     /**
      * @inheritDoc
      */
-    public function validate($value, Constraint $constraint) {
+    public function validate($value, Constraint $constraint): void {
         if(!$constraint instanceof Color) {
             throw new UnexpectedTypeException($constraint, Color::class);
         }

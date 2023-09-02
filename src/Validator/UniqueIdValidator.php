@@ -9,14 +9,14 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class UniqueIdValidator extends ConstraintValidator {
 
-    public function __construct(private PropertyAccessorInterface $propertyAccessor)
+    public function __construct(private readonly PropertyAccessorInterface $propertyAccessor)
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function validate($value, Constraint $constraint) {
+    public function validate($value, Constraint $constraint): void {
         if(!$constraint instanceof UniqueId) {
             throw new UnexpectedTypeException($constraint, UniqueId::class);
         }

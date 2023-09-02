@@ -13,14 +13,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DateInActiveSectionValidator extends ConstraintValidator {
 
-    public function __construct(private DateHelper $dateHelper, private SectionResolverInterface $sectionResolver, private TranslatorInterface $translator)
+    public function __construct(private readonly DateHelper $dateHelper, private readonly SectionResolverInterface $sectionResolver, private readonly TranslatorInterface $translator)
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function validate($value, Constraint $constraint) {
+    public function validate($value, Constraint $constraint): void {
         if(!$value instanceof DateTime) {
             throw new UnexpectedTypeException($value, DateTime::class);
         }

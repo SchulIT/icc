@@ -12,14 +12,14 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class NoReservationCollisionValidator extends ConstraintValidator {
 
-    public function __construct(private ResourceAvailabilityHelper $availabilityHelper, private TeacherStringConverter $teacherConverter)
+    public function __construct(private readonly ResourceAvailabilityHelper $availabilityHelper, private readonly TeacherStringConverter $teacherConverter)
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function validate($value, Constraint $constraint) {
+    public function validate($value, Constraint $constraint): void {
         if(!$constraint instanceof NoReservationCollision) {
             throw new UnexpectedTypeException($constraint, NoReservationCollision::class);
         }

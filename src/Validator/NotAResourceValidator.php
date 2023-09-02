@@ -12,14 +12,14 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class NotAResourceValidator extends ConstraintValidator {
 
-    public function __construct(private ResourceRepositoryInterface $resourceRepository)
+    public function __construct(private readonly ResourceRepositoryInterface $resourceRepository)
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function validate($value, Constraint $constraint) {
+    public function validate($value, Constraint $constraint): void {
         if(!$constraint instanceof NotAResource) {
             throw new UnexpectedTypeException($constraint, NotAResource::class);
         }

@@ -104,7 +104,7 @@ class LessonEntry {
      * @var Collection<LessonAttendance>
      */
     #[Assert\Valid(groups: ['Default'])]
-    #[ORM\OneToMany(mappedBy: 'entry', targetEntity: LessonAttendance::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'entry', targetEntity: LessonAttendance::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $attendances;
 
     /**

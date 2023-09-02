@@ -14,7 +14,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DateLessonGreaterThanValidator extends ConstraintValidator {
 
-    public function __construct(private TimetableTimeHelper $timetableTimeHelper, private TranslatorInterface $translator, private PropertyAccessorInterface $propertyAccessor)
+    public function __construct(private readonly TimetableTimeHelper $timetableTimeHelper, private readonly TranslatorInterface $translator, private readonly PropertyAccessorInterface $propertyAccessor)
     {
     }
 
@@ -29,9 +29,6 @@ class DateLessonGreaterThanValidator extends ConstraintValidator {
         ]);
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function compareValues($value1, $value2): bool {
         $date1 = $this->timetableTimeHelper->getLessonEndDateTime($value1->getDate(), $value1->getLesson());
         $date2 = $this->timetableTimeHelper->getLessonStartDateTime($value2->getDate(), $value2->getLesson());
@@ -39,10 +36,7 @@ class DateLessonGreaterThanValidator extends ConstraintValidator {
         return $date2 <= $date1;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function validate($value, Constraint $constraint) {
+    public function validate($value, Constraint $constraint): void {
         if(!$value instanceof DateLesson) {
             throw new UnexpectedTypeException($value, DateLesson::class);
         }

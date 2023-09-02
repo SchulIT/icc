@@ -20,7 +20,7 @@ class TuitionResolvableValidator extends ConstraintValidator {
                                 private readonly TuitionRepositoryInterface $tuitionRepository,
                                 private readonly ImportSettings $importSettings) { }
 
-    public function validate(mixed $value, Constraint $constraint) {
+    public function validate(mixed $value, Constraint $constraint): void {
         if(!$value instanceof TimetableLessonData) {
             throw new UnexpectedTypeException($value, TimetableLessonData::class);
         }

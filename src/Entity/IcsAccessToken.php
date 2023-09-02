@@ -41,7 +41,7 @@ class IcsAccessToken implements UserInterface {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getToken(): ?string {
         return $this->token;
@@ -122,10 +122,7 @@ class IcsAccessToken implements UserInterface {
         return $this->user->getSalt();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function eraseCredentials() {
+    public function eraseCredentials(): void {
         $this->user->eraseCredentials();
     }
 

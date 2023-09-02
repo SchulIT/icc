@@ -63,7 +63,7 @@ class TeacherAbsenceVoter extends Voter {
     }
 
     private function canViewAny(TokenInterface $token): bool {
-        return $this->accessDecisionManager->decide($token, [ 'ROLE_TEACHER_ABSENCE_MANAGER']);
+        return $this->accessDecisionManager->decide($token, [ 'ROLE_TEACHER_ABSENCE_VIEWER']);
     }
 
     private function canCreate(TokenInterface $token): bool {
@@ -94,6 +94,10 @@ class TeacherAbsenceVoter extends Voter {
     }
 
     private function canShow(TokenInterface $token, TeacherAbsence $absence): bool {
+        if($this->accessDecisionManager->decide($token, [ 'ROLE_TEACHER_ABSENCE_VIEWER'])) {
+            return true;
+        }
+
         return $this->canInteractIfTeacherOrManager($token, $absence);
     }
 

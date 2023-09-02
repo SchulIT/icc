@@ -89,7 +89,7 @@ class AppointmentVoter extends Voter {
     }
 
     private function canView(Appointment $appointment, TokenInterface $token): bool {
-        if($this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']) || $this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
+        if($this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']) || $this->accessDecisionManager->decide($token, [ 'ROLE_APPOINTMENT_VIEWER' ])) {
             return true;
         }
 

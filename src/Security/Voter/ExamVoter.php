@@ -175,7 +175,7 @@ class ExamVoter extends Voter {
     }
 
     public function canViewExam(Exam $exam, TokenInterface $token): bool {
-        if($this->accessDecisionManager->decide($token, ['ROLE_EXAMS_ADMIN']) === true || $this->accessDecisionManager->decide($token, ['ROLE_EXAMS_CREATOR']) === true) {
+        if($this->accessDecisionManager->decide($token, ['ROLE_EXAMS_ADMIN']) === true || $this->accessDecisionManager->decide($token, ['ROLE_EXAMS_CREATOR']) === true || $this->accessDecisionManager->decide($token, [ 'ROLE_EXAM_VIEWER'])) {
             return true;
         }
 

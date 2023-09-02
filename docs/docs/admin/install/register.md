@@ -62,27 +62,36 @@ Unter *Optionen* muss die Option *Mehrfach-Auswahl möglich* deaktiviert bleiben
 
 Folgende Optionen eintragen:
 
-| Schlüssel                    | Wert                                             |
-|------------------------------|--------------------------------------------------|
-| ROLE_USER                    | Benutzer                                         |
-| ROLE_ADMIN                   | Administrator                                    |
-| ROLE_SUPER_ADMIN             | Super-Administrator                              |
-| ROLE_MESSAGE_CREATOR         | Mitteilungen erstellen                           |
-| ROLE_MESSAGE_PRIORITY        | Mitteilungen mit Priorität erstellen             |
-| ROLE_MESSAGE_ADMIN           | Mitteilungs-Administrator                        |
-| ROLE_DOCUMENTS_ADMIN         | Dokumente-Administrator                          |
-| ROLE_APPOINTMENT_CREATOR     | Termine erstellen                                |
-| ROLE_APPOINTMENTS_ADMIN      | Termine-Administrator                            |
-| ROLE_WIKI_ADMIN              | Wiki-Administrator                               |
-| ROLE_EXAMS_CREATOR           | Klausuren erstellen                              |
-| ROLE_EXAMS_ADMIN             | Klausuren-Administrator                          |
-| ROLE_KIOSK                   | Kiosk-Benutzer                                   |
-| ROLE_STUDENT_ABSENCE_CREATOR | Krankmeldungen erstellen                         |
-| ROLE_STUDENT_ABSENCE_VIEWER  | Krankmeldungen einsehen                          |
-| ROLE_TEACHER_ABSENCE_MANAGER | Benutzer darf Absenzen von Lehrkräften verwalten |
-| ROLE_BOOK_ENTRY_CREATOR      | Unterrichtsbücher (schreibend)                   |
-| ROLE_BOOK_VIEWER             | Unterrichtsbücher (lesend)                       |
-| ROLE_SHOW_BIRTHDAY           | Geburtstage anzeigen (Lernende)                  |
+| Schlüssel                         | Wert                                                 |
+|-----------------------------------|------------------------------------------------------|
+| ROLE_USER                         | Benutzer                                             |
+| ROLE_ADMIN                        | Administrator                                        |
+| ROLE_SUPER_ADMIN                  | Super-Administrator                                  |
+| ROLE_MESSAGE_VIEWER               | Alle Mitteilungen lesen                              |
+| ROLE_MESSAGE_CREATOR              | Mitteilungen erstellen                               |
+| ROLE_MESSAGE_PRIORITY             | Mitteilungen mit Priorität erstellen                 |
+| ROLE_MESSAGE_ADMIN                | Mitteilungs-Administrator                            |
+| ROLE_DOCUMENT_VIEWER              | Alle Dokumente einsehen                              |
+| ROLE_DOCUMENTS_ADMIN              | Dokumente-Administrator                              |
+| ROLE_APPOINTMENT_VIEWER           | Alle Termine einsehen                                |
+| ROLE_APPOINTMENT_CREATOR          | Termine erstellen                                    |
+| ROLE_APPOINTMENTS_ADMIN           | Termine-Administrator                                |
+| ROLE_WIKI_ADMIN                   | Wiki-Administrator                                   |
+| ROLE_EXAM_VIEWER                  | Alle Klausuren einsehen                              |
+| ROLE_EXAMS_CREATOR                | Klausuren erstellen                                  |
+| ROLE_EXAMS_ADMIN                  | Klausuren-Administrator                              |
+| ROLE_KIOSK                        | Kiosk-Benutzer                                       |
+| ROLE_STUDENT_ABSENCE_CREATOR      | Krankmeldungen erstellen                             |
+| ROLE_STUDENT_ABSENCE_VIEWER       | Krankmeldungen einsehen                              |
+| ROLE_TEACHER_ABSENCE_VIEWER       | Benutzer darf alle Absenzen von Lehrkräften einsehen |
+| ROLE_TEACHER_ABSENCE_MANAGER      | Benutzer darf Absenzen von Lehrkräften verwalten     |
+| ROLE_BOOK_ENTRY_CREATOR           | Unterrichtsbücher (schreibend)                       |
+| ROLE_BOOK_VIEWER                  | Unterrichtsbücher (lesend)                           |
+| ROLE_SHOW_BIRTHDAY                | Geburtstage anzeigen (Lernende)                      |
+| ROLE_RESOURCE_RESERVATION_VIEWER  | Alle Reservierungen einsehen                         |
+| ROLE_RESOURCE_RESERVATION_CREATOR | Reservierungen erstellen                             |
+| ROLE_LISTS_VIEWER                 | Listen (Unterrichte, Lerngruppen etc.) einsehen      |
+| ROLE_LISTS_EXPORTER               | Listen exportieren                                   |
 
 
 Eine genaue Erklärung zu den Rollen und wie diese zugewiesen werden sollten, gibt es im Abschnitt [Benutzerrollen](../roles).

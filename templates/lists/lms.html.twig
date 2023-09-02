@@ -85,7 +85,7 @@
             </div>
 
             <div class="col-md-3 sticky-sidebar">
-                {% if lmsFilter.currentLearningManagementSystem != null and studyGroupFilter.currentStudyGroup != null %}
+                {% if lmsFilter.currentLearningManagementSystem != null and studyGroupFilter.currentStudyGroup != null and is_granted('export-lists') %}
                 <div class="card">
                     <div class="list-group list-group-flush">
                         <a href="{{ path('export_lms', { lms: lmsFilter.currentLearningManagementSystem.uuid, studyGroup: studyGroupFilter.currentStudyGroup.uuid }) }}" class="list-group-item list-group-item-action">

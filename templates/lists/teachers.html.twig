@@ -79,7 +79,7 @@
                 {% endif %}
             </div>
             <div class="col-md-3 sticky-sidebar">
-                {% if is_granted('export-teachers') or is_granted('ROLE_ADMIN') %}
+                {% if is_granted('export-lists') %}
                 <div class="card">
                     <div class="list-group list-group-flush">
                         <a href="#" class="list-group-item list-group-item-action" data-clipboard-text="{% for group in groups %}{% for teacher in group.teachers %}{% if teacher.email is not empty %}{{ teacher.email }};{% endif %}{% endfor %}{% endfor %}">

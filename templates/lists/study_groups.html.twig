@@ -236,7 +236,7 @@
             </div>
             <div class="col-md-3 sticky-sidebar">
             {% endif %}
-                {% if studyGroupFilter.currentStudyGroup != null and students|length > 0 %}
+                {% if studyGroupFilter.currentStudyGroup != null and students|length > 0 and is_granted('export-lists') %}
                     <div class="card">
                         <div class="list-group list-group-flush">
                             <a href="{{ path('export_studygroup', { uuid: studyGroupFilter.currentStudyGroup.uuid }) }}" class="list-group-item list-group-item-action">

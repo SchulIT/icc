@@ -54,7 +54,7 @@ class ResourceReservationVoter extends Voter {
     }
 
     private function canView(TokenInterface $token): bool {
-        if($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) === true) {
+        if($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) === true || $this->accessDecisionManager->decide($token, ['ROLE_RESOURCE_RESERVATION_VIEWER'])) {
             return true;
         }
 
@@ -68,11 +68,15 @@ class ResourceReservationVoter extends Voter {
     }
 
     private function canCreate(TokenInterface $token): bool {
+        if($this->accessDecisionManager->decide($token, ['ROLE_RESOURCE_RESERVATION_CREATOR'])) {
+            return true;
+        }
+
         return $this->canView($token);
     }
 
     private function canEdit(ResourceReservation $reservation, TokenInterface $token): bool {
-        if($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) === true) {
+        if($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) === true || $this->accessDecisionManager->decide($token, ['ROLE_RESOURCE_RESERVATION_CREATOR']) === true) {
             return true;
         }
 

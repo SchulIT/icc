@@ -85,7 +85,7 @@ class MessageVoter extends Voter {
         }
 
         // Admins see all messages
-        if($this->accessDecisionManager->decide($token, ['ROLE_MESSAGE_ADMIN']) || $this->accessDecisionManager->decide($token, ['ROLE_KIOSK'])) {
+        if($this->accessDecisionManager->decide($token, ['ROLE_MESSAGE_ADMIN']) || $this->accessDecisionManager->decide($token, ['ROLE_MESSAGE_VIEWER '])) {
             return true;
         }
 
@@ -136,10 +136,6 @@ class MessageVoter extends Voter {
     }
 
     private function canConfirm(Message $message, TokenInterface $token): bool {
-        if($this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
-            return false;
-        }
-
         return $message->mustConfirm()
             && $this->isMemberOfTypeAndStudyGroup(
                 $token,
@@ -150,10 +146,6 @@ class MessageVoter extends Voter {
     }
 
     private function canVote(Message $message, TokenInterface $token): bool {
-        if($this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
-            return false;
-        }
-
         return $message->isPollEnabled()
             && $this->isMemberOfTypeAndStudyGroup(
                 $token,
@@ -164,10 +156,6 @@ class MessageVoter extends Voter {
     }
 
     private function canDismiss(Message $message, TokenInterface $token): bool {
-        if($this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
-            return false;
-        }
-
         if($message->mustConfirm() === false || $this->canConfirm($message, $token) === false) {
             return true;
         }

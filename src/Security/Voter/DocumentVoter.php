@@ -86,7 +86,7 @@ class DocumentVoter extends Voter {
     }
 
     private function canViewDocument(Document $document, TokenInterface $token): bool {
-        if ($this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']) || $this->accessDecisionManager->decide($token, ['ROLE_KIOSK'])) {
+        if ($this->accessDecisionManager->decide($token, ['ROLE_DOCUMENTS_ADMIN']) || $this->accessDecisionManager->decide($token, ['ROLE_DOCUMENT_VIEWER'])) {
             return true;
         }
 

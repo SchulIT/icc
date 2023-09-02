@@ -19,7 +19,7 @@ class ListsVoter extends Voter {
     public const Privacy = 'privacy';
 
     public const LearningManagementSystems = 'lms';
-    public const ExportTeachers = 'export-teachers';
+    public const ExportLists = 'export-lists';
 
     public function __construct(private AccessDecisionManagerInterface $accessDecisionManager)
     {
@@ -36,7 +36,7 @@ class ListsVoter extends Voter {
             self::StudyGroups,
             self::Privacy,
             self::LearningManagementSystems,
-            self::ExportTeachers
+            self::ExportLists
         ];
 
         return in_array($attribute, $attributes)
@@ -50,35 +50,17 @@ class ListsVoter extends Voter {
     {
         return match ($attribute) {
             self::Teachers => true,
-            self::Students, self::StudyGroups, self::Tuitions, self::Privacy, self::ExportTeachers, self::LearningManagementSystems => $this->canViewLists($token),
+            self::Students, self::StudyGroups, self::Tuitions, self::Privacy, self::LearningManagementSystems => $this->canViewLists($token),
+            self::ExportLists => $this->canExport($token),
             default => throw new LogicException('This code should not be reached.'),
         };
     }
 
+    public function canExport(TokenInterface $token): bool {
+        return $this->accessDecisionManager->decide($token, [ 'ROLE_LISTS_EXPORTER']);
+    }
+
     private function canViewLists(TokenInterface $token): bool {
-        if($this->accessDecisionManager->decide($token, [ 'ROLE_ADMIN' ])) {
-            return true;
-        }
-
-        /** @var User|null $user */
-        $user = $token->getUser();
-
-        if($user === null) {
-            return false;
-        }
-
-        if(ArrayUtils::inArray($user->getUserType(), [
-            UserType::Student,
-            UserType::Parent,
-            UserType::Intern
-        ]) === true) {
-            return false;
-        }
-
-        if($user->isTeacher()) {
-            return true; // all teachers should be able to view lists
-        }
-
-        return $this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ]);
+        return $this->accessDecisionManager->decide($token, [ 'ROLE_LISTS_VIEWER']);
     }
 }

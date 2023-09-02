@@ -67,7 +67,7 @@ class ResourceVoter extends Voter {
     }
 
     private function canViewOverview(TokenInterface $token): bool {
-        if($this->accessDecisionManager->decide($token, [ 'ROLE_ADMIN' ]) || $this->accessDecisionManager->decide($token, [ 'ROLE_KIOSK' ])) {
+        if($this->accessDecisionManager->decide($token, [ 'ROLE_ADMIN' ]) || $this->accessDecisionManager->decide($token, [ 'ROLE_RESOURCE_RESERVATION_VIEWER' ])) {
             return true;
         }
 

@@ -11,6 +11,7 @@ use App\Security\Voter\ResourceReservationVoter;
 use App\Security\Voter\StudentAbsenceVoter;
 use App\Security\Voter\TeacherAbsenceVoter;
 use App\Security\Voter\WikiVoter;
+use App\Settings\BookSettings;
 use App\Settings\StudentAbsenceSettings;
 use App\Settings\TeacherAbsenceSettings;
 use Knp\Menu\FactoryInterface;
@@ -26,7 +27,8 @@ class Builder {
                                 private readonly TimetableLessonRepositoryInterface $lessonRepository,
                                 private readonly TokenStorageInterface $tokenStorage,
                                 private readonly DateHelper $dateHelper,
-                                private readonly SectionResolverInterface $sectionResolver)
+                                private readonly SectionResolverInterface $sectionResolver,
+                                private readonly BookSettings $bookSettings)
     {
     }
 
@@ -65,7 +67,7 @@ class Builder {
 
         $user = $this->tokenStorage->getToken()?->getUser();
 
-        if($user instanceof User && $user->isStudentOrParent()) {
+        if($user instanceof User && $user->isStudentOrParent() && $this->bookSettings->isAttendanceVisibleForStudentsAndParentsEnabled()) {
             $menu->addChild('attendance.label', [
                 'route' => 'student_attendance'
             ])

@@ -12,6 +12,7 @@ class TeacherAbsenceType {
     use UuidTrait;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $name = null;
 

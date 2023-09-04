@@ -20,10 +20,12 @@ class StudyGroup implements Stringable {
     use SectionAwareTrait;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $externalId = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $name = null;
 

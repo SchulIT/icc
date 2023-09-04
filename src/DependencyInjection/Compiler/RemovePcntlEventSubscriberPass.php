@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Messenger\EventListener\DispatchPcntlSignalListener;
 use Symfony\Component\Messenger\EventListener\StopWorkerOnSignalsListener;
+use Symfony\Component\Messenger\EventListener\StopWorkerOnSigtermSignalListener;
 
 class RemovePcntlEventSubscriberPass implements CompilerPassInterface {
 

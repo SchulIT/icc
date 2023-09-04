@@ -8,10 +8,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 class PrivacyCategoryData {
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $id = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $label = null;
 

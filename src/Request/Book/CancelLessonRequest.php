@@ -15,6 +15,7 @@ class CancelLessonRequest {
     private ?string $csrfToken = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\SerializedName('reason')]
     #[Serializer\Type('string')]
     private ?string $reason = null;

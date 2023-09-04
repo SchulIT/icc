@@ -180,7 +180,7 @@
                   <i class="fas fa-comment"></i>
                 </span>
 
-                <input type="text" v-model="editAttendance.attendance.comment" class="form-control" />
+                <input type="text" maxlength="255" v-model="editAttendance.attendance.comment" class="form-control" />
               </div>
             </div>
 

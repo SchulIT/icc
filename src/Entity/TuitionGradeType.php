@@ -16,6 +16,7 @@ class TuitionGradeType {
 
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $displayName = null;
 
     #[ORM\Column(name: '`values`', type: 'json')]

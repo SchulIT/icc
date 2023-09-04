@@ -32,6 +32,7 @@ class ExamData {
      * Optional description of the exam
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $description = null;
 

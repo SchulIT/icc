@@ -24,6 +24,7 @@ class Document {
 
     #[Gedmo\Versioned]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $title = null;
 

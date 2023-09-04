@@ -20,14 +20,17 @@ class Tuition implements Stringable {
     use UuidTrait;
     use SectionAwareTrait;
 
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $externalId = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $displayName = null;
 

@@ -18,11 +18,13 @@ class Appointment {
     use IdTrait;
     use UuidTrait;
 
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $externalId = null;
 
     #[Assert\NotNull]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $title = null;
 
@@ -38,6 +40,7 @@ class Appointment {
     private ?DateTime $end = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $location = null;
 
     #[ORM\Column(type: 'boolean')]
@@ -62,6 +65,7 @@ class Appointment {
     private $organizers;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $externalOrganizers = null;
 
     #[Assert\NotNull]

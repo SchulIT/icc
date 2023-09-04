@@ -21,6 +21,7 @@ class Notification {
 
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $subject;
 
     #[ORM\Column(type: 'text')]
@@ -33,6 +34,7 @@ class Notification {
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     private ?string $linkText;
 
     #[ORM\Column(type: 'datetime')]

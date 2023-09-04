@@ -8,14 +8,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 class StudyGroupData {
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $id = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $name = null;
 
     #[Assert\NotBlank]
+    ##!!
     #[Serializer\Type('string')]
     private ?string $type = null;
 

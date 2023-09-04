@@ -8,14 +8,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SubjectData {
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private string $id;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $abbreviation = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $name = null;
 

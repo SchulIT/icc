@@ -394,7 +394,9 @@ export default {
     validate() {
       if(this.entry.topic === null || this.entry.topic.trim() === '') {
         this.validation.topic = this.$trans('This value should not be blank.', {}, 'validators');
-      } else {
+      } else if(this.entry.topic.length > 255) {
+        this.validation.topic = this.$transChoice('This value is too long. It should have {{ limit }} character or less.|This value is too long. It should have {{ limit }} characters or less.', 255, { }, 'validators').replace('{{ limit }}', 255);
+      }  else {
         this.validation.topic = null;
       }
     },

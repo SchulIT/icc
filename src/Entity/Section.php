@@ -20,6 +20,7 @@ class Section implements Stringable
     #[ORM\Column(type: 'integer')]
     private ?int $year = null;
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $displayName = null;
     #[Assert\NotNull]

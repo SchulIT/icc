@@ -21,19 +21,24 @@ class Teacher implements Stringable {
     use UuidTrait;
 
     #[ORM\Column(type: 'string', unique: true)]
+    #[Assert\Length(max: 255)]
     private ?string $externalId = null;
 
     #[ORM\Column(type: 'string', unique: true)]
+    #[Assert\Length(max: 255)]
     private ?string $acronym = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $title = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $firstname = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $lastname = null;
 
@@ -42,6 +47,7 @@ class Teacher implements Stringable {
 
     #[Assert\NotBlank(allowNull: true)]
     #[Assert\Email]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $email = null;
 

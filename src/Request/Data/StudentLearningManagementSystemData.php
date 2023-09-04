@@ -25,6 +25,7 @@ class StudentLearningManagementSystemData {
      * Benutzername (optional)
      */
     #[Serializer\Type('string')]
+    #[Assert\Length(max: 255)]
     #[Assert\NotBlank(allowNull: true)]
     private ?string $username = null;
 
@@ -32,6 +33,7 @@ class StudentLearningManagementSystemData {
      * Passwort
      */
     #[Serializer\Type('string')]
+    #[Assert\Length(max: 255)]
     #[Assert\NotBlank(allowNull: true)]
     private ?string $password = null;
 

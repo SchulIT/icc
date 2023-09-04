@@ -13,6 +13,7 @@ class InfotextData {
     private ?DateTime $date = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $content = null;
 

@@ -10,6 +10,7 @@ class TimetableSupervisionData {
 
     #[Serializer\Accessor(getter: 'getId', setter: 'setId')]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $id = null;
 
@@ -29,6 +30,7 @@ class TimetableSupervisionData {
     private ?int $lesson = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $location = null;
 

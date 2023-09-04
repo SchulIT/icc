@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Room extends ResourceEntity {
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $externalId = null;
 

@@ -12,6 +12,7 @@ class ImportDateTime {
     use IdTrait;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', unique: true)]
     private ?string $entityClass = null;
 

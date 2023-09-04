@@ -61,6 +61,7 @@ class TimetableLesson {
      * @var string|null
      */
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $location = null;
 
     /**
@@ -74,6 +75,7 @@ class TimetableLesson {
      * @var string|null
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $subjectName = null;
 

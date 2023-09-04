@@ -12,11 +12,13 @@ class LearningManagementSystem {
     use IdTrait;
     use UuidTrait;
 
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $externalId;
 
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $name;
 
     public function __construct() {

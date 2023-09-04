@@ -57,6 +57,7 @@ class StudentAbsence {
      */
     #[Assert\NotBlank(allowNull: true)]
     #[Assert\Email]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $email = null;
 
@@ -64,6 +65,7 @@ class StudentAbsence {
      * @var string|null
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $phone = null;
 

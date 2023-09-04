@@ -24,10 +24,12 @@ class GradeResponsibility {
 
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $task;
 
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $person;
 
     public function __construct() {

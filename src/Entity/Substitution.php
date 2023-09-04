@@ -20,6 +20,7 @@ class Substitution {
     use IdTrait;
     use UuidTrait;
 
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', unique: true)]
     private ?string $externalId = null;
 
@@ -40,12 +41,15 @@ class Substitution {
     private bool $startsBefore = false;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $type = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $subject = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $replacementSubject = null;
 
     /**
@@ -87,12 +91,15 @@ class Substitution {
     private $replacementRooms;
 
     #[ORM\Column(type: 'string', nullable: true, options: ['comment' => 'Plain room name in case room resolve is not possible when importing substitutions.'])]
+    #[Assert\Length(max: 255)]
     private ?string $roomName = null;
 
     #[ORM\Column(type: 'string', nullable: true, options: ['comment' => 'Plain room name in case room resolve is not possible when importing substitutions.'])]
+    #[Assert\Length(max: 255)]
     private ?string $replacementRoomName = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $remark = null;
 
     /**

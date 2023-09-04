@@ -25,6 +25,7 @@ class StudyGroupMembershipData {
      * Type of the membership.
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $type = null;
 

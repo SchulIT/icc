@@ -29,14 +29,17 @@ class SubstitutionData {
     private ?bool $startsBefore = null;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $type = null;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $subject = null;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $replacementSubject = null;
 
@@ -65,6 +68,7 @@ class SubstitutionData {
     private ?array $replacementRooms = null;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $text = null;
 

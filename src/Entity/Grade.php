@@ -18,11 +18,13 @@ class Grade implements Stringable {
     use UuidTrait;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $externalId = null;
 
     #[Assert\NotNull]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', unique: true)]
     private ?string $name = null;
 

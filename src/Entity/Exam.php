@@ -25,6 +25,7 @@ class Exam {
     use UuidTrait;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $externalId = null;
 
@@ -43,6 +44,7 @@ class Exam {
     private int $lessonEnd = 0;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $description = null;
 
     #[ORM\Column(type: 'boolean')]

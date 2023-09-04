@@ -15,6 +15,7 @@ class IcsAccessToken implements UserInterface {
     use IdTrait;
     use UuidTrait;
 
+    #[Assert\Length(max: 128)]
     #[ORM\Column(type: 'string', length: 128, unique: true)]
     private ?string $token = null;
 
@@ -26,6 +27,7 @@ class IcsAccessToken implements UserInterface {
     private ?User $user = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $name = null;
 

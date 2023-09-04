@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Setting {
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Id]
     #[ORM\Column(name: '`key`', type: 'string', unique: true)]
     private ?string $key = null;

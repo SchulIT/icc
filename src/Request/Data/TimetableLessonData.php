@@ -14,6 +14,7 @@ class TimetableLessonData {
      * @var string
      */
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private string $id;
 
@@ -43,6 +44,7 @@ class TimetableLessonData {
      * @var string|null
      */
     #[Serializer\Type('string')]
+    #[Assert\Length(max: 255)]
     private ?string $room = null;
 
     /**
@@ -63,6 +65,7 @@ class TimetableLessonData {
      */
     #[Assert\NotBlank(allowNull: true)]
     #[Serializer\Type('string')]
+    #[Assert\Length(max: 255)]
     private ?string $subject = null;
 
     public function getId(): ?string {

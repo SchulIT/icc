@@ -26,6 +26,7 @@ class RoomTag {
     private bool $hasValue = false;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $icons = null;
 

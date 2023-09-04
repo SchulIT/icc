@@ -23,14 +23,17 @@ class Student implements JsonSerializable, Stringable {
     use UuidTrait;
 
     #[Assert\NotNull]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', unique: true)]
     private ?string $externalId = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $firstname = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $lastname = null;
 
@@ -39,10 +42,12 @@ class Student implements JsonSerializable, Stringable {
 
     #[Assert\NotBlank(allowNull: true)]
     #[Assert\Email]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $email = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $status = null;
 
     #[ORM\Column(type: 'date')]

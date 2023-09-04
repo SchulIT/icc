@@ -49,6 +49,7 @@ class UpdateAttendanceRequest {
      * @var string|null
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[Serializer\SerializedName('comment')]
     #[Serializer\Type('string')]
     private ?string $comment = null;

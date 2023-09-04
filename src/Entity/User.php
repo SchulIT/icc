@@ -23,18 +23,22 @@ class User implements UserInterface, Stringable {
     private ?UuidInterface $idpId = null;
 
     #[ORM\Column(type: 'string', unique: true)]
+    #[Assert\Length(max: 255)]
     private ?string $username = null;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $firstname = null;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $lastname = null;
 
     #[Assert\Email]
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $email = null;
 
@@ -81,6 +85,7 @@ class User implements UserInterface, Stringable {
     #[ORM\Column(type: 'boolean')]
     private bool $isEmailNotificationsEnabled = false;
 
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $pushoverToken = null;
 

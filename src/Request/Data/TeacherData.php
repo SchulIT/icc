@@ -10,27 +10,33 @@ use Symfony\Component\Validator\Constraints as Assert;
 class TeacherData {
 
     #[Assert\NotNull]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $id = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $acronym = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $firstname = null;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $lastname = null;
 
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $title = null;
 
     #[Assert\NotBlank(allowNull: true)]
     #[Assert\Email]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private ?string $email = null;
 

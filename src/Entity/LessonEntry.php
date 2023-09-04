@@ -61,6 +61,7 @@ class LessonEntry {
      * @var string|null
      */
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $replacementSubject = null;
 
@@ -83,6 +84,7 @@ class LessonEntry {
      * @var string|null
      */
     #[Assert\NotBlank(groups: ['Default'])]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $topic = null;
 
@@ -117,6 +119,7 @@ class LessonEntry {
      * @var string|null
      */
     #[Assert\NotBlank(groups: ['cancel'])]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $cancelReason = null;
 

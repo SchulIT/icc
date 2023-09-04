@@ -12,6 +12,7 @@ class AppointmentData {
      * Your ID which is used to update existing appointments.
      */
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private string $id;
 
@@ -23,6 +24,7 @@ class AppointmentData {
     private string $category;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Serializer\Type('string')]
     private string $subject;
 

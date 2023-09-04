@@ -9,10 +9,12 @@ class LearningManagementSystemData {
 
     #[Serializer\Type('string')]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $id = null;
 
     #[Serializer\Type('string')]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $name = null;
 
     public function getId(): ?string {

@@ -248,7 +248,7 @@
             <div class="w-100">
               <div class="input-group">
                 <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
-                <input type="text" v-model="attendance.comment" class="form-control" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][comment]'">
+                <input type="text" maxlength="255" v-model="attendance.comment" class="form-control" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][comment]'">
               </div>
             </div>
           </div>

@@ -16,6 +16,7 @@ class Display {
     use UuidTrait;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
@@ -53,6 +54,7 @@ class Display {
     private ?DateTime $countdownDate = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $countdownText = null;
 
     public function __construct() {

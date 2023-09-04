@@ -28,6 +28,7 @@ class TeacherTag {
     private $externalId;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private $name;
 

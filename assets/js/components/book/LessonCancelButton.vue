@@ -174,6 +174,8 @@ export default {
 
       if(this.entry.reason === null || this.entry.reason.trim() === '') {
         this.validation.reason = this.$trans('This value should not be blank.', {}, 'validators');
+      } else if(this.entry.reason.length > 255) {
+        this.validation.reason = this.$transChoice('This value is too long. It should have {{ limit }} character or less.|This value is too long. It should have {{ limit }} characters or less.', 255, { }, 'validators').replace('{{ limit }}', 255);
       } else {
         this.validation.reason = null;
       }

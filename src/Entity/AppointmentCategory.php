@@ -17,11 +17,13 @@ class AppointmentCategory {
     use IdTrait;
     use UuidTrait;
 
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $externalId = null;
 
     #[Assert\NotBlank]
     #[Assert\NotNull]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $name = null;
 

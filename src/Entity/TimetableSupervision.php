@@ -20,12 +20,14 @@ class TimetableSupervision {
      * @var string|null
      */
     #[ORM\Column(type: 'string', unique: true)]
+    #[Assert\Length(max: 255)]
     private ?string $externalId = null;
 
     /**
      * @var DateTime|null
      */
     #[Assert\NotNull]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'datetime')]
     private ?DateTime $date = null;
 
@@ -54,6 +56,7 @@ class TimetableSupervision {
      * @var string|null
      */
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $location = null;
 

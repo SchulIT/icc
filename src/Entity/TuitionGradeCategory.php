@@ -8,8 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[Auditable]
@@ -19,11 +18,13 @@ class TuitionGradeCategory {
     use UuidTrait;
 
     #[ORM\Column(type: 'string')]
-    #[NotBlank]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $displayName;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[NotBlank(allowNull: true)]
+    #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     private ?string $comment;
 
     #[ORM\Column(type: 'integer')]
@@ -35,7 +36,7 @@ class TuitionGradeCategory {
 
     #[ORM\ManyToOne(targetEntity: TuitionGradeType::class)]
     #[ORM\JoinColumn]
-    #[NotNull]
+    #[Assert\NotNull]
     private ?TuitionGradeType $gradeType;
 
     /**

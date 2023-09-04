@@ -18,11 +18,13 @@ class DocumentCategory {
 
     #[Assert\NotBlank]
     #[Assert\NotNull]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
     private ?string $icon = null;
 
     /**

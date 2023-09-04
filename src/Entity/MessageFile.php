@@ -22,11 +22,13 @@ class MessageFile {
 
     #[Assert\NotBlank]
     #[Assert\NotNull]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $label = null;
 
     #[Assert\NotBlank]
     #[Assert\NotNull]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $extension = null;
 

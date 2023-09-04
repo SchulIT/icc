@@ -17,6 +17,7 @@ class MessagePollChoice {
     private ?Message $message = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
     private ?string $label = null;
 

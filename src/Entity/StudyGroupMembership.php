@@ -5,6 +5,7 @@ namespace App\Entity;
 use Stringable;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
 #[ORM\Entity]
@@ -21,6 +22,7 @@ class StudyGroupMembership implements Stringable {
     private ?Student $student = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $type = null;
 
     public function getStudyGroup(): StudyGroup {

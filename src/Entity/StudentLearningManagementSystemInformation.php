@@ -24,9 +24,11 @@ class StudentLearningManagementSystemInformation {
     private ?LearningManagementSystem $lms;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $username = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $password = null;
 
     #[ORM\Column(type: 'boolean')]

@@ -22,6 +22,7 @@ use App\View\Filter\StudentFilter;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -32,7 +33,7 @@ class AttendanceController extends AbstractController {
     public function index(Request $request, StudentFilter $studentFilter, SectionFilter $sectionFilter,
                           BookSettings $bookSettings, TimetableSettings $timetableSettings,
                           TuitionRepositoryInterface $tuitionRepository, LessonEntryRepositoryInterface $entryRepository,
-                          StudentInfoResolver $infoResolver, Sorter $sorter, Grouper $grouper, DateHelper $dateHelper) {
+                          StudentInfoResolver $infoResolver, Sorter $sorter, Grouper $grouper, DateHelper $dateHelper): Response {
         if($bookSettings->isAttendanceVisibleForStudentsAndParentsEnabled() === false) {
             throw new AccessDeniedHttpException();
         }

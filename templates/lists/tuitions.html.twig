@@ -36,6 +36,8 @@
                                 {{ 'lists.tuitions.heading.teacher'|trans({'%teacher%': teacherFilter.currentTeacher|teacher }) }}
                             {% elseif gradeFilter.currentGrade != null %}
                                 {{ 'lists.tuitions.heading.grade'|trans({'%grade%': gradeFilter.currentGrade.name }) }}
+                            {% elseif subjectFilter.currentSubject != null %}
+                                {{ subjectFilter.currentSubject.name }}
                             {% endif %}
                         </div>
 

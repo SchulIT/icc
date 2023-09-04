@@ -944,7 +944,7 @@ admin:
                     help: Hier kann eine TTF-Schriftart für die PDF-Datei hinterlegt werden. Leer lassen, wenn die Schriftart nicht geändert werden soll.
             attendances_visible_for_students_and_parents:
                 label: Anwesenheit für Lernende und Eltern sichtbar machen
-                help: Wenn diese Option aktiv ist, erhalten Lernende und Eltern den Menüpunkt Anwesenheiten, in dem sie die eigene Anwesenheiten (inkl. Anzahl Fehlstunden und Entschuldigungsstatus) einsehen können.
+                help: 'Wenn diese Option aktiv ist, erhalten Lernende und Eltern den Menüpunkt Anwesenheiten, in dem sie die eigene Anwesenheiten (inkl. Anzahl Fehlstunden und Entschuldigungsstatus) einsehen können. Wichtig: Anwesenheiten können erst ab dem Folgetag eingesehen werden.'
 
         tuition_grades:
             label: Notenmodul
@@ -2031,3 +2031,5 @@ attendance:
     label: Anwesenheit
     empty: Diese Übersicht ist aktuell leer.
     info: Bitte beachten, dass Lehrkräfte Anwesenheiten ggf. zeitverzögert eintragen. Bei Rückfragen bitte an die Fachlehrkraft oder die Klassen-/Stufenleitung wenden.
+    delay: Anwesenheiten sind erst am Folgetag einsehbar.
+    legend: Die einzelnen Farben spiegeln die Anwesenheit wieder. Ist eine Zelle weiß, so fand hier kein Unterricht statt (z.B. Freistunde in der Oberstufe) oder die Lehrkraft hat noch keine Eintragung vorgenommen.

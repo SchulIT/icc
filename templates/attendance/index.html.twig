@@ -21,6 +21,7 @@
             <div class="col-md-9" id="app">
                 {% if info is not null and groups is not empty %}
                     <div class="bs-callout bs-callout-info">
+                        <p class="fw-bold">{{ 'attendance.delay'|trans }}</p>
                         <p>{{ 'attendance.info'|trans }}</p>
                     </div>
 
@@ -110,7 +111,7 @@
                     <div class="card-body">
                         <h5 class="card-title"><i class="fas fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
 
-                        <p>{{ 'book.students.overview.info'|trans }}</p>
+                        <p>{{ 'attendance.legend'|trans }}</p>
                     </div>
 
                     <div class="list-group list-group-flush">

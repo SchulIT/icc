@@ -54,7 +54,7 @@ class AttendanceController extends AbstractController {
 
             $min = $sectionFilterView->getCurrentSection()->getStart();
             $max = min(
-                $dateHelper->getToday(),
+                $dateHelper->getToday()->modify('-1 day'),
                 $sectionFilterView->getCurrentSection()->getEnd()
             );
 

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Book\Student\StudentInfoResolver;
 use App\Entity\LessonEntry;
 use App\Entity\Teacher;
+use App\Entity\User;
 use App\Grouping\DateWeekOfYearStrategy;
 use App\Grouping\Grouper;
 use App\Repository\LessonEntryRepositoryInterface;
@@ -36,8 +37,7 @@ class AttendanceController extends AbstractController {
             throw new AccessDeniedHttpException();
         }
 
-        /** @var User $user
-         */
+        /** @var User $user */
         $user = $this->getUser();
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));

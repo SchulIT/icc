@@ -268,17 +268,17 @@
                                 </div>
 
                                 <div class="flex-fill">
-                                    <div class="d-flex align-items-center mb-1">
-                                        <div>
+                                    <div class="d-flex align-items-center mb-1 flex-wrap">
+                                        <div class="me-2">
                                             <i class="fas fa-calendar-alt"></i> {{ comment.date|format_date }}
                                         </div>
 
-                                        <div class="ms-2">
+                                        <div class="me-2">
                                             <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
                                         </div>
 
                                         {% for student in comment.students %}
-                                            <div class="ms-2">
+                                            <div class="me-2">
                                                 <i class="fas fa-user-graduate"></i> {{ student|student }}
                                             </div>
                                         {% endfor %}

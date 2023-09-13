@@ -75,6 +75,8 @@ jobs:
 
       - name: Run PHPStan
         run: vendor/bin/phpstan analyze ./src --level 5 --memory-limit 1G
+        env:
+          DATABASE_URL: mysql://root:symfony@127.0.0.1:${{ job.services.mariadb.ports['3306'] }}/symfony
 
       - name: Run PHP Unit
         run: vendor/bin/phpunit --coverage-clover clover.xml

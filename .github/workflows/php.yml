@@ -82,11 +82,6 @@ jobs:
         run: vendor/bin/phpunit --coverage-clover clover.xml
         env:
           DATABASE_URL: mysql://root:symfony@127.0.0.1:${{ job.services.mariadb.ports['3306'] }}/symfony
-          ADAUTH_ENABLED: false
-          MAILER_DSN: null://null
-          KERNEL_CLASS: 'App\Kernel'
-          APP_SECRET: 's$cretf0rt3st'
-          SYMFONY_DEPRECATIONS_HELPER: 9999999
 
       - name: Cache Node packages
         id: node-cache

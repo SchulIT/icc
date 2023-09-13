@@ -809,6 +809,9 @@ admin:
                 number_of_exams_day:
                     label: Klausuren pro Tag
                     help: Maximale Anzahl an Klausuren pro Tag. Diese Beschränkung gilt auch für Benutzer mit Rolle ROLE_EXAMS_CREATOR oder ROLE_EXAMS_ADMIN.
+                reservation_enabled:
+                    label: Raumreservierung erlaubt
+                    help: Wenn diese Option aktiv ist, können Lehrkräfte einen Raum für den Zeitraum der Klausur reservieren.
 
         timetable:
             label: Stundenplan

@@ -104,4 +104,12 @@ class ExamSettings extends AbstractSettings {
     public function setVisibleGradeIds(array $ids): void {
         $this->setValue('exams.visible_for', $ids);
     }
+
+    public function isRoomReservationAllowed(): bool {
+        return $this->getValue('exams.reservation_enabled', true);
+    }
+
+    public function setIsRoomReservationAllowed(bool $isAllowed): void {
+        $this->setValue('exams.reservation_enabled', $isAllowed);
+    }
 }

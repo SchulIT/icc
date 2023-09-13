@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Room;
+use App\Settings\ExamSettings;
 use App\Sorting\RoomNameStrategy;
 use Doctrine\ORM\EntityRepository;
 use SchulIT\CommonBundle\Form\FieldsetType;
@@ -12,11 +13,13 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ExamType extends AbstractType {
 
-    public function __construct(private readonly RoomNameStrategy $roomStrategy, private readonly AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(private readonly RoomNameStrategy $roomStrategy, private readonly AuthorizationCheckerInterface $authorizationChecker, private readonly ExamSettings $examSettings)
     {
     }
 
@@ -94,5 +97,11 @@ class ExamType extends AbstractType {
                         ]);
                 }
             ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+            if($this->examSettings->isRoomReservationAllowed() !== true) {
+                $event->getForm()->get('group_general')->remove('room');
+            }
+        });
     }
 }

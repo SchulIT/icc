@@ -88,6 +88,12 @@ class ExamSettingsController extends AbstractController {
                 'required' => true,
                 'data' => $examSettings->getMaximumNumberOfExamsPerDay()
             ])
+            ->add('reservation_enabled', CheckboxType::class, [
+                'label' => 'admin.settings.exams.planning.reservation_enabled.label',
+                'help' => 'admin.settings.exams.planning.reservation_enabled.help',
+                'required' => false,
+                'data' => $examSettings->isRoomReservationAllowed()
+            ])
             ->add('visible_grades', ChoiceType::class, [
                 'label' => 'admin.settings.exams.visible_grades.label',
                 'help' => 'admin.settings.exams.visible_grades.help',
@@ -139,6 +145,9 @@ class ExamSettingsController extends AbstractController {
                 },
                 'number_of_exams_day' => function(int $number) use ($examSettings) {
                     $examSettings->setMaximumNumberOfExamsPerDay($number);
+                },
+                'reservation_enabled' => function(bool $isAllowed) use ($examSettings) {
+                    $examSettings->setIsRoomReservationAllowed($isAllowed);
                 },
                 'visible_grades' => function(?array $visibleGrades) use($examSettings) {
                     $examSettings->setVisibleGradeIds($visibleGrades ?? [ ]);

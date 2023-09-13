@@ -26,6 +26,7 @@
         <div class="card-header">{{ 'admin.settings.exams.planning.label'|trans }}</div>
 
         <div class="card-body">
+            {{ form_row(form.reservation_enabled) }}
             {{ form_row(form.number_of_exams_day) }}
 
             {% for grade in grades %}

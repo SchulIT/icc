@@ -35,6 +35,9 @@ class ResourceEntity implements Stringable {
     #[ORM\Column(type: 'boolean')]
     private bool $isReservationEnabled = true;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isVisibleOnOverview = true;
+
     #[Assert\NotNull]
     #[ORM\ManyToOne(targetEntity: ResourceType::class, inversedBy: 'resources')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
@@ -74,6 +77,15 @@ class ResourceEntity implements Stringable {
 
     public function setIsReservationEnabled(bool $isReservationEnabled): ResourceEntity {
         $this->isReservationEnabled = $isReservationEnabled;
+        return $this;
+    }
+
+    public function isVisibleOnOverview(): bool {
+        return $this->isVisibleOnOverview;
+    }
+
+    public function setIsVisibleOnOverview(bool $isVisibleOnOverview): ResourceEntity {
+        $this->isVisibleOnOverview = $isVisibleOnOverview;
         return $this;
     }
 

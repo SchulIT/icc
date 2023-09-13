@@ -163,6 +163,9 @@ label:
     reservation_enabled:
         label: Reservierung erlaubt
         help: Wenn diese Option deaktiviert ist, kann der Raum nicht gebucht werden. Bereits getätigte Reservierungen bleiben aktiv.
+    visible_on_overview:
+        label: Auf Übersicht anzeigen
+        help: Wenn diese Option aktiviert ist, wird der Raum auf der Übersicht angezeigt. Diese Option hat nur einen Einfluss, wenn der Raum nicht reserviert werden darf. Wenn ein Raum reserviert werden darf, wird er immer auf der Übersicht angezeigt.
     room_reservation_hint: Wenn ein Raum angegeben ist, wird dieser im Raumbelegplan automatisch geblockt. Bitte nur angeben, wenn Klausurraum und Unterrichtsraum verschieden sind.
     end_hint: 'Bei ganztätigen Terminen muss als Enddatum der Tag nach dem letzten Tag angegeben werden. Beispiel: Ist der Termin ganztätig und an einem Tag, ist das Startdatum der Tag, an dem der Termin stattfindet und das Ende der Tag darauf (beides jeweils um 0:00). Bei einem mehrtätigen Termin (Mo-Mi) wird der Do als Ende angegeben (beides jeweils um 0:00).'
     users_can_create_appointments:
@@ -494,6 +497,7 @@ resources:
         info: Informationen
         available: Der Raum ist nicht belegt und kann reserviert werden.
         not_available: Der Raumbelegplan kann nicht angezeigt werden, da dem ausgewählten Datum keine Periode oder Woche zugeordnet werden kann.
+        not_reservable: Der Raum darf nicht reserviert werden.
         room_absent: Raum gesperrt
         reservation: Reservierung
         add:

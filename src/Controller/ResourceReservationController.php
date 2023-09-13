@@ -64,7 +64,7 @@ class ResourceReservationController extends AbstractController {
 
         $sorter->sort($resources, ResourceStrategy::class);
 
-        $resources = array_filter($resources, fn(ResourceEntity $room) => $room->isReservationEnabled());
+        $resources = array_filter($resources, fn(ResourceEntity $room) => $room->isReservationEnabled() || $room->isVisibleOnOverview());
 
         $overview = $availabilityHelper->getAvailabilities($date, $resources);
 

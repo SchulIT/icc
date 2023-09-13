@@ -4,7 +4,11 @@
     {{ 'resources.reservations.not_available'|trans }}
 {% else %}
     {% if availability.isAvailable %}
-        {{ 'resources.reservations.available'|trans }}
+        {% if not resource.isReservationEnabled %}
+            {{ 'resources.reservations.not_reservable'|trans }}
+        {% else %}
+            {{ 'resources.reservations.available'|trans }}
+        {% endif %}
     {% endif %}
 
     {% for absence in availability.absences %}

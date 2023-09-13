@@ -56,6 +56,11 @@ class ResourceType extends AbstractType {
                                     'label_attr' => [
                                         'class' => 'checkbox-custom'
                                     ]
+                                ])
+                                ->add('isVisibleOnOverview',CheckboxType::class, [
+                                    'label' => 'label.visible_on_overview.label',
+                                    'help' => 'label.visible_on_overview.help',
+                                    'required' => false
                                 ]);
                         }
                     ])

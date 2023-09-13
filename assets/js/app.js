@@ -472,5 +472,31 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', event => {
+            let button = event.submitter;
+
+            if(button === null) {
+                return;
+            }
+
+            if(!button.classList.contains('btn')) {
+                return;
+            }
+
+            button.setAttribute('disabled', 'disabled');
+
+            let icon = button.querySelector('i');
+
+            if(icon === null) {
+                icon = document.createElement('i');
+                icon.className = 'fa-solid fa-spinner fa-spin';
+                button.innerHTML = icon.outerHTML + button.innerHTML;
+            } else {
+                icon.className = 'fa-solid fa-spinner fa-spin';
+            }
+        });
+    });
 });
 

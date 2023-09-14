@@ -485,7 +485,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            button.setAttribute('disabled', 'disabled');
+
 
             let icon = button.querySelector('i');
 
@@ -495,6 +495,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.innerHTML = icon.outerHTML + button.innerHTML;
             } else {
                 icon.className = 'fa-solid fa-spinner fa-spin';
+            }
+
+            if(button.getAttribute('value') !== null) {
+                button.classList.add('disabled');
+            } else {
+                button.setAttribute('disabled', 'disabled');
             }
         });
     });

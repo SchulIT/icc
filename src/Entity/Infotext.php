@@ -20,6 +20,7 @@ class Infotext {
     private ?DateTime $date = null;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank]
     private ?string $content = null;
 
     public function __construct() {

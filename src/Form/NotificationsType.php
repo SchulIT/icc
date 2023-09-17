@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class NotificationsType extends AbstractType {
 
@@ -64,7 +65,10 @@ class NotificationsType extends AbstractType {
                 ->add('pushoverToken', TextType::class, [
                     'required' => false,
                     'label' => 'profile.notifications.pushover.label',
-                    'help' => 'profile.notifications.pushover.help'
+                    'help' => 'profile.notifications.pushover.help',
+                    'constraints' => [
+                        new Regex('/^[a-zA-Z0-9]{30}$/')
+                    ]
                 ]);
         }
     }

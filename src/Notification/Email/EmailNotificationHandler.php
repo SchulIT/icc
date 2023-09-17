@@ -16,7 +16,7 @@ class EmailNotificationHandler implements NotificationHandlerInterface {
      * @param EmailStrategyInterface[] $strategies
      */
     public function __construct(private readonly iterable $strategies, private readonly string $appName, private readonly string $sender,
-                                private readonly MailerInterface  $mailer, private readonly Environment $twig, private readonly ?LoggerInterface $logger) {
+                                private readonly MailerInterface  $mailer, private readonly Environment $twig, private readonly LoggerInterface $logger) {
 
     }
 

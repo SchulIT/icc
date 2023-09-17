@@ -6,6 +6,7 @@ use App\Notification\Notification;
 use App\Notification\NotificationHandlerInterface;
 use App\Settings\NotificationSettings;
 use App\Utils\ArrayUtils;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Serhiy\Pushover\Api\Message\Message;
 use Serhiy\Pushover\Api\Message\Notification as PushoverNotification;
@@ -35,25 +36,32 @@ class PushoverNotificationHandler implements NotificationHandlerInterface {
     }
 
     public function handle(Notification $notification): void {
-        $this->initialize();;
+        $this->initialize();
 
-        $recipient = new Recipient($notification->getRecipient()->getPushoverToken());
-        $message = new Message($notification->getContent(), $notification->getSubject());
-        if(!empty($notification->getLink()) && !empty($notification->getLinkText())) {
-            $message->setUrl($notification->getLink());
-            $message->setUrlTitle($notification->getLinkText());
-        }
-        $message->setPriority(new Priority(Priority::NORMAL));
+        try {
+            $recipient = new Recipient($notification->getRecipient()->getPushoverToken());
+            $message = new Message($notification->getContent(), $notification->getSubject());
+            if (!empty($notification->getLink()) && !empty($notification->getLinkText())) {
+                $message->setUrl($notification->getLink());
+                $message->setUrlTitle($notification->getLinkText());
+            }
+            $message->setPriority(new Priority(Priority::NORMAL));
 
-        $pushoverNotification = new PushoverNotification($this->application, $recipient, $message);
-        $pushoverNotification->setSound(new Sound(Sound::PUSHOVER));
+            $pushoverNotification = new PushoverNotification($this->application, $recipient, $message);
+            $pushoverNotification->setSound(new Sound(Sound::PUSHOVER));
 
-        $response = $pushoverNotification->push();
+            $response = $pushoverNotification->push();
 
-        if(!$response->isSuccessful()) {
-            $this->logger->alert('Pushover-Benachrichtung wurde nicht erfolgreich abgeschickt.', [
-                'errors' => $response->getErrors(),
-                'receipt' => $response->getReceipt()
+            if (!$response->isSuccessful()) {
+                $this->logger->alert('Pushover-Benachrichtung wurde nicht erfolgreich abgeschickt.', [
+                    'errors' => $response->getErrors(),
+                    'receipt' => $response->getReceipt()
+                ]);
+            }
+        } catch (Exception $e) {
+            $this->logger->alert('Pushover-Benachrichtigung wurde nicht erfolgreich abgeschickt.', [
+                'errors' => $e->getMessage(),
+                'recipient' => $notification->getRecipient()->getUserIdentifier()
             ]);
         }
     }

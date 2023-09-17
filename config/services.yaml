@@ -281,6 +281,11 @@ services:
             $strategies: !tagged app.notifications.email_strategy
             $appName: '%env(APP_NAME)%'
             $sender: '%env(MAILER_FROM)%'
+            $logger: '@monolog.logger.notifications'
+
+    App\Notification\Pushover\PushoverNotificationHandler:
+        arguments:
+            $logger: '@monolog.logger.notifications'
 
     App\Notification\Email\DefaultEmailStrategy:
         arguments:

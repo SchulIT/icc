@@ -1,0 +1,10 @@
+{% if violations|length > 0 %}
+    <div class="bs-callout bs-callout-danger">
+        <h5>{{ 'error.label'|trans }}</h5>
+        <ul>
+            {% for violation in violations %}
+                <li>{{ violation.propertyPath }}: {{ violation.message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

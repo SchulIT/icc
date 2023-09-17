@@ -19,6 +19,8 @@
                 <p>{{ 'import.rooms.info'|trans }}</p>
             </div>
 
+            {% include "import/_violations.html.twig" %}
+
             {{ form_widget(form) }}
         </div>
     </div>

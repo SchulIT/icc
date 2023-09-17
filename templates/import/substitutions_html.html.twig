@@ -19,6 +19,8 @@
                 <p>{{ 'import.substitutions.html.info'|trans }}</p>
             </div>
 
+            {% include "import/_violations.html.twig" %}
+
             {{ form_widget(form) }}
 
             <p>{{ 'import.substitutions.html.template.info'|trans }}</p>

@@ -235,6 +235,8 @@ class UntisImportController extends AbstractController {
         $form = $this->createForm(SubstitutionGpuImportType::class, $data);
         $form->handleRequest($request);
 
+        $violations = [ ];
+
         if($form->isSubmitted() && $form->isValid()) {
             /** @var DateTime $start */
             $start = $form->get('start')->getData();
@@ -257,13 +259,16 @@ class UntisImportController extends AbstractController {
                 ]));
 
                 return $this->redirectToRoute('import_untis_substitutions_gpu');
-            } catch (ImportException $exception) {
+            } catch(ValidationFailedException $e) {
+                $violations = $e->getViolations();
+            }  catch (ImportException $exception) {
                 $this->addFlash('error', $exception->getMessage());
             }
         }
 
         return $this->render('import/substitutions_gpu.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'violations' => $violations
         ]);
     }
 
@@ -271,6 +276,8 @@ class UntisImportController extends AbstractController {
     public function substitutionsHtml(Request $request, HtmlSubstitutionImporter $importer, TranslatorInterface $translator, UntisSettings $settings): Response {
         $form = $this->createForm(SubstitutionHtmlImportType::class);
         $form->handleRequest($request);
+
+        $violations = [ ];
 
         if($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile[] $files */
@@ -288,13 +295,16 @@ class UntisImportController extends AbstractController {
 
                 $this->addFlash('success', 'import.substitutions.html.success');
                 return $this->redirectToRoute('import_untis_substitutions_html');
+            } catch(ValidationFailedException $e) {
+                $violations = $e->getViolations();
             } catch (Exception $exception) {
                 $this->addFlash('error', $exception->getMessage());
             }
         }
 
         return $this->render('import/substitutions_html.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'violations' => $violations
         ]);
     }
 
@@ -302,6 +312,8 @@ class UntisImportController extends AbstractController {
     public function supervisions(Request $request, SupervisionImporter $importer, TranslatorInterface $translator): Response {
         $form = $this->createForm(SupervisionImportType::class);
         $form->handleRequest($request);
+
+        $violations = [ ];
 
         if($form->isSubmitted() && $form->isValid()) {
             /** @var DateTime $start */
@@ -320,13 +332,16 @@ class UntisImportController extends AbstractController {
                 ]));
 
                 return $this->redirectToRoute('import_untis_supervisions');
+            } catch (ValidationFailedException $e) {
+                $violations = $e->getViolations();
             } catch (ImportException $exception) {
                 $this->addFlash('error', $exception->getMessage());
             }
         }
 
         return $this->render('import/supervisions.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'violations' => $violations
         ]);
     }
 
@@ -341,6 +356,8 @@ class UntisImportController extends AbstractController {
 
         $form = $this->createForm(ExamImportType::class, $data);
         $form->handleRequest($request);
+
+        $violations = [ ];
 
         if($form->isSubmitted() && $form->isValid()) {
             /** @var DateTime $start */
@@ -365,13 +382,16 @@ class UntisImportController extends AbstractController {
                 ]));
 
                 return $this->redirectToRoute('import_untis_exams');
+            } catch (ValidationFailedException $e) {
+                $violations = $e->getViolations();
             } catch (ImportException $exception) {
                 $this->addFlash('error', $exception->getMessage());
             }
         }
 
         return $this->render('import/exams.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'violations' => $violations
         ]);
     }
 
@@ -379,6 +399,8 @@ class UntisImportController extends AbstractController {
     public function rooms(Request $request, RoomImporter $roomImporter, TranslatorInterface $translator): Response {
         $form = $this->createForm(RoomImportType::class);
         $form->handleRequest($request);
+
+        $violations = [ ];
 
         if($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $roomsFile */
@@ -395,13 +417,16 @@ class UntisImportController extends AbstractController {
                 ]));
 
                 return $this->redirectToRoute('import_untis_rooms');
+            } catch (ValidationFailedException $e) {
+                $violations = $e->getViolations();
             } catch (ImportException $exception) {
                 $this->addFlash('error', $exception->getMessage());
             }
         }
 
         return $this->render('import/rooms.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'violations' => $violations
         ]);
     }
 

@@ -58,25 +58,13 @@ class AppointmentIcsExporter {
      * @throws CalendarEventException
      */
     private function getEvent(Appointment $appointment): CalendarEvent {
-        $event = (new CalendarEvent())
+        return (new CalendarEvent())
             ->setUid(sprintf('appointment-%d', $appointment->getId()))
             ->setStart($appointment->getStart())
             ->setEnd($appointment->getEnd())
             ->setAllDay($appointment->isAllDay())
             ->setSummary($this->makeSubject($appointment))
             ->setDescription($this->makeDescription($appointment));
-
-        foreach($appointment->getOrganizers() as $organizer) {
-            if(!empty($organizer->getEmail())) {
-                $attendee = (new Attendee(new Formatter()))
-                    ->setName($this->teacherConverter->convert($organizer))
-                    ->setValue($organizer->getEmail());
-
-                $event->addAttendee($attendee);
-            }
-        }
-
-        return $event;
     }
 
     private function makeSubject(Appointment $appointment): string {

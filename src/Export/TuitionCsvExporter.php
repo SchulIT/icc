@@ -33,6 +33,7 @@ class TuitionCsvExporter {
         $rows[] = [
             $this->translator->trans('label.lastname'),
             $this->translator->trans('label.firstname'),
+            $this->translator->trans('label.birthday'),
             $this->translator->trans('label.grade'),
             $this->translator->trans('label.email'),
             $this->translator->trans('label.type')
@@ -49,7 +50,8 @@ class TuitionCsvExporter {
             $rows[] = [
                 $membership->getStudent()->getLastname(),
                 $membership->getStudent()->getFirstname(),
-                $grade !== null ? $grade->getName() : null,
+                $membership->getStudent()->getBirthday()?->format('Y-m-d'),
+                $grade?->getName(),
                 $membership->getStudent()->getEmail(),
                 $membership->getType()
             ];

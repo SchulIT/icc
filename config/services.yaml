@@ -311,6 +311,10 @@ services:
         arguments:
             $filesystem: '@oneup_flysystem.student_absence_filesystem'
 
+    App\Command\CleanupAuditLogCommand:
+        arguments:
+            $retentionDays: '%env(AUDIT_RETENTION_DAYS)%'
+
     # SECTION
     App\Section\SectionResolver: ~
 

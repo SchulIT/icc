@@ -111,6 +111,17 @@ ist, ignoriert.
 
 Gibt an, ob der Auditierungsmechanismus aktiviert ist (`true`) oder nicht (`false`). Mehr unter [Auditierung](../../features/audit).
 
+#### AUDIT_RETENTION_DAYS
+
+Gibt an, wie lange Einträge im Auditlog behalten werden (in Tagen). Täglich läuft ein Cronjob, welcher alte Einträge aus
+der Datenbank entfernt (und diese anschließend mittels `OPTIMIZE TABLE` optimiert). 
+
+Für einen Wert von `0` werden alle Einträge behalten. Das kann jedoch sehr große Datenbanken erzeugen.
+
+Empfohlener Wert: `30` Tage
+
+Mehr zur Aufbewahrungsrichtlinie gibt es Mehr unter [hier](../../features/audit#aufbewahrungsrichtlinie).
+
 ### Datenbank
 
 #### DATABASE_URL

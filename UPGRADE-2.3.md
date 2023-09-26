@@ -32,6 +32,15 @@ Der zugrundeliegende Milestone 2.2 ist [auf GitHub](https://github.com/SchulIT/i
 Man kann Lernenden und Eltern ermöglichen, die Anwesenheit einzusehen. Dazu muss die entsprechende Option in den
 Einstellungen vom Unterrichtsbuch aktiviert werden (diese Option ist standardmäßig deaktiviert).
 
+### Aufbewahrungsrichtlinie im Auditlog für importierte Daten
+
+Es ist nun möglich, das Auditlog für importierte Daten nur für die letzten N Tage beizubehalten. So können große
+Datenbanken vermieden werden. Die Anzahl der Tage kann über den neuen Konfigurationsparameter `AUDIT_RETENTION_DAYS`
+gesteuert werden. Mehr dazu im Handbuch.
+
+Das neue Feature ändert die bisherige Aufbewahrungsrichtlinie (welche nicht vorhanden war) nicht und behält alle
+Einträge.
+
 ## Upgrade TODO
 
 Das Upgrade beinhaltet eine Migration.

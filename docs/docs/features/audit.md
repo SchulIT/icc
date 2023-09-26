@@ -24,5 +24,36 @@ Das Audit-Log befindet sich im Menü *Verwaltung* und ist für Benutzer mit der 
 
 ## Auditierung aktivieren/deaktivieren
 
-Über die [Konfigurationsdatei](../admin/install/configuration) `.env.local` kann gesteuert werden, ob die Auditierung aktiviert
+Über die [Konfigurationsdatei](../admin/install/configuration#audit_enabled) `.env.local` kann gesteuert werden, ob die Auditierung aktiviert
 ist oder nicht. Dazu muss der Parameter `AUDIT_ENABLED` entsprechend auf `true` oder `false` gesetzt werden.
+
+## Aufbewahrungsrichtlinie
+
+Über die [Konfigurationsdatei](../admin/install/configuration#audit_retention_days) `.env.local` kann gesteuert werden, wie viele Tage Einträge
+im Auditlog behalten werden sollen, die aus externen Quellen stammen. Konkret handelt es sich dabei um folgende Entitäten:
+
+* Klassenmitgliedschaften (Stammdaten)
+* Unterrichtsfreie Zeiten (Vertretungsplan)
+* Tagestexte (Vertretungsplan)
+* Lernende (Stammdaten)
+* Lerngruppen (Stammdaten)
+* Lerngruppen-Mitgliedschaften (Stammdaten)
+* Vertretungen (Vertretungsplan)
+* Fächer (Stammdaten)
+* Lehrkräfte (Stammdaten)
+* Stundenplanstunden (Stundenplan)
+* Pausenaufsichten (Stundenplan)
+* Unterrichte (Stammdaten)
+
+Alle anderen Entitäten sind von dieser Aufbewahrungsrichtlinie ausgenommen.
+
+## Leeren des Auditlogs
+
+Um das Auditlog zu leeren, kann das entsprechende Kommando auf der Kommandozeile ausgeführt werden. Anschließend
+sollte außerdem die Datenbank optimiert werden, um den freigewordenen Speicherplatz auch tatsächlich als freigegeben
+zu markieren.
+
+```bash
+$ php bin/console app:db:clear_audit
+$ php bin/console app:db:optimize
+```

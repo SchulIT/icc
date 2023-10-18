@@ -133,7 +133,8 @@ class SubstitutionImporter {
 
             if($this->untisSettings->getEventsType() !== null && $htmlSubstitution->getType() === $this->untisSettings->getEventsType() && $substitution->getId() !== null) {
                 // Unfortunately Untis exports the event ID as substitution ID in the HTML, so we need to prefix it to prevent clashes :)
-                $substitution->setId(self::EventsPrefix . $substitution->getId());
+                // For multi-day events, we also have to put the date into the ID in order to prevent clashes for the same ID
+                $substitution->setId(self::EventsPrefix . $substitution->getId() . '-' . $htmlSubstitution->getDate()->format('Ymd'));
             }
 
             $substitutions[] = $substitution;

@@ -176,7 +176,7 @@ class ExamAdminController extends AbstractController {
                     $reassignmentsHelper->applyReassignment($studentFilterView->getCurrentStudent(), $reassignments);
                     $this->addFlash('success', 'admin.exams.reassign.success');
 
-                    return $this->redirectToRoute('exams');
+                    return $this->redirectToRoute('admin_exams');
                 } else {
                     $isCsrfTokenInvalid = true;
                 }

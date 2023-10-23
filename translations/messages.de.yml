@@ -1209,6 +1209,20 @@ admin:
             help: Hiermit werden für jeden Unterricht entsprechend der angegebenen Anzahl Klausuren erstellt. Die Lehrkraft des Unterrichts kann anschließend das Datum sowie die Unterrichtsstunden für die Klausur festlegen.
             success: Klausuren erfolgreich angelegt
             number_of_exams: Anzahl der Klausuren
+        reassign:
+            label: Klausuren neu zuordnen
+            help: Hiermit werden Klausuren neu zugeordnet, beispielsweise nach einem Klassenwechsel. Dem Schüler oder der Schülerin müssen dazu bereits die neuen Unterrichte zugeordnet sein. Das System entfernt alle Klausuren von Unterrichten, an denen das Kind nicht mehr teilnimmt (es werden nur jene berücksichtigt, die entweder noch nicht geplant sind oder die ab dem festgelegten Datum stattfinden). Das System fügt das Kind zu Klausuren hinzu, die zu den aktuellen Unterrichten des Kindes passen und ungeplant sind oder ab dem festgelegten Datum stattfinden.
+            success: Klausuren erfolgreich neu zugeordnet
+            exams_to_add:
+                label: Neue Klausuren
+                help: Diese Klausuren werden %firstname% zugeordnet
+            exams_to_remove:
+                label: Gelöschte Klausuren
+                help: Aus diesen Klausuren wird %firstname% entfernt
+            exams_to_remain:
+                label: Nicht neu zugeordnete Klausuren
+                help: Diese Klausuren bleiben %firstname% zugeordnet
+            no_reassignments: '%firstname% ist bereits allen Klausuren zugeordnet'
 
     subjects:
         label: Fächer

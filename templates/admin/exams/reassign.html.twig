@@ -1,0 +1,147 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.exams.reassign.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_exams') }}">{{ 'admin.exams.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+
+    <div class="card border-warning">
+        <div class="card-header text-bg-warning">{{ 'admin.exams.reassign.label'|trans }}</div>
+
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                <h5>{{ 'info.label'|trans }}</h5>
+                <p>{{ 'admin.exams.reassign.help'|trans }}</p>
+            </div>
+
+            <form method="get">
+                {% include "_filter/student.html.twig" %}
+
+                <div class="mb-3">
+                    <label class="form-label" for="date">{{ 'label.date'|trans }}</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        <input class="form-control" type="date" id="date" name="date" data-trigger="submit" pattern="\d{4}-\d{2}-\d{2}" value="{% if date is not null %}{{ date.format('Y-m-d') }}{% endif %}">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if reassignments is not null %}
+        <form method="post">
+            {% set anythingToDo = false %}
+
+            {% if reassignments.examsToAdd|length > 0 %}
+                {% set anythingToDo = true %}
+                <div class="card">
+                    <div class="card-header">{{ 'admin.exams.reassign.exams_to_add.label'|trans }}</div>
+                    <div class="card-body pb-0">
+                        <div class="alert alert-info">{{ 'admin.exams.reassign.exams_to_add.help'|trans({'%firstname%': studentFilter.currentStudent.firstname }) }}</div>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for exam in reassignments.examsToAdd %}
+                            <div class="list-group-item">
+                                {% for tuition in exam.tuitions %}
+                                    <span class="badge text-bg-primary">{{ tuition.name }} ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})</span>
+                                {% endfor %}
+
+                                {% if exam.date is not null %}
+                                    <i class="fas fa-calendar-alt"></i> {{ exam.date|format_date }}
+                                {% else %}
+                                    <span class="badge text-bg-danger">{{ 'plans.exams.not_planned'|trans }}</span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if reassignments.examsToRemove|length > 0 %}
+                {% set anythingToDo = true %}
+                <div class="card">
+                    <div class="card-header">{{ 'admin.exams.reassign.exams_to_remove.label'|trans }}</div>
+                    <div class="card-body pb-0">
+                        <div class="alert alert-info">{{ 'admin.exams.reassign.exams_to_remove.help'|trans({'%firstname%': studentFilter.currentStudent.firstname }) }}</div>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for exam in reassignments.examsToRemove %}
+                            <div class="list-group-item">
+                                {% for tuition in exam.tuitions %}
+                                    <span class="badge text-bg-primary">{{ tuition.name }} ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})</span>
+                                {% endfor %}
+
+                                {% if exam.date is not null %}
+                                    <i class="fas fa-calendar-alt"></i> {{ exam.date|format_date }}
+                                {% else %}
+                                    <span class="badge text-bg-danger">{{ 'plans.exams.not_planned'|trans }}</span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if reassignments.unchangedExams|length > 0 %}
+                <div class="card">
+                    <div class="card-header">{{ 'admin.exams.reassign.exams_to_remain.label'|trans }}</div>
+                    <div class="card-body pb-0">
+                        <div class="alert alert-info">{{ 'admin.exams.reassign.exams_to_remain.help'|trans({'%firstname%': studentFilter.currentStudent.firstname }) }}</div>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for exam in reassignments.unchangedExams %}
+                            <div class="list-group-item">
+                                {% for tuition in exam.tuitions %}
+                                    <span class="badge text-bg-primary">{{ tuition.name }} ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})</span>
+                                {% endfor %}
+
+                                {% if exam.date is not null %}
+                                    <i class="fas fa-calendar-alt"></i> {{ exam.date|format_date }}
+                                {% else %}
+                                    <span class="badge text-bg-danger">{{ 'plans.exams.not_planned'|trans }}</span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if not anythingToDo %}
+                <div class="alert text-bg-success">
+                    <i class="fas fa-check-circle"></i> {{ 'admin.exams.reassign.no_reassignments'|trans({'%firstname%': studentFilter.currentStudent.firstname}) }}
+                </div>
+            {% endif %}
+
+            <input type="hidden" name="_token" value="{{ csrf_token(csrfTokenId) }}">
+
+            <div class="buttons">
+                {% if anythingToDo %}
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="fa fa-sync"></i> {{ 'admin.exams.reassign.label'|trans }}
+                </button>
+                {% endif %}
+
+                <a href="javascript: history.back()" class="btn btn-secondary btn-sm">
+                    <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+                </a>
+            </div>
+
+        </form>
+    {% else %}
+        <div class="buttons">
+            <a href="javascript: history.back()" class="btn btn-secondary btn-sm">
+                <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+            </a>
+        </div>
+    {% endif %}
+
+{% endblock %}

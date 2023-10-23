@@ -2,6 +2,11 @@
 
 namespace App\Controller;
 
+use App\Exam\ReassignmentsHelper;
+use App\Section\SectionResolverInterface;
+use DateTime;
+use Exception;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Exam;
 use App\Entity\Student;
@@ -34,6 +39,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ExamAdminController extends AbstractController {
 
     private const NumberOfExams = 25;
+    private const ReassignCsrfId = 'reassign_exams';
 
     public function __construct(RefererHelper $redirectHelper, private ExamRepositoryInterface $repository) {
         parent::__construct($redirectHelper);
@@ -140,6 +146,47 @@ class ExamAdminController extends AbstractController {
 
         return $this->render('admin/exams/bulk.html.twig', [
             'form' => $form->createView()
+        ]);
+    }
+
+    #[Route(path: '/reassign', name: 'reassign_student_exams')]
+    public function reassign(StudentFilter $studentFilter, ReassignmentsHelper $reassignmentsHelper, SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Request $request): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $studentFilterView = $studentFilter->handle($request->query->get('student'), $sectionResolver->getCurrentSection(), $user);
+
+        try {
+            $date = new DateTime($request->query->get('date'));
+            $date->setTime(0,0,0);
+        } catch(Exception $e) {
+            $date = $dateHelper->getToday();
+        }
+
+        $reassignments = null;
+        $isCsrfTokenInvalid = false;
+
+        if($studentFilterView->getCurrentStudent() !== null && $sectionResolver->getCurrentSection() !== null) {
+            $reassignments = $reassignmentsHelper->computeReassigns($studentFilterView->getCurrentStudent(), $sectionResolver->getCurrentSection(), $date);
+
+            if($request->getMethod() === Request::METHOD_POST) {
+                if($this->isCsrfTokenValid(self::ReassignCsrfId, $request->request->get('_token'))) {
+                    $reassignmentsHelper->applyReassignment($studentFilterView->getCurrentStudent(), $reassignments);
+                    $this->addFlash('success', 'admin.exams.reassign.success');
+
+                    return $this->redirectToRoute('exams');
+                } else {
+                    $isCsrfTokenInvalid = true;
+                }
+            }
+        }
+
+        return $this->render('admin/exams/reassign.html.twig', [
+            'studentFilter' => $studentFilterView,
+            'date' => $date,
+            'reassignments' => $reassignments,
+            'isCsrfTokenInvalid' => $isCsrfTokenInvalid,
+            'csrfTokenId' => self::ReassignCsrfId
         ]);
     }
 

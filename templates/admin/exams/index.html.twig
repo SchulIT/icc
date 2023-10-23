@@ -153,6 +153,11 @@
                         <a href="{{ path('bulk_exams') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-plus"></i> {{ 'admin.exams.bulk.label'|trans }}
                         </a>
+                        {% if is_granted('ROLE_EXAMS_ADMIN') %}
+                            <a href="{{ path('reassign_student_exams', { student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null}) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-sync"></i> {{ 'admin.exams.reassign.label'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
                 {% endif %}

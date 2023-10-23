@@ -151,6 +151,8 @@ class ExamAdminController extends AbstractController {
 
     #[Route(path: '/reassign', name: 'reassign_student_exams')]
     public function reassign(StudentFilter $studentFilter, ReassignmentsHelper $reassignmentsHelper, SectionResolverInterface $sectionResolver, DateHelper $dateHelper, Request $request): Response {
+        $this->denyAccessUnlessGranted('ROLE_EXAMS_ADMIN');
+
         /** @var User $user */
         $user = $this->getUser();
 

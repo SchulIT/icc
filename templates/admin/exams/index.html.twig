@@ -133,7 +133,8 @@
                     currentFilters: {
                         section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
                         grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
-                        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null
+                        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null,
+                        student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null
                     },
                     currentPage: page,
                     paginationPath: 'admin_exams',
@@ -161,15 +162,20 @@
                         {% set section = sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null %}
                         {% set teacher = teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null %}
                         {% set grade = gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null %}
+                        {% set student = studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null %}
 
-                        {% include "_filter/section.html.twig" with { currentFilter: { teacher: teacher, grade: grade } } %}
+                        {% include "_filter/section.html.twig" with { currentFilter: { teacher: teacher, grade: grade, student: student } } %}
 
                         {% if gradeFilter.grades|length > 0 %}
                             {% include "_filter/grade.html.twig" with { currentFilter: { section: section } } %}
                         {% endif %}
 
                         {% if teacherFilter.teachers|length > 0 %}
-                            {% include "_filter/teacher.html.twig" with { currentFilter: { section: section }, class: 'mb-0', allowClear: true, path: 'admin_exams' } %}
+                            {% include "_filter/teacher.html.twig" with { currentFilter: { section: section }, allowClear: true, path: 'admin_exams' } %}
+                        {% endif %}
+
+                        {% if studentFilter.studentCount > 0 %}
+                            {% include "_filter/student.html.twig" with { currentFilter: { section: section, class: 'mb-0' }} %}
                         {% endif %}
                     </div>
 

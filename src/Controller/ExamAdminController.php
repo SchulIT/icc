@@ -40,7 +40,7 @@ class ExamAdminController extends AbstractController {
     }
 
     #[Route(path: '', name: 'admin_exams')]
-    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, Grouper $grouper, ExamRepositoryInterface $examRepository, Sorter $sorter, Request $request): Response {
+    public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, StudentFilter $studentFilter, Grouper $grouper, ExamRepositoryInterface $examRepository, Sorter $sorter, Request $request): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Manage);
 
         $page = $request->query->getInt('page');
@@ -49,13 +49,14 @@ class ExamAdminController extends AbstractController {
         $user = $this->getUser();
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
+        $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user);
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $request->query->get('teacher') !== '✗' && $gradeFilterView->getCurrentGrade() === null);
 
         $paginator = $this->repository->getPaginator(self::NumberOfExams,
             $page,
             $gradeFilterView->getCurrentGrade(),
             $teacherFilterView->getCurrentTeacher(),
-            null,
+            $studentFilterView->getCurrentStudent(),
             null,
             false,
             null,
@@ -85,6 +86,7 @@ class ExamAdminController extends AbstractController {
             'sectionFilter' => $sectionFilterView,
             'gradeFilter' => $gradeFilterView,
             'teacherFilter' => $teacherFilterView,
+            'studentFilter' => $studentFilterView,
             'page' => $page,
             'pages' => $pages
         ]);

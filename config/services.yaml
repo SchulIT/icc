@@ -315,6 +315,18 @@ services:
         arguments:
             $retentionDays: '%env(AUDIT_RETENTION_DAYS)%'
 
+    App\Command\BackupCommand:
+        arguments:
+            $projectPath: '%kernel.project_dir%'
+            $databaseDsn: '%env(DATABASE_URL)%'
+            $backupDirectory: '%kernel.project_dir%/backup'
+            $tempDirectory: '%kernel.project_dir%/backup/tmp'
+            $files:
+                - '.env.local'
+            $directories:
+                - 'files'
+                - 'saml'
+
     # SECTION
     App\Section\SectionResolver: ~
 

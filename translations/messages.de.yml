@@ -1912,6 +1912,26 @@ book:
             info: Die Excel-Datei ist mit demselben Passwort verschlüsselt, das auch hier eingegeben werden muss.
             download: Download
 
+    integrity_check:
+        label: Integritätscheck
+        info: Mithilfe des Integritätschecks können fehlerhafte Eintragungen erkannt werden. Der Integritätscheck prüft alle Lernenden der ausgewählten Lerngruppe. Die Lerngruppe wird bei der Prüfung nicht berücksichtigt, sie dient nur zur Auswahl der Lernenden.
+        no_violation: Alles in Ordnung
+        violation: Fehler
+        empty: Bitte rechts über den Filter einen Abschnitt und eine Lerngruppe auswählen.
+        checks:
+            present_despite_absence_note:
+                label: Kind anwesend trotz Abwesenheitsmeldung
+                help: ''
+                violation: Kind trotz Abwesenheitsmeldung als anwesend markiert
+            more_than_one_change:
+                label: Anwesenheit wechselt mehr als einmal am Tag
+                help: Dieser Check kann überprüfen, ob ein Kind fälschlicherweise als anwesend bzw. abwesend markiert wurde. Abwesenheiten mit 0 Fehlstunden gelten als anwesend.
+                violation: Kind zwischendurch abwesend
+            more_than_one_attendances_at_the_same_time:
+                label: mehr als eine Anwesenheit pro Stunde
+                help: Dieser Check prüft nur, es es für das Kind zu einer Stunde zwei Anwesenheiten gibt (die Art der Anwesenheit, also anwesend, abwesend etc., wird dabei nicht geprüft).
+                violation: Kind hat zwei Anwesenheiten
+
 export:
     caution: Ich bestätige, dass ich die Datei nur auf zugelassenen Endgeräten verarbeite. Die Datei darf nur lokal verarbeitet werden und nicht via E-Mail versendet oder auf Clouddiensten gespeichert werden.
 
@@ -2036,7 +2056,8 @@ comingsoon:
 
 experimental:
     label: experimentell
-    info: Dieses Feature funktioniert möglichkerweise noch nicht so, wie erwartet. Es darf jedoch getestet werden.
+    title: Feature experimentell
+    info: Dieses Feature funktioniert möglicherweise noch nicht so, wie erwartet. Es darf jedoch getestet werden. Zukünftig können sich die Aussehen und Funktionsweise ändern.
 
 notifications:
     label: Benachrichtigungen

@@ -1,0 +1,155 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.integrity_check.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="bs-callout bs-callout-warning">
+        <h5>{{ 'experimental.title'|trans }}</h5>
+        <p>{{ 'experimental.info'|trans }}</p>
+    </div>
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if results is not empty %}
+                    <div class="card">
+                        <div class="table table-striped table-card border-top-0" id="result">
+                            <div class="table-head table-row">
+                                <div class="table-col column-md">{{ 'label.date'|trans }}</div>
+                                <div class="table-col column-md">{{ 'label.lesson'|trans }}</div>
+                                <div class="table-col column-md">{{ 'label.teacher'|trans }}</div>
+                                <div class="table-col column-md">{{ 'label.tuition'|trans }}</div>
+                                <div class="table-col fill">{{ 'book.integrity_check.violation'|trans }}</div>
+                            </div>
+
+                            {% for result in results %}
+                                {% set student = result.student %}
+                                {% set violations = result.result.violations %}
+                                <div class="table-row border-bottom pointer {% if violations|length == 0 %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}" data-toggle="table-collapse" data-target="#result-{{ student.uuid }}" data-is-collapsed="true">
+                                    <div class="table-col fill">
+                                        <span class="me-auto align-self-center p-0 bg-transparent">
+                                            <i class="fas fa-user"></i> {{ student|student }}
+                                        </span>
+
+                                        {% if violations|length > 0 %}
+                                            <span class="bg-transparent me-2">
+                                                <i class="fas fa-exclamation-triangle"></i> {{ violations|length }}
+                                            </span>
+
+                                            <i class="fa fa-chevron-down indicator align-self-center bg-transparent p-0"></i>
+                                        {% else %}
+                                            <span class="bg-transparent pe-0">
+                                                <i class="fas fa-check"></i> {{ 'book.integrity_check.no_violation'|trans }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if violations|length > 0 %}
+                                <div class="collapse" id="result-{{ student.uuid }}">
+                                    {% for violation in violations %}
+                                        <div class="table-row border-bottom">
+                                            <div class="table-col column-md">
+                                                {{ violation.date|format_date }}
+                                            </div>
+                                            <div class="table-col column-md">
+                                                {{ 'label.substitution_lessons'|trans({'%start%': violation.lesson, '%end%': violation.lesson, '%count%': 0}) }}
+                                            </div>
+                                            {% if violation.timetableLesson is not null and violation.timetableLesson.tuition is not null %}
+                                                <div class="table-col column-md">
+                                                    {% for teacher in violation.timetableLesson.tuition.teachers %}
+                                                        {{ teacher.acronym }}{% if not loop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                                <div class="table-col column-md">
+                                                    {{ violation.timetableLesson.tuition.name }}
+                                                </div>
+                                            {% else %}
+                                                <div class="table-col column-md"></div>
+                                                <div class="table-col column-md"></div>
+                                            {% endif %}
+                                            <div class="table-col fill">
+                                                {{ violation.message }}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+
+                                    <div class="table-row border-bottom">
+                                        <div class="table-col fill">
+                                            {% set grade = student.grade(sectionFilter.currentSection) %}
+                                            {% if grade is not null %}
+                                                <a href="{{ path('book_student', { student: student.uuid, section: sectionFilter.currentSection.uuid, grade: grade.uuid }) }}" class="btn btn-outline-primary btn-sm me-2" target="_blank">
+                                                    <i class="fas fa-external-link"></i> {{ 'book.students.label'|trans }}
+                                                </a>
+                                            {% endif %}
+
+                                            <a href="{{ path('student_absences', { section: sectionFilter.currentSection.uuid, student: student.uuid }) }}" class="btn btn-outline-primary  btn-sm" target="_blank">
+                                                <i class="fas fa-external-link"></i> {{ 'absences.label'|trans }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <button type="button" data-toggle="table-show-all" data-container="#result" class="btn btn-outline-primary btn-sm">
+                        {{ 'actions.show_all'|trans }}
+                    </button>
+                {% else %}
+                    <div class="bs-callout bs-callout-info">
+                        <p>{{ 'book.integrity_check.empty'|trans }}</p>
+                    </div>
+
+                {% endif %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+
+                        {% include "_filter/study_group.html.twig" with { params: { section: sectionFilter.currentSection.uuid }} %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-info-circle"></i> {{ 'book.integrity_check.label'|trans }}</h5>
+
+                        <p>
+                            {{ 'book.integrity_check.info'|trans }}
+                        </p>
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        {% for check in enabledChecks %}
+                            <div class="list-group-item">
+                                <p class="mb-0"><i class="fas fa-clipboard-check"></i> {{ ('book.integrity_check.checks.'~check.name ~'.label')|trans }}</p>
+
+                                {% set help = ('book.integrity_check.checks.'~check.name ~'.help')|trans %}
+
+                                {% if help is not empty %}
+                                    <p class="text-muted mt-2">{{ help }}</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block post_javascript %}
+
+{% endblock %}

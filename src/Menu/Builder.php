@@ -239,6 +239,11 @@ class Builder {
         ])
             ->setExtra('icon', 'fas fa-download');
 
+        $book->addChild('book.integrity_check.label', [
+            'route' => 'book_integrity_check'
+        ])
+            ->setExtra('icon', 'fas fa-clipboard-check');
+
         return $book;
     }
 

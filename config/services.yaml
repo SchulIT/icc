@@ -28,6 +28,8 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     _instanceof:
+        App\Book\IntegrityCheck\IntegrityCheckInterface:
+            tags: [ 'app.book.integrity_check']
         App\Dashboard\Absence\AbsenceResolveStrategyInterface:
             tags: [ 'app.absence_resolver' ]
         App\Grouping\GroupingStrategyInterface:
@@ -168,6 +170,10 @@ services:
             - { name: knp_menu.voter }
 
     # SERVICES
+    App\Book\IntegrityCheck\IntegrityCheckRunner:
+        arguments:
+            $checks: !tagged app.book.integrity_check
+
     App\Dashboard\Absence\:
         resource: '../src/Dashboard/Absence/*Strategy.php'
 

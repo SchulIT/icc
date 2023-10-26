@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Book\EntryOverviewHelper;
 use App\Book\Export\BookExporter;
+use App\Book\IntegrityCheck\IntegrityCheckRunner;
 use App\Book\Lesson;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\StudentInfo;
@@ -35,6 +36,7 @@ use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
+use App\Section\SectionResolverInterface;
 use App\Security\Voter\LessonEntryVoter;
 use App\Settings\BookSettings;
 use App\Settings\TimetableSettings;
@@ -53,6 +55,7 @@ use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentAwareGradeFilter;
 use App\View\Filter\StudentAwareTuitionFilter;
+use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Filter\TuitionFilter;
 use DateTime;
@@ -742,5 +745,36 @@ class BookController extends AbstractController {
         $filename = sprintf('%s-%d-%d.xml', $grade->getName(), $section->getYear(), $section->getNumber());
         $xml = $exporter->exportGradeXml($grade, $section);
         return $this->createResponse($xml, 'application/xml', $filename);
+    }
+
+    #[Route('/integrity_check', name: 'book_integrity_check')]
+    public function integrityCheck(StudyGroupFilter $studyGroupFilter, SectionFilter $sectionFilter, Request $request, IntegrityCheckRunner $runner, Sorter $sorter): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group'), $sectionFilterView?->getCurrentSection(), $user);
+
+        $results = [ ];
+
+        if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
+            /** @var Student[] $students */
+            $students = $studyGroupFilterView->getCurrentStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
+            $sorter->sort($students, StudentStrategy::class);
+
+            foreach($students as $student) {
+                $results[] = [
+                    'student' => $student,
+                    'result' => $runner->runChecks($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd())
+                ];
+            }
+        }
+
+        return $this->render('books/integrity_check.html.twig', [
+            'sectionFilter' => $sectionFilterView,
+            'studyGroupFilter' => $studyGroupFilterView,
+            'results' => $results,
+            'enabledChecks' => $runner->getEnabledChecks()
+        ]);
     }
 }

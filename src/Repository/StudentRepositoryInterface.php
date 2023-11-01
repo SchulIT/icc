@@ -6,6 +6,7 @@ use App\Entity\Grade;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
+use App\Entity\Tuition;
 use App\Sorting\StudentGroupMembershipStrategy;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
@@ -82,6 +83,8 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Student[]
      */
     public function findAllByStudyGroups(array $studyGroups): array;
+
+    public function findAllByTuition(Tuition $tuition, array $excludedStatuses = [ ], bool $includeStudentsWithAttendance = false);
 
     /**
      * @param StudyGroup[] $studyGroups

@@ -2,6 +2,7 @@
 
 namespace App\Book\AttendanceSuggestion;
 
+use App\Book\StudentsResolver;
 use App\Dashboard\Absence\AbsenceResolver;
 use App\Dashboard\AbsentExamStudent;
 use App\Dashboard\AbsentStudent;
@@ -19,7 +20,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AbsenceSuggestionResolver {
     public function __construct(private readonly AbsenceResolver $absenceResolver, private readonly LessonAttendanceRepositoryInterface $attendanceRepository,
-                                private readonly ExcuseNoteRepositoryInterface $excuseNoteRepository, private readonly UrlGeneratorInterface $urlGenerator) {
+                                private readonly ExcuseNoteRepositoryInterface $excuseNoteRepository, private readonly UrlGeneratorInterface $urlGenerator, private readonly StudentsResolver $studentsResolver) {
 
     }
 
@@ -30,7 +31,7 @@ class AbsenceSuggestionResolver {
      * @return AbsenceSuggestion[]
      */
     public function resolve(Tuition $tuition, DateTime $date, int $lesson): array {
-        $students = $tuition->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
+        $students = $this->studentsResolver->resolve($tuition);
 
         $suggestions = [ ];
 

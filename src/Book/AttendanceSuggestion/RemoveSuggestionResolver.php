@@ -2,6 +2,7 @@
 
 namespace App\Book\AttendanceSuggestion;
 
+use App\Book\StudentsResolver;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Teacher;
@@ -14,12 +15,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RemoveSuggestionResolver {
 
-    public function __construct(private readonly TimetableLessonRepositoryInterface $timetableLessonRepository, private readonly TranslatorInterface $translator) {
+    public function __construct(private readonly TimetableLessonRepositoryInterface $timetableLessonRepository, private readonly StudentsResolver $studentsResolver, private readonly TranslatorInterface $translator) {
 
     }
 
     public function resolve(Tuition $tuition, DateTime $date, int $lesson): array {
-        $students = $tuition->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
+        $students = $this->studentsResolver->resolve($tuition);
 
         $suggestions = [ ];
 

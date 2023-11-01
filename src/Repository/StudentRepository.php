@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
+use App\Entity\LessonAttendance;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
+use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use DateTime;
@@ -253,5 +255,53 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
             ->setFirstResult($offset);
 
         return $paginator;
+    }
+
+    public function findAllByTuition(Tuition $tuition, array $excludedStatuses = [], bool $includeStudentsWithAttendance = false) {
+        $qb = $this->em->createQueryBuilder()
+            ->select(['s'])
+            ->from(Student::class, 's');
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('sInner.id')
+            ->distinct()
+            ->from(Student::class, 'sInner')
+            ->leftJoin('sInner.studyGroupMemberships', 'sgmInner')
+            ->leftJoin('sgmInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.tuitions', 'tInner')
+            ->where('tInner.id = :tuition');
+
+        $qb->where(
+            $qb->expr()->in('s.id', $qbInner->getDQL())
+        )
+            ->setParameter('tuition', $tuition->getId());
+
+        if($includeStudentsWithAttendance) {
+            $attendanceStudents = $this->em->createQueryBuilder()
+                ->select('sAttendance.id')
+                ->from(LessonAttendance::class, 'attendanceInner')
+                ->leftJoin('attendanceInner.student', 'sAttendance')
+                ->leftJoin('attendanceInner.entry', 'entryInner')
+                ->leftJoin('entryInner.tuition = :tuition');
+
+            $qb->where(
+                $qb->expr()->orX(
+                    $qb->expr()->in('s.id', $qbInner->getDQL()),
+                    $qb->expr()->in('s.id', $attendanceStudents->getDQL())
+                )
+            )
+                ->setParameter('tuition', $tuition->getId());
+        }
+
+        if(count($excludedStatuses) > 0) {
+            $qb->andWhere(
+                $qb->expr()->notIn('s.status', ':excluded')
+            )
+                ->setParameter('excluded', $excludedStatuses);
+        }
+
+
+
+        return $qb->getQuery()->getResult();
     }
 }

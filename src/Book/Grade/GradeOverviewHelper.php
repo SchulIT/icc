@@ -2,6 +2,7 @@
 
 namespace App\Book\Grade;
 
+use App\Book\StudentsResolver;
 use App\Entity\Grade;
 use App\Entity\GradeMembership;
 use App\Entity\Section;
@@ -20,7 +21,7 @@ use App\Utils\ArrayUtils;
 
 class GradeOverviewHelper {
 
-    public function __construct(private readonly TuitionGradeRepositoryInterface $tuitionGradeRepository, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly Sorter $sorter) { }
+    public function __construct(private readonly TuitionGradeRepositoryInterface $tuitionGradeRepository, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly StudentsResolver $studentsResolver, private readonly Sorter $sorter) { }
 
     public function computeOverviewForStudent(Student $student, Section $section): GradeOverview {
         $tuitions = $this->tuitionRepository->findAllByStudents([$student], $section);
@@ -75,8 +76,7 @@ class GradeOverviewHelper {
 
         $rows = [ ];
         /** @var Student[] $students */
-        $students = $tuition->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
-
+        $students = $this->studentsResolver->resolve($tuition, true, true);
         $this->sorter->sort($students, StudentStrategy::class);
 
         foreach($students as $student) {

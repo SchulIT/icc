@@ -282,7 +282,8 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
                 ->from(LessonAttendance::class, 'attendanceInner')
                 ->leftJoin('attendanceInner.student', 'sAttendance')
                 ->leftJoin('attendanceInner.entry', 'entryInner')
-                ->leftJoin('entryInner.tuition = :tuition');
+                ->leftJoin('entryInner.tuition', 'tuitionInner')
+                ->where('tuitionInner.id = :tuition');
 
             $qb->where(
                 $qb->expr()->orX(

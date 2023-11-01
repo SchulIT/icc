@@ -9,6 +9,7 @@ use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\LessonAttendance;
 use App\Book\Student\StudentInfo;
 use App\Book\Student\StudentInfoResolver;
+use App\Book\StudentsResolver;
 use App\Entity\BookComment as CommentEntity;
 use App\Entity\Grade as GradeEntity;
 use App\Entity\GradeMembership;
@@ -33,7 +34,7 @@ use JMS\Serializer\SerializerInterface;
 class BookExporter {
 
     public function __construct(private readonly EntryOverviewHelper $overviewHelper, private readonly StudentInfoResolver $studentInfoResolver,
-                                private readonly Sorter $sorter, private readonly SerializerInterface $serializer,
+                                private readonly Sorter $sorter, private readonly SerializerInterface $serializer, private readonly StudentsResolver $studentsResolver,
                                 private readonly GradeOverviewHelper $gradeOverviewHelper, private readonly TuitionRepositoryInterface $tuitionRepository)
     {
     }
@@ -210,7 +211,7 @@ class BookExporter {
         $book = (new Book())
             ->setTuition($this->castTuition($tuition));
 
-        $students = $tuition->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
+        $students = $this->studentsResolver->resolve($tuition, true, true);
 
         $overview = $this->overviewHelper->computeOverviewForTuition($tuition, $section->getStart(), $section->getEnd());
 

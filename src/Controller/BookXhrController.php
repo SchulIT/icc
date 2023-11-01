@@ -6,6 +6,7 @@ use App\Book\AttendanceSuggestion\AbsenceSuggestionResolver;
 use App\Book\AttendanceSuggestion\RemoveSuggestionResolver;
 use App\Book\Lesson\LessonCancelHelper;
 use App\Book\Student\AbsenceExcuseResolver;
+use App\Book\StudentsResolver;
 use App\Entity\Grade;
 use App\Entity\LessonAttendance;
 use App\Entity\LessonEntry;
@@ -202,7 +203,8 @@ class BookXhrController extends AbstractController {
     #[OA\Parameter(name: 'end', description: 'Ende der Unterrichtsstunde', in: 'query')]
     #[Route(path: '/entry', name: 'xhr_lesson_entry', methods: ['GET'])]
     public function entry(Request $request, TimetableLessonRepositoryInterface $lessonRepository, AbsenceSuggestionResolver $suggestionResolver,
-                          SerializerInterface $serializer, AbsenceExcuseResolver $excuseResolver, BookSettings $settings, RemoveSuggestionResolver $removeSuggestionResolver): Response {
+                          SerializerInterface $serializer, AbsenceExcuseResolver $excuseResolver, BookSettings $settings,
+                          RemoveSuggestionResolver $removeSuggestionResolver, StudentsResolver $studentsResolver): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $lesson = $lessonRepository->findOneByUuid($request->query->get('lesson'));
@@ -269,13 +271,8 @@ class BookXhrController extends AbstractController {
         $students = [ ];
 
         if($entry === null) {
-            foreach ($lesson->getTuition()->getStudyGroup()->getMemberships() as $membership) {
-                if (in_array($membership->getStudent()->getStatus(), $settings->getExcludeStudentsStatus())) {
-                    // skip student
-                    continue;
-                }
-
-                $students[] = $this->getStudent($membership->getStudent());
+            foreach($studentsResolver->resolve($lesson->getTuition(), true, false) as $student) {
+                $students[] = $this->getStudent($student);
             }
         } else {
             foreach($entry->getAttendances() as $attendance) {

@@ -2057,7 +2057,7 @@ comingsoon:
 experimental:
     label: experimentell
     title: Feature experimentell
-    info: Dieses Feature funktioniert möglicherweise noch nicht so, wie erwartet. Es darf jedoch getestet werden. Zukünftig können sich die Aussehen und Funktionsweise ändern.
+    info: Dieses Feature funktioniert möglicherweise noch nicht so, wie erwartet. Es darf jedoch getestet werden. Zukünftig können sich Aussehen und Funktionsweise ändern.
 
 notifications:
     label: Benachrichtigungen

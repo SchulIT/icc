@@ -22,7 +22,7 @@
         "@symfony/webpack-encore": "^4.2.0",
         "@vue/compiler-sfc": "^3.1.4",
         "autoprefixer": "^10.4.13",
-        "axios": "^0.21.1",
+        "axios": "^1.6.0",
         "bazinga-translator": "^4.0.1",
         "bootstrap": "5.3.0",
         "browserify-fs": "^1.0.0",

@@ -1930,7 +1930,7 @@ book:
             more_than_one_change:
                 label: Anwesenheit wechselt mehr als einmal am Tag
                 help: Dieser Check kann überprüfen, ob ein Kind fälschlicherweise als anwesend bzw. abwesend markiert wurde. Abwesenheiten mit 0 Fehlstunden gelten als anwesend.
-                violation: Kind zwischendurch abwesend
+                violation: An- oder Abwesenheit möglicherweise falsch eingetragen
             more_than_one_attendances_at_the_same_time:
                 label: mehr als eine Anwesenheit pro Stunde
                 help: Dieser Check prüft nur, es es für das Kind zu einer Stunde zwei Anwesenheiten gibt (die Art der Anwesenheit, also anwesend, abwesend etc., wird dabei nicht geprüft).

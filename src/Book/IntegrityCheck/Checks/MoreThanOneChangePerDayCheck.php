@@ -43,6 +43,13 @@ class MoreThanOneChangePerDayCheck implements IntegrityCheckInterface {
             $this->sorter->sort($attendancesForToday, LessonAttendenceStrategy::class);
 
             $changes = 0;
+            $types = array_map(
+                fn(LessonAttendance $attendance) => $this->getCorrectedAttendanceType($attendance),
+                $attendancesForToday
+            );
+            $presentCount = count(array_filter($types, fn(int $attendance) => $attendance === LessonAttendanceType::Present));
+            $absentCount = count(array_filter($types, fn(int $attendance) => $attendance === LessonAttendanceType::Absent));
+            $loserType = $presentCount < $absentCount ? LessonAttendanceType::Present : LessonAttendanceType::Absent;
 
             for($idx = 1; $idx < count($attendancesForToday); $idx++) {
                 $lastAttendance = $attendancesForToday[$idx - 1];
@@ -57,6 +64,7 @@ class MoreThanOneChangePerDayCheck implements IntegrityCheckInterface {
             }
 
             if($changes > 1) {
+                /** @var LessonAttendance[] $attendanceByLesson */
                 $attendanceByLesson = ArrayUtils::createArrayWithKeys(
                     $attendancesForToday,
                     function(LessonAttendance $attendance) {
@@ -73,7 +81,10 @@ class MoreThanOneChangePerDayCheck implements IntegrityCheckInterface {
                 // As we do not know who's right or wrong, just blame them all :)
                 for($lessonNumber = 1; $lessonNumber <= $this->timetableSettings->getMaxLessons(); $lessonNumber++) {
                     $attendance = $attendanceByLesson[$lessonNumber] ?? null;
-                    $violations[] = new IntegrityCheckViolation(clone $current, $lessonNumber, $attendance?->getEntry()->getLesson() , $this->translator->trans('book.integrity_check.checks.more_than_one_change.violation'));
+
+                    if($attendance !== null && $attendance->getType() === $loserType) {
+                        $violations[] = new IntegrityCheckViolation(clone $current, $lessonNumber, $attendance?->getEntry()->getLesson(), $this->translator->trans('book.integrity_check.checks.more_than_one_change.violation'));
+                    }
                 }
             }
 

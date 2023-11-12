@@ -2,6 +2,7 @@
 
 namespace App\Validator;
 
+use App\Converter\StudentStringConverter;
 use App\Entity\Exam;
 use App\Entity\Student;
 use App\Repository\ExamRepositoryInterface;
@@ -13,7 +14,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
 
-    public function __construct(private readonly ExamSettings $examSettings, ExamRepositoryInterface $examRepository, private readonly SectionResolverInterface $sectionResolver) {
+    public function __construct(private readonly ExamSettings $examSettings, private readonly StudentStringConverter $studentStringConverter, ExamRepositoryInterface $examRepository, private readonly SectionResolverInterface $sectionResolver) {
         parent::__construct($examRepository);
     }
 
@@ -55,6 +56,7 @@ class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
             if($numberOfExams > $this->examSettings->getMaximumNumberOfExamsPerWeek($student->getGrade($section))) {
                 $this->context
                     ->buildViolation($constraint->message)
+                    ->setParameter('{{ student }}', $this->studentStringConverter->convert($student))
                     ->setParameter('{{ maxNumber }}', (string)$this->examSettings->getMaximumNumberOfExamsPerWeek($student->getGrade($section)))
                     ->setParameter('{{ number }}', (string)$numberOfExams)
                     ->addViolation();

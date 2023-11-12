@@ -36,7 +36,7 @@ class BookIntegrityCheckViolationRepository extends AbstractTransactionalReposit
     }
 
     public function remove(BookIntegrityCheckViolation $violation): void {
-        $this->em->persist($violation);
+        $this->em->remove($violation);
         $this->flushIfNotInTransaction();
     }
 

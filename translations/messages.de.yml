@@ -356,6 +356,8 @@ dashboard:
     notifications:
         unread: '{1}Es gibt %count% ungelesene Benachrichtigung|]1,Inf[ Es gibt %count% ungelesene Benachrichtigungen.'
         link: anzeigen
+    missing:
+        book_entry: '{1} Es gibt %count% fehlenden Eintrag im Unterrichtsbuch.|]1,Inf[ Es gibt %count% fehlende Einträge im Unterrichtsbuch.'
     settings:
         label: Einstellungen
         show_times: Uhrzeiten der Unterrichtsstunden anzeigen

@@ -2,20 +2,19 @@
 
 namespace App\Controller;
 
-use App\Repository\NotificationRepositoryInterface;
-use Symfony\Component\HttpFoundation\Response;
-use App\Dashboard\DashboardViewHelper;
 use App\Dashboard\DashboardViewCollapseHelper;
+use App\Dashboard\DashboardViewHelper;
 use App\Entity\Section;
 use App\Entity\Substitution;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Repository\ImportDateTypeRepositoryInterface;
-use App\Repository\MessageRepositoryInterface;
+use App\Repository\NotificationRepositoryInterface;
 use App\Repository\SectionRepositoryInterface;
+use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
+use App\Section\SectionResolverInterface;
 use App\Settings\DashboardSettings;
-use App\Settings\SubstitutionSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\EnumArrayUtils;
 use App\View\Filter\RoomFilter;
@@ -23,9 +22,9 @@ use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use App\View\Filter\UserTypeFilter;
 use DateTime;
-use League\Csv\Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractController {
@@ -45,7 +44,8 @@ class DashboardController extends AbstractController {
                               DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper,
                               DateHelper $dateHelper, DashboardSettings $settings, TimetableSettings $timetableSettings, SectionRepositoryInterface $sectionRepository,
                               UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository,
-                              NotificationRepositoryInterface $notificationRepository, Request $request): Response {
+                              NotificationRepositoryInterface $notificationRepository, TimetableLessonRepositoryInterface $lessonEntryRepository, SectionResolverInterface $sectionResolver,
+                              Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -134,6 +134,13 @@ class DashboardController extends AbstractController {
             $template = 'dashboard/two_columns.html.twig';
         }
 
+        $missingBookEntries = 0;
+
+        if($user->isTeacher()) {
+            $currentSection = $sectionResolver->getCurrentSection();
+            $missingBookEntries = $lessonEntryRepository->countMissingByTeacher($user->getTeacher(), $currentSection->getStart(), $dateHelper->getToday());
+        }
+
         return $this->render($template, [
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
@@ -153,7 +160,8 @@ class DashboardController extends AbstractController {
             'settings' => $settings,
             'section' => $section,
             'dateHasSection' => $dateHasSection,
-            'unreadNotificationsCount' => $notificationRepository->countUnreadForUser($user)
+            'unreadNotificationsCount' => $notificationRepository->countUnreadForUser($user),
+            'missingBookEntriesCount' => $missingBookEntries
         ]);
     }
 

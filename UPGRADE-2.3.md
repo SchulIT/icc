@@ -41,6 +41,13 @@ gesteuert werden. Mehr dazu im Handbuch.
 Das neue Feature ändert die bisherige Aufbewahrungsrichtlinie (welche nicht vorhanden war) nicht und behält alle
 Einträge.
 
+### Integritätscheck
+
+Mithilfe des Integritätchecks können fehlerhafte Eintragungen im Hinblick auf die Anwesenheit von Lernenden gefunden werden.
+Der entsprechende Menüpunkt ist unter *Unterrichtsbuch* zu finden. 
+
+Die Einrichtung ist im [Handbuch](https://docs.schulit.de/icc/admin/guides/integrity_check)
+
 ## Upgrade TODO
 
 Das Upgrade beinhaltet eine Migration.

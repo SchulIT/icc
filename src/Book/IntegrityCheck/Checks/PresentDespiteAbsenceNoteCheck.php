@@ -49,6 +49,7 @@ class PresentDespiteAbsenceNoteCheck implements IntegrityCheckInterface {
         );
 
         $absences = $this->absenceRepository->findByStudents([ $student ]);
+        $alreadyCheckedLessons = [ ];
 
         foreach($absences as $absence) {
             $lessons = $this->dateLessonExpander->expandRangeToDateLessons($absence->getFrom(), $absence->getUntil());
@@ -56,10 +57,12 @@ class PresentDespiteAbsenceNoteCheck implements IntegrityCheckInterface {
             foreach($lessons as $lesson) {
                 $key = sprintf('%s-%s', $lesson->getDate()->format('Y-m-d'), $lesson->getLesson());
 
-                if(array_key_exists($key, $presentAttendances)) {
+                if(!in_array($key, $alreadyCheckedLessons) && array_key_exists($key, $presentAttendances)) {
                     $attendance = $presentAttendances[$key];
                     $violations[] = new IntegrityCheckViolation(clone $lesson->getDate(), $lesson->getLesson(), $attendance->getEntry()->getLesson(), $this->translator->trans('book.integrity_check.checks.present_despite_absence_note.violation'));
                 }
+
+                $alreadyCheckedLessons[] = $key;
             }
         }
 

@@ -12,7 +12,7 @@ class IntegrityCheckResult {
      */
     private array $violations = [ ];
 
-    public function __construct(private readonly Student $student, private readonly DateTime $start, private readonly DateTime $end) { }
+    public function __construct(private readonly Student $student, private readonly DateTime $start, private readonly DateTime $end, private readonly ?DateTime $lastRun) { }
 
     public function getStudent(): Student {
         return $this->student;
@@ -24,6 +24,10 @@ class IntegrityCheckResult {
 
     public function getEnd(): DateTime {
         return $this->end;
+    }
+
+    public function getLastRun(): ?DateTime {
+        return $this->lastRun;
     }
 
     public function addViolation(IntegrityCheckViolation $violation): void {

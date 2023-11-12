@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Book\EntryOverviewHelper;
 use App\Book\Export\BookExporter;
+use App\Book\IntegrityCheck\CachedIntegrityCheckRunner;
+use App\Book\IntegrityCheck\IntegrityCheckPersister;
 use App\Book\IntegrityCheck\IntegrityCheckRunner;
 use App\Book\Lesson;
 use App\Book\Student\AbsenceExcuseResolver;
@@ -748,7 +750,7 @@ class BookController extends AbstractController {
     }
 
     #[Route('/integrity_check', name: 'book_integrity_check')]
-    public function integrityCheck(StudyGroupFilter $studyGroupFilter, SectionFilter $sectionFilter, Request $request, IntegrityCheckRunner $runner, Sorter $sorter): Response {
+    public function integrityCheck(StudyGroupFilter $studyGroupFilter, SectionFilter $sectionFilter, Request $request, CachedIntegrityCheckRunner $runner, Sorter $sorter): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -762,10 +764,19 @@ class BookController extends AbstractController {
             $students = $studyGroupFilterView->getCurrentStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
             $sorter->sort($students, StudentStrategy::class);
 
+            if($request->query->get('run') === '✓') {
+                foreach($students as $student) {
+                    $runner->runChecks($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
+                }
+                return $this->redirectToRoute('book_integrity_check', [
+                    'study_group' => $studyGroupFilterView->getCurrentStudyGroup()->getUuid()
+                ]);
+            }
+
             foreach($students as $student) {
                 $results[] = [
                     'student' => $student,
-                    'result' => $runner->runChecks($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd())
+                    'result' => $runner->getResults($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd())
                 ];
             }
         }

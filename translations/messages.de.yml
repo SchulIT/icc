@@ -1914,6 +1914,10 @@ book:
 
     integrity_check:
         label: Integritätscheck
+        run:
+            label: Prüfung
+            help: Möglicherweise sind die Ergebnisse des Checks nicht mehr gültig, da in der Zwischenzeit Korrekturen vorgenommen wurden.
+            button: Check erneut ausführen
         info: Mithilfe des Integritätschecks können fehlerhafte Eintragungen erkannt werden. Der Integritätscheck prüft alle Lernenden der ausgewählten Lerngruppe. Die Lerngruppe wird bei der Prüfung nicht berücksichtigt, sie dient nur zur Auswahl der Lernenden.
         no_violation: Alles in Ordnung
         violation: Fehler

@@ -37,6 +37,13 @@
                                     <div class="table-col fill">
                                         <span class="me-auto align-self-center p-0 bg-transparent">
                                             <i class="fas fa-user"></i> {{ student|student }}
+                                            <span class="text-muted">
+                                                {% if result.result.lastRun is not null %}
+                                                    {{ result.result.lastRun|format_datetime }}
+                                                {% else %}
+                                                    {{ 'label.never'|trans }}
+                                                {% endif %}
+                                            </span>
                                         </span>
 
                                         {% if violations|length > 0 %}
@@ -120,6 +127,20 @@
                         {% include "_filter/study_group.html.twig" with { params: { section: sectionFilter.currentSection.uuid }} %}
                     </div>
                 </div>
+
+                {% if studyGroupFilter.currentStudyGroup is not null %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ 'book.integrity_check.run.label'|trans }}</h5>
+
+                            <p>{{ 'book.integrity_check.run.help'|trans }}</p>
+
+                            <a href="{{ path('book_integrity_check', { section: sectionFilter.currentSection.uuid, study_group: studyGroupFilter.currentStudyGroup.uuid, run: '✓' }) }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-play"></i> {{ 'book.integrity_check.run.button'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
 
                 <div class="card">
                     <div class="card-body">

@@ -8,15 +8,14 @@ use App\Sorting\IntegrityCheckViolationStrategy;
 use App\Sorting\Sorter;
 use DateTime;
 
-class IntegrityCheckRunner {
-
+class IntegrityCheckRunner implements IntegrityCheckRunnerInterface {
     /**
      * @param IntegrityCheckInterface[] $checks
      */
     public function __construct(private readonly iterable $checks, private readonly BookSettings $bookSettings, private readonly Sorter $sorter) { }
 
     public function runChecks(Student $student, DateTime $start, DateTime $end): IntegrityCheckResult {
-        $result = new IntegrityCheckResult($student, $start, $end);
+        $result = new IntegrityCheckResult($student, $start, $end, new DateTime('now'));
 
         $violations = [ ];
         foreach($this->getEnabledChecks() as $check) {

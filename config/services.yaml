@@ -321,6 +321,10 @@ services:
         arguments:
             $retentionDays: '%env(AUDIT_RETENTION_DAYS)%'
 
+    App\Command\RunIntegrityCheckCommand:
+        arguments:
+            $isEnabled: '%env(ASYNC_CHECKS)%'
+
     # SECTION
     App\Section\SectionResolver: ~
 

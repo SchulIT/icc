@@ -5,9 +5,11 @@ framework:
 
         transports:
             async: "%env(MESSENGER_TRANSPORT_DSN)%"
+            checks: "%env(MESSENGER_TRANSPORT_DSN)%?queue_name=checks"
 
         routing:
             'Symfony\Component\Mailer\Messenger\SendEmailMessage': async
+            'App\Messenger\RunIntegrityCheckMessage': checks
 
 # when@test:
 #    framework:

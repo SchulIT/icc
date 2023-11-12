@@ -26,6 +26,7 @@ abgearbeitet werden, wird der Symfony Messenger genutzt. Folgender systemd-Diens
 Description=Integritätscheck
 
 [Service]
+WorkingDirectory=/path/to/icc/
 ExecStart=php /path/to/icc/bin/console messenger:consume checks --time-limit=3600 --memory-limit=256M
 Restart=always
 RestartSec=30

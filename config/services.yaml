@@ -62,6 +62,10 @@ services:
         resource: '../src/Doctrine/*Subscriber.php'
         tags: ['doctrine.event_subscriber']
 
+    App\Doctrine\LessonAttendanceUpdateSubscriber:
+        arguments:
+            $isEnabled: '%env(ASYNC_CHECKS)%'
+
     # SESSIONS
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:

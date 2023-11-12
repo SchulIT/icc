@@ -676,4 +676,32 @@
             </div>
         </div>
     {% endif %}
+
+    {% if violationsByTeacher > 0 %}
+        <div class="bs-callout bs-callout-danger mt-0">
+            <div class="d-flex align-items-center">
+                <p class="me-auto mb-0">{{ 'dashboard.violations.teacher'|trans({'%count%': violationsByTeacher, '%teacher%': app.user.teacher|teacher }) }}</p>
+                <div>
+                    <a href="{{ path('book_integrity_check', { section: section.uuid, teacher: app.user.teacher.uuid }) }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                        <i class="fas fa-external-link"></i> {{ 'dashboard.notifications.link'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% for item in violationsByGrade %}
+        {% if item.violations > 0 %}
+            <div class="bs-callout bs-callout-danger mt-0">
+                <div class="d-flex align-items-center">
+                    <p class="me-auto mb-0">{{ 'dashboard.violations.grade'|trans({'%count%': item.violations, '%grade%': item.grade.name }) }}</p>
+                    <div>
+                        <a href="{{ path('book_integrity_check', { section: section.uuid, grade: item.grade.uuid }) }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                            <i class="fas fa-external-link"></i> {{ 'dashboard.notifications.link'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
 {% endblock %}

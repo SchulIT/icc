@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Dashboard\DashboardViewCollapseHelper;
 use App\Dashboard\DashboardViewHelper;
+use App\Entity\GradeMembership;
 use App\Entity\Section;
 use App\Entity\Substitution;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\NotificationRepositoryInterface;
 use App\Repository\SectionRepositoryInterface;
@@ -44,7 +46,9 @@ class DashboardController extends AbstractController {
                               DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper,
                               DateHelper $dateHelper, DashboardSettings $settings, TimetableSettings $timetableSettings, SectionRepositoryInterface $sectionRepository,
                               UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository,
-                              NotificationRepositoryInterface $notificationRepository, TimetableLessonRepositoryInterface $lessonEntryRepository, SectionResolverInterface $sectionResolver,
+                              NotificationRepositoryInterface $notificationRepository, TimetableLessonRepositoryInterface $lessonEntryRepository,
+                              BookIntegrityCheckViolationRepositoryInterface $bookIntegrityCheckViolationRepository,
+                              SectionResolverInterface $sectionResolver,
                               Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -135,10 +139,32 @@ class DashboardController extends AbstractController {
         }
 
         $missingBookEntries = 0;
+        $violationsByTeacher = 0;
+        $violationsByGrade = [ ];
 
         if($user->isTeacher()) {
             $currentSection = $sectionResolver->getCurrentSection();
             $missingBookEntries = $lessonEntryRepository->countMissingByTeacher($user->getTeacher(), $currentSection->getStart(), $dateHelper->getToday());
+
+            $violationsByTeacher = $bookIntegrityCheckViolationRepository->countAllByTeacher($user->getTeacher(), $currentSection->getStart(), $currentSection->getEnd());
+
+            foreach($user->getTeacher()->getGrades() as $gradeTeacher) {
+                if($gradeTeacher->getSection()->getId() !== $currentSection->getId()) {
+                    continue;
+                }
+
+                $students = $gradeTeacher
+                    ->getGrade()
+                    ->getMemberships()
+                    ->filter(fn(GradeMembership $membership) => $membership->getSection()->getId() === $currentSection->getId())
+                    ->map(fN(GradeMembership $membership) => $membership->getStudent())
+                    ->toArray();
+
+                $violationsByGrade[] = [
+                    'grade' => $gradeTeacher->getGrade(),
+                    'violations' => $bookIntegrityCheckViolationRepository->countAllByStudents($students, $currentSection->getStart(), $currentSection->getEnd())
+                ];
+            }
         }
 
         return $this->render($template, [
@@ -161,7 +187,9 @@ class DashboardController extends AbstractController {
             'section' => $section,
             'dateHasSection' => $dateHasSection,
             'unreadNotificationsCount' => $notificationRepository->countUnreadForUser($user),
-            'missingBookEntriesCount' => $missingBookEntries
+            'missingBookEntriesCount' => $missingBookEntries,
+            'violationsByTeacher' => $violationsByTeacher,
+            'violationsByGrade' => $violationsByGrade
         ]);
     }
 

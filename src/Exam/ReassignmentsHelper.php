@@ -21,7 +21,7 @@ class ReassignmentsHelper {
         $oldExams = ArrayUtils::createArrayWithKeys(
             array_filter(
                 $this->examRepository->findAllByStudents([$student]),
-                fn(Exam $exam) => ($exam->getDate() === null || $exam->getDate() < $start) && $exam->getStudents()->contains($student)
+                fn(Exam $exam) => ($exam->getDate() === null || $exam->getDate() >= $start) && $exam->getStudents()->contains($student)
             ),
             fn(Exam $exam) => $exam->getId()
         );

@@ -43,6 +43,7 @@ use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
+use App\Security\Voter\BookIntegrityCheckViolationVoter;
 use App\Security\Voter\LessonEntryVoter;
 use App\Settings\BookSettings;
 use App\Settings\TimetableSettings;
@@ -763,6 +764,8 @@ class BookController extends AbstractController {
 
     #[Route('/integrity_check/{uuid}/toggleSuppress', methods: ['POST'])]
     public function toggleSuppressViolation(BookIntegrityCheckViolation $violation, BookIntegrityCheckViolationRepositoryInterface $violationRepository, Request $request): Response {
+        $this->denyAccessUnlessGranted(BookIntegrityCheckViolationVoter::Suppress, $violation);
+
         $violation->setIsSuppressed(!$violation->isSuppressed());
         $violationRepository->persist($violation);
 

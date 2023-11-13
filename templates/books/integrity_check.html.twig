@@ -94,6 +94,7 @@
                                             <div class="table-col fill {% if violation.isSuppressed %}text-muted{% endif %}">
                                                 {{ violation.message }}
                                             </div>
+                                            {% if is_granted('suppress', violation) %}
                                             <div class="table-col">
                                                 <form method="post" action="{{ path('app_book_togglesuppressviolation', { uuid: violation.uuid}) }}">
                                                     <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrfTokenId) }}">
@@ -106,6 +107,7 @@
                                                     </button>
                                                 </form>
                                             </div>
+                                            {% endif %}
                                         </div>
                                     {% endfor %}
 

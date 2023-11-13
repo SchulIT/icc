@@ -5,9 +5,10 @@ namespace App\Controller;
 use App\Book\EntryOverviewHelper;
 use App\Book\Export\BookExporter;
 use App\Book\IntegrityCheck\CachedIntegrityCheckRunner;
-use App\Book\IntegrityCheck\IntegrityCheckPersister;
 use App\Book\IntegrityCheck\IntegrityCheckRunner;
 use App\Book\IntegrityCheck\IntegrityCheckTeacherFilter;
+use App\Book\IntegrityCheck\Persistence\IntegrityCheckPersister;
+use App\Book\IntegrityCheck\Persistence\ViolationsResolver;
 use App\Book\Lesson;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\StudentInfo;
@@ -40,7 +41,6 @@ use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
-use App\Section\SectionResolverInterface;
 use App\Security\Voter\LessonEntryVoter;
 use App\Settings\BookSettings;
 use App\Settings\TimetableSettings;
@@ -757,11 +757,18 @@ class BookController extends AbstractController {
         return $this->createResponse($xml, 'application/xml', $filename);
     }
 
+    #[Route('/integrity_check/{referenceId}/suppress')]
+    public function suppressViolation(string $referenceId, IntegrityCheckPersister $persister): Response {
+        $persister->suppressViolation($referenceId);
+
+        return $this->redirectToRequestReferer('book_integrity_check');
+    }
+
     #[Route('/integrity_check', name: 'book_integrity_check')]
     public function integrityCheck(StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter, SectionFilter $sectionFilter,
                                    TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository,
-                                   MessageBusInterface $messageBus, IntegrityCheckTeacherFilter $integrityCheckTeacherFilter,
-                                   Request $request, CachedIntegrityCheckRunner $runner, Sorter $sorter): Response {
+                                   MessageBusInterface $messageBus, ViolationsResolver $violationsResolver,
+                                   Request $request, IntegrityCheckRunner $runner, Sorter $sorter): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -808,15 +815,9 @@ class BookController extends AbstractController {
         }
 
         foreach($students as $student) {
-            $result = $runner->getResults($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
-
-            if($teacherFilterView->getCurrentTeacher() !== null) {
-                $result = $integrityCheckTeacherFilter->filter($teacherFilterView->getCurrentTeacher(), $result);
-            }
-
             $results[] = [
                 'student' => $student,
-                'result' => $result
+                'result' => $violationsResolver->resolve($student, $sectionFilterView->getCurrentSection(), $teacherFilterView->getCurrentTeacher())
             ];
         }
 

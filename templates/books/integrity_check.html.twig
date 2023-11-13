@@ -71,16 +71,16 @@
                                                 {{ violation.date|format_date }}
                                             </div>
                                             <div class="table-col column-md">
-                                                {{ 'label.substitution_lessons'|trans({'%start%': violation.lesson, '%end%': violation.lesson, '%count%': 0}) }}
+                                                {{ 'label.substitution_lessons'|trans({'%start%': violation.lessonNumber, '%end%': violation.lessonNumber, '%count%': 0}) }}
                                             </div>
-                                            {% if violation.timetableLesson is not null and violation.timetableLesson.tuition is not null %}
+                                            {% if violation.lesson is not null and violation.lesson.tuition is not null %}
                                                 <div class="table-col column-md">
-                                                    {% for teacher in violation.timetableLesson.tuition.teachers %}
+                                                    {% for teacher in violation.lesson.tuition.teachers %}
                                                         {{ teacher.acronym }}{% if not loop.last %}, {% endif %}
                                                     {% endfor %}
                                                 </div>
                                                 <div class="table-col column-md">
-                                                    {{ violation.timetableLesson.tuition.name }}
+                                                    {{ violation.lesson.tuition.name }}
                                                 </div>
                                             {% else %}
                                                 <div class="table-col column-md"></div>

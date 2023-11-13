@@ -3,6 +3,8 @@
 {% block dashboard %}
     <div class="container-fluid px-0">
         {{ block('notifications') }}
+        {{ block('missingEntries') }}
+
         {{ block('priority_messages') }}
 
         {{ block('daily_info') }}
@@ -17,6 +19,7 @@
         {% endif %}
         {{ block('messages') }}
         {{ block('appointments') }}
+        {{ block('integrity_check') }}
         {{ block('exercises') }}
     </div>
 {% endblock %}

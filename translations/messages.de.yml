@@ -359,6 +359,7 @@ dashboard:
     missing:
         book_entry: '{1} Es gibt %count% fehlenden Eintrag im Unterrichtsbuch.|]1,Inf[ Es gibt %count% fehlende Einträge im Unterrichtsbuch.'
     violations:
+        empty: 'Alles in Ordnung.'
         teacher: '{1} Es wurde %count% Problem beim Integritätscheck für Lehrkraft %teacher% festgestellt.|]1,Inf[ Es wurden %count% Probleme beim Integritätscheck für Lehrkraft %teacher% festgestellt.'
         grade: '{1} Es wurde %count% Problem beim Integritätscheck für die Klasse %grade% festgestellt.|]1,Inf[ Es wurden %count% Probleme beim Integritätscheck für die Klasse %grade% festgestellt.'
     settings:

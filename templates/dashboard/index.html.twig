@@ -663,7 +663,7 @@
     {% endif %}
 {% endblock %}
 
-{% block missingStuff %}
+{% block missingEntries %}
     {% if missingBookEntriesCount %}
         <div class="bs-callout bs-callout-danger mt-0">
             <div class="d-flex align-items-center">
@@ -676,8 +676,17 @@
             </div>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block integrity_check %}
+    <div class="spacer">
+        <span><i class="fas fa-clipboard-check"></i> {{ 'book.integrity_check.label'|trans }}</span>
+    </div>
+
+    {% set anyErrors = false %}
 
     {% if violationsByTeacher > 0 %}
+        {% set anyErrors = true %}
         <div class="bs-callout bs-callout-danger mt-0">
             <div class="d-flex align-items-center">
                 <p class="me-auto mb-0">{{ 'dashboard.violations.teacher'|trans({'%count%': violationsByTeacher, '%teacher%': app.user.teacher|teacher }) }}</p>
@@ -692,6 +701,7 @@
 
     {% for item in violationsByGrade %}
         {% if item.violations > 0 %}
+            {% set anyErrors = true %}
             <div class="bs-callout bs-callout-danger mt-0">
                 <div class="d-flex align-items-center">
                     <p class="me-auto mb-0">{{ 'dashboard.violations.grade'|trans({'%count%': item.violations, '%grade%': item.grade.name }) }}</p>
@@ -704,4 +714,10 @@
             </div>
         {% endif %}
     {% endfor %}
+
+    {% if not anyErrors  %}
+        <div class="bs-callout bs-callout-success">
+            <p>{{ 'dashboard.violations.empty'|trans }}</p>
+        </div>
+    {% endif %}
 {% endblock %}

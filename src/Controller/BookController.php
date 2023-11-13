@@ -5,12 +5,15 @@ namespace App\Controller;
 use App\Book\EntryOverviewHelper;
 use App\Book\Export\BookExporter;
 use App\Book\IntegrityCheck\CachedIntegrityCheckRunner;
-use App\Book\IntegrityCheck\IntegrityCheckPersister;
 use App\Book\IntegrityCheck\IntegrityCheckRunner;
+use App\Book\IntegrityCheck\IntegrityCheckTeacherFilter;
+use App\Book\IntegrityCheck\Persistence\IntegrityCheckPersister;
+use App\Book\IntegrityCheck\Persistence\ViolationsResolver;
 use App\Book\Lesson;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\StudentInfo;
 use App\Book\Student\StudentInfoResolver;
+use App\Entity\BookIntegrityCheckViolation;
 use App\Entity\DateLesson;
 use App\Entity\ExcuseNote;
 use App\Entity\Grade;
@@ -32,13 +35,15 @@ use App\Grouping\Grouper;
 use App\Grouping\LessonDayStrategy;
 use App\Grouping\TuitionGradeGroup;
 use App\Grouping\TuitionGradeStrategy;
+use App\Messenger\RunIntegrityCheckMessage;
+use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\GradeResponsibilityRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
-use App\Section\SectionResolverInterface;
+use App\Security\Voter\BookIntegrityCheckViolationVoter;
 use App\Security\Voter\LessonEntryVoter;
 use App\Settings\BookSettings;
 use App\Settings\TimetableSettings;
@@ -63,10 +68,12 @@ use App\View\Filter\TuitionFilter;
 use DateTime;
 use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route(path: '/book')]
@@ -77,6 +84,12 @@ class BookController extends AbstractController {
     private const ItemsPerPage = 25;
 
     private const StudentsPerPage = 35;
+
+    private const ToggleSuppressCsrfId = 'book.integrity_check.suppress';
+
+    public function __construct(private readonly bool $isAsyncChecksEnabled, RefererHelper $redirectHelper) {
+        parent::__construct($redirectHelper);
+    }
 
     private function getClosestMonthStart(DateTime $dateTime): DateTime {
         $dateTime = clone $dateTime;
@@ -749,43 +762,83 @@ class BookController extends AbstractController {
         return $this->createResponse($xml, 'application/xml', $filename);
     }
 
+    #[Route('/integrity_check/{uuid}/toggleSuppress', methods: ['POST'])]
+    public function toggleSuppressViolation(BookIntegrityCheckViolation $violation, BookIntegrityCheckViolationRepositoryInterface $violationRepository, Request $request): Response {
+        $this->denyAccessUnlessGranted(BookIntegrityCheckViolationVoter::Suppress, $violation);
+
+        if($this->isCsrfTokenValid(self::ToggleSuppressCsrfId, $request->request->get('_csrf_token')) !== true) {
+            $this->addFlash('error', 'CSRF token invalid.');
+        } else {
+            $violation->setIsSuppressed(!$violation->isSuppressed());
+            $violationRepository->persist($violation);
+
+            $this->addFlash('success', 'book.integrity_check.suppress.success.' . ($violation->isSuppressed() ? 'true' : 'false'));
+        }
+
+        return $this->redirectToRequestReferer('book_integrity_check');
+    }
+
     #[Route('/integrity_check', name: 'book_integrity_check')]
-    public function integrityCheck(StudyGroupFilter $studyGroupFilter, SectionFilter $sectionFilter, Request $request, CachedIntegrityCheckRunner $runner, Sorter $sorter): Response {
+    public function integrityCheck(StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter, SectionFilter $sectionFilter,
+                                   TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository,
+                                   MessageBusInterface $messageBus, ViolationsResolver $violationsResolver,
+                                   Request $request, IntegrityCheckRunner $runner, Sorter $sorter): Response {
         /** @var User $user */
         $user = $this->getUser();
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group'), $sectionFilterView?->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher'), $sectionFilterView?->getCurrentSection(), $user, !$request->query->has('study_group'));
 
         $results = [ ];
+        $students = [ ];
 
         if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
             /** @var Student[] $students */
             $students = $studyGroupFilterView->getCurrentStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
-            $sorter->sort($students, StudentStrategy::class);
+        } else if($teacherFilterView->getCurrentTeacher() !== null) {
+            $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
+            $studyGroups = array_map(fn(Tuition $tuition) => $tuition->getStudyGroup(), $tuitions);
+            $students = $studentRepository->findAllByStudyGroups($studyGroups);
+        }
 
-            if($request->query->get('run') === '✓') {
+        $sorter->sort($students, StudentStrategy::class);
+
+        if($request->query->get('run') === '✓' && count($students) > 0) {
+            if($this->isAsyncChecksEnabled) {
+                // handle async
                 foreach($students as $student) {
+                    $messageBus->dispatch(new RunIntegrityCheckMessage($student->getId(), $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd()));
+                }
+
+                $this->addFlash('success', 'book.integrity_check.run.success.async');
+            } else if(count($students) < 50) {
+                foreach ($students as $student) {
                     $runner->runChecks($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
                 }
-                return $this->redirectToRoute('book_integrity_check', [
-                    'study_group' => $studyGroupFilterView->getCurrentStudyGroup()->getUuid()
-                ]);
+
+                $this->addFlash('success', 'book.integrity_check.run.success.no_async');
+            } else {
+                $this->addFlash('error', 'book.integrity_check.run.error.too_many');
             }
 
-            foreach($students as $student) {
-                $results[] = [
-                    'student' => $student,
-                    'result' => $runner->getResults($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd())
-                ];
-            }
+            return $this->redirectToRoute('book_integrity_check', [
+                'study_group' => $studyGroupFilterView->getCurrentStudyGroup()?->getUuid(),
+                'teacher' => $teacherFilterView->getCurrentTeacher()?->getUuid()
+            ]);
+        }
+
+        foreach($students as $student) {
+            $results[] = $violationsResolver->resolve($student, $sectionFilterView->getCurrentSection(), $teacherFilterView->getCurrentTeacher());
         }
 
         return $this->render('books/integrity_check.html.twig', [
             'sectionFilter' => $sectionFilterView,
             'studyGroupFilter' => $studyGroupFilterView,
+            'teacherFilter' => $teacherFilterView,
             'results' => $results,
-            'enabledChecks' => $runner->getEnabledChecks()
+            'enabledChecks' => $runner->getEnabledChecks(),
+            'csrfTokenId' => self::ToggleSuppressCsrfId
         ]);
     }
 }

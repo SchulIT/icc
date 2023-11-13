@@ -32,21 +32,26 @@
 
                             {% for result in results %}
                                 {% set student = result.student %}
-                                {% set violations = result.result.violations %}
-                                <div class="table-row border-bottom pointer {% if violations|length == 0 %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}" data-toggle="table-collapse" data-target="#result-{{ student.uuid }}" data-is-collapsed="true">
+                                {% set violations = result.violations %}
+                                {% set nonSuppressedViolationsCount = result.nonSuppressedViolationsCount %}
+                                <div class="table-row border-bottom pointer {% if nonSuppressedViolationsCount == 0 %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}" data-toggle="table-collapse" data-target="#result-{{ student.uuid }}" data-is-collapsed="true">
                                     <div class="table-col fill">
                                         <span class="me-auto align-self-center p-0 bg-transparent">
                                             <i class="fas fa-user"></i> {{ student|student }}
+                                            <span class="badge text-bg-primary">
+                                                {{ student.grade(sectionFilter.currentSection) }}
+                                            </span>
+
                                             <span class="text-muted">
-                                                {% if result.result.lastRun is not null %}
-                                                    {{ result.result.lastRun|format_datetime }}
+                                                {% if result.lastRun is not null %}
+                                                    {{ result.lastRun|format_datetime }}
                                                 {% else %}
                                                     {{ 'label.never'|trans }}
                                                 {% endif %}
                                             </span>
                                         </span>
 
-                                        {% if violations|length > 0 %}
+                                        {% if nonSuppressedViolationsCount > 0 %}
                                             <span class="bg-transparent me-2">
                                                 <i class="fas fa-exclamation-triangle"></i> {{ violations|length }}
                                             </span>
@@ -56,6 +61,10 @@
                                             <span class="bg-transparent pe-0">
                                                 <i class="fas fa-check"></i> {{ 'book.integrity_check.no_violation'|trans }}
                                             </span>
+
+                                            {% if violations|length > 0 %}
+                                                <i class="fa fa-chevron-down indicator align-self-center bg-transparent p-0 ms-2"></i>
+                                            {% endif %}
                                         {% endif %}
                                     </div>
                                 </div>
@@ -63,28 +72,42 @@
                                 <div class="collapse" id="result-{{ student.uuid }}">
                                     {% for violation in violations %}
                                         <div class="table-row border-bottom">
-                                            <div class="table-col column-md">
+                                            <div class="table-col column-md {% if violation.isSuppressed %}text-muted{% endif %}">
                                                 {{ violation.date|format_date }}
                                             </div>
                                             <div class="table-col column-md">
-                                                {{ 'label.substitution_lessons'|trans({'%start%': violation.lesson, '%end%': violation.lesson, '%count%': 0}) }}
+                                                {{ 'label.substitution_lessons'|trans({'%start%': violation.lessonNumber, '%end%': violation.lessonNumber, '%count%': 0}) }}
                                             </div>
-                                            {% if violation.timetableLesson is not null and violation.timetableLesson.tuition is not null %}
-                                                <div class="table-col column-md">
-                                                    {% for teacher in violation.timetableLesson.tuition.teachers %}
+                                            {% if violation.lesson is not null and violation.lesson.tuition is not null %}
+                                                <div class="table-col column-md {% if violation.isSuppressed %}text-muted{% endif %}">
+                                                    {% for teacher in violation.lesson.tuition.teachers %}
                                                         {{ teacher.acronym }}{% if not loop.last %}, {% endif %}
                                                     {% endfor %}
                                                 </div>
-                                                <div class="table-col column-md">
-                                                    {{ violation.timetableLesson.tuition.name }}
+                                                <div class="table-col column-md {% if violation.isSuppressed %}text-muted{% endif %}">
+                                                    {{ violation.lesson.tuition.name }}
                                                 </div>
                                             {% else %}
                                                 <div class="table-col column-md"></div>
                                                 <div class="table-col column-md"></div>
                                             {% endif %}
-                                            <div class="table-col fill">
+                                            <div class="table-col fill {% if violation.isSuppressed %}text-muted{% endif %}">
                                                 {{ violation.message }}
                                             </div>
+                                            {% if is_granted('suppress', violation) %}
+                                            <div class="table-col">
+                                                <form method="post" action="{{ path('app_book_togglesuppressviolation', { uuid: violation.uuid}) }}">
+                                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrfTokenId) }}">
+                                                    <button type="submit" class="btn btn-outline-primary btn-sm" title="{% if violation.isSuppressed %}{{ 'book.integrity_check.suppress.button.false'|trans }}{% else %}{{ 'book.integrity_check.suppress.button.true'|trans }}{% endif %}">
+                                                        {% if violation.isSuppressed %}
+                                                            <i class="fas fa-times"></i>
+                                                        {% else %}
+                                                            <i class="fas fa-check"></i>
+                                                        {% endif %}
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            {% endif %}
                                         </div>
                                     {% endfor %}
 
@@ -125,17 +148,25 @@
                         {% include "_filter/section.html.twig" %}
 
                         {% include "_filter/study_group.html.twig" with { params: { section: sectionFilter.currentSection.uuid }} %}
+
+                        {% include "_filter/teacher.html.twig" with { params: { section: sectionFilter.currentSection.uuid }} %}
                     </div>
                 </div>
 
-                {% if studyGroupFilter.currentStudyGroup is not null %}
+                {% if studyGroupFilter.currentStudyGroup is not null or teacherFilter.currentTeacher is not null %}
+                    {% set currentQuery = {
+                        section: sectionFilter.currentSection.uuid,
+                        teacher: teacherFilter.currentTeacher != null ? teacherFilter.currentTeacher.uuid : null,
+                        study_group: studyGroupFilter.currentStudyGroup != null ? studyGroupFilter.currentStudyGroup.uuid : null
+                    } %}
+
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">{{ 'book.integrity_check.run.label'|trans }}</h5>
 
                             <p>{{ 'book.integrity_check.run.help'|trans }}</p>
 
-                            <a href="{{ path('book_integrity_check', { section: sectionFilter.currentSection.uuid, study_group: studyGroupFilter.currentStudyGroup.uuid, run: '✓' }) }}" class="btn btn-primary btn-sm">
+                            <a href="{{ path('book_integrity_check', currentQuery|merge({ run: '✓' })) }}" class="btn btn-primary btn-sm">
                                 <i class="fas fa-play"></i> {{ 'book.integrity_check.run.button'|trans }}
                             </a>
                         </div>

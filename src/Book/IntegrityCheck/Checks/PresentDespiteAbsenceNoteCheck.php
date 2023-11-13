@@ -52,6 +52,13 @@ class PresentDespiteAbsenceNoteCheck implements IntegrityCheckInterface {
         $alreadyCheckedLessons = [ ];
 
         foreach($absences as $absence) {
+            if($absence->getType()->isMustApprove() && $absence->isApproved() === false) {
+                /**
+                 * Ignore absences which were not approved
+                 */
+                continue;
+            }
+
             $lessons = $this->dateLessonExpander->expandRangeToDateLessons($absence->getFrom(), $absence->getUntil());
 
             foreach($lessons as $lesson) {

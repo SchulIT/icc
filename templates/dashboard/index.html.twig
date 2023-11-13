@@ -696,7 +696,7 @@
                 <div class="d-flex align-items-center">
                     <p class="me-auto mb-0">{{ 'dashboard.violations.grade'|trans({'%count%': item.violations, '%grade%': item.grade.name }) }}</p>
                     <div>
-                        <a href="{{ path('book_integrity_check', { section: section.uuid, grade: item.grade.uuid }) }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                        <a href="{{ path('book_integrity_check', { section: section.uuid, study_group: item.studyGroup.uuid }) }}" class="btn btn-outline-primary btn-sm" target="_blank">
                             <i class="fas fa-external-link"></i> {{ 'dashboard.notifications.link'|trans }}
                         </a>
                     </div>

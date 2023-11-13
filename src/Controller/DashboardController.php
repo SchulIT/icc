@@ -13,6 +13,7 @@ use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\NotificationRepositoryInterface;
 use App\Repository\SectionRepositoryInterface;
+use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
@@ -48,7 +49,7 @@ class DashboardController extends AbstractController {
                               UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository,
                               NotificationRepositoryInterface $notificationRepository, TimetableLessonRepositoryInterface $lessonEntryRepository,
                               BookIntegrityCheckViolationRepositoryInterface $bookIntegrityCheckViolationRepository,
-                              SectionResolverInterface $sectionResolver,
+                              SectionResolverInterface $sectionResolver, StudyGroupRepositoryInterface $studyGroupRepository,
                               Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -161,6 +162,7 @@ class DashboardController extends AbstractController {
                     ->toArray();
 
                 $violationsByGrade[] = [
+                    'studyGroup' => $studyGroupRepository->findOneByGrade($gradeTeacher->getGrade(), $currentSection),
                     'grade' => $gradeTeacher->getGrade(),
                     'violations' => $bookIntegrityCheckViolationRepository->countAllByStudents($students, $currentSection->getStart(), $currentSection->getEnd())
                 ];

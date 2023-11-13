@@ -767,7 +767,7 @@ class BookController extends AbstractController {
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group'), $sectionFilterView?->getCurrentSection(), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher'), $sectionFilterView?->getCurrentSection(), $user, $studyGroupFilterView->getCurrentStudyGroup() !== null);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher'), $sectionFilterView?->getCurrentSection(), $user, !$request->query->has('study_group'));
 
         $results = [ ];
         $students = [ ];

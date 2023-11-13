@@ -766,10 +766,14 @@ class BookController extends AbstractController {
     public function toggleSuppressViolation(BookIntegrityCheckViolation $violation, BookIntegrityCheckViolationRepositoryInterface $violationRepository, Request $request): Response {
         $this->denyAccessUnlessGranted(BookIntegrityCheckViolationVoter::Suppress, $violation);
 
-        $violation->setIsSuppressed(!$violation->isSuppressed());
-        $violationRepository->persist($violation);
+        if($this->isCsrfTokenValid(self::ToggleSuppressCsrfId, $request->request->get('_csrf_token')) !== true) {
+            $this->addFlash('error', 'CSRF token invalid.');
+        } else {
+            $violation->setIsSuppressed(!$violation->isSuppressed());
+            $violationRepository->persist($violation);
 
-        $this->addFlash('success', 'book.integrity_check.suppress.success');
+            $this->addFlash('success', 'book.integrity_check.suppress.success.' . ($violation->isSuppressed() ? 'true' : 'false'));
+        }
 
         return $this->redirectToRequestReferer('book_integrity_check');
     }

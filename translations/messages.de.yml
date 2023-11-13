@@ -1932,6 +1932,13 @@ book:
         no_violation: Alles in Ordnung
         violation: Fehler
         empty: Bitte rechts über den Filter einen Abschnitt und eine Lerngruppe auswählen.
+        suppress:
+            success:
+                "true": Ergebnis nicht mehr berücksichtigen
+                "false": Ergebnis wird wieder berücksichtigt
+            button:
+                "true": ignorieren
+                "false": berücksichtigen
         checks:
             present_despite_absence_note:
                 label: Kind anwesend trotz Abwesenheitsmeldung

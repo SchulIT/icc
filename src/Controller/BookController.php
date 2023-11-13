@@ -13,6 +13,7 @@ use App\Book\Lesson;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\StudentInfo;
 use App\Book\Student\StudentInfoResolver;
+use App\Entity\BookIntegrityCheckViolation;
 use App\Entity\DateLesson;
 use App\Entity\ExcuseNote;
 use App\Entity\Grade;
@@ -35,6 +36,7 @@ use App\Grouping\LessonDayStrategy;
 use App\Grouping\TuitionGradeGroup;
 use App\Grouping\TuitionGradeStrategy;
 use App\Messenger\RunIntegrityCheckMessage;
+use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\GradeResponsibilityRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
@@ -81,6 +83,8 @@ class BookController extends AbstractController {
     private const ItemsPerPage = 25;
 
     private const StudentsPerPage = 35;
+
+    private const ToggleSuppressCsrfId = 'book.integrity_check.suppress';
 
     public function __construct(private readonly bool $isAsyncChecksEnabled, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
@@ -757,9 +761,12 @@ class BookController extends AbstractController {
         return $this->createResponse($xml, 'application/xml', $filename);
     }
 
-    #[Route('/integrity_check/{referenceId}/suppress')]
-    public function suppressViolation(string $referenceId, IntegrityCheckPersister $persister): Response {
-        $persister->suppressViolation($referenceId);
+    #[Route('/integrity_check/{uuid}/toggleSuppress', methods: ['POST'])]
+    public function toggleSuppressViolation(BookIntegrityCheckViolation $violation, BookIntegrityCheckViolationRepositoryInterface $violationRepository, Request $request): Response {
+        $violation->setIsSuppressed(!$violation->isSuppressed());
+        $violationRepository->persist($violation);
+
+        $this->addFlash('success', 'book.integrity_check.suppress.success');
 
         return $this->redirectToRequestReferer('book_integrity_check');
     }
@@ -815,10 +822,7 @@ class BookController extends AbstractController {
         }
 
         foreach($students as $student) {
-            $results[] = [
-                'student' => $student,
-                'result' => $violationsResolver->resolve($student, $sectionFilterView->getCurrentSection(), $teacherFilterView->getCurrentTeacher())
-            ];
+            $results[] = $violationsResolver->resolve($student, $sectionFilterView->getCurrentSection(), $teacherFilterView->getCurrentTeacher());
         }
 
         return $this->render('books/integrity_check.html.twig', [
@@ -826,7 +830,8 @@ class BookController extends AbstractController {
             'studyGroupFilter' => $studyGroupFilterView,
             'teacherFilter' => $teacherFilterView,
             'results' => $results,
-            'enabledChecks' => $runner->getEnabledChecks()
+            'enabledChecks' => $runner->getEnabledChecks(),
+            'csrfTokenId' => self::ToggleSuppressCsrfId
         ]);
     }
 }

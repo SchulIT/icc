@@ -40,6 +40,7 @@ class BookIntegrityCheckViolationRepository extends AbstractTransactionalReposit
             ->where('s.id IN(:students)')
             ->andWhere('v.date >= :start')
             ->andWhere('v.date <= :end')
+            ->andWhere('v.isSuppressed = false')
             ->setParameter('students', $studentIds)
             ->setParameter('start', $start)
             ->setParameter('end', $end)
@@ -71,6 +72,7 @@ class BookIntegrityCheckViolationRepository extends AbstractTransactionalReposit
     public function countAllByTeacher(Teacher $teacher, DateTime $start, DateTime $end): int {
         return $this->getByTeacherQueryBuilder($teacher, $start, $end)
             ->select('COUNT(DISTINCT v.id)')
+            ->andWhere('v.isSuppressed = false')
             ->getQuery()
             ->getSingleScalarResult();
     }

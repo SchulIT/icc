@@ -22,6 +22,8 @@ class BookIntegrityCheckViolationRepository extends AbstractTransactionalReposit
             ->setParameter('student', $student->getId())
             ->setParameter('start', $start)
             ->setParameter('end', $end)
+            ->orderBy('v.date', 'asc')
+            ->addOrderBy('v.lessonNumber', 'asc')
             ->getQuery()
             ->getResult();
     }

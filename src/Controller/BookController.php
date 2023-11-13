@@ -7,6 +7,7 @@ use App\Book\Export\BookExporter;
 use App\Book\IntegrityCheck\CachedIntegrityCheckRunner;
 use App\Book\IntegrityCheck\IntegrityCheckPersister;
 use App\Book\IntegrityCheck\IntegrityCheckRunner;
+use App\Book\IntegrityCheck\IntegrityCheckTeacherFilter;
 use App\Book\Lesson;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\StudentInfo;
@@ -32,6 +33,7 @@ use App\Grouping\Grouper;
 use App\Grouping\LessonDayStrategy;
 use App\Grouping\TuitionGradeGroup;
 use App\Grouping\TuitionGradeStrategy;
+use App\Messenger\RunIntegrityCheckMessage;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\GradeResponsibilityRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
@@ -63,10 +65,12 @@ use App\View\Filter\TuitionFilter;
 use DateTime;
 use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route(path: '/book')]
@@ -77,6 +81,10 @@ class BookController extends AbstractController {
     private const ItemsPerPage = 25;
 
     private const StudentsPerPage = 35;
+
+    public function __construct(private readonly bool $isAsyncChecksEnabled, RefererHelper $redirectHelper) {
+        parent::__construct($redirectHelper);
+    }
 
     private function getClosestMonthStart(DateTime $dateTime): DateTime {
         $dateTime = clone $dateTime;
@@ -750,40 +758,72 @@ class BookController extends AbstractController {
     }
 
     #[Route('/integrity_check', name: 'book_integrity_check')]
-    public function integrityCheck(StudyGroupFilter $studyGroupFilter, SectionFilter $sectionFilter, Request $request, CachedIntegrityCheckRunner $runner, Sorter $sorter): Response {
+    public function integrityCheck(StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter, SectionFilter $sectionFilter,
+                                   TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository,
+                                   MessageBusInterface $messageBus, IntegrityCheckTeacherFilter $integrityCheckTeacherFilter,
+                                   Request $request, CachedIntegrityCheckRunner $runner, Sorter $sorter): Response {
         /** @var User $user */
         $user = $this->getUser();
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $studyGroupFilterView = $studyGroupFilter->handle($request->query->get('study_group'), $sectionFilterView?->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher'), $sectionFilterView?->getCurrentSection(), $user, $studyGroupFilterView->getCurrentStudyGroup() !== null);
 
         $results = [ ];
+        $students = [ ];
 
         if($studyGroupFilterView->getCurrentStudyGroup() !== null) {
             /** @var Student[] $students */
             $students = $studyGroupFilterView->getCurrentStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
-            $sorter->sort($students, StudentStrategy::class);
+        } else if($teacherFilterView->getCurrentTeacher() !== null) {
+            $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
+            $studyGroups = array_map(fn(Tuition $tuition) => $tuition->getStudyGroup(), $tuitions);
+            $students = $studentRepository->findAllByStudyGroups($studyGroups);
+        }
 
-            if($request->query->get('run') === '✓') {
+        $sorter->sort($students, StudentStrategy::class);
+
+        if($request->query->get('run') === '✓' && count($students) > 0) {
+            if($this->isAsyncChecksEnabled) {
+                // handle async
                 foreach($students as $student) {
+                    $messageBus->dispatch(new RunIntegrityCheckMessage($student->getId(), $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd()));
+                }
+
+                $this->addFlash('success', 'book.integrity_check.run.success.async');
+            } else if(count($students) < 50) {
+                foreach ($students as $student) {
                     $runner->runChecks($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
                 }
-                return $this->redirectToRoute('book_integrity_check', [
-                    'study_group' => $studyGroupFilterView->getCurrentStudyGroup()->getUuid()
-                ]);
+
+                $this->addFlash('success', 'book.integrity_check.run.success.no_async');
+            } else {
+                $this->addFlash('error', 'book.integrity_check.run.error.too_many');
             }
 
-            foreach($students as $student) {
-                $results[] = [
-                    'student' => $student,
-                    'result' => $runner->getResults($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd())
-                ];
+            return $this->redirectToRoute('book_integrity_check', [
+                'study_group' => $studyGroupFilterView->getCurrentStudyGroup()?->getUuid(),
+                'teacher' => $teacherFilterView->getCurrentTeacher()?->getUuid()
+            ]);
+        }
+
+        foreach($students as $student) {
+            $result = $runner->getResults($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
+
+            if($teacherFilterView->getCurrentTeacher() !== null) {
+                $result = $integrityCheckTeacherFilter->filter($teacherFilterView->getCurrentTeacher(), $result);
             }
+
+            $results[] = [
+                'student' => $student,
+                'result' => $result
+            ];
         }
 
         return $this->render('books/integrity_check.html.twig', [
             'sectionFilter' => $sectionFilterView,
             'studyGroupFilter' => $studyGroupFilterView,
+            'teacherFilter' => $teacherFilterView,
             'results' => $results,
             'enabledChecks' => $runner->getEnabledChecks()
         ]);

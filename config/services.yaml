@@ -213,6 +213,10 @@ services:
         bind:
             $studentAbsencesFilesystem: '@oneup_flysystem.student_absence_filesystem'
 
+    App\Controller\BookController:
+        arguments:
+            $isAsyncChecksEnabled: '%env(ASYNC_CHECKS)%'
+
     # MARKDOWN
     League\CommonMark\Extension\CommonMarkCoreExtension: ~
 

@@ -37,6 +37,10 @@
                                     <div class="table-col fill">
                                         <span class="me-auto align-self-center p-0 bg-transparent">
                                             <i class="fas fa-user"></i> {{ student|student }}
+                                            <span class="badge text-bg-primary">
+                                                {{ student.grade(sectionFilter.currentSection) }}
+                                            </span>
+
                                             <span class="text-muted">
                                                 {% if result.result.lastRun is not null %}
                                                     {{ result.result.lastRun|format_datetime }}
@@ -125,17 +129,25 @@
                         {% include "_filter/section.html.twig" %}
 
                         {% include "_filter/study_group.html.twig" with { params: { section: sectionFilter.currentSection.uuid }} %}
+
+                        {% include "_filter/teacher.html.twig" with { params: { section: sectionFilter.currentSection.uuid }} %}
                     </div>
                 </div>
 
-                {% if studyGroupFilter.currentStudyGroup is not null %}
+                {% if studyGroupFilter.currentStudyGroup is not null or teacherFilter.currentTeacher is not null %}
+                    {% set currentQuery = {
+                        section: sectionFilter.currentSection.uuid,
+                        teacher: teacherFilter.currentTeacher != null ? teacherFilter.currentTeacher.uuid : null,
+                        study_group: studyGroupFilter.currentStudyGroup != null ? studyGroupFilter.currentStudyGroup.uuid : null
+                    } %}
+
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">{{ 'book.integrity_check.run.label'|trans }}</h5>
 
                             <p>{{ 'book.integrity_check.run.help'|trans }}</p>
 
-                            <a href="{{ path('book_integrity_check', { section: sectionFilter.currentSection.uuid, study_group: studyGroupFilter.currentStudyGroup.uuid, run: '✓' }) }}" class="btn btn-primary btn-sm">
+                            <a href="{{ path('book_integrity_check', currentQuery|merge({ run: '✓' })) }}" class="btn btn-primary btn-sm">
                                 <i class="fas fa-play"></i> {{ 'book.integrity_check.run.button'|trans }}
                             </a>
                         </div>

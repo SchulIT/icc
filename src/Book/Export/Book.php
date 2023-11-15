@@ -44,6 +44,10 @@ class Book {
     #[Serializer\SerializedName('students_grades')]
     private array $studentGrades = [ ];
 
+    #[Serializer\Type('array<App\Book\Export\Responsibility>')]
+    #[Serializer\SerializedName('responsibilities')]
+    private array $responsibilities = [ ];
+
     /**
      * @var Week[]
      */
@@ -122,6 +126,15 @@ class Book {
 
     public function addStudentGrades(StudentGrades $studentGrades): Book {
         $this->studentGrades[] = $studentGrades;
+        return $this;
+    }
+
+    public function getResponsibilities(): array {
+        return $this->responsibilities;
+    }
+
+    public function addResponsibility(Responsibility $responsibility): Book {
+        $this->responsibilities[] = $responsibility;
         return $this;
     }
 

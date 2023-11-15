@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
         addFont(pdf);
         setFont(pdf, 'normal');
 
-        addTitlePage(pdf, response.section, response.tuition, response.grades);
+        addTitlePage(pdf, response.section, response.tuition, response.grades, response.responsibilities);
 
         // Schülerübersicht
         let summary = [];
@@ -452,7 +452,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
         });
     }
 
-    function addTitlePage(pdf, section, tuition, grades) {
+    function addTitlePage(pdf, section, tuition, grades, responsibilities) {
         let originalFontSize = pdf.getFontSize();
         // Titelseite
         setFont(pdf, 'bold');
@@ -474,11 +474,25 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
             text.push('Klassenleitung: ' + teachers.map(x => x.firstname + ' ' + x.lastname).join(', '));
         }
+
         pdf.text(text, 15, 40);
+        setFont(pdf, 'normal');
+
+
+        // Aufgaben
+        if(responsibilities !== null && responsibilities.length > 0) {
+            let text = [];
+            for(let responsibility of responsibilities) {
+                text.push(responsibility.task + ': ' + responsibility.person);
+            }
+            pdf.setFontSize(12);
+            let textLines = pdf.splitTextToSize(text, pdf.getPageWidth() - 2*15);
+
+            pdf.text(textLines, 15, 65 + (tuition !== null ? 15 : 0));
+        }
 
         // Schriftgröße zurücksetzen
         pdf.setFontSize(originalFontSize);
-        setFont(pdf, 'normal');
     }
 
     function addHeader(pdf, section, tuition, grades) {

@@ -24,6 +24,7 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\Teacher as TeacherEntity;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition as TuitionEntity;
+use App\Repository\GradeResponsibilityRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
@@ -35,7 +36,8 @@ class BookExporter {
 
     public function __construct(private readonly EntryOverviewHelper $overviewHelper, private readonly StudentInfoResolver $studentInfoResolver,
                                 private readonly Sorter $sorter, private readonly SerializerInterface $serializer, private readonly StudentsResolver $studentsResolver,
-                                private readonly GradeOverviewHelper $gradeOverviewHelper, private readonly TuitionRepositoryInterface $tuitionRepository)
+                                private readonly GradeOverviewHelper $gradeOverviewHelper, private readonly TuitionRepositoryInterface $tuitionRepository,
+                                private readonly GradeResponsibilityRepositoryInterface $responsibilityRepository)
     {
     }
 
@@ -203,6 +205,10 @@ class BookExporter {
 
         $students = $grade->getMemberships()->filter(fn(GradeMembership $membership) => $membership->getSection() === $section)->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
         $overview = $this->overviewHelper->computeOverviewForGrade($grade, $section->getStart(), $section->getEnd());
+
+        foreach($this->responsibilityRepository->findAllByGrade($grade, $section) as $responsibility) {
+            $book->addResponsibility((new Responsibility())->setTask($responsibility->getTask())->setPerson($responsibility->getPerson()));
+        }
 
         return $this->export($book, $students, null, $grade, $section, $overview);
     }

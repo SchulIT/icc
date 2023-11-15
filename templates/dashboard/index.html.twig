@@ -679,6 +679,7 @@
 {% endblock %}
 
 {% block integrity_check %}
+    {% if app.user.isTeacher %}
     <div class="spacer">
         <span><i class="fas fa-clipboard-check"></i> {{ 'book.integrity_check.label'|trans }}</span>
     </div>
@@ -719,5 +720,6 @@
         <div class="bs-callout bs-callout-success">
             <p>{{ 'dashboard.violations.empty'|trans }}</p>
         </div>
+    {% endif %}
     {% endif %}
 {% endblock %}

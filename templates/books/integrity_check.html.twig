@@ -20,7 +20,7 @@
         <div class="row">
             <div class="col-md-9">
                 {% if results is not empty %}
-                    <div class="card">
+                    <div class="card" id="app">
                         <div class="table table-striped table-card border-top-0" id="result">
                             <div class="table-head table-row">
                                 <div class="table-col column-md">{{ 'label.date'|trans }}</div>
@@ -96,16 +96,10 @@
                                             </div>
                                             {% if is_granted('suppress', violation) %}
                                             <div class="table-col">
-                                                <form method="post" action="{{ path('app_book_togglesuppressviolation', { uuid: violation.uuid}) }}">
-                                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrfTokenId) }}">
-                                                    <button type="submit" class="btn btn-outline-primary btn-sm" title="{% if violation.isSuppressed %}{{ 'book.integrity_check.suppress.button.false'|trans }}{% else %}{{ 'book.integrity_check.suppress.button.true'|trans }}{% endif %}">
-                                                        {% if violation.isSuppressed %}
-                                                            <i class="fas fa-eye"></i>
-                                                        {% else %}
-                                                            <i class="fas fa-eye-slash"></i>
-                                                        {% endif %}
-                                                    </button>
-                                                </form>
+                                                <suppress-button url="{{ path('app_book_togglesuppressviolation', { uuid: violation.uuid}) }}"
+                                                                 csrfname="_token"
+                                                                 csrftoken="{{ csrf_token(csrfTokenId) }}"
+                                                                 :state="{{ violation.isSuppressed ? 'true' : 'false' }}"></suppress-button>
                                             </div>
                                             {% endif %}
                                         </div>
@@ -203,5 +197,5 @@
 {% endblock %}
 
 {% block post_javascript %}
-
+    <script src="{{ asset('build/book.js') }}"></script>
 {% endblock %}

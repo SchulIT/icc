@@ -70,6 +70,7 @@ use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -766,16 +767,14 @@ class BookController extends AbstractController {
     public function toggleSuppressViolation(BookIntegrityCheckViolation $violation, BookIntegrityCheckViolationRepositoryInterface $violationRepository, Request $request): Response {
         $this->denyAccessUnlessGranted(BookIntegrityCheckViolationVoter::Suppress, $violation);
 
-        if($this->isCsrfTokenValid(self::ToggleSuppressCsrfId, $request->request->get('_csrf_token')) !== true) {
-            $this->addFlash('error', 'CSRF token invalid.');
-        } else {
+        if($this->isCsrfTokenValid(self::ToggleSuppressCsrfId, $request->request->get('_token')) === true) {
             $violation->setIsSuppressed(!$violation->isSuppressed());
             $violationRepository->persist($violation);
-
-            $this->addFlash('success', 'book.integrity_check.suppress.success.' . ($violation->isSuppressed() ? 'true' : 'false'));
         }
 
-        return $this->redirectToRequestReferer('book_integrity_check');
+        return new JsonResponse([
+            'is_suppressed' => $violation->isSuppressed()
+        ]);
     }
 
     #[Route('/check', name: 'book_integrity_check')]

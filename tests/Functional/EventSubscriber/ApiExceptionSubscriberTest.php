@@ -38,7 +38,7 @@ JSON;
         $jsonResponse = json_decode($response->getContent());
 
         $this->assertEquals(JSON_ERROR_NONE, json_last_error());
-        $this->assertObjectHasAttribute('message', $jsonResponse);
+        $this->assertObjectHasProperty('message', $jsonResponse);
     }
 
     public function testInvalidJsonReturnsConstraintViolationJsonResponse() {
@@ -58,7 +58,7 @@ JSON;
         $jsonResponse = json_decode($response->getContent());
 
         $this->assertEquals(JSON_ERROR_NONE, json_last_error());
-        $this->assertObjectHasAttribute('violations', $jsonResponse);
+        $this->assertObjectHasProperty('violations', $jsonResponse);
     }
     /*
     public function testMissingAuthorizationHeaderSendsUnauthorizedOnApiRequests() {

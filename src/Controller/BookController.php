@@ -762,7 +762,7 @@ class BookController extends AbstractController {
         return $this->createResponse($xml, 'application/xml', $filename);
     }
 
-    #[Route('/integrity_check/{uuid}/toggleSuppress', methods: ['POST'])]
+    #[Route('/check/{uuid}/toggleSuppress', methods: ['POST'])]
     public function toggleSuppressViolation(BookIntegrityCheckViolation $violation, BookIntegrityCheckViolationRepositoryInterface $violationRepository, Request $request): Response {
         $this->denyAccessUnlessGranted(BookIntegrityCheckViolationVoter::Suppress, $violation);
 
@@ -778,7 +778,7 @@ class BookController extends AbstractController {
         return $this->redirectToRequestReferer('book_integrity_check');
     }
 
-    #[Route('/integrity_check', name: 'book_integrity_check')]
+    #[Route('/check', name: 'book_integrity_check')]
     public function integrityCheck(StudyGroupFilter $studyGroupFilter, TeacherFilter $teacherFilter, SectionFilter $sectionFilter,
                                    TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository,
                                    MessageBusInterface $messageBus, ViolationsResolver $violationsResolver,

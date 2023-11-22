@@ -76,7 +76,7 @@ class BookSettings extends AbstractSettings {
         return $this->getValue(sprintf('book.integrity_check.%s.enabled', $check), true);
     }
 
-    public function setIntegrityCheckEnabled(string $check, bool $isEnabled): array {
+    public function setIntegrityCheckEnabled(string $check, bool $isEnabled): void {
         $this->setValue(sprintf('book.integrity_check.%s.enabled', $check), $isEnabled);
     }
 }

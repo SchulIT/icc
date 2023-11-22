@@ -20,7 +20,7 @@ class BookIntegrityCheckViolation {
     private DateTime $date;
 
     #[ORM\ManyToOne(targetEntity: Student::class)]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Student $student;
 
     #[ORM\ManyToOne(targetEntity: TimetableLesson::class)]

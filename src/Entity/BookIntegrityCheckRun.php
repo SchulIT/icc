@@ -13,7 +13,7 @@ class BookIntegrityCheckRun {
     use UuidTrait;
 
     #[ORM\ManyToOne(targetEntity: Student::class)]
-    #[ORM\JoinColumn(unique: true, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(unique: true, nullable: false, onDelete: 'CASCADE')]
     private Student $student;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
@@ -34,6 +34,7 @@ class BookIntegrityCheckRun {
 
     /**
      * @param DateTime $lastRun
+     * @return BookIntegrityCheckRun
      */
     public function setLastRun(DateTime $lastRun): BookIntegrityCheckRun {
         $this->lastRun = $lastRun;

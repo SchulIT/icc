@@ -83,7 +83,7 @@ class MoreThanOneChangePerDayCheck implements IntegrityCheckInterface {
                     $attendance = $attendanceByLesson[$lessonNumber] ?? null;
 
                     if($attendance !== null && $attendance->getType() === $loserType) {
-                        $violations[] = new IntegrityCheckViolation(clone $current, $lessonNumber, $attendance?->getEntry()->getLesson(), $this->translator->trans('book.integrity_check.checks.more_than_one_change.violation'));
+                        $violations[] = new IntegrityCheckViolation(clone $current, $lessonNumber, $attendance->getEntry()->getLesson(), $this->translator->trans('book.integrity_check.checks.more_than_one_change.violation'));
                     }
                 }
             }

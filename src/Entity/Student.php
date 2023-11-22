@@ -154,11 +154,11 @@ class Student implements JsonSerializable, Stringable {
         return $this;
     }
 
-    public function getBirthday(): DateTime {
+    public function getBirthday(): ?DateTime {
         return $this->birthday;
     }
 
-    public function setBirthday(DateTime $birthday): Student {
+    public function setBirthday(?DateTime $birthday): Student {
         $this->birthday = $birthday;
         return $this;
     }

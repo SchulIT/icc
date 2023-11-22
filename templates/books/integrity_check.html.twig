@@ -34,6 +34,8 @@
                                 {% set student = result.student %}
                                 {% set violations = result.violations %}
                                 {% set nonSuppressedViolationsCount = result.nonSuppressedViolationsCount %}
+                                {% set grade = student.grade(sectionFilter.currentSection) %}
+
                                 <div class="table-row border-bottom pointer {% if nonSuppressedViolationsCount == 0 %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}" data-toggle="table-collapse" data-target="#result-{{ student.uuid }}" data-is-collapsed="true">
                                     <div class="table-col fill">
                                         <span class="me-auto align-self-center p-0 bg-transparent">
@@ -94,20 +96,32 @@
                                             <div class="table-col fill {% if violation.isSuppressed %}text-muted{% endif %}">
                                                 {{ violation.message }}
                                             </div>
-                                            {% if is_granted('suppress', violation) %}
+
                                             <div class="table-col">
-                                                <suppress-button url="{{ path('app_book_togglesuppressviolation', { uuid: violation.uuid}) }}"
-                                                                 csrfname="_token"
-                                                                 csrftoken="{{ csrf_token(csrfTokenId) }}"
-                                                                 :state="{{ violation.isSuppressed ? 'true' : 'false' }}"></suppress-button>
+                                                {% if grade is not null %}
+                                                    <a href="{{ path('book_student', { student: student.uuid, section: sectionFilter.currentSection.uuid, grade: grade.uuid }) }}#{{ violation.date.format('Y-m-d') }}"
+                                                       class="btn btn-outline-primary btn-sm"
+                                                       target="_blank">
+                                                        <i class="fas fa-external-link"></i>
+                                                    </a>
+                                               {% endif %}
+
+                                                {% if is_granted('suppress', violation) %}
+                                                    <div class="ms-1">
+                                                        <suppress-button url="{{ path('app_book_togglesuppressviolation', { uuid: violation.uuid}) }}"
+                                                                         csrfname="_token"
+                                                                         csrftoken="{{ csrf_token(csrfTokenId) }}"
+                                                                         :state="{{ violation.isSuppressed ? 'true' : 'false' }}"></suppress-button>
+                                                    </div>
+                                                {% endif %}
                                             </div>
-                                            {% endif %}
+
                                         </div>
                                     {% endfor %}
 
                                     <div class="table-row border-bottom">
                                         <div class="table-col fill">
-                                            {% set grade = student.grade(sectionFilter.currentSection) %}
+
                                             {% if grade is not null %}
                                                 <a href="{{ path('book_student', { student: student.uuid, section: sectionFilter.currentSection.uuid, grade: grade.uuid }) }}" class="btn btn-outline-primary btn-sm me-2" target="_blank">
                                                     <i class="fas fa-external-link"></i> {{ 'book.students.label'|trans }}

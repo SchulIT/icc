@@ -12,7 +12,7 @@
               </tr>
 
               <tr v-for="day in group.days">
-                <td class="align-middle">
+                <td class="align-middle" :id="'date-' + dateId(day)">
                   {{ weekday(day) }}
                   <span class="text-muted">
                     {{ date(day) }}
@@ -298,6 +298,23 @@ export default {
         $this.days[day] = lessons;
       });
     });
+
+    this.$nextTick(() => {
+      console.log($this.$el.querySelectorAll('td#date-2023-08-25'));
+
+      if(window.location.hash.substring(0, 1) === '#') {
+        let id = window.location.hash.substring(1);
+        let element = $this.$el.querySelector('td#date-' + id);
+
+        console.log(element);
+
+        if(element !== null) {
+          element.scrollIntoView({behavior: 'smooth'});
+        }
+
+        this.scrolled = true;
+      }
+    });
   },
   methods: {
     toDate(dateAsString) {
@@ -309,6 +326,9 @@ export default {
     },
     date(dateAsString) {
       return this.toDate(dateAsString).toLocaleDateString(undefined, { weekday: undefined, day: '2-digit', month: '2-digit', year: 'numeric' });
+    },
+    dateId(dateAsString) {
+      return dateAsString.substring(0, 10);
     },
     getComments(dateAsString) {
       return this.comments.filter(c => c.date === dateAsString);

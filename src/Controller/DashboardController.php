@@ -140,33 +140,10 @@ class DashboardController extends AbstractController {
         }
 
         $missingBookEntries = 0;
-        $violationsByTeacher = 0;
-        $violationsByGrade = [ ];
 
         if($user->isTeacher()) {
             $currentSection = $sectionResolver->getCurrentSection();
-            $missingBookEntries = $lessonEntryRepository->countMissingByTeacher($user->getTeacher(), $currentSection->getStart(), $dateHelper->getToday());
-
-            $violationsByTeacher = $bookIntegrityCheckViolationRepository->countAllByTeacher($user->getTeacher(), $currentSection->getStart(), $currentSection->getEnd());
-
-            foreach($user->getTeacher()->getGrades() as $gradeTeacher) {
-                if($gradeTeacher->getSection()->getId() !== $currentSection->getId()) {
-                    continue;
-                }
-
-                $students = $gradeTeacher
-                    ->getGrade()
-                    ->getMemberships()
-                    ->filter(fn(GradeMembership $membership) => $membership->getSection()->getId() === $currentSection->getId())
-                    ->map(fN(GradeMembership $membership) => $membership->getStudent())
-                    ->toArray();
-
-                $violationsByGrade[] = [
-                    'studyGroup' => $studyGroupRepository->findOneByGrade($gradeTeacher->getGrade(), $currentSection),
-                    'grade' => $gradeTeacher->getGrade(),
-                    'violations' => $bookIntegrityCheckViolationRepository->countAllByStudents($students, $currentSection->getStart(), $currentSection->getEnd())
-                ];
-            }
+            $missingBookEntries = $lessonEntryRepository->countMissingByTeacher($user->getTeacher(), $currentSection->getStart(), $dateHelper->getToday()->modify('-1 day'));
         }
 
         return $this->render($template, [
@@ -189,9 +166,7 @@ class DashboardController extends AbstractController {
             'section' => $section,
             'dateHasSection' => $dateHasSection,
             'unreadNotificationsCount' => $notificationRepository->countUnreadForUser($user),
-            'missingBookEntriesCount' => $missingBookEntries,
-            'violationsByTeacher' => $violationsByTeacher,
-            'violationsByGrade' => $violationsByGrade
+            'missingBookEntriesCount' => $missingBookEntries
         ]);
     }
 

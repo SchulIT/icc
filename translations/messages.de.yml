@@ -269,6 +269,9 @@ label:
     additional_recipients:
         label: Zusätzliche Empfänger
         help: Beim Erstellen wird zusätzlich eine E-Mail an die folgenden Empfänger versendet.
+    book_label:
+        label: Bezeichnung im Unterrichtsbuch
+        help: Diese Bezeichnung wird verwendet, wenn ein Abwesenheitsvorschlag ins Unterrichtbuch übernommen wird.
 
 markdown:
     label: Markdown

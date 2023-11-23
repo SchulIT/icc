@@ -18,6 +18,10 @@ class StudentAbsenceTypeType extends AbstractType {
                 'label' => 'label.details',
                 'required' => false
             ])
+            ->add('bookLabel', TextType::class, [
+                'label' => 'label.book_label.label',
+                'help' => 'label.book_label.help'
+            ])
             ->add('mustApprove', CheckboxType::class, [
                 'label' => 'label.must_approve.label',
                 'help' => 'label.must_approve.help',

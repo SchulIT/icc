@@ -20,7 +20,37 @@
         <div class="card-header">{{ 'label.general'|trans }}</div>
 
         <div class="card-body">
-            {{ form_widget(form) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.details) }}
+            {{ form_row(form.bookLabel) }}
+            {{ form_row(form.mustApprove)}}
+            {{ form_row(form.isTypeWithZeroAbsenceLessons)}}
+            {{ form_row(form.isAlwaysExcused)}}
+            {{ form_row(form.allowedUserTypes)}}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'label.additional_recipients.label'|trans }}</div>
+        <div class="card-body">
+            <p>{{ 'label.additional_recipients.help'|trans }}</p>
+
+            <div data-collection="recipients" data-prototype="{{ form_widget(form.additionalRecipients.vars.prototype)|e('html_attr') }}">
+                {% for recipient in form.additionalRecipients %}
+                    {{ form_widget(recipient) }}
+                {% endfor %}
+            </div>
+
+            {{ form_errors(form.additionalRecipients) }}
+            {{ form_help(form.additionalRecipients) }}
+
+            {% do form.additionalRecipients.setRendered %}
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="recipients">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
         </div>
     </div>
 

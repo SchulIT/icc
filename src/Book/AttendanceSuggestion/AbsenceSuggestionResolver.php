@@ -47,7 +47,7 @@ class AbsenceSuggestionResolver {
             $suggestions[$absentStudent->getStudent()->getId()] = new AbsenceSuggestion(
                 $this->getStudent($absentStudent->getStudent()),
                 $absentStudent->getReason()->value,
-                $absentStudent->getAbsence()->getType()->getName(),
+                $absentStudent->getAbsence()->getType()->getBookLabel(),
                 $absentStudent->getAbsence()->getType()->isTypeWithZeroAbsenceLessons(),
                 $excuseStatus,
                 $this->urlGenerator->generate('show_student_absence', [ 'uuid' => $absentStudent->getAbsence()->getUuid() ], UrlGeneratorInterface::ABSOLUTE_URL)
@@ -64,7 +64,7 @@ class AbsenceSuggestionResolver {
             $suggestions[$absentStudent->getStudent()->getId()] = new AbsenceSuggestion(
                 $this->getStudent($absentStudent->getStudent()),
                 $absentStudent->getReason()->value,
-                $absentStudent->getAbsence()->getType()->getName(),
+                $absentStudent->getAbsence()->getType()->getBookLabel(),
                 false,
                 $excuseStatus,
                 $this->urlGenerator->generate('show_student_absence', [ 'uuid' => $absentStudent->getAbsence()->getUuid() ], UrlGeneratorInterface::ABSOLUTE_URL)
@@ -115,7 +115,7 @@ class AbsenceSuggestionResolver {
             $suggestions[$absentStudent->getStudent()->getId()] = new AbsenceSuggestion(
                 $this->getStudent($absentStudent->getStudent()),
                 $absentStudent->getReason()->value,
-                $absentStudent->getAbsence()->getType()->getName(),
+                $absentStudent->getAbsence()->getType()->getBookLabel(),
                 true,
                 $excuseStatus,
                 $this->urlGenerator->generate('show_student_absence', [ 'uuid' => $absentStudent->getAbsence()->getUuid() ], UrlGeneratorInterface::ABSOLUTE_URL)

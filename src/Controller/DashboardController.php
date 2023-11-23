@@ -125,7 +125,8 @@ class DashboardController extends AbstractController {
         }
 
         if($view !== null) {
-            $dashboardViewMergeHelper->collapseView($view, $teacherFilterView->getCurrentTeacher());
+            $teacherOrStudent = $studentFilterView->getCurrentStudent() ?? $teacherFilterView->getCurrentTeacher();
+            $dashboardViewMergeHelper->collapseView($view, $teacherOrStudent);
         }
 
         $supervisionLabels = [ ];

@@ -2,6 +2,7 @@
 
 namespace App\Dashboard;
 
+use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Settings\DashboardSettings;
 use App\Utils\ArrayUtils;
@@ -16,9 +17,9 @@ class DashboardViewCollapseHelper {
     {
     }
 
-    public function collapseView(DashboardView $view, ?Teacher $teacher): void {
+    public function collapseView(DashboardView $view, Teacher|Student $teacherOrStudent): void {
         foreach($view->getLessons() as $lesson) {
-            $this->collapseLesson($lesson, $view, $teacher);
+            $this->collapseLesson($lesson, $view, $teacherOrStudent);
         }
 
         // Post-validation
@@ -79,7 +80,7 @@ class DashboardViewCollapseHelper {
         }
     }
 
-    private function collapseLesson(DashboardLesson $lesson, DashboardView $view, ?Teacher $teacher): void {
+    private function collapseLesson(DashboardLesson $lesson, DashboardView $view, Teacher|Student $teacherOrStudent): void {
         // Merge supervisions
         $this->mergeExamSupervisions($lesson);
 
@@ -138,11 +139,11 @@ class DashboardViewCollapseHelper {
         $substitutionMentions = [ ];
 
         foreach($originalSubstitutions as $substitution) {
-            if($teacher !== null && $this->isMentionedInSubstitution($substitution, $teacher) === true) {
+            if($teacherOrStudent instanceof Teacher && $this->isMentionedInSubstitution($substitution, $teacherOrStudent) === true) {
                 $substitutionMentions[] = $substitution;
             }
 
-            if ($teacher === null || $this->onlyMentionedInSubstitution($substitution, $teacher) === false) {
+            if (!$teacherOrStudent instanceof Teacher || $this->onlyMentionedInSubstitution($substitution, $teacherOrStudent) === false) {
                 $substitutions[] = $substitution;
             } else {
                 $substitutionMentions[] = $substitution;
@@ -151,11 +152,11 @@ class DashboardViewCollapseHelper {
 
         // Further classication
         /** @var SubstitutionViewItem[] $additionalSubstitutions */
-        $additionalSubstitutions = array_values(array_filter($substitutions, fn(SubstitutionViewItem $viewItem) => $this->isAdditionalSubstitution($viewItem)));
+        $additionalSubstitutions = array_values(array_filter($substitutions, fn(SubstitutionViewItem $viewItem) => $this->isAdditionalSubstitution($viewItem, $teacherOrStudent)));
         /** @var SubstitutionViewItem[] $removableSubstitutions */
-        $removableSubstitutions = array_values(array_filter($substitutions, fn(SubstitutionViewItem $viewItem) => $this->isRemovableSubstitution($viewItem, $teacher)));
+        $removableSubstitutions = array_values(array_filter($substitutions, fn(SubstitutionViewItem $viewItem) => $this->isRemovableSubstitution($viewItem, $teacherOrStudent)));
         /** @var SubstitutionViewItem[] $defaultSubstitutions */
-        $defaultSubstitutions = array_values(array_filter($substitutions, fn(SubstitutionViewItem $viewItem) => $this->isDefault($viewItem, $teacher)));
+        $defaultSubstitutions = array_values(array_filter($substitutions, fn(SubstitutionViewItem $viewItem) => $this->isDefault($viewItem, $teacherOrStudent)));
 
         $defaultSubstitutionsCount = $this->countDefaultSubstitutions($defaultSubstitutions);
 
@@ -203,7 +204,7 @@ class DashboardViewCollapseHelper {
             $collision = false;
 
             foreach($lesson->getItems() as $item) {
-                if(!($item instanceof SubstitutionViewItem) || $this->isDefault($item, $teacher)) {
+                if(!($item instanceof SubstitutionViewItem) || $this->isDefault($item, $teacherOrStudent)) {
                     $collision = true;
                 }
             }
@@ -453,8 +454,8 @@ class DashboardViewCollapseHelper {
         return $count;
     }
 
-    private function isRemovableSubstitution(SubstitutionViewItem $viewItem, ?Teacher $teacher) {
-        if($this->isAdditionalSubstitution($viewItem)) {
+    private function isRemovableSubstitution(SubstitutionViewItem $viewItem, Teacher|Student $teacherOrStudent): bool {
+        if($this->isAdditionalSubstitution($viewItem, $teacherOrStudent)) {
             return false;
         }
 
@@ -464,15 +465,19 @@ class DashboardViewCollapseHelper {
 
         $substitution = $viewItem->getSubstitution();
 
-        if($teacher !== null) {
-            return $substitution->getTeachers()->contains($teacher) && $substitution->getReplacementTeachers()->contains($teacher) === false;
+        if($teacherOrStudent instanceof Teacher) {
+            return $substitution->getTeachers()->contains($teacherOrStudent) && $substitution->getReplacementTeachers()->contains($teacherOrStudent) === false;
         }
 
         return false;
     }
 
-    private function isAdditionalSubstitution(SubstitutionViewItem $viewItem) {
-        return in_array($viewItem->getSubstitution()->getType(), $this->settings->getAdditionalSubstitutionTypes());
+    private function isAdditionalSubstitution(SubstitutionViewItem $viewItem, Teacher|Student $teacherOrStudent): bool {
+        if($teacherOrStudent instanceof Teacher) {
+            return in_array($viewItem->getSubstitution()->getType(), $this->settings->getAdditionalSubstitutionTypes());
+        }
+
+        return false;
     }
 
     private function onlyMentionedInSubstitution(SubstitutionViewItem $viewItem, Teacher $teacher): bool {
@@ -497,7 +502,7 @@ class DashboardViewCollapseHelper {
         return !empty($viewItem->getSubstitution()->getRemark()) && preg_match('~\W*' . $teacher->getAcronym() . '\W*~', $viewItem->getSubstitution()->getRemark());
     }
 
-    private function isDefault(SubstitutionViewItem $viewItem, ?Teacher $teacher) {
-        return $this->isRemovableSubstitution($viewItem, $teacher) === false && $this->isAdditionalSubstitution($viewItem) === false;
+    private function isDefault(SubstitutionViewItem $viewItem, Teacher|Student $teacherOrStudent): bool {
+        return $this->isRemovableSubstitution($viewItem, $teacherOrStudent) === false && $this->isAdditionalSubstitution($viewItem, $teacherOrStudent) === false;
     }
 }

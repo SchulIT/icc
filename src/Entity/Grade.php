@@ -31,7 +31,7 @@ class Grade implements Stringable {
     /**
      * @var ArrayCollection<GradeMembership>
      */
-    #[ORM\OneToMany(mappedBy: 'grade', targetEntity: GradeMembership::class)]
+    #[ORM\OneToMany(mappedBy: 'grade', targetEntity: GradeMembership::class, cascade: ['persist'])]
     private $memberships;
 
     /**

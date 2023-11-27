@@ -17,7 +17,7 @@ class DashboardViewCollapseHelper {
     {
     }
 
-    public function collapseView(DashboardView $view, Teacher|Student $teacherOrStudent): void {
+    public function collapseView(DashboardView $view, Teacher|Student|null $teacherOrStudent): void {
         foreach($view->getLessons() as $lesson) {
             $this->collapseLesson($lesson, $view, $teacherOrStudent);
         }

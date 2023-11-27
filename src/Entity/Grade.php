@@ -72,7 +72,7 @@ class Grade implements Stringable {
         return $this;
     }
 
-    public function addMemebership(GradeMembership $membership): void {
+    public function addMembership(GradeMembership $membership): void {
         $membership->setGrade($this);
         $this->memberships->add($membership);
     }

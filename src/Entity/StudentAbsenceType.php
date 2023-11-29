@@ -39,17 +39,14 @@ class StudentAbsenceType implements Stringable {
     #[ORM\Column(type: 'boolean')]
     private bool $mustApprove = false;
 
-    /**
-     * @var bool
-     */
     #[ORM\Column(type: 'boolean')]
     private bool $isTypeWithZeroAbsenceLessons = false;
 
-    /**
-     * @var bool
-     */
-    #[ORM\Column(type: 'boolean')]
-    private bool $isAlwaysExcused = false;
+    #[ORM\Column(type: 'integer')]
+    private int $bookAttendanceType = LessonAttendanceType::Absent;
+
+    #[ORM\Column(type: 'integer')]
+    private int $bookExcuseStatus = LessonAttendanceExcuseStatus::NotExcused;
 
     #[ORM\Column(type: 'json')]
     #[Assert\All([
@@ -57,6 +54,12 @@ class StudentAbsenceType implements Stringable {
         new Assert\Email()
     ])]
     private array $additionalRecipients = [ ];
+
+    #[ORM\JoinTable(name: 'student_absence_type_subjects')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: Subject::class)]
+    private Collection $subjects;
 
     /**
      * @var Collection<UserTypeEntity>
@@ -69,6 +72,7 @@ class StudentAbsenceType implements Stringable {
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
+        $this->subjects = new ArrayCollection();
         $this->allowedUserTypes = new ArrayCollection();
     }
 
@@ -117,13 +121,32 @@ class StudentAbsenceType implements Stringable {
         return $this;
     }
 
-    public function isAlwaysExcused(): bool {
-        return $this->isAlwaysExcused;
+    /**
+     * @param int $bookAttendanceType
+     */
+    public function setBookAttendanceType(int $bookAttendanceType): void {
+        $this->bookAttendanceType = $bookAttendanceType;
     }
 
-    public function setIsAlwaysExcused(bool $isAlwaysExcused): StudentAbsenceType {
-        $this->isAlwaysExcused = $isAlwaysExcused;
-        return $this;
+    /**
+     * @return int
+     */
+    public function getBookAttendanceType(): int {
+        return $this->bookAttendanceType;
+    }
+
+    /**
+     * @param int $bookExcuseStatus
+     */
+    public function setBookExcuseStatus(int $bookExcuseStatus): void {
+        $this->bookExcuseStatus = $bookExcuseStatus;
+    }
+
+    /**
+     * @return int
+     */
+    public function getBookExcuseStatus(): int {
+        return $this->bookExcuseStatus;
     }
 
     public function addAllowedUserType(UserTypeEntity $entity): void {
@@ -136,6 +159,18 @@ class StudentAbsenceType implements Stringable {
 
     public function getAllowedUserTypes(): Collection {
         return $this->allowedUserTypes;
+    }
+
+    public function addSubject(Subject $subject): void {
+        $this->subjects->add($subject);
+    }
+
+    public function removeSubject(Subject $subject): void {
+        $this->subjects->removeElement($subject);
+    }
+
+    public function getSubjects(): Collection {
+        return $this->subjects;
     }
 
     /**

@@ -79,4 +79,44 @@ class BookSettings extends AbstractSettings {
     public function setIntegrityCheckEnabled(string $check, bool $isEnabled): void {
         $this->setValue(sprintf('book.integrity_check.%s.enabled', $check), $isEnabled);
     }
+
+    public function getSuggestionPriorityForAbsenceType(string $uuid): int {
+        return $this->getValue('book.attendance_suggestion.priority.' . $uuid, 100);
+    }
+
+    public function setSuggestionPriorityForAbsenceType(string $uuid, int $priority): void {
+        $this->setValue('book.attendance_suggestion.priority.' . $uuid, $priority);
+    }
+
+    public function getSuggestionPriorityForExams(): int {
+        return $this->getValue('book.attendance_suggestion.priority.exam', 60);
+    }
+
+    public function setSuggestionPriorityForExams(int $priority): void {
+        $this->setValue('book.attendance_suggestion.priority.exam', $priority);
+    }
+
+    public function getSuggestionPriorityForPreviouslyAbsent(): int {
+        return $this->getValue('book.attendance_suggestion.priority.previously_absent', 20);
+    }
+
+    public function setSuggestionPriorityForPreviouslyAbsent(int $priority): void {
+        $this->setValue('book.attendance_suggestion.priority.previously_absent', $priority);
+    }
+
+    public function getSuggestionPriorityForExcuseNote(): int {
+        return $this->getValue('book.attendance_suggestion.priority.excuse_note', 40);
+    }
+
+    public function setSuggestionPriorityForExcuseNote(int $priority): void {
+        $this->setValue('book.attendance_suggestion.priority.excuse_note', $priority);
+    }
+
+    public function getSuggestionPriorityForRemoval(): int {
+        return $this->getValue('book.attendance_suggestion.priority.removal', 20);
+    }
+
+    public function setSuggestionPriorityForRemoval(int $priority): void {
+        $this->setValue('book.attendance_suggestion.priority.removal', $priority);
+    }
 }

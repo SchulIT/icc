@@ -228,9 +228,6 @@ label:
     type_with_zero_absence_lesson:
         label: erzeugt keine Fehlstunden
         help: Abwesenheiten mit dieser Art setzen die Anzahl der Fehlstunden bei Übernahme ins Unterrichtsbuch auf Null.
-    always_excused:
-        label: immer entschuldigt
-        help: Abwesenheiten mit dieser Art setzt die Fehlstunde bei Übernahme ins Unterrichtsbuch auf entschuldigt.
     show_all: Alle anzeigen
     task: Aufgabe
     person: Person(en)
@@ -272,6 +269,15 @@ label:
     book_label:
         label: Bezeichnung im Unterrichtsbuch
         help: Diese Bezeichnung wird verwendet, wenn ein Abwesenheitsvorschlag ins Unterrichtbuch übernommen wird.
+    book_attendance_type:
+        label: Anwesenheitsart im Unterrichtsbuch
+        help: Diese Anwesenheitsart wird verwendent, wenn ein Abwesenheitsvorschlag ins Unterrichtbuch übernommen wird.
+    book_excuse_status:
+        label: Entschuldigungsstatus im Unterrichtsbuch
+        help: Dieser Entschuldigungsstatus wird verwendet, wenn ein Abwesenheitsvorschlag ins Unterrichtbuch übernommen wird.
+    book_subjects:
+        label: Fächer berücksichtigen
+        help: Die Abwesenheitsmeldung wird nur als Vorschlag für die angegebenen Fächer angezeigt. Ist dieses Feld leer, so werden Vorschläge für alle Fächer erzeugt.
 
 markdown:
     label: Markdown
@@ -957,6 +963,14 @@ admin:
             attendances_visible_for_students_and_parents:
                 label: Anwesenheit für Lernende und Eltern sichtbar machen
                 help: 'Wenn diese Option aktiv ist, erhalten Lernende und Eltern den Menüpunkt Anwesenheiten, in dem sie die eigene Anwesenheiten (inkl. Anzahl Fehlstunden und Entschuldigungsstatus) einsehen können. Wichtig: Anwesenheiten können erst ab dem Folgetag eingesehen werden.'
+            attendance_suggestion:
+                label: An- und Abwesenheitsvorschläge
+                priority:
+                    help: Für den Fall, dass das System mehrere potentielle Vorschläge für An- oder Abwesenheit herausfindet, können den einzelnen Quellen Prioritäten zugewiesen werden. Die Quelle mit der höchsten Priorität gewinnt und wird dann angezeigt (es wird grundsätzlich nur ein Vorschlag pro Lernendem angezeigt). Bei identischer Priorität kann nicht vorhergesagt werden, welche Quelle angezeigt wird.
+                    exam: Klausur
+                    previously_absent: Abwesenheit in vorheriger Stunde
+                    excuse_note: Entschuldigung liegt vor
+                    absence_note: Abwesenheitsart %type%
 
         tuition_grades:
             label: Notenmodul

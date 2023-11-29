@@ -5,6 +5,7 @@ namespace App\Controller\Settings;
 use App\Entity\Grade;
 use App\Form\TextCollectionEntryType;
 use App\Repository\GradeRepositoryInterface;
+use App\Repository\StudentAbsenceTypeRepositoryInterface;
 use App\Settings\BookSettings;
 use App\Utils\ArrayUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -13,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +26,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[Security("is_granted('ROLE_ADMIN')")]
 class BookSettingsController extends AbstractController {
     #[Route(path: '/book', name: 'admin_settings_book')]
-    public function book(Request $request, BookSettings $settings, GradeRepositoryInterface $gradeRepository): Response {
+    public function book(Request $request, BookSettings $settings, GradeRepositoryInterface $gradeRepository, StudentAbsenceTypeRepositoryInterface $typeRepository): Response {
         $builder = $this->createFormBuilder();
         $builder->add('grades_grade_teacher_excuses', ChoiceType::class, [
             'label' => 'admin.settings.book.excuses.grades_grade_teacher_excuses.label',
@@ -73,7 +75,36 @@ class BookSettingsController extends AbstractController {
                 'label' => 'admin.settings.book.attendances_visible_for_students_and_parents.label',
                 'help' => 'admin.settings.book.attendances_visible_for_students_and_parents.help',
                 'data' => $settings->isAttendanceVisibleForStudentsAndParentsEnabled()
+            ])
+            ->add('suggestion_priority_exam', IntegerType::class, [
+                'required' => true,
+                'label' => 'admin.settings.book.attendance_suggestion.priority.exam',
+                'data' => $settings->getSuggestionPriorityForExams()
+            ])
+            ->add('suggestion_priority_previously_absent', IntegerType::class, [
+                'required' => true,
+                'label' => 'admin.settings.book.attendance_suggestion.priority.previously_absent',
+                'data' => $settings->getSuggestionPriorityForPreviouslyAbsent()
+            ])
+            ->add('suggestion_priority_excuse_note', IntegerType::class, [
+                'required' => true,
+                'label' => 'admin.settings.book.attendance_suggestion.priority.excuse_note',
+                'data' => $settings->getSuggestionPriorityForExcuseNote()
             ]);
+
+        $types = $typeRepository->findAll();
+
+        foreach($types as $type) {
+            $builder->add('suggestion_priority_' . $type->getUuid(), IntegerType::class, [
+                'required' => true,
+                'label' => 'admin.settings.book.attendance_suggestion.priority.absence_note',
+                'label_translation_parameters' => [
+                    '%type%' => $type->getName()
+                ],
+                'data' => $settings->getSuggestionPriorityForAbsenceType($type->getUuid()->toString())
+            ]);
+        }
+
         $form = $builder->getForm();
         $form->handleRequest($request);
 
@@ -90,12 +121,25 @@ class BookSettingsController extends AbstractController {
                 },
                 'attendances_visible_for_students_and_parents' => function(bool $isEnabled) use($settings) {
                     $settings->setAttendanceVisibleForStudentsAndParentsEnabled($isEnabled);
+                },
+                'suggestion_priority_exam' => function(int $priority) use ($settings) {
+                    $settings->setSuggestionPriorityForExams($priority);
+                },
+                'suggestion_priority_previously_absent' => function(int $priority) use ($settings) {
+                    $settings->setSuggestionPriorityForPreviouslyAbsent($priority);
+                },
+                'suggestion_priority_excuse_note' => function(int $priority) use ($settings) {
+                    $settings->setSuggestionPriorityForExcuseNote($priority);
                 }
             ];
 
             foreach($map as $formKey => $callable) {
                 $value = $form->get($formKey)->getData();
                 $callable($value);
+            }
+
+            foreach($types as $type) {
+                $settings->setSuggestionPriorityForAbsenceType($type->getUuid()->toString(), $form->get('suggestion_priority_' . $type->getUuid()->toString())->getData());
             }
 
             $map = [
@@ -124,7 +168,8 @@ class BookSettingsController extends AbstractController {
         }
 
         return $this->render('admin/settings/book.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'types' => $types
         ]);
     }
 }

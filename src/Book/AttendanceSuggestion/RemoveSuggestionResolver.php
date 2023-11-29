@@ -15,6 +15,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RemoveSuggestionResolver {
 
+    use StudentTransformerTrait;
+
     public function __construct(private readonly TimetableLessonRepositoryInterface $timetableLessonRepository, private readonly StudentsResolver $studentsResolver, private readonly TranslatorInterface $translator) {
 
     }
@@ -40,7 +42,7 @@ class RemoveSuggestionResolver {
                     );
 
                     $suggestions[] = new RemoveSuggestion(
-                        new StudentResponse($student->getUuid()->toString(), $student->getFirstname(), $student->getLastname()),
+                        $this->getStudent($student),
                         $this->translator->trans('book.attendance.remove_reason.timetable', [
                             '%student%' => $student->getFirstname(),
                             '%tuition%' => $timetableLesson->getTuition()->getName(),

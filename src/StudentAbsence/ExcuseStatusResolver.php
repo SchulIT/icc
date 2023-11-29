@@ -6,6 +6,7 @@ use App\Book\Student\ExcuseCollectionResolver;
 use App\Date\DateLessonExpander;
 use App\Entity\DateLesson;
 use App\Entity\LessonAttendance;
+use App\Entity\LessonAttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\StudentAbsence;
 use App\Entity\TimetableLesson;
@@ -25,12 +26,14 @@ class ExcuseStatusResolver {
     }
 
     public function getStatus(StudentAbsence $absence): ExcuseStatus {
+        if($absence->getType()->getBookAttendanceType() === LessonAttendanceType::Present) {
+            return new ExcuseStatus([]);
+        }
+
         $lessonsToExcuse = $this->dateLessonExpander->expandRangeToDateLessons($absence->getFrom(), $absence->getUntil());
         $collection = $this->excuseCollectionResolver->resolve($this->excuseNoteRepository->findByStudent($absence->getStudent()));
 
         $items = [ ];
-
-
 
         /** @var LessonAttendance[] $attendances */
         $attendances = ArrayUtils::createArrayWithKeys(

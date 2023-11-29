@@ -31,7 +31,7 @@ class Grade implements Stringable {
     /**
      * @var ArrayCollection<GradeMembership>
      */
-    #[ORM\OneToMany(mappedBy: 'grade', targetEntity: GradeMembership::class)]
+    #[ORM\OneToMany(mappedBy: 'grade', targetEntity: GradeMembership::class, cascade: ['persist'])]
     private $memberships;
 
     /**
@@ -72,7 +72,7 @@ class Grade implements Stringable {
         return $this;
     }
 
-    public function addMemebership(GradeMembership $membership): void {
+    public function addMembership(GradeMembership $membership): void {
         $membership->setGrade($this);
         $this->memberships->add($membership);
     }

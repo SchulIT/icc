@@ -158,7 +158,7 @@ class MessageController extends AbstractController {
 
         $vote = $voteHelper->getPollVote($message, $user);
         $rankedChoices = $voteHelper->getRankedChoices($vote);
-        $allowVote = $dateHelper->getToday() < $message->getExpireDate();
+        $allowVote = $dateHelper->getToday() <= $message->getExpireDate();
         $voteForm = $this->createForm(MessagePollVoteType::class, $rankedChoices, [
             'choices' => $message->getPollChoices(),
             'num_choices' => $message->getPollNumChoices(),

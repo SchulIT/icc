@@ -28,6 +28,8 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     _instanceof:
+        App\Book\AttendanceSuggestion\SuggestionStrategyInterface:
+            tags: [ 'app.book.attendance_suggestion']
         App\Book\IntegrityCheck\IntegrityCheckInterface:
             tags: [ 'app.book.integrity_check']
         App\Dashboard\Absence\AbsenceResolveStrategyInterface:
@@ -174,6 +176,10 @@ services:
             - { name: knp_menu.voter }
 
     # SERVICES
+    App\Book\AttendanceSuggestion\SuggestionResolver:
+        arguments:
+            $strategies: !tagged app.book.attendance_suggestion
+
     App\Book\IntegrityCheck\IntegrityCheckRunner:
         arguments:
             $checks: !tagged app.book.integrity_check

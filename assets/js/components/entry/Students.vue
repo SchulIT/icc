@@ -50,14 +50,14 @@
           <li v-for="absence in absences" class="d-flex align-items-start">
             <div class="flex-fill">
               <div>
-                {{ absence.lastname }}, {{ absence.firstname }}
+                {{ absence.student.lastname }}, {{ absence.student.firstname }}
               </div>
-              <span v-for="reason in absence.reasons" class="badge text-bg-primary">{{ reason }}</span>
+              <span class="badge text-bg-primary">{{ absence.label }}</span>
 
               <span v-if="absence.zero_absent_lessons" class="badge text-bg-info ms-1">0 FS</span>
             </div>
-            <a :href="absence.absence_url"
-               v-if="absence.absence_url !== null"
+            <a :href="absence.url"
+               v-if="absence.url !== null"
                target="_blank"
                class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-external-link"></i> {{ $trans('actions.show')}}</a>
 
@@ -365,22 +365,28 @@ export default {
     },
     applyAbsence(absence) {
       let $this = this;
-      this.attendances.forEach(function(attendance) {
-        if(attendance.student.uuid === absence.uuid) {
-          $this.absent(attendance);
 
-          if(absence.zero_absent_lessons) {
-            attendance.lessons = 0;
-          }
-
-          if(absence.excuse_status) {
-            attendance.excuse_status = absence.excuse_status;
-          }
-
-          attendance.comment = absence.reasons.join(', ');
-          $this.absences.splice($this.absences.indexOf(absence), 1);
+      for(let attendance of this.attendances) {
+        if(attendance.student.uuid !== absence.student.uuid) {
+          continue;
         }
-      });
+
+        if(absence.attendance_type === 0) {
+          this.absent(attendance);
+        } else if(absence.attendance_type === 1) {
+          this.present(attendance);
+        } else if(absence.attendance_type === 2) {
+          this.late(attendance);
+        }
+
+        if(absence.zero_absent_lessons === true) {
+          attendance.lessons = 0;
+        }
+        attendance.excuse_status = absence.excuse_status;
+        attendance.comment = absence.label;
+      }
+
+      $this.absences.splice($this.absences.indexOf(absence), 1);
     },
     absent(attendance) {
       let $this = this;
@@ -529,55 +535,26 @@ export default {
     },
     load() {
       let $this = this;
-      let students = { };
+      //let students = { };
 
       this.students.forEach(function(student) {
-        students[student.uuid] = {
-          uuid: student.uuid,
-          firstname: student.firstname,
-          lastname: student.lastname,
-          reasons: [ ],
-          zero_absent_lessons: false,
-          status: 0,
-          absence_url: null
-        };
-
         if($this.attendances.filter(x => x.student.uuid === student.uuid).length === 0) {
           $this.addStudent(student.uuid, student.firstname, student.lastname);
         }
       });
 
-      this.possibleAbsences.forEach(function(absence) {
-        if(absence.student.uuid in students) {
-          if(absence.label !== undefined && absence.label !== null) {
-            students[absence.student.uuid].reasons.push(absence.label);
-          } else {
-            students[absence.student.uuid].reasons.push($this.$trans('book.attendance.absence_reason.' + absence.reason));
+      this.absences = [ ];
+
+      for(let absence of this.possibleAbsences) {
+        // check if attendance is already applied
+        for(let attendance of this.attendances) {
+          if(attendance.student.uuid !== absence.student.uuid) {
+            continue;
           }
 
-          if(absence.absence_url !== null) {
-            students[absence.student.uuid].absence_url = absence.absence_url;
+          if(attendance.type !== absence.attendance_type || attendance.comment !== absence.label) {
+            this.absences.push(absence);
           }
-
-          if(absence.excuse_status) {
-            students[absence.student.uuid].excuse_status = absence.excuse_status;
-          }
-
-          if(absence.zero_absent_lessons === true) {
-            students[absence.student.uuid].zero_absent_lessons = true;
-          }
-        }
-      });
-
-      $this.absences = [ ];
-
-      for(let uuid in students) {
-        let student = students[uuid];
-
-        let attendance = $this.attendances.filter(x => x.student.uuid === uuid).map(x => x.type);
-
-        if(student.reasons.length > 0 && attendance.length > 0 && attendance[0] !== 0) {
-          $this.absences.push(student);
         }
       }
 

@@ -48,4 +48,19 @@
             {{ form_row(form.bold_font) }}
         </div>
     </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.book.attendance_suggestion.label'|trans }}</div>
+        <div class="card-body">
+            <p>{{ 'admin.settings.book.attendance_suggestion.priority.help'|trans }}</p>
+
+            {{ form_row(form.suggestion_priority_exam) }}
+            {{ form_row(form.suggestion_priority_previously_absent) }}
+            {{ form_row(form.suggestion_priority_excuse_note) }}
+
+            {% for type in types %}
+                {{ form_row(form['suggestion_priority_' ~ type.uuid.toString ]) }}
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

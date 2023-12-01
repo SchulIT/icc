@@ -69,7 +69,7 @@ class ExcuseStatusItem {
             return $this->absence->isApproved();
         }
 
-        if($this->absence->getType()->isAlwaysExcused()) {
+        if($this->absence->getType()->getBookExcuseStatus() === LessonAttendanceExcuseStatus::Excused) {
             return true;
         }
 

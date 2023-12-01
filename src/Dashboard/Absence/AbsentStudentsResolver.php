@@ -3,6 +3,7 @@
 namespace App\Dashboard\Absence;
 
 use App\Dashboard\AbsentStudentWithAbsenceNote;
+use App\Entity\LessonAttendanceType;
 use App\Entity\StudentAbsence;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Utils\ArrayUtils;
@@ -24,7 +25,7 @@ class AbsentStudentsResolver implements AbsenceResolveStrategyInterface {
         $students = ArrayUtils::iterableToArray($students);
         $absences = $this->repository->findByStudents($students, null, $dateTime, $lesson);
 
-        $absences = array_filter($absences, fn(StudentAbsence $absence) => $absence->getType()->isMustApprove() === false || $absence->isApproved());
+        $absences = array_filter($absences, fn(StudentAbsence $absence) => ($absence->getType()->isMustApprove() === false || $absence->isApproved()) && $absence->getType()->getBookAttendanceType() === LessonAttendanceType::Absent);
 
         return array_map(fn(StudentAbsence $note) => new AbsentStudentWithAbsenceNote($note->getStudent(), $note), $absences);
     }

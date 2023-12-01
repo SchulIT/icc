@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Book\AttendanceSuggestion\AbsenceSuggestionResolver;
 use App\Book\AttendanceSuggestion\RemoveSuggestionResolver;
+use App\Book\AttendanceSuggestion\SuggestionResolver;
 use App\Book\Lesson\LessonCancelHelper;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\StudentsResolver;
@@ -28,7 +29,7 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Request\Book\CancelLessonRequest;
 use App\Request\Book\UpdateAttendanceRequest;
-use App\Response\Book\AbsenceSuggestion;
+use App\Response\Book\AttendanceSuggestion;
 use App\Response\Book\RemoveSuggestion;
 use App\Response\Book\Student as StudentResponse;
 use App\Response\Book\StudyGroupStudents;
@@ -88,10 +89,10 @@ class BookXhrController extends AbstractController {
      * @param Tuition $tuition
      * @param DateTime $date
      * @param int $lesson
-     * @param AbsenceSuggestionResolver $suggestionResolver
-     * @return AbsenceSuggestion[]
+     * @param SuggestionResolver $suggestionResolver
+     * @return AttendanceSuggestion[]
      */
-    private function possiblyAbsentStudents(Tuition $tuition, DateTime $date, int $lesson, AbsenceSuggestionResolver $suggestionResolver): array {
+    private function possiblyAbsentStudents(Tuition $tuition, DateTime $date, int $lesson, SuggestionResolver $suggestionResolver): array {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         return $suggestionResolver->resolve($tuition, $date, $lesson);
@@ -202,7 +203,7 @@ class BookXhrController extends AbstractController {
     #[OA\Parameter(name: 'start', description: 'Start der Unterrichtsstunde', in: 'query')]
     #[OA\Parameter(name: 'end', description: 'Ende der Unterrichtsstunde', in: 'query')]
     #[Route(path: '/entry', name: 'xhr_lesson_entry', methods: ['GET'])]
-    public function entry(Request $request, TimetableLessonRepositoryInterface $lessonRepository, AbsenceSuggestionResolver $suggestionResolver,
+    public function entry(Request $request, TimetableLessonRepositoryInterface $lessonRepository, SuggestionResolver $suggestionResolver,
                           SerializerInterface $serializer, AbsenceExcuseResolver $excuseResolver, BookSettings $settings,
                           RemoveSuggestionResolver $removeSuggestionResolver, StudentsResolver $studentsResolver): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);

@@ -2,8 +2,13 @@
 
 namespace App\Form;
 
+use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\Subject;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -38,13 +43,36 @@ class StudentAbsenceTypeType extends AbstractType {
                     'class' => 'checkbox-custom'
                 ]
             ])
-            ->add('isAlwaysExcused', CheckboxType::class, [
-                'label' => 'label.always_excused.label',
-                'help' => 'label.always_excused.help',
+            ->add('bookAttendanceType', ChoiceType::class, [
+                'choices' => [
+                    'book.attendance.type.present' => \App\Entity\LessonAttendanceType::Present,
+                    'book.attendance.type.absent' => \App\Entity\LessonAttendanceType::Absent
+                ],
+                'label' => 'label.book_attendance_type.label',
+                'help' => 'label.book_attendance_type.help',
+                'expanded' => true
+            ])
+            ->add('bookExcuseStatus', ChoiceType::class, [
+                'choices' => [
+                    'book.students.excused' => LessonAttendanceExcuseStatus::Excused,
+                    'book.students.not_excused' => LessonAttendanceExcuseStatus::NotExcused,
+                    'book.students.not_set' => LessonAttendanceExcuseStatus::NotSet
+                ],
+                'label' => 'label.book_excuse_status.label',
+                'help' => 'label.book_excuse_status.help',
+                'expanded' => true
+            ])
+            ->add('subjects', EntityType::class, [
+                'label' => 'label.book_subjects.label',
+                'help' => 'label.book_subjects.help',
                 'required' => false,
-                'label_attr' => [
-                    'class' => 'checkbox-custom'
-                ]
+                'class' => Subject::class,
+                'multiple' => true,
+                'query_builder' => fn(EntityRepository $repository) => $repository->createQueryBuilder('s')->orderBy('s.name'),
+                'choice_label' => fn(Subject $subject) => $subject->getName(),
+                'attr' => [
+                    'data-choice' => 'true'
+                ],
             ])
             ->add('allowedUserTypes', UserTypeEntityType::class, [
                 'label' => 'label.usertypes',

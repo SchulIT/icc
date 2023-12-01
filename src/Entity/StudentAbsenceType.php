@@ -55,6 +55,9 @@ class StudentAbsenceType implements Stringable {
     ])]
     private array $additionalRecipients = [ ];
 
+    /**
+     * @var Collection<Subject>
+     */
     #[ORM\JoinTable(name: 'student_absence_type_subjects')]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]

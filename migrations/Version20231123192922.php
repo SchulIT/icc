@@ -17,6 +17,30 @@ final class Version20231123192922 extends AbstractMigration
         return '';
     }
 
+    private array $data = [ ];
+
+    public function preUp(Schema $schema): void {
+        parent::preUp($schema);
+
+        $result = $this->connection->executeQuery('SELECT * FROM student_absence_type');
+        while(($row = $result->fetchAssociative()) !== false) {
+            $this->data[intval($row['id'])] = intval($row['is_always_excused']);
+        }
+    }
+
+    public function postUp(Schema $schema): void {
+        parent::postUp($schema);
+
+        foreach($this->data as $id => $isAlwaysExcused) {
+            $stmt = $this->connection->prepare('UPDATE student_absence_type SET book_excuse_status = ? WHERE id = ?');
+            $stmt->bindValue(1, $isAlwaysExcused, 'integer');
+            $stmt->bindValue(2, $id, 'integer');
+            $stmt->executeQuery();
+        }
+
+        $this->connection->executeQuery('UPDATE student_absence_type SET book_attendance_type = 0');
+    }
+
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs

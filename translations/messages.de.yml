@@ -278,6 +278,7 @@ label:
     book_subjects:
         label: Fächer berücksichtigen
         help: Die Abwesenheitsmeldung wird nur als Vorschlag für die angegebenen Fächer angezeigt. Ist dieses Feld leer, so werden Vorschläge für alle Fächer erzeugt.
+    message_expiry_date_inclusive_help: Die Mitteilung wird an diesem Datum noch angezeigt. Personalisierte Uploads und Wahlen sind an diesem Datum noch möglich.
 
 markdown:
     label: Markdown

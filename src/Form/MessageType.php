@@ -76,7 +76,8 @@ class MessageType extends AbstractType {
                         ->add('expireDate', DateType::class, [
                             'label' => 'label.message.expiry',
                             'years' => $years,
-                            'widget' => 'single_text'
+                            'widget' => 'single_text',
+                            'help' => 'label.message_expiry_date_inclusive_help'
                         ])
                         ->add('content', MarkdownType::class, [
                             'label' => 'label.content',

@@ -2,7 +2,7 @@
 
 ## Veränderungen unter Haube
 
-* keine
+* Das Projekt basiert nun auf Symfony 6.4
 
 ## Neue Rollen
 

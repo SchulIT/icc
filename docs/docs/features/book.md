@@ -136,3 +136,25 @@ Eltern werden aktuell (Stand Sommer 2023) noch nicht informiert. Siehe [GitHub-I
 
 Standardmäßig sind Unterrichtsbücher für alle Unterrichte aktiviert. Die Deaktivierung kann über *Verwaltung ➜ Datenverwaltung
 ➜ EasyAdmin ➜ Unterrichte* vorgenommen werden.
+
+## Prioritäten für An- und Abwesenheitsvorschläge
+
+Unter *Einstellungen ➜ Unterrichtsbuch* können Prioritäten für An- und Abwesenheitsvorschläge hinterlegt werden. Das
+System sucht aus einigen Quellen (Klausurplan, Entschuldigungen, vorherige Anwesenheiten und Abwesenheitsmeldungen)
+Vorschläge zusammen und präsentiert nur den Vorschlag mit der höchsten Priorität. Dabei kann für die verschiedenen Quellen
+bzw. Abwesenheitsarten eine Priorität festgelegt werden. Bei gleicher Priorität kann nicht vorhergesagt werden, welcher
+Vorschlag gewinnt.
+
+Folgende Prioritäten werden empfohlen:
+
+| Art                                              | Priorität |
+|--------------------------------------------------|-----------|
+| Krankheit, krank entlassen, Auslandsaufenthalte* | 100       |
+| Entschuldigung liegt vor                         | 90        |
+| Beurlaubung*                                     | 80        |
+| Schulveranstaltung*                              | 70        |
+| Klausur                                          | 60        |
+| Abwesenheit in vorheriger Stunde                 | 20        |
+| Sportunfähigkeit*                                | 10        |
+
+Bei mit (*) gekennzeichneten Arten handelt es sich um Abwesenheitsarten (werden von der Schule angelegt).

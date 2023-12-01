@@ -23,7 +23,7 @@ Folgende Rollen wurden gelöscht:
 
 ## Neue Features / Verbesserungen
 
-Der zugrundeliegende Milestone 2.2 ist [auf GitHub](https://github.com/SchulIT/icc/milestone/14?closed=1) zu finden.
+Der zugrundeliegende Milestone 2.3 ist [auf GitHub](https://github.com/SchulIT/icc/milestone/14?closed=1) zu finden.
 
 ### Allgemeine Verbesserungen & Bugfixes
 
@@ -48,12 +48,30 @@ Der entsprechende Menüpunkt ist unter *Unterrichtsbuch* zu finden.
 
 Die Einrichtung ist im [Handbuch](https://docs.schulit.de/icc/admin/guides/integrity_check)
 
+### Verhalten von Abwesenheitsmeldungen überarbeitet
+
+Für Abwesenheitsarten kann nun der Text geändert werden, der ins Unterrichtsbuch übernommen wird. Außerdem kann pro
+Art festgelegt werden, wie der Anwesenheitsstatus (anwesend vs. abwesend) und der Entschuldigungsstatus (entschuldigt, offen)
+bei der Übernahme ins Unterrichtbuch gesetzt werden soll. Das erlaubt z.B. das Melden der Sportunfähigkeit (wo technisch
+gesehen keine Abwesenheit vorliegt).
+
+Es ist außerdem nun möglich, dass Abwesenheitsmeldungen nur für bestimmte Fächer berücksichtigt werden. Beispielsweise
+ist eine *Sportunfähigkeit* nur für das Fach *Sport* zu berücksichtigen. Es ist möglich, mehrere Fächer auszuwählen. 
+
+### Priorität An- bzw. Abwesenheitsvorschläge im Unterrichtsbuch
+
+Es ist nun möglich, in den Einstellungen des Unterrichtsbuchs Prioritäten für die Anwesenheitsvorschläge festzulegen. Das 
+ermöglicht es, für die eigene Schule und die eingepflegten Abwesenheitsarten zugeschnittene Vorschläge machen zu können.
+Das System sammelt zunächst alle möglichen An- oder Abwesenheitsgründe und schlägt nur den vor, der die höchste Priorität
+hat.
+
 ## Upgrade TODO
 
-Das Upgrade beinhaltet eine Migration.
+Das Upgrade beinhaltet mehrere Migrationen.
 
 **HINWEIS:** Dieses Update kann im laufenden Betrieb eingespielt werden.
 
 ### Nach dem Upgrade TODO
 
-... sind keine zusätzlichen Schritte notwendig. Bei Bedarf können die Import-Einstellungen von Untis angepasst werden.
+* Nach Belieben neue Abwesenheitsarten erstellen.
+* Prioritäten für die An- und Abwesenheitsvorschläge unter *Einstellungen ➜ Unterrichtsbuch* festlegen. Empfehlen finden sich im Handbuch.

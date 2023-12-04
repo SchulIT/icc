@@ -10,6 +10,7 @@ use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\StudentsResolver;
 use App\Entity\Grade;
 use App\Entity\LessonAttendance;
+use App\Entity\LessonAttendanceFlag;
 use App\Entity\LessonEntry;
 use App\Entity\Section;
 use App\Entity\Student;
@@ -21,6 +22,7 @@ use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
 use App\Markdown\Markdown;
+use App\Repository\LessonAttendanceFlagRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
@@ -205,7 +207,7 @@ class BookXhrController extends AbstractController {
     #[Route(path: '/entry', name: 'xhr_lesson_entry', methods: ['GET'])]
     public function entry(Request $request, TimetableLessonRepositoryInterface $lessonRepository, SuggestionResolver $suggestionResolver,
                           SerializerInterface $serializer, AbsenceExcuseResolver $excuseResolver, BookSettings $settings,
-                          RemoveSuggestionResolver $removeSuggestionResolver, StudentsResolver $studentsResolver): Response {
+                          RemoveSuggestionResolver $removeSuggestionResolver, StudentsResolver $studentsResolver, LessonAttendanceFlagRepositoryInterface $attendanceFlagRepository): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $lesson = $lessonRepository->findOneByUuid($request->query->get('lesson'));
@@ -248,7 +250,8 @@ class BookXhrController extends AbstractController {
                     'comment' => $attendance->getComment(),
                     'excuse_status' => $attendance->getExcuseStatus(),
                     'has_excuses' => $excuses->count() > 0,
-                    'type' => $attendance->getType()
+                    'type' => $attendance->getType(),
+                    'flags' => $attendance->getFlags()->map(fn(LessonAttendanceFlag $flag) => $flag->getId())->toArray()
                 ];
             }
 
@@ -293,7 +296,8 @@ class BookXhrController extends AbstractController {
             'removals' => $this->removeSuggestions($lesson->getTuition(), $lesson->getDate(), $start, $removeSuggestionResolver),
             'entry' => $entryJson,
             'students' => $students,
-            'has_other_entries' => count($lesson->getEntries()) > 0
+            'has_other_entries' => count($lesson->getEntries()) > 0,
+            'flags' => array_map(fn(LessonAttendanceFlag $flag) => $flag->jsonSerialize(), $attendanceFlagRepository->findAllBySubject($lesson->getTuition()->getSubject())),
         ];
 
         return $this->returnJson($response, $serializer);

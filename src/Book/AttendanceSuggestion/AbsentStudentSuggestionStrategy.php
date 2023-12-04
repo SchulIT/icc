@@ -4,6 +4,7 @@ namespace App\Book\AttendanceSuggestion;
 
 use App\Book\StudentsResolver;
 use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\LessonAttendanceFlag;
 use App\Entity\LessonAttendanceType;
 use App\Entity\StudentAbsence;
 use App\Entity\Subject;
@@ -43,6 +44,7 @@ class AbsentStudentSuggestionStrategy implements SuggestionStrategyInterface {
                 $type->isTypeWithZeroAbsenceLessons(),
                 $type->getBookExcuseStatus(),
                 $this->urlGenerator->generate('show_student_absence', [ 'uuid' => $absence->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL),
+                $absence->getType()->getBookAttendanceType() === LessonAttendanceType::Present ? $absence->getType()->getFlags()->map(fn(LessonAttendanceFlag $flag) => $flag->getId())->toArray() : [ ]
             );
 
             $suggestions[] = new PrioritizedSuggestion(

@@ -3,6 +3,8 @@
 
 @import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
 
+$enable-negative-margins: true;
+
 // Import Bootstrap
 @import '~bootstrap/scss/bootstrap';
 

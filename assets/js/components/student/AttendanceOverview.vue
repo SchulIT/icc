@@ -38,20 +38,20 @@
                          @contextmenu.prevent="changeExcuseStatus(entry)"
                          :class="'w-100 p-3 text-center align-middle ' + (entry.attendance !== null && entry.attendance.attendance.type === 1 ? 'text-bg-success' : '') + (entry.attendance !== null && entry.attendance.attendance.type === 0 ? 'text-bg-danger' : '') + (entry.attendance !== null && entry.attendance.attendance.type === 2 ? 'text-bg-warning' : '') + (entry.entry !== null && entry.entry.is_cancelled ? 'text-bg-secondary' : '') + ' ' + (entry.entry !== null && !entry.entry.is_cancelled && !readonly ? 'pointer' : '')"
                          :title="entry.entry !== null ? entry.entry.lesson.subject + ' (' + entry.entry.lesson.teachers.join(', ') + ')' + (entry.entry.is_cancelled ? ' [' + entry.entry.cancel_reason + ']' : '') : ''">
-                      <div v-if="entry.entry !== null && entry.entry.is_cancelled">
+                      <div v-if="entry.entry !== null && entry.entry.is_cancelled" class="d-inline">
                         <i class="far fa-calendar-times"></i>
                       </div>
-                      <div v-if="entry.attendance !== null && entry.attendance.attendance.type === 1">
+                      <div v-if="entry.attendance !== null && entry.attendance.attendance.type === 1" class="d-inline">
                         <i class="fas fa-user-check"></i>
                       </div>
-                      <div v-if="entry.attendance !== null && entry.attendance.attendance.type === 2">
+                      <div v-if="entry.attendance !== null && entry.attendance.attendance.type === 2" class="d-inline">
                         <i class="fas fa-user-clock"></i>
 
                         <span class="badge text-bg-info ms-2">
                             {{ $trans('book.attendance.late_minutes', { 'count': entry.attendance.attendance.late_minutes}) }}
                         </span>
                       </div>
-                      <div v-if="entry.attendance !== null && entry.attendance.attendance.type === 0">
+                      <div v-if="entry.attendance !== null && entry.attendance.attendance.type === 0" class="d-inline">
                         <span v-if="entry.attendance.has_excuses === true">
                           <i class="fas fa-check"></i>
                         </span>
@@ -64,6 +64,14 @@
                         <span class="badge text-bg-info ms-2" v-if="entry.attendance.attendance.absent_lessons !== (entry.entry.end - entry.entry.start + 1)">
                           {{ entry.attendance.attendance.absent_lessons }} FS
                         </span>
+                      </div>
+                      <div class="d-inline ms-2" v-if="entry.attendance !== null && entry.attendance.attendance.flags !== null && entry.attendance.attendance.flags.length > 0">
+                        <div class="d-inline" v-for="flag in entry.attendance.attendance.flags" :title="flag.description">
+                          <span class="fa-stack fa-1x m-n2">
+                            <i :class="flag.icon + ' fa-stack-1x'"></i>
+                            <i :class="flag.stack_icon + ' fa-stack-1x text-danger'" v-if="flag.stack_icon !== null"></i>
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -292,6 +300,8 @@ export default {
                 'entry': entry,
                 'attendance': attendance
               });
+
+              console.log(attendance);
             }
           }
 

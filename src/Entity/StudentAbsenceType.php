@@ -65,6 +65,15 @@ class StudentAbsenceType implements Stringable {
     private Collection $subjects;
 
     /**
+     * @var Collection<LessonAttendanceFlag>
+     */
+    #[ORM\JoinTable(name: 'student_absence_type_flags')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: LessonAttendanceFlag::class)]
+    private Collection $flags;
+
+    /**
      * @var Collection<UserTypeEntity>
      */
     #[ORM\JoinTable(name: 'student_absence_type_allowed_usertypes')]
@@ -77,6 +86,7 @@ class StudentAbsenceType implements Stringable {
         $this->uuid = Uuid::uuid4();
         $this->subjects = new ArrayCollection();
         $this->allowedUserTypes = new ArrayCollection();
+        $this->flags = new ArrayCollection();
     }
 
     public function getName(): ?string {
@@ -174,6 +184,18 @@ class StudentAbsenceType implements Stringable {
 
     public function getSubjects(): Collection {
         return $this->subjects;
+    }
+
+    public function addFlag(LessonAttendanceFlag $flag): void {
+        $this->flags->add($flag);
+    }
+
+    public function removeFlag(LessonAttendanceFlag $flag): void {
+        $this->flags->removeElement($flag);
+    }
+
+    public function getFlags(): Collection {
+        return $this->flags;
     }
 
     /**

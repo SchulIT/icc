@@ -157,6 +157,18 @@
               <i class="fa fa-user"></i> {{ attendance.student.lastname }}, {{ attendance.student.firstname }}
             </div>
             <div class="align-self-center text-right me-3 flex-shrink-1">
+              <div class="btn-group" v-if="flags.length > 0">
+                <template v-for="flag in flags">
+                  <input type="checkbox" class="btn-check" :checked="attendance.flags.includes(flag.id)" :id="attendance.student.uuid + '_' + flag.id" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][flags][]'" :value="flag.id">
+                  <label class="btn btn-outline-primary btn-sm" :title="flag.description" :for="attendance.student.uuid + '_' + flag.id">
+                    <span class="fa-stack fa-1x m-n2">
+                      <i :class="flag.icon + ' fa-stack-1x'"></i>
+                      <i :class="flag.stack_icon + ' fa-stack-1x text-danger'" v-if="flag.stack_icon !== null"></i>
+                    </span>
+                  </label>
+                </template>
+              </div>
+
               <button class="btn btn-outline-primary btn-sm ms-1 d-inline-block"
                       @click.prevent="attendance.showComment !== true ? attendance.showComment = true : attendance.showComment = false"
                       :title="$trans('label.comment')">
@@ -273,7 +285,8 @@ export default {
     end: Number,
     listStudentsUrl: String,
     listStudyGroupsUrl: String,
-    showSaveButton: Boolean
+    showSaveButton: Boolean,
+    flags: Array
   },
   data() {
     return {
@@ -383,7 +396,12 @@ export default {
           attendance.lessons = 0;
         }
         attendance.excuse_status = absence.excuse_status;
-        attendance.comment = absence.label;
+
+        if(absence.flags !== null && absence.flags.length > 0) {
+          attendance.flags = absence.flags;
+        } else {
+          attendance.comment = absence.label;
+        }
       }
 
       $this.absences.splice($this.absences.indexOf(absence), 1);
@@ -492,7 +510,8 @@ export default {
           uuid: uuid,
           firstname: firstname,
           lastname: lastname
-        }
+        },
+        flags: [ ]
       };
 
       this.attendances.push(attendance);
@@ -552,7 +571,14 @@ export default {
             continue;
           }
 
-          if(attendance.type !== absence.attendance_type || attendance.comment !== absence.label) {
+          let areFlagsAlreadyApplied = true;
+          for(let flag of absence.flags) {
+            if(!attendance.flags.includes(flag)) {
+              areFlagsAlreadyApplied = false;
+            }
+          }
+
+          if(attendance.type !== absence.attendance_type || (absence.flags.length === 0 && attendance.comment !== absence.label) || (absence.flags.length > 0 && areFlagsAlreadyApplied === false)) {
             this.absences.push(absence);
           }
         }

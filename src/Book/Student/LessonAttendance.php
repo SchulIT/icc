@@ -4,6 +4,7 @@ namespace App\Book\Student;
 
 use App\Entity\LessonAttendance as LessonAttendanceEntity;
 use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\LessonAttendanceFlag;
 use DateTime;
 use JsonSerializable;
 
@@ -57,7 +58,8 @@ class LessonAttendance implements JsonSerializable {
                 'late_minutes' => $this->attendance->getLateMinutes(),
                 'absent_lessons' => $this->attendance->getAbsentLessons(),
                 'comment' => $this->attendance->getComment(),
-                'excuse_status' => $this->attendance->getExcuseStatus()
+                'excuse_status' => $this->attendance->getExcuseStatus(),
+                'flags' => $this->attendance->getFlags()->map(fn(LessonAttendanceFlag $flag) => $flag->jsonSerialize())->toArray()
             ]
         ];
     }

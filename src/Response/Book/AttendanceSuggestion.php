@@ -38,13 +38,19 @@ class AttendanceSuggestion {
     #[Serializer\ReadOnlyProperty]
     private readonly ?string $url;
 
-    public function __construct(Student $student, string $label, int $attendanceType, bool $isZeroAbsentLessons = false, int $excuseStatus = LessonAttendanceExcuseStatus::NotSet, ?string $url = null) {
+    #[Serializer\Type('array<int>')]
+    #[Serializer\SerializedName('flags')]
+    #[Serializer\ReadOnlyProperty]
+    private readonly array $flags;
+
+    public function __construct(Student $student, string $label, int $attendanceType, bool $isZeroAbsentLessons = false, int $excuseStatus = LessonAttendanceExcuseStatus::NotSet, ?string $url = null, array $flags = [ ]) {
         $this->student = $student;
         $this->attendanceType = $attendanceType;
         $this->label = $label;
         $this->isZeroAbsentLessons = $isZeroAbsentLessons;
         $this->excuseStatus = $excuseStatus;
         $this->url = $url;
+        $this->flags = $flags;
     }
 
     /**
@@ -87,5 +93,12 @@ class AttendanceSuggestion {
      */
     public function getUrl(): ?string {
         return $this->url;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getFlags(): array {
+        return $this->flags;
     }
 }

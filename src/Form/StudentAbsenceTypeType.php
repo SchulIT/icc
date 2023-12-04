@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\LessonAttendanceFlag;
 use App\Entity\Subject;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -72,7 +73,18 @@ class StudentAbsenceTypeType extends AbstractType {
                 'choice_label' => fn(Subject $subject) => $subject->getName(),
                 'attr' => [
                     'data-choice' => 'true'
-                ],
+                ]
+            ])
+            ->add('flags', EntityType::class, [
+                'label' => 'label.book_flags.label',
+                'help' => 'label.book_flags.help',
+                'required' => false,
+                'class' => LessonAttendanceFlag::class,
+                'multiple' => true,
+                'choice_label' => fn(LessonAttendanceFlag $flag) => $flag->getDescription(),
+                'attr' => [
+                    'data-choice' => 'true'
+                ]
             ])
             ->add('allowedUserTypes', UserTypeEntityType::class, [
                 'label' => 'label.usertypes',

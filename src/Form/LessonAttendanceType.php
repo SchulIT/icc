@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\LessonAttendance;
 use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\LessonAttendanceFlag;
 use App\Entity\Student;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -48,6 +49,13 @@ class LessonAttendanceType extends AbstractType {
                     'book.student.not_excused' => LessonAttendanceExcuseStatus::NotExcused
                 ],
                 'label' => 'label.status'
+            ])
+            ->add('flags', EntityType::class, [
+                'class' => LessonAttendanceFlag::class,
+                'multiple' => true,
+                'choice_label' => fn(LessonAttendanceFlag $flag) => $flag->getDescription(),
+                'required' => false,
+                'expanded' => true
             ])
             ->add('lateMinutes', IntegerType::class, [])
             ->add('absentLessons', IntegerType::class, [])

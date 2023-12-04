@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Stringable;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
@@ -45,8 +47,15 @@ class LessonAttendance implements JsonSerializable, Stringable {
     #[ORM\Column(type: 'integer')]
     private int $excuseStatus = LessonAttendanceExcuseStatus::NotSet;
 
+    #[ORM\ManyToMany(targetEntity: LessonAttendanceFlag::class)]
+    #[ORM\JoinTable]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    private Collection $flags;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
+        $this->flags = new ArrayCollection();
     }
 
     public function getType(): int {
@@ -113,6 +122,21 @@ class LessonAttendance implements JsonSerializable, Stringable {
         return $this;
     }
 
+    public function addFlag(LessonAttendanceFlag $flag): void {
+        $this->flags->add($flag);
+    }
+
+    public function removeFlag(LessonAttendanceFlag $flag): void {
+        $this->flags->removeElement($flag);
+    }
+
+    /**
+     * @return Collection<LessonAttendanceFlag>
+     */
+    public function getFlags(): Collection {
+        return $this->flags;
+    }
+
     public function jsonSerialize(): array {
         return [
             'uuid' => $this->getUuid()->toString(),
@@ -121,7 +145,8 @@ class LessonAttendance implements JsonSerializable, Stringable {
             'minutes' => $this->getLateMinutes(),
             'lessons' => $this->getAbsentLessons(),
             'excuse_status' => $this->getExcuseStatus(),
-            'comment' => $this->getComment()
+            'comment' => $this->getComment(),
+            'flags' => $this->flags->toArray()
         ];
     }
 

@@ -187,6 +187,9 @@ label:
     icon:
         label: Icon
         help: Hier kann eine Font Awesome Icon Klasse eingetragen werden. Dabei handelt es sich um die CSS-Klasse, bspw. fas fa-door-open.
+    stack_icon:
+        label: Oberes Icon
+        help: Icon, dass über dem eigentlichen Icon angezeigt werden soll. Hier kann eine Font Awesome Icon Klasse eingetragen werden. Dabei handelt es sich um die CSS-Klasse, bspw. fas fa-door-open.
     tag: Tag
     weeks: Wochen
     section: Abschnitt
@@ -268,7 +271,7 @@ label:
         help: Beim Erstellen wird zusätzlich eine E-Mail an die folgenden Empfänger versendet.
     book_label:
         label: Bezeichnung im Unterrichtsbuch
-        help: Diese Bezeichnung wird verwendet, wenn ein Abwesenheitsvorschlag ins Unterrichtbuch übernommen wird.
+        help: Diese Bezeichnung wird als Kommentar verwendet, wenn ein Abwesenheitsvorschlag ins Unterrichtbuch übernommen wird.
     book_attendance_type:
         label: Anwesenheitsart im Unterrichtsbuch
         help: Diese Anwesenheitsart wird verwendent, wenn ein Abwesenheitsvorschlag ins Unterrichtbuch übernommen wird.
@@ -278,7 +281,13 @@ label:
     book_subjects:
         label: Fächer berücksichtigen
         help: Die Abwesenheitsmeldung wird nur als Vorschlag für die angegebenen Fächer angezeigt. Ist dieses Feld leer, so werden Vorschläge für alle Fächer erzeugt.
+    book_flags:
+        label: Anwesenheitsmerkmale
+        help: Die folgenden Anwesenheitsmerkmale werden automatisch gesetzt, sofern vorhanden. Wenn ein Merkmal ausgewählt ist, bleibt das Kommentarfeld leer. Die Merkmale werden nur gesetzt, wenn jemand anwesend ist.
     message_expiry_date_inclusive_help: Die Mitteilung wird an diesem Datum noch angezeigt. Personalisierte Uploads und Wahlen sind an diesem Datum noch möglich.
+    flag_subjects:
+        label: Fächer berücksichtigen
+        help: Das Merkmal wird nur für die angegebenen Fächer angezeigt. Ist dieses Feld leer, so wird das Merkmal für alle Fächer angezeigt.
 
 markdown:
     label: Markdown
@@ -1445,6 +1454,22 @@ admin:
             success: Notenkatalog erfolgreich gelöscht
             confirm: 'Soll der Notenkatalog %name% wirklich gelöscht werden? Der Katalog ist aktuell nicht zugeordnet und kann daher gefahrlos gelöscht werden.'
             error: Der Notenkatalog kann nicht gelöscht werden, weil er in einem Notenmodul verwendet wird.
+
+    attendance_flags:
+        label: Anwesenheitsmerkmale
+        empty: Bisher wurden keine Anwesenheitsmerkmale festgelegt.
+        add:
+            label: Neues Merkmal
+            success: Merkmal erfolgreich erstellt
+
+        edit:
+            label: Merkmal bearbeiten
+            success: Merkmal erfolgreich aktualisiert
+
+        remove:
+            label: Merkmal löschen
+            success: Merkmal erfolgreich gelöscht
+            confirm: 'Soll das Merkmal %flag% wirklich gelöscht werden? Dokumentierte Anwesenheiten mit diesem Merkmal verlieren das Merkmal. Die Anwesenheiten werden dabei nicht gelöscht.'
 
 tools:
     label: Tools

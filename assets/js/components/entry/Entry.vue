@@ -134,6 +134,7 @@
                               :list-study-groups-url="studyGroupsUrl"
                               :start="entry.start"
                               :end="entry.end"
+                              :flags="flags"
                               :show-save-button="false"
                               ref="studentComponent"></students>
                   </div>
@@ -286,6 +287,7 @@ export default {
       students: [ ],
       absences: [ ],
       removals: [ ],
+      flags: [ ],
       validation: {
         topic: null,
         start: null,
@@ -383,6 +385,7 @@ export default {
 
             $this.absences = response.data.absences;
             $this.removals = response.data.removals;
+            $this.flags = response.data.flags;
             $this.isInitialized = true;
           })
           .catch(function(error) {
@@ -481,7 +484,8 @@ export default {
             minutes: 0,
             lessons: 0,
             excuse_status: 0,
-            comment: null
+            comment: null,
+            flags: [ ]
           });
         });
       }

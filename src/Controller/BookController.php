@@ -561,17 +561,6 @@ class BookController extends AbstractController {
             $entries = array_merge($entries, $entryRepository->findAllByTuition($tuition, $min, $max));
         }
 
-        $entries = ArrayUtils::createArrayWithKeys(
-            $entries,
-            function(LessonEntry $entry) {
-                $keys = [ ];
-                for($lessonNumber = $entry->getLessonStart(); $lessonNumber <= $entry->getLessonEnd(); $lessonNumber++) {
-                    $keys[] = sprintf('%s_%d', $entry->getLesson()->getDate()->format('Ymd'), $lessonNumber);
-                }
-                return $keys;
-            }
-        );
-
         /**
          * @var string $key
          * @var LessonEntry $entry
@@ -630,7 +619,7 @@ class BookController extends AbstractController {
             'tuitionFilter' => $tuitionFilterView,
             'teacherFilter' => $teacherFilterView,
             'numberOfLessons' => $timetableSettings->getMaxLessons(),
-            'entries' => $entries,
+            'entries' => array_values($entries),
             'comments' => $comments
         ]);
     }

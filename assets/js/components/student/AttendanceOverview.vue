@@ -3,6 +3,14 @@
     <div class="card">
       <div class="table-responsive">
         <table class="table table-bordered table-hover table-striped card-table">
+          <colgroup>
+            <col class="column-lg">
+            <col>
+            <template v-for="lessonNumber in maxLessons">
+              <col class="column-md">
+            </template>
+          </colgroup>
+
           <tbody>
             <template v-for="group in dayGroups">
               <tr>
@@ -24,41 +32,40 @@
                   </template>
                 </td>
                 <template v-for="lesson in days[day]">
-                  <td v-if="lesson.colspan > 0"
-                      :colspan="lesson.colspan"
-                      :class="'text-center align-middle ' + (lesson.attendance !== null && lesson.attendance.attendance.type === 1 ? 'table-success text-success pointer' : '') + (lesson.attendance !== null && lesson.attendance.attendance.type === 0 ? 'table-danger text-danger pointer' : '') + (lesson.attendance !== null && lesson.attendance.attendance.type === 2 ? 'table-warning text-warning pointer' : '') + (lesson.entry !== null && lesson.entry.is_cancelled ? 'table-secondary' : '')"
-                      @click="edit(lesson)"
-                      @contextmenu.prevent="changeExcuseStatus(lesson)"
-                      :title="lesson.entry !== null ? lesson.entry.lesson.subject + ' (' + lesson.entry.lesson.teachers.join(', ') + ')' + (lesson.entry.is_cancelled ? ' [' + lesson.entry.cancel_reason + ']' : '') : ''">
-                      <div v-if="lesson.entry !== null">
-                        <div v-if="lesson.entry !== null && lesson.entry.is_cancelled">
-                            <i class="far fa-calendar-times"></i>
-                        </div>
-                        <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 1">
-                          <i class="fas fa-user-check"></i>
-                        </div>
-                        <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 2">
-                          <i class="fas fa-user-clock"></i>
-
-                          <span class="badge text-bg-info d-block">
-                            {{ $trans('book.attendance.late_minutes', { 'count': lesson.attendance.attendance.late_minutes}) }}
-                          </span>
-                        </div>
-                        <div v-if="lesson.attendance !== null && lesson.attendance.attendance.type === 0">
-                          <div v-if="lesson.attendance.has_excuses === true">
-                            <i class="fas fa-check"></i>
-                          </div>
-                          <div v-if="lesson.attendance.has_excuses === false">
-                            <i class="fas fa-question" v-if="lesson.attendance.attendance.excuse_status === 0 && lesson.attendance.attendance.absent_lessons > 0"></i>
-                            <i class="fas fa-check" v-if="lesson.attendance.attendance.excuse_status === 1 || lesson.attendance.attendance.absent_lessons === 0"></i>
-                            <i class="fas fa-times" v-if="lesson.attendance.attendance.excuse_status === 2"></i>
-                          </div>
-
-                          <span class="badge text-bg-info d-block" v-if="lesson.attendance.attendance.absent_lessons !== (lesson.entry.end - lesson.entry.start + 1)">
-                            {{ lesson.attendance.attendance.absent_lessons }} FS
-                          </span>
-                        </div>
+                  <td class="align-middle p-0" v-if="lesson !== null">
+                    <div v-for="entry in lesson.entries"
+                         @click.prevent="edit(entry)"
+                         @contextmenu.prevent="changeExcuseStatus(entry)"
+                         :class="'w-100 p-3 text-center align-middle ' + (entry.attendance !== null && entry.attendance.attendance.type === 1 ? 'text-bg-success' : '') + (entry.attendance !== null && entry.attendance.attendance.type === 0 ? 'text-bg-danger' : '') + (entry.attendance !== null && entry.attendance.attendance.type === 2 ? 'text-bg-warning' : '') + (entry.entry !== null && entry.entry.is_cancelled ? 'text-bg-secondary' : '') + ' ' + (entry.entry !== null && !entry.entry.is_cancelled && !readonly ? 'pointer' : '')"
+                         :title="entry.entry !== null ? entry.entry.lesson.subject + ' (' + entry.entry.lesson.teachers.join(', ') + ')' + (entry.entry.is_cancelled ? ' [' + entry.entry.cancel_reason + ']' : '') : ''">
+                      <div v-if="entry.entry !== null && entry.entry.is_cancelled">
+                        <i class="far fa-calendar-times"></i>
                       </div>
+                      <div v-if="entry.attendance !== null && entry.attendance.attendance.type === 1">
+                        <i class="fas fa-user-check"></i>
+                      </div>
+                      <div v-if="entry.attendance !== null && entry.attendance.attendance.type === 2">
+                        <i class="fas fa-user-clock"></i>
+
+                        <span class="badge text-bg-info ms-2">
+                            {{ $trans('book.attendance.late_minutes', { 'count': entry.attendance.attendance.late_minutes}) }}
+                        </span>
+                      </div>
+                      <div v-if="entry.attendance !== null && entry.attendance.attendance.type === 0">
+                        <span v-if="entry.attendance.has_excuses === true">
+                          <i class="fas fa-check"></i>
+                        </span>
+                        <span v-if="entry.attendance.has_excuses === false">
+                          <i class="fas fa-question" v-if="entry.attendance.attendance.excuse_status === 0 && entry.attendance.attendance.absent_lessons > 0"></i>
+                          <i class="fas fa-check" v-if="entry.attendance.attendance.excuse_status === 1 || entry.attendance.attendance.absent_lessons === 0"></i>
+                          <i class="fas fa-times" v-if="entry.attendance.attendance.excuse_status === 2"></i>
+                        </span>
+
+                        <span class="badge text-bg-info ms-2" v-if="entry.attendance.attendance.absent_lessons !== (entry.entry.end - entry.entry.start + 1)">
+                          {{ entry.attendance.attendance.absent_lessons }} FS
+                        </span>
+                      </div>
+                    </div>
                   </td>
                 </template>
               </tr>
@@ -265,48 +272,40 @@ export default {
     let $this = this;
     let lessonRange = [...Array(this.maxLessons).keys()].map(i => i + 1);
 
-    this.dayGroups.forEach(function(group) {
-      group.days.forEach(function(day) {
-        let lessons = { };
-        let date = $this.toDate(day);
-        let dateKey = '' + date.getFullYear() + ("0" + (date.getMonth() + 1)).slice(-2) + '' + ("0" + date.getDate()).slice(-2);
+    for(let group of this.dayGroups) {
+      for(let day of group.days) {
+        let lessons = [ ];
 
-        lessonRange.forEach(function(lessonNumber) {
-          let key = dateKey + '_' + lessonNumber;
-          let entry = $this.entries[key] ?? null;
-          let attendance = $this.attendances.filter(a => a.date === day && a.lesson === lessonNumber)[0] ?? null;
+        for(let lessonNumber of lessonRange) {
+          let lessonEntries = {
+            'lessonNumber': lessonNumber,
+            'entries': [ ]
+          };
+          let entries = $this.entries.filter(a => a.lesson.date === day && a.start <= lessonNumber && lessonNumber <= a.end);
 
-          let colspan = 1;
+          for (let entry of entries) {
+            let attendance = $this.attendances.filter(a => a.date === day && a.entry === entry.uuid)[0] ?? null;
 
-          if(entry != null) {
-            colspan = entry.end - entry.start + 1
-
-            if(lessonNumber !== entry.start) {
-              colspan = 0;
+            if(attendance !== null || entry.is_cancelled) {
+              lessonEntries.entries.push({
+                'lesson': lessonNumber,
+                'entry': entry,
+                'attendance': attendance
+              });
             }
           }
 
-          lessons[lessonNumber] = {
-            'lesson': lessonNumber,
-            'entry': entry,
-            'attendance': entry !== null ? attendance : null,
-            'colspan': colspan
-          };
-          
-        });
+          lessons[lessonNumber - 1] = lessonEntries;
+        }
 
         $this.days[day] = lessons;
-      });
-    });
+      }
+    }
 
     this.$nextTick(() => {
-      console.log($this.$el.querySelectorAll('td#date-2023-08-25'));
-
       if(window.location.hash.substring(0, 1) === '#') {
         let id = window.location.hash.substring(1);
         let element = $this.$el.querySelector('td#date-' + id);
-
-        console.log(element);
 
         if(element !== null) {
           element.scrollIntoView({behavior: 'smooth'});

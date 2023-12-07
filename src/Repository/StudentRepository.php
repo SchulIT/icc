@@ -257,10 +257,12 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
         return $paginator;
     }
 
-    public function findAllByTuition(Tuition $tuition, array $excludedStatuses = [], bool $includeStudentsWithAttendance = false) {
+    private function getTuitionQueryBuilder(Tuition $tuition, array $excludedStatuses = [], bool $includeStudentsWithAttendance = false): QueryBuilder {
         $qb = $this->em->createQueryBuilder()
             ->select(['s'])
-            ->from(Student::class, 's');
+            ->from(Student::class, 's')
+            ->orderBy('s.lastname')
+            ->addOrderBy('s.firstname');
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('sInner.id')
@@ -301,8 +303,25 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
                 ->setParameter('excluded', $excludedStatuses);
         }
 
+        return $qb;
+    }
 
+    public function findAllByTuition(Tuition $tuition, array $excludedStatuses = [], bool $includeStudentsWithAttendance = false) {
+        return $this->getTuitionQueryBuilder($tuition, $excludedStatuses, $includeStudentsWithAttendance)->getQuery()->getResult();
+    }
 
-        return $qb->getQuery()->getResult();
+    public function getStudentsByTuitionPaginator(int $itemsPerPage, int &$page, Tuition $tuition, array $excludedStatuses = [], bool $includeStudentsWithAttendance = false): Paginator {
+        if($page < 1) {
+            $page = 1;
+        }
+
+        $offset = ($page - 1) * $itemsPerPage;
+
+        $paginator = new Paginator($this->getTuitionQueryBuilder($tuition, $excludedStatuses, $includeStudentsWithAttendance));
+        $paginator->getQuery()
+            ->setMaxResults($itemsPerPage)
+            ->setFirstResult($offset);
+
+        return $paginator;
     }
 }

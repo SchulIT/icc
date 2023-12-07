@@ -87,10 +87,22 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllByTuition(Tuition $tuition, array $excludedStatuses = [ ], bool $includeStudentsWithAttendance = false);
 
     /**
+     * @param int $itemsPerPage
+     * @param int $page
      * @param StudyGroup[] $studyGroups
      * @return Paginator
      */
     public function getStudentsByStudyGroupsPaginator(int $itemsPerPage, int &$page, array $studyGroups): Paginator;
+
+    /**
+     * @param int $itemsPerPage
+     * @param int $page
+     * @param Tuition $tuition
+     * @param array $excludedStatuses
+     * @param bool $includeStudentsWithAttendance
+     * @return Paginator
+     */
+    public function getStudentsByTuitionPaginator(int $itemsPerPage, int &$page, Tuition $tuition, array $excludedStatuses = [ ], bool $includeStudentsWithAttendance = false): Paginator;
 
     /**
      * @param StudyGroup[] $studyGroups

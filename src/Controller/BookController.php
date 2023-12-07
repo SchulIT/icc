@@ -13,6 +13,7 @@ use App\Book\Lesson;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\StudentInfo;
 use App\Book\Student\StudentInfoResolver;
+use App\Book\StudentsResolver;
 use App\Entity\BookIntegrityCheckViolation;
 use App\Entity\DateLesson;
 use App\Entity\ExcuseNote;
@@ -463,7 +464,7 @@ class BookController extends AbstractController {
     #[Route(path: '/student', name: 'book_students')]
     public function students(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                              TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository, StudentInfoResolver $studentInfoResolver,
-                             Sorter $sorter, Request $request): Response {
+                             Sorter $sorter, StudentsResolver $studentsResolver, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -482,8 +483,7 @@ class BookController extends AbstractController {
             $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()], $sectionFilterView->getCurrentSection());
             $paginator = $studentRepository->getStudentsByGradePaginator(self::StudentsPerPage, $page, $gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
         } else if($tuitionFilterView->getCurrentTuition() !== null) {
-            $tuitions = [ $tuitionFilterView->getCurrentTuition() ];
-            $paginator = $studentRepository->getStudentsByStudyGroupsPaginator(self::StudentsPerPage, $page, [$tuitionFilterView->getCurrentTuition()->getStudyGroup()]);
+            $paginator = $studentsResolver->resolvePaginated(self::StudentsPerPage, $page, $tuitionFilterView->getCurrentTuition(), false, true);
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
             $studyGroups = array_map(fn(Tuition $tuition) => $tuition->getStudyGroup(), $tuitions);

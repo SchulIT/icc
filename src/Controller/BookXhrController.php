@@ -275,7 +275,7 @@ class BookXhrController extends AbstractController {
         $students = [ ];
 
         if($entry === null) {
-            foreach($studentsResolver->resolve($lesson->getTuition(), true, false) as $student) {
+            foreach($studentsResolver->resolve($lesson->getTuition()) as $student) {
                 $students[] = $this->getStudent($student);
             }
         } else {

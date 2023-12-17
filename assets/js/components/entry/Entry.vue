@@ -40,7 +40,7 @@
     <div class="modal fade entry">
       <div class="modal-dialog modal-xl">
         <div class="modal-content">
-          <form :action="action" method="post">
+          <form :action="action" method="post" autocomplete="off">
             <div class="modal-header">
               <h5 class="modal-title me-auto">{{ $trans('book.entry.label') }}</h5>
 

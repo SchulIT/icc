@@ -45,12 +45,7 @@ class StudentAbsencePersistSubscriber {
 
             $message = (new StudentAbsenceMessage())
                 ->setAbsence($entity);
-            $translationKey = null;
-
-            $oldDate = null;
-            $newDate = null;
-            $oldLesson = 0;
-            $newLesson = 0;
+            $messages = [ ];
 
             // Step 2: detect change
             if(array_key_exists(self::FromDateProperty, $changeset) || array_key_exists(self::FromLessonProperty, $changeset)) {
@@ -59,6 +54,13 @@ class StudentAbsencePersistSubscriber {
                 $oldLesson = $this->getValueFromChangesetOrEntityValue($entity->getFrom()->getLesson(), $changeset[self::FromLessonProperty] ?? null, 0);
                 $newLesson = $this->getValueFromChangesetOrEntityValue($entity->getFrom()->getLesson(), $changeset[self::FromLessonProperty] ?? null, 1);
                 $translationKey = 'absences.students.edit.from_date';
+
+                $messages[] = $this->translator->trans($translationKey, [
+                    '%oldDate%' => $oldDate->format($this->translator->trans('date.format')),
+                    '%newDate%' => $newDate->format($this->translator->trans('date.format')),
+                    '%oldLesson%' => $oldLesson,
+                    '%newLesson%' => $newLesson
+                ]);
             }
 
             if(array_key_exists(self::UntilDateProperty, $changeset) || array_key_exists(self::UntilLessonProperty, $changeset)) {
@@ -67,20 +69,20 @@ class StudentAbsencePersistSubscriber {
                 $oldLesson = $this->getValueFromChangesetOrEntityValue($entity->getUntil()->getLesson(), $changeset[self::UntilLessonProperty] ?? null, 0);
                 $newLesson = $this->getValueFromChangesetOrEntityValue($entity->getUntil()->getLesson(), $changeset[self::UntilLessonProperty] ?? null, 1);
                 $translationKey = 'absences.students.edit.until_date';
-            }
 
-            if($translationKey === null) {
-                return;
-            }
-
-            $message->setMessage(
-                $this->translator->trans($translationKey, [
+                $messages[] = $this->translator->trans($translationKey, [
                     '%oldDate%' => $oldDate->format($this->translator->trans('date.format')),
                     '%newDate%' => $newDate->format($this->translator->trans('date.format')),
                     '%oldLesson%' => $oldLesson,
                     '%newLesson%' => $newLesson
-                ])
-            );
+                ]);
+            }
+
+            if(count($messages) === 0) {
+                return;
+            }
+
+            $message->setMessage(implode(' ', $messages));
 
             $eventArgs->getObjectManager()->persist($message);
             $eventArgs->getObjectManager()->flush();

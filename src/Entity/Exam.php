@@ -60,13 +60,10 @@ class Exam {
     private $tuitions;
 
     /**
-     * @var Collection<Student>
+     * @var Collection<ExamStudent>
      */
-    #[ORM\JoinTable(name: 'exam_students')]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
-    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
-    #[ORM\ManyToMany(targetEntity: Student::class, cascade: ['persist'])]
-    private $students;
+    #[ORM\OneToMany(mappedBy: 'exam', targetEntity: ExamStudent::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $students;
 
     /**
      * @var Collection<ExamSupervision>
@@ -161,17 +158,18 @@ class Exam {
     }
 
     /**
-     * @return Collection<Student>
+     * @return Collection<ExamStudent>
      */
     public function getStudents(): Collection {
         return $this->students;
     }
 
-    public function addStudent(Student $student) {
+    public function addStudent(ExamStudent $student) {
+        $student->setExam($this);
         $this->students->add($student);
     }
 
-    public function removeStudent(Student $student) {
+    public function removeStudent(ExamStudent $student) {
         $this->students->removeElement($student);
     }
 

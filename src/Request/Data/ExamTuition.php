@@ -24,6 +24,14 @@ class ExamTuition {
     #[Serializer\Type('array<string>')]
     private array $teachers = [ ];
 
+    /**
+     * ID der SuS, die an der Klausur dieses Unterrichtes teilnehmen.
+     *
+     * @var string[]
+     */
+    #[Serializer\Type('array<string>')]
+    private array $students = [ ];
+
     public function getSubjectOrCourse(): ?string {
         return $this->subjectOrCourse;
     }
@@ -61,5 +69,19 @@ class ExamTuition {
     public function setTeachers(array $teachers): ExamTuition {
         $this->teachers = $teachers;
         return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getStudents(): array {
+        return $this->students;
+    }
+
+    /**
+     * @param string[] $students
+     */
+    public function setStudents(array $students): void {
+        $this->students = $students;
     }
 }

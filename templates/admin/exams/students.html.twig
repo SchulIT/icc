@@ -48,8 +48,23 @@
                     </span>
                 </div>
             </div>
+        </div>
+    </div>
 
-            {{ form_widget(form) }}
+    <div class="card">
+        <div class="card-header">{{ 'label.students_simple'|trans }}</div>
+        <div class="card-body">
+            <div data-collection="students" data-prototype="{{ form_widget(form.students.vars.prototype)|e('html_attr') }}">
+                {% for student in form.students %}
+                    {{ form_widget(student) }}
+                {% endfor %}
+            </div>
+
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-outline-primary btn-sm btn-add" data-collection="students">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
         </div>
     </div>
 
@@ -64,4 +79,8 @@
     </div>
 
     {{ form_end(form) }}
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/collection.js') }}"></script>
 {% endblock %}

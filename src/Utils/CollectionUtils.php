@@ -24,15 +24,17 @@ class CollectionUtils {
     /**
      * Synchronises a Collection with $targetEntities based on the given $idSelector.
      */
-    public static function synchronize(Collection $collection, array $targetEntities, Closure $idSelector) {
+    public static function synchronize(Collection $collection, array $targetEntities, Closure $idSelector, Closure|null $updateFunc = null) {
         $currentCollection = clone $collection;
         $currentIds = array_map($idSelector, $collection->toArray());
 
         $targetEntitiesIds = [ ];
+        $targetEntitiesById = [ ];
 
         foreach($targetEntities as $entity) {
             $entityId = $idSelector($entity);
             $targetEntitiesIds[] = $entityId;
+            $targetEntitiesById[$entityId] = $entity;
 
             if(!in_array($entityId, $currentIds)) {
                 $collection->add($entity);
@@ -44,6 +46,8 @@ class CollectionUtils {
 
             if(!in_array($itemId, $targetEntitiesIds)) {
                 $collection->removeElement($item);
+            } else if($updateFunc !== null) {
+                $updateFunc($item, $targetEntitiesById[$itemId]);
             }
         }
     }

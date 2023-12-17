@@ -1,3 +1,5 @@
+import Choices from "choices.js";
+
 document.addEventListener('DOMContentLoaded', function() {
     function deleteOption() {
         let selector = this.getAttribute('data-selector') ?? '.mb-3';
@@ -30,6 +32,23 @@ document.addEventListener('DOMContentLoaded', function() {
         let newForm = htmlToElement(newFormHtml);
 
         collectionHolder.appendChild(newForm);
+
+        newForm.querySelectorAll('[data-choice=true]').forEach(function(el) {
+            let removeItemButton = false;
+
+            if(el.getAttribute('multiple') !== null) {
+                removeItemButton = true;
+            }
+
+            el.choices = new Choices(el, {
+                itemSelectText: '',
+                shouldSort: false,
+                shouldSortItems: false,
+                removeItemButton: removeItemButton,
+                searchResultLimit: 10,
+                searchFields: ['label']
+            });
+        });
 
         newForm.querySelectorAll('.btn-delete').forEach(function(el) {
             el.removeEventListener('click', deleteOption, false);

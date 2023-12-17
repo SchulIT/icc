@@ -159,8 +159,8 @@
             <div class="align-self-center text-right me-3 flex-shrink-1">
               <div class="btn-group" v-if="flags.length > 0">
                 <template v-for="flag in flags">
-                  <input type="checkbox" class="btn-check" :checked="attendance.flags.includes(flag.id)" :id="attendance.student.uuid + '_' + flag.id" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][flags][]'" :value="flag.id">
-                  <label class="btn btn-outline-primary btn-sm" :title="flag.description" :for="attendance.student.uuid + '_' + flag.id">
+                  <input type="checkbox" class="btn-check" autocomplete="off" :checked="attendance.flags.includes(flag.id)" :id="uniquePrefix + '_' + attendance.student.uuid + '_' + flag.id" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][flags][]'" :value="flag.id">
+                  <label class="btn btn-outline-primary btn-sm" :title="flag.description" :for="uniquePrefix + '_' + attendance.student.uuid + '_' + flag.id">
                     <span class="fa-stack fa-1x m-n2">
                       <i :class="flag.icon + ' fa-stack-1x'"></i>
                       <i :class="flag.stack_icon + ' fa-stack-1x text-danger'" v-if="flag.stack_icon !== null"></i>
@@ -295,7 +295,8 @@ export default {
       //attendances: this.attendancedata,
       selectedAttendances: [ ],
       absences: [ ],
-      removals: [ ]
+      removals: [ ],
+      uniquePrefix: (Math.random() + 1).toString(16).substring(12)
     }
   },
   watch: {

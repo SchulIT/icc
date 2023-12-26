@@ -47,6 +47,9 @@ class LessonAttendance implements JsonSerializable, Stringable {
     #[ORM\Column(type: 'integer')]
     private int $excuseStatus = LessonAttendanceExcuseStatus::NotSet;
 
+    /**
+     * @var Collection<LessonAttendanceFlag>
+     */
     #[ORM\ManyToMany(targetEntity: LessonAttendanceFlag::class)]
     #[ORM\JoinTable]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]

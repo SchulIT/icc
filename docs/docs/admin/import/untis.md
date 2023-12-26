@@ -138,6 +138,25 @@ hinterlegt werden.
 Die Regeln für Klausurschreibende werden unter *Verwaltung ➜ Einstellungen ➜ Import* hinterlegt.
 :::
 
+#### Zuordnung der Klausurschreibenden zu Unterrichten
+
+Importiert man die Klausurschreibenden aus Untis, so ist für das System leider die genaue Kurszuordnung nicht ersichtlich. 
+Das System rät daher die Kurszuordnung der Klausurschreibenden folgendermaßen:
+
+Prüfe für alle der Klausur zugewiesenen Kurse und Klausurschreibenden:
+
+* wenn der Lernende in einem der zugewiesenen Kurse ist:
+  * prüfe, ob es eine "Regel für Klausurschreibende" für die Klasse des Lernenden gibt. Falls ja, überprüfe Regel und setze Kurs für den Lernenden entsprechend
+  * falls es für die Klasse des Lernenden keine Regel gibt, setze den Kurs
+
+Für den Fall, die Prüfung für mehrere Kurse zutreffend ist, so wird kein Kurs gesetzt.
+
+:::tip Gewusst
+Das Problem sollte nur bei Nachschreibklausuren auftreten (anderenfalls hat man einen Fehler in den Plandaten und ein Lernender schreibt zwei Klausuren parallel).
+Um das Problem zu lösen, kann man solche Klausuren in Untis splitten, sodass pro Klausur nur ein Kurs enthalten ist. 
+Dann ist die Zuordnung eindeutig und problemlos möglich.
+:::tip
+
 ### Aufsichten
 
 Die Pausenaufsichten können über *Import ➜ Aufsichten* mithilfe der GPU009.txt importiert werden. Dazu muss

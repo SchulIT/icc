@@ -65,6 +65,10 @@ ermöglicht es, für die eigene Schule und die eingepflegten Abwesenheitsarten z
 Das System sammelt zunächst alle möglichen An- oder Abwesenheitsgründe und schlägt nur den vor, der die höchste Priorität
 hat.
 
+### Klausurkurse erkennbar
+
+Das System versucht nun, bei Klausurschreibenden die entsprechenden Kurse zuzuordnen. Siehe [Handbuch](https://docs.schulit.de/icc/admin/import/untis/#zuordnung-der-klausurschreibenden-zu-unterrichten)
+
 ## Upgrade TODO
 
 Das Upgrade beinhaltet mehrere Migrationen.

@@ -11,8 +11,6 @@ vich_uploader:
             directory_namer: App\Filesystem\MessageFilesystem
             namer: Vich\UploaderBundle\Naming\UniqidNamer
             delete_on_update: false
-        wiki:
-            upload_destination: oneup_flysystem.wiki_filesystem
         documents:
             upload_destination: oneup_flysystem.documents_filesystem
             directory_namer: App\Filesystem\DocumentFilesystem

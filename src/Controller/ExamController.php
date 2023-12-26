@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Dashboard\Absence\AbsenceResolver;
 use App\Dashboard\Absence\ExamStudentsResolver;
 use App\Dashboard\AbsentStudent;
-use App\Date\WeekOfYear;
 use App\Entity\Exam;
+use App\Entity\ExamStudent;
 use App\Entity\IcsAccessToken;
 use App\Entity\IcsAccessTokenType;
 use App\Entity\MessageScope;
@@ -15,7 +15,7 @@ use App\Entity\Student;
 use App\Entity\User;
 use App\Export\ExamIcsExporter;
 use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
-use App\Grouping\ExamWeekGroup;
+use App\Grouping\ExamStudentTuitionStrategy;
 use App\Grouping\ExamWeekStrategy;
 use App\Grouping\Grouper;
 use App\Message\DismissedMessagesHelper;
@@ -27,6 +27,8 @@ use App\Security\Voter\ExamVoter;
 use App\Security\Voter\StudentAbsenceVoter;
 use App\Settings\ExamSettings;
 use App\Sorting\ExamDateLessonStrategy as ExamDateSortingStrategy;
+use App\Sorting\ExamStudentStrategy;
+use App\Sorting\ExamStudentTuitionGroupStrategy;
 use App\Sorting\ExamWeekGroupStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
@@ -37,8 +39,6 @@ use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\TeacherFilter;
-use Closure;
-use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -192,14 +192,11 @@ class ExamController extends AbstractControllerWithMessages {
     }
 
     #[Route(path: '/{uuid}', name: 'show_exam', requirements: ['id' => '\d+'])]
-    public function show(Exam $exam, AbsenceResolver $absenceResolver): Response {
+    public function show(Exam $exam, AbsenceResolver $absenceResolver, ): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Show, $exam);
 
-        $studyGroups = [ ];
         /** @var Student[] $students */
-        $students = $exam->getStudents()->toArray();
-
-        $this->sorter->sort($students, StudentStrategy::class);
+        $students = $exam->getStudents()->map(fn(ExamStudent $es) => $es->getStudent())->toArray();
 
         $absentStudents = [ ];
         if($this->isGranted(StudentAbsenceVoter::CanViewAny)) {
@@ -207,7 +204,7 @@ class ExamController extends AbstractControllerWithMessages {
                 $absenceResolver->resolve(
                     $exam->getDate(),
                     $exam->getLessonStart(),
-                    $exam->getStudents()->toArray(),
+                    $students,
                     [
                         ExamStudentsResolver::class
                     ]
@@ -216,10 +213,13 @@ class ExamController extends AbstractControllerWithMessages {
             );
         }
 
+        $groups = $this->grouper->group($exam->getStudents()->toArray(), ExamStudentTuitionStrategy::class);
+        $this->sorter->sort($groups, ExamStudentTuitionGroupStrategy::class);
+        $this->sorter->sortGroupItems($groups, ExamStudentStrategy::class);
+
         return $this->renderWithMessages('exams/details.html.twig', [
             'exam' => $exam,
-            'students' => $students,
-            'studyGroups' => $studyGroups,
+            'groups' => $groups,
             'absentStudents' => $absentStudents,
             'last_import' => $this->importDateTypeRepository->findOneByEntityClass(Exam::class)
         ]);

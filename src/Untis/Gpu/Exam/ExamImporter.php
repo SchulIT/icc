@@ -4,6 +4,7 @@ namespace App\Untis\Gpu\Exam;
 
 use App\Import\ExamsImportStrategy;
 use App\Import\Importer;
+use App\Import\ImportResult;
 use App\Repository\StudentRepositoryInterface;
 use App\Request\Data\ExamData;
 use App\Request\Data\ExamsData;
@@ -20,7 +21,7 @@ class ExamImporter {
     {
     }
 
-    public function import(Reader $examReader, Reader $tuitionReader, DateTime $start, DateTime $end, bool $suppressNotifications) {
+    public function import(Reader $examReader, Reader $tuitionReader, DateTime $start, DateTime $end, bool $suppressNotifications): ImportResult {
         $gpuExams = $this->examReader->readGpu($examReader);
         $tuitionMap = $this->computeTuitionMap($this->tuitionReader->readGpu($tuitionReader));
 

@@ -45,12 +45,18 @@ class ExamData {
     private ?array $tuitions = null;
 
     /**
-     * List of external student IDs which attend this exam.
+     * Externe ID von SuS, die an der Klausur teilnehmen. Wenn SuS hier eingetragen werden,
+     * kann das System nicht hinterlegen, welche Klausur (bezogen auf den Unterricht) das
+     * Kind schreibt.
      *
      * @var string[]
+     * @deprecated Bitte ab sofort unter `tuitions` die SuS pro Kurs definieren.
      */
     #[Serializer\Type('array<string>')]
     private ?array $students = null;
+
+    #[Serializer\Type('bool')]
+    private bool $computeStudentsFromRules = true;
 
     /**
      * Acronyms of the teachers (their acronyms) which supervise the exam.
@@ -140,6 +146,15 @@ class ExamData {
      */
     public function setStudents(array $students): ExamData {
         $this->students = $students;
+        return $this;
+    }
+
+    public function isComputeStudentsFromRules(): bool {
+        return $this->computeStudentsFromRules;
+    }
+
+    public function setComputeStudentsFromRules(bool $computeStudentsFromRules): ExamData {
+        $this->computeStudentsFromRules = $computeStudentsFromRules;
         return $this;
     }
 

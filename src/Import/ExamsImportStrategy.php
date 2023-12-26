@@ -3,12 +3,14 @@
 namespace App\Import;
 
 use App\Entity\Exam;
+use App\Entity\ExamStudent;
 use App\Entity\ExamSupervision;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Event\ExamImportEvent;
+use App\Exam\ExamStudentsResolver;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
@@ -24,11 +26,9 @@ use App\Utils\ArrayUtils;
 use App\Utils\CollectionUtils;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategyInterface, InitializeStrategyInterface {
+class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategyInterface {
 
-    private array $rules = [ ];
-
-    public function __construct(private ExamRepositoryInterface $examRepository, private TuitionRepositoryInterface $tuitionRepository, private StudentRepositoryInterface $studentRepository, private TeacherRepositoryInterface $teacherRepository, private EventDispatcherInterface $dispatcher, private RoomRepositoryInterface $roomRepository, private ImportSettings $importSettings, private SectionResolverInterface $sectionResolver)
+    public function __construct(private readonly ExamRepositoryInterface $examRepository, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly StudentRepositoryInterface $studentRepository, private readonly TeacherRepositoryInterface $teacherRepository, private readonly EventDispatcherInterface $dispatcher, private readonly RoomRepositoryInterface $roomRepository, private readonly SectionResolverInterface $sectionResolver, private readonly ExamStudentsResolver $examStudentsResolver)
     {
     }
 
@@ -142,6 +142,7 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
             }
         }
 
+        $students = [ ];
         $tuitions = [ ];
 
         foreach($data->getTuitions() as $tuitionData) {
@@ -154,7 +155,18 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
             if(count($resolvedTuitions) === 0) {
                 throw new ImportException(sprintf('Tuition for (%s; %s; %s) on exam ID "%s" was not found.', implode(',', $tuitionData->getGrades()), implode(',', $tuitionData->getTeachers()), $tuitionData->getSubjectOrCourse(), $data->getId()));
             } else if(count($resolvedTuitions) === 1) {
-                $tuitions[] = array_shift($resolvedTuitions);
+                $resolvedTuition = array_shift($resolvedTuitions);
+                $tuitions[] = $resolvedTuition;
+
+                if($data->isComputeStudentsFromRules() === false) {
+                    $students = array_merge(
+                        $students,
+                        array_map(
+                            fn(Student $student) => (new ExamStudent())->setExam($entity)->setStudent($student)->setTuition($resolvedTuition),
+                            $this->studentRepository->findAllByExternalId($tuitionData->getStudents())
+                        )
+                    );
+                }
             } else {
                 throw new ImportException(sprintf('Tuition for (%s; %s; %s) on exam ID "%s" is ambigious.', implode(',', $tuitionData->getGrades()), implode(',', $tuitionData->getTeachers()), $tuitionData->getSubjectOrCourse(), $data->getId()));
             }
@@ -166,39 +178,23 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
             fn(Tuition $tuition) => $tuition->getId()
         );
 
-        if(count($data->getStudents()) > 0) {
-            $students = $this->studentRepository->findAllByExternalId($data->getStudents());
+        if($data->isComputeStudentsFromRules()) {
+            $students = $this->examStudentsResolver->resolveExamStudentsByRules($entity);
         } else {
-            $students = $this->resolveStudentsFromRules($entity, $section);
+            // for compatibility reasons...
+            $examStudents = array_map(
+                fn(Student $student) => (new ExamStudent())->setExam($entity)->setStudent($student)->setTuition(null),
+                $this->studentRepository->findAllByExternalId($data->getStudents())
+            );
+
+            $students = array_merge(
+                $students,
+                $this->examStudentsResolver->resolveExamStudentsFromGivenStudents($entity, $examStudents)
+            );
+            // end
         }
 
-        CollectionUtils::synchronize(
-            $entity->getStudents(),
-            $students,
-            fn(Student $student) => $student->getId()
-        );
-    }
-
-    /**
-     * @return Student[]
-     */
-    private function resolveStudentsFromRules(Exam $exam, Section $section): array {
-        $students = [ ];
-
-        /** @var Tuition $tuition */
-        foreach($exam->getTuitions() as $tuition) {
-            /** @var StudyGroupMembership $membership */
-            foreach($tuition->getStudyGroup()->getMemberships() as $membership) {
-                $student = $membership->getStudent();
-                $grade = $student->getGrade($section);
-
-                if($grade !== null && array_key_exists($grade->getName(), $this->rules) && in_array($membership->getType(), $this->rules[$grade->getName()])) {
-                    $students[$student->getId()] = $student;
-                }
-            }
-        }
-
-        return array_values($students);
+        $this->examStudentsResolver->setExamStudents($entity, $students);
     }
 
     /**
@@ -244,24 +240,6 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
 
         if($request->isSuppressNotifications() === false) {
             $this->dispatcher->dispatch(new ExamImportEvent($result->getAdded(), $result->getUpdated(), $result->getRemoved()));
-        }
-    }
-
-    public function initialize($requestData): void {
-        $currentSection = $this->sectionResolver->getCurrentSection();
-
-        foreach($this->importSettings->getExamRules() as $rule) {
-            $grades = array_map('trim', explode(',', $rule['grades']));
-            $sections = array_map('trim', explode(',', $rule['sections']));
-            $types = array_map('trim',  explode(',', $rule['types']));
-
-            foreach($sections as $section) {
-                if($section == $currentSection->getNumber()) {
-                    foreach($grades as $grade) {
-                        $this->rules[$grade] = $types;
-                    }
-                }
-            }
         }
     }
 }

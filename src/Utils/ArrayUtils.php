@@ -119,6 +119,10 @@ class ArrayUtils {
     }
 
     public static function iterableToArray(iterable $items): array {
+        if(is_array($items)) {
+            return $items;
+        }
+
         $array = [ ];
 
         foreach($items as $item) {

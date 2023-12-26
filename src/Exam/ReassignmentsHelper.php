@@ -3,8 +3,10 @@
 namespace App\Exam;
 
 use App\Entity\Exam;
+use App\Entity\ExamStudent;
 use App\Entity\Section;
 use App\Entity\Student;
+use App\Entity\StudyGroupMembership;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Utils\ArrayUtils;
@@ -71,12 +73,37 @@ class ReassignmentsHelper {
         $this->examRepository->beginTransaction();
 
         foreach ($reassignments->getExamsToRemove() as $exam) {
-            $exam->removeStudent($student);
-            $this->examRepository->persist($exam);
+            $toRemove = $exam->getStudents()->filter(fn(ExamStudent $examStudent) => $examStudent->getStudent()->getId() === $student->getId())->first();
+
+            if($toRemove !== null && $toRemove !== false) {
+                $exam->removeStudent($toRemove);
+                $this->examRepository->persist($exam);
+            }
         }
 
         foreach($reassignments->getExamsToAdd() as $exam) {
-            $exam->addStudent($student);
+            $toAdd = (new ExamStudent())
+                ->setExam($exam)
+                ->setStudent($student);
+
+            $tuition = null;
+
+            if($exam->getTuitions()->count() > 0) {
+                foreach ($exam->getTuitions() as $examTuition) {
+                    $possibleTuitions = $examTuition->getStudyGroup()->getMemberships()->filter(fn(StudyGroupMembership $membership) => $membership->getStudent()->getId() === $student->getId());
+                    if($possibleTuitions->count() === 1) {
+                        $tuition = $possibleTuitions->first();
+                    } else if($possibleTuitions->count() > 1) {
+                        $tuition = null;
+                    }
+                }
+            } else {
+                $tuition = $exam->getTuitions()->first();
+            }
+
+            $toAdd->setTuition($tuition);
+
+            $exam->addStudent($toAdd);
             $this->examRepository->persist($exam);
         }
 

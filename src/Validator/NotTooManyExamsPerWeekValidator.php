@@ -37,8 +37,8 @@ class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
 
         $examWeek = $value->getDate()->format('W');
 
-        /** @var Student $student */
-        foreach($value->getStudents() as $student) {
+        foreach($value->getStudents() as $examStudent) {
+            $student = $examStudent->getStudent();
             $numberOfExams = 1;
             $exams = $this->findAllByStudent($student);
 

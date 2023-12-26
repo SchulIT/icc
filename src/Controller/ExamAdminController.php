@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\ExamStudent;
+use App\Exam\ExamStudentsResolver;
 use App\Exam\ReassignmentsHelper;
 use App\Section\SectionResolverInterface;
 use DateTime;
@@ -41,7 +43,7 @@ class ExamAdminController extends AbstractController {
     private const NumberOfExams = 25;
     private const ReassignCsrfId = 'reassign_exams';
 
-    public function __construct(RefererHelper $redirectHelper, private ExamRepositoryInterface $repository) {
+    public function __construct(RefererHelper $redirectHelper, private ExamRepositoryInterface $repository, private readonly ExamStudentsResolver $examStudentsResolver) {
         parent::__construct($redirectHelper);
     }
 
@@ -108,7 +110,10 @@ class ExamAdminController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             if($form->get('group_tuitions')->get('addStudents')->getData() === true) {
-                $this->addAllStudents($exam);
+                $this->examStudentsResolver->setExamStudents(
+                    $exam,
+                    $this->examStudentsResolver->resolveExamStudentsFromMembership($exam)
+                );
             }
 
             $this->repository->persist($exam);
@@ -203,7 +208,10 @@ class ExamAdminController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             if($form->get('group_tuitions')->get('addStudents')->getData() === true) {
-                $this->addAllStudents($exam);
+                $this->examStudentsResolver->setExamStudents(
+                    $exam,
+                    $this->examStudentsResolver->resolveExamStudentsFromMembership($exam)
+                );
             }
 
             $this->repository->persist($exam);
@@ -302,27 +310,6 @@ class ExamAdminController extends AbstractController {
     }
 
     /**
-     * Adds all students of the related tuitions to the exam (which means they attend to this exam)
-     */
-    private function addAllStudents(Exam $exam): void {
-        $students = [];
-
-        /** @var Tuition $tuition */
-        foreach ($exam->getTuitions() as $tuition) {
-            /** @var StudyGroupMembership $membership */
-            foreach ($tuition->getStudyGroup()->getMemberships() as $membership) {
-                $students[] = $membership->getStudent();
-            }
-        }
-
-        CollectionUtils::synchronize(
-            $exam->getStudents(),
-            $students,
-            fn(Student $student) => $student->getId()
-        );
-    }
-
-    /**
      * @param Tuition[] $tuitions
      */
     private function bulkCreateExams(int $number, array $tuitions, bool $addStudents): void {
@@ -337,7 +324,7 @@ class ExamAdminController extends AbstractController {
 
                 if($addStudents === true) {
                     foreach ($students as $student) {
-                        $exam->addStudent($student);
+                        $exam->addStudent((new ExamStudent())->setStudent($student)->setTuition($tuition)->setExam($exam));
                     }
                 }
 

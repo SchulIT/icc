@@ -341,6 +341,10 @@ user:
     display_name: "%lastname%, %firstname%"
 
 exams:
+    details:
+        tuition_unavailable:
+            label: Unterricht nicht zugeordnet
+            help: Bei diesen Klausurschreibenden konnte der Unterricht nicht zugeordnet werden
     export:
         title: Klausurplan
         description: "Klausurplan für %user%"

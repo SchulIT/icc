@@ -14,39 +14,52 @@
     {% include "_includes/exam.html.twig" with { exam: exam, hideDetails: true, showDate: true, header: 'plans.exam.label' } %}
 
     {% if is_granted('details', exam) %}
-    <div class="card">
-        <div class="card-header">{{ 'plans.exam.students'|trans }} <span class="badge text-bg-primary rounded-pill">{{ exam.students|length }}</span></div>
+        {% for group in groups %}
+            <div class="card">
+                <div class="card-header">
+                    {% if group.tuition is not null %}
+                        {{ group.tuition.name }}
+                    {% else %}
+                        {{ 'exams.details.tuition_unavailable.label'|trans }}
+                        <span class="badge text-bg-secondary rounded-pill" title="{{ 'exams.details.tuition_unavailable.help'|trans }}"><i class="fas fa-question"></i> </span>
+                    {% endif %}
 
-        <div class="table-responsive">
-            <table class="table table-striped table-hover table-bordered card-table">
-                <colgroup>
-                    <col class="column-lg">
-                    <col>
-                </colgroup>
-                <thead>
-                <tr>
-                    <th>{{ 'label.lastname'|trans }}</th>
-                    <th>{{ 'label.firstname'|trans }}</th>
-                </tr>
-                </thead>
+                    <span class="badge text-bg-primary rounded-pill">{{ group.students|length }}</span>
+                </div>
 
-                <tbody>
-                    {% for student in students %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-bordered card-table">
+                        <colgroup>
+                            <col class="column-lg">
+                            <col>
+                        </colgroup>
+                        <thead>
                         <tr>
-                            <td>{{ student.lastname }}</td>
-                            <td>
-                                {{ student.firstname }}
-
-                                {% if absentStudents[student.uuid.toString] is defined %}
-                                    <span class="badge text-bg-warning">{{ 'book.attendance.type.absent'|trans }}</span>
-                                {% endif %}
-                            </td>
+                            <th>{{ 'label.lastname'|trans }}</th>
+                            <th>{{ 'label.firstname'|trans }}</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+                        </thead>
+
+                        <tbody>
+                        {% for examStudent in group.students %}
+                            {% set student = examStudent.student %}
+                            <tr>
+                                <td>{{ student.lastname }}</td>
+                                <td>
+                                    {{ student.firstname }}
+
+                                    {% if absentStudents[student.uuid.toString] is defined %}
+                                        <span class="badge text-bg-warning">{{ 'book.attendance.type.absent'|trans }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+
     {% endif %}
 
     <div class="buttons">

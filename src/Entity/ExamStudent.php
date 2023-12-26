@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ExamStudent {
     use IdTrait;
 
-    #[ORM\ManyToOne(targetEntity: Exam::class)]
+    #[ORM\ManyToOne(targetEntity: Exam::class, inversedBy: 'students')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Exam $exam;
 

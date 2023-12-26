@@ -155,7 +155,7 @@ Für den Fall, die Prüfung für mehrere Kurse zutreffend ist, so wird kein Kurs
 Das Problem sollte nur bei Nachschreibklausuren auftreten (anderenfalls hat man einen Fehler in den Plandaten und ein Lernender schreibt zwei Klausuren parallel).
 Um das Problem zu lösen, kann man solche Klausuren in Untis splitten, sodass pro Klausur nur ein Kurs enthalten ist. 
 Dann ist die Zuordnung eindeutig und problemlos möglich.
-:::tip
+:::
 
 ### Aufsichten
 

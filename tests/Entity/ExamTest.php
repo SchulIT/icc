@@ -3,6 +3,7 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Exam;
+use App\Entity\ExamStudent;
 use App\Entity\ExamSupervision;
 use App\Entity\Room;
 use App\Entity\Student;
@@ -46,9 +47,10 @@ class ExamTest extends TestCase {
         $exam->removeTuition($tuition);
         $this->assertFalse($exam->getTuitions()->contains($tuition));
 
-        $student = new Student();
+        $student = new ExamStudent();
         $exam->addStudent($student);
         $this->assertTrue($exam->getStudents()->contains($student));
+        $this->assertEquals($exam, $student->getExam());
 
         $exam->removeStudent($student);
         $this->assertFalse($exam->getStudents()->contains($student));

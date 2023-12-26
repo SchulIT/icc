@@ -12,6 +12,7 @@ use App\Entity\StudyGroupType;
 use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
+use App\Exam\ExamStudentsResolver;
 use App\Import\ExamsImportStrategy;
 use App\Import\Importer;
 use App\Repository\ExamRepository;
@@ -130,12 +131,14 @@ class ExamsImportStrategyTest extends WebTestCase {
                     ->setStudents(['1', '2'])
                     ->setSupervisions(['TEST1', 'TEST2'])
                     ->setRooms([])
+                    ->setComputeStudentsFromRules(false)
             ]);
     }
 
     private function getStrategy(): ExamsImportStrategy {
         $settingsManager = new SettingsManager(new SettingRepository($this->em));
         $sectionResolver = new SectionResolver(new GeneralSettings($settingsManager), new SectionRepository($this->em));
+        $studentResolver = new ExamStudentsResolver(new ImportSettings($settingsManager), $sectionResolver);
 
         return new ExamsImportStrategy(
             new ExamRepository($this->em),
@@ -144,8 +147,8 @@ class ExamsImportStrategyTest extends WebTestCase {
             new TeacherRepository($this->em),
             $this->getMockBuilder(EventDispatcherInterface::class)->getMock(),
             $this->getMockBuilder(RoomRepositoryInterface::class)->getMock(),
-            new ImportSettings($settingsManager),
-            $sectionResolver
+            $sectionResolver,
+            $studentResolver
         );
     }
 

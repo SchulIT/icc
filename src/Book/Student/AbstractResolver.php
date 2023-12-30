@@ -69,4 +69,37 @@ abstract class AbstractResolver {
 
         return $lessonAttendance;
     }
+
+    /**
+     * @param LessonAttendanceEntity[] $attendances
+     * @return AttendanceFlagCount[]
+     */
+    protected function computeAttendanceFlagCounts(array $attendances): array {
+        $counts = [ ];
+        $flags = [ ];
+
+        foreach($attendances as $attendance) {
+            foreach($attendance->getFlags() as $flag) {
+                $id = $flag->getId();
+
+                if(!array_key_exists($id, $counts)) {
+                    $counts[$id] = 0;
+                }
+
+                if(!array_key_exists($id, $flags)) {
+                    $flags[$id] = $flag;
+                }
+
+                $counts[$id]++;
+            }
+        }
+
+        $result = [ ];
+
+        foreach($flags as $flag) {
+            $result[] = new AttendanceFlagCount($flag, $counts[$flag->getId()]);
+        }
+
+        return $result;
+    }
 }

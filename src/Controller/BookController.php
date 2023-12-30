@@ -40,6 +40,7 @@ use App\Messenger\RunIntegrityCheckMessage;
 use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\GradeResponsibilityRepositoryInterface;
+use App\Repository\LessonAttendanceFlagRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
@@ -463,7 +464,7 @@ class BookController extends AbstractController {
 
     #[Route(path: '/student', name: 'book_students')]
     public function students(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
-                             TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository, StudentInfoResolver $studentInfoResolver,
+                             TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository, LessonAttendanceFlagRepositoryInterface $flagRepository, StudentInfoResolver $studentInfoResolver,
                              Sorter $sorter, StudentsResolver $studentsResolver, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -509,6 +510,7 @@ class BookController extends AbstractController {
             'ownGrades' => $ownGrades,
             'ownTuitions' => $ownTuitions,
             'info' => $info,
+            'flags' => $flagRepository->findAll(),
             'page' => $page,
             'pages' => $pages
         ]);

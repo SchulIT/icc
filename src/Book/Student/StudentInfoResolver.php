@@ -47,7 +47,8 @@ class StudentInfoResolver extends AbstractResolver {
             $lateAttendanceCollection,
             $absentAttendanceCollection,
             $presentAttendanceCollection,
-            $comments
+            $comments,
+            $this->computeAttendanceFlagCounts($attendances)
         );
     }
 

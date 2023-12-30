@@ -37,6 +37,9 @@
                                 <col class="column-md">
                                 <col class="column-md">
                                 <col class="column-md">
+                                {% for flag in flags %}
+                                <col class="column-sm">
+                                {% endfor %}
                                 <col class="column-md">
                             </colgroup>
 
@@ -48,6 +51,16 @@
                                 <th>{{ 'book.students.absent'|trans }}</th>
                                 <th>{{ 'book.students.not_excused'|trans }}</th>
                                 <th>{{ 'book.students.not_set'|trans }}</th>
+                                {% for flag in flags %}
+                                    <th title="{{ flag.description }}">
+                                        <span class="fa-stack fa-1x">
+                                            <i class="{{ flag.icon }} fa-stack-1x"></i>
+                                            {% if flag.stackIcon is not empty %}
+                                                <i class="{{ flag.stackIcon }} fa-stack-1x text-danger"></i>
+                                            {% endif %}
+                                        </span>
+                                    </th>
+                                {% endfor %}
                                 <th></th>
                             </tr>
                             </thead>
@@ -92,6 +105,17 @@
                                     <td class="align-middle {% if nonSetCount > 0 %}bg-danger text-white{% endif%}">
                                         <i class="fas fa-exclamation-circle"></i> {{ nonSetCount }}
                                     </td>
+
+                                    {% for flag in flags %}
+                                        {% set count = studentInfo.attendanceFlagCount(flag) %}
+                                        <td class="align-middle">
+                                            {% if count is null %}
+                                                0
+                                            {% else %}
+                                                {{ count.count }}
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
 
                                     <td class="align-middle">
                                         {% if sectionFilter.currentSection != null %}

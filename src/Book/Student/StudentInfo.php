@@ -4,6 +4,7 @@ namespace App\Book\Student;
 
 use App\Entity\BookComment;
 use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\LessonAttendanceFlag;
 use App\Entity\LessonAttendanceType;
 use App\Entity\Student;
 use App\Entity\LessonAttendance as LessonAttendanceEntity;
@@ -16,8 +17,15 @@ class StudentInfo {
      * @param LessonAttendance[] $absentLessonAttendances
      * @param LessonAttendance[] $presentLessonAttendances
      * @param BookComment[] $comments
+     * @param AttendanceFlagCount[] $attendanceFlagCounts
      */
-    public function __construct(private readonly Student $student, private readonly int $totalLessonsCount, private readonly array $lateLessonAttendances, private readonly array $absentLessonAttendances, private readonly array $presentLessonAttendances, private readonly array $comments)
+    public function __construct(private readonly Student $student,
+                                private readonly int $totalLessonsCount,
+                                private readonly array $lateLessonAttendances,
+                                private readonly array $absentLessonAttendances,
+                                private readonly array $presentLessonAttendances,
+                                private readonly array $comments,
+                                private readonly array $attendanceFlagCounts)
     {
     }
 
@@ -127,5 +135,22 @@ class StudentInfo {
      */
     public function getComments(): array {
         return $this->comments;
+    }
+
+    /**
+     * @return AttendanceFlagCount[]
+     */
+    public function getAttendanceFlagCounts(): array {
+        return $this->attendanceFlagCounts;
+    }
+
+    public function getAttendanceFlagCount(LessonAttendanceFlag $flag): ?AttendanceFlagCount {
+        foreach($this->attendanceFlagCounts as $attendanceFlagCount) {
+            if($attendanceFlagCount->getFlag()->getId() === $flag->getId()) {
+                return $attendanceFlagCount;
+            }
+        }
+
+        return null;
     }
 }

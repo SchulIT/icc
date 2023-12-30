@@ -24,7 +24,11 @@ class DisplayHelper {
     {
     }
 
-    public function getStudentsItems(DateTime $dateTime) {
+    /**
+     * @param DateTime $dateTime
+     * @return GradeGroup[]
+     */
+    public function getStudentsItems(DateTime $dateTime): array {
         /** @var GradeGroup[] $groups */
         $groups = [ ];
 
@@ -68,9 +72,13 @@ class DisplayHelper {
         return $groups;
     }
 
-    public function getTeachersItems(DateTime $dateTime) {
+    /**
+     * @param DateTime $dateTime
+     * @return TeacherGroup[]
+     */
+    public function getTeachersItems(DateTime $dateTime): array {
         /** @var TeacherGroup[] $groups */
-        $groups = [ ];
+        $groups = [ ] ;
 
         $substitutions = $this->substitutionRepository->findAllByDate($dateTime, false);
         /** @var SubstitutionTeacherGroup[] $substitutionGroups */

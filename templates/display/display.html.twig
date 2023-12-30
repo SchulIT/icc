@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="{{ display.refreshTime }}">
+    {% block meta %}{% endblock %}
+    <title>{{ config.name }} | {{ display.name }}</title>
+
+    <link rel="stylesheet" href="{{ asset('build/display.css') }}">
+</head>
+
+{% import "_macros/replacement.html.twig" as _macro %}
+
+<body class="d-flex flex-column p-3 h-100">
+    <div class="flex-fill h-100 w-100 overflow-hidden">
+        <div class="container-fluid h-100 px-0">
+            <div class="row h-100">
+                {% set columnGroups = divide_groups(groups, display.numberOfColumns) %}
+
+                {% if columnGroups|length == 0 %}
+                <div class="col" data-table=".table" data-indicator=".indicator" data-intervall="{{ display.scrollTime }}">
+                    <div class="card h-100 overflow-hidden">
+                        <div class="card-header">
+                            <i class="fa fa-calendar-alt"></i> {{ day|format_date }}
+                        </div>
+
+                        <div class="card-body">
+                            {{ 'display.empty'|trans }}
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                    {% for i in range(0, display.numberOfColumns-1) %}
+                        {% set groups = columnGroups[i] %}
+                        <div class="col" data-table=".table" data-indicator=".indicator" data-intervall="{{ display.scrollTime }}">
+                            <div class="card h-100 overflow-hidden">
+                                <div class="card-header d-flex">
+                                    <span class="flex-fill font-weight-bold ">
+                                        {% for group in groups %}
+                                            {{ group.header }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </span>
+
+                                    <span class="flex-shrink-0 mx-2">
+                                        <i class="fa fa-calendar-alt"></i> {{ day|format_date }}
+                                    </span>
+
+                                    <div class="flex-shrink-0">
+                                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                                        <span class="indicator"></span>
+                                    </div>
+                                </div>
+
+                                <div class="h-100 overflow-hidden">
+                                    <table class="table table-striped table-sticky-header card-table">
+                                        <colgroup>
+                                            <col>
+                                            <col>
+                                            <col>
+                                            <col>
+                                            <col>
+                                            <col>
+                                            {% if not is_teachersview %}
+                                                <col>
+                                            {% endif %}
+                                        </colgroup>
+                                        <thead>
+                                        <tr>
+                                            <th>{{ 'label.lesson'|trans }}</th>
+                                            {% if is_teachersview %}
+                                                <th>{{ 'label.teacher'|trans }}</th>
+                                            {% endif %}
+                                            <th>{{ 'label.grades'|trans }}</th>
+                                            <th>{{ 'label.subject'|trans }}</th>
+                                            <th>{{ 'label.room'|trans }}</th>
+                                            {% if not is_teachersview %}
+                                                <th>{{ 'label.teacher'|trans }}</th>
+                                            {% endif %}
+                                            <th>{{ 'label.type'|trans }}</th>
+                                            <th>{{ 'label.remark'|trans }}</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        {% for group in groups %}
+                                            {% set isLastGroup = loop.last %}
+                                            {% for item in group.items %}
+                                                {% if item.name == 'substitution' %}
+                                                    {% set substitution = item.substitution %}
+                                                    {% set highlight = item.substitution.createdAt > day %}
+                                                    {% set duration = substitution.lessonEnd - substitution.lessonStart %}
+                                                    <tr class="{% if isLastGroup %}border-bottom{% endif %}{% if highlight %}table-warning{% endif %}">
+                                                        <td class="align-middle">
+                                                            {% if substitution.startsBefore %}
+                                                                {{ substitution.lessonStart|before_lesson }}
+                                                            {% else %}
+                                                                {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
+                                                            {% endif %}
+                                                        </td>
+                                                        {% if is_teachersview %}
+                                                            <td class="align-middle {% if loop.first %}font-weight-bold{% endif %}">
+                                                                {{ _macro.replacement(substitution.teachers|teachers(true, true), substitution.replacementTeachers|teachers(true, true)) }}
+                                                            </td>
+                                                            <td class="align-middle">
+                                                                {% for grade in substitution.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                                            </td>
+                                                        {% else %}
+                                                            <td class="align-middle {% if loop.first %}font-weight-bold{% endif %}">
+                                                                {{ group.header }}
+                                                            </td>
+                                                        {% endif %}
+                                                        <td class="align-middle">{{ _macro.replacement(substitution.subject, substitution.replacementSubject) }}</td>
+                                                        <td class="align-middle">{{ _macro.replacement(substitution.roomsAsString, substitution.replacementRoomsAsString) }}</td>
+
+                                                        {% if not is_teachersview %}
+                                                            <td class="align-middle">{{ _macro.replacement(substitution.teachers|teachers(true, true), substitution.replacementTeachers|teachers(true, true)) }}</td>
+                                                        {% endif %}
+
+                                                        <td class="align-middle"><i class="fas fa-random"></i> {{ substitution.type }}</td>
+                                                        <td class="align-middle">{{ substitution.remark }}</td>
+                                                    </tr>
+                                                {% elseif item.name == 'exam' %}
+                                                    {% set exam = item.exam %}
+                                                    <tr class="{% if isLastGroup %}border-bottom{% endif %}">
+                                                        <td class="align-middle">
+                                                            {{ 'label.substitution_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
+                                                        </td>
+                                                        <td class="align-middle {% if loop.first %}font-weight-bold{% endif %}">
+                                                            {{ group.header }}
+                                                        </td>
+                                                        <td class="align-middle" {% if is_teachersview %}colspan="2"{% endif %}>
+                                                            {% for tuition in exam.tuitions %}
+                                                                {{ tuition.name }} ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                                                                {%- if not loop.last %}, {% endif %}
+                                                            {% endfor %}
+                                                        </td>
+                                                        <td class="align-middle">
+                                                            {% if exam.room is not null %}
+                                                                {{ exam.room }}
+                                                            {% endif %}
+                                                        </td>
+
+                                                        {% if not is_teachersview %}
+                                                            <td class="align-middle">
+                                                                {% for tuition in exam.tuitions %}
+                                                                    {{ tuition.teachers|teachers(true, true) }}{% if not loop.last %}, {% endif %}
+                                                                {% endfor %}
+                                                            </td>
+                                                        {% endif %}
+                                                        <td class="align-middle">
+                                                            <i class="fa fa-edit"></i> {{ 'dashboard.exam'|trans }}
+                                                        </td>
+                                                        <td class="align-middle">
+                                                            {{ exam.description }}
+                                                        </td>
+                                                    </tr>
+                                                {% elseif item.name == 'exam_supervision' %}
+                                                    <tr class="{% if isLastGroup %}border-bottom{% endif %}">
+                                                        <td class="align-middle">
+                                                            {{ 'label.substitution_lessons'|trans({'%start%': item.lesson, '%end%': item.lesson, '%count%': 0 }) }}
+                                                        </td>
+                                                        <td class="align-middle {% if loop.first %}font-weight-bold{% endif %}">
+                                                            {{ group.header }}
+                                                        </td>
+                                                        <td class="align-middle" {% if is_teachersview %}colspan="2"{% endif %}>
+                                                            {% for tuition in item.exam.tuitions %}
+                                                                {{ tuition.name }} ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                                                                {%- if not loop.last %}, {% endif %}
+                                                            {% endfor %}
+                                                        </td>
+                                                        <td class="align-middle">
+                                                            {% if item.exam.room is not null %}
+                                                                {{ item.exam.room }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="align-middle">
+                                                            <i class="fa fa-eye"></i> {{ 'dashboard.exam_supervision'|trans }}
+                                                        </td>
+                                                        <td class="align-middle">
+                                                            {{ item. exam.description }}
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-shrink-1 mt-4">
+        <div class="flex-fill">
+            <div class="row h-100">
+                {% if display.showInfotexts and infotexts|length > 0 %}
+                    <div class="col h-100">
+                        <div class="card h-100">
+                            <div class="card-body p-3 h-100 overflow-hidden" data-scroll="true" data-interval="{{ display.scrollTime }}">
+                                {% for infotext in infotexts %}
+                                    <div class="d-flex {% if not loop.last %}mb-2{% endif %}">
+                                        <i class="fa fa-info-circle align-self-baseline me-2"></i>
+                                        <span class="align-self-baseline">{{ infotext.content }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if display.showAbsences and (absent_teachers|length > 0 or absent_studygroups|length > 0) %}
+                    <div class="col h-100">
+                        {% include "_includes/absences.html.twig" with {
+                            absentTeachers: absent_teachers,
+                            absentStudyGroups: absent_studygroups,
+                            absentRooms: absent_rooms,
+                            classes: 'h-100',
+                            bodyClasses: 'p-3 h-100 overflow-hidden'
+                        } only %}
+                    </div>
+                {% endif %}
+
+                {% if appointments|length > 0 or teacher_birthdays|length > 0 %}
+                    <div class="col h-100">
+                        <div class="card h-100">
+                            <div class="card-body p-3 h-100 overflow-hidden" data-scroll="true" data-interval="{{ display.scrollTime }}">
+                                {% for teacher in teacher_birthdays %}
+                                    <div class="d-flex mb-2">
+                                        <i class="fa fa-birthday-cake align-self-baseline me-2"></i>
+                                        <span class="align-self-baseline">
+                                            {{ teacher|teacher }}
+                                        </span>
+                                    </div>
+                                {% endfor %}
+
+                                {% for appointment in appointments %}
+                                    <div class="d-flex {% if not loop.last %}mb-2{% endif %}">
+                                        <i class="fa fa-calendar-alt align-self-baseline me-2"></i>
+                                        <span class="align-self-baseline">
+                                        {{ appointment.title }}
+
+                                            {% if not appointment.allDay %}
+                                                <i class="fa fa-clock"></i> {{ appointment.start|format_time }}
+                                            {% endif %}
+
+                                            {% if appointment.location is not empty %}
+                                                <i class="fa fa-map-marker-alt"></i> {{ appointment.location }}
+                                            {% endif %}
+                                    </span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if display.countdownDate is not null %}
+                    <div class="col h-100">
+                        <div class="card h-100 d-flex">
+                            <div class="my-auto text-center">
+                                <p class="fs-2 mb-0">{{ 'display.countdown'|trans({'%count%': countdown}) }}</p>
+                                <p class="mb-0">{{ display.countdownText}}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="d-flex align-items-end text-right ms-3">
+            <div class="text-right">
+                <div class="font-weight-bold">
+                    {% if display.showDate %}
+                        <span id="date">
+                            {{ 'now'|date('date.format'|trans) }}
+                        </span>
+                    {% endif %}
+
+                    {% if display.showTime %}
+                        <span id="time">{{ 'now'|date('date.time_format'|trans) }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="font-weight-bold font-si">
+                    {% if display.showWeek and week is not null %}
+                        <span id="week">
+                            {{ week.displayName }}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="info">
+                    {{ 'display.last_update'|trans }}<br> {{ last_update.updatedAt|format_datetime }}
+                </div>
+            </div>
+
+            {% if config.logo is defined and config.logo is not empty %}
+                <div class="ms-3">
+                    <img src="{{ asset(config.logo) }}" class="logo" alt="" style="max-height: 70px;">
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+<script src="{{ asset('build/display.js') }}"></script>
+</body>
+</html>

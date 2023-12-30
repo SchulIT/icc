@@ -105,3 +105,44 @@ body {
     border-top: none;
   }
 }
+
+.table {
+  table-layout: fixed;
+
+  tr {
+    td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+.scroller {
+  overflow: hidden;
+
+  .scroller__inner {
+    width: max-content;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .scroller__duplicate {
+      display: none;
+    }
+  }
+}
+
+.scroller[data-animate="true"] .scroller__inner {
+  animation: scroll 10s linear infinite;
+
+  .scroller__duplicate {
+    display: block;
+  }
+}
+
+@keyframes scroll {
+ to {
+   transform: translate(calc(-50% - 0.5rem));
+ }
+}

@@ -288,6 +288,9 @@ label:
     flag_subjects:
         label: Fächer berücksichtigen
         help: Das Merkmal wird nur für die angegebenen Fächer angezeigt. Ist dieses Feld leer, so wird das Merkmal für alle Fächer angezeigt.
+    columns:
+        label: Spalten
+        help: Anzahl der Spalten, auf die die Inhalte aufgeteilt werden.
 
 markdown:
     label: Markdown

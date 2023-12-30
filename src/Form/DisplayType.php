@@ -38,6 +38,10 @@ class DisplayType extends AbstractType {
                 'label' => 'label.refresh_time.label',
                 'help' => 'label.refresh_time.help'
             ])
+            ->add('numberOfColumns', IntegerType::class, [
+                'label' => 'label.columns.label',
+                'help' => 'label.columns.help'
+            ])
             ->add('scrollTime', IntegerType::class, [
                 'label' => 'label.scroll_time.label',
                 'help' => 'label.scroll_time.help'

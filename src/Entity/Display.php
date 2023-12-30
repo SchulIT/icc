@@ -32,6 +32,10 @@ class Display {
     #[ORM\Column(type: 'integer')]
     private int $scrollTime = 20;
 
+    #[Assert\GreaterThan(0)]
+    #[ORM\Column(type: 'integer')]
+    private int $numberOfColumns = 2;
+
     #[ORM\Column(type: 'boolean')]
     private bool $showDate = true;
 
@@ -85,6 +89,15 @@ class Display {
 
     public function setScrollTime(int $scrollTime): Display {
         $this->scrollTime = $scrollTime;
+        return $this;
+    }
+
+    public function getNumberOfColumns(): int {
+        return $this->numberOfColumns;
+    }
+
+    public function setNumberOfColumns(int $numberOfColumns): Display {
+        $this->numberOfColumns = $numberOfColumns;
         return $this;
     }
 

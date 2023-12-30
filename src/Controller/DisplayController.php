@@ -46,12 +46,6 @@ class DisplayController extends AbstractController {
 
         $sorter->sort($appointments, AppointmentStrategy::class);
 
-        $itemsCount = 0;
-
-        foreach($groups as $group) {
-            $itemsCount += is_countable($group->getItems()) ? count($group->getItems()) : 0;
-        }
-
         $week = $timetableWeekRepository->findOneByWeekNumber((int)$today->format('W'));
 
         $birthdays = [ ];
@@ -65,7 +59,7 @@ class DisplayController extends AbstractController {
             $countdownDays = $countdownCalculator->computeSchoolDaysUntis($display->getCountdownDate());
         }
 
-        return $this->render('display/two_column_bottom.html.twig', [
+        return $this->render('display/display.html.twig', [
             'display' => $display,
             'infotexts' => $infotextRepository->findAllByDate($today),
             'absent_studygroups' => $absenceRepository->findAllStudyGroups($today),
@@ -73,7 +67,6 @@ class DisplayController extends AbstractController {
             'absent_rooms' => $absenceRepository->findAllRooms($today),
             'groups' => $groups,
             'appointments' => $appointments,
-            'count' => $itemsCount,
             'last_update' => $importDateTymeRepository->findOneByEntityClass(Substitution::class),
             'day' => $today,
             'week' => $week,

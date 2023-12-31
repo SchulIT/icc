@@ -70,6 +70,13 @@ teacher_absence:
   link: Zur Abwesenheitsmeldung
   reply: Auf diese E-Mail kann geantwortet werden. Die Antwort wird an die Lehrkraft versendet, die sich abwesend gemeldet hat.
 
+teacher_absence_lesson:
+  error:
+    title: Zuordnung einer Unterrichtsstunde durch Stundenplanänderung gelöscht
+    content: Die Zuordnung einer betroffenen Unterrichtsstunde, für die eine Abwesenheitsmeldung vorliegt, konnte aufgrund einer Stundenplanänderung nicht automatisch neu zugeordnet werden. Bitte händisch überprüfen und betroffene Stunde neu zuordnen.
+  link: Meldung bearbeiten
+
+
 book_comment:
   create:
     title: Neuer Kommentar im Unterrichtsbuch

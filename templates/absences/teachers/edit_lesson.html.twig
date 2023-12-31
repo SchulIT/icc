@@ -21,6 +21,36 @@
     <div class="card">
         <div class="card-header">{{ 'label.general'|trans }}</div>
         <div class="card-body">
+            <div class="mb-2 row">
+                <div class="col-form-label col-sm-2">
+                    {{ 'absences.teachers.edit.lessons.current_lesson'|trans }}
+                </div>
+                <div class="col-sm-10">
+                    <div class="form-control-plaintext">
+                        <i class="fas fa-calendar-alt"></i>
+
+                        {% if lesson.date is not null %}
+                            {{ lesson.date|format_date }}
+
+                            ({{ 'label.exam_lessons'|trans({'%start%': lesson.lessonStart, '%end%': lesson.lessonEnd, '%count%': (lesson.lessonEnd - lesson.lessonStart)}) }})
+                        {% else %}
+                            <span class="badge text-bg-primary">{{ 'label.not_available'|trans }}</span>
+                        {% endif %}
+
+                        {% if lesson.tuition is not null %}
+                            <i class="fas fa-users"></i>
+                            {{ lesson.tuition.studyGroup.grades|join(', ') }}
+
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            {{ lesson.tuition.name }}
+                        {% else %}
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span class="badge text-bg-primary">{{ 'label.not_available'|trans }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
             {{ form_widget(form) }}
         </div>
     </div>

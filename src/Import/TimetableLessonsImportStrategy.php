@@ -9,6 +9,7 @@ use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
+use App\Messenger\ResolveTimetableLessonsForAbsenceLessonMessage;
 use App\Repository\GradeRepositoryInterface;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\SubjectRepositoryInterface;
@@ -24,8 +25,9 @@ use App\Utils\ArrayUtils;
 use App\Utils\CollectionUtils;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Messenger\MessageBusInterface;
 
-class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, InitializeStrategyInterface {
+class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, InitializeStrategyInterface, PostActionStrategyInterface {
 
     private array $gradeCache;
     private array $teacherCache;
@@ -33,7 +35,11 @@ class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, 
     private array $subjectCache;
     private array $tuitionCache = [ ];
 
-    public function __construct(private TimetableLessonRepositoryInterface $timetableRepository, private TuitionRepositoryInterface $tuitionRepository, private RoomRepositoryInterface $roomRepository, private TeacherRepositoryInterface $teacherRepository, private SubjectRepositoryInterface $subjectRepository, private GradeRepositoryInterface $gradeRepository, private SectionResolverInterface $sectionResolver, private LoggerInterface $logger)
+    public function __construct(private readonly TimetableLessonRepositoryInterface $timetableRepository, private readonly TuitionRepositoryInterface $tuitionRepository,
+                                private readonly RoomRepositoryInterface $roomRepository, private readonly TeacherRepositoryInterface $teacherRepository,
+                                private readonly SubjectRepositoryInterface $subjectRepository, private readonly GradeRepositoryInterface $gradeRepository,
+                                private readonly MessageBusInterface $messageBus,
+                                private readonly SectionResolverInterface $sectionResolver, private readonly LoggerInterface $logger)
     {
     }
 
@@ -196,5 +202,16 @@ class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, 
      */
     public function removeAll($data): void {
         $this->timetableRepository->removeStartingFrom($data->getStartDate());
+    }
+
+    public function onFinished(ImportResult $result): void {
+        $request = $result->getRequest();
+
+        if(!$request instanceof TimetableLessonsData) {
+            return;
+        }
+
+        // Trigger timetable lesson resolving
+        $this->messageBus->dispatch(new ResolveTimetableLessonsForAbsenceLessonMessage($request->getStartDate(), $request->getEndDate()));
     }
 }

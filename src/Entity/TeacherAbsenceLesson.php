@@ -34,6 +34,27 @@ class TeacherAbsenceLesson {
     #[Assert\NotBlank(allowNull: true)]
     private ?string $comment;
 
+    /*
+     * The following columns are only used to preserve
+     * entries after a new timetable was imported. The
+     * columns are used to re-join this AbsenceLesson
+     * with TimetableLesson
+     *
+     * Do not use them anywhere else!
+     */
+    #[ORM\ManyToOne(targetEntity: Tuition::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Tuition $tuition;
+
+    #[ORM\Column(type: 'date')]
+    private DateTime $date;
+
+    #[ORM\Column(type: 'integer')]
+    private int $lessonStart;
+
+    #[ORM\Column(type: 'integer')]
+    private int $lessonEnd;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
     }
@@ -67,6 +88,14 @@ class TeacherAbsenceLesson {
      */
     public function setLesson(?TimetableLesson $lesson): TeacherAbsenceLesson {
         $this->lesson = $lesson;
+
+        if($lesson !== null) {
+            $this->setTuition($lesson->getTuition());
+            $this->setDateTime($lesson->getDate());
+            $this->setLessonStart($lesson->getLessonStart());
+            $this->setLessonEnd($lesson->getLessonEnd());
+        }
+
         return $this;
     }
 
@@ -115,6 +144,42 @@ class TeacherAbsenceLesson {
      */
     public function setComment(?string $comment): TeacherAbsenceLesson {
         $this->comment = $comment;
+        return $this;
+    }
+
+    public function getTuition(): ?Tuition {
+        return $this->tuition;
+    }
+
+    private function setTuition(?Tuition $tuition): TeacherAbsenceLesson {
+        $this->tuition = $tuition;
+        return $this;
+    }
+
+    public function getDate(): DateTime {
+        return $this->date;
+    }
+
+    private function setDateTime(DateTime $dateTime): TeacherAbsenceLesson {
+        $this->date = $dateTime;
+        return $this;
+    }
+
+    public function getLessonStart(): int {
+        return $this->lessonStart;
+    }
+
+    private function setLessonStart(int $lessonStart): TeacherAbsenceLesson {
+        $this->lessonStart = $lessonStart;
+        return $this;
+    }
+
+    public function getLessonEnd(): int {
+        return $this->lessonEnd;
+    }
+
+    private function setLessonEnd(int $lessonEnd): TeacherAbsenceLesson {
+        $this->lessonEnd = $lessonEnd;
         return $this;
     }
 }

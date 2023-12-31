@@ -9,6 +9,7 @@ framework:
 
         routing:
             'Symfony\Component\Mailer\Messenger\SendEmailMessage': async
+            'App\Messenger\ResolveTimetableLessonsForAbsenceLessonMessage': async
             'App\Messenger\RunIntegrityCheckMessage': checks
 
 # when@test:

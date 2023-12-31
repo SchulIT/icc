@@ -1638,6 +1638,7 @@ absences:
             lessons:
                 label: Vertretungsinformationen
                 success: Vertretungsinformationen erfolgreich bearbeitet
+                current_lesson: Bisher gespeicherte Unterrichtsstunde
         remove:
             label: Abwesenheitsmeldung löschen
             confirm: 'Soll die Abwesenheitsmeldung wirklich gelöscht werden?'

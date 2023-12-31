@@ -77,6 +77,8 @@ interface TimetableLessonRepositoryInterface extends TransactionalRepositoryInte
      */
     public function findOneByDateAndRoomAndLesson(DateTime $date, Room $room, int $lessonNumber): ?TimetableLesson;
 
+    public function findOneByDateAndTeacher(DateTime $date, int $lessonStart, int $lessonEnd, Teacher $teacher): ?TimetableLesson;
+
     /**
      * @param DateTime $start
      * @param DateTime $end

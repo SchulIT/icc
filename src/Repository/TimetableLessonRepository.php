@@ -473,4 +473,26 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
             ->getResult();
     }
 
+    public function findOneByDateAndTeacher(DateTime $date, int $lessonStart, int $lessonEnd, Teacher $teacher): ?TimetableLesson {
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(TimetableLesson::class, 'tInner')
+            ->leftJoin('tInner.teachers', 'teacherInner')
+            ->where('teacherInner.id = :teacher');
+
+        $qb = $this->getDefaultQueryBuilder($date, $date)
+            ->andWhere('l.lessonStart = :lessonStart')
+            ->andWhere('l.lessonEnd = :lessonEnd');
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->in('l.id', $qbInner->getDQL())
+            )
+            ->setParameter('lessonStart', $lessonStart)
+            ->setParameter('lessonEnd', $lessonEnd)
+            ->setParameter('teacher', $teacher->getId())
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
 }

@@ -4,17 +4,13 @@ namespace App\Form;
 
 use App\Sorting\SortingStrategyInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Form\ChoiceList\View\ChoiceGroupView;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SortableEntityType extends EntityType implements ContainerAwareInterface {
-
-    use ContainerAwareTrait;
+class SortableEntityType extends EntityType {
 
     public function configureOptions(OptionsResolver $resolver): void {
         parent::configureOptions($resolver);

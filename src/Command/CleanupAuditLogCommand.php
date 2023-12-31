@@ -35,7 +35,7 @@ class CleanupAuditLogCommand extends Command {
         parent::__construct($name);
     }
 
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output): int {
         $style = new SymfonyStyle($input, $output);
 
         $auditTables = array_filter(

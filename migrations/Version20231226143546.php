@@ -30,7 +30,7 @@ final class Version20231226143546 extends AbstractMigration implements ExamStude
     public function postUp(Schema $schema): void {
         $this->examRepository->beginTransaction();
         foreach($this->examRepository->findAll() as $exam) {
-            $examStudents = $this->resolver->resolveExamStudentsFromGivenStudents($exam, $exam->getStudents());
+            $examStudents = $this->resolver->resolveExamStudentsFromGivenStudents($exam, $exam->getStudents()->toArray());
             $this->resolver->setExamStudents($exam, $examStudents);
             $this->examRepository->persist($exam);
         }

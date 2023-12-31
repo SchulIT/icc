@@ -6,6 +6,7 @@ use App\Dashboard\Absence\AbsenceResolver;
 use App\Dashboard\Absence\ExamStudentsResolver;
 use App\Entity\Appointment;
 use App\Entity\Exam;
+use App\Entity\ExamStudent;
 use App\Entity\ExamSupervision;
 use App\Entity\FreeTimespan;
 use App\Entity\Grade;
@@ -415,7 +416,7 @@ class DashboardViewHelper {
             }
 
             for($lesson = $exam->getLessonStart(); $lesson <= $exam->getLessonEnd(); $lesson++) {
-                $absentStudents = $computeAbsences ? $this->computeAbsentStudents($exam->getStudents()->toArray(), $lesson, $exam->getDate(), [ ExamStudentsResolver::class ]) : [ ];
+                $absentStudents = $computeAbsences ? $this->computeAbsentStudents($exam->getStudents()->map(fn(ExamStudent $student) => $student->getStudent())->toArray(), $lesson, $exam->getDate(), [ ExamStudentsResolver::class ]) : [ ];
 
                 if($teacher !== null) {
                     if(in_array($teacher->getId(), $tuitionTeacherIds)) {

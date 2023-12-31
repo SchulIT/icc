@@ -39,7 +39,7 @@ app.swagger_ui.import.json:
 
 composer:
     resource: "@ComposerDependencyListBundle/Controller"
-    type: annotation
+    type: attribute
     prefix: /dependencies
 
 dh_doctrine_audit:

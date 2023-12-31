@@ -2276,23 +2276,23 @@
         },
         {
             "name": "frostiede/composer-dependency-list-bundle",
-            "version": "3.0.1",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/frostieDE/composer-dependency-list-bundle.git",
-                "reference": "44a187014dc38b79f1285ec704997d9720a84fea"
+                "reference": "790de1c3208083892fe2534ffc591c05cb678ecc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/frostieDE/composer-dependency-list-bundle/zipball/44a187014dc38b79f1285ec704997d9720a84fea",
-                "reference": "44a187014dc38b79f1285ec704997d9720a84fea",
+                "url": "https://api.github.com/repos/frostieDE/composer-dependency-list-bundle/zipball/790de1c3208083892fe2534ffc591c05cb678ecc",
+                "reference": "790de1c3208083892fe2534ffc591c05cb678ecc",
                 "shasum": ""
             },
             "require": {
                 "frostiede/composer-dependency-list": "^2.0",
-                "php": "^7.4|^8.0",
-                "symfony/console": "^5.4|^6.0",
-                "symfony/framework-bundle": "^5.4|^6.0"
+                "php": "^8.1",
+                "symfony/console": "^6.4|^7.0",
+                "symfony/framework-bundle": "^6.4|^7.0"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -2312,9 +2312,9 @@
             ],
             "support": {
                 "issues": "https://github.com/frostieDE/composer-dependency-list-bundle/issues",
-                "source": "https://github.com/frostieDE/composer-dependency-list-bundle/tree/3.0.1"
+                "source": "https://github.com/frostieDE/composer-dependency-list-bundle/tree/4.0.0"
             },
-            "time": "2023-08-31T17:36:30+00:00"
+            "time": "2023-12-31T11:54:28+00:00"
         },
         {
             "name": "gedmo/doctrine-extensions",
@@ -5242,32 +5242,32 @@
         },
         {
             "name": "schulit/common-bundle",
-            "version": "4.1.0",
+            "version": "4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SchulIT/common-bundle.git",
-                "reference": "ca2f1ca2ea7694c75079ab23fb13c474b252e581"
+                "reference": "6b2b1407a250cdabddadf29299fa5063b35cc3b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/ca2f1ca2ea7694c75079ab23fb13c474b252e581",
-                "reference": "ca2f1ca2ea7694c75079ab23fb13c474b252e581",
+                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/6b2b1407a250cdabddadf29299fa5063b35cc3b6",
+                "reference": "6b2b1407a250cdabddadf29299fa5063b35cc3b6",
                 "shasum": ""
             },
             "require": {
                 "ext-iconv": "*",
                 "ext-openssl": "*",
-                "frostiede/composer-dependency-list-bundle": "^3.0",
+                "frostiede/composer-dependency-list-bundle": "^3.0|^4.0",
                 "knplabs/knp-menu": "^3.0",
                 "monolog/monolog": "^3.0",
                 "php": "^8.1",
                 "sensiolabs/ansi-to-html": "^1.1",
-                "symfony/form": "^6.0",
-                "symfony/framework-bundle": "^6.0",
-                "symfony/security-core": "^6.0",
-                "symfony/translation": "^6.0",
-                "symfony/validator": "^6.0",
-                "symfony/yaml": "^6.0",
+                "symfony/form": "^6.0|^7.0",
+                "symfony/framework-bundle": "^6.0|^7.0",
+                "symfony/security-core": "^6.0|^7.0",
+                "symfony/translation": "^6.0|^7.0",
+                "symfony/validator": "^6.0|^7.0",
+                "symfony/yaml": "^6.0|^7.0",
                 "twig/twig": "^3.0"
             },
             "suggest": {
@@ -5291,9 +5291,9 @@
             ],
             "support": {
                 "issues": "https://github.com/SchulIT/common-bundle/issues",
-                "source": "https://github.com/SchulIT/common-bundle/tree/4.1.0"
+                "source": "https://github.com/SchulIT/common-bundle/tree/4.2.0"
             },
-            "time": "2023-08-31T17:29:55+00:00"
+            "time": "2023-12-31T12:04:39+00:00"
         },
         {
             "name": "scienta/doctrine-json-functions",

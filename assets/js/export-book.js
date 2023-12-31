@@ -78,18 +78,37 @@ document.addEventListener('DOMContentLoaded', function(event) {
         let summary = [];
         for (let idx = 0; idx < response.students_summary.length; idx++) {
             let student = response.students_summary[idx];
-            summary.push([
+            let row = [
                 student.student.lastname,
                 student.student.firstname,
                 student.absent_lessons_count,
                 student.not_excused_absent_lessons_count + student.excuse_status_not_set_lessons_count,
                 student.late_minutes_count
-            ]);
+            ];
+
+            for(let flag of response.flags) {
+                let count = 0;
+                for(let flagCount of student.flags) {
+                    if(flag.uuid === flagCount.flag.uuid) {
+                        count = flagCount.count;
+                    }
+                }
+
+                row.push(count);
+            }
+
+            summary.push(row);
         }
 
-        pdf.addPage();
+        pdf.addPage('a4', 'landscape');
 
         pdf.text('Übersicht', 15, 25);
+        let header = ['Nachname', 'Vorname', 'FS (insg.)', 'FS (ue.)', 'Versp. (min)'];
+
+        for(let flag of response.flags) {
+            header.push(flag.description);
+        }
+
         pdf.autoTable({
             startY: 30,
             theme: 'grid',
@@ -98,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                 bottom: 25
             },
             head: [
-                ['Nachname', 'Vorname', 'FS (insg.)', 'FS (ue.)', 'Versp. (min)']
+                header
             ],
             body: summary,
             styles: {
@@ -235,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
         return output;
     }
 
-    function formatAttendances(attendances) {
+    function formatAttendances(attendances, flags) {
         let comments = [ ];
         attendances.filter(x => x.type === 'late').forEach(function(attendance) {
             comments.push(
@@ -248,6 +267,17 @@ document.addEventListener('DOMContentLoaded', function(event) {
                 attendance.student.firstname + ' ' + attendance.student.lastname + ' absent (' + attendance.absent_lesson_count + ' FS, ' + (attendance.is_excused ? 'E' : 'UE') + (attendance.comment !== null ? ', ' + attendance.comment.trim() : '') + ')'
             )
         });
+
+        for(let flag of flags) {
+            let students = [ ];
+            for(let attendance of attendances.filter(x => x.flags.some(y => y.uuid === flag.uuid))) {
+                students.push(attendance.student.firstname + ' ' + attendance.student.lastname);
+            }
+
+            if(students.length > 0) {
+                comments.push('*' + flag.description + '*: ' + students.join(', '));
+            }
+        }
 
         return comments;
     }
@@ -332,7 +362,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                         ]
                     ];
 
-                    let remarksAndAttendances = formatAttendances(lesson.attendances);
+                    let remarksAndAttendances = formatAttendances(lesson.attendances, data.flags);
 
                     if(lesson.was_cancelled) {
                         lesson.topic = '[Entfall] ' + lesson.topic;
@@ -423,7 +453,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                         [ formatLessons(lesson.start, lesson.end) ]
                     ];
 
-                    let remarksAndAttendances = formatAttendances(lesson.attendances);
+                    let remarksAndAttendances = formatAttendances(lesson.attendances, data.flags);
 
                     if(lesson.was_cancelled) {
                         lesson.topic = '[Entfall] ' + lesson.topic;

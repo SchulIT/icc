@@ -30,6 +30,10 @@ class Attendance {
     #[Serializer\SerializedName('comment')]
     private ?string $comment = null;
 
+    #[Serializer\Type('array<App\Book\Export\AttendanceFlag>')]
+    #[Serializer\SerializedName('flags')]
+    private array $flags = [ ];
+
     public function getStudent(): Student {
         return $this->student;
     }
@@ -82,5 +86,19 @@ class Attendance {
     public function setComment(?string $comment): Attendance {
         $this->comment = $comment;
         return $this;
+    }
+
+    /**
+     * @return AttendanceFlag[]
+     */
+    public function getFlags(): array {
+        return $this->flags;
+    }
+
+    /**
+     * @param AttendanceFlag[] $flags
+     */
+    public function setFlags(array $flags): void {
+        $this->flags = $flags;
     }
 }

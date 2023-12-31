@@ -25,6 +25,7 @@ use App\Entity\Teacher as TeacherEntity;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition as TuitionEntity;
 use App\Repository\GradeResponsibilityRepositoryInterface;
+use App\Repository\LessonAttendanceFlagRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
@@ -37,6 +38,7 @@ class BookExporter {
     public function __construct(private readonly EntryOverviewHelper $overviewHelper, private readonly StudentInfoResolver $studentInfoResolver,
                                 private readonly Sorter $sorter, private readonly SerializerInterface $serializer, private readonly StudentsResolver $studentsResolver,
                                 private readonly GradeOverviewHelper $gradeOverviewHelper, private readonly TuitionRepositoryInterface $tuitionRepository,
+                                private readonly LessonAttendanceFlagRepositoryInterface $flagRepository,
                                 private readonly GradeResponsibilityRepositoryInterface $responsibilityRepository)
     {
     }
@@ -147,6 +149,19 @@ class BookExporter {
         foreach($students as $student) {
             $info = $this->studentInfoResolver->resolveStudentInfo($student, $section, $tuitionsToConsider);
             $studentInfo[$student->getId()] = $info;
+            $counts = [ ];
+
+            foreach($info->getAttendanceFlagCounts() as $attendanceFlagCount) {
+                $counts[] = (new AttendanceFlagCount())
+                    ->setCount($attendanceFlagCount->getCount())
+                    ->setFlag(
+                        (new AttendanceFlag())
+                            ->setUuid($attendanceFlagCount->getFlag()->getUuid()->toString())
+                            ->setDescription($attendanceFlagCount->getFlag()->getDescription())
+                    );
+            }
+
+
             $book->addStudentSummary(
                 (new StudentSummary())
                     ->setStudent($this->castStudent($student, $section))
@@ -154,7 +169,16 @@ class BookExporter {
                     ->setAbsentLessonsCount($info->getAbsentLessonsCount())
                     ->setExcuseStatusNotSetLessonCount($info->getNotExcusedOrNotSetLessonsCount())
                     ->setNotExcusedAbsentLessonCount($info->getNotExcusedAbsentLessonsCount())
+                    ->setFlagCounts($counts)
             );
+        }
+
+        foreach($this->flagRepository->findAll() as $flag) { // only add (to overview) flag if necessary
+            if($tuition !== null && $flag->getSubjects()->count() > 0 && $flag->getSubjects()->contains($tuition->getSubject()) === false) {
+                continue;
+            }
+
+            $book->addFlag((new AttendanceFlag())->setUuid($flag->getUuid()->toString())->setDescription($flag->getDescription()));
         }
 
         $weeks = [ ];
@@ -291,6 +315,16 @@ class BookExporter {
                 ->setLateMinutesCount($attendance->getLateMinutes())
                 ->setStudent($this->castStudent($attendance->getStudent(), $section))
                 ->setType($this->castAttendanceType($attendance->getType()));
+
+            $flags = [ ];
+
+            foreach($attendance->getFlags() as $flag) {
+                $flags[] = (new AttendanceFlag())
+                    ->setUuid($flag->getUuid()->toString())
+                    ->setDescription($flag->getDescription());
+            }
+
+            $exportAttendance->setFlags($flags);
 
             // check if lesson is excused
             if($attendance->getType() === LessonAttendanceType::Absent) {

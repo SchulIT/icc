@@ -26,6 +26,10 @@ class StudentSummary {
     #[Serializer\Type('integer')]
     private int $lateMinutesCount = 0;
 
+    #[Serializer\SerializedName('flags')]
+    #[Serializer\Type('array<' . AttendanceFlagCount::class . '>')]
+    private array $flagCounts = [ ];
+
     public function getStudent(): Student {
         return $this->student;
     }
@@ -68,6 +72,21 @@ class StudentSummary {
 
     public function setLateMinutesCount(int $lateMinutesCount): StudentSummary {
         $this->lateMinutesCount = $lateMinutesCount;
+        return $this;
+    }
+
+    /**
+     * @return AttendanceFlagCount[]
+     */
+    public function getFlagCounts(): array {
+        return $this->flagCounts;
+    }
+
+    /**
+     * @param AttendanceFlagCount[] $flagCounts
+     */
+    public function setFlagCounts(array $flagCounts): StudentSummary {
+        $this->flagCounts = $flagCounts;
         return $this;
     }
 }

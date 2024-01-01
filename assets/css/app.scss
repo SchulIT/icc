@@ -485,3 +485,35 @@ table {
 .badge.freelesson {
   background-color: var(--bs-tertiary-color);
 }
+
+/** PRINT OUTPUT **/
+@media print {
+  body, html {
+    background: white;
+  }
+
+  header {
+    margin-bottom: 1rem;
+  }
+  header > div {
+    display: none;
+  }
+
+  .sticky-sidebar {
+    .card:has(> .list-group) {
+      display: none;
+    }
+
+    .w-100 {
+      .btn[href="#"] {
+        display: none;
+      }
+    }
+  }
+
+  .buttons {
+    [href^="javascript:"] {
+      display: none;
+    }
+  }
+}

@@ -73,8 +73,10 @@
 {% endblock %}
 
 {% block footer_links %}
+    <span class="d-print-none">
     – <i class="fas fa-book"></i> <a href="https://icc.readthedocs.io/" target="_blank">{{ 'external.docs'|trans }}</a>
     – <a href="{{ absolute_url('/docs/api/app') }}">{{ 'api.doc'|trans }}</a>
+    </span>
 {% endblock %}
 
 {% block css %}

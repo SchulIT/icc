@@ -64,6 +64,9 @@ class StudentAbsenceType implements Stringable {
     #[ORM\ManyToMany(targetEntity: Subject::class)]
     private Collection $subjects;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $notifySubjectTeacher = false;
+
     /**
      * @var Collection<LessonAttendanceFlag>
      */
@@ -184,6 +187,15 @@ class StudentAbsenceType implements Stringable {
 
     public function getSubjects(): Collection {
         return $this->subjects;
+    }
+
+    public function isNotifySubjectTeacher(): bool {
+        return $this->notifySubjectTeacher;
+    }
+
+    public function setNotifySubjectTeacher(bool $notifySubjectTeacher): StudentAbsenceType {
+        $this->notifySubjectTeacher = $notifySubjectTeacher;
+        return $this;
     }
 
     public function addFlag(LessonAttendanceFlag $flag): void {

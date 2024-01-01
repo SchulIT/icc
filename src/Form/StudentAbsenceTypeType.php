@@ -75,6 +75,11 @@ class StudentAbsenceTypeType extends AbstractType {
                     'data-choice' => 'true'
                 ]
             ])
+            ->add('notifySubjectTeacher', CheckboxType::class, [
+                'required' => false,
+                'label' => 'label.book_subjects.notify.label',
+                'help' => 'label.book_subjects.notify.help'
+            ])
             ->add('flags', EntityType::class, [
                 'label' => 'label.book_flags.label',
                 'help' => 'label.book_flags.help',

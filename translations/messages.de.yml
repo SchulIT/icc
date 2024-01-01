@@ -281,6 +281,9 @@ label:
     book_subjects:
         label: Fächer berücksichtigen
         help: Die Abwesenheitsmeldung wird nur als Vorschlag für die angegebenen Fächer angezeigt. Ist dieses Feld leer, so werden Vorschläge für alle Fächer erzeugt.
+        notify:
+            label: Fachlehrkraft benachrichtigen
+            help: Wenn diese Option aktiv ist, wird die Fachlehrkraft über die Meldung informiert.
     book_flags:
         label: Anwesenheitsmerkmale
         help: Die folgenden Anwesenheitsmerkmale werden automatisch gesetzt, sofern vorhanden. Wenn ein Merkmal ausgewählt ist, bleibt das Kommentarfeld leer. Die Merkmale werden nur gesetzt, wenn jemand anwesend ist.

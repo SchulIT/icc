@@ -45,7 +45,10 @@
                                 <tbody>
                                 {% for tag in tags %}
                                     <tr>
-                                        <td>{{ tag.name }}</td>
+                                        <td>
+                                            {{ tag.name }}
+                                            {% include "_includes/_id.html.twig" with { id: tag.id } %}
+                                        </td>
                                         <td>{{ tag.description }}</td>
                                         <td>
                                             <div class="dropdown">

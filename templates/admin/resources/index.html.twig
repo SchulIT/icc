@@ -54,7 +54,10 @@
                                             <i class="{{ resource.type.icon }}" title="{{ resource.type.name }}"></i>
                                         {% endif %}
                                     </td>
-                                    <td>{{ resource.name }}</td>
+                                    <td>
+                                        {{ resource.name }}
+                                        {% include "_includes/_id.html.twig" with { id: resource.id } %}
+                                    </td>
                                     <td>{{ resource.description }}</td>
                                     <td>
                                         {% if resource.capacity is defined %}

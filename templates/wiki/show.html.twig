@@ -29,7 +29,10 @@
                 {% if article is not null %}
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">{{ article.title }}</h5>
+                            <h5 class="card-title">
+                                {{ article.title }}
+                                {% include "_includes/_id.html.twig" with { id: article.id } %}
+                            </h5>
 
                             {{ article.content|markdown }}
                         </div>

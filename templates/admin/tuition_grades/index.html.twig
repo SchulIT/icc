@@ -51,6 +51,8 @@
                                             {% if category.comment is not null %}
                                                 <span class="text-muted">{{ category.comment }}</span>
                                             {% endif %}
+
+                                            {% include "_includes/_id.html.twig" with { id: category.id } %}
                                         </td>
                                         <td class="align-middle">
                                             {{ category.gradeType.displayName }}

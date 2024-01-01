@@ -3,7 +3,7 @@
 <div class="card">
     {% if header|default("") is not empty %}
     <div class="card-header">
-        {{ header|trans }}
+        {{ header|trans }} {% include "_includes/_id.html.twig" with { id: exam.id } %}
     </div>
     {% endif %}
 

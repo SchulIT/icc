@@ -17,7 +17,10 @@
             <div class="col-md-9">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">{{ document.title }}</h5>
+                        <h5 class="card-title">
+                            {{ document.title }}
+                            {% include "_includes/_id.html.twig" with { id: document.id } %}
+                        </h5>
 
                         {{ document.content|markdown }}
                     </div>

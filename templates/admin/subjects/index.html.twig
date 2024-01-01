@@ -63,6 +63,8 @@
                                             {% if subject.color is not empty %}
                                                 <span class="color-rect" style="background-color: {{ subject.color }}"></span>
                                             {% endif %}
+
+                                            {% include "_includes/_id.html.twig" with { id: subject.id } %}
                                         </td>
                                         <td class="align-middle">{{ subject.name }}</td>
                                         <td class="align-middle">

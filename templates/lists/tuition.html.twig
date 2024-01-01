@@ -163,6 +163,8 @@
                             {% else %}
                                 {{ tuition.name }}
                             {% endif %} ({{ tuition.subject.name }})
+
+                            {% include "_includes/_id.html.twig" with { id: tuition.id } %}
                         </h5>
 
                         <p>

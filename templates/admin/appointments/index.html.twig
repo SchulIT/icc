@@ -90,6 +90,8 @@
                                                 {{ appointment.title }}
 
                                                 <span class="badge" style="background: {{ appointment.category.color }}; color: {{ foreground(appointment.category.color) }}">{{ appointment.category.name }}</span>
+
+                                                {% include "_includes/_id.html.twig" with { id: appointment.id } %}
                                             </td>
                                             <td class="align-middle">{{ start }}</td>
                                             <td class="align-middle">{{ end }}</td>

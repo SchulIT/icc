@@ -46,6 +46,7 @@
                                     <tr>
                                         <td class="align-middle">
                                             {{ category.name }}
+                                            {% include "_includes/_id.html.twig" with { id: category.id } %}
                                         </td>
                                         <td class="align-middle">
                                             {{ category.documents.count }}

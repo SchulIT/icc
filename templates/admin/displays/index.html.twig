@@ -55,6 +55,8 @@
                                             <span class="badge text-bg-secondary">
                                                 {{ url('show_display', { uuid: display.uuid }) }}
                                             </span>
+
+                                            {% include "_includes/_id.html.twig" with { id: display.id } %}
                                         </td>
                                         <td>
                                             <div class="dropdown">

@@ -23,7 +23,10 @@
             <div class="card {% if mustConfirm %}border-warning{% endif %}">
                 <div class="card-body">
                     <div class="d-flex align-items-center flex-wrap {% if not is_dismissed(message) %}mb-2{% endif %}">
-                        <h5 class="card-title me-auto mb-0 me-2">{{ message.title }}</h5>
+                        <h5 class="card-title me-auto mb-0 me-2">
+                            {{ message.title }}
+                            {% include "_includes/_id.html.twig" with { id: message.id } %}
+                        </h5>
 
                         <div class="flex-shrink-0">
                             {% if message.mustConfirm and is_granted('confirm', message) %}

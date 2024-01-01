@@ -42,7 +42,10 @@
                                 <tbody>
                                 {% for type in types %}
                                     <tr>
-                                        <td class="align-middle">{{ type.displayName }}</td>
+                                        <td class="align-middle">
+                                            {{ type.displayName }}
+                                            {% include "_includes/_id.html.twig" with { id: type.id } %}
+                                        </td>
                                         <td class="align-middle">
                                             <div class="dropdown" >
                                                 <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">

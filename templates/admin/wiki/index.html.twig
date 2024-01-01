@@ -12,7 +12,12 @@
 
 {% macro wiki_article(article, paddingLeft) %}
     <tr>
-        <td class="align-middle"><span style="padding-left: {{ paddingLeft }}px;"></span> {% if paddingLeft > 0 %}┗{% endif %} {{ article.title }}</td>
+        <td class="align-middle">
+            <span style="padding-left: {{ paddingLeft }}px;"></span> {% if paddingLeft > 0 %}┗{% endif %}
+            {{ article.title }}
+
+            {% include "_includes/_id.html.twig" with { id: article.id } %}
+        </td>
         <td class="align-middle">
             {% if article.isOnline %}
                 <span class="badge text-bg-success">{{ 'label.online'|trans }}</span>

@@ -53,6 +53,7 @@
                                     <tr>
                                         <td>
                                             {{ type.name }}
+                                            {% include "_includes/_id.html.twig" with { id: type.id } %}
                                         </td>
                                         <td>
                                             {{ _self.show_boolean(type.mustApprove, 'label.must_approve.help', 'label.must_approve.help') }}

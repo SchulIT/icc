@@ -42,7 +42,10 @@
                                             <i class="{{ type.icon }}"></i>
                                         {% endif %}
                                     </td>
-                                    <td>{{ type.name }}</td>
+                                    <td>
+                                        {{ type.name }}
+                                        {% include "_includes/_id.html.twig" with { id: type.id } %}
+                                    </td>
                                     <td>
                                         <div class="dropdown">
                                             <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">

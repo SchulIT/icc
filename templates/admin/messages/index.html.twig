@@ -74,7 +74,10 @@
                                 <tbody>
                                 {% for message in group.messages %}
                                     <tr>
-                                        <td class="align-middle">{{ message.title }}</td>
+                                        <td class="align-middle">
+                                            {{ message.title }}
+                                            {% include "_includes/_id.html.twig" with { id: message.id } %}
+                                        </td>
                                         <td class="align-middle">{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only %}</td>
                                         <td class="align-middle">
                                             {{ message.expireDate|format_date }}

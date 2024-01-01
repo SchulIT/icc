@@ -49,7 +49,11 @@
                                 <tbody>
                                 {% for teacher in teachers %}
                                     <tr>
-                                        <td class="align-middle">{{ teacher.acronym }}</td>
+                                        <td class="align-middle">
+                                            {{ teacher.acronym }}
+
+                                            {% include "_includes/_id.html.twig" with { id: teacher.id } %}
+                                        </td>
                                         <td class="align-middle">{{ teacher.firstname}}</td>
                                         <td class="align-middle">{{ teacher.lastname }}</td>
                                         <td class="align-middle">{{ teacher.title }}</td>

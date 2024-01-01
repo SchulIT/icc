@@ -43,7 +43,11 @@
                                 <tbody>
                                 {% for tag in tags %}
                                     <tr>
-                                        <td>{{ tag.name }} <span class="badge text-bg-primary">{{ tag.externalId }}</span></td>
+                                        <td>
+                                            {{ tag.name }}
+                                            <span class="badge text-bg-primary">{{ tag.externalId }}</span>
+                                            {% include "_includes/_id.html.twig" with { id: tag.id } %}
+                                        </td>
                                         <td><span class="color-rect" style="background: {{ tag.color }}"></span> </td>
                                         <td>
                                             <div class="dropdown">

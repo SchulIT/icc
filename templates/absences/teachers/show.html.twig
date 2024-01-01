@@ -26,6 +26,8 @@
                             <span class="badge text-bg-primary">
                                 {{ absence.type.name }}
                             </span>
+
+                            {% include "_includes/_id.html.twig" with { id: absence.id } %}
                         </h4>
 
                         {% if absence.message is not empty %}

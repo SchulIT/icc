@@ -32,6 +32,7 @@
                             <div class="card-header d-flex">
                                 <div class="flex-fill">
                                     {{ studyGroupFilter.currentStudyGroup.name }}
+                                    {% include "_includes/_id.html.twig" with { id: studyGroupFilter.currentStudyGroup.id } %}
                                 </div>
 
                                 <div class="flex-shrink-0">

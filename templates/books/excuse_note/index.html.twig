@@ -38,7 +38,11 @@
                             <tbody>
                             {% for note in notes %}
                                 <tr>
-                                    <td class="align-middle">{{ note.student|student }}</td>
+                                    <td class="align-middle">
+                                        {{ note.student|student }}
+
+                                        {% include "_includes/_id.html.twig" with { id: note.id } %}
+                                    </td>
                                     <td class="align-middle">
                                         {{ note.from.date|format_date }} {{ 'dashboard.lesson'|trans({'%lesson%': note.from.lesson}) }}
                                     </td>

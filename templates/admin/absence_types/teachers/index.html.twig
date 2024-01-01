@@ -43,6 +43,7 @@
                                     <tr>
                                         <td>
                                             {{ type.name }}
+                                            {% include "_includes/_id.html.twig" with { id: type.id } %}
                                         </td>
                                         <td>
                                             <div class="dropdown">

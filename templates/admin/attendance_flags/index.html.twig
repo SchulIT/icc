@@ -45,6 +45,7 @@
                                     <tr>
                                         <td class="align-middle">
                                             {{ flag.description }}
+                                            {% include "_includes/_id.html.twig" with { id: flag.id } %}
                                         </td>
                                         <td class="align-middle">
                                             <span class="fa-stack fa-1x">

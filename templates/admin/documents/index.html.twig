@@ -47,7 +47,11 @@
                                     <tbody>
                                     {% for document in group.documents %}
                                         <tr>
-                                            <td class="align-middle">{{ document.title }}</td>
+                                            <td class="align-middle">
+                                                {{ document.title }}
+
+                                                {% include "_includes/_id.html.twig" with { id: document.id } %}
+                                            </td>
                                             <td class="align-middle">
                                                 {% for visibility in document.visibilities %}{{ visibility.userType|enum }}{% if not loop.last %}, {% endif %}{% endfor %}
                                             </td>

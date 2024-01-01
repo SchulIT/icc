@@ -98,6 +98,7 @@ class BackupCommand extends Command {
         $realpath = sprintf('%s/%s', $this->projectPath, $directory);
         $style->write(sprintf('Sichere Verzeichnis %s (%s)... ', $directory, $realpath));
         $finder = new Finder();
+        $finder->ignoreVCS(false)->ignoreDotFiles(false);
         foreach($finder->in($realpath)->files() as $file) {
             $zip->addFile($file->getPathname(), sprintf('%s/%s', $directory, $file->getRelativePathname()));
         }

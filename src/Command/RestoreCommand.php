@@ -50,7 +50,7 @@ class RestoreCommand extends Command {
         }
 
         $zip = new ZipArchive();
-        if($zip->open(sprintf('%s/%s', $this->backupDirectory, $backupToRestore)) === false) {
+        if($zip->open(sprintf('%s/%s', $this->backupDirectory, $backupToRestore)) !== true) {
             $style->error('ZIP-Datei konnte nicht geöffnet werden.');
             return Command::FAILURE;
         }

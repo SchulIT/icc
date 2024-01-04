@@ -203,7 +203,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->from(Exam::class, 'eInner')
             ->leftJoin('eInner.students', 'sInner')
             ->where(
-                $qb->expr()->in('sInner.id', ':studentIds')
+                $qb->expr()->in('sInner.student', ':studentIds')
             );
 
         $qb
@@ -228,7 +228,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->from(Exam::class, 'eInner')
             ->leftJoin('eInner.students', 'sInner')
             ->where(
-                $qb->expr()->in('sInner.id', ':studentIds')
+                $qb->expr()->in('sInner.student', ':studentIds')
             );
 
         $qb
@@ -434,7 +434,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         if($student !== null) {
             $qbInner
                 ->leftJoin('eInner.students', 'sInner')
-                ->andWhere('sInner.id = :student');
+                ->andWhere('sInner.student = :student');
             $qb->setParameter('student', $student->getId());
         }
 

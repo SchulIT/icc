@@ -34,6 +34,9 @@ class Grade implements Stringable {
     #[ORM\OneToMany(mappedBy: 'grade', targetEntity: GradeMembership::class, cascade: ['persist'])]
     private $memberships;
 
+    /**
+     * @var Collection<GradeLimitedMembership>
+     */
     #[ORM\OneToMany(mappedBy: 'grade', targetEntity: GradeLimitedMembership::class, cascade: ['persist'])]
     private Collection $limitedMemberships;
 

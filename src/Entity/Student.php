@@ -59,6 +59,9 @@ class Student implements JsonSerializable, Stringable {
     #[ORM\OneToMany(mappedBy: 'student', targetEntity: GradeMembership::class, cascade: ['persist'], orphanRemoval: true)]
     private $gradeMemberships;
 
+    /**
+     * @var Collection<GradeLimitedMembership>
+     */
     #[ORM\OneToMany(mappedBy: 'student', targetEntity: GradeLimitedMembership::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $gradeLimitedMemberships;
 

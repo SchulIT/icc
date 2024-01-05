@@ -153,6 +153,12 @@ class StudentAbsenceType extends AbstractType {
                                     'label' => 'absences.students.add.absent_until',
                                     'disabled' => true
                                 ]);
+                        } elseif ($absence->getType()->isMustApprove() === false) {
+                            $form
+                                ->add('from', DateLessonType::class, [
+                                    'label' => 'absences.students.add.absent_from',
+                                    'disabled' => true
+                                ]);
                         }
 
                         // Students and parents are not allowed to change absence type

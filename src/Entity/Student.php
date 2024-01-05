@@ -59,6 +59,9 @@ class Student implements JsonSerializable, Stringable {
     #[ORM\OneToMany(mappedBy: 'student', targetEntity: GradeMembership::class, cascade: ['persist'], orphanRemoval: true)]
     private $gradeMemberships;
 
+    #[ORM\OneToMany(mappedBy: 'student', targetEntity: GradeLimitedMembership::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $gradeLimitedMemberships;
+
     /**
      * @var Collection<StudyGroupMembership>
      */
@@ -97,6 +100,7 @@ class Student implements JsonSerializable, Stringable {
         $this->approvedPrivacyCategories = new ArrayCollection();
         $this->sections = new ArrayCollection();
         $this->gradeMemberships = new ArrayCollection();
+        $this->gradeLimitedMemberships = new ArrayCollection();
         $this->learningManagementSystems = new ArrayCollection();
     }
 
@@ -195,6 +199,13 @@ class Student implements JsonSerializable, Stringable {
      */
     public function getGradeMemberships(): Collection {
         return $this->gradeMemberships;
+    }
+
+    /**
+     * @return Collection<GradeLimitedMembership>
+     */
+    public function getGradeLimitedMemberships():Collection {
+        return $this->gradeLimitedMemberships;
     }
 
     /**

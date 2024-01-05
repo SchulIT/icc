@@ -80,9 +80,22 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
     }
 
     private function getQueryBuilderFindAllByGrade(Grade $grade, Section $section): QueryBuilder {
-        return $this->getDefaultQueryBuilder(true)
-            ->andWhere('gm.grade = :grade')
-            ->andWhere('gm.section = :section')
+        $qb = $this->getDefaultQueryBuilder(true)
+            ->leftJoin('s.gradeLimitedMemberships', 'glm');
+
+        return
+            $qb->where(
+                $qb->expr()->orX(
+                    $qb->expr()->andX(
+                        'gm.grade = :grade',
+                        'gm.section = :section'
+                    ),
+                    $qb->expr()->andX(
+                        'glm.grade = :grade',
+                        'glm.section = :section'
+                    ),
+                )
+            )
             ->orderBy('s.lastname')
             ->addOrderBy('s.firstname')
             ->setParameter('grade', $grade->getId())

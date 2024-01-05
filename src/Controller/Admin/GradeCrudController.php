@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Grade;
+use App\Form\GradeLimitedMembershipType;
 use App\Form\GradeMembershipType;
 use App\Form\GradeTeacherType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -48,6 +49,13 @@ class GradeCrudController extends AbstractCrudController
                 ->allowDelete(true)
                 ->setFormTypeOption('by_reference', false)
                 ->setLabel('Mitgliedschaften'),
+            CollectionField::new('limitedMemberships')
+                ->setEntryType(GradeLimitedMembershipType::class)
+                ->allowAdd(true)
+                ->allowDelete(true)
+                ->setFormTypeOption('by_reference', false)
+                ->setLabel('Zeitliche Mitgliedschaften')
+                ->setHelp('Hier werden Lernende eingetragen, die die Klasse im laufenden Schuljahr verlassen haben.'),
             CollectionField::new('teachers')
                 ->setEntryType(GradeTeacherType::class)
                 ->allowAdd(true)

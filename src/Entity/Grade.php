@@ -34,6 +34,9 @@ class Grade implements Stringable {
     #[ORM\OneToMany(mappedBy: 'grade', targetEntity: GradeMembership::class, cascade: ['persist'])]
     private $memberships;
 
+    #[ORM\OneToMany(mappedBy: 'grade', targetEntity: GradeLimitedMembership::class, cascade: ['persist'])]
+    private Collection $limitedMemberships;
+
     /**
      * @var ArrayCollection<GradeTeacher>
      */
@@ -47,6 +50,7 @@ class Grade implements Stringable {
         $this->uuid = Uuid::uuid4();
 
         $this->memberships = new ArrayCollection();
+        $this->limitedMemberships = new ArrayCollection();
         $this->teachers = new ArrayCollection();
     }
 
@@ -86,6 +90,22 @@ class Grade implements Stringable {
      */
     public function getMemberships(): Collection {
         return $this->memberships;
+    }
+
+    public function addLimitedMembership(GradeLimitedMembership $limitedMembership): void {
+        $limitedMembership->setGrade($this);
+        $this->limitedMemberships->add($limitedMembership);
+    }
+
+    public function removeLimitedMembership(GradeLimitedMembership $limitedMembership): void {
+        $this->limitedMemberships->removeElement($limitedMembership);
+    }
+
+    /**
+     * @return Collection<GradeLimitedMembership>
+     */
+    public function getLimitedMemberships(): Collection {
+        return $this->limitedMemberships;
     }
 
     public function addTeacher(GradeTeacher $teacher) {

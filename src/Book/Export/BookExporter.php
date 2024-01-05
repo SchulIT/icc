@@ -12,6 +12,7 @@ use App\Book\Student\StudentInfoResolver;
 use App\Book\StudentsResolver;
 use App\Entity\BookComment as CommentEntity;
 use App\Entity\Grade as GradeEntity;
+use App\Entity\GradeLimitedMembership;
 use App\Entity\GradeMembership;
 use App\Entity\GradeTeacher;
 use App\Entity\LessonAttendance as LessonAttendanceEntity;
@@ -24,6 +25,7 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\Teacher as TeacherEntity;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition as TuitionEntity;
+use App\Repository\GradeLimitedMembershipRepositoryInterface;
 use App\Repository\GradeResponsibilityRepositoryInterface;
 use App\Repository\LessonAttendanceFlagRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
@@ -39,7 +41,8 @@ class BookExporter {
                                 private readonly Sorter $sorter, private readonly SerializerInterface $serializer, private readonly StudentsResolver $studentsResolver,
                                 private readonly GradeOverviewHelper $gradeOverviewHelper, private readonly TuitionRepositoryInterface $tuitionRepository,
                                 private readonly LessonAttendanceFlagRepositoryInterface $flagRepository,
-                                private readonly GradeResponsibilityRepositoryInterface $responsibilityRepository)
+                                private readonly GradeResponsibilityRepositoryInterface $responsibilityRepository,
+                                private readonly GradeLimitedMembershipRepositoryInterface $limitedMembershipRepository)
     {
     }
 
@@ -228,6 +231,14 @@ class BookExporter {
             ->setGrades([$this->castGrade($grade, $section)]);
 
         $students = $grade->getMemberships()->filter(fn(GradeMembership $membership) => $membership->getSection() === $section)->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
+        $students = array_merge(
+            $students,
+            array_map(
+                fn(GradeLimitedMembership $membership) => $membership->getStudent(),
+                $this->limitedMembershipRepository->findAllByGradeAndSection($grade, $section)
+            )
+        );
+
         $overview = $this->overviewHelper->computeOverviewForGrade($grade, $section->getStart(), $section->getEnd());
 
         foreach($this->responsibilityRepository->findAllByGrade($grade, $section) as $responsibility) {

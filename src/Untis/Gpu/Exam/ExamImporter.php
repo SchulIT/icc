@@ -48,6 +48,7 @@ class ExamImporter {
             $exam->setSupervisions($gpuExam->getSupervisions());
             $exam->setDescription($gpuExam->getText());
 
+            $exam->setComputeStudentsFromRules(false);
             $this->clearStudentsIfNecessary($exam, $gpuExam->getName());
 
             $examTuition = $gpuExam->getTuitions();
@@ -112,6 +113,7 @@ class ExamImporter {
         if(($this->settings->alwaysImportExamWriters() === false && $ignoreOption === false)
          ||($this->settings->alwaysImportExamWriters() === true && $ignoreOption === true)) {
             $data->setStudents([]);
+            $data->setComputeStudentsFromRules(true);
         }
 
         return $data;

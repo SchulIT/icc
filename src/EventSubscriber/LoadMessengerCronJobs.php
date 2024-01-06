@@ -14,6 +14,8 @@ class LoadMessengerCronJobs implements EventSubscriberInterface {
     }
 
     public function onLoadJobs(LoadJobsEvent $event): void {
+        dump($this->useCronjobForMessenger);
+
         if(!$this->useCronjobForMessenger) {
             return;
         }

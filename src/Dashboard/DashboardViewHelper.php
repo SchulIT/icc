@@ -268,7 +268,7 @@ class DashboardViewHelper {
             }
 
             for($lessonNumber = $lesson->getLessonStart(); $lessonNumber <= $lesson->getLessonEnd(); $lessonNumber++) {
-                $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lessonStudents, $lessonNumber, $dateTime) : [ ];
+                $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lessonStudents, $lessonNumber, $dateTime, [], $lesson->getTuition()) : [ ];
                 $absenceLesson = $this->absenceLessonRepository->findOneForLesson($lesson);
                 $dashboardView->addItem($lessonNumber, new TimetableLessonViewItem($lesson, $absentStudents, $absenceLesson));
             }
@@ -343,7 +343,9 @@ class DashboardViewHelper {
             $students = $this->getStudents($studyGroups);
 
             for ($lesson = $substitution->getLessonStart(); $lesson <= $substitution->getLessonEnd(); $lesson++) {
-                $absentStudents = $computeAbsences ? $this->computeAbsentStudents($students, $lesson, $substitution->getDate()) : [ ];
+                $tuition = $this->tuitionRepository->findOneBySubstitution($substitution, $this->sectionResolver->getSectionForDate($substitution->getDate()));
+
+                $absentStudents = $computeAbsences ? $this->computeAbsentStudents($students, $lesson, $substitution->getDate(), [], $tuition) : [ ];
                 $timetableLesson = $this->findTimetableLesson($substitution, $lesson);
                 $absenceLesson = null;
 
@@ -514,10 +516,18 @@ class DashboardViewHelper {
     /**
      * @param Student[] $students
      * @param string[] $excludedResolvers FQCN of excluded strategies
+     * @param Tuition|null $tuition If set, exams with this tuition are removed automatically
      * @return AbsentStudentGroup[]
      */
-    private function computeAbsentStudents(array $students, int $lesson, DateTime $dateTime, array $excludedResolvers = [ ]): array {
+    private function computeAbsentStudents(array $students, int $lesson, DateTime $dateTime, array $excludedResolvers = [ ], ?Tuition $tuition = null): array {
         $absentStudents = $this->absenceResolver->resolve($dateTime, $lesson, $students, $excludedResolvers);
+
+        if($tuition !== null) {
+            $absentStudents = array_filter(
+                $absentStudents,
+                fn(AbsentStudent $absentStudent) => !$absentStudent instanceof AbsentExamStudent || $absentStudent->getTuition()?->getId() !== $tuition->getId()
+            );
+        }
 
         /** @var AbsentStudentGroup[] $groups */
         $groups = $this->grouper->group($absentStudents, AbstentStudentGroupStrategy::class);

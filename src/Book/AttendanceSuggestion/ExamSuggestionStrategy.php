@@ -36,6 +36,10 @@ class ExamSuggestionStrategy implements SuggestionStrategyInterface {
                 continue; // do not show exam of current tuition
             }
 
+            if($examStudent->getTuition() !== null && $examStudent->getTuition()->getId() === $tuition->getId()) {
+                continue; 
+            }
+
             $suggestion = new AttendanceSuggestion(
                 $this->getStudent($examStudent->getStudent()),
                 $this->translator->trans('book.attendance.absence_reason.exam'),

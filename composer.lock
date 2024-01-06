@@ -5244,16 +5244,16 @@
         },
         {
             "name": "schulit/common-bundle",
-            "version": "4.2.0",
+            "version": "4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SchulIT/common-bundle.git",
-                "reference": "6b2b1407a250cdabddadf29299fa5063b35cc3b6"
+                "reference": "f3046c2b5d36d005733799cf305de39f4a875b0b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/6b2b1407a250cdabddadf29299fa5063b35cc3b6",
-                "reference": "6b2b1407a250cdabddadf29299fa5063b35cc3b6",
+                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/f3046c2b5d36d005733799cf305de39f4a875b0b",
+                "reference": "f3046c2b5d36d005733799cf305de39f4a875b0b",
                 "shasum": ""
             },
             "require": {
@@ -5293,9 +5293,9 @@
             ],
             "support": {
                 "issues": "https://github.com/SchulIT/common-bundle/issues",
-                "source": "https://github.com/SchulIT/common-bundle/tree/4.2.0"
+                "source": "https://github.com/SchulIT/common-bundle/tree/4.3.0"
             },
-            "time": "2023-12-31T12:04:39+00:00"
+            "time": "2024-01-06T18:52:58+00:00"
         },
         {
             "name": "scienta/doctrine-json-functions",

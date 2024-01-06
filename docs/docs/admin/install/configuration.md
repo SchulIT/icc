@@ -74,8 +74,21 @@ Die Absende-E-Mail-Adresse für ausgehende E-Mails.
 
 #### MAILER_LIMIT
 
-Die Anzahl an E-Mails, die maximal pro Minute versendet werden darf. Das ist wichtig, da das System Massen-Mails versendet
+Die Anzahl an E-Mails, die maximal pro Intervall (siehe `MAILER_INTERVAL`) versendet werden dürfen. Das ist wichtig, da das System Massen-Mails versendet
 (z.B. bei neuem Vertretungsplan oder neuen Mitteilungen). 
+
+#### MAILER_INTERVAL
+
+Das Intervall, in dem die in `MAILER_LIMIT` angegebene Anzahl an E-Mails verschickt werden darf. 
+
+:::tip Gewusst
+Hier muss ein von PHP als gültiger Wert für relative Zeitangaben eingetragen werden, bspw. `1 minute`, `1 hour`. Siehe [PHP Dokumentation](https://www.php.net/manual/en/datetime.formats.php#datetime.formats.relative)
+:::
+
+:::tip Gewusst (Microsoft 365)
+Für Microsoft 365 findet man die entsprechenden Limits [hier](https://learn.microsoft.com/en-us/office365/servicedescriptions/exchange-online-service-description/exchange-online-limits#sending-limits).
+Praktischerweise sind die Limits (30 E-Mails pro 1 Minute) bereits in der Standardkonfiguration abgedeckt.
+:::
 
 #### CRON_PASSWORD
 

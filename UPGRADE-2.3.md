@@ -69,11 +69,26 @@ hat.
 
 Das System versucht nun, bei Klausurschreibenden die entsprechenden Kurse zuzuordnen. Siehe [Handbuch](https://docs.schulit.de/icc/admin/import/untis/#zuordnung-der-klausurschreibenden-zu-unterrichten)
 
+### Sauberes E-Mail-Limiting
+
+Das Limit von E-Mails wird nun streng eingehalten. Dazu müssen die Konfigurationsvariablen `MAILER_LIMIT` und `MAILER_INTERVAL`
+entsprechend gesetzt werden. Siehe [Handbuch](https://docs.schulit.de/icc/admin/install/configuration#mailer_limit)
+
+### Hintergrundaufgaben
+
+Hintergrundaufgaben erledigen zeitintensive Aufgaben wie beispielsweise den Versand von E-Mails. Bisher wurden diese
+Hintergrundaufgaben ausschließlich als Cronjob ausgeführt. Das kann jedoch je nach Konfiguration dazu führen, dass die
+Aufgaben nicht ordnungsgemäß ausgeführt werden.
+
+Es ist nun möglich, Hintergrundaufgaben nicht als Cronjob sondern mithilfe eines Dienstes (bspw. systemd) auszuführen.
+Mehr dazu gibt es im [Handbuch](https://docs.schulit.de/icc/admin/maintenance/messenger).
+
 ## Upgrade TODO
 
 Das Upgrade beinhaltet mehrere Migrationen.
 
-**HINWEIS:** Dieses Update kann im laufenden Betrieb eingespielt werden.
+**HINWEIS:** Dieses Update kann im laufenden Betrieb eingespielt werden. Es bedarf jedoch ggf. einer Anpassung der 
+Konfigurationsdatei.
 
 ### Nach dem Upgrade TODO
 

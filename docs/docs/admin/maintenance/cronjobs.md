@@ -58,7 +58,7 @@ Falls man einen eigenen Server betreibt, können Cronjob-Programme wie crontab o
 in regelmäßigen Abständen auszuführen. Dazu im Cronjob-Programm folgendes Skript alle zwei Minuten ausführen lassen:
 
 ```bash
-/usr/bin/php /path/to/sso/bin/console shapecode:cron:run
+/usr/bin/php /path/to/icc/bin/console shapecode:cron:run
 ```
 
 :::caution Achtung

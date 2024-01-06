@@ -37,6 +37,10 @@ Es ist wichtig, dass das `public/`-Verzeichnis als Wurzelverzeichnis im Webserve
 Konfigurationsdateien abgefangen werden.
 :::
 
+## E-Mail konfigurieren
+
+Siehe [E-Mails](../maintenance/messenger).
+
 ## Cronjobs konfigurieren
 
 Siehe [Cronjobs](../maintenance/cronjobs).

@@ -39,6 +39,18 @@ class ExamSupervisionViewItem extends AbsenceAwareViewItem {
         return $this->exams;
     }
 
+    /**
+     * @return Room[]
+     */
+    public function getRooms():array {
+        return array_unique(
+            array_map(
+                fn(Exam $exam) => $exam->getRoom(),
+                $this->exams
+            )
+        );
+    }
+
     public function getBlockName(): string {
         return 'exam_supervision';
     }

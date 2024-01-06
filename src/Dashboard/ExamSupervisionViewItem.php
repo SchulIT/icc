@@ -3,6 +3,7 @@
 namespace App\Dashboard;
 
 use App\Entity\Exam;
+use App\Entity\Room;
 use App\Grouping\AbsentStudentGroup;
 
 class ExamSupervisionViewItem extends AbsenceAwareViewItem {

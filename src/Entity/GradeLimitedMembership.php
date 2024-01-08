@@ -21,7 +21,7 @@ class GradeLimitedMembership {
     use SectionAwareTrait;
 
     #[Assert\NotNull]
-    #[ORM\ManyToOne(targetEntity: Student::class, inversedBy: 'gradeMemberships')]
+    #[ORM\ManyToOne(targetEntity: Student::class, inversedBy: 'gradeLimitedMemberships')]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Student $student = null;
 

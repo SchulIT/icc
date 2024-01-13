@@ -59,6 +59,13 @@ class PresentDespiteAbsenceNoteCheck implements IntegrityCheckInterface {
                 continue;
             }
 
+            if($absence->getType()->getBookAttendanceType() === LessonAttendanceType::Present) {
+                /**
+                 * Ignore absences which are basically just information and no real absence (e.g. those with present attendance type)
+                 */
+                continue;
+            }
+
             $lessons = $this->dateLessonExpander->expandRangeToDateLessons($absence->getFrom(), $absence->getUntil());
 
             foreach($lessons as $lesson) {
